@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from sqlalchemy import Column, Date, DateTime, Float, Integer, String, Text, ForeignKey
+from sqlalchemy.sql import func
 
 from backend.database import Base
 
@@ -9,9 +8,9 @@ class Patient(Base):
     __tablename__ = "patients"
 
     id = Column(String, primary_key=True, index=True)
-    name_code = Column(String, nullable=False)
+    name = Column(String, nullable=False)
     diagnosis = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class LabResult(Base):
@@ -35,7 +34,7 @@ class Treatment(Base):
     drug = Column(String, nullable=False)
 
 
-class CtReport(Base):
+class CTReport(Base):
     __tablename__ = "ct_reports"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -51,5 +50,5 @@ class PatientReport(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     patient_id = Column(String, ForeignKey("patients.id"), index=True)
-    generated_at = Column(DateTime, default=datetime.utcnow)
+    generated_at = Column(DateTime(timezone=True), server_default=func.now())
     report_json = Column(Text, nullable=False)

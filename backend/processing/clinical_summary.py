@@ -45,7 +45,13 @@ family. Explain what the numbers mean in plain language and what to watch for.
 """
 
 
-def generate_clinical_summary(trends, risks, treatment_effects):
+def generate_clinical_summary(
+    trends,
+    risks,
+    treatment_effects,
+    trend_risks=None,
+    radiology_summary=None,
+):
     """Generate a two-part clinical summary using Groq.
 
     Args:
@@ -68,15 +74,25 @@ def generate_clinical_summary(trends, risks, treatment_effects):
     client = Groq(api_key=api_key)
 
     # Format the data for the prompt
+    merged_risks = risks
+    if trend_risks:
+        merged_risks = risks + trend_risks
+
     trends_str = json.dumps(trends, indent=2)
-    risks_str = "\n".join(f"- {r}" for r in risks) if risks else "No risks detected."
+    risks_str = "\n".join(f"- {r}" for r in merged_risks) if merged_risks else "No risks detected."
     effects_str = json.dumps(treatment_effects, indent=2)
+    radiology_str = (
+        json.dumps(radiology_summary, indent=2)
+        if radiology_summary is not None
+        else "No radiology summary available."
+    )
 
     user_prompt = USER_PROMPT_TEMPLATE.format(
         trends=trends_str,
         risks=risks_str,
         treatment_effects=effects_str,
     )
+    user_prompt += f"\n\n## Radiology Summary\n{radiology_str}\n"
 
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",

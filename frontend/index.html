@@ -21,6 +21,11 @@
   <h1>AI Oncology Monitoring Dashboard</h1>
   <p class="subtitle">Clinical support view — not for diagnosis</p>
 
+  <div class="card section">
+    <label for="patientSelect"><strong>Select Patient:</strong></label>
+    <select id="patientSelect"></select>
+  </div>
+
   <div class="grid">
     <div class="card">
       <div class="label">Latest WBC</div>
@@ -69,52 +74,92 @@
   </div>
 
   <script>
-    fetch("http://127.0.0.1:8000/patient-report/P001")
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById("wbc").textContent = data.latest_labs.wbc;
-        document.getElementById("hemoglobin").textContent = data.latest_labs.hemoglobin;
-        document.getElementById("platelets").textContent = data.latest_labs.platelets;
+    let wbcChart = null;
+    let hemoglobinChart = null;
+    let plateletChart = null;
 
-        document.getElementById("risks").innerHTML =
-          data.risks.map(risk => `<li><strong>${risk.severity}</strong>: ${risk.message}</li>`).join("");
+    function loadPatient(patientId) {
+      fetch(`http://127.0.0.1:8000/patient-report/${patientId}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("wbc").textContent = data.latest_labs.wbc;
+          document.getElementById("hemoglobin").textContent = data.latest_labs.hemoglobin;
+          document.getElementById("platelets").textContent = data.latest_labs.platelets;
 
-        document.getElementById("treatment").innerHTML =
-          data.treatment_effects.map(item =>
-            `<li>Cycle ${item.cycle} (${item.drug}) — Minimum WBC post-cycle: ${item.min_wbc_post_cycle}</li>`
-          ).join("");
+          document.getElementById("risks").innerHTML =
+            data.risks.map(risk => `<li><strong>${risk.severity}</strong>: ${risk.message}</li>`).join("");
 
-        const labels = data.lab_history.map(row => row.date.slice(0, 10));
+          document.getElementById("treatment").innerHTML =
+            data.treatment_effects.map(item =>
+              `<li>Cycle ${item.cycle} (${item.drug}) — Minimum WBC post-cycle: ${item.min_wbc_post_cycle}</li>`
+            ).join("");
 
-        function createLineChart(canvasId, label, values) {
-          new Chart(document.getElementById(canvasId), {
-            type: "line",
-            data: {
-              labels: labels,
-              datasets: [
-                {
-                  label: label,
-                  data: values,
-                  tension: 0.3
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              scales: {
-                y: {
-                  beginAtZero: false
+          const labels = data.lab_history.map(row => row.date.slice(0, 10));
+
+          function createLineChart(canvasId, label, values, chartRefName) {
+            const ctx = document.getElementById(canvasId);
+
+            if (window[chartRefName]) {
+              window[chartRefName].destroy();
+            }
+
+            window[chartRefName] = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: label,
+                    data: values,
+                    tension: 0.3
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                scales: {
+                  y: {
+                    beginAtZero: false
+                  }
                 }
               }
-            }
-          });
+            });
+          }
+
+          createLineChart("wbcChart", "WBC", data.lab_history.map(row => row.wbc), "wbcChartInstance");
+          createLineChart(
+            "hemoglobinChart",
+            "Hemoglobin",
+            data.lab_history.map(row => row.hemoglobin),
+            "hemoglobinChartInstance"
+          );
+          createLineChart(
+            "plateletChart",
+            "Platelets",
+            data.lab_history.map(row => row.platelets),
+            "plateletChartInstance"
+          );
+
+          document.getElementById("summary").textContent = data.ai_summary;
+        });
+    }
+
+    fetch("http://127.0.0.1:8000/patients")
+      .then(response => response.json())
+      .then(patients => {
+        const select = document.getElementById("patientSelect");
+
+        select.innerHTML = patients
+          .map(patient => `<option value="${patient.id}">${patient.name}</option>`)
+          .join("");
+
+        if (patients.length > 0) {
+          loadPatient(patients[0].id);
         }
 
-        createLineChart("wbcChart", "WBC", data.lab_history.map(row => row.wbc));
-        createLineChart("hemoglobinChart", "Hemoglobin", data.lab_history.map(row => row.hemoglobin));
-        createLineChart("plateletChart", "Platelets", data.lab_history.map(row => row.platelets));
-
-        document.getElementById("summary").textContent = data.ai_summary;
+        select.addEventListener("change", e => {
+          loadPatient(e.target.value);
+        });
       });
   </script>
 </body>
