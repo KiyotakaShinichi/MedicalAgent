@@ -1,0 +1,55 @@
+from datetime import datetime
+
+from sqlalchemy import Column, Date, DateTime, Float, Integer, String, Text, ForeignKey
+
+from backend.database import Base
+
+
+class Patient(Base):
+    __tablename__ = "patients"
+
+    id = Column(String, primary_key=True, index=True)
+    name_code = Column(String, nullable=False)
+    diagnosis = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class LabResult(Base):
+    __tablename__ = "lab_results"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    date = Column(Date, nullable=False)
+    wbc = Column(Float, nullable=False)
+    hemoglobin = Column(Float, nullable=False)
+    platelets = Column(Float, nullable=False)
+
+
+class Treatment(Base):
+    __tablename__ = "treatments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    date = Column(Date, nullable=False)
+    cycle = Column(Integer, nullable=False)
+    drug = Column(String, nullable=False)
+
+
+class CtReport(Base):
+    __tablename__ = "ct_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    date = Column(Date, nullable=False)
+    report_type = Column(String, nullable=False)
+    findings = Column(Text, nullable=False)
+    impression = Column(Text, nullable=False)
+
+
+class PatientReport(Base):
+    __tablename__ = "patient_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    generated_at = Column(DateTime, default=datetime.utcnow)
+    report_json = Column(Text, nullable=False)

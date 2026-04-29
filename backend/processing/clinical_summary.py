@@ -1,6 +1,11 @@
+from dotenv import load_dotenv
 import os
 import json
 from groq import Groq
+
+
+load_dotenv()
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 SYSTEM_PROMPT = """\
 You are a clinical support AI. You do NOT diagnose. You summarize lab trends, \
@@ -52,7 +57,7 @@ def generate_clinical_summary(trends, risks, treatment_effects):
         str: The generated clinical summary text.
     """
 
-    api_key = os.environ.get("GROQ_API_KEY")
+    api_key = GROQ_API_KEY or os.environ.get("GROQ_API_KEY")
     if not api_key:
         return (
             "[ERROR] GROQ_API_KEY environment variable is not set.\n"

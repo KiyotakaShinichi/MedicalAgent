@@ -69,7 +69,7 @@
   </div>
 
   <script>
-    fetch("http://127.0.0.1:8000/patient-report")
+    fetch("http://127.0.0.1:8000/patient-report/P001")
       .then(response => response.json())
       .then(data => {
         document.getElementById("wbc").textContent = data.latest_labs.wbc;

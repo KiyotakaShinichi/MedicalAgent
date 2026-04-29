@@ -1,2 +1,5 @@
 pandas
 google-genai
+groq
+python-dotenv
+sqlalchemy
