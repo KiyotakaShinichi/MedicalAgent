@@ -2,80 +2,119 @@
 <html>
 <head>
   <title>AI Oncology Monitoring Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 24px; }
+    h1 { margin-bottom: 4px; }
+    .subtitle { color: #555; margin-bottom: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .card { background: white; padding: 18px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .label { color: #666; font-size: 14px; }
+    .value { font-size: 28px; font-weight: bold; margin-top: 8px; }
+    .warning { border-left: 6px solid orange; }
+    .section { margin-top: 24px; }
+    li { margin-bottom: 8px; }
+    pre { white-space: pre-wrap; font-family: Arial, sans-serif; }
+  </style>
 </head>
 <body>
   <h1>AI Oncology Monitoring Dashboard</h1>
+  <p class="subtitle">Clinical support view — not for diagnosis</p>
 
-  <h2>Patient Report</h2>
-  <pre id="report">Loading...</pre>
+  <div class="grid">
+    <div class="card">
+      <div class="label">Latest WBC</div>
+      <div class="value" id="wbc">-</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Latest Hemoglobin</div>
+      <div class="value" id="hemoglobin">-</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Latest Platelets</div>
+      <div class="value" id="platelets">-</div>
+    </div>
+  </div>
+
+  <div class="card warning section">
+    <h2>Risk Flags</h2>
+    <ul id="risks"></ul>
+  </div>
+
+  <div class="card section">
+    <h2>Treatment Effects</h2>
+    <ul id="treatment"></ul>
+  </div>
+
+  <div class="card section">
+    <h2>WBC Trend</h2>
+    <canvas id="wbcChart"></canvas>
+  </div>
+
+  <div class="card section">
+    <h2>Hemoglobin Trend</h2>
+    <canvas id="hemoglobinChart"></canvas>
+  </div>
+
+  <div class="card section">
+    <h2>Platelet Trend</h2>
+    <canvas id="plateletChart"></canvas>
+  </div>
+
+  <div class="card section">
+    <h2>AI Clinical Summary</h2>
+    <pre id="summary">Loading...</pre>
+  </div>
 
   <script>
     fetch("http://127.0.0.1:8000/patient-report")
       .then(response => response.json())
       .then(data => {
-        document.getElementById("report").textContent =
-          JSON.stringify(data, null, 2);
-      })
-      .catch(error => {
-        document.getElementById("report").textContent =
-          "Error loading report: " + error;
-      });
-  </script>
-</body>
-</html>
+        document.getElementById("wbc").textContent = data.latest_labs.wbc;
+        document.getElementById("hemoglobin").textContent = data.latest_labs.hemoglobin;
+        document.getElementById("platelets").textContent = data.latest_labs.platelets;
 
-    <div class="dashboard">
-      <div class="dashboard-header">
-        <h2>Patient Report Data</h2>
-        <div class="status-badge" id="statusBadge">
-          <div class="status-dot"></div>
-          <span id="statusText">Connecting</span>
-        </div>
-      </div>
-      
-      <div id="loading" class="loading-container">
-        <div class="loader"></div>
-        <p>Fetching clinical data from API...</p>
-      </div>
+        document.getElementById("risks").innerHTML =
+          data.risks.map(risk => `<li><strong>${risk.severity}</strong>: ${risk.message}</li>`).join("");
 
-      <pre id="report" style="display: none;"></pre>
-    </div>
-  </div>
+        document.getElementById("treatment").innerHTML =
+          data.treatment_effects.map(item =>
+            `<li>Cycle ${item.cycle} (${item.drug}) — Minimum WBC post-cycle: ${item.min_wbc_post_cycle}</li>`
+          ).join("");
 
-  <script>
-    fetch("http://127.0.0.1:8000/patient-report")
-      .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-      })
-      .then(data => {
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("report").style.display = "block";
-        document.getElementById("report").textContent = JSON.stringify(data, null, 2);
-        
-        const badge = document.getElementById("statusBadge");
-        const statusText = document.getElementById("statusText");
-        
-        statusText.textContent = "Live Update";
-        badge.style.backgroundColor = "rgba(16, 185, 129, 0.1)";
-        badge.style.color = "var(--success)";
-        badge.querySelector('.status-dot').style.backgroundColor = "var(--success)";
-      })
-      .catch(error => {
-        document.getElementById("loading").style.display = "none";
-        const reportEl = document.getElementById("report");
-        reportEl.style.display = "block";
-        reportEl.style.color = "var(--danger)";
-        reportEl.textContent = "Error loading report: " + error.message;
-        
-        const badge = document.getElementById("statusBadge");
-        const statusText = document.getElementById("statusText");
-        
-        statusText.textContent = "Disconnected";
-        badge.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
-        badge.style.color = "var(--danger)";
-        badge.querySelector('.status-dot').style.backgroundColor = "var(--danger)";
-        badge.querySelector('.status-dot').style.animation = "none";
+        const labels = data.lab_history.map(row => row.date.slice(0, 10));
+
+        function createLineChart(canvasId, label, values) {
+          new Chart(document.getElementById(canvasId), {
+            type: "line",
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: label,
+                  data: values,
+                  tension: 0.3
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: false
+                }
+              }
+            }
+          });
+        }
+
+        createLineChart("wbcChart", "WBC", data.lab_history.map(row => row.wbc));
+        createLineChart("hemoglobinChart", "Hemoglobin", data.lab_history.map(row => row.hemoglobin));
+        createLineChart("plateletChart", "Platelets", data.lab_history.map(row => row.platelets));
+
+        document.getElementById("summary").textContent = data.ai_summary;
       });
   </script>
 </body>

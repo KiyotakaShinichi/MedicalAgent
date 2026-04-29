@@ -1,6 +1,6 @@
 import os
 import json
-from google import genai
+from groq import Groq
 
 SYSTEM_PROMPT = """\
 You are a clinical support AI. You do NOT diagnose. You summarize lab trends, \
@@ -41,7 +41,7 @@ family. Explain what the numbers mean in plain language and what to watch for.
 
 
 def generate_clinical_summary(trends, risks, treatment_effects):
-    """Generate a two-part clinical summary using Gemini.
+    """Generate a two-part clinical summary using Groq.
 
     Args:
         trends: dict of lab trend directions (e.g. {"wbc": "decreasing"})
@@ -52,15 +52,15 @@ def generate_clinical_summary(trends, risks, treatment_effects):
         str: The generated clinical summary text.
     """
 
-    api_key = os.environ.get("GEMINI_API_KEY", "AIzaSyCg3BffO7EysV76EQrk2_gRQhSNKFaRzXI")
+    api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
         return (
-            "[ERROR] GEMINI_API_KEY environment variable is not set.\n"
-            "Set it with:  set GEMINI_API_KEY=your-key-here  (Windows)\n"
-            "              export GEMINI_API_KEY=your-key-here (Linux/Mac)"
+            "[ERROR] GROQ_API_KEY environment variable is not set.\n"
+            "Set it with:  set GROQ_API_KEY=your-key-here  (Windows)\n"
+            "              export GROQ_API_KEY=your-key-here (Linux/Mac)"
         )
 
-    client = genai.Client(api_key=api_key)
+    client = Groq(api_key=api_key)
 
     # Format the data for the prompt
     trends_str = json.dumps(trends, indent=2)
@@ -73,13 +73,13 @@ def generate_clinical_summary(trends, risks, treatment_effects):
         treatment_effects=effects_str,
     )
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        config={
-            "system_instruction": SYSTEM_PROMPT,
-            "temperature": 0.3,   # lower temperature for clinical accuracy
-        },
-        contents=user_prompt,
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        temperature=0.3,
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
     )
 
-    return response.text
+    return response.choices[0].message.content

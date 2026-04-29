@@ -12,6 +12,32 @@
         "hemoglobin": 13.2,
         "platelets": 250
     },
+    "lab_history": [
+        {
+            "date": "2026-01-01 00:00:00",
+            "wbc": 6.5,
+            "hemoglobin": 13.2,
+            "platelets": 250
+        },
+        {
+            "date": "2026-01-08 00:00:00",
+            "wbc": 4.2,
+            "hemoglobin": 12.5,
+            "platelets": 210
+        },
+        {
+            "date": "2026-01-15 00:00:00",
+            "wbc": 2.1,
+            "hemoglobin": 11.8,
+            "platelets": 150
+        },
+        {
+            "date": "2026-01-22 00:00:00",
+            "wbc": 3.8,
+            "hemoglobin": 12.0,
+            "platelets": 180
+        }
+    ],
     "trends": {
         "wbc": "decreasing",
         "hemoglobin": "decreasing",
@@ -41,5 +67,15 @@
             "min_wbc_post_cycle": 2.1
         }
     ],
-    "ai_summary": "### 1. Clinical Summary (Doctor-Level)\n\nThe patient exhibits a concerning trend of decreasing white blood cell (WBC), hemoglobin, and platelet counts, indicative of myelosuppression. Specifically, the WBC count has shown a significant decline of 67.7% from baseline, reaching a nadir of 2.1 x 10^9/L following both Cycle 1 and Cycle 2 of Cisplatin chemotherapy. This persistent leukopenia raises a warning for potential neutropenia, a known adverse effect of Cisplatin, and warrants close monitoring for infectious complications.\n\n### 2. Simple Explanation (Patient-Level)\n\nYour blood tests show that three important types of blood cells are lower than usual. These are:\n*   **White blood cells:** These cells help your body fight off infections. Your white blood cell count has dropped significantly, which means you might be more prone to infections.\n*   **Red blood cells (hemoglobin):** These carry oxygen and give you energy.\n*   **Platelets:** These help your blood clot and stop bleeding.\n\nIt's common for chemotherapy, like the Cisplatin you are receiving, to cause these counts to go down. Your care team is closely watching these numbers. It's important for you to watch for any signs of infection, such as fever or chills, unusual bruising or bleeding, or feeling unusually tired. Please let your care team know right away if you experience any of these symptoms."
+    "radiology_summary": {
+        "baseline_date": "2026-01-01 00:00:00",
+        "latest_date": "2026-02-01 00:00:00",
+        "baseline_tumor_size_cm": 4.2,
+        "latest_tumor_size_cm": 3.5,
+        "change_cm": -0.7000000000000002,
+        "percent_change": -16.7,
+        "status": "decreased",
+        "latest_impression": "Interval decrease in tumor size compared with baseline."
+    },
+    "ai_summary": "[ERROR] GROQ_API_KEY environment variable is not set.\nSet it with:  set GROQ_API_KEY=your-key-here  (Windows)\n              export GROQ_API_KEY=your-key-here (Linux/Mac)"
 }
