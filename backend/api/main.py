@@ -2,6 +2,8 @@ from datetime import date
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -65,9 +67,13 @@ class CTReportCreate(BaseModel):
     findings: str
     impression: str
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 def root():
-    return {"message": "MedicalAgent API is running"}
+    return RedirectResponse(url="/frontend/index.html")
+
+
+# Serve frontend static files
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
 
 @app.get("/patients")

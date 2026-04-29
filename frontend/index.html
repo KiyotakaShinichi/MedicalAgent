@@ -15,6 +15,14 @@
     .section { margin-top: 24px; }
     li { margin-bottom: 8px; }
     pre { white-space: pre-wrap; font-family: Arial, sans-serif; }
+    .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; align-items: center; }
+    .form-row input { flex: 1; min-width: 120px; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .form-row input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+    .btn-primary { padding: 9px 20px; background: #6366f1; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; white-space: nowrap; }
+    .btn-primary:hover { background: #4f46e5; }
+    .btn-primary:active { transform: scale(0.97); }
+    .toast { position: fixed; bottom: 28px; right: 28px; background: #22c55e; color: white; padding: 12px 22px; border-radius: 10px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); opacity: 0; transform: translateY(12px); transition: opacity 0.3s, transform 0.3s; z-index: 9999; }
+    .toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -24,6 +32,18 @@
   <div class="card section">
     <label for="patientSelect"><strong>Select Patient:</strong></label>
     <select id="patientSelect"></select>
+  </div>
+
+  <!-- Add Lab Result Form -->
+  <div class="card section">
+    <h2 style="margin-top:0;">Add Lab Result</h2>
+    <div class="form-row">
+      <input id="labDate" type="date" title="Lab date">
+      <input id="labWbc" type="number" step="0.1" placeholder="WBC (×10³/µL)" min="0">
+      <input id="labHemoglobin" type="number" step="0.1" placeholder="Hemoglobin (g/dL)" min="0">
+      <input id="labPlatelets" type="number" step="1" placeholder="Platelets (×10³/µL)" min="0">
+      <button class="btn-primary" onclick="addLabResult()">＋ Add Lab</button>
+    </div>
   </div>
 
   <div class="grid">
@@ -73,10 +93,63 @@
     <pre id="summary">Loading...</pre>
   </div>
 
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
   <script>
     let wbcChart = null;
     let hemoglobinChart = null;
     let plateletChart = null;
+
+    // --- Toast helper ---
+    function showToast(msg, isError = false) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.style.background = isError ? "#ef4444" : "#22c55e";
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 3000);
+    }
+
+    // --- Utility ---
+    function getSelectedPatientId() {
+      return document.getElementById("patientSelect").value;
+    }
+
+    // --- Add Lab Result ---
+    function addLabResult() {
+      const patientId = getSelectedPatientId();
+      if (!patientId) { showToast("Please select a patient first.", true); return; }
+
+      const date       = document.getElementById("labDate").value;
+      const wbc        = parseFloat(document.getElementById("labWbc").value);
+      const hemoglobin = parseFloat(document.getElementById("labHemoglobin").value);
+      const platelets  = parseFloat(document.getElementById("labPlatelets").value);
+
+      if (!date || isNaN(wbc) || isNaN(hemoglobin) || isNaN(platelets)) {
+        showToast("Please fill in all fields before submitting.", true);
+        return;
+      }
+
+      fetch(`http://127.0.0.1:8000/patients/${patientId}/labs`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, wbc, hemoglobin, platelets })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        return res.json();
+      })
+      .then(() => {
+        loadPatient(patientId);
+        showToast("Lab result added successfully!");
+        // Clear form
+        document.getElementById("labDate").value = "";
+        document.getElementById("labWbc").value = "";
+        document.getElementById("labHemoglobin").value = "";
+        document.getElementById("labPlatelets").value = "";
+      })
+      .catch(err => showToast(err.message, true));
+    }
 
     function loadPatient(patientId) {
       fetch(`http://127.0.0.1:8000/patient-report/${patientId}`)
