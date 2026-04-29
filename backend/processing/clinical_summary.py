@@ -52,7 +52,7 @@ def generate_clinical_summary(trends, risks, treatment_effects):
         str: The generated clinical summary text.
     """
 
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("GEMINI_API_KEY", "AIzaSyCg3BffO7EysV76EQrk2_gRQhSNKFaRzXI")
     if not api_key:
         return (
             "[ERROR] GEMINI_API_KEY environment variable is not set.\n"

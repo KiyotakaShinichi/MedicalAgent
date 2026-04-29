@@ -1,6 +1,14 @@
+import json
 import pandas as pd
 
-# Load data
+# --- Module Imports ---
+from backend.processing.trend_analysis import analyze_labs
+from backend.processing.risk_engine import detect_risks, detect_trend_risk
+from backend.processing.treatment_analysis import align_labs_with_treatment
+from backend.processing.clinical_summary import generate_clinical_summary
+from backend.reports.patient_report import build_patient_report
+
+# --- 1. Load Data ---
 labs = pd.read_csv("data/labs.csv", parse_dates=["date"])
 treatment = pd.read_csv("data/treatment.csv", parse_dates=["date"])
 
@@ -10,39 +18,25 @@ treatment = treatment.sort_values("date")
 
 print("Labs:")
 print(labs)
-
 print("\nTreatment:")
 print(treatment)
 
-from backend.processing.trend_analysis import analyze_labs
-
+# --- 2. Process Data ---
 trends = analyze_labs(labs)
+risks = detect_risks(labs)
+trend_risks = detect_trend_risk(labs)
+treatment_effects = align_labs_with_treatment(labs, treatment)
 
 print("\nTrends:")
 print(trends)
-
-from backend.processing.risk_engine import detect_risks, detect_trend_risk
-
-risks = detect_risks(labs)
-
 print("\nRisks:")
 print(risks)
-
-from backend.processing.treatment_analysis import align_labs_with_treatment
-
-treatment_effects = align_labs_with_treatment(labs, treatment)
-
 print("\nTreatment Effects:")
 print(treatment_effects)
-
-trend_risks = detect_trend_risk(labs)
-
 print("\nTrend Risks:")
 print(trend_risks)
 
-# --- AI Clinical Summary ---
-from backend.processing.clinical_summary import generate_clinical_summary
-
+# --- 3. AI Clinical Summary ---
 all_risks = risks + trend_risks
 summary = generate_clinical_summary(trends, all_risks, treatment_effects)
 
@@ -50,3 +44,19 @@ print("\n" + "=" * 60)
 print("AI CLINICAL SUMMARY")
 print("=" * 60)
 print(summary)
+
+# --- 4. Generate & Save Patient Report ---
+report = build_patient_report(
+    labs=labs,
+    trends=trends,
+    risks=risks,
+    trend_risks=trend_risks,
+    treatment_effects=treatment_effects,
+    ai_summary=summary
+)
+
+output_file = "Data/patient_report.json"
+with open(output_file, "w") as f:
+    json.dump(report, f, indent=4, default=str)
+
+print(f"\nPatient report saved to {output_file}")
