@@ -1,0 +1,3 @@
+patient_id,date,modality,report_type,body_site,findings,impression
+QINB02_001,2026-01-01,Breast MRI,Pre-treatment MRI,Breast,Right breast enhancing mass measuring 3.4 cm. BI-RADS 6.,Baseline breast MRI before neoadjuvant therapy.
+QINB02_001,2026-02-15,Breast MRI,On-treatment MRI,Breast,Right breast enhancing mass decreased to 2.6 cm. No evidence of liver lung or bone metastatic disease in available report text.,Interval decrease in breast tumor size.

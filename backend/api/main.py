@@ -35,7 +35,12 @@ from backend.processing.treatment_analysis import align_labs_with_treatment
 from backend.processing.trend_analysis import analyze_labs
 from backend.processing.clinical_summary import generate_clinical_summary
 from backend.reports.patient_report import build_patient_report
-from backend.services.csv_importer import DATASET_ADAPTERS, SUPPORTED_IMPORT_TYPES, import_csv
+from backend.services.csv_importer import (
+    DATASET_ADAPTERS,
+    SUPPORTED_IMPORT_TYPES,
+    import_csv,
+    import_qin_breast_02_clinical_xlsx,
+)
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 Base.metadata.create_all(bind=engine)
@@ -112,6 +117,10 @@ class CSVImportRequest(BaseModel):
     csv_text: str | None = None
     file_path: str | None = None
 
+
+class QINBreast02ImportRequest(BaseModel):
+    clinical_xlsx_path: str = "datasets/QIN-BREAST-02_clinicalData-Transformed-20191022-Revised20200210.xlsx"
+
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/frontend/index.html")
@@ -187,7 +196,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     symptom_risks = detect_symptom_risks(symptoms)
 
     treatment_effects = []
-    if not treatments.empty:
+    if not treatments.empty and not labs.empty:
         treatment_effects = align_labs_with_treatment(labs, treatments)
 
     radiology_summary = None
@@ -281,6 +290,24 @@ def import_csv_payload(payload: CSVImportRequest, db: Session = Depends(get_db))
         "message": "CSV import completed",
         "import_type": payload.import_type,
         "dataset": payload.dataset,
+        "result": result,
+    }
+
+
+@app.post("/import-qin-breast-02")
+def import_qin_breast_02(payload: QINBreast02ImportRequest, db: Session = Depends(get_db)):
+    try:
+        result = import_qin_breast_02_clinical_xlsx(
+            db=db,
+            file_path=payload.clinical_xlsx_path,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "QIN-BREAST-02 clinical workbook import completed",
         "result": result,
     }
 
