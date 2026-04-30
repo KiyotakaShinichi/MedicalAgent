@@ -6,3 +6,4 @@ sqlalchemy
 openpyxl
 pydicom
 pillow
+numpy

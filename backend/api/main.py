@@ -48,6 +48,8 @@ from backend.services.csv_importer import (
 )
 from backend.services.synthetic_cbc import generate_synthetic_cbc_for_qin_patients
 from backend.services.mri_series_indexer import index_mri_series
+from backend.services.mri_manifest import build_qin_mri_manifest
+from backend.services.mri_preprocessing import preprocess_mri_manifest_previews
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 ensure_schema()
@@ -143,6 +145,16 @@ class MRISeriesIndexRequest(BaseModel):
     root_path: str = "datasets/qin_breast_02"
     patient_id: str | None = None
     max_files: int | None = None
+
+
+class MRIManifestRequest(BaseModel):
+    clinical_xlsx_path: str | None = "Datasets/QIN-BREAST-02_clinicalData-Transformed-20191022-Revised20200210.xlsx"
+    output_csv_path: str | None = "Data/qin_breast_02_mri_manifest.csv"
+
+
+class MRIPreviewPreprocessRequest(BaseModel):
+    manifest_csv_path: str = "Data/qin_breast_02_mri_manifest.csv"
+    output_dir: str = "Data/qin_mri_previews"
 
 @app.get("/", include_in_schema=False)
 def root():
@@ -363,6 +375,29 @@ def index_qin_mri(payload: MRISeriesIndexRequest, db: Session = Depends(get_db))
     return {
         "message": "MRI DICOM series index completed",
         "result": result,
+    }
+
+
+@app.post("/build-qin-mri-manifest")
+def build_qin_mri_manifest_endpoint(payload: MRIManifestRequest, db: Session = Depends(get_db)):
+    return {
+        "message": "QIN-BREAST-02 MRI modeling manifest built",
+        "result": build_qin_mri_manifest(
+            db=db,
+            clinical_xlsx_path=payload.clinical_xlsx_path,
+            output_csv_path=payload.output_csv_path,
+        ),
+    }
+
+
+@app.post("/preprocess-qin-mri-previews")
+def preprocess_qin_mri_previews(payload: MRIPreviewPreprocessRequest):
+    return {
+        "message": "QIN-BREAST-02 MRI preview preprocessing completed",
+        "result": preprocess_mri_manifest_previews(
+            manifest_csv_path=payload.manifest_csv_path,
+            output_dir=payload.output_dir,
+        ),
     }
 
 

@@ -8,6 +8,15 @@ from backend.processing.radiology_analysis import (
     summarize_report,
 )
 from backend.services.mri_series_indexer import classify_mri_series_role
+from backend.services.mri_manifest import select_model_input_series
+from backend.services.mri_preprocessing import normalize_pixels
+
+
+class FakeSeries:
+    def __init__(self, role, description, instances):
+        self.candidate_role = role
+        self.series_description = description
+        self.instance_count = instances
 
 
 class BreastMonitoringNLPTests(unittest.TestCase):
@@ -100,6 +109,25 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertEqual(classify_mri_series_role("DWI_EPI_b0200800"), "dwi")
         self.assertEqual(classify_mri_series_role("THRIVE SENSE"), "t1w")
         self.assertEqual(classify_mri_series_role("Bloch-Siegert_FA300"), "b1")
+
+    def test_manifest_selects_best_core_mri_series(self):
+        selected = select_model_input_series([
+            FakeSeries("dce", "early dynamic", 80),
+            FakeSeries("dce", "DCE Dynamic", 100),
+            FakeSeries("dwi", "DWI_EPI_b0200800", 30),
+            FakeSeries("t1w", "THRIVE SENSE", 100),
+        ])
+
+        self.assertEqual(selected["dce"].series_description, "DCE Dynamic")
+        self.assertEqual(selected["dwi"].series_description, "DWI_EPI_b0200800")
+        self.assertEqual(selected["t1w"].series_description, "THRIVE SENSE")
+
+    def test_mri_preview_normalization_returns_uint8(self):
+        pixels = normalize_pixels(pd.Series([10, 20, 30]).to_numpy().reshape(1, 3))
+
+        self.assertEqual(str(pixels.dtype), "uint8")
+        self.assertEqual(int(pixels.min()), 0)
+        self.assertEqual(int(pixels.max()), 255)
 
 
 if __name__ == "__main__":
