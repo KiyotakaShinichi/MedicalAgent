@@ -52,7 +52,7 @@ from backend.services.mri_series_indexer import index_mri_series
 from backend.services.mri_manifest import build_qin_mri_manifest
 from backend.services.mri_preprocessing import preprocess_mri_manifest_previews
 from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
-from backend.services.breastdcedl_baseline import run_breastdcedl_baseline
+from backend.services.multimodal_fusion import build_multimodal_assessment
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 ensure_schema()
@@ -178,7 +178,33 @@ class BreastDCEDLBaselineRequest(BaseModel):
     manifest_csv_path: str = "Data/breastdcedl_spy1_manifest.csv"
     features_csv_path: str = "Data/breastdcedl_spy1_features.csv"
     metrics_json_path: str = "Data/breastdcedl_spy1_baseline_metrics.json"
+    predictions_csv_path: str = "Data/breastdcedl_spy1_model_predictions.csv"
     max_patients: int | None = None
+
+
+class BreastDCEDLPreviewRequest(BaseModel):
+    manifest_csv_path: str = "Data/breastdcedl_spy1_manifest.csv"
+    output_dir: str = "Data/breastdcedl_previews"
+    max_patients: int = 40
+
+
+class BreastDCEDLImportRequest(BaseModel):
+    manifest_csv_path: str = "Data/breastdcedl_spy1_manifest.csv"
+    limit: int = 25
+
+
+class BreastDCEDLCNNRequest(BaseModel):
+    manifest_csv_path: str = "Data/breastdcedl_spy1_manifest.csv"
+    metrics_json_path: str = "Data/breastdcedl_spy1_cnn_metrics.json"
+    max_patients: int = 120
+    epochs: int = 4
+    batch_size: int = 8
+
+
+class BreastDCEDLXAIRequest(BaseModel):
+    features_csv_path: str = "Data/breastdcedl_spy1_features.csv"
+    output_json_path: str = "Data/breastdcedl_spy1_shap_explanations.json"
+    top_n: int = 5
 
 @app.get("/", include_in_schema=False)
 def root():
@@ -320,6 +346,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["breast_cancer_profile"] = _profile_to_dict(breast_profile)
     report["mri_registry"] = mri_registry
     report["mri_series_index"] = mri_series_index
+    report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
 
     return report
 
@@ -474,11 +501,14 @@ def build_breastdcedl_manifest_endpoint(payload: BreastDCEDLManifestRequest):
 
 @app.post("/run-breastdcedl-baseline")
 def run_breastdcedl_baseline_endpoint(payload: BreastDCEDLBaselineRequest):
+    from backend.services.breastdcedl_baseline import run_breastdcedl_baseline
+
     try:
         result = run_breastdcedl_baseline(
             manifest_csv_path=payload.manifest_csv_path,
             features_csv_path=payload.features_csv_path,
             metrics_json_path=payload.metrics_json_path,
+            predictions_csv_path=payload.predictions_csv_path,
             max_patients=payload.max_patients,
         )
     except ValueError as exc:
@@ -487,6 +517,69 @@ def run_breastdcedl_baseline_endpoint(payload: BreastDCEDLBaselineRequest):
     return {
         "message": "BreastDCEDL baseline completed",
         "result": result,
+    }
+
+
+@app.post("/generate-breastdcedl-previews")
+def generate_breastdcedl_previews_endpoint(payload: BreastDCEDLPreviewRequest):
+    from backend.services.breastdcedl_previews import generate_breastdcedl_previews
+
+    return {
+        "message": "BreastDCEDL preview generation completed",
+        "result": generate_breastdcedl_previews(
+            manifest_csv_path=payload.manifest_csv_path,
+            output_dir=payload.output_dir,
+            max_patients=payload.max_patients,
+        ),
+    }
+
+
+@app.post("/import-breastdcedl-patients")
+def import_breastdcedl_patients_endpoint(payload: BreastDCEDLImportRequest, db: Session = Depends(get_db)):
+    from backend.services.breastdcedl_importer import import_breastdcedl_patients_to_dashboard
+
+    return {
+        "message": "BreastDCEDL patients imported to dashboard",
+        "result": import_breastdcedl_patients_to_dashboard(
+            db=db,
+            manifest_csv_path=payload.manifest_csv_path,
+            limit=payload.limit,
+        ),
+    }
+
+
+@app.post("/run-breastdcedl-cnn")
+def run_breastdcedl_cnn_endpoint(payload: BreastDCEDLCNNRequest):
+    from backend.services.breastdcedl_cnn import run_breastdcedl_small_cnn
+
+    try:
+        result = run_breastdcedl_small_cnn(
+            manifest_csv_path=payload.manifest_csv_path,
+            metrics_json_path=payload.metrics_json_path,
+            max_patients=payload.max_patients,
+            epochs=payload.epochs,
+            batch_size=payload.batch_size,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "BreastDCEDL small CNN baseline completed",
+        "result": result,
+    }
+
+
+@app.post("/generate-breastdcedl-xai")
+def generate_breastdcedl_xai_endpoint(payload: BreastDCEDLXAIRequest):
+    from backend.services.breastdcedl_xai import generate_breastdcedl_shap_explanations
+
+    return {
+        "message": "BreastDCEDL SHAP explanations generated",
+        "result": generate_breastdcedl_shap_explanations(
+            features_csv_path=payload.features_csv_path,
+            output_json_path=payload.output_json_path,
+            top_n=payload.top_n,
+        ),
     }
 
 

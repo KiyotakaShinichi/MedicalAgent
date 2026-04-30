@@ -16,6 +16,9 @@ Safety rules:
 - Do not recommend a specific treatment.
 - Summarize breast imaging trends, CBC toxicity trends, treatment context, symptoms, and evidence that may need clinician review.
 - State uncertainty clearly when findings come from NLP pattern matching.
+- If SHAP/XAI values are present, explain them only as model behavior:
+  positive SHAP pushes the model toward pCR/favorable complete response; negative SHAP pushes away from pCR.
+  Do not describe SHAP features as clinically good or bad, and do not imply causality.
 - Keep patient-facing language calm, simple, and non-alarming.
 """
 
@@ -32,6 +35,7 @@ Return valid JSON with these keys:
 - limitations: concise list of safety limitations.
 
 Do not include markdown fences. Do not make diagnoses.
+If SHAP/XAI is available, include the strongest toward-pCR and away-from-pCR contributors in plain language.
 """
 
 

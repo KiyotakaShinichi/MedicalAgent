@@ -1,0 +1,46 @@
+{
+  "rows": 120,
+  "train_rows": 90,
+  "validation_rows": 30,
+  "epochs": 4,
+  "batch_size": 8,
+  "final_validation": {
+    "epoch": 4,
+    "train_loss": 0.9663,
+    "val_accuracy": 0.733,
+    "val_balanced_accuracy": 0.5,
+    "val_roc_auc": 0.42
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.9683,
+      "val_accuracy": 0.733,
+      "val_balanced_accuracy": 0.5,
+      "val_roc_auc": 0.392
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.9671,
+      "val_accuracy": 0.733,
+      "val_balanced_accuracy": 0.5,
+      "val_roc_auc": 0.466
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.9664,
+      "val_accuracy": 0.733,
+      "val_balanced_accuracy": 0.5,
+      "val_roc_auc": 0.42
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.9663,
+      "val_accuracy": 0.733,
+      "val_balanced_accuracy": 0.5,
+      "val_roc_auc": 0.42
+    }
+  ],
+  "model_type": "small_2d_cnn_dce_slice",
+  "warning": "Exploratory PoC only. CPU-trained small CNN, not clinically validated."
+}

@@ -5,11 +5,13 @@ import nibabel as nib
 import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, balanced_accuracy_score, roc_auc_score
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
 
 
 FEATURE_COLUMNS = [
@@ -26,12 +28,14 @@ FEATURE_COLUMNS = [
     "delayed_enhancement_p90",
     "washout_p10",
 ]
+CATEGORICAL_FEATURE_COLUMNS = ["molecular_subtype"]
 
 
 def run_breastdcedl_baseline(
     manifest_csv_path: str = "Data/breastdcedl_spy1_manifest.csv",
     features_csv_path: str = "Data/breastdcedl_spy1_features.csv",
     metrics_json_path: str = "Data/breastdcedl_spy1_baseline_metrics.json",
+    predictions_csv_path: str = "Data/breastdcedl_spy1_model_predictions.csv",
     max_patients: int | None = None,
 ):
     features = extract_breastdcedl_features(
@@ -39,9 +43,10 @@ def run_breastdcedl_baseline(
         output_csv_path=features_csv_path,
         max_patients=max_patients,
     )
-    metrics = train_pcr_baseline(
+    metrics = train_pcr_baseline_models(
         features_csv_path=features_csv_path,
         metrics_json_path=metrics_json_path,
+        predictions_csv_path=predictions_csv_path,
     )
 
     return {
@@ -87,48 +92,99 @@ def extract_breastdcedl_features(
     }
 
 
-def train_pcr_baseline(
+def train_pcr_baseline_models(
     features_csv_path: str = "Data/breastdcedl_spy1_features.csv",
     metrics_json_path: str = "Data/breastdcedl_spy1_baseline_metrics.json",
+    predictions_csv_path: str = "Data/breastdcedl_spy1_model_predictions.csv",
 ):
     features = pd.read_csv(features_csv_path)
     features = features[features["pcr_label"].notna()].copy()
     if len(features) < 20:
         raise ValueError("Need at least 20 feature rows for baseline cross-validation")
 
-    X = features[FEATURE_COLUMNS]
+    X = features[FEATURE_COLUMNS + CATEGORICAL_FEATURE_COLUMNS]
     y = features["pcr_label"].astype(int)
-
-    model = Pipeline([
-        ("imputer", SimpleImputer(strategy="median")),
-        ("scaler", StandardScaler()),
-        ("classifier", LogisticRegression(class_weight="balanced", max_iter=2000)),
-    ])
     folds = min(5, int(y.value_counts().min()))
     if folds < 2:
         raise ValueError("Need at least two examples in each pCR class")
 
     cv = StratifiedKFold(n_splits=folds, shuffle=True, random_state=42)
-    probabilities = cross_val_predict(model, X, y, cv=cv, method="predict_proba")[:, 1]
-    predictions = (probabilities >= 0.5).astype(int)
+    models = {
+        "logistic_regression": _logistic_regression_pipeline(),
+        "random_forest": _random_forest_pipeline(),
+    }
+
+    model_metrics = {}
+    prediction_rows = features[["patient_id", "pcr_label", "molecular_subtype"]].copy()
+    for name, model in models.items():
+        probabilities = cross_val_predict(model, X, y, cv=cv, method="predict_proba")[:, 1]
+        predictions = (probabilities >= 0.5).astype(int)
+        model_metrics[name] = {
+            "accuracy": round(float(accuracy_score(y, predictions)), 3),
+            "balanced_accuracy": round(float(balanced_accuracy_score(y, predictions)), 3),
+            "roc_auc": round(float(roc_auc_score(y, probabilities)), 3),
+        }
+        prediction_rows[f"{name}_pcr_probability"] = np.round(probabilities, 6)
+        prediction_rows[f"{name}_predicted_label"] = predictions
+
+    best_model = max(model_metrics, key=lambda key: model_metrics[key]["roc_auc"])
+    prediction_rows["best_model"] = best_model
+    prediction_rows["best_model_pcr_probability"] = prediction_rows[f"{best_model}_pcr_probability"]
+    prediction_rows["best_model_predicted_label"] = prediction_rows[f"{best_model}_predicted_label"]
 
     metrics = {
         "rows": int(len(features)),
         "positive_pcr": int(y.sum()),
         "negative_pcr": int((y == 0).sum()),
         "cv_folds": int(folds),
-        "accuracy": round(float(accuracy_score(y, predictions)), 3),
-        "balanced_accuracy": round(float(balanced_accuracy_score(y, predictions)), 3),
-        "roc_auc": round(float(roc_auc_score(y, probabilities)), 3),
+        "models": model_metrics,
+        "best_model_by_roc_auc": best_model,
         "features_csv_path": features_csv_path,
-        "model_type": "logistic_regression_cross_validated",
+        "predictions_csv_path": predictions_csv_path,
+        "model_type": "cross_validated_tabular_baselines",
         "warning": "Exploratory PoC only. Not clinically validated.",
     }
 
     output_path = Path(metrics_json_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    prediction_output_path = Path(predictions_csv_path)
+    prediction_output_path.parent.mkdir(parents=True, exist_ok=True)
+    prediction_rows.to_csv(prediction_output_path, index=False)
     return metrics
+
+
+def _logistic_regression_pipeline():
+    return Pipeline([
+        ("preprocess", _preprocessor(scale_numeric=True)),
+        ("classifier", LogisticRegression(class_weight="balanced", max_iter=2000)),
+    ])
+
+
+def _random_forest_pipeline():
+    return Pipeline([
+        ("preprocess", _preprocessor(scale_numeric=False)),
+        ("classifier", RandomForestClassifier(
+            n_estimators=250,
+            max_depth=5,
+            min_samples_leaf=4,
+            class_weight="balanced",
+            random_state=42,
+        )),
+    ])
+
+
+def _preprocessor(scale_numeric):
+    numeric_steps = [("imputer", SimpleImputer(strategy="median"))]
+    if scale_numeric:
+        numeric_steps.append(("scaler", StandardScaler()))
+
+    from sklearn.pipeline import Pipeline as SklearnPipeline
+
+    return ColumnTransformer([
+        ("numeric", SklearnPipeline(numeric_steps), FEATURE_COLUMNS),
+        ("categorical", OneHotEncoder(handle_unknown="ignore"), CATEGORICAL_FEATURE_COLUMNS),
+    ])
 
 
 def _extract_patient_features(row):

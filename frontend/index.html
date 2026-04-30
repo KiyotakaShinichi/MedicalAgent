@@ -567,6 +567,14 @@
       </div>
     </div>
 
+    <!-- MULTIMODAL ASSESSMENT -->
+    <div>
+      <div class="section-label">Multimodal Monitoring Assessment</div>
+      <div class="card" id="multimodalAssessment">
+        <div class="empty-state">No fused assessment loaded.</div>
+      </div>
+    </div>
+
     <!-- IMAGING + METASTATIC -->
     <div class="two-col">
       <div>
@@ -863,6 +871,36 @@
       `;
     }
 
+    function renderMultimodalAssessment(assessment) {
+      const el = document.getElementById("multimodalAssessment");
+      if (!assessment) {
+        el.innerHTML = '<div class="empty-state">No fused assessment loaded.</div>';
+        return;
+      }
+
+      const mri = assessment.signals?.mri_response || {};
+      const clinical = assessment.signals?.clinical_monitoring || {};
+      const symptoms = assessment.signals?.symptoms || {};
+      const pcr = mri.pcr_probability !== undefined ? ` · pCR probability ${mri.pcr_probability}` : "";
+      const xai = mri.xai;
+      const xaiHtml = xai ? `
+        <div class="radio-field"><strong>XAI toward pCR:</strong> ${(xai.positive_contributions || []).slice(0,3).map(i => `${i.feature} (${i.shap_value})`).join(", ") || "none"}</div>
+        <div class="radio-field"><strong>XAI away from pCR:</strong> ${(xai.negative_contributions || []).slice(0,3).map(i => `${i.feature} (${i.shap_value})`).join(", ") || "none"}</div>
+      ` : "";
+
+      el.innerHTML = `
+        <div class="radio-field"><strong>Treatment monitoring score:</strong> ${assessment.treatment_monitoring_score ?? "—"}/100</div>
+        <div class="radio-field"><strong>Status:</strong> ${assessment.overall_status}</div>
+        <div class="radio-field">${assessment.overall_message}</div>
+        <div class="radio-field"><strong>MRI response:</strong> ${mri.status || "unavailable"}${pcr}<br><span style="color:var(--text-3);font-size:12px;">${mri.message || ""}</span></div>
+        ${xaiHtml}
+        <div class="radio-field"><strong>Clinical monitoring:</strong> ${clinical.status || "unavailable"}<br><span style="color:var(--text-3);font-size:12px;">${clinical.message || ""}</span></div>
+        <div class="radio-field"><strong>Symptoms:</strong> ${symptoms.status || "unavailable"}<br><span style="color:var(--text-3);font-size:12px;">${symptoms.message || ""}</span></div>
+        <div class="radio-field"><strong>Action:</strong> ${assessment.recommended_action}</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:8px;">${assessment.safety_note}</div>
+      `;
+    }
+
     function renderMRI(entries) {
       const el = document.getElementById("mriRegistry");
       if (!entries || entries.length === 0) { el.innerHTML = '<div class="empty-state">No local MRI folders registered.</div>'; return; }
@@ -944,6 +982,7 @@
 
           renderLabSource(data);
           renderRisks(data.risks);
+          renderMultimodalAssessment(data.multimodal_assessment);
           renderRadiology(data.radiology_summary);
 
           const metaEl = document.getElementById("metastaticIndicators");

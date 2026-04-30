@@ -9,3 +9,6 @@ pillow
 numpy
 nibabel
 scikit-learn
+torch
+torchvision
+shap

@@ -3,10 +3,21 @@
   "positive_pcr": 44,
   "negative_pcr": 115,
   "cv_folds": 5,
-  "accuracy": 0.491,
-  "balanced_accuracy": 0.486,
-  "roc_auc": 0.508,
+  "models": {
+    "logistic_regression": {
+      "accuracy": 0.616,
+      "balanced_accuracy": 0.63,
+      "roc_auc": 0.637
+    },
+    "random_forest": {
+      "accuracy": 0.654,
+      "balanced_accuracy": 0.543,
+      "roc_auc": 0.579
+    }
+  },
+  "best_model_by_roc_auc": "logistic_regression",
   "features_csv_path": "Data/breastdcedl_spy1_features.csv",
-  "model_type": "logistic_regression_cross_validated",
+  "predictions_csv_path": "Data/breastdcedl_spy1_model_predictions.csv",
+  "model_type": "cross_validated_tabular_baselines",
   "warning": "Exploratory PoC only. Not clinically validated."
 }
