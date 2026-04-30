@@ -218,6 +218,11 @@ def root():
     return RedirectResponse(url="/frontend/index.html")
 
 
+@app.get("/patient", include_in_schema=False)
+def patient_portal():
+    return RedirectResponse(url="/frontend/patient.html")
+
+
 # Serve frontend static files
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 

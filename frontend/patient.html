@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Oncology Journey</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f3ef;
+      --surface: #ffffff;
+      --soft: #faf8f5;
+      --text: #1f1915;
+      --muted: #776d65;
+      --line: rgba(54, 43, 34, 0.12);
+      --rose: #c45c6a;
+      --rose-soft: #fdf0f1;
+      --amber: #a8651e;
+      --amber-soft: #fff5e5;
+      --teal: #237a70;
+      --teal-soft: #edf7f5;
+      --red: #b42020;
+      --red-soft: #fff0f0;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      min-height: 68px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .brand { font-size: 18px; font-weight: 700; }
+    .brand span { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+    .toolbar { display: flex; align-items: center; gap: 10px; }
+    select, textarea, button {
+      font: inherit;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+    }
+    select { padding: 8px 10px; }
+    button {
+      padding: 9px 14px;
+      background: var(--rose);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 650;
+    }
+    main {
+      width: min(1180px, calc(100% - 28px));
+      margin: 24px auto 96px;
+      display: grid;
+      gap: 18px;
+    }
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 20px;
+      align-items: center;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: clamp(24px, 4vw, 40px); letter-spacing: 0; }
+    .hero p { margin: 0; color: var(--muted); line-height: 1.55; max-width: 680px; }
+    .score {
+      background: var(--teal-soft);
+      border: 1px solid rgba(35, 122, 112, 0.18);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .score .value { font-size: 44px; font-weight: 800; color: var(--teal); line-height: 1; }
+    .score .label { color: var(--muted); margin-top: 8px; font-size: 13px; }
+    .grid { display: grid; gap: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .metric { font-size: 30px; font-weight: 800; }
+    .metric small { display: block; font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 4px; }
+    .status-pill {
+      display: inline-flex;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .list { display: grid; gap: 8px; }
+    .item {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .muted { color: var(--muted); }
+    .agent-button {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      box-shadow: 0 12px 30px rgba(31, 25, 21, 0.18);
+      z-index: 30;
+    }
+    .chat-widget {
+      position: fixed;
+      right: 22px;
+      bottom: 92px;
+      width: min(390px, calc(100vw - 28px));
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 18px 46px rgba(31, 25, 21, 0.18);
+      display: none;
+      overflow: hidden;
+      z-index: 31;
+    }
+    .chat-widget.open { display: block; }
+    .chat-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 800; }
+    .chat-head span { display: block; color: var(--muted); font-weight: 500; font-size: 12px; margin-top: 2px; }
+    .chat-thread { padding: 14px; display: grid; gap: 8px; max-height: 320px; overflow-y: auto; }
+    .msg { padding: 9px 11px; border-radius: 9px; font-size: 13px; line-height: 1.45; white-space: pre-wrap; }
+    .msg.user { background: var(--rose-soft); color: var(--text); }
+    .msg.assistant { background: var(--soft); color: var(--text); border: 1px solid var(--line); }
+    .chat-compose { padding: 12px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
+    .chat-compose textarea { width: 100%; min-height: 70px; padding: 10px; resize: vertical; }
+    .safety { font-size: 12px; color: var(--muted); line-height: 1.45; }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 60;
+    }
+    .toast.show { opacity: 1; }
+    @media (max-width: 850px) {
+      header { padding: 12px 16px; align-items: flex-start; flex-direction: column; gap: 10px; }
+      .hero, .grid.two, .grid.three { grid-template-columns: 1fr; }
+      main { margin-top: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">My Oncology Journey<span>Patient portal</span></div>
+    <div class="toolbar">
+      <select id="patientSelect" title="Patient"></select>
+      <button onclick="loadSelectedPatient()">Open</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h1 id="patientName">Loading...</h1>
+        <p id="patientContext">Your personal monitoring view summarizes your records, treatment response signals, symptoms, and recent lab trends.</p>
+      </div>
+      <div class="score">
+        <div class="value" id="monitoringScore">--</div>
+        <div class="label">Treatment monitoring score</div>
+      </div>
+    </section>
+
+    <section class="grid three">
+      <div class="card">
+        <h2>WBC</h2>
+        <div class="metric" id="wbc">--<small>x10^3/uL</small></div>
+      </div>
+      <div class="card">
+        <h2>Hemoglobin</h2>
+        <div class="metric" id="hemoglobin">--<small>g/dL</small></div>
+      </div>
+      <div class="card">
+        <h2>Platelets</h2>
+        <div class="metric" id="platelets">--<small>x10^3/uL</small></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Monitoring Summary</h2>
+        <div class="status-pill" id="overallStatus">loading</div>
+        <div class="list">
+          <div class="item" id="overallMessage">Loading assessment...</div>
+          <div class="item" id="mriSignal">MRI response signal loading...</div>
+          <div class="item" id="clinicalSignal">Clinical monitoring signal loading...</div>
+          <div class="item" id="symptomSignal">Symptom signal loading...</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Lab Trends</h2>
+        <canvas id="labChart"></canvas>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Recent Symptoms</h2>
+        <div class="list" id="symptomList"><div class="item muted">No symptoms loaded.</div></div>
+      </div>
+      <div class="card">
+        <h2>Medication Log</h2>
+        <div class="list" id="medicationList"><div class="item muted">No medications logged.</div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>What To Bring To Your Care Team</h2>
+      <div class="list" id="reviewList"><div class="item muted">No review reasons loaded.</div></div>
+    </section>
+  </main>
+
+  <div class="chat-widget" id="chatWidget">
+    <div class="chat-head">Support Agent<span>Tell me symptoms, labs, medications, or how you feel.</span></div>
+    <div class="chat-thread" id="chatThread"><div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div></div>
+    <div class="chat-compose">
+      <textarea id="chatInput" placeholder="Example: I feel nauseous, severity 7/10. I am taking tamoxifen 20 mg daily."></textarea>
+      <button onclick="sendChat()">Send and save</button>
+      <div class="safety">For severe or sudden symptoms, contact your oncology team or emergency services.</div>
+    </div>
+  </div>
+  <button class="agent-button" onclick="toggleChat()">Chat</button>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let currentPatientId = new URLSearchParams(window.location.search).get("patient") || "SYN-BRCA-0001";
+    let labChart = null;
+
+    function toast(message) {
+      const el = document.getElementById("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => el.classList.remove("show"), 2600);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function toggleChat() {
+      document.getElementById("chatWidget").classList.toggle("open");
+    }
+
+    function loadSelectedPatient() {
+      currentPatientId = document.getElementById("patientSelect").value;
+      history.replaceState(null, "", `?patient=${encodeURIComponent(currentPatientId)}`);
+      loadPatient(currentPatientId);
+    }
+
+    function renderPatients(patients) {
+      const select = document.getElementById("patientSelect");
+      select.innerHTML = patients.map(p => `<option value="${p.id}">${p.name || p.id}</option>`).join("");
+      if (!patients.some(p => p.id === currentPatientId) && patients.length) currentPatientId = patients[0].id;
+      select.value = currentPatientId;
+    }
+
+    function renderChart(history) {
+      const labels = history.map(row => String(row.date).slice(0, 10));
+      const ctx = document.getElementById("labChart");
+      if (labChart) labChart.destroy();
+      labChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            { label: "WBC", data: history.map(r => r.wbc), borderColor: "#c45c6a", tension: 0.25 },
+            { label: "Hemoglobin", data: history.map(r => r.hemoglobin), borderColor: "#237a70", tension: 0.25 },
+            { label: "Platelets", data: history.map(r => r.platelets), borderColor: "#a8651e", tension: 0.25 }
+          ]
+        },
+        options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+      });
+    }
+
+    function renderChat(messages) {
+      const thread = document.getElementById("chatThread");
+      if (!messages || !messages.length) {
+        thread.innerHTML = '<div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div>';
+        return;
+      }
+      thread.innerHTML = messages.map(m => `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${escapeHtml(m.message)}</div>`).join("");
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    function renderReport(data) {
+      document.getElementById("patientName").textContent = data.patient_name || data.patient_id;
+      document.getElementById("patientContext").textContent = data.diagnosis || "Breast cancer monitoring record";
+
+      const assessment = data.multimodal_assessment || {};
+      document.getElementById("monitoringScore").textContent = assessment.treatment_monitoring_score ?? "--";
+      document.getElementById("overallStatus").textContent = assessment.overall_status || "unknown";
+      document.getElementById("overallMessage").textContent = assessment.overall_message || "No assessment available.";
+
+      const mri = assessment.signals?.mri_response || {};
+      const clinical = assessment.signals?.clinical_monitoring || {};
+      const symptoms = assessment.signals?.symptoms || {};
+      document.getElementById("mriSignal").textContent = `${mri.message || "No MRI signal available."}${mri.pcr_probability !== undefined ? ` pCR probability: ${mri.pcr_probability}` : ""}`;
+      document.getElementById("clinicalSignal").textContent = clinical.message || "No clinical signal available.";
+      document.getElementById("symptomSignal").textContent = symptoms.message || "No symptom signal available.";
+
+      const labs = data.latest_labs || {};
+      document.getElementById("wbc").innerHTML = `${labs.wbc ?? "--"}<small>x10^3/uL</small>`;
+      document.getElementById("hemoglobin").innerHTML = `${labs.hemoglobin ?? "--"}<small>g/dL</small>`;
+      document.getElementById("platelets").innerHTML = `${labs.platelets ?? "--"}<small>x10^3/uL</small>`;
+      renderChart(data.lab_history || []);
+
+      const symptomList = document.getElementById("symptomList");
+      symptomList.innerHTML = (data.symptoms || []).slice(-5).reverse().map(s =>
+        `<div class="item">${String(s.date).slice(0,10)}: ${escapeHtml(s.symptom)} severity ${s.severity}/10${s.notes ? `<br><span class="muted">${escapeHtml(s.notes)}</span>` : ""}</div>`
+      ).join("") || '<div class="item muted">No symptoms logged yet.</div>';
+
+      const meds = document.getElementById("medicationList");
+      meds.innerHTML = (data.medication_logs || []).slice(-6).reverse().map(m =>
+        `<div class="item">${String(m.date).slice(0,10)}: ${escapeHtml(m.medication)}${m.dose ? ` ${escapeHtml(m.dose)}` : ""}${m.frequency ? ` · ${escapeHtml(m.frequency)}` : ""}</div>`
+      ).join("") || '<div class="item muted">No medications logged yet.</div>';
+
+      const summary = data.ai_summary || {};
+      const reasons = summary.review_reasons || [];
+      document.getElementById("reviewList").innerHTML = reasons.length
+        ? reasons.map(r => `<div class="item">${escapeHtml(r)}</div>`).join("")
+        : '<div class="item muted">No review reasons listed right now.</div>';
+
+      renderChat(data.chat_history || []);
+    }
+
+    function loadPatient(patientId) {
+      fetch(`${API_BASE}/patient-report/${patientId}`)
+        .then(r => { if (!r.ok) throw new Error(`Could not load patient ${patientId}`); return r.json(); })
+        .then(renderReport)
+        .catch(err => toast(err.message));
+    }
+
+    function sendChat() {
+      const input = document.getElementById("chatInput");
+      const message = input.value.trim();
+      if (!message) { toast("Write a message first."); return; }
+      fetch(`${API_BASE}/patients/${currentPatientId}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      })
+      .then(r => { if (!r.ok) throw new Error(`Chat failed (${r.status})`); return r.json(); })
+      .then(result => {
+        input.value = "";
+        toast(result.saved_actions?.length ? "Saved to your record." : "Message saved.");
+        loadPatient(currentPatientId);
+      })
+      .catch(err => toast(err.message));
+    }
+
+    fetch(`${API_BASE}/patients`)
+      .then(r => r.json())
+      .then(patients => {
+        renderPatients(patients);
+        loadPatient(currentPatientId);
+      })
+      .catch(err => toast(err.message));
+  </script>
+</body>
+</html>
