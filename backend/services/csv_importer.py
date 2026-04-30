@@ -369,6 +369,8 @@ def _import_labs(db, df):
             wbc=float(_value(row, "wbc")),
             hemoglobin=float(_value(row, "hemoglobin")),
             platelets=float(_value(row, "platelets")),
+            source=str(_value(row, "source", "imported_csv")),
+            source_note=_value(row, "source_note"),
         ))
         created += 1
 

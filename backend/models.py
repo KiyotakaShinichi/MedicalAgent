@@ -36,6 +36,8 @@ class LabResult(Base):
     wbc = Column(Float, nullable=False)
     hemoglobin = Column(Float, nullable=False)
     platelets = Column(Float, nullable=False)
+    source = Column(String, nullable=False, default="manual")
+    source_note = Column(Text, nullable=True)
 
 
 class SymptomReport(Base):
@@ -81,6 +83,19 @@ class ImagingReport(Base):
     body_site = Column(String, nullable=True)
     findings = Column(Text, nullable=False)
     impression = Column(Text, nullable=False)
+
+
+class MRIFileRegistry(Base):
+    __tablename__ = "mri_file_registry"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    scan_date = Column(Date, nullable=True)
+    modality = Column(String, nullable=False, default="Breast MRI")
+    series_description = Column(String, nullable=True)
+    local_path = Column(Text, nullable=False)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class PatientReport(Base):

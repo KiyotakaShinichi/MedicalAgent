@@ -208,6 +208,11 @@
     </div>
   </div>
 
+  <div class="card section">
+    <h2>CBC Data Source</h2>
+    <div id="labSourceStatus" class="muted">No CBC source loaded.</div>
+  </div>
+
   <div class="grid two">
     <div class="card">
       <h2>Breast Imaging Trend</h2>
@@ -217,6 +222,11 @@
       <h2>Possible Metastatic Indicators</h2>
       <ul id="metastaticIndicators"></ul>
     </div>
+  </div>
+
+  <div class="card section">
+    <h2>MRI File Registry</h2>
+    <div id="mriRegistry" class="muted">No local MRI folders registered.</div>
   </div>
 
   <div class="card section">
@@ -316,6 +326,16 @@
           <div><strong>${event.title}</strong><br><span class="muted">${event.summary || ""}</span></div>
         </div>
       `).join("");
+    }
+
+    function renderMriRegistry(entries) {
+      if (!entries || entries.length === 0) {
+        return `<div class="muted">No local MRI folders registered yet.</div>`;
+      }
+
+      return `<ul>${entries.map(entry =>
+        `<li>${entry.scan_date || "undated"} - ${entry.modality}: ${entry.series_description || "series"}<br><span class="muted">${entry.local_path}</span></li>`
+      ).join("")}</ul>`;
     }
 
     function addLabResult() {
@@ -446,6 +466,10 @@
           document.getElementById("wbc").textContent = latestLabs.wbc ?? "-";
           document.getElementById("hemoglobin").textContent = latestLabs.hemoglobin ?? "-";
           document.getElementById("platelets").textContent = latestLabs.platelets ?? "-";
+          document.getElementById("labSourceStatus").innerHTML = `
+            <p><strong>Sources:</strong> ${(data.lab_sources || []).join(", ") || "none"}</p>
+            <p class="muted">${data.has_synthetic_labs ? "CBC values include synthetic demo data. Do not treat these as QIN-BREAST-02 real lab values." : "No synthetic CBC values detected."}</p>
+          `;
 
           document.getElementById("risks").innerHTML = listItems(
             data.risks.map(risk => `<span class="pill ${risk.severity}">${risk.severity}</span> ${risk.message}`)
@@ -477,6 +501,7 @@
               "No metastatic indicator wording was flagged in the available breast imaging or staging reports."
             );
           }
+          document.getElementById("mriRegistry").innerHTML = renderMriRegistry(data.mri_registry);
 
           const labHistory = data.lab_history || [];
           const labels = labHistory.map(row => String(row.date).slice(0, 10));

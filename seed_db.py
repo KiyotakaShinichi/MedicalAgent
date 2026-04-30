@@ -1,22 +1,25 @@
 from datetime import date
 
-from backend.database import Base, SessionLocal, engine
+from backend.database import SessionLocal
 from backend.models import (
     BreastCancerProfile,
     CTReport,
     ImagingReport,
     LabResult,
+    MRIFileRegistry,
     Patient,
     SymptomReport,
     Treatment,
 )
+from backend.schema_migrations import ensure_schema
 
 
-Base.metadata.create_all(bind=engine)
+ensure_schema()
 db = SessionLocal()
 
 # Clear old demo data
 db.query(CTReport).delete()
+db.query(MRIFileRegistry).delete()
 db.query(ImagingReport).delete()
 db.query(Treatment).delete()
 db.query(LabResult).delete()

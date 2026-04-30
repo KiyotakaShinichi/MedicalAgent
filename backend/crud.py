@@ -5,6 +5,7 @@ from backend.models import (
     CTReport,
     ImagingReport,
     LabResult,
+    MRIFileRegistry,
     Patient,
     SymptomReport,
     Treatment,
@@ -41,6 +42,8 @@ def get_labs_df(db, patient_id):
             "wbc": row.wbc,
             "hemoglobin": row.hemoglobin,
             "platelets": row.platelets,
+            "source": row.source,
+            "source_note": row.source_note,
         }
         for row in rows
     ]
@@ -131,3 +134,25 @@ def get_imaging_reports_df(db, patient_id):
     ]
 
     return pd.DataFrame(data)
+
+
+def get_mri_registry(db, patient_id):
+    rows = (
+        db.query(MRIFileRegistry)
+        .filter(MRIFileRegistry.patient_id == patient_id)
+        .order_by(MRIFileRegistry.scan_date, MRIFileRegistry.id)
+        .all()
+    )
+
+    return [
+        {
+            "id": row.id,
+            "patient_id": row.patient_id,
+            "scan_date": str(row.scan_date) if row.scan_date else None,
+            "modality": row.modality,
+            "series_description": row.series_description,
+            "local_path": row.local_path,
+            "notes": row.notes,
+        }
+        for row in rows
+    ]

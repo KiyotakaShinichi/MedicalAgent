@@ -13,16 +13,18 @@ from backend.crud import (
     get_ct_reports_df,
     get_imaging_reports_df,
     get_labs_df,
+    get_mri_registry,
     get_patient,
     get_symptoms_df,
     get_treatments_df,
 )
-from backend.database import Base, SessionLocal, engine
+from backend.database import SessionLocal
 from backend.models import (
     BreastCancerProfile,
     CTReport,
     ImagingReport,
     LabResult,
+    MRIFileRegistry,
     Patient,
     SymptomReport,
     Treatment,
@@ -35,15 +37,17 @@ from backend.processing.treatment_analysis import align_labs_with_treatment
 from backend.processing.trend_analysis import analyze_labs
 from backend.processing.clinical_summary import generate_clinical_summary
 from backend.reports.patient_report import build_patient_report
+from backend.schema_migrations import ensure_schema
 from backend.services.csv_importer import (
     DATASET_ADAPTERS,
     SUPPORTED_IMPORT_TYPES,
     import_csv,
     import_qin_breast_02_clinical_xlsx,
 )
+from backend.services.synthetic_cbc import generate_synthetic_cbc_for_qin_patients
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
-Base.metadata.create_all(bind=engine)
+ensure_schema()
 
 app.add_middleware(
     CORSMiddleware,
@@ -80,6 +84,8 @@ class LabCreate(BaseModel):
     wbc: float
     hemoglobin: float
     platelets: float
+    source: str | None = "manual"
+    source_note: str | None = None
 
 
 class TreatmentCreate(BaseModel):
@@ -120,6 +126,14 @@ class CSVImportRequest(BaseModel):
 
 class QINBreast02ImportRequest(BaseModel):
     clinical_xlsx_path: str = "datasets/QIN-BREAST-02_clinicalData-Transformed-20191022-Revised20200210.xlsx"
+
+
+class MRIRegistryCreate(BaseModel):
+    scan_date: date | None = None
+    modality: str = "Breast MRI"
+    series_description: str | None = None
+    local_path: str
+    notes: str | None = None
 
 @app.get("/", include_in_schema=False)
 def root():
@@ -184,6 +198,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     imaging_reports = get_imaging_reports_df(db, patient_id)
     ct_reports = get_ct_reports_df(db, patient_id)
     symptoms = get_symptoms_df(db, patient_id)
+    mri_registry = get_mri_registry(db, patient_id)
     breast_profile = get_breast_cancer_profile(db, patient_id)
 
     trends = {}
@@ -257,6 +272,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["patient_name"] = patient.name
     report["diagnosis"] = patient.diagnosis
     report["breast_cancer_profile"] = _profile_to_dict(breast_profile)
+    report["mri_registry"] = mri_registry
 
     return report
 
@@ -312,6 +328,15 @@ def import_qin_breast_02(payload: QINBreast02ImportRequest, db: Session = Depend
     }
 
 
+@app.post("/generate-qin-synthetic-cbc")
+def generate_qin_synthetic_cbc(db: Session = Depends(get_db)):
+    return {
+        "message": "Synthetic QIN CBC generation completed",
+        "result": generate_synthetic_cbc_for_qin_patients(db),
+        "warning": "These CBC values are synthetic demo data and are not part of QIN-BREAST-02.",
+    }
+
+
 @app.post("/patients/{patient_id}/labs")
 def add_lab_result(patient_id: str, payload: LabCreate, db: Session = Depends(get_db)):
     patient = get_patient(db, patient_id)
@@ -324,6 +349,8 @@ def add_lab_result(patient_id: str, payload: LabCreate, db: Session = Depends(ge
         wbc=payload.wbc,
         hemoglobin=payload.hemoglobin,
         platelets=payload.platelets,
+        source=payload.source or "manual",
+        source_note=payload.source_note,
     )
 
     db.add(lab)
@@ -394,6 +421,27 @@ def add_imaging_report(patient_id: str, payload: ImagingReportCreate, db: Sessio
     db.commit()
 
     return {"message": "Imaging report added"}
+
+
+@app.post("/patients/{patient_id}/mri-registry")
+def add_mri_registry_entry(patient_id: str, payload: MRIRegistryCreate, db: Session = Depends(get_db)):
+    patient = get_patient(db, patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    entry = MRIFileRegistry(
+        patient_id=patient_id,
+        scan_date=payload.scan_date,
+        modality=payload.modality,
+        series_description=payload.series_description,
+        local_path=payload.local_path,
+        notes=payload.notes,
+    )
+
+    db.add(entry)
+    db.commit()
+
+    return {"message": "MRI registry entry added", "id": entry.id}
 
 
 @app.post("/patients/{patient_id}/ct-reports")

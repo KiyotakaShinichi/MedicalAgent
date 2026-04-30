@@ -12,12 +12,16 @@ def build_patient_report(
     latest_labs = labs.iloc[-1].to_dict() if labs is not None and not labs.empty else None
     baseline_labs = labs.iloc[0].to_dict() if labs is not None and not labs.empty else None
     lab_history = labs.to_dict(orient="records") if labs is not None and not labs.empty else []
+    lab_sources = sorted({row.get("source", "unknown") for row in lab_history})
+    has_synthetic_labs = any(source.startswith("synthetic") for source in lab_sources)
 
     return {
         "patient_state": patient_state,
         "latest_labs": latest_labs,
         "baseline_labs": baseline_labs,
         "lab_history": lab_history,
+        "lab_sources": lab_sources,
+        "has_synthetic_labs": has_synthetic_labs,
         "trends": trends,
         "risks": risks,
         "treatment_effects": treatment_effects,
