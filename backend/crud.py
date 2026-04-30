@@ -1,6 +1,14 @@
 import pandas as pd
 
-from backend.models import CTReport, LabResult, Patient, SymptomReport, Treatment
+from backend.models import (
+    BreastCancerProfile,
+    CTReport,
+    ImagingReport,
+    LabResult,
+    Patient,
+    SymptomReport,
+    Treatment,
+)
 
 
 def get_all_patients(db):
@@ -9,6 +17,14 @@ def get_all_patients(db):
 
 def get_patient(db, patient_id):
     return db.query(Patient).filter(Patient.id == patient_id).first()
+
+
+def get_breast_cancer_profile(db, patient_id):
+    return (
+        db.query(BreastCancerProfile)
+        .filter(BreastCancerProfile.patient_id == patient_id)
+        .first()
+    )
 
 
 def get_labs_df(db, patient_id):
@@ -85,6 +101,29 @@ def get_ct_reports_df(db, patient_id):
         {
             "date": row.date,
             "report_type": row.report_type,
+            "findings": row.findings,
+            "impression": row.impression,
+        }
+        for row in rows
+    ]
+
+    return pd.DataFrame(data)
+
+
+def get_imaging_reports_df(db, patient_id):
+    rows = (
+        db.query(ImagingReport)
+        .filter(ImagingReport.patient_id == patient_id)
+        .order_by(ImagingReport.date)
+        .all()
+    )
+
+    data = [
+        {
+            "date": row.date,
+            "modality": row.modality,
+            "report_type": row.report_type,
+            "body_site": row.body_site,
             "findings": row.findings,
             "impression": row.impression,
         }

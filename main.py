@@ -47,11 +47,12 @@ all_risks = risks + trend_risks
 class DemoPatient:
     id = "P001"
     name = "Patient P001"
-    diagnosis = "Lung cancer - doctor-confirmed"
+    diagnosis = "Breast cancer - doctor-confirmed"
 
 
 patient_state = build_patient_state(
     patient=DemoPatient(),
+    breast_profile=None,
     labs=labs,
     trends=trends,
     risks=all_risks,

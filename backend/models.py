@@ -13,6 +13,20 @@ class Patient(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class BreastCancerProfile(Base):
+    __tablename__ = "breast_cancer_profiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), unique=True, index=True)
+    cancer_stage = Column(String, nullable=True)
+    er_status = Column(String, nullable=True)
+    pr_status = Column(String, nullable=True)
+    her2_status = Column(String, nullable=True)
+    molecular_subtype = Column(String, nullable=True)
+    treatment_intent = Column(String, nullable=True)
+    menopausal_status = Column(String, nullable=True)
+
+
 class LabResult(Base):
     __tablename__ = "lab_results"
 
@@ -52,6 +66,19 @@ class CTReport(Base):
     patient_id = Column(String, ForeignKey("patients.id"), index=True)
     date = Column(Date, nullable=False)
     report_type = Column(String, nullable=False)
+    findings = Column(Text, nullable=False)
+    impression = Column(Text, nullable=False)
+
+
+class ImagingReport(Base):
+    __tablename__ = "imaging_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    date = Column(Date, nullable=False)
+    modality = Column(String, nullable=False)
+    report_type = Column(String, nullable=False)
+    body_site = Column(String, nullable=True)
     findings = Column(Text, nullable=False)
     impression = Column(Text, nullable=False)
 

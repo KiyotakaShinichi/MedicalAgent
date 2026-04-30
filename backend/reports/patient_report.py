@@ -17,7 +17,8 @@ def build_patient_report(
         "risks": risks,
         "treatment_effects": treatment_effects,
         "radiology_summary": radiology_summary,
+        "breast_imaging_summary": radiology_summary,
         "symptoms": symptoms.to_dict(orient="records") if symptoms is not None and not symptoms.empty else [],
         "ai_summary": ai_summary,
-        "safety_note": "Clinical decision-support only. Not for diagnosis, cancer detection, or replacing a licensed clinician.",
+        "safety_note": "Breast cancer clinical decision-support only. Not for diagnosis, cancer detection, confirming metastasis, or replacing a licensed clinician.",
     }

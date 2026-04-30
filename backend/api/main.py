@@ -9,15 +9,25 @@ from sqlalchemy.orm import Session
 
 from backend.crud import (
     get_all_patients,
+    get_breast_cancer_profile,
     get_ct_reports_df,
+    get_imaging_reports_df,
     get_labs_df,
     get_patient,
     get_symptoms_df,
     get_treatments_df,
 )
 from backend.database import Base, SessionLocal, engine
-from backend.models import CTReport, LabResult, Patient, SymptomReport, Treatment
-from backend.processing.radiology_analysis import analyze_radiology_reports
+from backend.models import (
+    BreastCancerProfile,
+    CTReport,
+    ImagingReport,
+    LabResult,
+    Patient,
+    SymptomReport,
+    Treatment,
+)
+from backend.processing.radiology_analysis import analyze_breast_imaging_reports, analyze_radiology_reports
 from backend.processing.patient_state import build_patient_state
 from backend.processing.risk_engine import detect_risks, detect_symptom_risks, detect_trend_risk
 from backend.processing.treatment_analysis import align_labs_with_treatment
@@ -25,7 +35,7 @@ from backend.processing.trend_analysis import analyze_labs
 from backend.processing.clinical_summary import generate_clinical_summary
 from backend.reports.patient_report import build_patient_report
 
-app = FastAPI(title="AI Oncology Monitoring System")
+app = FastAPI(title="AI Breast Cancer Monitoring System")
 Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
@@ -49,6 +59,13 @@ class PatientCreate(BaseModel):
     id: str
     name: str
     diagnosis: str | None = None
+    cancer_stage: str | None = None
+    er_status: str | None = None
+    pr_status: str | None = None
+    her2_status: str | None = None
+    molecular_subtype: str | None = None
+    treatment_intent: str | None = None
+    menopausal_status: str | None = None
 
 
 class LabCreate(BaseModel):
@@ -77,6 +94,15 @@ class CTReportCreate(BaseModel):
     findings: str
     impression: str
 
+
+class ImagingReportCreate(BaseModel):
+    date: date
+    modality: str
+    report_type: str
+    body_site: str | None = "Breast"
+    findings: str
+    impression: str
+
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/frontend/index.html")
@@ -95,6 +121,7 @@ def list_patients(db: Session = Depends(get_db)):
             "id": patient.id,
             "name": patient.name,
             "diagnosis": patient.diagnosis,
+            "breast_cancer_profile": _profile_to_dict(get_breast_cancer_profile(db, patient.id)),
         }
         for patient in patients
     ]
@@ -109,10 +136,20 @@ def create_patient(payload: PatientCreate, db: Session = Depends(get_db)):
     patient = Patient(
         id=payload.id,
         name=payload.name,
-        diagnosis=payload.diagnosis,
+        diagnosis=payload.diagnosis or "Breast cancer - doctor-confirmed",
     )
 
     db.add(patient)
+    db.add(BreastCancerProfile(
+        patient_id=patient.id,
+        cancer_stage=payload.cancer_stage,
+        er_status=payload.er_status,
+        pr_status=payload.pr_status,
+        her2_status=payload.her2_status,
+        molecular_subtype=payload.molecular_subtype,
+        treatment_intent=payload.treatment_intent,
+        menopausal_status=payload.menopausal_status,
+    ))
     db.commit()
 
     return {"message": "Patient created", "patient_id": patient.id}
@@ -126,8 +163,10 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
 
     labs = get_labs_df(db, patient_id)
     treatments = get_treatments_df(db, patient_id)
+    imaging_reports = get_imaging_reports_df(db, patient_id)
     ct_reports = get_ct_reports_df(db, patient_id)
     symptoms = get_symptoms_df(db, patient_id)
+    breast_profile = get_breast_cancer_profile(db, patient_id)
 
     if labs.empty:
         raise HTTPException(status_code=400, detail="No lab data found for patient")
@@ -142,7 +181,9 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
         treatment_effects = align_labs_with_treatment(labs, treatments)
 
     radiology_summary = None
-    if not ct_reports.empty:
+    if not imaging_reports.empty:
+        radiology_summary = analyze_breast_imaging_reports(imaging_reports)
+    elif not ct_reports.empty:
         radiology_summary = analyze_radiology_reports(ct_reports)
 
     radiology_risks = []
@@ -164,6 +205,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     all_risks = risks + trend_risks + symptom_risks + radiology_risks
     patient_state = build_patient_state(
         patient=patient,
+        breast_profile=breast_profile,
         labs=labs,
         trends=trends,
         risks=all_risks,
@@ -187,6 +229,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["patient_id"] = patient.id
     report["patient_name"] = patient.name
     report["diagnosis"] = patient.diagnosis
+    report["breast_cancer_profile"] = _profile_to_dict(breast_profile)
 
     return report
 
@@ -253,6 +296,28 @@ def add_symptom_report(patient_id: str, payload: SymptomCreate, db: Session = De
     return {"message": "Symptom report added"}
 
 
+@app.post("/patients/{patient_id}/imaging-reports")
+def add_imaging_report(patient_id: str, payload: ImagingReportCreate, db: Session = Depends(get_db)):
+    patient = get_patient(db, patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    report = ImagingReport(
+        patient_id=patient_id,
+        date=payload.date,
+        modality=payload.modality,
+        report_type=payload.report_type,
+        body_site=payload.body_site,
+        findings=payload.findings,
+        impression=payload.impression,
+    )
+
+    db.add(report)
+    db.commit()
+
+    return {"message": "Imaging report added"}
+
+
 @app.post("/patients/{patient_id}/ct-reports")
 def add_ct_report(patient_id: str, payload: CTReportCreate, db: Session = Depends(get_db)):
     patient = get_patient(db, patient_id)
@@ -271,3 +336,18 @@ def add_ct_report(patient_id: str, payload: CTReportCreate, db: Session = Depend
     db.commit()
 
     return {"message": "CT report added"}
+
+
+def _profile_to_dict(profile):
+    if profile is None:
+        return None
+
+    return {
+        "cancer_stage": profile.cancer_stage,
+        "er_status": profile.er_status,
+        "pr_status": profile.pr_status,
+        "her2_status": profile.her2_status,
+        "molecular_subtype": profile.molecular_subtype,
+        "treatment_intent": profile.treatment_intent,
+        "menopausal_status": profile.menopausal_status,
+    }

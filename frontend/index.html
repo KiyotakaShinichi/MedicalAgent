@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AI Oncology Monitoring Dashboard</title>
+  <title>AI Breast Cancer Monitoring Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -119,16 +119,21 @@
   </style>
 </head>
 <body>
-  <h1>AI Oncology Monitoring Dashboard</h1>
-  <p class="subtitle">Longitudinal treatment monitoring for doctor-confirmed oncology patients</p>
+  <h1>AI Breast Cancer Monitoring Dashboard</h1>
+  <p class="subtitle">Longitudinal treatment monitoring for doctor-confirmed breast cancer patients</p>
 
   <div class="safety">
-    Clinical decision-support only. This system does not diagnose cancer, detect cancer, confirm metastasis, or replace a licensed clinician.
+    Breast cancer clinical decision-support only. This system does not diagnose cancer, detect cancer, confirm metastasis, or replace a licensed clinician.
   </div>
 
   <div class="card toolbar">
     <label for="patientSelect"><strong>Select Patient:</strong></label>
     <select id="patientSelect"></select>
+  </div>
+
+  <div class="card section">
+    <h2>Breast Cancer Profile</h2>
+    <div id="breastProfile" class="muted">No profile loaded.</div>
   </div>
 
   <div class="card section">
@@ -170,8 +175,8 @@
 
   <div class="grid two">
     <div class="card">
-      <h2>Radiology Trend</h2>
-      <div id="radiologySummary" class="muted">No radiology data loaded.</div>
+      <h2>Breast Imaging Trend</h2>
+      <div id="radiologySummary" class="muted">No breast imaging data loaded.</div>
     </div>
     <div class="card">
       <h2>Possible Metastatic Indicators</h2>
@@ -342,6 +347,14 @@
           return response.json();
         })
         .then(data => {
+          const profile = data.breast_cancer_profile || {};
+          document.getElementById("breastProfile").innerHTML = `
+            <p><strong>Diagnosis:</strong> ${data.diagnosis || "Not specified"}</p>
+            <p><strong>Stage:</strong> ${profile.cancer_stage || "Not specified"}; <strong>Subtype:</strong> ${profile.molecular_subtype || "Not specified"}</p>
+            <p><strong>ER:</strong> ${profile.er_status || "unknown"}; <strong>PR:</strong> ${profile.pr_status || "unknown"}; <strong>HER2:</strong> ${profile.her2_status || "unknown"}</p>
+            <p><strong>Treatment context:</strong> ${profile.treatment_intent || "Not specified"}</p>
+          `;
+
           document.getElementById("wbc").textContent = data.latest_labs.wbc;
           document.getElementById("hemoglobin").textContent = data.latest_labs.hemoglobin;
           document.getElementById("platelets").textContent = data.latest_labs.platelets;
@@ -363,6 +376,8 @@
           const radiology = data.radiology_summary;
           if (radiology) {
             document.getElementById("radiologySummary").innerHTML = `
+              <p><strong>Latest modality:</strong> ${radiology.latest_modality || "unknown"}; <strong>Side:</strong> ${radiology.latest_breast_side || "unknown"}</p>
+              <p><strong>Location:</strong> ${(radiology.latest_breast_locations || []).join(", ") || "unknown"}; <strong>BI-RADS:</strong> ${radiology.latest_bi_rads ?? "not reported"}</p>
               <p><strong>Baseline:</strong> ${radiology.baseline_tumor_size_cm ?? "unknown"} cm on ${radiology.baseline_date}</p>
               <p><strong>Latest:</strong> ${radiology.latest_tumor_size_cm ?? "unknown"} cm on ${radiology.latest_date}</p>
               <p><strong>Size status:</strong> ${radiology.size_status}; <strong>response language:</strong> ${radiology.response_language_status}</p>
@@ -370,7 +385,7 @@
             `;
             document.getElementById("metastaticIndicators").innerHTML = listItems(
               radiology.possible_metastatic_indicators.map(item => `${item.date}: ${item.message}`),
-              "No metastatic indicator wording was flagged in the available CT reports."
+              "No metastatic indicator wording was flagged in the available breast imaging or staging reports."
             );
           }
 
