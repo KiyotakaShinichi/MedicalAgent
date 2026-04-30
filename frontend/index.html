@@ -460,6 +460,42 @@
     .mri-meta { color: var(--text); }
     .mri-path { color: var(--text-3); font-size: 12px; margin-top: 2px; font-family: monospace; }
 
+    /* ── CHAT AGENT ── */
+    .chat-thread {
+      display: grid;
+      gap: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .chat-message {
+      padding: 9px 11px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      line-height: 1.45;
+      border: 1px solid var(--border);
+      white-space: pre-wrap;
+    }
+    .chat-message.user {
+      background: var(--rose-bg);
+      color: var(--text);
+      border-color: var(--rose-border);
+    }
+    .chat-message.assistant {
+      background: var(--surface-alt);
+      color: var(--text-2);
+    }
+    .chat-actions {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 12px;
+    }
+    .chat-actions textarea {
+      flex: 1;
+      min-height: 52px;
+    }
+
     /* ── EMPTY STATE ── */
     .empty-state {
       font-size: 13px;
@@ -572,6 +608,21 @@
       <div class="section-label">Multimodal Monitoring Assessment</div>
       <div class="card" id="multimodalAssessment">
         <div class="empty-state">No fused assessment loaded.</div>
+      </div>
+    </div>
+
+    <!-- SUPPORT AGENT -->
+    <div>
+      <div class="section-label">Patient Support Agent</div>
+      <div class="card">
+        <div class="chat-thread" id="chatThread">
+          <div class="empty-state">No chat messages yet.</div>
+        </div>
+        <div class="chat-actions">
+          <textarea id="chatInput" placeholder="Tell the assistant about symptoms, CBC values, medications, or how you feel..."></textarea>
+          <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+        </div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:8px;">The assistant can save symptoms, complete CBC values, and medication mentions. It does not diagnose or decide treatment.</div>
       </div>
     </div>
 
@@ -763,7 +814,7 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const API_BASE = "http://127.0.0.1:8000";
+    const API_BASE = window.location.origin;
 
     /* ── UTILITY ── */
     function showToast(msg, isError = false) {
@@ -778,6 +829,15 @@
 
     function emptyList(el, msg = "None reported.") {
       el.innerHTML = `<li class="empty-state">${msg}</li>`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     function togglePanel(header) {
@@ -935,6 +995,18 @@
       `;
     }
 
+    function renderChat(messages) {
+      const el = document.getElementById("chatThread");
+      if (!messages || messages.length === 0) {
+        el.innerHTML = '<div class="empty-state">No chat messages yet.</div>';
+        return;
+      }
+      el.innerHTML = messages.map(m => `
+        <div class="chat-message ${m.role === "user" ? "user" : "assistant"}">${escapeHtml(m.message)}</div>
+      `).join("");
+      el.scrollTop = el.scrollHeight;
+    }
+
     /* ── CHARTS ── */
     const chartInstances = {};
     function makeChart(id, label, labels, values) {
@@ -1006,6 +1078,7 @@
           renderTimeline(data.timeline);
           renderMRI(data.mri_registry);
           renderMRISeries(data.mri_series_index);
+          renderChat(data.chat_history);
 
           const h = data.lab_history || [];
           const lbls = h.map(r => String(r.date).slice(0,10));
@@ -1044,6 +1117,26 @@
       .then(() => {
         ["labDate","labWbc","labHemoglobin","labPlatelets"].forEach(id => document.getElementById(id).value = "");
         showToast("Lab result saved.");
+        loadPatient(pid);
+      })
+      .catch(err => showToast(err.message, true));
+    }
+
+    function sendChatMessage() {
+      const pid = getPatientId();
+      const input = document.getElementById("chatInput");
+      const message = input.value.trim();
+      if (!pid || !message) { showToast("Write a message first.", true); return; }
+
+      fetch(`${API_BASE}/patients/${pid}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      })
+      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
+      .then(result => {
+        input.value = "";
+        showToast(result.saved_actions?.length ? "Saved from chat." : "Message saved.");
         loadPatient(pid);
       })
       .catch(err => showToast(err.message, true));

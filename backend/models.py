@@ -61,6 +61,32 @@ class Treatment(Base):
     drug = Column(String, nullable=False)
 
 
+class MedicationLog(Base):
+    __tablename__ = "medication_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    date = Column(Date, nullable=False)
+    medication = Column(String, nullable=False)
+    dose = Column(String, nullable=True)
+    frequency = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
+    source = Column(String, nullable=False, default="chat_agent")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    role = Column(String, nullable=False)
+    message = Column(Text, nullable=False)
+    intent = Column(String, nullable=True)
+    saved_actions_json = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class CTReport(Base):
     __tablename__ = "ct_reports"
 

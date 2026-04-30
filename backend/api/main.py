@@ -10,9 +10,11 @@ from sqlalchemy.orm import Session
 from backend.crud import (
     get_all_patients,
     get_breast_cancer_profile,
+    get_chat_messages,
     get_ct_reports_df,
     get_imaging_reports_df,
     get_labs_df,
+    get_medication_logs,
     get_mri_registry,
     get_mri_series_index,
     get_patient,
@@ -53,6 +55,7 @@ from backend.services.mri_manifest import build_qin_mri_manifest
 from backend.services.mri_preprocessing import preprocess_mri_manifest_previews
 from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
 from backend.services.multimodal_fusion import build_multimodal_assessment
+from backend.services.support_chat_agent import handle_patient_chat
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 ensure_schema()
@@ -206,6 +209,10 @@ class BreastDCEDLXAIRequest(BaseModel):
     output_json_path: str = "Data/breastdcedl_spy1_shap_explanations.json"
     top_n: int = 5
 
+
+class PatientChatRequest(BaseModel):
+    message: str
+
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/frontend/index.html")
@@ -271,6 +278,8 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     symptoms = get_symptoms_df(db, patient_id)
     mri_registry = get_mri_registry(db, patient_id)
     mri_series_index = get_mri_series_index(db, patient_id)
+    medication_logs = get_medication_logs(db, patient_id)
+    chat_history = get_chat_messages(db, patient_id, limit=12)
     breast_profile = get_breast_cancer_profile(db, patient_id)
 
     trends = {}
@@ -346,9 +355,37 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["breast_cancer_profile"] = _profile_to_dict(breast_profile)
     report["mri_registry"] = mri_registry
     report["mri_series_index"] = mri_series_index
+    report["medication_logs"] = medication_logs
+    report["chat_history"] = chat_history
     report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
 
     return report
+
+
+@app.get("/patients/{patient_id}/chat")
+def get_patient_chat(patient_id: str, db: Session = Depends(get_db)):
+    patient = get_patient(db, patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    return {
+        "patient_id": patient_id,
+        "messages": get_chat_messages(db, patient_id, limit=50),
+    }
+
+
+@app.post("/patients/{patient_id}/chat")
+def chat_with_patient_agent(patient_id: str, payload: PatientChatRequest, db: Session = Depends(get_db)):
+    patient = get_patient(db, patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    try:
+        result = handle_patient_chat(db, patient_id, payload.message)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return result
 
 
 @app.get("/import-schema")

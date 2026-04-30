@@ -5,6 +5,8 @@ from backend.models import (
     CTReport,
     ImagingReport,
     LabResult,
+    ChatMessage,
+    MedicationLog,
     MRIFileRegistry,
     MRISeriesIndex,
     Patient,
@@ -180,4 +182,50 @@ def get_mri_series_index(db, patient_id):
             "candidate_role": row.candidate_role,
         }
         for row in rows
+    ]
+
+
+def get_medication_logs(db, patient_id):
+    rows = (
+        db.query(MedicationLog)
+        .filter(MedicationLog.patient_id == patient_id)
+        .order_by(MedicationLog.date, MedicationLog.id)
+        .all()
+    )
+
+    return [
+        {
+            "id": row.id,
+            "patient_id": row.patient_id,
+            "date": str(row.date),
+            "medication": row.medication,
+            "dose": row.dose,
+            "frequency": row.frequency,
+            "notes": row.notes,
+            "source": row.source,
+        }
+        for row in rows
+    ]
+
+
+def get_chat_messages(db, patient_id, limit=20):
+    rows = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.patient_id == patient_id)
+        .order_by(ChatMessage.created_at.desc(), ChatMessage.id.desc())
+        .limit(limit)
+        .all()
+    )
+
+    return [
+        {
+            "id": row.id,
+            "patient_id": row.patient_id,
+            "role": row.role,
+            "message": row.message,
+            "intent": row.intent,
+            "saved_actions_json": row.saved_actions_json,
+            "created_at": str(row.created_at),
+        }
+        for row in reversed(rows)
     ]
