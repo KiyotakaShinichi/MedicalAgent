@@ -7,3 +7,5 @@ openpyxl
 pydicom
 pillow
 numpy
+nibabel
+scikit-learn

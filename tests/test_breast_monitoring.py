@@ -1,4 +1,7 @@
 import unittest
+import tempfile
+import zipfile
+from pathlib import Path
 
 import pandas as pd
 
@@ -10,6 +13,8 @@ from backend.processing.radiology_analysis import (
 from backend.services.mri_series_indexer import classify_mri_series_role
 from backend.services.mri_manifest import select_model_input_series
 from backend.services.mri_preprocessing import normalize_pixels
+from backend.services.synthetic_journey import infer_synthetic_subtype
+from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
 
 
 class FakeSeries:
@@ -128,6 +133,68 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertEqual(str(pixels.dtype), "uint8")
         self.assertEqual(int(pixels.min()), 0)
         self.assertEqual(int(pixels.max()), 255)
+
+    def test_synthetic_subtype_inference(self):
+        self.assertEqual(
+            infer_synthetic_subtype("Positive", "Negative", "Not amplified"),
+            "HR-positive / HER2-negative",
+        )
+        self.assertEqual(
+            infer_synthetic_subtype("Negative", "Negative", "Amplified"),
+            "HER2-positive",
+        )
+        self.assertEqual(
+            infer_synthetic_subtype("Negative", "Negative", "Not amplified"),
+            "triple-negative",
+        )
+
+    def test_breastdcedl_zip_inspector_detects_images_and_metadata(self):
+        test_root = Path("C:/tmp")
+        test_root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=test_root) as temp_dir:
+            zip_path = Path(temp_dir) / "BreastDCEDL_spy1.zip"
+            with zipfile.ZipFile(zip_path, "w") as archive:
+                archive.writestr("ISPY1/patient_001/image.nii.gz", "fake")
+                archive.writestr("ISPY1/metadata.csv", "patient_id,pcr\n1,0\n")
+
+            result = inspect_breastdcedl_dataset(zip_path)
+
+        self.assertEqual(result["source_type"], "zip")
+        self.assertEqual(result["image_file_count"], 1)
+        self.assertEqual(result["metadata_file_count"], 1)
+        self.assertEqual(result["training_readiness"], "ready_for_manifest_mapping")
+
+    def test_breastdcedl_manifest_maps_dce_and_mask_paths(self):
+        test_root = Path("C:/tmp")
+        test_root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=test_root) as temp_dir:
+            root = Path(temp_dir) / "BreastDCEDL_spy1"
+            (root / "spt1_dce").mkdir(parents=True)
+            (root / "spy1_mask").mkdir(parents=True)
+            pd.DataFrame([{
+                "pid": "ISPY1_1001",
+                "age": 40,
+                "ER": 1,
+                "PR": 0,
+                "HR": 1,
+                "HER2": 0,
+                "HR_HER2_STATUS": "HRposHER2neg",
+                "MRI_LD_Baseline": 50,
+                "pCR": 0,
+                "rcb_class": 2,
+            }]).to_csv(root / "BreastDCEDL_spy1_metadata.csv", index=False)
+            for acq in ("acq0", "acq1", "acq2"):
+                (root / "spt1_dce" / f"ISPY1_1001_spy1_vis1_{acq}.nii.gz").write_text("fake")
+            (root / "spy1_mask" / "ISPY1_1001_spy1_vis1_mask.nii.gz").write_text("fake")
+
+            result = build_breastdcedl_manifest(
+                root_path=str(root),
+                output_csv_path=str(root / "manifest.csv"),
+            )
+
+        self.assertEqual(result["manifest_rows"], 1)
+        self.assertEqual(result["patients_with_acq0_acq1_acq2"], 1)
+        self.assertEqual(result["patients_with_masks"], 1)
 
 
 if __name__ == "__main__":

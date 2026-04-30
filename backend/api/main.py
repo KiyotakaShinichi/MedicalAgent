@@ -47,9 +47,12 @@ from backend.services.csv_importer import (
     import_qin_breast_02_clinical_xlsx,
 )
 from backend.services.synthetic_cbc import generate_synthetic_cbc_for_qin_patients
+from backend.services.synthetic_journey import generate_synthetic_breast_cancer_journeys
 from backend.services.mri_series_indexer import index_mri_series
 from backend.services.mri_manifest import build_qin_mri_manifest
 from backend.services.mri_preprocessing import preprocess_mri_manifest_previews
+from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
+from backend.services.breastdcedl_baseline import run_breastdcedl_baseline
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 ensure_schema()
@@ -155,6 +158,27 @@ class MRIManifestRequest(BaseModel):
 class MRIPreviewPreprocessRequest(BaseModel):
     manifest_csv_path: str = "Data/qin_breast_02_mri_manifest.csv"
     output_dir: str = "Data/qin_mri_previews"
+
+
+class SyntheticJourneyRequest(BaseModel):
+    count: int = 25
+    seed: int = 42
+
+
+class BreastDCEDLInspectRequest(BaseModel):
+    path: str = "Datasets/BreastDCEDL_spy1"
+
+
+class BreastDCEDLManifestRequest(BaseModel):
+    root_path: str = "Datasets/BreastDCEDL_spy1"
+    output_csv_path: str = "Data/breastdcedl_spy1_manifest.csv"
+
+
+class BreastDCEDLBaselineRequest(BaseModel):
+    manifest_csv_path: str = "Data/breastdcedl_spy1_manifest.csv"
+    features_csv_path: str = "Data/breastdcedl_spy1_features.csv"
+    metrics_json_path: str = "Data/breastdcedl_spy1_baseline_metrics.json"
+    max_patients: int | None = None
 
 @app.get("/", include_in_schema=False)
 def root():
@@ -360,6 +384,22 @@ def generate_qin_synthetic_cbc(db: Session = Depends(get_db)):
     }
 
 
+@app.post("/generate-synthetic-breast-journeys")
+def generate_synthetic_breast_journeys(payload: SyntheticJourneyRequest, db: Session = Depends(get_db)):
+    if payload.count < 1 or payload.count > 500:
+        raise HTTPException(status_code=400, detail="count must be between 1 and 500")
+
+    return {
+        "message": "Synthetic breast cancer longitudinal journeys generated",
+        "result": generate_synthetic_breast_cancer_journeys(
+            db=db,
+            count=payload.count,
+            seed=payload.seed,
+        ),
+        "warning": "Synthetic journeys are for software testing and demos only, not model validation or clinical evidence.",
+    }
+
+
 @app.post("/index-qin-mri")
 def index_qin_mri(payload: MRISeriesIndexRequest, db: Session = Depends(get_db)):
     try:
@@ -398,6 +438,55 @@ def preprocess_qin_mri_previews(payload: MRIPreviewPreprocessRequest):
             manifest_csv_path=payload.manifest_csv_path,
             output_dir=payload.output_dir,
         ),
+    }
+
+
+@app.post("/inspect-breastdcedl")
+def inspect_breastdcedl(payload: BreastDCEDLInspectRequest):
+    try:
+        result = inspect_breastdcedl_dataset(payload.path)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "BreastDCEDL local dataset inspection completed",
+        "result": result,
+    }
+
+
+@app.post("/build-breastdcedl-manifest")
+def build_breastdcedl_manifest_endpoint(payload: BreastDCEDLManifestRequest):
+    try:
+        result = build_breastdcedl_manifest(
+            root_path=payload.root_path,
+            output_csv_path=payload.output_csv_path,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    return {
+        "message": "BreastDCEDL manifest built",
+        "result": result,
+    }
+
+
+@app.post("/run-breastdcedl-baseline")
+def run_breastdcedl_baseline_endpoint(payload: BreastDCEDLBaselineRequest):
+    try:
+        result = run_breastdcedl_baseline(
+            manifest_csv_path=payload.manifest_csv_path,
+            features_csv_path=payload.features_csv_path,
+            metrics_json_path=payload.metrics_json_path,
+            max_patients=payload.max_patients,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "BreastDCEDL baseline completed",
+        "result": result,
     }
 
 
