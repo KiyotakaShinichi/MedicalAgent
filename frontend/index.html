@@ -1,397 +1,1034 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI Breast Cancer Monitoring Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oncology Monitoring — Breast Cancer</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
   <style>
     :root {
-      color-scheme: light;
-      --bg: #f7f8fa;
-      --panel: #ffffff;
-      --text: #172033;
-      --muted: #667085;
-      --line: #d9dee7;
-      --accent: #2563eb;
-      --warn: #b45309;
-      --urgent: #b42318;
-      --ok: #067647;
+      --bg:           #f5f3ef;
+      --surface:      #ffffff;
+      --surface-alt:  #faf9f6;
+      --border:       rgba(60,50,40,0.10);
+      --border-mid:   rgba(60,50,40,0.18);
+
+      --text:         #1c1714;
+      --text-2:       #5c524a;
+      --text-3:       #938880;
+
+      --rose:         #c45c6a;
+      --rose-bg:      #fdf0f1;
+      --rose-border:  #ebbfc4;
+
+      --amber:        #b06e28;
+      --amber-bg:     #fdf4e7;
+      --amber-border: #e8c88a;
+
+      --teal:         #2a7e72;
+      --teal-bg:      #edf6f4;
+      --teal-border:  #9fd3cb;
+
+      --red:          #b42020;
+      --red-bg:       #fdf1f1;
+      --red-border:   #e8aaaa;
+
+      --radius-sm:    6px;
+      --radius-md:    10px;
+      --radius-lg:    14px;
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
     }
 
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 15px; }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
-      margin: 0;
-      padding: 24px;
+      min-height: 100vh;
+      padding: 0;
     }
-    h1 { margin: 0 0 4px; font-size: 28px; }
-    h2 { margin: 0 0 14px; font-size: 18px; }
-    h3 { margin: 0 0 8px; font-size: 15px; }
-    .subtitle { color: var(--muted); margin: 0 0 20px; }
-    .safety {
-      border-left: 5px solid var(--accent);
-      background: #eef4ff;
-      padding: 12px 14px;
-      margin-bottom: 20px;
-      color: #1d3b70;
-    }
-    .toolbar {
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
       display: flex;
-      gap: 12px;
       align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    select, input, textarea {
-      padding: 8px 10px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      font-size: 14px;
-      background: white;
+    .topbar-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
     }
-    textarea { min-height: 38px; resize: vertical; }
-    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
-    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .card {
-      background: var(--panel);
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
+    .topbar-brand .wordmark {
+      font-family: var(--font-display);
+      font-size: 19px;
+      color: var(--text);
+      letter-spacing: -0.01em;
     }
-    .metric-label { color: var(--muted); font-size: 13px; }
-    .metric-value { font-size: 28px; font-weight: 700; margin-top: 6px; }
-    .section { margin-top: 16px; }
-    .form-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; align-items: start; }
-    .btn-primary {
-      padding: 9px 14px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
+    .topbar-brand .specialty {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--rose);
     }
-    .btn-primary:hover { background: #1d4ed8; }
-    ul { margin: 0; padding-left: 18px; }
-    li { margin-bottom: 8px; }
-    pre {
-      white-space: pre-wrap;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      line-height: 1.45;
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
-    .pill {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 999px;
+    .patient-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .patient-select-wrap label {
       font-size: 12px;
-      font-weight: 700;
-      background: #eef2f6;
-      color: #344054;
+      font-weight: 500;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
-    .urgent_review { background: #fef3f2; color: var(--urgent); }
-    .watch { background: #fffaeb; color: var(--warn); }
-    .info { background: #ecfdf3; color: var(--ok); }
-    .timeline {
-      display: grid;
+    select, input[type="text"], input[type="number"], input[type="date"], textarea {
+      font-family: var(--font-body);
+      font-size: 13.5px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(196,92,106,0.10);
+    }
+    select { cursor: pointer; padding-right: 28px; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23938880' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    textarea { resize: vertical; min-height: 36px; line-height: 1.4; }
+
+    /* ── SAFETY BANNER ── */
+    .safety-bar {
+      background: var(--rose-bg);
+      border-bottom: 1px solid var(--rose-border);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
       gap: 10px;
+      font-size: 12.5px;
+      color: var(--rose);
+      font-weight: 500;
     }
-    .timeline-item {
+    .safety-bar svg { flex-shrink: 0; }
+
+    /* ── LAYOUT ── */
+    .main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px 32px 60px;
       display: grid;
-      grid-template-columns: 120px 120px 1fr;
-      gap: 10px;
-      padding: 10px 0;
-      border-top: 1px solid var(--line);
+      gap: 20px;
     }
-    .timeline-item:first-child { border-top: none; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 10px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    /* ── PROFILE PANEL ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+    }
+    .profile-field { }
+    .profile-field .f-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 3px;
+    }
+    .profile-field .f-value {
+      font-size: 14.5px;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    /* ── RECEPTOR BADGES ── */
+    .receptor-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+    .badge-pos { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+    .badge-neg { background: var(--surface-alt); color: var(--text-2); border-color: var(--border-mid); }
+    .badge-warn { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+    .badge-urgent { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+
+    /* ── METRICS ROW ── */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--rose);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+    .metric-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 32px;
+      color: var(--text);
+      line-height: 1;
+    }
+    .metric-unit {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    /* ── TWO COLUMN ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    /* ── RISK FLAGS ── */
+    .risk-list { list-style: none; display: grid; gap: 8px; }
+    .risk-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+    }
+    .risk-item.urgent_review { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+    .risk-item.watch { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+    .risk-item.info { background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-border); }
+    .risk-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .urgent_review .risk-dot { background: var(--red); }
+    .watch .risk-dot { background: var(--amber); }
+    .info .risk-dot { background: var(--teal); }
+
+    /* ── TIMELINE ── */
+    .timeline { display: grid; gap: 0; }
+    .tl-item {
+      display: grid;
+      grid-template-columns: 100px 90px 1fr;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      align-items: start;
+    }
+    .tl-item:last-child { border-bottom: none; }
+    .tl-date { color: var(--text-3); font-weight: 400; font-size: 12.5px; padding-top: 2px; }
+    .tl-type { }
+    .tl-content strong { font-weight: 500; color: var(--text); }
+    .tl-content p { color: var(--text-2); margin-top: 2px; font-size: 12.5px; line-height: 1.4; }
+
+    /* ── DATA LIST ── */
+    .data-list { list-style: none; display: grid; gap: 6px; }
+    .data-list li {
+      font-size: 13.5px;
+      color: var(--text-2);
+      padding: 8px 12px;
+      background: var(--surface-alt);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      line-height: 1.4;
+    }
+    .data-list .empty { color: var(--text-3); font-style: italic; }
+
+    /* ── FORM SECTION ── */
+    .form-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .form-panel-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .form-panel-header h3 {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .form-panel-header .chevron {
+      margin-left: auto;
+      transition: transform 0.2s;
+      color: var(--text-3);
+    }
+    .form-panel-header.open .chevron { transform: rotate(180deg); }
+    .form-panel-body {
+      padding: 18px 20px;
+      display: none;
+    }
+    .form-panel-body.open { display: block; }
+    .form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .form-row input, .form-row select, .form-row textarea { flex: 1; min-width: 120px; }
+
+    /* ── BUTTON ── */
+    .btn {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-primary {
+      background: var(--rose);
+      color: white;
+    }
+    .btn-primary:hover { background: #b04d5b; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    /* ── SUMMARY PRE ── */
+    .summary-text {
+      font-family: var(--font-body);
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    /* ── RADIOLOGY SUMMARY ── */
+    .radio-field { margin-bottom: 8px; font-size: 13.5px; color: var(--text-2); }
+    .radio-field strong { color: var(--text); font-weight: 500; }
+
+    /* ── LAB SOURCE ── */
+    .source-text { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+    .source-warn { font-size: 12px; color: var(--amber); margin-top: 6px; }
+
+    /* ── CHARTS ── */
+    canvas { max-height: 160px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 24px 0 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--text);
+      font-weight: 400;
+    }
+    .page-header .patient-id {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* ── TOAST ── */
     .toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--ok);
+      bottom: 28px;
+      right: 28px;
+      background: var(--teal);
       color: white;
-      padding: 12px 18px;
-      border-radius: 8px;
-      font-weight: 700;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      font-weight: 500;
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(8px);
       transition: opacity 0.2s, transform 0.2s;
-      z-index: 10;
+      z-index: 999;
+      max-width: 320px;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
-    .muted { color: var(--muted); }
+    .toast.error { background: var(--red); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      border: none;
+      margin: 4px 0;
+    }
+
+    /* ── MRI LIST ── */
+    .mri-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .mri-item:last-child { border-bottom: none; }
+    .mri-meta { color: var(--text); }
+    .mri-path { color: var(--text-3); font-size: 12px; margin-top: 2px; font-family: monospace; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      font-size: 13px;
+      color: var(--text-3);
+      font-style: italic;
+      padding: 8px 0;
+    }
 
     @media (max-width: 900px) {
-      body { padding: 14px; }
-      .grid, .two, .form-row { grid-template-columns: 1fr; }
-      .timeline-item { grid-template-columns: 1fr; }
+      .main { padding: 16px; }
+      .topbar { padding: 0 16px; }
+      .safety-bar { padding: 8px 16px; }
+      .metrics-row, .two-col, .three-col { grid-template-columns: 1fr; }
+      .tl-item { grid-template-columns: 1fr; gap: 4px; }
+      .form-row { flex-direction: column; }
     }
   </style>
 </head>
 <body>
-  <h1>AI Breast Cancer Monitoring Dashboard</h1>
-  <p class="subtitle">Longitudinal treatment monitoring for doctor-confirmed breast cancer patients</p>
 
-  <div class="safety">
-    Breast cancer clinical decision-support only. This system does not diagnose cancer, detect cancer, confirm metastasis, or replace a licensed clinician.
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="wordmark">Oncology Monitor</span>
+      <span class="specialty">Breast Cancer</span>
+    </div>
+    <div class="topbar-right">
+      <div class="patient-select-wrap">
+        <label for="patientSelect">Patient</label>
+        <select id="patientSelect"></select>
+      </div>
+    </div>
+  </header>
+
+  <!-- SAFETY BANNER -->
+  <div class="safety-bar">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <circle cx="7" cy="7" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    Clinical decision-support only. This system does not diagnose cancer, confirm metastasis, or replace a licensed clinician. All findings require physician review.
   </div>
 
-  <div class="card toolbar">
-    <label for="patientSelect"><strong>Select Patient:</strong></label>
-    <select id="patientSelect"></select>
-  </div>
+  <!-- MAIN -->
+  <div class="main">
 
-  <div class="card section">
-    <h2>Breast Cancer Profile</h2>
-    <div id="breastProfile" class="muted">No profile loaded.</div>
-  </div>
+    <!-- PATIENT OVERVIEW -->
+    <div>
+      <div class="section-label">Patient Overview</div>
+      <div class="card">
+        <div class="profile-grid" id="breastProfile">
+          <div class="empty-state">Select a patient to begin.</div>
+        </div>
+      </div>
+    </div>
 
-  <div class="card section">
-    <h2>Add Lab Result</h2>
-    <div class="form-row">
-      <input id="labDate" type="date" title="Lab date">
-      <input id="labWbc" type="number" step="0.1" placeholder="WBC">
-      <input id="labHemoglobin" type="number" step="0.1" placeholder="Hemoglobin">
-      <input id="labPlatelets" type="number" step="1" placeholder="Platelets">
-      <button class="btn-primary" onclick="addLabResult()">Add Lab</button>
+    <!-- LATEST LABS -->
+    <div>
+      <div class="section-label">Complete Blood Count — Latest Values</div>
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">White Blood Cell</div>
+          <div class="metric-value" id="wbc">—</div>
+          <div class="metric-unit">×10³/μL</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Hemoglobin</div>
+          <div class="metric-value" id="hemoglobin">—</div>
+          <div class="metric-unit">g/dL</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Platelets</div>
+          <div class="metric-value" id="platelets">—</div>
+          <div class="metric-unit">×10³/μL</div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="card section">
-    <h2>Add Symptom Report</h2>
-    <div class="form-row">
-      <input id="symptomDate" type="date" title="Symptom date">
-      <input id="symptomName" type="text" placeholder="Symptom">
-      <input id="symptomSeverity" type="number" min="0" max="10" step="1" placeholder="Severity 0-10">
-      <textarea id="symptomNotes" placeholder="Notes"></textarea>
-      <button class="btn-primary" onclick="addSymptomReport()">Add Symptom</button>
+    <!-- CHARTS -->
+    <div>
+      <div class="section-label">Longitudinal Lab Trends</div>
+      <div class="three-col">
+        <div class="card">
+          <div class="card-title">WBC</div>
+          <canvas id="wbcChart"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-title">Hemoglobin</div>
+          <canvas id="hemoglobinChart"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-title">Platelets</div>
+          <canvas id="plateletChart"></canvas>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="card section">
-    <h2>Import CSV</h2>
-    <div class="form-row">
-      <select id="importType">
-        <option value="patients">patients</option>
-        <option value="breast_profiles">breast_profiles</option>
-        <option value="labs">labs</option>
-        <option value="treatments">treatments</option>
-        <option value="imaging_reports">imaging_reports</option>
-        <option value="symptoms">symptoms</option>
-      </select>
-      <select id="importDataset">
-        <option value="canonical">canonical</option>
-        <option value="duke_breast_mri">duke_breast_mri</option>
-        <option value="ispy2">ispy2</option>
-        <option value="mimic_labs">mimic_labs</option>
-      </select>
-      <textarea id="importCsvText" placeholder="Paste CSV text here"></textarea>
-      <button class="btn-primary" onclick="importCsv()">Import</button>
+    <!-- RISK FLAGS -->
+    <div>
+      <div class="section-label">Risk Flags</div>
+      <div class="card">
+        <ul class="risk-list" id="risks">
+          <li class="empty-state">No risk data loaded.</li>
+        </ul>
+      </div>
     </div>
-  </div>
 
-  <div class="grid">
-    <div class="card">
-      <div class="metric-label">Latest WBC</div>
-      <div class="metric-value" id="wbc">-</div>
+    <!-- IMAGING + METASTATIC -->
+    <div class="two-col">
+      <div>
+        <div class="section-label">Breast Imaging Summary</div>
+        <div class="card" id="radiologySummary">
+          <div class="empty-state">No breast imaging data loaded.</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Possible Metastatic Indicators</div>
+        <div class="card">
+          <ul class="data-list" id="metastaticIndicators">
+            <li class="empty">No indicators flagged.</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <div class="metric-label">Latest Hemoglobin</div>
-      <div class="metric-value" id="hemoglobin">-</div>
-    </div>
-    <div class="card">
-      <div class="metric-label">Latest Platelets</div>
-      <div class="metric-value" id="platelets">-</div>
-    </div>
-  </div>
 
-  <div class="card section">
-    <h2>CBC Data Source</h2>
-    <div id="labSourceStatus" class="muted">No CBC source loaded.</div>
-  </div>
+    <!-- AI SUMMARIES -->
+    <div class="two-col">
+      <div>
+        <div class="section-label">Clinical Summary</div>
+        <div class="card">
+          <pre class="summary-text" id="clinicalSummary">Loading…</pre>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Patient Explanation</div>
+        <div class="card">
+          <pre class="summary-text" id="patientExplanation">Loading…</pre>
+        </div>
+      </div>
+    </div>
 
-  <div class="grid two">
-    <div class="card">
-      <h2>Breast Imaging Trend</h2>
-      <div id="radiologySummary" class="muted">No breast imaging data loaded.</div>
+    <!-- CHANGES + REVIEW -->
+    <div class="two-col">
+      <div>
+        <div class="section-label">Changes Since Baseline</div>
+        <div class="card">
+          <ul class="data-list" id="changesSinceBaseline"></ul>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Review Reasons</div>
+        <div class="card">
+          <ul class="data-list" id="reviewReasons"></ul>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <h2>Possible Metastatic Indicators</h2>
-      <ul id="metastaticIndicators"></ul>
-    </div>
-  </div>
 
-  <div class="card section">
-    <h2>MRI File Registry</h2>
-    <div id="mriRegistry" class="muted">No local MRI folders registered.</div>
-  </div>
+    <!-- TREATMENT + SYMPTOMS -->
+    <div class="two-col">
+      <div>
+        <div class="section-label">Treatment Effects by Cycle</div>
+        <div class="card">
+          <ul class="data-list" id="treatment"></ul>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Symptom Reports</div>
+        <div class="card">
+          <ul class="data-list" id="symptoms"></ul>
+        </div>
+      </div>
+    </div>
 
-  <div class="card section">
-    <h2>Risk Flags</h2>
-    <ul id="risks"></ul>
-  </div>
+    <!-- TIMELINE -->
+    <div>
+      <div class="section-label">Clinical Timeline</div>
+      <div class="card">
+        <div class="timeline" id="clinicalTimeline">
+          <div class="empty-state">No timeline events.</div>
+        </div>
+      </div>
+    </div>
 
-  <div class="grid two section">
-    <div class="card">
-      <h2>Treatment Effects</h2>
-      <ul id="treatment"></ul>
+    <!-- CBC SOURCE + MRI -->
+    <div class="two-col">
+      <div>
+        <div class="section-label">CBC Data Source</div>
+        <div class="card" id="labSourceStatus">
+          <div class="empty-state">No source loaded.</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">MRI File Registry</div>
+        <div class="card" id="mriRegistry">
+          <div class="empty-state">No local MRI folders registered.</div>
+        </div>
+        <div class="section-label" style="margin-top:12px;">MRI Series Index</div>
+        <div class="card" id="mriSeriesIndex">
+          <div class="empty-state">No DICOM series indexed.</div>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <h2>Symptoms</h2>
-      <ul id="symptoms"></ul>
-    </div>
-  </div>
 
-  <div class="grid">
-    <div class="card">
-      <h2>WBC Trend</h2>
-      <canvas id="wbcChart"></canvas>
-    </div>
-    <div class="card">
-      <h2>Hemoglobin Trend</h2>
-      <canvas id="hemoglobinChart"></canvas>
-    </div>
-    <div class="card">
-      <h2>Platelet Trend</h2>
-      <canvas id="plateletChart"></canvas>
-    </div>
-  </div>
+    <!-- DATA ENTRY FORMS -->
+    <div>
+      <div class="section-label">Data Entry</div>
+      <div style="display: grid; gap: 10px;">
 
-  <div class="card section">
-    <h2>Clinical Timeline</h2>
-    <div id="clinicalTimeline" class="timeline"></div>
-  </div>
+        <!-- Add Lab -->
+        <div class="form-panel">
+          <div class="form-panel-header" onclick="togglePanel(this)">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--rose)">
+              <rect x="1" y="6" width="12" height="2" rx="1" fill="currentColor"/>
+              <rect x="6" y="1" width="2" height="12" rx="1" fill="currentColor"/>
+            </svg>
+            <h3>Add Lab Result</h3>
+            <span class="chevron">
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+          <div class="form-panel-body">
+            <div class="form-row">
+              <input id="labDate" type="date" title="Lab date">
+              <input id="labWbc" type="number" step="0.1" placeholder="WBC (×10³/μL)">
+              <input id="labHemoglobin" type="number" step="0.1" placeholder="Hemoglobin (g/dL)">
+              <input id="labPlatelets" type="number" step="1" placeholder="Platelets (×10³/μL)">
+              <button class="btn btn-primary" onclick="addLabResult()">Save Lab</button>
+            </div>
+          </div>
+        </div>
 
-  <div class="grid two section">
-    <div class="card">
-      <h2>Clinical Summary</h2>
-      <pre id="clinicalSummary">Loading...</pre>
-    </div>
-    <div class="card">
-      <h2>Patient Explanation</h2>
-      <pre id="patientExplanation">Loading...</pre>
-    </div>
-  </div>
+        <!-- Add Symptom -->
+        <div class="form-panel">
+          <div class="form-panel-header" onclick="togglePanel(this)">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--rose)">
+              <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M7 4.5v3M7 9v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <h3>Add Symptom Report</h3>
+            <span class="chevron">
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+          <div class="form-panel-body">
+            <div class="form-row">
+              <input id="symptomDate" type="date" title="Symptom date">
+              <input id="symptomName" type="text" placeholder="Symptom name">
+              <input id="symptomSeverity" type="number" min="0" max="10" step="1" placeholder="Severity 0–10">
+              <textarea id="symptomNotes" placeholder="Notes (optional)"></textarea>
+              <button class="btn btn-primary" onclick="addSymptomReport()">Save Symptom</button>
+            </div>
+          </div>
+        </div>
 
-  <div class="grid two section">
-    <div class="card">
-      <h2>Changes Since Baseline</h2>
-      <ul id="changesSinceBaseline"></ul>
+        <!-- Import CSV -->
+        <div class="form-panel">
+          <div class="form-panel-header" onclick="togglePanel(this)">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--rose)">
+              <path d="M2 10v2h10v-2M7 2v7M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h3>Import CSV</h3>
+            <span class="chevron">
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+          <div class="form-panel-body">
+            <div class="form-row">
+              <select id="importType">
+                <option value="patients">patients</option>
+                <option value="breast_profiles">breast_profiles</option>
+                <option value="labs">labs</option>
+                <option value="treatments">treatments</option>
+                <option value="imaging_reports">imaging_reports</option>
+                <option value="symptoms">symptoms</option>
+              </select>
+              <select id="importDataset">
+                <option value="canonical">canonical</option>
+                <option value="duke_breast_mri">duke_breast_mri</option>
+                <option value="ispy2">ispy2</option>
+                <option value="mimic_labs">mimic_labs</option>
+              </select>
+              <textarea id="importCsvText" placeholder="Paste CSV text here…" style="min-height:70px;"></textarea>
+              <button class="btn btn-primary" onclick="importCsv()">Import</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="card">
-      <h2>Review Reasons</h2>
-      <ul id="reviewReasons"></ul>
-    </div>
-  </div>
+
+  </div><!-- /main -->
 
   <div id="toast" class="toast"></div>
 
   <script>
     const API_BASE = "http://127.0.0.1:8000";
 
+    /* ── UTILITY ── */
     function showToast(msg, isError = false) {
-      const toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.style.background = isError ? "#b42318" : "#067647";
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 3000);
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.className = "toast show" + (isError ? " error" : "");
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove("show"), 3500);
     }
 
-    function getSelectedPatientId() {
-      return document.getElementById("patientSelect").value;
+    function getPatientId() { return document.getElementById("patientSelect").value; }
+
+    function emptyList(el, msg = "None reported.") {
+      el.innerHTML = `<li class="empty-state">${msg}</li>`;
     }
 
-    function listItems(items, emptyText = "None reported.") {
-      if (!items || items.length === 0) return `<li class="muted">${emptyText}</li>`;
-      return items.map(item => `<li>${item}</li>`).join("");
+    function togglePanel(header) {
+      header.classList.toggle("open");
+      const body = header.nextElementSibling;
+      body.classList.toggle("open");
     }
 
-    function renderSummaryField(value) {
-      if (Array.isArray(value)) return value.join("\n");
-      return value || "No summary available.";
+    /* ── BADGE HELPERS ── */
+    function receptorBadge(label, value) {
+      if (!value || value === "unknown") return `<span class="badge badge-neg">${label}: ?</span>`;
+      const pos = value.toLowerCase().includes("+") || value.toLowerCase() === "positive";
+      return `<span class="badge ${pos ? "badge-pos" : "badge-neg"}">${label}: ${value}</span>`;
+    }
+
+    function severityBadge(sev) {
+      const cls = { urgent_review: "badge-urgent", watch: "badge-warn", info: "badge-pos" }[sev] || "badge-neg";
+      return `<span class="badge ${cls}">${sev.replace("_", " ")}</span>`;
+    }
+
+    /* ── RENDER ── */
+    function renderProfile(data) {
+      const profile = data.breast_cancer_profile || {};
+      document.getElementById("breastProfile").innerHTML = `
+        <div class="profile-field">
+          <div class="f-label">Diagnosis</div>
+          <div class="f-value">${data.diagnosis || "Not specified"}</div>
+        </div>
+        <div class="profile-field">
+          <div class="f-label">Stage</div>
+          <div class="f-value">${profile.cancer_stage || "—"}</div>
+        </div>
+        <div class="profile-field">
+          <div class="f-label">Molecular Subtype</div>
+          <div class="f-value">${profile.molecular_subtype || "—"}</div>
+        </div>
+        <div class="profile-field">
+          <div class="f-label">Receptor Status</div>
+          <div class="receptor-row">
+            ${receptorBadge("ER", profile.er_status)}
+            ${receptorBadge("PR", profile.pr_status)}
+            ${receptorBadge("HER2", profile.her2_status)}
+          </div>
+        </div>
+        <div class="profile-field">
+          <div class="f-label">Treatment Intent</div>
+          <div class="f-value">${profile.treatment_intent || "—"}</div>
+        </div>
+      `;
+    }
+
+    function renderRisks(risks) {
+      const el = document.getElementById("risks");
+      if (!risks || risks.length === 0) { emptyList(el, "No risk flags at this time."); return; }
+      el.innerHTML = risks.map(r =>
+        `<li class="risk-item ${r.severity}">
+          <span class="risk-dot"></span>
+          <span>${r.message}</span>
+        </li>`
+      ).join("");
     }
 
     function renderTimeline(events) {
-      if (!events || events.length === 0) {
-        return `<div class="muted">No timeline events available.</div>`;
-      }
-
-      return events.map(event => `
-        <div class="timeline-item">
-          <div><strong>${String(event.date).slice(0, 10)}</strong></div>
-          <div><span class="pill ${event.severity || "info"}">${event.type}</span></div>
-          <div><strong>${event.title}</strong><br><span class="muted">${event.summary || ""}</span></div>
+      const el = document.getElementById("clinicalTimeline");
+      if (!events || events.length === 0) { el.innerHTML = '<div class="empty-state">No timeline events.</div>'; return; }
+      el.innerHTML = events.map(e => `
+        <div class="tl-item">
+          <div class="tl-date">${String(e.date).slice(0,10)}</div>
+          <div class="tl-type">${severityBadge(e.severity || "info")} <span style="font-size:12px;color:var(--text-3);margin-left:4px;">${e.type}</span></div>
+          <div class="tl-content"><strong>${e.title}</strong><p>${e.summary || ""}</p></div>
         </div>
       `).join("");
     }
 
-    function renderMriRegistry(entries) {
-      if (!entries || entries.length === 0) {
-        return `<div class="muted">No local MRI folders registered yet.</div>`;
-      }
-
-      return `<ul>${entries.map(entry =>
-        `<li>${entry.scan_date || "undated"} - ${entry.modality}: ${entry.series_description || "series"}<br><span class="muted">${entry.local_path}</span></li>`
-      ).join("")}</ul>`;
+    function renderDataList(elId, items, mapper, empty = "None reported.") {
+      const el = document.getElementById(elId);
+      if (!items || items.length === 0) { emptyList(el, empty); return; }
+      el.innerHTML = items.map(i => `<li>${mapper(i)}</li>`).join("");
     }
 
+    function renderRadiology(radiology) {
+      const el = document.getElementById("radiologySummary");
+      if (!radiology) { el.innerHTML = '<div class="empty-state">No breast imaging data loaded.</div>'; return; }
+      el.innerHTML = `
+        <div class="radio-field"><strong>Modality:</strong> ${radiology.latest_modality || "—"} · <strong>Side:</strong> ${radiology.latest_breast_side || "—"}</div>
+        <div class="radio-field"><strong>Location:</strong> ${(radiology.latest_breast_locations || []).join(", ") || "—"} · <strong>BI-RADS:</strong> ${radiology.latest_bi_rads ?? "not reported"}</div>
+        <div class="radio-field"><strong>Baseline:</strong> ${radiology.baseline_tumor_size_cm ?? "—"} cm (${radiology.baseline_date || "—"})</div>
+        <div class="radio-field"><strong>Latest:</strong> ${radiology.latest_tumor_size_cm ?? "—"} cm (${radiology.latest_date || "—"})</div>
+        <div class="radio-field"><strong>Response:</strong> ${radiology.size_status} — ${radiology.response_language_status}</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:8px;">${radiology.safety_note}</div>
+      `;
+    }
+
+    function renderMRI(entries) {
+      const el = document.getElementById("mriRegistry");
+      if (!entries || entries.length === 0) { el.innerHTML = '<div class="empty-state">No local MRI folders registered.</div>'; return; }
+      el.innerHTML = entries.map(e => `
+        <div class="mri-item">
+          <div>
+            <div class="mri-meta">${e.scan_date || "undated"} — ${e.modality}: ${e.series_description || "series"}</div>
+            <div class="mri-path">${e.local_path}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderMRISeries(series) {
+      const el = document.getElementById("mriSeriesIndex");
+      if (!series || series.length === 0) { el.innerHTML = '<div class="empty-state">No DICOM series indexed.</div>'; return; }
+      el.innerHTML = series.map(s => `
+        <div class="mri-item">
+          <div>
+            <div class="mri-meta">${s.study_date || "undated"} — ${s.modality || "MR"} · ${s.candidate_role || "unknown"} · ${s.instance_count} images</div>
+            <div class="mri-path">${s.series_description || "Unnamed series"}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderLabSource(data) {
+      const el = document.getElementById("labSourceStatus");
+      el.innerHTML = `
+        <div class="source-text"><strong>Sources:</strong> ${(data.lab_sources || []).join(", ") || "none"}</div>
+        ${data.has_synthetic_labs ? `<div class="source-warn">⚠ CBC values include synthetic demo data. Do not treat as real patient values.</div>` : `<div style="font-size:12px;color:var(--text-3);margin-top:4px;">No synthetic CBC values detected.</div>`}
+      `;
+    }
+
+    /* ── CHARTS ── */
+    const chartInstances = {};
+    function makeChart(id, label, labels, values) {
+      const ctx = document.getElementById(id);
+      if (chartInstances[id]) chartInstances[id].destroy();
+      chartInstances[id] = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label,
+            data: values,
+            borderColor: "#c45c6a",
+            backgroundColor: "rgba(196,92,106,0.07)",
+            borderWidth: 2,
+            pointRadius: 3,
+            pointBackgroundColor: "#c45c6a",
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { font: { size: 10 }, color: "#938880" }, grid: { color: "rgba(60,50,40,0.06)" } },
+            y: { ticks: { font: { size: 10 }, color: "#938880" }, grid: { color: "rgba(60,50,40,0.06)" }, beginAtZero: false }
+          }
+        }
+      });
+    }
+
+    /* ── LOAD PATIENT ── */
+    function loadPatient(patientId) {
+      fetch(`${API_BASE}/patient-report/${patientId}`)
+        .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
+        .then(data => {
+          renderProfile(data);
+
+          const labs = data.latest_labs || {};
+          document.getElementById("wbc").textContent = labs.wbc ?? "—";
+          document.getElementById("hemoglobin").textContent = labs.hemoglobin ?? "—";
+          document.getElementById("platelets").textContent = labs.platelets ?? "—";
+
+          renderLabSource(data);
+          renderRisks(data.risks);
+          renderRadiology(data.radiology_summary);
+
+          const metaEl = document.getElementById("metastaticIndicators");
+          if (data.radiology_summary?.possible_metastatic_indicators?.length) {
+            metaEl.innerHTML = data.radiology_summary.possible_metastatic_indicators
+              .map(i => `<li>${i.date}: ${i.message}</li>`).join("");
+          } else {
+            emptyList(metaEl, "No metastatic indicator wording flagged.");
+          }
+
+          renderDataList("treatment", data.treatment_effects,
+            i => `Cycle ${i.cycle} (${i.drug}, ${i.cycle_date}): WBC nadir ${i.min_wbc_post_cycle}, Hgb nadir ${i.min_hemoglobin_post_cycle}, Plt nadir ${i.min_platelets_post_cycle}`,
+            "No treatment cycle data."
+          );
+
+          renderDataList("symptoms", data.symptoms,
+            i => `${String(i.date).slice(0,10)}: <strong>${i.symptom}</strong> — severity ${i.severity}/10${i.notes ? ` · ${i.notes}` : ""}`,
+            "No symptoms reported."
+          );
+
+          renderTimeline(data.timeline);
+          renderMRI(data.mri_registry);
+          renderMRISeries(data.mri_series_index);
+
+          const h = data.lab_history || [];
+          const lbls = h.map(r => String(r.date).slice(0,10));
+          makeChart("wbcChart", "WBC", lbls, h.map(r => r.wbc));
+          makeChart("hemoglobinChart", "Hemoglobin", lbls, h.map(r => r.hemoglobin));
+          makeChart("plateletChart", "Platelets", lbls, h.map(r => r.platelets));
+
+          const summary = data.ai_summary || {};
+          document.getElementById("clinicalSummary").textContent =
+            Array.isArray(summary.clinical_summary) ? summary.clinical_summary.join("\n") : (summary.clinical_summary || "No summary available.");
+          document.getElementById("patientExplanation").textContent =
+            Array.isArray(summary.patient_explanation) ? summary.patient_explanation.join("\n") : (summary.patient_explanation || "No explanation available.");
+
+          renderDataList("changesSinceBaseline", summary.changes_since_baseline, i => i, "No changes recorded.");
+          renderDataList("reviewReasons", summary.review_reasons, i => i, "No review reasons listed.");
+        })
+        .catch(err => showToast(err.message, true));
+    }
+
+    /* ── ACTIONS ── */
     function addLabResult() {
-      const patientId = getSelectedPatientId();
+      const pid = getPatientId();
       const date = document.getElementById("labDate").value;
       const wbc = parseFloat(document.getElementById("labWbc").value);
       const hemoglobin = parseFloat(document.getElementById("labHemoglobin").value);
       const platelets = parseFloat(document.getElementById("labPlatelets").value);
-
-      if (!patientId || !date || isNaN(wbc) || isNaN(hemoglobin) || isNaN(platelets)) {
-        showToast("Fill in all lab fields first.", true);
-        return;
+      if (!pid || !date || isNaN(wbc) || isNaN(hemoglobin) || isNaN(platelets)) {
+        showToast("Fill in all lab fields.", true); return;
       }
-
-      fetch(`${API_BASE}/patients/${patientId}/labs`, {
+      fetch(`${API_BASE}/patients/${pid}/labs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date, wbc, hemoglobin, platelets })
       })
-      .then(res => {
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
-        return res.json();
-      })
+      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
       .then(() => {
-        ["labDate", "labWbc", "labHemoglobin", "labPlatelets"].forEach(id => document.getElementById(id).value = "");
-        showToast("Lab result added.");
-        loadPatient(patientId);
+        ["labDate","labWbc","labHemoglobin","labPlatelets"].forEach(id => document.getElementById(id).value = "");
+        showToast("Lab result saved.");
+        loadPatient(pid);
       })
       .catch(err => showToast(err.message, true));
     }
 
     function addSymptomReport() {
-      const patientId = getSelectedPatientId();
+      const pid = getPatientId();
       const date = document.getElementById("symptomDate").value;
       const symptom = document.getElementById("symptomName").value.trim();
       const severity = parseInt(document.getElementById("symptomSeverity").value, 10);
       const notes = document.getElementById("symptomNotes").value.trim();
-
-      if (!patientId || !date || !symptom || isNaN(severity)) {
-        showToast("Fill in symptom date, name, and severity.", true);
-        return;
+      if (!pid || !date || !symptom || isNaN(severity)) {
+        showToast("Fill in date, symptom, and severity.", true); return;
       }
-
-      fetch(`${API_BASE}/patients/${patientId}/symptoms`, {
+      fetch(`${API_BASE}/patients/${pid}/symptoms`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date, symptom, severity, notes })
       })
-      .then(res => {
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
-        return res.json();
-      })
+      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
       .then(() => {
-        ["symptomDate", "symptomName", "symptomSeverity", "symptomNotes"].forEach(id => document.getElementById(id).value = "");
-        showToast("Symptom report added.");
-        loadPatient(patientId);
+        ["symptomDate","symptomName","symptomSeverity","symptomNotes"].forEach(id => document.getElementById(id).value = "");
+        showToast("Symptom report saved.");
+        loadPatient(pid);
       })
       .catch(err => showToast(err.message, true));
     }
@@ -400,131 +1037,35 @@
       const import_type = document.getElementById("importType").value;
       const dataset = document.getElementById("importDataset").value;
       const csv_text = document.getElementById("importCsvText").value.trim();
-
-      if (!csv_text) {
-        showToast("Paste CSV text before importing.", true);
-        return;
-      }
-
+      if (!csv_text) { showToast("Paste CSV before importing.", true); return; }
       fetch(`${API_BASE}/import-csv`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ import_type, dataset, csv_text })
       })
-      .then(res => {
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
-        return res.json();
-      })
+      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
       .then(result => {
-        showToast(`Imported ${JSON.stringify(result.result)}`);
+        showToast(`Imported: ${JSON.stringify(result.result)}`);
         document.getElementById("importCsvText").value = "";
         return fetch(`${API_BASE}/patients`);
       })
-      .then(response => response.json())
+      .then(r => r.json())
       .then(patients => {
-        const select = document.getElementById("patientSelect");
-        select.innerHTML = patients.map(patient => `<option value="${patient.id}">${patient.name}</option>`).join("");
-        if (patients.length > 0) loadPatient(getSelectedPatientId() || patients[0].id);
+        const sel = document.getElementById("patientSelect");
+        sel.innerHTML = patients.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+        if (patients.length) loadPatient(getPatientId() || patients[0].id);
       })
       .catch(err => showToast(err.message, true));
     }
 
-    function createLineChart(canvasId, label, labels, values, chartRefName) {
-      const ctx = document.getElementById(canvasId);
-      if (window[chartRefName]) window[chartRefName].destroy();
-
-      window[chartRefName] = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [{ label, data: values, tension: 0.25, borderWidth: 2 }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: false } }
-        }
-      });
-    }
-
-    function loadPatient(patientId) {
-      fetch(`${API_BASE}/patient-report/${patientId}`)
-        .then(response => {
-          if (!response.ok) throw new Error(`Server error: ${response.status}`);
-          return response.json();
-        })
-        .then(data => {
-          const profile = data.breast_cancer_profile || {};
-          document.getElementById("breastProfile").innerHTML = `
-            <p><strong>Diagnosis:</strong> ${data.diagnosis || "Not specified"}</p>
-            <p><strong>Stage:</strong> ${profile.cancer_stage || "Not specified"}; <strong>Subtype:</strong> ${profile.molecular_subtype || "Not specified"}</p>
-            <p><strong>ER:</strong> ${profile.er_status || "unknown"}; <strong>PR:</strong> ${profile.pr_status || "unknown"}; <strong>HER2:</strong> ${profile.her2_status || "unknown"}</p>
-            <p><strong>Treatment context:</strong> ${profile.treatment_intent || "Not specified"}</p>
-          `;
-
-          const latestLabs = data.latest_labs || {};
-          document.getElementById("wbc").textContent = latestLabs.wbc ?? "-";
-          document.getElementById("hemoglobin").textContent = latestLabs.hemoglobin ?? "-";
-          document.getElementById("platelets").textContent = latestLabs.platelets ?? "-";
-          document.getElementById("labSourceStatus").innerHTML = `
-            <p><strong>Sources:</strong> ${(data.lab_sources || []).join(", ") || "none"}</p>
-            <p class="muted">${data.has_synthetic_labs ? "CBC values include synthetic demo data. Do not treat these as QIN-BREAST-02 real lab values." : "No synthetic CBC values detected."}</p>
-          `;
-
-          document.getElementById("risks").innerHTML = listItems(
-            data.risks.map(risk => `<span class="pill ${risk.severity}">${risk.severity}</span> ${risk.message}`)
-          );
-
-          document.getElementById("treatment").innerHTML = listItems(
-            data.treatment_effects.map(item =>
-              `Cycle ${item.cycle} (${item.drug}, ${item.cycle_date}): WBC nadir ${item.min_wbc_post_cycle}, hemoglobin nadir ${item.min_hemoglobin_post_cycle}, platelet nadir ${item.min_platelets_post_cycle}`
-            )
-          );
-
-          document.getElementById("symptoms").innerHTML = listItems(
-            data.symptoms.map(item => `${String(item.date).slice(0, 10)}: ${item.symptom} severity ${item.severity}/10${item.notes ? ` - ${item.notes}` : ""}`)
-          );
-          document.getElementById("clinicalTimeline").innerHTML = renderTimeline(data.timeline);
-
-          const radiology = data.radiology_summary;
-          if (radiology) {
-            document.getElementById("radiologySummary").innerHTML = `
-              <p><strong>Latest modality:</strong> ${radiology.latest_modality || "unknown"}; <strong>Side:</strong> ${radiology.latest_breast_side || "unknown"}</p>
-              <p><strong>Location:</strong> ${(radiology.latest_breast_locations || []).join(", ") || "unknown"}; <strong>BI-RADS:</strong> ${radiology.latest_bi_rads ?? "not reported"}</p>
-              <p><strong>Baseline:</strong> ${radiology.baseline_tumor_size_cm ?? "unknown"} cm on ${radiology.baseline_date}</p>
-              <p><strong>Latest:</strong> ${radiology.latest_tumor_size_cm ?? "unknown"} cm on ${radiology.latest_date}</p>
-              <p><strong>Size status:</strong> ${radiology.size_status}; <strong>response language:</strong> ${radiology.response_language_status}</p>
-              <p class="muted">${radiology.safety_note}</p>
-            `;
-            document.getElementById("metastaticIndicators").innerHTML = listItems(
-              radiology.possible_metastatic_indicators.map(item => `${item.date}: ${item.message}`),
-              "No metastatic indicator wording was flagged in the available breast imaging or staging reports."
-            );
-          }
-          document.getElementById("mriRegistry").innerHTML = renderMriRegistry(data.mri_registry);
-
-          const labHistory = data.lab_history || [];
-          const labels = labHistory.map(row => String(row.date).slice(0, 10));
-          createLineChart("wbcChart", "WBC", labels, labHistory.map(row => row.wbc), "wbcChartInstance");
-          createLineChart("hemoglobinChart", "Hemoglobin", labels, labHistory.map(row => row.hemoglobin), "hemoglobinChartInstance");
-          createLineChart("plateletChart", "Platelets", labels, labHistory.map(row => row.platelets), "plateletChartInstance");
-
-          const summary = data.ai_summary || {};
-          document.getElementById("clinicalSummary").textContent = renderSummaryField(summary.clinical_summary);
-          document.getElementById("patientExplanation").textContent = renderSummaryField(summary.patient_explanation);
-          document.getElementById("changesSinceBaseline").innerHTML = listItems(summary.changes_since_baseline);
-          document.getElementById("reviewReasons").innerHTML = listItems(summary.review_reasons);
-        })
-        .catch(err => showToast(err.message, true));
-    }
-
+    /* ── BOOT ── */
     fetch(`${API_BASE}/patients`)
-      .then(response => response.json())
+      .then(r => r.json())
       .then(patients => {
-        const select = document.getElementById("patientSelect");
-        select.innerHTML = patients.map(patient => `<option value="${patient.id}">${patient.name}</option>`).join("");
-        if (patients.length > 0) loadPatient(patients[0].id);
-        select.addEventListener("change", e => loadPatient(e.target.value));
+        const sel = document.getElementById("patientSelect");
+        sel.innerHTML = patients.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+        if (patients.length) loadPatient(patients[0].id);
+        sel.addEventListener("change", e => loadPatient(e.target.value));
       })
       .catch(err => showToast(err.message, true));
   </script>

@@ -7,6 +7,7 @@ from backend.processing.radiology_analysis import (
     detect_possible_metastatic_indicators,
     summarize_report,
 )
+from backend.services.mri_series_indexer import classify_mri_series_role
 
 
 class BreastMonitoringNLPTests(unittest.TestCase):
@@ -93,6 +94,12 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertIn("upper_inner", report["breast_locations"])
         self.assertIn("multifocal", report["disease_extent_terms"])
         self.assertEqual(report["bi_rads"], 6)
+
+    def test_mri_series_roles_are_classified(self):
+        self.assertEqual(classify_mri_series_role("DCE Dynamic Breast"), "dce")
+        self.assertEqual(classify_mri_series_role("DWI_EPI_b0200800"), "dwi")
+        self.assertEqual(classify_mri_series_role("THRIVE SENSE"), "t1w")
+        self.assertEqual(classify_mri_series_role("Bloch-Siegert_FA300"), "b1")
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ from backend.crud import (
     get_imaging_reports_df,
     get_labs_df,
     get_mri_registry,
+    get_mri_series_index,
     get_patient,
     get_symptoms_df,
     get_treatments_df,
@@ -25,6 +26,7 @@ from backend.models import (
     ImagingReport,
     LabResult,
     MRIFileRegistry,
+    MRISeriesIndex,
     Patient,
     SymptomReport,
     Treatment,
@@ -45,6 +47,7 @@ from backend.services.csv_importer import (
     import_qin_breast_02_clinical_xlsx,
 )
 from backend.services.synthetic_cbc import generate_synthetic_cbc_for_qin_patients
+from backend.services.mri_series_indexer import index_mri_series
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 ensure_schema()
@@ -135,6 +138,12 @@ class MRIRegistryCreate(BaseModel):
     local_path: str
     notes: str | None = None
 
+
+class MRISeriesIndexRequest(BaseModel):
+    root_path: str = "datasets/qin_breast_02"
+    patient_id: str | None = None
+    max_files: int | None = None
+
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/frontend/index.html")
@@ -199,6 +208,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     ct_reports = get_ct_reports_df(db, patient_id)
     symptoms = get_symptoms_df(db, patient_id)
     mri_registry = get_mri_registry(db, patient_id)
+    mri_series_index = get_mri_series_index(db, patient_id)
     breast_profile = get_breast_cancer_profile(db, patient_id)
 
     trends = {}
@@ -273,6 +283,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["diagnosis"] = patient.diagnosis
     report["breast_cancer_profile"] = _profile_to_dict(breast_profile)
     report["mri_registry"] = mri_registry
+    report["mri_series_index"] = mri_series_index
 
     return report
 
@@ -334,6 +345,24 @@ def generate_qin_synthetic_cbc(db: Session = Depends(get_db)):
         "message": "Synthetic QIN CBC generation completed",
         "result": generate_synthetic_cbc_for_qin_patients(db),
         "warning": "These CBC values are synthetic demo data and are not part of QIN-BREAST-02.",
+    }
+
+
+@app.post("/index-qin-mri")
+def index_qin_mri(payload: MRISeriesIndexRequest, db: Session = Depends(get_db)):
+    try:
+        result = index_mri_series(
+            db=db,
+            root_path=payload.root_path,
+            patient_id=payload.patient_id,
+            max_files=payload.max_files,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    return {
+        "message": "MRI DICOM series index completed",
+        "result": result,
     }
 
 

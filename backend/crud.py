@@ -6,6 +6,7 @@ from backend.models import (
     ImagingReport,
     LabResult,
     MRIFileRegistry,
+    MRISeriesIndex,
     Patient,
     SymptomReport,
     Treatment,
@@ -153,6 +154,30 @@ def get_mri_registry(db, patient_id):
             "series_description": row.series_description,
             "local_path": row.local_path,
             "notes": row.notes,
+        }
+        for row in rows
+    ]
+
+
+def get_mri_series_index(db, patient_id):
+    rows = (
+        db.query(MRISeriesIndex)
+        .filter(MRISeriesIndex.patient_id == patient_id)
+        .order_by(MRISeriesIndex.study_date, MRISeriesIndex.candidate_role, MRISeriesIndex.series_description)
+        .all()
+    )
+
+    return [
+        {
+            "id": row.id,
+            "patient_id": row.patient_id,
+            "study_date": str(row.study_date) if row.study_date else None,
+            "modality": row.modality,
+            "series_description": row.series_description,
+            "series_uid": row.series_uid,
+            "folder": row.folder,
+            "instance_count": row.instance_count,
+            "candidate_role": row.candidate_role,
         }
         for row in rows
     ]

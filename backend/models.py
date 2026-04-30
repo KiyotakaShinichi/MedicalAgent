@@ -98,6 +98,21 @@ class MRIFileRegistry(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class MRISeriesIndex(Base):
+    __tablename__ = "mri_series_index"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    study_date = Column(Date, nullable=True)
+    modality = Column(String, nullable=True)
+    series_description = Column(String, nullable=True)
+    series_uid = Column(String, nullable=False, unique=True, index=True)
+    folder = Column(Text, nullable=False)
+    instance_count = Column(Integer, nullable=False, default=0)
+    candidate_role = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class PatientReport(Base):
     __tablename__ = "patient_reports"
 
