@@ -1,20 +1,23 @@
 def build_patient_report(
+    patient_state,
     labs,
     trends,
     risks,
-    trend_risks,
     treatment_effects,
     radiology_summary,
+    symptoms,
     ai_summary,
 ):
     return {
-        "patient_id": "P001",
+        "patient_state": patient_state,
         "latest_labs": labs.iloc[-1].to_dict(),
         "baseline_labs": labs.iloc[0].to_dict(),
         "lab_history": labs.to_dict(orient="records"),
         "trends": trends,
-        "risks": risks + trend_risks,
+        "risks": risks,
         "treatment_effects": treatment_effects,
         "radiology_summary": radiology_summary,
-        "ai_summary": ai_summary
+        "symptoms": symptoms.to_dict(orient="records") if symptoms is not None and not symptoms.empty else [],
+        "ai_summary": ai_summary,
+        "safety_note": "Clinical decision-support only. Not for diagnosis, cancer detection, or replacing a licensed clinician.",
     }

@@ -1,6 +1,6 @@
 import pandas as pd
 
-from backend.models import Patient, LabResult, Treatment, CTReport
+from backend.models import CTReport, LabResult, Patient, SymptomReport, Treatment
 
 
 def get_all_patients(db):
@@ -45,6 +45,27 @@ def get_treatments_df(db, patient_id):
             "date": row.date,
             "cycle": row.cycle,
             "drug": row.drug,
+        }
+        for row in rows
+    ]
+
+    return pd.DataFrame(data)
+
+
+def get_symptoms_df(db, patient_id):
+    rows = (
+        db.query(SymptomReport)
+        .filter(SymptomReport.patient_id == patient_id)
+        .order_by(SymptomReport.date)
+        .all()
+    )
+
+    data = [
+        {
+            "date": row.date,
+            "symptom": row.symptom,
+            "severity": row.severity,
+            "notes": row.notes,
         }
         for row in rows
     ]

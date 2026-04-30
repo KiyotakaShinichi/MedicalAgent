@@ -24,6 +24,17 @@ class LabResult(Base):
     platelets = Column(Float, nullable=False)
 
 
+class SymptomReport(Base):
+    __tablename__ = "symptom_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    date = Column(Date, nullable=False)
+    symptom = Column(String, nullable=False)
+    severity = Column(Integer, nullable=False)
+    notes = Column(Text, nullable=True)
+
+
 class Treatment(Base):
     __tablename__ = "treatments"
 

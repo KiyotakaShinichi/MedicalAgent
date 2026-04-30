@@ -1,5 +1,163 @@
 {
-    "patient_id": "P001",
+    "patient_state": {
+        "patient": {
+            "id": "P001",
+            "name": "Patient P001",
+            "diagnosis": "Lung cancer - doctor-confirmed"
+        },
+        "latest_labs": {
+            "date": "2026-01-22 00:00:00",
+            "wbc": 3.8,
+            "hemoglobin": 12.0,
+            "platelets": 180
+        },
+        "baseline_labs": {
+            "date": "2026-01-01 00:00:00",
+            "wbc": 6.5,
+            "hemoglobin": 13.2,
+            "platelets": 250
+        },
+        "lab_trends": {
+            "wbc": "decreasing",
+            "hemoglobin": "decreasing",
+            "platelets": "decreasing"
+        },
+        "treatment_effects": [
+            {
+                "cycle": 1,
+                "drug": "Cisplatin",
+                "cycle_date": "2026-01-01 00:00:00",
+                "monitoring_window_days": 14,
+                "min_wbc_post_cycle": 2.1,
+                "min_hemoglobin_post_cycle": 11.8,
+                "min_platelets_post_cycle": 150.0,
+                "lab_dates_in_window": [
+                    "2026-01-01 00:00:00",
+                    "2026-01-08 00:00:00",
+                    "2026-01-15 00:00:00"
+                ]
+            },
+            {
+                "cycle": 2,
+                "drug": "Cisplatin",
+                "cycle_date": "2026-01-15 00:00:00",
+                "monitoring_window_days": 14,
+                "min_wbc_post_cycle": 2.1,
+                "min_hemoglobin_post_cycle": 11.8,
+                "min_platelets_post_cycle": 150.0,
+                "lab_dates_in_window": [
+                    "2026-01-15 00:00:00",
+                    "2026-01-22 00:00:00"
+                ]
+            }
+        ],
+        "radiology": {
+            "baseline_date": "2026-01-01 00:00:00",
+            "latest_date": "2026-02-01 00:00:00",
+            "baseline_tumor_size_cm": 4.2,
+            "latest_tumor_size_cm": 3.5,
+            "change_cm": -0.7,
+            "percent_change": -16.7,
+            "size_status": "decreased",
+            "response_language_status": "improved",
+            "lymph_node_summary": {
+                "mentioned": true,
+                "improved": false,
+                "worsened": false
+            },
+            "possible_metastatic_indicators": [],
+            "reports": [
+                {
+                    "date": "2026-01-01 00:00:00",
+                    "report_type": "Baseline CT",
+                    "tumor_sizes_cm": [
+                        4.2
+                    ],
+                    "largest_tumor_size_cm": 4.2,
+                    "response_language": {
+                        "status": "unknown",
+                        "matched_phrases": []
+                    },
+                    "lymph_nodes": {
+                        "mentioned": true,
+                        "improved": false,
+                        "worsened": false
+                    },
+                    "possible_metastatic_indicators": [],
+                    "impression": "Known lung malignancy. Baseline scan."
+                },
+                {
+                    "date": "2026-02-01 00:00:00",
+                    "report_type": "Follow-up CT",
+                    "tumor_sizes_cm": [
+                        3.5
+                    ],
+                    "largest_tumor_size_cm": 3.5,
+                    "response_language": {
+                        "status": "improved",
+                        "matched_phrases": [
+                            {
+                                "status": "improved",
+                                "phrase": "decrease"
+                            },
+                            {
+                                "status": "improved",
+                                "phrase": "decreased"
+                            }
+                        ]
+                    },
+                    "lymph_nodes": {
+                        "mentioned": true,
+                        "improved": false,
+                        "worsened": false
+                    },
+                    "possible_metastatic_indicators": [],
+                    "impression": "Interval decrease in tumor size compared with baseline."
+                }
+            ],
+            "latest_impression": "Interval decrease in tumor size compared with baseline.",
+            "safety_note": "Radiology NLP flags text patterns only. It does not diagnose metastasis or treatment response."
+        },
+        "symptoms": [],
+        "risk_flags": [
+            {
+                "type": "low_wbc",
+                "category": "lab",
+                "severity": "urgent_review",
+                "message": "WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.",
+                "evidence": {
+                    "metric": "wbc",
+                    "date": "2026-01-15 00:00:00",
+                    "value": 2.1,
+                    "unit": "x10^3/uL",
+                    "watch_threshold": 4.0,
+                    "urgent_review_threshold": 3.0
+                }
+            },
+            {
+                "type": "major_wbc_drop",
+                "category": "lab_trend",
+                "severity": "urgent_review",
+                "message": "WBC dropped by 67.7% from baseline. This should be reviewed with the treatment timeline.",
+                "evidence": {
+                    "metric": "wbc",
+                    "baseline_value": 6.5,
+                    "lowest_value": 2.1,
+                    "percent_drop": 67.7,
+                    "unit": "x10^3/uL"
+                }
+            }
+        ],
+        "safety_positioning": {
+            "role": "clinical decision-support and longitudinal monitoring assistant",
+            "not_for": [
+                "diagnosis",
+                "cancer detection",
+                "replacing clinician judgment"
+            ],
+            "requires_clinician_review": true
+        }
+    },
     "latest_labs": {
         "date": "2026-01-22 00:00:00",
         "wbc": 3.8,
@@ -46,25 +204,59 @@
     "risks": [
         {
             "type": "low_wbc",
-            "severity": "warning",
-            "message": "WBC dropped to 2.1, possible neutropenia risk. Medical review recommended."
+            "category": "lab",
+            "severity": "urgent_review",
+            "message": "WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.",
+            "evidence": {
+                "metric": "wbc",
+                "date": "2026-01-15 00:00:00",
+                "value": 2.1,
+                "unit": "x10^3/uL",
+                "watch_threshold": 4.0,
+                "urgent_review_threshold": 3.0
+            }
         },
         {
             "type": "major_wbc_drop",
-            "severity": "warning",
-            "message": "WBC dropped by 67.7% from baseline."
+            "category": "lab_trend",
+            "severity": "urgent_review",
+            "message": "WBC dropped by 67.7% from baseline. This should be reviewed with the treatment timeline.",
+            "evidence": {
+                "metric": "wbc",
+                "baseline_value": 6.5,
+                "lowest_value": 2.1,
+                "percent_drop": 67.7,
+                "unit": "x10^3/uL"
+            }
         }
     ],
     "treatment_effects": [
         {
             "cycle": 1,
             "drug": "Cisplatin",
-            "min_wbc_post_cycle": 2.1
+            "cycle_date": "2026-01-01 00:00:00",
+            "monitoring_window_days": 14,
+            "min_wbc_post_cycle": 2.1,
+            "min_hemoglobin_post_cycle": 11.8,
+            "min_platelets_post_cycle": 150.0,
+            "lab_dates_in_window": [
+                "2026-01-01 00:00:00",
+                "2026-01-08 00:00:00",
+                "2026-01-15 00:00:00"
+            ]
         },
         {
             "cycle": 2,
             "drug": "Cisplatin",
-            "min_wbc_post_cycle": 2.1
+            "cycle_date": "2026-01-15 00:00:00",
+            "monitoring_window_days": 14,
+            "min_wbc_post_cycle": 2.1,
+            "min_hemoglobin_post_cycle": 11.8,
+            "min_platelets_post_cycle": 150.0,
+            "lab_dates_in_window": [
+                "2026-01-15 00:00:00",
+                "2026-01-22 00:00:00"
+            ]
         }
     ],
     "radiology_summary": {
@@ -72,10 +264,84 @@
         "latest_date": "2026-02-01 00:00:00",
         "baseline_tumor_size_cm": 4.2,
         "latest_tumor_size_cm": 3.5,
-        "change_cm": -0.7000000000000002,
+        "change_cm": -0.7,
         "percent_change": -16.7,
-        "status": "decreased",
-        "latest_impression": "Interval decrease in tumor size compared with baseline."
+        "size_status": "decreased",
+        "response_language_status": "improved",
+        "lymph_node_summary": {
+            "mentioned": true,
+            "improved": false,
+            "worsened": false
+        },
+        "possible_metastatic_indicators": [],
+        "reports": [
+            {
+                "date": "2026-01-01 00:00:00",
+                "report_type": "Baseline CT",
+                "tumor_sizes_cm": [
+                    4.2
+                ],
+                "largest_tumor_size_cm": 4.2,
+                "response_language": {
+                    "status": "unknown",
+                    "matched_phrases": []
+                },
+                "lymph_nodes": {
+                    "mentioned": true,
+                    "improved": false,
+                    "worsened": false
+                },
+                "possible_metastatic_indicators": [],
+                "impression": "Known lung malignancy. Baseline scan."
+            },
+            {
+                "date": "2026-02-01 00:00:00",
+                "report_type": "Follow-up CT",
+                "tumor_sizes_cm": [
+                    3.5
+                ],
+                "largest_tumor_size_cm": 3.5,
+                "response_language": {
+                    "status": "improved",
+                    "matched_phrases": [
+                        {
+                            "status": "improved",
+                            "phrase": "decrease"
+                        },
+                        {
+                            "status": "improved",
+                            "phrase": "decreased"
+                        }
+                    ]
+                },
+                "lymph_nodes": {
+                    "mentioned": true,
+                    "improved": false,
+                    "worsened": false
+                },
+                "possible_metastatic_indicators": [],
+                "impression": "Interval decrease in tumor size compared with baseline."
+            }
+        ],
+        "latest_impression": "Interval decrease in tumor size compared with baseline.",
+        "safety_note": "Radiology NLP flags text patterns only. It does not diagnose metastasis or treatment response."
     },
-    "ai_summary": "**1. Clinical Summary (Doctor\u2011Level)**  \n\n- **Hematologic trend:** Serial complete blood counts show a progressive decline in all three major lineages: white\u2011blood cells (WBC), hemoglobin, and platelets. The downward trajectory is consistent across cycles.  \n- **WBC specifics:** The absolute WBC count fell to 2.1\u202f\u00d710\u2079/L, representing a 67.7\u202f% reduction from the pretreatment baseline. This magnitude of drop meets the threshold for a **major WBC decline** alert and triggers a **low\u2011WBC (neutropenia) warning**.  \n- **Chemotherapy correlation:** Both documented cycles involved cisplatin, a platinum\u2011based agent known to cause myelosuppression. The nadir WBC values are identical (2.1\u202f\u00d710\u2079/L) after cycles\u202f1 and\u202f2, suggesting a reproducible cytopenic effect of the regimen.  \n- **Other cytopenias:** Parallel decreases in hemoglobin and platelets, although exact values are not provided, indicate a broader marrow suppression pattern rather than an isolated neutrophil effect.  \n- **Risk implication:** The current WBC nadir places the patient in the range where infection risk is heightened (grade\u202f2\u20133 neutropenia per CTCAE). The concurrent anemia and thrombocytopenia may contribute to fatigue and bleeding risk, respectively.  \n- **Recommended monitoring (non\u2011prescriptive):** Ongoing CBCs with attention to the timing of nadir (typically 7\u201114\u202fdays post\u2011cisplatin) and clinical assessment for signs of infection, bleeding, or symptomatic anemia are warranted.\n\n---\n\n**2. Simple Explanation (Patient\u2011Level)**  \n\nYour recent blood tests show that three important numbers\u2014white blood cells, red blood cells (hemoglobin), and platelets\u2014have been slowly going down.  \n\n- **White blood cells** help fight infections. After each round of the chemotherapy drug cisplatin, the lowest count you reached was 2.1, which is lower than normal and can make you a bit more prone to getting sick.  \n- **Hemoglobin** carries oxygen, and a drop can make you feel more tired.  \n- **Platelets** help your blood clot, and a lower count can increase the chance of bruising or bleeding.  \n\nThese changes are a known side effect of the chemotherapy you\u2019re receiving and have happened in the same way after both the first and second treatment cycles.  \n\n**What to watch for:**  \n- Fever, chills, or any new cough \u2013 tell your care team right away.  \n- Unusual bruising, bleeding gums, or blood in urine or stool.  \n- Feeling unusually weak or short of breath.  \n\nYour doctors will keep checking these numbers regularly and will let you know if anything needs extra attention. The goal is to stay safe while you continue treatment. If you have any questions or notice any of the signs above, reach out to your healthcare team promptly."
+    "symptoms": [],
+    "ai_summary": {
+        "clinical_summary": "Automated LLM summary unavailable: GROQ_API_KEY environment variable is not set",
+        "patient_explanation": "The system can still show trends and safety flags, but the AI text summary is unavailable right now.",
+        "changes_since_baseline": [
+            "CT report NLP shows tumor size status: decreased (-16.7% change when measurable)."
+        ],
+        "review_reasons": [
+            "WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.",
+            "WBC dropped by 67.7% from baseline. This should be reviewed with the treatment timeline."
+        ],
+        "limitations": [
+            "This system does not diagnose.",
+            "Radiology findings are extracted from report text and require clinician interpretation.",
+            "Risk flags are decision-support signals, not medical orders."
+        ]
+    },
+    "safety_note": "Clinical decision-support only. Not for diagnosis, cancer detection, or replacing a licensed clinician."
 }

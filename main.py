@@ -7,6 +7,7 @@ from backend.processing.risk_engine import detect_risks, detect_trend_risk
 from backend.processing.treatment_analysis import align_labs_with_treatment
 from backend.processing.radiology_analysis import analyze_radiology_reports
 from backend.processing.clinical_summary import generate_clinical_summary
+from backend.processing.patient_state import build_patient_state
 from backend.reports.patient_report import build_patient_report
 
 # --- 1. Load Data ---
@@ -43,7 +44,21 @@ print(radiology_summary)
 
 # --- 3. AI Clinical Summary ---
 all_risks = risks + trend_risks
-summary = generate_clinical_summary(trends, all_risks, treatment_effects)
+class DemoPatient:
+    id = "P001"
+    name = "Patient P001"
+    diagnosis = "Lung cancer - doctor-confirmed"
+
+
+patient_state = build_patient_state(
+    patient=DemoPatient(),
+    labs=labs,
+    trends=trends,
+    risks=all_risks,
+    treatment_effects=treatment_effects,
+    radiology_summary=radiology_summary,
+)
+summary = generate_clinical_summary(patient_state)
 
 print("\n" + "=" * 60)
 print("AI CLINICAL SUMMARY")
@@ -52,12 +67,13 @@ print(summary)
 
 # --- 4. Generate & Save Patient Report ---
 report = build_patient_report(
+    patient_state=patient_state,
     labs=labs,
     trends=trends,
-    risks=risks,
-    trend_risks=trend_risks,
+    risks=all_risks,
     treatment_effects=treatment_effects,
     radiology_summary=radiology_summary,
+    symptoms=None,
     ai_summary=summary
 )
 

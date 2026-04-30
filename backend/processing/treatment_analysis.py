@@ -13,12 +13,19 @@ def align_labs_with_treatment(labs_df, treatment_df):
         ]
 
         if not window.empty:
-            min_wbc = window["wbc"].min()
+            min_wbc = float(window["wbc"].min())
+            min_hgb = float(window["hemoglobin"].min())
+            min_platelets = float(window["platelets"].min())
 
             results.append({
                 "cycle": treatment_row["cycle"],
                 "drug": treatment_row["drug"],
-                "min_wbc_post_cycle": min_wbc
+                "cycle_date": str(treatment_row["date"]),
+                "monitoring_window_days": 14,
+                "min_wbc_post_cycle": min_wbc,
+                "min_hemoglobin_post_cycle": min_hgb,
+                "min_platelets_post_cycle": min_platelets,
+                "lab_dates_in_window": [str(value) for value in window["date"].tolist()],
             })
 
     return results
