@@ -95,6 +95,18 @@
     .urgent_review { background: #fef3f2; color: var(--urgent); }
     .watch { background: #fffaeb; color: var(--warn); }
     .info { background: #ecfdf3; color: var(--ok); }
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 120px 120px 1fr;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+    .timeline-item:first-child { border-top: none; }
     .toast {
       position: fixed;
       bottom: 24px;
@@ -115,6 +127,7 @@
     @media (max-width: 900px) {
       body { padding: 14px; }
       .grid, .two, .form-row { grid-template-columns: 1fr; }
+      .timeline-item { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -155,6 +168,28 @@
       <input id="symptomSeverity" type="number" min="0" max="10" step="1" placeholder="Severity 0-10">
       <textarea id="symptomNotes" placeholder="Notes"></textarea>
       <button class="btn-primary" onclick="addSymptomReport()">Add Symptom</button>
+    </div>
+  </div>
+
+  <div class="card section">
+    <h2>Import CSV</h2>
+    <div class="form-row">
+      <select id="importType">
+        <option value="patients">patients</option>
+        <option value="breast_profiles">breast_profiles</option>
+        <option value="labs">labs</option>
+        <option value="treatments">treatments</option>
+        <option value="imaging_reports">imaging_reports</option>
+        <option value="symptoms">symptoms</option>
+      </select>
+      <select id="importDataset">
+        <option value="canonical">canonical</option>
+        <option value="duke_breast_mri">duke_breast_mri</option>
+        <option value="ispy2">ispy2</option>
+        <option value="mimic_labs">mimic_labs</option>
+      </select>
+      <textarea id="importCsvText" placeholder="Paste CSV text here"></textarea>
+      <button class="btn-primary" onclick="importCsv()">Import</button>
     </div>
   </div>
 
@@ -215,6 +250,11 @@
     </div>
   </div>
 
+  <div class="card section">
+    <h2>Clinical Timeline</h2>
+    <div id="clinicalTimeline" class="timeline"></div>
+  </div>
+
   <div class="grid two section">
     <div class="card">
       <h2>Clinical Summary</h2>
@@ -262,6 +302,20 @@
     function renderSummaryField(value) {
       if (Array.isArray(value)) return value.join("\n");
       return value || "No summary available.";
+    }
+
+    function renderTimeline(events) {
+      if (!events || events.length === 0) {
+        return `<div class="muted">No timeline events available.</div>`;
+      }
+
+      return events.map(event => `
+        <div class="timeline-item">
+          <div><strong>${String(event.date).slice(0, 10)}</strong></div>
+          <div><span class="pill ${event.severity || "info"}">${event.type}</span></div>
+          <div><strong>${event.title}</strong><br><span class="muted">${event.summary || ""}</span></div>
+        </div>
+      `).join("");
     }
 
     function addLabResult() {
@@ -322,6 +376,39 @@
       .catch(err => showToast(err.message, true));
     }
 
+    function importCsv() {
+      const import_type = document.getElementById("importType").value;
+      const dataset = document.getElementById("importDataset").value;
+      const csv_text = document.getElementById("importCsvText").value.trim();
+
+      if (!csv_text) {
+        showToast("Paste CSV text before importing.", true);
+        return;
+      }
+
+      fetch(`${API_BASE}/import-csv`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ import_type, dataset, csv_text })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        return res.json();
+      })
+      .then(result => {
+        showToast(`Imported ${JSON.stringify(result.result)}`);
+        document.getElementById("importCsvText").value = "";
+        return fetch(`${API_BASE}/patients`);
+      })
+      .then(response => response.json())
+      .then(patients => {
+        const select = document.getElementById("patientSelect");
+        select.innerHTML = patients.map(patient => `<option value="${patient.id}">${patient.name}</option>`).join("");
+        if (patients.length > 0) loadPatient(getSelectedPatientId() || patients[0].id);
+      })
+      .catch(err => showToast(err.message, true));
+    }
+
     function createLineChart(canvasId, label, labels, values, chartRefName) {
       const ctx = document.getElementById(canvasId);
       if (window[chartRefName]) window[chartRefName].destroy();
@@ -355,9 +442,10 @@
             <p><strong>Treatment context:</strong> ${profile.treatment_intent || "Not specified"}</p>
           `;
 
-          document.getElementById("wbc").textContent = data.latest_labs.wbc;
-          document.getElementById("hemoglobin").textContent = data.latest_labs.hemoglobin;
-          document.getElementById("platelets").textContent = data.latest_labs.platelets;
+          const latestLabs = data.latest_labs || {};
+          document.getElementById("wbc").textContent = latestLabs.wbc ?? "-";
+          document.getElementById("hemoglobin").textContent = latestLabs.hemoglobin ?? "-";
+          document.getElementById("platelets").textContent = latestLabs.platelets ?? "-";
 
           document.getElementById("risks").innerHTML = listItems(
             data.risks.map(risk => `<span class="pill ${risk.severity}">${risk.severity}</span> ${risk.message}`)
@@ -372,6 +460,7 @@
           document.getElementById("symptoms").innerHTML = listItems(
             data.symptoms.map(item => `${String(item.date).slice(0, 10)}: ${item.symptom} severity ${item.severity}/10${item.notes ? ` - ${item.notes}` : ""}`)
           );
+          document.getElementById("clinicalTimeline").innerHTML = renderTimeline(data.timeline);
 
           const radiology = data.radiology_summary;
           if (radiology) {
@@ -389,10 +478,11 @@
             );
           }
 
-          const labels = data.lab_history.map(row => String(row.date).slice(0, 10));
-          createLineChart("wbcChart", "WBC", labels, data.lab_history.map(row => row.wbc), "wbcChartInstance");
-          createLineChart("hemoglobinChart", "Hemoglobin", labels, data.lab_history.map(row => row.hemoglobin), "hemoglobinChartInstance");
-          createLineChart("plateletChart", "Platelets", labels, data.lab_history.map(row => row.platelets), "plateletChartInstance");
+          const labHistory = data.lab_history || [];
+          const labels = labHistory.map(row => String(row.date).slice(0, 10));
+          createLineChart("wbcChart", "WBC", labels, labHistory.map(row => row.wbc), "wbcChartInstance");
+          createLineChart("hemoglobinChart", "Hemoglobin", labels, labHistory.map(row => row.hemoglobin), "hemoglobinChartInstance");
+          createLineChart("plateletChart", "Platelets", labels, labHistory.map(row => row.platelets), "plateletChartInstance");
 
           const summary = data.ai_summary || {};
           document.getElementById("clinicalSummary").textContent = renderSummaryField(summary.clinical_summary);

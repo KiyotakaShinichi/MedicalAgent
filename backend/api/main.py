@@ -30,10 +30,12 @@ from backend.models import (
 from backend.processing.radiology_analysis import analyze_breast_imaging_reports, analyze_radiology_reports
 from backend.processing.patient_state import build_patient_state
 from backend.processing.risk_engine import detect_risks, detect_symptom_risks, detect_trend_risk
+from backend.processing.timeline import build_clinical_timeline
 from backend.processing.treatment_analysis import align_labs_with_treatment
 from backend.processing.trend_analysis import analyze_labs
 from backend.processing.clinical_summary import generate_clinical_summary
 from backend.reports.patient_report import build_patient_report
+from backend.services.csv_importer import DATASET_ADAPTERS, SUPPORTED_IMPORT_TYPES, import_csv
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 Base.metadata.create_all(bind=engine)
@@ -103,6 +105,13 @@ class ImagingReportCreate(BaseModel):
     findings: str
     impression: str
 
+
+class CSVImportRequest(BaseModel):
+    import_type: str
+    dataset: str = "canonical"
+    csv_text: str | None = None
+    file_path: str | None = None
+
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/frontend/index.html")
@@ -168,12 +177,13 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     symptoms = get_symptoms_df(db, patient_id)
     breast_profile = get_breast_cancer_profile(db, patient_id)
 
-    if labs.empty:
-        raise HTTPException(status_code=400, detail="No lab data found for patient")
-
-    trends = analyze_labs(labs)
-    risks = detect_risks(labs)
-    trend_risks = detect_trend_risk(labs)
+    trends = {}
+    risks = []
+    trend_risks = []
+    if not labs.empty:
+        trends = analyze_labs(labs)
+        risks = detect_risks(labs)
+        trend_risks = detect_trend_risk(labs)
     symptom_risks = detect_symptom_risks(symptoms)
 
     treatment_effects = []
@@ -203,6 +213,13 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
         ]
 
     all_risks = risks + trend_risks + symptom_risks + radiology_risks
+    timeline = build_clinical_timeline(
+        labs=labs,
+        treatments=treatments,
+        imaging_reports=imaging_reports,
+        symptoms=symptoms,
+        risks=all_risks,
+    )
     patient_state = build_patient_state(
         patient=patient,
         breast_profile=breast_profile,
@@ -223,6 +240,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
         treatment_effects=treatment_effects,
         radiology_summary=radiology_summary,
         symptoms=symptoms,
+        timeline=timeline,
         ai_summary=summary,
     )
 
@@ -232,6 +250,39 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["breast_cancer_profile"] = _profile_to_dict(breast_profile)
 
     return report
+
+
+@app.get("/import-schema")
+def get_import_schema():
+    return {
+        "supported_import_types": sorted(SUPPORTED_IMPORT_TYPES),
+        "supported_datasets": sorted(DATASET_ADAPTERS.keys()),
+        "data_dictionary": "Data/breast_monitoring_data_dictionary.md",
+    }
+
+
+@app.post("/import-csv")
+def import_csv_payload(payload: CSVImportRequest, db: Session = Depends(get_db)):
+    if not payload.csv_text and not payload.file_path:
+        raise HTTPException(status_code=400, detail="Provide csv_text or file_path")
+
+    try:
+        result = import_csv(
+            db=db,
+            import_type=payload.import_type,
+            csv_text=payload.csv_text,
+            file_path=payload.file_path,
+            dataset=payload.dataset,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "CSV import completed",
+        "import_type": payload.import_type,
+        "dataset": payload.dataset,
+        "result": result,
+    }
 
 
 @app.post("/patients/{patient_id}/labs")

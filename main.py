@@ -8,6 +8,7 @@ from backend.processing.treatment_analysis import align_labs_with_treatment
 from backend.processing.radiology_analysis import analyze_radiology_reports
 from backend.processing.clinical_summary import generate_clinical_summary
 from backend.processing.patient_state import build_patient_state
+from backend.processing.timeline import build_clinical_timeline
 from backend.reports.patient_report import build_patient_report
 
 # --- 1. Load Data ---
@@ -60,6 +61,13 @@ patient_state = build_patient_state(
     radiology_summary=radiology_summary,
 )
 summary = generate_clinical_summary(patient_state)
+timeline = build_clinical_timeline(
+    labs=labs,
+    treatments=treatment,
+    imaging_reports=ct_reports,
+    symptoms=None,
+    risks=all_risks,
+)
 
 print("\n" + "=" * 60)
 print("AI CLINICAL SUMMARY")
@@ -75,6 +83,7 @@ report = build_patient_report(
     treatment_effects=treatment_effects,
     radiology_summary=radiology_summary,
     symptoms=None,
+    timeline=timeline,
     ai_summary=summary
 )
 

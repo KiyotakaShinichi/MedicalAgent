@@ -19,6 +19,14 @@ BREAST_LOCATION_PATTERNS = {
     "axilla": r"axilla|axillary",
 }
 
+DISEASE_EXTENT_PATTERNS = {
+    "multifocal": r"\bmultifocal\b",
+    "multicentric": r"\bmulticentric\b",
+    "contralateral": r"\bcontralateral\b|opposite breast",
+    "skin_involvement": r"skin thickening|skin involvement|dermal involvement",
+    "chest_wall_involvement": r"chest wall|pectoralis invasion|pectoralis involvement",
+}
+
 RESPONSE_PATTERNS = {
     "improved": [
         "decrease",
@@ -27,6 +35,9 @@ RESPONSE_PATTERNS = {
         "reduced enhancement",
         "partial response",
         "near complete response",
+        "complete imaging response",
+        "complete radiologic response",
+        "resolution of enhancement",
         "response to treatment",
     ],
     "worsened": [
@@ -84,6 +95,15 @@ def extract_breast_locations(text):
     return [
         location
         for location, pattern in BREAST_LOCATION_PATTERNS.items()
+        if re.search(pattern, normalized)
+    ]
+
+
+def extract_disease_extent_terms(text):
+    normalized = (text or "").lower()
+    return [
+        term
+        for term, pattern in DISEASE_EXTENT_PATTERNS.items()
         if re.search(pattern, normalized)
     ]
 
@@ -162,6 +182,7 @@ def summarize_report(row):
         "body_site": row.get("body_site"),
         "breast_side": extract_breast_side(text),
         "breast_locations": extract_breast_locations(text),
+        "disease_extent_terms": extract_disease_extent_terms(text),
         "bi_rads": extract_bi_rads(text),
         "tumor_sizes_cm": extract_tumor_sizes(text),
         "largest_tumor_size_cm": extract_largest_tumor_size(text),
@@ -222,6 +243,7 @@ def analyze_breast_imaging_reports(imaging_df):
         "latest_report_modality": latest_report["modality"],
         "latest_breast_side": latest["breast_side"],
         "latest_breast_locations": latest["breast_locations"],
+        "latest_disease_extent_terms": latest["disease_extent_terms"],
         "latest_bi_rads": latest["bi_rads"],
         "lymph_node_summary": latest["lymph_nodes"],
         "possible_metastatic_indicators": indicators,
