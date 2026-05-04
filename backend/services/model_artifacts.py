@@ -1,4 +1,5 @@
 import json
+import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,6 +21,9 @@ DEFAULT_FEATURES_CSV_PATH = "Data/breastdcedl_spy1_features.csv"
 DEFAULT_METRICS_PATH = "Data/breastdcedl_spy1_baseline_metrics.json"
 DEFAULT_SHAP_PATH = "Data/breastdcedl_spy1_shap_explanations.json"
 DEFAULT_ARTIFACT_DIR = "Data/models"
+DEFAULT_COMPLETE_SYNTHETIC_METRICS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
+DEFAULT_COMPLETE_SYNTHETIC_TRAINING_DATA_PATH = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
+DEFAULT_COMPLETE_SYNTHETIC_ARTIFACT_DIR = "Data/complete_synthetic_training"
 
 
 def train_and_register_breastdcedl_model(
@@ -53,6 +57,14 @@ def train_and_register_breastdcedl_model(
         "feature_columns": FEATURE_COLUMNS,
         "categorical_feature_columns": CATEGORICAL_FEATURE_COLUMNS,
         "metrics": metrics,
+        "training_dataset_hash": _file_sha256(features_csv_path),
+        "metrics_hash": _file_sha256(metrics_path),
+        "promotion_status": "candidate",
+        "promotion_reason": (
+            "Registered as a candidate PoC artifact. Promote only after evaluation report review, "
+            "calibration checks, and clinician-loop acceptance review."
+        ),
+        "registry_schema_version": "model_registry_metadata_v2",
         "warning": "Exploratory PoC model only. Not clinically validated.",
     }
     bundle = {
@@ -161,6 +173,61 @@ def list_registered_models(db):
         .all()
     )
     return [_registry_row_to_dict(row) for row in rows]
+
+
+def register_complete_synthetic_champion(
+    db,
+    version: str = "synthetic-v1",
+    metrics_path: str = DEFAULT_COMPLETE_SYNTHETIC_METRICS_PATH,
+    training_data_path: str = DEFAULT_COMPLETE_SYNTHETIC_TRAINING_DATA_PATH,
+    artifact_dir: str = DEFAULT_COMPLETE_SYNTHETIC_ARTIFACT_DIR,
+    promotion_status: str = "candidate",
+    promotion_reason: str | None = None,
+):
+    metrics = _load_json_if_exists(metrics_path)
+    if not metrics:
+        raise FileNotFoundError(f"Complete synthetic metrics file not found: {metrics_path}")
+
+    model_name = metrics.get("best_model_by_patient_level_roc_auc")
+    if not model_name:
+        raise ValueError("Metrics file does not contain best_model_by_patient_level_roc_auc")
+    target = metrics.get("task") or "treatment_success_binary"
+    artifact_path = _complete_synthetic_artifact_path(artifact_dir, model_name, target)
+    if not artifact_path.exists():
+        raise FileNotFoundError(f"Champion artifact not found: {artifact_path}")
+
+    metadata = {
+        "model_name": model_name,
+        "model_version": version,
+        "task": f"Complete synthetic longitudinal breast cancer {target}",
+        "target": target,
+        "model_family": (metrics.get("models") or {}).get(model_name, {}).get("model_type"),
+        "registered_at": datetime.now(timezone.utc).isoformat(),
+        "source": "complete_synthetic_longitudinal_breast_cancer_journeys",
+        "metrics": (metrics.get("models") or {}).get(model_name, {}),
+        "training_rows": metrics.get("train_rows"),
+        "test_rows": metrics.get("test_rows"),
+        "patients": metrics.get("patients"),
+        "training_dataset_hash": _file_sha256(training_data_path),
+        "metrics_hash": _file_sha256(metrics_path),
+        "artifact_hash": _file_sha256(artifact_path),
+        "promotion_status": promotion_status,
+        "promotion_reason": promotion_reason or "Registered as synthetic champion for engineering evaluation only.",
+        "registry_schema_version": "model_registry_metadata_v2",
+        "warning": "Synthetic-data champion only. This does not prove real clinical performance.",
+    }
+
+    row = _upsert_model_registry(
+        db=db,
+        model_name=f"complete_synthetic_{model_name}",
+        version=version,
+        task=metadata["task"],
+        artifact_path=str(artifact_path),
+        metrics_path=metrics_path,
+        training_data_path=training_data_path,
+        metadata=metadata,
+    )
+    return _registry_row_to_dict(row)
 
 
 def get_prediction_audit_logs(db, patient_id: str | None = None, limit: int = 50):
@@ -289,6 +356,22 @@ def _safe_int(value):
     if pd.isna(value):
         return None
     return int(value)
+
+
+def _file_sha256(path):
+    file_path = Path(path)
+    if not file_path.exists():
+        return None
+    digest = hashlib.sha256()
+    with file_path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _complete_synthetic_artifact_path(artifact_dir, model_name, target):
+    extension = ".pt" if model_name in {"temporal_1d_cnn", "temporal_gru"} else ".joblib"
+    return Path(artifact_dir) / f"{model_name}_{target}{extension}"
 
 
 def _interpret_pcr_probability(probability):

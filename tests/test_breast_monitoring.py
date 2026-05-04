@@ -19,10 +19,13 @@ from backend.processing.radiology_analysis import (
 from backend.services.mri_series_indexer import classify_mri_series_role
 from backend.services.mri_manifest import select_model_input_series
 from backend.services.mri_preprocessing import normalize_pixels
-from backend.services.auth import create_demo_session, get_context_from_authorization
+from backend.services.auth import create_demo_session, get_context_from_authorization, require_admin_context, require_patient_context
 from backend.services.clinician_feedback import create_clinical_summary_review
 from backend.services import admin_analytics
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
+from backend.services.evaluation_reports import generate_versioned_evaluation_report
+from backend.services.model_artifacts import register_complete_synthetic_champion
+from backend.services.mri_derived_features import build_mri_derived_feature_summary
 from backend.services.patient_uploads import save_patient_upload
 from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys, infer_synthetic_subtype
 from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
@@ -244,6 +247,26 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
+    def test_role_contexts_reject_wrong_portal_access(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="TEST-PSEC", name="Scoped Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            patient_session = create_demo_session(db, role="patient", patient_id="TEST-PSEC")
+            admin_session = create_demo_session(db, role="admin")
+            patient_context = get_context_from_authorization(db, f"Bearer {patient_session['access_token']}")
+            admin_context = get_context_from_authorization(db, f"Bearer {admin_session['access_token']}")
+
+            self.assertEqual(require_patient_context(patient_context).patient_id, "TEST-PSEC")
+            with self.assertRaises(PermissionError):
+                require_admin_context(patient_context)
+            with self.assertRaises(PermissionError):
+                require_patient_context(admin_context)
+        finally:
+            db.close()
+            db.bind.dispose()
+
     def test_complete_synthetic_dataset_exports_training_tables(self):
         db = _temp_db_session()
         output_dir = _make_temp_dir(_temp_root()) / "complete_bundle"
@@ -366,6 +389,49 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertEqual(len(cost_sensitive["policies"]), 3)
         self.assertGreater(len(decision_impact["categories"]), 0)
         self.assertEqual(mri_summary["status"], "acceptable")
+
+    def test_mri_derived_feature_service_documents_report_pipeline(self):
+        frame = pd.DataFrame({
+            "patient_id": ["P1", "P2"],
+            "latest_mri_percent_change": [-52.0, -12.0],
+            "latest_mri_tumor_size_cm": [1.2, 3.1],
+        })
+        reports = pd.DataFrame([
+            {"patient_id": "P1", "date": "2026-01-01", "cycle": 0, "timepoint": "baseline", "tumor_size_cm": 3.0, "percent_change_from_baseline": 0.0},
+            {"patient_id": "P1", "date": "2026-02-01", "cycle": 1, "timepoint": "cycle_1", "tumor_size_cm": 1.2, "percent_change_from_baseline": -60.0},
+            {"patient_id": "P2", "date": "2026-01-01", "cycle": 0, "timepoint": "baseline", "tumor_size_cm": 3.5, "percent_change_from_baseline": 0.0},
+            {"patient_id": "P2", "date": "2026-02-01", "cycle": 1, "timepoint": "cycle_1", "tumor_size_cm": 3.1, "percent_change_from_baseline": -11.4},
+        ])
+
+        summary = build_mri_derived_feature_summary(frame, reports)
+
+        self.assertEqual(summary["status"], "acceptable")
+        self.assertEqual(summary["report_pipeline"]["status"], "passed")
+        self.assertGreater(len(summary["report_pipeline"]["steps"]), 0)
+
+    def test_evaluation_report_and_registry_artifacts_are_versioned(self):
+        db = _temp_db_session()
+        output_dir = _make_temp_dir(_temp_root()) / "eval_reports"
+        try:
+            registered = register_complete_synthetic_champion(
+                db=db,
+                version="unit-test",
+                promotion_status="candidate",
+                promotion_reason="unit test registration",
+            )
+            report = generate_versioned_evaluation_report(
+                db=db,
+                output_root=str(output_dir),
+                run_id="unit-test-run",
+            )
+
+            self.assertEqual(registered["metadata"]["promotion_status"], "candidate")
+            self.assertTrue(Path(report["files"]["evaluation_report_json"]).exists())
+            self.assertTrue(Path(report["files"]["threshold_operating_points_csv"]).exists())
+            self.assertTrue(Path(report["latest_manifest_path"]).exists())
+        finally:
+            db.close()
+            db.bind.dispose()
 
 def _temp_db_session():
     engine = create_engine(

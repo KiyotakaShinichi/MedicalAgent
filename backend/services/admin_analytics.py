@@ -8,6 +8,9 @@ from sklearn.metrics import average_precision_score, brier_score_loss, confusion
 
 from backend.models import ModelRegistry, PredictionAuditLog
 from backend.services.clinician_feedback import clinical_feedback_summary
+from backend.services.mri_derived_features import (
+    build_mri_derived_feature_summary as build_mri_derived_feature_summary_service,
+)
 
 
 DEFAULT_SYNTHETIC_METRICS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
@@ -32,6 +35,7 @@ def build_admin_analytics(db):
             "admin": "Model evaluation, drift monitoring, A/B comparison, audit and feedback analytics.",
         },
         "model_performance": _model_performance(synthetic_metrics, breastdcedl_metrics),
+        "evidence_separation": _evidence_separation(synthetic_metrics, breastdcedl_metrics),
         "metric_interpretation_guide": _metric_interpretation_guide(),
         "advanced_model_evaluation": _advanced_model_evaluation(synthetic_metrics, predictions, training_rows, mri_reports),
         "drift_monitoring": _drift_monitoring(training_rows),
@@ -70,6 +74,50 @@ def _model_performance(synthetic_metrics, breastdcedl_metrics):
             "status": "not_available",
             "message": "BreastDCEDL baseline metrics file was not found.",
         },
+    }
+
+
+def _evidence_separation(synthetic_metrics, breastdcedl_metrics):
+    synthetic_models = (synthetic_metrics or {}).get("models") or {}
+    synthetic_best = (synthetic_metrics or {}).get("best_model_by_patient_level_roc_auc")
+    synthetic_best_metrics = synthetic_models.get(synthetic_best, {}) if synthetic_best else {}
+    real_models = (breastdcedl_metrics or {}).get("models") or {}
+    real_best = (breastdcedl_metrics or {}).get("best_model_by_roc_auc")
+    real_best_metrics = real_models.get(real_best, {}) if real_best else {}
+    return {
+        "purpose": "Separates simulator-learning evidence from real-dataset exploratory evidence so project claims stay honest.",
+        "sections": [
+            {
+                "name": "Synthetic longitudinal simulator",
+                "status": "engineering_evidence",
+                "rows": (synthetic_metrics or {}).get("rows"),
+                "patients": (synthetic_metrics or {}).get("patients"),
+                "best_model": synthetic_best,
+                "primary_metric": "patient_level_roc_auc",
+                "primary_metric_value": synthetic_best_metrics.get("patient_level_roc_auc"),
+                "claim_boundary": "Useful for workflow, MLOps, and model-practice evidence. It does not prove real clinical performance.",
+            },
+            {
+                "name": "BreastDCEDL / I-SPY1 MRI-derived baseline",
+                "status": "exploratory_real_dataset_baseline" if breastdcedl_metrics else "not_available",
+                "rows": (breastdcedl_metrics or {}).get("rows"),
+                "patients": (breastdcedl_metrics or {}).get("rows"),
+                "best_model": real_best,
+                "primary_metric": "roc_auc",
+                "primary_metric_value": real_best_metrics.get("roc_auc"),
+                "claim_boundary": "Small real-data MRI-derived tabular baseline. Not longitudinal clinical validation.",
+            },
+            {
+                "name": "Raw MRI computer vision",
+                "status": "planned_integration",
+                "rows": None,
+                "patients": None,
+                "best_model": None,
+                "primary_metric": None,
+                "primary_metric_value": None,
+                "claim_boundary": "Planned multimodal work. Current longitudinal response models use MRI-derived tabular trend features.",
+            },
+        ],
     }
 
 
@@ -549,54 +597,10 @@ def _decision_impact_simulation(frame):
 
 
 def _mri_derived_feature_summary(frame, mri_reports=None):
-    report_summary = _mri_report_feature_pipeline(mri_reports)
-    if "latest_mri_percent_change" not in frame.columns:
-        return {
-            "status": report_summary.get("status", "unavailable"),
-            "purpose": "MRI-derived features are expected, but no MRI trend columns were found.",
-            "features": [],
-            "report_pipeline": report_summary,
-        }
-
-    changes = frame["latest_mri_percent_change"].dropna().astype(float)
-    sizes = frame["latest_mri_tumor_size_cm"].dropna().astype(float) if "latest_mri_tumor_size_cm" in frame.columns else pd.Series(dtype=float)
-    if changes.empty:
-        return {
-            "status": "unavailable",
-            "purpose": "MRI-derived features exist in schema, but values are missing for this evaluation split.",
-            "features": [],
-            "report_pipeline": report_summary,
-        }
-
-    categories = {
-        "strong_decrease": int((changes <= -50).sum()),
-        "partial_decrease": int(((changes > -50) & (changes <= -20)).sum()),
-        "stable_or_weak_decrease": int(((changes > -20) & (changes <= 10)).sum()),
-        "increase": int((changes > 10).sum()),
-    }
-    return {
-        "status": "acceptable",
-        "purpose": "Summarizes MRI-derived numeric trend features used by the longitudinal simulator; this is not raw MRI interpretation.",
-        "features": [
-            {
-                "name": "latest_mri_percent_change",
-                "meaning": "Percent tumor-size change from baseline MRI-derived measurement.",
-                "mean": _round(changes.mean()),
-                "min": _round(changes.min()),
-                "max": _round(changes.max()),
-            },
-            {
-                "name": "latest_mri_tumor_size_cm",
-                "meaning": "Latest tumor-size measurement in centimeters when available.",
-                "mean": _round(sizes.mean()) if not sizes.empty else None,
-                "min": _round(sizes.min()) if not sizes.empty else None,
-                "max": _round(sizes.max()) if not sizes.empty else None,
-            },
-        ],
-        "response_trend_buckets": categories,
-        "report_pipeline": report_summary,
-        "safety_note": "Raw DICOM/NIfTI computer vision remains a planned integration path. Current longitudinal models use MRI-derived tabular features.",
-    }
+    return build_mri_derived_feature_summary_service(
+        evaluation_frame=frame,
+        mri_reports=mri_reports,
+    )
 
 
 def _mri_report_feature_pipeline(mri_reports):

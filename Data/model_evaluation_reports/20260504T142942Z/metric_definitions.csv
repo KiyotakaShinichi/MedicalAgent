@@ -1,0 +1,13 @@
+metric,for
+Expected calibration error,Checks whether a 0.80 probability behaves like about 80% observed positives.
+Bootstrap confidence interval,Shows metric uncertainty from the finite held-out patient set.
+Decision curve / net benefit,Checks whether flagging patients at a threshold is better than flagging everyone or no one.
+Threshold operating points,"Shows sensitivity, specificity, precision, and false-negative tradeoffs at several score cutoffs."
+Cost-sensitive threshold,Chooses thresholds after assigning higher cost to missed cases or false alarms.
+Decision-impact simulation,Maps model and timeline signals to simulated clinician-review routing categories.
+False-negative review,Lists positive cases missed by the model; these are highest priority in medical monitoring.
+Subgroup performance,"Checks whether performance changes by stage, subtype, age band, or regimen."
+Clinician-loop metrics,"Tracks whether clinicians approve, edit, reject, or escalate AI summaries."
+Data coverage,"Checks whether CBC, MRI, symptoms, treatment schedule, and longitudinal depth are complete enough."
+LLM summary quality,Uses clinician ratings and edit/reject behavior as a proxy for factuality and usefulness.
+MRI-derived feature summary,"Documents the current imaging input as tabular MRI trend features, not raw-MRI diagnosis."

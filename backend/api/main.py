@@ -320,6 +320,15 @@ class BreastDCEDLModelPredictRequest(BaseModel):
     shap_json_path: str = "Data/breastdcedl_spy1_shap_explanations.json"
 
 
+class CompleteSyntheticRegisterRequest(BaseModel):
+    version: str = "synthetic-v1"
+    metrics_path: str = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
+    training_data_path: str = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
+    artifact_dir: str = "Data/complete_synthetic_training"
+    promotion_status: str = "candidate"
+    promotion_reason: str | None = None
+
+
 class PatientChatRequest(BaseModel):
     message: str
 
@@ -334,6 +343,11 @@ class ClinicianSummaryReviewRequest(BaseModel):
     edited_patient_summary: str | None = None
     explanation_quality_score: int | None = None
     model_usefulness_score: int | None = None
+
+
+class EvaluationReportRequest(BaseModel):
+    output_root: str = "Data/model_evaluation_reports"
+    run_id: str | None = None
 
 @app.get("/", include_in_schema=False)
 def root():
@@ -606,6 +620,54 @@ def list_summary_reviews_endpoint(
     }
 
 
+@app.get("/clinician/review-queue")
+def clinician_review_queue_endpoint(
+    limit: int = 25,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    patients = get_all_patients(db)[: max(1, min(limit, 100))]
+    rows = []
+    for patient in patients:
+        report = generate_patient_report(patient.id, db)
+        assessment = report.get("multimodal_assessment") or {}
+        summary = report.get("patient_timeline_summary") or {}
+        intelligence = report.get("timeline_intelligence") or {}
+        latest_review = report.get("latest_clinician_review")
+        risks = report.get("risks") or []
+        urgent_count = sum(1 for risk in risks if risk.get("severity") == "urgent_review")
+        review_flags = summary.get("review_flags") or []
+        missing = intelligence.get("missing_data_warnings") or []
+        status = assessment.get("overall_status") or "unknown"
+        priority_score = (
+            urgent_count * 5
+            + len(review_flags) * 2
+            + (0 if latest_review else 2)
+            + (2 if status in {"needs_clinician_review", "watch_closely"} else 0)
+            + min(len(missing), 3)
+        )
+        rows.append({
+            "patient_id": patient.id,
+            "patient_name": patient.name,
+            "overall_status": status,
+            "priority_score": priority_score,
+            "urgent_flag_count": urgent_count,
+            "review_flag_count": len(review_flags),
+            "missing_data_count": len(missing),
+            "latest_review_decision": latest_review.get("decision") if latest_review else None,
+            "headline": summary.get("headline"),
+            "top_review_flags": review_flags[:3],
+            "top_missing_data_warnings": missing[:3],
+            "recommended_action": assessment.get("recommended_action"),
+        })
+
+    rows = sorted(rows, key=lambda row: (row["priority_score"], row["urgent_flag_count"]), reverse=True)
+    return {
+        "queue": rows,
+        "safety_note": "Review queue prioritizes monitoring signals for clinician attention. It does not diagnose or choose treatment.",
+    }
+
+
 @app.get("/admin/analytics")
 def get_admin_analytics_endpoint(
     context=Depends(get_admin_access_context),
@@ -614,6 +676,24 @@ def get_admin_analytics_endpoint(
     from backend.services.admin_analytics import build_admin_analytics
 
     return build_admin_analytics(db)
+
+
+@app.post("/admin/evaluation-report")
+def generate_admin_evaluation_report_endpoint(
+    payload: EvaluationReportRequest,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.evaluation_reports import generate_versioned_evaluation_report
+
+    return {
+        "message": "Versioned evaluation report generated.",
+        "result": generate_versioned_evaluation_report(
+            db=db,
+            output_root=payload.output_root,
+            run_id=payload.run_id,
+        ),
+    }
 
 
 @app.get("/patients/{patient_id}/chat")
@@ -1080,6 +1160,36 @@ def list_models_endpoint(db: Session = Depends(get_db)):
     from backend.services.model_artifacts import list_registered_models
 
     return {"models": list_registered_models(db)}
+
+
+@app.post("/models/complete-synthetic/register-champion")
+def register_complete_synthetic_champion_endpoint(
+    payload: CompleteSyntheticRegisterRequest,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.model_artifacts import register_complete_synthetic_champion
+
+    try:
+        result = register_complete_synthetic_champion(
+            db=db,
+            version=payload.version,
+            metrics_path=payload.metrics_path,
+            training_data_path=payload.training_data_path,
+            artifact_dir=payload.artifact_dir,
+            promotion_status=payload.promotion_status,
+            promotion_reason=payload.promotion_reason,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "Complete synthetic champion registered.",
+        "model": result,
+        "warning": "Synthetic champion registration is for MLOps practice only, not clinical deployment.",
+    }
 
 
 @app.post("/models/breastdcedl/predict/{patient_id}")

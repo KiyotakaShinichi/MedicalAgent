@@ -24,6 +24,8 @@ AI-assisted proof of concept for longitudinal breast cancer treatment monitoring
 - `frontend/index.html`: clinician dashboard.
 - `frontend/patient.html`: patient portal.
 - `frontend/admin.html`: admin/MLE operations dashboard.
+- `scripts/run_training_pipeline.py`: one-command synthetic training, evaluation-report, and registry pipeline.
+- `.github/workflows/ci.yml`: CI workflow for backend compilation and tests.
 - `Data/`: generated manifests, model outputs, summaries, and local artifacts.
 - `Datasets/`: local real datasets, ignored by git.
 
@@ -144,8 +146,40 @@ The admin/MLE dashboard reports:
 - Decision-impact simulation categories for clinician-review routing.
 - Subgroup performance by stage, subtype, age band, and treatment regimen.
 - Drift, data-quality, data-coverage, and clinician-loop metrics.
+- Real-vs-synthetic evidence separation so simulator results are not confused with real-dataset baselines.
+- MRI-derived feature inventory documenting current tabular imaging features and the planned raw-MRI boundary.
 
 These metrics are project engineering gates only. They do not prove clinical safety or real-world effectiveness.
+
+Versioned evaluation artifacts can be generated into:
+
+```text
+Data/model_evaluation_reports/
+```
+
+Each run writes `evaluation_report.json`, calibration bins, threshold operating points, cost-sensitive thresholds, false-negative cases, subgroup metrics, decision-impact categories, data coverage, and a manifest.
+
+## Reproducible Pipeline
+
+Run the complete synthetic training/evaluation pipeline:
+
+```text
+python scripts/run_training_pipeline.py
+```
+
+To regenerate evaluation artifacts and registry metadata from existing trained outputs:
+
+```text
+python scripts/run_training_pipeline.py --skip-training
+```
+
+The pipeline validates the synthetic temporal ML table, trains models unless skipped, registers the synthetic champion with dataset/model hashes, writes versioned evaluation reports, and keeps the synthetic-data warning explicit.
+
+## Clinician Workflow
+
+The clinician dashboard includes a review queue that prioritizes urgent deterministic risk flags, unreviewed summaries, missing data warnings, `needs_clinician_review` / `watch_closely` statuses, and top review flags from the patient timeline summary.
+
+The review queue routes attention. It does not diagnose or recommend treatment changes.
 
 ## Documentation Cards
 
@@ -190,6 +224,8 @@ GROQ_API_KEY=your_key_here
 ```
 
 The app also checks the legacy nested `MedicalAgent/.env` location, but the project root is the canonical location.
+
+Use `.env.example` as the safe template. Do not commit real API keys or real patient data.
 
 ## Portfolio Description
 

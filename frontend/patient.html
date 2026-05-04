@@ -319,6 +319,28 @@
       <div class="safety" id="summarySafety">Monitoring support only. This does not diagnose or choose treatment.</div>
     </section>
 
+    <section class="grid two">
+      <div class="card">
+        <h2>What Changed Recently</h2>
+        <div class="list" id="recentChangesList"><div class="item muted">Loading recent changes...</div></div>
+      </div>
+      <div class="card">
+        <h2>Discuss With Your Doctor</h2>
+        <div class="list" id="doctorDiscussionList"><div class="item muted">Loading discussion points...</div></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Missing Or Uncertain Data</h2>
+        <div class="list" id="missingDataList"><div class="item muted">Loading uncertainty notes...</div></div>
+      </div>
+      <div class="card">
+        <h2>Why This Score Appears</h2>
+        <div class="list" id="scoreExplanationList"><div class="item muted">Loading score explanation...</div></div>
+      </div>
+    </section>
+
     <section class="grid three">
       <div class="card">
         <h2>WBC</h2>
@@ -578,6 +600,12 @@
       return values.map(item => `<li>${escapeHtml(item)}</li>`).join("");
     }
 
+    function itemList(items, fallback) {
+      const values = (items || []).filter(Boolean).slice(0, 5);
+      if (!values.length) return `<div class="item muted">${escapeHtml(fallback)}</div>`;
+      return values.map(item => `<div class="item">${escapeHtml(item)}</div>`).join("");
+    }
+
     function renderPatientSummary(data) {
       const summary = data.patient_timeline_summary || {};
       document.getElementById("summaryHeadline").textContent = summary.headline || "Monitoring summary is not available yet.";
@@ -586,6 +614,36 @@
       document.getElementById("summaryReviewFlags").innerHTML = listItems(summary.review_flags, "No review flags listed right now.");
       document.getElementById("summaryUncertainty").innerHTML = listItems(summary.uncertainty_notes, "No uncertainty notes listed right now.");
       document.getElementById("summarySafety").textContent = summary.safety_note || "Monitoring support only. This does not diagnose or choose treatment.";
+
+      const intelligence = data.timeline_intelligence || {};
+      const recentEvents = ((intelligence.last_14_days || {}).events || []).slice(0, 4).map(event =>
+        `${String(event.date).slice(0, 10)}: ${event.title || event.type} - ${event.summary || ""}`
+      );
+      document.getElementById("recentChangesList").innerHTML = itemList(recentEvents, "No recent timeline changes were found in the represented record.");
+
+      const discussion = [
+        ...(summary.review_flags || []),
+        (intelligence.toxicity_trend || {}).message,
+        (intelligence.discordance || {}).message,
+      ].filter(Boolean);
+      document.getElementById("doctorDiscussionList").innerHTML = itemList(discussion, "No specific discussion prompts are listed right now.");
+
+      const missing = [
+        ...(summary.uncertainty_notes || []),
+        ...(intelligence.missing_data_warnings || []),
+      ];
+      document.getElementById("missingDataList").innerHTML = itemList(missing, "No major missing-data warnings are listed right now.");
+
+      const assessment = data.multimodal_assessment || {};
+      const signals = assessment.signals || {};
+      const scoreReasons = [
+        `Monitoring score: ${assessment.treatment_monitoring_score ?? "not available"}/100.`,
+        signals.mri_response?.message,
+        signals.clinical_monitoring?.message,
+        signals.symptoms?.message,
+        "The score combines available monitoring signals; it does not diagnose or choose treatment.",
+      ].filter(Boolean);
+      document.getElementById("scoreExplanationList").innerHTML = itemList(scoreReasons, "Score explanation is not available yet.");
     }
 
     function renderReport(data) {

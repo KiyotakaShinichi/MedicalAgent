@@ -542,6 +542,16 @@
   <!-- MAIN -->
   <div class="main">
 
+    <!-- CLINICIAN REVIEW QUEUE -->
+    <div>
+      <div class="section-label">Clinician Review Queue</div>
+      <div class="card">
+        <ul class="data-list" id="reviewQueue">
+          <li class="empty">Loading review queue...</li>
+        </ul>
+      </div>
+    </div>
+
     <!-- PATIENT OVERVIEW -->
     <div>
       <div class="section-label">Patient Overview</div>
@@ -875,6 +885,16 @@
       });
     }
 
+    function loadReviewQueue() {
+      const request = () => fetch(`${API_BASE}/clinician/review-queue?limit=12`, {
+        headers: clinicianHeaders()
+      })
+      .then(r => { if (!r.ok) throw new Error(`Review queue failed (${r.status})`); return r.json(); })
+      .then(renderReviewQueue);
+
+      return request().catch(() => loginClinician().then(request));
+    }
+
     function emptyList(el, msg = "None reported.") {
       el.innerHTML = `<li class="empty-state">${msg}</li>`;
     }
@@ -946,6 +966,27 @@
           <span>${r.message}</span>
         </li>`
       ).join("");
+    }
+
+    function renderReviewQueue(data) {
+      const el = document.getElementById("reviewQueue");
+      const rows = data.queue || [];
+      if (!rows.length) {
+        emptyList(el, "No patients are currently queued for review.");
+        return;
+      }
+      el.innerHTML = rows.map(row => {
+        const flags = (row.top_review_flags || []).concat(row.top_missing_data_warnings || []).slice(0, 2);
+        return `
+          <li>
+            <strong>${escapeHtml(row.patient_name)} (${escapeHtml(row.patient_id)})</strong>
+            <br>${severityBadge(row.urgent_flag_count ? "urgent_review" : row.priority_score >= 5 ? "watch" : "info")}
+            <span style="color:var(--text-2);">priority ${row.priority_score}; ${escapeHtml(row.overall_status)}; latest review ${escapeHtml(row.latest_review_decision || "none")}</span>
+            <br><span style="color:var(--text-3);font-size:12px;">${escapeHtml(row.headline || row.recommended_action || "No headline available.")}</span>
+            ${flags.length ? `<br><span style="color:var(--text-3);font-size:12px;">${flags.map(escapeHtml).join(" | ")}</span>` : ""}
+          </li>
+        `;
+      }).join("");
     }
 
     function renderTimeline(events) {
@@ -1309,6 +1350,7 @@
         sel.addEventListener("change", e => loadPatient(e.target.value));
       })
       .catch(err => showToast(err.message, true));
+    loadReviewQueue().catch(err => showToast(err.message, true));
   </script>
 </body>
 </html>

@@ -1,0 +1,1165 @@
+{
+  "roles": {
+    "patient": "Personal portal, uploads, symptom/CBC/medication logging, support agent.",
+    "clinician": "Patient list, timeline review, AI summary approval/edit/reject workflow.",
+    "admin": "Model evaluation, drift monitoring, A/B comparison, audit and feedback analytics."
+  },
+  "model_performance": {
+    "synthetic_longitudinal_response": {
+      "task": "treatment_success_binary",
+      "best_model": "gradient_boosting",
+      "patient_level_roc_auc": 0.99,
+      "patient_level_average_precision": 0.993,
+      "patient_level_brier_score": 0.062,
+      "patient_level_sensitivity": 0.977,
+      "patient_level_specificity": 0.875,
+      "warning": "Models were trained only on synthetic data. Results measure ability to learn the simulator, not clinical performance.",
+      "metric_statuses": {
+        "patient_level_roc_auc": "passed",
+        "patient_level_average_precision": "passed",
+        "patient_level_sensitivity": "passed",
+        "patient_level_specificity": "strong",
+        "patient_level_brier_score": "passed"
+      }
+    },
+    "real_breastdcedl_baseline": {
+      "rows": 159,
+      "positive_pcr": 44,
+      "negative_pcr": 115,
+      "cv_folds": 5,
+      "models": {
+        "logistic_regression": {
+          "accuracy": 0.616,
+          "balanced_accuracy": 0.63,
+          "roc_auc": 0.637
+        },
+        "random_forest": {
+          "accuracy": 0.654,
+          "balanced_accuracy": 0.543,
+          "roc_auc": 0.579
+        }
+      },
+      "best_model_by_roc_auc": "logistic_regression",
+      "features_csv_path": "Data/breastdcedl_spy1_features.csv",
+      "predictions_csv_path": "Data/breastdcedl_spy1_model_predictions.csv",
+      "model_type": "cross_validated_tabular_baselines",
+      "warning": "Exploratory PoC only. Not clinically validated."
+    }
+  },
+  "evidence_separation": {
+    "purpose": "Separates simulator-learning evidence from real-dataset exploratory evidence so project claims stay honest.",
+    "sections": [
+      {
+        "name": "Synthetic longitudinal simulator",
+        "status": "engineering_evidence",
+        "rows": 1800,
+        "patients": 300,
+        "best_model": "gradient_boosting",
+        "primary_metric": "patient_level_roc_auc",
+        "primary_metric_value": 0.99,
+        "claim_boundary": "Useful for workflow, MLOps, and model-practice evidence. It does not prove real clinical performance."
+      },
+      {
+        "name": "BreastDCEDL / I-SPY1 MRI-derived baseline",
+        "status": "exploratory_real_dataset_baseline",
+        "rows": 159,
+        "patients": 159,
+        "best_model": "logistic_regression",
+        "primary_metric": "roc_auc",
+        "primary_metric_value": 0.637,
+        "claim_boundary": "Small real-data MRI-derived tabular baseline. Not longitudinal clinical validation."
+      },
+      {
+        "name": "Raw MRI computer vision",
+        "status": "planned_integration",
+        "rows": null,
+        "patients": null,
+        "best_model": null,
+        "primary_metric": null,
+        "primary_metric_value": null,
+        "claim_boundary": "Planned multimodal work. Current longitudinal response models use MRI-derived tabular trend features."
+      }
+    ]
+  },
+  "metric_interpretation_guide": {
+    "status_levels": [
+      {
+        "status": "failed",
+        "meaning": "Below the minimum engineering gate. Do not present as a reliable model signal."
+      },
+      {
+        "status": "unideal",
+        "meaning": "Works weakly or has important risk. Useful for debugging, not for headline claims."
+      },
+      {
+        "status": "acceptable",
+        "meaning": "Reasonable for a PoC if limitations are explicit and humans stay in the loop."
+      },
+      {
+        "status": "strong",
+        "meaning": "Good engineering result on the current validation setup."
+      },
+      {
+        "status": "passed",
+        "meaning": "Passes this project gate. This is not clinical validation."
+      }
+    ],
+    "model_metric_bands": {
+      "AUROC": "Failed <0.60, unideal 0.60-0.70, acceptable 0.70-0.80, strong 0.80-0.90, passed >=0.90.",
+      "Average precision / AUPRC": "Interpreted relative to class prevalence. For this PoC: failed <0.50, unideal 0.50-0.65, acceptable 0.65-0.80, strong 0.80-0.90, passed >=0.90.",
+      "Sensitivity": "False negatives matter in monitoring. Failed <0.75, unideal 0.75-0.85, acceptable 0.85-0.90, strong 0.90-0.95, passed >=0.95.",
+      "Specificity": "Controls false alarms. Failed <0.60, unideal 0.60-0.70, acceptable 0.70-0.80, strong 0.80-0.90, passed >=0.90.",
+      "Brier score": "Lower is better. Failed >0.25, unideal 0.18-0.25, acceptable 0.12-0.18, strong 0.08-0.12, passed <=0.08.",
+      "Expected calibration error": "Lower is better. Failed >0.15, unideal 0.10-0.15, acceptable 0.06-0.10, strong 0.03-0.06, passed <=0.03.",
+      "Bootstrap CI width": "Narrower is more stable. Failed >0.25, unideal 0.15-0.25, acceptable 0.10-0.15, strong 0.05-0.10, passed <=0.05.",
+      "False-negative rate": "Lower is safer. Failed >0.35, unideal 0.20-0.35, acceptable 0.10-0.20, strong 0.05-0.10, passed <=0.05.",
+      "Drift standardized mean shift": "Lower is better. Passed <0.20, acceptable 0.20-0.50, unideal 0.50-0.80, failed >=0.80.",
+      "Missingness": "Lower is better. Passed <=5%, acceptable <=10%, unideal <=20%, failed >20%.",
+      "Data coverage": "Higher is better. Failed <70%, unideal 70-85%, acceptable 85-95%, passed >=95%.",
+      "Clinician accepted-review rate": "Higher means clinicians usually approve/edit/escalate instead of reject. Failed <30%, unideal 30-45%, acceptable 45-60%, strong 60-75%, passed >=75%.",
+      "Clinician quality score": "Average 1-5 rating. Failed <2, unideal 2-3, acceptable 3-4, strong 4-4.5, passed >=4.5."
+    },
+    "advanced_metric_definitions": [
+      {
+        "metric": "Expected calibration error",
+        "for": "Checks whether a 0.80 probability behaves like about 80% observed positives."
+      },
+      {
+        "metric": "Bootstrap confidence interval",
+        "for": "Shows metric uncertainty from the finite held-out patient set."
+      },
+      {
+        "metric": "Decision curve / net benefit",
+        "for": "Checks whether flagging patients at a threshold is better than flagging everyone or no one."
+      },
+      {
+        "metric": "Threshold operating points",
+        "for": "Shows sensitivity, specificity, precision, and false-negative tradeoffs at several score cutoffs."
+      },
+      {
+        "metric": "Cost-sensitive threshold",
+        "for": "Chooses thresholds after assigning higher cost to missed cases or false alarms."
+      },
+      {
+        "metric": "Decision-impact simulation",
+        "for": "Maps model and timeline signals to simulated clinician-review routing categories."
+      },
+      {
+        "metric": "False-negative review",
+        "for": "Lists positive cases missed by the model; these are highest priority in medical monitoring."
+      },
+      {
+        "metric": "Subgroup performance",
+        "for": "Checks whether performance changes by stage, subtype, age band, or regimen."
+      },
+      {
+        "metric": "Clinician-loop metrics",
+        "for": "Tracks whether clinicians approve, edit, reject, or escalate AI summaries."
+      },
+      {
+        "metric": "Data coverage",
+        "for": "Checks whether CBC, MRI, symptoms, treatment schedule, and longitudinal depth are complete enough."
+      },
+      {
+        "metric": "LLM summary quality",
+        "for": "Uses clinician ratings and edit/reject behavior as a proxy for factuality and usefulness."
+      },
+      {
+        "metric": "MRI-derived feature summary",
+        "for": "Documents the current imaging input as tabular MRI trend features, not raw-MRI diagnosis."
+      }
+    ],
+    "what_current_metrics_do_not_prove": [
+      "They do not prove clinical safety.",
+      "They do not prove generalization to real hospitals.",
+      "They do not prove fairness across age, stage, subtype, or scanner/site groups.",
+      "Synthetic-data metrics mostly prove that the model learned the simulator."
+    ],
+    "recommended_next_metrics": [
+      "Calibration curve and expected calibration error.",
+      "Decision curve analysis / net benefit.",
+      "False-negative case review table.",
+      "Subgroup performance by stage, molecular subtype, age band, and data source.",
+      "Confidence intervals via bootstrap resampling.",
+      "Alert precision: how many clinician-review flags were accepted by clinicians.",
+      "Time-to-review and override-rate metrics for clinician workflow.",
+      "Data freshness and missing-baseline indicators.",
+      "Scanner/site/protocol drift when real MRI metadata is available.",
+      "LLM summary quality: factuality, completeness, safety, and clinician edit distance."
+    ],
+    "next_steps": [
+      "Move calibration, threshold policies, subgroup metrics, and false-negative review into saved training reports.",
+      "Add BreastDCEDL real-dataset subgroup tables when enough metadata is mapped.",
+      "Add visual calibration plots and decision-curve charts.",
+      "Start logging clinician decisions and compare AI flags against accepted/rejected reviews.",
+      "Separate synthetic simulator metrics from real-dataset metrics visually in the dashboard."
+    ]
+  },
+  "advanced_model_evaluation": {
+    "status": "unideal",
+    "champion_model": "gradient_boosting",
+    "threshold": 0.5,
+    "evaluated_patients": 75,
+    "calibration": {
+      "status": "unideal",
+      "purpose": "Checks whether predicted probabilities behave like real probabilities, not just rankings.",
+      "expected_calibration_error": 0.113,
+      "brier_score": 0.062,
+      "bins": [
+        {
+          "range": "0.0-0.1",
+          "count": 13,
+          "mean_probability": 0.042,
+          "observed_positive_rate": 0.0,
+          "gap": 0.042
+        },
+        {
+          "range": "0.1-0.2",
+          "count": 4,
+          "mean_probability": 0.163,
+          "observed_positive_rate": 0.0,
+          "gap": 0.163
+        },
+        {
+          "range": "0.2-0.3",
+          "count": 3,
+          "mean_probability": 0.222,
+          "observed_positive_rate": 0.0,
+          "gap": 0.222
+        },
+        {
+          "range": "0.3-0.4",
+          "count": 4,
+          "mean_probability": 0.347,
+          "observed_positive_rate": 0.0,
+          "gap": 0.347
+        },
+        {
+          "range": "0.4-0.5",
+          "count": 5,
+          "mean_probability": 0.459,
+          "observed_positive_rate": 0.2,
+          "gap": 0.259
+        },
+        {
+          "range": "0.5-0.6",
+          "count": 1,
+          "mean_probability": 0.518,
+          "observed_positive_rate": 0.0,
+          "gap": 0.518
+        },
+        {
+          "range": "0.6-0.7",
+          "count": 6,
+          "mean_probability": 0.652,
+          "observed_positive_rate": 0.667,
+          "gap": 0.014
+        },
+        {
+          "range": "0.7-0.8",
+          "count": 5,
+          "mean_probability": 0.747,
+          "observed_positive_rate": 0.8,
+          "gap": 0.053
+        },
+        {
+          "range": "0.8-0.9",
+          "count": 13,
+          "mean_probability": 0.854,
+          "observed_positive_rate": 1.0,
+          "gap": 0.146
+        },
+        {
+          "range": "0.9-1.0",
+          "count": 21,
+          "mean_probability": 0.945,
+          "observed_positive_rate": 1.0,
+          "gap": 0.055
+        }
+      ]
+    },
+    "bootstrap_confidence_intervals": {
+      "status": "passed",
+      "purpose": "Shows how stable the metric is under resampling; wide intervals mean the validation set is too small or noisy.",
+      "method": "Patient-level bootstrap with replacement.",
+      "resamples": 300,
+      "metrics": [
+        {
+          "metric": "AUROC",
+          "estimate": 0.99,
+          "ci_low": 0.972,
+          "ci_high": 1.0,
+          "interval_width": 0.028,
+          "status": "passed"
+        },
+        {
+          "metric": "AUPRC",
+          "estimate": 0.993,
+          "ci_low": 0.978,
+          "ci_high": 1.0,
+          "interval_width": 0.022,
+          "status": "passed"
+        },
+        {
+          "metric": "Brier",
+          "estimate": 0.062,
+          "ci_low": 0.041,
+          "ci_high": 0.085,
+          "interval_width": 0.043,
+          "status": "passed"
+        }
+      ]
+    },
+    "decision_curve": {
+      "purpose": "Estimates whether using the model at a threshold adds value versus flagging everyone or no one.",
+      "rows": [
+        {
+          "threshold": 0.3,
+          "flagged_patients": 55,
+          "true_positive": 43,
+          "false_positive": 12,
+          "model_net_benefit": 0.505,
+          "treat_all_net_benefit": 0.39,
+          "treat_none_net_benefit": 0.0,
+          "status": "passed"
+        },
+        {
+          "threshold": 0.5,
+          "flagged_patients": 46,
+          "true_positive": 42,
+          "false_positive": 4,
+          "model_net_benefit": 0.507,
+          "treat_all_net_benefit": 0.147,
+          "treat_none_net_benefit": 0.0,
+          "status": "passed"
+        },
+        {
+          "threshold": 0.7,
+          "flagged_patients": 39,
+          "true_positive": 38,
+          "false_positive": 1,
+          "model_net_benefit": 0.476,
+          "treat_all_net_benefit": -0.422,
+          "treat_none_net_benefit": 0.0,
+          "status": "passed"
+        }
+      ]
+    },
+    "threshold_operating_points": {
+      "purpose": "Shows the tradeoff between catching positive response cases and adding false alarms at different thresholds.",
+      "rows": [
+        {
+          "threshold": 0.2,
+          "flagged_positive_rate": 0.773,
+          "sensitivity": 1.0,
+          "specificity": 0.531,
+          "precision": 0.741,
+          "false_negative_rate": 0.0,
+          "false_positive_rate": 0.469,
+          "true_positive": 43,
+          "false_positive": 15,
+          "false_negative": 0,
+          "true_negative": 17,
+          "status": "passed"
+        },
+        {
+          "threshold": 0.3,
+          "flagged_positive_rate": 0.733,
+          "sensitivity": 1.0,
+          "specificity": 0.625,
+          "precision": 0.782,
+          "false_negative_rate": 0.0,
+          "false_positive_rate": 0.375,
+          "true_positive": 43,
+          "false_positive": 12,
+          "false_negative": 0,
+          "true_negative": 20,
+          "status": "passed"
+        },
+        {
+          "threshold": 0.4,
+          "flagged_positive_rate": 0.68,
+          "sensitivity": 1.0,
+          "specificity": 0.75,
+          "precision": 0.843,
+          "false_negative_rate": 0.0,
+          "false_positive_rate": 0.25,
+          "true_positive": 43,
+          "false_positive": 8,
+          "false_negative": 0,
+          "true_negative": 24,
+          "status": "passed"
+        },
+        {
+          "threshold": 0.5,
+          "flagged_positive_rate": 0.613,
+          "sensitivity": 0.977,
+          "specificity": 0.875,
+          "precision": 0.913,
+          "false_negative_rate": 0.023,
+          "false_positive_rate": 0.125,
+          "true_positive": 42,
+          "false_positive": 4,
+          "false_negative": 1,
+          "true_negative": 28,
+          "status": "passed"
+        },
+        {
+          "threshold": 0.6,
+          "flagged_positive_rate": 0.6,
+          "sensitivity": 0.977,
+          "specificity": 0.906,
+          "precision": 0.933,
+          "false_negative_rate": 0.023,
+          "false_positive_rate": 0.094,
+          "true_positive": 42,
+          "false_positive": 3,
+          "false_negative": 1,
+          "true_negative": 29,
+          "status": "passed"
+        },
+        {
+          "threshold": 0.7,
+          "flagged_positive_rate": 0.52,
+          "sensitivity": 0.884,
+          "specificity": 0.969,
+          "precision": 0.974,
+          "false_negative_rate": 0.116,
+          "false_positive_rate": 0.031,
+          "true_positive": 38,
+          "false_positive": 1,
+          "false_negative": 5,
+          "true_negative": 31,
+          "status": "acceptable"
+        },
+        {
+          "threshold": 0.8,
+          "flagged_positive_rate": 0.453,
+          "sensitivity": 0.791,
+          "specificity": 1.0,
+          "precision": 1.0,
+          "false_negative_rate": 0.209,
+          "false_positive_rate": 0.0,
+          "true_positive": 34,
+          "false_positive": 0,
+          "false_negative": 9,
+          "true_negative": 32,
+          "status": "unideal"
+        }
+      ]
+    },
+    "cost_sensitive_thresholds": {
+      "status": "strong",
+      "purpose": "Treats errors differently so the threshold matches the clinical-review workflow being simulated.",
+      "policies": [
+        {
+          "name": "safety_first",
+          "false_negative_cost": 5,
+          "false_positive_cost": 1,
+          "purpose": "Prioritizes avoiding missed positive/benefit cases, accepting more review flags.",
+          "recommended_threshold": 0.45,
+          "weighted_error": 0.08,
+          "sensitivity": 1.0,
+          "specificity": 0.812,
+          "false_negative": 0,
+          "false_positive": 6,
+          "status": "strong"
+        },
+        {
+          "name": "balanced",
+          "false_negative_cost": 2,
+          "false_positive_cost": 1,
+          "purpose": "Keeps false negatives more expensive while limiting unnecessary review burden.",
+          "recommended_threshold": 0.55,
+          "weighted_error": 0.067,
+          "sensitivity": 0.977,
+          "specificity": 0.906,
+          "false_negative": 1,
+          "false_positive": 3,
+          "status": "strong"
+        },
+        {
+          "name": "precision_first",
+          "false_negative_cost": 1,
+          "false_positive_cost": 2,
+          "purpose": "Prioritizes fewer false alarms when review capacity is limited.",
+          "recommended_threshold": 0.55,
+          "weighted_error": 0.093,
+          "sensitivity": 0.977,
+          "specificity": 0.906,
+          "false_negative": 1,
+          "false_positive": 3,
+          "status": "strong"
+        }
+      ]
+    },
+    "decision_impact_simulation": {
+      "purpose": "Simulates what model/timeline signals would change in the clinician-review workflow. It does not recommend treatment changes.",
+      "categories": [
+        {
+          "category": "discordant_response_toxicity_review",
+          "count": 39,
+          "rate": 0.52,
+          "meaning": "Response looks favorable, but toxicity signals still need review."
+        },
+        {
+          "category": "response_concern_review",
+          "count": 1,
+          "rate": 0.013,
+          "meaning": "Low response signal would prompt clinician response-trend review."
+        },
+        {
+          "category": "toxicity_review",
+          "count": 35,
+          "rate": 0.467,
+          "meaning": "CBC or symptom toxicity signal would prompt clinician review."
+        }
+      ],
+      "examples": [
+        {
+          "patient_id": "COMPV4-BRCA-0001",
+          "category": "discordant_response_toxicity_review",
+          "action": "Favorable response signal, but toxicity signals would route to clinician review.",
+          "probability": 0.957,
+          "latest_mri_percent_change": -96.07,
+          "max_symptom_severity": 8.0,
+          "nadir_wbc": 0.59,
+          "intervention_count": 8.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0004",
+          "category": "toxicity_review",
+          "action": "CBC/symptom toxicity signals would route to clinician review.",
+          "probability": 0.025,
+          "latest_mri_percent_change": 37.02,
+          "max_symptom_severity": 9.0,
+          "nadir_wbc": 0.59,
+          "intervention_count": 7.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0007",
+          "category": "discordant_response_toxicity_review",
+          "action": "Favorable response signal, but toxicity signals would route to clinician review.",
+          "probability": 0.775,
+          "latest_mri_percent_change": -62.43,
+          "max_symptom_severity": 7.0,
+          "nadir_wbc": 0.6,
+          "intervention_count": 2.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0008",
+          "category": "toxicity_review",
+          "action": "CBC/symptom toxicity signals would route to clinician review.",
+          "probability": 0.093,
+          "latest_mri_percent_change": -35.0,
+          "max_symptom_severity": 7.0,
+          "nadir_wbc": 0.6,
+          "intervention_count": 4.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0021",
+          "category": "discordant_response_toxicity_review",
+          "action": "Favorable response signal, but toxicity signals would route to clinician review.",
+          "probability": 0.965,
+          "latest_mri_percent_change": -83.33,
+          "max_symptom_severity": 9.0,
+          "nadir_wbc": 0.59,
+          "intervention_count": 9.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0026",
+          "category": "discordant_response_toxicity_review",
+          "action": "Favorable response signal, but toxicity signals would route to clinician review.",
+          "probability": 0.893,
+          "latest_mri_percent_change": -90.0,
+          "max_symptom_severity": 9.0,
+          "nadir_wbc": 0.58,
+          "intervention_count": 11.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0034",
+          "category": "toxicity_review",
+          "action": "CBC/symptom toxicity signals would route to clinician review.",
+          "probability": 0.037,
+          "latest_mri_percent_change": 24.0,
+          "max_symptom_severity": 7.0,
+          "nadir_wbc": 1.33,
+          "intervention_count": 2.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0047",
+          "category": "discordant_response_toxicity_review",
+          "action": "Favorable response signal, but toxicity signals would route to clinician review.",
+          "probability": 0.901,
+          "latest_mri_percent_change": -63.51,
+          "max_symptom_severity": 9.0,
+          "nadir_wbc": 0.59,
+          "intervention_count": 5.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0048",
+          "category": "toxicity_review",
+          "action": "CBC/symptom toxicity signals would route to clinician review.",
+          "probability": 0.518,
+          "latest_mri_percent_change": -41.71,
+          "max_symptom_severity": 8.0,
+          "nadir_wbc": 0.58,
+          "intervention_count": 7.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0049",
+          "category": "toxicity_review",
+          "action": "CBC/symptom toxicity signals would route to clinician review.",
+          "probability": 0.077,
+          "latest_mri_percent_change": 28.26,
+          "max_symptom_severity": 9.0,
+          "nadir_wbc": 0.61,
+          "intervention_count": 10.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0051",
+          "category": "discordant_response_toxicity_review",
+          "action": "Favorable response signal, but toxicity signals would route to clinician review.",
+          "probability": 0.904,
+          "latest_mri_percent_change": -85.42,
+          "max_symptom_severity": 8.0,
+          "nadir_wbc": 0.58,
+          "intervention_count": 7.0
+        },
+        {
+          "patient_id": "COMPV4-BRCA-0052",
+          "category": "discordant_response_toxicity_review",
+          "action": "Favorable response signal, but toxicity signals would route to clinician review.",
+          "probability": 0.857,
+          "latest_mri_percent_change": -70.26,
+          "max_symptom_severity": 9.0,
+          "nadir_wbc": 0.59,
+          "intervention_count": 7.0
+        }
+      ],
+      "safety_note": "These are review-routing categories, not chemotherapy recommendations."
+    },
+    "false_negative_review": {
+      "status": "passed",
+      "purpose": "Finds positive/benefit cases the model missed at the current threshold. These are the cases to inspect first in medical ML.",
+      "count": 1,
+      "positive_cases": 43,
+      "false_negative_rate": 0.023,
+      "cases": [
+        {
+          "patient_id": "COMPV4-BRCA-0223",
+          "probability": 0.496,
+          "stage": "IIB",
+          "molecular_subtype": "HR+/HER2-",
+          "latest_mri_percent_change": -48.1,
+          "max_symptom_severity": 8.0,
+          "nadir_wbc": 0.58,
+          "final_cancer_status": "minimal_residual_disease"
+        }
+      ]
+    },
+    "subgroup_performance": {
+      "status": "unideal",
+      "purpose": "Checks whether the model behaves differently across clinically relevant groups.",
+      "rows": [
+        {
+          "group": "Age band",
+          "value": "<45",
+          "n": 32,
+          "positive_rate": 0.5,
+          "roc_auc": 0.996,
+          "average_precision": 0.996,
+          "brier_score": 0.051,
+          "sensitivity": 1.0,
+          "specificity": 0.938,
+          "status": "passed"
+        },
+        {
+          "group": "Age band",
+          "value": "65-74",
+          "n": 16,
+          "positive_rate": 0.688,
+          "roc_auc": 0.964,
+          "average_precision": 0.986,
+          "brier_score": 0.087,
+          "sensitivity": 1.0,
+          "specificity": 0.6,
+          "status": "passed"
+        },
+        {
+          "group": "Age band",
+          "value": "55-64",
+          "n": 15,
+          "positive_rate": 0.6,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.05,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "status": "passed"
+        },
+        {
+          "group": "Age band",
+          "value": "45-54",
+          "n": 12,
+          "positive_rate": 0.583,
+          "roc_auc": 0.971,
+          "average_precision": 0.982,
+          "brier_score": 0.069,
+          "sensitivity": 0.857,
+          "specificity": 0.8,
+          "status": "passed"
+        },
+        {
+          "group": "Cancer stage",
+          "value": "IIB",
+          "n": 26,
+          "positive_rate": 0.462,
+          "roc_auc": 0.952,
+          "average_precision": 0.952,
+          "brier_score": 0.12,
+          "sensitivity": 0.917,
+          "specificity": 0.786,
+          "status": "passed"
+        },
+        {
+          "group": "Cancer stage",
+          "value": "IIIA",
+          "n": 19,
+          "positive_rate": 0.842,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.04,
+          "sensitivity": 1.0,
+          "specificity": 0.667,
+          "status": "passed"
+        },
+        {
+          "group": "Cancer stage",
+          "value": "IIIB",
+          "n": 16,
+          "positive_rate": 0.5,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.017,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "status": "passed"
+        },
+        {
+          "group": "Cancer stage",
+          "value": "IIA",
+          "n": 12,
+          "positive_rate": 0.583,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.037,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "status": "passed"
+        },
+        {
+          "group": "Cancer stage",
+          "value": "IV",
+          "n": 2,
+          "positive_rate": 0.0,
+          "roc_auc": null,
+          "average_precision": null,
+          "brier_score": 0.006,
+          "sensitivity": null,
+          "specificity": 1.0,
+          "status": "unideal"
+        },
+        {
+          "group": "Molecular subtype",
+          "value": "HR+/HER2-",
+          "n": 42,
+          "positive_rate": 0.619,
+          "roc_auc": 0.998,
+          "average_precision": 0.999,
+          "brier_score": 0.056,
+          "sensitivity": 0.962,
+          "specificity": 0.938,
+          "status": "passed"
+        },
+        {
+          "group": "Molecular subtype",
+          "value": "triple-negative",
+          "n": 18,
+          "positive_rate": 0.5,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.082,
+          "sensitivity": 1.0,
+          "specificity": 0.778,
+          "status": "passed"
+        },
+        {
+          "group": "Molecular subtype",
+          "value": "HER2+",
+          "n": 11,
+          "positive_rate": 0.545,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.051,
+          "sensitivity": 1.0,
+          "specificity": 0.8,
+          "status": "passed"
+        },
+        {
+          "group": "Molecular subtype",
+          "value": "HR+/HER2+",
+          "n": 4,
+          "positive_rate": 0.5,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.058,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "status": "unideal"
+        },
+        {
+          "group": "Treatment regimen",
+          "value": "dose-dense AC then paclitaxel",
+          "n": 42,
+          "positive_rate": 0.619,
+          "roc_auc": 0.998,
+          "average_precision": 0.999,
+          "brier_score": 0.056,
+          "sensitivity": 0.962,
+          "specificity": 0.938,
+          "status": "passed"
+        },
+        {
+          "group": "Treatment regimen",
+          "value": "paclitaxel + carboplatin then AC",
+          "n": 18,
+          "positive_rate": 0.5,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.082,
+          "sensitivity": 1.0,
+          "specificity": 0.778,
+          "status": "passed"
+        },
+        {
+          "group": "Treatment regimen",
+          "value": "TCHP",
+          "n": 11,
+          "positive_rate": 0.545,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.051,
+          "sensitivity": 1.0,
+          "specificity": 0.8,
+          "status": "passed"
+        },
+        {
+          "group": "Treatment regimen",
+          "value": "TCHP then endocrine therapy",
+          "n": 4,
+          "positive_rate": 0.5,
+          "roc_auc": 1.0,
+          "average_precision": 1.0,
+          "brier_score": 0.058,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "status": "unideal"
+        }
+      ]
+    },
+    "mri_derived_features": {
+      "status": "acceptable",
+      "purpose": "Summarizes MRI-derived numeric trend features used by the longitudinal simulator; this is not raw MRI interpretation.",
+      "features": [
+        {
+          "name": "latest_mri_percent_change",
+          "meaning": "Percent tumor-size change from baseline MRI-derived measurement.",
+          "mean": -46.348,
+          "min": -97.43,
+          "max": 40.62
+        },
+        {
+          "name": "latest_mri_tumor_size_cm",
+          "meaning": "Latest tumor-size measurement in centimeters when available.",
+          "mean": 2.517,
+          "min": 0.09,
+          "max": 9.0
+        }
+      ],
+      "response_trend_buckets": {
+        "strong_decrease": 37,
+        "partial_decrease": 28,
+        "stable_or_weak_decrease": 1,
+        "increase": 9
+      },
+      "report_pipeline": {
+        "status": "passed",
+        "purpose": "Inventory of the MRI-derived feature pipeline from synthetic MRI measurements.",
+        "patients_with_mri": 300,
+        "measurement_rows": 2100,
+        "patients_with_baseline": 300,
+        "patients_with_followup": 300,
+        "latest_change_coverage": 1.0,
+        "tumor_size_cm_mean": 3.465,
+        "latest_percent_change_mean": -43.811,
+        "response_trend_buckets": {
+          "strong_decrease": 151,
+          "partial_decrease": 89,
+          "stable_or_weak_decrease": 8,
+          "increase": 52
+        },
+        "steps": [
+          "Read one synthetic MRI measurement row per patient baseline and treatment-cycle follow-up.",
+          "Sort measurements by patient and date.",
+          "Use baseline tumor size as the reference measurement.",
+          "Compute latest tumor size and percent change from baseline.",
+          "Bucket MRI-derived trend as strong decrease, partial decrease, stable/weak decrease, or increase.",
+          "Join MRI-derived trend features into the longitudinal treatment model table."
+        ]
+      },
+      "safety_note": "Raw DICOM/NIfTI computer vision remains a planned integration path. Current longitudinal models use MRI-derived tabular features."
+    }
+  },
+  "drift_monitoring": {
+    "status": "passed",
+    "method": "reference/current split by synthetic patient id; standardized mean shift.",
+    "watch_feature_count": 0,
+    "features": [
+      {
+        "feature": "age",
+        "reference_mean": 51.007,
+        "current_mean": 51.367,
+        "standardized_mean_shift": 0.028,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      },
+      {
+        "feature": "nadir_wbc",
+        "reference_mean": 1.932,
+        "current_mean": 1.797,
+        "standardized_mean_shift": 0.082,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      },
+      {
+        "feature": "nadir_hemoglobin",
+        "reference_mean": 10.512,
+        "current_mean": 10.315,
+        "standardized_mean_shift": 0.127,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      },
+      {
+        "feature": "nadir_platelets",
+        "reference_mean": 143.464,
+        "current_mean": 147.625,
+        "standardized_mean_shift": 0.052,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      },
+      {
+        "feature": "mri_percent_change_from_baseline",
+        "reference_mean": -27.637,
+        "current_mean": -27.394,
+        "standardized_mean_shift": 0.009,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      },
+      {
+        "feature": "max_symptom_severity",
+        "reference_mean": 5.493,
+        "current_mean": 5.435,
+        "standardized_mean_shift": 0.029,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      }
+    ]
+  },
+  "ab_testing": {
+    "champion": {
+      "model": "gradient_boosting",
+      "patient_level_roc_auc": 0.99,
+      "patient_level_average_precision": 0.993,
+      "patient_level_brier_score": 0.062,
+      "patient_level_sensitivity": 0.977,
+      "patient_level_specificity": 0.875,
+      "metric_statuses": {
+        "patient_level_roc_auc": "passed",
+        "patient_level_average_precision": "passed",
+        "patient_level_sensitivity": "passed",
+        "patient_level_specificity": "strong",
+        "patient_level_brier_score": "passed"
+      }
+    },
+    "challengers": [
+      {
+        "model": "logistic_regression",
+        "patient_level_roc_auc": 0.983,
+        "patient_level_average_precision": 0.988,
+        "patient_level_brier_score": 0.072,
+        "patient_level_sensitivity": 0.93,
+        "patient_level_specificity": 0.938,
+        "metric_statuses": {
+          "patient_level_roc_auc": "passed",
+          "patient_level_average_precision": "passed",
+          "patient_level_sensitivity": "strong",
+          "patient_level_specificity": "passed",
+          "patient_level_brier_score": "passed"
+        }
+      },
+      {
+        "model": "random_forest",
+        "patient_level_roc_auc": 0.972,
+        "patient_level_average_precision": 0.978,
+        "patient_level_brier_score": 0.132,
+        "patient_level_sensitivity": 0.953,
+        "patient_level_specificity": 0.875,
+        "metric_statuses": {
+          "patient_level_roc_auc": "passed",
+          "patient_level_average_precision": "passed",
+          "patient_level_sensitivity": "passed",
+          "patient_level_specificity": "strong",
+          "patient_level_brier_score": "acceptable"
+        }
+      },
+      {
+        "model": "mlp",
+        "patient_level_roc_auc": 0.961,
+        "patient_level_average_precision": 0.969,
+        "patient_level_brier_score": 0.08,
+        "patient_level_sensitivity": 0.93,
+        "patient_level_specificity": 0.844,
+        "metric_statuses": {
+          "patient_level_roc_auc": "passed",
+          "patient_level_average_precision": "passed",
+          "patient_level_sensitivity": "strong",
+          "patient_level_specificity": "strong",
+          "patient_level_brier_score": "passed"
+        }
+      }
+    ],
+    "prediction_disagreement_rate": 0.24,
+    "recommendation": "Use champion/challenger evaluation offline until clinician-feedback and real-world monitoring data are strong enough."
+  },
+  "audit_and_feedback": {
+    "registered_model_count": 2,
+    "prediction_audit_count": 2,
+    "clinical_feedback": {
+      "review_count": 1,
+      "decision_counts": {
+        "approved": 1
+      },
+      "average_explanation_quality_score": 4.0,
+      "average_model_usefulness_score": 3.0
+    }
+  },
+  "clinician_loop_metrics": {
+    "status": "acceptable",
+    "purpose": "A clinician-in-the-loop proxy for alert precision and summary usefulness. It is workflow evidence, not ground-truth clinical accuracy.",
+    "review_count": 1,
+    "accepted_review_rate": 1.0,
+    "rejected_review_rate": 0.0,
+    "edited_review_rate": 0.0,
+    "needs_followup_rate": 0.0,
+    "average_explanation_quality_score": 4.0,
+    "average_model_usefulness_score": 3.0,
+    "accepted_review_status": "passed",
+    "summary_quality_status": "strong",
+    "model_usefulness_status": "acceptable"
+  },
+  "data_quality": {
+    "status": "acceptable",
+    "rows": 1800,
+    "patients": 300,
+    "missingness": [
+      {
+        "column": "mri_tumor_size_cm",
+        "missing_rate": 0.054,
+        "status": "acceptable",
+        "meaning": "Usable for PoC with clear caveats."
+      },
+      {
+        "column": "max_symptom_severity",
+        "missing_rate": 0.052,
+        "status": "acceptable",
+        "meaning": "Usable for PoC with clear caveats."
+      },
+      {
+        "column": "recovery_platelets",
+        "missing_rate": 0.051,
+        "status": "acceptable",
+        "meaning": "Usable for PoC with clear caveats."
+      },
+      {
+        "column": "mri_percent_change_from_baseline",
+        "missing_rate": 0.051,
+        "status": "acceptable",
+        "meaning": "Usable for PoC with clear caveats."
+      },
+      {
+        "column": "nadir_platelets",
+        "missing_rate": 0.049,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      },
+      {
+        "column": "pre_platelets",
+        "missing_rate": 0.045,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      },
+      {
+        "column": "pre_anc",
+        "missing_rate": 0.044,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      },
+      {
+        "column": "nadir_anc",
+        "missing_rate": 0.043,
+        "status": "passed",
+        "meaning": "Meets this project gate, not clinical validation."
+      }
+    ]
+  },
+  "data_coverage": {
+    "status": "acceptable",
+    "purpose": "Shows whether the longitudinal dataset is complete enough to trust model and timeline metrics.",
+    "rows": 1800,
+    "patients": 300,
+    "items": [
+      {
+        "name": "Longitudinal depth",
+        "coverage_rate": 1.0,
+        "status": "passed",
+        "detail": "300/300 patients have at least 6 cycles."
+      },
+      {
+        "name": "CBC coverage",
+        "coverage_rate": 0.977,
+        "status": "passed",
+        "detail": "8/8 expected columns present."
+      },
+      {
+        "name": "MRI trend coverage",
+        "coverage_rate": 0.948,
+        "status": "acceptable",
+        "detail": "2/2 expected columns present."
+      },
+      {
+        "name": "Treatment schedule coverage",
+        "coverage_rate": 1.0,
+        "status": "passed",
+        "detail": "3/3 expected columns present."
+      },
+      {
+        "name": "Symptom/toxicity coverage",
+        "coverage_rate": 0.983,
+        "status": "passed",
+        "detail": "3/3 expected columns present."
+      }
+    ]
+  },
+  "safety_positioning": "Admin analytics are for ML engineering monitoring only. They do not diagnose or make treatment decisions."
+}

@@ -1,0 +1,21 @@
+{
+  "run_id": "20260504T142942Z",
+  "created_at": "2026-05-04T14:29:42.953712+00:00",
+  "output_dir": "Data\\model_evaluation_reports\\20260504T142942Z",
+  "advanced_evaluation_status": "unideal",
+  "champion_model": "gradient_boosting",
+  "files": {
+    "evaluation_report_json": "Data\\model_evaluation_reports\\20260504T142942Z\\evaluation_report.json",
+    "metric_definitions_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\metric_definitions.csv",
+    "calibration_bins_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\calibration_bins.csv",
+    "threshold_operating_points_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\threshold_operating_points.csv",
+    "cost_sensitive_thresholds_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\cost_sensitive_thresholds.csv",
+    "false_negative_cases_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\false_negative_cases.csv",
+    "subgroup_metrics_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\subgroup_metrics.csv",
+    "decision_impact_categories_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\decision_impact_categories.csv",
+    "decision_impact_examples_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\decision_impact_examples.csv",
+    "data_coverage_csv": "Data\\model_evaluation_reports\\20260504T142942Z\\data_coverage.csv",
+    "manifest_json": "Data\\model_evaluation_reports\\20260504T142942Z\\manifest.json"
+  },
+  "safety_note": "Evaluation reports are engineering artifacts. They are not clinical validation."
+}
