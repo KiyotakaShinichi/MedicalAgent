@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timezone
 
-from backend.models import AppEventLog, PredictionAuditLog
+from backend.models import AgentResponseCache, AppEventLog, PredictionAuditLog
 
 
 def log_app_event(
@@ -43,6 +43,8 @@ def build_app_monitoring_summary(db, recent_limit=10):
         event_type_counts[event.event_type] = event_type_counts.get(event.event_type, 0) + 1
 
     confidence_distribution = _confidence_distribution(db)
+    cache_rows = db.query(AgentResponseCache).all()
+    cache_hit_count = sum(int(row.hit_count or 0) for row in cache_rows)
     recent_errors = (
         db.query(AppEventLog)
         .filter(AppEventLog.status.in_(["error", "failed"]))
@@ -60,6 +62,11 @@ def build_app_monitoring_summary(db, recent_limit=10):
         "failure_rate": round(failure_rate, 3),
         "event_type_counts": event_type_counts,
         "confidence_distribution": confidence_distribution,
+        "agent_cache": {
+            "cache_entry_count": len(cache_rows),
+            "cache_hit_count": cache_hit_count,
+            "purpose": "Tracks exact/semantic reuse for low-risk educational agent answers only.",
+        },
         "recent_errors": [app_event_to_dict(row) for row in recent_errors],
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }

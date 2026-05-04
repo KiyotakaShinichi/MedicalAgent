@@ -269,3 +269,19 @@ class AppEventLog(Base):
     output_json = Column(Text, nullable=True)
     error_message = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class AgentResponseCache(Base):
+    __tablename__ = "agent_response_cache"
+
+    id = Column(Integer, primary_key=True, index=True)
+    query_hash = Column(String, nullable=False, unique=True, index=True)
+    semantic_key = Column(String, nullable=False, index=True)
+    intent = Column(String, nullable=False, index=True)
+    safety_level = Column(String, nullable=False, index=True)
+    normalized_query = Column(Text, nullable=False)
+    response_json = Column(Text, nullable=False)
+    source_ids_json = Column(Text, nullable=True)
+    hit_count = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now())

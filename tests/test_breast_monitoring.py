@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.database import Base
-from backend.models import AppEventLog, ClinicalIntervention, ClinicalSummaryReview, LabResult, MedicationLog, ModelRegistry, Patient, PatientUpload, PredictionAuditLog, SymptomReport, Treatment, TreatmentOutcome
+from backend.models import AgentResponseCache, AppEventLog, ClinicalIntervention, ClinicalSummaryReview, LabResult, MedicationLog, ModelRegistry, Patient, PatientUpload, PredictionAuditLog, SymptomReport, Treatment, TreatmentOutcome
 from backend.processing.risk_engine import detect_clinical_rule_risks
 from backend.processing.radiology_analysis import (
     analyze_breast_imaging_reports,
@@ -25,6 +25,7 @@ from backend.services import admin_analytics
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
 from backend.services.app_logging import build_app_monitoring_summary, log_app_event
+from backend.services.agent_rag import run_patient_agent_pipeline, safety_scope_check
 from backend.services.data_availability import build_data_availability
 from backend.services.input_validation import validate_cbc_values, validate_symptom_payload
 from backend.services.model_artifacts import promote_model_version, register_complete_synthetic_champion, rollback_model_version
@@ -526,6 +527,56 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             rows = {row.model_version: row.status for row in db.query(ModelRegistry).all()}
             self.assertEqual(rows["v1"], "champion")
             self.assertEqual(rows["v2"], "rolled_back")
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_agent_rag_caches_low_risk_education_with_citations(self):
+        db = _temp_db_session()
+        try:
+            first = run_patient_agent_pipeline(
+                db=db,
+                patient_id="CACHE-P001",
+                query="What is pCR?",
+                patient_context={},
+                fallback_response="I can explain general terms.",
+            )
+            second = run_patient_agent_pipeline(
+                db=db,
+                patient_id="CACHE-P001",
+                query="What is pCR?",
+                patient_context={},
+                fallback_response="I can explain general terms.",
+            )
+
+            self.assertEqual(first["cache"]["status"], "stored")
+            self.assertEqual(second["cache"]["status"], "exact_cache_hit")
+            self.assertEqual(first["validation"]["status"], "passed")
+            self.assertGreaterEqual(len(first["citations"]), 1)
+            self.assertEqual(db.query(AgentResponseCache).count(), 1)
+            self.assertEqual(db.query(AgentResponseCache).first().hit_count, 1)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_agent_rag_does_not_cache_high_risk_fever_query(self):
+        db = _temp_db_session()
+        try:
+            safety = safety_scope_check("I have fever during chemo")
+            result = run_patient_agent_pipeline(
+                db=db,
+                patient_id="CACHE-P002",
+                query="I have fever during chemo",
+                patient_context={},
+                fallback_response="I noticed possible urgent wording.",
+                urgent_flags=["fever"],
+            )
+
+            self.assertEqual(safety["level"], "high_risk")
+            self.assertFalse(result["cache"]["cacheable"])
+            self.assertIn("oncology", result["reply"].lower())
+            self.assertGreaterEqual(len(result["citations"]), 1)
+            self.assertEqual(db.query(AgentResponseCache).count(), 0)
         finally:
             db.close()
             db.bind.dispose()

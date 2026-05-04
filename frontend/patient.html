@@ -251,6 +251,22 @@
     .msg { padding: 9px 11px; border-radius: 9px; font-size: 13px; line-height: 1.45; white-space: pre-wrap; }
     .msg.user { background: var(--rose-soft); color: var(--text); }
     .msg.assistant { background: var(--soft); color: var(--text); border: 1px solid var(--line); }
+    .msg-citations {
+      margin-top: 7px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      white-space: normal;
+      font-size: 11px;
+    }
+    .msg-citations a, .msg-citations span {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 7px;
+      color: var(--muted);
+      background: #fff;
+      text-decoration: none;
+    }
     .chat-compose { padding: 12px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
     .chat-compose textarea { width: 100%; min-height: 70px; padding: 10px; resize: vertical; }
     .safety { font-size: 12px; color: var(--muted); line-height: 1.45; }
@@ -524,8 +540,35 @@
         thread.innerHTML = '<div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div>';
         return;
       }
-      thread.innerHTML = messages.map(m => `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${escapeHtml(m.message)}</div>`).join("");
+      thread.innerHTML = messages.map(m => {
+        const meta = parseChatMeta(m.saved_actions_json);
+        const citations = m.role === "assistant" ? renderChatCitations(meta?.agent_pipeline?.citations || []) : "";
+        return `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${escapeHtml(m.message)}${citations}</div>`;
+      }).join("");
       thread.scrollTop = thread.scrollHeight;
+    }
+
+    function parseChatMeta(raw) {
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? { saved_actions: parsed } : parsed;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function renderChatCitations(citations) {
+      const safe = (citations || []).slice(0, 3);
+      if (!safe.length) return "";
+      return `<div class="msg-citations">${safe.map(citation => {
+        const label = escapeHtml(citation.source_name || citation.title || "Source");
+        const url = String(citation.source_url || "");
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+          return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+        }
+        return `<span>${label}</span>`;
+      }).join("")}</div>`;
     }
 
     function probabilityFromPrediction(prediction) {

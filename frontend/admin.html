@@ -627,10 +627,12 @@
     function renderOperations(monitoring) {
       const confidence = monitoring?.confidence_distribution || {};
       const counts = monitoring?.event_type_counts || {};
+      const cache = monitoring?.agent_cache || {};
       document.getElementById("operationsList").innerHTML = [
         rowHtml("Monitoring status", monitoring?.purpose || "Operational telemetry.", statusPill(monitoring?.status)),
         row("Predictions", "Total prediction audit logs.", monitoring?.prediction_count ?? 0),
         rowHtml("Failure rate", "Failed/error app events divided by total app events.", metricRight(monitoring?.failure_rate ?? 0, monitoring?.status)),
+        row("Agent cache", cache.purpose || "Low-risk response cache.", `${cache.cache_entry_count ?? 0} entries / ${cache.cache_hit_count ?? 0} hits`),
         row("Event types", JSON.stringify(counts)),
         ...((monitoring?.recent_errors || []).slice(0, 3).map(item =>
           row(item.event_type, item.error_message || "No error message", item.route || "")

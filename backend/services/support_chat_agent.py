@@ -15,6 +15,8 @@ from backend.models import (
     Treatment,
     TreatmentOutcome,
 )
+from backend.services.agent_rag import run_patient_agent_pipeline
+from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_symptom_payload
 
 
@@ -121,29 +123,62 @@ def handle_patient_chat(db, patient_id, message):
 
     patient_context = _recent_patient_context(db, patient_id)
     fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
-    if _prefer_deterministic_reply(normalized):
-        response = fallback_response
-    else:
-        response = _generate_llm_response(
-            message=normalized,
-            actions=actions,
-            urgent_flags=urgent_flags,
-            patient_context=patient_context,
-            fallback_response=fallback_response,
-        )
+    agent_result = run_patient_agent_pipeline(
+        db=db,
+        patient_id=patient_id,
+        query=normalized,
+        patient_context=patient_context,
+        fallback_response=fallback_response,
+        actions=actions,
+        urgent_flags=urgent_flags,
+    )
+    response = agent_result["reply"]
     db.add(ChatMessage(
         patient_id=patient_id,
         role="assistant",
         message=response,
         intent="patient_support_response",
-        saved_actions_json=json.dumps(actions),
+        saved_actions_json=json.dumps({
+            "saved_actions": actions,
+            "agent_pipeline": {
+                "intent": agent_result.get("intent"),
+                "safety": agent_result.get("safety"),
+                "citations": agent_result.get("citations") or [],
+                "cache": agent_result.get("cache"),
+                "validation": agent_result.get("validation"),
+            },
+        }),
     ))
     db.commit()
+    log_app_event(
+        db=db,
+        event_type="agent_rag",
+        patient_id=patient_id,
+        route="/me/chat",
+        status="ok",
+        input_payload={
+            "intent": agent_result.get("intent"),
+            "safety_level": (agent_result.get("safety") or {}).get("level"),
+            "cache": agent_result.get("cache"),
+        },
+        output_payload={
+            "citation_count": len(agent_result.get("citations") or []),
+            "validation": agent_result.get("validation"),
+        },
+    )
 
     return {
         "reply": response,
         "saved_actions": actions,
         "urgent_flags": urgent_flags,
+        "agent_pipeline": {
+            "intent": agent_result.get("intent"),
+            "safety": agent_result.get("safety"),
+            "citations": agent_result.get("citations") or [],
+            "cache": agent_result.get("cache"),
+            "validation": agent_result.get("validation"),
+            "pipeline_trace": agent_result.get("pipeline_trace"),
+        },
         "safety_note": "This assistant logs and summarizes information only. It does not diagnose or give treatment instructions.",
     }
 

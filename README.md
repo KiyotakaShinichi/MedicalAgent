@@ -37,6 +37,38 @@ Week 3, "Stress & Failure Testing":
 - Tests now intentionally cover impossible CBC values, extreme-but-plausible lab warnings, invalid symptom severity, missing longitudinal data, monitoring counters, and rollback behavior.
 - Threshold, cost-sensitive, false-negative, calibration, subgroup, and decision-impact metrics remain visible in the admin dashboard for failure-mode review.
 
+## Patient Agent RAG Architecture
+
+The patient support agent now follows a safety-first RAG pipeline:
+
+```text
+User query
+-> safety / scope check
+-> intent router
+-> query rewrite and decomposition
+-> exact cache check
+-> semantic cache check for low-risk queries
+-> hybrid retrieval
+-> parent-child / sentence-window expansion
+-> reranking
+-> contextual compression
+-> answer generation
+-> validation and citation check
+-> safe cache storage
+```
+
+Implemented in:
+
+- `backend/services/agent_rag.py`: safety routing, retrieval, reranking, compression, citation validation, and low-risk cache storage.
+- `backend/services/support_chat_agent.py`: patient chat integration after symptom/CBC/medication extraction.
+- `backend/models.py`: `AgentResponseCache` for exact and semantic reuse of safe educational answers.
+- `backend/services/app_logging.py`: admin telemetry for agent cache entries and hits.
+
+Cache policy:
+
+- Cacheable: low-risk educational or portal-help answers with citations and no patient-specific state.
+- Not cacheable: urgent symptoms, diagnosis/outcome questions, treatment-decision wording, patient-specific timeline summaries, or messages that save labs/symptoms/medications.
+
 ## Current Architecture
 
 - `backend/api/main.py`: FastAPI routes.
