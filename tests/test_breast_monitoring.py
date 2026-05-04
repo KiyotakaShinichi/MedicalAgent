@@ -21,6 +21,7 @@ from backend.services.mri_manifest import select_model_input_series
 from backend.services.mri_preprocessing import normalize_pixels
 from backend.services.auth import create_demo_session, get_context_from_authorization
 from backend.services.clinician_feedback import create_clinical_summary_review
+from backend.services import admin_analytics
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
 from backend.services.patient_uploads import save_patient_upload
 from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys, infer_synthetic_subtype
@@ -308,6 +309,63 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         finally:
             db.close()
             db.bind.dispose()
+
+    def test_admin_advanced_metrics_cover_calibration_failures_and_coverage(self):
+        labels = pd.Series([1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]).to_numpy()
+        probabilities = pd.Series([0.92, 0.08, 0.40, 0.22, 0.81, 0.15, 0.73, 0.45, 0.67, 0.30, 0.88, 0.12]).to_numpy()
+        frame = pd.DataFrame({
+            "patient_id": [f"TEST-{index:03d}" for index in range(len(labels))],
+            "actual_label": labels,
+            "probability": probabilities,
+            "predicted_label": (probabilities >= 0.5).astype(int),
+            "stage": ["II", "II", "III", "III"] * 3,
+            "molecular_subtype": ["HER2-positive", "triple-negative"] * 6,
+            "latest_mri_percent_change": [-55, -12, -8, 5, -44, -20, -35, 12, -63, -5, -24, 3],
+            "latest_mri_tumor_size_cm": [1.1, 3.0, 2.9, 3.4, 1.8, 2.2, 2.0, 3.7, 0.9, 2.8, 2.1, 3.3],
+            "max_symptom_severity": [2, 4, 3, 8, 2, 6, 3, 7, 2, 5, 3, 4],
+            "nadir_wbc": [3.0, 2.4, 2.8, 1.7, 3.1, 2.2, 2.9, 1.8, 3.3, 2.0, 2.7, 2.5],
+            "nadir_anc": [1.8, 1.3, 1.5, 0.8, 1.9, 1.2, 1.6, 0.7, 2.1, 1.1, 1.4, 1.3],
+            "intervention_count": [0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 0],
+        })
+        training_rows = pd.DataFrame({
+            "patient_id": ["A", "A", "B", "B"],
+            "cycle": [1, 2, 1, 2],
+            "pre_wbc": [5.0, 4.5, 6.0, 5.5],
+            "pre_anc": [3.0, 2.7, 3.5, 3.1],
+            "pre_hemoglobin": [12.1, 11.8, 13.0, 12.7],
+            "pre_platelets": [220, 210, 250, 240],
+            "nadir_wbc": [3.2, 2.8, 4.1, 3.9],
+            "nadir_anc": [1.8, 1.4, 2.5, 2.2],
+            "nadir_hemoglobin": [11.7, 11.2, 12.5, 12.0],
+            "nadir_platelets": [170, 150, 210, 205],
+            "mri_tumor_size_cm": [4.0, 3.2, 2.5, 2.1],
+            "mri_percent_change_from_baseline": [0.0, -20.0, 0.0, -16.0],
+            "treatment_date": ["2026-01-01", "2026-01-21", "2026-01-01", "2026-01-21"],
+            "regimen": ["AC-T", "AC-T", "TCHP", "TCHP"],
+            "max_symptom_severity": [3, 4, 2, 3],
+            "symptom_count": [1, 2, 1, 1],
+            "intervention_count": [0, 1, 0, 0],
+        })
+
+        calibration = admin_analytics._calibration_metrics(labels, probabilities)
+        confidence = admin_analytics._bootstrap_confidence_intervals(labels, probabilities, resamples=25, seed=1)
+        false_negatives = admin_analytics._false_negative_review(frame)
+        subgroups = admin_analytics._subgroup_performance(frame)
+        coverage = admin_analytics._data_coverage(training_rows)
+        thresholds = admin_analytics._threshold_operating_points(labels, probabilities)
+        cost_sensitive = admin_analytics._cost_sensitive_thresholds(labels, probabilities)
+        decision_impact = admin_analytics._decision_impact_simulation(frame)
+        mri_summary = admin_analytics._mri_derived_feature_summary(frame)
+
+        self.assertIn("expected_calibration_error", calibration)
+        self.assertGreater(len(confidence["metrics"]), 0)
+        self.assertEqual(false_negatives["count"], 1)
+        self.assertGreater(len(subgroups["rows"]), 0)
+        self.assertIn(coverage["status"], {"failed", "unideal", "acceptable", "passed"})
+        self.assertGreater(len(thresholds["rows"]), 0)
+        self.assertEqual(len(cost_sensitive["policies"]), 3)
+        self.assertGreater(len(decision_impact["categories"]), 0)
+        self.assertEqual(mri_summary["status"], "acceptable")
 
 def _temp_db_session():
     engine = create_engine(

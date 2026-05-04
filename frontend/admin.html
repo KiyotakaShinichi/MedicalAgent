@@ -98,6 +98,12 @@
     .pill.ok { color: var(--green); background: #eaf7ef; }
     .pill.watch { color: var(--amber); background: #fff4df; }
     .pill.bad { color: var(--red); background: #fff0ef; }
+    .pill.failed { color: var(--red); background: #fff0ef; }
+    .pill.unideal { color: var(--amber); background: #fff4df; }
+    .pill.acceptable { color: var(--blue); background: #edf4ff; }
+    .pill.strong { color: var(--green); background: #eaf7ef; }
+    .pill.passed { color: var(--green); background: #eaf7ef; }
+    .pill.unavailable { color: var(--muted); background: #eef2f6; }
     .list { display: grid; gap: 8px; }
     .row {
       display: grid;
@@ -113,6 +119,52 @@
     .row strong { display: block; margin-bottom: 3px; }
     .row span { color: var(--muted); }
     .mono { font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px; }
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .guide-item {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: var(--soft);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .guide-item strong { display: block; margin-bottom: 5px; }
+    .metric-table { display: grid; gap: 8px; }
+    .metric-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--soft);
+      font-size: 13px;
+    }
+    .metric-row span { color: var(--muted); }
+    .right-stack {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .bar-track {
+      width: 120px;
+      height: 8px;
+      border-radius: 999px;
+      background: #e7edf3;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--blue);
+      border-radius: inherit;
+    }
     @media (max-width: 860px) {
       header { height: auto; padding: 14px; align-items: flex-start; flex-direction: column; gap: 12px; }
       .hero, .grid.two, .grid.three { grid-template-columns: 1fr; }
@@ -158,6 +210,96 @@
 
     <section class="grid two">
       <div class="card">
+        <h2>Champion Metric Guide</h2>
+        <div class="metric-table" id="metricGuideList"></div>
+      </div>
+      <div class="card">
+        <h2>Status Legend</h2>
+        <div class="guide-grid" id="statusLegend"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Metric Bands</h2>
+        <div class="list" id="metricBandsList"></div>
+      </div>
+      <div class="card">
+        <h2>What Metrics Do Not Prove</h2>
+        <div class="list" id="metricLimits"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Calibration & Reliability</h2>
+        <div class="list" id="calibrationList"></div>
+      </div>
+      <div class="card">
+        <h2>Confidence Intervals</h2>
+        <div class="list" id="confidenceIntervalList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>False-Negative Review</h2>
+        <div class="list" id="falseNegativeList"></div>
+      </div>
+      <div class="card">
+        <h2>Decision Curve</h2>
+        <div class="list" id="decisionCurveList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Threshold Operating Points</h2>
+        <div class="list" id="thresholdList"></div>
+      </div>
+      <div class="card">
+        <h2>Cost-Sensitive Thresholds</h2>
+        <div class="list" id="costSensitiveList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Decision Impact Simulation</h2>
+        <div class="list" id="decisionImpactList"></div>
+      </div>
+      <div class="card">
+        <h2>MRI-Derived Feature Summary</h2>
+        <div class="list" id="mriFeatureList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Subgroup Performance</h2>
+        <div class="list" id="subgroupList"></div>
+      </div>
+      <div class="card">
+        <h2>Data Coverage</h2>
+        <div id="coverageStatus" class="pill">loading</div>
+        <div class="list" id="coverageList" style="margin-top:12px;"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Clinician Loop & LLM Quality</h2>
+        <div id="clinicianLoopStatus" class="pill">loading</div>
+        <div class="list" id="clinicianLoopList" style="margin-top:12px;"></div>
+      </div>
+      <div class="card">
+        <h2>Advanced Metric Definitions</h2>
+        <div class="list" id="advancedMetricDefinitions"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
         <h2>Drift Monitoring</h2>
         <div id="driftStatus" class="pill">loading</div>
         <div class="list" id="driftList" style="margin-top:12px;"></div>
@@ -177,6 +319,17 @@
         <h2>Data Quality</h2>
         <div id="dataQualityStatus" class="pill">loading</div>
         <div class="list" id="qualityList" style="margin-top:12px;"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Recommended Additional Metrics</h2>
+        <div class="list" id="recommendedMetrics"></div>
+      </div>
+      <div class="card">
+        <h2>Next Engineering Steps</h2>
+        <div class="list" id="nextMetricSteps"></div>
       </div>
     </section>
   </main>
@@ -201,6 +354,7 @@
     function pillClass(status) {
       if (status === "stable" || status === "ok") return "pill ok";
       if (status === "watch") return "pill watch";
+      if (["failed", "unideal", "acceptable", "strong", "passed", "unavailable"].includes(status)) return `pill ${status}`;
       return "pill";
     }
 
@@ -221,27 +375,235 @@
       return `<div class="row"><div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(detail)}</span></div><div class="mono">${escapeHtml(right)}</div></div>`;
     }
 
+    function rowHtml(title, detail, rightHtml = "") {
+      return `<div class="row"><div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(detail)}</span></div><div>${rightHtml}</div></div>`;
+    }
+
+    function statusPill(status, extra = "") {
+      const label = [extra, status].filter(Boolean).join(" ");
+      return `<span class="${pillClass(status)}">${escapeHtml(label || "n/a")}</span>`;
+    }
+
+    function metricRight(value, status) {
+      return `<span class="right-stack"><span class="mono">${escapeHtml(value ?? "n/a")}</span>${statusPill(status)}</span>`;
+    }
+
+    function bar(value) {
+      const numeric = Number(value);
+      const width = Number.isFinite(numeric) ? Math.max(0, Math.min(100, numeric * 100)) : 0;
+      return `<span class="right-stack"><span class="bar-track"><span class="bar-fill" style="width:${width}%"></span></span><span class="mono">${escapeHtml(value ?? "n/a")}</span></span>`;
+    }
+
+    function guideItem(title, detail) {
+      return `<div class="guide-item">${statusPill(title)}<span style="display:block;margin-top:7px;color:var(--muted);">${escapeHtml(detail)}</span></div>`;
+    }
+
+    function metricRow(label, value, status) {
+      return `<div class="metric-row"><div><strong>${escapeHtml(label)}</strong><span>${escapeHtml(metricMeaning(label))}</span></div><div class="mono">${escapeHtml(value ?? "n/a")}</div><div class="${pillClass(status)}">${escapeHtml(status || "n/a")}</div></div>`;
+    }
+
+    function metricMeaning(label) {
+      const meanings = {
+        "AUROC": "Ranking ability across thresholds.",
+        "AUPRC": "Precision/recall quality, useful with imbalance.",
+        "Brier": "Calibration/probability error; lower is better.",
+        "Sensitivity": "Recall for positive cases; false-negative guard.",
+        "Specificity": "True-negative rate; false-alarm guard."
+      };
+      return meanings[label] || "";
+    }
+
+    function renderAdvancedEvaluation(advanced) {
+      if (!advanced || advanced.status === "unavailable") {
+        const message = advanced?.message || "Advanced metrics are unavailable.";
+        document.getElementById("calibrationList").innerHTML = row("Unavailable", message);
+        document.getElementById("confidenceIntervalList").innerHTML = row("Unavailable", message);
+        document.getElementById("falseNegativeList").innerHTML = row("Unavailable", message);
+        document.getElementById("decisionCurveList").innerHTML = row("Unavailable", message);
+        document.getElementById("thresholdList").innerHTML = row("Unavailable", message);
+        document.getElementById("costSensitiveList").innerHTML = row("Unavailable", message);
+        document.getElementById("decisionImpactList").innerHTML = row("Unavailable", message);
+        document.getElementById("mriFeatureList").innerHTML = row("Unavailable", message);
+        document.getElementById("subgroupList").innerHTML = row("Unavailable", message);
+        return;
+      }
+
+      const calibration = advanced.calibration || {};
+      document.getElementById("calibrationList").innerHTML = [
+        rowHtml("Expected calibration error", calibration.purpose || "Probability reliability check.", metricRight(calibration.expected_calibration_error, calibration.status)),
+        row("Brier score", "Mean squared probability error; lower is better.", calibration.brier_score ?? "n/a"),
+        ...(calibration.bins || []).map(bin =>
+          row(`Bin ${bin.range}`, `n=${bin.count}, predicted ${bin.mean_probability}, observed ${bin.observed_positive_rate}`, `gap ${bin.gap}`)
+        )
+      ].join("");
+
+      const confidence = advanced.bootstrap_confidence_intervals || {};
+      document.getElementById("confidenceIntervalList").innerHTML = [
+        row("Method", confidence.purpose || "Bootstrap uncertainty check.", `${confidence.resamples ?? 0} resamples`),
+        ...(confidence.metrics || []).map(item =>
+          rowHtml(item.metric, `95% CI ${item.ci_low ?? "n/a"} to ${item.ci_high ?? "n/a"}; width ${item.interval_width ?? "n/a"}`, metricRight(item.estimate, item.status))
+        )
+      ].join("");
+
+      const fn = advanced.false_negative_review || {};
+      const fnCases = (fn.cases || []).map(item =>
+        row(item.patient_id, `prob ${item.probability}, stage ${item.stage ?? "n/a"}, subtype ${item.molecular_subtype ?? "n/a"}, MRI change ${item.latest_mri_percent_change ?? "n/a"}, nadir WBC ${item.nadir_wbc ?? "n/a"}`, item.final_cancer_status ?? "")
+      );
+      document.getElementById("falseNegativeList").innerHTML = [
+        rowHtml("False-negative rate", fn.purpose || "Missed positive case review.", metricRight(fn.false_negative_rate, fn.status)),
+        row("Missed / positives", "Positive cases predicted below the current threshold.", `${fn.count ?? 0}/${fn.positive_cases ?? 0}`),
+        ...(fnCases.length ? fnCases : [row("No current cases", "No false negatives at the current 0.50 threshold.")])
+      ].join("");
+
+      const decision = advanced.decision_curve || {};
+      document.getElementById("decisionCurveList").innerHTML = [
+        row("Purpose", decision.purpose || "Threshold utility check."),
+        ...(decision.rows || []).map(item =>
+          rowHtml(`Threshold ${item.threshold}`, `flagged ${item.flagged_patients}, TP ${item.true_positive}, FP ${item.false_positive}, treat-all ${item.treat_all_net_benefit}`, metricRight(item.model_net_benefit, item.status))
+        )
+      ].join("");
+
+      const thresholds = advanced.threshold_operating_points || {};
+      document.getElementById("thresholdList").innerHTML = [
+        row("Purpose", thresholds.purpose || "Threshold tradeoff table."),
+        ...(thresholds.rows || []).map(item =>
+          rowHtml(`Cutoff ${item.threshold}`, `sens ${item.sensitivity}, spec ${item.specificity}, precision ${item.precision}, FNR ${item.false_negative_rate}, FPR ${item.false_positive_rate}`, metricRight(item.flagged_positive_rate, item.status))
+        )
+      ].join("");
+
+      const cost = advanced.cost_sensitive_thresholds || {};
+      document.getElementById("costSensitiveList").innerHTML = [
+        row("Purpose", cost.purpose || "Cost-sensitive threshold policy."),
+        ...(cost.policies || []).map(item =>
+          rowHtml(item.name, `FN cost ${item.false_negative_cost}, FP cost ${item.false_positive_cost}; threshold ${item.recommended_threshold}; sens ${item.sensitivity}, spec ${item.specificity}; FN ${item.false_negative}, FP ${item.false_positive}`, metricRight(item.weighted_error, item.status))
+        )
+      ].join("");
+
+      const impact = advanced.decision_impact_simulation || {};
+      document.getElementById("decisionImpactList").innerHTML = [
+        row("Purpose", impact.purpose || "Review-routing simulation."),
+        ...(impact.categories || []).map(item =>
+          rowHtml(item.category, item.meaning, bar(item.rate))
+        ),
+        ...(impact.examples || []).slice(0, 4).map(item =>
+          row(item.patient_id, `${item.action} Probability ${item.probability}, MRI change ${item.latest_mri_percent_change ?? "n/a"}, symptom ${item.max_symptom_severity ?? "n/a"}, WBC ${item.nadir_wbc ?? "n/a"}`, item.category)
+        )
+      ].join("");
+
+      const mri = advanced.mri_derived_features || {};
+      const pipeline = mri.report_pipeline || {};
+      const trendBuckets = Object.entries(mri.response_trend_buckets || {}).map(([name, count]) =>
+        row(name, "MRI-derived response trend bucket.", count)
+      );
+      document.getElementById("mriFeatureList").innerHTML = [
+        rowHtml("Status", mri.purpose || "MRI-derived feature summary.", statusPill(mri.status)),
+        row("Report pipeline", pipeline.purpose || "No report-pipeline inventory available.", `${pipeline.patients_with_mri ?? 0} patients`),
+        row("MRI coverage", `baseline ${pipeline.patients_with_baseline ?? "n/a"}, follow-up ${pipeline.patients_with_followup ?? "n/a"}, measurement rows ${pipeline.measurement_rows ?? "n/a"}`, pipeline.latest_change_coverage ?? "n/a"),
+        ...(mri.features || []).map(item =>
+          row(item.name, `${item.meaning} mean ${item.mean ?? "n/a"}, min ${item.min ?? "n/a"}, max ${item.max ?? "n/a"}`)
+        ),
+        ...trendBuckets,
+        ...(pipeline.steps || []).slice(0, 4).map((step, index) =>
+          row(`Pipeline step ${index + 1}`, step)
+        ),
+        row("Safety note", mri.safety_note || "Current model uses MRI-derived tabular trends, not raw-MRI clinical interpretation.")
+      ].join("");
+
+      const subgroup = advanced.subgroup_performance || {};
+      document.getElementById("subgroupList").innerHTML = [
+        rowHtml("Overall subgroup status", subgroup.purpose || "Group robustness check.", statusPill(subgroup.status)),
+        ...(subgroup.rows || []).slice(0, 16).map(item =>
+          rowHtml(`${item.group}: ${item.value}`, `n=${item.n}, positive rate ${item.positive_rate}, sensitivity ${item.sensitivity ?? "n/a"}, specificity ${item.specificity ?? "n/a"}, brier ${item.brier_score ?? "n/a"}`, metricRight(item.roc_auc, item.status))
+        )
+      ].join("");
+    }
+
+    function renderDataCoverage(coverage) {
+      const status = document.getElementById("coverageStatus");
+      status.className = pillClass(coverage?.status);
+      status.textContent = coverage?.status || "unknown";
+      document.getElementById("coverageList").innerHTML = [
+        row("Purpose", coverage?.purpose || "Dataset completeness check."),
+        ...(coverage?.items || []).map(item =>
+          rowHtml(item.name, item.detail, metricRight(item.coverage_rate, item.status))
+        )
+      ].join("");
+    }
+
+    function renderClinicianLoop(loop) {
+      const status = document.getElementById("clinicianLoopStatus");
+      status.className = pillClass(loop?.status);
+      status.textContent = loop?.status || "unknown";
+      if (!loop || loop.status === "unavailable") {
+        document.getElementById("clinicianLoopList").innerHTML = row("Unavailable", loop?.message || "No clinician-loop metrics yet.");
+        return;
+      }
+      document.getElementById("clinicianLoopList").innerHTML = [
+        row("Purpose", loop.purpose),
+        rowHtml("Accepted review rate", "Approved, edited, or needs-follow-up reviews divided by all reviews.", metricRight(loop.accepted_review_rate, loop.accepted_review_status)),
+        row("Rejected review rate", "Rejected summaries divided by all reviews.", loop.rejected_review_rate),
+        row("Edited review rate", "How often clinicians edit the AI output.", loop.edited_review_rate),
+        row("Needs-follow-up rate", "How often clinician review escalates to follow-up.", loop.needs_followup_rate),
+        rowHtml("Explanation quality", "Average clinician score from 1 to 5.", metricRight(loop.average_explanation_quality_score, loop.summary_quality_status)),
+        rowHtml("Model usefulness", "Average clinician score from 1 to 5.", metricRight(loop.average_model_usefulness_score, loop.model_usefulness_status))
+      ].join("");
+    }
+
     function render(data) {
       const roles = data.roles || {};
       document.getElementById("rolesList").innerHTML = Object.entries(roles).map(([name, desc]) => row(name, desc)).join("");
 
       const perf = data.model_performance?.synthetic_longitudinal_response || {};
+      const statuses = perf.metric_statuses || {};
       document.getElementById("championModel").innerHTML = `${escapeHtml(perf.best_model || "--")}<span>best current synthetic model</span>`;
       document.getElementById("championAuroc").innerHTML = `${perf.patient_level_roc_auc ?? "--"}<span>held-out patient split</span>`;
       document.getElementById("auditCount").innerHTML = `${data.audit_and_feedback?.prediction_audit_count ?? 0}<span>prediction audit logs</span>`;
+      document.getElementById("metricGuideList").innerHTML = [
+        metricRow("AUROC", perf.patient_level_roc_auc, statuses.patient_level_roc_auc),
+        metricRow("AUPRC", perf.patient_level_average_precision, statuses.patient_level_average_precision),
+        metricRow("Brier", perf.patient_level_brier_score, statuses.patient_level_brier_score),
+        metricRow("Sensitivity", perf.patient_level_sensitivity, statuses.patient_level_sensitivity),
+        metricRow("Specificity", perf.patient_level_specificity, statuses.patient_level_specificity)
+      ].join("");
+
+      const guide = data.metric_interpretation_guide || {};
+      document.getElementById("statusLegend").innerHTML = (guide.status_levels || []).map(item =>
+        guideItem(item.status, item.meaning)
+      ).join("");
+      document.getElementById("metricBandsList").innerHTML = Object.entries(guide.model_metric_bands || {}).map(([metric, band]) =>
+        row(metric, band)
+      ).join("");
+      document.getElementById("metricLimits").innerHTML = (guide.what_current_metrics_do_not_prove || []).map((item, index) =>
+        row(`Limit ${index + 1}`, item)
+      ).join("");
+      document.getElementById("advancedMetricDefinitions").innerHTML = (guide.advanced_metric_definitions || []).map(item =>
+        row(item.metric, item["for"])
+      ).join("");
+
+      renderAdvancedEvaluation(data.advanced_model_evaluation || {});
+      renderDataCoverage(data.data_coverage || {});
+      renderClinicianLoop(data.clinician_loop_metrics || {});
 
       const drift = data.drift_monitoring || {};
       const driftStatus = document.getElementById("driftStatus");
       driftStatus.className = pillClass(drift.status);
       driftStatus.textContent = drift.status || "unknown";
       document.getElementById("driftList").innerHTML = (drift.features || []).map(item =>
-        row(item.feature, `reference ${item.reference_mean}, current ${item.current_mean}`, item.standardized_mean_shift)
+        rowHtml(
+          item.feature,
+          `reference ${item.reference_mean}, current ${item.current_mean}; ${item.meaning || ""}`,
+          `<span class="right-stack"><span class="mono">${escapeHtml(item.standardized_mean_shift)}</span>${statusPill(item.status)}</span>`
+        )
       ).join("") || row("No drift data", "Run or generate training data first.");
 
       const ab = data.ab_testing || {};
       const candidates = [ab.champion, ...(ab.challengers || [])].filter(Boolean);
       document.getElementById("abList").innerHTML = candidates.map(item =>
-        row(item.model, `AUROC ${item.patient_level_roc_auc}, AP ${item.patient_level_average_precision ?? "n/a"}, Brier ${item.patient_level_brier_score ?? "n/a"}`)
+        rowHtml(
+          item.model,
+          `AUROC ${item.patient_level_roc_auc}, AP ${item.patient_level_average_precision ?? "n/a"}, Brier ${item.patient_level_brier_score ?? "n/a"}`,
+          statusPill(item.metric_statuses?.patient_level_roc_auc)
+        )
       ).join("") + row("Disagreement", "Prediction disagreement across model candidates", ab.prediction_disagreement_rate ?? "n/a");
 
       const feedback = data.audit_and_feedback?.clinical_feedback || {};
@@ -257,8 +619,15 @@
       qualityStatus.className = pillClass(quality.status);
       qualityStatus.textContent = quality.status || "unknown";
       document.getElementById("qualityList").innerHTML = (quality.missingness || []).map(item =>
-        row(item.column, `missing rate ${item.missing_rate}`, item.status)
+        rowHtml(item.column, `missing rate ${item.missing_rate}; ${item.meaning || ""}`, statusPill(item.status))
       ).join("") || row("No missingness", `${quality.rows || 0} rows checked.`);
+
+      document.getElementById("recommendedMetrics").innerHTML = (guide.recommended_next_metrics || []).map((item, index) =>
+        row(`Metric ${index + 1}`, item)
+      ).join("");
+      document.getElementById("nextMetricSteps").innerHTML = (guide.next_steps || []).map((item, index) =>
+        row(`Step ${index + 1}`, item)
+      ).join("");
     }
 
     function loadAnalytics() {

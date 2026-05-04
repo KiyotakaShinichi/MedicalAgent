@@ -7,13 +7,13 @@ AI-assisted proof of concept for longitudinal breast cancer treatment monitoring
 - Tracks CBC/lab trends across treatment cycles.
 - Stores treatment schedules, medication logs, symptoms, imaging reports, and MRI file references.
 - Builds patient reports with risk flags, temporal timelines, deterministic monitoring snapshots, and patient-friendly explanations.
-- Uses BreastDCEDL/I-SPY1 DCE-MRI features to train a pCR response-classification baseline.
+- Uses BreastDCEDL/I-SPY1 MRI-derived tabular features for a small pCR response-classification baseline.
 - Adds SHAP explanations for model behavior.
 - Saves model artifacts, registry metadata, and prediction audit logs.
 - Provides separate patient, clinician, and admin/MLE surfaces.
 - Provides a patient support chat that can save symptoms, complete CBC values, medication mentions, and answer timeline-monitoring questions.
 - Adds clinician-in-the-loop summary review with approve/edit/reject audit logging.
-- Adds admin/MLE analytics for model evaluation, drift checks, champion/challenger comparison, audit counts, and clinician feedback.
+- Adds admin/MLE analytics for model evaluation, calibration, threshold policies, cost-sensitive error analysis, drift checks, subgroup behavior, audit counts, and clinician feedback.
 
 ## Current Architecture
 
@@ -34,11 +34,11 @@ AI-assisted proof of concept for longitudinal breast cancer treatment monitoring
 - Synthetic temporal journeys: generated longitudinal CBC, medications, symptoms, treatments, and imaging reports for workflow simulation.
 - Complete synthetic journeys: generated end-to-end treatment journeys with diagnosis, treatment sessions, per-cycle MRI, CBC timepoints, medications, symptoms, interventions, and final outcome labels.
 
-## ML Task
+## Real MRI Baseline Task
 
 Binary treatment-response classification:
 
-- Input: DCE-MRI tumor-region features.
+- Input: MRI-derived tabular tumor-region features.
 - Output: pCR positive vs pCR negative.
 
 Current best baseline:
@@ -48,6 +48,8 @@ Current best baseline:
 - ROC AUC: 0.637.
 
 The small CNN experiment did not beat the classical baseline, which is documented as an honest result.
+
+This baseline is not the main longitudinal treatment-monitoring model and should not be presented as clinical MRI interpretation.
 
 ## Complete Synthetic Dataset
 
@@ -84,7 +86,7 @@ Training script:
 python train_complete_synthetic_models.py --target treatment_success_binary
 ```
 
-Models trained:
+Models trained on synthetic longitudinal rows:
 
 - logistic regression
 - random forest
@@ -92,8 +94,8 @@ Models trained:
 - gradient boosting
 - SVM
 - MLP
-- temporal 1D CNN over patient treatment-cycle sequences
-- temporal GRU over patient treatment-cycle sequences
+- temporal 1D CNN over patient treatment-cycle sequences: Conv1D encoder over cycle-ordered feature sequences with binary cross-entropy objective
+- temporal GRU over patient treatment-cycle sequences: GRU sequence encoder over cycle-ordered features with binary cross-entropy objective
 
 Main target:
 
@@ -128,6 +130,28 @@ Training notes:
 
 - `Data/complete_synthetic_training_notes.md`
 
+## Evaluation and MLE Monitoring
+
+The admin/MLE dashboard reports:
+
+- AUROC, AUPRC, sensitivity, specificity, precision, and Brier score.
+- Expected calibration error and calibration bins.
+- Bootstrap confidence intervals.
+- False-negative review cases.
+- Decision-curve net benefit.
+- Threshold operating points across multiple cutoffs.
+- Cost-sensitive threshold policies for safety-first, balanced, and precision-first review workflows.
+- Decision-impact simulation categories for clinician-review routing.
+- Subgroup performance by stage, subtype, age band, and treatment regimen.
+- Drift, data-quality, data-coverage, and clinician-loop metrics.
+
+These metrics are project engineering gates only. They do not prove clinical safety or real-world effectiveness.
+
+## Documentation Cards
+
+- `MODEL_CARD.md`: model purpose, input representation, training objective, evaluation, limitations, and safe positioning.
+- `DATA_CARD.md`: dataset sources, labels, feature groups, counts, limitations, and safe dataset language.
+
 ## Safety Positioning
 
 This system does not:
@@ -138,7 +162,7 @@ This system does not:
 - choose treatment
 - replace clinicians
 
-It is a clinical support and engineering proof of concept for organizing and summarizing longitudinal oncology data.
+It is a clinical-safety-inspired engineering proof of concept for organizing and summarizing longitudinal oncology data.
 
 ## Local URLs
 
@@ -169,4 +193,4 @@ The app also checks the legacy nested `MedicalAgent/.env` location, but the proj
 
 ## Portfolio Description
 
-Built an AI-assisted breast cancer treatment-monitoring platform that combines longitudinal patient records, CBC trends, medication and symptom tracking, breast imaging report NLP, MRI-derived response modeling, XAI explanations, deterministic clinical rule flags, timeline intelligence, and LLM-assisted summaries. Implemented FastAPI services, SQLite persistence, patient/clinician/admin demo sessions, local upload logging, synthetic temporal oncology journeys, model artifact registration, prediction audit trails, clinician-in-the-loop summary review, and admin/MLE monitoring for drift, A/B comparison, and feedback analytics. The system is positioned as clinical decision support and workflow intelligence, not diagnosis or treatment recommendation.
+Built an AI-assisted breast cancer treatment-monitoring platform that combines longitudinal patient records, CBC trends, medication and symptom tracking, breast imaging report NLP, planned multimodal integration using MRI-derived features, deterministic clinical rule flags, timeline intelligence, and LLM-assisted summaries. Implemented FastAPI services, SQLite persistence, patient/clinician/admin demo sessions, local upload logging, synthetic temporal oncology journeys, model artifact registration, prediction audit trails, clinician-in-the-loop summary review, and admin/MLE monitoring for calibration, confidence intervals, drift, subgroup behavior, threshold policy, cost-sensitive error analysis, decision-impact simulation, and feedback analytics. The system is positioned as clinician-review support and workflow intelligence, not diagnosis or treatment recommendation.
