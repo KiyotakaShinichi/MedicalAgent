@@ -1,12 +1,8 @@
-from dotenv import load_dotenv
 import json
-import os
 
 from groq import Groq
 
-
-load_dotenv()
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+from backend.config import get_groq_api_key
 
 SYSTEM_PROMPT = """\
 You are a clinical support AI for longitudinal breast cancer monitoring.
@@ -70,24 +66,26 @@ def _fallback_summary(patient_state, reason):
 def generate_clinical_summary(patient_state):
     """Generate structured doctor and patient summaries from fused patient state."""
 
-    api_key = GROQ_API_KEY or os.environ.get("GROQ_API_KEY")
+    api_key = get_groq_api_key()
     if not api_key:
         return _fallback_summary(patient_state, "GROQ_API_KEY environment variable is not set")
-
-    client = Groq(api_key=api_key)
 
     user_prompt = USER_PROMPT_TEMPLATE.format(
         patient_state=json.dumps(patient_state, indent=2, default=str),
     )
 
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-        temperature=0.2,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-    )
+    try:
+        client = Groq(api_key=api_key)
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            temperature=0.2,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+        )
+    except Exception as exc:
+        return _fallback_summary(patient_state, f"LLM request failed: {exc.__class__.__name__}")
 
     content = response.choices[0].message.content
 

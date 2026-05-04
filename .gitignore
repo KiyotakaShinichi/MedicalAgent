@@ -9,3 +9,5 @@ datasets/
 Data/dicom_previews/
 Data/qin_mri_previews/
 Data/breastdcedl_previews/
+Data/uploads/
+Data/test_tmp/

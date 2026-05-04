@@ -47,7 +47,19 @@
     .brand { font-size: 18px; font-weight: 700; }
     .brand span { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 2px; }
     .toolbar { display: flex; align-items: center; gap: 10px; }
-    select, textarea, button {
+    .account-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--soft);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    select, textarea, input[type="file"], button {
       font: inherit;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -118,6 +130,8 @@
       margin-bottom: 10px;
     }
     .list { display: grid; gap: 8px; }
+    .upload-form { display: grid; gap: 10px; }
+    .upload-form textarea { width: 100%; min-height: 66px; padding: 10px; resize: vertical; }
     .item {
       background: var(--soft);
       border: 1px solid var(--line);
@@ -186,8 +200,7 @@
   <header>
     <div class="brand">My Oncology Journey<span>Patient portal</span></div>
     <div class="toolbar">
-      <select id="patientSelect" title="Patient"></select>
-      <button onclick="loadSelectedPatient()">Open</button>
+      <span class="account-chip" id="accountChip">Private patient view</span>
     </div>
   </header>
 
@@ -250,6 +263,29 @@
       <h2>What To Bring To Your Care Team</h2>
       <div class="list" id="reviewList"><div class="item muted">No review reasons loaded.</div></div>
     </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Upload Records</h2>
+        <div class="upload-form">
+          <select id="uploadType">
+            <option value="breast_mri">Breast MRI</option>
+            <option value="lab_report">Lab report</option>
+            <option value="medication_list">Medication list</option>
+            <option value="symptom_note">Symptom note</option>
+            <option value="document">Other document</option>
+          </select>
+          <input type="file" id="uploadFile">
+          <textarea id="uploadNotes" placeholder="Optional note for your care team"></textarea>
+          <button onclick="uploadRecord()">Upload to my record</button>
+          <div class="safety">Demo limit: small files only. Uploads are stored locally for this project.</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Recent Uploads</h2>
+        <div class="list" id="uploadList"><div class="item muted">No uploads yet.</div></div>
+      </div>
+    </section>
   </main>
 
   <div class="chat-widget" id="chatWidget">
@@ -266,8 +302,24 @@
 
   <script>
     const API_BASE = window.location.origin;
-    let currentPatientId = new URLSearchParams(window.location.search).get("patient") || "SYN-BRCA-0001";
+    let currentPatientId = resolvePatientId();
+    let accessToken = localStorage.getItem("patientPortalAccessToken") || null;
     let labChart = null;
+
+    function resolvePatientId() {
+      const params = new URLSearchParams(window.location.search);
+      const patientFromLink = params.get("patient");
+      if (patientFromLink) {
+        localStorage.setItem("patientPortalPatientId", patientFromLink);
+        history.replaceState(null, "", "/patient");
+        return patientFromLink;
+      }
+      return localStorage.getItem("patientPortalPatientId") || "SYN-BRCA-0001";
+    }
+
+    function authHeaders() {
+      return accessToken ? { "Authorization": `Bearer ${accessToken}` } : {};
+    }
 
     function toast(message) {
       const el = document.getElementById("toast");
@@ -288,19 +340,6 @@
 
     function toggleChat() {
       document.getElementById("chatWidget").classList.toggle("open");
-    }
-
-    function loadSelectedPatient() {
-      currentPatientId = document.getElementById("patientSelect").value;
-      history.replaceState(null, "", `?patient=${encodeURIComponent(currentPatientId)}`);
-      loadPatient(currentPatientId);
-    }
-
-    function renderPatients(patients) {
-      const select = document.getElementById("patientSelect");
-      select.innerHTML = patients.map(p => `<option value="${p.id}">${p.name || p.id}</option>`).join("");
-      if (!patients.some(p => p.id === currentPatientId) && patients.length) currentPatientId = patients[0].id;
-      select.value = currentPatientId;
     }
 
     function renderChart(history) {
@@ -369,12 +408,17 @@
         ? reasons.map(r => `<div class="item">${escapeHtml(r)}</div>`).join("")
         : '<div class="item muted">No review reasons listed right now.</div>';
 
+      const uploads = document.getElementById("uploadList");
+      uploads.innerHTML = (data.uploads || []).slice(0, 8).map(u =>
+        `<div class="item">${escapeHtml(u.upload_type)}: ${escapeHtml(u.original_filename)}<br><span class="muted">${escapeHtml(u.notes || "No note")}</span></div>`
+      ).join("") || '<div class="item muted">No uploads yet.</div>';
+
       renderChat(data.chat_history || []);
     }
 
-    function loadPatient(patientId) {
-      fetch(`${API_BASE}/patient-report/${patientId}`)
-        .then(r => { if (!r.ok) throw new Error(`Could not load patient ${patientId}`); return r.json(); })
+    function loadPatient() {
+      fetch(`${API_BASE}/me/patient-report`, { headers: authHeaders() })
+        .then(r => { if (!r.ok) throw new Error(`Could not load your patient record`); return r.json(); })
         .then(renderReport)
         .catch(err => toast(err.message));
     }
@@ -383,27 +427,65 @@
       const input = document.getElementById("chatInput");
       const message = input.value.trim();
       if (!message) { toast("Write a message first."); return; }
-      fetch(`${API_BASE}/patients/${currentPatientId}/chat`, {
+      fetch(`${API_BASE}/me/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ message })
       })
       .then(r => { if (!r.ok) throw new Error(`Chat failed (${r.status})`); return r.json(); })
       .then(result => {
         input.value = "";
         toast(result.saved_actions?.length ? "Saved to your record." : "Message saved.");
-        loadPatient(currentPatientId);
+        loadPatient();
       })
       .catch(err => toast(err.message));
     }
 
-    fetch(`${API_BASE}/patients`)
-      .then(r => r.json())
-      .then(patients => {
-        renderPatients(patients);
-        loadPatient(currentPatientId);
+    function uploadRecord() {
+      const file = document.getElementById("uploadFile").files[0];
+      if (!file) { toast("Choose a file first."); return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        fetch(`${API_BASE}/me/uploads`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({
+            upload_type: document.getElementById("uploadType").value,
+            file_name: file.name,
+            content_type: file.type || "application/octet-stream",
+            content_base64: reader.result,
+            notes: document.getElementById("uploadNotes").value.trim()
+          })
+        })
+        .then(r => { if (!r.ok) throw new Error(`Upload failed (${r.status})`); return r.json(); })
+        .then(() => {
+          document.getElementById("uploadFile").value = "";
+          document.getElementById("uploadNotes").value = "";
+          toast("Upload saved to your record.");
+          loadPatient();
+        })
+        .catch(err => toast(err.message));
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loginAndLoadPatient() {
+      fetch(`${API_BASE}/auth/demo-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: "patient", patient_id: currentPatientId })
+      })
+      .then(r => { if (!r.ok) throw new Error(`Login failed (${r.status})`); return r.json(); })
+      .then(session => {
+        accessToken = session.access_token;
+        localStorage.setItem("patientPortalAccessToken", accessToken);
+        localStorage.setItem("patientPortalPatientId", currentPatientId);
+        loadPatient();
       })
       .catch(err => toast(err.message));
+    }
+
+    loginAndLoadPatient();
   </script>
 </body>
 </html>

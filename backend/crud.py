@@ -9,6 +9,7 @@ from backend.models import (
     MedicationLog,
     MRIFileRegistry,
     MRISeriesIndex,
+    PatientUpload,
     Patient,
     SymptomReport,
     Treatment,
@@ -228,4 +229,28 @@ def get_chat_messages(db, patient_id, limit=20):
             "created_at": str(row.created_at),
         }
         for row in reversed(rows)
+    ]
+
+
+def get_patient_uploads(db, patient_id, limit=20):
+    rows = (
+        db.query(PatientUpload)
+        .filter(PatientUpload.patient_id == patient_id)
+        .order_by(PatientUpload.created_at.desc(), PatientUpload.id.desc())
+        .limit(limit)
+        .all()
+    )
+
+    return [
+        {
+            "id": row.id,
+            "patient_id": row.patient_id,
+            "upload_type": row.upload_type,
+            "original_filename": row.original_filename,
+            "content_type": row.content_type,
+            "local_path": row.local_path,
+            "notes": row.notes,
+            "created_at": str(row.created_at),
+        }
+        for row in rows
     ]

@@ -9,6 +9,7 @@ pillow
 numpy
 nibabel
 scikit-learn
+joblib
 torch
 torchvision
 shap

@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +18,7 @@ from backend.crud import (
     get_mri_registry,
     get_mri_series_index,
     get_patient,
+    get_patient_uploads,
     get_symptoms_df,
     get_treatments_df,
 )
@@ -75,6 +76,24 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def get_access_context(authorization: str | None = Header(None), db: Session = Depends(get_db)):
+    from backend.services.auth import get_context_from_authorization
+
+    try:
+        return get_context_from_authorization(db, authorization)
+    except PermissionError as exc:
+        raise HTTPException(status_code=401, detail=str(exc)) from exc
+
+
+def get_patient_access_context(context=Depends(get_access_context)):
+    from backend.services.auth import require_patient_context
+
+    try:
+        return require_patient_context(context)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
 
 
 class PatientCreate(BaseModel):
@@ -168,6 +187,26 @@ class SyntheticJourneyRequest(BaseModel):
     seed: int = 42
 
 
+class TemporalSyntheticJourneyRequest(BaseModel):
+    count: int = 12
+    seed: int = 2026
+    cycles: int = 6
+
+
+class DemoLoginRequest(BaseModel):
+    role: str = "patient"
+    patient_id: str | None = "SYN-BRCA-0001"
+
+
+class PatientUploadCreate(BaseModel):
+    upload_type: str = "document"
+    file_name: str
+    content_type: str | None = None
+    content_base64: str
+    notes: str | None = None
+    scan_date: date | None = None
+
+
 class BreastDCEDLInspectRequest(BaseModel):
     path: str = "Datasets/BreastDCEDL_spy1"
 
@@ -210,6 +249,20 @@ class BreastDCEDLXAIRequest(BaseModel):
     top_n: int = 5
 
 
+class BreastDCEDLModelTrainRequest(BaseModel):
+    version: str = "v1"
+    features_csv_path: str = "Data/breastdcedl_spy1_features.csv"
+    metrics_path: str = "Data/breastdcedl_spy1_baseline_metrics.json"
+    artifact_dir: str = "Data/models"
+
+
+class BreastDCEDLModelPredictRequest(BaseModel):
+    model_name: str = "breastdcedl_pcr_logreg"
+    model_version: str = "v1"
+    features_csv_path: str = "Data/breastdcedl_spy1_features.csv"
+    shap_json_path: str = "Data/breastdcedl_spy1_shap_explanations.json"
+
+
 class PatientChatRequest(BaseModel):
     message: str
 
@@ -225,6 +278,16 @@ def patient_portal():
 
 # Serve frontend static files
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+
+
+@app.post("/auth/demo-login")
+def demo_login(payload: DemoLoginRequest, db: Session = Depends(get_db)):
+    from backend.services.auth import create_demo_session
+
+    try:
+        return create_demo_session(db, role=payload.role, patient_id=payload.patient_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @app.get("/patients")
@@ -362,9 +425,15 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["mri_series_index"] = mri_series_index
     report["medication_logs"] = medication_logs
     report["chat_history"] = chat_history
+    report["uploads"] = get_patient_uploads(db, patient.id, limit=25)
     report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
 
     return report
+
+
+@app.get("/me/patient-report")
+def get_my_patient_report(context=Depends(get_patient_access_context), db: Session = Depends(get_db)):
+    return generate_patient_report(context.patient_id, db)
 
 
 @app.get("/patients/{patient_id}/chat")
@@ -391,6 +460,64 @@ def chat_with_patient_agent(patient_id: str, payload: PatientChatRequest, db: Se
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return result
+
+
+@app.get("/me/chat")
+def get_my_patient_chat(context=Depends(get_patient_access_context), db: Session = Depends(get_db)):
+    return {
+        "patient_id": context.patient_id,
+        "messages": get_chat_messages(db, context.patient_id, limit=50),
+    }
+
+
+@app.post("/me/chat")
+def chat_with_my_patient_agent(
+    payload: PatientChatRequest,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    try:
+        result = handle_patient_chat(db, context.patient_id, payload.message)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return result
+
+
+@app.get("/me/uploads")
+def get_my_uploads(context=Depends(get_patient_access_context), db: Session = Depends(get_db)):
+    return {
+        "patient_id": context.patient_id,
+        "uploads": get_patient_uploads(db, context.patient_id, limit=50),
+    }
+
+
+@app.post("/me/uploads")
+def create_my_upload(
+    payload: PatientUploadCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.patient_uploads import save_patient_upload
+
+    try:
+        upload = save_patient_upload(
+            db=db,
+            patient_id=context.patient_id,
+            upload_type=payload.upload_type,
+            file_name=payload.file_name,
+            content_type=payload.content_type,
+            content_base64=payload.content_base64,
+            notes=payload.notes,
+            scan_date=payload.scan_date,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "Upload saved to patient record",
+        "upload": upload,
+    }
 
 
 @app.get("/import-schema")
@@ -466,6 +593,27 @@ def generate_synthetic_breast_journeys(payload: SyntheticJourneyRequest, db: Ses
             seed=payload.seed,
         ),
         "warning": "Synthetic journeys are for software testing and demos only, not model validation or clinical evidence.",
+    }
+
+
+@app.post("/generate-temporal-synthetic-breast-journeys")
+def generate_temporal_synthetic_breast_journeys(payload: TemporalSyntheticJourneyRequest, db: Session = Depends(get_db)):
+    if payload.count < 1 or payload.count > 300:
+        raise HTTPException(status_code=400, detail="count must be between 1 and 300")
+    if payload.cycles < 2 or payload.cycles > 8:
+        raise HTTPException(status_code=400, detail="cycles must be between 2 and 8")
+
+    from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys
+
+    return {
+        "message": "Temporal synthetic breast cancer journeys generated",
+        "result": generate_temporal_breast_cancer_journeys(
+            db=db,
+            count=payload.count,
+            seed=payload.seed,
+            cycles=payload.cycles,
+        ),
+        "warning": "Synthetic temporal journeys are for engineering demos and model practice only, not clinical evidence.",
     }
 
 
@@ -623,6 +771,70 @@ def generate_breastdcedl_xai_endpoint(payload: BreastDCEDLXAIRequest):
             top_n=payload.top_n,
         ),
     }
+
+
+@app.post("/models/breastdcedl/train-final")
+def train_breastdcedl_final_model_endpoint(payload: BreastDCEDLModelTrainRequest, db: Session = Depends(get_db)):
+    from backend.services.model_artifacts import train_and_register_breastdcedl_model
+
+    try:
+        result = train_and_register_breastdcedl_model(
+            db=db,
+            version=payload.version,
+            features_csv_path=payload.features_csv_path,
+            metrics_path=payload.metrics_path,
+            artifact_dir=payload.artifact_dir,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return result
+
+
+@app.get("/models")
+def list_models_endpoint(db: Session = Depends(get_db)):
+    from backend.services.model_artifacts import list_registered_models
+
+    return {"models": list_registered_models(db)}
+
+
+@app.post("/models/breastdcedl/predict/{patient_id}")
+def predict_breastdcedl_patient_endpoint(
+    patient_id: str,
+    payload: BreastDCEDLModelPredictRequest,
+    db: Session = Depends(get_db),
+):
+    patient = get_patient(db, patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    from backend.services.model_artifacts import predict_breastdcedl_patient
+
+    try:
+        result = predict_breastdcedl_patient(
+            db=db,
+            patient_id=patient_id,
+            model_name=payload.model_name,
+            model_version=payload.model_version,
+            features_csv_path=payload.features_csv_path,
+            shap_json_path=payload.shap_json_path,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return result
+
+
+@app.get("/prediction-audits")
+def list_prediction_audits_endpoint(patient_id: str | None = None, limit: int = 50, db: Session = Depends(get_db)):
+    from backend.services.model_artifacts import get_prediction_audit_logs
+
+    safe_limit = max(1, min(limit, 200))
+    return {"prediction_audits": get_prediction_audit_logs(db, patient_id=patient_id, limit=safe_limit)}
 
 
 @app.post("/patients/{patient_id}/labs")

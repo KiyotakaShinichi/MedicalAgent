@@ -1,0 +1,51 @@
+{
+  "model_name": "breastdcedl_pcr_logreg",
+  "model_version": "v1",
+  "task": "BreastDCEDL pCR treatment-response classification",
+  "target": "pCR positive / pathologic complete response",
+  "trained_at": "2026-05-04T02:26:09.334564+00:00",
+  "training_rows": 159,
+  "positive_pcr": 44,
+  "negative_pcr": 115,
+  "feature_columns": [
+    "age",
+    "baseline_longest_diameter_mm",
+    "tumor_voxel_count",
+    "acq0_mask_mean",
+    "acq1_mask_mean",
+    "acq2_mask_mean",
+    "early_enhancement_mean",
+    "delayed_enhancement_mean",
+    "washout_mean",
+    "early_enhancement_p90",
+    "delayed_enhancement_p90",
+    "washout_p10"
+  ],
+  "categorical_feature_columns": [
+    "molecular_subtype"
+  ],
+  "metrics": {
+    "rows": 159,
+    "positive_pcr": 44,
+    "negative_pcr": 115,
+    "cv_folds": 5,
+    "models": {
+      "logistic_regression": {
+        "accuracy": 0.616,
+        "balanced_accuracy": 0.63,
+        "roc_auc": 0.637
+      },
+      "random_forest": {
+        "accuracy": 0.654,
+        "balanced_accuracy": 0.543,
+        "roc_auc": 0.579
+      }
+    },
+    "best_model_by_roc_auc": "logistic_regression",
+    "features_csv_path": "Data/breastdcedl_spy1_features.csv",
+    "predictions_csv_path": "Data/breastdcedl_spy1_model_predictions.csv",
+    "model_type": "cross_validated_tabular_baselines",
+    "warning": "Exploratory PoC only. Not clinically validated."
+  },
+  "warning": "Exploratory PoC model only. Not clinically validated."
+}

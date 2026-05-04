@@ -2,6 +2,9 @@ import json
 import re
 from datetime import date, timedelta
 
+from groq import Groq
+
+from backend.config import get_groq_api_key
 from backend.models import ChatMessage, LabResult, MedicationLog, SymptomReport
 
 
@@ -30,6 +33,17 @@ URGENT_TERMS = [
     "self harm",
     "kill myself",
 ]
+
+CHAT_SYSTEM_PROMPT = """\
+You are a patient support assistant for a breast cancer treatment monitoring portal.
+
+Rules:
+- Do not diagnose, stage, confirm recurrence/metastasis, or decide treatment.
+- Do not tell the patient to start, stop, increase, or decrease medications.
+- Explain what was logged, ask for missing tracking details when useful, and encourage oncology team review for concerning symptoms.
+- If urgent wording is present, advise contacting the oncology team or emergency services now.
+- Keep the tone calm and practical. Maximum 120 words. Plain text only.
+"""
 
 
 def handle_patient_chat(db, patient_id, message):
@@ -93,7 +107,15 @@ def handle_patient_chat(db, patient_id, message):
         ))
         actions.append({"type": "saved_medication", **medication})
 
-    response = _build_response(actions, urgent_flags)
+    fallback_response = _build_response(actions, urgent_flags)
+    response = _generate_llm_response(
+        db=db,
+        patient_id=patient_id,
+        message=normalized,
+        actions=actions,
+        urgent_flags=urgent_flags,
+        fallback_response=fallback_response,
+    )
     db.add(ChatMessage(
         patient_id=patient_id,
         role="assistant",
@@ -252,3 +274,79 @@ def _build_response(actions, urgent_flags):
         "I can help track what you are feeling and summarize it for review, but I cannot diagnose or decide treatment."
     )
     return " ".join(parts)
+
+
+def _generate_llm_response(db, patient_id, message, actions, urgent_flags, fallback_response):
+    api_key = get_groq_api_key()
+    if not api_key:
+        return fallback_response
+
+    context = _recent_patient_context(db, patient_id)
+    user_prompt = {
+        "patient_message": message,
+        "saved_actions": actions,
+        "urgent_flags": urgent_flags,
+        "recent_context": context,
+        "fallback_reply": fallback_response,
+    }
+    try:
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            temperature=0.2,
+            max_tokens=220,
+            messages=[
+                {"role": "system", "content": CHAT_SYSTEM_PROMPT},
+                {"role": "user", "content": json.dumps(user_prompt, default=str)},
+            ],
+        )
+        reply = completion.choices[0].message.content.strip()
+    except Exception:
+        return fallback_response
+
+    if not reply:
+        return fallback_response
+    if urgent_flags and "emergency" not in reply.lower() and "oncology" not in reply.lower():
+        return fallback_response
+    return reply
+
+
+def _recent_patient_context(db, patient_id):
+    latest_lab = (
+        db.query(LabResult)
+        .filter(LabResult.patient_id == patient_id)
+        .order_by(LabResult.date.desc(), LabResult.id.desc())
+        .first()
+    )
+    symptoms = (
+        db.query(SymptomReport)
+        .filter(SymptomReport.patient_id == patient_id)
+        .order_by(SymptomReport.date.desc(), SymptomReport.id.desc())
+        .limit(3)
+        .all()
+    )
+    medications = (
+        db.query(MedicationLog)
+        .filter(MedicationLog.patient_id == patient_id)
+        .order_by(MedicationLog.date.desc(), MedicationLog.id.desc())
+        .limit(3)
+        .all()
+    )
+
+    return {
+        "latest_lab": {
+            "date": latest_lab.date,
+            "wbc": latest_lab.wbc,
+            "hemoglobin": latest_lab.hemoglobin,
+            "platelets": latest_lab.platelets,
+            "source": latest_lab.source,
+        } if latest_lab else None,
+        "recent_symptoms": [
+            {"date": row.date, "symptom": row.symptom, "severity": row.severity}
+            for row in symptoms
+        ],
+        "recent_medications": [
+            {"date": row.date, "medication": row.medication, "dose": row.dose, "frequency": row.frequency}
+            for row in medications
+        ],
+    }

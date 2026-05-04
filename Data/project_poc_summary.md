@@ -26,6 +26,10 @@ The user-facing mental model is:
 8. BreastDCEDL treatment-response baseline
 9. Multimodal fusion assessment
 10. SHAP/XAI explanation for MRI response model
+11. Patient-scoped portal endpoints and demo sessions
+12. Patient file upload logging
+13. Groq-assisted patient support chat with deterministic data capture
+14. Model registry and prediction audit history
 
 ## Real Datasets
 
@@ -124,6 +128,62 @@ Interpretation:
 - SHAP explains model behavior, not clinical causality.
 
 The Groq summary prompt is instructed to explain SHAP in this safe framing and avoid calling features clinically good or bad.
+
+## Model Artifact and Audit Layer
+
+The pCR logistic regression baseline is now also treated like a deployable model artifact:
+
+- Final model artifact: `Data/models/breastdcedl_pcr_logreg_v1.joblib`
+- Metadata: `Data/models/breastdcedl_pcr_logreg_v1_metadata.json`
+- Registry table: `model_registry`
+- Prediction audit table: `prediction_audit_logs`
+
+This adds a more production-like lifecycle:
+
+1. Train the final model on extracted BreastDCEDL features.
+2. Save the fitted pipeline as a versioned artifact.
+3. Register the artifact path, task, features, metrics, and warning metadata.
+4. Serve patient-level pCR probability predictions through the API.
+5. Store each prediction with its model version, input reference, output JSON, and SHAP explanation.
+
+This does not make the model clinically valid, but it does make the engineering workflow more realistic and auditable.
+
+## Patient Portal and Access Boundary
+
+The patient portal no longer loads the global patient list. It uses a demo patient-scoped bearer session and calls `/me/...` endpoints:
+
+- `/auth/demo-login`
+- `/me/patient-report`
+- `/me/chat`
+- `/me/uploads`
+
+This is not production authentication, but it introduces the correct server-side shape: patient-facing routes are scoped to the authenticated patient context instead of trusting arbitrary patient IDs in the browser.
+
+## Temporal Synthetic Journey Data
+
+The project now has a richer temporal synthetic generator:
+
+- pre-treatment baseline CBC
+- pre-cycle CBC before each treatment
+- post-cycle CBC nadir
+- CBC recovery checks
+- scheduled chemotherapy cycles
+- supportive medications
+- optional endocrine therapy
+- symptoms generated around treatment cycles
+- baseline, mid-treatment, and follow-up breast MRI reports
+
+This is useful for engineering and ML practice because it creates longitudinal progression data where labs, treatments, symptoms, medications, and imaging are aligned over time. It remains synthetic demo data and must not be treated as clinical evidence.
+
+## Groq-Assisted Chat
+
+The support chat keeps deterministic extraction for database writes:
+
+- symptoms
+- complete CBC values
+- medication mentions
+
+Groq is used only to phrase the supportive reply. If the LLM request fails, the app falls back to the deterministic response. The LLM is instructed not to diagnose, not to choose treatment, and not to modify medications.
 
 ## Honest Limitation
 

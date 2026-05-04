@@ -611,6 +611,16 @@
       </div>
     </div>
 
+    <!-- MODEL AUDIT -->
+    <div>
+      <div class="section-label">Model Prediction Audit</div>
+      <div class="card">
+        <ul class="data-list" id="predictionAudit">
+          <li class="empty">No prediction audits loaded.</li>
+        </ul>
+      </div>
+    </div>
+
     <!-- SUPPORT AGENT -->
     <div>
       <div class="section-label">Patient Support Agent</div>
@@ -961,6 +971,25 @@
       `;
     }
 
+    function loadPredictionAudits(patientId) {
+      fetch(`${API_BASE}/prediction-audits?patient_id=${encodeURIComponent(patientId)}&limit=8`)
+        .then(r => r.json())
+        .then(data => {
+          const el = document.getElementById("predictionAudit");
+          const rows = data.prediction_audits || [];
+          if (!rows.length) {
+            emptyList(el, "No model prediction audits for this patient.");
+            return;
+          }
+          el.innerHTML = rows.map(row => {
+            const pred = row.prediction || {};
+            const probability = pred.pcr_probability !== undefined ? `pCR probability ${pred.pcr_probability}` : "no probability";
+            return `<li>${String(row.created_at).slice(0,19)}: ${row.model_name} ${row.model_version} - ${probability}</li>`;
+          }).join("");
+        })
+        .catch(() => emptyList(document.getElementById("predictionAudit"), "Could not load prediction audits."));
+    }
+
     function renderMRI(entries) {
       const el = document.getElementById("mriRegistry");
       if (!entries || entries.length === 0) { el.innerHTML = '<div class="empty-state">No local MRI folders registered.</div>'; return; }
@@ -1055,6 +1084,7 @@
           renderLabSource(data);
           renderRisks(data.risks);
           renderMultimodalAssessment(data.multimodal_assessment);
+          loadPredictionAudits(patientId);
           renderRadiology(data.radiology_summary);
 
           const metaEl = document.getElementById("metastaticIndicators");
