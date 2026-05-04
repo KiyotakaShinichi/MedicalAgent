@@ -69,6 +69,31 @@ Cache policy:
 - Cacheable: low-risk educational or portal-help answers with citations and no patient-specific state.
 - Not cacheable: urgent symptoms, diagnosis/outcome questions, treatment-decision wording, patient-specific timeline summaries, or messages that save labs/symptoms/medications.
 
+## RAG Evaluation, Guardrails, and Feedback
+
+The RAG layer now logs lightweight production evaluation metrics for every patient-agent response:
+
+- Proxy retrieval precision@3: heuristic top-3 relevance from query-token overlap. This is a placeholder until a labeled KB/RAGAS evaluation set exists.
+- Answer grounding score: answer/context overlap proxy for whether the reply is supported by retrieved text.
+- Hallucination score: inverse grounding plus citation and guardrail penalties. Lower is better.
+- Input guardrails: prompt-injection, privacy-boundary, high-risk medical scope, diagnosis/outcome, urgent symptom, and treatment-decision detection.
+- Output guardrails: unsafe treatment directives, diagnosis claims, missing citations, and missing escalation language for high-risk messages.
+- Cost/latency telemetry: per-call latency, estimated input/output tokens, cache path, and estimated LLM cost. Current deterministic RAG path has zero provider cost.
+- User feedback: patient-facing 1-5 rating with thumbs-up/down derivation for each assistant response.
+
+Admin dashboard visibility:
+
+- RAG call count, cache hit rate, average proxy precision@3, grounding score, hallucination score, hallucination-risk distribution, guardrail pass/fail counts, latency, and token estimates.
+- Patient agent feedback count, average rating, thumbs-up rate, rating distribution, and recent comments.
+
+Appropriate now:
+
+- Guardrail pass/fail, citation coverage, cache hit rate, latency, token estimates, user ratings, and heuristic grounding/hallucination checks.
+
+Appropriate later after research-paper KB:
+
+- RAGAS context precision/recall, faithfulness, answer relevancy, answer correctness, labeled retrieval precision@k, source-level evaluation by paper/guideline type, and clinician/SME scoring.
+
 ## Current Architecture
 
 - `backend/api/main.py`: FastAPI routes.

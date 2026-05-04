@@ -344,6 +344,13 @@ class PatientChatRequest(BaseModel):
     message: str
 
 
+class AgentFeedbackRequest(BaseModel):
+    chat_message_id: int | None = None
+    rating: int
+    thumbs_up: bool | None = None
+    feedback_text: str | None = None
+
+
 class TimelineQuestionRequest(BaseModel):
     question: str
 
@@ -802,6 +809,69 @@ def chat_with_my_patient_agent(
         raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/me/chat")) from exc
 
     return result
+
+
+@app.post("/me/agent-feedback")
+def create_my_agent_feedback(
+    payload: AgentFeedbackRequest,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.agent_feedback import create_agent_response_feedback
+
+    try:
+        feedback = create_agent_response_feedback(
+            db=db,
+            patient_id=context.patient_id,
+            chat_message_id=payload.chat_message_id,
+            rating=payload.rating,
+            thumbs_up=payload.thumbs_up,
+            feedback_text=payload.feedback_text,
+            feedback_context={"source": "patient_portal"},
+        )
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="agent_feedback_error",
+            actor_role=context.role,
+            patient_id=context.patient_id,
+            route="/me/agent-feedback",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    log_app_event(
+        db=db,
+        event_type="agent_feedback",
+        actor_role=context.role,
+        patient_id=context.patient_id,
+        route="/me/agent-feedback",
+        status="ok",
+        input_payload={"chat_message_id": payload.chat_message_id, "rating": payload.rating, "thumbs_up": payload.thumbs_up},
+        output_payload={"feedback_id": feedback["id"]},
+    )
+    return {
+        "message": "Agent feedback saved.",
+        "feedback": feedback,
+        "safety_note": "Feedback improves the support workflow. It is not clinical ground truth.",
+    }
+
+
+@app.get("/agent-feedback")
+def list_agent_feedback_endpoint(
+    patient_id: str | None = None,
+    limit: int = 50,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.agent_feedback import build_agent_feedback_summary, list_agent_feedback
+
+    return {
+        "summary": build_agent_feedback_summary(db),
+        "feedback": list_agent_feedback(db, patient_id=patient_id, limit=limit),
+    }
 
 
 @app.get("/me/uploads")

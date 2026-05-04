@@ -285,3 +285,43 @@ class AgentResponseCache(Base):
     hit_count = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class RAGEvaluationLog(Base):
+    __tablename__ = "rag_evaluation_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=True, index=True)
+    query_hash = Column(String, nullable=False, index=True)
+    intent = Column(String, nullable=False, index=True)
+    safety_level = Column(String, nullable=False, index=True)
+    cache_status = Column(String, nullable=True, index=True)
+    terminal_step = Column(String, nullable=True)
+    retrieval_precision_at_3 = Column(Float, nullable=True)
+    grounding_score = Column(Float, nullable=True)
+    hallucination_score = Column(Float, nullable=True)
+    hallucination_risk = Column(String, nullable=True, index=True)
+    input_guardrail_status = Column(String, nullable=True, index=True)
+    output_guardrail_status = Column(String, nullable=True, index=True)
+    latency_ms = Column(Float, nullable=True)
+    estimated_input_tokens = Column(Integer, nullable=True)
+    estimated_output_tokens = Column(Integer, nullable=True)
+    estimated_total_tokens = Column(Integer, nullable=True)
+    estimated_llm_cost_usd = Column(Float, nullable=True)
+    retrieved_source_ids_json = Column(Text, nullable=True)
+    cited_source_ids_json = Column(Text, nullable=True)
+    guardrail_issues_json = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class AgentResponseFeedback(Base):
+    __tablename__ = "agent_response_feedback"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=False, index=True)
+    chat_message_id = Column(Integer, ForeignKey("chat_messages.id"), nullable=True, index=True)
+    rating = Column(Integer, nullable=False)
+    thumbs_up = Column(Integer, nullable=True)
+    feedback_text = Column(Text, nullable=True)
+    feedback_json = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

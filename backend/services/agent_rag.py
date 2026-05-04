@@ -1,9 +1,10 @@
 import hashlib
 import json
 import re
+from time import perf_counter
 from datetime import datetime, timezone
 
-from backend.models import AgentResponseCache
+from backend.models import AgentResponseCache, RAGEvaluationLog
 
 
 MAX_CONTEXT_CHARS = 1300
@@ -98,9 +99,19 @@ KNOWLEDGE_SNIPPETS = [
 
 
 def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_response, actions=None, urgent_flags=None):
+    started = perf_counter()
     actions = actions or []
     urgent_flags = urgent_flags or []
     safety = safety_scope_check(query, urgent_flags)
+    input_guardrails = input_guardrail_check(query, safety)
+    if input_guardrails["status"] == "failed":
+        safety = {
+            **safety,
+            "level": "high_risk",
+            "scope": input_guardrails["scope"],
+            "cache_allowed": False,
+            "message": input_guardrails["message"],
+        }
     intent = route_intent(query, actions, safety)
     rewritten = rewrite_and_decompose(query, intent)
     cacheable = is_cacheable(query, intent, safety, actions, urgent_flags)
@@ -111,7 +122,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
         if cache_hit is None:
             cache_hit = semantic_cache_check(db, rewritten["semantic_key"], intent)
     if cache_hit:
-        return {
+        result = {
             **cache_hit["response"],
             "cache": {
                 "status": cache_hit["status"],
@@ -120,6 +131,18 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             },
             "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "cache_hit"),
         }
+        return _finalize_result(
+            db=db,
+            patient_id=patient_id,
+            query=query,
+            rewritten=rewritten,
+            result=result,
+            retrieved=[],
+            reranked=[],
+            compressed=result.get("retrieval_context") or [],
+            input_guardrails=input_guardrails,
+            started=started,
+        )
 
     retrieved = hybrid_retrieval(rewritten, intent)
     expanded = expand_parent_child_windows(retrieved)
@@ -142,10 +165,64 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
     else:
         cache_status = {"status": "not_cacheable", "cacheable": False, "reason": _cache_rejection_reason(query, intent, safety, actions, urgent_flags)}
 
-    return {
+    result = {
         **validated,
         "cache": cache_status,
         "pipeline_trace": _trace(safety, intent, rewritten, retrieved, reranked, compressed, "generated"),
+    }
+    return _finalize_result(
+        db=db,
+        patient_id=patient_id,
+        query=query,
+        rewritten=rewritten,
+        result=result,
+        retrieved=retrieved,
+        reranked=reranked,
+        compressed=compressed,
+        input_guardrails=input_guardrails,
+        started=started,
+    )
+
+
+def input_guardrail_check(query, safety):
+    lower = query.lower()
+    issues = []
+    injection_terms = [
+        "ignore previous",
+        "ignore all previous",
+        "system prompt",
+        "developer message",
+        "jailbreak",
+        "bypass safety",
+        "forget your rules",
+        "act as my doctor",
+    ]
+    privacy_terms = [
+        "show another patient",
+        "other patient's",
+        "other patient",
+        "all patients",
+        "someone else's record",
+    ]
+    if any(term in lower for term in injection_terms):
+        issues.append("prompt_injection_or_policy_bypass")
+    if any(term in lower for term in privacy_terms):
+        issues.append("privacy_boundary_request")
+    if safety.get("level") == "high_risk":
+        issues.append(safety.get("scope") or "high_risk_medical_scope")
+
+    status = "failed" if any(issue in issues for issue in ["prompt_injection_or_policy_bypass", "privacy_boundary_request"]) else "passed"
+    if status == "failed":
+        scope = "input_guardrail_block"
+        message = "Input guardrail detected unsafe instruction, privacy-boundary, or policy-bypass wording."
+    else:
+        scope = safety.get("scope")
+        message = "Input guardrail passed."
+    return {
+        "status": status,
+        "scope": scope,
+        "issues": issues,
+        "message": message,
     }
 
 
@@ -403,6 +480,8 @@ def validate_answer_and_citations(generated, compressed_context, safety):
         issues.append("treatment_directive_detected")
     if safety.get("level") == "high_risk" and not any(term in reply.lower() for term in ["oncology", "emergency", "clinician", "care team"]):
         issues.append("high_risk_reply_missing_escalation")
+    if _contains_diagnostic_or_treatment_claim(reply):
+        issues.append("diagnostic_or_treatment_claim_detected")
 
     status = "passed" if not issues else "failed"
     if issues:
@@ -417,6 +496,279 @@ def validate_answer_and_citations(generated, compressed_context, safety):
         "citation_count": len(citations),
     }
     return generated
+
+
+def _finalize_result(db, patient_id, query, rewritten, result, retrieved, reranked, compressed, input_guardrails, started):
+    latency_ms = round((perf_counter() - started) * 1000, 2)
+    output_guardrails = output_guardrail_check(result)
+    rag_evaluation = evaluate_rag_response(
+        query=query,
+        rewritten=rewritten,
+        result=result,
+        retrieved=retrieved,
+        reranked=reranked,
+        compressed=compressed,
+        input_guardrails=input_guardrails,
+        output_guardrails=output_guardrails,
+        latency_ms=latency_ms,
+    )
+    result["guardrails"] = {
+        "input": input_guardrails,
+        "output": output_guardrails,
+    }
+    result["rag_evaluation"] = rag_evaluation
+    _store_rag_evaluation_log(
+        db=db,
+        patient_id=patient_id,
+        query=query,
+        result=result,
+        rag_evaluation=rag_evaluation,
+        retrieved=retrieved,
+        compressed=compressed,
+    )
+    return result
+
+
+def output_guardrail_check(result):
+    reply = result.get("reply") or ""
+    validation = result.get("validation") or {}
+    issues = list(validation.get("issues") or [])
+    unsafe_terms = [
+        "you should stop",
+        "you should start",
+        "increase your dose",
+        "decrease your dose",
+        "skip chemo",
+        "you are cancer free",
+        "you have metastasis",
+    ]
+    if any(term in reply.lower() for term in unsafe_terms):
+        issues.append("unsafe_output_directive_or_diagnosis")
+    if (result.get("retrieval_context") or []) and not (result.get("citations") or []):
+        issues.append("missing_citations")
+    safety = result.get("safety") or {}
+    if safety.get("level") == "high_risk" and not any(term in reply.lower() for term in ["oncology", "emergency", "clinician", "care team"]):
+        issues.append("missing_high_risk_escalation")
+    return {
+        "status": "passed" if not issues else "failed",
+        "issues": sorted(set(issues)),
+    }
+
+
+def evaluate_rag_response(query, rewritten, result, retrieved, reranked, compressed, input_guardrails, output_guardrails, latency_ms):
+    retrieval_precision = proxy_retrieval_precision_at_k(reranked or retrieved, rewritten, k=3)
+    grounding = answer_grounding_score(result.get("reply") or "", compressed)
+    hallucination = hallucination_score(
+        grounding_score=grounding["score"],
+        validation=result.get("validation") or {},
+        input_guardrails=input_guardrails,
+        output_guardrails=output_guardrails,
+        citations=result.get("citations") or [],
+        compressed=compressed,
+    )
+    token_cost = estimate_token_and_cost(query, result.get("reply") or "", compressed)
+    return {
+        "retrieval_precision_at_3": retrieval_precision,
+        "answer_grounding": grounding,
+        "hallucination": hallucination,
+        "cost_latency": {
+            **token_cost,
+            "latency_ms": latency_ms,
+            "cache_status": (result.get("cache") or {}).get("status"),
+            "tradeoff_note": _cost_latency_note((result.get("cache") or {}).get("status"), latency_ms, token_cost["estimated_total_tokens"]),
+        },
+        "guardrail_summary": {
+            "input_status": input_guardrails.get("status"),
+            "output_status": output_guardrails.get("status"),
+            "input_issues": input_guardrails.get("issues") or [],
+            "output_issues": output_guardrails.get("issues") or [],
+        },
+        "metric_limitations": (
+            "Retrieval precision, grounding, and hallucination are heuristic proxy metrics until a labeled KB and RAGAS evaluation set are added."
+        ),
+    }
+
+
+def proxy_retrieval_precision_at_k(items, rewritten, k=3):
+    top = (items or [])[:k]
+    if not top:
+        return {
+            "metric": "proxy_retrieval_precision_at_3",
+            "value": None,
+            "k": k,
+            "relevant_count": 0,
+            "method": "No retrieved context.",
+            "status": "unavailable",
+        }
+    query_tokens = set(_tokenize(rewritten.get("expanded_query") or ""))
+    relevant_count = 0
+    for item in top:
+        item_tokens = set(_tokenize(" ".join([
+            item.get("title", ""),
+            item.get("text", ""),
+            " ".join(item.get("tags", [])),
+        ])))
+        if query_tokens & item_tokens:
+            relevant_count += 1
+    value = round(relevant_count / len(top), 3)
+    return {
+        "metric": "proxy_retrieval_precision_at_3",
+        "value": value,
+        "k": len(top),
+        "relevant_count": relevant_count,
+        "method": "Heuristic query-token overlap with retrieved source title/tags/text. Replace with labeled precision@k or RAGAS context precision later.",
+        "status": _score_status(value, strong=0.8, acceptable=0.6),
+    }
+
+
+def answer_grounding_score(reply, compressed):
+    if not reply:
+        return {"score": 0.0, "status": "failed", "method": "Empty reply."}
+    if not compressed:
+        return {
+            "score": None,
+            "status": "unavailable",
+            "method": "No retrieved context; answer may be deterministic fallback rather than RAG-grounded.",
+        }
+    reply_tokens = set(_content_tokens(reply))
+    context_tokens = set()
+    for item in compressed:
+        context_tokens.update(_content_tokens(item.get("text", "")))
+        context_tokens.update(_content_tokens(item.get("title", "")))
+    if not reply_tokens:
+        score = 0.0
+    else:
+        score = len(reply_tokens & context_tokens) / len(reply_tokens)
+    score = round(score, 3)
+    return {
+        "score": score,
+        "status": _score_status(score, strong=0.55, acceptable=0.35),
+        "method": "Heuristic content-token overlap between answer and retrieved context. Upgrade to RAGAS faithfulness/answer relevancy later.",
+    }
+
+
+def hallucination_score(grounding_score, validation, input_guardrails, output_guardrails, citations, compressed):
+    issues = set(validation.get("issues") or [])
+    issues.update(input_guardrails.get("issues") or [])
+    issues.update(output_guardrails.get("issues") or [])
+    if grounding_score is None:
+        base = 0.25 if not compressed else 0.5
+    else:
+        base = max(0.0, 1.0 - grounding_score)
+    if compressed and not citations:
+        base += 0.25
+    if issues:
+        base += min(0.45, 0.15 * len(issues))
+    score = round(min(1.0, base), 3)
+    if score <= 0.35:
+        risk = "low"
+    elif score <= 0.65:
+        risk = "medium"
+    else:
+        risk = "high"
+    return {
+        "score": score,
+        "risk": risk,
+        "method": "Heuristic inverse grounding plus citation and guardrail penalties. Replace/compare with RAGAS faithfulness later.",
+        "issues": sorted(issues),
+    }
+
+
+def estimate_token_and_cost(query, reply, compressed):
+    context_chars = sum(len(item.get("text", "")) for item in compressed)
+    input_tokens = _estimate_tokens(query) + _estimate_tokens(" ".join(item.get("text", "") for item in compressed))
+    output_tokens = _estimate_tokens(reply)
+    total_tokens = input_tokens + output_tokens
+    return {
+        "estimated_input_tokens": input_tokens,
+        "estimated_output_tokens": output_tokens,
+        "estimated_total_tokens": total_tokens,
+        "estimated_context_chars": context_chars,
+        "estimated_llm_cost_usd": 0.0,
+        "cost_basis": "Current agent path is deterministic/local. Token estimates are logged for future LLM/RAGAS cost analysis.",
+    }
+
+
+def _store_rag_evaluation_log(db, patient_id, query, result, rag_evaluation, retrieved, compressed):
+    hallucination = rag_evaluation["hallucination"]
+    grounding = rag_evaluation["answer_grounding"]
+    retrieval_precision = rag_evaluation["retrieval_precision_at_3"]
+    cost_latency = rag_evaluation["cost_latency"]
+    guardrails = rag_evaluation["guardrail_summary"]
+    row = RAGEvaluationLog(
+        patient_id=patient_id,
+        query_hash=_query_hash(_normalize_query(query)),
+        intent=result.get("intent") or "unknown",
+        safety_level=(result.get("safety") or {}).get("level") or "unknown",
+        cache_status=(result.get("cache") or {}).get("status"),
+        terminal_step=(result.get("pipeline_trace") or {}).get("terminal_step"),
+        retrieval_precision_at_3=retrieval_precision.get("value"),
+        grounding_score=grounding.get("score"),
+        hallucination_score=hallucination.get("score"),
+        hallucination_risk=hallucination.get("risk"),
+        input_guardrail_status=guardrails.get("input_status"),
+        output_guardrail_status=guardrails.get("output_status"),
+        latency_ms=cost_latency.get("latency_ms"),
+        estimated_input_tokens=cost_latency.get("estimated_input_tokens"),
+        estimated_output_tokens=cost_latency.get("estimated_output_tokens"),
+        estimated_total_tokens=cost_latency.get("estimated_total_tokens"),
+        estimated_llm_cost_usd=cost_latency.get("estimated_llm_cost_usd"),
+        retrieved_source_ids_json=json.dumps([item.get("id") for item in retrieved if item.get("id")]),
+        cited_source_ids_json=json.dumps([item.get("id") for item in result.get("citations") or []]),
+        guardrail_issues_json=json.dumps({
+            "input": guardrails.get("input_issues") or [],
+            "output": guardrails.get("output_issues") or [],
+        }),
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+def _contains_diagnostic_or_treatment_claim(reply):
+    lower = reply.lower()
+    blocked_patterns = [
+        "you are cancer free",
+        "your cancer is gone",
+        "you have metastasis",
+        "you do not have metastasis",
+        "stop chemotherapy",
+        "start chemotherapy",
+        "change your dose",
+    ]
+    return any(pattern in lower for pattern in blocked_patterns)
+
+
+def _content_tokens(text):
+    generic = {
+        "general", "information", "portal", "patient", "team", "care", "use", "discuss", "personal",
+        "decisions", "oncology", "medical", "review", "contact", "emergency", "services", "support",
+        "assistant", "tracking", "education", "only",
+    }
+    return [token for token in _tokenize(text) if token not in generic and len(token) > 2]
+
+
+def _estimate_tokens(text):
+    return max(1, int(len(text or "") / 4))
+
+
+def _score_status(value, strong, acceptable):
+    if value is None:
+        return "unavailable"
+    if value >= strong:
+        return "strong"
+    if value >= acceptable:
+        return "acceptable"
+    return "unideal"
+
+
+def _cost_latency_note(cache_status, latency_ms, total_tokens):
+    if cache_status in {"exact_cache_hit", "semantic_cache_hit"}:
+        return "Cache hit: lower latency and no new retrieval/generation cost."
+    if total_tokens > 800 or latency_ms > 1500:
+        return "Generated path is heavier; consider caching if this is low-risk and reusable."
+    return "Generated path is within current PoC latency/token budget."
 
 
 def is_cacheable(query, intent, safety, actions=None, urgent_flags=None):

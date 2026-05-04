@@ -133,7 +133,7 @@ def handle_patient_chat(db, patient_id, message):
         urgent_flags=urgent_flags,
     )
     response = agent_result["reply"]
-    db.add(ChatMessage(
+    assistant_record = ChatMessage(
         patient_id=patient_id,
         role="assistant",
         message=response,
@@ -146,10 +146,14 @@ def handle_patient_chat(db, patient_id, message):
                 "citations": agent_result.get("citations") or [],
                 "cache": agent_result.get("cache"),
                 "validation": agent_result.get("validation"),
+                "guardrails": agent_result.get("guardrails"),
+                "rag_evaluation": agent_result.get("rag_evaluation"),
             },
         }),
-    ))
+    )
+    db.add(assistant_record)
     db.commit()
+    db.refresh(assistant_record)
     log_app_event(
         db=db,
         event_type="agent_rag",
@@ -177,8 +181,11 @@ def handle_patient_chat(db, patient_id, message):
             "citations": agent_result.get("citations") or [],
             "cache": agent_result.get("cache"),
             "validation": agent_result.get("validation"),
+            "guardrails": agent_result.get("guardrails"),
+            "rag_evaluation": agent_result.get("rag_evaluation"),
             "pipeline_trace": agent_result.get("pipeline_trace"),
         },
+        "assistant_message_id": assistant_record.id,
         "safety_note": "This assistant logs and summarizes information only. It does not diagnose or give treatment instructions.",
     }
 

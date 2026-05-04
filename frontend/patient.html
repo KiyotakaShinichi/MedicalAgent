@@ -267,6 +267,25 @@
       background: #fff;
       text-decoration: none;
     }
+    .msg-feedback {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      white-space: normal;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .msg-feedback button {
+      width: auto;
+      min-height: 24px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #fff;
+      color: var(--muted);
+    }
     .chat-compose { padding: 12px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
     .chat-compose textarea { width: 100%; min-height: 70px; padding: 10px; resize: vertical; }
     .safety { font-size: 12px; color: var(--muted); line-height: 1.45; }
@@ -543,7 +562,8 @@
       thread.innerHTML = messages.map(m => {
         const meta = parseChatMeta(m.saved_actions_json);
         const citations = m.role === "assistant" ? renderChatCitations(meta?.agent_pipeline?.citations || []) : "";
-        return `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${escapeHtml(m.message)}${citations}</div>`;
+        const feedback = m.role === "assistant" && m.id ? renderChatFeedback(m.id) : "";
+        return `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${escapeHtml(m.message)}${citations}${feedback}</div>`;
       }).join("");
       thread.scrollTop = thread.scrollHeight;
     }
@@ -569,6 +589,27 @@
         }
         return `<span>${label}</span>`;
       }).join("")}</div>`;
+    }
+
+    function renderChatFeedback(messageId) {
+      return `<div class="msg-feedback"><span>Rate answer</span>${[1,2,3,4,5].map(rating =>
+        `<button type="button" onclick="submitAgentFeedback(${Number(messageId)}, ${rating})">${rating}</button>`
+      ).join("")}</div>`;
+    }
+
+    function submitAgentFeedback(chatMessageId, rating) {
+      fetch(`${API_BASE}/me/agent-feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify({
+          chat_message_id: chatMessageId,
+          rating,
+          thumbs_up: rating >= 4
+        })
+      })
+      .then(r => { if (!r.ok) throw new Error(`Feedback failed (${r.status})`); return r.json(); })
+      .then(() => toast("Feedback saved."))
+      .catch(err => toast(err.message));
     }
 
     function probabilityFromPrediction(prediction) {

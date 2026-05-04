@@ -236,6 +236,17 @@
 
     <section class="grid two">
       <div class="card">
+        <h2>RAG Evaluation & Guardrails</h2>
+        <div class="list" id="ragEvaluationList"></div>
+      </div>
+      <div class="card">
+        <h2>Agent Feedback</h2>
+        <div class="list" id="agentFeedbackList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
         <h2>Champion Metric Guide</h2>
         <div class="metric-table" id="metricGuideList"></div>
       </div>
@@ -647,6 +658,36 @@
       ].join("");
     }
 
+    function renderRagEvaluation(rag, feedback) {
+      const recent = rag?.recent_calls || [];
+      document.getElementById("ragEvaluationList").innerHTML = [
+        rowHtml("RAG status", rag?.purpose || "RAG quality telemetry.", statusPill(rag?.status || "unavailable")),
+        row("Calls", "Total patient-agent RAG pipeline calls.", rag?.call_count ?? 0),
+        row("Cache hit rate", "Exact or semantic cache hits divided by all RAG calls.", rag?.cache_hit_rate ?? "n/a"),
+        rowHtml("Precision@3", "Proxy retrieval precision@3; replace with RAGAS/labeled KB later.", metricRight(rag?.average_retrieval_precision_at_3 ?? "n/a", rag?.status)),
+        row("Grounding", "Answer/context overlap proxy.", rag?.average_grounding_score ?? "n/a"),
+        row("Hallucination score", "Lower is better; heuristic until RAGAS faithfulness is available.", rag?.average_hallucination_score ?? "n/a"),
+        row("Hallucination risks", JSON.stringify(rag?.hallucination_risk_counts || {})),
+        row("Input guardrails", JSON.stringify(rag?.input_guardrail_counts || {})),
+        row("Output guardrails", JSON.stringify(rag?.output_guardrail_counts || {})),
+        row("Latency", `avg ${rag?.average_latency_ms ?? "n/a"}ms, p95 ${rag?.p95_latency_ms ?? "n/a"}ms`, `${rag?.average_estimated_total_tokens ?? "n/a"} tokens`),
+        ...recent.slice(0, 3).map(item =>
+          row(item.intent, `cache ${item.cache_status}; grounding ${item.grounding_score ?? "n/a"}; hallucination ${item.hallucination_score ?? "n/a"} (${item.hallucination_risk ?? "n/a"})`, item.output_guardrail_status || "")
+        )
+      ].join("");
+
+      document.getElementById("agentFeedbackList").innerHTML = [
+        rowHtml("Feedback status", feedback?.purpose || "Patient feedback on agent answers.", statusPill(feedback?.status || "unavailable")),
+        row("Feedback count", "Patient ratings submitted.", feedback?.feedback_count ?? 0),
+        row("Average rating", "1-5 stars.", feedback?.average_rating ?? "n/a"),
+        row("Thumbs-up rate", "Share of explicit positive thumb ratings.", feedback?.thumbs_up_rate ?? "n/a"),
+        row("Rating distribution", JSON.stringify(feedback?.rating_distribution || {})),
+        ...((feedback?.recent_feedback || []).slice(0, 4).map(item =>
+          row(`Rating ${item.rating}/5`, item.feedback_text || "No note", item.thumbs_up === null ? "" : (item.thumbs_up ? "up" : "down"))
+        ))
+      ].join("");
+    }
+
     function render(data) {
       const roles = data.roles || {};
       document.getElementById("rolesList").innerHTML = Object.entries(roles).map(([name, desc]) => row(name, desc)).join("");
@@ -657,6 +698,7 @@
       document.getElementById("championAuroc").innerHTML = `${perf.patient_level_roc_auc ?? "--"}<span>held-out patient split</span>`;
       document.getElementById("auditCount").innerHTML = `${data.audit_and_feedback?.prediction_audit_count ?? 0}<span>prediction audit logs</span>`;
       renderOperations(data.app_monitoring || {});
+      renderRagEvaluation(data.rag_evaluation || {}, data.agent_feedback || {});
       document.getElementById("metricGuideList").innerHTML = [
         metricRow("AUROC", perf.patient_level_roc_auc, statuses.patient_level_roc_auc),
         metricRow("AUPRC", perf.patient_level_average_precision, statuses.patient_level_average_precision),
