@@ -19,9 +19,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 1.0,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 1.0,
+        "temporal_1d_cnn_probability": 0.999973,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.997908,
+        "temporal_gru_probability": 0.978577,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -299,9 +299,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.030182,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 5.5e-05,
+        "temporal_1d_cnn_probability": 0.000459,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.00127,
+        "temporal_gru_probability": 0.009943,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -579,10 +579,10 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.827429,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.988711,
+        "temporal_1d_cnn_probability": 0.81503,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.808537,
-        "temporal_gru_predicted_label": 1
+        "temporal_gru_probability": 0.445358,
+        "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
         {
@@ -685,10 +685,10 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.0,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.008191,
+        "temporal_1d_cnn_probability": 0.12458,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.007712,
-        "temporal_gru_predicted_label": 0
+        "temporal_gru_probability": 0.584836,
+        "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
         {
@@ -1835,9 +1835,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999999,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999996,
+        "temporal_1d_cnn_probability": 0.999505,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.996986,
+        "temporal_gru_probability": 0.973915,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -2289,9 +2289,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999997,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999999,
+        "temporal_1d_cnn_probability": 0.999809,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.997912,
+        "temporal_gru_probability": 0.982558,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -3004,9 +3004,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.0,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.00017,
+        "temporal_1d_cnn_probability": 0.003747,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.00156,
+        "temporal_gru_probability": 0.015608,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -4154,9 +4154,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.84728,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.997497,
+        "temporal_1d_cnn_probability": 0.982426,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.972586,
+        "temporal_gru_probability": 0.916473,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -4260,9 +4260,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.117446,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.989056,
+        "temporal_1d_cnn_probability": 0.817802,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.963236,
+        "temporal_gru_probability": 0.597716,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -4366,9 +4366,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.017874,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 2.2e-05,
+        "temporal_1d_cnn_probability": 0.000342,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.001208,
+        "temporal_gru_probability": 0.014393,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -4559,9 +4559,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.998318,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999932,
+        "temporal_1d_cnn_probability": 0.999324,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.995705,
+        "temporal_gru_probability": 0.94599,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -4665,9 +4665,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.871886,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999975,
+        "temporal_1d_cnn_probability": 0.997552,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.993527,
+        "temporal_gru_probability": 0.954257,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -4771,9 +4771,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.054834,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.012175,
+        "temporal_1d_cnn_probability": 0.077245,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.002369,
+        "temporal_gru_probability": 0.046358,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -4964,9 +4964,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.692081,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.743538,
+        "temporal_1d_cnn_probability": 0.837024,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.952545,
+        "temporal_gru_probability": 0.818755,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -5592,9 +5592,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.692517,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.948032,
+        "temporal_1d_cnn_probability": 0.852799,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.901423,
+        "temporal_gru_probability": 0.554653,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -5872,9 +5872,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.580963,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.666664,
-        "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.109697,
+        "temporal_1d_cnn_probability": 0.492457,
+        "temporal_1d_cnn_predicted_label": 0,
+        "temporal_gru_probability": 0.124752,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -5978,9 +5978,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.994097,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999878,
+        "temporal_1d_cnn_probability": 0.990628,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.994893,
+        "temporal_gru_probability": 0.93413,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -6171,9 +6171,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.090537,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.06773,
+        "temporal_1d_cnn_probability": 0.066964,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.014853,
+        "temporal_gru_probability": 0.029127,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -6712,9 +6712,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.003274,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 1.8e-05,
+        "temporal_1d_cnn_probability": 0.00033,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.001755,
+        "temporal_gru_probability": 0.012904,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -6818,9 +6818,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 1.0,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.990913,
+        "temporal_1d_cnn_probability": 0.952488,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.900279,
+        "temporal_gru_probability": 0.774172,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -7011,9 +7011,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.848782,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.996417,
+        "temporal_1d_cnn_probability": 0.940562,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.972513,
+        "temporal_gru_probability": 0.562526,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -7291,9 +7291,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.723889,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.79978,
+        "temporal_1d_cnn_probability": 0.631867,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.933901,
+        "temporal_gru_probability": 0.583026,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -8000,9 +8000,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.011728,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.065144,
+        "temporal_1d_cnn_probability": 0.080719,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.026224,
+        "temporal_gru_probability": 0.104705,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -8280,9 +8280,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.985936,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999997,
+        "temporal_1d_cnn_probability": 0.999721,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.99772,
+        "temporal_gru_probability": 0.975119,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -9685,9 +9685,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.636875,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999727,
+        "temporal_1d_cnn_probability": 0.99255,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.995989,
+        "temporal_gru_probability": 0.920095,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -9965,10 +9965,10 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.357372,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.938686,
+        "temporal_1d_cnn_probability": 0.584939,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.957817,
-        "temporal_gru_predicted_label": 1
+        "temporal_gru_probability": 0.189512,
+        "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
         {
@@ -10419,10 +10419,10 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.221265,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.931592,
+        "temporal_1d_cnn_probability": 0.757786,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.75855,
-        "temporal_gru_predicted_label": 1
+        "temporal_gru_probability": 0.112885,
+        "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
         {
@@ -11047,9 +11047,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.877006,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.998908,
+        "temporal_1d_cnn_probability": 0.990957,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.95566,
+        "temporal_gru_probability": 0.896716,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -11240,9 +11240,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.051737,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.0012,
+        "temporal_1d_cnn_probability": 0.004435,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.001961,
+        "temporal_gru_probability": 0.01561,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -11520,9 +11520,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.99993,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999929,
+        "temporal_1d_cnn_probability": 0.999664,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.99778,
+        "temporal_gru_probability": 0.981634,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -11626,9 +11626,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.432273,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.690489,
-        "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.412329,
+        "temporal_1d_cnn_probability": 0.494566,
+        "temporal_1d_cnn_predicted_label": 0,
+        "temporal_gru_probability": 0.175533,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -12602,9 +12602,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.005796,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.000547,
+        "temporal_1d_cnn_probability": 0.003561,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.001753,
+        "temporal_gru_probability": 0.015488,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -12882,9 +12882,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.962805,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999674,
+        "temporal_1d_cnn_probability": 0.994624,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.993511,
+        "temporal_gru_probability": 0.96123,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -13162,10 +13162,10 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.59042,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.151894,
+        "temporal_1d_cnn_probability": 0.215289,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.881044,
-        "temporal_gru_predicted_label": 1
+        "temporal_gru_probability": 0.235907,
+        "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
         {
@@ -13268,9 +13268,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.914409,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.99999,
+        "temporal_1d_cnn_probability": 0.999667,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.997812,
+        "temporal_gru_probability": 0.976846,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -13461,9 +13461,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.346459,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.153516,
+        "temporal_1d_cnn_probability": 0.095745,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.007555,
+        "temporal_gru_probability": 0.142217,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -13828,9 +13828,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999866,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.991714,
+        "temporal_1d_cnn_probability": 0.957224,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.903876,
+        "temporal_gru_probability": 0.659888,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -14108,10 +14108,10 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.837367,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.873549,
+        "temporal_1d_cnn_probability": 0.763948,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.533638,
-        "temporal_gru_predicted_label": 1
+        "temporal_gru_probability": 0.474276,
+        "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
         {
@@ -14388,10 +14388,10 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.515509,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.759236,
+        "temporal_1d_cnn_probability": 0.746805,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.156786,
-        "temporal_gru_predicted_label": 0
+        "temporal_gru_probability": 0.71486,
+        "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
         {
@@ -14668,9 +14668,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.840598,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999861,
+        "temporal_1d_cnn_probability": 0.995557,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.995992,
+        "temporal_gru_probability": 0.959714,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -15122,9 +15122,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.833329,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999896,
+        "temporal_1d_cnn_probability": 0.99681,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.997256,
+        "temporal_gru_probability": 0.968159,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -15489,10 +15489,10 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.644093,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.76267,
+        "temporal_1d_cnn_probability": 0.720125,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.253529,
-        "temporal_gru_predicted_label": 0
+        "temporal_gru_probability": 0.859351,
+        "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
         {
@@ -15682,9 +15682,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999728,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999917,
+        "temporal_1d_cnn_probability": 0.997608,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.997186,
+        "temporal_gru_probability": 0.972242,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -15962,10 +15962,10 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.256989,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.930187,
+        "temporal_1d_cnn_probability": 0.701061,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.775166,
-        "temporal_gru_predicted_label": 1
+        "temporal_gru_probability": 0.194717,
+        "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
         {
@@ -16242,9 +16242,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.162923,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.606345,
-        "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.14159,
+        "temporal_1d_cnn_probability": 0.089383,
+        "temporal_1d_cnn_predicted_label": 0,
+        "temporal_gru_probability": 0.256063,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -16609,9 +16609,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 1.0,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999851,
+        "temporal_1d_cnn_probability": 0.986279,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.996132,
+        "temporal_gru_probability": 0.948964,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -16715,9 +16715,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.0,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.000277,
+        "temporal_1d_cnn_probability": 0.008341,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.001581,
+        "temporal_gru_probability": 0.054328,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -16821,9 +16821,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.0708,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.227465,
+        "temporal_1d_cnn_probability": 0.234833,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.07173,
+        "temporal_gru_probability": 0.139007,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -18754,9 +18754,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999729,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999989,
+        "temporal_1d_cnn_probability": 0.999561,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.99788,
+        "temporal_gru_probability": 0.967486,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -18947,9 +18947,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.16788,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.011596,
+        "temporal_1d_cnn_probability": 0.045038,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.112191,
+        "temporal_gru_probability": 0.220434,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -19314,9 +19314,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.998597,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.992595,
+        "temporal_1d_cnn_probability": 0.952138,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.986694,
+        "temporal_gru_probability": 0.88033,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -19594,9 +19594,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.235084,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.46538,
+        "temporal_1d_cnn_probability": 0.284194,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.055909,
+        "temporal_gru_probability": 0.08748,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -19874,9 +19874,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.190764,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.050209,
+        "temporal_1d_cnn_probability": 0.042505,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.005717,
+        "temporal_gru_probability": 0.044786,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -20067,9 +20067,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.670916,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.987647,
+        "temporal_1d_cnn_probability": 0.982346,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.996188,
+        "temporal_gru_probability": 0.864839,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -20347,9 +20347,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.586607,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.677621,
+        "temporal_1d_cnn_probability": 0.600849,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.117638,
+        "temporal_gru_probability": 0.421899,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -20627,9 +20627,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999997,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999998,
+        "temporal_1d_cnn_probability": 0.999687,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.996861,
+        "temporal_gru_probability": 0.977049,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -20820,9 +20820,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 7e-06,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.05981,
+        "temporal_1d_cnn_probability": 0.012322,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.002039,
+        "temporal_gru_probability": 0.017279,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -21100,9 +21100,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 1.0,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999999,
+        "temporal_1d_cnn_probability": 0.999986,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.997329,
+        "temporal_gru_probability": 0.981783,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -21467,9 +21467,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999997,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.99929,
+        "temporal_1d_cnn_probability": 0.986983,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.993468,
+        "temporal_gru_probability": 0.963513,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -21921,9 +21921,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.867422,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.996335,
-        "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.98733,
+        "temporal_1d_cnn_probability": 0.471434,
+        "temporal_1d_cnn_predicted_label": 0,
+        "temporal_gru_probability": 0.63997,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -22027,9 +22027,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999935,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 1.0,
+        "temporal_1d_cnn_probability": 0.999952,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.996165,
+        "temporal_gru_probability": 0.970516,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -22133,9 +22133,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 1.0,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999851,
+        "temporal_1d_cnn_probability": 0.999002,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.997712,
+        "temporal_gru_probability": 0.980562,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -22326,9 +22326,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 6.8e-05,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 3e-06,
+        "temporal_1d_cnn_probability": 0.000152,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.001045,
+        "temporal_gru_probability": 0.008247,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -22867,9 +22867,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.439757,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.04481,
+        "temporal_1d_cnn_probability": 0.079717,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.006201,
+        "temporal_gru_probability": 0.035657,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -23147,9 +23147,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.33949,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.934842,
+        "temporal_1d_cnn_probability": 0.902052,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.692648,
+        "temporal_gru_probability": 0.682691,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -23514,9 +23514,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.999996,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.999725,
+        "temporal_1d_cnn_probability": 0.995078,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.992621,
+        "temporal_gru_probability": 0.946087,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -23620,9 +23620,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.166673,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.192541,
+        "temporal_1d_cnn_probability": 0.08128,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.053255,
+        "temporal_gru_probability": 0.129719,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -23813,9 +23813,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.817604,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.869834,
+        "temporal_1d_cnn_probability": 0.800391,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.910752,
+        "temporal_gru_probability": 0.736482,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -24267,9 +24267,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.834718,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.959078,
+        "temporal_1d_cnn_probability": 0.936947,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.855825,
+        "temporal_gru_probability": 0.822434,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -24982,9 +24982,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.900659,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.974931,
+        "temporal_1d_cnn_probability": 0.953599,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.976831,
+        "temporal_gru_probability": 0.912493,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -25175,9 +25175,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.519574,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.383422,
+        "temporal_1d_cnn_probability": 0.203518,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.013407,
+        "temporal_gru_probability": 0.19098,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -25890,9 +25890,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 1.1e-05,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 0.020537,
+        "temporal_1d_cnn_probability": 0.024603,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.005468,
+        "temporal_gru_probability": 0.021089,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -26431,9 +26431,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 0.0,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 7e-06,
+        "temporal_1d_cnn_probability": 0.000246,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.001198,
+        "temporal_gru_probability": 0.008603,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [
@@ -27146,9 +27146,9 @@
         "svm_rbf_predicted_label": 1,
         "mlp_probability": 0.99442,
         "mlp_predicted_label": 1,
-        "temporal_1d_cnn_probability": 0.99996,
+        "temporal_1d_cnn_probability": 0.998691,
         "temporal_1d_cnn_predicted_label": 1,
-        "temporal_gru_probability": 0.994134,
+        "temporal_gru_probability": 0.92319,
         "temporal_gru_predicted_label": 1
       },
       "positive_contributions": [
@@ -27339,9 +27339,9 @@
         "svm_rbf_predicted_label": 0,
         "mlp_probability": 8e-05,
         "mlp_predicted_label": 0,
-        "temporal_1d_cnn_probability": 2.4e-05,
+        "temporal_1d_cnn_probability": 0.000425,
         "temporal_1d_cnn_predicted_label": 0,
-        "temporal_gru_probability": 0.001196,
+        "temporal_gru_probability": 0.012879,
         "temporal_gru_predicted_label": 0
       },
       "positive_contributions": [

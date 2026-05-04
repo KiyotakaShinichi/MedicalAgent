@@ -239,3 +239,18 @@ class PredictionAuditLog(Base):
     prediction_json = Column(Text, nullable=False)
     explanation_json = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class ClinicalSummaryReview(Base):
+    __tablename__ = "clinical_summary_reviews"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    reviewer_role = Column(String, nullable=False)
+    decision = Column(String, nullable=False)
+    clinician_notes = Column(Text, nullable=True)
+    edited_patient_summary = Column(Text, nullable=True)
+    summary_snapshot_json = Column(Text, nullable=False)
+    explanation_quality_score = Column(Integer, nullable=True)
+    model_usefulness_score = Column(Integer, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -76,6 +76,12 @@ def require_admin_or_clinician(context: AccessContext):
     return context
 
 
+def require_admin_context(context: AccessContext):
+    if context.role != "admin":
+        raise PermissionError("Admin session required")
+    return context
+
+
 def _ensure_demo_account(db, role, patient_id):
     username = f"demo-{role}-{patient_id or 'global'}"
     if db.query(UserAccount).filter(UserAccount.username == username).first():

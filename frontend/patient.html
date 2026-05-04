@@ -101,6 +101,58 @@
     }
     .score .value { font-size: 44px; font-weight: 800; color: var(--teal); line-height: 1; }
     .score .label { color: var(--muted); margin-top: 8px; font-size: 13px; }
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+    }
+    .summary-card h2 {
+      margin: 0;
+      font-size: 15px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .summary-headline {
+      margin: 0;
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .summary-text {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 920px;
+    }
+    .summary-columns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .summary-column {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 120px;
+    }
+    .summary-column strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .summary-column ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
     .grid { display: grid; gap: 18px; }
     .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -219,7 +271,7 @@
     .toast.show { opacity: 1; }
     @media (max-width: 850px) {
       header { padding: 12px 16px; align-items: flex-start; flex-direction: column; gap: 10px; }
-      .hero, .grid.two, .grid.three { grid-template-columns: 1fr; }
+      .hero, .summary-columns, .grid.two, .grid.three { grid-template-columns: 1fr; }
       main { margin-top: 14px; }
     }
   </style>
@@ -242,6 +294,29 @@
         <div class="value" id="monitoringScore">--</div>
         <div class="label">Treatment monitoring score</div>
       </div>
+    </section>
+
+    <section class="summary-card">
+      <h2>AI Monitoring Snapshot</h2>
+      <div>
+        <p class="summary-headline" id="summaryHeadline">Loading summary...</p>
+        <p class="summary-text" id="summaryText">The portal is organizing your treatment timeline, labs, symptoms, imaging, and model signals into a simpler overview.</p>
+      </div>
+      <div class="summary-columns">
+        <div class="summary-column">
+          <strong>Key Signals</strong>
+          <ul id="summaryKeyPoints"><li>Loading...</li></ul>
+        </div>
+        <div class="summary-column">
+          <strong>Review With Care Team</strong>
+          <ul id="summaryReviewFlags"><li>Loading...</li></ul>
+        </div>
+        <div class="summary-column">
+          <strong>Uncertainty</strong>
+          <ul id="summaryUncertainty"><li>Loading...</li></ul>
+        </div>
+      </div>
+      <div class="safety" id="summarySafety">Monitoring support only. This does not diagnose or choose treatment.</div>
     </section>
 
     <section class="grid three">
@@ -497,9 +572,26 @@
       ).join("") || '<div class="item muted">No cycle lab impact available.</div>';
     }
 
+    function listItems(items, fallback) {
+      const values = (items || []).filter(Boolean).slice(0, 5);
+      if (!values.length) return `<li>${escapeHtml(fallback)}</li>`;
+      return values.map(item => `<li>${escapeHtml(item)}</li>`).join("");
+    }
+
+    function renderPatientSummary(data) {
+      const summary = data.patient_timeline_summary || {};
+      document.getElementById("summaryHeadline").textContent = summary.headline || "Monitoring summary is not available yet.";
+      document.getElementById("summaryText").textContent = summary.patient_summary || "The portal needs more timeline data to create a useful summary.";
+      document.getElementById("summaryKeyPoints").innerHTML = listItems(summary.key_points, "No key signals available yet.");
+      document.getElementById("summaryReviewFlags").innerHTML = listItems(summary.review_flags, "No review flags listed right now.");
+      document.getElementById("summaryUncertainty").innerHTML = listItems(summary.uncertainty_notes, "No uncertainty notes listed right now.");
+      document.getElementById("summarySafety").textContent = summary.safety_note || "Monitoring support only. This does not diagnose or choose treatment.";
+    }
+
     function renderReport(data) {
       document.getElementById("patientName").textContent = data.patient_name || data.patient_id;
       document.getElementById("patientContext").textContent = data.diagnosis || "Breast cancer monitoring record";
+      renderPatientSummary(data);
 
       const assessment = data.multimodal_assessment || {};
       document.getElementById("monitoringScore").textContent = assessment.treatment_monitoring_score ?? "--";

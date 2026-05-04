@@ -118,13 +118,16 @@ def handle_patient_chat(db, patient_id, message):
 
     patient_context = _recent_patient_context(db, patient_id)
     fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
-    response = _generate_llm_response(
-        message=normalized,
-        actions=actions,
-        urgent_flags=urgent_flags,
-        patient_context=patient_context,
-        fallback_response=fallback_response,
-    )
+    if _prefer_deterministic_reply(normalized):
+        response = fallback_response
+    else:
+        response = _generate_llm_response(
+            message=normalized,
+            actions=actions,
+            urgent_flags=urgent_flags,
+            patient_context=patient_context,
+            fallback_response=fallback_response,
+        )
     db.add(ChatMessage(
         patient_id=patient_id,
         role="assistant",
@@ -254,6 +257,23 @@ def _detect_urgent_flags(message):
     return [term for term in URGENT_TERMS if term in lower]
 
 
+def _prefer_deterministic_reply(message):
+    lower = message.lower()
+    deterministic_terms = [
+        "last 14",
+        "last fourteen",
+        "what changed",
+        "timeline",
+        "tumor board",
+        "toxicity",
+        "cycle 2",
+        "score",
+        "model",
+        "why",
+    ]
+    return any(term in lower for term in deterministic_terms)
+
+
 def _build_response(message, actions, urgent_flags, patient_context):
     parts = []
     if urgent_flags:
@@ -321,11 +341,15 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
 
 
 def _recent_patient_context(db, patient_id):
-    latest_lab = (
+    lab_rows = (
         db.query(LabResult)
         .filter(LabResult.patient_id == patient_id)
         .order_by(LabResult.date.desc(), LabResult.id.desc())
-        .first()
+        .limit(50)
+        .all()
+    )
+    latest_lab = (
+        lab_rows[0] if lab_rows else None
     )
     symptoms = (
         db.query(SymptomReport)
@@ -368,6 +392,15 @@ def _recent_patient_context(db, patient_id):
         .first()
     )
     synthetic_prediction, synthetic_xai = _synthetic_model_context(patient_id)
+    timeline_context = _timeline_context(
+        lab_rows=lab_rows,
+        symptoms=symptoms,
+        treatments=treatments,
+        imaging_reports=imaging_reports,
+        interventions=interventions,
+        outcome=outcome,
+        synthetic_prediction=synthetic_prediction,
+    )
 
     return {
         "latest_lab": {
@@ -415,6 +448,7 @@ def _recent_patient_context(db, patient_id):
         } if outcome else None,
         "synthetic_model_prediction": synthetic_prediction,
         "synthetic_model_explanation": synthetic_xai,
+        "timeline_context": timeline_context,
     }
 
 
@@ -423,6 +457,19 @@ def _contextual_reply(message, context):
     status_terms = ["how am i", "how is my treatment", "am i improving", "working", "progress", "score"]
     explain_terms = ["why", "explain", "factor", "contribute", "model"]
     doctor_terms = ["doctor", "oncologist", "tell them", "bring", "ask"]
+    timeline_terms = ["last 14", "last fourteen", "what changed", "timeline", "tumor board", "toxicity", "cycle 2"]
+
+    if any(term in lower for term in timeline_terms):
+        timeline = context.get("timeline_context") or {}
+        if "tumor board" in lower:
+            return timeline.get("tumor_board_brief")
+        if "toxicity" in lower or "cycle 2" in lower:
+            return timeline.get("toxicity_summary")
+        if "last 14" in lower or "last fourteen" in lower or "what changed" in lower:
+            changes = timeline.get("last_14_day_changes") or []
+            if changes:
+                return "In the last represented 14 days: " + "; ".join(changes[:5]) + "."
+            return "I do not see timeline events in the last represented 14-day window. This may mean the record is missing recent updates."
 
     if any(term in lower for term in status_terms):
         prediction = context.get("synthetic_model_prediction") or {}
@@ -493,3 +540,70 @@ def _synthetic_model_context(patient_id):
         )
     except Exception:
         return None, None
+
+
+def _timeline_context(lab_rows, symptoms, treatments, imaging_reports, interventions, outcome, synthetic_prediction):
+    events = []
+    for row in lab_rows:
+        events.append((row.date, f"CBC WBC {row.wbc}, hemoglobin {row.hemoglobin}, platelets {row.platelets}"))
+    for row in symptoms:
+        events.append((row.date, f"symptom {row.symptom} severity {row.severity}/10"))
+    for row in treatments:
+        events.append((row.date, f"treatment cycle {row.cycle}: {row.drug}"))
+    for row in imaging_reports:
+        events.append((row.date, f"{row.modality} impression: {row.impression[:100]}"))
+    for row in interventions:
+        events.append((row.date, f"support intervention {row.intervention_type}: {row.reason[:90]}"))
+
+    last_14 = _last_14_day_changes(events)
+    toxicity = _chat_toxicity_summary(lab_rows, symptoms)
+    probability = None
+    if synthetic_prediction:
+        probability = synthetic_prediction.get("logistic_regression_probability") or synthetic_prediction.get("gradient_boosting_probability")
+    probability_text = f"Demo response probability {round(float(probability) * 100, 1)}%. " if probability is not None else ""
+    outcome_text = (
+        f"Recorded outcome {outcome.response_category} / {outcome.cancer_status}. "
+        if outcome else ""
+    )
+    tumor_board = (
+        f"{probability_text}{toxicity} "
+        f"Recent changes: {'; '.join(last_14[:4]) if last_14 else 'no recent timeline events represented'}. "
+        f"{outcome_text}For clinician review only; this is not diagnosis or treatment advice."
+    )
+    return {
+        "last_14_day_changes": last_14,
+        "toxicity_summary": toxicity,
+        "tumor_board_brief": tumor_board,
+    }
+
+
+def _last_14_day_changes(events):
+    if not events:
+        return []
+    latest = max(date_value for date_value, _ in events)
+    start = latest - timedelta(days=14)
+    return [
+        text for date_value, text in sorted(events, key=lambda item: item[0], reverse=True)
+        if date_value >= start
+    ]
+
+
+def _chat_toxicity_summary(lab_rows, symptoms):
+    if not lab_rows:
+        return "CBC toxicity trend is unavailable because no CBC rows are present."
+    sorted_labs = sorted(lab_rows, key=lambda row: row.date)
+    early = sorted_labs[:max(1, len(sorted_labs) // 2)]
+    late = sorted_labs[max(1, len(sorted_labs) // 2):] or sorted_labs[-1:]
+    early_min_wbc = min(row.wbc for row in early)
+    late_min_wbc = min(row.wbc for row in late)
+    late_min_platelets = min(row.platelets for row in late)
+    high_symptoms = [row for row in symptoms if row.severity >= 7]
+    if late_min_wbc < early_min_wbc * 0.8 or late_min_platelets < 75 or high_symptoms:
+        return (
+            f"CBC/symptom toxicity needs review: late minimum WBC {round(late_min_wbc, 2)}, "
+            f"late minimum platelets {round(late_min_platelets, 1)}, high symptom reports {len(high_symptoms)}."
+        )
+    return (
+        f"CBC toxicity does not look worse in the latest represented window: "
+        f"late minimum WBC {round(late_min_wbc, 2)}, late minimum platelets {round(late_min_platelets, 1)}."
+    )

@@ -6,12 +6,14 @@ AI-assisted proof of concept for longitudinal breast cancer treatment monitoring
 
 - Tracks CBC/lab trends across treatment cycles.
 - Stores treatment schedules, medication logs, symptoms, imaging reports, and MRI file references.
-- Builds patient reports with risk flags, temporal timelines, and patient-friendly explanations.
+- Builds patient reports with risk flags, temporal timelines, deterministic monitoring snapshots, and patient-friendly explanations.
 - Uses BreastDCEDL/I-SPY1 DCE-MRI features to train a pCR response-classification baseline.
 - Adds SHAP explanations for model behavior.
 - Saves model artifacts, registry metadata, and prediction audit logs.
-- Provides a clinician/admin dashboard and a separate patient portal.
-- Provides a patient support chat that can save symptoms, complete CBC values, and medication mentions.
+- Provides separate patient, clinician, and admin/MLE surfaces.
+- Provides a patient support chat that can save symptoms, complete CBC values, medication mentions, and answer timeline-monitoring questions.
+- Adds clinician-in-the-loop summary review with approve/edit/reject audit logging.
+- Adds admin/MLE analytics for model evaluation, drift checks, champion/challenger comparison, audit counts, and clinician feedback.
 
 ## Current Architecture
 
@@ -19,8 +21,9 @@ AI-assisted proof of concept for longitudinal breast cancer treatment monitoring
 - `backend/models.py`: SQLAlchemy database schema.
 - `backend/services/`: dataset handling, synthetic data, auth, uploads, model artifacts, chat agent.
 - `backend/processing/`: clinical trend, risk, timeline, report, and LLM summary logic.
-- `frontend/index.html`: clinician/admin dashboard.
+- `frontend/index.html`: clinician dashboard.
 - `frontend/patient.html`: patient portal.
+- `frontend/admin.html`: admin/MLE operations dashboard.
 - `Data/`: generated manifests, model outputs, summaries, and local artifacts.
 - `Datasets/`: local real datasets, ignored by git.
 
@@ -100,14 +103,18 @@ Best current result on patient-level test split:
 
 - Gradient boosting
 - ROC AUC: 0.990
+- Average precision: 0.993
+- Brier score: 0.062
+- Sensitivity: 0.977
+- Specificity: 0.875
 - Accuracy: 0.933
 - Balanced accuracy: 0.926
 
 Other response models:
 
 - Logistic regression patient-level ROC AUC: 0.983
-- Temporal 1D CNN patient-level ROC AUC: 0.969
-- Temporal GRU patient-level ROC AUC: 0.954
+- Temporal 1D CNN patient-level ROC AUC: 0.959
+- Temporal GRU patient-level ROC AUC: 0.929
 
 Cycle-level monitoring classifiers were also trained for `toxicity_risk_binary` and `support_intervention_needed`. These are simulator-learning tasks because the labels are generated from CBC/symptom/intervention rules.
 
@@ -137,14 +144,17 @@ It is a clinical support and engineering proof of concept for organizing and sum
 
 Use the current running FastAPI port.
 
-- Admin dashboard: `/frontend/index.html`
+- Clinician dashboard: `/clinician`
+- Admin/MLE dashboard: `/admin`
 - Patient portal: `/patient`
 - API docs: `/docs`
 
 Example:
 
 ```text
-http://127.0.0.1:8011/patient
+http://127.0.0.1:8017/patient
+http://127.0.0.1:8017/clinician
+http://127.0.0.1:8017/admin
 ```
 
 ## Environment
@@ -159,4 +169,4 @@ The app also checks the legacy nested `MedicalAgent/.env` location, but the proj
 
 ## Portfolio Description
 
-Built an AI-assisted breast cancer treatment-monitoring platform that combines longitudinal patient records, CBC trends, medication and symptom tracking, breast imaging report NLP, MRI-derived response modeling, SHAP explanations, and LLM-generated clinical summaries. Implemented FastAPI services, SQLite persistence, patient-scoped demo sessions, local upload logging, synthetic temporal oncology journeys, model artifact registration, prediction audit trails, and separate clinician and patient-facing dashboards. The system is positioned as clinical decision support and workflow intelligence, not diagnosis or treatment recommendation.
+Built an AI-assisted breast cancer treatment-monitoring platform that combines longitudinal patient records, CBC trends, medication and symptom tracking, breast imaging report NLP, MRI-derived response modeling, XAI explanations, deterministic clinical rule flags, timeline intelligence, and LLM-assisted summaries. Implemented FastAPI services, SQLite persistence, patient/clinician/admin demo sessions, local upload logging, synthetic temporal oncology journeys, model artifact registration, prediction audit trails, clinician-in-the-loop summary review, and admin/MLE monitoring for drift, A/B comparison, and feedback analytics. The system is positioned as clinical decision support and workflow intelligence, not diagnosis or treatment recommendation.

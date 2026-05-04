@@ -670,6 +670,25 @@
       </div>
     </div>
 
+    <!-- CLINICIAN REVIEW -->
+    <div>
+      <div class="section-label">Clinician-in-the-loop Review</div>
+      <div class="card">
+        <div class="radio-field"><strong>Current deterministic snapshot:</strong> <span id="monitoringSnapshot">Loading...</span></div>
+        <div class="radio-field"><strong>Latest review:</strong> <span id="latestReview">No review loaded.</span></div>
+        <textarea id="clinicianNotes" placeholder="Clinician notes for audit trail..." style="width:100%;min-height:70px;margin-top:8px;"></textarea>
+        <textarea id="editedPatientSummary" placeholder="Optional edited patient-facing summary..." style="width:100%;min-height:70px;margin-top:8px;"></textarea>
+        <div class="form-row" style="margin-top:8px;">
+          <input id="explanationQualityScore" type="number" min="1" max="5" placeholder="Explanation quality 1-5">
+          <input id="modelUsefulnessScore" type="number" min="1" max="5" placeholder="Model usefulness 1-5">
+          <button class="btn btn-primary" onclick="submitSummaryReview('approved')">Approve</button>
+          <button class="btn btn-ghost" onclick="submitSummaryReview('edited')">Save Edit</button>
+          <button class="btn btn-ghost" onclick="submitSummaryReview('rejected')">Reject</button>
+        </div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:8px;">Review feedback is logged for evaluation and governance. It does not automatically change treatment decisions.</div>
+      </div>
+    </div>
+
     <!-- CHANGES + REVIEW -->
     <div class="two-col">
       <div>
@@ -825,6 +844,8 @@
 
   <script>
     const API_BASE = window.location.origin;
+    let clinicianToken = localStorage.getItem("clinicianAccessToken") || null;
+    let latestPatientReport = null;
 
     /* ── UTILITY ── */
     function showToast(msg, isError = false) {
@@ -836,6 +857,23 @@
     }
 
     function getPatientId() { return document.getElementById("patientSelect").value; }
+
+    function clinicianHeaders() {
+      return clinicianToken ? { "Authorization": `Bearer ${clinicianToken}` } : {};
+    }
+
+    function loginClinician() {
+      return fetch(`${API_BASE}/auth/demo-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: "clinician" })
+      })
+      .then(r => { if (!r.ok) throw new Error(`Clinician login failed (${r.status})`); return r.json(); })
+      .then(session => {
+        clinicianToken = session.access_token;
+        localStorage.setItem("clinicianAccessToken", clinicianToken);
+      });
+    }
 
     function emptyList(el, msg = "None reported.") {
       el.innerHTML = `<li class="empty-state">${msg}</li>`;
@@ -971,6 +1009,15 @@
       `;
     }
 
+    function renderClinicianReview(data) {
+      const snapshot = data.patient_timeline_summary || {};
+      const review = data.latest_clinician_review;
+      document.getElementById("monitoringSnapshot").textContent = snapshot.headline || "No deterministic snapshot available.";
+      document.getElementById("latestReview").textContent = review
+        ? `${review.decision} by ${review.reviewer_role} at ${String(review.created_at).slice(0,19)}`
+        : "No clinician review saved yet.";
+    }
+
     function loadPredictionAudits(patientId) {
       fetch(`${API_BASE}/prediction-audits?patient_id=${encodeURIComponent(patientId)}&limit=8`)
         .then(r => r.json())
@@ -1074,6 +1121,7 @@
       fetch(`${API_BASE}/patient-report/${patientId}`)
         .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
         .then(data => {
+          latestPatientReport = data;
           renderProfile(data);
 
           const labs = data.latest_labs || {};
@@ -1084,6 +1132,7 @@
           renderLabSource(data);
           renderRisks(data.risks);
           renderMultimodalAssessment(data.multimodal_assessment);
+          renderClinicianReview(data);
           loadPredictionAudits(patientId);
           renderRadiology(data.radiology_summary);
 
@@ -1170,6 +1219,36 @@
         loadPatient(pid);
       })
       .catch(err => showToast(err.message, true));
+    }
+
+    function submitSummaryReview(decision) {
+      const pid = getPatientId();
+      if (!pid) { showToast("Select a patient first.", true); return; }
+
+      const explanationQuality = document.getElementById("explanationQualityScore").value;
+      const modelUsefulness = document.getElementById("modelUsefulnessScore").value;
+      const payload = {
+        decision,
+        clinician_notes: document.getElementById("clinicianNotes").value.trim() || null,
+        edited_patient_summary: document.getElementById("editedPatientSummary").value.trim() || null,
+        explanation_quality_score: explanationQuality ? Number(explanationQuality) : null,
+        model_usefulness_score: modelUsefulness ? Number(modelUsefulness) : null
+      };
+
+      const request = () => fetch(`${API_BASE}/patients/${pid}/summary-review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
+        body: JSON.stringify(payload)
+      })
+      .then(r => { if (!r.ok) throw new Error(`Review failed (${r.status})`); return r.json(); })
+      .then(() => {
+        showToast("Clinician review saved.");
+        document.getElementById("clinicianNotes").value = "";
+        document.getElementById("editedPatientSummary").value = "";
+        loadPatient(pid);
+      });
+
+      request().catch(() => loginClinician().then(request).catch(err => showToast(err.message, true)));
     }
 
     function addSymptomReport() {

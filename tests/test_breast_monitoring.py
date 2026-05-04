@@ -9,7 +9,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.database import Base
-from backend.models import ClinicalIntervention, LabResult, MedicationLog, Patient, PatientUpload, Treatment, TreatmentOutcome
+from backend.models import ClinicalIntervention, ClinicalSummaryReview, LabResult, MedicationLog, Patient, PatientUpload, SymptomReport, Treatment, TreatmentOutcome
+from backend.processing.risk_engine import detect_clinical_rule_risks
 from backend.processing.radiology_analysis import (
     analyze_breast_imaging_reports,
     detect_possible_metastatic_indicators,
@@ -19,6 +20,7 @@ from backend.services.mri_series_indexer import classify_mri_series_role
 from backend.services.mri_manifest import select_model_input_series
 from backend.services.mri_preprocessing import normalize_pixels
 from backend.services.auth import create_demo_session, get_context_from_authorization
+from backend.services.clinician_feedback import create_clinical_summary_review
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
 from backend.services.patient_uploads import save_patient_upload
 from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys, infer_synthetic_subtype
@@ -261,6 +263,48 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertTrue((output_dir / "outcomes.csv").exists())
             self.assertEqual(db.query(TreatmentOutcome).count(), 3)
             self.assertGreater(db.query(ClinicalIntervention).count(), 0)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_clinical_rules_flag_fever_after_treatment_and_low_wbc(self):
+        labs = pd.DataFrame([
+            {"date": pd.Timestamp("2026-01-01").date(), "wbc": 5.0, "hemoglobin": 12.0, "platelets": 210},
+            {"date": pd.Timestamp("2026-01-08").date(), "wbc": 1.8, "hemoglobin": 9.5, "platelets": 90},
+        ])
+        symptoms = pd.DataFrame([
+            {"date": pd.Timestamp("2026-01-09").date(), "symptom": "fever", "severity": 8, "notes": "reported fever"},
+        ])
+        treatments = pd.DataFrame([
+            {"date": pd.Timestamp("2026-01-02").date(), "cycle": 1, "drug": "paclitaxel"},
+        ])
+
+        risks = detect_clinical_rule_risks(labs, symptoms, treatments)
+        risk_types = {risk["type"] for risk in risks}
+
+        self.assertIn("critical_wbc_suppression", risk_types)
+        self.assertIn("fever_after_recent_chemotherapy", risk_types)
+        self.assertIn("fever_with_low_wbc", risk_types)
+
+    def test_clinician_summary_review_is_audited(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="TEST-P002", name="Review Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            review = create_clinical_summary_review(
+                db=db,
+                patient_id="TEST-P002",
+                reviewer_role="clinician",
+                decision="approved",
+                summary_snapshot={"headline": "Review recommended"},
+                clinician_notes="Agree with review flag.",
+                explanation_quality_score=4,
+                model_usefulness_score=3,
+            )
+
+            self.assertEqual(review["decision"], "approved")
+            self.assertEqual(db.query(ClinicalSummaryReview).count(), 1)
         finally:
             db.close()
             db.bind.dispose()

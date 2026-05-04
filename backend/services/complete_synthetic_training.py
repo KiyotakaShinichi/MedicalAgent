@@ -9,7 +9,17 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier, RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score, roc_auc_score
+from sklearn.metrics import (
+    accuracy_score,
+    average_precision_score,
+    balanced_accuracy_score,
+    brier_score_loss,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
@@ -424,16 +434,35 @@ def _aggregate_patient_predictions(test_rows, target, probabilities, model_name)
 def _binary_metrics(labels, probabilities, prefix=""):
     predictions = (np.asarray(probabilities) >= 0.5).astype(int)
     labels = np.asarray(labels).astype(int)
+    tn, fp, fn, tp = _confusion_counts(labels, predictions)
     metrics = {
         f"{prefix}accuracy": round(float(accuracy_score(labels, predictions)), 3),
         f"{prefix}balanced_accuracy": round(float(balanced_accuracy_score(labels, predictions)), 3),
         f"{prefix}f1": round(float(f1_score(labels, predictions, zero_division=0)), 3),
+        f"{prefix}precision": round(float(precision_score(labels, predictions, zero_division=0)), 3),
+        f"{prefix}sensitivity": round(float(recall_score(labels, predictions, zero_division=0)), 3),
+        f"{prefix}specificity": round(float(tn / (tn + fp)), 3) if (tn + fp) else None,
+        f"{prefix}brier_score": round(float(brier_score_loss(labels, probabilities)), 3),
+        f"{prefix}confusion_matrix": {
+            "true_negative": int(tn),
+            "false_positive": int(fp),
+            "false_negative": int(fn),
+            "true_positive": int(tp),
+        },
     }
     if len(set(labels.tolist())) > 1:
         metrics[f"{prefix}roc_auc"] = round(float(roc_auc_score(labels, probabilities)), 3)
+        metrics[f"{prefix}average_precision"] = round(float(average_precision_score(labels, probabilities)), 3)
     else:
         metrics[f"{prefix}roc_auc"] = None
+        metrics[f"{prefix}average_precision"] = None
     return metrics
+
+
+def _confusion_counts(labels, predictions):
+    matrix = confusion_matrix(labels, predictions, labels=[0, 1])
+    tn, fp, fn, tp = matrix.ravel()
+    return int(tn), int(fp), int(fn), int(tp)
 
 
 def _sequence_tensor(rows, target, preprocessor):

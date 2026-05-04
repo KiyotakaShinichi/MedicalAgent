@@ -61,14 +61,18 @@ Best model:
 
 - Gradient boosting
 - Patient-level ROC AUC: 0.990
+- Patient-level average precision: 0.993
+- Patient-level Brier score: 0.062
+- Patient-level sensitivity: 0.977
+- Patient-level specificity: 0.875
 - Patient-level accuracy: 0.933
 - Patient-level balanced accuracy: 0.926
 
 Other useful baselines:
 
 - Logistic regression patient-level ROC AUC: 0.983
-- Temporal 1D CNN patient-level ROC AUC: 0.969
-- Temporal GRU patient-level ROC AUC: 0.954
+- Temporal 1D CNN patient-level ROC AUC: 0.959
+- Temporal GRU patient-level ROC AUC: 0.929
 
 ## Cycle-Level Monitoring Targets
 

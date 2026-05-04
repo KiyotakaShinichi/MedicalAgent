@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Operations Dashboard</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --soft: #f8fafc;
+      --text: #17202a;
+      --muted: #667085;
+      --line: rgba(23, 32, 42, 0.12);
+      --blue: #2364aa;
+      --green: #237a57;
+      --amber: #a86413;
+      --red: #b42318;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      height: 66px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .brand { font-weight: 800; }
+    .brand span { display: block; color: var(--muted); font-size: 12px; font-weight: 500; margin-top: 2px; }
+    nav { display: flex; gap: 8px; align-items: center; }
+    a, button {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      padding: 8px 11px;
+      font: inherit;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    button.primary { background: var(--blue); color: white; border-color: var(--blue); }
+    main {
+      width: min(1220px, calc(100% - 28px));
+      margin: 22px auto 64px;
+      display: grid;
+      gap: 16px;
+    }
+    .hero, .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      align-items: center;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0; }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    p { margin: 0; color: var(--muted); line-height: 1.55; }
+    .grid { display: grid; gap: 16px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric { font-size: 32px; font-weight: 850; }
+    .metric span { display: block; font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 4px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .pill.ok { color: var(--green); background: #eaf7ef; }
+    .pill.watch { color: var(--amber); background: #fff4df; }
+    .pill.bad { color: var(--red); background: #fff0ef; }
+    .list { display: grid; gap: 8px; }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--soft);
+      font-size: 13px;
+    }
+    .row strong { display: block; margin-bottom: 3px; }
+    .row span { color: var(--muted); }
+    .mono { font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px; }
+    @media (max-width: 860px) {
+      header { height: auto; padding: 14px; align-items: flex-start; flex-direction: column; gap: 12px; }
+      .hero, .grid.two, .grid.three { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Model Operations<span>Admin / MLE dashboard</span></div>
+    <nav>
+      <a href="/clinician">Clinician</a>
+      <a href="/patient?patient=COMPV4-BRCA-0001">Patient</a>
+      <button class="primary" onclick="loadAnalytics()">Refresh</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Monitoring Assistant Operations</h1>
+        <p>Model evaluation, drift signals, champion/challenger comparison, audit logs, and clinician-feedback monitoring for the breast cancer treatment monitoring PoC.</p>
+      </div>
+      <div class="card">
+        <h2>System Roles</h2>
+        <div class="list" id="rolesList"><div class="row"><span>Loading roles...</span></div></div>
+      </div>
+    </section>
+
+    <section class="grid three">
+      <div class="card">
+        <h2>Champion Model</h2>
+        <div class="metric" id="championModel">--<span>best current synthetic model</span></div>
+      </div>
+      <div class="card">
+        <h2>Patient AUROC</h2>
+        <div class="metric" id="championAuroc">--<span>held-out patient split</span></div>
+      </div>
+      <div class="card">
+        <h2>Audit Events</h2>
+        <div class="metric" id="auditCount">--<span>prediction audit logs</span></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Drift Monitoring</h2>
+        <div id="driftStatus" class="pill">loading</div>
+        <div class="list" id="driftList" style="margin-top:12px;"></div>
+      </div>
+      <div class="card">
+        <h2>A/B Testing Readiness</h2>
+        <div class="list" id="abList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Clinical Feedback</h2>
+        <div class="list" id="feedbackList"></div>
+      </div>
+      <div class="card">
+        <h2>Data Quality</h2>
+        <div id="dataQualityStatus" class="pill">loading</div>
+        <div class="list" id="qualityList" style="margin-top:12px;"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let adminToken = localStorage.getItem("adminAccessToken") || null;
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function headers() {
+      return adminToken ? { "Authorization": `Bearer ${adminToken}` } : {};
+    }
+
+    function pillClass(status) {
+      if (status === "stable" || status === "ok") return "pill ok";
+      if (status === "watch") return "pill watch";
+      return "pill";
+    }
+
+    function loginAdmin() {
+      return fetch(`${API_BASE}/auth/demo-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: "admin" })
+      })
+      .then(r => { if (!r.ok) throw new Error(`admin login failed (${r.status})`); return r.json(); })
+      .then(session => {
+        adminToken = session.access_token;
+        localStorage.setItem("adminAccessToken", adminToken);
+      });
+    }
+
+    function row(title, detail, right = "") {
+      return `<div class="row"><div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(detail)}</span></div><div class="mono">${escapeHtml(right)}</div></div>`;
+    }
+
+    function render(data) {
+      const roles = data.roles || {};
+      document.getElementById("rolesList").innerHTML = Object.entries(roles).map(([name, desc]) => row(name, desc)).join("");
+
+      const perf = data.model_performance?.synthetic_longitudinal_response || {};
+      document.getElementById("championModel").innerHTML = `${escapeHtml(perf.best_model || "--")}<span>best current synthetic model</span>`;
+      document.getElementById("championAuroc").innerHTML = `${perf.patient_level_roc_auc ?? "--"}<span>held-out patient split</span>`;
+      document.getElementById("auditCount").innerHTML = `${data.audit_and_feedback?.prediction_audit_count ?? 0}<span>prediction audit logs</span>`;
+
+      const drift = data.drift_monitoring || {};
+      const driftStatus = document.getElementById("driftStatus");
+      driftStatus.className = pillClass(drift.status);
+      driftStatus.textContent = drift.status || "unknown";
+      document.getElementById("driftList").innerHTML = (drift.features || []).map(item =>
+        row(item.feature, `reference ${item.reference_mean}, current ${item.current_mean}`, item.standardized_mean_shift)
+      ).join("") || row("No drift data", "Run or generate training data first.");
+
+      const ab = data.ab_testing || {};
+      const candidates = [ab.champion, ...(ab.challengers || [])].filter(Boolean);
+      document.getElementById("abList").innerHTML = candidates.map(item =>
+        row(item.model, `AUROC ${item.patient_level_roc_auc}, AP ${item.patient_level_average_precision ?? "n/a"}, Brier ${item.patient_level_brier_score ?? "n/a"}`)
+      ).join("") + row("Disagreement", "Prediction disagreement across model candidates", ab.prediction_disagreement_rate ?? "n/a");
+
+      const feedback = data.audit_and_feedback?.clinical_feedback || {};
+      document.getElementById("feedbackList").innerHTML = [
+        row("Reviews", "Clinician summary review count", feedback.review_count ?? 0),
+        row("Decisions", JSON.stringify(feedback.decision_counts || {})),
+        row("Explanation quality", "Average clinician score", feedback.average_explanation_quality_score ?? "n/a"),
+        row("Model usefulness", "Average clinician score", feedback.average_model_usefulness_score ?? "n/a")
+      ].join("");
+
+      const quality = data.data_quality || {};
+      const qualityStatus = document.getElementById("dataQualityStatus");
+      qualityStatus.className = pillClass(quality.status);
+      qualityStatus.textContent = quality.status || "unknown";
+      document.getElementById("qualityList").innerHTML = (quality.missingness || []).map(item =>
+        row(item.column, `missing rate ${item.missing_rate}`, item.status)
+      ).join("") || row("No missingness", `${quality.rows || 0} rows checked.`);
+    }
+
+    function loadAnalytics() {
+      const request = () => fetch(`${API_BASE}/admin/analytics`, { headers: headers() })
+        .then(r => { if (!r.ok) throw new Error(`analytics failed (${r.status})`); return r.json(); })
+        .then(render);
+      return request().catch(() => loginAdmin().then(request));
+    }
+
+    loadAnalytics();
+  </script>
+</body>
+</html>

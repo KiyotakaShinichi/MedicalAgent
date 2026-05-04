@@ -238,14 +238,18 @@ Best model:
 
 - gradient boosting
 - patient-level ROC AUC: 0.990
+- patient-level average precision: 0.993
+- patient-level Brier score: 0.062
+- patient-level sensitivity: 0.977
+- patient-level specificity: 0.875
 - patient-level accuracy: 0.933
 - patient-level balanced accuracy: 0.926
 
 Other response models:
 
 - logistic regression patient-level ROC AUC: 0.983
-- temporal 1D CNN patient-level ROC AUC: 0.969
-- temporal GRU patient-level ROC AUC: 0.954
+- temporal 1D CNN patient-level ROC AUC: 0.959
+- temporal GRU patient-level ROC AUC: 0.929
 
 Additional cycle-level monitoring targets were trained separately:
 
@@ -255,6 +259,16 @@ Additional cycle-level monitoring targets were trained separately:
 Those cycle-level tasks skip CNN/GRU and use tabular models because the label is per treatment cycle, not one final journey outcome. Results are simulator-learning results, not clinical validation.
 
 Synthetic model explanations were generated at `Data/complete_synthetic_training/synthetic_xai_explanations.json`. They explain logistic-regression feature contributions toward or away from the synthetic treatment-response label and are used by the patient portal and chat agent.
+
+## Role-Based Workflow
+
+The app now has three surfaces:
+
+- Patient portal: personal monitoring summary, uploads, symptom/CBC/medication logging, and support agent.
+- Clinician dashboard: patient review, deterministic monitoring snapshot, timeline intelligence, and approve/edit/reject summary review.
+- Admin/MLE dashboard: model evaluation, drift checks, champion/challenger comparison, prediction audit counts, data quality, and clinician-feedback analytics.
+
+Clinician feedback is stored as audit data and does not automatically modify medical records or treatment decisions.
 
 ## Groq-Assisted Chat
 

@@ -38,7 +38,12 @@ from backend.models import (
 )
 from backend.processing.radiology_analysis import analyze_breast_imaging_reports, analyze_radiology_reports
 from backend.processing.patient_state import build_patient_state
-from backend.processing.risk_engine import detect_risks, detect_symptom_risks, detect_trend_risk
+from backend.processing.risk_engine import (
+    detect_clinical_rule_risks,
+    detect_risks,
+    detect_symptom_risks,
+    detect_trend_risk,
+)
 from backend.processing.timeline import build_clinical_timeline
 from backend.processing.treatment_analysis import align_labs_with_treatment
 from backend.processing.trend_analysis import analyze_labs
@@ -58,7 +63,9 @@ from backend.services.mri_manifest import build_qin_mri_manifest
 from backend.services.mri_preprocessing import preprocess_mri_manifest_previews
 from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
 from backend.services.multimodal_fusion import build_multimodal_assessment
+from backend.services.patient_timeline_summary import build_patient_timeline_risk_summary
 from backend.services.support_chat_agent import handle_patient_chat
+from backend.services.timeline_intelligence import answer_timeline_question, build_timeline_intelligence
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 ensure_schema()
@@ -94,6 +101,24 @@ def get_patient_access_context(context=Depends(get_access_context)):
 
     try:
         return require_patient_context(context)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+
+
+def get_clinician_or_admin_context(context=Depends(get_access_context)):
+    from backend.services.auth import require_admin_or_clinician
+
+    try:
+        return require_admin_or_clinician(context)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+
+
+def get_admin_access_context(context=Depends(get_access_context)):
+    from backend.services.auth import require_admin_context
+
+    try:
+        return require_admin_context(context)
     except PermissionError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
 
@@ -298,6 +323,18 @@ class BreastDCEDLModelPredictRequest(BaseModel):
 class PatientChatRequest(BaseModel):
     message: str
 
+
+class TimelineQuestionRequest(BaseModel):
+    question: str
+
+
+class ClinicianSummaryReviewRequest(BaseModel):
+    decision: str
+    clinician_notes: str | None = None
+    edited_patient_summary: str | None = None
+    explanation_quality_score: int | None = None
+    model_usefulness_score: int | None = None
+
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/frontend/index.html")
@@ -306,6 +343,16 @@ def root():
 @app.get("/patient", include_in_schema=False)
 def patient_portal():
     return RedirectResponse(url="/frontend/patient.html")
+
+
+@app.get("/clinician", include_in_schema=False)
+def clinician_dashboard():
+    return RedirectResponse(url="/frontend/index.html")
+
+
+@app.get("/admin", include_in_schema=False)
+def admin_dashboard():
+    return RedirectResponse(url="/frontend/admin.html")
 
 
 # Serve frontend static files
@@ -392,6 +439,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
         risks = detect_risks(labs)
         trend_risks = detect_trend_risk(labs)
     symptom_risks = detect_symptom_risks(symptoms)
+    clinical_rule_risks = detect_clinical_rule_risks(labs, symptoms, treatments)
 
     treatment_effects = []
     if not treatments.empty and not labs.empty:
@@ -419,7 +467,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
             for indicator in radiology_summary.get("possible_metastatic_indicators", [])
         ]
 
-    all_risks = risks + trend_risks + symptom_risks + radiology_risks
+    all_risks = risks + trend_risks + symptom_risks + clinical_rule_risks + radiology_risks
     timeline = build_clinical_timeline(
         labs=labs,
         treatments=treatments,
@@ -474,6 +522,14 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
         report["synthetic_model_prediction"] = None
         report["synthetic_model_explanation"] = None
     report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
+    report["patient_timeline_summary"] = build_patient_timeline_risk_summary(report)
+    report["timeline_intelligence"] = build_timeline_intelligence(report)
+    try:
+        from backend.services.clinician_feedback import latest_clinical_summary_review
+
+        report["latest_clinician_review"] = latest_clinical_summary_review(db, patient.id)
+    except Exception:
+        report["latest_clinician_review"] = None
 
     return report
 
@@ -481,6 +537,83 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
 @app.get("/me/patient-report")
 def get_my_patient_report(context=Depends(get_patient_access_context), db: Session = Depends(get_db)):
     return generate_patient_report(context.patient_id, db)
+
+
+@app.post("/patients/{patient_id}/timeline-question")
+def answer_patient_timeline_question_endpoint(
+    patient_id: str,
+    payload: TimelineQuestionRequest,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    patient = get_patient(db, patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    if not payload.question.strip():
+        raise HTTPException(status_code=400, detail="question cannot be empty")
+
+    report = generate_patient_report(patient_id, db)
+    return answer_timeline_question(report, payload.question)
+
+
+@app.post("/patients/{patient_id}/summary-review")
+def create_patient_summary_review_endpoint(
+    patient_id: str,
+    payload: ClinicianSummaryReviewRequest,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    patient = get_patient(db, patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    from backend.services.clinician_feedback import create_clinical_summary_review
+
+    report = generate_patient_report(patient_id, db)
+    try:
+        review = create_clinical_summary_review(
+            db=db,
+            patient_id=patient_id,
+            reviewer_role=context.role,
+            decision=payload.decision,
+            summary_snapshot=report.get("patient_timeline_summary") or {},
+            clinician_notes=payload.clinician_notes,
+            edited_patient_summary=payload.edited_patient_summary,
+            explanation_quality_score=payload.explanation_quality_score,
+            model_usefulness_score=payload.model_usefulness_score,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "Clinician summary review saved",
+        "review": review,
+        "safety_note": "Review feedback is audit data. It does not change the patient record automatically.",
+    }
+
+
+@app.get("/summary-reviews")
+def list_summary_reviews_endpoint(
+    patient_id: str | None = None,
+    limit: int = 50,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.clinician_feedback import list_clinical_summary_reviews
+
+    return {
+        "summary_reviews": list_clinical_summary_reviews(db, patient_id=patient_id, limit=limit),
+    }
+
+
+@app.get("/admin/analytics")
+def get_admin_analytics_endpoint(
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.admin_analytics import build_admin_analytics
+
+    return build_admin_analytics(db)
 
 
 @app.get("/patients/{patient_id}/chat")
