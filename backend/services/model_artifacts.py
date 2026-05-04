@@ -7,6 +7,7 @@ import joblib
 import pandas as pd
 
 from backend.models import ModelRegistry, PredictionAuditLog
+from backend.services.app_logging import log_app_event
 from backend.services.breastdcedl_baseline import (
     CATEGORICAL_FEATURE_COLUMNS,
     FEATURE_COLUMNS,
@@ -163,6 +164,21 @@ def predict_breastdcedl_patient(
 
     prediction_payload["audit_log_id"] = audit_log.id
     prediction_payload["xai"] = explanation
+    log_app_event(
+        db=db,
+        event_type="prediction",
+        patient_id=patient_id,
+        route="/models/breastdcedl/predict/{patient_id}",
+        status="ok",
+        input_payload=input_reference,
+        output_payload={
+            "model_name": model_name,
+            "model_version": model_version,
+            "pcr_probability": prediction_payload["pcr_probability"],
+            "predicted_label": predicted_label,
+            "audit_log_id": audit_log.id,
+        },
+    )
     return prediction_payload
 
 
@@ -173,6 +189,86 @@ def list_registered_models(db):
         .all()
     )
     return [_registry_row_to_dict(row) for row in rows]
+
+
+def promote_model_version(db, model_name, model_version, reason=None):
+    row = _get_model_registry_row_any_status(db, model_name, model_version)
+    if row is None:
+        raise ValueError(f"No registered model found for {model_name} {model_version}")
+
+    for other in db.query(ModelRegistry).filter(ModelRegistry.model_name == model_name).all():
+        if other.id != row.id and other.status in {"active", "champion"}:
+            other.status = "archived"
+            other.model_metadata_json = json.dumps(_update_metadata(
+                other.model_metadata_json,
+                {
+                    "promotion_status": "archived",
+                    "archived_at": datetime.now(timezone.utc).isoformat(),
+                    "archived_reason": f"Replaced by {model_name} {model_version}.",
+                },
+            ))
+
+    row.status = "champion"
+    row.model_metadata_json = json.dumps(_update_metadata(
+        row.model_metadata_json,
+        {
+            "promotion_status": "champion",
+            "promoted_at": datetime.now(timezone.utc).isoformat(),
+            "promotion_reason": reason or "Promoted through admin model lifecycle endpoint.",
+        },
+    ))
+    db.commit()
+    db.refresh(row)
+    log_app_event(
+        db=db,
+        event_type="model_lifecycle",
+        actor_role="admin",
+        route="/models/{model_name}/{model_version}/promote",
+        status="ok",
+        input_payload={"model_name": model_name, "model_version": model_version, "reason": reason},
+        output_payload={"status": row.status},
+    )
+    return _registry_row_to_dict(row)
+
+
+def rollback_model_version(db, model_name, rollback_to_version, reason=None):
+    target = _get_model_registry_row_any_status(db, model_name, rollback_to_version)
+    if target is None:
+        raise ValueError(f"No rollback target found for {model_name} {rollback_to_version}")
+
+    for current in db.query(ModelRegistry).filter(ModelRegistry.model_name == model_name).all():
+        if current.id != target.id and current.status == "champion":
+            current.status = "rolled_back"
+            current.model_metadata_json = json.dumps(_update_metadata(
+                current.model_metadata_json,
+                {
+                    "promotion_status": "rolled_back",
+                    "rolled_back_at": datetime.now(timezone.utc).isoformat(),
+                    "rollback_reason": reason or f"Rolled back to {rollback_to_version}.",
+                },
+            ))
+
+    target.status = "champion"
+    target.model_metadata_json = json.dumps(_update_metadata(
+        target.model_metadata_json,
+        {
+            "promotion_status": "champion",
+            "rollback_promoted_at": datetime.now(timezone.utc).isoformat(),
+            "rollback_reason": reason or "Selected as rollback target through admin lifecycle endpoint.",
+        },
+    ))
+    db.commit()
+    db.refresh(target)
+    log_app_event(
+        db=db,
+        event_type="model_lifecycle",
+        actor_role="admin",
+        route="/models/{model_name}/{model_version}/rollback",
+        status="ok",
+        input_payload={"model_name": model_name, "rollback_to_version": rollback_to_version, "reason": reason},
+        output_payload={"status": target.status},
+    )
+    return _registry_row_to_dict(target)
 
 
 def register_complete_synthetic_champion(
@@ -302,7 +398,16 @@ def _get_model_registry_row(db, model_name, model_version):
         db.query(ModelRegistry)
         .filter(ModelRegistry.model_name == model_name)
         .filter(ModelRegistry.model_version == model_version)
-        .filter(ModelRegistry.status == "active")
+        .filter(ModelRegistry.status.in_(["active", "champion"]))
+        .first()
+    )
+
+
+def _get_model_registry_row_any_status(db, model_name, model_version):
+    return (
+        db.query(ModelRegistry)
+        .filter(ModelRegistry.model_name == model_name)
+        .filter(ModelRegistry.model_version == model_version)
         .first()
     )
 
@@ -346,6 +451,12 @@ def _loads_or_none(value):
     if not value:
         return None
     return json.loads(value)
+
+
+def _update_metadata(metadata_json, updates):
+    metadata = _loads_or_none(metadata_json) or {}
+    metadata.update(updates)
+    return metadata
 
 
 def _safe_version(version):

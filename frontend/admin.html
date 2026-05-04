@@ -225,6 +225,17 @@
 
     <section class="grid two">
       <div class="card">
+        <h2>Operations Monitoring</h2>
+        <div class="list" id="operationsList"></div>
+      </div>
+      <div class="card">
+        <h2>Confidence Distribution</h2>
+        <div class="list" id="confidenceDistributionList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
         <h2>Champion Metric Guide</h2>
         <div class="metric-table" id="metricGuideList"></div>
       </div>
@@ -613,6 +624,27 @@
       ].join("");
     }
 
+    function renderOperations(monitoring) {
+      const confidence = monitoring?.confidence_distribution || {};
+      const counts = monitoring?.event_type_counts || {};
+      document.getElementById("operationsList").innerHTML = [
+        rowHtml("Monitoring status", monitoring?.purpose || "Operational telemetry.", statusPill(monitoring?.status)),
+        row("Predictions", "Total prediction audit logs.", monitoring?.prediction_count ?? 0),
+        rowHtml("Failure rate", "Failed/error app events divided by total app events.", metricRight(monitoring?.failure_rate ?? 0, monitoring?.status)),
+        row("Event types", JSON.stringify(counts)),
+        ...((monitoring?.recent_errors || []).slice(0, 3).map(item =>
+          row(item.event_type, item.error_message || "No error message", item.route || "")
+        ))
+      ].join("");
+
+      document.getElementById("confidenceDistributionList").innerHTML = [
+        row("Purpose", confidence.purpose || "Prediction confidence distribution."),
+        row("Sample count", "Prediction rows with extractable probability.", confidence.sample_count ?? 0),
+        row("Mean probability", "Average extracted prediction probability.", confidence.mean_probability ?? "n/a"),
+        ...((confidence.bins || []).map(item => row(item.range, "Prediction probability band.", item.count)))
+      ].join("");
+    }
+
     function render(data) {
       const roles = data.roles || {};
       document.getElementById("rolesList").innerHTML = Object.entries(roles).map(([name, desc]) => row(name, desc)).join("");
@@ -622,6 +654,7 @@
       document.getElementById("championModel").innerHTML = `${escapeHtml(perf.best_model || "--")}<span>best current synthetic model</span>`;
       document.getElementById("championAuroc").innerHTML = `${perf.patient_level_roc_auc ?? "--"}<span>held-out patient split</span>`;
       document.getElementById("auditCount").innerHTML = `${data.audit_and_feedback?.prediction_audit_count ?? 0}<span>prediction audit logs</span>`;
+      renderOperations(data.app_monitoring || {});
       document.getElementById("metricGuideList").innerHTML = [
         metricRow("AUROC", perf.patient_level_roc_auc, statuses.patient_level_roc_auc),
         metricRow("AUPRC", perf.patient_level_average_precision, statuses.patient_level_average_precision),

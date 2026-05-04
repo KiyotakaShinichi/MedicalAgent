@@ -66,6 +66,17 @@ from backend.services.multimodal_fusion import build_multimodal_assessment
 from backend.services.patient_timeline_summary import build_patient_timeline_risk_summary
 from backend.services.support_chat_agent import handle_patient_chat
 from backend.services.timeline_intelligence import answer_timeline_question, build_timeline_intelligence
+from backend.services.app_logging import log_app_event
+from backend.services.data_availability import build_data_availability
+from backend.services.input_validation import (
+    validate_cbc_values,
+    validate_chat_message,
+    validate_imaging_report_payload,
+    validate_patient_payload,
+    validate_symptom_payload,
+    validate_treatment_payload,
+    validation_error_payload,
+)
 
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 ensure_schema()
@@ -349,6 +360,11 @@ class EvaluationReportRequest(BaseModel):
     output_root: str = "Data/model_evaluation_reports"
     run_id: str | None = None
 
+
+class ModelVersionActionRequest(BaseModel):
+    reason: str | None = None
+
+
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/frontend/index.html")
@@ -383,6 +399,15 @@ def demo_login(payload: DemoLoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@app.get("/auth/whoami")
+def whoami(context=Depends(get_access_context)):
+    return {
+        "role": context.role,
+        "patient_id": context.patient_id,
+        "safety_note": "Demo sessions are role-scoped for the PoC. They are not production identity management.",
+    }
+
+
 @app.get("/patients")
 def list_patients(db: Session = Depends(get_db)):
     patients = get_all_patients(db)
@@ -400,6 +425,19 @@ def list_patients(db: Session = Depends(get_db)):
 
 @app.post("/patients")
 def create_patient(payload: PatientCreate, db: Session = Depends(get_db)):
+    try:
+        validate_patient_payload(payload.id, payload.name)
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="validation_error",
+            route="/patients",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients")) from exc
+
     existing = get_patient(db, payload.id)
     if existing:
         raise HTTPException(status_code=400, detail="Patient already exists")
@@ -538,6 +576,7 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
     report["patient_timeline_summary"] = build_patient_timeline_risk_summary(report)
     report["timeline_intelligence"] = build_timeline_intelligence(report)
+    report["data_availability"] = build_data_availability(report)
     try:
         from backend.services.clinician_feedback import latest_clinical_summary_review
 
@@ -715,9 +754,19 @@ def chat_with_patient_agent(patient_id: str, payload: PatientChatRequest, db: Se
         raise HTTPException(status_code=404, detail="Patient not found")
 
     try:
+        validate_chat_message(payload.message)
         result = handle_patient_chat(db, patient_id, payload.message)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        log_app_event(
+            db=db,
+            event_type="chat_error",
+            patient_id=patient_id,
+            route="/patients/{patient_id}/chat",
+            status="error",
+            input_payload={"message": payload.message},
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients/{patient_id}/chat")) from exc
 
     return result
 
@@ -737,9 +786,20 @@ def chat_with_my_patient_agent(
     db: Session = Depends(get_db),
 ):
     try:
+        validate_chat_message(payload.message)
         result = handle_patient_chat(db, context.patient_id, payload.message)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        log_app_event(
+            db=db,
+            event_type="chat_error",
+            actor_role=context.role,
+            patient_id=context.patient_id,
+            route="/me/chat",
+            status="error",
+            input_payload={"message": payload.message},
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/me/chat")) from exc
 
     return result
 
@@ -1192,6 +1252,68 @@ def register_complete_synthetic_champion_endpoint(
     }
 
 
+@app.post("/models/{model_name}/{model_version}/promote")
+def promote_model_version_endpoint(
+    model_name: str,
+    model_version: str,
+    payload: ModelVersionActionRequest,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.model_artifacts import promote_model_version
+
+    try:
+        model = promote_model_version(db, model_name=model_name, model_version=model_version, reason=payload.reason)
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="model_lifecycle",
+            actor_role=context.role,
+            route="/models/{model_name}/{model_version}/promote",
+            status="error",
+            input_payload={"model_name": model_name, "model_version": model_version, "reason": payload.reason},
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    return {
+        "message": "Model version promoted to champion.",
+        "model": model,
+        "safety_note": "Promotion is an MLOps registry action. It does not imply clinical validation.",
+    }
+
+
+@app.post("/models/{model_name}/{model_version}/rollback")
+def rollback_model_version_endpoint(
+    model_name: str,
+    model_version: str,
+    payload: ModelVersionActionRequest,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.model_artifacts import rollback_model_version
+
+    try:
+        model = rollback_model_version(db, model_name=model_name, rollback_to_version=model_version, reason=payload.reason)
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="model_lifecycle",
+            actor_role=context.role,
+            route="/models/{model_name}/{model_version}/rollback",
+            status="error",
+            input_payload={"model_name": model_name, "model_version": model_version, "reason": payload.reason},
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    return {
+        "message": "Model rollback completed.",
+        "model": model,
+        "safety_note": "Rollback changes serving registry status only. Clinical use still requires review.",
+    }
+
+
 @app.post("/models/breastdcedl/predict/{patient_id}")
 def predict_breastdcedl_patient_endpoint(
     patient_id: str,
@@ -1214,8 +1336,26 @@ def predict_breastdcedl_patient_endpoint(
             shap_json_path=payload.shap_json_path,
         )
     except FileNotFoundError as exc:
+        log_app_event(
+            db=db,
+            event_type="prediction",
+            patient_id=patient_id,
+            route="/models/breastdcedl/predict/{patient_id}",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="prediction",
+            patient_id=patient_id,
+            route="/models/breastdcedl/predict/{patient_id}",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return result
@@ -1235,6 +1375,20 @@ def add_lab_result(patient_id: str, payload: LabCreate, db: Session = Depends(ge
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
 
+    try:
+        validation_warnings = validate_cbc_values(payload.wbc, payload.hemoglobin, payload.platelets)
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="validation_error",
+            patient_id=patient_id,
+            route="/patients/{patient_id}/labs",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients/{patient_id}/labs")) from exc
+
     lab = LabResult(
         patient_id=patient_id,
         date=payload.date,
@@ -1248,7 +1402,21 @@ def add_lab_result(patient_id: str, payload: LabCreate, db: Session = Depends(ge
     db.add(lab)
     db.commit()
 
-    return {"message": "Lab result added"}
+    log_app_event(
+        db=db,
+        event_type="patient_input",
+        patient_id=patient_id,
+        route="/patients/{patient_id}/labs",
+        status="ok",
+        input_payload=payload.dict(),
+        output_payload={"lab_id": lab.id, "warning_count": len(validation_warnings)},
+    )
+
+    return {
+        "message": "Lab result added",
+        "validation_warnings": validation_warnings,
+        "error_state": None,
+    }
 
 
 @app.post("/patients/{patient_id}/treatments")
@@ -1256,6 +1424,20 @@ def add_treatment(patient_id: str, payload: TreatmentCreate, db: Session = Depen
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
+
+    try:
+        validation_warnings = validate_treatment_payload(payload.cycle, payload.drug)
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="validation_error",
+            patient_id=patient_id,
+            route="/patients/{patient_id}/treatments",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients/{patient_id}/treatments")) from exc
 
     treatment = Treatment(
         patient_id=patient_id,
@@ -1267,7 +1449,17 @@ def add_treatment(patient_id: str, payload: TreatmentCreate, db: Session = Depen
     db.add(treatment)
     db.commit()
 
-    return {"message": "Treatment added"}
+    log_app_event(
+        db=db,
+        event_type="patient_input",
+        patient_id=patient_id,
+        route="/patients/{patient_id}/treatments",
+        status="ok",
+        input_payload=payload.dict(),
+        output_payload={"treatment_id": treatment.id},
+    )
+
+    return {"message": "Treatment added", "validation_warnings": validation_warnings, "error_state": None}
 
 
 @app.post("/patients/{patient_id}/symptoms")
@@ -1276,8 +1468,19 @@ def add_symptom_report(patient_id: str, payload: SymptomCreate, db: Session = De
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
 
-    if payload.severity < 0 or payload.severity > 10:
-        raise HTTPException(status_code=400, detail="Severity must be between 0 and 10")
+    try:
+        validation_warnings = validate_symptom_payload(payload.symptom, payload.severity, payload.notes)
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="validation_error",
+            patient_id=patient_id,
+            route="/patients/{patient_id}/symptoms",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients/{patient_id}/symptoms")) from exc
 
     symptom = SymptomReport(
         patient_id=patient_id,
@@ -1290,7 +1493,17 @@ def add_symptom_report(patient_id: str, payload: SymptomCreate, db: Session = De
     db.add(symptom)
     db.commit()
 
-    return {"message": "Symptom report added"}
+    log_app_event(
+        db=db,
+        event_type="patient_input",
+        patient_id=patient_id,
+        route="/patients/{patient_id}/symptoms",
+        status="ok",
+        input_payload=payload.dict(),
+        output_payload={"symptom_id": symptom.id, "warning_count": len(validation_warnings)},
+    )
+
+    return {"message": "Symptom report added", "validation_warnings": validation_warnings, "error_state": None}
 
 
 @app.post("/patients/{patient_id}/imaging-reports")
@@ -1298,6 +1511,26 @@ def add_imaging_report(patient_id: str, payload: ImagingReportCreate, db: Sessio
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
+
+    try:
+        validation_warnings = validate_imaging_report_payload(
+            payload.modality,
+            payload.report_type,
+            payload.findings,
+            payload.impression,
+            payload.body_site,
+        )
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="validation_error",
+            patient_id=patient_id,
+            route="/patients/{patient_id}/imaging-reports",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients/{patient_id}/imaging-reports")) from exc
 
     report = ImagingReport(
         patient_id=patient_id,
@@ -1312,7 +1545,17 @@ def add_imaging_report(patient_id: str, payload: ImagingReportCreate, db: Sessio
     db.add(report)
     db.commit()
 
-    return {"message": "Imaging report added"}
+    log_app_event(
+        db=db,
+        event_type="patient_input",
+        patient_id=patient_id,
+        route="/patients/{patient_id}/imaging-reports",
+        status="ok",
+        input_payload={**payload.dict(), "findings": "[redacted report text]", "impression": "[redacted report text]"},
+        output_payload={"imaging_report_id": report.id, "warning_count": len(validation_warnings)},
+    )
+
+    return {"message": "Imaging report added", "validation_warnings": validation_warnings, "error_state": None}
 
 
 @app.post("/patients/{patient_id}/mri-registry")
@@ -1342,6 +1585,26 @@ def add_ct_report(patient_id: str, payload: CTReportCreate, db: Session = Depend
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
 
+    try:
+        validation_warnings = validate_imaging_report_payload(
+            "CT",
+            payload.report_type,
+            payload.findings,
+            payload.impression,
+            body_site="Chest/abdomen/pelvis",
+        )
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="validation_error",
+            patient_id=patient_id,
+            route="/patients/{patient_id}/ct-reports",
+            status="error",
+            input_payload={**payload.dict(), "findings": "[redacted report text]", "impression": "[redacted report text]"},
+            error_message=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients/{patient_id}/ct-reports")) from exc
+
     report = CTReport(
         patient_id=patient_id,
         date=payload.date,
@@ -1353,7 +1616,17 @@ def add_ct_report(patient_id: str, payload: CTReportCreate, db: Session = Depend
     db.add(report)
     db.commit()
 
-    return {"message": "CT report added"}
+    log_app_event(
+        db=db,
+        event_type="patient_input",
+        patient_id=patient_id,
+        route="/patients/{patient_id}/ct-reports",
+        status="ok",
+        input_payload={**payload.dict(), "findings": "[redacted report text]", "impression": "[redacted report text]"},
+        output_payload={"ct_report_id": report.id, "warning_count": len(validation_warnings)},
+    )
+
+    return {"message": "CT report added", "validation_warnings": validation_warnings, "error_state": None}
 
 
 def _profile_to_dict(profile):

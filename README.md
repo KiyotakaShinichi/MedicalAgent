@@ -14,6 +14,28 @@ AI-assisted proof of concept for longitudinal breast cancer treatment monitoring
 - Provides a patient support chat that can save symptoms, complete CBC values, medication mentions, and answer timeline-monitoring questions.
 - Adds clinician-in-the-loop summary review with approve/edit/reject audit logging.
 - Adds admin/MLE analytics for model evaluation, calibration, threshold policies, cost-sensitive error analysis, drift checks, subgroup behavior, audit counts, and clinician feedback.
+- Adds product-grade failure handling: constrained inputs, invalid-data responses, insufficient-data summaries, model-unavailable states, and clinician-style fallback language.
+- Adds production-thinking telemetry: structured app event logs, prediction/error monitoring, confidence distribution, model version promotion, and rollback controls.
+
+## Product Hardening Roadmap Implemented
+
+Week 1, "Make it Real":
+
+- Demo user sessions expose patient, clinician, and admin role context through `/auth/demo-login` and `/auth/whoami`.
+- Patient inputs now enforce CBC, symptom, treatment-cycle, chat, and imaging-report constraints before database writes.
+- Invalid values return structured `invalid_data` responses instead of failing silently or saving impossible records.
+- Patient reports include a `data_availability` section with missing labs, insufficient timeline depth, unavailable model signal, and clinician-style interpretation guidance.
+
+Week 2, "Production Thinking":
+
+- `app_event_logs` records validation errors, patient-input events, model lifecycle changes, and prediction events.
+- Admin/MLE analytics show prediction count, operational failure rate, recent errors, event-type counts, and confidence distribution.
+- Model registry supports champion promotion and rollback so model v1/v2 lifecycle behavior can be practiced safely.
+
+Week 3, "Stress & Failure Testing":
+
+- Tests now intentionally cover impossible CBC values, extreme-but-plausible lab warnings, invalid symptom severity, missing longitudinal data, monitoring counters, and rollback behavior.
+- Threshold, cost-sensitive, false-negative, calibration, subgroup, and decision-impact metrics remain visible in the admin dashboard for failure-mode review.
 
 ## Current Architecture
 

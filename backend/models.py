@@ -254,3 +254,18 @@ class ClinicalSummaryReview(Base):
     explanation_quality_score = Column(Integer, nullable=True)
     model_usefulness_score = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class AppEventLog(Base):
+    __tablename__ = "app_event_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_type = Column(String, nullable=False, index=True)
+    actor_role = Column(String, nullable=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=True, index=True)
+    route = Column(String, nullable=True)
+    status = Column(String, nullable=False, default="ok", index=True)
+    input_json = Column(Text, nullable=True)
+    output_json = Column(Text, nullable=True)
+    error_message = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

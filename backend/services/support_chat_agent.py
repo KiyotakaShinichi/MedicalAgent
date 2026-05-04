@@ -15,6 +15,7 @@ from backend.models import (
     Treatment,
     TreatmentOutcome,
 )
+from backend.services.input_validation import validate_cbc_values, validate_symptom_payload
 
 
 SYMPTOM_KEYWORDS = {
@@ -73,6 +74,7 @@ def handle_patient_chat(db, patient_id, message):
 
     symptom = _extract_symptom(normalized)
     if symptom:
+        validate_symptom_payload(symptom["symptom"], symptom["severity"])
         db.add(SymptomReport(
             patient_id=patient_id,
             date=_extract_date(normalized),
@@ -88,6 +90,7 @@ def handle_patient_chat(db, patient_id, message):
 
     labs = _extract_complete_labs(normalized)
     if labs:
+        validate_cbc_values(labs["wbc"], labs["hemoglobin"], labs["platelets"])
         db.add(LabResult(
             patient_id=patient_id,
             date=_extract_date(normalized),

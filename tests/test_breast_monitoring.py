@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.database import Base
-from backend.models import ClinicalIntervention, ClinicalSummaryReview, LabResult, MedicationLog, Patient, PatientUpload, SymptomReport, Treatment, TreatmentOutcome
+from backend.models import AppEventLog, ClinicalIntervention, ClinicalSummaryReview, LabResult, MedicationLog, ModelRegistry, Patient, PatientUpload, PredictionAuditLog, SymptomReport, Treatment, TreatmentOutcome
 from backend.processing.risk_engine import detect_clinical_rule_risks
 from backend.processing.radiology_analysis import (
     analyze_breast_imaging_reports,
@@ -24,7 +24,10 @@ from backend.services.clinician_feedback import create_clinical_summary_review
 from backend.services import admin_analytics
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
-from backend.services.model_artifacts import register_complete_synthetic_champion
+from backend.services.app_logging import build_app_monitoring_summary, log_app_event
+from backend.services.data_availability import build_data_availability
+from backend.services.input_validation import validate_cbc_values, validate_symptom_payload
+from backend.services.model_artifacts import promote_model_version, register_complete_synthetic_champion, rollback_model_version
 from backend.services.mri_derived_features import build_mri_derived_feature_summary
 from backend.services.patient_uploads import save_patient_upload
 from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys, infer_synthetic_subtype
@@ -429,6 +432,100 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertTrue(Path(report["files"]["evaluation_report_json"]).exists())
             self.assertTrue(Path(report["files"]["threshold_operating_points_csv"]).exists())
             self.assertTrue(Path(report["latest_manifest_path"]).exists())
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_validation_rejects_impossible_cbc_and_warns_on_extreme_values(self):
+        with self.assertRaises(ValueError):
+            validate_cbc_values(wbc=-1, hemoglobin=12.0, platelets=200)
+
+        warnings = validate_cbc_values(wbc=1.4, hemoglobin=6.5, platelets=48)
+
+        self.assertEqual(len(warnings), 3)
+        self.assertTrue(all(item["level"] == "clinician_review" for item in warnings))
+
+    def test_validation_rejects_bad_symptom_severity(self):
+        with self.assertRaises(ValueError):
+            validate_symptom_payload("fatigue", 11)
+
+    def test_data_availability_reports_missing_model_and_insufficient_timeline(self):
+        report = {
+            "lab_history": [{"date": "2026-01-01", "wbc": 5.0, "hemoglobin": 12.0, "platelets": 200}],
+            "symptoms": [],
+            "timeline": [{"date": "2026-01-01", "title": "Baseline", "summary": "one event"}],
+            "treatment_effects": [],
+            "radiology_summary": None,
+            "mri_registry": [],
+            "synthetic_model_prediction": None,
+            "multimodal_assessment": {
+                "signals": {
+                    "mri_response": {"status": "unavailable", "source": "none"},
+                }
+            },
+        }
+
+        availability = build_data_availability(report)
+        statuses = {item["name"]: item["status"] for item in availability["items"]}
+
+        self.assertEqual(statuses["CBC trend"], "insufficient_data")
+        self.assertEqual(statuses["Model signal"], "model_unavailable")
+        self.assertIn("Interpret with limitations", availability["clinician_style_summary"])
+
+    def test_app_monitoring_counts_failures_and_prediction_confidence(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="LOG-P001", name="Log Patient", diagnosis="Breast cancer demo"))
+            db.add(PredictionAuditLog(
+                patient_id="LOG-P001",
+                model_name="demo_model",
+                model_version="v1",
+                input_reference="{}",
+                prediction_json='{"response_probability": 0.73}',
+            ))
+            db.commit()
+            log_app_event(db, event_type="prediction", patient_id="LOG-P001", status="ok")
+            log_app_event(db, event_type="validation_error", patient_id="LOG-P001", status="error", error_message="bad input")
+
+            summary = build_app_monitoring_summary(db)
+
+            self.assertEqual(summary["prediction_count"], 1)
+            self.assertEqual(summary["failed_event_count"], 1)
+            self.assertEqual(summary["confidence_distribution"]["sample_count"], 1)
+            self.assertEqual(db.query(AppEventLog).count(), 2)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_model_lifecycle_promote_and_rollback_changes_champion(self):
+        db = _temp_db_session()
+        try:
+            db.add(ModelRegistry(
+                model_name="demo_response_model",
+                model_version="v1",
+                task="demo",
+                artifact_path="Data/models/demo_v1.joblib",
+                model_metadata_json='{"promotion_status": "candidate"}',
+                status="active",
+            ))
+            db.add(ModelRegistry(
+                model_name="demo_response_model",
+                model_version="v2",
+                task="demo",
+                artifact_path="Data/models/demo_v2.joblib",
+                model_metadata_json='{"promotion_status": "candidate"}',
+                status="active",
+            ))
+            db.commit()
+
+            promoted = promote_model_version(db, "demo_response_model", "v2", reason="better calibration")
+            rolled_back = rollback_model_version(db, "demo_response_model", "v1", reason="v2 drift alert")
+
+            self.assertEqual(promoted["status"], "champion")
+            self.assertEqual(rolled_back["status"], "champion")
+            rows = {row.model_version: row.status for row in db.query(ModelRegistry).all()}
+            self.assertEqual(rows["v1"], "champion")
+            self.assertEqual(rows["v2"], "rolled_back")
         finally:
             db.close()
             db.bind.dispose()
