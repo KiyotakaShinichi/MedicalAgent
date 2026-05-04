@@ -141,6 +141,34 @@
       line-height: 1.45;
     }
     .muted { color: var(--muted); }
+    .timeline-list { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
+    .timeline-item {
+      position: relative;
+      padding: 0 0 12px 14px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -6px;
+      top: 3px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--rose);
+    }
+    .feature-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 0;
+      font-size: 13px;
+    }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row strong { color: var(--text); }
+    .feature-row span { color: var(--muted); text-align: right; }
     .agent-button {
       position: fixed;
       right: 22px;
@@ -250,6 +278,28 @@
 
     <section class="grid two">
       <div class="card">
+        <h2>Model Response Signal</h2>
+        <div class="list" id="modelSignal"><div class="item muted">No model signal loaded.</div></div>
+      </div>
+      <div class="card">
+        <h2>Model Explanation</h2>
+        <div class="list" id="modelExplanation"><div class="item muted">No explanation loaded.</div></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Treatment Timeline</h2>
+        <div class="timeline-list" id="timelineList"><div class="timeline-item muted">No timeline loaded.</div></div>
+      </div>
+      <div class="card">
+        <h2>Cycle Lab Impact</h2>
+        <div class="list" id="cycleImpactList"><div class="item muted">No cycle impact loaded.</div></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
         <h2>Recent Symptoms</h2>
         <div class="list" id="symptomList"><div class="item muted">No symptoms loaded.</div></div>
       </div>
@@ -262,6 +312,17 @@
     <section class="card">
       <h2>What To Bring To Your Care Team</h2>
       <div class="list" id="reviewList"><div class="item muted">No review reasons loaded.</div></div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>Treatment Outcome</h2>
+        <div class="list" id="outcomeList"><div class="item muted">No outcome loaded.</div></div>
+      </div>
+      <div class="card">
+        <h2>Support Interventions</h2>
+        <div class="list" id="interventionList"><div class="item muted">No interventions logged.</div></div>
+      </div>
     </section>
 
     <section class="grid two">
@@ -314,7 +375,7 @@
         history.replaceState(null, "", "/patient");
         return patientFromLink;
       }
-      return localStorage.getItem("patientPortalPatientId") || "SYN-BRCA-0001";
+      return localStorage.getItem("patientPortalPatientId") || "COMPV4-BRCA-0001";
     }
 
     function authHeaders() {
@@ -370,6 +431,72 @@
       thread.scrollTop = thread.scrollHeight;
     }
 
+    function probabilityFromPrediction(prediction) {
+      if (!prediction) return null;
+      const keys = [
+        "logistic_regression_probability",
+        "extra_trees_probability",
+        "random_forest_probability",
+        "gradient_boosting_probability",
+        "temporal_gru_probability",
+        "temporal_1d_cnn_probability"
+      ];
+      for (const key of keys) {
+        if (prediction[key] !== undefined && prediction[key] !== null && prediction[key] !== "") {
+          return { key, value: Number(prediction[key]) };
+        }
+      }
+      return null;
+    }
+
+    function renderModelSignal(data) {
+      const prediction = data.synthetic_model_prediction;
+      const signal = probabilityFromPrediction(prediction);
+      const modelEl = document.getElementById("modelSignal");
+      if (!signal) {
+        modelEl.innerHTML = '<div class="item muted">No synthetic longitudinal model prediction found for this patient.</div>';
+        return;
+      }
+      const percent = Math.round(signal.value * 1000) / 10;
+      const label = signal.value >= 0.66 ? "favorable response signal" : signal.value <= 0.4 ? "lower response signal" : "mixed response signal";
+      const actual = prediction.actual_label !== undefined ? `<br><span class="muted">Synthetic held-out label: ${escapeHtml(prediction.actual_label)}</span>` : "";
+      modelEl.innerHTML = `
+        <div class="item"><strong>${percent}%</strong> demo treatment-response probability<br><span class="muted">${escapeHtml(label)} from ${escapeHtml(signal.key.replace("_probability", ""))}</span>${actual}</div>
+        <div class="item muted">This score is trained on generated longitudinal data for engineering practice. It is not clinical validation.</div>
+      `;
+    }
+
+    function renderModelExplanation(data) {
+      const xai = data.synthetic_model_explanation;
+      const el = document.getElementById("modelExplanation");
+      if (!xai) {
+        el.innerHTML = '<div class="item muted">No model explanation generated yet.</div>';
+        return;
+      }
+      const positive = (xai.positive_contributions || []).slice(0, 3);
+      const negative = (xai.negative_contributions || []).slice(0, 3);
+      const row = item => `<div class="feature-row"><strong>${escapeHtml(item.feature)}</strong><span>${Number(item.contribution).toFixed(3)}</span></div>`;
+      el.innerHTML = `
+        <div class="item"><strong>Toward response</strong>${positive.map(row).join("") || '<div class="muted">No positive contributors.</div>'}</div>
+        <div class="item"><strong>Away from response</strong>${negative.map(row).join("") || '<div class="muted">No negative contributors.</div>'}</div>
+      `;
+    }
+
+    function renderTimeline(events) {
+      const el = document.getElementById("timelineList");
+      const latest = (events || []).slice(-12).reverse();
+      el.innerHTML = latest.map(event =>
+        `<div class="timeline-item"><strong>${String(event.date).slice(0,10)} ${escapeHtml(event.title || event.type)}</strong><br><span class="muted">${escapeHtml(event.summary || "")}</span></div>`
+      ).join("") || '<div class="timeline-item muted">No timeline events loaded.</div>';
+    }
+
+    function renderCycleImpact(items) {
+      const el = document.getElementById("cycleImpactList");
+      el.innerHTML = (items || []).slice(-6).reverse().map(item =>
+        `<div class="item">Cycle ${escapeHtml(item.cycle)}: ${escapeHtml(item.drug)}<br><span class="muted">Lowest post-cycle WBC ${escapeHtml(item.min_wbc_post_cycle)}, hemoglobin ${escapeHtml(item.min_hemoglobin_post_cycle)}, platelets ${escapeHtml(item.min_platelets_post_cycle)}</span></div>`
+      ).join("") || '<div class="item muted">No cycle lab impact available.</div>';
+    }
+
     function renderReport(data) {
       document.getElementById("patientName").textContent = data.patient_name || data.patient_id;
       document.getElementById("patientContext").textContent = data.diagnosis || "Breast cancer monitoring record";
@@ -382,7 +509,8 @@
       const mri = assessment.signals?.mri_response || {};
       const clinical = assessment.signals?.clinical_monitoring || {};
       const symptoms = assessment.signals?.symptoms || {};
-      document.getElementById("mriSignal").textContent = `${mri.message || "No MRI signal available."}${mri.pcr_probability !== undefined ? ` pCR probability: ${mri.pcr_probability}` : ""}`;
+      const mriProbability = mri.pcr_probability ?? mri.response_probability;
+      document.getElementById("mriSignal").textContent = `${mri.message || "No MRI signal available."}${mriProbability !== undefined ? ` probability: ${mriProbability}` : ""}`;
       document.getElementById("clinicalSignal").textContent = clinical.message || "No clinical signal available.";
       document.getElementById("symptomSignal").textContent = symptoms.message || "No symptom signal available.";
 
@@ -399,14 +527,29 @@
 
       const meds = document.getElementById("medicationList");
       meds.innerHTML = (data.medication_logs || []).slice(-6).reverse().map(m =>
-        `<div class="item">${String(m.date).slice(0,10)}: ${escapeHtml(m.medication)}${m.dose ? ` ${escapeHtml(m.dose)}` : ""}${m.frequency ? ` · ${escapeHtml(m.frequency)}` : ""}</div>`
+        `<div class="item">${String(m.date).slice(0,10)}: ${escapeHtml(m.medication)}${m.dose ? ` ${escapeHtml(m.dose)}` : ""}${m.frequency ? ` &middot; ${escapeHtml(m.frequency)}` : ""}</div>`
       ).join("") || '<div class="item muted">No medications logged yet.</div>';
+
+      renderModelSignal(data);
+      renderModelExplanation(data);
+      renderTimeline(data.timeline || []);
+      renderCycleImpact(data.treatment_effects || []);
 
       const summary = data.ai_summary || {};
       const reasons = summary.review_reasons || [];
       document.getElementById("reviewList").innerHTML = reasons.length
         ? reasons.map(r => `<div class="item">${escapeHtml(r)}</div>`).join("")
         : '<div class="item muted">No review reasons listed right now.</div>';
+
+      const outcome = data.treatment_outcome;
+      document.getElementById("outcomeList").innerHTML = outcome
+        ? `<div class="item"><strong>${escapeHtml(outcome.response_category)}</strong><br>${escapeHtml(outcome.cancer_status)}<br><span class="muted">${escapeHtml(outcome.maintenance_plan || "No maintenance plan logged.")}</span></div>`
+        : '<div class="item muted">No final outcome recorded yet.</div>';
+
+      const interventions = data.clinical_interventions || [];
+      document.getElementById("interventionList").innerHTML = interventions.slice(-8).reverse().map(i =>
+        `<div class="item">${String(i.date).slice(0,10)}: ${escapeHtml(i.intervention_type)}<br><span class="muted">${escapeHtml(i.reason)}${i.medication_or_product ? ` - ${escapeHtml(i.medication_or_product)}` : ""}</span></div>`
+      ).join("") || '<div class="item muted">No interventions logged.</div>';
 
       const uploads = document.getElementById("uploadList");
       uploads.innerHTML = (data.uploads || []).slice(0, 8).map(u =>

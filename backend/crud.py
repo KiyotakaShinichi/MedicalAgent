@@ -2,6 +2,7 @@ import pandas as pd
 
 from backend.models import (
     BreastCancerProfile,
+    ClinicalIntervention,
     CTReport,
     ImagingReport,
     LabResult,
@@ -13,6 +14,7 @@ from backend.models import (
     Patient,
     SymptomReport,
     Treatment,
+    TreatmentOutcome,
 )
 
 
@@ -73,6 +75,52 @@ def get_treatments_df(db, patient_id):
     ]
 
     return pd.DataFrame(data)
+
+
+def get_clinical_interventions(db, patient_id):
+    rows = (
+        db.query(ClinicalIntervention)
+        .filter(ClinicalIntervention.patient_id == patient_id)
+        .order_by(ClinicalIntervention.date, ClinicalIntervention.id)
+        .all()
+    )
+
+    return [
+        {
+            "id": row.id,
+            "patient_id": row.patient_id,
+            "date": str(row.date),
+            "intervention_type": row.intervention_type,
+            "reason": row.reason,
+            "medication_or_product": row.medication_or_product,
+            "dose": row.dose,
+            "notes": row.notes,
+            "source": row.source,
+        }
+        for row in rows
+    ]
+
+
+def get_treatment_outcome(db, patient_id):
+    row = (
+        db.query(TreatmentOutcome)
+        .filter(TreatmentOutcome.patient_id == patient_id)
+        .first()
+    )
+    if row is None:
+        return None
+
+    return {
+        "id": row.id,
+        "patient_id": row.patient_id,
+        "assessment_date": str(row.assessment_date),
+        "response_category": row.response_category,
+        "cancer_status": row.cancer_status,
+        "maintenance_plan": row.maintenance_plan,
+        "recurrence_risk_band": row.recurrence_risk_band,
+        "notes": row.notes,
+        "source": row.source,
+    }
 
 
 def get_symptoms_df(db, patient_id):

@@ -5,7 +5,16 @@ from datetime import date, timedelta
 from groq import Groq
 
 from backend.config import get_groq_api_key
-from backend.models import ChatMessage, LabResult, MedicationLog, SymptomReport
+from backend.models import (
+    ChatMessage,
+    ClinicalIntervention,
+    ImagingReport,
+    LabResult,
+    MedicationLog,
+    SymptomReport,
+    Treatment,
+    TreatmentOutcome,
+)
 
 
 SYMPTOM_KEYWORDS = {
@@ -107,13 +116,13 @@ def handle_patient_chat(db, patient_id, message):
         ))
         actions.append({"type": "saved_medication", **medication})
 
-    fallback_response = _build_response(actions, urgent_flags)
+    patient_context = _recent_patient_context(db, patient_id)
+    fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
     response = _generate_llm_response(
-        db=db,
-        patient_id=patient_id,
         message=normalized,
         actions=actions,
         urgent_flags=urgent_flags,
+        patient_context=patient_context,
         fallback_response=fallback_response,
     )
     db.add(ChatMessage(
@@ -245,7 +254,7 @@ def _detect_urgent_flags(message):
     return [term for term in URGENT_TERMS if term in lower]
 
 
-def _build_response(actions, urgent_flags):
+def _build_response(message, actions, urgent_flags, patient_context):
     parts = []
     if urgent_flags:
         parts.append(
@@ -264,7 +273,8 @@ def _build_response(actions, urgent_flags):
                 labels.append(f"medication: {action['medication']}")
         parts.append("I saved this to your patient record: " + "; ".join(labels) + ".")
     else:
-        parts.append("I saved your message in the chat history.")
+        contextual = _contextual_reply(message, patient_context)
+        parts.append(contextual or "I saved your message in the chat history.")
 
     partial_labs = [action for action in actions if action["type"] == "partial_labs_detected"]
     if partial_labs:
@@ -276,17 +286,16 @@ def _build_response(actions, urgent_flags):
     return " ".join(parts)
 
 
-def _generate_llm_response(db, patient_id, message, actions, urgent_flags, fallback_response):
+def _generate_llm_response(message, actions, urgent_flags, patient_context, fallback_response):
     api_key = get_groq_api_key()
     if not api_key:
         return fallback_response
 
-    context = _recent_patient_context(db, patient_id)
     user_prompt = {
         "patient_message": message,
         "saved_actions": actions,
         "urgent_flags": urgent_flags,
-        "recent_context": context,
+        "recent_context": patient_context,
         "fallback_reply": fallback_response,
     }
     try:
@@ -332,6 +341,33 @@ def _recent_patient_context(db, patient_id):
         .limit(3)
         .all()
     )
+    treatments = (
+        db.query(Treatment)
+        .filter(Treatment.patient_id == patient_id)
+        .order_by(Treatment.date.desc(), Treatment.id.desc())
+        .limit(6)
+        .all()
+    )
+    imaging_reports = (
+        db.query(ImagingReport)
+        .filter(ImagingReport.patient_id == patient_id)
+        .order_by(ImagingReport.date.desc(), ImagingReport.id.desc())
+        .limit(3)
+        .all()
+    )
+    interventions = (
+        db.query(ClinicalIntervention)
+        .filter(ClinicalIntervention.patient_id == patient_id)
+        .order_by(ClinicalIntervention.date.desc(), ClinicalIntervention.id.desc())
+        .limit(4)
+        .all()
+    )
+    outcome = (
+        db.query(TreatmentOutcome)
+        .filter(TreatmentOutcome.patient_id == patient_id)
+        .first()
+    )
+    synthetic_prediction, synthetic_xai = _synthetic_model_context(patient_id)
 
     return {
         "latest_lab": {
@@ -349,4 +385,111 @@ def _recent_patient_context(db, patient_id):
             {"date": row.date, "medication": row.medication, "dose": row.dose, "frequency": row.frequency}
             for row in medications
         ],
+        "recent_treatments": [
+            {"date": row.date, "cycle": row.cycle, "drug": row.drug}
+            for row in treatments
+        ],
+        "recent_imaging": [
+            {
+                "date": row.date,
+                "modality": row.modality,
+                "report_type": row.report_type,
+                "impression": row.impression[:240],
+            }
+            for row in imaging_reports
+        ],
+        "recent_interventions": [
+            {
+                "date": row.date,
+                "type": row.intervention_type,
+                "reason": row.reason,
+                "medication_or_product": row.medication_or_product,
+            }
+            for row in interventions
+        ],
+        "treatment_outcome": {
+            "assessment_date": outcome.assessment_date,
+            "response_category": outcome.response_category,
+            "cancer_status": outcome.cancer_status,
+            "maintenance_plan": outcome.maintenance_plan,
+        } if outcome else None,
+        "synthetic_model_prediction": synthetic_prediction,
+        "synthetic_model_explanation": synthetic_xai,
     }
+
+
+def _contextual_reply(message, context):
+    lower = message.lower()
+    status_terms = ["how am i", "how is my treatment", "am i improving", "working", "progress", "score"]
+    explain_terms = ["why", "explain", "factor", "contribute", "model"]
+    doctor_terms = ["doctor", "oncologist", "tell them", "bring", "ask"]
+
+    if any(term in lower for term in status_terms):
+        prediction = context.get("synthetic_model_prediction") or {}
+        outcome = context.get("treatment_outcome")
+        latest_lab = context.get("latest_lab")
+        recent_imaging = context.get("recent_imaging") or []
+        probability = prediction.get("logistic_regression_probability")
+        if probability is None:
+            probability = prediction.get("random_forest_probability")
+        if probability is not None:
+            percent = round(float(probability) * 100, 1)
+            lab_text = (
+                f"WBC {latest_lab.get('wbc')}, hemoglobin {latest_lab.get('hemoglobin')}, platelets {latest_lab.get('platelets')}"
+                if latest_lab else "not available"
+            )
+            return (
+                f"Based on the demo model, your synthetic treatment-response score is {percent}%. "
+                "This is a simulator-trained tracking signal, not a clinical prediction. "
+                f"Latest CBC: {lab_text}. "
+                f"Latest imaging note: {recent_imaging[0].get('impression') if recent_imaging else 'not available'}."
+            )
+        if outcome:
+            return (
+                f"Your record lists final response as {outcome.get('response_category')} with status {outcome.get('cancer_status')}. "
+                "Use this as a portal summary only and confirm meaning with your oncology team."
+            )
+
+    if any(term in lower for term in explain_terms):
+        xai = context.get("synthetic_model_explanation") or {}
+        positives = xai.get("positive_contributions") or []
+        negatives = xai.get("negative_contributions") or []
+        if positives or negatives:
+            toward = ", ".join(item["feature"] for item in positives[:3]) or "none"
+            away = ", ".join(item["feature"] for item in negatives[:3]) or "none"
+            return (
+                f"The demo explanation says features pushing toward response include: {toward}. "
+                f"Features pushing away include: {away}. "
+                "These explain model behavior on synthetic data, not medical causality."
+            )
+
+    if any(term in lower for term in doctor_terms):
+        latest_lab = context.get("latest_lab")
+        interventions = context.get("recent_interventions") or []
+        symptoms = context.get("recent_symptoms") or []
+        items = []
+        if latest_lab:
+            items.append(f"latest CBC WBC {latest_lab.get('wbc')}, hemoglobin {latest_lab.get('hemoglobin')}, platelets {latest_lab.get('platelets')}")
+        if symptoms:
+            items.append(f"recent symptom {symptoms[0].get('symptom')} severity {symptoms[0].get('severity')}/10")
+        if interventions:
+            items.append(f"recent support intervention: {interventions[0].get('type')}")
+        if items:
+            return "For your care team, bring up " + "; ".join(items) + "."
+
+    return None
+
+
+def _synthetic_model_context(patient_id):
+    try:
+        from backend.services.complete_synthetic_xai import (
+            load_complete_synthetic_patient_prediction,
+            load_complete_synthetic_patient_xai,
+        )
+
+        return (
+            load_complete_synthetic_patient_prediction(patient_id),
+            load_complete_synthetic_patient_xai(patient_id),
+        )
+    except Exception:
+        return None, None

@@ -65,6 +65,31 @@ def _mri_response_signal(patient_id, report, predictions_csv_path, shap_explanat
             "caveat": "Model is a PoC baseline and is not clinically validated.",
         }
 
+    synthetic_prediction = report.get("synthetic_model_prediction") or {}
+    synthetic_probability = _synthetic_response_probability(synthetic_prediction)
+    if synthetic_probability is not None:
+        explanation = report.get("synthetic_model_explanation")
+        if synthetic_probability >= 0.66:
+            status = "favorable_response_signal"
+            message = "Synthetic longitudinal model leans toward favorable treatment response."
+        elif synthetic_probability <= 0.40:
+            status = "lower_response_signal"
+            message = "Synthetic longitudinal model leans away from favorable treatment response."
+        else:
+            status = "indeterminate_response_signal"
+            message = "Synthetic longitudinal model signal is uncertain."
+
+        return {
+            "status": status,
+            "source": "complete_synthetic_longitudinal_model",
+            "response_probability": round(synthetic_probability, 3),
+            "response_signal_score": round(synthetic_probability * 100),
+            "model": _synthetic_probability_source(synthetic_prediction),
+            "xai": explanation,
+            "message": message,
+            "caveat": "Model is trained on synthetic simulator data and is not clinically validated.",
+        }
+
     radiology = report.get("radiology_summary") or {}
     size_status = radiology.get("size_status")
     if size_status == "decreased":
@@ -99,6 +124,35 @@ def _mri_response_signal(patient_id, report, predictions_csv_path, shap_explanat
         "message": "No MRI response model or imaging trend signal is available for this patient.",
         "caveat": "Upload or import MRI/imaging data to enable this branch.",
     }
+
+
+def _synthetic_response_probability(prediction):
+    for key in [
+        "logistic_regression_probability",
+        "extra_trees_probability",
+        "random_forest_probability",
+        "gradient_boosting_probability",
+        "temporal_gru_probability",
+        "temporal_1d_cnn_probability",
+    ]:
+        value = prediction.get(key)
+        if value is not None:
+            return float(value)
+    return None
+
+
+def _synthetic_probability_source(prediction):
+    for key in [
+        "logistic_regression_probability",
+        "extra_trees_probability",
+        "random_forest_probability",
+        "gradient_boosting_probability",
+        "temporal_gru_probability",
+        "temporal_1d_cnn_probability",
+    ]:
+        if prediction.get(key) is not None:
+            return key.replace("_probability", "")
+    return "unknown"
 
 
 def _clinical_monitoring_signal(report):
@@ -161,12 +215,12 @@ def _treatment_monitoring_score(mri_signal, clinical_signal, symptom_signal):
         base = 50
 
     penalty = 0
-    penalty += clinical_signal.get("urgent_count", 0) * 20
-    penalty += clinical_signal.get("watch_count", 0) * 8
+    penalty += min(35, clinical_signal.get("urgent_count", 0) * 12)
+    penalty += min(20, clinical_signal.get("watch_count", 0) * 5)
 
     max_severity = symptom_signal.get("max_severity")
     if max_severity is not None:
-        penalty += min(15, int(max_severity) * 1.5)
+        penalty += min(12, int(max_severity) * 1.2)
 
     if clinical_signal.get("has_synthetic_labs"):
         penalty += 3

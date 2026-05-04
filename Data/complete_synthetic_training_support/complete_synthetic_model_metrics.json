@@ -1,0 +1,133 @@
+{
+  "task": "support_intervention_needed",
+  "source_csv": "Data\\complete_synthetic_breast_journeys\\temporal_ml_rows.csv",
+  "rows": 1800,
+  "patients": 300,
+  "train_patients": 225,
+  "test_patients": 75,
+  "train_rows": 1350,
+  "test_rows": 450,
+  "features": {
+    "numeric": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced"
+    ],
+    "categorical": [
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "excluded": [
+      "cycle_response_trend_class",
+      "final_cancer_status",
+      "final_response_category",
+      "final_response_multiclass",
+      "latent_response_strength",
+      "maintenance_needed",
+      "patient_id",
+      "support_intervention_needed",
+      "toxicity_risk_binary",
+      "treatment_date",
+      "treatment_success_binary",
+      "urgent_intervention_needed"
+    ]
+  },
+  "models": {
+    "logistic_regression": {
+      "accuracy": 0.973,
+      "balanced_accuracy": 0.978,
+      "f1": 0.979,
+      "roc_auc": 0.997,
+      "patient_level_accuracy": 0.8,
+      "patient_level_balanced_accuracy": 0.8,
+      "patient_level_f1": 0.889,
+      "patient_level_roc_auc": null,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "random_forest": {
+      "accuracy": 0.982,
+      "balanced_accuracy": 0.985,
+      "f1": 0.986,
+      "roc_auc": 0.999,
+      "patient_level_accuracy": 0.787,
+      "patient_level_balanced_accuracy": 0.787,
+      "patient_level_f1": 0.881,
+      "patient_level_roc_auc": null,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "extra_trees": {
+      "accuracy": 0.976,
+      "balanced_accuracy": 0.98,
+      "f1": 0.981,
+      "roc_auc": 0.998,
+      "patient_level_accuracy": 0.787,
+      "patient_level_balanced_accuracy": 0.787,
+      "patient_level_f1": 0.881,
+      "patient_level_roc_auc": null,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "gradient_boosting": {
+      "accuracy": 0.998,
+      "balanced_accuracy": 0.998,
+      "f1": 0.998,
+      "roc_auc": 1.0,
+      "patient_level_accuracy": 0.813,
+      "patient_level_balanced_accuracy": 0.813,
+      "patient_level_f1": 0.897,
+      "patient_level_roc_auc": null,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "svm_rbf": {
+      "accuracy": 0.969,
+      "balanced_accuracy": 0.969,
+      "f1": 0.976,
+      "roc_auc": 0.995,
+      "patient_level_accuracy": 0.827,
+      "patient_level_balanced_accuracy": 0.827,
+      "patient_level_f1": 0.905,
+      "patient_level_roc_auc": null,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "mlp": {
+      "accuracy": 0.964,
+      "balanced_accuracy": 0.959,
+      "f1": 0.972,
+      "roc_auc": 0.997,
+      "patient_level_accuracy": 0.813,
+      "patient_level_balanced_accuracy": 0.813,
+      "patient_level_f1": 0.897,
+      "patient_level_roc_auc": null,
+      "model_type": "cycle_tabular_classifier"
+    }
+  },
+  "best_model_by_patient_level_roc_auc": "gradient_boosting",
+  "artifacts": {
+    "logistic_regression": "Data\\complete_synthetic_training_support\\logistic_regression_support_intervention_needed.joblib",
+    "random_forest": "Data\\complete_synthetic_training_support\\random_forest_support_intervention_needed.joblib",
+    "extra_trees": "Data\\complete_synthetic_training_support\\extra_trees_support_intervention_needed.joblib",
+    "gradient_boosting": "Data\\complete_synthetic_training_support\\gradient_boosting_support_intervention_needed.joblib",
+    "svm_rbf": "Data\\complete_synthetic_training_support\\svm_rbf_support_intervention_needed.joblib",
+    "mlp": "Data\\complete_synthetic_training_support\\mlp_support_intervention_needed.joblib",
+    "predictions_csv": "Data\\complete_synthetic_training_support\\complete_synthetic_model_predictions.csv"
+  },
+  "sequence_note": "Sequence CNN/GRU skipped because this is a cycle-level monitoring target.",
+  "warning": "Models were trained only on synthetic data. Results measure ability to learn the simulator, not clinical performance."
+}

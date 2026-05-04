@@ -83,6 +83,36 @@ class Treatment(Base):
     drug = Column(String, nullable=False)
 
 
+class ClinicalIntervention(Base):
+    __tablename__ = "clinical_interventions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    date = Column(Date, nullable=False)
+    intervention_type = Column(String, nullable=False)
+    reason = Column(Text, nullable=False)
+    medication_or_product = Column(String, nullable=True)
+    dose = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
+    source = Column(String, nullable=False, default="synthetic_complete_journey")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class TreatmentOutcome(Base):
+    __tablename__ = "treatment_outcomes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), unique=True, index=True)
+    assessment_date = Column(Date, nullable=False)
+    response_category = Column(String, nullable=False)
+    cancer_status = Column(String, nullable=False)
+    maintenance_plan = Column(Text, nullable=True)
+    recurrence_risk_band = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
+    source = Column(String, nullable=False, default="synthetic_complete_journey")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class MedicationLog(Base):
     __tablename__ = "medication_logs"
 

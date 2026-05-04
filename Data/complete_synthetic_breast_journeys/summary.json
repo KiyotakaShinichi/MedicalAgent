@@ -1,0 +1,38 @@
+{
+  "patients_created": 300,
+  "patients_skipped": 0,
+  "cycles_per_patient": 6,
+  "patient_prefix": "COMPV4-BRCA-",
+  "source": "synthetic_complete_breast_journey",
+  "output_dir": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys",
+  "table_counts": {
+    "patients": 300,
+    "diagnoses": 300,
+    "treatment_sessions": 1800,
+    "labs": 5400,
+    "medications": 7028,
+    "symptoms": 3420,
+    "mri_reports": 2100,
+    "interventions": 1990,
+    "outcomes": 300,
+    "temporal_ml_rows": 1800
+  },
+  "files": {
+    "patients": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\patients.csv",
+    "diagnoses": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\diagnoses.csv",
+    "treatment_sessions": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\treatment_sessions.csv",
+    "labs": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\labs.csv",
+    "medications": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\medications.csv",
+    "symptoms": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\symptoms.csv",
+    "mri_reports": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\mri_reports.csv",
+    "interventions": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\interventions.csv",
+    "outcomes": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\outcomes.csv",
+    "temporal_ml_rows": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys\\temporal_ml_rows.csv"
+  },
+  "generation_options": {
+    "balanced_outcomes": true,
+    "missing_rate": 0.05,
+    "noise_level": 0.04
+  },
+  "warning": "Fully synthetic data for engineering and ML practice only. It is not clinical evidence and must not be used for patient care."
+}

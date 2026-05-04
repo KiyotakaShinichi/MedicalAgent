@@ -175,6 +175,87 @@ The project now has a richer temporal synthetic generator:
 
 This is useful for engineering and ML practice because it creates longitudinal progression data where labs, treatments, symptoms, medications, and imaging are aligned over time. It remains synthetic demo data and must not be treated as clinical evidence.
 
+## Complete Synthetic Training Dataset
+
+A complete synthetic dataset bundle is available at:
+
+- `Data/complete_synthetic_breast_journeys/`
+
+Generated tables:
+
+- `patients.csv`
+- `diagnoses.csv`
+- `treatment_sessions.csv`
+- `labs.csv`
+- `medications.csv`
+- `symptoms.csv`
+- `mri_reports.csv`
+- `interventions.csv`
+- `outcomes.csv`
+- `temporal_ml_rows.csv`
+
+The current generated bundle contains:
+
+- 300 synthetic `COMPV4-BRCA-*` patients
+- 1,800 treatment sessions
+- 5,400 CBC rows
+- 7,028 medication/supportive-medication rows
+- 3,420 symptom rows
+- 2,100 synthetic MRI report rows
+- 1,990 intervention rows
+- 300 final outcome rows
+- 1,800 training-ready temporal ML rows
+
+The dataset includes synthetic events such as growth-factor support, blood transfusion, platelet support, infection management, treatment delays, dose reductions, and maintenance/surveillance outcomes. The intended ML table is `temporal_ml_rows.csv`, which joins per-cycle labs, MRI response, symptoms, interventions, dose changes, and final outcome labels.
+
+Important: these are simulated labels for engineering practice. They are not real clinical labels and should not be mixed with real datasets as clinical evidence.
+
+## Complete Synthetic Model Training
+
+Models were trained on `Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv` using a patient-level split:
+
+- 225 train patients
+- 75 test patients
+- 1,350 train cycle rows
+- 450 test cycle rows
+
+Models trained:
+
+- logistic regression
+- random forest
+- extra trees
+- gradient boosting
+- SVM
+- MLP
+- temporal 1D CNN
+- temporal GRU
+
+Main target:
+
+- `treatment_success_binary`
+
+Best model:
+
+- gradient boosting
+- patient-level ROC AUC: 0.990
+- patient-level accuracy: 0.933
+- patient-level balanced accuracy: 0.926
+
+Other response models:
+
+- logistic regression patient-level ROC AUC: 0.983
+- temporal 1D CNN patient-level ROC AUC: 0.969
+- temporal GRU patient-level ROC AUC: 0.954
+
+Additional cycle-level monitoring targets were trained separately:
+
+- `toxicity_risk_binary`
+- `support_intervention_needed`
+
+Those cycle-level tasks skip CNN/GRU and use tabular models because the label is per treatment cycle, not one final journey outcome. Results are simulator-learning results, not clinical validation.
+
+Synthetic model explanations were generated at `Data/complete_synthetic_training/synthetic_xai_explanations.json`. They explain logistic-regression feature contributions toward or away from the synthetic treatment-response label and are used by the patient portal and chat agent.
+
 ## Groq-Assisted Chat
 
 The support chat keeps deterministic extraction for database writes:
@@ -182,8 +263,9 @@ The support chat keeps deterministic extraction for database writes:
 - symptoms
 - complete CBC values
 - medication mentions
+- contextual treatment-response questions
 
-Groq is used only to phrase the supportive reply. If the LLM request fails, the app falls back to the deterministic response. The LLM is instructed not to diagnose, not to choose treatment, and not to modify medications.
+Groq is used only to phrase the supportive reply. If the LLM request fails, the app falls back to the deterministic response. The agent now includes latest labs, recent treatment cycles, MRI impressions, final outcome, synthetic model score, and XAI context. Database writes remain deterministic. The LLM is instructed not to diagnose, not to choose treatment, and not to modify medications.
 
 ## Honest Limitation
 

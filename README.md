@@ -29,6 +29,7 @@ AI-assisted proof of concept for longitudinal breast cancer treatment monitoring
 - QIN-BREAST-02: small breast MRI DICOM and clinical metadata dataset, useful for workflow and DICOM indexing.
 - BreastDCEDL I-SPY1: DCE-MRI NIfTI volumes and masks with pCR labels, useful for MRI response-classification proof of concept.
 - Synthetic temporal journeys: generated longitudinal CBC, medications, symptoms, treatments, and imaging reports for workflow simulation.
+- Complete synthetic journeys: generated end-to-end treatment journeys with diagnosis, treatment sessions, per-cycle MRI, CBC timepoints, medications, symptoms, interventions, and final outcome labels.
 
 ## ML Task
 
@@ -44,6 +45,81 @@ Current best baseline:
 - ROC AUC: 0.637.
 
 The small CNN experiment did not beat the classical baseline, which is documented as an honest result.
+
+## Complete Synthetic Dataset
+
+The complete generated dataset lives in:
+
+```text
+Data/complete_synthetic_breast_journeys/
+```
+
+It currently includes:
+
+- 300 synthetic `COMPV4-BRCA-*` patients
+- 1,800 treatment sessions
+- 5,400 CBC rows
+- 7,028 medication/support rows
+- 3,420 symptom rows
+- 2,100 synthetic MRI report rows
+- 1,990 support intervention rows
+- 300 final outcome rows
+- 1,800 training-ready temporal ML rows
+
+Important files:
+
+- `temporal_ml_rows.csv`: cycle-level ML table.
+- `outcomes.csv`: final synthetic response/cancer-status labels.
+- `interventions.csv`: growth-factor support, transfusion, platelet support, infection management, and urgent support events.
+- `data_dictionary.json`: table descriptions.
+
+## Complete Synthetic Model Training
+
+Training script:
+
+```text
+python train_complete_synthetic_models.py --target treatment_success_binary
+```
+
+Models trained:
+
+- logistic regression
+- random forest
+- extra trees
+- gradient boosting
+- SVM
+- MLP
+- temporal 1D CNN over patient treatment-cycle sequences
+- temporal GRU over patient treatment-cycle sequences
+
+Main target:
+
+- `treatment_success_binary`
+
+Best current result on patient-level test split:
+
+- Gradient boosting
+- ROC AUC: 0.990
+- Accuracy: 0.933
+- Balanced accuracy: 0.926
+
+Other response models:
+
+- Logistic regression patient-level ROC AUC: 0.983
+- Temporal 1D CNN patient-level ROC AUC: 0.969
+- Temporal GRU patient-level ROC AUC: 0.954
+
+Cycle-level monitoring classifiers were also trained for `toxicity_risk_binary` and `support_intervention_needed`. These are simulator-learning tasks because the labels are generated from CBC/symptom/intervention rules.
+
+Synthetic XAI:
+
+- `Data/complete_synthetic_training/synthetic_xai_explanations.json`
+- Explains logistic-regression contributions toward or away from `treatment_success_binary`.
+- Used by the patient portal and support agent.
+
+Training notes:
+
+- `Data/complete_synthetic_training_notes.md`
 
 ## Safety Positioning
 

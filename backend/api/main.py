@@ -11,6 +11,7 @@ from backend.crud import (
     get_all_patients,
     get_breast_cancer_profile,
     get_chat_messages,
+    get_clinical_interventions,
     get_ct_reports_df,
     get_imaging_reports_df,
     get_labs_df,
@@ -20,6 +21,7 @@ from backend.crud import (
     get_patient,
     get_patient_uploads,
     get_symptoms_df,
+    get_treatment_outcome,
     get_treatments_df,
 )
 from backend.database import SessionLocal
@@ -193,9 +195,39 @@ class TemporalSyntheticJourneyRequest(BaseModel):
     cycles: int = 6
 
 
+class CompleteSyntheticDatasetRequest(BaseModel):
+    count: int = 60
+    seed: int = 2027
+    cycles: int = 6
+    output_dir: str = "Data/complete_synthetic_breast_journeys"
+    write_db: bool = True
+    patient_prefix: str = "COMP-BRCA-"
+    balanced_outcomes: bool = True
+    missing_rate: float = 0.04
+    noise_level: float = 0.03
+
+
+class CompleteSyntheticTrainingRequest(BaseModel):
+    ml_csv_path: str = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
+    output_dir: str = "Data/complete_synthetic_training"
+    target: str = "treatment_success_binary"
+    test_size: float = 0.25
+    seed: int = 42
+    cnn_epochs: int = 20
+    cnn_batch_size: int = 16
+
+
+class CompleteSyntheticXAIRequest(BaseModel):
+    ml_csv_path: str = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
+    model_path: str = "Data/complete_synthetic_training/logistic_regression_treatment_success_binary.joblib"
+    predictions_csv_path: str = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
+    output_json_path: str = "Data/complete_synthetic_training/synthetic_xai_explanations.json"
+    top_n: int = 6
+
+
 class DemoLoginRequest(BaseModel):
     role: str = "patient"
-    patient_id: str | None = "SYN-BRCA-0001"
+    patient_id: str | None = "COMPV4-BRCA-0001"
 
 
 class PatientUploadCreate(BaseModel):
@@ -348,6 +380,8 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     mri_series_index = get_mri_series_index(db, patient_id)
     medication_logs = get_medication_logs(db, patient_id)
     chat_history = get_chat_messages(db, patient_id, limit=12)
+    clinical_interventions = get_clinical_interventions(db, patient_id)
+    treatment_outcome = get_treatment_outcome(db, patient_id)
     breast_profile = get_breast_cancer_profile(db, patient_id)
 
     trends = {}
@@ -426,6 +460,19 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     report["medication_logs"] = medication_logs
     report["chat_history"] = chat_history
     report["uploads"] = get_patient_uploads(db, patient.id, limit=25)
+    report["clinical_interventions"] = clinical_interventions
+    report["treatment_outcome"] = treatment_outcome
+    try:
+        from backend.services.complete_synthetic_xai import (
+            load_complete_synthetic_patient_prediction,
+            load_complete_synthetic_patient_xai,
+        )
+
+        report["synthetic_model_prediction"] = load_complete_synthetic_patient_prediction(patient.id)
+        report["synthetic_model_explanation"] = load_complete_synthetic_patient_xai(patient.id)
+    except Exception:
+        report["synthetic_model_prediction"] = None
+        report["synthetic_model_explanation"] = None
     report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
 
     return report
@@ -614,6 +661,108 @@ def generate_temporal_synthetic_breast_journeys(payload: TemporalSyntheticJourne
             cycles=payload.cycles,
         ),
         "warning": "Synthetic temporal journeys are for engineering demos and model practice only, not clinical evidence.",
+    }
+
+
+@app.post("/generate-complete-synthetic-breast-dataset")
+def generate_complete_synthetic_breast_dataset_endpoint(
+    payload: CompleteSyntheticDatasetRequest,
+    db: Session = Depends(get_db),
+):
+    if payload.count < 1 or payload.count > 1000:
+        raise HTTPException(status_code=400, detail="count must be between 1 and 1000")
+    if payload.cycles < 2 or payload.cycles > 10:
+        raise HTTPException(status_code=400, detail="cycles must be between 2 and 10")
+    if payload.missing_rate < 0 or payload.missing_rate > 0.35:
+        raise HTTPException(status_code=400, detail="missing_rate must be between 0 and 0.35")
+    if payload.noise_level < 0 or payload.noise_level > 0.25:
+        raise HTTPException(status_code=400, detail="noise_level must be between 0 and 0.25")
+    if not payload.patient_prefix or len(payload.patient_prefix) > 32:
+        raise HTTPException(status_code=400, detail="patient_prefix is required and must be 32 characters or less")
+
+    from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
+
+    return {
+        "message": "Complete synthetic breast cancer treatment dataset generated",
+        "result": generate_complete_synthetic_breast_dataset(
+            db=db,
+            count=payload.count,
+            seed=payload.seed,
+            cycles=payload.cycles,
+            output_dir=payload.output_dir,
+            write_db=payload.write_db,
+            patient_prefix=payload.patient_prefix,
+            balanced_outcomes=payload.balanced_outcomes,
+            missing_rate=payload.missing_rate,
+            noise_level=payload.noise_level,
+        ),
+        "warning": "This dataset is fully synthetic and intended only for engineering demos and ML practice.",
+    }
+
+
+@app.post("/train-complete-synthetic-models")
+def train_complete_synthetic_models_endpoint(payload: CompleteSyntheticTrainingRequest):
+    allowed_targets = {
+        "treatment_success_binary",
+        "maintenance_needed",
+        "toxicity_risk_binary",
+        "support_intervention_needed",
+        "urgent_intervention_needed",
+    }
+    if payload.target not in allowed_targets:
+        raise HTTPException(status_code=400, detail=f"target must be one of {sorted(allowed_targets)}")
+    if payload.test_size <= 0 or payload.test_size >= 0.5:
+        raise HTTPException(status_code=400, detail="test_size must be greater than 0 and less than 0.5")
+    if payload.cnn_epochs < 1 or payload.cnn_epochs > 200:
+        raise HTTPException(status_code=400, detail="cnn_epochs must be between 1 and 200")
+
+    from backend.services.complete_synthetic_training import train_complete_synthetic_models
+
+    try:
+        result = train_complete_synthetic_models(
+            ml_csv_path=payload.ml_csv_path,
+            output_dir=payload.output_dir,
+            target=payload.target,
+            test_size=payload.test_size,
+            seed=payload.seed,
+            cnn_epochs=payload.cnn_epochs,
+            cnn_batch_size=payload.cnn_batch_size,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "Complete synthetic model training finished",
+        "result": result,
+    }
+
+
+@app.post("/generate-complete-synthetic-xai")
+def generate_complete_synthetic_xai_endpoint(payload: CompleteSyntheticXAIRequest):
+    if payload.top_n < 1 or payload.top_n > 20:
+        raise HTTPException(status_code=400, detail="top_n must be between 1 and 20")
+
+    from backend.services.complete_synthetic_xai import generate_complete_synthetic_xai
+
+    try:
+        result = generate_complete_synthetic_xai(
+            ml_csv_path=payload.ml_csv_path,
+            model_path=payload.model_path,
+            predictions_csv_path=payload.predictions_csv_path,
+            output_json_path=payload.output_json_path,
+            top_n=payload.top_n,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "message": "Complete synthetic model explanations generated",
+        "result": result,
+        "warning": "Synthetic XAI explains simulator-trained model behavior only, not clinical causality.",
     }
 
 

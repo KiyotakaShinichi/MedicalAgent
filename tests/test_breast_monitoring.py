@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.database import Base
-from backend.models import LabResult, MedicationLog, Patient, PatientUpload, Treatment
+from backend.models import ClinicalIntervention, LabResult, MedicationLog, Patient, PatientUpload, Treatment, TreatmentOutcome
 from backend.processing.radiology_analysis import (
     analyze_breast_imaging_reports,
     detect_possible_metastatic_indicators,
@@ -19,6 +19,7 @@ from backend.services.mri_series_indexer import classify_mri_series_role
 from backend.services.mri_manifest import select_model_input_series
 from backend.services.mri_preprocessing import normalize_pixels
 from backend.services.auth import create_demo_session, get_context_from_authorization
+from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
 from backend.services.patient_uploads import save_patient_upload
 from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys, infer_synthetic_subtype
 from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
@@ -236,6 +237,30 @@ class BreastMonitoringNLPTests(unittest.TestCase):
 
             self.assertEqual(upload["patient_id"], "TEST-P001")
             self.assertEqual(db.query(PatientUpload).count(), 1)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_complete_synthetic_dataset_exports_training_tables(self):
+        db = _temp_db_session()
+        output_dir = _make_temp_dir(_temp_root()) / "complete_bundle"
+        try:
+            result = generate_complete_synthetic_breast_dataset(
+                db=db,
+                count=3,
+                seed=1,
+                cycles=5,
+                output_dir=str(output_dir),
+                write_db=True,
+            )
+
+            self.assertEqual(result["patients_created"], 3)
+            self.assertEqual(result["table_counts"]["treatment_sessions"], 15)
+            self.assertEqual(result["table_counts"]["mri_reports"], 18)
+            self.assertTrue((output_dir / "temporal_ml_rows.csv").exists())
+            self.assertTrue((output_dir / "outcomes.csv").exists())
+            self.assertEqual(db.query(TreatmentOutcome).count(), 3)
+            self.assertGreater(db.query(ClinicalIntervention).count(), 0)
         finally:
             db.close()
             db.bind.dispose()

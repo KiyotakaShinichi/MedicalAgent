@@ -1,0 +1,303 @@
+{
+  "task": "maintenance_needed",
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "rows": 720,
+  "patients": 120,
+  "train_patients": 90,
+  "test_patients": 30,
+  "train_rows": 540,
+  "test_rows": 180,
+  "features": {
+    "numeric": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced"
+    ],
+    "categorical": [
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "excluded": [
+      "final_cancer_status",
+      "final_response_category",
+      "latent_response_strength",
+      "maintenance_needed",
+      "patient_id",
+      "treatment_date",
+      "treatment_success_binary"
+    ]
+  },
+  "models": {
+    "logistic_regression": {
+      "accuracy": 0.928,
+      "balanced_accuracy": 0.48,
+      "f1": 0.963,
+      "roc_auc": 0.807,
+      "patient_level_accuracy": 0.933,
+      "patient_level_balanced_accuracy": 0.483,
+      "patient_level_f1": 0.966,
+      "patient_level_roc_auc": 0.897,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "random_forest": {
+      "accuracy": 0.967,
+      "balanced_accuracy": 0.5,
+      "f1": 0.983,
+      "roc_auc": 0.739,
+      "patient_level_accuracy": 0.967,
+      "patient_level_balanced_accuracy": 0.5,
+      "patient_level_f1": 0.983,
+      "patient_level_roc_auc": 0.897,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "gradient_boosting": {
+      "accuracy": 0.967,
+      "balanced_accuracy": 0.5,
+      "f1": 0.983,
+      "roc_auc": 0.789,
+      "patient_level_accuracy": 0.967,
+      "patient_level_balanced_accuracy": 0.5,
+      "patient_level_f1": 0.983,
+      "patient_level_roc_auc": 0.862,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "temporal_1d_cnn": {
+      "patient_level_accuracy": 0.933,
+      "patient_level_balanced_accuracy": 0.483,
+      "patient_level_f1": 0.966,
+      "patient_level_roc_auc": 0.552,
+      "model_type": "patient_sequence_1d_cnn",
+      "epochs": 25,
+      "batch_size": 16,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.0144,
+          "accuracy": 0.033,
+          "balanced_accuracy": 0.5,
+          "f1": 0.0,
+          "roc_auc": 0.586
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.0126,
+          "accuracy": 0.333,
+          "balanced_accuracy": 0.655,
+          "f1": 0.474,
+          "roc_auc": 0.586
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.0117,
+          "accuracy": 0.567,
+          "balanced_accuracy": 0.776,
+          "f1": 0.711,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.0108,
+          "accuracy": 0.633,
+          "balanced_accuracy": 0.81,
+          "f1": 0.766,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.0094,
+          "accuracy": 0.733,
+          "balanced_accuracy": 0.379,
+          "f1": 0.846,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.0082,
+          "accuracy": 0.767,
+          "balanced_accuracy": 0.397,
+          "f1": 0.868,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 7,
+          "train_loss": 0.0066,
+          "accuracy": 0.767,
+          "balanced_accuracy": 0.397,
+          "f1": 0.868,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 8,
+          "train_loss": 0.0062,
+          "accuracy": 0.8,
+          "balanced_accuracy": 0.414,
+          "f1": 0.889,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 9,
+          "train_loss": 0.0052,
+          "accuracy": 0.867,
+          "balanced_accuracy": 0.448,
+          "f1": 0.929,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 10,
+          "train_loss": 0.0051,
+          "accuracy": 0.867,
+          "balanced_accuracy": 0.448,
+          "f1": 0.929,
+          "roc_auc": 0.655
+        },
+        {
+          "epoch": 11,
+          "train_loss": 0.004,
+          "accuracy": 0.867,
+          "balanced_accuracy": 0.448,
+          "f1": 0.929,
+          "roc_auc": 0.655
+        },
+        {
+          "epoch": 12,
+          "train_loss": 0.0035,
+          "accuracy": 0.867,
+          "balanced_accuracy": 0.448,
+          "f1": 0.929,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 13,
+          "train_loss": 0.0025,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.621
+        },
+        {
+          "epoch": 14,
+          "train_loss": 0.0029,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.69
+        },
+        {
+          "epoch": 15,
+          "train_loss": 0.0019,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.724
+        },
+        {
+          "epoch": 16,
+          "train_loss": 0.0021,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.724
+        },
+        {
+          "epoch": 17,
+          "train_loss": 0.0014,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.724
+        },
+        {
+          "epoch": 18,
+          "train_loss": 0.0017,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.69
+        },
+        {
+          "epoch": 19,
+          "train_loss": 0.0014,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.69
+        },
+        {
+          "epoch": 20,
+          "train_loss": 0.0008,
+          "accuracy": 0.9,
+          "balanced_accuracy": 0.466,
+          "f1": 0.947,
+          "roc_auc": 0.655
+        },
+        {
+          "epoch": 21,
+          "train_loss": 0.0008,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.586
+        },
+        {
+          "epoch": 22,
+          "train_loss": 0.0008,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.586
+        },
+        {
+          "epoch": 23,
+          "train_loss": 0.0006,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.552
+        },
+        {
+          "epoch": 24,
+          "train_loss": 0.0006,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.552
+        },
+        {
+          "epoch": 25,
+          "train_loss": 0.0006,
+          "accuracy": 0.933,
+          "balanced_accuracy": 0.483,
+          "f1": 0.966,
+          "roc_auc": 0.552
+        }
+      ]
+    }
+  },
+  "best_model_by_patient_level_roc_auc": "logistic_regression",
+  "artifacts": {
+    "logistic_regression": "Data\\complete_synthetic_training_maintenance\\logistic_regression_maintenance_needed.joblib",
+    "random_forest": "Data\\complete_synthetic_training_maintenance\\random_forest_maintenance_needed.joblib",
+    "gradient_boosting": "Data\\complete_synthetic_training_maintenance\\gradient_boosting_maintenance_needed.joblib",
+    "temporal_1d_cnn": "Data\\complete_synthetic_training_maintenance\\temporal_1d_cnn_maintenance_needed.pt",
+    "predictions_csv": "Data\\complete_synthetic_training_maintenance\\complete_synthetic_model_predictions.csv"
+  },
+  "warning": "Models were trained only on synthetic data. Results measure ability to learn the simulator, not clinical performance."
+}

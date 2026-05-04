@@ -1,0 +1,14 @@
+{
+  "patients": "One row per synthetic patient.",
+  "diagnoses": "Synthetic diagnosis and receptor/subtype profile.",
+  "treatment_sessions": "One row per scheduled treatment cycle with regimen, dates, and dose status.",
+  "labs": "CBC rows at baseline/pre-cycle/nadir/recovery, with WBC, ANC, RBC, hemoglobin, and platelets.",
+  "medications": "Anti-cancer regimen entries, supportive medications, and intervention medications/products.",
+  "symptoms": "Patient-reported symptoms around treatment cycles.",
+  "mri_reports": "Synthetic MRI measurements at baseline and every treatment cycle.",
+  "interventions": "Clinical support events such as growth-factor support, transfusions, antibiotics, or urgent review.",
+  "outcomes": "Synthetic end-of-journey response labels and maintenance status.",
+  "temporal_ml_rows": "Training-ready cycle-level features with final outcome labels.",
+  "extra_labels": "Synthetic labels include treatment_success_binary, maintenance_needed, toxicity_risk_binary, support_intervention_needed, urgent_intervention_needed, final_response_multiclass, and cycle_response_trend_class.",
+  "warning": "All tables are synthetic and should be used only for engineering demos and ML practice."
+}
