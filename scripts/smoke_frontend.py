@@ -10,6 +10,10 @@ CHECKS = {
         "API Cost & Latency",
         "Security Guardrails",
         "Agent Feedback",
+        "Agent Regression Suite",
+        "runAgentRegression",
+        "MLE Release Gates",
+        "runMleReadiness",
     ],
     "frontend/patient.html": [
         "My Oncology Journey",

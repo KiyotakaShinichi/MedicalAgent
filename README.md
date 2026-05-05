@@ -80,11 +80,13 @@ The RAG layer now logs lightweight production evaluation metrics for every patie
 - Output guardrails: unsafe treatment directives, diagnosis claims, missing citations, and missing escalation language for high-risk messages.
 - Cost/latency telemetry: per-call latency, estimated input/output tokens, cache path, and estimated LLM cost. Current deterministic RAG path has zero provider cost.
 - User feedback: patient-facing 1-5 rating with thumbs-up/down derivation for each assistant response.
+- Offline agent regression suite: labeled education, portal-help, clinical-safety, and prompt-injection/security cases for route, citation, source-hit, grounding, hallucination, latency, and guardrail checks.
 
 Admin dashboard visibility:
 
 - RAG call count, cache hit rate, average proxy precision@3, grounding score, hallucination score, hallucination-risk distribution, guardrail pass/fail counts, latency, and token estimates.
 - Patient agent feedback count, average rating, thumbs-up rate, rating distribution, and recent comments.
+- Latest agent regression status, pass rate, intent accuracy, source-hit rate, citation coverage, attack-block rate, output-guardrail pass rate, grounding/hallucination proxies, and quality gates.
 
 Appropriate now:
 
@@ -93,6 +95,20 @@ Appropriate now:
 Appropriate later after research-paper KB:
 
 - RAGAS context precision/recall, faithfulness, answer relevancy, answer correctness, labeled retrieval precision@k, source-level evaluation by paper/guideline type, and clinician/SME scoring.
+
+Run the local agent regression suite:
+
+```text
+python scripts/evaluate_agent_rag.py
+```
+
+Output:
+
+```text
+Data/agent_eval/latest_agent_regression.json
+```
+
+The admin dashboard can also run the same suite from the `Agent Regression Suite` card.
 
 ## Current Architecture
 
@@ -230,6 +246,29 @@ The admin/MLE dashboard reports:
 
 These metrics are project engineering gates only. They do not prove clinical safety or real-world effectiveness.
 
+## MLE Readiness Gates
+
+The project includes a model-lifecycle readiness layer for production-style MLE practice:
+
+- Data contract checks: required temporal columns, patient/cycle uniqueness, longitudinal depth, label prevalence, missingness, and numeric range validation.
+- Artifact checks: training CSV, prediction export, metrics JSON, versioned evaluation report, champion model artifact, and SHA-256 hashes.
+- Model quality gates: AUROC, AUPRC, sensitivity, Brier score, expected calibration error, false-negative rate, bootstrap CI stability, subgroup checks, and drift proxy status.
+- Lifecycle checks: model registry readiness, prediction audit logging, rollback metadata readiness, and safety regression status from the patient-agent suite.
+
+Run locally:
+
+```text
+python scripts/run_mle_checks.py
+```
+
+Output:
+
+```text
+Data/mle_monitoring/latest_mle_readiness.json
+```
+
+The admin dashboard also has an `MLE Release Gates` card that runs the same checks through `/admin/mle-readiness`.
+
 Versioned evaluation artifacts can be generated into:
 
 ```text
@@ -310,6 +349,7 @@ The workflow runs on push, pull request, and manual dispatch:
 - RAG guardrail/red-team tests
 - frontend smoke checks
 - knowledge-base ingestion smoke test
+- agent RAG regression suite
 - FastAPI health/API smoke test
 - Docker image build
 
@@ -362,6 +402,15 @@ Data/rag_knowledge_base_chunks.json
 
 The patient RAG agent automatically combines the built-in safety/education snippets with ingested local KB chunks when that file exists. The generated chunk file is ignored by git so licensed papers and large local documents do not accidentally get committed.
 
+After adding papers, rerun:
+
+```text
+python scripts/ingest_knowledge_base.py
+python scripts/evaluate_agent_rag.py
+```
+
+That gives a quick check that new KB content did not weaken retrieval, citations, guardrails, or prompt-injection blocking.
+
 ## Environment
 
 Use the root `.env` file:
@@ -376,4 +425,4 @@ Use `.env.example` as the safe template. Do not commit real API keys or real pat
 
 ## Portfolio Description
 
-Built an AI-assisted breast cancer treatment-monitoring platform that combines longitudinal patient records, CBC trends, medication and symptom tracking, breast imaging report NLP, planned multimodal integration using MRI-derived features, deterministic clinical rule flags, timeline intelligence, and LLM-assisted summaries. Implemented FastAPI services, SQLite persistence, patient/clinician/admin demo sessions, local upload logging, synthetic temporal oncology journeys, model artifact registration, prediction audit trails, clinician-in-the-loop summary review, and admin/MLE monitoring for calibration, confidence intervals, drift, subgroup behavior, threshold policy, cost-sensitive error analysis, decision-impact simulation, and feedback analytics. The system is positioned as clinician-review support and workflow intelligence, not diagnosis or treatment recommendation.
+Built an AI-assisted breast cancer treatment-monitoring platform that combines longitudinal patient records, CBC trends, medication and symptom tracking, breast imaging report NLP, planned multimodal integration using MRI-derived features, deterministic clinical rule flags, timeline intelligence, and LLM-assisted summaries. Implemented FastAPI services, SQLite persistence, patient/clinician/admin demo sessions, local upload logging, synthetic temporal oncology journeys, model artifact registration, prediction audit trails, clinician-in-the-loop summary review, RAG knowledge-base ingestion, prompt-injection/data-exfiltration guardrails, offline agent regression evaluation, CI/CD checks, Docker deployment scaffolding, and admin/MLE monitoring for calibration, confidence intervals, drift, subgroup behavior, threshold policy, cost-sensitive error analysis, decision-impact simulation, API cost/latency, grounding, hallucination proxies, and feedback analytics. The system is positioned as clinician-review support and workflow intelligence, not diagnosis or treatment recommendation.

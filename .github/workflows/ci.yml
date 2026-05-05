@@ -40,6 +40,14 @@ jobs:
           printf "# Breast cancer chemotherapy\n\nCBC monitoring can help track WBC, hemoglobin, platelets, and treatment toxicity." > KnowledgeBase/raw/ci_smoke.md
           python scripts/ingest_knowledge_base.py --input-dir KnowledgeBase/raw --output-path Data/test_tmp/rag_chunks.json
 
+      - name: Agent RAG regression suite
+        run: python scripts/evaluate_agent_rag.py --output-path Data/test_tmp/agent_regression.json
+
+      - name: MLE readiness checks
+        env:
+          DATABASE_URL: sqlite:///./Data/test_tmp/ci_medical_agent.db
+        run: python scripts/run_mle_checks.py --output-path Data/test_tmp/mle_readiness.json
+
       - name: API smoke checks
         env:
           DATABASE_URL: sqlite:///./Data/test_tmp/ci_medical_agent.db

@@ -247,6 +247,30 @@
 
     <section class="grid two">
       <div class="card">
+        <h2>Agent Regression Suite</h2>
+        <button onclick="runAgentRegression()">Run Suite</button>
+        <div class="list" id="agentRegressionList" style="margin-top:12px;"></div>
+      </div>
+      <div class="card">
+        <h2>Agent Quality Gates</h2>
+        <div class="list" id="agentQualityGateList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>MLE Release Gates</h2>
+        <button onclick="runMleReadiness()">Run MLE Checks</button>
+        <div class="list" id="mleReadinessList" style="margin-top:12px;"></div>
+      </div>
+      <div class="card">
+        <h2>Training Data Contract</h2>
+        <div class="list" id="mleDataContractList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
         <h2>API Cost & Latency</h2>
         <div class="list" id="apiCostList"></div>
       </div>
@@ -445,6 +469,15 @@
 
     function metricRight(value, status) {
       return `<span class="right-stack"><span class="mono">${escapeHtml(value ?? "n/a")}</span>${statusPill(status)}</span>`;
+    }
+
+    function compactValue(value) {
+      if (value === null || value === undefined) return "n/a";
+      if (typeof value === "object") {
+        const text = JSON.stringify(value);
+        return text.length > 110 ? `${text.slice(0, 110)}...` : text;
+      }
+      return value;
     }
 
     function bar(value) {
@@ -720,6 +753,86 @@
       ].join("");
     }
 
+    function renderAgentRegression(report) {
+      const summary = report?.summary || {};
+      const cases = report?.cases || [];
+      const gates = report?.quality_gates || [];
+      document.getElementById("agentRegressionList").innerHTML = [
+        rowHtml("Suite status", report?.purpose || report?.message || "Offline agent regression report.", statusPill(summary.status || report?.status || "unavailable")),
+        row("Cases", "Total regression questions across education, portal, clinical safety, and security.", report?.case_count ?? cases.length ?? 0),
+        row("Pass rate", "Share of cases passing all expected checks.", summary.pass_rate ?? "n/a"),
+        row("Intent accuracy", "Expected intent route match rate.", summary.intent_accuracy ?? "n/a"),
+        row("Source hit rate", "Expected source appears in citations or retrieved context.", summary.expected_source_hit_rate ?? "n/a"),
+        row("Attack block rate", "Prompt-injection/privacy/database exfiltration cases blocked.", summary.attack_block_rate ?? "n/a"),
+        row("Output guardrails", "Answers avoid unsafe directives and diagnosis/treatment claims.", summary.output_guardrail_pass_rate ?? "n/a"),
+        row("Grounding", `avg ${summary.average_grounding_score ?? "n/a"}; hallucination ${summary.average_hallucination_score ?? "n/a"}`, `${summary.average_latency_ms ?? "n/a"}ms`),
+        ...cases.slice(0, 6).map(item =>
+          rowHtml(item.id, `${item.category}; intent ${item.observed?.intent ?? "n/a"}; sources ${(item.observed?.citation_ids || []).join(", ") || "none"}`, statusPill(item.status))
+        )
+      ].join("");
+
+      document.getElementById("agentQualityGateList").innerHTML = gates.map(item =>
+        row(item.metric, `${item.purpose} Minimum: ${item.minimum}`)
+      ).join("") || row("No gates", "Run the agent regression suite to populate quality gates.");
+    }
+
+    function runAgentRegression() {
+      const target = document.getElementById("agentRegressionList");
+      target.innerHTML = row("Running", "Executing offline agent regression suite...");
+      const request = () => fetch(`${API_BASE}/admin/agent-regression`, {
+        method: "POST",
+        headers: headers()
+      })
+      .then(r => { if (!r.ok) throw new Error(`agent regression failed (${r.status})`); return r.json(); })
+      .then(payload => {
+        renderAgentRegression(payload.result);
+        return loadAnalytics();
+      });
+      return request().catch(() => loginAdmin().then(request));
+    }
+
+    function renderMleReadiness(report) {
+      const checks = report?.checks || [];
+      const categories = report?.category_statuses || {};
+      const hardFailures = report?.hard_gate_failures || [];
+      const dataChecks = checks.filter(item => item.category === "data_contract");
+      const importantChecks = checks.filter(item => item.category !== "data_contract");
+      document.getElementById("mleReadinessList").innerHTML = [
+        rowHtml("Readiness status", report?.purpose || report?.message || "MLE readiness report.", statusPill(report?.status || "unavailable")),
+        row("Release recommendation", "Promotion guidance from the current gates.", report?.release_recommendation || "n/a"),
+        rowHtml("Hard gates", `${hardFailures.length} blocking failure(s).`, statusPill(report?.hard_gate_status || "unavailable")),
+        row("Category statuses", JSON.stringify(categories)),
+        ...importantChecks.slice(0, 12).map(item =>
+          rowHtml(item.name, `${item.meaning} Threshold: ${item.threshold}. Value: ${compactValue(item.value)}`, statusPill(item.status))
+        ),
+        ...((report?.next_actions || []).slice(0, 5).map(item =>
+          row(item.check, item.action, item.priority)
+        ))
+      ].join("");
+
+      document.getElementById("mleDataContractList").innerHTML = [
+        ...dataChecks.map(item =>
+          rowHtml(item.name, `${item.meaning} Threshold: ${item.threshold}. Value: ${compactValue(item.value)}`, statusPill(item.status))
+        ),
+        row("Claim boundary", report?.claim_boundary || "MLE gates are engineering controls, not clinical validation.")
+      ].join("");
+    }
+
+    function runMleReadiness() {
+      const target = document.getElementById("mleReadinessList");
+      target.innerHTML = row("Running", "Checking data contract, artifacts, performance, lifecycle, and safety regressions...");
+      const request = () => fetch(`${API_BASE}/admin/mle-readiness`, {
+        method: "POST",
+        headers: headers()
+      })
+      .then(r => { if (!r.ok) throw new Error(`MLE readiness failed (${r.status})`); return r.json(); })
+      .then(payload => {
+        renderMleReadiness(payload.result);
+        return loadAnalytics();
+      });
+      return request().catch(() => loginAdmin().then(request));
+    }
+
     function render(data) {
       const roles = data.roles || {};
       document.getElementById("rolesList").innerHTML = Object.entries(roles).map(([name, desc]) => row(name, desc)).join("");
@@ -731,6 +844,8 @@
       document.getElementById("auditCount").innerHTML = `${data.audit_and_feedback?.prediction_audit_count ?? 0}<span>prediction audit logs</span>`;
       renderOperations(data.app_monitoring || {});
       renderRagEvaluation(data.rag_evaluation || {}, data.agent_feedback || {});
+      renderAgentRegression(data.agent_regression_evaluation || {});
+      renderMleReadiness(data.mle_readiness || {});
       document.getElementById("metricGuideList").innerHTML = [
         metricRow("AUROC", perf.patient_level_roc_auc, statuses.patient_level_roc_auc),
         metricRow("AUPRC", perf.patient_level_average_precision, statuses.patient_level_average_precision),

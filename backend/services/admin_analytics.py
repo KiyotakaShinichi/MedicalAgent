@@ -9,7 +9,9 @@ from sklearn.metrics import average_precision_score, brier_score_loss, confusion
 from backend.models import ModelRegistry, PredictionAuditLog
 from backend.services.app_logging import build_app_monitoring_summary
 from backend.services.agent_feedback import build_agent_feedback_summary
+from backend.services.agent_regression_eval import load_latest_agent_regression_report
 from backend.services.clinician_feedback import clinical_feedback_summary
+from backend.services.mle_readiness import build_mle_readiness_summary
 from backend.services.mri_derived_features import (
     build_mri_derived_feature_summary as build_mri_derived_feature_summary_service,
 )
@@ -46,10 +48,12 @@ def build_admin_analytics(db):
         "audit_and_feedback": audit_and_feedback,
         "app_monitoring": build_app_monitoring_summary(db),
         "rag_evaluation": build_rag_evaluation_summary(db),
+        "agent_regression_evaluation": load_latest_agent_regression_report(),
         "agent_feedback": build_agent_feedback_summary(db),
         "clinician_loop_metrics": _clinician_loop_metrics(audit_and_feedback["clinical_feedback"]),
         "data_quality": _data_quality(training_rows),
         "data_coverage": _data_coverage(training_rows),
+        "mle_readiness": build_mle_readiness_summary(db=db),
         "safety_positioning": (
             "Admin analytics are for ML engineering monitoring only. They do not diagnose or make treatment decisions."
         ),

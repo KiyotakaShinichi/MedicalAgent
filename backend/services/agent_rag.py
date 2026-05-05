@@ -868,7 +868,8 @@ def _security_block_reply(input_guardrails):
         "I cannot reveal system instructions, database contents, secrets, raw internal knowledge-base data, "
         "or any other patient's information. "
         f"Detected category: {issues}. "
-        "You can ask general breast cancer treatment-monitoring questions or enter your own symptoms, labs, medications, and uploads."
+        "You can ask general breast cancer treatment-monitoring questions or enter your own symptoms, labs, medications, and uploads. "
+        "For medical concerns, contact your oncology care team."
     )
 
 

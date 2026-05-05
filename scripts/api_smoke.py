@@ -15,6 +15,7 @@ def main():
 
     admin = _post_json("/auth/demo-login", {"role": "admin"})
     assert admin["role"] == "admin", admin
+    admin_token = admin["access_token"]
 
     _ensure_smoke_patient()
 
@@ -32,6 +33,16 @@ def main():
     assert pipeline["intent"] == "security_boundary", pipeline
     assert pipeline["guardrails"]["input"]["status"] == "failed", pipeline
     assert pipeline["cache"]["status"] == "blocked_by_input_guardrail", pipeline
+
+    regression = _post_json("/admin/agent-regression", {}, token=admin_token)
+    assert regression["result"]["summary"]["attack_block_rate"] == 1.0, regression
+
+    mle = _post_json("/admin/mle-readiness", {}, token=admin_token)
+    assert mle["result"]["hard_gate_status"] == "passed", mle
+
+    analytics = _get_json("/admin/analytics", token=admin_token)
+    assert "agent_regression_evaluation" in analytics, analytics
+    assert "mle_readiness" in analytics, analytics
     print("API smoke checks passed.")
 
 

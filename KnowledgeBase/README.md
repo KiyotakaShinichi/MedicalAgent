@@ -18,6 +18,14 @@ Then run:
 python scripts/ingest_knowledge_base.py
 ```
 
+After ingestion, run the agent regression suite:
+
+```text
+python scripts/evaluate_agent_rag.py
+```
+
+This checks whether the updated KB still preserves expected retrieval, citations, grounding proxies, and prompt-injection/privacy blocking.
+
 The ingestion script writes local RAG chunks to:
 
 ```text

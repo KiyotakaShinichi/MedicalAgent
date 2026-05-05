@@ -754,6 +754,31 @@ def generate_admin_evaluation_report_endpoint(
     }
 
 
+@app.post("/admin/agent-regression")
+def run_admin_agent_regression_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.agent_regression_eval import run_agent_regression_suite
+
+    return {
+        "message": "Agent regression suite completed.",
+        "result": run_agent_regression_suite(),
+    }
+
+
+@app.post("/admin/mle-readiness")
+def run_admin_mle_readiness_endpoint(
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.mle_readiness import DEFAULT_OUTPUT_PATH, build_mle_readiness_summary
+
+    return {
+        "message": "MLE readiness checks completed.",
+        "result": build_mle_readiness_summary(db=db, output_path=DEFAULT_OUTPUT_PATH),
+    }
+
+
 @app.get("/patients/{patient_id}/chat")
 def get_patient_chat(patient_id: str, db: Session = Depends(get_db)):
     patient = get_patient(db, patient_id)

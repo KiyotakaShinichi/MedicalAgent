@@ -1,3 +1,4 @@
+import json
 import unittest
 import tempfile
 import uuid
@@ -26,10 +27,12 @@ from backend.services.complete_synthetic_dataset import generate_complete_synthe
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
 from backend.services.app_logging import build_app_monitoring_summary, log_app_event
 from backend.services.agent_rag import run_patient_agent_pipeline, safety_scope_check
+from backend.services.agent_regression_eval import run_agent_regression_suite
 from backend.services.agent_feedback import build_agent_feedback_summary, create_agent_response_feedback
 from backend.services.data_availability import build_data_availability
 from backend.services.input_validation import validate_cbc_values, validate_symptom_payload
 from backend.services.kb_ingestion import ingest_knowledge_base, load_ingested_chunks
+from backend.services.mle_readiness import build_mle_readiness_summary
 from backend.services.model_artifacts import promote_model_version, register_complete_synthetic_champion, rollback_model_version
 from backend.services.mri_derived_features import build_mri_derived_feature_summary
 from backend.services.patient_uploads import save_patient_upload
@@ -700,6 +703,113 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertGreaterEqual(result["chunk_count"], 1)
         self.assertTrue(any("cbc" in chunk["tags"] for chunk in chunks))
         self.assertTrue(output_path.exists())
+
+    def test_agent_regression_suite_tracks_guardrails_and_sources(self):
+        output_path = _make_temp_dir(_temp_root()) / "agent_regression.json"
+
+        report = run_agent_regression_suite(output_path=str(output_path))
+
+        self.assertTrue(output_path.exists())
+        self.assertGreaterEqual(report["case_count"], 6)
+        self.assertEqual(report["summary"]["attack_block_rate"], 1.0)
+        self.assertEqual(report["summary"]["output_guardrail_pass_rate"], 1.0)
+        self.assertGreaterEqual(report["summary"]["expected_source_hit_rate"], 0.67)
+        self.assertIn(report["summary"]["status"], {"acceptable", "strong"})
+
+    def test_mle_readiness_checks_data_contract_and_artifacts(self):
+        test_dir = _make_temp_dir(_temp_root())
+        training_csv = test_dir / "temporal_ml_rows.csv"
+        metrics_path = test_dir / "complete_synthetic_model_metrics.json"
+        predictions_path = test_dir / "complete_synthetic_model_predictions.csv"
+        manifest_path = test_dir / "latest_manifest.json"
+        report_dir = test_dir / "run_001"
+        report_dir.mkdir()
+        output_path = test_dir / "mle_readiness.json"
+        artifact_path = test_dir / "logistic_regression_treatment_success_binary.joblib"
+        artifact_path.write_text("demo artifact", encoding="utf-8")
+
+        rows = []
+        for patient_index in range(100):
+            for cycle in range(1, 7):
+                rows.append({
+                    "patient_id": f"MLE-P{patient_index:03d}",
+                    "cycle": cycle,
+                    "age": 52,
+                    "stage": "IIB",
+                    "molecular_subtype": "HR+/HER2-",
+                    "regimen": "AC-T",
+                    "pre_wbc": 5.2,
+                    "pre_anc": 3.1,
+                    "pre_hemoglobin": 12.4,
+                    "pre_platelets": 240,
+                    "nadir_wbc": 3.0,
+                    "nadir_anc": 1.4,
+                    "nadir_hemoglobin": 10.9,
+                    "nadir_platelets": 160,
+                    "mri_tumor_size_cm": 2.5,
+                    "mri_percent_change_from_baseline": -25.0,
+                    "max_symptom_severity": 4,
+                    "symptom_count": 2,
+                    "intervention_count": 1,
+                    "dose_delayed": 0,
+                    "dose_reduced": 0,
+                    "treatment_success_binary": 1 if patient_index % 2 == 0 else 0,
+                })
+        pd.DataFrame(rows).to_csv(training_csv, index=False)
+        pd.DataFrame({
+            "patient_id": [f"MLE-P{index:03d}" for index in range(20)],
+            "actual_label": [index % 2 for index in range(20)],
+            "logistic_regression_probability": [0.8 if index % 2 else 0.2 for index in range(20)],
+        }).to_csv(predictions_path, index=False)
+        metrics_path.write_text(json.dumps({
+            "task": "treatment_success_binary",
+            "rows": len(rows),
+            "patients": 100,
+            "best_model_by_patient_level_roc_auc": "logistic_regression",
+            "models": {
+                "logistic_regression": {
+                    "patient_level_roc_auc": 0.91,
+                    "patient_level_average_precision": 0.92,
+                    "patient_level_sensitivity": 0.94,
+                    "patient_level_brier_score": 0.07,
+                }
+            },
+        }), encoding="utf-8")
+        evaluation_report_path = report_dir / "evaluation_report.json"
+        evaluation_report_path.write_text(json.dumps({
+            "advanced_model_evaluation": {
+                "calibration": {"expected_calibration_error": 0.05},
+                "false_negative_review": {"false_negative_rate": 0.02},
+                "bootstrap_confidence_intervals": {
+                    "metrics": [{"metric": "AUROC", "interval_width": 0.04, "status": "passed"}]
+                },
+                "subgroup_performance": {"status": "passed", "rows": []},
+            },
+            "drift_monitoring": {"status": "passed", "watch_feature_count": 0},
+            "data_coverage": {"status": "passed", "rows": len(rows), "patients": 100},
+        }), encoding="utf-8")
+        manifest_path.write_text(json.dumps({
+            "files": {"evaluation_report": str(evaluation_report_path)}
+        }), encoding="utf-8")
+
+        db = _temp_db_session()
+        try:
+            report = build_mle_readiness_summary(
+                db=db,
+                training_csv=str(training_csv),
+                metrics_path=str(metrics_path),
+                predictions_path=str(predictions_path),
+                evaluation_manifest_path=str(manifest_path),
+                output_path=str(output_path),
+            )
+        finally:
+            db.close()
+            db.bind.dispose()
+
+        self.assertTrue(output_path.exists())
+        self.assertEqual(report["hard_gate_status"], "passed")
+        self.assertIn("data_contract", report["category_statuses"])
+        self.assertTrue(any(check["name"] == "numeric_range_contract" for check in report["checks"]))
 
 def _temp_db_session():
     engine = create_engine(
