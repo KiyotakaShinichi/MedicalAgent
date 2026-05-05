@@ -93,6 +93,7 @@ def handle_patient_chat(db, patient_id, message):
     labs = _extract_complete_labs(normalized)
     if labs:
         validate_cbc_values(labs["wbc"], labs["hemoglobin"], labs["platelets"])
+        lab_alerts = _clinical_lab_alerts(labs)
         db.add(LabResult(
             patient_id=patient_id,
             date=_extract_date(normalized),
@@ -103,6 +104,13 @@ def handle_patient_chat(db, patient_id, message):
             source_note="Captured from patient support chat.",
         ))
         actions.append({"type": "saved_labs", **labs})
+        if lab_alerts:
+            actions.append({
+                "type": "clinical_rule_alert",
+                "alerts": lab_alerts,
+                "message": "CBC safety rule triggered before RAG retrieval.",
+            })
+            urgent_flags.extend([alert["rule"] for alert in lab_alerts])
     elif _looks_like_partial_labs(normalized):
         actions.append({
             "type": "partial_labs_detected",
@@ -249,6 +257,40 @@ def _extract_number_after(lower_message, labels):
     return None
 
 
+def _clinical_lab_alerts(labs):
+    checks = [
+        {
+            "rule": "very_low_wbc",
+            "label": "WBC",
+            "value": labs["wbc"],
+            "threshold": "<2.0",
+            "severity": "high",
+            "triggered": labs["wbc"] < 2.0,
+        },
+        {
+            "rule": "very_low_hemoglobin",
+            "label": "hemoglobin",
+            "value": labs["hemoglobin"],
+            "threshold": "<8.0",
+            "severity": "high",
+            "triggered": labs["hemoglobin"] < 8.0,
+        },
+        {
+            "rule": "very_low_platelets",
+            "label": "platelets",
+            "value": labs["platelets"],
+            "threshold": "<50",
+            "severity": "high",
+            "triggered": labs["platelets"] < 50,
+        },
+    ]
+    return [
+        {key: value for key, value in item.items() if key != "triggered"}
+        for item in checks
+        if item["triggered"]
+    ]
+
+
 def _extract_medication(message):
     lower = message.lower()
     patterns = [
@@ -344,6 +386,18 @@ def _build_response(message, actions, urgent_flags, patient_context):
     partial_labs = [action for action in actions if action["type"] == "partial_labs_detected"]
     if partial_labs:
         parts.append(partial_labs[0]["message"])
+
+    lab_alerts = [action for action in actions if action["type"] == "clinical_rule_alert"]
+    if lab_alerts:
+        labels = [
+            f"{alert['label']} {alert['value']} ({alert['severity']}, threshold {alert['threshold']})"
+            for alert in lab_alerts[0]["alerts"]
+        ]
+        parts.append(
+            "A deterministic CBC safety rule flagged this for clinician review: "
+            + "; ".join(labels)
+            + ". Please contact your oncology care team for medical guidance."
+        )
 
     parts.append(
         "I can help track what you are feeling and summarize it for review, but I cannot diagnose or decide treatment."

@@ -13,8 +13,8 @@ def main():
     parser = argparse.ArgumentParser(description="Ingest local RAG knowledge-base files into chunk JSON.")
     parser.add_argument("--input-dir", default="KnowledgeBase/raw")
     parser.add_argument("--output-path", default="Data/rag_knowledge_base_chunks.json")
-    parser.add_argument("--chunk-chars", type=int, default=1400)
-    parser.add_argument("--overlap-chars", type=int, default=180)
+    parser.add_argument("--chunk-chars", type=int, default=2200)
+    parser.add_argument("--overlap-chars", type=int, default=220)
     args = parser.parse_args()
 
     result = ingest_knowledge_base(

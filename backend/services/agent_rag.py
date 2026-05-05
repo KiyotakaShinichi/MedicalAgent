@@ -403,11 +403,25 @@ def hybrid_retrieval(rewritten, intent):
     query_tokens = set(_tokenize(rewritten["expanded_query"]))
     rows = []
     for snippet in _knowledge_snippets():
-        text_tokens = set(_tokenize(" ".join([snippet["title"], snippet["text"], " ".join(snippet["tags"])])))
+        metadata_text = " ".join([
+            snippet.get("title", ""),
+            snippet.get("text", ""),
+            " ".join(snippet.get("tags", [])),
+            snippet.get("topic") or "",
+            " ".join(snippet.get("modality", []) or []),
+            snippet.get("care_stage") or "",
+            snippet.get("section") or "",
+        ])
+        text_tokens = set(_tokenize(metadata_text))
         lexical = len(query_tokens & text_tokens) / max(len(query_tokens), 1)
-        semantic = len(query_tokens & set(snippet["tags"])) / max(len(set(snippet["tags"])), 1)
+        metadata_terms = set(snippet.get("tags", []))
+        metadata_terms.update(_tokenize(snippet.get("topic") or ""))
+        metadata_terms.update(_tokenize(" ".join(snippet.get("modality", []) or [])))
+        semantic = len(query_tokens & metadata_terms) / max(len(metadata_terms), 1)
         intent_boost = _intent_boost(intent, snippet)
-        score = lexical + semantic + intent_boost
+        domain_boost = _domain_boost(query_tokens, snippet)
+        section_boost = _section_boost(snippet)
+        score = lexical + semantic + intent_boost + domain_boost + section_boost
         if score > 0:
             rows.append({
                 **snippet,
@@ -463,6 +477,9 @@ def contextual_compression(reranked):
             "title": item["title"],
             "source_name": item["source_name"],
             "source_url": item["source_url"],
+            "section": item.get("section"),
+            "topic": item.get("topic"),
+            "confidence": item.get("confidence"),
             "text": text,
             "score": item.get("rerank_score", item.get("retrieval_score")),
         })
@@ -898,14 +915,41 @@ def _intent_boost(intent, snippet):
     tags = set(snippet["tags"])
     boosts = {
         "portal_help": {"upload", "portal", "labs", "mri"},
-        "education": {"pcr", "cbc", "wbc", "chemotherapy", "side effects", "mri"},
-        "patient_timeline_monitoring": {"score", "monitoring", "cbc", "response"},
-        "safety_boundary": {"urgent", "fever", "infection"},
+        "education": {"pcr", "cbc", "wbc", "chemotherapy", "side effects", "mri", "radiomics", "machine learning"},
+        "patient_timeline_monitoring": {"score", "monitoring", "cbc", "response", "mri_response_monitoring"},
+        "safety_boundary": {"urgent", "fever", "infection", "clinical safety", "cbc_toxicity_monitoring"},
         "treatment_decision_boundary": {"treatment", "doctor", "chemotherapy"},
         "emotional_support": {"symptoms", "doctor", "side effects"},
     }
     desired = boosts.get(intent, set())
-    return 0.25 if tags & desired else 0
+    topic = snippet.get("topic")
+    return 0.25 if (tags & desired or topic in desired) else 0
+
+
+def _domain_boost(query_tokens, snippet):
+    tags = set(snippet.get("tags") or [])
+    topic = snippet.get("topic") or ""
+    modalities = {item.lower() for item in (snippet.get("modality") or [])}
+    boost = 0.0
+    if query_tokens & {"mri", "dce", "radiomics", "imaging", "pcr", "response"}:
+        if "MRI".lower() in modalities or "mri" in tags or "mri" in topic:
+            boost += 0.2
+    if query_tokens & {"cbc", "wbc", "anc", "neutropenia", "platelets", "hemoglobin", "fever"}:
+        if "CBC".lower() in modalities or "cbc" in tags or "toxicity" in tags or "neutropenia" in topic:
+            boost += 0.2
+    if query_tokens & {"chemo", "chemotherapy", "neoadjuvant", "treatment"}:
+        if "chemotherapy" in tags or "treatment" in modalities or "treatment" in topic:
+            boost += 0.12
+    return boost
+
+
+def _section_boost(snippet):
+    section = snippet.get("section") or ""
+    if section in {"abstract", "conclusion", "conclusions", "clinical implications", "results"}:
+        return 0.08
+    if section in {"references"}:
+        return -0.25
+    return 0.0
 
 
 def _mark_cache_hit(db, row):

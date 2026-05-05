@@ -388,6 +388,24 @@ Supported starter formats:
 - text
 - PDF through `pypdf`
 
+Download the starter open-access breast cancer paper set:
+
+```text
+python scripts/download_research_papers.py
+```
+
+This stores NCBI Open Access full-text files in:
+
+```text
+KnowledgeBase/raw/research_papers/
+```
+
+Direct PDF downloads from PubMed Central can be browser-gated, so the downloader saves clean article text for ingestion. The current starter set covers breast MRI treatment response, DCE-MRI response prediction, chemotherapy-induced neutropenia, febrile neutropenia support, and hematologic toxicity. See:
+
+```text
+KnowledgeBase/STARTER_PAPERS.md
+```
+
 Run ingestion:
 
 ```text
@@ -401,6 +419,14 @@ Data/rag_knowledge_base_chunks.json
 ```
 
 The patient RAG agent automatically combines the built-in safety/education snippets with ingested local KB chunks when that file exists. The generated chunk file is ignored by git so licensed papers and large local documents do not accidentally get committed.
+
+The ingestion pipeline uses section-aware chunks, metadata tagging, and quality checks:
+
+- section-aware chunking for abstract, methods, results, discussion, and conclusion style content
+- metadata for topic, modality, care stage, confidence/source type, PMCID, tags, and section
+- lightweight watchlists for strong unsupported claim language and possible contradiction-sensitive terms
+
+The patient agent applies deterministic CBC safety rules before RAG retrieval. Very low WBC, hemoglobin, or platelet values are routed to clinician-review language instead of being left to the LLM/RAG layer.
 
 After adding papers, rerun:
 

@@ -37,6 +37,7 @@ from backend.services.model_artifacts import promote_model_version, register_com
 from backend.services.mri_derived_features import build_mri_derived_feature_summary
 from backend.services.patient_uploads import save_patient_upload
 from backend.services.rag_analytics import build_rag_evaluation_summary
+from backend.services.support_chat_agent import handle_patient_chat
 from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys, infer_synthetic_subtype
 from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
 
@@ -702,7 +703,30 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertEqual(result["source_count"], 1)
         self.assertGreaterEqual(result["chunk_count"], 1)
         self.assertTrue(any("cbc" in chunk["tags"] for chunk in chunks))
+        self.assertTrue(all("section" in chunk for chunk in chunks))
+        self.assertTrue(any(chunk.get("topic") for chunk in chunks))
         self.assertTrue(output_path.exists())
+
+    def test_chat_clinical_rule_layer_flags_low_cbc_before_rag(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="RULE-P001", name="Rule Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="RULE-P001",
+                message="My WBC is 1.4 hemoglobin is 7.5 platelets is 45 today.",
+            )
+
+            alert_actions = [action for action in result["saved_actions"] if action["type"] == "clinical_rule_alert"]
+            self.assertEqual(len(alert_actions), 1)
+            self.assertIn("very_low_wbc", result["urgent_flags"])
+            self.assertEqual(result["agent_pipeline"]["safety"]["level"], "high_risk")
+            self.assertIn("oncology", result["reply"].lower())
+        finally:
+            db.close()
+            db.bind.dispose()
 
     def test_agent_regression_suite_tracks_guardrails_and_sources(self):
         output_path = _make_temp_dir(_temp_root()) / "agent_regression.json"
