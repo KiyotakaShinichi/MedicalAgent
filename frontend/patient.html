@@ -1,868 +1,1707 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Oncology Journey</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
-    :root {
-      --bg: #f6f3ef;
-      --surface: #ffffff;
-      --soft: #faf8f5;
-      --text: #1f1915;
-      --muted: #776d65;
-      --line: rgba(54, 43, 34, 0.12);
-      --rose: #c45c6a;
-      --rose-soft: #fdf0f1;
-      --amber: #a8651e;
-      --amber-soft: #fff5e5;
-      --teal: #237a70;
-      --teal-soft: #edf7f5;
-      --red: #b42020;
-      --red-soft: #fff0f0;
-      --radius: 10px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OncoTrack — Breast Cancer Monitoring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --rose:       #c2455a;
+    --rose-dark:  #8f2f41;
+    --rose-light: #fdf2f4;
+    --rose-mid:   #f0c4cc;
+    --navy:       #1a2035;
+    --navy-mid:   #2e3a55;
+    --slate:      #4a5568;
+    --muted:      #718096;
+    --light:      #f7f8fc;
+    --border:     #e8ecf2;
+    --white:      #ffffff;
+    --green:      #2f7a5e;
+    --green-bg:   #edf7f3;
+    --amber:      #b45309;
+    --amber-bg:   #fef3e2;
+    --red:        #991b1b;
+    --red-bg:     #fef2f2;
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  16px;
+    --shadow-sm:  0 1px 3px rgba(26,32,53,0.08);
+    --shadow-md:  0 4px 16px rgba(26,32,53,0.10);
+    --transition: all 0.18s ease;
+  }
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Inter, "Segoe UI", system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-    header {
-      min-height: 68px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-    .brand { font-size: 18px; font-weight: 700; }
-    .brand span { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 2px; }
-    .toolbar { display: flex; align-items: center; gap: 10px; }
-    .account-chip {
-      display: inline-flex;
-      align-items: center;
-      min-height: 34px;
-      padding: 7px 11px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--muted);
-      background: var(--soft);
-      font-size: 13px;
-      font-weight: 700;
-    }
-    select, textarea, input[type="file"], button {
-      font: inherit;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--surface);
-      color: var(--text);
-    }
-    select { padding: 8px 10px; }
-    button {
-      padding: 9px 14px;
-      background: var(--rose);
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: 650;
-    }
-    main {
-      width: min(1180px, calc(100% - 28px));
-      margin: 24px auto 96px;
-      display: grid;
-      gap: 18px;
-    }
-    .hero {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 22px;
-      display: grid;
-      grid-template-columns: 1.4fr 0.8fr;
-      gap: 20px;
-      align-items: center;
-    }
-    .hero h1 { margin: 0 0 8px; font-size: clamp(24px, 4vw, 40px); letter-spacing: 0; }
-    .hero p { margin: 0; color: var(--muted); line-height: 1.55; max-width: 680px; }
-    .score {
-      background: var(--teal-soft);
-      border: 1px solid rgba(35, 122, 112, 0.18);
-      border-radius: var(--radius);
-      padding: 18px;
-    }
-    .score .value { font-size: 44px; font-weight: 800; color: var(--teal); line-height: 1; }
-    .score .label { color: var(--muted); margin-top: 8px; font-size: 13px; }
-    .summary-card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px;
-      display: grid;
-      gap: 16px;
-    }
-    .summary-card h2 {
-      margin: 0;
-      font-size: 15px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .summary-headline {
-      margin: 0;
-      font-size: clamp(20px, 3vw, 28px);
-      font-weight: 800;
-      line-height: 1.2;
-    }
-    .summary-text {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.55;
-      max-width: 920px;
-    }
-    .summary-columns {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .summary-column {
-      background: var(--soft);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 12px;
-      min-height: 120px;
-    }
-    .summary-column strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: var(--text);
-    }
-    .summary-column ul {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-    .grid { display: grid; gap: 18px; }
-    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-    }
-    .card h2 {
-      margin: 0 0 14px;
-      font-size: 14px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .metric { font-size: 30px; font-weight: 800; }
-    .metric small { display: block; font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 4px; }
-    .status-pill {
-      display: inline-flex;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: var(--amber-soft);
-      color: var(--amber);
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .list { display: grid; gap: 8px; }
-    .upload-form { display: grid; gap: 10px; }
-    .upload-form textarea { width: 100%; min-height: 66px; padding: 10px; resize: vertical; }
-    .item {
-      background: var(--soft);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-    .muted { color: var(--muted); }
-    .timeline-list { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
-    .timeline-item {
-      position: relative;
-      padding: 0 0 12px 14px;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-    .timeline-item::before {
-      content: "";
-      position: absolute;
-      left: -6px;
-      top: 3px;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--rose);
-    }
-    .feature-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      border-bottom: 1px solid var(--line);
-      padding: 8px 0;
-      font-size: 13px;
-    }
-    .feature-row:last-child { border-bottom: none; }
-    .feature-row strong { color: var(--text); }
-    .feature-row span { color: var(--muted); text-align: right; }
-    .agent-button {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      box-shadow: 0 12px 30px rgba(31, 25, 21, 0.18);
-      z-index: 30;
-    }
-    .chat-widget {
-      position: fixed;
-      right: 22px;
-      bottom: 92px;
-      width: min(390px, calc(100vw - 28px));
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 18px 46px rgba(31, 25, 21, 0.18);
-      display: none;
-      overflow: hidden;
-      z-index: 31;
-    }
-    .chat-widget.open { display: block; }
-    .chat-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 800; }
-    .chat-head span { display: block; color: var(--muted); font-weight: 500; font-size: 12px; margin-top: 2px; }
-    .chat-thread { padding: 14px; display: grid; gap: 8px; max-height: 320px; overflow-y: auto; }
-    .msg { padding: 9px 11px; border-radius: 9px; font-size: 13px; line-height: 1.45; white-space: pre-wrap; }
-    .msg.user { background: var(--rose-soft); color: var(--text); }
-    .msg.assistant { background: var(--soft); color: var(--text); border: 1px solid var(--line); }
-    .msg-citations {
-      margin-top: 7px;
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      white-space: normal;
-      font-size: 11px;
-    }
-    .msg-citations a, .msg-citations span {
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 3px 7px;
-      color: var(--muted);
-      background: #fff;
-      text-decoration: none;
-    }
-    .msg-feedback {
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-wrap: wrap;
-      white-space: normal;
-      color: var(--muted);
-      font-size: 11px;
-    }
-    .msg-feedback button {
-      width: auto;
-      min-height: 24px;
-      padding: 3px 7px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: #fff;
-      color: var(--muted);
-    }
-    .chat-compose { padding: 12px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
-    .chat-compose textarea { width: 100%; min-height: 70px; padding: 10px; resize: vertical; }
-    .safety { font-size: 12px; color: var(--muted); line-height: 1.45; }
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 22px;
-      transform: translateX(-50%);
-      background: var(--text);
-      color: white;
-      padding: 10px 14px;
-      border-radius: 8px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      z-index: 60;
-    }
-    .toast.show { opacity: 1; }
-    @media (max-width: 850px) {
-      header { padding: 12px 16px; align-items: flex-start; flex-direction: column; gap: 10px; }
-      .hero, .summary-columns, .grid.two, .grid.three { grid-template-columns: 1fr; }
-      main { margin-top: 14px; }
-    }
-  </style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    background: var(--light);
+    color: var(--navy);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ───────────────────────────────── */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 34px; height: 34px;
+    background: var(--rose);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-icon svg { width: 18px; height: 18px; fill: white; }
+
+  .logo-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: white;
+    line-height: 1.1;
+  }
+
+  .logo-text span {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .sidebar-patient {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .patient-avatar {
+    width: 40px; height: 40px;
+    background: rgba(194,69,90,0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #f0c4cc;
+    margin-bottom: 8px;
+  }
+
+  .patient-name-sidebar {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 2px;
+  }
+
+  .patient-id-sidebar {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .sidebar-nav {
+    padding: 12px 0;
+    flex: 1;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    padding: 12px 20px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: var(--transition);
+    border-left: 3px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    color: white;
+    background: rgba(255,255,255,0.06);
+    border-left-color: var(--rose);
+  }
+
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.5;
+  }
+
+  /* ── MAIN LAYOUT ────────────────────────────── */
+  .main-wrap {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .topbar-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    transition: var(--transition);
+  }
+
+  .btn:hover { background: var(--light); }
+
+  .btn-primary {
+    background: var(--rose);
+    color: white;
+    border-color: var(--rose);
+  }
+
+  .btn-primary:hover { background: var(--rose-dark); border-color: var(--rose-dark); }
+
+  /* ── PAGE CONTENT ───────────────────────────── */
+  .content {
+    padding: 24px 28px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* ── PATIENT HERO BANNER ────────────────────── */
+  .patient-banner {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .patient-banner-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .patient-avatar-lg {
+    width: 54px; height: 54px;
+    background: var(--rose-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--rose);
+    flex-shrink: 0;
+  }
+
+  .patient-banner h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .patient-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .meta-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--slate);
+    background: var(--light);
+  }
+
+  .meta-tag.status-active { background: var(--green-bg); color: var(--green); border-color: #b2dfd0; }
+  .meta-tag.status-watch  { background: var(--amber-bg); color: var(--amber); border-color: #f3d08a; }
+  .meta-tag.status-alert  { background: var(--red-bg); color: var(--red); border-color: #f5b0b0; }
+
+  .score-block {
+    text-align: center;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    border-radius: var(--radius-md);
+    padding: 18px 28px;
+    color: white;
+  }
+
+  .score-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    line-height: 1;
+    color: white;
+  }
+
+  .score-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .score-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 6px;
+  }
+
+  /* ── AI SNAPSHOT ────────────────────────────── */
+  .ai-snapshot {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .ai-snapshot-header {
+    padding: 16px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: var(--rose-light);
+    border: 1px solid var(--rose-mid);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rose);
+  }
+
+  .ai-snapshot-body {
+    padding: 18px 22px;
+  }
+
+  .snapshot-headline {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+
+  .snapshot-text {
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.65;
+    margin-bottom: 18px;
+    max-width: 780px;
+  }
+
+  .snapshot-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .snapshot-col {
+    border-radius: var(--radius-md);
+    padding: 14px;
+    border: 1px solid;
+  }
+
+  .snapshot-col.signals   { background: var(--green-bg); border-color: #b2dfd0; }
+  .snapshot-col.review    { background: var(--amber-bg); border-color: #f3d08a; }
+  .snapshot-col.uncertain { background: var(--red-bg);   border-color: #f5b0b0; }
+
+  .snapshot-col-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .snapshot-col.signals   .snapshot-col-title { color: var(--green); }
+  .snapshot-col.review    .snapshot-col-title { color: var(--amber); }
+  .snapshot-col.uncertain .snapshot-col-title { color: var(--red); }
+
+  .snapshot-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .snapshot-col li {
+    font-size: 12px;
+    color: var(--slate);
+    line-height: 1.45;
+    padding-left: 10px;
+    position: relative;
+  }
+
+  .snapshot-col li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 6px;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+  }
+
+  .snapshot-col.signals li::before   { background: var(--green); }
+  .snapshot-col.review  li::before   { background: var(--amber); }
+  .snapshot-col.uncertain li::before { background: var(--red); }
+
+  .ai-disclaimer {
+    padding: 10px 22px;
+    background: var(--light);
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── GRID LAYOUTS ───────────────────────────── */
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  /* ── CARDS ──────────────────────────────────── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 14px 18px 13px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .card-body { padding: 16px 18px; }
+
+  /* ── STAT CARDS ─────────────────────────────── */
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .stat-card.normal::before  { background: var(--green); }
+  .stat-card.warning::before { background: var(--amber); }
+  .stat-card.low::before     { background: var(--red); }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1;
+  }
+
+  .stat-unit {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+
+  .stat-range {
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .range-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .range-dot.normal  { background: var(--green); }
+  .range-dot.warning { background: var(--amber); }
+  .range-dot.low     { background: var(--red); }
+
+  /* ── SIGNAL ITEMS ───────────────────────────── */
+  .signal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .signal-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--light);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.45;
+  }
+
+  .signal-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .signal-dot.green  { background: var(--green); }
+  .signal-dot.amber  { background: var(--amber); }
+  .signal-dot.red    { background: var(--red); }
+  .signal-dot.rose   { background: var(--rose); }
+  .signal-dot.gray   { background: #a0aec0; }
+
+  /* ── TIMELINE ────────────────────────────────── */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-left: 8px;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 14px;
+    position: relative;
+  }
+
+  .timeline-item:not(:last-child) .tl-line {
+    position: absolute;
+    left: 6px;
+    top: 14px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .tl-dot {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: var(--rose-mid);
+    border: 2px solid var(--rose);
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tl-content { flex: 1; }
+
+  .tl-date {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+
+  .tl-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+
+  .tl-summary {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── DISCUSSION ITEMS ───────────────────────── */
+  .discuss-item {
+    padding: 11px 13px;
+    background: var(--light);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--rose);
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.45;
+  }
+
+  /* ── PILL BADGES ─────────────────────────────── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .pill-green  { background: var(--green-bg); color: var(--green); }
+  .pill-amber  { background: var(--amber-bg); color: var(--amber); }
+  .pill-red    { background: var(--red-bg);   color: var(--red); }
+  .pill-rose   { background: var(--rose-light); color: var(--rose); }
+  .pill-navy   { background: rgba(26,32,53,0.08); color: var(--navy); }
+
+  /* ── TABLE STYLES ───────────────────────────── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .data-table th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--light);
+  }
+
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--slate);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--light); }
+
+  /* ── CHAT WIDGET ─────────────────────────────── */
+  .chat-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 200;
+    width: 52px; height: 52px;
+    background: var(--rose);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(194,69,90,0.4);
+    transition: var(--transition);
+    color: white;
+  }
+
+  .chat-fab:hover { transform: scale(1.06); background: var(--rose-dark); }
+
+  .chat-fab svg { width: 22px; height: 22px; }
+
+  .chat-panel {
+    position: fixed;
+    right: 24px;
+    bottom: 88px;
+    width: 360px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .chat-panel.open { display: flex; }
+
+  .chat-panel-head {
+    padding: 14px 16px;
+    background: var(--navy);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .chat-panel-head-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .chat-panel-head-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2px;
+  }
+
+  .chat-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,0.5);
+    padding: 4px;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+  }
+
+  .msg {
+    padding: 9px 11px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .msg.assistant {
+    background: var(--light);
+    color: var(--slate);
+    border: 1px solid var(--border);
+  }
+
+  .msg.user {
+    background: var(--rose-light);
+    color: var(--navy);
+    align-self: flex-end;
+    max-width: 85%;
+  }
+
+  .chat-compose {
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chat-compose textarea {
+    font: inherit;
+    font-size: 13px;
+    width: 100%;
+    min-height: 64px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    resize: none;
+    color: var(--navy);
+    background: var(--white);
+    outline: none;
+  }
+
+  .chat-compose textarea:focus { border-color: var(--rose); }
+
+  .chat-safety {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── UPLOAD ──────────────────────────────────── */
+  .upload-zone {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--light);
+  }
+
+  .upload-zone:hover {
+    border-color: var(--rose);
+    background: var(--rose-light);
+    color: var(--rose);
+  }
+
+  .upload-icon { margin-bottom: 8px; }
+
+  .upload-zone p { font-size: 13px; }
+  .upload-zone small { display: block; font-size: 11px; margin-top: 3px; opacity: 0.7; }
+
+  .form-row {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  select, textarea {
+    font: inherit;
+    font-size: 13px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--navy);
+    background: var(--white);
+    outline: none;
+    width: 100%;
+  }
+
+  select:focus, textarea:focus { border-color: var(--rose); }
+
+  input[type="file"] { display: none; }
+
+  /* ── TOAST ───────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--navy);
+    color: white;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.22s ease;
+    z-index: 500;
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── FEATURE ROWS ────────────────────────────── */
+  .feature-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .feature-row:last-child { border-bottom: none; }
+  .feature-row .label { color: var(--slate); }
+  .feature-row .val   { color: var(--navy); font-weight: 500; }
+
+  /* ── REVIEW LIST ─────────────────────────────── */
+  .review-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.45;
+  }
+
+  .review-item:last-child { border-bottom: none; }
+
+  .review-num {
+    width: 22px; height: 22px;
+    background: var(--rose-light);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--rose);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { width: 200px; }
+    .main-wrap { margin-left: 200px; }
+    .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .snapshot-columns { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 660px) {
+    .sidebar { display: none; }
+    .main-wrap { margin-left: 0; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .patient-banner { grid-template-columns: 1fr; }
+    .content { padding: 16px; }
+  }
+</style>
 </head>
 <body>
-  <header>
-    <div class="brand">My Oncology Journey<span>Patient portal</span></div>
-    <div class="toolbar">
-      <span class="account-chip" id="accountChip">Private patient view</span>
+
+<!-- ══ SIDEBAR ═══════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">
+        <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2C6.69 2 4 4.69 4 8c0 2.15 1.08 4.04 2.73 5.17L6 18h8l-.73-4.83C14.92 12.04 16 10.15 16 8c0-3.31-2.69-6-6-6zm0 2a4 4 0 110 8 4 4 0 010-8z"/>
+        </svg>
+      </div>
+      <div class="logo-text">OncoTrack<span>Breast Cancer Monitoring</span></div>
+    </div>
+  </div>
+
+  <div class="sidebar-patient">
+    <div class="patient-avatar" id="sidebarAvatar">--</div>
+    <div class="patient-name-sidebar" id="sidebarName">Loading...</div>
+    <div class="patient-id-sidebar" id="sidebarId">Patient ID · —</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Monitoring</div>
+    <a class="nav-item active" href="#overview">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1h6v6H1V1zm8 0h6v6H9V1zM1 9h6v6H1V9zm8 0h6v6H9V9z" opacity=".7"/></svg>
+      Overview
+    </a>
+    <a class="nav-item" href="#labs">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 1v6L2 13h12L11 7V1H5zm2 0h2v5.5l2.5 5.5h-7L7 6.5V1z" opacity=".7"/></svg>
+      Lab Results
+    </a>
+    <a class="nav-item" href="#treatment">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.5 3h1v4.5l3 1.8-.5.86L7.5 9V4z" opacity=".7"/></svg>
+      Treatment Timeline
+    </a>
+    <a class="nav-item" href="#symptoms">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM7 5h2v4H7V5zm0 5h2v2H7v-2z" opacity=".7"/></svg>
+      Symptoms & Meds
+    </a>
+    <div class="nav-section-label">Tools</div>
+    <a class="nav-item" href="#upload">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L4 6h3v6h2V6h3L8 1zM2 13h12v2H2v-2z" opacity=".7"/></svg>
+      Upload Records
+    </a>
+    <a class="nav-item" href="#care-prep">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v12H2V2zm1 1v10h10V3H3zm2 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z" opacity=".7"/></svg>
+      Care Prep
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    Monitoring support only.<br>Does not diagnose or recommend treatment.
+  </div>
+</aside>
+
+<!-- ══ MAIN ═══════════════════════════════════════ -->
+<div class="main-wrap">
+  <header class="topbar">
+    <div>
+      <div class="topbar-title" id="topbarTitle">Patient Record</div>
+      <div class="topbar-sub">Last updated: just now</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn" onclick="loadPatient()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M13.65 2.35A8 8 0 1015 8h-2a6 6 0 11-1.65-4.15L9 6h6V0l-1.35 2.35z"/></svg>
+        Refresh
+      </button>
+      <button class="btn btn-primary" onclick="toggleChat()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1 1h14v10H8.5L5 14v-3H1V1zm1 1v8h4v2.5L8 10h7V2H2z"/></svg>
+        Support Chat
+      </button>
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div>
-        <h1 id="patientName">Loading...</h1>
-        <p id="patientContext">Your personal monitoring view summarizes your records, treatment response signals, symptoms, and recent lab trends.</p>
-      </div>
-      <div class="score">
-        <div class="value" id="monitoringScore">--</div>
-        <div class="label">Treatment monitoring score</div>
-      </div>
-    </section>
+  <div class="content">
 
-    <section class="summary-card">
-      <h2>AI Monitoring Snapshot</h2>
-      <div>
-        <p class="summary-headline" id="summaryHeadline">Loading summary...</p>
-        <p class="summary-text" id="summaryText">The portal is organizing your treatment timeline, labs, symptoms, imaging, and model signals into a simpler overview.</p>
-      </div>
-      <div class="summary-columns">
-        <div class="summary-column">
-          <strong>Key Signals</strong>
-          <ul id="summaryKeyPoints"><li>Loading...</li></ul>
-        </div>
-        <div class="summary-column">
-          <strong>Review With Care Team</strong>
-          <ul id="summaryReviewFlags"><li>Loading...</li></ul>
-        </div>
-        <div class="summary-column">
-          <strong>Uncertainty</strong>
-          <ul id="summaryUncertainty"><li>Loading...</li></ul>
+    <!-- Patient Banner -->
+    <section class="patient-banner" id="overview">
+      <div class="patient-banner-left">
+        <div class="patient-avatar-lg" id="heroAvatar">--</div>
+        <div>
+          <h1 id="patientName">Loading...</h1>
+          <div class="patient-meta" id="patientMeta">
+            <span class="meta-tag">Loading...</span>
+          </div>
         </div>
       </div>
-      <div class="safety" id="summarySafety">Monitoring support only. This does not diagnose or choose treatment.</div>
-    </section>
-
-    <section class="grid two">
-      <div class="card">
-        <h2>What Changed Recently</h2>
-        <div class="list" id="recentChangesList"><div class="item muted">Loading recent changes...</div></div>
-      </div>
-      <div class="card">
-        <h2>Discuss With Your Doctor</h2>
-        <div class="list" id="doctorDiscussionList"><div class="item muted">Loading discussion points...</div></div>
+      <div class="score-block">
+        <div class="score-value" id="monitoringScore">--</div>
+        <div class="score-label">Monitoring Score</div>
+        <div class="score-sub" id="overallStatus">Loading...</div>
       </div>
     </section>
 
-    <section class="grid two">
-      <div class="card">
-        <h2>Missing Or Uncertain Data</h2>
-        <div class="list" id="missingDataList"><div class="item muted">Loading uncertainty notes...</div></div>
+    <!-- AI Snapshot -->
+    <section class="ai-snapshot">
+      <div class="ai-snapshot-header">
+        <div>
+          <div class="section-eyebrow">AI Monitoring</div>
+          <div class="section-title">Clinical Snapshot</div>
+        </div>
+        <span class="ai-badge">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7"/></svg>
+          AI-generated · not clinical advice
+        </span>
       </div>
-      <div class="card">
-        <h2>Why This Score Appears</h2>
-        <div class="list" id="scoreExplanationList"><div class="item muted">Loading score explanation...</div></div>
+      <div class="ai-snapshot-body">
+        <div class="snapshot-headline" id="summaryHeadline">Generating summary...</div>
+        <div class="snapshot-text" id="summaryText">Organizing your treatment timeline, labs, symptoms, and model signals.</div>
+        <div class="snapshot-columns">
+          <div class="snapshot-col signals">
+            <div class="snapshot-col-title">Key Signals</div>
+            <ul id="summaryKeyPoints"><li>Loading…</li></ul>
+          </div>
+          <div class="snapshot-col review">
+            <div class="snapshot-col-title">Review With Care Team</div>
+            <ul id="summaryReviewFlags"><li>Loading…</li></ul>
+          </div>
+          <div class="snapshot-col uncertain">
+            <div class="snapshot-col-title">Data Gaps & Uncertainty</div>
+            <ul id="summaryUncertainty"><li>Loading…</li></ul>
+          </div>
+        </div>
       </div>
+      <div class="ai-disclaimer" id="summarySafety">Monitoring support only. This does not diagnose or choose treatment.</div>
     </section>
 
-    <section class="grid three">
+    <!-- Recent Changes + Discuss -->
+    <div class="grid grid-2">
       <div class="card">
-        <h2>WBC</h2>
-        <div class="metric" id="wbc">--<small>x10^3/uL</small></div>
-      </div>
-      <div class="card">
-        <h2>Hemoglobin</h2>
-        <div class="metric" id="hemoglobin">--<small>g/dL</small></div>
-      </div>
-      <div class="card">
-        <h2>Platelets</h2>
-        <div class="metric" id="platelets">--<small>x10^3/uL</small></div>
-      </div>
-    </section>
-
-    <section class="grid two">
-      <div class="card">
-        <h2>Monitoring Summary</h2>
-        <div class="status-pill" id="overallStatus">loading</div>
-        <div class="list">
-          <div class="item" id="overallMessage">Loading assessment...</div>
-          <div class="item" id="mriSignal">MRI response signal loading...</div>
-          <div class="item" id="clinicalSignal">Clinical monitoring signal loading...</div>
-          <div class="item" id="symptomSignal">Symptom signal loading...</div>
+        <div class="card-header">
+          <div class="card-title">Recent Changes (14 days)</div>
+        </div>
+        <div class="card-body">
+          <div class="signal-list" id="recentChangesList">
+            <div class="signal-item"><span class="signal-dot gray"></span>Loading…</div>
+          </div>
         </div>
       </div>
       <div class="card">
-        <h2>Lab Trends</h2>
-        <canvas id="labChart"></canvas>
-      </div>
-    </section>
-
-    <section class="grid two">
-      <div class="card">
-        <h2>Model Response Signal</h2>
-        <div class="list" id="modelSignal"><div class="item muted">No model signal loaded.</div></div>
-      </div>
-      <div class="card">
-        <h2>Model Explanation</h2>
-        <div class="list" id="modelExplanation"><div class="item muted">No explanation loaded.</div></div>
-      </div>
-    </section>
-
-    <section class="grid two">
-      <div class="card">
-        <h2>Treatment Timeline</h2>
-        <div class="timeline-list" id="timelineList"><div class="timeline-item muted">No timeline loaded.</div></div>
-      </div>
-      <div class="card">
-        <h2>Cycle Lab Impact</h2>
-        <div class="list" id="cycleImpactList"><div class="item muted">No cycle impact loaded.</div></div>
-      </div>
-    </section>
-
-    <section class="grid two">
-      <div class="card">
-        <h2>Recent Symptoms</h2>
-        <div class="list" id="symptomList"><div class="item muted">No symptoms loaded.</div></div>
-      </div>
-      <div class="card">
-        <h2>Medication Log</h2>
-        <div class="list" id="medicationList"><div class="item muted">No medications logged.</div></div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>What To Bring To Your Care Team</h2>
-      <div class="list" id="reviewList"><div class="item muted">No review reasons loaded.</div></div>
-    </section>
-
-    <section class="grid two">
-      <div class="card">
-        <h2>Treatment Outcome</h2>
-        <div class="list" id="outcomeList"><div class="item muted">No outcome loaded.</div></div>
-      </div>
-      <div class="card">
-        <h2>Support Interventions</h2>
-        <div class="list" id="interventionList"><div class="item muted">No interventions logged.</div></div>
-      </div>
-    </section>
-
-    <section class="grid two">
-      <div class="card">
-        <h2>Upload Records</h2>
-        <div class="upload-form">
-          <select id="uploadType">
-            <option value="breast_mri">Breast MRI</option>
-            <option value="lab_report">Lab report</option>
-            <option value="medication_list">Medication list</option>
-            <option value="symptom_note">Symptom note</option>
-            <option value="document">Other document</option>
-          </select>
-          <input type="file" id="uploadFile">
-          <textarea id="uploadNotes" placeholder="Optional note for your care team"></textarea>
-          <button onclick="uploadRecord()">Upload to my record</button>
-          <div class="safety">Demo limit: small files only. Uploads are stored locally for this project.</div>
+        <div class="card-header">
+          <div class="card-title">Discuss With Your Doctor</div>
+        </div>
+        <div class="card-body">
+          <div id="doctorDiscussionList">
+            <div class="discuss-item">Loading discussion points…</div>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <h2>Recent Uploads</h2>
-        <div class="list" id="uploadList"><div class="item muted">No uploads yet.</div></div>
-      </div>
-    </section>
-  </main>
-
-  <div class="chat-widget" id="chatWidget">
-    <div class="chat-head">Support Agent<span>Tell me symptoms, labs, medications, or how you feel.</span></div>
-    <div class="chat-thread" id="chatThread"><div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div></div>
-    <div class="chat-compose">
-      <textarea id="chatInput" placeholder="Example: I feel nauseous, severity 7/10. I am taking tamoxifen 20 mg daily."></textarea>
-      <button onclick="sendChat()">Send and save</button>
-      <div class="safety">For severe or sudden symptoms, contact your oncology team or emergency services.</div>
     </div>
+
+    <!-- Lab Values -->
+    <div class="grid grid-3" id="labs">
+      <div class="stat-card" id="wbcCard">
+        <div class="stat-label">WBC</div>
+        <div class="stat-value" id="wbc">--<span class="stat-unit">×10³/µL</span></div>
+        <div class="stat-range"><span class="range-dot" id="wbcDot"></span><span id="wbcStatus">Loading…</span></div>
+      </div>
+      <div class="stat-card" id="hgbCard">
+        <div class="stat-label">Hemoglobin</div>
+        <div class="stat-value" id="hemoglobin">--<span class="stat-unit">g/dL</span></div>
+        <div class="stat-range"><span class="range-dot" id="hgbDot"></span><span id="hgbStatus">Loading…</span></div>
+      </div>
+      <div class="stat-card" id="pltCard">
+        <div class="stat-label">Platelets</div>
+        <div class="stat-value" id="platelets">--<span class="stat-unit">×10³/µL</span></div>
+        <div class="stat-range"><span class="range-dot" id="pltDot"></span><span id="pltStatus">Loading…</span></div>
+      </div>
+    </div>
+
+    <!-- Chart + Monitoring Signals -->
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Lab Trends</div>
+        </div>
+        <div class="card-body">
+          <canvas id="labChart" height="200"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Monitoring Signals</div>
+        </div>
+        <div class="card-body">
+          <div class="signal-list">
+            <div class="signal-item" id="mriSignal"><span class="signal-dot gray"></span>Loading MRI signal…</div>
+            <div class="signal-item" id="clinicalSignal"><span class="signal-dot gray"></span>Loading clinical signal…</div>
+            <div class="signal-item" id="symptomSignal"><span class="signal-dot gray"></span>Loading symptom signal…</div>
+            <div class="signal-item" id="overallMessage"><span class="signal-dot gray"></span>Loading assessment…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Signal + Explanation -->
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">AI Response Model Signal</div>
+          <span class="pill pill-navy" style="font-size:10px;">Demo · not validated</span>
+        </div>
+        <div class="card-body">
+          <div id="modelSignal"><div class="signal-item"><span class="signal-dot gray"></span>No model signal loaded.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Model Explanation (XAI)</div>
+        </div>
+        <div class="card-body">
+          <div id="modelExplanation"><div class="signal-item"><span class="signal-dot gray"></span>No explanation loaded.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Missing Data + Score Why -->
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Missing or Uncertain Data</div>
+        </div>
+        <div class="card-body">
+          <div class="signal-list" id="missingDataList">
+            <div class="signal-item"><span class="signal-dot amber"></span>Loading…</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Why This Score Appears</div>
+        </div>
+        <div class="card-body">
+          <div id="scoreExplanationList">
+            <div class="feature-row"><span class="label">Score</span><span class="val">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Treatment Timeline + Cycle Impact -->
+    <div class="grid grid-2" id="treatment">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Treatment Timeline</div>
+        </div>
+        <div class="card-body">
+          <div class="timeline" id="timelineList">
+            <div class="signal-item"><span class="signal-dot gray"></span>No timeline loaded.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Cycle Lab Impact</div>
+        </div>
+        <div class="card-body">
+          <div id="cycleImpactList">
+            <div class="signal-item"><span class="signal-dot gray"></span>No cycle data loaded.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symptoms + Meds -->
+    <div class="grid grid-2" id="symptoms">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Recent Symptoms</div>
+        </div>
+        <div class="card-body">
+          <div id="symptomTable">
+            <table class="data-table">
+              <thead><tr><th>Date</th><th>Symptom</th><th>Severity</th><th>Notes</th></tr></thead>
+              <tbody id="symptomRows"><tr><td colspan="4" style="color:var(--muted)">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Medication Log</div>
+        </div>
+        <div class="card-body">
+          <table class="data-table">
+            <thead><tr><th>Date</th><th>Medication</th><th>Dose</th><th>Frequency</th></tr></thead>
+            <tbody id="medRows"><tr><td colspan="4" style="color:var(--muted)">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outcome + Interventions -->
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Treatment Outcome</div>
+        </div>
+        <div class="card-body">
+          <div id="outcomeList"><div class="signal-item"><span class="signal-dot gray"></span>No outcome recorded.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Support Interventions</div>
+        </div>
+        <div class="card-body">
+          <div id="interventionList"><div class="signal-item"><span class="signal-dot gray"></span>No interventions logged.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What to Bring to Care Team -->
+    <div class="card" id="care-prep">
+      <div class="card-header">
+        <div class="card-title">What To Bring To Your Care Team</div>
+      </div>
+      <div class="card-body">
+        <div id="reviewList"><div class="review-item"><div class="review-num">!</div>No review reasons loaded.</div></div>
+      </div>
+    </div>
+
+    <!-- Upload + Recent Uploads -->
+    <div class="grid grid-2" id="upload">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Upload Records</div>
+        </div>
+        <div class="card-body">
+          <label class="upload-zone" for="uploadFile">
+            <div class="upload-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 16V8m0 0-3 3m3-3 3 3M20 20H4a2 2 0 01-2-2V6a2 2 0 012-2h4l2 2h10a2 2 0 012 2v10a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <p>Drop a file or click to browse</p>
+            <small>Breast MRI, lab report, medication list, symptom note</small>
+          </label>
+          <input type="file" id="uploadFile">
+          <div class="form-row">
+            <select id="uploadType">
+              <option value="breast_mri">Breast MRI</option>
+              <option value="lab_report">Lab report</option>
+              <option value="medication_list">Medication list</option>
+              <option value="symptom_note">Symptom note</option>
+              <option value="document">Other document</option>
+            </select>
+            <textarea id="uploadNotes" placeholder="Optional note for your care team" rows="2"></textarea>
+            <button class="btn btn-primary" onclick="uploadRecord()">Upload to My Record</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Recent Uploads</div>
+        </div>
+        <div class="card-body">
+          <div id="uploadList">
+            <div class="signal-item"><span class="signal-dot gray"></span>No uploads yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main-wrap -->
+
+<!-- ══ CHAT PANEL ══════════════════════════════════ -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-panel-head">
+    <div>
+      <div class="chat-panel-head-title">Support Agent</div>
+      <div class="chat-panel-head-sub">Log symptoms, labs, medications.</div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M12.7 3.3L8 8 3.3 3.3 2 4.7 6.6 8 2 11.3l1.3 1.4L8 9.4l4.7 4.3 1.3-1.4L9.4 8l4.6-3.3z"/></svg>
+    </button>
   </div>
-  <button class="agent-button" onclick="toggleChat()">Chat</button>
-  <div class="toast" id="toast"></div>
+  <div class="chat-messages" id="chatThread">
+    <div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div>
+  </div>
+  <div class="chat-compose">
+    <textarea id="chatInput" placeholder="E.g. Nausea severity 6/10. Taking tamoxifen 20mg daily."></textarea>
+    <button class="btn btn-primary" onclick="sendChat()">Send & Save</button>
+    <div class="chat-safety">For severe or sudden symptoms, contact your oncology team or emergency services immediately.</div>
+  </div>
+</div>
 
-  <script>
-    const API_BASE = window.location.origin;
-    let currentPatientId = resolvePatientId();
-    let accessToken = localStorage.getItem("patientPortalAccessToken") || null;
-    let labChart = null;
+<button class="chat-fab" onclick="toggleChat()">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 2h20v14H13l-4 4v-4H2V2zm2 2v10h6v2.5L12.5 14H20V4H4z"/></svg>
+</button>
 
-    function resolvePatientId() {
-      const params = new URLSearchParams(window.location.search);
-      const patientFromLink = params.get("patient");
-      if (patientFromLink) {
-        localStorage.setItem("patientPortalPatientId", patientFromLink);
-        history.replaceState(null, "", "/patient");
-        return patientFromLink;
-      }
-      return localStorage.getItem("patientPortalPatientId") || "COMPV4-BRCA-0001";
-    }
+<div class="toast" id="toast"></div>
 
-    function authHeaders() {
-      return accessToken ? { "Authorization": `Bearer ${accessToken}` } : {};
-    }
+<script>
+  const API_BASE = window.location.origin;
+  let currentPatientId = resolvePatientId();
+  let accessToken = localStorage.getItem("patientPortalAccessToken") || null;
+  let labChart = null;
 
-    function toast(message) {
-      const el = document.getElementById("toast");
-      el.textContent = message;
-      el.classList.add("show");
-      clearTimeout(el._timer);
-      el._timer = setTimeout(() => el.classList.remove("show"), 2600);
-    }
+  function resolvePatientId() {
+    const params = new URLSearchParams(window.location.search);
+    const p = params.get("patient");
+    if (p) { localStorage.setItem("patientPortalPatientId", p); history.replaceState(null, "", "/patient"); return p; }
+    return localStorage.getItem("patientPortalPatientId") || "COMPV4-BRCA-0001";
+  }
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+  function authHeaders() {
+    return accessToken ? { "Authorization": `Bearer ${accessToken}` } : {};
+  }
 
-    function toggleChat() {
-      document.getElementById("chatWidget").classList.toggle("open");
-    }
+  function toast(msg) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove("show"), 2800);
+  }
 
-    function renderChart(history) {
-      const labels = history.map(row => String(row.date).slice(0, 10));
-      const ctx = document.getElementById("labChart");
-      if (labChart) labChart.destroy();
-      labChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [
-            { label: "WBC", data: history.map(r => r.wbc), borderColor: "#c45c6a", tension: 0.25 },
-            { label: "Hemoglobin", data: history.map(r => r.hemoglobin), borderColor: "#237a70", tension: 0.25 },
-            { label: "Platelets", data: history.map(r => r.platelets), borderColor: "#a8651e", tension: 0.25 }
-          ]
-        },
-        options: { responsive: true, plugins: { legend: { position: "bottom" } } }
-      });
-    }
+  function esc(v) {
+    return String(v ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
 
-    function renderChat(messages) {
-      const thread = document.getElementById("chatThread");
-      if (!messages || !messages.length) {
-        thread.innerHTML = '<div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div>';
-        return;
-      }
-      thread.innerHTML = messages.map(m => {
-        const meta = parseChatMeta(m.saved_actions_json);
-        const citations = m.role === "assistant" ? renderChatCitations(meta?.agent_pipeline?.citations || []) : "";
-        const feedback = m.role === "assistant" && m.id ? renderChatFeedback(m.id) : "";
-        return `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${escapeHtml(m.message)}${citations}${feedback}</div>`;
-      }).join("");
-      thread.scrollTop = thread.scrollHeight;
-    }
+  function initials(name) {
+    return (name || "??").split(" ").filter(Boolean).slice(0,2).map(n => n[0].toUpperCase()).join("");
+  }
 
-    function parseChatMeta(raw) {
-      if (!raw) return null;
-      try {
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? { saved_actions: parsed } : parsed;
-      } catch (_) {
-        return null;
-      }
-    }
+  function toggleChat() { document.getElementById("chatPanel").classList.toggle("open"); }
 
-    function renderChatCitations(citations) {
-      const safe = (citations || []).slice(0, 3);
-      if (!safe.length) return "";
-      return `<div class="msg-citations">${safe.map(citation => {
-        const label = escapeHtml(citation.source_name || citation.title || "Source");
-        const url = String(citation.source_url || "");
-        if (url.startsWith("http://") || url.startsWith("https://")) {
-          return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  function labStatus(value, low, high) {
+    if (value === null || value === undefined || value === "") return { cls:"gray", text:"No data" };
+    const v = Number(value);
+    if (v < low) return { cls:"red", text:"Below range" };
+    if (v > high) return { cls:"amber", text:"Above range" };
+    return { cls:"green", text:"Within range" };
+  }
+
+  function renderChart(history) {
+    const labels = history.map(r => String(r.date).slice(0,7));
+    const ctx = document.getElementById("labChart");
+    if (labChart) labChart.destroy();
+    labChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: "WBC", data: history.map(r => r.wbc), borderColor: "#c2455a", backgroundColor: "rgba(194,69,90,0.07)", tension: 0.3, pointRadius: 3 },
+          { label: "Hemoglobin", data: history.map(r => r.hemoglobin), borderColor: "#2f7a5e", backgroundColor: "rgba(47,122,94,0.07)", tension: 0.3, pointRadius: 3 },
+          { label: "Platelets / 10", data: history.map(r => r.platelets / 10), borderColor: "#b45309", backgroundColor: "rgba(180,83,9,0.07)", tension: 0.3, pointRadius: 3 }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom", labels: { font: { family: "DM Sans", size: 11 }, boxWidth: 10 } } },
+        scales: {
+          x: { grid: { color: "#e8ecf2" }, ticks: { font: { family: "DM Sans", size: 10 } } },
+          y: { grid: { color: "#e8ecf2" }, ticks: { font: { family: "DM Sans", size: 10 } } }
         }
-        return `<span>${label}</span>`;
-      }).join("")}</div>`;
-    }
+      }
+    });
+  }
 
-    function renderChatFeedback(messageId) {
-      return `<div class="msg-feedback"><span>Rate answer</span>${[1,2,3,4,5].map(rating =>
-        `<button type="button" onclick="submitAgentFeedback(${Number(messageId)}, ${rating})">${rating}</button>`
-      ).join("")}</div>`;
+  function renderChat(messages) {
+    const thread = document.getElementById("chatThread");
+    if (!messages || !messages.length) {
+      thread.innerHTML = '<div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div>';
+      return;
     }
+    thread.innerHTML = messages.map(m =>
+      `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${esc(m.message)}</div>`
+    ).join("");
+    thread.scrollTop = thread.scrollHeight;
+  }
 
-    function submitAgentFeedback(chatMessageId, rating) {
-      fetch(`${API_BASE}/me/agent-feedback`, {
+  function renderModelSignal(data) {
+    const pred = data.synthetic_model_prediction;
+    const el = document.getElementById("modelSignal");
+    if (!pred) { el.innerHTML = '<div class="signal-item"><span class="signal-dot gray"></span>No synthetic model prediction found.</div>'; return; }
+    const keys = ["logistic_regression_probability","extra_trees_probability","random_forest_probability","gradient_boosting_probability","temporal_gru_probability","temporal_1d_cnn_probability"];
+    const found = keys.map(k => ({ k, v: pred[k] })).find(x => x.v !== undefined && x.v !== null && x.v !== "");
+    if (!found) { el.innerHTML = '<div class="signal-item"><span class="signal-dot gray"></span>No model signal available.</div>'; return; }
+    const pct = Math.round(found.v * 1000) / 10;
+    const dot = found.v >= 0.66 ? "green" : found.v <= 0.4 ? "red" : "amber";
+    const label = found.v >= 0.66 ? "Favorable response signal" : found.v <= 0.4 ? "Lower response signal" : "Mixed response signal";
+    const actual = pred.actual_label !== undefined ? `<div class="signal-item" style="margin-top:6px"><span class="signal-dot gray"></span>Held-out label: ${esc(pred.actual_label)}</div>` : "";
+    el.innerHTML = `<div class="signal-item"><span class="signal-dot ${dot}"></span><strong>${pct}%</strong> — ${label}<br><span style="color:var(--muted);font-size:11px">${esc(found.k.replace("_probability",""))}</span></div>${actual}<div class="signal-item" style="margin-top:6px"><span class="signal-dot amber"></span>Trained on generated data. Not clinically validated.</div>`;
+  }
+
+  function renderModelExplanation(data) {
+    const xai = data.synthetic_model_explanation;
+    const el = document.getElementById("modelExplanation");
+    if (!xai) { el.innerHTML = '<div class="signal-item"><span class="signal-dot gray"></span>No explanation generated.</div>'; return; }
+    const pos = (xai.positive_contributions || []).slice(0,3);
+    const neg = (xai.negative_contributions || []).slice(0,3);
+    const row = (item, dot) => `<div class="feature-row"><span class="label">${esc(item.feature)}</span><span class="val" style="color:var(--${dot === 'green' ? 'green' : 'red'})">${Number(item.contribution).toFixed(3)}</span></div>`;
+    el.innerHTML = `<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Toward response</div>${pos.map(i => row(i,'green')).join("") || '<div class="feature-row"><span class="label" style="color:var(--muted)">None</span></div>'}</div><div><div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Away from response</div>${neg.map(i => row(i,'red')).join("") || '<div class="feature-row"><span class="label" style="color:var(--muted)">None</span></div>'}</div>`;
+  }
+
+  function renderTimeline(events) {
+    const el = document.getElementById("timelineList");
+    const latest = (events || []).slice(-10).reverse();
+    if (!latest.length) { el.innerHTML = '<div class="signal-item"><span class="signal-dot gray"></span>No timeline events.</div>'; return; }
+    el.innerHTML = latest.map((event, i) => `
+      <div class="timeline-item">
+        <div class="tl-dot"></div>
+        ${i < latest.length - 1 ? '<div class="tl-line"></div>' : ''}
+        <div class="tl-content">
+          <div class="tl-date">${String(event.date).slice(0,10)}</div>
+          <div class="tl-title">${esc(event.title || event.type)}</div>
+          <div class="tl-summary">${esc(event.summary || "")}</div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function renderCycleImpact(items) {
+    const el = document.getElementById("cycleImpactList");
+    if (!items || !items.length) { el.innerHTML = '<div class="signal-item"><span class="signal-dot gray"></span>No cycle lab impact available.</div>'; return; }
+    el.innerHTML = items.slice(-6).reverse().map(item => `
+      <div class="card-body" style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px">Cycle ${esc(item.cycle)}: ${esc(item.drug)}</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <span style="font-size:12px;color:var(--muted)">WBC nadir: <strong style="color:var(--navy)">${esc(item.min_wbc_post_cycle)}</strong></span>
+          <span style="font-size:12px;color:var(--muted)">Hgb nadir: <strong style="color:var(--navy)">${esc(item.min_hemoglobin_post_cycle)}</strong></span>
+          <span style="font-size:12px;color:var(--muted)">Plt nadir: <strong style="color:var(--navy)">${esc(item.min_platelets_post_cycle)}</strong></span>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function renderSignalItem(elId, message, dotColor) {
+    const el = document.getElementById(elId);
+    if (el) el.innerHTML = `<span class="signal-dot ${dotColor || 'gray'}"></span>${esc(message || "—")}`;
+  }
+
+  function renderPatientSummary(data) {
+    const summary = data.patient_timeline_summary || {};
+    document.getElementById("summaryHeadline").textContent = summary.headline || "Monitoring summary unavailable.";
+    document.getElementById("summaryText").textContent = summary.patient_summary || "More timeline data is needed.";
+
+    const listItems = (arr, fallback) => (arr || []).filter(Boolean).slice(0,5).map(i => `<li>${esc(i)}</li>`).join("") || `<li>${esc(fallback)}</li>`;
+    document.getElementById("summaryKeyPoints").innerHTML = listItems(summary.key_points, "No signals yet.");
+    document.getElementById("summaryReviewFlags").innerHTML = listItems(summary.review_flags, "No flags.");
+    document.getElementById("summaryUncertainty").innerHTML = listItems(summary.uncertainty_notes, "No uncertainty noted.");
+    document.getElementById("summarySafety").textContent = summary.safety_note || "Monitoring support only. This does not diagnose or choose treatment.";
+
+    const intel = data.timeline_intelligence || {};
+    const recentRaw = ((intel.last_14_days || {}).events || []).slice(0,5).map(e => `${String(e.date).slice(0,10)}: ${e.title || e.type} — ${e.summary || ""}`);
+    document.getElementById("recentChangesList").innerHTML = recentRaw.length
+      ? recentRaw.map(r => `<div class="signal-item"><span class="signal-dot rose"></span>${esc(r)}</div>`).join("")
+      : '<div class="signal-item"><span class="signal-dot gray"></span>No recent changes found.</div>';
+
+    const discuss = [
+      ...(summary.review_flags || []),
+      (intel.toxicity_trend || {}).message,
+      (intel.discordance || {}).message,
+    ].filter(Boolean);
+    document.getElementById("doctorDiscussionList").innerHTML = discuss.length
+      ? discuss.map(d => `<div class="discuss-item">${esc(d)}</div>`).join("")
+      : '<div class="discuss-item">No specific discussion prompts listed.</div>';
+
+    const missing = [...(summary.uncertainty_notes || []), ...(intel.missing_data_warnings || [])];
+    document.getElementById("missingDataList").innerHTML = missing.length
+      ? missing.map(m => `<div class="signal-item"><span class="signal-dot amber"></span>${esc(m)}</div>`).join("")
+      : '<div class="signal-item"><span class="signal-dot green"></span>No missing data warnings.</div>';
+
+    const assessment = data.multimodal_assessment || {};
+    const signals = assessment.signals || {};
+    const scoreRows = [
+      { label: "Monitoring score", val: `${assessment.treatment_monitoring_score ?? "—"} / 100` },
+      { label: "MRI response", val: signals.mri_response?.message || "—" },
+      { label: "Clinical monitoring", val: signals.clinical_monitoring?.message || "—" },
+      { label: "Symptom signal", val: signals.symptoms?.message || "—" },
+    ];
+    document.getElementById("scoreExplanationList").innerHTML = scoreRows.map(r => `<div class="feature-row"><span class="label">${esc(r.label)}</span><span class="val" style="max-width:55%;text-align:right;font-size:12px">${esc(r.val)}</span></div>`).join("");
+  }
+
+  function renderReport(data) {
+    const name = data.patient_name || data.patient_id;
+    const initStr = initials(name);
+
+    document.getElementById("sidebarAvatar").textContent = initStr;
+    document.getElementById("sidebarName").textContent = name;
+    document.getElementById("sidebarId").textContent = `Patient ID · ${data.patient_id || "—"}`;
+    document.getElementById("heroAvatar").textContent = initStr;
+    document.getElementById("patientName").textContent = name;
+    document.getElementById("topbarTitle").textContent = name;
+
+    // Meta tags
+    const diagnosisMeta = data.diagnosis ? `<span class="meta-tag">${esc(data.diagnosis)}</span>` : "";
+    const assessment = data.multimodal_assessment || {};
+    const status = assessment.overall_status || "unknown";
+    const statusCls = status.includes("favorable") || status.includes("good") ? "status-active" : status.includes("mixed") ? "status-watch" : "status-alert";
+    document.getElementById("patientMeta").innerHTML = `${diagnosisMeta}<span class="meta-tag ${statusCls}">${esc(status)}</span>`;
+
+    document.getElementById("monitoringScore").textContent = assessment.treatment_monitoring_score ?? "--";
+    document.getElementById("overallStatus").textContent = assessment.overall_message || status;
+
+    const labs = data.latest_labs || {};
+
+    // WBC: normal 4.5–11
+    const wbcS = labStatus(labs.wbc, 4.5, 11);
+    document.getElementById("wbc").innerHTML = `${labs.wbc ?? "--"}<span class="stat-unit">×10³/µL</span>`;
+    document.getElementById("wbcCard").className = `stat-card ${wbcS.cls}`;
+    document.getElementById("wbcDot").className = `range-dot ${wbcS.cls}`;
+    document.getElementById("wbcStatus").textContent = wbcS.text + " (ref 4.5–11)";
+
+    // Hemoglobin: normal 12–16
+    const hgbS = labStatus(labs.hemoglobin, 12, 16);
+    document.getElementById("hemoglobin").innerHTML = `${labs.hemoglobin ?? "--"}<span class="stat-unit">g/dL</span>`;
+    document.getElementById("hgbCard").className = `stat-card ${hgbS.cls}`;
+    document.getElementById("hgbDot").className = `range-dot ${hgbS.cls}`;
+    document.getElementById("hgbStatus").textContent = hgbS.text + " (ref 12–16)";
+
+    // Platelets: normal 150–400
+    const pltS = labStatus(labs.platelets, 150, 400);
+    document.getElementById("platelets").innerHTML = `${labs.platelets ?? "--"}<span class="stat-unit">×10³/µL</span>`;
+    document.getElementById("pltCard").className = `stat-card ${pltS.cls}`;
+    document.getElementById("pltDot").className = `range-dot ${pltS.cls}`;
+    document.getElementById("pltStatus").textContent = pltS.text + " (ref 150–400)";
+
+    renderChart(data.lab_history || []);
+
+    const mri = assessment.signals?.mri_response || {};
+    const clinical = assessment.signals?.clinical_monitoring || {};
+    const symptoms = assessment.signals?.symptoms || {};
+    renderSignalItem("mriSignal", `MRI: ${mri.message || "No data"}`, mri.response_probability >= 0.6 ? "green" : "amber");
+    renderSignalItem("clinicalSignal", `Clinical: ${clinical.message || "No data"}`, "amber");
+    renderSignalItem("symptomSignal", `Symptoms: ${symptoms.message || "No data"}`, "rose");
+    renderSignalItem("overallMessage", assessment.overall_message || "No overall assessment.", status.includes("favorable") ? "green" : "amber");
+
+    renderPatientSummary(data);
+    renderModelSignal(data);
+    renderModelExplanation(data);
+    renderTimeline(data.timeline || []);
+    renderCycleImpact(data.treatment_effects || []);
+
+    // Symptoms table
+    const symRows = (data.symptoms || []).slice(-8).reverse();
+    document.getElementById("symptomRows").innerHTML = symRows.length
+      ? symRows.map(s => `<tr><td>${String(s.date).slice(0,10)}</td><td>${esc(s.symptom)}</td><td><span class="pill ${s.severity >= 7 ? 'pill-red' : s.severity >= 4 ? 'pill-amber' : 'pill-green'}">${s.severity}/10</span></td><td>${esc(s.notes || "—")}</td></tr>`).join("")
+      : '<tr><td colspan="4" style="color:var(--muted)">No symptoms logged yet.</td></tr>';
+
+    // Meds table
+    const medRows = (data.medication_logs || []).slice(-8).reverse();
+    document.getElementById("medRows").innerHTML = medRows.length
+      ? medRows.map(m => `<tr><td>${String(m.date).slice(0,10)}</td><td>${esc(m.medication)}</td><td>${esc(m.dose || "—")}</td><td>${esc(m.frequency || "—")}</td></tr>`).join("")
+      : '<tr><td colspan="4" style="color:var(--muted)">No medications logged.</td></tr>';
+
+    // Review reasons
+    const reasons = (data.ai_summary || {}).review_reasons || [];
+    document.getElementById("reviewList").innerHTML = reasons.length
+      ? reasons.map((r, i) => `<div class="review-item"><div class="review-num">${i+1}</div><div>${esc(r)}</div></div>`).join("")
+      : '<div class="review-item"><div class="review-num">—</div><div>No review reasons listed.</div></div>';
+
+    // Outcome
+    const outcome = data.treatment_outcome;
+    document.getElementById("outcomeList").innerHTML = outcome
+      ? `<div style="margin-bottom:10px"><span class="pill pill-green" style="margin-bottom:8px">${esc(outcome.response_category)}</span><div style="font-size:13px;color:var(--slate);line-height:1.5">${esc(outcome.cancer_status)}</div></div><div style="font-size:12px;color:var(--muted)">${esc(outcome.maintenance_plan || "No maintenance plan logged.")}</div>`
+      : '<div class="signal-item"><span class="signal-dot gray"></span>No outcome recorded yet.</div>';
+
+    // Interventions
+    const intv = (data.clinical_interventions || []).slice(-8).reverse();
+    document.getElementById("interventionList").innerHTML = intv.length
+      ? intv.map(i => `<div class="signal-item" style="flex-direction:column;gap:2px;align-items:flex-start"><div style="font-size:12px;color:var(--muted)">${String(i.date).slice(0,10)}</div><div style="font-size:13px;font-weight:500;color:var(--navy)">${esc(i.intervention_type)}</div><div style="font-size:12px;color:var(--muted)">${esc(i.reason)}${i.medication_or_product ? ` · ${esc(i.medication_or_product)}` : ""}</div></div>`).join("")
+      : '<div class="signal-item"><span class="signal-dot gray"></span>No interventions logged.</div>';
+
+    // Uploads
+    document.getElementById("uploadList").innerHTML = (data.uploads || []).slice(0,8).map(u =>
+      `<div class="signal-item" style="flex-direction:column;align-items:flex-start;gap:2px"><div style="font-size:12px;font-weight:600;color:var(--rose)">${esc(u.upload_type)}</div><div style="font-size:13px;color:var(--navy)">${esc(u.original_filename)}</div><div style="font-size:11px;color:var(--muted)">${esc(u.notes || "No note")}</div></div>`
+    ).join("") || '<div class="signal-item"><span class="signal-dot gray"></span>No uploads yet.</div>';
+
+    renderChat(data.chat_history || []);
+  }
+
+  function loadPatient() {
+    fetch(`${API_BASE}/me/patient-report`, { headers: authHeaders() })
+      .then(r => { if (!r.ok) throw new Error(`Could not load patient record (${r.status})`); return r.json(); })
+      .then(renderReport)
+      .catch(err => toast(err.message));
+  }
+
+  function sendChat() {
+    const input = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if (!message) { toast("Please write a message first."); return; }
+    fetch(`${API_BASE}/me/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeaders() },
+      body: JSON.stringify({ message })
+    })
+    .then(r => { if (!r.ok) throw new Error(`Chat failed (${r.status})`); return r.json(); })
+    .then(result => {
+      input.value = "";
+      toast(result.saved_actions?.length ? "Saved to your record." : "Message saved.");
+      loadPatient();
+    })
+    .catch(err => toast(err.message));
+  }
+
+  function uploadRecord() {
+    const file = document.getElementById("uploadFile").files[0];
+    if (!file) { toast("Please choose a file first."); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      fetch(`${API_BASE}/me/uploads`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({
-          chat_message_id: chatMessageId,
-          rating,
-          thumbs_up: rating >= 4
+          upload_type: document.getElementById("uploadType").value,
+          file_name: file.name,
+          content_type: file.type || "application/octet-stream",
+          content_base64: reader.result,
+          notes: document.getElementById("uploadNotes").value.trim()
         })
       })
-      .then(r => { if (!r.ok) throw new Error(`Feedback failed (${r.status})`); return r.json(); })
-      .then(() => toast("Feedback saved."))
-      .catch(err => toast(err.message));
-    }
-
-    function probabilityFromPrediction(prediction) {
-      if (!prediction) return null;
-      const keys = [
-        "logistic_regression_probability",
-        "extra_trees_probability",
-        "random_forest_probability",
-        "gradient_boosting_probability",
-        "temporal_gru_probability",
-        "temporal_1d_cnn_probability"
-      ];
-      for (const key of keys) {
-        if (prediction[key] !== undefined && prediction[key] !== null && prediction[key] !== "") {
-          return { key, value: Number(prediction[key]) };
-        }
-      }
-      return null;
-    }
-
-    function renderModelSignal(data) {
-      const prediction = data.synthetic_model_prediction;
-      const signal = probabilityFromPrediction(prediction);
-      const modelEl = document.getElementById("modelSignal");
-      if (!signal) {
-        modelEl.innerHTML = '<div class="item muted">No synthetic longitudinal model prediction found for this patient.</div>';
-        return;
-      }
-      const percent = Math.round(signal.value * 1000) / 10;
-      const label = signal.value >= 0.66 ? "favorable response signal" : signal.value <= 0.4 ? "lower response signal" : "mixed response signal";
-      const actual = prediction.actual_label !== undefined ? `<br><span class="muted">Synthetic held-out label: ${escapeHtml(prediction.actual_label)}</span>` : "";
-      modelEl.innerHTML = `
-        <div class="item"><strong>${percent}%</strong> demo treatment-response probability<br><span class="muted">${escapeHtml(label)} from ${escapeHtml(signal.key.replace("_probability", ""))}</span>${actual}</div>
-        <div class="item muted">This score is trained on generated longitudinal data for engineering practice. It is not clinical validation.</div>
-      `;
-    }
-
-    function renderModelExplanation(data) {
-      const xai = data.synthetic_model_explanation;
-      const el = document.getElementById("modelExplanation");
-      if (!xai) {
-        el.innerHTML = '<div class="item muted">No model explanation generated yet.</div>';
-        return;
-      }
-      const positive = (xai.positive_contributions || []).slice(0, 3);
-      const negative = (xai.negative_contributions || []).slice(0, 3);
-      const row = item => `<div class="feature-row"><strong>${escapeHtml(item.feature)}</strong><span>${Number(item.contribution).toFixed(3)}</span></div>`;
-      el.innerHTML = `
-        <div class="item"><strong>Toward response</strong>${positive.map(row).join("") || '<div class="muted">No positive contributors.</div>'}</div>
-        <div class="item"><strong>Away from response</strong>${negative.map(row).join("") || '<div class="muted">No negative contributors.</div>'}</div>
-      `;
-    }
-
-    function renderTimeline(events) {
-      const el = document.getElementById("timelineList");
-      const latest = (events || []).slice(-12).reverse();
-      el.innerHTML = latest.map(event =>
-        `<div class="timeline-item"><strong>${String(event.date).slice(0,10)} ${escapeHtml(event.title || event.type)}</strong><br><span class="muted">${escapeHtml(event.summary || "")}</span></div>`
-      ).join("") || '<div class="timeline-item muted">No timeline events loaded.</div>';
-    }
-
-    function renderCycleImpact(items) {
-      const el = document.getElementById("cycleImpactList");
-      el.innerHTML = (items || []).slice(-6).reverse().map(item =>
-        `<div class="item">Cycle ${escapeHtml(item.cycle)}: ${escapeHtml(item.drug)}<br><span class="muted">Lowest post-cycle WBC ${escapeHtml(item.min_wbc_post_cycle)}, hemoglobin ${escapeHtml(item.min_hemoglobin_post_cycle)}, platelets ${escapeHtml(item.min_platelets_post_cycle)}</span></div>`
-      ).join("") || '<div class="item muted">No cycle lab impact available.</div>';
-    }
-
-    function listItems(items, fallback) {
-      const values = (items || []).filter(Boolean).slice(0, 5);
-      if (!values.length) return `<li>${escapeHtml(fallback)}</li>`;
-      return values.map(item => `<li>${escapeHtml(item)}</li>`).join("");
-    }
-
-    function itemList(items, fallback) {
-      const values = (items || []).filter(Boolean).slice(0, 5);
-      if (!values.length) return `<div class="item muted">${escapeHtml(fallback)}</div>`;
-      return values.map(item => `<div class="item">${escapeHtml(item)}</div>`).join("");
-    }
-
-    function renderPatientSummary(data) {
-      const summary = data.patient_timeline_summary || {};
-      document.getElementById("summaryHeadline").textContent = summary.headline || "Monitoring summary is not available yet.";
-      document.getElementById("summaryText").textContent = summary.patient_summary || "The portal needs more timeline data to create a useful summary.";
-      document.getElementById("summaryKeyPoints").innerHTML = listItems(summary.key_points, "No key signals available yet.");
-      document.getElementById("summaryReviewFlags").innerHTML = listItems(summary.review_flags, "No review flags listed right now.");
-      document.getElementById("summaryUncertainty").innerHTML = listItems(summary.uncertainty_notes, "No uncertainty notes listed right now.");
-      document.getElementById("summarySafety").textContent = summary.safety_note || "Monitoring support only. This does not diagnose or choose treatment.";
-
-      const intelligence = data.timeline_intelligence || {};
-      const recentEvents = ((intelligence.last_14_days || {}).events || []).slice(0, 4).map(event =>
-        `${String(event.date).slice(0, 10)}: ${event.title || event.type} - ${event.summary || ""}`
-      );
-      document.getElementById("recentChangesList").innerHTML = itemList(recentEvents, "No recent timeline changes were found in the represented record.");
-
-      const discussion = [
-        ...(summary.review_flags || []),
-        (intelligence.toxicity_trend || {}).message,
-        (intelligence.discordance || {}).message,
-      ].filter(Boolean);
-      document.getElementById("doctorDiscussionList").innerHTML = itemList(discussion, "No specific discussion prompts are listed right now.");
-
-      const missing = [
-        ...(summary.uncertainty_notes || []),
-        ...(intelligence.missing_data_warnings || []),
-      ];
-      document.getElementById("missingDataList").innerHTML = itemList(missing, "No major missing-data warnings are listed right now.");
-
-      const assessment = data.multimodal_assessment || {};
-      const signals = assessment.signals || {};
-      const scoreReasons = [
-        `Monitoring score: ${assessment.treatment_monitoring_score ?? "not available"}/100.`,
-        signals.mri_response?.message,
-        signals.clinical_monitoring?.message,
-        signals.symptoms?.message,
-        "The score combines available monitoring signals; it does not diagnose or choose treatment.",
-      ].filter(Boolean);
-      document.getElementById("scoreExplanationList").innerHTML = itemList(scoreReasons, "Score explanation is not available yet.");
-    }
-
-    function renderReport(data) {
-      document.getElementById("patientName").textContent = data.patient_name || data.patient_id;
-      document.getElementById("patientContext").textContent = data.diagnosis || "Breast cancer monitoring record";
-      renderPatientSummary(data);
-
-      const assessment = data.multimodal_assessment || {};
-      document.getElementById("monitoringScore").textContent = assessment.treatment_monitoring_score ?? "--";
-      document.getElementById("overallStatus").textContent = assessment.overall_status || "unknown";
-      document.getElementById("overallMessage").textContent = assessment.overall_message || "No assessment available.";
-
-      const mri = assessment.signals?.mri_response || {};
-      const clinical = assessment.signals?.clinical_monitoring || {};
-      const symptoms = assessment.signals?.symptoms || {};
-      const mriProbability = mri.pcr_probability ?? mri.response_probability;
-      document.getElementById("mriSignal").textContent = `${mri.message || "No MRI signal available."}${mriProbability !== undefined ? ` probability: ${mriProbability}` : ""}`;
-      document.getElementById("clinicalSignal").textContent = clinical.message || "No clinical signal available.";
-      document.getElementById("symptomSignal").textContent = symptoms.message || "No symptom signal available.";
-
-      const labs = data.latest_labs || {};
-      document.getElementById("wbc").innerHTML = `${labs.wbc ?? "--"}<small>x10^3/uL</small>`;
-      document.getElementById("hemoglobin").innerHTML = `${labs.hemoglobin ?? "--"}<small>g/dL</small>`;
-      document.getElementById("platelets").innerHTML = `${labs.platelets ?? "--"}<small>x10^3/uL</small>`;
-      renderChart(data.lab_history || []);
-
-      const symptomList = document.getElementById("symptomList");
-      symptomList.innerHTML = (data.symptoms || []).slice(-5).reverse().map(s =>
-        `<div class="item">${String(s.date).slice(0,10)}: ${escapeHtml(s.symptom)} severity ${s.severity}/10${s.notes ? `<br><span class="muted">${escapeHtml(s.notes)}</span>` : ""}</div>`
-      ).join("") || '<div class="item muted">No symptoms logged yet.</div>';
-
-      const meds = document.getElementById("medicationList");
-      meds.innerHTML = (data.medication_logs || []).slice(-6).reverse().map(m =>
-        `<div class="item">${String(m.date).slice(0,10)}: ${escapeHtml(m.medication)}${m.dose ? ` ${escapeHtml(m.dose)}` : ""}${m.frequency ? ` &middot; ${escapeHtml(m.frequency)}` : ""}</div>`
-      ).join("") || '<div class="item muted">No medications logged yet.</div>';
-
-      renderModelSignal(data);
-      renderModelExplanation(data);
-      renderTimeline(data.timeline || []);
-      renderCycleImpact(data.treatment_effects || []);
-
-      const summary = data.ai_summary || {};
-      const reasons = summary.review_reasons || [];
-      document.getElementById("reviewList").innerHTML = reasons.length
-        ? reasons.map(r => `<div class="item">${escapeHtml(r)}</div>`).join("")
-        : '<div class="item muted">No review reasons listed right now.</div>';
-
-      const outcome = data.treatment_outcome;
-      document.getElementById("outcomeList").innerHTML = outcome
-        ? `<div class="item"><strong>${escapeHtml(outcome.response_category)}</strong><br>${escapeHtml(outcome.cancer_status)}<br><span class="muted">${escapeHtml(outcome.maintenance_plan || "No maintenance plan logged.")}</span></div>`
-        : '<div class="item muted">No final outcome recorded yet.</div>';
-
-      const interventions = data.clinical_interventions || [];
-      document.getElementById("interventionList").innerHTML = interventions.slice(-8).reverse().map(i =>
-        `<div class="item">${String(i.date).slice(0,10)}: ${escapeHtml(i.intervention_type)}<br><span class="muted">${escapeHtml(i.reason)}${i.medication_or_product ? ` - ${escapeHtml(i.medication_or_product)}` : ""}</span></div>`
-      ).join("") || '<div class="item muted">No interventions logged.</div>';
-
-      const uploads = document.getElementById("uploadList");
-      uploads.innerHTML = (data.uploads || []).slice(0, 8).map(u =>
-        `<div class="item">${escapeHtml(u.upload_type)}: ${escapeHtml(u.original_filename)}<br><span class="muted">${escapeHtml(u.notes || "No note")}</span></div>`
-      ).join("") || '<div class="item muted">No uploads yet.</div>';
-
-      renderChat(data.chat_history || []);
-    }
-
-    function loadPatient() {
-      fetch(`${API_BASE}/me/patient-report`, { headers: authHeaders() })
-        .then(r => { if (!r.ok) throw new Error(`Could not load your patient record`); return r.json(); })
-        .then(renderReport)
-        .catch(err => toast(err.message));
-    }
-
-    function sendChat() {
-      const input = document.getElementById("chatInput");
-      const message = input.value.trim();
-      if (!message) { toast("Write a message first."); return; }
-      fetch(`${API_BASE}/me/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({ message })
-      })
-      .then(r => { if (!r.ok) throw new Error(`Chat failed (${r.status})`); return r.json(); })
-      .then(result => {
-        input.value = "";
-        toast(result.saved_actions?.length ? "Saved to your record." : "Message saved.");
+      .then(r => { if (!r.ok) throw new Error(`Upload failed (${r.status})`); return r.json(); })
+      .then(() => {
+        document.getElementById("uploadFile").value = "";
+        document.getElementById("uploadNotes").value = "";
+        toast("Upload saved to your record.");
         loadPatient();
       })
       .catch(err => toast(err.message));
-    }
+    };
+    reader.readAsDataURL(file);
+  }
 
-    function uploadRecord() {
-      const file = document.getElementById("uploadFile").files[0];
-      if (!file) { toast("Choose a file first."); return; }
-      const reader = new FileReader();
-      reader.onload = () => {
-        fetch(`${API_BASE}/me/uploads`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...authHeaders() },
-          body: JSON.stringify({
-            upload_type: document.getElementById("uploadType").value,
-            file_name: file.name,
-            content_type: file.type || "application/octet-stream",
-            content_base64: reader.result,
-            notes: document.getElementById("uploadNotes").value.trim()
-          })
-        })
-        .then(r => { if (!r.ok) throw new Error(`Upload failed (${r.status})`); return r.json(); })
-        .then(() => {
-          document.getElementById("uploadFile").value = "";
-          document.getElementById("uploadNotes").value = "";
-          toast("Upload saved to your record.");
-          loadPatient();
-        })
-        .catch(err => toast(err.message));
-      };
-      reader.readAsDataURL(file);
-    }
+  function loginAndLoadPatient() {
+    fetch(`${API_BASE}/auth/demo-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: "patient", patient_id: currentPatientId })
+    })
+    .then(r => { if (!r.ok) throw new Error(`Login failed (${r.status})`); return r.json(); })
+    .then(session => {
+      accessToken = session.access_token;
+      localStorage.setItem("patientPortalAccessToken", accessToken);
+      localStorage.setItem("patientPortalPatientId", currentPatientId);
+      loadPatient();
+    })
+    .catch(err => toast(err.message));
+  }
 
-    function loginAndLoadPatient() {
-      fetch(`${API_BASE}/auth/demo-login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: "patient", patient_id: currentPatientId })
-      })
-      .then(r => { if (!r.ok) throw new Error(`Login failed (${r.status})`); return r.json(); })
-      .then(session => {
-        accessToken = session.access_token;
-        localStorage.setItem("patientPortalAccessToken", accessToken);
-        localStorage.setItem("patientPortalPatientId", currentPatientId);
-        loadPatient();
-      })
-      .catch(err => toast(err.message));
-    }
-
-    loginAndLoadPatient();
-  </script>
+  loginAndLoadPatient();
+</script>
 </body>
 </html>
