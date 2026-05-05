@@ -247,6 +247,17 @@
 
     <section class="grid two">
       <div class="card">
+        <h2>API Cost & Latency</h2>
+        <div class="list" id="apiCostList"></div>
+      </div>
+      <div class="card">
+        <h2>Security Guardrails</h2>
+        <div class="list" id="securityGuardrailList"></div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
         <h2>Champion Metric Guide</h2>
         <div class="metric-table" id="metricGuideList"></div>
       </div>
@@ -660,6 +671,7 @@
 
     function renderRagEvaluation(rag, feedback) {
       const recent = rag?.recent_calls || [];
+      const costs = rag?.api_costs || {};
       document.getElementById("ragEvaluationList").innerHTML = [
         rowHtml("RAG status", rag?.purpose || "RAG quality telemetry.", statusPill(rag?.status || "unavailable")),
         row("Calls", "Total patient-agent RAG pipeline calls.", rag?.call_count ?? 0),
@@ -685,6 +697,26 @@
         ...((feedback?.recent_feedback || []).slice(0, 4).map(item =>
           row(`Rating ${item.rating}/5`, item.feedback_text || "No note", item.thumbs_up === null ? "" : (item.thumbs_up ? "up" : "down"))
         ))
+      ].join("");
+
+      document.getElementById("apiCostList").innerHTML = [
+        row("Total API cost", "Estimated provider cost for current RAG calls.", `$${costs.total_estimated_api_cost_usd ?? "0.000000"}`),
+        row("Average API cost", "Estimated average per RAG call.", `$${costs.average_estimated_api_cost_usd ?? "0.000000"}`),
+        row("Token estimate", `input ${costs.estimated_input_tokens ?? 0}, output ${costs.estimated_output_tokens ?? 0}`, `${costs.estimated_total_tokens ?? 0} total`),
+        row("Path mix", "Generated calls vs cache hits.", `${costs.generated_call_count ?? 0} generated / ${costs.cache_hit_count ?? 0} cached`),
+        row("Cost basis", costs.cost_basis || "No cost basis available."),
+        ...((rag?.cost_latency_tradeoffs || []).slice(0, 4).map(item =>
+          row(item.path, `${item.meaning} Avg latency ${item.average_latency_ms ?? "n/a"}ms`, `${item.average_estimated_total_tokens ?? "n/a"} tokens`)
+        ))
+      ].join("");
+
+      document.getElementById("securityGuardrailList").innerHTML = [
+        row("Purpose", "Blocks prompt injection, jailbreaks, privacy-boundary requests, database/file access attempts, and sensitive data exfiltration."),
+        row("Input guardrail counts", JSON.stringify(rag?.input_guardrail_counts || {})),
+        row("Output guardrail counts", JSON.stringify(rag?.output_guardrail_counts || {})),
+        ...recent.filter(item => item.input_guardrail_status === "failed").slice(0, 4).map(item =>
+          row(item.intent, `blocked; issues ${JSON.stringify((item.guardrail_issues || {}).input || [])}`, item.created_at || "")
+        )
       ].join("");
     }
 

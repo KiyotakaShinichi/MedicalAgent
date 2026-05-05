@@ -1,8 +1,9 @@
-name: CI
+name: CI/CD
 
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -21,9 +22,40 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Secret scan
+        run: python scripts/ci_secret_scan.py
+
       - name: Compile backend
         run: python -m compileall backend
 
       - name: Run tests
         run: python -m unittest tests/test_breast_monitoring.py
 
+      - name: Frontend smoke checks
+        run: python scripts/smoke_frontend.py
+
+      - name: Knowledge base ingestion smoke
+        run: |
+          mkdir -p KnowledgeBase/raw Data/test_tmp
+          printf "# Breast cancer chemotherapy\n\nCBC monitoring can help track WBC, hemoglobin, platelets, and treatment toxicity." > KnowledgeBase/raw/ci_smoke.md
+          python scripts/ingest_knowledge_base.py --input-dir KnowledgeBase/raw --output-path Data/test_tmp/rag_chunks.json
+
+      - name: API smoke checks
+        env:
+          DATABASE_URL: sqlite:///./Data/test_tmp/ci_medical_agent.db
+        run: |
+          python -m uvicorn backend.api.main:app --host 127.0.0.1 --port 8017 &
+          echo $! > uvicorn.pid
+          trap "kill $(cat uvicorn.pid)" EXIT
+          sleep 8
+          python scripts/api_smoke.py
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t medical-agent:ci .

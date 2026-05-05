@@ -377,6 +377,18 @@ def root():
     return RedirectResponse(url="/frontend/index.html")
 
 
+@app.get("/health")
+def healthcheck(db: Session = Depends(get_db)):
+    from sqlalchemy import text
+
+    db.execute(text("SELECT 1"))
+    return {
+        "status": "ok",
+        "service": "ai_breast_cancer_monitoring",
+        "database": "ok",
+    }
+
+
 @app.get("/patient", include_in_schema=False)
 def patient_portal():
     return RedirectResponse(url="/frontend/patient.html")

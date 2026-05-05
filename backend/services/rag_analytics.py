@@ -41,6 +41,7 @@ def build_rag_evaluation_summary(db, limit=10):
         "p95_latency_ms": _percentile(latency_values, 0.95),
         "average_estimated_total_tokens": _round_mean(total_token_values),
         "estimated_llm_cost_usd": round(sum(float(row.estimated_llm_cost_usd or 0) for row in rows), 6),
+        "api_costs": _api_cost_summary(rows),
         "cost_latency_tradeoffs": _cost_latency_tradeoffs(rows),
         "metric_definitions": metric_definitions(),
         "recent_calls": [_row_to_dict(row) for row in rows[:limit]],
@@ -89,6 +90,26 @@ def metric_definitions():
             "later_upgrade": "Pair with clinician review and issue taxonomy.",
         },
     ]
+
+
+def _api_cost_summary(rows):
+    total_input_tokens = sum(int(row.estimated_input_tokens or 0) for row in rows)
+    total_output_tokens = sum(int(row.estimated_output_tokens or 0) for row in rows)
+    total_tokens = sum(int(row.estimated_total_tokens or 0) for row in rows)
+    total_cost = round(sum(float(row.estimated_llm_cost_usd or 0) for row in rows), 6)
+    generated_calls = [row for row in rows if row.cache_status not in {"exact_cache_hit", "semantic_cache_hit"}]
+    cache_hits = [row for row in rows if row.cache_status in {"exact_cache_hit", "semantic_cache_hit"}]
+    return {
+        "total_estimated_api_cost_usd": total_cost,
+        "average_estimated_api_cost_usd": round(total_cost / len(rows), 6) if rows else 0.0,
+        "estimated_input_tokens": total_input_tokens,
+        "estimated_output_tokens": total_output_tokens,
+        "estimated_total_tokens": total_tokens,
+        "generated_call_count": len(generated_calls),
+        "cache_hit_count": len(cache_hits),
+        "cost_basis": "Current RAG answer path is deterministic/local, so provider API cost is logged as $0. Token estimates are ready for Groq/OpenAI/RAGAS judge costs later.",
+        "admin_note": "Use this card to compare cache hits, generated calls, latency, and future provider token costs.",
+    }
 
 
 def _cost_latency_tradeoffs(rows):

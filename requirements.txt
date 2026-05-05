@@ -1,9 +1,12 @@
 pandas
+fastapi
+uvicorn[standard]
 google-genai
 groq
 python-dotenv
 sqlalchemy
 openpyxl
+pypdf
 pydicom
 pillow
 numpy

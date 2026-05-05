@@ -294,6 +294,74 @@ http://127.0.0.1:8017/clinician
 http://127.0.0.1:8017/admin
 ```
 
+## CI/CD and Deployment Readiness
+
+The repository now includes a GitHub Actions CI/CD workflow in:
+
+```text
+.github/workflows/ci.yml
+```
+
+The workflow runs on push, pull request, and manual dispatch:
+
+- secret scan for API keys/tokens
+- backend compilation
+- unit and regression tests
+- RAG guardrail/red-team tests
+- frontend smoke checks
+- knowledge-base ingestion smoke test
+- FastAPI health/API smoke test
+- Docker image build
+
+Local Docker run:
+
+```text
+docker compose up --build
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8017/health
+http://127.0.0.1:8017/patient
+http://127.0.0.1:8017/clinician
+http://127.0.0.1:8017/admin
+```
+
+The app uses `DATABASE_URL` from `.env` when provided. Docker defaults to:
+
+```text
+sqlite:////app/Data/medical_agent.db
+```
+
+## Knowledge Base Ingestion
+
+Future research papers and trusted source files can be staged in:
+
+```text
+KnowledgeBase/raw/
+```
+
+Supported starter formats:
+
+- Markdown
+- text
+- PDF through `pypdf`
+
+Run ingestion:
+
+```text
+python scripts/ingest_knowledge_base.py
+```
+
+Output:
+
+```text
+Data/rag_knowledge_base_chunks.json
+```
+
+The patient RAG agent automatically combines the built-in safety/education snippets with ingested local KB chunks when that file exists. The generated chunk file is ignored by git so licensed papers and large local documents do not accidentally get committed.
+
 ## Environment
 
 Use the root `.env` file:

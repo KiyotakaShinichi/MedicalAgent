@@ -5,6 +5,8 @@ from time import perf_counter
 from datetime import datetime, timezone
 
 from backend.models import AgentResponseCache, RAGEvaluationLog
+from backend.services.kb_ingestion import load_ingested_chunks
+from backend.services.security_guardrails import detect_prompt_injection_or_exfiltration
 
 
 MAX_CONTEXT_CHARS = 1300
@@ -112,6 +114,40 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             "cache_allowed": False,
             "message": input_guardrails["message"],
         }
+        intent = "security_boundary"
+        rewritten = rewrite_and_decompose(query, intent)
+        result = {
+            "reply": _security_block_reply(input_guardrails),
+            "citations": [],
+            "intent": intent,
+            "safety": safety,
+            "retrieval_context": [],
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "safety_note": "Security boundary: the assistant cannot reveal private records, system instructions, database contents, secrets, or raw internal knowledge base data.",
+            "validation": {
+                "status": "passed",
+                "issues": [],
+                "citation_count": 0,
+            },
+            "cache": {
+                "status": "blocked_by_input_guardrail",
+                "cacheable": False,
+                "reason": input_guardrails["scope"],
+            },
+            "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "input_guardrail_block"),
+        }
+        return _finalize_result(
+            db=db,
+            patient_id=patient_id,
+            query=query,
+            rewritten=rewritten,
+            result=result,
+            retrieved=[],
+            reranked=[],
+            compressed=[],
+            input_guardrails=input_guardrails,
+            started=started,
+        )
     intent = route_intent(query, actions, safety)
     rewritten = rewrite_and_decompose(query, intent)
     cacheable = is_cacheable(query, intent, safety, actions, urgent_flags)
@@ -185,44 +221,36 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
 
 
 def input_guardrail_check(query, safety):
+    security = detect_prompt_injection_or_exfiltration(query)
     lower = query.lower()
     issues = []
-    injection_terms = [
-        "ignore previous",
-        "ignore all previous",
-        "system prompt",
-        "developer message",
-        "jailbreak",
-        "bypass safety",
-        "forget your rules",
-        "act as my doctor",
-    ]
-    privacy_terms = [
-        "show another patient",
-        "other patient's",
-        "other patient",
-        "all patients",
-        "someone else's record",
-    ]
-    if any(term in lower for term in injection_terms):
-        issues.append("prompt_injection_or_policy_bypass")
-    if any(term in lower for term in privacy_terms):
-        issues.append("privacy_boundary_request")
+    if security["blocked"]:
+        issues.extend(security["issues"])
     if safety.get("level") == "high_risk":
         issues.append(safety.get("scope") or "high_risk_medical_scope")
 
-    status = "failed" if any(issue in issues for issue in ["prompt_injection_or_policy_bypass", "privacy_boundary_request"]) else "passed"
+    blocking_issues = {
+        "prompt_injection_or_jailbreak",
+        "database_or_file_access_attempt",
+        "sensitive_data_exfiltration_attempt",
+        "privacy_boundary_request",
+    }
+    status = "failed" if any(issue in blocking_issues for issue in issues) else "passed"
     if status == "failed":
         scope = "input_guardrail_block"
-        message = "Input guardrail detected unsafe instruction, privacy-boundary, or policy-bypass wording."
+        message = security["message"]
     else:
         scope = safety.get("scope")
         message = "Input guardrail passed."
     return {
         "status": status,
         "scope": scope,
-        "issues": issues,
+        "issues": sorted(set(issues)),
         "message": message,
+        "security": {
+            "confidence": security["confidence"],
+            "signals": security["signals"],
+        },
     }
 
 
@@ -374,7 +402,7 @@ def semantic_cache_check(db, semantic_key, intent, min_similarity=0.86):
 def hybrid_retrieval(rewritten, intent):
     query_tokens = set(_tokenize(rewritten["expanded_query"]))
     rows = []
-    for snippet in KNOWLEDGE_SNIPPETS:
+    for snippet in _knowledge_snippets():
         text_tokens = set(_tokenize(" ".join([snippet["title"], snippet["text"], " ".join(snippet["tags"])])))
         lexical = len(query_tokens & text_tokens) / max(len(query_tokens), 1)
         semantic = len(query_tokens & set(snippet["tags"])) / max(len(set(snippet["tags"])), 1)
@@ -393,7 +421,7 @@ def expand_parent_child_windows(retrieved):
     seen = {item["id"] for item in retrieved}
     expanded = list(retrieved)
     parent_ids = {item["parent_id"] for item in retrieved}
-    for snippet in KNOWLEDGE_SNIPPETS:
+    for snippet in _knowledge_snippets():
         if snippet["parent_id"] in parent_ids and snippet["id"] not in seen:
             expanded.append({
                 **snippet,
@@ -403,6 +431,11 @@ def expand_parent_child_windows(retrieved):
             })
             seen.add(snippet["id"])
     return expanded
+
+
+def _knowledge_snippets():
+    external = load_ingested_chunks()
+    return KNOWLEDGE_SNIPPETS + external
 
 
 def rerank_context(expanded, rewritten, intent, safety):
@@ -825,6 +858,17 @@ def _safety_reply(fallback_response, compressed_context, safety):
     return (
         f"{fallback_response} I cannot safely make diagnosis or treatment decisions. "
         "Please contact the oncology care team for medical review."
+    )
+
+
+def _security_block_reply(input_guardrails):
+    issues = ", ".join(input_guardrails.get("issues") or ["unsafe request"])
+    return (
+        "I blocked that request for security and privacy reasons. "
+        "I cannot reveal system instructions, database contents, secrets, raw internal knowledge-base data, "
+        "or any other patient's information. "
+        f"Detected category: {issues}. "
+        "You can ask general breast cancer treatment-monitoring questions or enter your own symptoms, labs, medications, and uploads."
     )
 
 

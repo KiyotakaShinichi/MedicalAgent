@@ -12,3 +12,6 @@ Data/qin_mri_previews/
 Data/breastdcedl_previews/
 Data/uploads/
 Data/test_tmp/
+Data/rag_knowledge_base_chunks.json
+KnowledgeBase/raw/
+KnowledgeBase/processed/
