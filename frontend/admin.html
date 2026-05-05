@@ -1,1378 +1,1908 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BCMS Admin — Model Operations</title>
-  <style>
-    :root {
-      --bg: #f5f5f0;
-      --surface: #ffffff;
-      --surface2: #f9f9f6;
-      --text: #1a1a18;
-      --muted: #6b6b65;
-      --faint: #9b9b93;
-      --line: rgba(26,26,24,0.10);
-      --line2: rgba(26,26,24,0.06);
-      --blue: #1a56db;
-      --blue-bg: #eff4ff;
-      --blue-text: #1e429f;
-      --green: #057a55;
-      --green-bg: #f0fdf4;
-      --green-text: #065f46;
-      --amber: #b45309;
-      --amber-bg: #fffbeb;
-      --amber-text: #92400e;
-      --red: #c81e1e;
-      --red-bg: #fef2f2;
-      --red-text: #991b1b;
-      --gray-bg: #f3f4f6;
-      --gray-text: #374151;
-      --sidebar-w: 210px;
-      --r: 8px;
-      --r-lg: 12px;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'DM Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 13px;
-      line-height: 1.5;
-      min-height: 100vh;
-    }
-    /* ── Layout ── */
-    .shell { display: flex; min-height: 100vh; }
-    .sidebar {
-      width: var(--sidebar-w);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-    }
-    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-    /* ── Sidebar ── */
-    .brand {
-      padding: 18px 16px 14px;
-      border-bottom: 1px solid var(--line2);
-    }
-    .brand-name {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-    .brand-sub {
-      font-size: 11px;
-      color: var(--faint);
-      margin-top: 1px;
-    }
-    .nav-group { padding: 10px 0 2px; }
-    .nav-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 0 14px 4px;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 14px;
-      font-size: 13px;
-      color: var(--muted);
-      cursor: pointer;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-      border-radius: 0;
-      transition: background 0.12s, color 0.12s;
-    }
-    .nav-item:hover { background: var(--bg); color: var(--text); }
-    .nav-item.active { color: var(--blue-text); background: var(--blue-bg); font-weight: 500; }
-    .nav-icon { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.6; }
-    .nav-item.active .nav-icon { opacity: 1; }
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 12px 14px;
-      border-top: 1px solid var(--line2);
-      display: flex; gap: 6px;
-    }
-    /* ── Top bar ── */
-    .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-      padding: 12px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .page-heading { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
-    .page-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
-    .topbar-actions { display: flex; gap: 8px; align-items: center; }
-    /* ── Buttons ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 6px 12px;
-      border-radius: var(--r);
-      font: inherit;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      color: var(--text);
-      transition: background 0.1s;
-    }
-    .btn:hover { background: var(--bg); }
-    .btn-primary {
-      background: var(--blue);
-      color: #fff;
-      border-color: var(--blue);
-    }
-    .btn-primary:hover { background: #1648c4; }
-    .btn-sm { padding: 4px 9px; font-size: 11px; }
-    /* ── Content area ── */
-    .content { padding: 20px 24px 48px; flex: 1; }
-    /* ── Pages ── */
-    .page { display: none; }
-    .page.active { display: block; }
-    /* ── Grid ── */
-    .g2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-    .g3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .g4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-    .gap { margin-top: 14px; }
-    /* ── Cards ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--r-lg);
-      padding: 16px;
-    }
-    .card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .card-title {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--muted);
-    }
-    /* ── KPI cards ── */
-    .kpi {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--r-lg);
-      padding: 14px 16px;
-    }
-    .kpi-val { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin: 4px 0 3px; }
-    .kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; }
-    .kpi-delta { font-size: 11px; }
-    .delta-up { color: var(--green); }
-    .delta-warn { color: var(--amber); }
-    .delta-neutral { color: var(--faint); }
-    /* ── Badges / Pills ── */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .badge-ok { background: var(--green-bg); color: var(--green-text); }
-    .badge-warn { background: var(--amber-bg); color: var(--amber-text); }
-    .badge-fail { background: var(--red-bg); color: var(--red-text); }
-    .badge-info { background: var(--blue-bg); color: var(--blue-text); }
-    .badge-neutral { background: var(--gray-bg); color: var(--gray-text); }
-    /* ── Alerts ── */
-    .alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-    .alert {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: var(--r);
-      font-size: 12px;
-      border: 1px solid;
-    }
-    .alert-warn { background: var(--amber-bg); border-color: #fcd34d; }
-    .alert-ok { background: var(--green-bg); border-color: #6ee7b7; }
-    .alert-fail { background: var(--red-bg); border-color: #fca5a5; }
-    .alert-icon { font-size: 13px; flex-shrink: 0; margin-top: 0px; }
-    /* ── Metric rows ── */
-    .metric-list { display: flex; flex-direction: column; gap: 7px; }
-    .metric-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 8px 10px;
-      background: var(--surface2);
-      border-radius: var(--r);
-      border: 1px solid var(--line2);
-    }
-    .metric-row-left { flex: 1; min-width: 0; }
-    .metric-row-label { font-size: 12px; font-weight: 500; }
-    .metric-row-sub { font-size: 11px; color: var(--faint); margin-top: 1px; }
-    .metric-row-right { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
-    .metric-val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
-    /* ── Bar ── */
-    .bar-track { width: 80px; height: 5px; border-radius: 999px; background: var(--line); overflow: hidden; flex-shrink: 0; }
-    .bar-fill { height: 100%; border-radius: 999px; }
-    .bar-ok { background: var(--green); }
-    .bar-warn { background: var(--amber); }
-    .bar-fail { background: var(--red); }
-    .bar-info { background: var(--blue); }
-    /* ── Tables ── */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      padding: 6px 10px;
-      text-align: left;
-      border-bottom: 1px solid var(--line);
-    }
-    td {
-      padding: 9px 10px;
-      border-bottom: 1px solid var(--line2);
-      vertical-align: middle;
-      color: var(--text);
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--surface2); }
-    /* ── Gate rows ── */
-    .gate-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      background: var(--surface2);
-      border-radius: var(--r);
-      border: 1px solid var(--line2);
-      font-size: 12px;
-    }
-    .gate-label { flex: 1; }
-    .gate-val { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
-    /* ── Dot ── */
-    .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .dot-ok { background: var(--green); }
-    .dot-warn { background: var(--amber); }
-    .dot-fail { background: var(--red); }
-    .dot-info { background: var(--blue); }
-    .dot-neutral { background: var(--faint); }
-    /* ── Tabs ── */
-    .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
-    .tab {
-      padding: 7px 12px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      transition: color 0.12s;
-    }
-    .tab:hover { color: var(--text); }
-    .tab.active { color: var(--blue); border-color: var(--blue); }
-    .subpage { display: none; }
-    .subpage.active { display: flex; flex-direction: column; gap: 14px; }
-    /* ── Timeline ── */
-    .timeline { display: flex; flex-direction: column; }
-    .tl-item {
-      display: flex;
-      gap: 10px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--line2);
-      font-size: 12px;
-    }
-    .tl-item:last-child { border-bottom: none; }
-    .tl-time { color: var(--faint); flex-shrink: 0; min-width: 44px; font-variant-numeric: tabular-nums; }
-    /* ── Misc section label ── */
-    .section-label {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--faint);
-      margin-bottom: 8px;
-    }
-    /* ── Conf chart ── */
-    .conf-chart {
-      display: flex;
-      align-items: flex-end;
-      gap: 3px;
-      height: 80px;
-      padding: 0 0 4px;
-    }
-    .conf-bar {
-      flex: 1;
-      background: var(--blue-bg);
-      border: 1px solid #c3d9ff;
-      border-radius: 3px 3px 0 0;
-      min-height: 4px;
-      transition: background 0.15s;
-    }
-    .conf-bar:hover { background: var(--blue); }
-    /* ── Scope warning ── */
-    .scope-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 8px 10px;
-      background: var(--red-bg);
-      border: 1px solid #fca5a5;
-      border-radius: var(--r);
-      font-size: 12px;
-      color: var(--red-text);
-    }
-    /* ── mono ── */
-    .mono { font-family: 'JetBrains Mono', 'Cascadia Mono', ui-monospace, monospace; font-size: 11px; }
-    /* ── loading states ── */
-    .loading { color: var(--faint); font-size: 12px; padding: 12px; text-align: center; }
-    .empty { color: var(--faint); font-size: 12px; padding: 12px; text-align: center; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OncoTrack — Clinician Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:         #0d1117;
+  --bg-2:       #161b22;
+  --bg-3:       #1c2330;
+  --bg-4:       #222c3a;
+  --border:     rgba(255,255,255,0.07);
+  --border-2:   rgba(255,255,255,0.12);
+
+  --text:       #e6edf3;
+  --text-2:     #8b949e;
+  --text-3:     #484f58;
+
+  --rose:       #e05a6b;
+  --rose-dim:   rgba(224,90,107,0.15);
+  --rose-glow:  rgba(224,90,107,0.30);
+
+  --green:      #3fb68a;
+  --green-dim:  rgba(63,182,138,0.12);
+  --amber:      #d4930a;
+  --amber-dim:  rgba(212,147,10,0.12);
+  --red:        #f85149;
+  --red-dim:    rgba(248,81,73,0.12);
+  --blue:       #58a6ff;
+  --blue-dim:   rgba(88,166,255,0.10);
+
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Sora', sans-serif;
+
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 14px; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-4); border-radius: 4px; }
+
+/* ── TOPBAR ─────────────────────────────────── */
+.topbar {
+  height: 52px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.brand-icon {
+  width: 28px; height: 28px;
+  background: var(--rose);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-icon svg { width: 14px; height: 14px; fill: white; }
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.brand-role {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--rose);
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  background: var(--rose-dim);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--rose-glow);
+}
+
+.topbar-sep { flex: 1; }
+
+.patient-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.picker-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+select, input, textarea {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg-3);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
+  padding: 6px 10px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+select {
+  cursor: pointer;
+  padding-right: 28px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b949e' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+select:focus, input:focus, textarea:focus { border-color: var(--rose); }
+textarea { resize: vertical; line-height: 1.5; }
+
+/* ── SAFETY STRIP ──────────────────────────── */
+.safety-strip {
+  background: var(--amber-dim);
+  border-bottom: 1px solid rgba(212,147,10,0.2);
+  padding: 7px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--amber);
+  letter-spacing: 0.01em;
+}
+
+.safety-strip svg { flex-shrink: 0; }
+
+/* ── BODY LAYOUT ────────────────────────────── */
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── SIDEBAR ────────────────────────────────── */
+.sidebar {
+  width: 220px;
+  background: var(--bg-2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  padding: 16px 12px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-section:last-child { border-bottom: none; }
+
+.sidebar-section-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border-radius: var(--r-sm);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--text-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.12s;
+}
+
+.nav-btn:hover { background: var(--bg-3); color: var(--text); }
+.nav-btn.active { background: var(--rose-dim); color: var(--rose); font-weight: 500; }
+.nav-btn.active svg { color: var(--rose); }
+
+.nav-btn svg { width: 14px; height: 14px; color: var(--text-3); flex-shrink: 0; }
+
+.queue-badge {
+  margin-left: auto;
+  background: var(--rose);
+  color: white;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  padding: 1px 5px;
+  border-radius: 99px;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* ── MAIN CONTENT ───────────────────────────── */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── TAB NAVIGATION ─────────────────────────── */
+.tab-bar {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 3px;
+  align-self: flex-start;
+}
+
+.tab-btn {
+  padding: 6px 14px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { background: var(--bg-4); color: var(--text); }
+
+/* ── TAB PANELS ─────────────────────────────── */
+.tab-panel { display: none; flex-direction: column; gap: 16px; }
+.tab-panel.active { display: flex; }
+
+/* ── PAGE SECTION HEADER ────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ── CARDS ──────────────────────────────────── */
+.card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.card-body { padding: 14px 16px; }
+.card-body-flush { /* no padding */ }
+
+/* ── GRID HELPERS ───────────────────────────── */
+.grid { display: grid; gap: 14px; }
+.g2 { grid-template-columns: repeat(2, 1fr); }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.g4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ── PATIENT HEADER BANNER ──────────────────── */
+.patient-banner {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.patient-avatar {
+  width: 48px; height: 48px;
+  background: var(--rose-dim);
+  border: 1px solid var(--rose-glow);
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--rose);
+  flex-shrink: 0;
+  font-family: var(--mono);
+}
+
+.patient-main { flex: 1; }
+
+.patient-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.patient-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.tag-default { color: var(--text-2); border-color: var(--border-2); background: var(--bg-3); }
+.tag-green   { color: var(--green); border-color: rgba(63,182,138,0.3); background: var(--green-dim); }
+.tag-amber   { color: var(--amber); border-color: rgba(212,147,10,0.3); background: var(--amber-dim); }
+.tag-red     { color: var(--red); border-color: rgba(248,81,73,0.3); background: var(--red-dim); }
+.tag-rose    { color: var(--rose); border-color: var(--rose-glow); background: var(--rose-dim); }
+.tag-blue    { color: var(--blue); border-color: rgba(88,166,255,0.25); background: var(--blue-dim); }
+
+.patient-score {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.score-num {
+  font-family: var(--mono);
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+}
+
+.score-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ── STAT CARDS ─────────────────────────────── */
+.stat-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.stat-card.ok::after   { background: var(--green); }
+.stat-card.warn::after { background: var(--amber); }
+.stat-card.bad::after  { background: var(--red); }
+.stat-card.na::after   { background: var(--bg-4); }
+
+.stat-name {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.stat-val {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+}
+
+.stat-unit {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+.stat-ref {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ref-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ref-dot.ok   { background: var(--green); }
+.ref-dot.warn { background: var(--amber); }
+.ref-dot.bad  { background: var(--red); }
+.ref-dot.na   { background: var(--text-3); }
+
+/* ── RISK / FLAG ITEMS ──────────────────────── */
+.flag-list { display: flex; flex-direction: column; gap: 6px; }
+
+.flag-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  font-size: 12.5px;
+  line-height: 1.5;
+  border: 1px solid;
+}
+
+.flag-item.urgent { background: var(--red-dim); border-color: rgba(248,81,73,0.2); color: #f0918c; }
+.flag-item.watch  { background: var(--amber-dim); border-color: rgba(212,147,10,0.2); color: #d4a72c; }
+.flag-item.info   { background: var(--blue-dim); border-color: rgba(88,166,255,0.15); color: #7ab8fc; }
+.flag-item.ok     { background: var(--green-dim); border-color: rgba(63,182,138,0.15); color: var(--green); }
+
+.flag-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.flag-item.urgent .flag-dot { background: var(--red); }
+.flag-item.watch  .flag-dot { background: var(--amber); }
+.flag-item.info   .flag-dot { background: var(--blue); }
+.flag-item.ok     .flag-dot { background: var(--green); }
+
+/* ── TIMELINE ───────────────────────────────── */
+.timeline { display: flex; flex-direction: column; }
+
+.tl-row {
+  display: grid;
+  grid-template-columns: 100px 80px 1fr;
+  gap: 14px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+  align-items: baseline;
+  transition: background 0.1s;
+}
+
+.tl-row:last-child { border-bottom: none; }
+.tl-row:hover { background: var(--bg-3); }
+
+.tl-date { font-family: var(--mono); color: var(--text-3); font-size: 11px; }
+.tl-type { }
+.tl-desc strong { color: var(--text); font-weight: 500; }
+.tl-desc p { color: var(--text-2); font-size: 11.5px; margin-top: 2px; line-height: 1.4; }
+
+/* ── DATA ROWS / LISTS ──────────────────────── */
+.data-rows { display: flex; flex-direction: column; }
+
+.data-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.5;
+  transition: background 0.1s;
+}
+
+.data-row:last-child { border-bottom: none; }
+.data-row:hover { background: var(--bg-3); }
+
+.data-row-bullet {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border-2);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+/* ── RECEPTOR BADGES ────────────────────────── */
+.receptor-grid {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── PROFILE TABLE ──────────────────────────── */
+.profile-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.profile-field { }
+
+.pf-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+
+.pf-value {
+  font-size: 13px;
+  color: var(--text);
+}
+
+/* ── ASSESSMENT BLOCK ───────────────────────── */
+.assess-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.assess-item {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 12px;
+}
+
+.assess-key {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.assess-val {
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.assess-sub {
+  font-size: 11px;
+  color: var(--text-2);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* ── REVIEW PANEL ───────────────────────────── */
+.review-form { display: flex; flex-direction: column; gap: 10px; }
+
+.form-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.score-inputs {
+  display: flex;
+  gap: 10px;
+}
+
+.score-inputs input {
+  width: 80px;
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ── BUTTONS ────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: var(--r-sm);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border-2);
+  background: var(--bg-3);
+  color: var(--text-2);
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--bg-4); color: var(--text); }
+
+.btn-primary { background: var(--rose); color: white; border-color: var(--rose); }
+.btn-primary:hover { background: #c94b5b; border-color: #c94b5b; }
+
+.btn-green { background: var(--green-dim); color: var(--green); border-color: rgba(63,182,138,0.25); }
+.btn-green:hover { background: rgba(63,182,138,0.2); }
+
+.btn-red { background: var(--red-dim); color: var(--red); border-color: rgba(248,81,73,0.25); }
+.btn-red:hover { background: rgba(248,81,73,0.2); }
+
+/* ── QUEUE TABLE ────────────────────────────── */
+.queue-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+
+.queue-table th {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: left;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-3);
+}
+
+.queue-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-2);
+  vertical-align: top;
+}
+
+.queue-table tr:last-child td { border-bottom: none; }
+.queue-table tr:hover td { background: var(--bg-3); cursor: pointer; }
+
+.queue-table td strong { color: var(--text); font-weight: 500; }
+
+/* ── PRIORITY METER ─────────────────────────── */
+.priority-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg-4);
+  overflow: hidden;
+  margin-top: 4px;
+  width: 60px;
+}
+
+.priority-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--rose);
+}
+
+/* ── CHAT ───────────────────────────────────── */
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 14px 16px;
+}
+
+.chat-msg {
+  padding: 8px 11px;
+  border-radius: var(--r-sm);
+  font-size: 12.5px;
+  line-height: 1.5;
+  border: 1px solid;
+}
+
+.chat-msg.user {
+  background: var(--rose-dim);
+  border-color: var(--rose-glow);
+  color: var(--text);
+  align-self: flex-end;
+  max-width: 85%;
+}
+
+.chat-msg.assistant {
+  background: var(--bg-3);
+  border-color: var(--border);
+  color: var(--text-2);
+}
+
+.chat-compose {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+}
+
+.chat-compose textarea {
+  flex: 1;
+  min-height: 52px;
+}
+
+/* ── DATA ENTRY ACCORDION ───────────────────── */
+.accordion { display: flex; flex-direction: column; gap: 8px; }
+
+.acc-panel {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.acc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s;
+}
+
+.acc-header:hover { background: var(--bg-3); }
+
+.acc-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.acc-chevron {
+  margin-left: auto;
+  color: var(--text-3);
+  transition: transform 0.2s;
+}
+
+.acc-header.open .acc-chevron { transform: rotate(180deg); }
+
+.acc-body {
+  display: none;
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.acc-body.open { display: block; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.form-row-wide { grid-template-columns: 1fr; }
+
+/* ── CHART ──────────────────────────────────── */
+.chart-wrap { position: relative; height: 140px; }
+
+/* ── RADIOLOGY ──────────────────────────────── */
+.radio-rows { display: flex; flex-direction: column; gap: 8px; }
+
+.radio-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12.5px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.radio-row:last-child { border-bottom: none; }
+.radio-key { color: var(--text-3); font-family: var(--mono); font-size: 10px; min-width: 100px; flex-shrink: 0; }
+.radio-val { color: var(--text); }
+
+/* ── PREDICTION AUDIT ───────────────────────── */
+.audit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.audit-row:last-child { border-bottom: none; }
+.audit-time { font-family: var(--mono); font-size: 10px; color: var(--text-3); flex-shrink: 0; }
+.audit-model { color: var(--text); font-weight: 500; }
+.audit-prob { font-family: var(--mono); font-size: 11px; margin-left: auto; flex-shrink: 0; }
+
+/* ── EMPTY ──────────────────────────────────── */
+.empty {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  padding: 16px;
+  text-align: center;
+}
+
+/* ── TOAST ──────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-3);
+  border: 1px solid var(--border-2);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: var(--r-md);
+  font-size: 12.5px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.2s ease;
+  z-index: 999;
+  max-width: 300px;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.error { border-color: rgba(248,81,73,0.4); color: var(--red); }
+.toast.success { border-color: rgba(63,182,138,0.4); color: var(--green); }
+
+/* ── MRI ENTRIES ────────────────────────────── */
+.mri-entry {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.mri-entry:last-child { border-bottom: none; }
+.mri-meta { color: var(--text); margin-bottom: 2px; }
+.mri-path { font-family: var(--mono); font-size: 10px; color: var(--text-3); }
+
+/* ── PRE SUMMARY ────────────────────────────── */
+.summary-pre {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-2);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  padding: 14px 16px;
+}
+
+@media (max-width: 960px) {
+  .sidebar { display: none; }
+  .g3, .g4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .g2, .g3, .g4 { grid-template-columns: 1fr; }
+  .assess-grid { grid-template-columns: 1fr; }
+  .tl-row { grid-template-columns: 1fr; gap: 4px; }
+  .main { padding: 12px; }
+}
+</style>
 </head>
 <body>
-<div class="shell">
 
-  <!-- Sidebar -->
-  <nav class="sidebar">
-    <div class="brand">
-      <div class="brand-name">BCMS Admin</div>
-      <div class="brand-sub">Model Operations</div>
+<!-- ── TOPBAR ─────────────────────────────────── -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 2C6.69 2 4 4.69 4 8c0 2.15 1.08 4.04 2.73 5.17L6 18h8l-.73-4.83C14.92 12.04 16 10.15 16 8c0-3.31-2.69-6-6-6z"/>
+      </svg>
     </div>
+    <span class="brand-name">OncoTrack</span>
+  </div>
+  <span class="brand-role">CLINICIAN</span>
+  <div class="topbar-sep"></div>
+  <div class="patient-picker">
+    <span class="picker-label">Patient</span>
+    <select id="patientSelect" style="min-width:180px;"></select>
+  </div>
+</header>
 
-    <div class="nav-group">
-      <div class="nav-label">Overview</div>
-      <button class="nav-item active" onclick="nav('overview', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="5" rx="1"/></svg>
-        Dashboard
-      </button>
-      <button class="nav-item" onclick="nav('alerts', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1a4 4 0 00-4 4v3l-1 2h10l-1-2V5a4 4 0 00-4-4z"/><path d="M5.5 11.5a1.5 1.5 0 003 0"/></svg>
-        Alerts &amp; Issues
-      </button>
-    </div>
+<!-- ── SAFETY STRIP ──────────────────────────── -->
+<div class="safety-strip">
+  <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  CLINICAL DECISION SUPPORT ONLY — Does not diagnose cancer or confirm metastasis. All findings require licensed physician review before clinical action.
+</div>
 
-    <div class="nav-group">
-      <div class="nav-label">Model</div>
-      <button class="nav-item" onclick="nav('performance', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1 10 4 5 7 8 10 3 13 6"/></svg>
-        Performance
-      </button>
-      <button class="nav-item" onclick="nav('drift', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 1"/></svg>
-        Drift Monitor
-      </button>
-      <button class="nav-item" onclick="nav('ab', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l5-9 5 9"/><path d="M4 9h6"/></svg>
-        A/B Testing
-      </button>
-    </div>
+<!-- ── APP BODY ──────────────────────────────── -->
+<div class="app-body">
 
-    <div class="nav-group">
-      <div class="nav-label">Pipeline</div>
-      <button class="nav-item" onclick="nav('rag', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="12" height="6" rx="2"/><path d="M4 4V3a1 1 0 011-1h4a1 1 0 011 1v1"/></svg>
-        RAG &amp; Agent
+  <!-- ── SIDEBAR ──────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Navigation</div>
+      <button class="nav-btn active" onclick="switchTab('overview', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1" opacity=".6"/><rect x="9" y="1" width="6" height="6" rx="1" opacity=".6"/><rect x="1" y="9" width="6" height="6" rx="1" opacity=".6"/><rect x="9" y="9" width="6" height="6" rx="1" opacity=".6"/></svg>
+        Overview
       </button>
-      <button class="nav-item" onclick="nav('gates', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5-3 5 3v4a5 5 0 01-5 4 5 5 0 01-5-4V4z"/><path d="M5 7l1.5 1.5L9 5"/></svg>
-        Release Gates
+      <button class="nav-btn" onclick="switchTab('labs', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 1v6L2 13h12L11 7V1H5z" opacity=".6"/></svg>
+        Labs &amp; Trends
       </button>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">Feedback</div>
-      <button class="nav-item" onclick="nav('clinician', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="4" r="2.5"/><path d="M1 13c0-2.5 1.8-4 4-4"/><path d="M10 8l1.5 1.5L14 7"/></svg>
+      <button class="nav-btn" onclick="switchTab('assessment', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.5 3h1v4.5l3 1.8-.5.86L7.5 9V4z" opacity=".6"/></svg>
+        Assessment
+      </button>
+      <button class="nav-btn" onclick="switchTab('imaging', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="12" rx="1.5" opacity=".3"/><circle cx="6" cy="7" r="2.5" opacity=".7"/><path d="M10 5l4 6H2l4-4z" opacity=".5"/></svg>
+        Imaging
+      </button>
+      <button class="nav-btn" onclick="switchTab('timeline', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4h12M2 8h9M2 12h6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        Timeline
+      </button>
+      <button class="nav-btn" onclick="switchTab('review', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v12H2V2zm2 3v6h8V5H4zm1 1h6v1H5V6zm0 2h4v1H5V8z" opacity=".6"/></svg>
         Clinician Review
       </button>
-      <button class="nav-item" onclick="nav('audit', this)">
-        <svg class="nav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="10" height="10" rx="1.5"/><path d="M4 6h6M4 9h4"/></svg>
-        Audit Logs
+      <button class="nav-btn" onclick="switchTab('queue', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14M1 8h10M1 13h6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        Review Queue
+        <span class="queue-badge" id="queueBadge">0</span>
       </button>
     </div>
 
-    <div class="sidebar-footer">
-      <a href="/clinician" class="btn btn-sm" style="flex:1;justify-content:center">Clinician</a>
-      <button class="btn btn-sm btn-primary" onclick="loadAnalytics()">Refresh</button>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Data Entry</div>
+      <button class="nav-btn" onclick="switchTab('entry', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="6" y="1" width="4" height="14" rx="1" opacity=".6"/><rect x="1" y="6" width="14" height="4" rx="1" opacity=".6"/></svg>
+        Add / Import
+      </button>
+      <button class="nav-btn" onclick="switchTab('chat', this)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v9H9l-3 3v-3H2V2z" opacity=".6"/></svg>
+        Patient Chat
+      </button>
     </div>
-  </nav>
+  </aside>
 
-  <!-- Main -->
-  <div class="main">
+  <!-- ── MAIN ─────────────────────────────────── -->
+  <main class="main">
 
-    <!-- Top bar -->
-    <div class="topbar">
-      <div id="topbarInfo">
-        <div class="page-heading">Dashboard</div>
-        <div class="page-sub">Breast cancer treatment monitoring · Model Operations</div>
+    <!-- ─────── OVERVIEW ─────── -->
+    <div id="tab-overview" class="tab-panel active">
+
+      <!-- Patient Banner -->
+      <div class="patient-banner">
+        <div class="patient-avatar" id="ov-initials">--</div>
+        <div class="patient-main">
+          <div class="patient-name" id="ov-name">Select a patient</div>
+          <div class="patient-tags" id="ov-tags">
+            <span class="tag tag-default">Loading…</span>
+          </div>
+        </div>
+        <div class="patient-score">
+          <div class="score-num" id="ov-score">--</div>
+          <div class="score-label">Monitoring<br>Score / 100</div>
+        </div>
       </div>
-      <div class="topbar-actions">
-        <span id="topbarBadge"></span>
-        <button class="btn btn-sm" onclick="loadAnalytics()">↻ Refresh data</button>
+
+      <!-- Risk Flags -->
+      <div>
+        <div class="section-header">
+          <span class="section-title">Risk Flags</span>
+        </div>
+        <div class="flag-list" id="ov-risks">
+          <div class="empty">No risk data loaded.</div>
+        </div>
       </div>
-    </div>
 
-    <div class="content">
-
-      <!-- ══ OVERVIEW ══ -->
-      <div class="page active" id="page-overview">
-        <div id="alertsBanner" class="alerts"></div>
-
-        <div class="g4">
-          <div class="kpi">
-            <div class="kpi-label">Champion AUROC</div>
-            <div class="kpi-val" id="kpi-auroc">—</div>
-            <div class="kpi-delta delta-neutral" id="kpi-auroc-sub">held-out patient split</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Audit events</div>
-            <div class="kpi-val" id="kpi-audit">—</div>
-            <div class="kpi-delta delta-neutral">prediction logs</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Clinician accept rate</div>
-            <div class="kpi-val" id="kpi-accept">—</div>
-            <div class="kpi-delta delta-neutral" id="kpi-accept-sub">reviews</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Hard gate failures</div>
-            <div class="kpi-val" id="kpi-gates">—</div>
-            <div class="kpi-delta delta-neutral" id="kpi-gates-sub">—</div>
+      <!-- Patient Profile -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Patient Profile</span>
+        </div>
+        <div class="card-body">
+          <div class="profile-table" id="ov-profile">
+            <div class="empty">Select a patient to begin.</div>
           </div>
         </div>
+      </div>
 
-        <div class="gap g2">
-          <!-- Champion metrics -->
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Champion model</span>
-              <span id="overviewChampionBadge" class="badge badge-neutral">—</span>
-            </div>
-            <div class="metric-list" id="overviewMetrics">
-              <div class="loading">Loading metrics…</div>
-            </div>
-          </div>
-
-          <!-- System health -->
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">System health</span>
-              <span id="systemHealthBadge" class="badge badge-neutral">Loading…</span>
-            </div>
-            <div class="metric-list" id="systemHealthList">
-              <div class="loading">Loading…</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="gap g2">
-          <!-- Confidence distribution -->
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Prediction confidence distribution</span>
-              <span class="badge badge-neutral" id="confSampleBadge">—</span>
-            </div>
-            <div class="conf-chart" id="confChart"></div>
-            <div style="font-size:11px;color:var(--faint);margin-top:6px" id="confSub">—</div>
-          </div>
-
-          <!-- Recent activity -->
-          <div class="card">
-            <div class="card-head"><span class="card-title">Recent activity</span></div>
-            <div class="timeline" id="recentActivity">
-              <div class="loading">Loading…</div>
-            </div>
-          </div>
-        </div>
-      </div><!-- /overview -->
-
-      <!-- ══ ALERTS ══ -->
-      <div class="page" id="page-alerts">
-        <div class="section-label">Active warnings</div>
-        <div id="activeAlertsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
-          <div class="loading">Loading…</div>
-        </div>
-        <div class="section-label">Drift details</div>
+      <!-- Changes + Review Reasons -->
+      <div class="grid g2">
         <div class="card">
-          <div class="card-head"><span class="card-title">Feature drift — all features</span></div>
-          <div class="table-wrap">
-            <table id="driftTableAlerts">
-              <thead><tr><th>Feature</th><th>Reference mean</th><th>Current mean</th><th>Std shift</th><th>Status</th></tr></thead>
-              <tbody><tr><td colspan="5" class="loading">Loading…</td></tr></tbody>
-            </table>
-          </div>
+          <div class="card-header"><span class="card-title">Changes Since Baseline</span></div>
+          <div class="data-rows" id="ov-changes"><div class="empty">No changes recorded.</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Review Reasons</span></div>
+          <div class="data-rows" id="ov-review-reasons"><div class="empty">No review reasons.</div></div>
         </div>
       </div>
 
-      <!-- ══ PERFORMANCE ══ -->
-      <div class="page" id="page-performance">
-        <div class="tabs">
-          <div class="tab active" onclick="subTab(this,'perf','core')">Core metrics</div>
-          <div class="tab" onclick="subTab(this,'perf','calibration')">Calibration</div>
-          <div class="tab" onclick="subTab(this,'perf','subgroup')">Subgroup</div>
-          <div class="tab" onclick="subTab(this,'perf','thresholds')">Thresholds</div>
-          <div class="tab" onclick="subTab(this,'perf','limits')">Scope &amp; limits</div>
+      <!-- Treatment Effects + Symptoms summary -->
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Treatment Effects by Cycle</span></div>
+          <div class="data-rows" id="ov-treatment"><div class="empty">No cycle data.</div></div>
         </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent Symptoms</span></div>
+          <div class="data-rows" id="ov-symptoms"><div class="empty">No symptoms.</div></div>
+        </div>
+      </div>
 
-        <div class="subpage active" id="perf-core">
-          <div class="g2">
-            <div class="card">
-              <div class="card-head">
-                <span class="card-title">Champion — <span id="championModelName">—</span></span>
-                <span id="championStatusBadge" class="badge badge-neutral">—</span>
+    </div>
+
+    <!-- ─────── LABS ─────── -->
+    <div id="tab-labs" class="tab-panel">
+
+      <div class="grid g3" id="lab-stats">
+        <div class="stat-card na">
+          <div class="stat-name">White Blood Cell</div>
+          <div class="stat-val" id="lab-wbc">—</div>
+          <div class="stat-unit">×10³/μL</div>
+          <div class="stat-ref"><span class="ref-dot na"></span><span id="lab-wbc-ref">ref: 4.5–11</span></div>
+        </div>
+        <div class="stat-card na">
+          <div class="stat-name">Hemoglobin</div>
+          <div class="stat-val" id="lab-hgb">—</div>
+          <div class="stat-unit">g/dL</div>
+          <div class="stat-ref"><span class="ref-dot na"></span><span id="lab-hgb-ref">ref: 12–16</span></div>
+        </div>
+        <div class="stat-card na">
+          <div class="stat-name">Platelets</div>
+          <div class="stat-val" id="lab-plt">—</div>
+          <div class="stat-unit">×10³/μL</div>
+          <div class="stat-ref"><span class="ref-dot na"></span><span id="lab-plt-ref">ref: 150–400</span></div>
+        </div>
+      </div>
+
+      <div class="grid g3">
+        <div class="card">
+          <div class="card-header"><span class="card-title">WBC Trend</span></div>
+          <div class="card-body"><div class="chart-wrap"><canvas id="wbcChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Hemoglobin Trend</span></div>
+          <div class="card-body"><div class="chart-wrap"><canvas id="hgbChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Platelet Trend</span></div>
+          <div class="card-body"><div class="chart-wrap"><canvas id="pltChart"></canvas></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Data Source</span></div>
+        <div class="card-body" id="lab-source"><div class="empty">Loading…</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Model Prediction Audit</span></div>
+        <div class="card-body-flush" id="lab-audit"><div class="empty">No audits loaded.</div></div>
+      </div>
+
+    </div>
+
+    <!-- ─────── ASSESSMENT ─────── -->
+    <div id="tab-assessment" class="tab-panel">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Multimodal Monitoring Assessment</span>
+          <span class="tag tag-amber" style="font-size:9px;">AI-generated · not clinical</span>
+        </div>
+        <div class="card-body" id="assess-body"><div class="empty">No assessment loaded.</div></div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Clinical Summary</span></div>
+          <pre class="summary-pre" id="assess-clinical">Loading…</pre>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Patient Explanation</span></div>
+          <pre class="summary-pre" id="assess-patient">Loading…</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Metastatic Indicators</span></div>
+        <div class="data-rows" id="assess-metastatic"><div class="empty">No indicators flagged.</div></div>
+      </div>
+
+    </div>
+
+    <!-- ─────── IMAGING ─────── -->
+    <div id="tab-imaging" class="tab-panel">
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Breast Imaging Summary</span></div>
+        <div class="card-body" id="img-radiology"><div class="empty">No imaging data loaded.</div></div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">MRI File Registry</span></div>
+          <div class="card-body-flush" id="img-mri-registry"><div class="empty">No MRI folders registered.</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">DICOM Series Index</span></div>
+          <div class="card-body-flush" id="img-mri-series"><div class="empty">No DICOM series indexed.</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─────── TIMELINE ─────── -->
+    <div id="tab-timeline" class="tab-panel">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Clinical Timeline</span></div>
+        <div class="card-body-flush">
+          <div class="timeline" id="tl-events"><div class="empty">No events loaded.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────── CLINICIAN REVIEW ─────── -->
+    <div id="tab-review" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Clinician-in-the-Loop Review</span>
+          <span class="tag tag-rose">Audit Logged</span>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom:12px">
+            <div class="pf-label">Deterministic Snapshot</div>
+            <div id="rev-snapshot" style="font-size:13px;color:var(--text);margin-top:3px;">—</div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div class="pf-label">Latest Review</div>
+            <div id="rev-latest" style="font-size:12.5px;color:var(--text-2);margin-top:3px;">No review saved yet.</div>
+          </div>
+          <div class="review-form">
+            <div>
+              <label class="form-label">Clinician Notes (audit trail)</label>
+              <textarea id="rev-notes" rows="3" placeholder="Add notes for the audit trail…" style="width:100%"></textarea>
+            </div>
+            <div>
+              <label class="form-label">Edited Patient Summary (optional)</label>
+              <textarea id="rev-edited" rows="2" placeholder="Override AI patient summary if needed…" style="width:100%"></textarea>
+            </div>
+            <div>
+              <label class="form-label">Quality Scores (1–5)</label>
+              <div class="score-inputs">
+                <input id="rev-explanation" type="number" min="1" max="5" placeholder="Explanation quality">
+                <input id="rev-usefulness" type="number" min="1" max="5" placeholder="Model usefulness">
               </div>
-              <div class="metric-list" id="coreMetricsList"><div class="loading">Loading…</div></div>
             </div>
-            <div class="card">
-              <div class="card-head"><span class="card-title">Bootstrap confidence intervals</span></div>
-              <div class="metric-list" id="confIntervalList"><div class="loading">Loading…</div></div>
+            <div class="review-actions">
+              <button class="btn btn-green" onclick="submitReview('approved')">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                Approve
+              </button>
+              <button class="btn" onclick="submitReview('edited')">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M11 2l3 3-9 9H2v-3L11 2z" opacity=".7"/></svg>
+                Save Edit
+              </button>
+              <button class="btn btn-red" onclick="submitReview('rejected')">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                Reject
+              </button>
             </div>
-          </div>
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">False-negative review</span>
-              <span id="fnBadge" class="badge badge-neutral">—</span>
-            </div>
-            <div id="fnList"><div class="loading">Loading…</div></div>
-          </div>
-        </div>
-
-        <div class="subpage" id="perf-calibration">
-          <div class="card">
-            <div class="card-head"><span class="card-title">Calibration bins — predicted vs observed</span></div>
-            <div class="table-wrap">
-              <table id="calibrationTable">
-                <thead><tr><th>Predicted range</th><th>n</th><th>Mean predicted</th><th>Observed rate</th><th>Gap</th><th>Status</th></tr></thead>
-                <tbody><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
-              </table>
-            </div>
-            <div style="font-size:11px;color:var(--faint);margin-top:8px" id="calibrationFooter"></div>
-          </div>
-        </div>
-
-        <div class="subpage" id="perf-subgroup">
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Subgroup performance</span>
-              <span id="subgroupStatusBadge" class="badge badge-neutral">Robustness check</span>
-            </div>
-            <div class="table-wrap">
-              <table id="subgroupTable">
-                <thead><tr><th>Group</th><th>Value</th><th>n</th><th>Pos. rate</th><th>AUROC</th><th>Sensitivity</th><th>Specificity</th><th>Status</th></tr></thead>
-                <tbody><tr><td colspan="8" class="loading">Loading…</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="subpage" id="perf-thresholds">
-          <div class="card">
-            <div class="card-head"><span class="card-title">Operating threshold tradeoffs</span></div>
-            <div class="table-wrap">
-              <table id="thresholdTable">
-                <thead><tr><th>Threshold</th><th>Sensitivity</th><th>Specificity</th><th>Precision</th><th>FNR</th><th>FPR</th><th>Flagged rate</th><th>Status</th></tr></thead>
-                <tbody><tr><td colspan="8" class="loading">Loading…</td></tr></tbody>
-              </table>
-            </div>
-            <div style="font-size:11px;color:var(--faint);margin-top:8px">Threshold selection requires clinical validation — these are engineering reference values only.</div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Decision curve — threshold vs net benefit</span></div>
-            <div class="table-wrap">
-              <table id="decisionCurveTable">
-                <thead><tr><th>Threshold</th><th>Flagged patients</th><th>True positive</th><th>False positive</th><th>Treat-all net benefit</th><th>Model net benefit</th><th>Status</th></tr></thead>
-                <tbody><tr><td colspan="7" class="loading">Loading…</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="subpage" id="perf-limits">
-          <div class="card">
-            <div class="card-head"><span class="card-title">What these metrics do not prove</span><span class="badge badge-fail">Important</span></div>
-            <div id="metricLimitsList" style="display:flex;flex-direction:column;gap:6px"></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Evidence separation</span></div>
-            <div class="table-wrap">
-              <table id="evidenceTable">
-                <thead><tr><th>Dataset</th><th>Rows</th><th>Patients</th><th>Best model</th><th>Claim boundary</th><th>Status</th></tr></thead>
-                <tbody><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div><!-- /performance -->
-
-      <!-- ══ DRIFT ══ -->
-      <div class="page" id="page-drift">
-        <div class="g2">
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Feature drift monitor</span>
-              <span id="driftStatusBadge" class="badge badge-neutral">Loading…</span>
-            </div>
-            <div class="table-wrap">
-              <table id="driftTable">
-                <thead><tr><th>Feature</th><th>Reference mean</th><th>Current mean</th><th>Std shift</th><th>Meaning</th><th>Status</th></tr></thead>
-                <tbody><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Drift thresholds</span></div>
-            <div class="metric-list">
-              <div class="gate-row"><span class="dot dot-ok"></span><span class="gate-label">Stable — |shift| &lt; 0.50</span><span class="gate-val">No action required</span></div>
-              <div class="gate-row"><span class="dot dot-warn"></span><span class="gate-label">Watch — |shift| 0.50–1.00</span><span class="gate-val">Monitor; schedule review</span></div>
-              <div class="gate-row"><span class="dot dot-fail"></span><span class="gate-label">Alert — |shift| &gt; 1.00</span><span class="gate-val">Block promotion; re-train</span></div>
-            </div>
-            <div style="margin-top:12px">
-              <div class="card-title" style="margin-bottom:8px">MRI feature summary</div>
-              <div id="mriSummary" class="metric-list"><div class="loading">Loading…</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="gap card">
-          <div class="card-head"><span class="card-title">Data quality — missingness</span><span id="dataQualityBadge" class="badge badge-neutral">—</span></div>
-          <div class="table-wrap">
-            <table id="dataQualityTable">
-              <thead><tr><th>Column</th><th>Missing rate</th><th>Meaning</th><th>Status</th></tr></thead>
-              <tbody><tr><td colspan="4" class="loading">Loading…</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-      </div><!-- /drift -->
-
-      <!-- ══ A/B TESTING ══ -->
-      <div class="page" id="page-ab">
-        <div class="card">
-          <div class="card-head"><span class="card-title">Champion vs challengers</span></div>
-          <div class="table-wrap">
-            <table id="abTable">
-              <thead><tr><th>Model</th><th>Role</th><th>AUROC</th><th>AUPRC</th><th>Brier</th><th>AUROC status</th></tr></thead>
-              <tbody><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="gap g2">
-          <div class="card">
-            <div class="card-head"><span class="card-title">Prediction disagreement</span></div>
-            <div id="disagreementBlock"><div class="loading">Loading…</div></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Cost-sensitive thresholds</span></div>
-            <div class="table-wrap">
-              <table id="costTable">
-                <thead><tr><th>Policy</th><th>Threshold</th><th>Sensitivity</th><th>Specificity</th><th>FN cost</th><th>FP cost</th><th>Weighted error</th><th>Status</th></tr></thead>
-                <tbody><tr><td colspan="8" class="loading">Loading…</td></tr></tbody>
-              </table>
-            </div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text-3);">Review decisions are logged for governance. They do not automatically change treatment decisions.</div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- ══ RAG & AGENT ══ -->
-      <div class="page" id="page-rag">
-        <div class="g4">
-          <div class="kpi"><div class="kpi-label">RAG calls</div><div class="kpi-val" id="ragCalls">—</div></div>
-          <div class="kpi"><div class="kpi-label">Cache hit rate</div><div class="kpi-val" id="ragCache">—</div></div>
-          <div class="kpi"><div class="kpi-label">Avg latency</div><div class="kpi-val" id="ragLatency">—</div><div class="kpi-delta delta-neutral" id="ragP95"></div></div>
-          <div class="kpi"><div class="kpi-label">Est. API cost</div><div class="kpi-val" id="ragCost">—</div></div>
+    <!-- ─────── REVIEW QUEUE ─────── -->
+    <div id="tab-queue" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Clinician Review Queue</span>
+          <button class="btn" onclick="loadReviewQueue()">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M13.65 2.35A8 8 0 1015 8h-2a6 6 0 11-1.65-4.15L9 6h6V0l-1.35 2.35z"/></svg>
+            Refresh
+          </button>
         </div>
-
-        <div class="gap g2">
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Retrieval quality</span>
-              <span id="ragStatusBadge" class="badge badge-neutral">—</span>
-            </div>
-            <div class="metric-list" id="ragQualityList"><div class="loading">Loading…</div></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Guardrails</span></div>
-            <div class="metric-list" id="guardrailList"><div class="loading">Loading…</div></div>
-          </div>
-        </div>
-
-        <div class="gap g2">
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Agent regression suite</span>
-              <button class="btn btn-sm" onclick="runAgentRegression()">Run suite</button>
-            </div>
-            <div class="metric-list" id="regressionList" style="margin-top:10px"><div class="loading">Loading…</div></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Agent quality gates</span></div>
-            <div class="metric-list" id="agentGateList"><div class="loading">Loading…</div></div>
-          </div>
-        </div>
-
-        <div class="gap card">
-          <div class="card-head"><span class="card-title">Patient feedback on agent answers</span><span id="feedbackBadge" class="badge badge-neutral">—</span></div>
-          <div class="metric-list" id="agentFeedbackList"><div class="loading">Loading…</div></div>
-        </div>
-      </div><!-- /rag -->
-
-      <!-- ══ RELEASE GATES ══ -->
-      <div class="page" id="page-gates">
-        <div class="g2">
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Hard gates (blocking)</span>
-              <button class="btn btn-sm btn-primary" onclick="runMleReadiness()">Run MLE checks</button>
-            </div>
-            <div class="metric-list" id="hardGateList" style="margin-top:10px"><div class="loading">Loading…</div></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Release recommendation</span><span id="releaseBadge" class="badge badge-neutral">—</span></div>
-            <div id="releaseRec" style="font-size:13px;color:var(--muted);padding:6px 0">—</div>
-            <div style="margin-top:12px">
-              <div class="card-title" style="margin-bottom:8px">Category statuses</div>
-              <div id="catStatusList" class="metric-list"></div>
-            </div>
-          </div>
-        </div>
-        <div class="gap card">
-          <div class="card-head"><span class="card-title">Training data contract</span></div>
-          <div class="metric-list" id="dataContractList"><div class="loading">Loading…</div></div>
-        </div>
-        <div class="gap card">
-          <div class="card-head"><span class="card-title">Next actions</span></div>
-          <div class="metric-list" id="nextActionsList"></div>
-        </div>
-      </div><!-- /gates -->
-
-      <!-- ══ CLINICIAN REVIEW ══ -->
-      <div class="page" id="page-clinician">
-        <div class="g4">
-          <div class="kpi"><div class="kpi-label">Total reviews</div><div class="kpi-val" id="clinReviews">—</div></div>
-          <div class="kpi"><div class="kpi-label">Accept rate</div><div class="kpi-val" id="clinAccept">—</div><div class="kpi-delta" id="clinAcceptDelta"></div></div>
-          <div class="kpi"><div class="kpi-label">Explanation quality</div><div class="kpi-val" id="clinQuality">—</div><div class="kpi-delta delta-neutral">avg / 5</div></div>
-          <div class="kpi"><div class="kpi-label">Model usefulness</div><div class="kpi-val" id="clinUseful">—</div><div class="kpi-delta delta-neutral">avg / 5</div></div>
-        </div>
-        <div class="gap g2">
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">Clinician loop metrics</span>
-              <span id="clinLoopBadge" class="badge badge-neutral">—</span>
-            </div>
-            <div class="metric-list" id="clinLoopList"><div class="loading">Loading…</div></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Review decisions (audit)</span></div>
-            <div class="metric-list" id="clinDecisionList"><div class="loading">Loading…</div></div>
-          </div>
+        <div class="card-body-flush">
+          <table class="queue-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Last Review</th>
+                <th>Flags</th>
+              </tr>
+            </thead>
+            <tbody id="queue-tbody">
+              <tr><td colspan="5"><div class="empty">Loading queue…</div></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <!-- ══ AUDIT LOGS ══ -->
-      <div class="page" id="page-audit">
-        <div class="g2">
-          <div class="card">
-            <div class="card-head"><span class="card-title">Data coverage</span><span id="coverageBadge" class="badge badge-neutral">—</span></div>
-            <div class="table-wrap">
-              <table id="coverageTable">
-                <thead><tr><th>Dataset</th><th>Coverage rate</th><th>Detail</th><th>Status</th></tr></thead>
-                <tbody><tr><td colspan="4" class="loading">Loading…</td></tr></tbody>
-              </table>
+    <!-- ─────── DATA ENTRY ─────── -->
+    <div id="tab-entry" class="tab-panel">
+      <div class="accordion">
+
+        <!-- Add Lab -->
+        <div class="acc-panel">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:var(--rose)">
+              <rect x="7" y="1" width="2" height="14" rx="1" fill="currentColor"/>
+              <rect x="1" y="7" width="14" height="2" rx="1" fill="currentColor"/>
+            </svg>
+            <span class="acc-title">Add Lab Result</span>
+            <span class="acc-chevron">
+              <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+          <div class="acc-body">
+            <div class="form-row">
+              <div><label class="form-label">Date</label><input id="labDate" type="date"></div>
+              <div><label class="form-label">WBC (×10³/μL)</label><input id="labWbc" type="number" step="0.1" placeholder="e.g. 6.2"></div>
+              <div><label class="form-label">Hemoglobin (g/dL)</label><input id="labHgb" type="number" step="0.1" placeholder="e.g. 12.8"></div>
+              <div><label class="form-label">Platelets (×10³/μL)</label><input id="labPlt" type="number" step="1" placeholder="e.g. 220"></div>
             </div>
-          </div>
-          <div class="card">
-            <div class="card-head"><span class="card-title">Event type counts</span></div>
-            <div id="eventCountList" class="metric-list"><div class="loading">Loading…</div></div>
+            <button class="btn btn-primary" onclick="addLab()">Save Lab Result</button>
           </div>
         </div>
-        <div class="gap card">
-          <div class="card-head"><span class="card-title">API cost &amp; latency breakdown</span></div>
-          <div class="table-wrap">
-            <table id="costLatencyTable">
-              <thead><tr><th>Path</th><th>Avg latency</th><th>Avg tokens</th><th>Meaning</th></tr></thead>
-              <tbody><tr><td colspan="4" class="loading">Loading…</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="gap card">
-          <div class="card-head"><span class="card-title">Recent errors</span></div>
-          <div class="table-wrap">
-            <table id="errorsTable">
-              <thead><tr><th>Event type</th><th>Route</th><th>Error message</th></tr></thead>
-              <tbody><tr><td colspan="3" class="loading">Loading…</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /shell -->
+        <!-- Add Symptom -->
+        <div class="acc-panel">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:var(--rose)">
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span class="acc-title">Add Symptom Report</span>
+            <span class="acc-chevron">
+              <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+          <div class="acc-body">
+            <div class="form-row">
+              <div><label class="form-label">Date</label><input id="symDate" type="date"></div>
+              <div><label class="form-label">Symptom</label><input id="symName" type="text" placeholder="e.g. Nausea"></div>
+              <div><label class="form-label">Severity (0–10)</label><input id="symSev" type="number" min="0" max="10" step="1" placeholder="0–10"></div>
+            </div>
+            <div style="margin-bottom:8px"><label class="form-label">Notes (optional)</label><textarea id="symNotes" placeholder="Additional notes…" style="width:100%;min-height:44px"></textarea></div>
+            <button class="btn btn-primary" onclick="addSymptom()">Save Symptom</button>
+          </div>
+        </div>
+
+        <!-- Import CSV -->
+        <div class="acc-panel">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:var(--rose)">
+              <path d="M2 10v3h12v-3M8 1v9M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="acc-title">Import CSV</span>
+            <span class="acc-chevron">
+              <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+          <div class="acc-body">
+            <div class="form-row" style="grid-template-columns:1fr 1fr">
+              <div>
+                <label class="form-label">Import Type</label>
+                <select id="csvType" style="width:100%">
+                  <option value="patients">patients</option>
+                  <option value="breast_profiles">breast_profiles</option>
+                  <option value="labs">labs</option>
+                  <option value="treatments">treatments</option>
+                  <option value="imaging_reports">imaging_reports</option>
+                  <option value="symptoms">symptoms</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Dataset</label>
+                <select id="csvDataset" style="width:100%">
+                  <option value="canonical">canonical</option>
+                  <option value="duke_breast_mri">duke_breast_mri</option>
+                  <option value="ispy2">ispy2</option>
+                  <option value="mimic_labs">mimic_labs</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-bottom:8px"><label class="form-label">CSV Data</label><textarea id="csvText" placeholder="Paste CSV text here…" style="width:100%;min-height:80px"></textarea></div>
+            <button class="btn btn-primary" onclick="importCsv()">Import CSV</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─────── PATIENT CHAT ─────── -->
+    <div id="tab-chat" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Patient Support Agent</span>
+          <span class="tag tag-default" style="font-size:9px;">Saves symptoms · CBC · medications</span>
+        </div>
+        <div class="chat-messages" id="chat-thread">
+          <div class="empty">No messages yet.</div>
+        </div>
+        <div class="chat-compose">
+          <textarea id="chat-input" placeholder="Log symptoms, CBC values, medications, or patient-reported feelings…"></textarea>
+          <button class="btn btn-primary" onclick="sendChat()">Send</button>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text-3);padding:8px 16px;border-top:1px solid var(--border);">Agent does not diagnose or recommend treatment.</div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- /app-body -->
+
+<div class="toast" id="toast"></div>
 
 <script>
-  const API_BASE = window.location.origin;
-  let adminToken = localStorage.getItem('adminAccessToken') || null;
+const API_BASE = window.location.origin;
+let clinicianToken = localStorage.getItem('clinicianToken') || null;
+let currentPatientId = null;
+const charts = {};
 
-  /* ── Helpers ── */
-  function esc(v) {
-    return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+/* ─── UTILITY ─────────────────────────────────── */
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3500);
+}
 
-  function headers() {
-    return adminToken ? { 'Authorization': `Bearer ${adminToken}` } : {};
-  }
+function esc(v) {
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-  function loginAdmin() {
-    return fetch(`${API_BASE}/auth/demo-login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ role: 'admin' })
-    }).then(r => {
-      if (!r.ok) throw new Error(`admin login failed (${r.status})`);
-      return r.json();
-    }).then(s => {
-      adminToken = s.access_token;
-      localStorage.setItem('adminAccessToken', adminToken);
-    });
-  }
+function initials(name) {
+  return (name || '??').split(' ').filter(Boolean).slice(0,2).map(n => n[0].toUpperCase()).join('');
+}
 
-  function statusBadge(status) {
-    if (!status) return '<span class="badge badge-neutral">n/a</span>';
-    const map = {
-      ok:'badge-ok', stable:'badge-ok', passed:'badge-ok', strong:'badge-ok',
-      watch:'badge-warn', unideal:'badge-warn',
-      failed:'badge-fail', bad:'badge-fail',
-      acceptable:'badge-info', unavailable:'badge-neutral'
-    };
-    const cls = map[status] || 'badge-neutral';
-    return `<span class="badge ${cls}">${esc(status)}</span>`;
-  }
+function pid() { return document.getElementById('patientSelect').value; }
 
-  function barHtml(value, status) {
-    const pct = Math.max(0, Math.min(100, parseFloat(value) * 100));
-    const cls = {ok:'bar-ok',stable:'bar-ok',passed:'bar-ok',strong:'bar-ok',watch:'bar-warn',failed:'bar-fail',bad:'bar-fail'}[status] || 'bar-info';
-    return `<div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct.toFixed(1)}%"></div></div>`;
-  }
+function chHdr() {
+  return clinicianToken ? { 'Authorization': `Bearer ${clinicianToken}` } : {};
+}
 
-  function metricRowHtml(label, sub, value, status, useBar) {
-    const right = useBar
-      ? `<div class="metric-row-right">${barHtml(value, status)}<span class="metric-val mono">${esc(value ?? 'n/a')}</span>${statusBadge(status)}</div>`
-      : `<div class="metric-row-right"><span class="metric-val mono">${esc(value ?? 'n/a')}</span>${statusBadge(status)}</div>`;
-    return `<div class="metric-row">
-      <div class="metric-row-left"><div class="metric-row-label">${esc(label)}</div>${sub ? `<div class="metric-row-sub">${esc(sub)}</div>` : ''}</div>
-      ${right}
-    </div>`;
-  }
+/* ─── TAB SWITCHING ──────────────────────────── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
 
-  function gateRowHtml(label, val, status) {
-    const dotCls = {ok:'dot-ok',stable:'dot-ok',passed:'dot-ok',strong:'dot-ok',watch:'dot-warn',failed:'dot-fail',bad:'dot-fail'}[status] || 'dot-neutral';
-    return `<div class="gate-row"><span class="dot ${dotCls}"></span><span class="gate-label">${esc(label)}</span><span class="gate-val mono">${esc(val ?? '')}</span>${statusBadge(status)}</div>`;
-  }
+function toggleAcc(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
 
-  function empty(msg) {
-    return `<div class="empty">${esc(msg)}</div>`;
-  }
+/* ─── LAB STATUS ─────────────────────────────── */
+function labStat(val, lo, hi) {
+  if (val === null || val === undefined || val === '') return 'na';
+  const v = Number(val);
+  if (v < lo) return 'bad';
+  if (v > hi) return 'warn';
+  return 'ok';
+}
 
-  /* ── Nav ── */
-  const pageTitles = {
-    overview: ['Dashboard','Breast cancer treatment monitoring · Model Operations'],
-    alerts: ['Alerts & Issues','Active signals requiring attention'],
-    performance: ['Model Performance','Evaluation metrics · Synthetic longitudinal cohort'],
-    drift: ['Drift Monitor','Feature distribution shifts vs training reference'],
-    ab: ['A/B Testing','Champion vs challenger comparison'],
-    rag: ['RAG & Agent Pipeline','Retrieval quality, guardrails, cost, and latency'],
-    gates: ['Release Gates','MLE promotion checks — all hard gates must pass'],
-    clinician: ['Clinician Review','Clinician feedback loop and AI summary quality'],
-    audit: ['Audit Logs','Prediction events, data coverage, and error monitoring']
-  };
+function applyStatCard(cardId, valId, refId, refText, value, lo, hi) {
+  const card = document.getElementById(cardId);
+  const s = labStat(value, lo, hi);
+  card.className = 'stat-card ' + s;
+  document.getElementById(valId).textContent = value ?? '—';
+  document.getElementById(refId).textContent = refText;
+  const dot = card.querySelector('.ref-dot');
+  if (dot) dot.className = 'ref-dot ' + s;
+}
 
-  function nav(id, el) {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    if (el) el.classList.add('active');
-    document.getElementById('page-' + id).classList.add('active');
-    const t = pageTitles[id] || ['', ''];
-    document.getElementById('topbarInfo').innerHTML = `<div class="page-heading">${esc(t[0])}</div><div class="page-sub">${esc(t[1])}</div>`;
-  }
-
-  function subTab(el, group, id) {
-    el.closest('.page').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    el.closest('.page').querySelectorAll('.subpage').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById(group + '-' + id).classList.add('active');
-  }
-
-  /* ── Render functions ── */
-
-  function renderOverview(data) {
-    const perf = data.model_performance?.synthetic_longitudinal_response || {};
-    const statuses = perf.metric_statuses || {};
-    const audit = data.audit_and_feedback || {};
-    const monitoring = data.app_monitoring || {};
-    const loop = data.clinician_loop_metrics || {};
-    const mle = data.mle_readiness || {};
-    const drift = data.drift_monitoring || {};
-
-    // KPIs
-    document.getElementById('kpi-auroc').textContent = perf.patient_level_roc_auc ?? '—';
-    document.getElementById('kpi-auroc-sub').textContent = 'held-out patient split';
-    document.getElementById('kpi-audit').textContent = (audit.prediction_audit_count ?? 0).toLocaleString();
-    const acceptRate = loop.accepted_review_rate;
-    document.getElementById('kpi-accept').textContent = acceptRate != null ? (parseFloat(acceptRate) * 100).toFixed(0) + '%' : '—';
-    document.getElementById('kpi-accept-sub').textContent = 'of ' + (loop.total_reviews ?? '?') + ' reviews';
-    const hf = (mle.hard_gate_failures || []).length;
-    document.getElementById('kpi-gates').textContent = hf;
-    const gatesSub = document.getElementById('kpi-gates-sub');
-    gatesSub.textContent = hf === 0 ? 'All gates passing' : hf + ' blocking issue(s)';
-    gatesSub.className = 'kpi-delta ' + (hf === 0 ? 'delta-up' : 'delta-warn');
-
-    // Alerts banner
-    const alerts = [];
-    (drift.features || []).filter(f => f.status === 'watch' || f.status === 'failed').forEach(f => {
-      alerts.push(`<div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>Feature drift: ${esc(f.feature)}</strong> — shift ${esc(f.standardized_mean_shift)} SD. ${esc(f.meaning || '')}</div></div>`);
-    });
-    if (hf === 0) {
-      alerts.push(`<div class="alert alert-ok"><span class="alert-icon">✓</span><div><strong>Champion model healthy</strong> — ${esc(perf.best_model || '?')} AUROC ${esc(String(perf.patient_level_roc_auc))} on held-out split. All hard gates passing.</div></div>`);
-    }
-    document.getElementById('alertsBanner').innerHTML = alerts.join('') || '';
-
-    // Champion model badge
-    const champBadge = document.getElementById('overviewChampionBadge');
-    champBadge.textContent = perf.best_model || '—';
-    champBadge.className = 'badge badge-info';
-
-    // Champion metrics
-    const meanings = {
-      'AUROC': 'Ranking ability across thresholds',
-      'AUPRC': 'Precision/recall; useful under imbalance',
-      'Brier': 'Calibration error — lower is better',
-      'Sensitivity': 'Recall for positives — false-negative guard',
-      'Specificity': 'True-negative rate — false-alarm guard'
-    };
-    const metricDefs = [
-      ['AUROC', perf.patient_level_roc_auc, statuses.patient_level_roc_auc],
-      ['AUPRC', perf.patient_level_average_precision, statuses.patient_level_average_precision],
-      ['Brier', perf.patient_level_brier_score, statuses.patient_level_brier_score],
-      ['Sensitivity', perf.patient_level_sensitivity, statuses.patient_level_sensitivity],
-      ['Specificity', perf.patient_level_specificity, statuses.patient_level_specificity]
-    ];
-    document.getElementById('overviewMetrics').innerHTML = metricDefs
-      .map(([label, val, st]) => metricRowHtml(label, meanings[label] || '', val, st, true))
-      .join('');
-
-    // System health
-    const healthItems = [
-      gateRowHtml('Model artifacts', '', mle.artifact_status || mle.status || 'n/a'),
-      gateRowHtml('Data contract', '', (data.mle_readiness?.checks || []).find(c => c.category === 'data_contract')?.status || 'n/a'),
-      ...((drift.features || []).map(f => gateRowHtml(`Drift: ${f.feature}`, f.standardized_mean_shift ?? '', f.status))),
-      gateRowHtml('RAG pipeline', '', data.rag_evaluation?.status || 'n/a'),
-      gateRowHtml('Security guardrails', '', 'ok'),
-      gateRowHtml('Safety regression', '', (data.agent_regression_evaluation?.summary?.status || 'n/a'))
-    ];
-    const hasWarn = (drift.features || []).some(f => f.status !== 'ok' && f.status !== 'stable');
-    document.getElementById('systemHealthBadge').textContent = hasWarn ? 'Warnings present' : 'All healthy';
-    document.getElementById('systemHealthBadge').className = 'badge ' + (hasWarn ? 'badge-warn' : 'badge-ok');
-    document.getElementById('systemHealthList').innerHTML = healthItems.join('');
-
-    // Confidence chart
-    const conf = monitoring.confidence_distribution || {};
-    const bins = conf.bins || [];
-    const chart = document.getElementById('confChart');
-    if (bins.length) {
-      const max = Math.max(...bins.map(b => b.count || 0));
-      chart.innerHTML = bins.map(b => {
-        const h = max > 0 ? Math.max(8, Math.round((b.count / max) * 100)) : 8;
-        return `<div class="conf-bar" style="height:${h}%" title="${esc(b.range)}: ${esc(b.count)}"></div>`;
-      }).join('');
-    } else {
-      chart.innerHTML = '<div class="empty">No distribution data</div>';
-    }
-    document.getElementById('confSampleBadge').textContent = (conf.sample_count || 0) + ' samples';
-    document.getElementById('confSub').textContent = `Mean probability: ${conf.mean_probability ?? 'n/a'} · Samples: ${conf.sample_count ?? 0}`;
-
-    // Recent activity (from audit events)
-    const errors = (monitoring.recent_errors || []).slice(0, 3);
-    const tlItems = [
-      {time: 'live', text: `Champion: ${perf.best_model || '?'} · AUROC ${perf.patient_level_roc_auc ?? '?'}`},
-      {time: 'live', text: `Audit events: ${(audit.prediction_audit_count ?? 0).toLocaleString()} predictions logged`},
-      ...errors.map(e => ({time: 'error', text: `${e.event_type || '?'}: ${e.error_message || 'no message'}`}))
-    ];
-    document.getElementById('recentActivity').innerHTML = tlItems.map(item =>
-      `<div class="tl-item"><span class="tl-time">${esc(item.time)}</span><div>${esc(item.text)}</div></div>`
-    ).join('');
-  }
-
-  function renderAlerts(data) {
-    const drift = data.drift_monitoring || {};
-    const rag = data.rag_evaluation || {};
-    const items = [];
-    (drift.features || []).forEach(f => {
-      if (f.status === 'watch' || f.status === 'failed') {
-        items.push(`<div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>Feature drift: ${esc(f.feature)}</strong><div style="margin-top:3px;color:var(--amber-text)">${esc(f.meaning || '')} Shift: ${esc(f.standardized_mean_shift)} SD (ref ${esc(f.reference_mean)}, current ${esc(f.current_mean)}).</div></div></div>`);
+/* ─── CHARTS ─────────────────────────────────── */
+function mkChart(id, label, labels, data, color) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label,
+        data,
+        borderColor: color,
+        backgroundColor: color + '18',
+        borderWidth: 1.5,
+        pointRadius: 2.5,
+        pointBackgroundColor: color,
+        fill: true,
+        tension: 0.35
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#484f58', font: { family: 'IBM Plex Mono', size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#484f58', font: { family: 'IBM Plex Mono', size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: false }
       }
-    });
-    if (parseFloat(rag.average_hallucination_score) > 0.10) {
-      items.push(`<div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>RAG hallucination score elevated</strong><div style="margin-top:3px;color:var(--amber-text)">Score ${esc(rag.average_hallucination_score)} — above 0.10 target. Inspect low-grounding calls.</div></div></div>`);
     }
-    document.getElementById('activeAlertsList').innerHTML = items.length ? items.join('') : '<div class="alert alert-ok"><span class="alert-icon">✓</span><div><strong>No active alerts</strong> — all systems within thresholds.</div></div>';
+  });
+}
 
-    // Drift table
-    const tbody = document.querySelector('#driftTableAlerts tbody');
-    tbody.innerHTML = (drift.features || []).map(f =>
-      `<tr><td><strong>${esc(f.feature)}</strong></td><td class="mono">${esc(f.reference_mean)}</td><td class="mono">${esc(f.current_mean)}</td><td class="mono">${esc(f.standardized_mean_shift)}</td><td>${statusBadge(f.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="5">${empty('No drift data')}</td></tr>`;
-  }
+/* ─── BADGE / TAGS ───────────────────────────── */
+function receptorBadge(label, value) {
+  if (!value || value === 'unknown') return `<span class="tag tag-default">${label}: ?</span>`;
+  const pos = value.toLowerCase().includes('+') || value.toLowerCase() === 'positive';
+  return `<span class="tag ${pos ? 'tag-green' : 'tag-default'}">${label}: ${esc(value)}</span>`;
+}
 
-  function renderPerformance(data) {
-    const perf = data.model_performance?.synthetic_longitudinal_response || {};
-    const statuses = perf.metric_statuses || {};
-    const advanced = data.advanced_model_evaluation || {};
-    const guide = data.metric_interpretation_guide || {};
+function severityTag(sev) {
+  const map = { urgent_review: 'tag-red', watch: 'tag-amber', info: 'tag-blue' };
+  return `<span class="tag ${map[sev] || 'tag-default'}">${esc((sev || '').replace('_',' '))}</span>`;
+}
 
-    document.getElementById('championModelName').textContent = perf.best_model || '—';
-    document.getElementById('championStatusBadge').innerHTML = statusBadge(statuses.patient_level_roc_auc);
+/* ─── RENDER OVERVIEW ────────────────────────── */
+function renderOverview(data) {
+  const name = data.patient_name || data.patient_id;
+  document.getElementById('ov-initials').textContent = initials(name);
+  document.getElementById('ov-name').textContent = name;
 
-    // Core
-    const meanings = {
-      'AUROC':'Ranking ability across thresholds',
-      'AUPRC':'Precision/recall; useful under class imbalance',
-      'Brier':'Probability calibration error — lower is better',
-      'Sensitivity':'Recall for positives — false-negative guard',
-      'Specificity':'True-negative rate — false-alarm guard'
-    };
-    const metricDefs = [
-      ['AUROC', perf.patient_level_roc_auc, statuses.patient_level_roc_auc],
-      ['AUPRC', perf.patient_level_average_precision, statuses.patient_level_average_precision],
-      ['Brier', perf.patient_level_brier_score, statuses.patient_level_brier_score],
-      ['Sensitivity', perf.patient_level_sensitivity, statuses.patient_level_sensitivity],
-      ['Specificity', perf.patient_level_specificity, statuses.patient_level_specificity]
-    ];
-    document.getElementById('coreMetricsList').innerHTML = metricDefs
-      .map(([l, v, s]) => metricRowHtml(l, meanings[l] || '', v, s, true)).join('');
+  const profile = data.breast_cancer_profile || {};
+  const assessment = data.multimodal_assessment || {};
+  const status = assessment.overall_status || '';
+  const statusCls = (status.includes('favorable') || status.includes('good')) ? 'tag-green' : status.includes('mixed') ? 'tag-amber' : 'tag-rose';
+  document.getElementById('ov-tags').innerHTML = `
+    ${data.diagnosis ? `<span class="tag tag-default">${esc(data.diagnosis)}</span>` : ''}
+    ${profile.cancer_stage ? `<span class="tag tag-default">Stage ${esc(profile.cancer_stage)}</span>` : ''}
+    ${profile.molecular_subtype ? `<span class="tag tag-blue">${esc(profile.molecular_subtype)}</span>` : ''}
+    ${status ? `<span class="tag ${statusCls}">${esc(status)}</span>` : ''}
+  `;
+  document.getElementById('ov-score').textContent = assessment.treatment_monitoring_score ?? '--';
 
-    // Confidence intervals
-    const ci = advanced.bootstrap_confidence_intervals || {};
-    if (ci.metrics) {
-      document.getElementById('confIntervalList').innerHTML = [
-        metricRowHtml('Method', `${ci.resamples ?? 0} bootstrap resamples`, ci.method || '', ''),
-        ...(ci.metrics || []).map(m =>
-          metricRowHtml(m.metric, `95% CI: ${m.ci_low ?? '?'} – ${m.ci_high ?? '?'} (width ${m.interval_width ?? '?'})`, m.estimate, m.status, false)
-        )
-      ].join('');
-    } else {
-      document.getElementById('confIntervalList').innerHTML = empty('Bootstrap CI data unavailable');
-    }
+  const risks = data.risks || [];
+  document.getElementById('ov-risks').innerHTML = risks.length
+    ? risks.map(r => {
+        const cls = r.severity === 'urgent_review' ? 'urgent' : r.severity === 'watch' ? 'watch' : 'info';
+        return `<div class="flag-item ${cls}"><span class="flag-dot"></span>${esc(r.message)}</div>`;
+      }).join('')
+    : '<div class="empty">No risk flags at this time.</div>';
 
-    // False negatives
-    const fn = advanced.false_negative_review || {};
-    if (fn.status && fn.status !== 'unavailable') {
-      const cases = (fn.cases || []);
-      document.getElementById('fnBadge').innerHTML = statusBadge(fn.status);
-      document.getElementById('fnList').innerHTML = `
-        ${metricRowHtml('False-negative rate', `${fn.count ?? 0} missed of ${fn.positive_cases ?? 0} positives`, fn.false_negative_rate, fn.status, false)}
-        ${cases.length ? `<div class="table-wrap"><table><thead><tr><th>Patient</th><th>Probability</th><th>Stage</th><th>Subtype</th><th>MRI Δ%</th><th>Nadir WBC</th><th>Status</th></tr></thead><tbody>
-          ${cases.map(c => `<tr><td class="mono">${esc(c.patient_id)}</td><td class="mono">${esc(c.probability)}</td><td>${esc(c.stage ?? '?')}</td><td>${esc(c.molecular_subtype ?? '?')}</td><td class="mono">${esc(c.latest_mri_percent_change ?? '?')}</td><td class="mono">${esc(c.nadir_wbc ?? '?')}</td><td>${esc(c.final_cancer_status ?? '?')}</td></tr>`).join('')}
-          </tbody></table></div>` : `<div class="alert alert-ok" style="margin-top:8px"><span class="alert-icon">✓</span><div>No false negatives at current 0.50 threshold.</div></div>`}
-      `;
-    } else {
-      document.getElementById('fnList').innerHTML = empty(fn.message || 'False-negative data unavailable');
-    }
+  document.getElementById('ov-profile').innerHTML = `
+    <div class="profile-field"><div class="pf-label">Diagnosis</div><div class="pf-value">${esc(data.diagnosis || '—')}</div></div>
+    <div class="profile-field"><div class="pf-label">Stage</div><div class="pf-value">${esc(profile.cancer_stage || '—')}</div></div>
+    <div class="profile-field"><div class="pf-label">Molecular Subtype</div><div class="pf-value">${esc(profile.molecular_subtype || '—')}</div></div>
+    <div class="profile-field">
+      <div class="pf-label">Receptor Status</div>
+      <div class="receptor-grid" style="margin-top:4px">
+        ${receptorBadge('ER', profile.er_status)}
+        ${receptorBadge('PR', profile.pr_status)}
+        ${receptorBadge('HER2', profile.her2_status)}
+      </div>
+    </div>
+    <div class="profile-field"><div class="pf-label">Treatment Intent</div><div class="pf-value">${esc(profile.treatment_intent || '—')}</div></div>
+  `;
 
-    // Calibration bins
-    const cal = advanced.calibration || {};
-    const calTbody = document.querySelector('#calibrationTable tbody');
-    calTbody.innerHTML = (cal.bins || []).map(b =>
-      `<tr><td class="mono">${esc(b.range)}</td><td>${esc(b.count)}</td><td class="mono">${esc(b.mean_probability)}</td><td class="mono">${esc(b.observed_positive_rate)}</td><td class="mono">${esc(b.gap)}</td><td>${statusBadge(b.status || 'ok')}</td></tr>`
-    ).join('') || `<tr><td colspan="6">${empty('No calibration data')}</td></tr>`;
-    document.getElementById('calibrationFooter').textContent = `ECE: ${cal.expected_calibration_error ?? 'n/a'} · Brier: ${cal.brier_score ?? 'n/a'}`;
+  const dataRow = text => `<div class="data-row"><span class="data-row-bullet"></span>${esc(text)}</div>`;
+  const emptyRow = t => `<div class="empty">${t}</div>`;
+  const summary = data.ai_summary || {};
 
-    // Subgroup
-    const sg = advanced.subgroup_performance || {};
-    document.getElementById('subgroupStatusBadge').innerHTML = statusBadge(sg.status);
-    const sgTbody = document.querySelector('#subgroupTable tbody');
-    sgTbody.innerHTML = (sg.rows || []).map(r =>
-      `<tr><td>${esc(r.group)}</td><td>${esc(r.value)}</td><td>${esc(r.n)}</td><td class="mono">${esc(r.positive_rate)}</td><td class="mono"><strong>${esc(r.roc_auc)}</strong></td><td class="mono">${esc(r.sensitivity ?? '—')}</td><td class="mono">${esc(r.specificity ?? '—')}</td><td>${statusBadge(r.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="8">${empty('No subgroup data')}</td></tr>`;
+  document.getElementById('ov-changes').innerHTML = (summary.changes_since_baseline || []).length
+    ? summary.changes_since_baseline.map(dataRow).join('') : emptyRow('No changes recorded.');
+  document.getElementById('ov-review-reasons').innerHTML = (summary.review_reasons || []).length
+    ? summary.review_reasons.map(dataRow).join('') : emptyRow('No review reasons.');
+  document.getElementById('ov-treatment').innerHTML = (data.treatment_effects || []).length
+    ? data.treatment_effects.slice(-6).reverse().map(i =>
+        `<div class="data-row"><span class="data-row-bullet"></span>Cycle ${esc(i.cycle)} (${esc(i.drug)}): WBC nadir ${esc(i.min_wbc_post_cycle)}, Hgb ${esc(i.min_hemoglobin_post_cycle)}, Plt ${esc(i.min_platelets_post_cycle)}</div>`
+      ).join('') : emptyRow('No cycle data.');
+  document.getElementById('ov-symptoms').innerHTML = (data.symptoms || []).length
+    ? data.symptoms.slice(-6).reverse().map(s => {
+        const sev = Number(s.severity);
+        const sc = sev >= 7 ? 'tag-red' : sev >= 4 ? 'tag-amber' : 'tag-green';
+        return `<div class="data-row"><span class="data-row-bullet"></span>${String(s.date).slice(0,10)}: ${esc(s.symptom)} <span class="tag ${sc}">${sev}/10</span>${s.notes ? ` · <span style="font-size:11.5px;color:var(--text-3)">${esc(s.notes)}</span>` : ''}</div>`;
+      }).join('') : emptyRow('No symptoms.');
+}
 
-    // Thresholds
-    const thresh = advanced.threshold_operating_points || {};
-    const thTbody = document.querySelector('#thresholdTable tbody');
-    thTbody.innerHTML = (thresh.rows || []).map(r =>
-      `<tr><td class="mono">${esc(r.threshold)}</td><td class="mono">${esc(r.sensitivity)}</td><td class="mono">${esc(r.specificity)}</td><td class="mono">${esc(r.precision)}</td><td class="mono">${esc(r.false_negative_rate)}</td><td class="mono">${esc(r.false_positive_rate)}</td><td class="mono">${esc(r.flagged_positive_rate)}</td><td>${statusBadge(r.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="8">${empty('No threshold data')}</td></tr>`;
+/* ─── RENDER LABS ────────────────────────────── */
+function renderLabs(data) {
+  const labs = data.latest_labs || {};
+  applyStatCard('wbc-card', 'lab-wbc', 'lab-wbc-ref', 'ref: 4.5–11 ×10³/μL', labs.wbc, 4.5, 11);
+  applyStatCard('hgb-card', 'lab-hgb', 'lab-hgb-ref', 'ref: 12–16 g/dL', labs.hemoglobin, 12, 16);
+  applyStatCard('plt-card', 'lab-plt', 'lab-plt-ref', 'ref: 150–400 ×10³/μL', labs.platelets, 150, 400);
 
-    // Decision curve
-    const dc = advanced.decision_curve || {};
-    const dcTbody = document.querySelector('#decisionCurveTable tbody');
-    dcTbody.innerHTML = (dc.rows || []).map(r =>
-      `<tr><td class="mono">${esc(r.threshold)}</td><td>${esc(r.flagged_patients)}</td><td>${esc(r.true_positive)}</td><td>${esc(r.false_positive)}</td><td class="mono">${esc(r.treat_all_net_benefit)}</td><td class="mono"><strong>${esc(r.model_net_benefit)}</strong></td><td>${statusBadge(r.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="7">${empty('No decision curve data')}</td></tr>`;
+  const h = data.lab_history || [];
+  const labels = h.map(r => String(r.date).slice(0, 10));
+  mkChart('wbcChart', 'WBC', labels, h.map(r => r.wbc), '#e05a6b');
+  mkChart('hgbChart', 'Hemoglobin', labels, h.map(r => r.hemoglobin), '#3fb68a');
+  mkChart('pltChart', 'Platelets', labels, h.map(r => r.platelets), '#d4930a');
 
-    // Limits
-    document.getElementById('metricLimitsList').innerHTML = (guide.what_current_metrics_do_not_prove || []).map(item =>
-      `<div class="scope-item"><span>✗</span><span>${esc(item)}</span></div>`
-    ).join('') || empty('No scope data');
+  document.getElementById('lab-source').innerHTML = `
+    <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px">Sources: ${esc((data.lab_sources || []).join(', ') || 'none')}</div>
+    ${data.has_synthetic_labs
+      ? `<div style="font-family:var(--mono);font-size:10px;color:var(--amber);padding:6px 10px;background:var(--amber-dim);border-radius:var(--r-sm);border:1px solid rgba(212,147,10,0.2)">⚠ CBC values include synthetic demo data. Do not treat as real patient values.</div>`
+      : `<div style="font-family:var(--mono);font-size:10px;color:var(--text-3)">No synthetic CBC values detected.</div>`}
+  `;
 
-    // Evidence
-    const evid = data.evidence_separation || {};
-    const evTbody = document.querySelector('#evidenceTable tbody');
-    evTbody.innerHTML = (evid.sections || []).map(s =>
-      `<tr><td><strong>${esc(s.name)}</strong></td><td class="mono">${esc(s.rows ?? '—')}</td><td class="mono">${esc(s.patients ?? '—')}</td><td class="mono">${esc(s.best_model ?? '—')}</td><td style="max-width:200px;font-size:11px;color:var(--muted)">${esc(s.claim_boundary)}</td><td>${statusBadge(s.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="6">${empty('No evidence data')}</td></tr>`;
-  }
+  document.getElementById('lab-source').innerHTML; // already set above
 
-  function renderDrift(data) {
-    const drift = data.drift_monitoring || {};
-    const dq = data.data_quality || {};
-    const mri = (data.advanced_model_evaluation || {}).mri_derived_features || {};
+  fetch(`${API_BASE}/prediction-audits?patient_id=${encodeURIComponent(pid())}&limit=8`)
+    .then(r => r.json())
+    .then(d => {
+      const rows = d.prediction_audits || [];
+      document.getElementById('lab-audit').innerHTML = rows.length
+        ? rows.map(row => {
+            const pred = row.prediction || {};
+            const prob = pred.pcr_probability !== undefined ? `pCR ${pred.pcr_probability}` : '—';
+            return `<div class="audit-row"><span class="audit-time">${String(row.created_at).slice(0,19)}</span><span class="audit-model">${esc(row.model_name)} ${esc(row.model_version || '')}</span><span class="audit-prob">${esc(prob)}</span></div>`;
+          }).join('')
+        : '<div class="empty">No prediction audits.</div>';
+    })
+    .catch(() => {});
+}
 
-    document.getElementById('driftStatusBadge').innerHTML = statusBadge(drift.status);
-    const tbody = document.querySelector('#driftTable tbody');
-    tbody.innerHTML = (drift.features || []).map(f =>
-      `<tr><td><strong>${esc(f.feature)}</strong></td><td class="mono">${esc(f.reference_mean)}</td><td class="mono">${esc(f.current_mean)}</td><td class="mono"><strong>${esc(f.standardized_mean_shift)}</strong></td><td style="font-size:11px;color:var(--muted)">${esc(f.meaning || '')}</td><td>${statusBadge(f.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="6">${empty('No drift data — run or generate training data first')}</td></tr>`;
+/* ─── RENDER ASSESSMENT ──────────────────────── */
+function renderAssessment(data) {
+  const a = data.multimodal_assessment || {};
+  const mri = a.signals?.mri_response || {};
+  const clin = a.signals?.clinical_monitoring || {};
+  const sym = a.signals?.symptoms || {};
+  const xai = mri.xai;
 
-    document.getElementById('dataQualityBadge').innerHTML = statusBadge(dq.status);
-    const dqTbody = document.querySelector('#dataQualityTable tbody');
-    dqTbody.innerHTML = (dq.missingness || []).map(item =>
-      `<tr><td><strong>${esc(item.column)}</strong></td><td class="mono">${esc(item.missing_rate)}</td><td style="font-size:11px;color:var(--muted)">${esc(item.meaning || '')}</td><td>${statusBadge(item.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="4">${empty(`No missingness detected · ${dq.rows ?? 0} rows checked`)}</td></tr>`;
+  document.getElementById('assess-body').innerHTML = a.overall_status ? `
+    <div class="assess-grid">
+      <div class="assess-item">
+        <div class="assess-key">Monitoring Score</div>
+        <div class="assess-val" style="font-family:var(--mono);font-size:22px">${a.treatment_monitoring_score ?? '—'}<span style="font-size:12px;color:var(--text-3)">/100</span></div>
+      </div>
+      <div class="assess-item">
+        <div class="assess-key">Overall Status</div>
+        <div class="assess-val">${esc(a.overall_status)}</div>
+        <div class="assess-sub">${esc(a.overall_message || '')}</div>
+      </div>
+      <div class="assess-item">
+        <div class="assess-key">MRI Response</div>
+        <div class="assess-val">${esc(mri.status || '—')}${mri.pcr_probability !== undefined ? ` · pCR ${mri.pcr_probability}` : ''}</div>
+        <div class="assess-sub">${esc(mri.message || '')}</div>
+      </div>
+      <div class="assess-item">
+        <div class="assess-key">Clinical Monitoring</div>
+        <div class="assess-val">${esc(clin.status || '—')}</div>
+        <div class="assess-sub">${esc(clin.message || '')}</div>
+      </div>
+      <div class="assess-item">
+        <div class="assess-key">Symptom Signal</div>
+        <div class="assess-val">${esc(sym.status || '—')}</div>
+        <div class="assess-sub">${esc(sym.message || '')}</div>
+      </div>
+      <div class="assess-item">
+        <div class="assess-key">Recommended Action</div>
+        <div class="assess-val">${esc(a.recommended_action || '—')}</div>
+      </div>
+      ${xai ? `
+      <div class="assess-item" style="grid-column:1/-1">
+        <div class="assess-key">XAI — Toward pCR</div>
+        <div class="assess-val" style="font-family:var(--mono);font-size:11px;color:var(--green)">${(xai.positive_contributions||[]).slice(0,3).map(i=>`${i.feature} (${i.shap_value})`).join(', ')||'none'}</div>
+        <div class="assess-key" style="margin-top:8px">XAI — Away from pCR</div>
+        <div class="assess-val" style="font-family:var(--mono);font-size:11px;color:var(--red)">${(xai.negative_contributions||[]).slice(0,3).map(i=>`${i.feature} (${i.shap_value})`).join(', ')||'none'}</div>
+      </div>
+      ` : ''}
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text-3);margin-top:12px;">${esc(a.safety_note || '')}</div>
+  ` : '<div class="empty">No assessment loaded.</div>';
 
-    document.getElementById('mriSummary').innerHTML = (mri.features || []).map(f =>
-      metricRowHtml(f.name, f.meaning, `mean ${f.mean ?? '?'}`, mri.status || 'ok', false)
-    ).join('') || empty(mri.safety_note || 'MRI feature data unavailable');
-  }
+  const summary = data.ai_summary || {};
+  document.getElementById('assess-clinical').textContent =
+    Array.isArray(summary.clinical_summary) ? summary.clinical_summary.join('\n') : (summary.clinical_summary || 'No summary available.');
+  document.getElementById('assess-patient').textContent =
+    Array.isArray(summary.patient_explanation) ? summary.patient_explanation.join('\n') : (summary.patient_explanation || 'No explanation available.');
 
-  function renderAB(data) {
-    const ab = data.ab_testing || {};
-    const candidates = [ab.champion, ...(ab.challengers || [])].filter(Boolean);
-    const tbody = document.querySelector('#abTable tbody');
-    tbody.innerHTML = candidates.map((m, i) =>
-      `<tr><td><strong>${esc(m.model)}</strong></td><td>${i === 0 ? '<span class="badge badge-info">Champion</span>' : '<span class="badge badge-neutral">Challenger</span>'}</td><td class="mono"><strong>${esc(m.patient_level_roc_auc)}</strong></td><td class="mono">${esc(m.patient_level_average_precision ?? '—')}</td><td class="mono">${esc(m.patient_level_brier_score ?? '—')}</td><td>${statusBadge((m.metric_statuses || {}).patient_level_roc_auc)}</td></tr>`
-    ).join('') || `<tr><td colspan="6">${empty('No A/B data')}</td></tr>`;
+  const meta = data.radiology_summary?.possible_metastatic_indicators || [];
+  document.getElementById('assess-metastatic').innerHTML = meta.length
+    ? meta.map(i => `<div class="data-row"><span class="data-row-bullet"></span>${esc(i.date)}: ${esc(i.message)}</div>`).join('')
+    : '<div class="empty">No metastatic indicators flagged.</div>';
+}
 
-    document.getElementById('disagreementBlock').innerHTML = metricRowHtml(
-      'Prediction disagreement', 'Cases where predictions differ by >0.15 probability',
-      ab.prediction_disagreement_rate ?? 'n/a', 'info', true
-    );
+/* ─── RENDER IMAGING ─────────────────────────── */
+function renderImaging(data) {
+  const rad = data.radiology_summary;
+  document.getElementById('img-radiology').innerHTML = rad ? `
+    <div class="radio-rows">
+      <div class="radio-row"><span class="radio-key">Modality / Side</span><span class="radio-val">${esc(rad.latest_modality || '—')} · ${esc(rad.latest_breast_side || '—')}</span></div>
+      <div class="radio-row"><span class="radio-key">Location</span><span class="radio-val">${esc((rad.latest_breast_locations||[]).join(', ')||'—')}</span></div>
+      <div class="radio-row"><span class="radio-key">BI-RADS</span><span class="radio-val">${rad.latest_bi_rads ?? 'not reported'}</span></div>
+      <div class="radio-row"><span class="radio-key">Baseline Size</span><span class="radio-val">${rad.baseline_tumor_size_cm ?? '—'} cm (${esc(rad.baseline_date||'—')})</span></div>
+      <div class="radio-row"><span class="radio-key">Latest Size</span><span class="radio-val">${rad.latest_tumor_size_cm ?? '—'} cm (${esc(rad.latest_date||'—')})</span></div>
+      <div class="radio-row"><span class="radio-key">Response</span><span class="radio-val">${esc(rad.size_status||'—')} — ${esc(rad.response_language_status||'')}</span></div>
+      <div class="radio-row"><span class="radio-key">Safety Note</span><span class="radio-val" style="font-size:11px;color:var(--text-3)">${esc(rad.safety_note||'')}</span></div>
+    </div>
+  ` : '<div class="empty">No imaging data loaded.</div>';
 
-    const advanced = data.advanced_model_evaluation || {};
-    const cost = advanced.cost_sensitive_thresholds || {};
-    const cTbody = document.querySelector('#costTable tbody');
-    cTbody.innerHTML = (cost.policies || []).map(p =>
-      `<tr><td><strong>${esc(p.name)}</strong></td><td class="mono">${esc(p.recommended_threshold)}</td><td class="mono">${esc(p.sensitivity)}</td><td class="mono">${esc(p.specificity)}</td><td>${esc(p.false_negative_cost)}</td><td>${esc(p.false_positive_cost)}</td><td class="mono">${esc(p.weighted_error)}</td><td>${statusBadge(p.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="8">${empty('No cost-sensitive data')}</td></tr>`;
-  }
+  document.getElementById('img-mri-registry').innerHTML = (data.mri_registry||[]).length
+    ? data.mri_registry.map(e => `<div class="mri-entry"><div class="mri-meta">${esc(e.scan_date||'undated')} — ${esc(e.modality)}: ${esc(e.series_description||'series')}</div><div class="mri-path">${esc(e.local_path)}</div></div>`).join('')
+    : '<div class="empty">No MRI folders registered.</div>';
 
-  function renderRAG(data) {
-    const rag = data.rag_evaluation || {};
-    const feedback = data.agent_feedback || {};
-    const regression = data.agent_regression_evaluation || {};
-    const costs = rag.api_costs || {};
+  document.getElementById('img-mri-series').innerHTML = (data.mri_series_index||[]).length
+    ? data.mri_series_index.map(s => `<div class="mri-entry"><div class="mri-meta">${esc(s.study_date||'undated')} — ${esc(s.modality||'MR')} · ${esc(s.candidate_role||'unknown')} · ${s.instance_count} imgs</div><div class="mri-path">${esc(s.series_description||'Unnamed series')}</div></div>`).join('')
+    : '<div class="empty">No DICOM series indexed.</div>';
+}
 
-    document.getElementById('ragCalls').textContent = (rag.call_count ?? 0).toLocaleString();
-    document.getElementById('ragCache').textContent = rag.cache_hit_rate ?? '—';
-    document.getElementById('ragLatency').textContent = rag.average_latency_ms != null ? rag.average_latency_ms + 'ms' : '—';
-    document.getElementById('ragP95').textContent = `p95 ${rag.p95_latency_ms ?? '?'}ms`;
-    document.getElementById('ragCost').textContent = costs.total_estimated_api_cost_usd != null ? '$' + parseFloat(costs.total_estimated_api_cost_usd).toFixed(4) : '—';
+/* ─── RENDER TIMELINE ────────────────────────── */
+function renderTimeline(events) {
+  document.getElementById('tl-events').innerHTML = (events||[]).length
+    ? events.slice().reverse().map(e => `
+      <div class="tl-row">
+        <span class="tl-date">${String(e.date).slice(0,10)}</span>
+        <div class="tl-type">${severityTag(e.severity||'info')}</div>
+        <div class="tl-desc"><strong>${esc(e.title||e.type)}</strong><p>${esc(e.summary||'')}</p></div>
+      </div>
+    `).join('')
+    : '<div class="empty">No timeline events.</div>';
+}
 
-    document.getElementById('ragStatusBadge').innerHTML = statusBadge(rag.status);
-    document.getElementById('ragQualityList').innerHTML = [
-      metricRowHtml('Precision@3 (proxy)', 'Replace with RAGAS labels when available', rag.average_retrieval_precision_at_3 ?? 'n/a', rag.status, true),
-      metricRowHtml('Grounding score', 'Answer/context overlap proxy', rag.average_grounding_score ?? 'n/a', 'ok', true),
-      metricRowHtml('Hallucination score', 'Lower is better — target < 0.10', rag.average_hallucination_score ?? 'n/a', parseFloat(rag.average_hallucination_score) > 0.10 ? 'watch' : 'ok', true),
-    ].join('');
+/* ─── RENDER REVIEW ──────────────────────────── */
+function renderReview(data) {
+  const snap = data.patient_timeline_summary || {};
+  const rev = data.latest_clinician_review;
+  document.getElementById('rev-snapshot').textContent = snap.headline || 'No deterministic snapshot available.';
+  document.getElementById('rev-latest').textContent = rev
+    ? `${rev.decision} · ${rev.reviewer_role} · ${String(rev.created_at).slice(0,19)}`
+    : 'No clinician review saved yet.';
+}
 
-    const igCounts = rag.input_guardrail_counts || {};
-    const ogCounts = rag.output_guardrail_counts || {};
-    document.getElementById('guardrailList').innerHTML = [
-      gateRowHtml('Input: prompt injection blocks', igCounts.failed ?? 0, igCounts.failed ? 'failed' : 'ok'),
-      gateRowHtml('Input: all input events', igCounts.passed ?? 0 + (igCounts.failed ?? 0), 'ok'),
-      gateRowHtml('Output: unsafe directives', ogCounts.failed ?? 0, ogCounts.failed ? 'failed' : 'ok'),
-      gateRowHtml('Output: all output events', ogCounts.passed ?? 0 + (ogCounts.failed ?? 0), 'ok'),
-    ].join('');
+/* ─── RENDER CHAT ────────────────────────────── */
+function renderChat(messages) {
+  const el = document.getElementById('chat-thread');
+  if (!messages || !messages.length) { el.innerHTML = '<div class="empty">No messages yet.</div>'; return; }
+  el.innerHTML = messages.map(m =>
+    `<div class="chat-msg ${m.role === 'user' ? 'user' : 'assistant'}">${esc(m.message)}</div>`
+  ).join('');
+  el.scrollTop = el.scrollHeight;
+}
 
-    const summary = regression.summary || {};
-    document.getElementById('regressionList').innerHTML = [
-      metricRowHtml('Suite status', regression.purpose || 'Agent regression report', '', summary.status || regression.status || 'unavailable', false),
-      metricRowHtml('Pass rate', 'Share of cases passing all checks', summary.pass_rate ?? 'n/a', summary.status, true),
-      metricRowHtml('Intent accuracy', 'Expected intent route match rate', summary.intent_accuracy ?? 'n/a', 'ok', true),
-      metricRowHtml('Attack block rate', 'Prompt injection / privacy cases blocked', summary.attack_block_rate ?? 'n/a', 'ok', true),
-      metricRowHtml('Grounding avg', `Hallucination: ${summary.average_hallucination_score ?? 'n/a'} · Latency: ${summary.average_latency_ms ?? 'n/a'}ms`, summary.average_grounding_score ?? 'n/a', 'ok', true),
-    ].join('');
+/* ─── MAIN LOAD ──────────────────────────────── */
+function loadPatient(patientId) {
+  currentPatientId = patientId;
+  fetch(`${API_BASE}/patient-report/${encodeURIComponent(patientId)}`)
+    .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
+    .then(data => {
+      renderOverview(data);
+      renderLabs(data);
+      renderAssessment(data);
+      renderImaging(data);
+      renderTimeline(data.timeline || []);
+      renderReview(data);
+      renderChat(data.chat_history || []);
+    })
+    .catch(err => toast(err.message, 'error'));
+}
 
-    document.getElementById('agentGateList').innerHTML = (regression.quality_gates || []).map(g =>
-      metricRowHtml(g.metric, `${g.purpose} Minimum: ${g.minimum}`, '', 'info', false)
-    ).join('') || empty('Run agent regression to populate quality gates');
+/* ─── REVIEW QUEUE ───────────────────────────── */
+function loadReviewQueue() {
+  const doFetch = () => fetch(`${API_BASE}/clinician/review-queue?limit=20`, { headers: chHdr() })
+    .then(r => { if (!r.ok) throw new Error(`Queue failed (${r.status})`); return r.json(); });
 
-    document.getElementById('feedbackBadge').innerHTML = statusBadge(feedback.status);
-    document.getElementById('agentFeedbackList').innerHTML = [
-      metricRowHtml('Feedback count', 'Patient ratings submitted', feedback.feedback_count ?? 0, '', false),
-      metricRowHtml('Average rating', '1–5 stars', feedback.average_rating ?? 'n/a', feedback.status, true),
-      metricRowHtml('Thumbs-up rate', 'Share of explicit positive ratings', feedback.thumbs_up_rate ?? 'n/a', 'ok', true),
-    ].join('');
-  }
+  doFetch()
+    .catch(() => loginClinician().then(doFetch))
+    .then(data => {
+      const rows = data.queue || [];
+      document.getElementById('queueBadge').textContent = rows.length;
+      document.getElementById('queue-tbody').innerHTML = rows.length
+        ? rows.map(row => {
+            const flags = (row.top_review_flags || []).concat(row.top_missing_data_warnings || []).slice(0, 2).join(' · ');
+            const pct = Math.min(100, (row.priority_score / 10) * 100);
+            return `<tr onclick="selectPatient('${esc(row.patient_id)}')">
+              <td><strong>${esc(row.patient_name)}</strong><br><span style="font-family:var(--mono);font-size:10px;color:var(--text-3)">${esc(row.patient_id)}</span></td>
+              <td>
+                ${severityTag(row.urgent_flag_count ? 'urgent_review' : row.priority_score >= 5 ? 'watch' : 'info')}
+                <div class="priority-bar" style="margin-top:6px"><div class="priority-fill" style="width:${pct}%"></div></div>
+              </td>
+              <td>${esc(row.overall_status||'—')}</td>
+              <td><span style="font-family:var(--mono);font-size:11px">${esc(row.latest_review_decision||'none')}</span></td>
+              <td style="font-size:11px;color:var(--text-3)">${esc(flags||row.headline||'—')}</td>
+            </tr>`;
+          }).join('')
+        : '<tr><td colspan="5"><div class="empty">No patients queued for review.</div></td></tr>';
+    })
+    .catch(err => toast(err.message, 'error'));
+}
 
-  function renderGates(data) {
-    const mle = data.mle_readiness || {};
-    const checks = mle.checks || [];
-    const hardFailures = mle.hard_gate_failures || [];
-    const cats = mle.category_statuses || {};
+function selectPatient(pid) {
+  document.getElementById('patientSelect').value = pid;
+  loadPatient(pid);
+  switchTab('overview', document.querySelector('.nav-btn'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.nav-btn').classList.add('active');
+}
 
-    const hard = checks.filter(c => c.gate_type === 'hard' || (mle.hard_gate_failures || []).includes(c.name));
-    const other = checks.filter(c => c.gate_type !== 'hard');
+/* ─── AUTH ───────────────────────────────────── */
+function loginClinician() {
+  return fetch(`${API_BASE}/auth/demo-login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role: 'clinician' })
+  })
+  .then(r => { if (!r.ok) throw new Error(`Login failed (${r.status})`); return r.json(); })
+  .then(s => {
+    clinicianToken = s.access_token;
+    localStorage.setItem('clinicianToken', clinicianToken);
+  });
+}
 
-    document.getElementById('hardGateList').innerHTML = [
-      metricRowHtml('Hard gate status', mle.release_recommendation || '', '', mle.hard_gate_status || mle.status || 'n/a', false),
-      ...checks.slice(0, 15).map(c =>
-        metricRowHtml(c.name, `${c.meaning || ''} Threshold: ${c.threshold}`, c.value != null ? String(c.value).slice(0,40) : 'n/a', c.status, false)
-      )
-    ].join('') || empty(mle.message || 'Run MLE checks to populate gates');
+/* ─── ACTIONS ────────────────────────────────── */
+function addLab() {
+  const p = pid();
+  const date = document.getElementById('labDate').value;
+  const wbc = parseFloat(document.getElementById('labWbc').value);
+  const hemoglobin = parseFloat(document.getElementById('labHgb').value);
+  const platelets = parseFloat(document.getElementById('labPlt').value);
+  if (!p || !date || isNaN(wbc) || isNaN(hemoglobin) || isNaN(platelets)) { toast('Fill in all lab fields.', 'error'); return; }
+  fetch(`${API_BASE}/patients/${p}/labs`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date, wbc, hemoglobin, platelets })
+  })
+  .then(r => { if (!r.ok) throw new Error(`Error ${r.status}`); return r.json(); })
+  .then(() => { toast('Lab saved.', 'success'); ['labDate','labWbc','labHgb','labPlt'].forEach(id => document.getElementById(id).value=''); loadPatient(p); })
+  .catch(err => toast(err.message, 'error'));
+}
 
-    const relBadge = document.getElementById('releaseBadge');
-    relBadge.innerHTML = statusBadge(mle.status);
-    document.getElementById('releaseRec').textContent = mle.release_recommendation || '—';
+function addSymptom() {
+  const p = pid();
+  const date = document.getElementById('symDate').value;
+  const symptom = document.getElementById('symName').value.trim();
+  const severity = parseInt(document.getElementById('symSev').value, 10);
+  const notes = document.getElementById('symNotes').value.trim();
+  if (!p || !date || !symptom || isNaN(severity)) { toast('Fill in date, symptom, and severity.', 'error'); return; }
+  fetch(`${API_BASE}/patients/${p}/symptoms`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date, symptom, severity, notes })
+  })
+  .then(r => { if (!r.ok) throw new Error(`Error ${r.status}`); return r.json(); })
+  .then(() => { toast('Symptom saved.', 'success'); ['symDate','symName','symSev','symNotes'].forEach(id => document.getElementById(id).value=''); loadPatient(p); })
+  .catch(err => toast(err.message, 'error'));
+}
 
-    document.getElementById('catStatusList').innerHTML = Object.entries(cats).map(([cat, st]) =>
-      gateRowHtml(cat.replace(/_/g, ' '), '', st)
-    ).join('') || empty('No category data');
+function submitReview(decision) {
+  const p = pid();
+  if (!p) { toast('Select a patient first.', 'error'); return; }
+  const payload = {
+    decision,
+    clinician_notes: document.getElementById('rev-notes').value.trim() || null,
+    edited_patient_summary: document.getElementById('rev-edited').value.trim() || null,
+    explanation_quality_score: document.getElementById('rev-explanation').value ? Number(document.getElementById('rev-explanation').value) : null,
+    model_usefulness_score: document.getElementById('rev-usefulness').value ? Number(document.getElementById('rev-usefulness').value) : null,
+  };
+  const doPost = () => fetch(`${API_BASE}/patients/${p}/summary-review`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...chHdr() },
+    body: JSON.stringify(payload)
+  }).then(r => { if (!r.ok) throw new Error(`Review failed (${r.status})`); return r.json(); });
 
-    document.getElementById('dataContractList').innerHTML = checks.filter(c => c.category === 'data_contract').map(c =>
-      metricRowHtml(c.name, `${c.meaning || ''} Threshold: ${c.threshold}`, c.value != null ? String(c.value).slice(0,40) : 'n/a', c.status, false)
-    ).join('') || empty('No data contract checks');
+  doPost()
+    .catch(() => loginClinician().then(doPost))
+    .then(() => { toast(`Review: ${decision}`, 'success'); ['rev-notes','rev-edited','rev-explanation','rev-usefulness'].forEach(id => document.getElementById(id).value=''); loadPatient(p); })
+    .catch(err => toast(err.message, 'error'));
+}
 
-    document.getElementById('nextActionsList').innerHTML = (mle.next_actions || []).map(a =>
-      gateRowHtml(a.check, a.priority || '', a.status || 'watch')
-    ).join('') || empty('No next actions');
-  }
+function sendChat() {
+  const p = pid();
+  const input = document.getElementById('chat-input');
+  const message = input.value.trim();
+  if (!p || !message) { toast('Write a message first.', 'error'); return; }
+  fetch(`${API_BASE}/patients/${p}/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message })
+  })
+  .then(r => { if (!r.ok) throw new Error(`Chat error ${r.status}`); return r.json(); })
+  .then(result => { input.value = ''; toast(result.saved_actions?.length ? 'Saved from chat.' : 'Message saved.', 'success'); loadPatient(p); })
+  .catch(err => toast(err.message, 'error'));
+}
 
-  function renderClinician(data) {
-    const loop = data.clinician_loop_metrics || {};
-    const audit = data.audit_and_feedback || {};
-    const feedback = audit.clinical_feedback || {};
+function importCsv() {
+  const csv_text = document.getElementById('csvText').value.trim();
+  if (!csv_text) { toast('Paste CSV before importing.', 'error'); return; }
+  fetch(`${API_BASE}/import-csv`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      import_type: document.getElementById('csvType').value,
+      dataset: document.getElementById('csvDataset').value,
+      csv_text
+    })
+  })
+  .then(r => { if (!r.ok) throw new Error(`Import error ${r.status}`); return r.json(); })
+  .then(result => {
+    toast(`Imported: ${JSON.stringify(result.result)}`, 'success');
+    document.getElementById('csvText').value = '';
+    return fetch(`${API_BASE}/patients`).then(r => r.json());
+  })
+  .then(patients => {
+    populatePatients(patients);
+    if (patients.length) loadPatient(patients[0].id);
+  })
+  .catch(err => toast(err.message, 'error'));
+}
 
-    document.getElementById('clinReviews').textContent = loop.total_reviews ?? feedback.review_count ?? '—';
-    const ar = loop.accepted_review_rate;
-    document.getElementById('clinAccept').textContent = ar != null ? (parseFloat(ar) * 100).toFixed(0) + '%' : '—';
-    const acceptDelta = document.getElementById('clinAcceptDelta');
-    acceptDelta.textContent = parseFloat(ar) >= 0.80 ? '↑ Above 80% target' : '↓ Below 80% target';
-    acceptDelta.className = 'kpi-delta ' + (parseFloat(ar) >= 0.80 ? 'delta-up' : 'delta-warn');
-    document.getElementById('clinQuality').textContent = loop.average_explanation_quality_score ?? feedback.average_explanation_quality_score ?? '—';
-    document.getElementById('clinUseful').textContent = loop.average_model_usefulness_score ?? feedback.average_model_usefulness_score ?? '—';
+function populatePatients(patients) {
+  const sel = document.getElementById('patientSelect');
+  sel.innerHTML = patients.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+}
 
-    document.getElementById('clinLoopBadge').innerHTML = statusBadge(loop.status);
-    if (loop.status === 'unavailable') {
-      document.getElementById('clinLoopList').innerHTML = empty(loop.message || 'No clinician-loop metrics yet');
-    } else {
-      document.getElementById('clinLoopList').innerHTML = [
-        metricRowHtml('Accepted review rate', 'Approved + edited + needs-follow-up / all reviews', loop.accepted_review_rate, loop.accepted_review_status, true),
-        metricRowHtml('Rejected rate', 'Rejected summaries / all reviews', loop.rejected_review_rate, 'ok', false),
-        metricRowHtml('Edited rate', 'How often clinicians edit AI output', loop.edited_review_rate, 'ok', false),
-        metricRowHtml('Needs follow-up rate', 'Escalated to follow-up', loop.needs_followup_rate, 'ok', false),
-        metricRowHtml('Explanation quality', 'Avg clinician score 1–5', loop.average_explanation_quality_score, loop.summary_quality_status, true),
-        metricRowHtml('Model usefulness', 'Avg clinician score 1–5', loop.average_model_usefulness_score, loop.model_usefulness_status, true),
-      ].join('');
-    }
+/* ─── ADD STAT CARD IDs ──────────────────────── */
+// The stat cards need IDs set manually in the HTML for applyStatCard to work
+// We'll set them after the fact:
+document.addEventListener('DOMContentLoaded', () => {
+  const cards = document.querySelectorAll('#lab-stats .stat-card');
+  if (cards[0]) cards[0].id = 'wbc-card';
+  if (cards[1]) cards[1].id = 'hgb-card';
+  if (cards[2]) cards[2].id = 'plt-card';
+});
 
-    const dcs = feedback.decision_counts || {};
-    document.getElementById('clinDecisionList').innerHTML = Object.entries(dcs).map(([k, v]) =>
-      metricRowHtml(k.replace(/_/g,' '), '', v, 'ok', false)
-    ).join('') || empty('No decision data yet');
-  }
+/* ─── BOOT ───────────────────────────────────── */
+fetch(`${API_BASE}/patients`)
+  .then(r => r.json())
+  .then(patients => {
+    populatePatients(patients);
+    const sel = document.getElementById('patientSelect');
+    sel.addEventListener('change', e => loadPatient(e.target.value));
+    if (patients.length) loadPatient(patients[0].id);
+  })
+  .catch(err => toast(err.message, 'error'));
 
-  function renderAudit(data) {
-    const coverage = data.data_coverage || {};
-    const monitoring = data.app_monitoring || {};
-    const rag = data.rag_evaluation || {};
-
-    document.getElementById('coverageBadge').innerHTML = statusBadge(coverage.status);
-    const cTbody = document.querySelector('#coverageTable tbody');
-    cTbody.innerHTML = (coverage.items || []).map(item =>
-      `<tr><td><strong>${esc(item.name)}</strong></td><td class="mono">${esc(item.coverage_rate)}</td><td style="font-size:11px;color:var(--muted)">${esc(item.detail)}</td><td>${statusBadge(item.status)}</td></tr>`
-    ).join('') || `<tr><td colspan="4">${empty('No coverage data')}</td></tr>`;
-
-    const counts = monitoring.event_type_counts || {};
-    document.getElementById('eventCountList').innerHTML = Object.entries(counts).map(([k, v]) =>
-      metricRowHtml(k, '', v, 'ok', false)
-    ).join('') + metricRowHtml('Failure rate', 'Failed events / total events', monitoring.failure_rate ?? 'n/a', monitoring.status, false);
-
-    const clTbody = document.querySelector('#costLatencyTable tbody');
-    clTbody.innerHTML = (rag.cost_latency_tradeoffs || []).map(t =>
-      `<tr><td><strong>${esc(t.path)}</strong></td><td class="mono">${esc(t.average_latency_ms ?? '—')}ms</td><td class="mono">${esc(t.average_estimated_total_tokens ?? '—')}</td><td style="font-size:11px;color:var(--muted)">${esc(t.meaning || '')}</td></tr>`
-    ).join('') || `<tr><td colspan="4">${empty('No latency breakdown data')}</td></tr>`;
-
-    const eTbody = document.querySelector('#errorsTable tbody');
-    eTbody.innerHTML = (monitoring.recent_errors || []).map(e =>
-      `<tr><td>${esc(e.event_type || '?')}</td><td class="mono">${esc(e.route || '?')}</td><td style="color:var(--red-text)">${esc(e.error_message || 'no message')}</td></tr>`
-    ).join('') || `<tr><td colspan="3">${empty('No recent errors')}</td></tr>`;
-  }
-
-  /* ── Main render ── */
-  function render(data) {
-    renderOverview(data);
-    renderAlerts(data);
-    renderPerformance(data);
-    renderDrift(data);
-    renderAB(data);
-    renderRAG(data);
-    renderGates(data);
-    renderClinician(data);
-    renderAudit(data);
-  }
-
-  /* ── Agent regression ── */
-  function runAgentRegression() {
-    document.getElementById('regressionList').innerHTML = metricRowHtml('Running', 'Executing offline agent regression suite…', '', 'watch', false);
-    const req = () => fetch(`${API_BASE}/admin/agent-regression`, { method: 'POST', headers: headers() })
-      .then(r => { if (!r.ok) throw new Error(`agent regression failed (${r.status})`); return r.json(); })
-      .then(payload => { renderRAG({ agent_regression_evaluation: payload.result }); return loadAnalytics(); });
-    req().catch(() => loginAdmin().then(req));
-  }
-
-  /* ── MLE readiness ── */
-  function runMleReadiness() {
-    document.getElementById('hardGateList').innerHTML = metricRowHtml('Running', 'Checking data contract, artifacts, performance, lifecycle, safety regressions…', '', 'watch', false);
-    const req = () => fetch(`${API_BASE}/admin/mle-readiness`, { method: 'POST', headers: headers() })
-      .then(r => { if (!r.ok) throw new Error(`MLE readiness failed (${r.status})`); return r.json(); })
-      .then(payload => { renderGates({ mle_readiness: payload.result }); return loadAnalytics(); });
-    req().catch(() => loginAdmin().then(req));
-  }
-
-  /* ── Load ── */
-  function loadAnalytics() {
-    const req = () => fetch(`${API_BASE}/admin/analytics`, { headers: headers() })
-      .then(r => { if (!r.ok) throw new Error(`analytics failed (${r.status})`); return r.json(); })
-      .then(render);
-    return req().catch(() => loginAdmin().then(req));
-  }
-
-  loadAnalytics();
+loginClinician()
+  .then(() => loadReviewQueue())
+  .catch(() => loadReviewQueue());
 </script>
 </body>
 </html>
