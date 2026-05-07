@@ -25,7 +25,7 @@ from backend.services.mri_manifest import select_model_input_series
 from backend.services.mri_preprocessing import normalize_pixels
 from backend.services.auth import create_demo_session, get_context_from_authorization, require_admin_context, require_patient_context
 from backend.services.clinician_feedback import create_clinical_summary_review
-from backend.services import admin_analytics, agent_rag
+from backend.services import admin_analytics, agent_rag, support_chat_agent
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
 from backend.services.app_logging import build_app_monitoring_summary, log_app_event
@@ -848,6 +848,14 @@ class BreastMonitoringNLPTests(unittest.TestCase):
                 "conversation",
             )
             self.assertEqual(
+                agent_rag.route_intent("who are you", safety={"scope": "education_or_tracking", "level": "low_risk"}),
+                "conversation",
+            )
+            self.assertEqual(
+                agent_rag.route_intent("how are you", safety={"scope": "education_or_tracking", "level": "low_risk"}),
+                "conversation",
+            )
+            self.assertEqual(
                 agent_rag.route_intent("what did I tell you earlier?", safety={"scope": "education_or_tracking", "level": "low_risk"}),
                 "patient_memory",
             )
@@ -1122,9 +1130,57 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertEqual(result["agent_pipeline"]["intent"], "conversation")
             self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
             self.assertEqual(result["agent_pipeline"]["citations"], [])
-            self.assertIn("Hi", result["reply"])
+            self.assertTrue(
+                any(term in result["reply"].lower() for term in ["hello", "hi", "help", "support"])
+            )
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_identity_question_is_conversational_without_rag_retrieval(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P004", name="Identity Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P004",
+                message="who are you",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "conversation")
+            self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+            self.assertEqual(result["agent_pipeline"]["citations"], [])
+            self.assertIn("support", result["reply"].lower())
             self.assertIn("symptoms", result["reply"].lower())
         finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_direct_lane_uses_llm_response_when_available(self):
+        db = _temp_db_session()
+        original = support_chat_agent._generate_llm_response
+        try:
+            db.add(Patient(id="CHAT-P005", name="LLM Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            support_chat_agent._generate_llm_response = lambda message, actions, urgent_flags, patient_context, fallback_response: (
+                "I'm here with you. I can chat, remember recent patient-scoped notes, and help log symptoms, CBC values, medications, or MRI report text."
+            )
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P005",
+                message="how are you",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "conversation")
+            self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+            self.assertEqual(result["agent_pipeline"]["citations"], [])
+            self.assertIn("I'm here with you", result["reply"])
+        finally:
+            support_chat_agent._generate_llm_response = original
             db.close()
             db.bind.dispose()
 

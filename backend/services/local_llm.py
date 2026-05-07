@@ -83,7 +83,8 @@ def route_intent_with_local_llm(text, deterministic_intent=None, safety=None):
     system = (
         "You classify patient portal messages. Return only JSON. "
         "Allowed intents: security_boundary, safety_boundary, treatment_decision_boundary, "
-        "data_entry_confirmation, portal_help, patient_timeline_monitoring, education, emotional_support, general_support. "
+        "data_entry_confirmation, portal_help, patient_timeline_monitoring, education, emotional_support, "
+        "general_support, conversation, patient_memory. "
         "Prefer safety_boundary for urgent symptoms or self-harm. Prefer treatment_decision_boundary for requests to start/stop/change treatment."
     )
     prompt = {

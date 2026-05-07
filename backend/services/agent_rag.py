@@ -13,7 +13,7 @@ from backend.services.security_guardrails import detect_multilingual_medical_dan
 
 MAX_CONTEXT_CHARS = 1300
 AGENT_CACHE_TTL_DAYS = 30
-AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v3"
+AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v4"
 SEMANTIC_CACHE_MIN_SIMILARITY = 0.86
 
 
@@ -196,7 +196,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             started=started,
         )
 
-    if intent in {"conversation", "patient_memory"} or (intent == "data_entry_confirmation" and safety.get("level") != "high_risk"):
+    if _uses_direct_support_lane(intent, safety):
         generated = generate_answer(
             query=query,
             fallback_response=fallback_response,
@@ -397,13 +397,17 @@ def route_intent(query, actions=None, safety=None):
         deterministic = "data_entry_confirmation"
     elif _is_conversation_opening(lower):
         deterministic = "conversation"
+    elif _is_identity_or_capability_question(lower):
+        deterministic = "conversation"
+    elif _is_social_checkin(lower):
+        deterministic = "conversation"
     elif any(term in lower for term in ["remember", "what did i tell", "what did i say", "last message", "previous message", "chat history"]):
         deterministic = "patient_memory"
     elif any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add"]):
         deterministic = "portal_help"
     elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment", "working", "progress"]):
         deterministic = "patient_timeline_monitoring"
-    elif any(term in lower for term in ["pcr", "response", "mri", "cbc", "wbc", "hemoglobin", "platelets", "chemo", "chemotherapy", "side effect"]):
+    elif any(term in lower for term in ["pcr", "response", "mri", "cbc", "wbc", "hemoglobin", "platelets", "chemo", "chemotherapy", "side effect", "breast cancer", "neutropenia", "infection risk"]):
         deterministic = "education"
     elif any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed"]):
         deterministic = "emotional_support"
@@ -426,10 +430,22 @@ def route_intent(query, actions=None, safety=None):
     }
     candidate = llm.get("intent")
     if llm.get("available") and candidate in allowed and float(llm.get("confidence") or 0) >= 0.72:
-        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation", "conversation", "patient_memory"}:
+        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation", "conversation", "patient_memory", "patient_timeline_monitoring", "general_support", "emotional_support"}:
             return deterministic
         return candidate
     return deterministic
+
+
+def _uses_direct_support_lane(intent, safety):
+    if intent == "data_entry_confirmation" and safety.get("level") != "high_risk":
+        return True
+    return intent in {
+        "conversation",
+        "patient_memory",
+        "patient_timeline_monitoring",
+        "general_support",
+        "emotional_support",
+    }
 
 
 def rewrite_and_decompose(query, intent):
@@ -670,7 +686,7 @@ def generate_answer(query, fallback_response, safety, intent, compressed_context
         }
         for item in compressed_context
     ]
-    if intent in {"conversation", "patient_memory"}:
+    if _uses_direct_support_lane(intent, safety):
         reply = fallback_response
     elif safety.get("level") == "high_risk":
         reply = _safety_reply(fallback_response, compressed_context, safety)
@@ -1130,17 +1146,47 @@ def _with_related_guidance(fallback_response, compressed_context):
 
 
 def _educational_reply(query, intent, compressed_context):
-    primary = compressed_context[0]["text"]
-    supporting = compressed_context[1]["text"] if len(compressed_context) > 1 else None
+    primary = _clean_context_text(compressed_context[0]["text"])
+    supporting = _clean_context_text(compressed_context[1]["text"], max_chars=220) if len(compressed_context) > 1 else None
     if intent == "portal_help":
         opener = "For this portal:"
     else:
         opener = "General information:"
     reply = f"{opener} {primary}"
-    if supporting:
+    if supporting and _should_include_supporting_context(query, primary, supporting):
         reply += f" {supporting}"
     reply += " Use this as education and discuss personal decisions with the oncology team."
     return reply
+
+
+def _clean_context_text(text, max_chars=420):
+    value = re.sub(r"\[[^\]]{1,40}\]", "", str(text or ""))
+    value = re.sub(r"\s+", " ", value).strip()
+    sentences = re.split(r"(?<=[.!?])\s+", value)
+    selected = []
+    total = 0
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if not sentence:
+            continue
+        next_total = total + len(sentence) + (1 if selected else 0)
+        if selected and next_total > max_chars:
+            break
+        selected.append(sentence)
+        total = next_total
+        if total >= max_chars:
+            break
+    cleaned = " ".join(selected) if selected else value[:max_chars].strip()
+    return cleaned[:max_chars].rstrip(" ,;:")
+
+
+def _should_include_supporting_context(query, primary, supporting):
+    query_tokens = set(_tokenize(query))
+    primary_tokens = set(_tokenize(primary))
+    if {"what", "define", "meaning"} & query_tokens and len(primary_tokens & query_tokens) >= 1:
+        return False
+    supporting_tokens = set(_tokenize(supporting))
+    return len((supporting_tokens - primary_tokens) & query_tokens) >= 2
 
 
 def _intent_boost(intent, snippet):
@@ -1175,6 +1221,39 @@ def _is_conversation_opening(lower):
         "thank you",
     }
     return cleaned in greetings or cleaned.startswith(("hi ", "hello ", "hey "))
+
+
+def _is_identity_or_capability_question(lower):
+    cleaned = re.sub(r"[^a-z0-9\s]", " ", lower).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    patterns = [
+        "who are you",
+        "what are you",
+        "what can you do",
+        "what do you do",
+        "how can you help",
+        "help me",
+        "can you help",
+        "are you a doctor",
+        "are you ai",
+        "are you an ai",
+    ]
+    return any(pattern in cleaned for pattern in patterns)
+
+
+def _is_social_checkin(lower):
+    cleaned = re.sub(r"[^a-z0-9\s]", " ", lower).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    patterns = [
+        "how are you",
+        "how are u",
+        "how you doing",
+        "how are you doing",
+        "are you ok",
+        "what s up",
+        "whats up",
+    ]
+    return any(pattern in cleaned for pattern in patterns)
 
 
 def _domain_boost(query_tokens, snippet):

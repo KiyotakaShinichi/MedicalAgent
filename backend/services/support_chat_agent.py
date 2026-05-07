@@ -15,7 +15,7 @@ from backend.models import (
     Treatment,
     TreatmentOutcome,
 )
-from backend.services.agent_rag import run_patient_agent_pipeline
+from backend.services.agent_rag import run_patient_agent_pipeline, route_intent, safety_scope_check
 from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_imaging_report_payload, validate_symptom_payload
 from backend.services.security_guardrails import detect_multilingual_medical_danger, normalize_security_text
@@ -53,7 +53,11 @@ You are a patient support assistant for a breast cancer treatment monitoring por
 Rules:
 - Do not diagnose, stage, confirm recurrence/metastasis, or decide treatment.
 - Do not tell the patient to start, stop, increase, or decrease medications.
+- Do not invent patient facts. Use recent_context only when directly helpful.
 - Explain what was logged, ask for missing tracking details when useful, and encourage oncology team review for concerning symptoms.
+- For greetings, identity questions, and "how are you" style messages, answer naturally and briefly as a warm portal assistant.
+- If saved_actions contains a saved item, acknowledge the item clearly and do not add unrelated oncology education.
+- If the message asks about prior chat, summarize only patient-scoped recent_context / chat messages.
 - If urgent wording is present, advise contacting the oncology team or emergency services now.
 - Keep the tone calm and practical. Maximum 120 words. Plain text only.
 """
@@ -162,6 +166,10 @@ def handle_patient_chat(db, patient_id, message):
 
     patient_context = _recent_patient_context(db, patient_id)
     fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
+    routing_safety = safety_scope_check(normalized, urgent_flags)
+    routing_intent = route_intent(normalized, actions=actions, safety=routing_safety)
+    if _should_use_llm_direct_reply(routing_intent, routing_safety, actions, urgent_flags):
+        fallback_response = _generate_llm_response(normalized, actions, urgent_flags, patient_context, fallback_response)
     agent_result = run_patient_agent_pipeline(
         db=db,
         patient_id=patient_id,
@@ -490,7 +498,7 @@ def _prefer_deterministic_reply(message):
 
 
 def _build_response(message, actions, urgent_flags, patient_context):
-    if not actions and not urgent_flags and _is_small_talk(message):
+    if not actions and not urgent_flags and _is_conversational_prompt(message):
         return _conversation_reply(patient_context)
 
     parts = []
@@ -564,16 +572,68 @@ def _is_small_talk(message):
     return cleaned in small_talk or cleaned.startswith(("hi ", "hello ", "hey "))
 
 
+def _is_conversational_prompt(message):
+    return _is_small_talk(message) or _is_identity_or_capability_question(message) or _is_social_checkin(message)
+
+
+def _is_identity_or_capability_question(message):
+    cleaned = re.sub(r"[^a-z0-9\s]", " ", message.lower()).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    patterns = [
+        "who are you",
+        "what are you",
+        "what can you do",
+        "what do you do",
+        "how can you help",
+        "help me",
+        "can you help",
+        "are you a doctor",
+        "are you ai",
+        "are you an ai",
+    ]
+    return any(pattern in cleaned for pattern in patterns)
+
+
+def _is_social_checkin(message):
+    cleaned = re.sub(r"[^a-z0-9\s]", " ", message.lower()).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    patterns = [
+        "how are you",
+        "how are u",
+        "how you doing",
+        "how are you doing",
+        "are you ok",
+        "what s up",
+        "whats up",
+    ]
+    return any(pattern in cleaned for pattern in patterns)
+
+
 def _conversation_reply(patient_context):
     memory_hint = _latest_memory_hint(patient_context)
     base = (
-        "Hi, I am here. You can tell me symptoms, CBC values, medications, or paste MRI/imaging report text, "
-        "and I will save what is safe to save for clinician review."
+        "I am the portal support agent for this breast cancer monitoring demo. "
+        "I can chat normally, remember recent patient-scoped messages, log symptoms, save complete CBC values, "
+        "record medications, and save report-like MRI/imaging notes for clinician review."
     )
     if memory_hint:
         base += f" I can also refer back to recent portal context, like {memory_hint}."
     base += " I cannot diagnose or choose treatment."
     return base
+
+
+def _should_use_llm_direct_reply(intent, safety, actions, urgent_flags):
+    if urgent_flags or safety.get("level") == "high_risk":
+        return False
+    if intent == "data_entry_confirmation":
+        return bool(actions)
+    return intent in {
+        "conversation",
+        "patient_memory",
+        "patient_timeline_monitoring",
+        "general_support",
+        "emotional_support",
+    }
 
 
 def _generate_llm_response(message, actions, urgent_flags, patient_context, fallback_response):
