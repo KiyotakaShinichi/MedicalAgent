@@ -3,465 +3,727 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oncology Monitor - Admin / MLE</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>OncoTrack — Admin / MLE</title>
+<link rel="preconnect" href="[fonts.googleapis.com](https://fonts.googleapis.com)">
+<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap)" rel="stylesheet">
 <style>
   :root {
-    --bg: #101520;
-    --panel: #171e2c;
-    --panel-2: #1d2636;
-    --line: rgba(255,255,255,0.10);
-    --text: #f2f5fa;
-    --muted: #9aa7bb;
-    --muted-2: #69758a;
-    --rose: #e05a6f;
-    --green: #4cc38a;
-    --amber: #e5a23d;
-    --blue: #6ba7ff;
-    --red: #ff6b6b;
-    --mono: "IBM Plex Mono", monospace;
-    --body: "DM Sans", system-ui, sans-serif;
+    --bg:       #0c1018;
+    --panel:    #141923;
+    --panel-2:  #1a2130;
+    --panel-3:  #1f2840;
+    --line:     rgba(255,255,255,0.08);
+    --line-2:   rgba(255,255,255,0.14);
+    --text:     #eef2f9;
+    --muted:    #8a98b0;
+    --muted-2:  #566070;
+    --rose:     #e05a6f;
+    --rose-dim: rgba(224,90,111,0.12);
+    --green:    #4cc38a;
+    --green-dim:rgba(76,195,138,0.10);
+    --amber:    #e5a23d;
+    --amber-dim:rgba(229,162,61,0.10);
+    --blue:     #6ba7ff;
+    --blue-dim: rgba(107,167,255,0.10);
+    --red:      #ff6b6b;
+    --red-dim:  rgba(255,107,107,0.10);
+    --mono:     "IBM Plex Mono", monospace;
+    --body:     "DM Sans", system-ui, sans-serif;
+    --sidebar:  220px;
+    --radius:   4px;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     min-height: 100vh;
     background: var(--bg);
     color: var(--text);
     font-family: var(--body);
+    display: flex;
+    flex-direction: column;
   }
 
+  /* ── Topbar ── */
   .topbar {
-    height: 64px;
-    padding: 0 28px;
+    height: 56px;
+    padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--line);
-    background: rgba(16,21,32,0.96);
+    background: var(--panel);
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 100;
+    flex-shrink: 0;
   }
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .brand { display: flex; align-items: center; gap: 10px; }
 
   .brand-icon {
-    width: 34px;
-    height: 34px;
-    display: grid;
-    place-items: center;
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
     background: var(--rose);
+    border-radius: 3px;
+    flex-shrink: 0;
   }
+  .brand-icon svg { width: 15px; height: 15px; fill: white; }
 
-  .brand-icon svg { width: 18px; height: 18px; fill: white; }
-  .brand-name { font-weight: 800; letter-spacing: 0; }
-  .brand-role {
-    font: 600 10px var(--mono);
-    color: var(--muted);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  .brand-name { font-weight: 700; font-size: 15px; }
+  .brand-sep { color: var(--muted-2); margin: 0 4px; }
+  .brand-role { font: 500 11px var(--mono); color: var(--muted); letter-spacing: 0.06em; }
+
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+
+  .alert-badge {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    background: var(--red-dim);
+    border: 1px solid rgba(255,107,107,0.35);
+    color: var(--red);
+    font: 600 11px var(--mono);
+    padding: 4px 10px;
+    border-radius: var(--radius);
+    letter-spacing: 0.04em;
   }
-
-  .actions { display: flex; align-items: center; gap: 8px; }
-
-  .surface-link {
-    border: 1px solid var(--line);
-    background: var(--panel-2);
-    color: var(--muted);
-    font: 600 12px var(--body);
-    padding: 8px 11px;
-    text-decoration: none;
+  .alert-badge.show { display: flex; }
+  .alert-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: pulse 1.4s ease-in-out infinite;
   }
-
-  .surface-link:hover,
-  .surface-link.active {
-    color: var(--text);
-    border-color: rgba(224,90,111,0.62);
-    background: rgba(224,90,111,0.12);
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
   }
 
   .btn {
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-2);
     background: var(--panel-2);
     color: var(--text);
     font: 600 12px var(--body);
-    padding: 8px 11px;
+    padding: 7px 13px;
     cursor: pointer;
+    border-radius: var(--radius);
+    transition: border-color .15s, background .15s;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: rgba(255,255,255,0.28); background: var(--panel-3); }
+  .btn-primary { background: var(--rose); border-color: var(--rose); color: #fff; }
+  .btn-primary:hover { background: #c94e62; border-color: #c94e62; }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+  /* ── Layout ── */
+  .layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
   }
 
-  .btn:hover { border-color: rgba(255,255,255,0.24); }
-  .btn-primary { background: var(--rose); border-color: var(--rose); }
-
-  .main {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 24px;
-    display: grid;
-    gap: 18px;
-  }
-
-  .hero {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 14px;
-  }
-
-  .hero-panel,
-  .card {
+  /* ── Sidebar ── */
+  .sidebar {
+    width: var(--sidebar);
+    flex-shrink: 0;
+    border-right: 1px solid var(--line);
     background: var(--panel);
-    border: 1px solid var(--line);
+    padding: 16px 0;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
   }
 
-  .hero-panel { padding: 22px; }
-
-  .eyebrow {
-    font: 600 10px var(--mono);
-    color: var(--rose);
-    letter-spacing: 0.12em;
+  .nav-section-label {
+    font: 600 9px var(--mono);
+    color: var(--muted-2);
     text-transform: uppercase;
-    margin-bottom: 10px;
+    letter-spacing: 0.12em;
+    padding: 12px 16px 6px;
   }
 
-  h1 {
-    font-size: clamp(28px, 4vw, 44px);
-    line-height: 1.02;
-    letter-spacing: 0;
-    margin-bottom: 12px;
-  }
-
-  .copy {
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 16px;
     color: var(--muted);
-    line-height: 1.6;
-    max-width: 760px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: color .12s, border-color .12s, background .12s;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--text); border-left-color: var(--rose); background: rgba(224,90,111,0.07); }
+
+  .nav-icon { width: 14px; height: 14px; opacity: 0.7; flex-shrink: 0; }
+  .nav-item.active .nav-icon { opacity: 1; }
+
+  .nav-badge {
+    margin-left: auto;
+    font: 600 9px var(--mono);
+    padding: 2px 6px;
+    border-radius: 10px;
+    background: var(--rose-dim);
+    color: var(--rose);
+    border: 1px solid rgba(224,90,111,0.25);
+  }
+  .nav-badge.green { background: var(--green-dim); color: var(--green); border-color: rgba(76,195,138,0.25); }
+
+  /* ── Main content ── */
+  .content {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
 
-  .status-grid {
+  /* ── Overview tiles ── */
+  .tiles {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
 
-  .status-tile {
-    background: var(--panel-2);
+  .tile {
+    background: var(--panel);
     border: 1px solid var(--line);
-    padding: 14px;
-    min-height: 98px;
+    border-top: 2px solid var(--line);
+    padding: 16px;
+    border-radius: var(--radius);
+    transition: border-color .2s;
   }
+  .tile.ok    { border-top-color: var(--green); }
+  .tile.warn  { border-top-color: var(--amber); }
+  .tile.err   { border-top-color: var(--red); }
+  .tile.info  { border-top-color: var(--blue); }
 
   .tile-label {
     font: 600 10px var(--mono);
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
-
   .tile-value {
-    font: 600 24px var(--mono);
+    font: 700 26px var(--mono);
     color: var(--text);
     margin-bottom: 4px;
+    line-height: 1;
   }
-
-  .tile-sub {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.4;
-  }
-
-  .grid { display: grid; gap: 14px; }
-  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-  .card-header {
-    min-height: 48px;
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--line);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .card-title {
-    font-size: 14px;
-    font-weight: 800;
-  }
-
-  .card-body { padding: 14px; }
-
-  .tag {
+  .tile-sub { font-size: 11px; color: var(--muted-2); line-height: 1.4; }
+  .tile-status {
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    margin-top: 8px;
+    font: 600 10px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .tile-status .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+
+  /* ── Section containers ── */
+  .section { display: flex; flex-direction: column; gap: 14px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ── Cards ── */
+  .grid { display: grid; gap: 14px; }
+  .g2   { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .g3   { grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    background: rgba(0,0,0,0.15);
+  }
+  .card-title { font-size: 13px; font-weight: 700; flex: 1; }
+  .card-body { padding: 16px; }
+  .card-body-flush { }
+
+  /* ── Tags ── */
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px;
     border: 1px solid var(--line);
     color: var(--muted);
-    font: 600 10px var(--mono);
+    font: 600 9px var(--mono);
     padding: 3px 7px;
     text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-radius: 2px;
+    white-space: nowrap;
   }
-
   .tag.strong,
-  .tag.passed { color: var(--green); border-color: rgba(76,195,138,0.32); background: rgba(76,195,138,0.08); }
-  .tag.acceptable { color: var(--blue); border-color: rgba(107,167,255,0.32); background: rgba(107,167,255,0.08); }
-  .tag.unideal { color: var(--amber); border-color: rgba(229,162,61,0.32); background: rgba(229,162,61,0.08); }
-  .tag.failed { color: var(--red); border-color: rgba(255,107,107,0.32); background: rgba(255,107,107,0.08); }
-  .tag.unavailable { color: var(--muted); }
+  .tag.passed  { color: var(--green); border-color: rgba(76,195,138,0.35); background: var(--green-dim); }
+  .tag.acceptable { color: var(--blue); border-color: rgba(107,167,255,0.35); background: var(--blue-dim); }
+  .tag.unideal { color: var(--amber); border-color: rgba(229,162,61,0.35); background: var(--amber-dim); }
+  .tag.failed  { color: var(--red); border-color: rgba(255,107,107,0.35); background: var(--red-dim); }
+  .tag.unavailable { color: var(--muted-2); }
+  .tag.loading { color: var(--muted-2); animation: blink .9s step-start infinite; }
+  @keyframes blink { 50% { opacity: 0.4; } }
 
-  .metric-list {
-    display: grid;
-    gap: 8px;
-  }
+  /* ── Metric rows ── */
+  .metric-list { display: flex; flex-direction: column; }
 
   .metric-row {
     display: grid;
-    grid-template-columns: minmax(130px, 0.85fr) minmax(100px, 0.5fr) 1.4fr;
+    grid-template-columns: 160px 110px 1fr;
     gap: 12px;
-    align-items: baseline;
-    padding: 9px 0;
+    align-items: start;
+    padding: 10px 0;
     border-bottom: 1px solid var(--line);
   }
+  .metric-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .metric-row:first-child { padding-top: 0; }
 
-  .metric-row:last-child { border-bottom: none; }
-  .metric-name { color: var(--muted); font-size: 12px; }
+  .metric-name  { color: var(--muted); font-size: 12px; padding-top: 1px; }
   .metric-value { font: 600 13px var(--mono); color: var(--text); }
-  .metric-why { color: var(--muted-2); font-size: 12px; line-height: 1.45; }
+  .metric-why   { color: var(--muted-2); font-size: 11px; line-height: 1.5; padding-top: 2px; }
 
+  /* ── Tables ── */
+  .table-wrap { overflow-x: auto; }
   .table {
     width: 100%;
     border-collapse: collapse;
     font-size: 12px;
   }
-
   .table th {
     text-align: left;
-    font: 600 10px var(--mono);
+    font: 600 9px var(--mono);
     color: var(--muted-2);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    padding: 8px;
+    padding: 8px 12px;
     border-bottom: 1px solid var(--line);
+    white-space: nowrap;
   }
-
   .table td {
-    padding: 9px 8px;
+    padding: 9px 12px;
     color: var(--muted);
     border-bottom: 1px solid var(--line);
     vertical-align: top;
   }
-
+  .table tr:last-child td { border-bottom: none; }
+  .table tbody tr { transition: background .1s; }
+  .table tbody tr:hover { background: rgba(255,255,255,0.025); }
   .table strong { color: var(--text); }
 
+  /* ── Code / JSON ── */
   pre {
     white-space: pre-wrap;
     word-break: break-word;
-    background: #0d111a;
+    background: #090d14;
     border: 1px solid var(--line);
+    border-radius: var(--radius);
     color: var(--muted);
-    padding: 12px;
-    font: 400 11px/1.55 var(--mono);
-    max-height: 320px;
+    padding: 14px;
+    font: 400 11px/1.6 var(--mono);
+    max-height: 280px;
     overflow: auto;
   }
 
-  .empty {
-    color: var(--muted-2);
-    font-size: 12px;
-    line-height: 1.5;
+  /* ── Tabs ── */
+  .tabs { display: flex; border-bottom: 1px solid var(--line); }
+  .tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font: 600 12px var(--body);
+    padding: 10px 16px;
+    cursor: pointer;
+    margin-bottom: -1px;
+    transition: color .12s, border-color .12s;
   }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--rose); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+  .tab-pane { display: none; padding: 16px; }
+  .tab-pane.active { display: block; }
 
+  /* ── Empty / loading ── */
+  .empty { color: var(--muted-2); font-size: 12px; }
+  .skeleton {
+    height: 12px; border-radius: 3px;
+    background: linear-gradient(90deg, var(--panel-2) 25%, var(--panel-3) 50%, var(--panel-2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    margin-bottom: 8px;
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ── Toast ── */
   .toast {
     position: fixed;
-    right: 18px;
-    bottom: 18px;
+    right: 18px; bottom: 18px;
     background: var(--panel-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-2);
     color: var(--text);
-    padding: 10px 12px;
+    padding: 10px 14px;
     font-size: 13px;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     display: none;
+    z-index: 999;
+    max-width: 320px;
   }
-
   .toast.show { display: block; }
+  .toast.error { border-color: rgba(255,107,107,0.4); color: var(--red); }
 
-  @media (max-width: 980px) {
-    .hero, .g2, .g3, .status-grid { grid-template-columns: 1fr; }
-    .metric-row { grid-template-columns: 1fr; gap: 4px; }
+  /* ── Divider ── */
+  .divider { border: none; border-top: 1px solid var(--line); margin: 4px 0; }
+
+  /* ── Responsive ── */
+  @media (max-width: 1080px) {
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .g3    { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width: 780px) {
+    .sidebar  { display: none; }
+    .tiles, .g2, .g3 { grid-template-columns: 1fr; }
+    .metric-row { grid-template-columns: 1fr; gap: 3px; }
   }
 </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v4H4V4Zm0 6h10v4H4v-4Zm0 6h16v4H4v-4Zm12-6h4v4h-4v-4Z"/></svg></div>
-      <span class="brand-name">Oncology Monitor</span>
-      <span class="brand-role">Admin / MLE Operations</span>
-    </div>
-    <div class="actions">
-      <a class="surface-link" href="/patient">Patient</a>
-      <a class="surface-link" href="/clinician">Clinician</a>
-      <a class="surface-link active" href="/admin">Admin/MLE</a>
-      <button class="btn" onclick="loadAll()">Refresh</button>
-      <button class="btn" onclick="logout()">Logout</button>
-    </div>
-  </header>
 
-  <main class="main">
-    <section class="hero">
-      <div class="hero-panel">
-        <div class="eyebrow">AI Governance Console</div>
-        <h1>RAG safety, model readiness, monitoring, and feedback.</h1>
-        <p class="copy">
-          Admin surface for tracking the agent layer and MLE lifecycle: retrieval quality, citations, guardrails,
-          prompt-injection regression, user feedback, cost/latency telemetry, drift proxies, and release gates.
-        </p>
+<!-- Topbar -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16v4H4V4Zm0 6h10v4H4v-4Zm0 6h16v4H4v-4Zm12-6h4v4h-4v-4Z"/></svg>
+    </div>
+    <span class="brand-name">OncoTrack</span>
+    <span class="brand-sep">/</span>
+    <span class="brand-role">Admin · MLE Ops</span>
+  </div>
+  <div class="topbar-right">
+    <div class="alert-badge" id="alertBadge">
+      <div class="alert-dot"></div>
+      <span id="alertText">Guardrail failure detected</span>
+    </div>
+    <button class="btn btn-sm" onclick="loadAll()">↻ Refresh</button>
+    <button class="btn btn-sm" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-item active" href="#overview" onclick="scrollTo('overview',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v5H2V2Zm7 0h5v5H9V2ZM2 9h5v5H2V9Zm7 0h5v5H9V9Z"/></svg>
+      Dashboard
+    </a>
+
+    <div class="nav-section-label">RAG & Safety</div>
+    <a class="nav-item" href="#rag" onclick="scrollTo('rag',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3Zm0 2v4l3 1.5-.7 1.3L7 10V5h1Z"/></svg>
+      RAG Evaluation
+      <span class="nav-badge" id="navRagBadge" style="display:none"></span>
+    </a>
+    <a class="nav-item" href="#guardrails" onclick="scrollTo('guardrails',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1 2 4v4c0 3.3 2.6 6.4 6 7 3.4-.6 6-3.7 6-7V4L8 1Zm0 2.2 4 2V8c0 2.4-1.7 4.6-4 5.2C5.7 12.6 4 10.4 4 8V5.2l4-2Z"/></svg>
+      Guardrails
+      <span class="nav-badge" id="navGuardBadge" style="display:none"></span>
+    </a>
+    <a class="nav-item" href="#sources" onclick="scrollTo('sources',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm1 2v8h8V4H4Zm1 1h6v1H5V5Zm0 2h6v1H5V7Zm0 2h4v1H5V9Z"/></svg>
+      KB Sources
+    </a>
+
+    <div class="nav-section-label">Operations</div>
+    <a class="nav-item" href="#cost" onclick="scrollTo('cost',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3Zm-.5 2v.6A2 2 0 0 0 8 9.9V11h-1v1h1v.5h1V12h.5a1.5 1.5 0 0 0 0-3H9V7.1A1 1 0 0 1 9.9 8H11a2 2 0 0 0-3.5-1.3V5h-1Z"/></svg>
+      Cost & Latency
+    </a>
+    <a class="nav-item" href="#feedback" onclick="scrollTo('feedback',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v9H9l-3 3V11H2V2Zm2 2v1h8V4H4Zm0 2v1h8V6H4Zm0 2v1h5V8H4Z"/></svg>
+      Feedback
+    </a>
+
+    <div class="nav-section-label">ML Lifecycle</div>
+    <a class="nav-item" href="#regression" onclick="scrollTo('regression',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 12l4-4 3 3 4-5 3 2V14H1v-2Zm0-8a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v1H1V4Z"/></svg>
+      Regression
+    </a>
+    <a class="nav-item" href="#mle" onclick="scrollTo('mle',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1 1 5v6l7 4 7-4V5L8 1ZM3 9.4V6.2L8 3.1l5 3.1v3.2L8 12.5 3 9.4Z"/></svg>
+      MLE Gates
+    </a>
+    <a class="nav-item" href="#drift" onclick="scrollTo('drift',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 11l3-4 2 2 3-5 2 3 2-2v5H2v1Zm0-9h12v1H2V2Z"/></svg>
+      Model & Drift
+    </a>
+  </nav>
+
+  <!-- Main content -->
+  <main class="content">
+
+    <!-- Overview tiles -->
+    <section class="section" id="overview">
+      <div class="section-header">
+        <span class="section-title">System Overview</span>
+        <span class="tag loading" id="overallStatus">loading</span>
+        <span style="margin-left:auto;font:500 11px var(--mono);color:var(--muted-2)" id="lastUpdated"></span>
       </div>
-      <div class="status-grid">
-        <div class="status-tile"><div class="tile-label">RAG Status</div><div class="tile-value" id="ragStatus">--</div><div class="tile-sub">Grounding, hallucination proxy, guardrails.</div></div>
-        <div class="status-tile"><div class="tile-label">MLE Gates</div><div class="tile-value" id="mleStatus">--</div><div class="tile-sub">Data contract, artifacts, quality, lifecycle.</div></div>
-        <div class="status-tile"><div class="tile-label">API Cost</div><div class="tile-value" id="apiCost">$--</div><div class="tile-sub">Estimated provider cost and token path.</div></div>
-        <div class="status-tile"><div class="tile-label">Feedback</div><div class="tile-value" id="feedbackScore">--</div><div class="tile-sub">Patient rating and thumbs-up signal.</div></div>
+      <div class="tiles">
+        <div class="tile" id="tileRag">
+          <div class="tile-label">RAG Evaluation</div>
+          <div class="tile-value" id="ragStatus">--</div>
+          <div class="tile-sub">Grounding, hallucination proxy, guardrails.</div>
+          <div class="tile-status" id="tileRagStatus"></div>
+        </div>
+        <div class="tile" id="tileMle">
+          <div class="tile-label">MLE Gates</div>
+          <div class="tile-value" id="mleStatus">--</div>
+          <div class="tile-sub">Data contract, artifacts, quality, lifecycle.</div>
+          <div class="tile-status" id="tileMleStatus"></div>
+        </div>
+        <div class="tile info" id="tileCost">
+          <div class="tile-label">API Cost</div>
+          <div class="tile-value" id="apiCost">$--</div>
+          <div class="tile-sub">Estimated provider cost this session.</div>
+        </div>
+        <div class="tile" id="tileFeedback">
+          <div class="tile-label">Feedback Score</div>
+          <div class="tile-value" id="feedbackScore">--</div>
+          <div class="tile-sub">Average patient rating (1–5).</div>
+        </div>
       </div>
     </section>
 
-    <section class="grid g2">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">RAG Evaluation & Guardrails</div>
-          <span class="tag" id="ragTag">loading</span>
-        </div>
-        <div class="card-body">
-          <div class="metric-list" id="ragMetrics"></div>
-        </div>
+    <!-- RAG Evaluation & Cost -->
+    <section class="section" id="rag">
+      <div class="section-header">
+        <span class="section-title">RAG & Cost</span>
       </div>
+      <div class="grid g2">
 
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">API Cost & Latency</div>
-          <span class="tag">cost</span>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">RAG Evaluation</span>
+            <span class="tag loading" id="ragTag">loading</span>
+          </div>
+          <div class="card-body">
+            <div class="metric-list" id="ragMetrics">
+              <div class="skeleton" style="width:80%"></div>
+              <div class="skeleton" style="width:60%"></div>
+              <div class="skeleton" style="width:70%"></div>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
-          <div class="metric-list" id="costMetrics"></div>
+
+        <div class="card" id="cost">
+          <div class="card-header">
+            <span class="card-title">Cost & Latency</span>
+            <span class="tag">telemetry</span>
+          </div>
+          <div class="card-body">
+            <div class="metric-list" id="costMetrics"></div>
+          </div>
         </div>
+
       </div>
     </section>
 
-    <section class="grid g2">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Security Guardrails</div>
-          <span class="tag" id="guardrailTag">loading</span>
-        </div>
-        <div class="card-body">
-          <div class="metric-list" id="guardrailMetrics"></div>
-        </div>
+    <!-- Guardrails -->
+    <section class="section" id="guardrails">
+      <div class="section-header">
+        <span class="section-title">Security Guardrails</span>
       </div>
+      <div class="grid g2">
 
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Input / Output Guardrails</span>
+            <span class="tag loading" id="guardrailTag">loading</span>
+          </div>
+          <div class="card-body">
+            <div class="metric-list" id="guardrailMetrics"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Attack Block Summary</span>
+            <span class="tag">red-team</span>
+          </div>
+          <div class="card-body">
+            <div class="metric-list" id="attackMetrics"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- KB Sources -->
+    <section class="section" id="sources">
+      <div class="section-header">
+        <span class="section-title">Knowledge Base Sources</span>
+      </div>
       <div class="card">
         <div class="card-header">
-          <div class="card-title">Agent Feedback</div>
-          <span class="tag">ratings</span>
+          <span class="card-title">Source Registry</span>
+          <span class="tag loading" id="sourceTag">loading</span>
         </div>
-        <div class="card-body">
-          <div class="metric-list" id="feedbackMetrics"></div>
-          <div style="height:12px"></div>
+        <div class="card-body" style="padding-bottom:0">
+          <div class="grid g3" style="margin-bottom:16px">
+            <div class="metric-list" id="sourceMetrics"></div>
+          </div>
+        </div>
+        <div class="table-wrap">
           <table class="table">
-            <thead><tr><th>Patient</th><th>Rating</th><th>Comment</th></tr></thead>
-            <tbody id="feedbackRows"><tr><td colspan="3" class="empty">Loading feedback...</td></tr></tbody>
+            <thead><tr><th>Source</th><th>Trust</th><th>Chunks</th><th>Topics</th></tr></thead>
+            <tbody id="sourceRows"><tr><td colspan="4" class="empty">Loading sources…</td></tr></tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <section class="grid g2">
+    <!-- Feedback -->
+    <section class="section" id="feedback">
+      <div class="section-header">
+        <span class="section-title">Agent Feedback</span>
+      </div>
       <div class="card">
         <div class="card-header">
-          <div class="card-title">Agent Regression Suite</div>
-          <button class="btn btn-primary" onclick="runAgentRegression()">Run</button>
+          <span class="card-title">Patient Ratings</span>
+          <span class="tag">live</span>
         </div>
-        <div class="card-body">
-          <div class="metric-list" id="agentRegressionMetrics"></div>
-          <div style="height:12px"></div>
+        <div class="card-body" style="padding-bottom:0">
+          <div class="grid g3" style="margin-bottom:16px">
+            <div class="metric-list" id="feedbackMetrics"></div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Patient</th><th>Rating</th><th>Comment</th></tr></thead>
+            <tbody id="feedbackRows"><tr><td colspan="3" class="empty">Loading feedback…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Regression -->
+    <section class="section" id="regression">
+      <div class="section-header">
+        <span class="section-title">Agent Regression Suite</span>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Regression Tests</span>
+          <button class="btn btn-sm btn-primary" onclick="runAgentRegression()" id="runRegressionBtn">▶ Run Suite</button>
+        </div>
+        <div class="tabs" id="regressionTabs">
+          <button class="tab-btn active" onclick="switchTab('regression','summary',this)">Summary</button>
+          <button class="tab-btn" onclick="switchTab('regression','json',this)">Raw JSON</button>
+        </div>
+        <div class="tab-pane active" id="regression-summary">
+          <div class="metric-list" id="agentRegressionMetrics"><div class="empty">No run loaded — click Run Suite.</div></div>
+        </div>
+        <div class="tab-pane" id="regression-json">
           <pre id="agentRegressionJson">No run loaded.</pre>
         </div>
       </div>
+    </section>
 
+    <!-- MLE Gates -->
+    <section class="section" id="mle">
+      <div class="section-header">
+        <span class="section-title">MLE Release Gates</span>
+      </div>
       <div class="card">
         <div class="card-header">
-          <div class="card-title">MLE Release Gates</div>
-          <button class="btn btn-primary" onclick="runMleReadiness()">Run</button>
+          <span class="card-title">Release Readiness</span>
+          <button class="btn btn-sm btn-primary" onclick="runMleReadiness()" id="runMleBtn">▶ Run Gates</button>
         </div>
-        <div class="card-body">
-          <div class="metric-list" id="mleMetrics"></div>
-          <div style="height:12px"></div>
+        <div class="tabs" id="mleTabs">
+          <button class="tab-btn active" onclick="switchTab('mle','summary',this)">Summary</button>
+          <button class="tab-btn" onclick="switchTab('mle','json',this)">Raw JSON</button>
+        </div>
+        <div class="tab-pane active" id="mle-summary">
+          <div class="metric-list" id="mleMetrics"><div class="empty">No run loaded — click Run Gates.</div></div>
+        </div>
+        <div class="tab-pane" id="mle-json">
           <pre id="mleJson">No run loaded.</pre>
         </div>
       </div>
     </section>
 
-    <section class="grid g2">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">KB Source Registry</div>
-          <span class="tag" id="sourceTag">loading</span>
-        </div>
-        <div class="card-body">
-          <div class="metric-list" id="sourceMetrics"></div>
-          <div style="height:12px"></div>
-          <table class="table">
-            <thead><tr><th>Source</th><th>Trust</th><th>Chunks</th><th>Topics</th></tr></thead>
-            <tbody id="sourceRows"><tr><td colspan="4" class="empty">Loading sources...</td></tr></tbody>
-          </table>
-        </div>
+    <!-- Model & Drift -->
+    <section class="section" id="drift">
+      <div class="section-header">
+        <span class="section-title">Model Evaluation & Drift</span>
       </div>
+      <div class="grid g2">
 
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Model Evaluation & Drift</div>
-          <span class="tag">monitoring</span>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Model Summary</span>
+            <span class="tag">evaluation</span>
+          </div>
+          <div class="card-body">
+            <div class="metric-list" id="modelMetrics"></div>
+          </div>
         </div>
-        <div class="card-body">
-          <div class="metric-list" id="modelMetrics"></div>
-          <div style="height:12px"></div>
-          <table class="table">
-            <thead><tr><th>Feature</th><th>Shift</th><th>Status</th></tr></thead>
-            <tbody id="driftRows"><tr><td colspan="3" class="empty">Loading drift metrics...</td></tr></tbody>
-          </table>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Feature Drift</span>
+            <span class="tag">monitoring</span>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Feature</th><th>Std. Mean Shift</th><th>Status</th></tr></thead>
+              <tbody id="driftRows"><tr><td colspan="3" class="empty">Loading drift metrics…</td></tr></tbody>
+            </table>
+          </div>
         </div>
+
       </div>
     </section>
-  </main>
 
-  <div class="toast" id="toast"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
   const API_BASE = window.location.origin;
   let adminToken = localStorage.getItem("adminAccessToken") || null;
 
+  /* ── Auth ── */
   function headers() {
     return adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
-  }
-
-  function toast(message) {
-    const box = document.getElementById("toast");
-    box.textContent = message;
-    box.classList.add("show");
-    clearTimeout(box._t);
-    box._t = setTimeout(() => box.classList.remove("show"), 3200);
-  }
-
-  function esc(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
   }
 
   function loginAdmin() {
@@ -469,201 +731,315 @@
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role: "admin" })
-    })
-    .then(response => {
-      if (!response.ok) throw new Error(`Admin login failed (${response.status})`);
-      return response.json();
-    })
-    .then(session => {
-      adminToken = session.access_token;
+    }).then(r => {
+      if (!r.ok) throw new Error(`Admin login failed (${r.status})`);
+      return r.json();
+    }).then(s => {
+      adminToken = s.access_token;
       localStorage.setItem("adminAccessToken", adminToken);
     });
   }
 
   function adminFetch(path, options = {}) {
-    const request = () => fetch(`${API_BASE}${path}`, {
+    const req = () => fetch(`${API_BASE}${path}`, {
       ...options,
       headers: { ...(options.headers || {}), ...headers() }
     });
-    return request().then(response => {
-      if (response.status === 401 || response.status === 403) {
-        return loginAdmin().then(request);
-      }
-      return response;
-    }).then(response => {
-      if (!response.ok) throw new Error(`${path} failed (${response.status})`);
-      return response.json();
+    return req().then(r => {
+      if (r.status === 401 || r.status === 403) return loginAdmin().then(req);
+      return r;
+    }).then(r => {
+      if (!r.ok) throw new Error(`${path} failed (${r.status})`);
+      return r.json();
     });
   }
 
-  function tag(status) {
-    const value = String(status || "unavailable");
-    return `<span class="tag ${esc(value)}">${esc(value)}</span>`;
+  /* ── Utilities ── */
+  function esc(v) {
+    return String(v ?? "")
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function toast(msg, isError = false) {
+    const box = document.getElementById("toast");
+    box.textContent = msg;
+    box.className = "toast show" + (isError ? " error" : "");
+    clearTimeout(box._t);
+    box._t = setTimeout(() => box.classList.remove("show"), 3500);
+  }
+
+  function asPct(v) {
+    if (v === null || v === undefined) return "--";
+    return `${Math.round(Number(v) * 1000) / 10}%`;
+  }
+
+  function asNum(v) {
+    if (v === null || v === undefined || v === "") return "--";
+    if (typeof v === "number") return Number.isInteger(v) ? String(v) : String(Math.round(v * 1000) / 1000);
+    return String(v);
+  }
+
+  function rows(items) {
+    return items.map(it => `
+      <div class="metric-row">
+        <div class="metric-name">${esc(it.name)}</div>
+        <div class="metric-value">${esc(it.value)}</div>
+        <div class="metric-why">${esc(it.why)}</div>
+      </div>`).join("");
+  }
+
+  function tagHtml(status) {
+    const v = String(status || "unavailable");
+    return `<span class="tag ${esc(v)}">${esc(v)}</span>`;
   }
 
   function setTag(id, status) {
     const el = document.getElementById(id);
     if (!el) return;
-    const value = String(status || "unavailable");
-    el.className = `tag ${value}`;
-    el.textContent = value;
+    const v = String(status || "unavailable");
+    el.className = `tag ${v}`;
+    el.textContent = v;
   }
 
-  function rows(items) {
-    return items.map(item => `
-      <div class="metric-row">
-        <div class="metric-name">${esc(item.name)}</div>
-        <div class="metric-value">${esc(item.value)}</div>
-        <div class="metric-why">${esc(item.why)}</div>
-      </div>
-    `).join("");
+  /* Tile state colours */
+  function setTileState(tileId, statusWord) {
+    const el = document.getElementById(tileId);
+    if (!el) return;
+    el.classList.remove("ok", "warn", "err", "info");
+    const s = String(statusWord || "").toLowerCase();
+    if (["passed","strong","acceptable","ok","ready"].some(w => s.includes(w))) el.classList.add("ok");
+    else if (["unideal","warn","partial"].some(w => s.includes(w))) el.classList.add("warn");
+    else if (["failed","err","error","blocked"].some(w => s.includes(w))) el.classList.add("err");
+    else el.classList.add("info");
   }
 
-  function asPct(value) {
-    if (value === null || value === undefined) return "--";
-    return `${Math.round(Number(value) * 1000) / 10}%`;
+  /* ── Nav scroll ── */
+  function scrollTo(id, link) {
+    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+    link.classList.add("active");
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    return false;
   }
 
-  function asNum(value) {
-    if (value === null || value === undefined || value === "") return "--";
-    if (typeof value === "number") return Number.isInteger(value) ? String(value) : String(Math.round(value * 1000) / 1000);
-    return String(value);
+  /* ── Tabs ── */
+  function switchTab(section, tab, btn) {
+    document.querySelectorAll(`#${section}-summary, #${section}-json`).forEach(p => p.classList.remove("active"));
+    document.getElementById(`${section}-${tab}`).classList.add("active");
+    btn.closest(".tabs").querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
   }
 
+  /* ── Render ── */
   function renderAnalytics(data) {
-    const rag = data.rag_evaluation || {};
-    const costs = rag.api_costs || {};
-    const feedback = data.agent_feedback || {};
-    const regression = data.agent_regression_evaluation || {};
-    const regressionSummary = regression.summary || {};
-    const mle = data.mle_readiness || {};
-    const source = data.rag_source_registry || {};
-    const model = data.advanced_model_evaluation || {};
-    const drift = data.drift_monitoring || {};
+    const rag         = data.rag_evaluation || {};
+    const costs       = rag.api_costs || {};
+    const feedback    = data.agent_feedback || {};
+    const regression  = data.agent_regression_evaluation || {};
+    const regSum      = regression.summary || {};
+    const mle         = data.mle_readiness || {};
+    const source      = data.rag_source_registry || {};
+    const model       = data.advanced_model_evaluation || {};
+    const drift       = data.drift_monitoring || {};
+    const inputCounts = rag.input_guardrail_counts || {};
+    const outputCounts= rag.output_guardrail_counts || {};
 
-    document.getElementById("ragStatus").textContent = rag.status || "--";
-    document.getElementById("mleStatus").textContent = mle.status || mle.hard_gate_status || "--";
-    document.getElementById("apiCost").textContent = `$${asNum(costs.total_estimated_api_cost_usd)}`;
-    document.getElementById("feedbackScore").textContent = asNum(feedback.average_rating);
+    /* Timestamp */
+    document.getElementById("lastUpdated").textContent =
+      "Updated " + new Date().toLocaleTimeString();
 
+    /* Tiles */
+    document.getElementById("ragStatus").textContent    = rag.status || "--";
+    document.getElementById("mleStatus").textContent    = mle.status || mle.hard_gate_status || "--";
+    document.getElementById("apiCost").textContent      = `$${asNum(costs.total_estimated_api_cost_usd)}`;
+    document.getElementById("feedbackScore").textContent= asNum(feedback.average_rating);
+
+    setTileState("tileRag",      rag.status);
+    setTileState("tileMle",      mle.status || mle.hard_gate_status);
+    setTileState("tileFeedback", feedback.average_rating >= 4 ? "ok" : feedback.average_rating >= 3 ? "warn" : "err");
+
+    /* Guardrail alert banner */
+    const hasFailure = Number(inputCounts.failed || 0) + Number(outputCounts.failed || 0) > 0;
+    const alertBadge = document.getElementById("alertBadge");
+    if (hasFailure) {
+      alertBadge.classList.add("show");
+      document.getElementById("alertText").textContent =
+        `${Number(inputCounts.failed||0) + Number(outputCounts.failed||0)} guardrail failure(s)`;
+    } else {
+      alertBadge.classList.remove("show");
+    }
+
+    /* Overall tag */
+    const allStatuses = [rag.status, mle.status];
+    const overallEl = document.getElementById("overallStatus");
+    const overallBad = allStatuses.some(s => String(s||"").toLowerCase().includes("fail"));
+    const overallWarn = allStatuses.some(s => ["unideal","warn","partial"].some(w => String(s||"").toLowerCase().includes(w)));
+    overallEl.className = "tag " + (overallBad ? "failed" : overallWarn ? "unideal" : "passed");
+    overallEl.textContent = overallBad ? "issues detected" : overallWarn ? "attention needed" : "all systems nominal";
+
+    /* RAG metrics */
     setTag("ragTag", rag.status);
     document.getElementById("ragMetrics").innerHTML = rows([
-      { name: "Calls", value: asNum(rag.call_count), why: "Number of patient-agent RAG evaluations logged." },
-      { name: "Precision@3", value: asNum(rag.average_retrieval_precision_at_3), why: "Heuristic top-3 retrieval relevance until labeled RAGAS data exists." },
-      { name: "Grounding", value: asNum(rag.average_grounding_score), why: "Overlap proxy between answer and retrieved context. Higher is better." },
-      { name: "Hallucination", value: asNum(rag.average_hallucination_score), why: "Inverse grounding plus citation/guardrail penalties. Lower is better." },
-      { name: "Cache hit rate", value: asPct(rag.cache_hit_rate), why: "Safe reuse of low-risk educational answers." },
+      { name: "Evaluations",     value: asNum(rag.call_count),                          why: "Patient-agent RAG evaluations logged." },
+      { name: "Precision@3",     value: asNum(rag.average_retrieval_precision_at_3),    why: "Heuristic top-3 retrieval relevance. Awaiting labeled RAGAS data." },
+      { name: "Grounding score", value: asNum(rag.average_grounding_score),             why: "Overlap proxy between answer and retrieved context. Higher → better." },
+      { name: "Hallucination",   value: asNum(rag.average_hallucination_score),         why: "Inverse grounding + citation penalties. Lower → better." },
+      { name: "Cache hit rate",  value: asPct(rag.cache_hit_rate),                     why: "Reuse of safe, low-risk educational answers." },
     ]);
 
+    /* Cost metrics */
     document.getElementById("costMetrics").innerHTML = rows([
-      { name: "Estimated cost", value: `$${asNum(costs.total_estimated_api_cost_usd)}`, why: costs.cost_basis || "Estimated API cost." },
-      { name: "Input tokens", value: asNum(costs.estimated_input_tokens), why: "Tracked for future Groq/OpenAI/RAGAS judge cost accounting." },
-      { name: "Output tokens", value: asNum(costs.estimated_output_tokens), why: "Estimated generated output token volume." },
-      { name: "P95 latency", value: `${asNum(rag.p95_latency_ms)} ms`, why: "Latency tail for user-facing agent responses." },
+      { name: "Estimated cost",  value: `$${asNum(costs.total_estimated_api_cost_usd)}`, why: costs.cost_basis || "Estimated API cost this session." },
+      { name: "Input tokens",    value: asNum(costs.estimated_input_tokens),            why: "For Groq / OpenAI / RAGAS judge cost accounting." },
+      { name: "Output tokens",   value: asNum(costs.estimated_output_tokens),           why: "Estimated generated token volume." },
+      { name: "P95 latency",     value: `${asNum(rag.p95_latency_ms)} ms`,             why: "Tail latency for user-facing agent responses." },
     ]);
 
-    const inputCounts = rag.input_guardrail_counts || {};
-    const outputCounts = rag.output_guardrail_counts || {};
-    setTag("guardrailTag",
-      Number(inputCounts.failed || 0) || Number(outputCounts.failed || 0) ? "failed" : "passed"
-    );
+    /* Guardrails */
+    const guardStatus = hasFailure ? "failed" : "passed";
+    setTag("guardrailTag", guardStatus);
     document.getElementById("guardrailMetrics").innerHTML = rows([
-      { name: "Input passed", value: asNum(inputCounts.passed || 0), why: "Messages that passed scope/security checks." },
-      { name: "Input blocked", value: asNum(inputCounts.failed || 0), why: "Prompt injection, privacy exfiltration, or unsafe intent blocked." },
-      { name: "Output passed", value: asNum(outputCounts.passed || 0), why: "Answers that avoided unsafe directives and unsupported claims." },
-      { name: "Attack block rate", value: asPct(regressionSummary.attack_block_rate), why: "Offline multilingual red-team cases must stay at 100%." },
+      { name: "Input passed",    value: asNum(inputCounts.passed  || 0), why: "Messages that cleared scope and security checks." },
+      { name: "Input blocked",   value: asNum(inputCounts.failed  || 0), why: "Prompt injection, privacy exfiltration, or unsafe intent blocked." },
+      { name: "Output passed",   value: asNum(outputCounts.passed || 0), why: "Answers that avoided unsafe directives and unsupported claims." },
+      { name: "Output blocked",  value: asNum(outputCounts.failed || 0), why: "Responses that triggered output guardrail rules." },
     ]);
 
+    document.getElementById("attackMetrics").innerHTML = rows([
+      { name: "Attack block rate", value: asPct(regSum.attack_block_rate), why: "Multilingual red-team block rate. Must remain 100%." },
+      { name: "Pass rate",         value: asPct(regSum.pass_rate),         why: "Golden-agent cases that passed expected behavior." },
+    ]);
+
+    /* Feedback metrics */
     document.getElementById("feedbackMetrics").innerHTML = rows([
-      { name: "Feedback count", value: asNum(feedback.feedback_count), why: "Patient ratings captured for assistant response quality." },
-      { name: "Average rating", value: asNum(feedback.average_rating), why: "1-5 score. Usefulness signal, not clinical correctness." },
-      { name: "Thumbs-up rate", value: asPct(feedback.thumbs_up_rate), why: "Simple patient satisfaction trend." },
+      { name: "Feedback count",  value: asNum(feedback.feedback_count),  why: "Patient ratings captured for assistant quality." },
+      { name: "Average rating",  value: asNum(feedback.average_rating),  why: "1–5 score. Usefulness signal, not clinical correctness." },
+      { name: "Thumbs-up rate",  value: asPct(feedback.thumbs_up_rate),  why: "Simple patient satisfaction trend." },
     ]);
 
+    /* Regression summary (pre-loaded) */
     document.getElementById("agentRegressionMetrics").innerHTML = rows([
-      { name: "Status", value: regressionSummary.status || regression.status || "unavailable", why: "Overall route/retrieval/security regression status." },
-      { name: "Pass rate", value: asPct(regressionSummary.pass_rate), why: "Golden-agent cases that pass expected behavior." },
-      { name: "Source hit", value: asPct(regressionSummary.expected_source_hit_rate), why: "Expected source appears in retrieval or citations." },
+      { name: "Status",      value: regSum.status || regression.status || "unavailable", why: "Route / retrieval / security regression status." },
+      { name: "Pass rate",   value: asPct(regSum.pass_rate),                             why: "Golden-agent cases that pass expected behavior." },
+      { name: "Source hit",  value: asPct(regSum.expected_source_hit_rate),              why: "Expected source appears in retrieval or citations." },
     ]);
-    document.getElementById("agentRegressionJson").textContent = JSON.stringify(regressionSummary, null, 2);
+    document.getElementById("agentRegressionJson").textContent =
+      JSON.stringify(regSum, null, 2);
 
+    /* MLE summary (pre-loaded) */
     document.getElementById("mleMetrics").innerHTML = rows([
-      { name: "Overall", value: mle.status || "unavailable", why: "Aggregated MLE readiness status." },
-      { name: "Hard gates", value: mle.hard_gate_status || "--", why: "Release-blocking checks for artifacts, contracts, and safety." },
-      { name: "PoC readiness", value: (mle.poc_demo_readiness || {}).status || "--", why: "Supervised synthetic-data demo posture, separate from strict MLE status." },
-      { name: "Recommendation", value: mle.release_recommendation || "--", why: "Current model lifecycle recommendation." },
+      { name: "Overall",          value: mle.status || "unavailable",                why: "Aggregated MLE readiness status." },
+      { name: "Hard gates",       value: mle.hard_gate_status || "--",               why: "Release-blocking checks: artifacts, contracts, safety." },
+      { name: "Recommendation",   value: mle.release_recommendation || "--",         why: "Current model lifecycle recommendation." },
     ]);
-    document.getElementById("mleJson").textContent = JSON.stringify(mle.category_statuses || mle, null, 2);
+    document.getElementById("mleJson").textContent =
+      JSON.stringify(mle.category_statuses || mle, null, 2);
 
+    /* Sources */
     setTag("sourceTag", source.status);
     document.getElementById("sourceMetrics").innerHTML = rows([
-      { name: "Sources", value: asNum(source.source_count), why: "Distinct papers/files in the local RAG registry." },
-      { name: "Chunks", value: asNum(source.chunk_count), why: "Section-aware retrieval chunks available to the agent." },
-      { name: "Strong claims", value: asNum((source.quality_checks?.strong_claim_watchlist || []).length), why: "Heuristic watchlist for unsupported absolute wording." },
-      { name: "Contradictions", value: asNum((source.quality_checks?.contradiction_watchlist || []).length), why: "Heuristic contradiction-sensitive source review queue." },
+      { name: "Sources",        value: asNum(source.source_count),                              why: "Distinct papers/files in the local RAG registry." },
+      { name: "Chunks",         value: asNum(source.chunk_count),                               why: "Section-aware retrieval chunks available to the agent." },
+      { name: "Strong claims",  value: asNum((source.quality_checks?.strong_claim_watchlist  || []).length), why: "Watchlist for unsupported absolute wording." },
+      { name: "Contradictions", value: asNum((source.quality_checks?.contradiction_watchlist  || []).length), why: "Contradiction-sensitive source review queue." },
     ]);
-
-    document.getElementById("modelMetrics").innerHTML = rows([
-      { name: "Champion", value: model.champion_model || "--", why: "Current evaluated synthetic champion model." },
-      { name: "Evaluated patients", value: asNum(model.evaluated_patients), why: "Patient-level evaluation sample count." },
-      { name: "Calibration", value: model.calibration?.status || "--", why: "Probability reliability gate." },
-      { name: "Decision impact", value: model.decision_impact_simulation?.status || "--", why: "Simulated clinician-review routing impact." },
-    ]);
-
-    renderFeedbackRows([]);
     renderSourceRows(source.sources || []);
+
+    /* Model */
+    document.getElementById("modelMetrics").innerHTML = rows([
+      { name: "Champion",          value: model.champion_model || "--",                    why: "Current evaluated synthetic champion model." },
+      { name: "Evaluated patients",value: asNum(model.evaluated_patients),                 why: "Patient-level evaluation sample count." },
+      { name: "Calibration",       value: model.calibration?.status || "--",              why: "Probability reliability gate." },
+      { name: "Decision impact",   value: model.decision_impact_simulation?.status || "--", why: "Simulated clinician-review routing impact." },
+    ]);
     renderDriftRows(drift.features || []);
+
+    /* Feedback table (async) */
+    renderFeedbackRows();
   }
 
-  function renderFeedbackRows(items) {
+  function renderFeedbackRows() {
     adminFetch("/agent-feedback?limit=10")
       .then(data => {
-        const rowsData = data.feedback || [];
-        document.getElementById("feedbackRows").innerHTML = rowsData.length
-          ? rowsData.map(item => `<tr><td>${esc(item.patient_id)}</td><td><strong>${esc(item.rating)}</strong></td><td>${esc(item.feedback_text || "No comment")}</td></tr>`).join("")
+        const items = data.feedback || [];
+        document.getElementById("feedbackRows").innerHTML = items.length
+          ? items.map(it => {
+              const stars = Number(it.rating) >= 4
+                ? `<strong style="color:var(--green)">${esc(it.rating)} ★</strong>`
+                : Number(it.rating) >= 3
+                  ? `<strong style="color:var(--amber)">${esc(it.rating)} ★</strong>`
+                  : `<strong style="color:var(--red)">${esc(it.rating)} ★</strong>`;
+              return `<tr><td>${esc(it.patient_id)}</td><td>${stars}</td><td>${esc(it.feedback_text || "No comment")}</td></tr>`;
+            }).join("")
           : '<tr><td colspan="3" class="empty">No feedback yet.</td></tr>';
       })
       .catch(() => {
-        document.getElementById("feedbackRows").innerHTML = '<tr><td colspan="3" class="empty">Feedback unavailable.</td></tr>';
+        document.getElementById("feedbackRows").innerHTML =
+          '<tr><td colspan="3" class="empty">Feedback unavailable.</td></tr>';
       });
   }
 
   function renderSourceRows(items) {
     document.getElementById("sourceRows").innerHTML = items.length
-      ? items.slice(0, 10).map(item => `<tr><td><strong>${esc(item.title)}</strong><br>${esc(item.pmcid || item.source_id)}</td><td>${esc(item.trust_level)}<br>${esc(item.confidence)}</td><td>${esc(item.chunk_count)}</td><td>${esc((item.topics || []).join(", "))}</td></tr>`).join("")
+      ? items.slice(0, 12).map(it => `
+          <tr>
+            <td><strong>${esc(it.title)}</strong><br>
+                <span style="font:400 10px var(--mono);color:var(--muted-2)">${esc(it.pmcid || it.source_id)}</span></td>
+            <td>${esc(it.trust_level)}<br>
+                <span style="color:var(--muted-2);font-size:11px">${esc(it.confidence)}</span></td>
+            <td>${esc(it.chunk_count)}</td>
+            <td>${esc((it.topics || []).join(", "))}</td>
+          </tr>`).join("")
       : '<tr><td colspan="4" class="empty">No RAG sources loaded.</td></tr>';
   }
 
   function renderDriftRows(items) {
     document.getElementById("driftRows").innerHTML = items.length
-      ? items.slice(0, 8).map(item => `<tr><td><strong>${esc(item.feature)}</strong></td><td>${esc(item.standardized_mean_shift)}</td><td>${tag(item.status)}</td></tr>`).join("")
-      : '<tr><td colspan="3" class="empty">No drift rows available.</td></tr>';
+      ? items.slice(0, 10).map(it => `
+          <tr>
+            <td><strong>${esc(it.feature)}</strong></td>
+            <td><span style="font:500 12px var(--mono)">${esc(it.standardized_mean_shift)}</span></td>
+            <td>${tagHtml(it.status)}</td>
+          </tr>`).join("")
+      : '<tr><td colspan="3" class="empty">No drift data available.</td></tr>';
   }
 
+  /* ── Actions ── */
   function runAgentRegression() {
+    const btn = document.getElementById("runRegressionBtn");
+    btn.disabled = true;
+    btn.textContent = "Running…";
     adminFetch("/admin/agent-regression", { method: "POST" })
       .then(data => {
         toast("Agent regression completed.");
-        document.getElementById("agentRegressionJson").textContent = JSON.stringify(data.result.summary, null, 2);
+        document.getElementById("agentRegressionJson").textContent =
+          JSON.stringify(data.result.summary, null, 2);
         return loadAll();
       })
-      .catch(error => toast(error.message));
+      .catch(err => toast(err.message, true))
+      .finally(() => { btn.disabled = false; btn.textContent = "▶ Run Suite"; });
   }
 
   function runMleReadiness() {
+    const btn = document.getElementById("runMleBtn");
+    btn.disabled = true;
+    btn.textContent = "Running…";
     adminFetch("/admin/mle-readiness", { method: "POST" })
       .then(data => {
-        toast("MLE readiness completed.");
-        document.getElementById("mleJson").textContent = JSON.stringify(data.result, null, 2);
+        toast("MLE readiness check completed.");
+        document.getElementById("mleJson").textContent =
+          JSON.stringify(data.result, null, 2);
         return loadAll();
       })
-      .catch(error => toast(error.message));
+      .catch(err => toast(err.message, true))
+      .finally(() => { btn.disabled = false; btn.textContent = "▶ Run Gates"; });
   }
 
   function loadAll() {
     return adminFetch("/admin/analytics")
       .then(renderAnalytics)
-      .catch(error => toast(error.message));
+      .catch(err => toast(err.message, true));
   }
 
   function logout() {

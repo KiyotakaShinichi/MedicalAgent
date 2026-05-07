@@ -1,825 +1,1004 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oncology Monitor - Breast Cancer</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg:           #f5f3ef;
-      --surface:      #ffffff;
-      --surface-alt:  #faf9f6;
-      --border:       rgba(60,50,40,0.10);
-      --border-mid:   rgba(60,50,40,0.18);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OncoTrack — Clinician</title>
+<script src="[cdn.jsdelivr.net](https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js)"></script>
+<link rel="preconnect" href="[fonts.googleapis.com](https://fonts.googleapis.com)">
+<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap)" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0c1018;
+    --panel:     #141923;
+    --panel-2:   #1a2130;
+    --panel-3:   #1f2840;
+    --line:      rgba(255,255,255,0.08);
+    --line-2:    rgba(255,255,255,0.14);
+    --text:      #eef2f9;
+    --muted:     #8a98b0;
+    --muted-2:   #566070;
+    --rose:      #e05a6f;
+    --rose-dim:  rgba(224,90,111,0.12);
+    --green:     #4cc38a;
+    --green-dim: rgba(76,195,138,0.10);
+    --amber:     #e5a23d;
+    --amber-dim: rgba(229,162,61,0.10);
+    --blue:      #6ba7ff;
+    --blue-dim:  rgba(107,167,255,0.10);
+    --red:       #ff6b6b;
+    --red-dim:   rgba(255,107,107,0.10);
+    --mono:      "IBM Plex Mono", monospace;
+    --body:      "DM Sans", system-ui, sans-serif;
+    --sidebar:   220px;
+    --radius:    4px;
+  }
 
-      --text:         #1c1714;
-      --text-2:       #5c524a;
-      --text-3:       #938880;
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      --rose:         #c45c6a;
-      --rose-bg:      #fdf0f1;
-      --rose-border:  #ebbfc4;
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    display: flex;
+    flex-direction: column;
+  }
 
-      --amber:        #b06e28;
-      --amber-bg:     #fdf4e7;
-      --amber-border: #e8c88a;
+  /* ── Topbar ── */
+  .topbar {
+    height: 56px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+    gap: 16px;
+  }
 
-      --teal:         #2a7e72;
-      --teal-bg:      #edf6f4;
-      --teal-border:  #9fd3cb;
+  .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .brand-icon {
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    background: var(--rose);
+    border-radius: 3px;
+  }
+  .brand-icon svg { width: 15px; height: 15px; fill: white; }
+  .brand-name { font-weight: 700; font-size: 15px; }
+  .brand-sep  { color: var(--muted-2); margin: 0 2px; }
+  .brand-role { font: 500 11px var(--mono); color: var(--muted); letter-spacing: 0.06em; }
 
-      --red:          #b42020;
-      --red-bg:       #fdf1f1;
-      --red-border:   #e8aaaa;
+  .topbar-center {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-      --radius-sm:    6px;
-      --radius-md:    10px;
-      --radius-lg:    14px;
+  .nav-tab {
+    font: 600 11px var(--body);
+    color: var(--muted);
+    padding: 6px 11px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-2);
+    text-decoration: none;
+    transition: color .12s, border-color .12s, background .12s;
+  }
+  .nav-tab:hover { color: var(--text); border-color: var(--line-2); }
+  .nav-tab.active {
+    color: var(--rose);
+    border-color: rgba(224,90,111,0.4);
+    background: var(--rose-dim);
+  }
 
-      --font-display: 'DM Serif Display', Georgia, serif;
-      --font-body:    'DM Sans', system-ui, sans-serif;
-    }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .patient-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .patient-selector label {
+    font: 600 10px var(--mono);
+    color: var(--muted-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  select {
+    font: 500 12px var(--body);
+    color: var(--text);
+    background: var(--panel-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    padding: 6px 28px 6px 10px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='[w3.org](http://www.w3.org/2000/svg)' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a98b0' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+    transition: border-color .15s;
+  }
+  select:focus { border-color: var(--rose); outline: none; }
 
-    html { font-size: 15px; }
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  textarea {
+    font: 400 12px var(--body);
+    color: var(--text);
+    background: var(--panel-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 3px rgba(224,90,111,0.10);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted-2); }
+  textarea { resize: vertical; min-height: 52px; line-height: 1.5; }
 
-    body {
-      font-family: var(--font-body);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 0;
-    }
+  /* ── Safety bar ── */
+  .safety-bar {
+    background: rgba(224,90,111,0.07);
+    border-bottom: 1px solid rgba(224,90,111,0.2);
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: 500 11.5px var(--body);
+    color: var(--rose);
+    flex-shrink: 0;
+  }
+  .safety-bar svg { flex-shrink: 0; }
 
-    /* ── TOPBAR ── */
-    .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .topbar-brand {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-    }
-    .topbar-brand .wordmark {
-      font-family: var(--font-display);
-      font-size: 19px;
-      color: var(--text);
-      letter-spacing: -0.01em;
-    }
-    .topbar-brand .specialty {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
-      color: var(--rose);
-    }
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .surface-links {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .surface-link {
-      color: var(--text-2);
-      font-size: 12px;
-      font-weight: 600;
-      text-decoration: none;
-      padding: 7px 9px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface-alt);
-    }
-    .surface-link.active {
-      color: var(--rose);
-      border-color: var(--rose-border);
-      background: var(--rose-bg);
-    }
-    .patient-select-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .patient-select-wrap label {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-3);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    select, input[type="text"], input[type="number"], input[type="date"], textarea {
-      font-family: var(--font-body);
-      font-size: 13.5px;
-      color: var(--text);
-      background: var(--surface);
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius-sm);
-      padding: 7px 10px;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    select:focus, input:focus, textarea:focus {
-      border-color: var(--rose);
-      box-shadow: 0 0 0 3px rgba(196,92,106,0.10);
-    }
-    select { cursor: pointer; padding-right: 28px; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23938880' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-    }
-    textarea { resize: vertical; min-height: 36px; line-height: 1.4; }
+  /* ── Layout ── */
+  .layout { display: flex; flex: 1; min-height: 0; }
 
-    /* ── SAFETY BANNER ── */
-    .safety-bar {
-      background: var(--rose-bg);
-      border-bottom: 1px solid var(--rose-border);
-      padding: 10px 32px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 12.5px;
-      color: var(--rose);
-      font-weight: 500;
-    }
-    .safety-bar svg { flex-shrink: 0; }
+  /* ── Sidebar ── */
+  .sidebar {
+    width: var(--sidebar);
+    flex-shrink: 0;
+    border-right: 1px solid var(--line);
+    background: var(--panel);
+    padding: 14px 0;
+    position: sticky;
+    top: 56px; /* topbar + safety bar ≈ let JS handle or just use fixed offset */
+    height: calc(100vh - 88px);
+    overflow-y: auto;
+  }
 
-    /* ── LAYOUT ── */
-    .main {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 28px 32px 60px;
-      display: grid;
-      gap: 20px;
-    }
+  .nav-section-label {
+    font: 600 9px var(--mono);
+    color: var(--muted-2);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 10px 16px 5px;
+  }
 
-    /* ── SECTION LABEL ── */
-    .section-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-bottom: 10px;
-    }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 16px;
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: color .12s, border-color .12s, background .12s;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--text); border-left-color: var(--rose); background: var(--rose-dim); }
+  .nav-icon { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.65; }
+  .nav-item.active .nav-icon { opacity: 1; }
 
-    /* ── CARD ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px 22px;
-    }
-    .card-title {
-      font-family: var(--font-display);
-      font-size: 16px;
-      color: var(--text);
-      margin-bottom: 14px;
-    }
+  /* ── Content ── */
+  .content {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
 
-    /* ── PROFILE PANEL ── */
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 14px;
-    }
-    .profile-field { }
-    .profile-field .f-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-3);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin-bottom: 3px;
-    }
-    .profile-field .f-value {
-      font-size: 14.5px;
-      color: var(--text);
-      font-weight: 400;
-    }
+  /* ── Section ── */
+  .section { display: flex; flex-direction: column; gap: 12px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-title {
+    font: 700 11px var(--mono);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+  }
 
-    /* ── RECEPTOR BADGES ── */
-    .receptor-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 9px;
-      border-radius: 99px;
-      font-size: 11.5px;
-      font-weight: 600;
-      border: 1px solid;
-    }
-    .badge-pos { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
-    .badge-neg { background: var(--surface-alt); color: var(--text-2); border-color: var(--border-mid); }
-    .badge-warn { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
-    .badge-urgent { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+  /* ── Cards ── */
+  .grid { display: grid; gap: 12px; }
+  .g2   { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .g3   { grid-template-columns: repeat(3, minmax(0,1fr)); }
 
-    /* ── METRICS ROW ── */
-    .metrics-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-    .metric-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 16px 18px;
-      position: relative;
-      overflow: hidden;
-    }
-    .metric-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--rose);
-      border-radius: var(--radius-md) var(--radius-md) 0 0;
-    }
-    .metric-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-3);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
-    .metric-value {
-      font-family: var(--font-display);
-      font-size: 32px;
-      color: var(--text);
-      line-height: 1;
-    }
-    .metric-unit {
-      font-family: var(--font-body);
-      font-size: 12px;
-      color: var(--text-3);
-      margin-top: 4px;
-    }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    background: rgba(0,0,0,0.15);
+  }
+  .card-title { font-size: 12.5px; font-weight: 700; flex: 1; }
+  .card-body  { padding: 14px; }
 
-    /* ── TWO COLUMN ── */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    .three-col {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
+  /* ── Metric tiles ── */
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .tile {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    transition: border-color .2s;
+  }
+  .tile.ok   { border-top-color: var(--green); }
+  .tile.warn { border-top-color: var(--amber); }
+  .tile.err  { border-top-color: var(--red); }
+  .tile.info { border-top-color: var(--blue); }
 
-    /* ── RISK FLAGS ── */
-    .risk-list { list-style: none; display: grid; gap: 8px; }
-    .risk-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      font-size: 13.5px;
-    }
-    .risk-item.urgent_review { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
-    .risk-item.watch { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
-    .risk-item.info { background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-border); }
-    .risk-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-    .urgent_review .risk-dot { background: var(--red); }
-    .watch .risk-dot { background: var(--amber); }
-    .info .risk-dot { background: var(--teal); }
+  .tile-label {
+    font: 600 10px var(--mono);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .tile-value {
+    font: 700 28px var(--mono);
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .tile-unit { font: 400 11px var(--mono); color: var(--muted-2); }
 
-    /* ── TIMELINE ── */
-    .timeline { display: grid; gap: 0; }
-    .tl-item {
-      display: grid;
-      grid-template-columns: 100px 90px 1fr;
-      gap: 14px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-      align-items: start;
-    }
-    .tl-item:last-child { border-bottom: none; }
-    .tl-date { color: var(--text-3); font-weight: 400; font-size: 12.5px; padding-top: 2px; }
-    .tl-type { }
-    .tl-content strong { font-weight: 500; color: var(--text); }
-    .tl-content p { color: var(--text-2); margin-top: 2px; font-size: 12.5px; line-height: 1.4; }
+  /* ── Tags ── */
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font: 600 9px var(--mono);
+    padding: 3px 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tag.ok,
+  .tag.info,
+  .tag.passed  { color: var(--green); border-color: rgba(76,195,138,0.35); background: var(--green-dim); }
+  .tag.watch,
+  .tag.unideal { color: var(--amber); border-color: rgba(229,162,61,0.35); background: var(--amber-dim); }
+  .tag.urgent,
+  .tag.failed  { color: var(--red); border-color: rgba(255,107,107,0.35); background: var(--red-dim); }
+  .tag.loading { color: var(--muted-2); animation: blink .9s step-start infinite; }
+  @keyframes blink { 50% { opacity: 0.35; } }
 
-    /* ── DATA LIST ── */
-    .data-list { list-style: none; display: grid; gap: 6px; }
-    .data-list li {
-      font-size: 13.5px;
-      color: var(--text-2);
-      padding: 8px 12px;
-      background: var(--surface-alt);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      line-height: 1.4;
-    }
-    .data-list .empty { color: var(--text-3); font-style: italic; }
+  /* ── Profile grid ── */
+  .profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 16px;
+  }
+  .profile-field .f-label {
+    font: 600 10px var(--mono);
+    color: var(--muted-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 5px;
+  }
+  .profile-field .f-value { font-size: 13px; color: var(--text); }
 
-    /* ── FORM SECTION ── */
-    .form-panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-    }
-    .form-panel-header {
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .form-panel-header h3 {
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-2);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-    .form-panel-header .chevron {
-      margin-left: auto;
-      transition: transform 0.2s;
-      color: var(--text-3);
-    }
-    .form-panel-header.open .chevron { transform: rotate(180deg); }
-    .form-panel-body {
-      padding: 18px 20px;
-      display: none;
-    }
-    .form-panel-body.open { display: block; }
-    .form-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: flex-start;
-    }
-    .form-row input, .form-row select, .form-row textarea { flex: 1; min-width: 120px; }
+  .receptor-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 2px; }
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font: 600 10px var(--mono);
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-pos  { color: var(--green); border-color: rgba(76,195,138,0.35); background: var(--green-dim); }
+  .badge-neg  { color: var(--muted); border-color: var(--line-2); background: var(--panel-2); }
+  .badge-warn { color: var(--amber); border-color: rgba(229,162,61,0.35); background: var(--amber-dim); }
+  .badge-err  { color: var(--red);   border-color: rgba(255,107,107,0.35); background: var(--red-dim); }
 
-    /* ── BUTTON ── */
-    .btn {
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 8px 16px;
-      border-radius: var(--radius-sm);
-      border: none;
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .btn-primary {
-      background: var(--rose);
-      color: white;
-    }
-    .btn-primary:hover { background: #b04d5b; }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-ghost {
-      background: var(--surface-alt);
-      color: var(--text-2);
-      border: 1px solid var(--border-mid);
-    }
-    .btn-ghost:hover {
-      background: var(--rose-bg);
-      color: var(--rose);
-      border-color: var(--rose-border);
-    }
+  /* ── Risk list ── */
+  .risk-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .risk-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius);
+    font-size: 12.5px;
+    border: 1px solid;
+  }
+  .risk-item.urgent_review { background: var(--red-dim);   color: var(--red);   border-color: rgba(255,107,107,0.25); }
+  .risk-item.watch         { background: var(--amber-dim); color: var(--amber); border-color: rgba(229,162,61,0.25); }
+  .risk-item.info          { background: var(--green-dim); color: var(--green); border-color: rgba(76,195,138,0.25); }
+  .risk-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .urgent_review .risk-dot { background: var(--red); }
+  .watch .risk-dot         { background: var(--amber); }
+  .info .risk-dot          { background: var(--green); }
 
-    /* ── SUMMARY PRE ── */
-    .summary-text {
-      font-family: var(--font-body);
-      font-size: 13.5px;
-      color: var(--text-2);
-      line-height: 1.7;
-      white-space: pre-wrap;
-    }
+  /* ── Data list ── */
+  .data-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .data-list li {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 8px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    line-height: 1.5;
+  }
+  .data-list li strong { color: var(--text); }
+  .data-list .empty-state { color: var(--muted-2); font-style: italic; }
 
-    /* ── RADIOLOGY SUMMARY ── */
-    .radio-field { margin-bottom: 8px; font-size: 13.5px; color: var(--text-2); }
-    .radio-field strong { color: var(--text); font-weight: 500; }
+  /* ── Timeline ── */
+  .timeline { display: flex; flex-direction: column; }
+  .tl-item {
+    display: grid;
+    grid-template-columns: 100px 110px 1fr;
+    gap: 14px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+    font-size: 12px;
+  }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-date    { font: 400 11px var(--mono); color: var(--muted-2); padding-top: 2px; }
+  .tl-content strong { color: var(--text); font-size: 12.5px; }
+  .tl-content p      { color: var(--muted); margin-top: 3px; font-size: 11.5px; line-height: 1.45; }
 
-    /* ── LAB SOURCE ── */
-    .source-text { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-    .source-warn { font-size: 12px; color: var(--amber); margin-top: 6px; }
+  /* ── Radiology / multimodal fields ── */
+  .radio-field {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--line);
+    line-height: 1.5;
+  }
+  .radio-field:last-child { border-bottom: none; }
+  .radio-field strong { color: var(--text); }
 
-    /* ── CHARTS ── */
-    canvas { max-height: 160px; }
+  /* ── MRI list ── */
+  .mri-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+  }
+  .mri-item:last-child { border-bottom: none; }
+  .mri-meta { color: var(--text); }
+  .mri-path { font: 400 10px var(--mono); color: var(--muted-2); margin-top: 2px; word-break: break-all; }
 
-    /* ── PAGE HEADER ── */
-    .page-header {
-      padding: 24px 0 8px;
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-    }
-    .page-header h1 {
-      font-family: var(--font-display);
-      font-size: 28px;
-      color: var(--text);
-      font-weight: 400;
-    }
-    .page-header .patient-id {
-      font-size: 12px;
-      color: var(--text-3);
-    }
+  /* ── Chat ── */
+  .chat-thread {
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 12px;
+  }
+  .chat-message {
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    line-height: 1.5;
+    border: 1px solid var(--line);
+    white-space: pre-wrap;
+  }
+  .chat-message.user      { background: var(--rose-dim); color: var(--text); border-color: rgba(224,90,111,0.25); }
+  .chat-message.assistant { background: var(--panel-2);  color: var(--muted); }
+  .chat-row { display: flex; gap: 8px; align-items: flex-start; }
+  .chat-row textarea { flex: 1; }
 
-    /* ── TOAST ── */
-    .toast {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      background: var(--teal);
-      color: white;
-      padding: 12px 20px;
-      border-radius: var(--radius-md);
-      font-size: 13.5px;
-      font-weight: 500;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.2s, transform 0.2s;
-      z-index: 999;
-      max-width: 320px;
-    }
-    .toast.show { opacity: 1; transform: translateY(0); }
-    .toast.error { background: var(--red); }
+  /* ── Clinician review ── */
+  .review-field { margin-bottom: 8px; font-size: 12px; color: var(--muted); }
+  .review-field strong { color: var(--text); }
+  .review-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .score-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .score-row input { width: 160px; }
 
-    /* ── DIVIDER ── */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      border: none;
-      margin: 4px 0;
-    }
+  /* ── AI summary ── */
+  .summary-pre {
+    font: 400 12px/1.7 var(--mono);
+    color: var(--muted);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 
-    /* ── MRI LIST ── */
-    .mri-item {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-    .mri-item:last-child { border-bottom: none; }
-    .mri-meta { color: var(--text); }
-    .mri-path { color: var(--text-3); font-size: 12px; margin-top: 2px; font-family: monospace; }
+  /* ── Source note ── */
+  .source-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .source-warn { font-size: 11px; color: var(--amber); margin-top: 6px; }
 
-    /* ── CHAT AGENT ── */
-    .chat-thread {
-      display: grid;
-      gap: 8px;
-      max-height: 260px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-    .chat-message {
-      padding: 9px 11px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      line-height: 1.45;
-      border: 1px solid var(--border);
-      white-space: pre-wrap;
-    }
-    .chat-message.user {
-      background: var(--rose-bg);
-      color: var(--text);
-      border-color: var(--rose-border);
-    }
-    .chat-message.assistant {
-      background: var(--surface-alt);
-      color: var(--text-2);
-    }
-    .chat-actions {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin-top: 12px;
-    }
-    .chat-actions textarea {
-      flex: 1;
-      min-height: 52px;
-    }
+  /* ── Charts ── */
+  canvas { max-height: 150px; }
 
-    /* ── EMPTY STATE ── */
-    .empty-state {
-      font-size: 13px;
-      color: var(--text-3);
-      font-style: italic;
-      padding: 8px 0;
-    }
+  /* ── Buttons ── */
+  .btn {
+    font: 600 12px var(--body);
+    padding: 7px 13px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line-2);
+    background: var(--panel-2);
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color .15s, background .15s;
+    flex-shrink: 0;
+  }
+  .btn:hover { border-color: var(--line-2); background: var(--panel-3); }
+  .btn-primary { background: var(--rose); border-color: var(--rose); color: #fff; }
+  .btn-primary:hover { background: #c94e62; border-color: #c94e62; }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+  .btn-ghost { background: transparent; color: var(--muted); }
+  .btn-ghost:hover { color: var(--text); background: var(--panel-2); }
 
-    @media (max-width: 900px) {
-      .main { padding: 16px; }
-      .topbar { padding: 0 16px; }
-      .safety-bar { padding: 8px 16px; }
-      .metrics-row, .two-col, .three-col { grid-template-columns: 1fr; }
-      .tl-item { grid-template-columns: 1fr; gap: 4px; }
-      .form-row { flex-direction: column; }
-    }
-  </style>
+  /* ── Collapsible form panels ── */
+  .form-panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .form-panel-header {
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: background .12s, border-color .12s;
+  }
+  .form-panel-header:hover { background: rgba(255,255,255,0.03); }
+  .form-panel-header.open  { border-bottom-color: var(--line); }
+  .form-panel-header h3    {
+    font: 600 12px var(--body);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    flex: 1;
+  }
+  .chevron { color: var(--muted-2); transition: transform .2s; }
+  .form-panel-header.open .chevron { transform: rotate(180deg); }
+  .form-panel-body { padding: 14px; display: none; }
+  .form-panel-body.open { display: block; }
+  .form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .form-row input, .form-row select, .form-row textarea { flex: 1; min-width: 120px; }
+
+  /* ── Review queue item ── */
+  .queue-item {
+    padding: 10px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .queue-item + .queue-item { margin-top: 6px; }
+  .queue-item strong { color: var(--text); }
+  .queue-item .meta  { color: var(--muted-2); font-size: 11px; margin-top: 2px; }
+
+  /* ── Empty ── */
+  .empty-state { font-size: 12px; color: var(--muted-2); font-style: italic; padding: 4px 0; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    right: 18px; bottom: 18px;
+    background: var(--panel-2);
+    border: 1px solid var(--line-2);
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .2s, transform .2s;
+    pointer-events: none;
+    z-index: 999;
+    max-width: 320px;
+  }
+  .toast.show  { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .toast.error { border-color: rgba(255,107,107,0.4); color: var(--red); }
+
+  /* ── Responsive ── */
+  @media (max-width: 1060px) {
+    .g3    { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 780px) {
+    .sidebar { display: none; }
+    .tiles, .g2, .g3 { grid-template-columns: 1fr; }
+    .tl-item { grid-template-columns: 1fr; gap: 4px; }
+    .form-row { flex-direction: column; }
+    .topbar-center { display: none; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-brand">
-      <span class="wordmark">Oncology Monitor</span>
-      <span class="specialty">Breast Cancer</span>
+<!-- Topbar -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16v4H4V4Zm0 6h10v4H4v-4Zm0 6h16v4H4v-4Zm12-6h4v4h-4v-4Z"/></svg>
     </div>
-    <div class="topbar-right">
-      <nav class="surface-links" aria-label="Workspace surfaces">
-        <a class="surface-link" href="/patient">Patient</a>
-        <a class="surface-link active" href="/clinician">Clinician</a>
-        <a class="surface-link" href="/admin">Admin/MLE</a>
-      </nav>
-      <div class="patient-select-wrap">
-        <label for="patientSelect">Patient</label>
-        <select id="patientSelect"></select>
-      </div>
-    </div>
-  </header>
-
-  <!-- SAFETY BANNER -->
-  <div class="safety-bar">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-      <circle cx="7" cy="7" r="6.5" stroke="currentColor" stroke-width="1.2"/>
-      <path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-    </svg>
-    Clinical decision-support only. This system does not diagnose cancer, confirm metastasis, or replace a licensed clinician. All findings require physician review.
+    <span class="brand-name">OncoTrack</span>
+    <span class="brand-sep">/</span>
+    <span class="brand-role">Clinician</span>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
+  <nav class="topbar-center">
+    <a class="nav-tab" href="/patient">Patient</a>
+    <a class="nav-tab active" href="/clinician">Clinician</a>
+    <a class="nav-tab" href="/admin">Admin / MLE</a>
+  </nav>
 
-    <!-- CLINICIAN REVIEW QUEUE -->
-    <div>
-      <div class="section-label">Clinician Review Queue</div>
+  <div class="topbar-right">
+    <div class="patient-selector">
+      <label for="patientSelect">Patient</label>
+      <select id="patientSelect"></select>
+    </div>
+  </div>
+</header>
+
+<!-- Safety bar -->
+<div class="safety-bar">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <circle cx="7" cy="7" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+    <path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  Clinical decision-support only. Does not diagnose cancer, confirm metastasis, or replace a licensed clinician. All findings require physician review.
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="nav-section-label">Patient</div>
+    <a class="nav-item active" href="#queue"    onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2V3Zm0 4h12v2H2V7Zm0 4h8v2H2v-2Z"/></svg>
+      Review Queue
+    </a>
+    <a class="nav-item" href="#profile"  onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6H2Z"/></svg>
+      Patient Profile
+    </a>
+
+    <div class="nav-section-label">Labs & Imaging</div>
+    <a class="nav-item" href="#labs"    onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M5 2h6l2 4-5 8L3 6l2-4Zm1.5 1L5 5l3 5 3-5-1.5-2h-3Z"/></svg>
+      CBC Metrics
+    </a>
+    <a class="nav-item" href="#charts"  onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 12l4-4 3 3 4-5 3 2V14H1v-2Z"/></svg>
+      Lab Trends
+    </a>
+    <a class="nav-item" href="#imaging" onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.3" fill="none"/><circle cx="8" cy="8" r="3" fill="currentColor"/></svg>
+      Imaging
+    </a>
+    <a class="nav-item" href="#mri"     onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v2H2V2Zm0 4h12v1H2V6Zm0 3h8v1H2V9Zm0 3h5v1H2v-1Z"/></svg>
+      MRI Registry
+    </a>
+
+    <div class="nav-section-label">Clinical</div>
+    <a class="nav-item" href="#risks"   onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1 1 14h14L8 1Zm0 3.5 4.5 8h-9L8 4.5Zm0 2.5v3h-1V7h1Zm0 4v1H7v-1h1Z"/></svg>
+      Risk Flags
+    </a>
+    <a class="nav-item" href="#multimodal" onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3Zm-1 2v5l4 2-.5 1L6 11V5h1Z"/></svg>
+      Assessment
+    </a>
+    <a class="nav-item" href="#timeline" onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 4h1v8H2V4Zm3 0h9v2H5V4Zm0 4h7v2H5V8Zm0 4h5v1H5v-1Z"/></svg>
+      Timeline
+    </a>
+
+    <div class="nav-section-label">Review</div>
+    <a class="nav-item" href="#summaries" onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm1 2v1h8V4H4Zm0 2v1h8V6H4Zm0 2v1h5V8H4Z"/></svg>
+      AI Summaries
+    </a>
+    <a class="nav-item" href="#review"  onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M13 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1ZM6.5 10.5 4 8l1-1 1.5 1.5 4-4 1 1-5 5Z"/></svg>
+      Clinician Review
+    </a>
+    <a class="nav-item" href="#audit"   onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 8 3Zm-.5 2v4.2l3 1.5-.5 1-3.5-1.8V5h1Z"/></svg>
+      Prediction Audit
+    </a>
+    <a class="nav-item" href="#chat"    onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v9H9l-3 3V11H2V2Zm2 2v1h8V4H4Zm0 2v1h8V6H4Zm0 2v1h5V8H4Z"/></svg>
+      Support Agent
+    </a>
+
+    <div class="nav-section-label">Data Entry</div>
+    <a class="nav-item" href="#entry"   onclick="nav(this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+      Add / Import
+    </a>
+  </nav>
+
+  <!-- Main content -->
+  <main class="content">
+
+    <!-- Review Queue -->
+    <section class="section" id="queue">
+      <div class="section-header">
+        <span class="section-title">Clinician Review Queue</span>
+      </div>
       <div class="card">
-        <ul class="data-list" id="reviewQueue">
-          <li class="empty">Loading review queue...</li>
-        </ul>
+        <div class="card-header">
+          <span class="card-title">Patients Requiring Review</span>
+          <span class="tag loading" id="queueTag">loading</span>
+        </div>
+        <div class="card-body">
+          <div id="reviewQueue"><div class="empty-state">Loading review queue…</div></div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- PATIENT OVERVIEW -->
-    <div>
-      <div class="section-label">Patient Overview</div>
+    <!-- Patient Profile -->
+    <section class="section" id="profile">
+      <div class="section-header">
+        <span class="section-title">Patient Profile</span>
+        <span class="tag loading" id="profileTag">loading</span>
+      </div>
       <div class="card">
-        <div class="profile-grid" id="breastProfile">
-          <div class="empty-state">Select a patient to begin.</div>
+        <div class="card-header">
+          <span class="card-title">Breast Cancer Profile</span>
+        </div>
+        <div class="card-body">
+          <div class="profile-grid" id="breastProfile">
+            <div class="empty-state">Select a patient to begin.</div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- LATEST LABS -->
-    <div>
-      <div class="section-label">Complete Blood Count — Latest Values</div>
-      <div class="metrics-row">
-        <div class="metric-card">
-          <div class="metric-label">White Blood Cell</div>
-          <div class="metric-value" id="wbc">—</div>
-          <div class="metric-unit">×10³/μL</div>
+    <!-- CBC Metrics -->
+    <section class="section" id="labs">
+      <div class="section-header">
+        <span class="section-title">CBC — Latest Values</span>
+      </div>
+      <div class="tiles">
+        <div class="tile info" id="tileWbc">
+          <div class="tile-label">White Blood Cell</div>
+          <div class="tile-value" id="wbc">—</div>
+          <div class="tile-unit">×10³/μL</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">Hemoglobin</div>
-          <div class="metric-value" id="hemoglobin">—</div>
-          <div class="metric-unit">g/dL</div>
+        <div class="tile info" id="tileHgb">
+          <div class="tile-label">Hemoglobin</div>
+          <div class="tile-value" id="hemoglobin">—</div>
+          <div class="tile-unit">g/dL</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">Platelets</div>
-          <div class="metric-value" id="platelets">—</div>
-          <div class="metric-unit">×10³/μL</div>
+        <div class="tile info" id="tilePlt">
+          <div class="tile-label">Platelets</div>
+          <div class="tile-value" id="platelets">—</div>
+          <div class="tile-unit">×10³/μL</div>
         </div>
       </div>
-    </div>
-
-    <!-- CHARTS -->
-    <div>
-      <div class="section-label">Longitudinal Lab Trends</div>
-      <div class="three-col">
-        <div class="card">
-          <div class="card-title">WBC</div>
-          <canvas id="wbcChart"></canvas>
-        </div>
-        <div class="card">
-          <div class="card-title">Hemoglobin</div>
-          <canvas id="hemoglobinChart"></canvas>
-        </div>
-        <div class="card">
-          <div class="card-title">Platelets</div>
-          <canvas id="plateletChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- RISK FLAGS -->
-    <div>
-      <div class="section-label">Risk Flags</div>
       <div class="card">
-        <ul class="risk-list" id="risks">
-          <li class="empty-state">No risk data loaded.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- MULTIMODAL ASSESSMENT -->
-    <div>
-      <div class="section-label">Multimodal Monitoring Assessment</div>
-      <div class="card" id="multimodalAssessment">
-        <div class="empty-state">No fused assessment loaded.</div>
-      </div>
-    </div>
-
-    <!-- MODEL AUDIT -->
-    <div>
-      <div class="section-label">Model Prediction Audit</div>
-      <div class="card">
-        <ul class="data-list" id="predictionAudit">
-          <li class="empty">No prediction audits loaded.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SUPPORT AGENT -->
-    <div>
-      <div class="section-label">Patient Support Agent</div>
-      <div class="card">
-        <div class="chat-thread" id="chatThread">
-          <div class="empty-state">No chat messages yet.</div>
+        <div class="card-header">
+          <span class="card-title">CBC Data Source</span>
         </div>
-        <div class="chat-actions">
-          <textarea id="chatInput" placeholder="Tell the assistant about symptoms, CBC values, medications, or how you feel..."></textarea>
-          <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
-        </div>
-        <div style="font-size:12px;color:var(--text-3);margin-top:8px;">The assistant can save symptoms, complete CBC values, and medication mentions. It does not diagnose or decide treatment.</div>
-      </div>
-    </div>
-
-    <!-- IMAGING + METASTATIC -->
-    <div class="two-col">
-      <div>
-        <div class="section-label">Breast Imaging Summary</div>
-        <div class="card" id="radiologySummary">
-          <div class="empty-state">No breast imaging data loaded.</div>
-        </div>
-      </div>
-      <div>
-        <div class="section-label">Possible Metastatic Indicators</div>
-        <div class="card">
-          <ul class="data-list" id="metastaticIndicators">
-            <li class="empty">No indicators flagged.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI SUMMARIES -->
-    <div class="two-col">
-      <div>
-        <div class="section-label">Clinical Summary</div>
-        <div class="card">
-          <pre class="summary-text" id="clinicalSummary">Loading…</pre>
-        </div>
-      </div>
-      <div>
-        <div class="section-label">Patient Explanation</div>
-        <div class="card">
-          <pre class="summary-text" id="patientExplanation">Loading…</pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- CLINICIAN REVIEW -->
-    <div>
-      <div class="section-label">Clinician-in-the-loop Review</div>
-      <div class="card">
-        <div class="radio-field"><strong>Current deterministic snapshot:</strong> <span id="monitoringSnapshot">Loading...</span></div>
-        <div class="radio-field"><strong>Latest review:</strong> <span id="latestReview">No review loaded.</span></div>
-        <textarea id="clinicianNotes" placeholder="Clinician notes for audit trail..." style="width:100%;min-height:70px;margin-top:8px;"></textarea>
-        <textarea id="editedPatientSummary" placeholder="Optional edited patient-facing summary..." style="width:100%;min-height:70px;margin-top:8px;"></textarea>
-        <div class="form-row" style="margin-top:8px;">
-          <input id="explanationQualityScore" type="number" min="1" max="5" placeholder="Explanation quality 1-5">
-          <input id="modelUsefulnessScore" type="number" min="1" max="5" placeholder="Model usefulness 1-5">
-          <button class="btn btn-primary" onclick="submitSummaryReview('approved')">Approve</button>
-          <button class="btn btn-ghost" onclick="submitSummaryReview('edited')">Save Edit</button>
-          <button class="btn btn-ghost" onclick="submitSummaryReview('rejected')">Reject</button>
-        </div>
-        <div style="font-size:12px;color:var(--text-3);margin-top:8px;">Review feedback is logged for evaluation and governance. It does not automatically change treatment decisions.</div>
-      </div>
-    </div>
-
-    <!-- CHANGES + REVIEW -->
-    <div class="two-col">
-      <div>
-        <div class="section-label">Changes Since Baseline</div>
-        <div class="card">
-          <ul class="data-list" id="changesSinceBaseline"></ul>
-        </div>
-      </div>
-      <div>
-        <div class="section-label">Review Reasons</div>
-        <div class="card">
-          <ul class="data-list" id="reviewReasons"></ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- TREATMENT + SYMPTOMS -->
-    <div class="two-col">
-      <div>
-        <div class="section-label">Treatment Effects by Cycle</div>
-        <div class="card">
-          <ul class="data-list" id="treatment"></ul>
-        </div>
-      </div>
-      <div>
-        <div class="section-label">Symptom Reports</div>
-        <div class="card">
-          <ul class="data-list" id="symptoms"></ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- TIMELINE -->
-    <div>
-      <div class="section-label">Clinical Timeline</div>
-      <div class="card">
-        <div class="timeline" id="clinicalTimeline">
-          <div class="empty-state">No timeline events.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CBC SOURCE + MRI -->
-    <div class="two-col">
-      <div>
-        <div class="section-label">CBC Data Source</div>
-        <div class="card" id="labSourceStatus">
+        <div class="card-body" id="labSourceStatus">
           <div class="empty-state">No source loaded.</div>
         </div>
       </div>
-      <div>
-        <div class="section-label">MRI File Registry</div>
-        <div class="card" id="mriRegistry">
-          <div class="empty-state">No local MRI folders registered.</div>
+    </section>
+
+    <!-- Lab Trends -->
+    <section class="section" id="charts">
+      <div class="section-header">
+        <span class="section-title">Longitudinal Lab Trends</span>
+      </div>
+      <div class="grid g3">
+        <div class="card">
+          <div class="card-header"><span class="card-title">WBC</span></div>
+          <div class="card-body"><canvas id="wbcChart"></canvas></div>
         </div>
-        <div class="section-label" style="margin-top:12px;">MRI Series Index</div>
-        <div class="card" id="mriSeriesIndex">
-          <div class="empty-state">No DICOM series indexed.</div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Hemoglobin</span></div>
+          <div class="card-body"><canvas id="hemoglobinChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Platelets</span></div>
+          <div class="card-body"><canvas id="plateletChart"></canvas></div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- DATA ENTRY FORMS -->
-    <div>
-      <div class="section-label">Data Entry</div>
-      <div style="display: grid; gap: 10px;">
+    <!-- Risk Flags -->
+    <section class="section" id="risks">
+      <div class="section-header">
+        <span class="section-title">Risk Flags</span>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Active Flags</span>
+          <span class="tag loading" id="riskTag">loading</span>
+        </div>
+        <div class="card-body">
+          <ul class="risk-list" id="risks-list">
+            <li class="empty-state">No risk data loaded.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Imaging -->
+    <section class="section" id="imaging">
+      <div class="section-header">
+        <span class="section-title">Imaging</span>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Breast Imaging Summary</span></div>
+          <div class="card-body" id="radiologySummary">
+            <div class="empty-state">No breast imaging data loaded.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Possible Metastatic Indicators</span></div>
+          <div class="card-body">
+            <ul class="data-list" id="metastaticIndicators">
+              <li class="empty-state">No indicators flagged.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Multimodal Assessment -->
+    <section class="section" id="multimodal">
+      <div class="section-header">
+        <span class="section-title">Multimodal Monitoring Assessment</span>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Fused Assessment</span>
+          <span class="tag loading" id="multimodalTag">loading</span>
+        </div>
+        <div class="card-body" id="multimodalAssessment">
+          <div class="empty-state">No fused assessment loaded.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="section" id="timeline">
+      <div class="section-header">
+        <span class="section-title">Clinical Timeline</span>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Events</span></div>
+        <div class="card-body">
+          <div class="timeline" id="clinicalTimeline">
+            <div class="empty-state">No timeline events.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Treatment Effects by Cycle</span></div>
+          <div class="card-body">
+            <ul class="data-list" id="treatment"></ul>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Symptom Reports</span></div>
+          <div class="card-body">
+            <ul class="data-list" id="symptoms"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Changes Since Baseline</span></div>
+          <div class="card-body">
+            <ul class="data-list" id="changesSinceBaseline"></ul>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Review Reasons</span></div>
+          <div class="card-body">
+            <ul class="data-list" id="reviewReasons"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MRI Registry -->
+    <section class="section" id="mri">
+      <div class="section-header">
+        <span class="section-title">MRI Registry</span>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">MRI File Registry</span></div>
+          <div class="card-body" id="mriRegistry">
+            <div class="empty-state">No local MRI folders registered.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">DICOM Series Index</span></div>
+          <div class="card-body" id="mriSeriesIndex">
+            <div class="empty-state">No DICOM series indexed.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Summaries -->
+    <section class="section" id="summaries">
+      <div class="section-header">
+        <span class="section-title">AI Summaries</span>
+      </div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Clinical Summary</span></div>
+          <div class="card-body">
+            <pre class="summary-pre" id="clinicalSummary">Loading…</pre>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Patient Explanation</span></div>
+          <div class="card-body">
+            <pre class="summary-pre" id="patientExplanation">Loading…</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Clinician Review -->
+    <section class="section" id="review">
+      <div class="section-header">
+        <span class="section-title">Clinician-in-the-Loop Review</span>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Review & Feedback</span>
+          <span class="tag">audit trail</span>
+        </div>
+        <div class="card-body">
+          <div class="review-field"><strong>Monitoring snapshot:</strong> <span id="monitoringSnapshot">—</span></div>
+          <div class="review-field"><strong>Latest review:</strong> <span id="latestReview">No review saved yet.</span></div>
+
+          <textarea id="clinicianNotes" placeholder="Clinician notes for audit trail…" style="width:100%;min-height:64px;margin-top:12px;"></textarea>
+          <textarea id="editedPatientSummary" placeholder="Optional: edited patient-facing summary…" style="width:100%;min-height:64px;margin-top:8px;"></textarea>
+
+          <div class="score-row" style="margin-top:10px;">
+            <input id="explanationQualityScore" type="number" min="1" max="5" placeholder="Explanation quality 1–5">
+            <input id="modelUsefulnessScore"    type="number" min="1" max="5" placeholder="Model usefulness 1–5">
+          </div>
+
+          <div class="review-actions">
+            <button class="btn btn-primary btn-sm" onclick="submitSummaryReview('approved')">✓ Approve</button>
+            <button class="btn btn-sm" onclick="submitSummaryReview('edited')">Save Edit</button>
+            <button class="btn btn-ghost btn-sm" onclick="submitSummaryReview('rejected')">Reject</button>
+            <button class="btn btn-ghost btn-sm" onclick="submitSummaryReview('marked_unsafe')">⚠ Mark Unsafe</button>
+            <button class="btn btn-ghost btn-sm" onclick="submitSummaryReview('marked_incomplete')">Mark Incomplete</button>
+          </div>
+          <div style="font:400 11px var(--mono);color:var(--muted-2);margin-top:10px;">
+            Review feedback is logged for evaluation and governance. It does not automatically change treatment decisions.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prediction Audit -->
+    <section class="section" id="audit">
+      <div class="section-header">
+        <span class="section-title">Model Prediction Audit</span>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Audit Log</span></div>
+        <div class="card-body">
+          <ul class="data-list" id="predictionAudit">
+            <li class="empty-state">No prediction audits loaded.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Support Agent -->
+    <section class="section" id="chat">
+      <div class="section-header">
+        <span class="section-title">Patient Support Agent</span>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Chat</span>
+          <span class="tag">live</span>
+        </div>
+        <div class="card-body">
+          <div class="chat-thread" id="chatThread">
+            <div class="empty-state">No messages yet.</div>
+          </div>
+          <div class="chat-row">
+            <textarea id="chatInput" placeholder="Describe symptoms, CBC values, medications, or how you feel…"></textarea>
+            <button class="btn btn-primary btn-sm" onclick="sendChatMessage()">Send</button>
+          </div>
+          <div style="font:400 11px var(--mono);color:var(--muted-2);margin-top:8px;">
+            The assistant can save symptoms, CBC values, and medication mentions. It does not diagnose or decide treatment.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Entry -->
+    <section class="section" id="entry">
+      <div class="section-header">
+        <span class="section-title">Data Entry</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
 
         <!-- Add Lab -->
         <div class="form-panel">
           <div class="form-panel-header" onclick="togglePanel(this)">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--rose)">
-              <rect x="1" y="6" width="12" height="2" rx="1" fill="currentColor"/>
-              <rect x="6" y="1" width="2" height="12" rx="1" fill="currentColor"/>
-            </svg>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="var(--rose)"><rect x="1" y="6" width="12" height="2" rx="1"/><rect x="6" y="1" width="2" height="12" rx="1"/></svg>
             <h3>Add Lab Result</h3>
-            <span class="chevron">
-              <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            </span>
+            <span class="chevron"><svg width="10" height="6" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
           </div>
           <div class="form-panel-body">
             <div class="form-row">
-              <input id="labDate" type="date" title="Lab date">
+              <input id="labDate" type="date">
               <input id="labWbc" type="number" step="0.1" placeholder="WBC (×10³/μL)">
+              <input id="labNeutrophils" type="number" step="0.1" placeholder="Neutrophils (×10³/μL)">
               <input id="labHemoglobin" type="number" step="0.1" placeholder="Hemoglobin (g/dL)">
               <input id="labPlatelets" type="number" step="1" placeholder="Platelets (×10³/μL)">
-              <button class="btn btn-primary" onclick="addLabResult()">Save Lab</button>
+              <button class="btn btn-primary btn-sm" onclick="addLabResult()">Save Lab</button>
             </div>
           </div>
         </div>
@@ -827,22 +1006,88 @@
         <!-- Add Symptom -->
         <div class="form-panel">
           <div class="form-panel-header" onclick="togglePanel(this)">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--rose)">
-              <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/>
-              <path d="M7 4.5v3M7 9v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-            </svg>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--rose)" stroke-width="1.4"><circle cx="7" cy="7" r="6"/><path d="M7 4.5v3M7 9v.5" stroke-linecap="round"/></svg>
             <h3>Add Symptom Report</h3>
-            <span class="chevron">
-              <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            </span>
+            <span class="chevron"><svg width="10" height="6" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
           </div>
           <div class="form-panel-body">
             <div class="form-row">
-              <input id="symptomDate" type="date" title="Symptom date">
+              <input id="symptomDate" type="date">
               <input id="symptomName" type="text" placeholder="Symptom name">
               <input id="symptomSeverity" type="number" min="0" max="10" step="1" placeholder="Severity 0–10">
               <textarea id="symptomNotes" placeholder="Notes (optional)"></textarea>
-              <button class="btn btn-primary" onclick="addSymptomReport()">Save Symptom</button>
+              <button class="btn btn-primary btn-sm" onclick="addSymptomReport()">Save Symptom</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Treatment Cycle -->
+        <div class="form-panel">
+          <div class="form-panel-header" onclick="togglePanel(this)">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--rose)" stroke-width="1.4"><path d="M2 3h10M2 7h10M2 11h10" stroke-linecap="round"/></svg>
+            <h3>Add Treatment Cycle</h3>
+            <span class="chevron"><svg width="10" height="6" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </div>
+          <div class="form-panel-body">
+            <div class="form-row">
+              <input id="treatmentDate" type="date">
+              <input id="treatmentCycle" type="number" min="1" max="30" step="1" placeholder="Cycle number">
+              <input id="treatmentDrug" type="text" placeholder="Regimen / drug">
+              <button class="btn btn-primary btn-sm" onclick="addTreatmentCycle()">Save Cycle</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Medication -->
+        <div class="form-panel">
+          <div class="form-panel-header" onclick="togglePanel(this)">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--rose)" stroke-width="1.3"><rect x="2" y="2" width="10" height="10" rx="2"/><path d="M7 4v6M4 7h6" stroke-linecap="round"/></svg>
+            <h3>Add Medication</h3>
+            <span class="chevron"><svg width="10" height="6" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </div>
+          <div class="form-panel-body">
+            <div class="form-row">
+              <input id="medDate" type="date">
+              <input id="medName" type="text" placeholder="Medication name">
+              <input id="medDose" type="text" placeholder="Dose (optional)">
+              <input id="medFrequency" type="text" placeholder="Frequency (optional)">
+              <textarea id="medNotes" placeholder="Notes (optional)"></textarea>
+              <button class="btn btn-primary btn-sm" onclick="addMedication()">Save Medication</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Imaging Summary -->
+        <div class="form-panel">
+          <div class="form-panel-header" onclick="togglePanel(this)">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--rose)" stroke-width="1.4"><path d="M2 4h10M2 7h10M2 10h6" stroke-linecap="round"/></svg>
+            <h3>Add Imaging Summary</h3>
+            <span class="chevron"><svg width="10" height="6" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </div>
+          <div class="form-panel-body">
+            <div class="form-row">
+              <input id="imagingDate" type="date">
+              <input id="imagingModality" type="text" placeholder="Modality (e.g., MRI)">
+              <input id="imagingBodySite" type="text" placeholder="Body site (optional)">
+              <textarea id="imagingSummaryText" placeholder="Summary text"></textarea>
+              <button class="btn btn-primary btn-sm" onclick="addImagingSummary()">Save Imaging</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Clinical Note -->
+        <div class="form-panel">
+          <div class="form-panel-header" onclick="togglePanel(this)">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--rose)" stroke-width="1.4"><path d="M2 11h10M3 3h8M3 6h8" stroke-linecap="round"/></svg>
+            <h3>Add Clinical Note</h3>
+            <span class="chevron"><svg width="10" height="6" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </div>
+          <div class="form-panel-body">
+            <div class="form-row">
+              <input id="noteDate" type="date">
+              <input id="noteType" type="text" placeholder="Note type (e.g., clinician_note)">
+              <textarea id="noteContent" placeholder="Note text"></textarea>
+              <button class="btn btn-primary btn-sm" onclick="addClinicalNote()">Save Note</button>
             </div>
           </div>
         </div>
@@ -850,13 +1095,9 @@
         <!-- Import CSV -->
         <div class="form-panel">
           <div class="form-panel-header" onclick="togglePanel(this)">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--rose)">
-              <path d="M2 10v2h10v-2M7 2v7M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--rose)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10v2h10v-2M7 2v7M4 6l3 3 3-3"/></svg>
             <h3>Import CSV</h3>
-            <span class="chevron">
-              <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            </span>
+            <span class="chevron"><svg width="10" height="6" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
           </div>
           <div class="form-panel-body">
             <div class="form-row">
@@ -875,518 +1116,627 @@
                 <option value="mimic_labs">mimic_labs</option>
               </select>
               <textarea id="importCsvText" placeholder="Paste CSV text here…" style="min-height:70px;"></textarea>
-              <button class="btn btn-primary" onclick="importCsv()">Import</button>
+              <button class="btn btn-primary btn-sm" onclick="importCsv()">Import</button>
             </div>
           </div>
         </div>
 
       </div>
-    </div>
+    </section>
 
-  </div><!-- /main -->
+  </main>
+</div>
 
-  <div id="toast" class="toast"></div>
+<div id="toast" class="toast"></div>
 
-  <script>
-    const API_BASE = window.location.origin;
-    let clinicianToken = localStorage.getItem("clinicianAccessToken") || null;
-    let latestPatientReport = null;
+<script>
+  const API_BASE = window.location.origin;
+  let clinicianToken = localStorage.getItem("clinicianAccessToken") || null;
+  let latestPatientReport = null;
 
-    /* ── UTILITY ── */
-    function showToast(msg, isError = false) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.className = "toast show" + (isError ? " error" : "");
-      clearTimeout(t._timer);
-      t._timer = setTimeout(() => t.classList.remove("show"), 3500);
-    }
+  /* ── Auth ── */
+  function clinicianHeaders() {
+    return clinicianToken ? { Authorization: `Bearer ${clinicianToken}` } : {};
+  }
 
-    function getPatientId() { return document.getElementById("patientSelect").value; }
+  function loginClinician() {
+    return fetch(`${API_BASE}/auth/demo-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: "clinician" })
+    }).then(r => {
+      if (!r.ok) throw new Error(`Clinician login failed (${r.status})`);
+      return r.json();
+    }).then(s => {
+      clinicianToken = s.access_token;
+      localStorage.setItem("clinicianAccessToken", clinicianToken);
+    });
+  }
 
-    function clinicianHeaders() {
-      return clinicianToken ? { "Authorization": `Bearer ${clinicianToken}` } : {};
-    }
+  function apiFetch(path, options = {}) {
+    const req = () => fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: { ...(options.headers || {}), ...clinicianHeaders() }
+    });
+    return req().then(r => {
+      if (r.status === 401 || r.status === 403) return loginClinician().then(req);
+      return r;
+    }).then(r => {
+      if (!r.ok) throw new Error(`${path} → ${r.status}`);
+      return r.json();
+    });
+  }
 
-    function loginClinician() {
-      return fetch(`${API_BASE}/auth/demo-login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: "clinician" })
-      })
-      .then(r => { if (!r.ok) throw new Error(`Clinician login failed (${r.status})`); return r.json(); })
-      .then(session => {
-        clinicianToken = session.access_token;
-        localStorage.setItem("clinicianAccessToken", clinicianToken);
-      });
-    }
+  /* ── Utilities ── */
+  function showToast(msg, isError = false) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "toast show" + (isError ? " error" : "");
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove("show"), 3500);
+  }
 
-    function loadReviewQueue() {
-      const request = () => fetch(`${API_BASE}/clinician/review-queue?limit=12`, {
-        headers: clinicianHeaders()
-      })
-      .then(r => { if (!r.ok) throw new Error(`Review queue failed (${r.status})`); return r.json(); })
-      .then(renderReviewQueue);
+  function getPatientId() { return document.getElementById("patientSelect").value; }
 
-      return request().catch(() => loginClinician().then(request));
-    }
+  function esc(v) {
+    return String(v ?? "")
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
 
-    function emptyList(el, msg = "None reported.") {
-      el.innerHTML = `<li class="empty-state">${msg}</li>`;
-    }
+  function togglePanel(header) {
+    header.classList.toggle("open");
+    header.nextElementSibling.classList.toggle("open");
+  }
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+  function nav(link) {
+    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+    link.classList.add("active");
+    const id = link.getAttribute("href").slice(1);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return false;
+  }
 
-    function togglePanel(header) {
-      header.classList.toggle("open");
-      const body = header.nextElementSibling;
-      body.classList.toggle("open");
-    }
+  function tagEl(id, status) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const v = String(status || "unavailable");
+    el.className = `tag ${v}`;
+    el.textContent = v;
+  }
 
-    /* ── BADGE HELPERS ── */
-    function receptorBadge(label, value) {
-      if (!value || value === "unknown") return `<span class="badge badge-neg">${label}: ?</span>`;
-      const pos = value.toLowerCase().includes("+") || value.toLowerCase() === "positive";
-      return `<span class="badge ${pos ? "badge-pos" : "badge-neg"}">${label}: ${value}</span>`;
-    }
+  function tagHtml(status) {
+    const v = String(status || "unavailable");
+    return `<span class="tag ${esc(v)}">${esc(v)}</span>`;
+  }
 
-    function severityBadge(sev) {
-      const cls = { urgent_review: "badge-urgent", watch: "badge-warn", info: "badge-pos" }[sev] || "badge-neg";
-      return `<span class="badge ${cls}">${sev.replace("_", " ")}</span>`;
-    }
+  /* ── Badge helpers ── */
+  function receptorBadge(label, value) {
+    if (!value || value === "unknown")
+      return `<span class="badge badge-neg">${label}: ?</span>`;
+    const pos = value.toLowerCase().includes("+") || value.toLowerCase() === "positive";
+    return `<span class="badge ${pos ? "badge-pos" : "badge-neg"}">${label}: ${esc(value)}</span>`;
+  }
 
-    /* ── RENDER ── */
-    function renderProfile(data) {
-      const profile = data.breast_cancer_profile || {};
-      document.getElementById("breastProfile").innerHTML = `
-        <div class="profile-field">
-          <div class="f-label">Diagnosis</div>
-          <div class="f-value">${data.diagnosis || "Not specified"}</div>
+  function severityBadge(sev) {
+    const map = { urgent_review: "urgent", watch: "watch", info: "ok" };
+    const cls = map[sev] || "loading";
+    const label = String(sev).replace("_", " ");
+    return `<span class="tag ${cls}">${label}</span>`;
+  }
+
+  /* ── Render functions ── */
+  function renderProfile(data) {
+    const p = data.breast_cancer_profile || {};
+    tagEl("profileTag", data.overall_status || "ok");
+    document.getElementById("breastProfile").innerHTML = `
+      <div class="profile-field">
+        <div class="f-label">Diagnosis</div>
+        <div class="f-value">${esc(data.diagnosis || "Not specified")}</div>
+      </div>
+      <div class="profile-field">
+        <div class="f-label">Stage</div>
+        <div class="f-value">${esc(p.cancer_stage || "—")}</div>
+      </div>
+      <div class="profile-field">
+        <div class="f-label">Molecular Subtype</div>
+        <div class="f-value">${esc(p.molecular_subtype || "—")}</div>
+      </div>
+      <div class="profile-field">
+        <div class="f-label">Receptor Status</div>
+        <div class="receptor-row">
+          ${receptorBadge("ER", p.er_status)}
+          ${receptorBadge("PR", p.pr_status)}
+          ${receptorBadge("HER2", p.her2_status)}
         </div>
-        <div class="profile-field">
-          <div class="f-label">Stage</div>
-          <div class="f-value">${profile.cancer_stage || "—"}</div>
-        </div>
-        <div class="profile-field">
-          <div class="f-label">Molecular Subtype</div>
-          <div class="f-value">${profile.molecular_subtype || "—"}</div>
-        </div>
-        <div class="profile-field">
-          <div class="f-label">Receptor Status</div>
-          <div class="receptor-row">
-            ${receptorBadge("ER", profile.er_status)}
-            ${receptorBadge("PR", profile.pr_status)}
-            ${receptorBadge("HER2", profile.her2_status)}
+      </div>
+      <div class="profile-field">
+        <div class="f-label">Treatment Intent</div>
+        <div class="f-value">${esc(p.treatment_intent || "—")}</div>
+      </div>
+    `;
+  }
+
+  function renderRisks(risks) {
+    const el = document.getElementById("risks-list");
+    const count = risks?.length || 0;
+    tagEl("riskTag", count === 0 ? "passed" : risks.some(r => r.severity === "urgent_review") ? "failed" : "unideal");
+    if (!count) { el.innerHTML = '<li class="empty-state">No risk flags at this time.</li>'; return; }
+    el.innerHTML = risks.map(r =>
+      `<li class="risk-item ${r.severity}">
+        <span class="risk-dot"></span>
+        <span>${esc(r.message)}</span>
+      </li>`
+    ).join("");
+  }
+
+  function renderReviewQueue(data) {
+    const el  = document.getElementById("reviewQueue");
+    const rows = data.queue || [];
+    const urgentCount = rows.filter(r => r.urgent_flag_count > 0).length;
+    tagEl("queueTag", urgentCount > 0 ? "urgent" : rows.length > 0 ? "watch" : "ok");
+
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty-state">No patients queued for review.</div>';
+      return;
+    }
+
+    el.innerHTML = rows.map(row => {
+      const flags = (row.top_review_flags || []).concat(row.top_missing_data_warnings || []).slice(0, 2);
+      const sev = row.urgent_flag_count ? "urgent_review" : row.priority_score >= 5 ? "watch" : "info";
+      return `
+        <div class="queue-item">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <strong>${esc(row.patient_name)} <span style="color:var(--muted-2);font-weight:400">${esc(row.patient_id)}</span></strong>
+            ${severityBadge(sev)}
+            <span class="tag" style="margin-left:auto">priority ${esc(row.priority_score)}</span>
           </div>
-        </div>
-        <div class="profile-field">
-          <div class="f-label">Treatment Intent</div>
-          <div class="f-value">${profile.treatment_intent || "—"}</div>
+          <div style="color:var(--muted);font-size:11.5px;">${esc(row.overall_status)} · last review: ${esc(row.latest_review_decision || "none")}</div>
+          <div class="meta">${esc(row.headline || row.recommended_action || "No headline available.")}</div>
+          ${flags.length ? `<div class="meta" style="margin-top:2px">${flags.map(esc).join(" · ")}</div>` : ""}
         </div>
       `;
-    }
+    }).join("");
+  }
 
-    function renderRisks(risks) {
-      const el = document.getElementById("risks");
-      if (!risks || risks.length === 0) { emptyList(el, "No risk flags at this time."); return; }
-      el.innerHTML = risks.map(r =>
-        `<li class="risk-item ${r.severity}">
-          <span class="risk-dot"></span>
-          <span>${r.message}</span>
-        </li>`
-      ).join("");
-    }
+  function renderTimeline(events) {
+    const el = document.getElementById("clinicalTimeline");
+    if (!events?.length) { el.innerHTML = '<div class="empty-state">No timeline events.</div>'; return; }
+    el.innerHTML = events.map(e => `
+      <div class="tl-item">
+        <div class="tl-date">${esc(String(e.date).slice(0,10))}</div>
+        <div>${severityBadge(e.severity || "info")} <span style="font:400 10px var(--mono);color:var(--muted-2);margin-left:4px">${esc(e.type)}</span></div>
+        <div class="tl-content">
+          <strong>${esc(e.title)}</strong>
+          <p>${esc(e.summary || "")}</p>
+        </div>
+      </div>
+    `).join("");
+  }
 
-    function renderReviewQueue(data) {
-      const el = document.getElementById("reviewQueue");
-      const rows = data.queue || [];
-      if (!rows.length) {
-        emptyList(el, "No patients are currently queued for review.");
-        return;
+  function renderDataList(elId, items, mapper, empty = "None reported.") {
+    const el = document.getElementById(elId);
+    if (!items?.length) { el.innerHTML = `<li class="empty-state">${empty}</li>`; return; }
+    el.innerHTML = items.map(i => `<li>${mapper(i)}</li>`).join("");
+  }
+
+  function renderRadiology(radiology) {
+    const el = document.getElementById("radiologySummary");
+    if (!radiology) { el.innerHTML = '<div class="empty-state">No breast imaging data loaded.</div>'; return; }
+    el.innerHTML = `
+      <div class="radio-field"><strong>Modality:</strong> ${esc(radiology.latest_modality || "—")} &nbsp;·&nbsp; <strong>Side:</strong> ${esc(radiology.latest_breast_side || "—")}</div>
+      <div class="radio-field"><strong>Location:</strong> ${esc((radiology.latest_breast_locations || []).join(", ") || "—")} &nbsp;·&nbsp; <strong>BI-RADS:</strong> ${esc(String(radiology.latest_bi_rads ?? "not reported"))}</div>
+      <div class="radio-field"><strong>Baseline:</strong> ${esc(String(radiology.baseline_tumor_size_cm ?? "—"))} cm <span style="color:var(--muted-2)">(${esc(radiology.baseline_date || "—")})</span></div>
+      <div class="radio-field"><strong>Latest:</strong> ${esc(String(radiology.latest_tumor_size_cm ?? "—"))} cm <span style="color:var(--muted-2)">(${esc(radiology.latest_date || "—")})</span></div>
+      <div class="radio-field"><strong>Response:</strong> ${esc(radiology.size_status)} — ${esc(radiology.response_language_status)}</div>
+      <div style="font:400 11px var(--mono);color:var(--muted-2);margin-top:8px;">${esc(radiology.safety_note)}</div>
+    `;
+  }
+
+  function renderMultimodalAssessment(assessment) {
+    const el = document.getElementById("multimodalAssessment");
+    if (!assessment) {
+      tagEl("multimodalTag", "unavailable");
+      el.innerHTML = '<div class="empty-state">No fused assessment loaded.</div>';
+      return;
+    }
+    const mri      = assessment.signals?.mri_response || {};
+    const clinical = assessment.signals?.clinical_monitoring || {};
+    const symptoms = assessment.signals?.symptoms || {};
+    const pcr      = mri.pcr_probability !== undefined ? ` · pCR probability ${mri.pcr_probability}` : "";
+    const xai      = mri.xai;
+    const xaiHtml  = xai ? `
+      <div class="radio-field"><strong>XAI → pCR:</strong> ${(xai.positive_contributions || []).slice(0,3).map(i => `${esc(i.feature)} (${esc(i.shap_value)})`).join(", ") || "none"}</div>
+      <div class="radio-field"><strong>XAI ↓ pCR:</strong> ${(xai.negative_contributions || []).slice(0,3).map(i => `${esc(i.feature)} (${esc(i.shap_value)})`).join(", ") || "none"}</div>
+    ` : "";
+
+    const statusWord = assessment.overall_status || "unavailable";
+    tagEl("multimodalTag", statusWord.toLowerCase().includes("concern") || statusWord.toLowerCase().includes("urgent") ? "urgent" : "ok");
+
+    el.innerHTML = `
+      <div class="radio-field"><strong>Monitoring score:</strong> ${esc(String(assessment.treatment_monitoring_score ?? "—"))}/100</div>
+      <div class="radio-field"><strong>Status:</strong> ${esc(assessment.overall_status)}</div>
+      <div class="radio-field">${esc(assessment.overall_message)}</div>
+      <div class="radio-field"><strong>MRI response:</strong> ${esc(mri.status || "unavailable")}${esc(pcr)}<br><span style="color:var(--muted-2);font-size:11px">${esc(mri.message || "")}</span></div>
+      ${xaiHtml}
+      <div class="radio-field"><strong>Clinical monitoring:</strong> ${esc(clinical.status || "unavailable")}<br><span style="color:var(--muted-2);font-size:11px">${esc(clinical.message || "")}</span></div>
+      <div class="radio-field"><strong>Symptoms:</strong> ${esc(symptoms.status || "unavailable")}<br><span style="color:var(--muted-2);font-size:11px">${esc(symptoms.message || "")}</span></div>
+      <div class="radio-field"><strong>Recommended action:</strong> ${esc(assessment.recommended_action)}</div>
+      <div style="font:400 11px var(--mono);color:var(--muted-2);margin-top:8px;">${esc(assessment.safety_note)}</div>
+    `;
+  }
+
+  function renderClinicianReview(data) {
+    const snapshot = data.patient_timeline_summary || {};
+    const review   = data.latest_clinician_review;
+    document.getElementById("monitoringSnapshot").textContent = snapshot.headline || "No deterministic snapshot available.";
+    document.getElementById("latestReview").textContent = review
+      ? `${review.decision} · ${review.reviewer_role} · ${String(review.created_at).slice(0,19)}`
+      : "No clinician review saved yet.";
+  }
+
+  function renderMRI(entries) {
+    const el = document.getElementById("mriRegistry");
+    if (!entries?.length) { el.innerHTML = '<div class="empty-state">No local MRI folders registered.</div>'; return; }
+    el.innerHTML = entries.map(e => `
+      <div class="mri-item">
+        <div>
+          <div class="mri-meta">${esc(e.scan_date || "undated")} — ${esc(e.modality)}: ${esc(e.series_description || "series")}</div>
+          <div class="mri-path">${esc(e.local_path)}</div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function renderMRISeries(series) {
+    const el = document.getElementById("mriSeriesIndex");
+    if (!series?.length) { el.innerHTML = '<div class="empty-state">No DICOM series indexed.</div>'; return; }
+    el.innerHTML = series.map(s => `
+      <div class="mri-item">
+        <div>
+          <div class="mri-meta">${esc(s.study_date || "undated")} — ${esc(s.modality || "MR")} · ${esc(s.candidate_role || "unknown")} · ${esc(s.instance_count)} images</div>
+          <div class="mri-path">${esc(s.series_description || "Unnamed series")}</div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function renderLabSource(data) {
+    document.getElementById("labSourceStatus").innerHTML = `
+      <div class="source-text"><strong>Sources:</strong> ${esc((data.lab_sources || []).join(", ") || "none")}</div>
+      ${data.has_synthetic_labs
+        ? `<div class="source-warn">⚠ CBC values include synthetic demo data. Do not treat as real patient values.</div>`
+        : `<div style="font:400 11px var(--mono);color:var(--muted-2);margin-top:4px">No synthetic CBC values detected.</div>`
       }
-      el.innerHTML = rows.map(row => {
-        const flags = (row.top_review_flags || []).concat(row.top_missing_data_warnings || []).slice(0, 2);
-        return `
-          <li>
-            <strong>${escapeHtml(row.patient_name)} (${escapeHtml(row.patient_id)})</strong>
-            <br>${severityBadge(row.urgent_flag_count ? "urgent_review" : row.priority_score >= 5 ? "watch" : "info")}
-            <span style="color:var(--text-2);">priority ${row.priority_score}; ${escapeHtml(row.overall_status)}; latest review ${escapeHtml(row.latest_review_decision || "none")}</span>
-            <br><span style="color:var(--text-3);font-size:12px;">${escapeHtml(row.headline || row.recommended_action || "No headline available.")}</span>
-            ${flags.length ? `<br><span style="color:var(--text-3);font-size:12px;">${flags.map(escapeHtml).join(" | ")}</span>` : ""}
-          </li>
-        `;
-      }).join("");
-    }
+    `;
+  }
 
-    function renderTimeline(events) {
-      const el = document.getElementById("clinicalTimeline");
-      if (!events || events.length === 0) { el.innerHTML = '<div class="empty-state">No timeline events.</div>'; return; }
-      el.innerHTML = events.map(e => `
-        <div class="tl-item">
-          <div class="tl-date">${String(e.date).slice(0,10)}</div>
-          <div class="tl-type">${severityBadge(e.severity || "info")} <span style="font-size:12px;color:var(--text-3);margin-left:4px;">${e.type}</span></div>
-          <div class="tl-content"><strong>${e.title}</strong><p>${e.summary || ""}</p></div>
-        </div>
-      `).join("");
-    }
+  function renderChat(messages) {
+    const el = document.getElementById("chatThread");
+    if (!messages?.length) { el.innerHTML = '<div class="empty-state">No messages yet.</div>'; return; }
+    el.innerHTML = messages.map(m =>
+      `<div class="chat-message ${m.role === "user" ? "user" : "assistant"}">${esc(m.message)}</div>`
+    ).join("");
+    el.scrollTop = el.scrollHeight;
+  }
 
-    function renderDataList(elId, items, mapper, empty = "None reported.") {
-      const el = document.getElementById(elId);
-      if (!items || items.length === 0) { emptyList(el, empty); return; }
-      el.innerHTML = items.map(i => `<li>${mapper(i)}</li>`).join("");
-    }
-
-    function renderRadiology(radiology) {
-      const el = document.getElementById("radiologySummary");
-      if (!radiology) { el.innerHTML = '<div class="empty-state">No breast imaging data loaded.</div>'; return; }
-      el.innerHTML = `
-        <div class="radio-field"><strong>Modality:</strong> ${radiology.latest_modality || "—"} · <strong>Side:</strong> ${radiology.latest_breast_side || "—"}</div>
-        <div class="radio-field"><strong>Location:</strong> ${(radiology.latest_breast_locations || []).join(", ") || "—"} · <strong>BI-RADS:</strong> ${radiology.latest_bi_rads ?? "not reported"}</div>
-        <div class="radio-field"><strong>Baseline:</strong> ${radiology.baseline_tumor_size_cm ?? "—"} cm (${radiology.baseline_date || "—"})</div>
-        <div class="radio-field"><strong>Latest:</strong> ${radiology.latest_tumor_size_cm ?? "—"} cm (${radiology.latest_date || "—"})</div>
-        <div class="radio-field"><strong>Response:</strong> ${radiology.size_status} — ${radiology.response_language_status}</div>
-        <div style="font-size:12px;color:var(--text-3);margin-top:8px;">${radiology.safety_note}</div>
-      `;
-    }
-
-    function renderMultimodalAssessment(assessment) {
-      const el = document.getElementById("multimodalAssessment");
-      if (!assessment) {
-        el.innerHTML = '<div class="empty-state">No fused assessment loaded.</div>';
-        return;
-      }
-
-      const mri = assessment.signals?.mri_response || {};
-      const clinical = assessment.signals?.clinical_monitoring || {};
-      const symptoms = assessment.signals?.symptoms || {};
-      const pcr = mri.pcr_probability !== undefined ? ` · pCR probability ${mri.pcr_probability}` : "";
-      const xai = mri.xai;
-      const xaiHtml = xai ? `
-        <div class="radio-field"><strong>XAI toward pCR:</strong> ${(xai.positive_contributions || []).slice(0,3).map(i => `${i.feature} (${i.shap_value})`).join(", ") || "none"}</div>
-        <div class="radio-field"><strong>XAI away from pCR:</strong> ${(xai.negative_contributions || []).slice(0,3).map(i => `${i.feature} (${i.shap_value})`).join(", ") || "none"}</div>
-      ` : "";
-
-      el.innerHTML = `
-        <div class="radio-field"><strong>Treatment monitoring score:</strong> ${assessment.treatment_monitoring_score ?? "—"}/100</div>
-        <div class="radio-field"><strong>Status:</strong> ${assessment.overall_status}</div>
-        <div class="radio-field">${assessment.overall_message}</div>
-        <div class="radio-field"><strong>MRI response:</strong> ${mri.status || "unavailable"}${pcr}<br><span style="color:var(--text-3);font-size:12px;">${mri.message || ""}</span></div>
-        ${xaiHtml}
-        <div class="radio-field"><strong>Clinical monitoring:</strong> ${clinical.status || "unavailable"}<br><span style="color:var(--text-3);font-size:12px;">${clinical.message || ""}</span></div>
-        <div class="radio-field"><strong>Symptoms:</strong> ${symptoms.status || "unavailable"}<br><span style="color:var(--text-3);font-size:12px;">${symptoms.message || ""}</span></div>
-        <div class="radio-field"><strong>Action:</strong> ${assessment.recommended_action}</div>
-        <div style="font-size:12px;color:var(--text-3);margin-top:8px;">${assessment.safety_note}</div>
-      `;
-    }
-
-    function renderClinicianReview(data) {
-      const snapshot = data.patient_timeline_summary || {};
-      const review = data.latest_clinician_review;
-      document.getElementById("monitoringSnapshot").textContent = snapshot.headline || "No deterministic snapshot available.";
-      document.getElementById("latestReview").textContent = review
-        ? `${review.decision} by ${review.reviewer_role} at ${String(review.created_at).slice(0,19)}`
-        : "No clinician review saved yet.";
-    }
-
-    function loadPredictionAudits(patientId) {
-      fetch(`${API_BASE}/prediction-audits?patient_id=${encodeURIComponent(patientId)}&limit=8`, { headers: clinicianHeaders() })
-        .then(r => r.json())
-        .then(data => {
-          const el = document.getElementById("predictionAudit");
-          const rows = data.prediction_audits || [];
-          if (!rows.length) {
-            emptyList(el, "No model prediction audits for this patient.");
-            return;
-          }
-          el.innerHTML = rows.map(row => {
-            const pred = row.prediction || {};
-            const probability = pred.pcr_probability !== undefined ? `pCR probability ${pred.pcr_probability}` : "no probability";
-            return `<li>${String(row.created_at).slice(0,19)}: ${row.model_name} ${row.model_version} - ${probability}</li>`;
-          }).join("");
-        })
-        .catch(() => emptyList(document.getElementById("predictionAudit"), "Could not load prediction audits."));
-    }
-
-    function renderMRI(entries) {
-      const el = document.getElementById("mriRegistry");
-      if (!entries || entries.length === 0) { el.innerHTML = '<div class="empty-state">No local MRI folders registered.</div>'; return; }
-      el.innerHTML = entries.map(e => `
-        <div class="mri-item">
-          <div>
-            <div class="mri-meta">${e.scan_date || "undated"} — ${e.modality}: ${e.series_description || "series"}</div>
-            <div class="mri-path">${e.local_path}</div>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function renderMRISeries(series) {
-      const el = document.getElementById("mriSeriesIndex");
-      if (!series || series.length === 0) { el.innerHTML = '<div class="empty-state">No DICOM series indexed.</div>'; return; }
-      el.innerHTML = series.map(s => `
-        <div class="mri-item">
-          <div>
-            <div class="mri-meta">${s.study_date || "undated"} — ${s.modality || "MR"} · ${s.candidate_role || "unknown"} · ${s.instance_count} images</div>
-            <div class="mri-path">${s.series_description || "Unnamed series"}</div>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function renderLabSource(data) {
-      const el = document.getElementById("labSourceStatus");
-      el.innerHTML = `
-        <div class="source-text"><strong>Sources:</strong> ${(data.lab_sources || []).join(", ") || "none"}</div>
-        ${data.has_synthetic_labs ? `<div class="source-warn">⚠ CBC values include synthetic demo data. Do not treat as real patient values.</div>` : `<div style="font-size:12px;color:var(--text-3);margin-top:4px;">No synthetic CBC values detected.</div>`}
-      `;
-    }
-
-    function renderChat(messages) {
-      const el = document.getElementById("chatThread");
-      if (!messages || messages.length === 0) {
-        el.innerHTML = '<div class="empty-state">No chat messages yet.</div>';
-        return;
-      }
-      el.innerHTML = messages.map(m => `
-        <div class="chat-message ${m.role === "user" ? "user" : "assistant"}">${escapeHtml(m.message)}</div>
-      `).join("");
-      el.scrollTop = el.scrollHeight;
-    }
-
-    /* ── CHARTS ── */
-    const chartInstances = {};
-    function makeChart(id, label, labels, values) {
-      const ctx = document.getElementById(id);
-      if (chartInstances[id]) chartInstances[id].destroy();
-      chartInstances[id] = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [{
-            label,
-            data: values,
-            borderColor: "#c45c6a",
-            backgroundColor: "rgba(196,92,106,0.07)",
-            borderWidth: 2,
-            pointRadius: 3,
-            pointBackgroundColor: "#c45c6a",
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { font: { size: 10 }, color: "#938880" }, grid: { color: "rgba(60,50,40,0.06)" } },
-            y: { ticks: { font: { size: 10 }, color: "#938880" }, grid: { color: "rgba(60,50,40,0.06)" }, beginAtZero: false }
-          }
+  /* ── Charts ── */
+  const charts = {};
+  function makeChart(id, label, labels, values) {
+    const ctx = document.getElementById(id);
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data: values,
+          borderColor: "#e05a6f",
+          backgroundColor: "rgba(224,90,111,0.08)",
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: "#e05a6f",
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { font: { size: 10 }, color: "#566070" }, grid: { color: "rgba(255,255,255,0.05)" } },
+          y: { ticks: { font: { size: 10 }, color: "#566070" }, grid: { color: "rgba(255,255,255,0.05)" }, beginAtZero: false }
         }
-      });
-    }
-
-    /* ── LOAD PATIENT ── */
-    function loadPatient(patientId) {
-      fetch(`${API_BASE}/patient-report/${patientId}`, { headers: clinicianHeaders() })
-        .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
-        .then(data => {
-          latestPatientReport = data;
-          renderProfile(data);
-
-          const labs = data.latest_labs || {};
-          document.getElementById("wbc").textContent = labs.wbc ?? "—";
-          document.getElementById("hemoglobin").textContent = labs.hemoglobin ?? "—";
-          document.getElementById("platelets").textContent = labs.platelets ?? "—";
-
-          renderLabSource(data);
-          renderRisks(data.risks);
-          renderMultimodalAssessment(data.multimodal_assessment);
-          renderClinicianReview(data);
-          loadPredictionAudits(patientId);
-          renderRadiology(data.radiology_summary);
-
-          const metaEl = document.getElementById("metastaticIndicators");
-          if (data.radiology_summary?.possible_metastatic_indicators?.length) {
-            metaEl.innerHTML = data.radiology_summary.possible_metastatic_indicators
-              .map(i => `<li>${i.date}: ${i.message}</li>`).join("");
-          } else {
-            emptyList(metaEl, "No metastatic indicator wording flagged.");
-          }
-
-          renderDataList("treatment", data.treatment_effects,
-            i => `Cycle ${i.cycle} (${i.drug}, ${i.cycle_date}): WBC nadir ${i.min_wbc_post_cycle}, Hgb nadir ${i.min_hemoglobin_post_cycle}, Plt nadir ${i.min_platelets_post_cycle}`,
-            "No treatment cycle data."
-          );
-
-          renderDataList("symptoms", data.symptoms,
-            i => `${String(i.date).slice(0,10)}: <strong>${i.symptom}</strong> — severity ${i.severity}/10${i.notes ? ` · ${i.notes}` : ""}`,
-            "No symptoms reported."
-          );
-
-          renderTimeline(data.timeline);
-          renderMRI(data.mri_registry);
-          renderMRISeries(data.mri_series_index);
-          renderChat(data.chat_history);
-
-          const h = data.lab_history || [];
-          const lbls = h.map(r => String(r.date).slice(0,10));
-          makeChart("wbcChart", "WBC", lbls, h.map(r => r.wbc));
-          makeChart("hemoglobinChart", "Hemoglobin", lbls, h.map(r => r.hemoglobin));
-          makeChart("plateletChart", "Platelets", lbls, h.map(r => r.platelets));
-
-          const summary = data.ai_summary || {};
-          document.getElementById("clinicalSummary").textContent =
-            Array.isArray(summary.clinical_summary) ? summary.clinical_summary.join("\n") : (summary.clinical_summary || "No summary available.");
-          document.getElementById("patientExplanation").textContent =
-            Array.isArray(summary.patient_explanation) ? summary.patient_explanation.join("\n") : (summary.patient_explanation || "No explanation available.");
-
-          renderDataList("changesSinceBaseline", summary.changes_since_baseline, i => i, "No changes recorded.");
-          renderDataList("reviewReasons", summary.review_reasons, i => i, "No review reasons listed.");
-        })
-        .catch(err => showToast(err.message, true));
-    }
-
-    /* ── ACTIONS ── */
-    function addLabResult() {
-      const pid = getPatientId();
-      const date = document.getElementById("labDate").value;
-      const wbc = parseFloat(document.getElementById("labWbc").value);
-      const hemoglobin = parseFloat(document.getElementById("labHemoglobin").value);
-      const platelets = parseFloat(document.getElementById("labPlatelets").value);
-      if (!pid || !date || isNaN(wbc) || isNaN(hemoglobin) || isNaN(platelets)) {
-        showToast("Fill in all lab fields.", true); return;
       }
-      fetch(`${API_BASE}/patients/${pid}/labs`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
-        body: JSON.stringify({ date, wbc, hemoglobin, platelets })
+    });
+  }
+
+  /* ── Prediction audits ── */
+  function loadPredictionAudits(pid) {
+    apiFetch(`/prediction-audits?patient_id=${encodeURIComponent(pid)}&limit=8`)
+      .then(data => {
+        const rows = data.prediction_audits || [];
+        const el   = document.getElementById("predictionAudit");
+        if (!rows.length) { el.innerHTML = '<li class="empty-state">No prediction audits for this patient.</li>'; return; }
+        el.innerHTML = rows.map(row => {
+          const pred = row.prediction || {};
+          const prob = pred.pcr_probability !== undefined ? `pCR probability ${pred.pcr_probability}` : "no probability";
+          return `<li><span style="font:500 11px var(--mono);color:var(--muted-2)">${esc(String(row.created_at).slice(0,19))}</span> — ${esc(row.model_name)} ${esc(row.model_version)} · ${prob}</li>`;
+        }).join("");
       })
-      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
-      .then(() => {
-        ["labDate","labWbc","labHemoglobin","labPlatelets"].forEach(id => document.getElementById(id).value = "");
-        showToast("Lab result saved.");
-        loadPatient(pid);
+      .catch(() => {
+        document.getElementById("predictionAudit").innerHTML = '<li class="empty-state">Could not load prediction audits.</li>';
+      });
+  }
+
+  /* ── Load patient ── */
+  function loadPatient(pid) {
+    apiFetch(`/patient-report/${pid}`)
+      .then(data => {
+        latestPatientReport = data;
+        renderProfile(data);
+
+        const labs = data.latest_labs || {};
+        document.getElementById("wbc").textContent       = labs.wbc       ?? "—";
+        document.getElementById("hemoglobin").textContent = labs.hemoglobin ?? "—";
+        document.getElementById("platelets").textContent  = labs.platelets  ?? "—";
+
+        renderLabSource(data);
+        renderRisks(data.risks);
+        renderMultimodalAssessment(data.multimodal_assessment);
+        renderClinicianReview(data);
+        loadPredictionAudits(pid);
+        renderRadiology(data.radiology_summary);
+
+        const metaEl = document.getElementById("metastaticIndicators");
+        if (data.radiology_summary?.possible_metastatic_indicators?.length) {
+          metaEl.innerHTML = data.radiology_summary.possible_metastatic_indicators
+            .map(i => `<li>${esc(i.date)}: ${esc(i.message)}</li>`).join("");
+        } else {
+          metaEl.innerHTML = '<li class="empty-state">No metastatic indicator wording flagged.</li>';
+        }
+
+        renderDataList("treatment", data.treatment_effects,
+          i => `Cycle ${esc(i.cycle)} (${esc(i.drug)}, ${esc(i.cycle_date)}): WBC nadir <strong>${esc(String(i.min_wbc_post_cycle))}</strong>, Hgb nadir <strong>${esc(String(i.min_hemoglobin_post_cycle))}</strong>, Plt nadir <strong>${esc(String(i.min_platelets_post_cycle))}</strong>`,
+          "No treatment cycle data."
+        );
+        renderDataList("symptoms", data.symptoms,
+          i => `${esc(String(i.date).slice(0,10))} — <strong>${esc(i.symptom)}</strong> severity ${esc(String(i.severity))}/10${i.notes ? ` · ${esc(i.notes)}` : ""}`,
+          "No symptoms reported."
+        );
+
+        renderTimeline(data.timeline);
+        renderMRI(data.mri_registry);
+        renderMRISeries(data.mri_series_index);
+        renderChat(data.chat_history);
+
+        const h    = data.lab_history || [];
+        const lbls = h.map(r => String(r.date).slice(0,10));
+        makeChart("wbcChart",        "WBC",        lbls, h.map(r => r.wbc));
+        makeChart("hemoglobinChart", "Hemoglobin", lbls, h.map(r => r.hemoglobin));
+        makeChart("plateletChart",   "Platelets",  lbls, h.map(r => r.platelets));
+
+        const summary = data.ai_summary || {};
+        document.getElementById("clinicalSummary").textContent =
+          Array.isArray(summary.clinical_summary)
+            ? summary.clinical_summary.join("\n")
+            : (summary.clinical_summary || "No summary available.");
+        document.getElementById("patientExplanation").textContent =
+          Array.isArray(summary.patient_explanation)
+            ? summary.patient_explanation.join("\n")
+            : (summary.patient_explanation || "No explanation available.");
+
+        renderDataList("changesSinceBaseline", summary.changes_since_baseline, i => esc(i), "No changes recorded.");
+        renderDataList("reviewReasons",        summary.review_reasons,         i => esc(i), "No review reasons listed.");
       })
       .catch(err => showToast(err.message, true));
+  }
+
+  /* ── Review queue ── */
+  function loadReviewQueue() {
+    return apiFetch("/clinician/review-queue?limit=12").then(renderReviewQueue);
+  }
+
+  /* ── Actions ── */
+  function addLabResult() {
+    const pid = getPatientId();
+    const date = document.getElementById("labDate").value;
+    const wbc  = parseFloat(document.getElementById("labWbc").value);
+    const neutRaw = document.getElementById("labNeutrophils").value;
+    const neutrophils = neutRaw === "" ? null : parseFloat(neutRaw);
+    const hemoglobin = parseFloat(document.getElementById("labHemoglobin").value);
+    const platelets  = parseFloat(document.getElementById("labPlatelets").value);
+    if (!pid || !date || isNaN(wbc) || isNaN(hemoglobin) || isNaN(platelets)) {
+      showToast("Fill in all required lab fields.", true); return;
     }
+    apiFetch(`/patients/${pid}/labs`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, wbc, neutrophils, hemoglobin, platelets })
+    }).then(() => {
+      ["labDate","labWbc","labNeutrophils","labHemoglobin","labPlatelets"]
+        .forEach(id => document.getElementById(id).value = "");
+      showToast("Lab result saved.");
+      loadPatient(pid);
+    }).catch(err => showToast(err.message, true));
+  }
 
-    function sendChatMessage() {
-      const pid = getPatientId();
-      const input = document.getElementById("chatInput");
-      const message = input.value.trim();
-      if (!pid || !message) { showToast("Write a message first.", true); return; }
+  function sendChatMessage() {
+    const pid     = getPatientId();
+    const input   = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if (!pid || !message) { showToast("Write a message first.", true); return; }
+    apiFetch(`/patients/${pid}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message })
+    }).then(result => {
+      input.value = "";
+      showToast(result.saved_actions?.length ? "Saved from chat." : "Message sent.");
+      loadPatient(pid);
+    }).catch(err => showToast(err.message, true));
+  }
 
-      fetch(`${API_BASE}/patients/${pid}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
-        body: JSON.stringify({ message })
-      })
-      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
-      .then(result => {
-        input.value = "";
-        showToast(result.saved_actions?.length ? "Saved from chat." : "Message saved.");
-        loadPatient(pid);
-      })
-      .catch(err => showToast(err.message, true));
-    }
-
-    function submitSummaryReview(decision) {
-      const pid = getPatientId();
-      if (!pid) { showToast("Select a patient first.", true); return; }
-
-      const explanationQuality = document.getElementById("explanationQualityScore").value;
-      const modelUsefulness = document.getElementById("modelUsefulnessScore").value;
-      const payload = {
+  function submitSummaryReview(decision) {
+    const pid = getPatientId();
+    if (!pid) { showToast("Select a patient first.", true); return; }
+    const eq = document.getElementById("explanationQualityScore").value;
+    const mu = document.getElementById("modelUsefulnessScore").value;
+    apiFetch(`/patients/${pid}/summary-review`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         decision,
-        clinician_notes: document.getElementById("clinicianNotes").value.trim() || null,
+        clinician_notes:        document.getElementById("clinicianNotes").value.trim() || null,
         edited_patient_summary: document.getElementById("editedPatientSummary").value.trim() || null,
-        explanation_quality_score: explanationQuality ? Number(explanationQuality) : null,
-        model_usefulness_score: modelUsefulness ? Number(modelUsefulness) : null
-      };
-
-      const request = () => fetch(`${API_BASE}/patients/${pid}/summary-review`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
-        body: JSON.stringify(payload)
+        explanation_quality_score: eq ? Number(eq) : null,
+        model_usefulness_score:    mu ? Number(mu) : null
       })
-      .then(r => { if (!r.ok) throw new Error(`Review failed (${r.status})`); return r.json(); })
-      .then(() => {
-        showToast("Clinician review saved.");
-        document.getElementById("clinicianNotes").value = "";
-        document.getElementById("editedPatientSummary").value = "";
-        loadPatient(pid);
-      });
+    }).then(() => {
+      showToast("Review saved.");
+      ["clinicianNotes","editedPatientSummary"].forEach(id => document.getElementById(id).value = "");
+      loadPatient(pid);
+    }).catch(err => showToast(err.message, true));
+  }
 
-      request().catch(() => loginClinician().then(request).catch(err => showToast(err.message, true)));
+  function addSymptomReport() {
+    const pid      = getPatientId();
+    const date     = document.getElementById("symptomDate").value;
+    const symptom  = document.getElementById("symptomName").value.trim();
+    const severity = parseInt(document.getElementById("symptomSeverity").value, 10);
+    const notes    = document.getElementById("symptomNotes").value.trim();
+    if (!pid || !date || !symptom || isNaN(severity)) {
+      showToast("Fill in date, symptom, and severity.", true); return;
     }
+    apiFetch(`/patients/${pid}/symptoms`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, symptom, severity, notes })
+    }).then(() => {
+      ["symptomDate","symptomName","symptomSeverity","symptomNotes"]
+        .forEach(id => document.getElementById(id).value = "");
+      showToast("Symptom saved.");
+      loadPatient(pid);
+    }).catch(err => showToast(err.message, true));
+  }
 
-    function addSymptomReport() {
-      const pid = getPatientId();
-      const date = document.getElementById("symptomDate").value;
-      const symptom = document.getElementById("symptomName").value.trim();
-      const severity = parseInt(document.getElementById("symptomSeverity").value, 10);
-      const notes = document.getElementById("symptomNotes").value.trim();
-      if (!pid || !date || !symptom || isNaN(severity)) {
-        showToast("Fill in date, symptom, and severity.", true); return;
-      }
-      fetch(`${API_BASE}/patients/${pid}/symptoms`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
-        body: JSON.stringify({ date, symptom, severity, notes })
-      })
-      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
-      .then(() => {
-        ["symptomDate","symptomName","symptomSeverity","symptomNotes"].forEach(id => document.getElementById(id).value = "");
-        showToast("Symptom report saved.");
-        loadPatient(pid);
-      })
-      .catch(err => showToast(err.message, true));
+  function addTreatmentCycle() {
+    const pid   = getPatientId();
+    const date  = document.getElementById("treatmentDate").value;
+    const cycle = parseInt(document.getElementById("treatmentCycle").value, 10);
+    const drug  = document.getElementById("treatmentDrug").value.trim();
+    if (!pid || !date || isNaN(cycle) || !drug) {
+      showToast("Fill in date, cycle, and regimen.", true); return;
     }
+    apiFetch(`/patients/${pid}/treatments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, cycle, drug })
+    }).then(() => {
+      ["treatmentDate","treatmentCycle","treatmentDrug"]
+        .forEach(id => document.getElementById(id).value = "");
+      showToast("Treatment cycle saved.");
+      loadPatient(pid);
+    }).catch(err => showToast(err.message, true));
+  }
 
-    function importCsv() {
-      const import_type = document.getElementById("importType").value;
-      const dataset = document.getElementById("importDataset").value;
-      const csv_text = document.getElementById("importCsvText").value.trim();
-      if (!csv_text) { showToast("Paste CSV before importing.", true); return; }
-      fetch(`${API_BASE}/import-csv`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
-        body: JSON.stringify({ import_type, dataset, csv_text })
-      })
-      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
-      .then(result => {
-        showToast(`Imported: ${JSON.stringify(result.result)}`);
-        document.getElementById("importCsvText").value = "";
-        return fetch(`${API_BASE}/patients`, { headers: clinicianHeaders() });
-      })
-      .then(r => r.json())
-      .then(patients => {
-        const sel = document.getElementById("patientSelect");
-        sel.innerHTML = patients.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
-        if (patients.length) loadPatient(getPatientId() || patients[0].id);
-      })
-      .catch(err => showToast(err.message, true));
+  function addMedication() {
+    const pid       = getPatientId();
+    const date      = document.getElementById("medDate").value;
+    const medication = document.getElementById("medName").value.trim();
+    const dose      = document.getElementById("medDose").value.trim();
+    const frequency = document.getElementById("medFrequency").value.trim();
+    const notes     = document.getElementById("medNotes").value.trim();
+    if (!pid || !date || !medication) {
+      showToast("Fill in date and medication name.", true); return;
     }
+    apiFetch(`/patients/${pid}/medications`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, medication, dose: dose || null, frequency: frequency || null, notes: notes || null })
+    }).then(() => {
+      ["medDate","medName","medDose","medFrequency","medNotes"]
+        .forEach(id => document.getElementById(id).value = "");
+      showToast("Medication saved.");
+      loadPatient(pid);
+    }).catch(err => showToast(err.message, true));
+  }
 
-    /* ── BOOT ── */
-    loginClinician()
-      .then(() => fetch(`${API_BASE}/patients`, { headers: clinicianHeaders() }))
-      .then(r => r.json())
-      .then(patients => {
-        const sel = document.getElementById("patientSelect");
-        sel.innerHTML = patients.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
-        if (patients.length) loadPatient(patients[0].id);
-        sel.addEventListener("change", e => loadPatient(e.target.value));
-      })
-      .catch(err => showToast(err.message, true));
-    loadReviewQueue().catch(err => showToast(err.message, true));
-  </script>
+  function addImagingSummary() {
+    const pid          = getPatientId();
+    const date         = document.getElementById("imagingDate").value;
+    const modality     = document.getElementById("imagingModality").value.trim() || "Imaging";
+    const body_site    = document.getElementById("imagingBodySite").value.trim();
+    const summary_text = document.getElementById("imagingSummaryText").value.trim();
+    if (!pid || !date || !summary_text) {
+      showToast("Fill in date and summary text.", true); return;
+    }
+    apiFetch(`/patients/${pid}/imaging-summary`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, modality, body_site: body_site || null, summary_text })
+    }).then(() => {
+      ["imagingDate","imagingModality","imagingBodySite","imagingSummaryText"]
+        .forEach(id => document.getElementById(id).value = "");
+      showToast("Imaging summary saved.");
+      loadPatient(pid);
+    }).catch(err => showToast(err.message, true));
+  }
+
+  function addClinicalNote() {
+    const pid       = getPatientId();
+    const date      = document.getElementById("noteDate").value;
+    const note_type = document.getElementById("noteType").value.trim() || "clinical_note";
+    const content   = document.getElementById("noteContent").value.trim();
+    if (!pid || !date || !content) {
+      showToast("Fill in date and note text.", true); return;
+    }
+    apiFetch(`/patients/${pid}/notes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, note_type, content })
+    }).then(() => {
+      ["noteDate","noteType","noteContent"]
+        .forEach(id => document.getElementById(id).value = "");
+      showToast("Clinical note saved.");
+      loadPatient(pid);
+    }).catch(err => showToast(err.message, true));
+  }
+
+  function importCsv() {
+    const import_type = document.getElementById("importType").value;
+    const dataset     = document.getElementById("importDataset").value;
+    const csv_text    = document.getElementById("importCsvText").value.trim();
+    if (!csv_text) { showToast("Paste CSV before importing.", true); return; }
+    apiFetch("/import-csv", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ import_type, dataset, csv_text })
+    }).then(result => {
+      showToast(`Imported: ${JSON.stringify(result.result)}`);
+      document.getElementById("importCsvText").value = "";
+      return apiFetch("/patients");
+    }).then(patients => {
+      const sel = document.getElementById("patientSelect");
+      sel.innerHTML = patients.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+      if (patients.length) loadPatient(getPatientId() || patients[0].id);
+    }).catch(err => showToast(err.message, true));
+  }
+
+  /* ── Boot ── */
+  loginClinician()
+    .then(() => apiFetch("/patients"))
+    .then(patients => {
+      const sel = document.getElementById("patientSelect");
+      sel.innerHTML = patients.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+      if (patients.length) loadPatient(patients[0].id);
+      sel.addEventListener("change", e => loadPatient(e.target.value));
+    })
+    .catch(err => showToast(err.message, true));
+
+  loadReviewQueue().catch(err => showToast(err.message, true));
+</script>
 </body>
 </html>
