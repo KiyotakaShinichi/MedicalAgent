@@ -228,6 +228,24 @@ class ModelRegistry(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class MLExperimentRun(Base):
+    __tablename__ = "ml_experiment_runs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    run_id = Column(String, nullable=False, unique=True, index=True)
+    experiment_name = Column(String, nullable=False, index=True)
+    run_name = Column(String, nullable=True)
+    status = Column(String, nullable=False, default="running", index=True)
+    params_json = Column(Text, nullable=True)
+    metrics_json = Column(Text, nullable=True)
+    artifacts_json = Column(Text, nullable=True)
+    tags_json = Column(Text, nullable=True)
+    error_message = Column(Text, nullable=True)
+    started_at = Column(DateTime(timezone=True), nullable=False)
+    ended_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class PredictionAuditLog(Base):
     __tablename__ = "prediction_audit_logs"
 
@@ -269,6 +287,22 @@ class AppEventLog(Base):
     output_json = Column(Text, nullable=True)
     error_message = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class AsyncTask(Base):
+    __tablename__ = "async_tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    task_type = Column(String, nullable=False, index=True)
+    status = Column(String, nullable=False, default="queued", index=True)
+    payload_json = Column(Text, nullable=True)
+    result_json = Column(Text, nullable=True)
+    error_message = Column(Text, nullable=True)
+    attempts = Column(Integer, nullable=False, default=0)
+    created_by = Column(String, nullable=True, index=True)
+    queued_at = Column(DateTime(timezone=True), server_default=func.now())
+    started_at = Column(DateTime(timezone=True), nullable=True)
+    finished_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class AgentResponseCache(Base):

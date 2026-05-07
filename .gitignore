@@ -14,6 +14,8 @@ Data/uploads/
 Data/test_tmp/
 Data/server_logs/
 Data/mle_monitoring/
+Data/mlruns_local/
+Data/feature_store/
 Data/rag_index/
 Data/rag_knowledge_base_chunks.json
 Data/agent_eval/

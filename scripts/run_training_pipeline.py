@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from backend.database import SessionLocal
 from backend.services.complete_synthetic_training import train_complete_synthetic_models
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
+from backend.services.mlops_tracking import finish_experiment_run, start_experiment_run
 from backend.services.model_artifacts import register_complete_synthetic_champion
 
 
@@ -32,16 +33,40 @@ def main():
         raise FileNotFoundError(f"Training CSV not found: {args.ml_csv_path}")
 
     training_metrics = None
+    run = start_experiment_run(
+        experiment_name="complete_synthetic_training_pipeline",
+        run_name=args.model_version,
+        params={
+            "ml_csv_path": args.ml_csv_path,
+            "training_output_dir": args.training_output_dir,
+            "target": args.target,
+            "test_size": args.test_size,
+            "seed": args.seed,
+            "cnn_epochs": args.cnn_epochs,
+            "cnn_batch_size": args.cnn_batch_size,
+            "skip_training": args.skip_training,
+            "skip_register": args.skip_register,
+        },
+        tags={"pipeline": "local_account_free", "warning": "synthetic_data_only"},
+    )
     if not args.skip_training:
-        training_metrics = train_complete_synthetic_models(
-            ml_csv_path=args.ml_csv_path,
-            output_dir=args.training_output_dir,
-            target=args.target,
-            test_size=args.test_size,
-            seed=args.seed,
-            cnn_epochs=args.cnn_epochs,
-            cnn_batch_size=args.cnn_batch_size,
-        )
+        try:
+            training_metrics = train_complete_synthetic_models(
+                ml_csv_path=args.ml_csv_path,
+                output_dir=args.training_output_dir,
+                target=args.target,
+                test_size=args.test_size,
+                seed=args.seed,
+                cnn_epochs=args.cnn_epochs,
+                cnn_batch_size=args.cnn_batch_size,
+            )
+        except Exception as exc:
+            finish_experiment_run(
+                run_id=run["run_id"],
+                status="failed",
+                error_message=str(exc),
+            )
+            raise
 
     db = SessionLocal()
     try:
@@ -60,10 +85,24 @@ def main():
             db=db,
             output_root=args.evaluation_output_root,
         )
+        finish_experiment_run(
+            db=db,
+            run_id=run["run_id"],
+            status="completed",
+            metrics=(training_metrics or {}),
+            artifacts={
+                "metrics": str(Path(args.training_output_dir) / "complete_synthetic_model_metrics.json"),
+                "predictions": str(Path(args.training_output_dir) / "complete_synthetic_model_predictions.csv"),
+                "evaluation_report": (report.get("files") or {}).get("evaluation_report_json"),
+                "registered_artifact": (registry_model or {}).get("artifact_path"),
+            },
+            tags={"registered": bool(registry_model)},
+        )
     finally:
         db.close()
 
     result = {
+        "mlops_run_id": run["run_id"],
         "training_ran": not args.skip_training,
         "best_model": (training_metrics or {}).get("best_model_by_patient_level_roc_auc"),
         "registered_model": registry_model,

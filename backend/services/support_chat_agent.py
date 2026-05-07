@@ -4,7 +4,7 @@ from datetime import date, timedelta
 
 from groq import Groq
 
-from backend.config import get_groq_api_key
+from backend.config import get_groq_api_key, get_groq_model
 from backend.models import (
     ChatMessage,
     ClinicalIntervention,
@@ -18,6 +18,7 @@ from backend.models import (
 from backend.services.agent_rag import run_patient_agent_pipeline
 from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_symptom_payload
+from backend.services.security_guardrails import detect_multilingual_medical_danger, normalize_security_text
 
 
 SYMPTOM_KEYWORDS = {
@@ -340,8 +341,11 @@ def _extract_date(message):
 
 
 def _detect_urgent_flags(message):
-    lower = message.lower()
-    return [term for term in URGENT_TERMS if term in lower]
+    normalized = normalize_security_text(message)
+    flags = [term for term in URGENT_TERMS if term in normalized]
+    danger = detect_multilingual_medical_danger(message)
+    flags.extend(danger.get("matches") or [])
+    return sorted(set(flags))
 
 
 def _prefer_deterministic_reply(message):
@@ -420,7 +424,7 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
     try:
         client = Groq(api_key=api_key)
         completion = client.chat.completions.create(
-            model="openai/gpt-oss-120b",
+            model=get_groq_model(),
             temperature=0.2,
             max_tokens=220,
             messages=[

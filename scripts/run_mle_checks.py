@@ -31,6 +31,8 @@ def main():
         "release_recommendation": report["release_recommendation"],
         "hard_gate_status": report["hard_gate_status"],
         "hard_gate_failures": len(report["hard_gate_failures"]),
+        "poc_demo_readiness": report.get("poc_demo_readiness", {}).get("status"),
+        "poc_demo_recommendation": report.get("poc_demo_readiness", {}).get("recommendation"),
         "category_statuses": report["category_statuses"],
     }, indent=2))
 

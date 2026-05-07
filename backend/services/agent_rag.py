@@ -6,8 +6,9 @@ from datetime import datetime, timezone, timedelta
 
 from backend.models import AgentResponseCache, RAGEvaluationLog
 from backend.services.kb_ingestion import load_ingested_chunks
+from backend.services.local_llm import configured_llm_providers, decide_cache_with_local_llm, route_intent_with_local_llm
 from backend.services.rag_vector_index import corpus_fingerprint, search_hybrid_index
-from backend.services.security_guardrails import detect_prompt_injection_or_exfiltration
+from backend.services.security_guardrails import detect_multilingual_medical_danger, detect_prompt_injection_or_exfiltration, normalize_security_text
 
 
 MAX_CONTEXT_CHARS = 1300
@@ -277,6 +278,7 @@ def input_guardrail_check(query, safety):
 
 def safety_scope_check(query, urgent_flags=None):
     lower = query.lower()
+    normalized = normalize_security_text(query)
     urgent_flags = urgent_flags or []
     decision_terms = [
         "should i stop",
@@ -295,21 +297,27 @@ def safety_scope_check(query, urgent_flags=None):
         "is my cancer gone",
         "diagnose me",
     ]
-    if urgent_flags or any(term in lower for term in ["fever", "chest pain", "cannot breathe", "bleeding", "suicidal", "self harm"]):
+    medical_danger = detect_multilingual_medical_danger(query)
+    if (
+        urgent_flags
+        or medical_danger["detected"]
+        or any(term in normalized for term in ["fever", "chest pain", "cannot breathe", "bleeding", "suicidal", "self harm"])
+    ):
         return {
             "level": "high_risk",
             "scope": "urgent_or_safety_related",
             "cache_allowed": False,
             "message": "Urgent or safety-related wording detected; answer must route toward clinician/emergency review.",
+            "matched_safety_terms": sorted(set(urgent_flags + medical_danger.get("matches", [])))[:10],
         }
-    if any(term in lower for term in decision_terms):
+    if any(term in normalized for term in decision_terms):
         return {
             "level": "high_risk",
             "scope": "treatment_decision_request",
             "cache_allowed": False,
             "message": "Treatment decision wording detected; assistant must not recommend medication or treatment changes.",
         }
-    if any(term in lower for term in diagnostic_terms):
+    if any(term in normalized for term in diagnostic_terms):
         return {
             "level": "high_risk",
             "scope": "diagnosis_or_outcome_claim",
@@ -329,20 +337,40 @@ def route_intent(query, actions=None, safety=None):
     actions = actions or []
     safety = safety or {}
     if safety.get("scope") == "treatment_decision_request":
-        return "treatment_decision_boundary"
-    if safety.get("scope") in {"urgent_or_safety_related", "diagnosis_or_outcome_claim"}:
-        return "safety_boundary"
-    if actions:
-        return "data_entry_confirmation"
-    if any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add"]):
-        return "portal_help"
-    if any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment", "working", "progress"]):
-        return "patient_timeline_monitoring"
-    if any(term in lower for term in ["pcr", "response", "mri", "cbc", "wbc", "hemoglobin", "platelets", "chemo", "chemotherapy", "side effect"]):
-        return "education"
-    if any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed"]):
-        return "emotional_support"
-    return "general_support"
+        deterministic = "treatment_decision_boundary"
+    elif safety.get("scope") in {"urgent_or_safety_related", "diagnosis_or_outcome_claim"}:
+        deterministic = "safety_boundary"
+    elif actions:
+        deterministic = "data_entry_confirmation"
+    elif any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add"]):
+        deterministic = "portal_help"
+    elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment", "working", "progress"]):
+        deterministic = "patient_timeline_monitoring"
+    elif any(term in lower for term in ["pcr", "response", "mri", "cbc", "wbc", "hemoglobin", "platelets", "chemo", "chemotherapy", "side effect"]):
+        deterministic = "education"
+    elif any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed"]):
+        deterministic = "emotional_support"
+    else:
+        deterministic = "general_support"
+
+    llm = route_intent_with_local_llm(query, deterministic_intent=deterministic, safety=safety)
+    allowed = {
+        "security_boundary",
+        "safety_boundary",
+        "treatment_decision_boundary",
+        "data_entry_confirmation",
+        "portal_help",
+        "patient_timeline_monitoring",
+        "education",
+        "emotional_support",
+        "general_support",
+    }
+    candidate = llm.get("intent")
+    if llm.get("available") and candidate in allowed and float(llm.get("confidence") or 0) >= 0.72:
+        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation"}:
+            return deterministic
+        return candidate
+    return deterministic
 
 
 def rewrite_and_decompose(query, intent):
@@ -913,6 +941,9 @@ def is_cacheable(query, intent, safety, actions=None, urgent_flags=None):
     padded = f" {lower} "
     if any(term in padded for term in patient_specific_terms):
         return False
+    llm = decide_cache_with_local_llm(query, deterministic_cacheable=True, intent=intent, safety=safety)
+    if llm.get("available") and float(llm.get("confidence") or 0) >= 0.72:
+        return bool(llm.get("cacheable"))
     return True
 
 
@@ -964,6 +995,7 @@ def _cache_policy_snapshot(knowledge_fingerprint):
         "semantic_min_similarity": SEMANTIC_CACHE_MIN_SIMILARITY,
         "knowledge_fingerprint": knowledge_fingerprint,
         "reuse_scope": "low_risk_non_patient_specific_agent_answers",
+        "llm_cache_adjudication": configured_llm_providers(),
         "invalidates_on": ["ttl_expiry", "knowledge_base_fingerprint_change", "safety_policy_rejection"],
     }
 

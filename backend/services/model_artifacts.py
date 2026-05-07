@@ -110,76 +110,16 @@ def predict_breastdcedl_patient(
     features_csv_path: str = DEFAULT_FEATURES_CSV_PATH,
     shap_json_path: str = DEFAULT_SHAP_PATH,
 ):
-    registry_row = _get_model_registry_row(db, model_name, model_version)
-    if registry_row is None:
-        raise FileNotFoundError(
-            f"No registered model found for {model_name} {model_version}. "
-            "Run /models/breastdcedl/train-final first."
-        )
+    from backend.services.inference_service import get_inference_service
 
-    artifact_path = Path(registry_row.artifact_path)
-    if not artifact_path.exists():
-        raise FileNotFoundError(f"Registered model artifact is missing: {artifact_path}")
-
-    bundle = joblib.load(artifact_path)
-    model = bundle["model"]
-    feature_columns = bundle.get("feature_columns", FEATURE_COLUMNS)
-    categorical_columns = bundle.get("categorical_feature_columns", CATEGORICAL_FEATURE_COLUMNS)
-    patient_row = _load_patient_feature_row(features_csv_path, patient_id)
-    X = patient_row[feature_columns + categorical_columns]
-
-    pcr_probability = float(model.predict_proba(X)[:, 1][0])
-    predicted_label = int(pcr_probability >= 0.5)
-    explanation = load_patient_shap_explanation(patient_id, shap_json_path)
-    prediction_payload = {
-        "patient_id": patient_id,
-        "model_name": model_name,
-        "model_version": model_version,
-        "task": "BreastDCEDL pCR treatment-response classification",
-        "pcr_probability": round(pcr_probability, 6),
-        "predicted_label": predicted_label,
-        "actual_pcr_label": _safe_int(patient_row.iloc[0].get("pcr_label")),
-        "model_interpretation": _interpret_pcr_probability(pcr_probability),
-        "safety_note": (
-            "This is an exploratory treatment-response model signal from a PoC dataset. "
-            "It is not diagnosis, treatment advice, or a clinically validated score."
-        ),
-    }
-    input_reference = {
-        "features_csv_path": features_csv_path,
-        "patient_id": patient_id,
-        "feature_columns": feature_columns + categorical_columns,
-    }
-    audit_log = PredictionAuditLog(
+    return get_inference_service().predict_breastdcedl_patient(
+        db=db,
         patient_id=patient_id,
         model_name=model_name,
         model_version=model_version,
-        input_reference=json.dumps(input_reference),
-        prediction_json=json.dumps(prediction_payload),
-        explanation_json=json.dumps(explanation) if explanation else None,
+        features_csv_path=features_csv_path,
+        shap_json_path=shap_json_path,
     )
-    db.add(audit_log)
-    db.commit()
-    db.refresh(audit_log)
-
-    prediction_payload["audit_log_id"] = audit_log.id
-    prediction_payload["xai"] = explanation
-    log_app_event(
-        db=db,
-        event_type="prediction",
-        patient_id=patient_id,
-        route="/models/breastdcedl/predict/{patient_id}",
-        status="ok",
-        input_payload=input_reference,
-        output_payload={
-            "model_name": model_name,
-            "model_version": model_version,
-            "pcr_probability": prediction_payload["pcr_probability"],
-            "predicted_label": predicted_label,
-            "audit_log_id": audit_log.id,
-        },
-    )
-    return prediction_payload
 
 
 def list_registered_models(db):

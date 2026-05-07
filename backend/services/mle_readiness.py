@@ -5,11 +5,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from backend.models import ModelRegistry, PredictionAuditLog
+from backend.models import MLExperimentRun, ModelRegistry, PredictionAuditLog
 from backend.services.agent_regression_eval import (
     DEFAULT_AGENT_REGRESSION_PATH,
     load_latest_agent_regression_report,
 )
+from backend.services.feature_store import load_feature_store_manifest
 
 
 DEFAULT_TRAINING_CSV = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
@@ -85,6 +86,7 @@ def build_mle_readiness_summary(
     checks = []
     checks.extend(_artifact_checks(metrics, metrics_path, predictions_path, training_csv, evaluation_report))
     checks.extend(_data_contract_checks(training_rows))
+    checks.extend(_feature_store_checks(training_csv))
     checks.extend(_performance_checks(metrics, evaluation_report))
     checks.extend(_lifecycle_checks(db, metrics))
     checks.extend(_agent_quality_checks(agent_regression))
@@ -102,6 +104,7 @@ def build_mle_readiness_summary(
         "release_recommendation": _release_recommendation(checks),
         "hard_gate_status": "failed" if hard_failures else "passed",
         "hard_gate_failures": hard_failures,
+        "poc_demo_readiness": _poc_demo_readiness(checks, category_statuses, hard_failures),
         "category_statuses": category_statuses,
         "checks": checks,
         "artifact_hashes": _artifact_hashes([training_csv, metrics_path, predictions_path, evaluation_manifest_path]),
@@ -360,6 +363,44 @@ def _performance_checks(metrics, evaluation_report):
     ]
 
 
+def _feature_store_checks(training_csv):
+    manifest = load_feature_store_manifest()
+    if manifest.get("status") == "missing":
+        return [_check(
+            name="local_feature_store_materialized",
+            category="feature_store",
+            status="unideal",
+            value=manifest.get("path"),
+            threshold="feature_store_manifest.json exists",
+            meaning="A feature-store manifest keeps training and serving feature contracts visible.",
+            hard_gate=False,
+            remediation="Run python scripts/materialize_feature_store.py.",
+        )]
+    source_matches = _same_path(manifest.get("source_csv"), training_csv)
+    return [
+        _check(
+            name="local_feature_store_materialized",
+            category="feature_store",
+            status="passed" if manifest.get("status") == "current" else "unideal",
+            value={"status": manifest.get("status"), "rows": manifest.get("row_count"), "entities": manifest.get("entity_count")},
+            threshold="manifest current",
+            meaning="Local offline features should be materialized and hash-checked.",
+            hard_gate=False,
+            remediation="Rematerialize the feature store from the current training CSV.",
+        ),
+        _check(
+            name="feature_store_source_matches_training",
+            category="feature_store",
+            status="passed" if source_matches else "unideal",
+            value={"manifest_source": manifest.get("source_csv"), "training_csv": training_csv},
+            threshold="manifest source equals readiness training CSV",
+            meaning="Training and serving should reference the same feature source contract.",
+            hard_gate=False,
+            remediation="Materialize the feature store using the same training CSV used by readiness checks.",
+        ),
+    ]
+
+
 def _lifecycle_checks(db, metrics):
     checks = []
     if db is None:
@@ -377,6 +418,8 @@ def _lifecycle_checks(db, metrics):
     registered = db.query(ModelRegistry).count()
     champion_or_active = db.query(ModelRegistry).filter(ModelRegistry.status.in_(["active", "champion"])).count()
     audit_logs = db.query(PredictionAuditLog).count()
+    experiment_runs = db.query(MLExperimentRun).count()
+    completed_runs = db.query(MLExperimentRun).filter(MLExperimentRun.status == "completed").count()
     checks.append(_check(
         name="model_registry_ready",
         category="lifecycle",
@@ -386,6 +429,16 @@ def _lifecycle_checks(db, metrics):
         meaning="A registry row gives model version, artifact path, metrics path, and promotion state.",
         hard_gate=False,
         remediation="Run the training pipeline with registration enabled.",
+    ))
+    checks.append(_check(
+        name="experiment_tracking_ready",
+        category="lifecycle",
+        status="passed" if completed_runs else "unideal",
+        value={"runs": experiment_runs, "completed": completed_runs},
+        threshold="at least one completed ML experiment run",
+        meaning="Training/evaluation runs should record params, metrics, artifact hashes, and status.",
+        hard_gate=False,
+        remediation="Run the local training pipeline or training endpoint so MLExperimentRun records are created.",
     ))
     checks.append(_check(
         name="prediction_audit_logging",
@@ -492,6 +545,67 @@ def _release_recommendation(checks):
     if status == "strong":
         return "strong_for_engineering_poc_not_clinical_validation"
     return "insufficient_artifacts"
+
+
+def _poc_demo_readiness(checks, category_statuses, hard_failures):
+    if hard_failures:
+        return {
+            "status": "not_ready",
+            "recommendation": "do_not_demo_until_hard_gates_pass",
+            "reason": "One or more hard gates failed.",
+            "required_categories": ["artifacts", "data_contract", "safety_regression"],
+            "blocking_categories": sorted({check["category"] for check in hard_failures}),
+            "advisory_gaps": _advisory_gaps(checks),
+            "claim_boundary": "Not suitable for clinical use or unsupervised patient decision-making.",
+        }
+
+    required_categories = ["artifacts", "data_contract", "safety_regression"]
+    acceptable_statuses = {"strong", "passed", "acceptable"}
+    blocking_categories = [
+        category
+        for category in required_categories
+        if category_statuses.get(category) not in acceptable_statuses
+    ]
+    feature_store_status = category_statuses.get("feature_store")
+    if feature_store_status in {"failed", "unavailable"}:
+        blocking_categories.append("feature_store")
+
+    status = "ready_with_limitations" if not blocking_categories else "needs_poc_fixes"
+    recommendation = (
+        "ok_for_supervised_engineering_demo_with_disclaimers"
+        if status == "ready_with_limitations"
+        else "fix_blocking_poc_gates_before_demo"
+    )
+    reason = (
+        "Core artifacts, data contract, and agent safety regression gates are usable for a supervised PoC demo."
+        if status == "ready_with_limitations"
+        else "One or more PoC-required engineering gates are not yet acceptable."
+    )
+    return {
+        "status": status,
+        "recommendation": recommendation,
+        "reason": reason,
+        "required_categories": required_categories,
+        "blocking_categories": sorted(set(blocking_categories)),
+        "advisory_gaps": _advisory_gaps(checks),
+        "claim_boundary": (
+            "PoC/demo readiness means the engineering workflow is demonstrable with synthetic/demo data. "
+            "It is not production readiness, clinical validation, or permission to make diagnosis/treatment claims."
+        ),
+    }
+
+
+def _advisory_gaps(checks):
+    return [
+        {
+            "check": check["name"],
+            "category": check["category"],
+            "status": check["status"],
+            "remediation": check["remediation"],
+        }
+        for check in checks
+        if not check["hard_gate"] and check["status"] in {"unideal", "unavailable", "failed"}
+    ][:10]
 
 
 def _category_statuses(checks):
@@ -642,6 +756,15 @@ def _load_json(path):
     if not json_path.exists():
         return None
     return json.loads(json_path.read_text(encoding="utf-8"))
+
+
+def _same_path(left, right):
+    if not left or not right:
+        return False
+    try:
+        return Path(left).resolve() == Path(right).resolve()
+    except OSError:
+        return str(left) == str(right)
 
 
 def _round(value, digits=3):

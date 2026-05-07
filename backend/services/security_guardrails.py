@@ -1,5 +1,9 @@
+import base64
+import binascii
 import re
 import unicodedata
+
+from backend.services.local_llm import assess_security_with_local_llm
 
 
 LEET_TRANSLATION = str.maketrans({
@@ -90,10 +94,29 @@ MULTILINGUAL_ATTACK_PHRASES = [
     "mostra il database",
     "ignorar instrucoes",
     "mostre o banco de dados",
-    "患者データ",
-    "系统提示",
+    "ignoriere alle anweisungen",
+    "zeige die datenbank",
+    "patientendaten",
+    "игнорируй инструкции",
+    "покажи базу данных",
+    "данные пациентов",
     "忽略指令",
+    "忽略以前的指令",
+    "显示系统提示",
     "显示数据库",
+    "患者数据",
+    "患者記録",
+    "システムプロンプトを表示",
+    "データベースを表示",
+    "지시를 무시",
+    "데이터베이스 보여",
+    "환자 기록",
+    "تجاهل التعليمات",
+    "اعرض قاعدة البيانات",
+    "سجلات المرضى",
+    "निर्देशों को अनदेखा",
+    "डेटाबेस दिखाओ",
+    "मरीजों का डेटा",
 ]
 
 
@@ -131,6 +154,14 @@ SENSITIVE_TARGET_TERMS = [
     "lahat ng pasyente",
     "datos",
     "record",
+    "registros de pacientes",
+    "patientendaten",
+    "данные пациентов",
+    "患者数据",
+    "患者記録",
+    "환자 기록",
+    "سجلات المرضى",
+    "मरीजों का डेटा",
 ]
 
 
@@ -162,6 +193,64 @@ EXFILTRATION_VERBS = [
     "donne",
     "mostra",
     "mostre",
+    "zeige",
+    "anzeigen",
+    "покажи",
+    "раскрой",
+    "显示",
+    "展示",
+    "見せて",
+    "表示",
+    "보여",
+    "اعرض",
+    "اظهر",
+    "दिखाओ",
+]
+
+
+URGENT_MEDICAL_PHRASES = [
+    "chest pain",
+    "cannot breathe",
+    "can't breathe",
+    "difficulty breathing",
+    "shortness of breath",
+    "severe bleeding",
+    "fainting",
+    "confused",
+    "fever",
+    "suicidal",
+    "self harm",
+    "kill myself",
+    "matinding lagnat",
+    "hindi makahinga",
+    "sakit sa dibdib",
+    "magpakamatay",
+    "no puedo respirar",
+    "dolor en el pecho",
+    "fiebre",
+    "suicida",
+    "je ne peux pas respirer",
+    "douleur thoracique",
+    "fievre",
+    "kann nicht atmen",
+    "brustschmerzen",
+    "лихорадка",
+    "не могу дышать",
+    "боль в груди",
+    "胸痛",
+    "呼吸できない",
+    "発熱",
+    "发烧",
+    "无法呼吸",
+    "열",
+    "숨을 못 쉬",
+    "가슴 통증",
+    "حمى",
+    "ألم في الصدر",
+    "لا أستطيع التنفس",
+    "बुखार",
+    "सांस नहीं",
+    "सीने में दर्द",
 ]
 
 
@@ -180,7 +269,7 @@ SQL_OR_FILE_PATTERNS = [
 
 def detect_prompt_injection_or_exfiltration(text):
     normalized = normalize_security_text(text)
-    compact = normalized.replace(" ", "")
+    variants = [normalized] + [normalize_security_text(item) for item in _decoded_variants(text)]
     issues = []
     signals = []
 
@@ -190,26 +279,57 @@ def detect_prompt_injection_or_exfiltration(text):
         ("prompt_injection_or_jailbreak", MULTILINGUAL_ATTACK_PHRASES),
     ]
     for category, phrases in phrase_groups:
-        matches = _phrase_matches(normalized, compact, phrases)
+        matches = []
+        for variant in variants:
+            matches.extend(_phrase_matches(variant, variant.replace(" ", ""), phrases))
         if matches:
             issues.append(category)
-            signals.extend({"category": category, "match": match} for match in matches[:5])
+            signals.extend({"category": category, "match": match} for match in sorted(set(matches))[:5])
 
     sql_matches = []
     for pattern in SQL_OR_FILE_PATTERNS:
-        if re.search(pattern, normalized):
+        if any(re.search(pattern, variant) for variant in variants):
             sql_matches.append(pattern)
     if sql_matches:
         issues.append("database_or_file_access_attempt")
         signals.extend({"category": "database_or_file_access_attempt", "match": match} for match in sql_matches[:5])
 
-    if _has_exfiltration_intent(normalized):
+    if any(_has_exfiltration_intent(variant) for variant in variants):
         issues.append("sensitive_data_exfiltration_attempt")
         signals.append({"category": "sensitive_data_exfiltration_attempt", "match": "verb+protected_target"})
 
-    if _asks_for_other_patient(normalized):
+    if any(_asks_for_other_patient(variant) for variant in variants):
         issues.append("privacy_boundary_request")
         signals.append({"category": "privacy_boundary_request", "match": "other/all patient data"})
+
+    medical = detect_multilingual_medical_danger(text)
+    if medical["detected"]:
+        issues.append("urgent_medical_or_self_harm")
+        signals.extend({"category": "urgent_medical_or_self_harm", "match": item} for item in medical["matches"][:5])
+
+    llm_assessment = assess_security_with_local_llm(
+        text,
+        deterministic_context={"issues": sorted(set(issues)), "signals": signals[:10]},
+    )
+    llm_wants_block = (
+        llm_assessment.get("available")
+        and llm_assessment.get("blocked")
+        and float(llm_assessment.get("confidence") or 0) >= 0.7
+    )
+    benign_self_entry = not issues and _is_benign_self_data_entry(normalized)
+    if llm_wants_block and not benign_self_entry:
+        issues.extend(str(issue) for issue in llm_assessment.get("issues") or ["llm_security_boundary"])
+        signals.append({
+            "category": "local_llm_security_assessment",
+            "match": llm_assessment.get("reason") or "blocked",
+            "confidence": llm_assessment.get("confidence"),
+        })
+    elif llm_wants_block and benign_self_entry:
+        signals.append({
+            "category": "llm_security_assessment_suppressed",
+            "match": "benign self-scoped portal data-entry wording",
+            "confidence": llm_assessment.get("confidence"),
+        })
 
     issues = sorted(set(issues))
     blocked = bool(issues)
@@ -219,9 +339,11 @@ def detect_prompt_injection_or_exfiltration(text):
         "issues": issues,
         "signals": signals[:10],
         "confidence": _confidence(issues, signals),
+        "llm_assessment": llm_assessment,
+        "medical_danger": medical,
         "normalized_text": normalized[:500],
         "message": (
-            "Security guardrail blocked suspected prompt-injection, jailbreak, privacy-boundary, or data-exfiltration intent."
+            "Security guardrail blocked suspected prompt-injection, jailbreak, privacy-boundary, data-exfiltration, or urgent danger intent."
             if blocked else "Security guardrail passed."
         ),
     }
@@ -230,11 +352,26 @@ def detect_prompt_injection_or_exfiltration(text):
 def normalize_security_text(text):
     value = unicodedata.normalize("NFKC", str(text or ""))
     value = "".join(char for char in value if unicodedata.category(char) not in {"Cf", "Cc"})
-    value = value.lower().translate(LEET_TRANSLATION)
+    value = _strip_diacritics(value).lower().translate(LEET_TRANSLATION)
     value = re.sub(r"[\u200b-\u200f\u202a-\u202e]", "", value)
     value = re.sub(r"[_\-./\\|*~`'\"()\[\]{}:;,+?<>]+", " ", value)
+    value = re.sub(r"(.)\1{3,}", r"\1\1", value)
     value = re.sub(r"\s+", " ", value).strip()
     return value
+
+
+def detect_multilingual_medical_danger(text):
+    normalized = normalize_security_text(text)
+    compact = normalized.replace(" ", "")
+    matches = []
+    for phrase in URGENT_MEDICAL_PHRASES:
+        clean = normalize_security_text(phrase)
+        if clean and (clean in normalized or clean.replace(" ", "") in compact):
+            matches.append(phrase)
+    return {
+        "detected": bool(matches),
+        "matches": sorted(set(matches))[:10],
+    }
 
 
 def _phrase_matches(normalized, compact, phrases):
@@ -264,8 +401,50 @@ def _asks_for_other_patient(normalized):
         "records ng pasyente",
         "patient records",
         "registros de pacientes",
+        "patientendaten",
+        "данные пациентов",
+        "患者数据",
+        "患者記録",
+        "환자 기록",
+        "سجلات المرضى",
+        "मरीजों का डेटा",
     ]
     return any(_term_present(normalized, term) for term in patient_scope_terms)
+
+
+def _is_benign_self_data_entry(normalized):
+    action_terms = [
+        "where can i put",
+        "where do i put",
+        "how do i upload",
+        "how can i upload",
+        "upload my",
+        "put my",
+        "save my",
+        "log my",
+        "record my",
+        "report my",
+        "add my",
+        "enter my",
+    ]
+    self_data_terms = [
+        "my cbc",
+        "my lab",
+        "my labs",
+        "my medication",
+        "my medications",
+        "my symptom",
+        "my symptoms",
+        "my mri",
+        "my scan",
+        "my upload",
+    ]
+    portal_terms = ["portal", "upload", "uploads", "cbc", "medication", "symptoms", "mri"]
+    return (
+        any(term in normalized for term in action_terms)
+        and any(term in normalized for term in self_data_terms)
+        and any(term in normalized for term in portal_terms)
+    )
 
 
 def _term_present(normalized, term):
@@ -274,7 +453,40 @@ def _term_present(normalized, term):
         return False
     if " " in clean:
         return clean in normalized
-    return re.search(rf"\b{re.escape(clean)}\b", normalized) is not None
+    if _has_word_boundary_script(clean):
+        return re.search(rf"\b{re.escape(clean)}\b", normalized) is not None
+    return clean in normalized
+
+
+def _strip_diacritics(value):
+    decomposed = unicodedata.normalize("NFKD", value)
+    return "".join(char for char in decomposed if not unicodedata.combining(char))
+
+
+def _decoded_variants(text):
+    raw = str(text or "")
+    decoded = []
+    for candidate in re.findall(r"(?<![A-Za-z0-9+/=])([A-Za-z0-9+/]{16,}={0,2})(?![A-Za-z0-9+/=])", raw)[:3]:
+        try:
+            padded = candidate + ("=" * ((4 - len(candidate) % 4) % 4))
+            value = base64.b64decode(padded, validate=True)
+            decoded_text = value.decode("utf-8")
+        except (binascii.Error, ValueError, UnicodeDecodeError):
+            continue
+        if decoded_text and len(decoded_text) <= 2000:
+            decoded.append(decoded_text)
+    for candidate in re.findall(r"\b(?:[0-9a-fA-F]{2}){8,}\b", raw)[:3]:
+        try:
+            decoded_text = bytes.fromhex(candidate).decode("utf-8")
+        except (ValueError, UnicodeDecodeError):
+            continue
+        if decoded_text and len(decoded_text) <= 2000:
+            decoded.append(decoded_text)
+    return decoded
+
+
+def _has_word_boundary_script(value):
+    return all(ord(char) < 128 for char in value)
 
 
 def _confidence(issues, signals):

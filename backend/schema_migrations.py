@@ -9,9 +9,10 @@ def ensure_schema():
     Base.metadata.create_all(bind=engine)
 
     inspector = inspect(engine)
+    table_names = set(inspector.get_table_names())
     lab_columns = {column["name"] for column in inspector.get_columns("lab_results")}
     cache_columns = set()
-    if "agent_response_cache" in inspector.get_table_names():
+    if "agent_response_cache" in table_names:
         cache_columns = {column["name"] for column in inspector.get_columns("agent_response_cache")}
 
     with engine.begin() as connection:

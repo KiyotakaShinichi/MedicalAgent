@@ -1,321 +1,365 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OncoTrack Login</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --ink: #172033;
-    --muted: #667085;
-    --line: #dfe5ee;
-    --page: #f5f7fb;
-    --panel: #ffffff;
-    --rose: #c2455a;
-    --rose-2: #f9e7ea;
-    --teal: #23786f;
-    --teal-2: #e7f4f2;
-    --amber: #a96617;
-    --amber-2: #fff4df;
-    --blue: #244c8f;
-    --blue-2: #e9effa;
-    --shadow: 0 20px 55px rgba(23,32,51,0.12);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OncoTrack Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --line: #dfe5ee;
+      --page: #f5f7fb;
+      --panel: #ffffff;
+      --rose: #c2455a;
+      --rose-2: #f9e7ea;
+      --teal: #23786f;
+      --teal-2: #e7f4f2;
+      --amber: #a96617;
+      --amber-2: #fff4df;
+      --blue: #244c8f;
+      --blue-2: #e9effa;
+      --shadow: 0 20px 55px rgba(23, 32, 51, 0.12);
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  body {
-    min-height: 100vh;
-    font-family: "DM Sans", system-ui, sans-serif;
-    color: var(--ink);
-    background:
-      linear-gradient(180deg, rgba(255,255,255,0.80), rgba(245,247,251,0.96)),
-      url("https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1800&q=80");
-    background-size: cover;
-    background-position: center;
-    display: grid;
-    place-items: center;
-    padding: 28px;
-  }
+    body {
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.80), rgba(245, 247, 251, 0.96)),
+        url("https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1800&q=80");
+      background-size: cover;
+      background-position: center;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
 
-  .shell {
-    width: min(1040px, 100%);
-    min-height: 640px;
-    background: rgba(255,255,255,0.94);
-    border: 1px solid rgba(255,255,255,0.70);
-    box-shadow: var(--shadow);
-    display: grid;
-    grid-template-columns: 0.92fr 1.08fr;
-    overflow: hidden;
-  }
+    .shell {
+      width: min(1040px, 100%);
+      min-height: 640px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.70);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      overflow: hidden;
+    }
 
-  .brand-side {
-    background: #182238;
-    color: white;
-    padding: 34px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+    .brand-side {
+      background: #182238;
+      color: white;
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
 
-  .brand-mark {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-  }
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
 
-  .mark-icon {
-    width: 38px;
-    height: 38px;
-    display: grid;
-    place-items: center;
-    background: var(--rose);
-  }
+    .mark-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      background: var(--rose);
+    }
 
-  .mark-icon svg {
-    width: 20px;
-    height: 20px;
-    fill: white;
-  }
+    .mark-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
 
-  h1 {
-    font-family: "DM Serif Display", Georgia, serif;
-    font-size: clamp(34px, 5vw, 56px);
-    line-height: 0.96;
-    letter-spacing: 0;
-    margin-bottom: 18px;
-  }
+    h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 0.96;
+      letter-spacing: 0;
+      margin-bottom: 18px;
+    }
 
-  .brand-copy {
-    color: rgba(255,255,255,0.74);
-    line-height: 1.65;
-    max-width: 390px;
-  }
+    .brand-copy {
+      color: rgba(255, 255, 255, 0.74);
+      line-height: 1.65;
+      max-width: 390px;
+    }
 
-  .status-strip {
-    display: grid;
-    gap: 10px;
-    margin-top: 34px;
-  }
+    .status-strip {
+      display: grid;
+      gap: 10px;
+      margin-top: 34px;
+    }
 
-  .status-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border: 1px solid rgba(255,255,255,0.11);
-    background: rgba(255,255,255,0.06);
-    font-size: 13px;
-    color: rgba(255,255,255,0.80);
-  }
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.80);
+    }
 
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--teal);
-    flex: 0 0 auto;
-  }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex: 0 0 auto;
+    }
 
-  .login-side {
-    padding: 34px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 22px;
-  }
+    .login-side {
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 22px;
+    }
 
-  .login-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 18px;
-  }
+    .login-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+    }
 
-  .eyebrow {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--rose);
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--rose);
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
 
-  h2 {
-    font-size: 25px;
-    line-height: 1.2;
-    letter-spacing: 0;
-  }
+    h2 {
+      font-size: 25px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
 
-  .demo-note {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.5;
-    max-width: 250px;
-    text-align: right;
-  }
+    .demo-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 250px;
+      text-align: right;
+    }
 
-  .role-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
 
-  .role-btn {
-    border: 1px solid var(--line);
-    background: var(--panel);
-    padding: 14px;
-    cursor: pointer;
-    text-align: left;
-    min-height: 116px;
-    transition: border-color 0.16s, transform 0.16s, background 0.16s;
-  }
+    .role-btn {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 14px;
+      cursor: pointer;
+      text-align: left;
+      min-height: 116px;
+      transition: border-color 0.16s, transform 0.16s, background 0.16s;
+    }
 
-  .role-btn:hover,
-  .role-btn.active {
-    transform: translateY(-1px);
-    border-color: var(--rose);
-    background: #fff8f9;
-  }
+    .role-btn:hover,
+    .role-btn.active {
+      transform: translateY(-1px);
+      border-color: var(--rose);
+      background: #fff8f9;
+    }
 
-  .role-icon {
-    width: 34px;
-    height: 34px;
-    display: grid;
-    place-items: center;
-    margin-bottom: 12px;
-    background: var(--blue-2);
-    color: var(--blue);
-  }
+    .role-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      background: var(--blue-2);
+      color: var(--blue);
+    }
 
-  .role-btn[data-role="patient"] .role-icon { background: var(--rose-2); color: var(--rose); }
-  .role-btn[data-role="clinician"] .role-icon { background: var(--teal-2); color: var(--teal); }
-  .role-btn[data-role="admin"] .role-icon { background: var(--amber-2); color: var(--amber); }
+    .role-btn[data-role="patient"] .role-icon {
+      background: var(--rose-2);
+      color: var(--rose);
+    }
 
-  .role-icon svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-  }
+    .role-btn[data-role="clinician"] .role-icon {
+      background: var(--teal-2);
+      color: var(--teal);
+    }
 
-  .role-title {
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
+    .role-btn[data-role="admin"] .role-icon {
+      background: var(--amber-2);
+      color: var(--amber);
+    }
 
-  .role-sub {
-    font-size: 12px;
-    line-height: 1.45;
-    color: var(--muted);
-  }
+    .role-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
 
-  .patient-box {
-    border: 1px solid var(--line);
-    background: #fbfcfe;
-    padding: 16px;
-    display: grid;
-    gap: 10px;
-  }
+    .role-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
 
-  .field-label {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
+    .role-sub {
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
 
-  input,
-  select {
-    width: 100%;
-    font: inherit;
-    font-size: 14px;
-    padding: 10px 11px;
-    border: 1px solid var(--line);
-    background: white;
-    color: var(--ink);
-    outline: none;
-  }
+    .patient-box {
+      border: 1px solid var(--line);
+      background: #fbfcfe;
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
 
-  input:focus,
-  select:focus {
-    border-color: var(--rose);
-    box-shadow: 0 0 0 3px rgba(194,69,90,0.12);
-  }
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
 
-  .row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+    input,
+    select {
+      width: 100%;
+      font: inherit;
+      font-size: 14px;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      outline: none;
+    }
 
-  .actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    align-items: center;
-  }
+    input:focus,
+    select:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(194, 69, 90, 0.12);
+    }
 
-  .btn {
-    border: 1px solid var(--line);
-    background: white;
-    color: var(--ink);
-    font: inherit;
-    font-weight: 700;
-    padding: 10px 14px;
-    cursor: pointer;
-  }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
 
-  .btn-primary {
-    background: var(--rose);
-    border-color: var(--rose);
-    color: white;
-    min-width: 150px;
-  }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
 
-  .btn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
+    .btn {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
 
-  .error {
-    min-height: 18px;
-    color: #a0182a;
-    font-size: 13px;
-    line-height: 1.4;
-  }
+    .btn-primary {
+      background: var(--rose);
+      border-color: var(--rose);
+      color: white;
+      min-width: 150px;
+    }
 
-  .fine-print {
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 1.55;
-    border-top: 1px solid var(--line);
-    padding-top: 14px;
-  }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
 
-  @media (max-width: 840px) {
-    body { padding: 0; display: block; }
-    .shell { min-height: 100vh; grid-template-columns: 1fr; }
-    .brand-side { min-height: 330px; }
-    .role-grid, .row { grid-template-columns: 1fr; }
-    .login-head { align-items: flex-start; flex-direction: column; }
-    .demo-note { text-align: left; max-width: none; }
-  }
-</style>
+    .error {
+      min-height: 18px;
+      color: #a0182a;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .fine-print {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    @media (max-width: 840px) {
+      body {
+        padding: 0;
+        display: block;
+      }
+
+      .shell {
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+      }
+
+      .brand-side {
+        min-height: 330px;
+      }
+
+      .role-grid,
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .login-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .demo-note {
+        text-align: left;
+        max-width: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <main class="shell">
     <section class="brand-side">
       <div class="brand-mark">
         <div class="mark-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2c4.42 0 8 3.58 8 8 0 5.25-4.64 8.21-7.22 10.61a1.14 1.14 0 0 1-1.56 0C8.64 18.21 4 15.25 4 10c0-4.42 3.58-8 8-8Zm0 3.2A4.8 4.8 0 0 0 7.2 10c0 2.57 1.87 4.53 4.8 7.18 2.93-2.65 4.8-4.61 4.8-7.18A4.8 4.8 0 0 0 12 5.2Z"/></svg>
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2c4.42 0 8 3.58 8 8 0 5.25-4.64 8.21-7.22 10.61a1.14 1.14 0 0 1-1.56 0C8.64 18.21 4 15.25 4 10c0-4.42 3.58-8 8-8Zm0 3.2A4.8 4.8 0 0 0 7.2 10c0 2.57 1.87 4.53 4.8 7.18 2.93-2.65 4.8-4.61 4.8-7.18A4.8 4.8 0 0 0 12 5.2Z" />
+          </svg>
         </div>
         <span>OncoTrack</span>
       </div>
@@ -340,22 +384,29 @@
           <div class="eyebrow">Demo Access</div>
           <h2>Choose a workspace.</h2>
         </div>
-        <p class="demo-note">This is a local demo login. Production auth would use verified identity, MFA, and scoped clinical permissions.</p>
+        <p class="demo-note">This is a local demo login. Production auth would use verified identity, MFA, and scoped
+          clinical permissions.</p>
       </div>
 
       <div class="role-grid" id="roleGrid">
         <button class="role-btn active" data-role="patient" onclick="selectRole('patient')">
-          <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"/></svg></div>
+          <div class="role-icon"><svg viewBox="0 0 24 24">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
+            </svg></div>
           <div class="role-title">Patient</div>
           <div class="role-sub">Personal portal and support agent.</div>
         </button>
         <button class="role-btn" data-role="clinician" onclick="selectRole('clinician')">
-          <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M10 3h4v5h5v4h-5v5h-4v-5H5V8h5V3Z"/></svg></div>
+          <div class="role-icon"><svg viewBox="0 0 24 24">
+              <path d="M10 3h4v5h5v4h-5v5h-4v-5H5V8h5V3Z" />
+            </svg></div>
           <div class="role-title">Clinician</div>
           <div class="role-sub">Review queue and patient timelines.</div>
         </button>
         <button class="role-btn" data-role="admin" onclick="selectRole('admin')">
-          <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v4H4V4Zm0 6h10v4H4v-4Zm0 6h16v4H4v-4Zm12-6h4v4h-4v-4Z"/></svg></div>
+          <div class="role-icon"><svg viewBox="0 0 24 24">
+              <path d="M4 4h16v4H4V4Zm0 6h10v4H4v-4Zm0 6h16v4H4v-4Zm12-6h4v4h-4v-4Z" />
+            </svg></div>
           <div class="role-title">Admin</div>
           <div class="role-sub">RAG, safety, cost, and model ops.</div>
         </button>
@@ -384,108 +435,109 @@
     </section>
   </main>
 
-<script>
-  const API_BASE = window.location.origin;
-  let selectedRole = "patient";
+  <script>
+    const API_BASE = window.location.origin;
+    let selectedRole = "patient";
 
-  function selectRole(role) {
-    selectedRole = role;
-    document.querySelectorAll(".role-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.role === role));
-    document.getElementById("patientBox").style.display = role === "patient" ? "grid" : "none";
-    setError("");
-  }
-
-  function setError(message) {
-    document.getElementById("errorBox").textContent = message || "";
-  }
-
-  function clearSessions() {
-    [
-      "patientPortalAccessToken",
-      "patientPortalPatientId",
-      "clinicianAccessToken",
-      "clinicianToken",
-      "adminAccessToken"
-    ].forEach(key => localStorage.removeItem(key));
-    setError("Local demo sessions cleared.");
-  }
-
-  function selectedPatientId() {
-    return document.getElementById("patientId").value.trim() || document.getElementById("patientSelect").value;
-  }
-
-  function login() {
-    setError("");
-    const button = document.getElementById("loginBtn");
-    const payload = { role: selectedRole };
-    if (selectedRole === "patient") {
-      const patientId = selectedPatientId();
-      if (!patientId) {
-        setError("Choose or enter a patient demo ID.");
-        return;
-      }
-      payload.patient_id = patientId;
+    function selectRole(role) {
+      selectedRole = role;
+      document.querySelectorAll(".role-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.role === role));
+      document.getElementById("patientBox").style.display = role === "patient" ? "grid" : "none";
+      setError("");
     }
 
-    button.disabled = true;
-    fetch(`${API_BASE}/auth/demo-login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-    .then(response => response.json().then(body => ({ ok: response.ok, body })))
-    .then(({ ok, body }) => {
-      if (!ok) throw new Error(body.detail || "Login failed.");
+    function setError(message) {
+      document.getElementById("errorBox").textContent = message || "";
+    }
+
+    function clearSessions() {
+      [
+        "patientPortalAccessToken",
+        "patientPortalPatientId",
+        "clinicianAccessToken",
+        "clinicianToken",
+        "adminAccessToken"
+      ].forEach(key => localStorage.removeItem(key));
+      setError("Local demo sessions cleared.");
+    }
+
+    function selectedPatientId() {
+      return document.getElementById("patientId").value.trim() || document.getElementById("patientSelect").value;
+    }
+
+    function login() {
+      setError("");
+      const button = document.getElementById("loginBtn");
+      const payload = { role: selectedRole };
       if (selectedRole === "patient") {
-        localStorage.setItem("patientPortalAccessToken", body.access_token);
-        localStorage.setItem("patientPortalPatientId", body.patient_id);
-        window.location.href = "/patient";
-      } else if (selectedRole === "clinician") {
-        localStorage.setItem("clinicianAccessToken", body.access_token);
-        localStorage.setItem("clinicianToken", body.access_token);
-        window.location.href = "/clinician";
-      } else {
-        localStorage.setItem("adminAccessToken", body.access_token);
-        window.location.href = "/admin";
+        const patientId = selectedPatientId();
+        if (!patientId) {
+          setError("Choose or enter a patient demo ID.");
+          return;
+        }
+        payload.patient_id = patientId;
       }
-    })
-    .catch(error => setError(error.message))
-    .finally(() => { button.disabled = false; });
-  }
 
-  function loadDemoPatients() {
-    fetch(`${API_BASE}/auth/demo-patients`)
-      .then(response => response.json())
-      .then(data => {
-        const patients = data.patients || [];
-        const select = document.getElementById("patientSelect");
-        select.innerHTML = patients.length
-          ? patients.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.label)} - ${escapeHtml(item.hint)}</option>`).join("")
-          : '<option value="">No demo patients found</option>';
+      button.disabled = true;
+      fetch(`${API_BASE}/auth/demo-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       })
-      .catch(() => {
-        document.getElementById("patientSelect").innerHTML = '<option value="">Enter patient ID manually</option>';
-      });
-  }
-
-  function applyQueryPatient() {
-    const patient = new URLSearchParams(window.location.search).get("patient");
-    if (patient) {
-      document.getElementById("patientId").value = patient;
-      selectRole("patient");
+        .then(response => response.json().then(body => ({ ok: response.ok, body })))
+        .then(({ ok, body }) => {
+          if (!ok) throw new Error(body.detail || "Login failed.");
+          if (selectedRole === "patient") {
+            localStorage.setItem("patientPortalAccessToken", body.access_token);
+            localStorage.setItem("patientPortalPatientId", body.patient_id);
+            window.location.href = "/patient";
+          } else if (selectedRole === "clinician") {
+            localStorage.setItem("clinicianAccessToken", body.access_token);
+            localStorage.setItem("clinicianToken", body.access_token);
+            window.location.href = "/clinician";
+          } else {
+            localStorage.setItem("adminAccessToken", body.access_token);
+            window.location.href = "/admin";
+          }
+        })
+        .catch(error => setError(error.message))
+        .finally(() => { button.disabled = false; });
     }
-  }
 
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
+    function loadDemoPatients() {
+      fetch(`${API_BASE}/auth/demo-patients`)
+        .then(response => response.json())
+        .then(data => {
+          const patients = data.patients || [];
+          const select = document.getElementById("patientSelect");
+          select.innerHTML = patients.length
+            ? patients.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.label)} - ${escapeHtml(item.hint)}</option>`).join("")
+            : '<option value="">No demo patients found</option>';
+        })
+        .catch(() => {
+          document.getElementById("patientSelect").innerHTML = '<option value="">Enter patient ID manually</option>';
+        });
+    }
 
-  loadDemoPatients();
-  applyQueryPatient();
-</script>
+    function applyQueryPatient() {
+      const patient = new URLSearchParams(window.location.search).get("patient");
+      if (patient) {
+        document.getElementById("patientId").value = patient;
+        selectRole("patient");
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    loadDemoPatients();
+    applyQueryPatient();
+  </script>
 </body>
+
 </html>

@@ -44,7 +44,7 @@ The patient support agent now follows a safety-first RAG pipeline:
 ```text
 User query
 -> safety / scope check
--> intent router
+-> intent router with deterministic rules plus optional LLM adjudication
 -> query rewrite and decomposition
 -> exact cache check
 -> semantic cache check for low-risk queries
@@ -62,6 +62,7 @@ Implemented in:
 - `backend/services/agent_rag.py`: safety routing, retrieval, reranking, compression, citation validation, and low-risk cache storage.
 - `backend/services/rag_vector_index.py`: persisted local hybrid retrieval index with TF-IDF vector similarity, lexical overlap, metadata scoring, and KB fingerprint invalidation.
 - `backend/services/support_chat_agent.py`: patient chat integration after symptom/CBC/medication extraction.
+- `backend/services/local_llm.py`: optional JSON adjudication for security, intent routing, and cache policy. Groq is primary when configured; Ollama is the local experiment/fallback path; deterministic guardrails remain the final fallback.
 - `backend/models.py`: `AgentResponseCache` for exact and semantic reuse of safe educational answers with TTL, schema versioning, KB/source fingerprint invalidation, and last-hit telemetry.
 - `backend/services/app_logging.py`: admin telemetry for agent cache entries and hits.
 
@@ -71,6 +72,7 @@ Cache policy:
 - Not cacheable: urgent symptoms, diagnosis/outcome questions, treatment-decision wording, patient-specific timeline summaries, or messages that save labs/symptoms/medications.
 - Freshness: cached answers expire after 30 days and are invalidated whenever the built-in/local RAG knowledge fingerprint changes.
 - Semantic reuse: only low-risk answers with the same intent, current cache schema, current KB fingerprint, and sufficient semantic-key similarity are reused.
+- Cache adjudication: deterministic policy decides first; when available, Groq can veto/confirm cache storage for borderline low-risk messages, with Ollama reserved for local fallback experiments.
 - Ingested KB chunks are also cached in-process using file size/mtime signatures so local JSON retrieval does not reread unchanged chunk files on every request.
 
 ## RAG Evaluation, Guardrails, and Feedback
@@ -82,9 +84,10 @@ The RAG layer now logs lightweight production evaluation metrics for every patie
 - Hallucination score: inverse grounding plus citation and guardrail penalties. Lower is better.
 - Input guardrails: prompt-injection, privacy-boundary, high-risk medical scope, diagnosis/outcome, urgent symptom, and treatment-decision detection.
 - Output guardrails: unsafe treatment directives, diagnosis claims, missing citations, and missing escalation language for high-risk messages.
-- Cost/latency telemetry: per-call latency, estimated input/output tokens, cache path, and estimated LLM cost. Current deterministic RAG path has zero provider cost.
+- Cost/latency telemetry: per-call latency, estimated input/output tokens, cache path, and estimated LLM cost. The deterministic RAG path has zero provider generation cost; optional Groq adjudication can add small hosted LLM cost.
 - User feedback: patient-facing 1-5 rating with thumbs-up/down derivation for each assistant response.
 - Offline agent regression suite: labeled education, portal-help, clinical-safety, and prompt-injection/security cases for route, citation, source-hit, grounding, hallucination, latency, and guardrail checks.
+- Multilingual/adversarial guardrail cases: Tagalog, Spanish, CJK, encoded payloads, and obfuscated database/privacy attacks.
 
 Admin dashboard visibility:
 
@@ -119,6 +122,19 @@ Data/agent_eval/latest_agent_regression.json
 Data/rag_index/local_hybrid_rag_index.joblib
 ```
 
+Hosted Groq adjudication plus optional local Ollama fallback:
+
+```text
+GROQ_API_KEY=<your-groq-key>
+GROQ_MODEL=openai/gpt-oss-120b
+GROQ_ADJUDICATION_TIMEOUT_SECONDS=3
+LLM_ADJUDICATION_ENABLED=true
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=<your-local-model-name>
+```
+
+If `GROQ_API_KEY` is set, Groq is used as the primary hosted adjudicator for safety, intent, and cache policy. If Groq is absent or unavailable, Ollama can be used as a local learning/fallback experiment when `OLLAMA_MODEL` is set. If neither provider is available, the system keeps using deterministic guardrails and routing.
+
 The admin dashboard can also run the same suite from the `Agent Regression Suite` card.
 
 ## Current Architecture
@@ -129,6 +145,35 @@ The admin dashboard can also run the same suite from the `Agent Regression Suite
 - `backend/processing/`: clinical trend, risk, timeline, report, and LLM summary logic.
 - `frontend/index.html`: clinician dashboard.
 - `frontend/patient.html`: patient portal.
+
+## Local MLOps, Serving, and Jobs
+
+Account-free production-style AI/ML upgrades are implemented locally:
+
+- `backend/services/mlops_tracking.py`: MLflow-style local run tracking with params, metrics, artifact hashes, status, DB rows, and JSON run files under `Data/mlruns_local/`.
+- `backend/services/inference_service.py`: model-serving boundary for local artifact inference today and BentoML/Ray Serve/Triton-style backends later.
+- `backend/services/task_queue.py`: DB-backed local task queue for heavier jobs such as RAG index builds, agent regression, MLE readiness, evaluation reports, and feature-store materialization.
+- `backend/services/feature_store.py`: local offline feature-store manifest with source hashes, feature schema, entity counts, missing rates, and serving-row lookup.
+
+Useful scripts:
+
+```text
+python scripts/run_training_pipeline.py
+python scripts/materialize_feature_store.py
+python scripts/build_rag_index.py
+python scripts/evaluate_agent_rag.py
+```
+
+Admin API helpers:
+
+```text
+GET  /admin/mlops-runs
+GET  /admin/inference-service
+GET  /admin/llm-adjudication
+POST /admin/tasks
+POST /admin/tasks/{task_id}/run
+POST /admin/tasks/run-next
+```
 - `frontend/admin.html`: admin/MLE operations dashboard.
 - `scripts/run_training_pipeline.py`: one-command synthetic training, evaluation-report, and registry pipeline.
 - `.github/workflows/ci.yml`: CI workflow for backend compilation and tests.
@@ -265,6 +310,7 @@ The project includes a model-lifecycle readiness layer for production-style MLE 
 - Artifact checks: training CSV, prediction export, metrics JSON, versioned evaluation report, champion model artifact, and SHA-256 hashes.
 - Model quality gates: AUROC, AUPRC, sensitivity, Brier score, expected calibration error, false-negative rate, bootstrap CI stability, subgroup checks, and drift proxy status.
 - Lifecycle checks: model registry readiness, prediction audit logging, rollback metadata readiness, and safety regression status from the patient-agent suite.
+- PoC demo readiness: a separate `poc_demo_readiness` field allows supervised engineering demos when hard gates pass, while still listing advisory gaps such as calibration, subgroup coverage, lifecycle maturity, or drift monitoring.
 
 Run locally:
 
@@ -279,6 +325,8 @@ Data/mle_monitoring/latest_mle_readiness.json
 ```
 
 The admin dashboard also has an `MLE Release Gates` card that runs the same checks through `/admin/mle-readiness`.
+
+Important boundary: `status` remains the strict MLE signal. `poc_demo_readiness.ready_with_limitations` means the workflow is demoable with synthetic/demo data and disclaimers; it does not mean production or clinical validation.
 
 Versioned evaluation artifacts can be generated into:
 
@@ -469,6 +517,8 @@ Use the root `.env` file:
 
 ```env
 GROQ_API_KEY=your_key_here
+GROQ_MODEL=openai/gpt-oss-120b
+LLM_ADJUDICATION_ENABLED=true
 ```
 
 The app also checks the legacy nested `MedicalAgent/.env` location, but the project root is the canonical location.

@@ -372,6 +372,11 @@ class ModelVersionActionRequest(BaseModel):
     reason: str | None = None
 
 
+class AsyncTaskRequest(BaseModel):
+    task_type: str
+    payload: dict | None = None
+
+
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/frontend/login.html")
@@ -816,6 +821,91 @@ def run_admin_mle_readiness_endpoint(
     }
 
 
+@app.get("/admin/mlops-runs")
+def get_admin_mlops_runs_endpoint(
+    limit: int = 50,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.mlops_tracking import list_experiment_runs
+
+    safe_limit = max(1, min(limit, 200))
+    return {
+        "runs": list_experiment_runs(db=db, limit=safe_limit),
+        "purpose": "Local account-free experiment tracking for params, metrics, artifacts, hashes, and run status.",
+    }
+
+
+@app.get("/admin/inference-service")
+def get_admin_inference_service_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.inference_service import describe_inference_service
+
+    return describe_inference_service()
+
+
+@app.get("/admin/llm-adjudication")
+def get_admin_llm_adjudication_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.local_llm import describe_llm_adjudication
+
+    return describe_llm_adjudication()
+
+
+@app.post("/admin/tasks")
+def enqueue_admin_task_endpoint(
+    payload: AsyncTaskRequest,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.task_queue import enqueue_task
+
+    try:
+        task = enqueue_task(db, task_type=payload.task_type, payload=payload.payload or {}, created_by=context.role)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"message": "Task queued.", "task": task}
+
+
+@app.get("/admin/tasks")
+def list_admin_tasks_endpoint(
+    limit: int = 50,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.task_queue import list_tasks
+
+    safe_limit = max(1, min(limit, 200))
+    return {"tasks": list_tasks(db, limit=safe_limit)}
+
+
+@app.post("/admin/tasks/{task_id}/run")
+def run_admin_task_endpoint(
+    task_id: int,
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.task_queue import run_task
+
+    try:
+        return {"task": run_task(db, task_id)}
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.post("/admin/tasks/run-next")
+def run_next_admin_task_endpoint(
+    context=Depends(get_admin_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.task_queue import run_next_queued_task
+
+    task = run_next_queued_task(db)
+    return {"task": task, "message": "No queued tasks." if task is None else "Task completed."}
+
+
 @app.get("/admin/rag-source-registry")
 def get_admin_rag_source_registry_endpoint(
     context=Depends(get_admin_access_context),
@@ -1140,7 +1230,7 @@ def generate_complete_synthetic_breast_dataset_endpoint(
 
 
 @app.post("/train-complete-synthetic-models")
-def train_complete_synthetic_models_endpoint(payload: CompleteSyntheticTrainingRequest):
+def train_complete_synthetic_models_endpoint(payload: CompleteSyntheticTrainingRequest, db: Session = Depends(get_db)):
     allowed_targets = {
         "treatment_success_binary",
         "maintenance_needed",
@@ -1156,6 +1246,15 @@ def train_complete_synthetic_models_endpoint(payload: CompleteSyntheticTrainingR
         raise HTTPException(status_code=400, detail="cnn_epochs must be between 1 and 200")
 
     from backend.services.complete_synthetic_training import train_complete_synthetic_models
+    from backend.services.mlops_tracking import finish_experiment_run, start_experiment_run
+
+    run = start_experiment_run(
+        db=db,
+        experiment_name="complete_synthetic_training_api",
+        run_name=payload.target,
+        params=payload.dict(),
+        tags={"entrypoint": "fastapi", "warning": "synthetic_data_only"},
+    )
 
     try:
         result = train_complete_synthetic_models(
@@ -1168,12 +1267,26 @@ def train_complete_synthetic_models_endpoint(payload: CompleteSyntheticTrainingR
             cnn_batch_size=payload.cnn_batch_size,
         )
     except FileNotFoundError as exc:
+        finish_experiment_run(db=db, run_id=run["run_id"], status="failed", error_message=str(exc))
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ValueError as exc:
+        finish_experiment_run(db=db, run_id=run["run_id"], status="failed", error_message=str(exc))
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        finish_experiment_run(db=db, run_id=run["run_id"], status="failed", error_message=str(exc))
+        raise
 
+    finish_experiment_run(
+        db=db,
+        run_id=run["run_id"],
+        status="completed",
+        metrics=result,
+        artifacts=(result.get("artifacts") or {}),
+        tags={"best_model": result.get("best_model_by_patient_level_roc_auc")},
+    )
     return {
         "message": "Complete synthetic model training finished",
+        "mlops_run_id": run["run_id"],
         "result": result,
     }
 
