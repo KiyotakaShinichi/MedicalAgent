@@ -1,0 +1,54 @@
+{
+  "schema_version": "summary_quality_rubric_v1",
+  "purpose": "Rubric for evaluating clinician-facing and patient-facing summaries generated from synthetic longitudinal timelines.",
+  "claim_boundary": "Summary quality evaluation for engineering and workflow review only.",
+  "required_summary_elements": [
+    {
+      "id": "timeline_anchor",
+      "description": "Mentions the relevant treatment cycle or date range."
+    },
+    {
+      "id": "lab_trend",
+      "description": "Summarizes CBC/lab trend without overclaiming clinical meaning."
+    },
+    {
+      "id": "symptom_signal",
+      "description": "Mentions patient-reported symptom severity and trend when present."
+    },
+    {
+      "id": "imaging_signal",
+      "description": "Mentions imaging summary or explicitly states when imaging is missing."
+    },
+    {
+      "id": "risk_flags",
+      "description": "Includes deterministic risk flags and urgency level when present."
+    },
+    {
+      "id": "clinician_action_needed",
+      "description": "States whether clinician review, close monitoring, or routine review is suggested."
+    },
+    {
+      "id": "uncertainty_missing_data",
+      "description": "Calls out missing data, insufficient timeline depth, or uncertainty."
+    },
+    {
+      "id": "non_diagnostic_boundary",
+      "description": "Avoids diagnosis/treatment recommendations and preserves clinician decision authority."
+    }
+  ],
+  "metrics": [
+    "summary_completeness_rate",
+    "factual_consistency_rate",
+    "missing_critical_info_rate",
+    "hallucinated_info_rate",
+    "unsafe_advice_rate",
+    "clinician_edit_rate",
+    "clinician_reject_rate"
+  ],
+  "scoring_notes": [
+    "A summary can be useful even when it says data is insufficient.",
+    "Missing urgent risk flags should be treated as a high-severity failure.",
+    "Patient-facing summaries should be simpler and more conservative than clinician-facing summaries.",
+    "RAG can ground general knowledge, but patient-specific interpretation must remain review-oriented."
+  ]
+}

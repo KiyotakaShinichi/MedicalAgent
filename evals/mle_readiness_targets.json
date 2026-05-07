@@ -1,0 +1,35 @@
+{
+  "schema_version": "mle_readiness_targets_v1",
+  "purpose": "Target gates for interpreting the local MLE readiness report.",
+  "strict_status_meaning": {
+    "strong": "All available engineering gates are strong or passed.",
+    "acceptable": "No hard failures; some non-critical gates are acceptable.",
+    "unideal": "Hard gates may pass, but one or more advisory gaps need work before strong claims.",
+    "failed": "At least one hard gate failed."
+  },
+  "poc_demo_status_meaning": {
+    "ready_with_limitations": "Supervised synthetic-data engineering demo is acceptable with disclaimers.",
+    "needs_poc_fixes": "Fix blocking PoC categories before using the demo as a flagship artifact.",
+    "not_ready": "A hard gate failed; do not demo as a serious MLE project yet."
+  },
+  "required_for_poc_demo": [
+    "artifacts",
+    "data_contract",
+    "safety_regression"
+  ],
+  "advisory_but_important": [
+    "feature_store",
+    "model_quality",
+    "monitoring",
+    "lifecycle"
+  ],
+  "next_true_production_steps": [
+    "Replace local JSON/vector files with Pinecone, pgvector, Qdrant, or another managed vector store.",
+    "Move SQLite to PostgreSQL with Alembic migrations.",
+    "Move DB-backed local async tasks to Celery/RQ with Redis or RabbitMQ.",
+    "Add labeled summary and RAG evaluation datasets.",
+    "Calibrate treatment-response probability and address weak subgroup slices.",
+    "Add formal threat model and PHI redaction/retention policy enforcement.",
+    "Componentize the frontend into React/Next.js views."
+  ]
+}

@@ -20,6 +20,14 @@ This project is an AI-assisted oncology monitoring proof of concept. The models 
 
 ## Current Model Families
 
+### Deterministic Monitoring Rules
+
+- CBC range validation and trend checks.
+- Symptom severity and urgent-wording checks.
+- Treatment-decision, diagnosis/outcome, prompt-injection, and privacy-boundary routing.
+
+These rules run before LLM adjudication and are part of the safety architecture, not a replacement for clinician review.
+
 ### Classical Tabular Models
 
 - Logistic regression
@@ -35,6 +43,25 @@ This project is an AI-assisted oncology monitoring proof of concept. The models 
 - Temporal GRU over patient treatment-cycle sequences.
 
 These are sequence baselines, not clinically validated temporal foundation models.
+
+### Imaging / CNN Direction
+
+Small CNN and imaging-preprocessing experiments are baseline demonstrations only. They should be described as raw-imaging workflow exploration or proof of deep-learning implementation, not as validated breast MRI interpretation.
+
+### LLM Behavior / QLoRA Direction
+
+QLoRA is a planned local learning experiment for behavior, not medical knowledge. The safe intended target is:
+
+- structured JSON validity
+- non-diagnostic wording
+- refusal and escalation behavior
+- patient-friendly explanations
+- citation-aware formatting
+- insufficient-evidence responses
+
+RAG remains necessary for factual grounding and current knowledge. A safe future claim would be:
+
+> QLoRA was used experimentally to improve structured summary behavior and safety-boundary adherence. RAG remained necessary for factual grounding.
 
 ## Input Representation
 
@@ -88,6 +115,7 @@ Metric statuses such as `passed`, `strong`, or `acceptable` are project engineer
 - No real-world clinical validation has been performed.
 - Synthetic data does not fully capture real hospital noise, scanner variation, missingness, clinical practice variation, or bias.
 - MRI integration is currently MRI-derived feature integration, not full raw-image clinical interpretation.
+- QLoRA/local fine-tuning, when added, should be treated as behavior-formatting research only.
 - The model has no authority to recommend treatment changes.
 - Clinician feedback metrics are workflow proxies, not ground truth.
 
@@ -104,4 +132,3 @@ The system is designed around clinician-in-the-loop review:
 Best one-line description:
 
 > AI-assisted breast cancer treatment monitoring and clinician-review support platform using synthetic longitudinal oncology journeys, MRI-derived trend features, deterministic safety rules, explainable summaries, and MLE/admin evaluation.
-

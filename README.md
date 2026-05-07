@@ -2,6 +2,45 @@
 
 AI-assisted proof of concept for longitudinal breast cancer treatment monitoring. The system is not a diagnostic tool. It assumes a patient already has doctor-confirmed breast cancer and helps organize treatment journey data over time.
 
+## Flagship Positioning
+
+This project is intentionally timeline-first, not chatbot-first.
+
+Safe positioning:
+
+> A safety-first AI-assisted monitoring and clinician-review platform for breast cancer treatment journeys.
+
+The platform helps clinicians review longitudinal patient progress by combining CBC trends, symptoms, treatment cycles, imaging summaries, and AI-generated structured summaries while enforcing non-diagnostic boundaries, deterministic safety rules, citations, audit logs, and clinician approval workflows.
+
+Do not position it as an AI doctor, diagnosis bot, cancer-progression detector, or treatment recommender. The system organizes, summarizes, flags, explains, and audits; clinicians make decisions.
+
+## Flagship Implementation Matrix
+
+| System area | Status | Evidence |
+| --- | --- | --- |
+| Patient timeline | Implemented | Patient report timeline combines labs, symptoms, treatments, imaging, interventions, reports, and chat history. |
+| CBC/symptom safety rules | Implemented | Deterministic validation/risk rules run before LLM/RAG behavior. |
+| RAG with citations | Implemented | Hybrid retrieval, reranking, compression, citations, output validation, cache policy. |
+| Clinician approval workflow | Implemented | Approve/edit/reject summary review with notes and quality/usefulness scores. |
+| Audit logs | Implemented | App events, prediction audit logs, RAG eval logs, review logs, upload logs. |
+| ML response/risk model | Implemented as PoC | Synthetic longitudinal model registry plus BreastDCEDL pCR baseline signal. |
+| Calibration/Brier | Implemented as MLE gate | Versioned reports and readiness gates track Brier score and expected calibration error. |
+| SHAP explanations | Implemented where available | pCR prediction payloads include XAI/SHAP-style explanations. |
+| CNN imaging baseline | Implemented as experiment | Temporal/deep-learning baselines exist; imaging claims remain exploratory. |
+| QLoRA behavior experiment | Planned | Use later for formatting/safety behavior only; RAG remains factual grounding. |
+| RAG eval suite | Implemented | `scripts/evaluate_agent_rag.py` plus `Data/agent_eval/latest_agent_regression.json`. |
+| Safety eval suite | Implemented | Multilingual, encoded, privacy, treatment-boundary, and false-positive guardrail tests. |
+| Model/system/data cards | Implemented | `MODEL_CARD.md`, `DATA_CARD.md`, and `SYSTEM_CARD.md`. |
+| Dashboard screenshots/demo video | Planned | Capture after frontend polish/componentization. |
+
+Current readiness posture:
+
+- Strict MLE status: `unideal`
+- Hard gates: `passed`
+- PoC demo readiness: `ready_with_limitations`
+- Safety regression: `strong`
+- Claim boundary: supervised synthetic-data engineering demo, not production or clinical validation.
+
 ## What It Does
 
 - Tracks CBC/lab trends across treatment cycles.
@@ -103,6 +142,13 @@ Appropriate later after research-paper KB:
 
 - RAGAS context precision/recall, faithfulness, answer relevancy, answer correctness, labeled retrieval precision@k, source-level evaluation by paper/guideline type, and clinician/SME scoring.
 
+Project cards and eval catalog:
+
+- `SYSTEM_CARD.md`: intended use, non-diagnostic boundary, safety architecture, privacy/security posture, and known risks.
+- `MODEL_CARD.md`: model purpose, inputs, metrics, limitations, QLoRA boundary, and safe claims.
+- `DATA_CARD.md`: synthetic journey data, feature groups, labels, scenario coverage, and dataset limitations.
+- `evals/`: RAG, safety, summary-quality, workflow, and MLE readiness evaluation catalog.
+
 Run the local agent regression suite:
 
 ```text
@@ -179,6 +225,24 @@ POST /admin/tasks/run-next
 - `.github/workflows/ci.yml`: CI workflow for backend compilation and tests.
 - `Data/`: generated manifests, model outputs, summaries, and local artifacts.
 - `Datasets/`: local real datasets, ignored by git.
+
+```mermaid
+flowchart TB
+    patient["Patient Portal"] --> api["FastAPI Backend"]
+    clinician["Clinician Portal"] --> api
+    admin["Admin / MLE Dashboard"] --> api
+    api --> auth["Auth / Role Access"]
+    api --> timeline["Patient Timeline Service"]
+    api --> safety["Deterministic Safety Rules"]
+    api --> rag["Guardrailed RAG Service"]
+    api --> ml["ML Prediction Boundary"]
+    api --> review["Clinician Review Service"]
+    api --> audit["Audit / Evaluation Logs"]
+    timeline --> data["SQLite PoC Data Layer"]
+    rag --> kb["Hybrid Local KB Index"]
+    ml --> registry["Model Registry + Artifacts"]
+    audit --> evals["Readiness / RAG / Workflow Evals"]
+```
 
 ## Main Datasets
 

@@ -24,6 +24,23 @@ It contains synthetic:
 - Final synthetic response and maintenance labels.
 - Training-ready temporal ML rows.
 
+The synthetic journey generator is intentionally a project asset. It lets the system test timeline assembly, safety flags, model readiness, RAG boundaries, and clinician workflow without using real patient records.
+
+Scenario coverage includes or should continue expanding toward:
+
+- normal response with mild fatigue
+- declining WBC after chemotherapy
+- fever plus low-WBC/low-ANC review flags
+- platelet drop and anemia trends
+- partial imaging response
+- stable disease wording
+- possible progression wording routed to clinician review
+- missing or delayed labs
+- missing imaging report
+- contradictory symptom reports
+- medication/treatment-decision questions
+- prompt-injection attempts inside uploaded notes
+
 ### BreastDCEDL / I-SPY1 Direction
 
 BreastDCEDL/I-SPY1 is used as the real-data direction for MRI response modeling experiments. Current project language should describe this as:
@@ -124,4 +141,3 @@ Do not call it:
 Best description:
 
 > The project uses a complete synthetic longitudinal oncology dataset for engineering and ML practice, with real breast MRI datasets reserved for workflow exploration and future MRI-derived feature validation.
-
