@@ -44,7 +44,7 @@ def build_app_monitoring_summary(db, recent_limit=10):
 
     confidence_distribution = _confidence_distribution(db)
     cache_rows = db.query(AgentResponseCache).all()
-    cache_hit_count = sum(int(row.hit_count or 0) for row in cache_rows)
+    cache_summary = _agent_cache_summary(cache_rows)
     recent_errors = (
         db.query(AppEventLog)
         .filter(AppEventLog.status.in_(["error", "failed"]))
@@ -62,11 +62,7 @@ def build_app_monitoring_summary(db, recent_limit=10):
         "failure_rate": round(failure_rate, 3),
         "event_type_counts": event_type_counts,
         "confidence_distribution": confidence_distribution,
-        "agent_cache": {
-            "cache_entry_count": len(cache_rows),
-            "cache_hit_count": cache_hit_count,
-            "purpose": "Tracks exact/semantic reuse for low-risk educational agent answers only.",
-        },
+        "agent_cache": cache_summary,
         "recent_errors": [app_event_to_dict(row) for row in recent_errors],
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -140,6 +136,46 @@ def _monitoring_status(failure_rate, prediction_count):
     if failure_rate >= 0.05:
         return "unideal"
     return "passed"
+
+
+def _agent_cache_summary(cache_rows):
+    now = datetime.now(timezone.utc)
+    fresh_count = 0
+    expired_count = 0
+    legacy_or_unversioned_count = 0
+    policy_counts = {}
+    total_hits = 0
+    for row in cache_rows:
+        total_hits += int(row.hit_count or 0)
+        policy = _json_loads(row.cache_policy_json) or {}
+        version = row.cache_schema_version or policy.get("schema_version") or "legacy"
+        policy_counts[version] = policy_counts.get(version, 0) + 1
+        expires_at = _coerce_utc(row.expires_at)
+        if not row.knowledge_fingerprint or not row.cache_schema_version or expires_at is None:
+            legacy_or_unversioned_count += 1
+        elif expires_at <= now:
+            expired_count += 1
+        else:
+            fresh_count += 1
+
+    return {
+        "cache_entry_count": len(cache_rows),
+        "fresh_entry_count": fresh_count,
+        "expired_entry_count": expired_count,
+        "legacy_or_unversioned_entry_count": legacy_or_unversioned_count,
+        "cache_hit_count": total_hits,
+        "cache_policy_counts": policy_counts,
+        "purpose": "Tracks exact/semantic reuse for low-risk educational agent answers only.",
+        "safety_note": "Fresh cache entries require TTL, cache schema version, and KB/source fingerprint metadata.",
+    }
+
+
+def _coerce_utc(value):
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
 
 
 def _json_dumps(value):

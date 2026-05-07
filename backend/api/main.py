@@ -374,7 +374,12 @@ class ModelVersionActionRequest(BaseModel):
 
 @app.get("/", include_in_schema=False)
 def root():
-    return RedirectResponse(url="/frontend/index.html")
+    return RedirectResponse(url="/frontend/login.html")
+
+
+@app.get("/login", include_in_schema=False)
+def login_page():
+    return RedirectResponse(url="/frontend/login.html")
 
 
 @app.get("/health")
@@ -418,6 +423,22 @@ def demo_login(payload: DemoLoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@app.get("/auth/demo-patients")
+def demo_patient_options(db: Session = Depends(get_db)):
+    patients = get_all_patients(db)[:50]
+    return {
+        "patients": [
+            {
+                "id": patient.id,
+                "label": f"Demo patient {index}",
+                "hint": patient.id,
+            }
+            for index, patient in enumerate(patients, start=1)
+        ],
+        "safety_note": "Demo-only selector. Production patient login must use real identity verification.",
+    }
+
+
 @app.get("/auth/whoami")
 def whoami(context=Depends(get_access_context)):
     return {
@@ -428,7 +449,10 @@ def whoami(context=Depends(get_access_context)):
 
 
 @app.get("/patients")
-def list_patients(db: Session = Depends(get_db)):
+def list_patients(
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patients = get_all_patients(db)
 
     return [
@@ -443,7 +467,11 @@ def list_patients(db: Session = Depends(get_db)):
 
 
 @app.post("/patients")
-def create_patient(payload: PatientCreate, db: Session = Depends(get_db)):
+def create_patient(
+    payload: PatientCreate,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     try:
         validate_patient_payload(payload.id, payload.name)
     except ValueError as exc:
@@ -482,8 +510,8 @@ def create_patient(payload: PatientCreate, db: Session = Depends(get_db)):
 
     return {"message": "Patient created", "patient_id": patient.id}
 
-@app.get("/patient-report/{patient_id}")
-def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
+
+def build_patient_report_response(patient_id: str, db: Session):
     patient = get_patient(db, patient_id)
 
     if not patient:
@@ -606,9 +634,18 @@ def generate_patient_report(patient_id: str, db: Session = Depends(get_db)):
     return report
 
 
+@app.get("/patient-report/{patient_id}")
+def generate_patient_report_endpoint(
+    patient_id: str,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    return build_patient_report_response(patient_id, db)
+
+
 @app.get("/me/patient-report")
 def get_my_patient_report(context=Depends(get_patient_access_context), db: Session = Depends(get_db)):
-    return generate_patient_report(context.patient_id, db)
+    return build_patient_report_response(context.patient_id, db)
 
 
 @app.post("/patients/{patient_id}/timeline-question")
@@ -624,7 +661,7 @@ def answer_patient_timeline_question_endpoint(
     if not payload.question.strip():
         raise HTTPException(status_code=400, detail="question cannot be empty")
 
-    report = generate_patient_report(patient_id, db)
+    report = build_patient_report_response(patient_id, db)
     return answer_timeline_question(report, payload.question)
 
 
@@ -641,7 +678,7 @@ def create_patient_summary_review_endpoint(
 
     from backend.services.clinician_feedback import create_clinical_summary_review
 
-    report = generate_patient_report(patient_id, db)
+    report = build_patient_report_response(patient_id, db)
     try:
         review = create_clinical_summary_review(
             db=db,
@@ -687,7 +724,7 @@ def clinician_review_queue_endpoint(
     patients = get_all_patients(db)[: max(1, min(limit, 100))]
     rows = []
     for patient in patients:
-        report = generate_patient_report(patient.id, db)
+        report = build_patient_report_response(patient.id, db)
         assessment = report.get("multimodal_assessment") or {}
         summary = report.get("patient_timeline_summary") or {}
         intelligence = report.get("timeline_intelligence") or {}
@@ -779,8 +816,21 @@ def run_admin_mle_readiness_endpoint(
     }
 
 
+@app.get("/admin/rag-source-registry")
+def get_admin_rag_source_registry_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.rag_source_registry import build_rag_source_registry
+
+    return build_rag_source_registry()
+
+
 @app.get("/patients/{patient_id}/chat")
-def get_patient_chat(patient_id: str, db: Session = Depends(get_db)):
+def get_patient_chat(
+    patient_id: str,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -792,7 +842,12 @@ def get_patient_chat(patient_id: str, db: Session = Depends(get_db)):
 
 
 @app.post("/patients/{patient_id}/chat")
-def chat_with_patient_agent(patient_id: str, payload: PatientChatRequest, db: Session = Depends(get_db)):
+def chat_with_patient_agent(
+    patient_id: str,
+    payload: PatientChatRequest,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -957,7 +1012,11 @@ def get_import_schema():
 
 
 @app.post("/import-csv")
-def import_csv_payload(payload: CSVImportRequest, db: Session = Depends(get_db)):
+def import_csv_payload(
+    payload: CSVImportRequest,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     if not payload.csv_text and not payload.file_path:
         raise HTTPException(status_code=400, detail="Provide csv_text or file_path")
 
@@ -1323,7 +1382,10 @@ def train_breastdcedl_final_model_endpoint(payload: BreastDCEDLModelTrainRequest
 
 
 @app.get("/models")
-def list_models_endpoint(db: Session = Depends(get_db)):
+def list_models_endpoint(
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     from backend.services.model_artifacts import list_registered_models
 
     return {"models": list_registered_models(db)}
@@ -1425,6 +1487,7 @@ def rollback_model_version_endpoint(
 def predict_breastdcedl_patient_endpoint(
     patient_id: str,
     payload: BreastDCEDLModelPredictRequest,
+    context=Depends(get_clinician_or_admin_context),
     db: Session = Depends(get_db),
 ):
     patient = get_patient(db, patient_id)
@@ -1469,7 +1532,12 @@ def predict_breastdcedl_patient_endpoint(
 
 
 @app.get("/prediction-audits")
-def list_prediction_audits_endpoint(patient_id: str | None = None, limit: int = 50, db: Session = Depends(get_db)):
+def list_prediction_audits_endpoint(
+    patient_id: str | None = None,
+    limit: int = 50,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     from backend.services.model_artifacts import get_prediction_audit_logs
 
     safe_limit = max(1, min(limit, 200))
@@ -1477,7 +1545,12 @@ def list_prediction_audits_endpoint(patient_id: str | None = None, limit: int = 
 
 
 @app.post("/patients/{patient_id}/labs")
-def add_lab_result(patient_id: str, payload: LabCreate, db: Session = Depends(get_db)):
+def add_lab_result(
+    patient_id: str,
+    payload: LabCreate,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -1527,7 +1600,12 @@ def add_lab_result(patient_id: str, payload: LabCreate, db: Session = Depends(ge
 
 
 @app.post("/patients/{patient_id}/treatments")
-def add_treatment(patient_id: str, payload: TreatmentCreate, db: Session = Depends(get_db)):
+def add_treatment(
+    patient_id: str,
+    payload: TreatmentCreate,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -1570,7 +1648,12 @@ def add_treatment(patient_id: str, payload: TreatmentCreate, db: Session = Depen
 
 
 @app.post("/patients/{patient_id}/symptoms")
-def add_symptom_report(patient_id: str, payload: SymptomCreate, db: Session = Depends(get_db)):
+def add_symptom_report(
+    patient_id: str,
+    payload: SymptomCreate,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -1614,7 +1697,12 @@ def add_symptom_report(patient_id: str, payload: SymptomCreate, db: Session = De
 
 
 @app.post("/patients/{patient_id}/imaging-reports")
-def add_imaging_report(patient_id: str, payload: ImagingReportCreate, db: Session = Depends(get_db)):
+def add_imaging_report(
+    patient_id: str,
+    payload: ImagingReportCreate,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -1666,7 +1754,12 @@ def add_imaging_report(patient_id: str, payload: ImagingReportCreate, db: Sessio
 
 
 @app.post("/patients/{patient_id}/mri-registry")
-def add_mri_registry_entry(patient_id: str, payload: MRIRegistryCreate, db: Session = Depends(get_db)):
+def add_mri_registry_entry(
+    patient_id: str,
+    payload: MRIRegistryCreate,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -1687,7 +1780,12 @@ def add_mri_registry_entry(patient_id: str, payload: MRIRegistryCreate, db: Sess
 
 
 @app.post("/patients/{patient_id}/ct-reports")
-def add_ct_report(patient_id: str, payload: CTReportCreate, db: Session = Depends(get_db)):
+def add_ct_report(
+    patient_id: str,
+    payload: CTReportCreate,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")

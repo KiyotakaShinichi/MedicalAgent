@@ -3,6 +3,7 @@ import unittest
 import tempfile
 import uuid
 import zipfile
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -26,7 +27,7 @@ from backend.services import admin_analytics
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
 from backend.services.app_logging import build_app_monitoring_summary, log_app_event
-from backend.services.agent_rag import run_patient_agent_pipeline, safety_scope_check
+from backend.services.agent_rag import knowledge_base_fingerprint, run_patient_agent_pipeline, safety_scope_check
 from backend.services.agent_regression_eval import run_agent_regression_suite
 from backend.services.agent_feedback import build_agent_feedback_summary, create_agent_response_feedback
 from backend.services.data_availability import build_data_availability
@@ -564,7 +565,77 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertGreaterEqual(len(first["citations"]), 1)
             self.assertEqual(db.query(AgentResponseCache).count(), 1)
             self.assertEqual(db.query(RAGEvaluationLog).count(), 2)
-            self.assertEqual(db.query(AgentResponseCache).first().hit_count, 1)
+            cache_row = db.query(AgentResponseCache).first()
+            self.assertEqual(cache_row.hit_count, 1)
+            self.assertIsNotNone(cache_row.expires_at)
+            self.assertIsNotNone(cache_row.last_hit_at)
+            self.assertEqual(cache_row.knowledge_fingerprint, knowledge_base_fingerprint())
+            self.assertEqual(cache_row.cache_schema_version, "agent_response_cache_v2")
+            self.assertIn("ttl_days", json.loads(cache_row.cache_policy_json))
+            self.assertIn("policy", second["cache"])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_agent_rag_refreshes_stale_cache_when_kb_fingerprint_changes(self):
+        db = _temp_db_session()
+        try:
+            first = run_patient_agent_pipeline(
+                db=db,
+                patient_id="CACHE-P003",
+                query="What is pCR?",
+                patient_context={},
+                fallback_response="I can explain general terms.",
+            )
+            cache_row = db.query(AgentResponseCache).first()
+            self.assertEqual(first["cache"]["status"], "stored")
+
+            cache_row.knowledge_fingerprint = "stale-source-fingerprint"
+            cache_row.expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+            db.commit()
+
+            second = run_patient_agent_pipeline(
+                db=db,
+                patient_id="CACHE-P003",
+                query="What is pCR?",
+                patient_context={},
+                fallback_response="I can explain general terms.",
+            )
+            refreshed = db.query(AgentResponseCache).first()
+
+            self.assertEqual(second["cache"]["status"], "stored")
+            self.assertEqual(db.query(AgentResponseCache).count(), 1)
+            self.assertEqual(refreshed.knowledge_fingerprint, knowledge_base_fingerprint())
+            self.assertEqual(refreshed.hit_count, 0)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_agent_rag_refreshes_expired_cache(self):
+        db = _temp_db_session()
+        try:
+            run_patient_agent_pipeline(
+                db=db,
+                patient_id="CACHE-P004",
+                query="What is pCR?",
+                patient_context={},
+                fallback_response="I can explain general terms.",
+            )
+            cache_row = db.query(AgentResponseCache).first()
+            cache_row.expires_at = datetime.now(timezone.utc) - timedelta(seconds=1)
+            db.commit()
+
+            result = run_patient_agent_pipeline(
+                db=db,
+                patient_id="CACHE-P004",
+                query="What is pCR?",
+                patient_context={},
+                fallback_response="I can explain general terms.",
+            )
+
+            self.assertEqual(result["cache"]["status"], "stored")
+            self.assertEqual(db.query(AgentResponseCache).count(), 1)
+            self.assertIsNotNone(db.query(AgentResponseCache).first().expires_at)
         finally:
             db.close()
             db.bind.dispose()

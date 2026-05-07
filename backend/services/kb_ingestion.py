@@ -6,6 +6,7 @@ from pathlib import Path
 
 
 SUPPORTED_EXTENSIONS = {".md", ".txt", ".pdf"}
+_INGESTED_CHUNK_CACHE = {}
 
 
 def ingest_knowledge_base(
@@ -84,6 +85,12 @@ def load_ingested_chunks(path="Data/rag_knowledge_base_chunks.json"):
     chunk_path = Path(path)
     if not chunk_path.exists():
         return []
+    cache_key = str(chunk_path.resolve())
+    signature = _file_signature(chunk_path)
+    cached = _INGESTED_CHUNK_CACHE.get(cache_key)
+    if cached and cached["signature"] == signature:
+        return _copy_chunks(cached["chunks"])
+
     payload = json.loads(chunk_path.read_text(encoding="utf-8"))
     chunks = payload.get("chunks") if isinstance(payload, dict) else payload
     if not isinstance(chunks, list):
@@ -107,7 +114,33 @@ def load_ingested_chunks(path="Data/rag_knowledge_base_chunks.json"):
             "text": chunk.get("text"),
             "trust_level": chunk.get("trust_level") or "local_source",
         })
-    return normalized
+    _INGESTED_CHUNK_CACHE[cache_key] = {
+        "signature": signature,
+        "chunks": normalized,
+    }
+    return _copy_chunks(normalized)
+
+
+def clear_ingested_chunk_cache():
+    _INGESTED_CHUNK_CACHE.clear()
+
+
+def _file_signature(path):
+    stat = path.stat()
+    return {
+        "mtime_ns": stat.st_mtime_ns,
+        "size": stat.st_size,
+    }
+
+
+def _copy_chunks(chunks):
+    output = []
+    for chunk in chunks:
+        cloned = dict(chunk)
+        cloned["tags"] = list(chunk.get("tags") or [])
+        cloned["modality"] = list(chunk.get("modality") or [])
+        output.append(cloned)
+    return output
 
 
 def _extract_text(path):

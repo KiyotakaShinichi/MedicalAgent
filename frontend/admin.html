@@ -3,1906 +3,655 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OncoTrack — Clinician Dashboard</title>
+<title>OncoTrack Admin / MLE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:         #0d1117;
-  --bg-2:       #161b22;
-  --bg-3:       #1c2330;
-  --bg-4:       #222c3a;
-  --border:     rgba(255,255,255,0.07);
-  --border-2:   rgba(255,255,255,0.12);
-
-  --text:       #e6edf3;
-  --text-2:     #8b949e;
-  --text-3:     #484f58;
-
-  --rose:       #e05a6b;
-  --rose-dim:   rgba(224,90,107,0.15);
-  --rose-glow:  rgba(224,90,107,0.30);
-
-  --green:      #3fb68a;
-  --green-dim:  rgba(63,182,138,0.12);
-  --amber:      #d4930a;
-  --amber-dim:  rgba(212,147,10,0.12);
-  --red:        #f85149;
-  --red-dim:    rgba(248,81,73,0.12);
-  --blue:       #58a6ff;
-  --blue-dim:   rgba(88,166,255,0.10);
-
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'Sora', sans-serif;
-
-  --r-sm: 4px;
-  --r-md: 8px;
-  --r-lg: 12px;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { font-size: 14px; }
-
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* scrollbar */
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--bg-4); border-radius: 4px; }
-
-/* ── TOPBAR ─────────────────────────────────── */
-.topbar {
-  height: 52px;
-  background: var(--bg-2);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  gap: 20px;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  flex-shrink: 0;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.brand-icon {
-  width: 28px; height: 28px;
-  background: var(--rose);
-  border-radius: var(--r-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.brand-icon svg { width: 14px; height: 14px; fill: white; }
-
-.brand-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.brand-role {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--rose);
-  letter-spacing: 0.05em;
-  padding: 2px 6px;
-  background: var(--rose-dim);
-  border-radius: var(--r-sm);
-  border: 1px solid var(--rose-glow);
-}
-
-.topbar-sep { flex: 1; }
-
-.patient-picker {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.picker-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-3);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-
-select, input, textarea {
-  font-family: var(--sans);
-  font-size: 13px;
-  color: var(--text);
-  background: var(--bg-3);
-  border: 1px solid var(--border-2);
-  border-radius: var(--r-sm);
-  padding: 6px 10px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-select {
-  cursor: pointer;
-  padding-right: 28px;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b949e' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-}
-
-select:focus, input:focus, textarea:focus { border-color: var(--rose); }
-textarea { resize: vertical; line-height: 1.5; }
-
-/* ── SAFETY STRIP ──────────────────────────── */
-.safety-strip {
-  background: var(--amber-dim);
-  border-bottom: 1px solid rgba(212,147,10,0.2);
-  padding: 7px 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--amber);
-  letter-spacing: 0.01em;
-}
-
-.safety-strip svg { flex-shrink: 0; }
-
-/* ── BODY LAYOUT ────────────────────────────── */
-.app-body {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-}
-
-/* ── SIDEBAR ────────────────────────────────── */
-.sidebar {
-  width: 220px;
-  background: var(--bg-2);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  position: sticky;
-  top: 52px;
-  height: calc(100vh - 52px);
-  overflow-y: auto;
-}
-
-.sidebar-section {
-  padding: 16px 12px 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sidebar-section:last-child { border-bottom: none; }
-
-.sidebar-section-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  padding: 0 8px;
-  margin-bottom: 6px;
-}
-
-.nav-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 7px 8px;
-  border-radius: var(--r-sm);
-  font-family: var(--sans);
-  font-size: 12.5px;
-  font-weight: 400;
-  color: var(--text-2);
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.12s;
-}
-
-.nav-btn:hover { background: var(--bg-3); color: var(--text); }
-.nav-btn.active { background: var(--rose-dim); color: var(--rose); font-weight: 500; }
-.nav-btn.active svg { color: var(--rose); }
-
-.nav-btn svg { width: 14px; height: 14px; color: var(--text-3); flex-shrink: 0; }
-
-.queue-badge {
-  margin-left: auto;
-  background: var(--rose);
-  color: white;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 500;
-  padding: 1px 5px;
-  border-radius: 99px;
-  min-width: 16px;
-  text-align: center;
-}
-
-/* ── MAIN CONTENT ───────────────────────────── */
-.main {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* ── TAB NAVIGATION ─────────────────────────── */
-.tab-bar {
-  display: flex;
-  gap: 2px;
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 3px;
-  align-self: flex-start;
-}
-
-.tab-btn {
-  padding: 6px 14px;
-  border-radius: var(--r-sm);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-2);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.12s;
-  white-space: nowrap;
-}
-
-.tab-btn:hover { color: var(--text); }
-.tab-btn.active { background: var(--bg-4); color: var(--text); }
-
-/* ── TAB PANELS ─────────────────────────────── */
-.tab-panel { display: none; flex-direction: column; gap: 16px; }
-.tab-panel.active { display: flex; }
-
-/* ── PAGE SECTION HEADER ────────────────────── */
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.section-title {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-/* ── CARDS ──────────────────────────────────── */
-.card {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-}
-
-.card-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.card-body { padding: 14px 16px; }
-.card-body-flush { /* no padding */ }
-
-/* ── GRID HELPERS ───────────────────────────── */
-.grid { display: grid; gap: 14px; }
-.g2 { grid-template-columns: repeat(2, 1fr); }
-.g3 { grid-template-columns: repeat(3, 1fr); }
-.g4 { grid-template-columns: repeat(4, 1fr); }
-
-/* ── PATIENT HEADER BANNER ──────────────────── */
-.patient-banner {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 16px 20px;
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.patient-avatar {
-  width: 48px; height: 48px;
-  background: var(--rose-dim);
-  border: 1px solid var(--rose-glow);
-  border-radius: var(--r-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--rose);
-  flex-shrink: 0;
-  font-family: var(--mono);
-}
-
-.patient-main { flex: 1; }
-
-.patient-name {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.02em;
-  margin-bottom: 6px;
-}
-
-.patient-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 99px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  border: 1px solid;
-}
-
-.tag-default { color: var(--text-2); border-color: var(--border-2); background: var(--bg-3); }
-.tag-green   { color: var(--green); border-color: rgba(63,182,138,0.3); background: var(--green-dim); }
-.tag-amber   { color: var(--amber); border-color: rgba(212,147,10,0.3); background: var(--amber-dim); }
-.tag-red     { color: var(--red); border-color: rgba(248,81,73,0.3); background: var(--red-dim); }
-.tag-rose    { color: var(--rose); border-color: var(--rose-glow); background: var(--rose-dim); }
-.tag-blue    { color: var(--blue); border-color: rgba(88,166,255,0.25); background: var(--blue-dim); }
-
-.patient-score {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.score-num {
-  font-family: var(--mono);
-  font-size: 36px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1;
-}
-
-.score-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-3);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-top: 4px;
-}
-
-/* ── STAT CARDS ─────────────────────────────── */
-.stat-card {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 14px 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 2px;
-}
-
-.stat-card.ok::after   { background: var(--green); }
-.stat-card.warn::after { background: var(--amber); }
-.stat-card.bad::after  { background: var(--red); }
-.stat-card.na::after   { background: var(--bg-4); }
-
-.stat-name {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 8px;
-}
-
-.stat-val {
-  font-family: var(--mono);
-  font-size: 28px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1;
-}
-
-.stat-unit {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-top: 4px;
-}
-
-.stat-ref {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-3);
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.ref-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.ref-dot.ok   { background: var(--green); }
-.ref-dot.warn { background: var(--amber); }
-.ref-dot.bad  { background: var(--red); }
-.ref-dot.na   { background: var(--text-3); }
-
-/* ── RISK / FLAG ITEMS ──────────────────────── */
-.flag-list { display: flex; flex-direction: column; gap: 6px; }
-
-.flag-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--r-sm);
-  font-size: 12.5px;
-  line-height: 1.5;
-  border: 1px solid;
-}
-
-.flag-item.urgent { background: var(--red-dim); border-color: rgba(248,81,73,0.2); color: #f0918c; }
-.flag-item.watch  { background: var(--amber-dim); border-color: rgba(212,147,10,0.2); color: #d4a72c; }
-.flag-item.info   { background: var(--blue-dim); border-color: rgba(88,166,255,0.15); color: #7ab8fc; }
-.flag-item.ok     { background: var(--green-dim); border-color: rgba(63,182,138,0.15); color: var(--green); }
-
-.flag-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
-.flag-item.urgent .flag-dot { background: var(--red); }
-.flag-item.watch  .flag-dot { background: var(--amber); }
-.flag-item.info   .flag-dot { background: var(--blue); }
-.flag-item.ok     .flag-dot { background: var(--green); }
-
-/* ── TIMELINE ───────────────────────────────── */
-.timeline { display: flex; flex-direction: column; }
-
-.tl-row {
-  display: grid;
-  grid-template-columns: 100px 80px 1fr;
-  gap: 14px;
-  padding: 11px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12.5px;
-  align-items: baseline;
-  transition: background 0.1s;
-}
-
-.tl-row:last-child { border-bottom: none; }
-.tl-row:hover { background: var(--bg-3); }
-
-.tl-date { font-family: var(--mono); color: var(--text-3); font-size: 11px; }
-.tl-type { }
-.tl-desc strong { color: var(--text); font-weight: 500; }
-.tl-desc p { color: var(--text-2); font-size: 11.5px; margin-top: 2px; line-height: 1.4; }
-
-/* ── DATA ROWS / LISTS ──────────────────────── */
-.data-rows { display: flex; flex-direction: column; }
-
-.data-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12.5px;
-  color: var(--text-2);
-  line-height: 1.5;
-  transition: background 0.1s;
-}
-
-.data-row:last-child { border-bottom: none; }
-.data-row:hover { background: var(--bg-3); }
-
-.data-row-bullet {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--border-2);
-  flex-shrink: 0;
-  margin-top: 5px;
-}
-
-/* ── RECEPTOR BADGES ────────────────────────── */
-.receptor-grid {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-/* ── PROFILE TABLE ──────────────────────────── */
-.profile-table {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 14px;
-}
-
-.profile-field { }
-
-.pf-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 4px;
-}
-
-.pf-value {
-  font-size: 13px;
-  color: var(--text);
-}
-
-/* ── ASSESSMENT BLOCK ───────────────────────── */
-.assess-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.assess-item {
-  background: var(--bg-3);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 12px;
-}
-
-.assess-key {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 6px;
-}
-
-.assess-val {
-  font-size: 12.5px;
-  color: var(--text);
-  line-height: 1.5;
-}
-
-.assess-sub {
-  font-size: 11px;
-  color: var(--text-2);
-  margin-top: 3px;
-  line-height: 1.4;
-}
-
-/* ── REVIEW PANEL ───────────────────────────── */
-.review-form { display: flex; flex-direction: column; gap: 10px; }
-
-.form-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 4px;
-  display: block;
-}
-
-.score-inputs {
-  display: flex;
-  gap: 10px;
-}
-
-.score-inputs input {
-  width: 80px;
-}
-
-.review-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* ── BUTTONS ────────────────────────────────── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 13px;
-  border-radius: var(--r-sm);
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid var(--border-2);
-  background: var(--bg-3);
-  color: var(--text-2);
-  transition: all 0.12s;
-  white-space: nowrap;
-}
-
-.btn:hover { background: var(--bg-4); color: var(--text); }
-
-.btn-primary { background: var(--rose); color: white; border-color: var(--rose); }
-.btn-primary:hover { background: #c94b5b; border-color: #c94b5b; }
-
-.btn-green { background: var(--green-dim); color: var(--green); border-color: rgba(63,182,138,0.25); }
-.btn-green:hover { background: rgba(63,182,138,0.2); }
-
-.btn-red { background: var(--red-dim); color: var(--red); border-color: rgba(248,81,73,0.25); }
-.btn-red:hover { background: rgba(248,81,73,0.2); }
-
-/* ── QUEUE TABLE ────────────────────────────── */
-.queue-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-
-.queue-table th {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  text-align: left;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-3);
-}
-
-.queue-table td {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text-2);
-  vertical-align: top;
-}
-
-.queue-table tr:last-child td { border-bottom: none; }
-.queue-table tr:hover td { background: var(--bg-3); cursor: pointer; }
-
-.queue-table td strong { color: var(--text); font-weight: 500; }
-
-/* ── PRIORITY METER ─────────────────────────── */
-.priority-bar {
-  height: 4px;
-  border-radius: 2px;
-  background: var(--bg-4);
-  overflow: hidden;
-  margin-top: 4px;
-  width: 60px;
-}
-
-.priority-fill {
-  height: 100%;
-  border-radius: 2px;
-  background: var(--rose);
-}
-
-/* ── CHAT ───────────────────────────────────── */
-.chat-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 240px;
-  overflow-y: auto;
-  padding: 14px 16px;
-}
-
-.chat-msg {
-  padding: 8px 11px;
-  border-radius: var(--r-sm);
-  font-size: 12.5px;
-  line-height: 1.5;
-  border: 1px solid;
-}
-
-.chat-msg.user {
-  background: var(--rose-dim);
-  border-color: var(--rose-glow);
-  color: var(--text);
-  align-self: flex-end;
-  max-width: 85%;
-}
-
-.chat-msg.assistant {
-  background: var(--bg-3);
-  border-color: var(--border);
-  color: var(--text-2);
-}
-
-.chat-compose {
-  padding: 12px 16px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 8px;
-}
-
-.chat-compose textarea {
-  flex: 1;
-  min-height: 52px;
-}
-
-/* ── DATA ENTRY ACCORDION ───────────────────── */
-.accordion { display: flex; flex-direction: column; gap: 8px; }
-
-.acc-panel {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-}
-
-.acc-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 16px;
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.1s;
-}
-
-.acc-header:hover { background: var(--bg-3); }
-
-.acc-title {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-2);
-}
-
-.acc-chevron {
-  margin-left: auto;
-  color: var(--text-3);
-  transition: transform 0.2s;
-}
-
-.acc-header.open .acc-chevron { transform: rotate(180deg); }
-
-.acc-body {
-  display: none;
-  padding: 14px 16px;
-  border-top: 1px solid var(--border);
-}
-
-.acc-body.open { display: block; }
-
-.form-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.form-row-wide { grid-template-columns: 1fr; }
-
-/* ── CHART ──────────────────────────────────── */
-.chart-wrap { position: relative; height: 140px; }
-
-/* ── RADIOLOGY ──────────────────────────────── */
-.radio-rows { display: flex; flex-direction: column; gap: 8px; }
-
-.radio-row {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 12.5px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.radio-row:last-child { border-bottom: none; }
-.radio-key { color: var(--text-3); font-family: var(--mono); font-size: 10px; min-width: 100px; flex-shrink: 0; }
-.radio-val { color: var(--text); }
-
-/* ── PREDICTION AUDIT ───────────────────────── */
-.audit-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-}
-
-.audit-row:last-child { border-bottom: none; }
-.audit-time { font-family: var(--mono); font-size: 10px; color: var(--text-3); flex-shrink: 0; }
-.audit-model { color: var(--text); font-weight: 500; }
-.audit-prob { font-family: var(--mono); font-size: 11px; margin-left: auto; flex-shrink: 0; }
-
-/* ── EMPTY ──────────────────────────────────── */
-.empty {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-3);
-  padding: 16px;
-  text-align: center;
-}
-
-/* ── TOAST ──────────────────────────────────── */
-.toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--bg-3);
-  border: 1px solid var(--border-2);
-  color: var(--text);
-  padding: 10px 16px;
-  border-radius: var(--r-md);
-  font-size: 12.5px;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: all 0.2s ease;
-  z-index: 999;
-  max-width: 300px;
-}
-
-.toast.show { opacity: 1; transform: translateY(0); }
-.toast.error { border-color: rgba(248,81,73,0.4); color: var(--red); }
-.toast.success { border-color: rgba(63,182,138,0.4); color: var(--green); }
-
-/* ── MRI ENTRIES ────────────────────────────── */
-.mri-entry {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-}
-
-.mri-entry:last-child { border-bottom: none; }
-.mri-meta { color: var(--text); margin-bottom: 2px; }
-.mri-path { font-family: var(--mono); font-size: 10px; color: var(--text-3); }
-
-/* ── PRE SUMMARY ────────────────────────────── */
-.summary-pre {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--text-2);
-  line-height: 1.7;
-  white-space: pre-wrap;
-  padding: 14px 16px;
-}
-
-@media (max-width: 960px) {
-  .sidebar { display: none; }
-  .g3, .g4 { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 640px) {
-  .g2, .g3, .g4 { grid-template-columns: 1fr; }
-  .assess-grid { grid-template-columns: 1fr; }
-  .tl-row { grid-template-columns: 1fr; gap: 4px; }
-  .main { padding: 12px; }
-}
+  :root {
+    --bg: #101520;
+    --panel: #171e2c;
+    --panel-2: #1d2636;
+    --line: rgba(255,255,255,0.10);
+    --text: #f2f5fa;
+    --muted: #9aa7bb;
+    --muted-2: #69758a;
+    --rose: #e05a6f;
+    --green: #4cc38a;
+    --amber: #e5a23d;
+    --blue: #6ba7ff;
+    --red: #ff6b6b;
+    --mono: "IBM Plex Mono", monospace;
+    --body: "DM Sans", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+  }
+
+  .topbar {
+    height: 64px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: rgba(16,21,32,0.96);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    background: var(--rose);
+  }
+
+  .brand-icon svg { width: 18px; height: 18px; fill: white; }
+  .brand-name { font-weight: 800; letter-spacing: 0; }
+  .brand-role {
+    font: 600 10px var(--mono);
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .actions { display: flex; align-items: center; gap: 8px; }
+
+  .btn {
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--text);
+    font: 600 12px var(--body);
+    padding: 8px 11px;
+    cursor: pointer;
+  }
+
+  .btn:hover { border-color: rgba(255,255,255,0.24); }
+  .btn-primary { background: var(--rose); border-color: var(--rose); }
+
+  .main {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    gap: 18px;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 14px;
+  }
+
+  .hero-panel,
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+  }
+
+  .hero-panel { padding: 22px; }
+
+  .eyebrow {
+    font: 600 10px var(--mono);
+    color: var(--rose);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.02;
+    letter-spacing: 0;
+    margin-bottom: 12px;
+  }
+
+  .copy {
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 760px;
+  }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .status-tile {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    padding: 14px;
+    min-height: 98px;
+  }
+
+  .tile-label {
+    font: 600 10px var(--mono);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .tile-value {
+    font: 600 24px var(--mono);
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .tile-sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .grid { display: grid; gap: 14px; }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .card-header {
+    min-height: 48px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .card-body { padding: 14px; }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font: 600 10px var(--mono);
+    padding: 3px 7px;
+    text-transform: uppercase;
+  }
+
+  .tag.strong,
+  .tag.passed { color: var(--green); border-color: rgba(76,195,138,0.32); background: rgba(76,195,138,0.08); }
+  .tag.acceptable { color: var(--blue); border-color: rgba(107,167,255,0.32); background: rgba(107,167,255,0.08); }
+  .tag.unideal { color: var(--amber); border-color: rgba(229,162,61,0.32); background: rgba(229,162,61,0.08); }
+  .tag.failed { color: var(--red); border-color: rgba(255,107,107,0.32); background: rgba(255,107,107,0.08); }
+  .tag.unavailable { color: var(--muted); }
+
+  .metric-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: minmax(130px, 0.85fr) minmax(100px, 0.5fr) 1.4fr;
+    gap: 12px;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .metric-row:last-child { border-bottom: none; }
+  .metric-name { color: var(--muted); font-size: 12px; }
+  .metric-value { font: 600 13px var(--mono); color: var(--text); }
+  .metric-why { color: var(--muted-2); font-size: 12px; line-height: 1.45; }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .table th {
+    text-align: left;
+    font: 600 10px var(--mono);
+    color: var(--muted-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .table td {
+    padding: 9px 8px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  .table strong { color: var(--text); }
+
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: #0d111a;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 12px;
+    font: 400 11px/1.55 var(--mono);
+    max-height: 320px;
+    overflow: auto;
+  }
+
+  .empty {
+    color: var(--muted-2);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .toast {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 10px 12px;
+    font-size: 13px;
+    display: none;
+  }
+
+  .toast.show { display: block; }
+
+  @media (max-width: 980px) {
+    .hero, .g2, .g3, .status-grid { grid-template-columns: 1fr; }
+    .metric-row { grid-template-columns: 1fr; gap: 4px; }
+  }
 </style>
 </head>
 <body>
-
-<!-- ── TOPBAR ─────────────────────────────────── -->
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-icon">
-      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 2C6.69 2 4 4.69 4 8c0 2.15 1.08 4.04 2.73 5.17L6 18h8l-.73-4.83C14.92 12.04 16 10.15 16 8c0-3.31-2.69-6-6-6z"/>
-      </svg>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v4H4V4Zm0 6h10v4H4v-4Zm0 6h16v4H4v-4Zm12-6h4v4h-4v-4Z"/></svg></div>
+      <span class="brand-name">OncoTrack</span>
+      <span class="brand-role">Admin / MLE Operations</span>
     </div>
-    <span class="brand-name">OncoTrack</span>
-  </div>
-  <span class="brand-role">CLINICIAN</span>
-  <div class="topbar-sep"></div>
-  <div class="patient-picker">
-    <span class="picker-label">Patient</span>
-    <select id="patientSelect" style="min-width:180px;"></select>
-  </div>
-</header>
-
-<!-- ── SAFETY STRIP ──────────────────────────── -->
-<div class="safety-strip">
-  <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/>
-    <path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-  </svg>
-  CLINICAL DECISION SUPPORT ONLY — Does not diagnose cancer or confirm metastasis. All findings require licensed physician review before clinical action.
-</div>
-
-<!-- ── APP BODY ──────────────────────────────── -->
-<div class="app-body">
-
-  <!-- ── SIDEBAR ──────────────────────────────── -->
-  <aside class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">Navigation</div>
-      <button class="nav-btn active" onclick="switchTab('overview', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1" opacity=".6"/><rect x="9" y="1" width="6" height="6" rx="1" opacity=".6"/><rect x="1" y="9" width="6" height="6" rx="1" opacity=".6"/><rect x="9" y="9" width="6" height="6" rx="1" opacity=".6"/></svg>
-        Overview
-      </button>
-      <button class="nav-btn" onclick="switchTab('labs', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 1v6L2 13h12L11 7V1H5z" opacity=".6"/></svg>
-        Labs &amp; Trends
-      </button>
-      <button class="nav-btn" onclick="switchTab('assessment', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.5 3h1v4.5l3 1.8-.5.86L7.5 9V4z" opacity=".6"/></svg>
-        Assessment
-      </button>
-      <button class="nav-btn" onclick="switchTab('imaging', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="12" rx="1.5" opacity=".3"/><circle cx="6" cy="7" r="2.5" opacity=".7"/><path d="M10 5l4 6H2l4-4z" opacity=".5"/></svg>
-        Imaging
-      </button>
-      <button class="nav-btn" onclick="switchTab('timeline', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4h12M2 8h9M2 12h6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-        Timeline
-      </button>
-      <button class="nav-btn" onclick="switchTab('review', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v12H2V2zm2 3v6h8V5H4zm1 1h6v1H5V6zm0 2h4v1H5V8z" opacity=".6"/></svg>
-        Clinician Review
-      </button>
-      <button class="nav-btn" onclick="switchTab('queue', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14M1 8h10M1 13h6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-        Review Queue
-        <span class="queue-badge" id="queueBadge">0</span>
-      </button>
+    <div class="actions">
+      <button class="btn" onclick="loadAll()">Refresh</button>
+      <button class="btn" onclick="logout()">Logout</button>
     </div>
+  </header>
 
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">Data Entry</div>
-      <button class="nav-btn" onclick="switchTab('entry', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="6" y="1" width="4" height="14" rx="1" opacity=".6"/><rect x="1" y="6" width="14" height="4" rx="1" opacity=".6"/></svg>
-        Add / Import
-      </button>
-      <button class="nav-btn" onclick="switchTab('chat', this)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v9H9l-3 3v-3H2V2z" opacity=".6"/></svg>
-        Patient Chat
-      </button>
-    </div>
-  </aside>
-
-  <!-- ── MAIN ─────────────────────────────────── -->
   <main class="main">
-
-    <!-- ─────── OVERVIEW ─────── -->
-    <div id="tab-overview" class="tab-panel active">
-
-      <!-- Patient Banner -->
-      <div class="patient-banner">
-        <div class="patient-avatar" id="ov-initials">--</div>
-        <div class="patient-main">
-          <div class="patient-name" id="ov-name">Select a patient</div>
-          <div class="patient-tags" id="ov-tags">
-            <span class="tag tag-default">Loading…</span>
-          </div>
-        </div>
-        <div class="patient-score">
-          <div class="score-num" id="ov-score">--</div>
-          <div class="score-label">Monitoring<br>Score / 100</div>
-        </div>
+    <section class="hero">
+      <div class="hero-panel">
+        <div class="eyebrow">AI Governance Console</div>
+        <h1>RAG safety, model readiness, monitoring, and feedback.</h1>
+        <p class="copy">
+          Admin surface for tracking the agent layer and MLE lifecycle: retrieval quality, citations, guardrails,
+          prompt-injection regression, user feedback, cost/latency telemetry, drift proxies, and release gates.
+        </p>
       </div>
-
-      <!-- Risk Flags -->
-      <div>
-        <div class="section-header">
-          <span class="section-title">Risk Flags</span>
-        </div>
-        <div class="flag-list" id="ov-risks">
-          <div class="empty">No risk data loaded.</div>
-        </div>
+      <div class="status-grid">
+        <div class="status-tile"><div class="tile-label">RAG Status</div><div class="tile-value" id="ragStatus">--</div><div class="tile-sub">Grounding, hallucination proxy, guardrails.</div></div>
+        <div class="status-tile"><div class="tile-label">MLE Gates</div><div class="tile-value" id="mleStatus">--</div><div class="tile-sub">Data contract, artifacts, quality, lifecycle.</div></div>
+        <div class="status-tile"><div class="tile-label">API Cost</div><div class="tile-value" id="apiCost">$--</div><div class="tile-sub">Estimated provider cost and token path.</div></div>
+        <div class="status-tile"><div class="tile-label">Feedback</div><div class="tile-value" id="feedbackScore">--</div><div class="tile-sub">Patient rating and thumbs-up signal.</div></div>
       </div>
+    </section>
 
-      <!-- Patient Profile -->
+    <section class="grid g2">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Patient Profile</span>
+          <div class="card-title">RAG Evaluation & Guardrails</div>
+          <span class="tag" id="ragTag">loading</span>
         </div>
         <div class="card-body">
-          <div class="profile-table" id="ov-profile">
-            <div class="empty">Select a patient to begin.</div>
-          </div>
+          <div class="metric-list" id="ragMetrics"></div>
         </div>
       </div>
-
-      <!-- Changes + Review Reasons -->
-      <div class="grid g2">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Changes Since Baseline</span></div>
-          <div class="data-rows" id="ov-changes"><div class="empty">No changes recorded.</div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Review Reasons</span></div>
-          <div class="data-rows" id="ov-review-reasons"><div class="empty">No review reasons.</div></div>
-        </div>
-      </div>
-
-      <!-- Treatment Effects + Symptoms summary -->
-      <div class="grid g2">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Treatment Effects by Cycle</span></div>
-          <div class="data-rows" id="ov-treatment"><div class="empty">No cycle data.</div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Recent Symptoms</span></div>
-          <div class="data-rows" id="ov-symptoms"><div class="empty">No symptoms.</div></div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ─────── LABS ─────── -->
-    <div id="tab-labs" class="tab-panel">
-
-      <div class="grid g3" id="lab-stats">
-        <div class="stat-card na">
-          <div class="stat-name">White Blood Cell</div>
-          <div class="stat-val" id="lab-wbc">—</div>
-          <div class="stat-unit">×10³/μL</div>
-          <div class="stat-ref"><span class="ref-dot na"></span><span id="lab-wbc-ref">ref: 4.5–11</span></div>
-        </div>
-        <div class="stat-card na">
-          <div class="stat-name">Hemoglobin</div>
-          <div class="stat-val" id="lab-hgb">—</div>
-          <div class="stat-unit">g/dL</div>
-          <div class="stat-ref"><span class="ref-dot na"></span><span id="lab-hgb-ref">ref: 12–16</span></div>
-        </div>
-        <div class="stat-card na">
-          <div class="stat-name">Platelets</div>
-          <div class="stat-val" id="lab-plt">—</div>
-          <div class="stat-unit">×10³/μL</div>
-          <div class="stat-ref"><span class="ref-dot na"></span><span id="lab-plt-ref">ref: 150–400</span></div>
-        </div>
-      </div>
-
-      <div class="grid g3">
-        <div class="card">
-          <div class="card-header"><span class="card-title">WBC Trend</span></div>
-          <div class="card-body"><div class="chart-wrap"><canvas id="wbcChart"></canvas></div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Hemoglobin Trend</span></div>
-          <div class="card-body"><div class="chart-wrap"><canvas id="hgbChart"></canvas></div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Platelet Trend</span></div>
-          <div class="card-body"><div class="chart-wrap"><canvas id="pltChart"></canvas></div></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">Data Source</span></div>
-        <div class="card-body" id="lab-source"><div class="empty">Loading…</div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">Model Prediction Audit</span></div>
-        <div class="card-body-flush" id="lab-audit"><div class="empty">No audits loaded.</div></div>
-      </div>
-
-    </div>
-
-    <!-- ─────── ASSESSMENT ─────── -->
-    <div id="tab-assessment" class="tab-panel">
 
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Multimodal Monitoring Assessment</span>
-          <span class="tag tag-amber" style="font-size:9px;">AI-generated · not clinical</span>
-        </div>
-        <div class="card-body" id="assess-body"><div class="empty">No assessment loaded.</div></div>
-      </div>
-
-      <div class="grid g2">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Clinical Summary</span></div>
-          <pre class="summary-pre" id="assess-clinical">Loading…</pre>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Patient Explanation</span></div>
-          <pre class="summary-pre" id="assess-patient">Loading…</pre>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">Metastatic Indicators</span></div>
-        <div class="data-rows" id="assess-metastatic"><div class="empty">No indicators flagged.</div></div>
-      </div>
-
-    </div>
-
-    <!-- ─────── IMAGING ─────── -->
-    <div id="tab-imaging" class="tab-panel">
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">Breast Imaging Summary</span></div>
-        <div class="card-body" id="img-radiology"><div class="empty">No imaging data loaded.</div></div>
-      </div>
-
-      <div class="grid g2">
-        <div class="card">
-          <div class="card-header"><span class="card-title">MRI File Registry</span></div>
-          <div class="card-body-flush" id="img-mri-registry"><div class="empty">No MRI folders registered.</div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">DICOM Series Index</span></div>
-          <div class="card-body-flush" id="img-mri-series"><div class="empty">No DICOM series indexed.</div></div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ─────── TIMELINE ─────── -->
-    <div id="tab-timeline" class="tab-panel">
-      <div class="card">
-        <div class="card-header"><span class="card-title">Clinical Timeline</span></div>
-        <div class="card-body-flush">
-          <div class="timeline" id="tl-events"><div class="empty">No events loaded.</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ─────── CLINICIAN REVIEW ─────── -->
-    <div id="tab-review" class="tab-panel">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Clinician-in-the-Loop Review</span>
-          <span class="tag tag-rose">Audit Logged</span>
+          <div class="card-title">API Cost & Latency</div>
+          <span class="tag">cost</span>
         </div>
         <div class="card-body">
-          <div style="margin-bottom:12px">
-            <div class="pf-label">Deterministic Snapshot</div>
-            <div id="rev-snapshot" style="font-size:13px;color:var(--text);margin-top:3px;">—</div>
-          </div>
-          <div style="margin-bottom:14px">
-            <div class="pf-label">Latest Review</div>
-            <div id="rev-latest" style="font-size:12.5px;color:var(--text-2);margin-top:3px;">No review saved yet.</div>
-          </div>
-          <div class="review-form">
-            <div>
-              <label class="form-label">Clinician Notes (audit trail)</label>
-              <textarea id="rev-notes" rows="3" placeholder="Add notes for the audit trail…" style="width:100%"></textarea>
-            </div>
-            <div>
-              <label class="form-label">Edited Patient Summary (optional)</label>
-              <textarea id="rev-edited" rows="2" placeholder="Override AI patient summary if needed…" style="width:100%"></textarea>
-            </div>
-            <div>
-              <label class="form-label">Quality Scores (1–5)</label>
-              <div class="score-inputs">
-                <input id="rev-explanation" type="number" min="1" max="5" placeholder="Explanation quality">
-                <input id="rev-usefulness" type="number" min="1" max="5" placeholder="Model usefulness">
-              </div>
-            </div>
-            <div class="review-actions">
-              <button class="btn btn-green" onclick="submitReview('approved')">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
-                Approve
-              </button>
-              <button class="btn" onclick="submitReview('edited')">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M11 2l3 3-9 9H2v-3L11 2z" opacity=".7"/></svg>
-                Save Edit
-              </button>
-              <button class="btn btn-red" onclick="submitReview('rejected')">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
-                Reject
-              </button>
-            </div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--text-3);">Review decisions are logged for governance. They do not automatically change treatment decisions.</div>
-          </div>
+          <div class="metric-list" id="costMetrics"></div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- ─────── REVIEW QUEUE ─────── -->
-    <div id="tab-queue" class="tab-panel">
+    <section class="grid g2">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Clinician Review Queue</span>
-          <button class="btn" onclick="loadReviewQueue()">
-            <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M13.65 2.35A8 8 0 1015 8h-2a6 6 0 11-1.65-4.15L9 6h6V0l-1.35 2.35z"/></svg>
-            Refresh
-          </button>
+          <div class="card-title">Security Guardrails</div>
+          <span class="tag" id="guardrailTag">loading</span>
         </div>
-        <div class="card-body-flush">
-          <table class="queue-table">
-            <thead>
-              <tr>
-                <th>Patient</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Last Review</th>
-                <th>Flags</th>
-              </tr>
-            </thead>
-            <tbody id="queue-tbody">
-              <tr><td colspan="5"><div class="empty">Loading queue…</div></td></tr>
-            </tbody>
+        <div class="card-body">
+          <div class="metric-list" id="guardrailMetrics"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Agent Feedback</div>
+          <span class="tag">ratings</span>
+        </div>
+        <div class="card-body">
+          <div class="metric-list" id="feedbackMetrics"></div>
+          <div style="height:12px"></div>
+          <table class="table">
+            <thead><tr><th>Patient</th><th>Rating</th><th>Comment</th></tr></thead>
+            <tbody id="feedbackRows"><tr><td colspan="3" class="empty">Loading feedback...</td></tr></tbody>
           </table>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- ─────── DATA ENTRY ─────── -->
-    <div id="tab-entry" class="tab-panel">
-      <div class="accordion">
-
-        <!-- Add Lab -->
-        <div class="acc-panel">
-          <div class="acc-header" onclick="toggleAcc(this)">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:var(--rose)">
-              <rect x="7" y="1" width="2" height="14" rx="1" fill="currentColor"/>
-              <rect x="1" y="7" width="14" height="2" rx="1" fill="currentColor"/>
-            </svg>
-            <span class="acc-title">Add Lab Result</span>
-            <span class="acc-chevron">
-              <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            </span>
-          </div>
-          <div class="acc-body">
-            <div class="form-row">
-              <div><label class="form-label">Date</label><input id="labDate" type="date"></div>
-              <div><label class="form-label">WBC (×10³/μL)</label><input id="labWbc" type="number" step="0.1" placeholder="e.g. 6.2"></div>
-              <div><label class="form-label">Hemoglobin (g/dL)</label><input id="labHgb" type="number" step="0.1" placeholder="e.g. 12.8"></div>
-              <div><label class="form-label">Platelets (×10³/μL)</label><input id="labPlt" type="number" step="1" placeholder="e.g. 220"></div>
-            </div>
-            <button class="btn btn-primary" onclick="addLab()">Save Lab Result</button>
-          </div>
-        </div>
-
-        <!-- Add Symptom -->
-        <div class="acc-panel">
-          <div class="acc-header" onclick="toggleAcc(this)">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:var(--rose)">
-              <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/>
-              <path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-            </svg>
-            <span class="acc-title">Add Symptom Report</span>
-            <span class="acc-chevron">
-              <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            </span>
-          </div>
-          <div class="acc-body">
-            <div class="form-row">
-              <div><label class="form-label">Date</label><input id="symDate" type="date"></div>
-              <div><label class="form-label">Symptom</label><input id="symName" type="text" placeholder="e.g. Nausea"></div>
-              <div><label class="form-label">Severity (0–10)</label><input id="symSev" type="number" min="0" max="10" step="1" placeholder="0–10"></div>
-            </div>
-            <div style="margin-bottom:8px"><label class="form-label">Notes (optional)</label><textarea id="symNotes" placeholder="Additional notes…" style="width:100%;min-height:44px"></textarea></div>
-            <button class="btn btn-primary" onclick="addSymptom()">Save Symptom</button>
-          </div>
-        </div>
-
-        <!-- Import CSV -->
-        <div class="acc-panel">
-          <div class="acc-header" onclick="toggleAcc(this)">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:var(--rose)">
-              <path d="M2 10v3h12v-3M8 1v9M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="acc-title">Import CSV</span>
-            <span class="acc-chevron">
-              <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            </span>
-          </div>
-          <div class="acc-body">
-            <div class="form-row" style="grid-template-columns:1fr 1fr">
-              <div>
-                <label class="form-label">Import Type</label>
-                <select id="csvType" style="width:100%">
-                  <option value="patients">patients</option>
-                  <option value="breast_profiles">breast_profiles</option>
-                  <option value="labs">labs</option>
-                  <option value="treatments">treatments</option>
-                  <option value="imaging_reports">imaging_reports</option>
-                  <option value="symptoms">symptoms</option>
-                </select>
-              </div>
-              <div>
-                <label class="form-label">Dataset</label>
-                <select id="csvDataset" style="width:100%">
-                  <option value="canonical">canonical</option>
-                  <option value="duke_breast_mri">duke_breast_mri</option>
-                  <option value="ispy2">ispy2</option>
-                  <option value="mimic_labs">mimic_labs</option>
-                </select>
-              </div>
-            </div>
-            <div style="margin-bottom:8px"><label class="form-label">CSV Data</label><textarea id="csvText" placeholder="Paste CSV text here…" style="width:100%;min-height:80px"></textarea></div>
-            <button class="btn btn-primary" onclick="importCsv()">Import CSV</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ─────── PATIENT CHAT ─────── -->
-    <div id="tab-chat" class="tab-panel">
+    <section class="grid g2">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Patient Support Agent</span>
-          <span class="tag tag-default" style="font-size:9px;">Saves symptoms · CBC · medications</span>
+          <div class="card-title">Agent Regression Suite</div>
+          <button class="btn btn-primary" onclick="runAgentRegression()">Run</button>
         </div>
-        <div class="chat-messages" id="chat-thread">
-          <div class="empty">No messages yet.</div>
+        <div class="card-body">
+          <div class="metric-list" id="agentRegressionMetrics"></div>
+          <div style="height:12px"></div>
+          <pre id="agentRegressionJson">No run loaded.</pre>
         </div>
-        <div class="chat-compose">
-          <textarea id="chat-input" placeholder="Log symptoms, CBC values, medications, or patient-reported feelings…"></textarea>
-          <button class="btn btn-primary" onclick="sendChat()">Send</button>
-        </div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text-3);padding:8px 16px;border-top:1px solid var(--border);">Agent does not diagnose or recommend treatment.</div>
       </div>
-    </div>
 
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">MLE Release Gates</div>
+          <button class="btn btn-primary" onclick="runMleReadiness()">Run</button>
+        </div>
+        <div class="card-body">
+          <div class="metric-list" id="mleMetrics"></div>
+          <div style="height:12px"></div>
+          <pre id="mleJson">No run loaded.</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid g2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">KB Source Registry</div>
+          <span class="tag" id="sourceTag">loading</span>
+        </div>
+        <div class="card-body">
+          <div class="metric-list" id="sourceMetrics"></div>
+          <div style="height:12px"></div>
+          <table class="table">
+            <thead><tr><th>Source</th><th>Trust</th><th>Chunks</th><th>Topics</th></tr></thead>
+            <tbody id="sourceRows"><tr><td colspan="4" class="empty">Loading sources...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Model Evaluation & Drift</div>
+          <span class="tag">monitoring</span>
+        </div>
+        <div class="card-body">
+          <div class="metric-list" id="modelMetrics"></div>
+          <div style="height:12px"></div>
+          <table class="table">
+            <thead><tr><th>Feature</th><th>Shift</th><th>Status</th></tr></thead>
+            <tbody id="driftRows"><tr><td colspan="3" class="empty">Loading drift metrics...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
   </main>
-</div><!-- /app-body -->
 
-<div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div>
 
 <script>
-const API_BASE = window.location.origin;
-let clinicianToken = localStorage.getItem('clinicianToken') || null;
-let currentPatientId = null;
-const charts = {};
+  const API_BASE = window.location.origin;
+  let adminToken = localStorage.getItem("adminAccessToken") || null;
 
-/* ─── UTILITY ─────────────────────────────────── */
-function toast(msg, type = '') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show' + (type ? ' ' + type : '');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 3500);
-}
+  function headers() {
+    return adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
+  }
 
-function esc(v) {
-  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+  function toast(message) {
+    const box = document.getElementById("toast");
+    box.textContent = message;
+    box.classList.add("show");
+    clearTimeout(box._t);
+    box._t = setTimeout(() => box.classList.remove("show"), 3200);
+  }
 
-function initials(name) {
-  return (name || '??').split(' ').filter(Boolean).slice(0,2).map(n => n[0].toUpperCase()).join('');
-}
+  function esc(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
 
-function pid() { return document.getElementById('patientSelect').value; }
+  function loginAdmin() {
+    return fetch(`${API_BASE}/auth/demo-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: "admin" })
+    })
+    .then(response => {
+      if (!response.ok) throw new Error(`Admin login failed (${response.status})`);
+      return response.json();
+    })
+    .then(session => {
+      adminToken = session.access_token;
+      localStorage.setItem("adminAccessToken", adminToken);
+    });
+  }
 
-function chHdr() {
-  return clinicianToken ? { 'Authorization': `Bearer ${clinicianToken}` } : {};
-}
-
-/* ─── TAB SWITCHING ──────────────────────────── */
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  if (btn) btn.classList.add('active');
-}
-
-function toggleAcc(header) {
-  header.classList.toggle('open');
-  header.nextElementSibling.classList.toggle('open');
-}
-
-/* ─── LAB STATUS ─────────────────────────────── */
-function labStat(val, lo, hi) {
-  if (val === null || val === undefined || val === '') return 'na';
-  const v = Number(val);
-  if (v < lo) return 'bad';
-  if (v > hi) return 'warn';
-  return 'ok';
-}
-
-function applyStatCard(cardId, valId, refId, refText, value, lo, hi) {
-  const card = document.getElementById(cardId);
-  const s = labStat(value, lo, hi);
-  card.className = 'stat-card ' + s;
-  document.getElementById(valId).textContent = value ?? '—';
-  document.getElementById(refId).textContent = refText;
-  const dot = card.querySelector('.ref-dot');
-  if (dot) dot.className = 'ref-dot ' + s;
-}
-
-/* ─── CHARTS ─────────────────────────────────── */
-function mkChart(id, label, labels, data, color) {
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  if (charts[id]) charts[id].destroy();
-  charts[id] = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label,
-        data,
-        borderColor: color,
-        backgroundColor: color + '18',
-        borderWidth: 1.5,
-        pointRadius: 2.5,
-        pointBackgroundColor: color,
-        fill: true,
-        tension: 0.35
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: '#484f58', font: { family: 'IBM Plex Mono', size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
-        y: { ticks: { color: '#484f58', font: { family: 'IBM Plex Mono', size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: false }
+  function adminFetch(path, options = {}) {
+    const request = () => fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: { ...(options.headers || {}), ...headers() }
+    });
+    return request().then(response => {
+      if (response.status === 401 || response.status === 403) {
+        return loginAdmin().then(request);
       }
-    }
-  });
-}
+      return response;
+    }).then(response => {
+      if (!response.ok) throw new Error(`${path} failed (${response.status})`);
+      return response.json();
+    });
+  }
 
-/* ─── BADGE / TAGS ───────────────────────────── */
-function receptorBadge(label, value) {
-  if (!value || value === 'unknown') return `<span class="tag tag-default">${label}: ?</span>`;
-  const pos = value.toLowerCase().includes('+') || value.toLowerCase() === 'positive';
-  return `<span class="tag ${pos ? 'tag-green' : 'tag-default'}">${label}: ${esc(value)}</span>`;
-}
+  function tag(status) {
+    const value = String(status || "unavailable");
+    return `<span class="tag ${esc(value)}">${esc(value)}</span>`;
+  }
 
-function severityTag(sev) {
-  const map = { urgent_review: 'tag-red', watch: 'tag-amber', info: 'tag-blue' };
-  return `<span class="tag ${map[sev] || 'tag-default'}">${esc((sev || '').replace('_',' '))}</span>`;
-}
+  function setTag(id, status) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const value = String(status || "unavailable");
+    el.className = `tag ${value}`;
+    el.textContent = value;
+  }
 
-/* ─── RENDER OVERVIEW ────────────────────────── */
-function renderOverview(data) {
-  const name = data.patient_name || data.patient_id;
-  document.getElementById('ov-initials').textContent = initials(name);
-  document.getElementById('ov-name').textContent = name;
-
-  const profile = data.breast_cancer_profile || {};
-  const assessment = data.multimodal_assessment || {};
-  const status = assessment.overall_status || '';
-  const statusCls = (status.includes('favorable') || status.includes('good')) ? 'tag-green' : status.includes('mixed') ? 'tag-amber' : 'tag-rose';
-  document.getElementById('ov-tags').innerHTML = `
-    ${data.diagnosis ? `<span class="tag tag-default">${esc(data.diagnosis)}</span>` : ''}
-    ${profile.cancer_stage ? `<span class="tag tag-default">Stage ${esc(profile.cancer_stage)}</span>` : ''}
-    ${profile.molecular_subtype ? `<span class="tag tag-blue">${esc(profile.molecular_subtype)}</span>` : ''}
-    ${status ? `<span class="tag ${statusCls}">${esc(status)}</span>` : ''}
-  `;
-  document.getElementById('ov-score').textContent = assessment.treatment_monitoring_score ?? '--';
-
-  const risks = data.risks || [];
-  document.getElementById('ov-risks').innerHTML = risks.length
-    ? risks.map(r => {
-        const cls = r.severity === 'urgent_review' ? 'urgent' : r.severity === 'watch' ? 'watch' : 'info';
-        return `<div class="flag-item ${cls}"><span class="flag-dot"></span>${esc(r.message)}</div>`;
-      }).join('')
-    : '<div class="empty">No risk flags at this time.</div>';
-
-  document.getElementById('ov-profile').innerHTML = `
-    <div class="profile-field"><div class="pf-label">Diagnosis</div><div class="pf-value">${esc(data.diagnosis || '—')}</div></div>
-    <div class="profile-field"><div class="pf-label">Stage</div><div class="pf-value">${esc(profile.cancer_stage || '—')}</div></div>
-    <div class="profile-field"><div class="pf-label">Molecular Subtype</div><div class="pf-value">${esc(profile.molecular_subtype || '—')}</div></div>
-    <div class="profile-field">
-      <div class="pf-label">Receptor Status</div>
-      <div class="receptor-grid" style="margin-top:4px">
-        ${receptorBadge('ER', profile.er_status)}
-        ${receptorBadge('PR', profile.pr_status)}
-        ${receptorBadge('HER2', profile.her2_status)}
+  function rows(items) {
+    return items.map(item => `
+      <div class="metric-row">
+        <div class="metric-name">${esc(item.name)}</div>
+        <div class="metric-value">${esc(item.value)}</div>
+        <div class="metric-why">${esc(item.why)}</div>
       </div>
-    </div>
-    <div class="profile-field"><div class="pf-label">Treatment Intent</div><div class="pf-value">${esc(profile.treatment_intent || '—')}</div></div>
-  `;
+    `).join("");
+  }
 
-  const dataRow = text => `<div class="data-row"><span class="data-row-bullet"></span>${esc(text)}</div>`;
-  const emptyRow = t => `<div class="empty">${t}</div>`;
-  const summary = data.ai_summary || {};
+  function asPct(value) {
+    if (value === null || value === undefined) return "--";
+    return `${Math.round(Number(value) * 1000) / 10}%`;
+  }
 
-  document.getElementById('ov-changes').innerHTML = (summary.changes_since_baseline || []).length
-    ? summary.changes_since_baseline.map(dataRow).join('') : emptyRow('No changes recorded.');
-  document.getElementById('ov-review-reasons').innerHTML = (summary.review_reasons || []).length
-    ? summary.review_reasons.map(dataRow).join('') : emptyRow('No review reasons.');
-  document.getElementById('ov-treatment').innerHTML = (data.treatment_effects || []).length
-    ? data.treatment_effects.slice(-6).reverse().map(i =>
-        `<div class="data-row"><span class="data-row-bullet"></span>Cycle ${esc(i.cycle)} (${esc(i.drug)}): WBC nadir ${esc(i.min_wbc_post_cycle)}, Hgb ${esc(i.min_hemoglobin_post_cycle)}, Plt ${esc(i.min_platelets_post_cycle)}</div>`
-      ).join('') : emptyRow('No cycle data.');
-  document.getElementById('ov-symptoms').innerHTML = (data.symptoms || []).length
-    ? data.symptoms.slice(-6).reverse().map(s => {
-        const sev = Number(s.severity);
-        const sc = sev >= 7 ? 'tag-red' : sev >= 4 ? 'tag-amber' : 'tag-green';
-        return `<div class="data-row"><span class="data-row-bullet"></span>${String(s.date).slice(0,10)}: ${esc(s.symptom)} <span class="tag ${sc}">${sev}/10</span>${s.notes ? ` · <span style="font-size:11.5px;color:var(--text-3)">${esc(s.notes)}</span>` : ''}</div>`;
-      }).join('') : emptyRow('No symptoms.');
-}
+  function asNum(value) {
+    if (value === null || value === undefined || value === "") return "--";
+    if (typeof value === "number") return Number.isInteger(value) ? String(value) : String(Math.round(value * 1000) / 1000);
+    return String(value);
+  }
 
-/* ─── RENDER LABS ────────────────────────────── */
-function renderLabs(data) {
-  const labs = data.latest_labs || {};
-  applyStatCard('wbc-card', 'lab-wbc', 'lab-wbc-ref', 'ref: 4.5–11 ×10³/μL', labs.wbc, 4.5, 11);
-  applyStatCard('hgb-card', 'lab-hgb', 'lab-hgb-ref', 'ref: 12–16 g/dL', labs.hemoglobin, 12, 16);
-  applyStatCard('plt-card', 'lab-plt', 'lab-plt-ref', 'ref: 150–400 ×10³/μL', labs.platelets, 150, 400);
+  function renderAnalytics(data) {
+    const rag = data.rag_evaluation || {};
+    const costs = rag.api_costs || {};
+    const feedback = data.agent_feedback || {};
+    const regression = data.agent_regression_evaluation || {};
+    const regressionSummary = regression.summary || {};
+    const mle = data.mle_readiness || {};
+    const source = data.rag_source_registry || {};
+    const model = data.advanced_model_evaluation || {};
+    const drift = data.drift_monitoring || {};
 
-  const h = data.lab_history || [];
-  const labels = h.map(r => String(r.date).slice(0, 10));
-  mkChart('wbcChart', 'WBC', labels, h.map(r => r.wbc), '#e05a6b');
-  mkChart('hgbChart', 'Hemoglobin', labels, h.map(r => r.hemoglobin), '#3fb68a');
-  mkChart('pltChart', 'Platelets', labels, h.map(r => r.platelets), '#d4930a');
+    document.getElementById("ragStatus").textContent = rag.status || "--";
+    document.getElementById("mleStatus").textContent = mle.status || mle.hard_gate_status || "--";
+    document.getElementById("apiCost").textContent = `$${asNum(costs.total_estimated_api_cost_usd)}`;
+    document.getElementById("feedbackScore").textContent = asNum(feedback.average_rating);
 
-  document.getElementById('lab-source').innerHTML = `
-    <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px">Sources: ${esc((data.lab_sources || []).join(', ') || 'none')}</div>
-    ${data.has_synthetic_labs
-      ? `<div style="font-family:var(--mono);font-size:10px;color:var(--amber);padding:6px 10px;background:var(--amber-dim);border-radius:var(--r-sm);border:1px solid rgba(212,147,10,0.2)">⚠ CBC values include synthetic demo data. Do not treat as real patient values.</div>`
-      : `<div style="font-family:var(--mono);font-size:10px;color:var(--text-3)">No synthetic CBC values detected.</div>`}
-  `;
+    setTag("ragTag", rag.status);
+    document.getElementById("ragMetrics").innerHTML = rows([
+      { name: "Calls", value: asNum(rag.call_count), why: "Number of patient-agent RAG evaluations logged." },
+      { name: "Precision@3", value: asNum(rag.average_retrieval_precision_at_3), why: "Heuristic top-3 retrieval relevance until labeled RAGAS data exists." },
+      { name: "Grounding", value: asNum(rag.average_grounding_score), why: "Overlap proxy between answer and retrieved context. Higher is better." },
+      { name: "Hallucination", value: asNum(rag.average_hallucination_score), why: "Inverse grounding plus citation/guardrail penalties. Lower is better." },
+      { name: "Cache hit rate", value: asPct(rag.cache_hit_rate), why: "Safe reuse of low-risk educational answers." },
+    ]);
 
-  document.getElementById('lab-source').innerHTML; // already set above
+    document.getElementById("costMetrics").innerHTML = rows([
+      { name: "Estimated cost", value: `$${asNum(costs.total_estimated_api_cost_usd)}`, why: costs.cost_basis || "Estimated API cost." },
+      { name: "Input tokens", value: asNum(costs.estimated_input_tokens), why: "Tracked for future Groq/OpenAI/RAGAS judge cost accounting." },
+      { name: "Output tokens", value: asNum(costs.estimated_output_tokens), why: "Estimated generated output token volume." },
+      { name: "P95 latency", value: `${asNum(rag.p95_latency_ms)} ms`, why: "Latency tail for user-facing agent responses." },
+    ]);
 
-  fetch(`${API_BASE}/prediction-audits?patient_id=${encodeURIComponent(pid())}&limit=8`)
-    .then(r => r.json())
-    .then(d => {
-      const rows = d.prediction_audits || [];
-      document.getElementById('lab-audit').innerHTML = rows.length
-        ? rows.map(row => {
-            const pred = row.prediction || {};
-            const prob = pred.pcr_probability !== undefined ? `pCR ${pred.pcr_probability}` : '—';
-            return `<div class="audit-row"><span class="audit-time">${String(row.created_at).slice(0,19)}</span><span class="audit-model">${esc(row.model_name)} ${esc(row.model_version || '')}</span><span class="audit-prob">${esc(prob)}</span></div>`;
-          }).join('')
-        : '<div class="empty">No prediction audits.</div>';
-    })
-    .catch(() => {});
-}
+    const inputCounts = rag.input_guardrail_counts || {};
+    const outputCounts = rag.output_guardrail_counts || {};
+    setTag("guardrailTag",
+      Number(inputCounts.failed || 0) || Number(outputCounts.failed || 0) ? "failed" : "passed"
+    );
+    document.getElementById("guardrailMetrics").innerHTML = rows([
+      { name: "Input passed", value: asNum(inputCounts.passed || 0), why: "Messages that passed scope/security checks." },
+      { name: "Input blocked", value: asNum(inputCounts.failed || 0), why: "Prompt injection, privacy exfiltration, or unsafe intent blocked." },
+      { name: "Output passed", value: asNum(outputCounts.passed || 0), why: "Answers that avoided unsafe directives and unsupported claims." },
+      { name: "Attack block rate", value: asPct(regressionSummary.attack_block_rate), why: "Offline multilingual red-team cases must stay at 100%." },
+    ]);
 
-/* ─── RENDER ASSESSMENT ──────────────────────── */
-function renderAssessment(data) {
-  const a = data.multimodal_assessment || {};
-  const mri = a.signals?.mri_response || {};
-  const clin = a.signals?.clinical_monitoring || {};
-  const sym = a.signals?.symptoms || {};
-  const xai = mri.xai;
+    document.getElementById("feedbackMetrics").innerHTML = rows([
+      { name: "Feedback count", value: asNum(feedback.feedback_count), why: "Patient ratings captured for assistant response quality." },
+      { name: "Average rating", value: asNum(feedback.average_rating), why: "1-5 score. Usefulness signal, not clinical correctness." },
+      { name: "Thumbs-up rate", value: asPct(feedback.thumbs_up_rate), why: "Simple patient satisfaction trend." },
+    ]);
 
-  document.getElementById('assess-body').innerHTML = a.overall_status ? `
-    <div class="assess-grid">
-      <div class="assess-item">
-        <div class="assess-key">Monitoring Score</div>
-        <div class="assess-val" style="font-family:var(--mono);font-size:22px">${a.treatment_monitoring_score ?? '—'}<span style="font-size:12px;color:var(--text-3)">/100</span></div>
-      </div>
-      <div class="assess-item">
-        <div class="assess-key">Overall Status</div>
-        <div class="assess-val">${esc(a.overall_status)}</div>
-        <div class="assess-sub">${esc(a.overall_message || '')}</div>
-      </div>
-      <div class="assess-item">
-        <div class="assess-key">MRI Response</div>
-        <div class="assess-val">${esc(mri.status || '—')}${mri.pcr_probability !== undefined ? ` · pCR ${mri.pcr_probability}` : ''}</div>
-        <div class="assess-sub">${esc(mri.message || '')}</div>
-      </div>
-      <div class="assess-item">
-        <div class="assess-key">Clinical Monitoring</div>
-        <div class="assess-val">${esc(clin.status || '—')}</div>
-        <div class="assess-sub">${esc(clin.message || '')}</div>
-      </div>
-      <div class="assess-item">
-        <div class="assess-key">Symptom Signal</div>
-        <div class="assess-val">${esc(sym.status || '—')}</div>
-        <div class="assess-sub">${esc(sym.message || '')}</div>
-      </div>
-      <div class="assess-item">
-        <div class="assess-key">Recommended Action</div>
-        <div class="assess-val">${esc(a.recommended_action || '—')}</div>
-      </div>
-      ${xai ? `
-      <div class="assess-item" style="grid-column:1/-1">
-        <div class="assess-key">XAI — Toward pCR</div>
-        <div class="assess-val" style="font-family:var(--mono);font-size:11px;color:var(--green)">${(xai.positive_contributions||[]).slice(0,3).map(i=>`${i.feature} (${i.shap_value})`).join(', ')||'none'}</div>
-        <div class="assess-key" style="margin-top:8px">XAI — Away from pCR</div>
-        <div class="assess-val" style="font-family:var(--mono);font-size:11px;color:var(--red)">${(xai.negative_contributions||[]).slice(0,3).map(i=>`${i.feature} (${i.shap_value})`).join(', ')||'none'}</div>
-      </div>
-      ` : ''}
-    </div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--text-3);margin-top:12px;">${esc(a.safety_note || '')}</div>
-  ` : '<div class="empty">No assessment loaded.</div>';
+    document.getElementById("agentRegressionMetrics").innerHTML = rows([
+      { name: "Status", value: regressionSummary.status || regression.status || "unavailable", why: "Overall route/retrieval/security regression status." },
+      { name: "Pass rate", value: asPct(regressionSummary.pass_rate), why: "Golden-agent cases that pass expected behavior." },
+      { name: "Source hit", value: asPct(regressionSummary.expected_source_hit_rate), why: "Expected source appears in retrieval or citations." },
+    ]);
+    document.getElementById("agentRegressionJson").textContent = JSON.stringify(regressionSummary, null, 2);
 
-  const summary = data.ai_summary || {};
-  document.getElementById('assess-clinical').textContent =
-    Array.isArray(summary.clinical_summary) ? summary.clinical_summary.join('\n') : (summary.clinical_summary || 'No summary available.');
-  document.getElementById('assess-patient').textContent =
-    Array.isArray(summary.patient_explanation) ? summary.patient_explanation.join('\n') : (summary.patient_explanation || 'No explanation available.');
+    document.getElementById("mleMetrics").innerHTML = rows([
+      { name: "Overall", value: mle.status || "unavailable", why: "Aggregated MLE readiness status." },
+      { name: "Hard gates", value: mle.hard_gate_status || "--", why: "Release-blocking checks for artifacts, contracts, and safety." },
+      { name: "Recommendation", value: mle.release_recommendation || "--", why: "Current model lifecycle recommendation." },
+    ]);
+    document.getElementById("mleJson").textContent = JSON.stringify(mle.category_statuses || mle, null, 2);
 
-  const meta = data.radiology_summary?.possible_metastatic_indicators || [];
-  document.getElementById('assess-metastatic').innerHTML = meta.length
-    ? meta.map(i => `<div class="data-row"><span class="data-row-bullet"></span>${esc(i.date)}: ${esc(i.message)}</div>`).join('')
-    : '<div class="empty">No metastatic indicators flagged.</div>';
-}
+    setTag("sourceTag", source.status);
+    document.getElementById("sourceMetrics").innerHTML = rows([
+      { name: "Sources", value: asNum(source.source_count), why: "Distinct papers/files in the local RAG registry." },
+      { name: "Chunks", value: asNum(source.chunk_count), why: "Section-aware retrieval chunks available to the agent." },
+      { name: "Strong claims", value: asNum((source.quality_checks?.strong_claim_watchlist || []).length), why: "Heuristic watchlist for unsupported absolute wording." },
+      { name: "Contradictions", value: asNum((source.quality_checks?.contradiction_watchlist || []).length), why: "Heuristic contradiction-sensitive source review queue." },
+    ]);
 
-/* ─── RENDER IMAGING ─────────────────────────── */
-function renderImaging(data) {
-  const rad = data.radiology_summary;
-  document.getElementById('img-radiology').innerHTML = rad ? `
-    <div class="radio-rows">
-      <div class="radio-row"><span class="radio-key">Modality / Side</span><span class="radio-val">${esc(rad.latest_modality || '—')} · ${esc(rad.latest_breast_side || '—')}</span></div>
-      <div class="radio-row"><span class="radio-key">Location</span><span class="radio-val">${esc((rad.latest_breast_locations||[]).join(', ')||'—')}</span></div>
-      <div class="radio-row"><span class="radio-key">BI-RADS</span><span class="radio-val">${rad.latest_bi_rads ?? 'not reported'}</span></div>
-      <div class="radio-row"><span class="radio-key">Baseline Size</span><span class="radio-val">${rad.baseline_tumor_size_cm ?? '—'} cm (${esc(rad.baseline_date||'—')})</span></div>
-      <div class="radio-row"><span class="radio-key">Latest Size</span><span class="radio-val">${rad.latest_tumor_size_cm ?? '—'} cm (${esc(rad.latest_date||'—')})</span></div>
-      <div class="radio-row"><span class="radio-key">Response</span><span class="radio-val">${esc(rad.size_status||'—')} — ${esc(rad.response_language_status||'')}</span></div>
-      <div class="radio-row"><span class="radio-key">Safety Note</span><span class="radio-val" style="font-size:11px;color:var(--text-3)">${esc(rad.safety_note||'')}</span></div>
-    </div>
-  ` : '<div class="empty">No imaging data loaded.</div>';
+    document.getElementById("modelMetrics").innerHTML = rows([
+      { name: "Champion", value: model.champion_model || "--", why: "Current evaluated synthetic champion model." },
+      { name: "Evaluated patients", value: asNum(model.evaluated_patients), why: "Patient-level evaluation sample count." },
+      { name: "Calibration", value: model.calibration?.status || "--", why: "Probability reliability gate." },
+      { name: "Decision impact", value: model.decision_impact_simulation?.status || "--", why: "Simulated clinician-review routing impact." },
+    ]);
 
-  document.getElementById('img-mri-registry').innerHTML = (data.mri_registry||[]).length
-    ? data.mri_registry.map(e => `<div class="mri-entry"><div class="mri-meta">${esc(e.scan_date||'undated')} — ${esc(e.modality)}: ${esc(e.series_description||'series')}</div><div class="mri-path">${esc(e.local_path)}</div></div>`).join('')
-    : '<div class="empty">No MRI folders registered.</div>';
+    renderFeedbackRows([]);
+    renderSourceRows(source.sources || []);
+    renderDriftRows(drift.features || []);
+  }
 
-  document.getElementById('img-mri-series').innerHTML = (data.mri_series_index||[]).length
-    ? data.mri_series_index.map(s => `<div class="mri-entry"><div class="mri-meta">${esc(s.study_date||'undated')} — ${esc(s.modality||'MR')} · ${esc(s.candidate_role||'unknown')} · ${s.instance_count} imgs</div><div class="mri-path">${esc(s.series_description||'Unnamed series')}</div></div>`).join('')
-    : '<div class="empty">No DICOM series indexed.</div>';
-}
+  function renderFeedbackRows(items) {
+    adminFetch("/agent-feedback?limit=10")
+      .then(data => {
+        const rowsData = data.feedback || [];
+        document.getElementById("feedbackRows").innerHTML = rowsData.length
+          ? rowsData.map(item => `<tr><td>${esc(item.patient_id)}</td><td><strong>${esc(item.rating)}</strong></td><td>${esc(item.feedback_text || "No comment")}</td></tr>`).join("")
+          : '<tr><td colspan="3" class="empty">No feedback yet.</td></tr>';
+      })
+      .catch(() => {
+        document.getElementById("feedbackRows").innerHTML = '<tr><td colspan="3" class="empty">Feedback unavailable.</td></tr>';
+      });
+  }
 
-/* ─── RENDER TIMELINE ────────────────────────── */
-function renderTimeline(events) {
-  document.getElementById('tl-events').innerHTML = (events||[]).length
-    ? events.slice().reverse().map(e => `
-      <div class="tl-row">
-        <span class="tl-date">${String(e.date).slice(0,10)}</span>
-        <div class="tl-type">${severityTag(e.severity||'info')}</div>
-        <div class="tl-desc"><strong>${esc(e.title||e.type)}</strong><p>${esc(e.summary||'')}</p></div>
-      </div>
-    `).join('')
-    : '<div class="empty">No timeline events.</div>';
-}
+  function renderSourceRows(items) {
+    document.getElementById("sourceRows").innerHTML = items.length
+      ? items.slice(0, 10).map(item => `<tr><td><strong>${esc(item.title)}</strong><br>${esc(item.pmcid || item.source_id)}</td><td>${esc(item.trust_level)}<br>${esc(item.confidence)}</td><td>${esc(item.chunk_count)}</td><td>${esc((item.topics || []).join(", "))}</td></tr>`).join("")
+      : '<tr><td colspan="4" class="empty">No RAG sources loaded.</td></tr>';
+  }
 
-/* ─── RENDER REVIEW ──────────────────────────── */
-function renderReview(data) {
-  const snap = data.patient_timeline_summary || {};
-  const rev = data.latest_clinician_review;
-  document.getElementById('rev-snapshot').textContent = snap.headline || 'No deterministic snapshot available.';
-  document.getElementById('rev-latest').textContent = rev
-    ? `${rev.decision} · ${rev.reviewer_role} · ${String(rev.created_at).slice(0,19)}`
-    : 'No clinician review saved yet.';
-}
+  function renderDriftRows(items) {
+    document.getElementById("driftRows").innerHTML = items.length
+      ? items.slice(0, 8).map(item => `<tr><td><strong>${esc(item.feature)}</strong></td><td>${esc(item.standardized_mean_shift)}</td><td>${tag(item.status)}</td></tr>`).join("")
+      : '<tr><td colspan="3" class="empty">No drift rows available.</td></tr>';
+  }
 
-/* ─── RENDER CHAT ────────────────────────────── */
-function renderChat(messages) {
-  const el = document.getElementById('chat-thread');
-  if (!messages || !messages.length) { el.innerHTML = '<div class="empty">No messages yet.</div>'; return; }
-  el.innerHTML = messages.map(m =>
-    `<div class="chat-msg ${m.role === 'user' ? 'user' : 'assistant'}">${esc(m.message)}</div>`
-  ).join('');
-  el.scrollTop = el.scrollHeight;
-}
+  function runAgentRegression() {
+    adminFetch("/admin/agent-regression", { method: "POST" })
+      .then(data => {
+        toast("Agent regression completed.");
+        document.getElementById("agentRegressionJson").textContent = JSON.stringify(data.result.summary, null, 2);
+        return loadAll();
+      })
+      .catch(error => toast(error.message));
+  }
 
-/* ─── MAIN LOAD ──────────────────────────────── */
-function loadPatient(patientId) {
-  currentPatientId = patientId;
-  fetch(`${API_BASE}/patient-report/${encodeURIComponent(patientId)}`)
-    .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
-    .then(data => {
-      renderOverview(data);
-      renderLabs(data);
-      renderAssessment(data);
-      renderImaging(data);
-      renderTimeline(data.timeline || []);
-      renderReview(data);
-      renderChat(data.chat_history || []);
-    })
-    .catch(err => toast(err.message, 'error'));
-}
+  function runMleReadiness() {
+    adminFetch("/admin/mle-readiness", { method: "POST" })
+      .then(data => {
+        toast("MLE readiness completed.");
+        document.getElementById("mleJson").textContent = JSON.stringify(data.result, null, 2);
+        return loadAll();
+      })
+      .catch(error => toast(error.message));
+  }
 
-/* ─── REVIEW QUEUE ───────────────────────────── */
-function loadReviewQueue() {
-  const doFetch = () => fetch(`${API_BASE}/clinician/review-queue?limit=20`, { headers: chHdr() })
-    .then(r => { if (!r.ok) throw new Error(`Queue failed (${r.status})`); return r.json(); });
+  function loadAll() {
+    return adminFetch("/admin/analytics")
+      .then(renderAnalytics)
+      .catch(error => toast(error.message));
+  }
 
-  doFetch()
-    .catch(() => loginClinician().then(doFetch))
-    .then(data => {
-      const rows = data.queue || [];
-      document.getElementById('queueBadge').textContent = rows.length;
-      document.getElementById('queue-tbody').innerHTML = rows.length
-        ? rows.map(row => {
-            const flags = (row.top_review_flags || []).concat(row.top_missing_data_warnings || []).slice(0, 2).join(' · ');
-            const pct = Math.min(100, (row.priority_score / 10) * 100);
-            return `<tr onclick="selectPatient('${esc(row.patient_id)}')">
-              <td><strong>${esc(row.patient_name)}</strong><br><span style="font-family:var(--mono);font-size:10px;color:var(--text-3)">${esc(row.patient_id)}</span></td>
-              <td>
-                ${severityTag(row.urgent_flag_count ? 'urgent_review' : row.priority_score >= 5 ? 'watch' : 'info')}
-                <div class="priority-bar" style="margin-top:6px"><div class="priority-fill" style="width:${pct}%"></div></div>
-              </td>
-              <td>${esc(row.overall_status||'—')}</td>
-              <td><span style="font-family:var(--mono);font-size:11px">${esc(row.latest_review_decision||'none')}</span></td>
-              <td style="font-size:11px;color:var(--text-3)">${esc(flags||row.headline||'—')}</td>
-            </tr>`;
-          }).join('')
-        : '<tr><td colspan="5"><div class="empty">No patients queued for review.</div></td></tr>';
-    })
-    .catch(err => toast(err.message, 'error'));
-}
+  function logout() {
+    localStorage.removeItem("adminAccessToken");
+    window.location.href = "/login";
+  }
 
-function selectPatient(pid) {
-  document.getElementById('patientSelect').value = pid;
-  loadPatient(pid);
-  switchTab('overview', document.querySelector('.nav-btn'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.nav-btn').classList.add('active');
-}
-
-/* ─── AUTH ───────────────────────────────────── */
-function loginClinician() {
-  return fetch(`${API_BASE}/auth/demo-login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ role: 'clinician' })
-  })
-  .then(r => { if (!r.ok) throw new Error(`Login failed (${r.status})`); return r.json(); })
-  .then(s => {
-    clinicianToken = s.access_token;
-    localStorage.setItem('clinicianToken', clinicianToken);
-  });
-}
-
-/* ─── ACTIONS ────────────────────────────────── */
-function addLab() {
-  const p = pid();
-  const date = document.getElementById('labDate').value;
-  const wbc = parseFloat(document.getElementById('labWbc').value);
-  const hemoglobin = parseFloat(document.getElementById('labHgb').value);
-  const platelets = parseFloat(document.getElementById('labPlt').value);
-  if (!p || !date || isNaN(wbc) || isNaN(hemoglobin) || isNaN(platelets)) { toast('Fill in all lab fields.', 'error'); return; }
-  fetch(`${API_BASE}/patients/${p}/labs`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ date, wbc, hemoglobin, platelets })
-  })
-  .then(r => { if (!r.ok) throw new Error(`Error ${r.status}`); return r.json(); })
-  .then(() => { toast('Lab saved.', 'success'); ['labDate','labWbc','labHgb','labPlt'].forEach(id => document.getElementById(id).value=''); loadPatient(p); })
-  .catch(err => toast(err.message, 'error'));
-}
-
-function addSymptom() {
-  const p = pid();
-  const date = document.getElementById('symDate').value;
-  const symptom = document.getElementById('symName').value.trim();
-  const severity = parseInt(document.getElementById('symSev').value, 10);
-  const notes = document.getElementById('symNotes').value.trim();
-  if (!p || !date || !symptom || isNaN(severity)) { toast('Fill in date, symptom, and severity.', 'error'); return; }
-  fetch(`${API_BASE}/patients/${p}/symptoms`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ date, symptom, severity, notes })
-  })
-  .then(r => { if (!r.ok) throw new Error(`Error ${r.status}`); return r.json(); })
-  .then(() => { toast('Symptom saved.', 'success'); ['symDate','symName','symSev','symNotes'].forEach(id => document.getElementById(id).value=''); loadPatient(p); })
-  .catch(err => toast(err.message, 'error'));
-}
-
-function submitReview(decision) {
-  const p = pid();
-  if (!p) { toast('Select a patient first.', 'error'); return; }
-  const payload = {
-    decision,
-    clinician_notes: document.getElementById('rev-notes').value.trim() || null,
-    edited_patient_summary: document.getElementById('rev-edited').value.trim() || null,
-    explanation_quality_score: document.getElementById('rev-explanation').value ? Number(document.getElementById('rev-explanation').value) : null,
-    model_usefulness_score: document.getElementById('rev-usefulness').value ? Number(document.getElementById('rev-usefulness').value) : null,
-  };
-  const doPost = () => fetch(`${API_BASE}/patients/${p}/summary-review`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...chHdr() },
-    body: JSON.stringify(payload)
-  }).then(r => { if (!r.ok) throw new Error(`Review failed (${r.status})`); return r.json(); });
-
-  doPost()
-    .catch(() => loginClinician().then(doPost))
-    .then(() => { toast(`Review: ${decision}`, 'success'); ['rev-notes','rev-edited','rev-explanation','rev-usefulness'].forEach(id => document.getElementById(id).value=''); loadPatient(p); })
-    .catch(err => toast(err.message, 'error'));
-}
-
-function sendChat() {
-  const p = pid();
-  const input = document.getElementById('chat-input');
-  const message = input.value.trim();
-  if (!p || !message) { toast('Write a message first.', 'error'); return; }
-  fetch(`${API_BASE}/patients/${p}/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message })
-  })
-  .then(r => { if (!r.ok) throw new Error(`Chat error ${r.status}`); return r.json(); })
-  .then(result => { input.value = ''; toast(result.saved_actions?.length ? 'Saved from chat.' : 'Message saved.', 'success'); loadPatient(p); })
-  .catch(err => toast(err.message, 'error'));
-}
-
-function importCsv() {
-  const csv_text = document.getElementById('csvText').value.trim();
-  if (!csv_text) { toast('Paste CSV before importing.', 'error'); return; }
-  fetch(`${API_BASE}/import-csv`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      import_type: document.getElementById('csvType').value,
-      dataset: document.getElementById('csvDataset').value,
-      csv_text
-    })
-  })
-  .then(r => { if (!r.ok) throw new Error(`Import error ${r.status}`); return r.json(); })
-  .then(result => {
-    toast(`Imported: ${JSON.stringify(result.result)}`, 'success');
-    document.getElementById('csvText').value = '';
-    return fetch(`${API_BASE}/patients`).then(r => r.json());
-  })
-  .then(patients => {
-    populatePatients(patients);
-    if (patients.length) loadPatient(patients[0].id);
-  })
-  .catch(err => toast(err.message, 'error'));
-}
-
-function populatePatients(patients) {
-  const sel = document.getElementById('patientSelect');
-  sel.innerHTML = patients.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
-}
-
-/* ─── ADD STAT CARD IDs ──────────────────────── */
-// The stat cards need IDs set manually in the HTML for applyStatCard to work
-// We'll set them after the fact:
-document.addEventListener('DOMContentLoaded', () => {
-  const cards = document.querySelectorAll('#lab-stats .stat-card');
-  if (cards[0]) cards[0].id = 'wbc-card';
-  if (cards[1]) cards[1].id = 'hgb-card';
-  if (cards[2]) cards[2].id = 'plt-card';
-});
-
-/* ─── BOOT ───────────────────────────────────── */
-fetch(`${API_BASE}/patients`)
-  .then(r => r.json())
-  .then(patients => {
-    populatePatients(patients);
-    const sel = document.getElementById('patientSelect');
-    sel.addEventListener('change', e => loadPatient(e.target.value));
-    if (patients.length) loadPatient(patients[0].id);
-  })
-  .catch(err => toast(err.message, 'error'));
-
-loginClinician()
-  .then(() => loadReviewQueue())
-  .catch(() => loadReviewQueue());
+  loadAll();
 </script>
 </body>
 </html>

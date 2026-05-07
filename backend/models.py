@@ -282,7 +282,12 @@ class AgentResponseCache(Base):
     normalized_query = Column(Text, nullable=False)
     response_json = Column(Text, nullable=False)
     source_ids_json = Column(Text, nullable=True)
+    knowledge_fingerprint = Column(String, nullable=True, index=True)
+    cache_schema_version = Column(String, nullable=True, index=True)
+    cache_policy_json = Column(Text, nullable=True)
     hit_count = Column(Integer, nullable=False, default=0)
+    expires_at = Column(DateTime(timezone=True), nullable=True, index=True)
+    last_hit_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
 

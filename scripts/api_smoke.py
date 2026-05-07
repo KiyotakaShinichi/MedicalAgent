@@ -17,7 +17,12 @@ def main():
     assert admin["role"] == "admin", admin
     admin_token = admin["access_token"]
 
-    _ensure_smoke_patient()
+    _ensure_smoke_patient(admin_token)
+
+    clinician = _post_json("/auth/demo-login", {"role": "clinician"})
+    clinician_token = clinician["access_token"]
+    patient_list = _get_json("/patients", token=clinician_token)
+    assert isinstance(patient_list, list), patient_list
 
     patient = _post_json("/auth/demo-login", {"role": "patient", "patient_id": PATIENT_ID})
     token = patient["access_token"]
@@ -43,10 +48,12 @@ def main():
     analytics = _get_json("/admin/analytics", token=admin_token)
     assert "agent_regression_evaluation" in analytics, analytics
     assert "mle_readiness" in analytics, analytics
+    source_registry = _get_json("/admin/rag-source-registry", token=admin_token)
+    assert "source_count" in source_registry, source_registry
     print("API smoke checks passed.")
 
 
-def _ensure_smoke_patient():
+def _ensure_smoke_patient(admin_token):
     try:
         _post_json(
             "/patients",
@@ -61,6 +68,7 @@ def _ensure_smoke_patient():
                 "molecular_subtype": "HR+/HER2-",
                 "treatment_intent": "neoadjuvant",
             },
+            token=admin_token,
         )
     except RuntimeError as exc:
         if "Patient already exists" not in str(exc):

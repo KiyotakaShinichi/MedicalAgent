@@ -2,7 +2,7 @@ import hashlib
 import json
 import re
 from time import perf_counter
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from backend.models import AgentResponseCache, RAGEvaluationLog
 from backend.services.kb_ingestion import load_ingested_chunks
@@ -10,6 +10,9 @@ from backend.services.security_guardrails import detect_prompt_injection_or_exfi
 
 
 MAX_CONTEXT_CHARS = 1300
+AGENT_CACHE_TTL_DAYS = 30
+AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v2"
+SEMANTIC_CACHE_MIN_SIMILARITY = 0.86
 
 
 KNOWLEDGE_SNIPPETS = [
@@ -151,12 +154,14 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
     intent = route_intent(query, actions, safety)
     rewritten = rewrite_and_decompose(query, intent)
     cacheable = is_cacheable(query, intent, safety, actions, urgent_flags)
+    knowledge_fingerprint = knowledge_base_fingerprint()
+    cache_policy = _cache_policy_snapshot(knowledge_fingerprint)
 
     cache_hit = None
     if cacheable:
-        cache_hit = exact_cache_check(db, rewritten["normalized_query"])
+        cache_hit = exact_cache_check(db, rewritten["normalized_query"], knowledge_fingerprint=knowledge_fingerprint)
         if cache_hit is None:
-            cache_hit = semantic_cache_check(db, rewritten["semantic_key"], intent)
+            cache_hit = semantic_cache_check(db, rewritten["semantic_key"], intent, knowledge_fingerprint=knowledge_fingerprint)
     if cache_hit:
         result = {
             **cache_hit["response"],
@@ -164,8 +169,11 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
                 "status": cache_hit["status"],
                 "cache_id": cache_hit["cache_id"],
                 "cacheable": True,
+                "expires_at": cache_hit.get("expires_at"),
+                "knowledge_fingerprint": cache_hit.get("knowledge_fingerprint"),
+                "policy": cache_hit.get("policy"),
             },
-            "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "cache_hit"),
+            "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "cache_hit", cache_policy=cache_policy),
         }
         return _finalize_result(
             db=db,
@@ -196,15 +204,27 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
     validated = validate_answer_and_citations(generated, compressed, safety)
 
     if cacheable and validated["validation"]["status"] == "passed":
-        cache_row = store_cache(db, rewritten, intent, safety, validated)
-        cache_status = {"status": "stored", "cache_id": cache_row.id, "cacheable": True}
+        cache_row = store_cache(db, rewritten, intent, safety, validated, knowledge_fingerprint=knowledge_fingerprint)
+        cache_status = {
+            "status": "stored",
+            "cache_id": cache_row.id,
+            "cacheable": True,
+            "expires_at": _datetime_to_iso(cache_row.expires_at),
+            "knowledge_fingerprint": cache_row.knowledge_fingerprint,
+            "policy": cache_policy,
+        }
     else:
-        cache_status = {"status": "not_cacheable", "cacheable": False, "reason": _cache_rejection_reason(query, intent, safety, actions, urgent_flags)}
+        cache_status = {
+            "status": "not_cacheable",
+            "cacheable": False,
+            "reason": _cache_rejection_reason(query, intent, safety, actions, urgent_flags),
+            "policy": cache_policy,
+        }
 
     result = {
         **validated,
         "cache": cache_status,
-        "pipeline_trace": _trace(safety, intent, rewritten, retrieved, reranked, compressed, "generated"),
+        "pipeline_trace": _trace(safety, intent, rewritten, retrieved, reranked, compressed, "generated", cache_policy=cache_policy),
     }
     return _finalize_result(
         db=db,
@@ -355,20 +375,31 @@ def rewrite_and_decompose(query, intent):
     }
 
 
-def exact_cache_check(db, normalized_query):
+def exact_cache_check(db, normalized_query, knowledge_fingerprint=None, now=None):
+    knowledge_fingerprint = knowledge_fingerprint or knowledge_base_fingerprint()
     query_hash = _query_hash(normalized_query)
     row = db.query(AgentResponseCache).filter(AgentResponseCache.query_hash == query_hash).first()
     if not row:
         return None
-    _mark_cache_hit(db, row)
+    freshness = _cache_row_freshness(row, knowledge_fingerprint, now=now)
+    if freshness["status"] != "fresh":
+        return None
+    response = _json_loads(row.response_json)
+    if response is None:
+        return None
+    _mark_cache_hit(db, row, now=now)
     return {
         "status": "exact_cache_hit",
         "cache_id": row.id,
-        "response": _json_loads(row.response_json),
+        "response": response,
+        "expires_at": _datetime_to_iso(row.expires_at),
+        "knowledge_fingerprint": row.knowledge_fingerprint,
+        "policy": _cache_row_policy(row),
     }
 
 
-def semantic_cache_check(db, semantic_key, intent, min_similarity=0.86):
+def semantic_cache_check(db, semantic_key, intent, min_similarity=SEMANTIC_CACHE_MIN_SIMILARITY, knowledge_fingerprint=None, now=None):
+    knowledge_fingerprint = knowledge_fingerprint or knowledge_base_fingerprint()
     query_tokens = set(semantic_key.split())
     if not query_tokens:
         return None
@@ -376,10 +407,14 @@ def semantic_cache_check(db, semantic_key, intent, min_similarity=0.86):
         db.query(AgentResponseCache)
         .filter(AgentResponseCache.intent == intent)
         .filter(AgentResponseCache.safety_level == "low_risk")
+        .filter(AgentResponseCache.knowledge_fingerprint == knowledge_fingerprint)
         .all()
     )
     best = None
     for row in rows:
+        freshness = _cache_row_freshness(row, knowledge_fingerprint, now=now)
+        if freshness["status"] != "fresh":
+            continue
         row_tokens = set((row.semantic_key or "").split())
         if not row_tokens:
             continue
@@ -389,13 +424,18 @@ def semantic_cache_check(db, semantic_key, intent, min_similarity=0.86):
     if best is None:
         return None
     row = best[1]
-    _mark_cache_hit(db, row)
     response = _json_loads(row.response_json)
+    if response is None:
+        return None
+    _mark_cache_hit(db, row, now=now)
     response["semantic_cache_similarity"] = round(best[0], 3)
     return {
         "status": "semantic_cache_hit",
         "cache_id": row.id,
         "response": response,
+        "expires_at": _datetime_to_iso(row.expires_at),
+        "knowledge_fingerprint": row.knowledge_fingerprint,
+        "policy": _cache_row_policy(row),
     }
 
 
@@ -450,6 +490,24 @@ def expand_parent_child_windows(retrieved):
 def _knowledge_snippets():
     external = load_ingested_chunks()
     return KNOWLEDGE_SNIPPETS + external
+
+
+def knowledge_base_fingerprint():
+    payload = []
+    for snippet in _knowledge_snippets():
+        payload.append({
+            "id": snippet.get("id"),
+            "parent_id": snippet.get("parent_id"),
+            "title": snippet.get("title"),
+            "source_name": snippet.get("source_name"),
+            "source_url": snippet.get("source_url"),
+            "tags": sorted(snippet.get("tags") or []),
+            "topic": snippet.get("topic"),
+            "section": snippet.get("section"),
+            "text_hash": _query_hash(snippet.get("text") or ""),
+        })
+    encoded = json.dumps(sorted(payload, key=lambda row: row.get("id") or ""), sort_keys=True)
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:16]
 
 
 def rerank_context(expanded, rewritten, intent, safety):
@@ -836,17 +894,29 @@ def is_cacheable(query, intent, safety, actions=None, urgent_flags=None):
     return True
 
 
-def store_cache(db, rewritten, intent, safety, response):
-    row = AgentResponseCache(
-        query_hash=_query_hash(rewritten["normalized_query"]),
-        semantic_key=rewritten["semantic_key"],
-        intent=intent,
-        safety_level=safety["level"],
-        normalized_query=rewritten["normalized_query"],
-        response_json=json.dumps(_cache_response_payload(response), default=str),
-        source_ids_json=json.dumps([item["id"] for item in response.get("citations") or []]),
-    )
-    db.add(row)
+def store_cache(db, rewritten, intent, safety, response, knowledge_fingerprint=None, now=None):
+    now = now or datetime.now(timezone.utc)
+    knowledge_fingerprint = knowledge_fingerprint or knowledge_base_fingerprint()
+    query_hash = _query_hash(rewritten["normalized_query"])
+    row = db.query(AgentResponseCache).filter(AgentResponseCache.query_hash == query_hash).first()
+    if row is None:
+        row = AgentResponseCache(query_hash=query_hash)
+        db.add(row)
+    else:
+        row.hit_count = 0
+        row.last_hit_at = None
+
+    row.semantic_key = rewritten["semantic_key"]
+    row.intent = intent
+    row.safety_level = safety["level"]
+    row.normalized_query = rewritten["normalized_query"]
+    row.response_json = json.dumps(_cache_response_payload(response), default=str)
+    row.source_ids_json = json.dumps([item["id"] for item in response.get("citations") or []])
+    row.knowledge_fingerprint = knowledge_fingerprint
+    row.cache_schema_version = AGENT_CACHE_SCHEMA_VERSION
+    row.cache_policy_json = json.dumps(_cache_policy_snapshot(knowledge_fingerprint), default=str)
+    row.expires_at = now + timedelta(days=AGENT_CACHE_TTL_DAYS)
+    row.updated_at = now
     db.commit()
     db.refresh(row)
     return row
@@ -862,6 +932,49 @@ def _cache_response_payload(response):
         "generated_at": response.get("generated_at"),
         "safety_note": response.get("safety_note"),
         "validation": response.get("validation"),
+    }
+
+
+def _cache_policy_snapshot(knowledge_fingerprint):
+    return {
+        "schema_version": AGENT_CACHE_SCHEMA_VERSION,
+        "ttl_days": AGENT_CACHE_TTL_DAYS,
+        "semantic_min_similarity": SEMANTIC_CACHE_MIN_SIMILARITY,
+        "knowledge_fingerprint": knowledge_fingerprint,
+        "reuse_scope": "low_risk_non_patient_specific_agent_answers",
+        "invalidates_on": ["ttl_expiry", "knowledge_base_fingerprint_change", "safety_policy_rejection"],
+    }
+
+
+def _cache_row_freshness(row, knowledge_fingerprint, now=None):
+    now = now or datetime.now(timezone.utc)
+    reasons = []
+    expires_at = _coerce_utc(row.expires_at)
+    if row.cache_schema_version != AGENT_CACHE_SCHEMA_VERSION:
+        reasons.append("cache_schema_version_changed")
+    if not row.knowledge_fingerprint:
+        reasons.append("missing_knowledge_fingerprint")
+    elif row.knowledge_fingerprint != knowledge_fingerprint:
+        reasons.append("knowledge_base_fingerprint_changed")
+    if expires_at is None:
+        reasons.append("missing_expiry")
+    elif expires_at <= now:
+        reasons.append("expired")
+    return {
+        "status": "fresh" if not reasons else "stale",
+        "reasons": reasons,
+    }
+
+
+def _cache_row_policy(row):
+    policy = _json_loads(row.cache_policy_json) or {}
+    if not policy:
+        policy = _cache_policy_snapshot(row.knowledge_fingerprint)
+    return {
+        **policy,
+        "expires_at": _datetime_to_iso(row.expires_at),
+        "last_hit_at": _datetime_to_iso(row.last_hit_at),
+        "hit_count": int(row.hit_count or 0),
     }
 
 
@@ -952,9 +1065,11 @@ def _section_boost(snippet):
     return 0.0
 
 
-def _mark_cache_hit(db, row):
+def _mark_cache_hit(db, row, now=None):
+    now = now or datetime.now(timezone.utc)
     row.hit_count = int(row.hit_count or 0) + 1
-    row.updated_at = datetime.now(timezone.utc)
+    row.last_hit_at = now
+    row.updated_at = now
     db.commit()
     db.refresh(row)
 
@@ -971,7 +1086,7 @@ def _cache_rejection_reason(query, intent, safety, actions, urgent_flags):
     return "patient_specific_or_uncertain"
 
 
-def _trace(safety, intent, rewritten, retrieved, reranked, compressed, terminal_step):
+def _trace(safety, intent, rewritten, retrieved, reranked, compressed, terminal_step, cache_policy=None):
     return {
         "steps": [
             "safety_scope_check",
@@ -994,6 +1109,7 @@ def _trace(safety, intent, rewritten, retrieved, reranked, compressed, terminal_
         "retrieved_count": len(retrieved),
         "reranked_count": len(reranked),
         "compressed_count": len(compressed),
+        "cache_policy": cache_policy,
     }
 
 
@@ -1017,6 +1133,19 @@ def _tokenize(text):
         "why", "with", "you", "your",
     }
     return [token for token in re.findall(r"[a-z0-9]+", text.lower()) if token not in stopwords and len(token) > 1]
+
+
+def _coerce_utc(value):
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
+
+
+def _datetime_to_iso(value):
+    value = _coerce_utc(value)
+    return value.isoformat() if value else None
 
 
 def _json_loads(value):

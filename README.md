@@ -61,13 +61,16 @@ Implemented in:
 
 - `backend/services/agent_rag.py`: safety routing, retrieval, reranking, compression, citation validation, and low-risk cache storage.
 - `backend/services/support_chat_agent.py`: patient chat integration after symptom/CBC/medication extraction.
-- `backend/models.py`: `AgentResponseCache` for exact and semantic reuse of safe educational answers.
+- `backend/models.py`: `AgentResponseCache` for exact and semantic reuse of safe educational answers with TTL, schema versioning, KB/source fingerprint invalidation, and last-hit telemetry.
 - `backend/services/app_logging.py`: admin telemetry for agent cache entries and hits.
 
 Cache policy:
 
 - Cacheable: low-risk educational or portal-help answers with citations and no patient-specific state.
 - Not cacheable: urgent symptoms, diagnosis/outcome questions, treatment-decision wording, patient-specific timeline summaries, or messages that save labs/symptoms/medications.
+- Freshness: cached answers expire after 30 days and are invalidated whenever the built-in/local RAG knowledge fingerprint changes.
+- Semantic reuse: only low-risk answers with the same intent, current cache schema, current KB fingerprint, and sufficient semantic-key similarity are reused.
+- Ingested KB chunks are also cached in-process using file size/mtime signatures so local JSON retrieval does not reread unchanged chunk files on every request.
 
 ## RAG Evaluation, Guardrails, and Feedback
 
@@ -320,18 +323,22 @@ It is a clinical-safety-inspired engineering proof of concept for organizing and
 
 Use the current running FastAPI port.
 
+- Login / role landing page: `/login`
+- Patient portal: `/patient`
 - Clinician dashboard: `/clinician`
 - Admin/MLE dashboard: `/admin`
-- Patient portal: `/patient`
 - API docs: `/docs`
 
 Example:
 
 ```text
+http://127.0.0.1:8017/login
 http://127.0.0.1:8017/patient
 http://127.0.0.1:8017/clinician
 http://127.0.0.1:8017/admin
 ```
+
+The root path `/` opens the login/role page. The patient portal no longer creates a default Patient 1 session automatically; it requires a patient-scoped demo session from the login page. Cross-patient lists and patient reports are scoped to clinician/admin demo sessions.
 
 ## CI/CD and Deployment Readiness
 
@@ -363,6 +370,7 @@ Then open:
 
 ```text
 http://127.0.0.1:8017/health
+http://127.0.0.1:8017/login
 http://127.0.0.1:8017/patient
 http://127.0.0.1:8017/clinician
 http://127.0.0.1:8017/admin
@@ -427,6 +435,14 @@ The ingestion pipeline uses section-aware chunks, metadata tagging, and quality 
 - lightweight watchlists for strong unsupported claim language and possible contradiction-sensitive terms
 
 The patient agent applies deterministic CBC safety rules before RAG retrieval. Very low WBC, hemoglobin, or platelet values are routed to clinician-review language instead of being left to the LLM/RAG layer.
+
+Admin RAG governance is available at:
+
+```text
+GET /admin/rag-source-registry
+```
+
+The admin dashboard uses this source registry to show source counts, chunk counts, topic/modality coverage, trust levels, citation policy, and lightweight quality watchlists.
 
 After adding papers, rerun:
 

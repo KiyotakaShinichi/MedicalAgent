@@ -1060,7 +1060,7 @@
     }
 
     function loadPredictionAudits(patientId) {
-      fetch(`${API_BASE}/prediction-audits?patient_id=${encodeURIComponent(patientId)}&limit=8`)
+      fetch(`${API_BASE}/prediction-audits?patient_id=${encodeURIComponent(patientId)}&limit=8`, { headers: clinicianHeaders() })
         .then(r => r.json())
         .then(data => {
           const el = document.getElementById("predictionAudit");
@@ -1159,7 +1159,7 @@
 
     /* ── LOAD PATIENT ── */
     function loadPatient(patientId) {
-      fetch(`${API_BASE}/patient-report/${patientId}`)
+      fetch(`${API_BASE}/patient-report/${patientId}`, { headers: clinicianHeaders() })
         .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
         .then(data => {
           latestPatientReport = data;
@@ -1230,7 +1230,7 @@
       }
       fetch(`${API_BASE}/patients/${pid}/labs`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
         body: JSON.stringify({ date, wbc, hemoglobin, platelets })
       })
       .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
@@ -1250,7 +1250,7 @@
 
       fetch(`${API_BASE}/patients/${pid}/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
         body: JSON.stringify({ message })
       })
       .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
@@ -1303,7 +1303,7 @@
       }
       fetch(`${API_BASE}/patients/${pid}/symptoms`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
         body: JSON.stringify({ date, symptom, severity, notes })
       })
       .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
@@ -1322,14 +1322,14 @@
       if (!csv_text) { showToast("Paste CSV before importing.", true); return; }
       fetch(`${API_BASE}/import-csv`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...clinicianHeaders() },
         body: JSON.stringify({ import_type, dataset, csv_text })
       })
       .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
       .then(result => {
         showToast(`Imported: ${JSON.stringify(result.result)}`);
         document.getElementById("importCsvText").value = "";
-        return fetch(`${API_BASE}/patients`);
+        return fetch(`${API_BASE}/patients`, { headers: clinicianHeaders() });
       })
       .then(r => r.json())
       .then(patients => {
@@ -1341,7 +1341,8 @@
     }
 
     /* ── BOOT ── */
-    fetch(`${API_BASE}/patients`)
+    loginClinician()
+      .then(() => fetch(`${API_BASE}/patients`, { headers: clinicianHeaders() }))
       .then(r => r.json())
       .then(patients => {
         const sel = document.getElementById("patientSelect");

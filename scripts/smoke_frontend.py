@@ -5,6 +5,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 CHECKS = {
+    "frontend/login.html": [
+        "Demo Access",
+        "Choose a workspace",
+        "patientPortalAccessToken",
+        "adminAccessToken",
+    ],
     "frontend/admin.html": [
         "RAG Evaluation & Guardrails",
         "API Cost & Latency",

@@ -805,6 +805,52 @@
     max-width: 85%;
   }
 
+  .msg-citations {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .agent-feedback {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .agent-feedback select {
+    font: inherit;
+    font-size: 11px;
+    padding: 4px 6px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--navy);
+  }
+
+  .feedback-btn {
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    font: inherit;
+    font-size: 11px;
+    padding: 4px 7px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .feedback-btn:hover { background: var(--light); }
+
   .chat-compose {
     padding: 12px;
     border-top: 1px solid var(--border);
@@ -1017,9 +1063,12 @@
   <header class="topbar">
     <div>
       <div class="topbar-title" id="topbarTitle">Patient Record</div>
-      <div class="topbar-sub">Last updated: just now</div>
+      <div class="topbar-sub">My Oncology Journey</div>
     </div>
     <div class="topbar-actions">
+      <button class="btn" onclick="logoutPatient()">
+        Sign Out
+      </button>
       <button class="btn" onclick="loadPatient()">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M13.65 2.35A8 8 0 1015 8h-2a6 6 0 11-1.65-4.15L9 6h6V0l-1.35 2.35z"/></svg>
         Refresh
@@ -1361,7 +1410,7 @@
     const params = new URLSearchParams(window.location.search);
     const p = params.get("patient");
     if (p) { localStorage.setItem("patientPortalPatientId", p); history.replaceState(null, "", "/patient"); return p; }
-    return localStorage.getItem("patientPortalPatientId") || "COMPV4-BRCA-0001";
+    return localStorage.getItem("patientPortalPatientId") || null;
   }
 
   function authHeaders() {
@@ -1385,6 +1434,36 @@
   }
 
   function toggleChat() { document.getElementById("chatPanel").classList.toggle("open"); }
+
+  function redirectToLogin() {
+    const suffix = currentPatientId ? `?patient=${encodeURIComponent(currentPatientId)}` : "";
+    window.location.href = `/login${suffix}`;
+  }
+
+  function logoutPatient() {
+    localStorage.removeItem("patientPortalAccessToken");
+    localStorage.removeItem("patientPortalPatientId");
+    window.location.href = "/login";
+  }
+
+  function ensurePatientSession() {
+    if (!accessToken) {
+      redirectToLogin();
+      return;
+    }
+    fetch(`${API_BASE}/auth/whoami`, { headers: authHeaders() })
+      .then(r => { if (!r.ok) throw new Error("Patient login required"); return r.json(); })
+      .then(session => {
+        if (session.role !== "patient" || !session.patient_id) throw new Error("Patient login required");
+        currentPatientId = session.patient_id;
+        localStorage.setItem("patientPortalPatientId", currentPatientId);
+        loadPatient();
+      })
+      .catch(() => {
+        localStorage.removeItem("patientPortalAccessToken");
+        redirectToLogin();
+      });
+  }
 
   function labStatus(value, low, high) {
     if (value === null || value === undefined || value === "") return { cls:"gray", text:"No data" };
@@ -1426,9 +1505,56 @@
       return;
     }
     thread.innerHTML = messages.map(m =>
-      `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${esc(m.message)}</div>`
+      `<div class="msg ${m.role === "user" ? "user" : "assistant"}">${esc(m.message)}${m.role === "assistant" ? renderAssistantMeta(m) : ""}</div>`
     ).join("");
     thread.scrollTop = thread.scrollHeight;
+  }
+
+  function renderAssistantMeta(message) {
+    const payload = parseSavedPayload(message.saved_actions_json);
+    const pipeline = payload.agent_pipeline || {};
+    const citations = pipeline.citations || [];
+    const citationHtml = citations.length
+      ? `<div class="msg-citations">${citations.slice(0, 3).map(c => `<div>${esc(c.source_name || "Source")}: ${esc(c.title || c.id)}</div>`).join("")}</div>`
+      : '<div class="msg-citations">No citations used for this answer.</div>';
+    const feedbackHtml = message.id ? `
+      <div class="agent-feedback">
+        <span>Rate answer</span>
+        <select id="feedback-rating-${message.id}" aria-label="Rate answer">
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+          <option value="1">1</option>
+        </select>
+        <button class="feedback-btn" onclick="submitAgentFeedback(${Number(message.id)}, true)">Helpful</button>
+        <button class="feedback-btn" onclick="submitAgentFeedback(${Number(message.id)}, false)">Not helpful</button>
+      </div>
+    ` : "";
+    return citationHtml + feedbackHtml;
+  }
+
+  function parseSavedPayload(raw) {
+    if (!raw) return {};
+    try { return JSON.parse(raw); } catch (_) { return {}; }
+  }
+
+  function submitAgentFeedback(chatMessageId, thumbsUp) {
+    const selector = document.getElementById(`feedback-rating-${chatMessageId}`);
+    const rating = selector ? Number(selector.value) : (thumbsUp ? 5 : 2);
+    fetch(`${API_BASE}/me/agent-feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeaders() },
+      body: JSON.stringify({
+        chat_message_id: chatMessageId,
+        rating,
+        thumbs_up: Boolean(thumbsUp),
+        feedback_text: thumbsUp ? "Marked helpful from patient portal." : "Marked not helpful from patient portal."
+      })
+    })
+    .then(r => { if (!r.ok) throw new Error(`Feedback failed (${r.status})`); return r.json(); })
+    .then(() => toast("Feedback saved."))
+    .catch(err => toast(err.message));
   }
 
   function renderModelSignal(data) {
@@ -1636,7 +1762,10 @@
     fetch(`${API_BASE}/me/patient-report`, { headers: authHeaders() })
       .then(r => { if (!r.ok) throw new Error(`Could not load patient record (${r.status})`); return r.json(); })
       .then(renderReport)
-      .catch(err => toast(err.message));
+      .catch(err => {
+        if (String(err.message).includes("401") || String(err.message).includes("403")) redirectToLogin();
+        else toast(err.message);
+      });
   }
 
   function sendChat() {
@@ -1685,23 +1814,7 @@
     reader.readAsDataURL(file);
   }
 
-  function loginAndLoadPatient() {
-    fetch(`${API_BASE}/auth/demo-login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role: "patient", patient_id: currentPatientId })
-    })
-    .then(r => { if (!r.ok) throw new Error(`Login failed (${r.status})`); return r.json(); })
-    .then(session => {
-      accessToken = session.access_token;
-      localStorage.setItem("patientPortalAccessToken", accessToken);
-      localStorage.setItem("patientPortalPatientId", currentPatientId);
-      loadPatient();
-    })
-    .catch(err => toast(err.message));
-  }
-
-  loginAndLoadPatient();
+  ensurePatientSession();
 </script>
 </body>
 </html>
