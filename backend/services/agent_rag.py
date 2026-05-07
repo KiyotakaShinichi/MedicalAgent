@@ -13,7 +13,7 @@ from backend.services.security_guardrails import detect_multilingual_medical_dan
 
 MAX_CONTEXT_CHARS = 1300
 AGENT_CACHE_TTL_DAYS = 30
-AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v2"
+AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v3"
 SEMANTIC_CACHE_MIN_SIMILARITY = 0.86
 
 
@@ -161,7 +161,13 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
 
     cache_hit = None
     if cacheable:
-        cache_hit = exact_cache_check(db, rewritten["normalized_query"], knowledge_fingerprint=knowledge_fingerprint)
+        cache_hit = exact_cache_check(
+            db,
+            rewritten["normalized_query"],
+            intent=intent,
+            safety_level=safety.get("level"),
+            knowledge_fingerprint=knowledge_fingerprint,
+        )
         if cache_hit is None:
             cache_hit = semantic_cache_check(db, rewritten["semantic_key"], intent, knowledge_fingerprint=knowledge_fingerprint)
     if cache_hit:
@@ -186,6 +192,40 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             retrieved=[],
             reranked=[],
             compressed=result.get("retrieval_context") or [],
+            input_guardrails=input_guardrails,
+            started=started,
+        )
+
+    if intent in {"conversation", "patient_memory"} or (intent == "data_entry_confirmation" and safety.get("level") != "high_risk"):
+        generated = generate_answer(
+            query=query,
+            fallback_response=fallback_response,
+            safety=safety,
+            intent=intent,
+            compressed_context=[],
+            actions=actions,
+            patient_context=patient_context,
+        )
+        validated = validate_answer_and_citations(generated, [], safety)
+        result = {
+            **validated,
+            "cache": {
+                "status": "not_cacheable",
+                "cacheable": False,
+                "reason": f"intent_not_cacheable:{intent}",
+                "policy": cache_policy,
+            },
+            "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "direct_support", cache_policy=cache_policy),
+        }
+        return _finalize_result(
+            db=db,
+            patient_id=patient_id,
+            query=query,
+            rewritten=rewritten,
+            result=result,
+            retrieved=[],
+            reranked=[],
+            compressed=[],
             input_guardrails=input_guardrails,
             started=started,
         )
@@ -284,9 +324,22 @@ def safety_scope_check(query, urgent_flags=None):
         "should i stop",
         "should i start",
         "should i change",
+        "should i delay",
+        "can i stop",
+        "can i start",
+        "can i change",
+        "can i delay",
+        "do i need to delay",
         "what dose",
+        "change my dose",
         "increase my dose",
         "decrease my dose",
+        "stop chemo",
+        "stop chemotherapy",
+        "delay chemo",
+        "delay chemotherapy",
+        "delay treatment",
+        "delay my next chemo",
         "skip chemo",
         "skip treatment",
     ]
@@ -342,6 +395,10 @@ def route_intent(query, actions=None, safety=None):
         deterministic = "safety_boundary"
     elif actions:
         deterministic = "data_entry_confirmation"
+    elif _is_conversation_opening(lower):
+        deterministic = "conversation"
+    elif any(term in lower for term in ["remember", "what did i tell", "what did i say", "last message", "previous message", "chat history"]):
+        deterministic = "patient_memory"
     elif any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add"]):
         deterministic = "portal_help"
     elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment", "working", "progress"]):
@@ -364,10 +421,12 @@ def route_intent(query, actions=None, safety=None):
         "education",
         "emotional_support",
         "general_support",
+        "conversation",
+        "patient_memory",
     }
     candidate = llm.get("intent")
     if llm.get("available") and candidate in allowed and float(llm.get("confidence") or 0) >= 0.72:
-        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation"}:
+        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation", "conversation", "patient_memory"}:
             return deterministic
         return candidate
     return deterministic
@@ -404,11 +463,15 @@ def rewrite_and_decompose(query, intent):
     }
 
 
-def exact_cache_check(db, normalized_query, knowledge_fingerprint=None, now=None):
+def exact_cache_check(db, normalized_query, intent=None, safety_level=None, knowledge_fingerprint=None, now=None):
     knowledge_fingerprint = knowledge_fingerprint or knowledge_base_fingerprint()
     query_hash = _query_hash(normalized_query)
     row = db.query(AgentResponseCache).filter(AgentResponseCache.query_hash == query_hash).first()
     if not row:
+        return None
+    if intent is not None and row.intent != intent:
+        return None
+    if safety_level is not None and row.safety_level != safety_level:
         return None
     freshness = _cache_row_freshness(row, knowledge_fingerprint, now=now)
     if freshness["status"] != "fresh":
@@ -607,7 +670,9 @@ def generate_answer(query, fallback_response, safety, intent, compressed_context
         }
         for item in compressed_context
     ]
-    if safety.get("level") == "high_risk":
+    if intent in {"conversation", "patient_memory"}:
+        reply = fallback_response
+    elif safety.get("level") == "high_risk":
         reply = _safety_reply(fallback_response, compressed_context, safety)
     elif actions:
         reply = _with_related_guidance(fallback_response, compressed_context)
@@ -1091,6 +1156,25 @@ def _intent_boost(intent, snippet):
     desired = boosts.get(intent, set())
     topic = snippet.get("topic")
     return 0.25 if (tags & desired or topic in desired) else 0
+
+
+def _is_conversation_opening(lower):
+    cleaned = re.sub(r"[^a-z0-9\s]", " ", lower).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    greetings = {
+        "hi",
+        "hello",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "kumusta",
+        "kamusta",
+        "salamat",
+        "thanks",
+        "thank you",
+    }
+    return cleaned in greetings or cleaned.startswith(("hi ", "hello ", "hey "))
 
 
 def _domain_boost(query_tokens, snippet):

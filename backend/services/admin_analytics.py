@@ -4,7 +4,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.isotonic import IsotonicRegression
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, brier_score_loss, confusion_matrix, roc_auc_score
+from sklearn.model_selection import StratifiedShuffleSplit
 
 from backend.models import ModelRegistry, PredictionAuditLog
 from backend.services.app_logging import build_app_monitoring_summary
@@ -368,13 +371,163 @@ def _calibration_metrics(labels, probabilities, bins=10):
             })
 
     ece = _round(expected_calibration_error)
+    posthoc = _posthoc_calibration_diagnostics(labels, probabilities, bins=bins)
     return {
         "status": _ece_status(expected_calibration_error),
         "purpose": "Checks whether predicted probabilities behave like real probabilities, not just rankings.",
         "expected_calibration_error": ece,
         "brier_score": _round(brier_score_loss(labels, probabilities)),
         "bins": bin_rows,
+        "posthoc_calibration": posthoc,
+        "recommendation": _calibration_recommendation(expected_calibration_error, posthoc),
     }
+
+
+def _posthoc_calibration_diagnostics(labels, probabilities, bins=10):
+    labels = np.asarray(labels, dtype=int)
+    probabilities = np.asarray(probabilities, dtype=float)
+    if len(labels) < 30 or len(np.unique(labels)) < 2:
+        return {
+            "status": "unavailable",
+            "method": "heldout_posthoc_calibration",
+            "message": "At least 30 labeled predictions with both classes are needed for a useful calibration split.",
+            "candidates": [],
+        }
+
+    splitter = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=42)
+    try:
+        calibration_index, validation_index = next(splitter.split(probabilities.reshape(-1, 1), labels))
+    except ValueError as exc:
+        return {
+            "status": "unavailable",
+            "method": "heldout_posthoc_calibration",
+            "message": f"Could not create stratified calibration split: {exc}",
+            "candidates": [],
+        }
+
+    calibration_labels = labels[calibration_index]
+    validation_labels = labels[validation_index]
+    calibration_probabilities = probabilities[calibration_index]
+    validation_probabilities = probabilities[validation_index]
+
+    candidates = [
+        _calibration_candidate(
+            "raw_validation",
+            validation_labels,
+            validation_probabilities,
+            bins=bins,
+            note="Uncalibrated validation probabilities.",
+        )
+    ]
+
+    try:
+        platt = LogisticRegression(solver="lbfgs", random_state=42)
+        platt.fit(calibration_probabilities.reshape(-1, 1), calibration_labels)
+        platt_probabilities = platt.predict_proba(validation_probabilities.reshape(-1, 1))[:, 1]
+        candidates.append(_calibration_candidate(
+            "platt_scaling",
+            validation_labels,
+            platt_probabilities,
+            bins=bins,
+            note="Logistic calibration fitted on the calibration split.",
+        ))
+    except ValueError as exc:
+        candidates.append({
+            "method": "platt_scaling",
+            "status": "unavailable",
+            "error": str(exc),
+        })
+
+    try:
+        isotonic = IsotonicRegression(out_of_bounds="clip")
+        isotonic.fit(calibration_probabilities, calibration_labels)
+        isotonic_probabilities = np.clip(isotonic.transform(validation_probabilities), 0.0, 1.0)
+        candidates.append(_calibration_candidate(
+            "isotonic_regression",
+            validation_labels,
+            isotonic_probabilities,
+            bins=bins,
+            note="Non-parametric calibration fitted on the calibration split.",
+        ))
+    except ValueError as exc:
+        candidates.append({
+            "method": "isotonic_regression",
+            "status": "unavailable",
+            "error": str(exc),
+        })
+
+    valid_candidates = [candidate for candidate in candidates if candidate.get("expected_calibration_error") is not None]
+    best = min(
+        valid_candidates,
+        key=lambda candidate: (
+            candidate["expected_calibration_error"],
+            candidate.get("brier_score") if candidate.get("brier_score") is not None else float("inf"),
+        ),
+    ) if valid_candidates else None
+
+    return {
+        "status": best.get("status") if best else "unavailable",
+        "method": "heldout_posthoc_calibration",
+        "calibration_patients": int(len(calibration_labels)),
+        "validation_patients": int(len(validation_labels)),
+        "best_method": best.get("method") if best else None,
+        "best_validation_ece": best.get("expected_calibration_error") if best else None,
+        "best_validation_brier_score": best.get("brier_score") if best else None,
+        "candidates": candidates,
+        "claim_boundary": (
+            "Post-hoc calibration is a diagnostic and candidate promotion step. "
+            "It needs a locked calibration split or external validation before probability-strength claims."
+        ),
+    }
+
+
+def _calibration_candidate(method, labels, probabilities, bins=10, note=None):
+    ece = _expected_calibration_error(labels, probabilities, bins=bins)
+    return {
+        "method": method,
+        "status": _ece_status(ece),
+        "expected_calibration_error": _round(ece),
+        "brier_score": _round(brier_score_loss(labels, probabilities)),
+        "note": note,
+    }
+
+
+def _expected_calibration_error(labels, probabilities, bins=10):
+    labels = np.asarray(labels, dtype=int)
+    probabilities = np.asarray(probabilities, dtype=float)
+    if len(labels) == 0:
+        return 1.0
+    expected_calibration_error = 0.0
+    for index in range(bins):
+        lower = index / bins
+        upper = (index + 1) / bins
+        if index == bins - 1:
+            mask = (probabilities >= lower) & (probabilities <= upper)
+        else:
+            mask = (probabilities >= lower) & (probabilities < upper)
+        count = int(mask.sum())
+        if count:
+            gap = abs(float(labels[mask].mean()) - float(probabilities[mask].mean()))
+            expected_calibration_error += (count / len(labels)) * gap
+    return float(expected_calibration_error)
+
+
+def _calibration_recommendation(expected_calibration_error, posthoc=None):
+    if expected_calibration_error <= 0.10:
+        return "Raw probabilities are acceptable for PoC monitoring language with clear non-clinical caveats."
+
+    best_ece = (posthoc or {}).get("best_validation_ece")
+    best_method = (posthoc or {}).get("best_method")
+    if best_ece is not None and best_ece <= 0.10 and best_method != "raw_validation":
+        return (
+            f"Register a calibrated probability head using {best_method} on a locked calibration split, "
+            "then re-run threshold and subgroup checks before stronger claims."
+        )
+
+    return (
+        "Keep probability language conservative, collect more labeled validation journeys, "
+        "and inspect calibration before presenting risk scores as reliable probabilities."
+    )
 
 
 def _bootstrap_confidence_intervals(labels, probabilities, resamples=300, seed=42):
@@ -695,7 +848,9 @@ def _false_negative_review(frame):
 
 def _subgroup_performance(frame):
     rows = []
-    statuses = []
+    gate_statuses = []
+    powered_statuses = []
+    low_support_groups = []
     for column, label in [
         ("stage", "Cancer stage"),
         ("molecular_subtype", "Molecular subtype"),
@@ -711,7 +866,12 @@ def _subgroup_performance(frame):
             probabilities = group["probability"].to_numpy(dtype=float)
             metrics = _binary_metric_summary(labels, probabilities)
             status = _subgroup_status(metrics, len(group))
-            statuses.append(status)
+            gate_status = "acceptable" if status == "low_support" else status
+            gate_statuses.append(gate_status)
+            if status == "low_support":
+                low_support_groups.append({"group": label, "value": str(value), "n": int(len(group))})
+            else:
+                powered_statuses.append(status)
             rows.append({
                 "group": label,
                 "value": str(value),
@@ -727,8 +887,15 @@ def _subgroup_performance(frame):
 
     rows = sorted(rows, key=lambda row: (row["group"], -row["n"], row["value"]))
     return {
-        "status": _worst_status(statuses) if statuses else "unavailable",
+        "status": _worst_status(gate_statuses) if gate_statuses else "unavailable",
         "purpose": "Checks whether the model behaves differently across clinically relevant groups.",
+        "powered_group_status": _worst_status(powered_statuses),
+        "low_support_group_count": len(low_support_groups),
+        "low_support_groups": low_support_groups[:12],
+        "interpretation": (
+            "Low-support groups are validation coverage gaps, not proof of model failure. "
+            "Adequately powered subgroup failures should block stronger claims."
+        ),
         "rows": rows[:40],
     }
 
@@ -1064,7 +1231,7 @@ def _false_negative_status(value):
 
 def _subgroup_status(metrics, sample_size):
     if sample_size < 8:
-        return "unideal"
+        return "low_support"
     if metrics["roc_auc"] is None:
         return "unavailable"
     return _higher_is_better_status(metrics["roc_auc"], [0.55, 0.65, 0.75, 0.85])
@@ -1171,6 +1338,7 @@ def _status_meaning(status):
         "acceptable": "Usable for PoC with clear caveats.",
         "strong": "Good current engineering signal.",
         "passed": "Meets this project gate, not clinical validation.",
+        "low_support": "Too few examples for a reliable subgroup claim.",
         "unavailable": "Metric could not be computed.",
     }
     return meanings.get(status, "Status not recognized.")

@@ -17,7 +17,7 @@ from backend.models import (
 )
 from backend.services.agent_rag import run_patient_agent_pipeline
 from backend.services.app_logging import log_app_event
-from backend.services.input_validation import validate_cbc_values, validate_symptom_payload
+from backend.services.input_validation import validate_cbc_values, validate_imaging_report_payload, validate_symptom_payload
 from backend.services.security_guardrails import detect_multilingual_medical_danger, normalize_security_text
 
 
@@ -116,6 +116,36 @@ def handle_patient_chat(db, patient_id, message):
         actions.append({
             "type": "partial_labs_detected",
             "message": "I saw lab information, but I need WBC, hemoglobin, and platelets together to save a CBC row.",
+        })
+
+    imaging_report = _extract_imaging_report(normalized)
+    if imaging_report:
+        validate_imaging_report_payload(
+            imaging_report["modality"],
+            imaging_report["report_type"],
+            imaging_report["findings"],
+            imaging_report["impression"],
+            body_site=imaging_report["body_site"],
+        )
+        db.add(ImagingReport(
+            patient_id=patient_id,
+            date=imaging_report["date"],
+            modality=imaging_report["modality"],
+            report_type=imaging_report["report_type"],
+            body_site=imaging_report["body_site"],
+            findings=imaging_report["findings"],
+            impression=imaging_report["impression"],
+        ))
+        actions.append({
+            "type": "saved_imaging_report",
+            "modality": imaging_report["modality"],
+            "date": imaging_report["date"].isoformat(),
+            "report_type": imaging_report["report_type"],
+        })
+    elif _looks_like_partial_imaging(normalized):
+        actions.append({
+            "type": "partial_imaging_detected",
+            "message": "I saw MRI/imaging wording. To save it as an imaging report, paste the report date plus findings or impression text.",
         })
 
     medication = _extract_medication(normalized)
@@ -250,6 +280,92 @@ def _looks_like_partial_labs(message):
     return any(term in lower for term in ["wbc", "white blood", "hemoglobin", "hgb", "platelet", "platelets", "plt"])
 
 
+def _extract_imaging_report(message):
+    lower = message.lower()
+    if not _has_imaging_term(lower):
+        return None
+    report_terms = [
+        "findings",
+        "impression",
+        "mass",
+        "tumor",
+        "lesion",
+        "bi-rads",
+        "birads",
+        "cm",
+        "decreased",
+        "increased",
+        "stable",
+        "interval",
+        "response",
+    ]
+    if not any(term in lower for term in report_terms):
+        return None
+    if _is_general_imaging_question(lower):
+        return None
+
+    modality = "Breast MRI"
+    if "mammogram" in lower or "mammography" in lower:
+        modality = "Mammogram"
+    elif "ultrasound" in lower or "sonogram" in lower:
+        modality = "Breast ultrasound"
+
+    report_type = "Patient-entered imaging note"
+    if any(term in lower for term in ["follow-up", "follow up", "interval", "decreased", "increased", "stable"]):
+        report_type = "Follow-up"
+    elif "baseline" in lower:
+        report_type = "Baseline"
+
+    impression = _extract_report_section(message, "impression") or _best_imaging_sentence(message) or message
+    findings = _extract_report_section(message, "findings") or message
+    return {
+        "date": _extract_date(message),
+        "modality": modality,
+        "report_type": report_type,
+        "body_site": "Breast",
+        "findings": findings.strip()[:12000],
+        "impression": impression.strip()[:4000],
+    }
+
+
+def _looks_like_partial_imaging(message):
+    lower = message.lower()
+    if _is_general_imaging_question(lower):
+        return False
+    if not _has_imaging_term(lower):
+        return False
+    self_scoped_terms = ["my", "report", "scan", "result", "uploaded", "impression", "findings"]
+    return len(lower.split()) <= 6 or any(term in lower for term in self_scoped_terms)
+
+
+def _has_imaging_term(lower_message):
+    return any(term in lower_message for term in ["mri", "imaging", "scan", "bi-rads", "birads", "mammogram", "ultrasound"])
+
+
+def _is_general_imaging_question(lower_message):
+    stripped = lower_message.strip()
+    question_starts = ("what is", "what does", "how does", "why", "can you explain", "explain")
+    return stripped.endswith("?") and stripped.startswith(question_starts) and "my " not in stripped
+
+
+def _extract_report_section(message, label):
+    pattern = rf"{label}\s*(?:is|:|-)?\s*(.+?)(?:\b(?:findings|impression)\s*(?:is|:|-)|$)"
+    match = re.search(pattern, message, flags=re.IGNORECASE | re.DOTALL)
+    if not match:
+        return None
+    section = re.sub(r"\s+", " ", match.group(1)).strip(" .,:;-")
+    return section if section else None
+
+
+def _best_imaging_sentence(message):
+    sentences = [part.strip() for part in re.split(r"(?<=[.!?])\s+|[;\n]", message) if part.strip()]
+    terms = ["mass", "tumor", "lesion", "bi-rads", "birads", "cm", "decreased", "increased", "stable", "interval"]
+    for sentence in sentences:
+        if any(term in sentence.lower() for term in terms):
+            return sentence
+    return None
+
+
 def _extract_number_after(lower_message, labels):
     for label in labels:
         match = re.search(rf"{re.escape(label)}\s*(?:is|=|:)?\s*(\d+(?:\.\d+)?)", lower_message)
@@ -335,6 +451,14 @@ def _extract_frequency(lower_message):
 
 def _extract_date(message):
     lower = message.lower()
+    iso_match = re.search(r"\b(20\d{2})-(\d{1,2})-(\d{1,2})\b", lower)
+    if iso_match:
+        year, month, day = [int(part) for part in iso_match.groups()]
+        return date(year, month, day)
+    slash_match = re.search(r"\b(\d{1,2})/(\d{1,2})/(20\d{2})\b", lower)
+    if slash_match:
+        month, day, year = [int(part) for part in slash_match.groups()]
+        return date(year, month, day)
     if "yesterday" in lower:
         return date.today() - timedelta(days=1)
     return date.today()
@@ -366,6 +490,9 @@ def _prefer_deterministic_reply(message):
 
 
 def _build_response(message, actions, urgent_flags, patient_context):
+    if not actions and not urgent_flags and _is_small_talk(message):
+        return _conversation_reply(patient_context)
+
     parts = []
     if urgent_flags:
         parts.append(
@@ -373,6 +500,7 @@ def _build_response(message, actions, urgent_flags, patient_context):
         )
 
     saved = [action for action in actions if action["type"].startswith("saved_")]
+    partial_actions = [action for action in actions if action["type"].startswith("partial_")]
     if saved:
         labels = []
         for action in saved:
@@ -382,14 +510,22 @@ def _build_response(message, actions, urgent_flags, patient_context):
                 labels.append("CBC values")
             elif action["type"] == "saved_medication":
                 labels.append(f"medication: {action['medication']}")
+            elif action["type"] == "saved_imaging_report":
+                labels.append(f"{action['modality']} report from {action['date']}")
         parts.append("I saved this to your patient record: " + "; ".join(labels) + ".")
+    elif partial_actions:
+        parts.extend(action["message"] for action in partial_actions if action.get("message"))
     else:
         contextual = _contextual_reply(message, patient_context)
-        parts.append(contextual or "I saved your message in the chat history.")
+        parts.append(contextual or "I heard you. I saved this in the chat history so it can be reviewed with the rest of your portal record.")
 
     partial_labs = [action for action in actions if action["type"] == "partial_labs_detected"]
-    if partial_labs:
+    if partial_labs and saved:
         parts.append(partial_labs[0]["message"])
+
+    partial_imaging = [action for action in actions if action["type"] == "partial_imaging_detected"]
+    if partial_imaging and saved:
+        parts.append(partial_imaging[0]["message"])
 
     lab_alerts = [action for action in actions if action["type"] == "clinical_rule_alert"]
     if lab_alerts:
@@ -407,6 +543,37 @@ def _build_response(message, actions, urgent_flags, patient_context):
         "I can help track what you are feeling and summarize it for review, but I cannot diagnose or decide treatment."
     )
     return " ".join(parts)
+
+
+def _is_small_talk(message):
+    cleaned = re.sub(r"[^a-z0-9\s]", " ", message.lower()).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    small_talk = {
+        "hi",
+        "hello",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "kumusta",
+        "kamusta",
+        "thanks",
+        "thank you",
+        "salamat",
+    }
+    return cleaned in small_talk or cleaned.startswith(("hi ", "hello ", "hey "))
+
+
+def _conversation_reply(patient_context):
+    memory_hint = _latest_memory_hint(patient_context)
+    base = (
+        "Hi, I am here. You can tell me symptoms, CBC values, medications, or paste MRI/imaging report text, "
+        "and I will save what is safe to save for clinician review."
+    )
+    if memory_hint:
+        base += f" I can also refer back to recent portal context, like {memory_hint}."
+    base += " I cannot diagnose or choose treatment."
+    return base
 
 
 def _generate_llm_response(message, actions, urgent_flags, patient_context, fallback_response):
@@ -482,6 +649,13 @@ def _recent_patient_context(db, patient_id):
         .limit(3)
         .all()
     )
+    chat_messages = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.patient_id == patient_id)
+        .order_by(ChatMessage.created_at.desc(), ChatMessage.id.desc())
+        .limit(8)
+        .all()
+    )
     interventions = (
         db.query(ClinicalIntervention)
         .filter(ClinicalIntervention.patient_id == patient_id)
@@ -534,6 +708,14 @@ def _recent_patient_context(db, patient_id):
             }
             for row in imaging_reports
         ],
+        "recent_chat": [
+            {
+                "role": row.role,
+                "message": row.message[:240],
+                "created_at": row.created_at,
+            }
+            for row in reversed(chat_messages)
+        ],
         "recent_interventions": [
             {
                 "date": row.date,
@@ -561,6 +743,10 @@ def _contextual_reply(message, context):
     explain_terms = ["why", "explain", "factor", "contribute", "model"]
     doctor_terms = ["doctor", "oncologist", "tell them", "bring", "ask"]
     timeline_terms = ["last 14", "last fourteen", "what changed", "timeline", "tumor board", "toxicity", "cycle 2"]
+    memory_terms = ["remember", "what did i tell", "what did i say", "last message", "previous message", "chat history"]
+
+    if any(term in lower for term in memory_terms):
+        return _memory_reply(message, context)
 
     if any(term in lower for term in timeline_terms):
         timeline = context.get("timeline_context") or {}
@@ -627,6 +813,50 @@ def _contextual_reply(message, context):
         if items:
             return "For your care team, bring up " + "; ".join(items) + "."
 
+    return None
+
+
+def _memory_reply(message, context):
+    current = message.strip().lower()
+    recent_chat = context.get("recent_chat") or []
+    previous_user_messages = []
+    seen = set()
+    for item in recent_chat:
+        if item.get("role") != "user":
+            continue
+        text = item.get("message", "").strip()
+        key = re.sub(r"\s+", " ", text.lower())
+        if not text or key == current or key in seen or _is_small_talk(text):
+            continue
+        seen.add(key)
+        previous_user_messages.append(text)
+    if previous_user_messages:
+        snippets = [text.strip() for text in previous_user_messages[-3:] if text.strip()]
+        return (
+            "From this chat, the recent things you told me were: "
+            + " | ".join(snippets)
+            + ". I use this only as portal memory for tracking and review, not diagnosis."
+        )
+
+    hint = _latest_memory_hint(context)
+    if hint:
+        return f"I do not see earlier chat notes yet, but your portal context includes {hint}. This is for tracking and clinician review only."
+    return "I do not see earlier chat details for this patient yet. Tell me symptoms, CBC values, medications, or imaging report text and I can help log them."
+
+
+def _latest_memory_hint(context):
+    latest_lab = context.get("latest_lab")
+    symptoms = context.get("recent_symptoms") or []
+    imaging = context.get("recent_imaging") or []
+    medications = context.get("recent_medications") or []
+    if latest_lab:
+        return f"latest CBC WBC {latest_lab.get('wbc')}, hemoglobin {latest_lab.get('hemoglobin')}, platelets {latest_lab.get('platelets')}"
+    if symptoms:
+        return f"recent symptom {symptoms[0].get('symptom')} severity {symptoms[0].get('severity')}/10"
+    if imaging:
+        return f"recent imaging note: {imaging[0].get('impression')}"
+    if medications:
+        return f"recent medication: {medications[0].get('medication')}"
     return None
 
 

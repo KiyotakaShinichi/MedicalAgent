@@ -16,6 +16,12 @@ Run patient-agent RAG and safety regression:
 python scripts/evaluate_agent_rag.py
 ```
 
+Validate documented eval catalog coverage:
+
+```text
+python scripts/evaluate_eval_catalogs.py
+```
+
 Run MLE readiness gates:
 
 ```text

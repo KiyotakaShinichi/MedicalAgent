@@ -1,0 +1,2 @@
+patient_id,probability,stage,molecular_subtype,latest_mri_percent_change,max_symptom_severity,nadir_wbc,final_cancer_status
+COMPV4-BRCA-0223,0.496,IIB,HR+/HER2-,-48.1,8.0,0.58,minimal_residual_disease

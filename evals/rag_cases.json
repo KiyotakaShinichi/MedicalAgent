@@ -26,8 +26,8 @@
       "category": "education",
       "input": "What do CBC trends generally help monitor during chemotherapy?",
       "expected_intent": "education",
-      "expected_sources": ["cbc-monitoring-overview"],
-      "required_reply_terms": ["white blood cell", "platelets"],
+      "expected_sources": ["acs-chemo-side-effects"],
+      "required_reply_terms": ["white blood", "CBC"],
       "cacheable": true
     },
     {

@@ -13,7 +13,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.database import Base
-from backend.models import AgentResponseCache, AgentResponseFeedback, AppEventLog, AsyncTask, ChatMessage, ClinicalIntervention, ClinicalSummaryReview, LabResult, MedicationLog, MLExperimentRun, ModelRegistry, Patient, PatientUpload, PredictionAuditLog, RAGEvaluationLog, SymptomReport, Treatment, TreatmentOutcome
+from backend.models import AgentResponseCache, AgentResponseFeedback, AppEventLog, AsyncTask, ChatMessage, ClinicalIntervention, ClinicalSummaryReview, ImagingReport, LabResult, MedicationLog, MLExperimentRun, ModelRegistry, Patient, PatientUpload, PredictionAuditLog, RAGEvaluationLog, SymptomReport, Treatment, TreatmentOutcome
 from backend.processing.risk_engine import detect_clinical_rule_risks
 from backend.processing.radiology_analysis import (
     analyze_breast_imaging_reports,
@@ -25,12 +25,12 @@ from backend.services.mri_manifest import select_model_input_series
 from backend.services.mri_preprocessing import normalize_pixels
 from backend.services.auth import create_demo_session, get_context_from_authorization, require_admin_context, require_patient_context
 from backend.services.clinician_feedback import create_clinical_summary_review
-from backend.services import admin_analytics
+from backend.services import admin_analytics, agent_rag
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
 from backend.services.app_logging import build_app_monitoring_summary, log_app_event
 from backend.services import security_guardrails
-from backend.services.agent_rag import knowledge_base_fingerprint, run_patient_agent_pipeline, safety_scope_check
+from backend.services.agent_rag import AGENT_CACHE_SCHEMA_VERSION, knowledge_base_fingerprint, run_patient_agent_pipeline, safety_scope_check
 from backend.services.agent_regression_eval import run_agent_regression_suite
 from backend.services.agent_feedback import build_agent_feedback_summary, create_agent_response_feedback
 from backend.services.data_availability import build_data_availability
@@ -412,6 +412,31 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertGreater(len(decision_impact["categories"]), 0)
         self.assertEqual(mri_summary["status"], "acceptable")
 
+    def test_calibration_and_subgroup_diagnostics_are_claim_aware(self):
+        labels = pd.Series(([1, 0] * 20)).to_numpy()
+        probabilities = pd.Series(
+            [0.90, 0.10, 0.82, 0.15, 0.74, 0.18, 0.68, 0.24] * 5
+        ).to_numpy()
+
+        calibration = admin_analytics._calibration_metrics(labels, probabilities, bins=5)
+
+        self.assertEqual(calibration["posthoc_calibration"]["method"], "heldout_posthoc_calibration")
+        self.assertGreaterEqual(len(calibration["posthoc_calibration"]["candidates"]), 3)
+        self.assertIn("best_validation_ece", calibration["posthoc_calibration"])
+
+        subgroup_frame = pd.DataFrame({
+            "patient_id": [f"SG-{index:03d}" for index in range(14)],
+            "actual_label": ([1, 0] * 5) + [1, 0, 1, 0],
+            "probability": ([0.92, 0.08] * 5) + [0.70, 0.30, 0.60, 0.40],
+            "stage": (["II"] * 10) + (["IV"] * 4),
+        })
+        subgroups = admin_analytics._subgroup_performance(subgroup_frame)
+
+        self.assertEqual(subgroups["low_support_group_count"], 1)
+        self.assertEqual(subgroups["powered_group_status"], "passed")
+        self.assertEqual(subgroups["status"], "acceptable")
+        self.assertIn("low_support", {row["status"] for row in subgroups["rows"]})
+
     def test_mri_derived_feature_service_documents_report_pipeline(self):
         frame = pd.DataFrame({
             "patient_id": ["P1", "P2"],
@@ -694,7 +719,7 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertIsNotNone(cache_row.expires_at)
             self.assertIsNotNone(cache_row.last_hit_at)
             self.assertEqual(cache_row.knowledge_fingerprint, knowledge_base_fingerprint())
-            self.assertEqual(cache_row.cache_schema_version, "agent_response_cache_v2")
+            self.assertEqual(cache_row.cache_schema_version, AGENT_CACHE_SCHEMA_VERSION)
             self.assertIn("ttl_days", json.loads(cache_row.cache_policy_json))
             self.assertIn("policy", second["cache"])
         finally:
@@ -786,6 +811,49 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
+    def test_agent_rag_treatment_delay_questions_are_high_risk_and_not_cached(self):
+        db = _temp_db_session()
+        try:
+            safety = safety_scope_check("Based on my labs, should I delay my next chemo cycle?")
+            result = run_patient_agent_pipeline(
+                db=db,
+                patient_id="CACHE-P005",
+                query="Based on my labs, should I delay my next chemo cycle?",
+                patient_context={},
+                fallback_response="I cannot decide whether to delay chemotherapy. Please contact your clinician.",
+            )
+
+            self.assertEqual(safety["level"], "high_risk")
+            self.assertEqual(safety["scope"], "treatment_decision_request")
+            self.assertEqual(result["intent"], "treatment_decision_boundary")
+            self.assertFalse(result["cache"]["cacheable"])
+            self.assertIn("clinician", result["reply"].lower())
+            self.assertEqual(db.query(AgentResponseCache).count(), 0)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_llm_intent_router_cannot_override_conversation_or_memory(self):
+        original = agent_rag.route_intent_with_local_llm
+        try:
+            agent_rag.route_intent_with_local_llm = lambda query, deterministic_intent=None, safety=None: {
+                "available": True,
+                "intent": "general_support",
+                "confidence": 0.99,
+                "reason": "mocked cloud override",
+            }
+
+            self.assertEqual(
+                agent_rag.route_intent("hi", safety={"scope": "education_or_tracking", "level": "low_risk"}),
+                "conversation",
+            )
+            self.assertEqual(
+                agent_rag.route_intent("what did I tell you earlier?", safety={"scope": "education_or_tracking", "level": "low_risk"}),
+                "patient_memory",
+            )
+        finally:
+            agent_rag.route_intent_with_local_llm = original
+
     def test_agent_rag_blocks_prompt_injection_and_logs_guardrail_metrics(self):
         db = _temp_db_session()
         try:
@@ -868,6 +936,25 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             }
             result = security_guardrails.detect_prompt_injection_or_exfiltration(
                 "Where can I put my CBC, medication, symptoms, and MRI uploads?"
+            )
+        finally:
+            security_guardrails.assess_security_with_local_llm = original
+
+        self.assertFalse(result["blocked"])
+        self.assertIn("llm_security_assessment_suppressed", [signal["category"] for signal in result["signals"]])
+
+    def test_guardrails_suppress_llm_false_positive_for_self_memory_query(self):
+        original = security_guardrails.assess_security_with_local_llm
+        try:
+            security_guardrails.assess_security_with_local_llm = lambda text, deterministic_context=None: {
+                "available": True,
+                "blocked": True,
+                "issues": ["privacy_boundary_request"],
+                "confidence": 0.98,
+                "reason": "mocked self-memory false positive",
+            }
+            result = security_guardrails.detect_prompt_injection_or_exfiltration(
+                "What did I tell you earlier?"
             )
         finally:
             security_guardrails.assess_security_with_local_llm = original
@@ -1016,6 +1103,77 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertIn("very_low_wbc", result["urgent_flags"])
             self.assertEqual(result["agent_pipeline"]["safety"]["level"], "high_risk")
             self.assertIn("oncology", result["reply"].lower())
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_greeting_is_conversational_without_rag_retrieval(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P001", name="Chat Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P001",
+                message="hi",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "conversation")
+            self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+            self.assertEqual(result["agent_pipeline"]["citations"], [])
+            self.assertIn("Hi", result["reply"])
+            self.assertIn("symptoms", result["reply"].lower())
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_memory_can_recall_recent_user_messages(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P002", name="Memory Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P002",
+                message="Nausea severity 6/10 today.",
+            )
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P002",
+                message="what did I tell you earlier?",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "patient_memory")
+            self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+            self.assertIn("nausea", result["reply"].lower())
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_saves_mri_report_text_as_imaging_report(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P003", name="MRI Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P003",
+                message="MRI report on 2026-02-01 impression: right breast mass decreased to 2.1 cm.",
+            )
+
+            saved_imaging = [action for action in result["saved_actions"] if action["type"] == "saved_imaging_report"]
+            self.assertEqual(len(saved_imaging), 1)
+            self.assertEqual(db.query(ImagingReport).count(), 1)
+            report = db.query(ImagingReport).first()
+            self.assertEqual(report.modality, "Breast MRI")
+            self.assertEqual(str(report.date), "2026-02-01")
+            self.assertIn("decreased", report.impression.lower())
+            self.assertIn("mri report", result["reply"].lower())
+            self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+            self.assertEqual(result["agent_pipeline"]["citations"], [])
         finally:
             db.close()
             db.bind.dispose()

@@ -307,6 +307,7 @@ def _performance_checks(metrics, evaluation_report):
     best_metrics = ((metrics or {}).get("models") or {}).get(best_model, {})
     advanced = (evaluation_report or {}).get("advanced_model_evaluation") or {}
     calibration = advanced.get("calibration") or {}
+    posthoc_calibration = calibration.get("posthoc_calibration") or {}
     false_negative = advanced.get("false_negative_review") or {}
     ci_report = advanced.get("bootstrap_confidence_intervals") or {}
     subgroup = advanced.get("subgroup_performance") or {}
@@ -319,6 +320,20 @@ def _performance_checks(metrics, evaluation_report):
         _metric_check("patient_level_sensitivity", "model_quality", best_metrics.get("patient_level_sensitivity"), minimum=0.90, strong=0.95, hard_minimum=0.80, meaning="Medical monitoring should be especially careful about missed positive cases."),
         _metric_check("patient_level_brier_score", "model_quality", best_metrics.get("patient_level_brier_score"), maximum=0.12, strong=0.08, hard_maximum=0.20, lower_is_better=True, meaning="Probability error; lower is better."),
         _metric_check("expected_calibration_error", "model_quality", calibration.get("expected_calibration_error"), maximum=0.10, strong=0.06, hard_maximum=0.20, lower_is_better=True, meaning="Checks whether probabilities are calibrated enough for score interpretation."),
+        _check(
+            name="posthoc_calibration_diagnostic",
+            category="model_quality",
+            status=posthoc_calibration.get("status") or "unavailable",
+            value={
+                "best_method": posthoc_calibration.get("best_method"),
+                "best_validation_ece": posthoc_calibration.get("best_validation_ece"),
+                "validation_patients": posthoc_calibration.get("validation_patients"),
+            },
+            threshold="diagnostic available and validation ECE <=0.10 preferred",
+            meaning="Shows whether a candidate calibration head could improve probability quality before promotion.",
+            hard_gate=False,
+            remediation="Lock a calibration split, register the calibrated head, and re-run threshold and subgroup checks.",
+        ),
         _metric_check("false_negative_rate", "model_quality", false_negative.get("false_negative_rate"), maximum=0.10, strong=0.05, hard_maximum=0.20, lower_is_better=True, meaning="Missed positive/benefit cases need special review in medical ML."),
         _check(
             name="bootstrap_ci_stability",
@@ -334,7 +349,12 @@ def _performance_checks(metrics, evaluation_report):
             name="subgroup_performance_review",
             category="model_quality",
             status=subgroup.get("status") or "unavailable",
-            value={"status": subgroup.get("status"), "groups": len(subgroup.get("rows") or [])},
+            value={
+                "status": subgroup.get("status"),
+                "powered_group_status": subgroup.get("powered_group_status"),
+                "groups": len(subgroup.get("rows") or []),
+                "low_support_group_count": subgroup.get("low_support_group_count"),
+            },
             threshold="no failed subgroup gate",
             meaning="Subgroup checks catch brittle behavior by age/stage/subtype/regimen.",
             hard_gate=subgroup.get("status") == "failed",

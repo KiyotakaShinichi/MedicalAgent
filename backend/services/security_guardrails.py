@@ -316,7 +316,10 @@ def detect_prompt_injection_or_exfiltration(text):
         and llm_assessment.get("blocked")
         and float(llm_assessment.get("confidence") or 0) >= 0.7
     )
-    benign_self_entry = not issues and _is_benign_self_data_entry(normalized)
+    benign_self_entry = not issues and (
+        _is_benign_self_data_entry(normalized)
+        or _is_benign_self_memory_query(normalized)
+    )
     if llm_wants_block and not benign_self_entry:
         issues.extend(str(issue) for issue in llm_assessment.get("issues") or ["llm_security_boundary"])
         signals.append({
@@ -445,6 +448,29 @@ def _is_benign_self_data_entry(normalized):
         and any(term in normalized for term in self_data_terms)
         and any(term in normalized for term in portal_terms)
     )
+
+
+def _is_benign_self_memory_query(normalized):
+    memory_terms = [
+        "what did i tell you",
+        "what did i say",
+        "what was my last message",
+        "what did i mention",
+        "remember what i said",
+        "remember what i told you",
+        "my chat history",
+    ]
+    risky_scope_terms = [
+        "other patient",
+        "another patient",
+        "all patients",
+        "database",
+        "system prompt",
+        "developer message",
+        "secret",
+        "api key",
+    ]
+    return any(term in normalized for term in memory_terms) and not any(term in normalized for term in risky_scope_terms)
 
 
 def _term_present(normalized, term):
