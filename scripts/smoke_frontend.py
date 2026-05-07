@@ -6,12 +6,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 CHECKS = {
     "frontend/login.html": [
+        "Oncology Monitor",
         "Demo Access",
         "Choose a workspace",
         "patientPortalAccessToken",
         "adminAccessToken",
     ],
     "frontend/admin.html": [
+        "Oncology Monitor",
         "RAG Evaluation & Guardrails",
         "API Cost & Latency",
         "Security Guardrails",
@@ -19,17 +21,23 @@ CHECKS = {
         "Agent Regression Suite",
         "runAgentRegression",
         "MLE Release Gates",
+        "PoC readiness",
         "runMleReadiness",
     ],
     "frontend/patient.html": [
+        "Oncology Monitor",
         "My Oncology Journey",
+        "Admin/MLE",
         "Rate answer",
         "msg-citations",
         "submitAgentFeedback",
     ],
     "frontend/index.html": [
+        "Oncology Monitor",
         "Clinician",
         "Review Queue",
+        "Admin/MLE",
+        "btn-ghost",
     ],
 }
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OncoTrack — Breast Cancer Monitoring</title>
+<title>Oncology Monitor - Patient Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -209,6 +209,27 @@
     display: flex;
     align-items: center;
     gap: 10px;
+  }
+
+  .surface-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--slate);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+  }
+
+  .surface-link:hover,
+  .surface-link.active {
+    color: var(--rose);
+    border-color: var(--rose-mid);
+    background: var(--rose-light);
   }
 
   .btn {
@@ -1014,7 +1035,7 @@
           <path d="M10 2C6.69 2 4 4.69 4 8c0 2.15 1.08 4.04 2.73 5.17L6 18h8l-.73-4.83C14.92 12.04 16 10.15 16 8c0-3.31-2.69-6-6-6zm0 2a4 4 0 110 8 4 4 0 010-8z"/>
         </svg>
       </div>
-      <div class="logo-text">OncoTrack<span>Breast Cancer Monitoring</span></div>
+      <div class="logo-text">Oncology Monitor<span>Breast Cancer Monitoring</span></div>
     </div>
   </div>
 
@@ -1066,6 +1087,9 @@
       <div class="topbar-sub">My Oncology Journey</div>
     </div>
     <div class="topbar-actions">
+      <a class="surface-link active" href="/patient">Patient</a>
+      <a class="surface-link" href="/clinician">Clinician</a>
+      <a class="surface-link" href="/admin">Admin/MLE</a>
       <button class="btn" onclick="logoutPatient()">
         Sign Out
       </button>

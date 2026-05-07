@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OncoTrack Admin / MLE</title>
+<title>Oncology Monitor - Admin / MLE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -70,6 +70,22 @@
   }
 
   .actions { display: flex; align-items: center; gap: 8px; }
+
+  .surface-link {
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--muted);
+    font: 600 12px var(--body);
+    padding: 8px 11px;
+    text-decoration: none;
+  }
+
+  .surface-link:hover,
+  .surface-link.active {
+    color: var(--text);
+    border-color: rgba(224,90,111,0.62);
+    background: rgba(224,90,111,0.12);
+  }
 
   .btn {
     border: 1px solid var(--line);
@@ -284,10 +300,13 @@
   <header class="topbar">
     <div class="brand">
       <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v4H4V4Zm0 6h10v4H4v-4Zm0 6h16v4H4v-4Zm12-6h4v4h-4v-4Z"/></svg></div>
-      <span class="brand-name">OncoTrack</span>
+      <span class="brand-name">Oncology Monitor</span>
       <span class="brand-role">Admin / MLE Operations</span>
     </div>
     <div class="actions">
+      <a class="surface-link" href="/patient">Patient</a>
+      <a class="surface-link" href="/clinician">Clinician</a>
+      <a class="surface-link active" href="/admin">Admin/MLE</a>
       <button class="btn" onclick="loadAll()">Refresh</button>
       <button class="btn" onclick="logout()">Logout</button>
     </div>
@@ -571,6 +590,7 @@
     document.getElementById("mleMetrics").innerHTML = rows([
       { name: "Overall", value: mle.status || "unavailable", why: "Aggregated MLE readiness status." },
       { name: "Hard gates", value: mle.hard_gate_status || "--", why: "Release-blocking checks for artifacts, contracts, and safety." },
+      { name: "PoC readiness", value: (mle.poc_demo_readiness || {}).status || "--", why: "Supervised synthetic-data demo posture, separate from strict MLE status." },
       { name: "Recommendation", value: mle.release_recommendation || "--", why: "Current model lifecycle recommendation." },
     ]);
     document.getElementById("mleJson").textContent = JSON.stringify(mle.category_statuses || mle, null, 2);

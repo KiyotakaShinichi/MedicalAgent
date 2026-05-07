@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oncology Monitoring — Breast Cancer</title>
+  <title>Oncology Monitor - Breast Cancer</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,6 +91,26 @@
       display: flex;
       align-items: center;
       gap: 14px;
+    }
+    .surface-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .surface-link {
+      color: var(--text-2);
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 7px 9px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-alt);
+    }
+    .surface-link.active {
+      color: var(--rose);
+      border-color: var(--rose-border);
+      background: var(--rose-bg);
     }
     .patient-select-wrap {
       display: flex;
@@ -380,6 +400,16 @@
     }
     .btn-primary:hover { background: #b04d5b; }
     .btn-primary:active { transform: scale(0.98); }
+    .btn-ghost {
+      background: var(--surface-alt);
+      color: var(--text-2);
+      border: 1px solid var(--border-mid);
+    }
+    .btn-ghost:hover {
+      background: var(--rose-bg);
+      color: var(--rose);
+      border-color: var(--rose-border);
+    }
 
     /* ── SUMMARY PRE ── */
     .summary-text {
@@ -523,6 +553,11 @@
       <span class="specialty">Breast Cancer</span>
     </div>
     <div class="topbar-right">
+      <nav class="surface-links" aria-label="Workspace surfaces">
+        <a class="surface-link" href="/patient">Patient</a>
+        <a class="surface-link active" href="/clinician">Clinician</a>
+        <a class="surface-link" href="/admin">Admin/MLE</a>
+      </nav>
       <div class="patient-select-wrap">
         <label for="patientSelect">Patient</label>
         <select id="patientSelect"></select>
