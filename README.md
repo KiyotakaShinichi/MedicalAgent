@@ -48,7 +48,7 @@ User query
 -> query rewrite and decomposition
 -> exact cache check
 -> semantic cache check for low-risk queries
--> hybrid retrieval
+-> local hybrid TF-IDF/vector index retrieval
 -> parent-child / sentence-window expansion
 -> reranking
 -> contextual compression
@@ -60,6 +60,7 @@ User query
 Implemented in:
 
 - `backend/services/agent_rag.py`: safety routing, retrieval, reranking, compression, citation validation, and low-risk cache storage.
+- `backend/services/rag_vector_index.py`: persisted local hybrid retrieval index with TF-IDF vector similarity, lexical overlap, metadata scoring, and KB fingerprint invalidation.
 - `backend/services/support_chat_agent.py`: patient chat integration after symptom/CBC/medication extraction.
 - `backend/models.py`: `AgentResponseCache` for exact and semantic reuse of safe educational answers with TTL, schema versioning, KB/source fingerprint invalidation, and last-hit telemetry.
 - `backend/services/app_logging.py`: admin telemetry for agent cache entries and hits.
@@ -105,10 +106,17 @@ Run the local agent regression suite:
 python scripts/evaluate_agent_rag.py
 ```
 
+Build or refresh the local RAG retrieval index:
+
+```text
+python scripts/build_rag_index.py
+```
+
 Output:
 
 ```text
 Data/agent_eval/latest_agent_regression.json
+Data/rag_index/local_hybrid_rag_index.joblib
 ```
 
 The admin dashboard can also run the same suite from the `Agent Regression Suite` card.
@@ -424,15 +432,17 @@ Output:
 
 ```text
 Data/rag_knowledge_base_chunks.json
+Data/rag_index/local_hybrid_rag_index.joblib
 ```
 
-The patient RAG agent automatically combines the built-in safety/education snippets with ingested local KB chunks when that file exists. The generated chunk file is ignored by git so licensed papers and large local documents do not accidentally get committed.
+The patient RAG agent automatically combines the built-in safety/education snippets with ingested local KB chunks when that file exists. The generated chunk file and local retrieval index are ignored by git so licensed papers, large local documents, and binary retriever artifacts do not accidentally get committed.
 
 The ingestion pipeline uses section-aware chunks, metadata tagging, and quality checks:
 
 - section-aware chunking for abstract, methods, results, discussion, and conclusion style content
 - metadata for topic, modality, care stage, confidence/source type, PMCID, tags, and section
 - lightweight watchlists for strong unsupported claim language and possible contradiction-sensitive terms
+- automatic local hybrid RAG index refresh unless `--skip-index` is passed
 
 The patient agent applies deterministic CBC safety rules before RAG retrieval. Very low WBC, hemoglobin, or platelet values are routed to clinician-review language instead of being left to the LLM/RAG layer.
 

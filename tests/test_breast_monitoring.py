@@ -38,6 +38,7 @@ from backend.services.model_artifacts import promote_model_version, register_com
 from backend.services.mri_derived_features import build_mri_derived_feature_summary
 from backend.services.patient_uploads import save_patient_upload
 from backend.services.rag_analytics import build_rag_evaluation_summary
+from backend.services.rag_vector_index import build_rag_vector_index, search_hybrid_index
 from backend.services.support_chat_agent import handle_patient_chat
 from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys, infer_synthetic_subtype
 from backend.services.breastdcedl_inspector import build_breastdcedl_manifest, inspect_breastdcedl_dataset
@@ -777,6 +778,66 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertTrue(all("section" in chunk for chunk in chunks))
         self.assertTrue(any(chunk.get("topic") for chunk in chunks))
         self.assertTrue(output_path.exists())
+
+    def test_local_rag_vector_index_retrieves_expected_source(self):
+        index_path = _make_temp_dir(_temp_root()) / "rag_index.joblib"
+        corpus = [
+            {
+                "id": "pcr-source",
+                "parent_id": "response",
+                "title": "pCR definition",
+                "source_name": "Unit Test KB",
+                "source_url": "unit://pcr",
+                "tags": ["pcr", "pathologic complete response", "mri"],
+                "text": "pCR means pathologic complete response in treatment response modeling.",
+            },
+            {
+                "id": "portal-source",
+                "parent_id": "portal",
+                "title": "Portal uploads",
+                "source_name": "Unit Test KB",
+                "source_url": "unit://portal",
+                "tags": ["portal", "upload", "symptoms"],
+                "text": "Patients can upload symptoms and documents in the portal.",
+            },
+        ]
+
+        summary = build_rag_vector_index(corpus=corpus, index_path=index_path, knowledge_fingerprint="unit-fingerprint")
+        results = search_hybrid_index(
+            query="What does pathologic complete response pCR mean?",
+            corpus=corpus,
+            intent="education",
+            index_path=index_path,
+            knowledge_fingerprint="unit-fingerprint",
+        )
+
+        self.assertEqual(summary["document_count"], 2)
+        self.assertEqual(results[0]["id"], "pcr-source")
+        self.assertEqual(results[0]["retrieval_backend"], "local_tfidf_hybrid_index")
+        self.assertGreater(results[0]["vector_score"], 0)
+
+    def test_agent_rag_pipeline_uses_local_hybrid_index_backend(self):
+        db = _temp_db_session()
+        try:
+            result = run_patient_agent_pipeline(
+                db=db,
+                patient_id="INDEX-P001",
+                query="What is pCR?",
+                patient_context={},
+                fallback_response="I can explain general terms.",
+            )
+            context = result["retrieval_context"]
+
+            self.assertGreaterEqual(len(context), 1)
+            self.assertEqual(result["pipeline_trace"]["terminal_step"], "generated")
+            self.assertTrue(any(item.get("retrieval_backend") == "local_tfidf_hybrid_index" for item in context))
+            self.assertTrue(
+                any(item.get("id") == "project-pcr-definition" for item in context)
+                or any(item.get("id") == "project-pcr-definition" for item in result["citations"])
+            )
+        finally:
+            db.close()
+            db.bind.dispose()
 
     def test_chat_clinical_rule_layer_flags_low_cbc_before_rag(self):
         db = _temp_db_session()

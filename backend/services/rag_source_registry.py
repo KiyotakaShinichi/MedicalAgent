@@ -9,6 +9,7 @@ DEFAULT_KB_CHUNKS_PATH = "Data/rag_knowledge_base_chunks.json"
 def build_rag_source_registry(path=DEFAULT_KB_CHUNKS_PATH, source_limit=25):
     payload = _load_payload(path)
     chunks = payload.get("chunks") or []
+    vector_index = _vector_index_status()
     sources = defaultdict(list)
     for chunk in chunks:
         source_key = chunk.get("parent_id") or chunk.get("source_name") or chunk.get("source_path") or chunk.get("id")
@@ -54,6 +55,7 @@ def build_rag_source_registry(path=DEFAULT_KB_CHUNKS_PATH, source_limit=25):
             "strong_claim_watchlist": quality_checks.get("strong_claim_watchlist") or [],
             "contradiction_watchlist": quality_checks.get("contradiction_watchlist") or [],
         },
+        "vector_index": vector_index,
         "citation_policy": [
             "Every RAG answer using retrieved context should expose citations.",
             "Patient-specific answers should not be cached or generalized across patients.",
@@ -76,6 +78,20 @@ def _registry_status(payload, sources, quality_checks):
     if len(sources) < 3:
         return "unideal"
     return "passed"
+
+
+def _vector_index_status():
+    try:
+        from backend.services.agent_rag import get_rag_corpus, knowledge_base_fingerprint
+        from backend.services.rag_vector_index import rag_index_status
+
+        corpus = get_rag_corpus()
+        return rag_index_status(corpus=corpus, knowledge_fingerprint=knowledge_base_fingerprint())
+    except Exception as exc:
+        return {
+            "status": "unavailable",
+            "error": str(exc),
+        }
 
 
 def _load_payload(path):

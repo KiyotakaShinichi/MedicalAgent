@@ -6,6 +6,7 @@ from datetime import datetime, timezone, timedelta
 
 from backend.models import AgentResponseCache, RAGEvaluationLog
 from backend.services.kb_ingestion import load_ingested_chunks
+from backend.services.rag_vector_index import corpus_fingerprint, search_hybrid_index
 from backend.services.security_guardrails import detect_prompt_injection_or_exfiltration
 
 
@@ -441,8 +442,37 @@ def semantic_cache_check(db, semantic_key, intent, min_similarity=SEMANTIC_CACHE
 
 def hybrid_retrieval(rewritten, intent):
     query_tokens = set(_tokenize(rewritten["expanded_query"]))
+    snippets = _knowledge_snippets()
+    indexed_rows = search_hybrid_index(
+        query=rewritten["expanded_query"],
+        corpus=snippets,
+        intent=intent,
+        knowledge_fingerprint=knowledge_base_fingerprint(),
+    )
+    if indexed_rows:
+        rows = []
+        for item in indexed_rows:
+            intent_boost = _intent_boost(intent, item)
+            domain_boost = _domain_boost(query_tokens, item)
+            section_boost = _section_boost(item)
+            score = float(item.get("retrieval_score", 0)) + intent_boost + domain_boost + section_boost
+            rows.append({
+                **item,
+                "retrieval_score": round(score, 4),
+                "retrieval_trace": {
+                    "backend": item.get("retrieval_backend"),
+                    "vector_score": item.get("vector_score"),
+                    "lexical_score": item.get("lexical_score"),
+                    "metadata_score": item.get("metadata_score"),
+                    "agent_intent_boost": round(intent_boost, 4),
+                    "agent_domain_boost": round(domain_boost, 4),
+                    "agent_section_boost": round(section_boost, 4),
+                },
+            })
+        return sorted(rows, key=lambda row: row["retrieval_score"], reverse=True)[:5]
+
     rows = []
-    for snippet in _knowledge_snippets():
+    for snippet in snippets:
         metadata_text = " ".join([
             snippet.get("title", ""),
             snippet.get("text", ""),
@@ -492,22 +522,12 @@ def _knowledge_snippets():
     return KNOWLEDGE_SNIPPETS + external
 
 
+def get_rag_corpus():
+    return _knowledge_snippets()
+
+
 def knowledge_base_fingerprint():
-    payload = []
-    for snippet in _knowledge_snippets():
-        payload.append({
-            "id": snippet.get("id"),
-            "parent_id": snippet.get("parent_id"),
-            "title": snippet.get("title"),
-            "source_name": snippet.get("source_name"),
-            "source_url": snippet.get("source_url"),
-            "tags": sorted(snippet.get("tags") or []),
-            "topic": snippet.get("topic"),
-            "section": snippet.get("section"),
-            "text_hash": _query_hash(snippet.get("text") or ""),
-        })
-    encoded = json.dumps(sorted(payload, key=lambda row: row.get("id") or ""), sort_keys=True)
-    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:16]
+    return corpus_fingerprint(_knowledge_snippets())
 
 
 def rerank_context(expanded, rewritten, intent, safety):
@@ -540,6 +560,8 @@ def contextual_compression(reranked):
             "confidence": item.get("confidence"),
             "text": text,
             "score": item.get("rerank_score", item.get("retrieval_score")),
+            "retrieval_backend": item.get("retrieval_backend"),
+            "retrieval_trace": item.get("retrieval_trace"),
         })
         total += len(text)
         if len(compressed) >= 3:
