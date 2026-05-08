@@ -146,15 +146,23 @@ Implemented now:
 
 ## Current Quality Snapshot
 
-As of the current local report:
+This section is only valid after you run the evaluation scripts. Do not quote specific statuses unless they were generated locally.
 
-- Strict MLE status: `unideal`
-- Hard gates: `passed`
-- PoC demo readiness: `ready_with_limitations`
-- Safety regression: `strong`
-- Lifecycle: `passed`
+To generate current statuses:
 
-This is the right honest posture for a synthetic-data healthcare AI PoC: demoable, testable, and disciplined, but not production or clinical validation.
+```text
+python scripts/evaluate_agent_rag.py
+python scripts/run_mle_checks.py
+```
+
+Then review:
+
+```text
+Data/agent_eval/latest_agent_regression.json
+Data/mle_monitoring/latest_mle_readiness.json
+```
+
+The expected posture for a synthetic-data healthcare AI PoC is: demoable and testable with clear limitations, not production or clinical validation.
 
 ## Claim Boundary
 

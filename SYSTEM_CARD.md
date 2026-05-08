@@ -2,13 +2,13 @@
 
 ## System Positioning
 
-This project is a safety-first clinical workflow proof of concept for breast cancer treatment monitoring. It is not an AI doctor, diagnosis bot, treatment recommender, triage device, or clinically validated medical product.
+This project is a safety-first clinical decision-support proof of concept for breast cancer monitoring. It is not an AI doctor, diagnosis bot, treatment recommender, triage device, or clinically validated medical product.
 
 Best one-line positioning:
 
-> A safety-first AI-assisted monitoring and clinician-review platform for breast cancer treatment journeys.
+> A safety-first clinical decision-support PoC for breast cancer monitoring and clinician review.
 
-The platform helps organize, summarize, flag, and explain longitudinal patient data so a clinician can review it. The doctor remains the decision-maker.
+The platform helps organize, summarize, flag, and explain longitudinal patient data so a clinician can review it. It fuses labs, imaging summaries, symptoms, treatment cycles, and longitudinal trends into a unified clinician view. The clinician remains the decision-maker.
 
 ## Intended Users
 
@@ -23,6 +23,7 @@ The platform helps organize, summarize, flag, and explain longitudinal patient d
 - Provide patient-friendly and clinician-facing summaries with non-diagnostic wording.
 - Answer general oncology monitoring knowledge questions through a guardrailed RAG pipeline with citations.
 - Practice ML engineering workflows using synthetic/demo data, model cards, local registry, prediction audit logs, evaluation reports, and readiness gates.
+- All patient-specific or urgent outputs must be reviewed by a qualified clinician.
 
 ## Not Intended Use
 
@@ -31,6 +32,11 @@ The platform helps organize, summarize, flag, and explain longitudinal patient d
 - Replacing emergency care, clinician judgment, oncology team review, or validated clinical pathways.
 - Handling real PHI in production without proper healthcare privacy, security, institutional, and regulatory controls.
 - Claiming HIPAA compliance, FDA readiness, clinical safety, or real-world effectiveness.
+- This system does not diagnose breast cancer.
+- This system does not recommend treatment changes.
+- This system does not replace clinicians.
+- This system is not clinically validated.
+- Synthetic data is used for POC workflow and safety testing, not clinical validation.
 
 ## Timeline-First Architecture
 
@@ -89,6 +95,7 @@ Flow:
 6. Ollama is reserved for local learning/fallback experiments.
 7. RAG output is validated for citations, unsupported claims, unsafe treatment language, and escalation wording.
 8. Clinician review remains required for clinical interpretation.
+9. RAG is used for grounded knowledge support, not autonomous medical decision-making.
 
 ## RAG Boundary
 
@@ -125,6 +132,8 @@ Outputs should be framed as:
 - "clinician-review flag"
 - "exploratory PoC score"
 - "synthetic-data engineering result"
+
+ML outputs are monitoring signals and risk flags, not diagnoses.
 
 Outputs should not be framed as:
 

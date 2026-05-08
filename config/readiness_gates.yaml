@@ -1,0 +1,126 @@
+schema_version: readiness_gates_v1
+source_of_truth: backend/services/mle_readiness.py
+notes:
+  - "Thresholds are enforced in code; update this file when changing gate definitions."
+  - "This configuration is documentation for the PoC readiness gates."
+
+categories:
+  artifacts:
+    checks:
+      - name: training_dataset_present
+        hard_gate: true
+        threshold: "training CSV exists"
+      - name: metrics_artifact_present
+        hard_gate: true
+        threshold: "metrics JSON exists"
+      - name: prediction_artifact_present
+        hard_gate: true
+        threshold: "prediction export exists"
+      - name: versioned_evaluation_report_present
+        hard_gate: false
+        threshold: "latest evaluation report exists"
+      - name: champion_model_artifact_present
+        hard_gate: true
+        threshold: "champion artifact exists"
+
+  data_contract:
+    checks:
+      - name: training_data_loadable
+        hard_gate: true
+        threshold: "non-empty training CSV"
+      - name: required_columns_present
+        hard_gate: true
+        threshold: "required temporal columns present"
+      - name: minimum_training_size
+        hard_gate: true
+        threshold: "patient count >= 100 minimum"
+      - name: patient_cycle_uniqueness
+        hard_gate: true
+        threshold: "no duplicate patient-cycle rows"
+      - name: longitudinal_depth
+        hard_gate: true
+        threshold: ">= 0.80 patients with >= 6 cycles"
+      - name: label_prevalence_balance
+        hard_gate: true
+        threshold: "preferred 0.35-0.65, minimum 0.25-0.75"
+      - name: feature_missingness
+        hard_gate: true
+        threshold: "<= 0.20 hard max"
+      - name: numeric_range_contract
+        hard_gate: true
+        threshold: "0 out-of-range values"
+
+  model_quality:
+    checks:
+      - name: patient_level_roc_auc
+        hard_gate: true
+        threshold: ">= 0.70 hard min, >= 0.80 preferred"
+      - name: patient_level_average_precision
+        hard_gate: true
+        threshold: ">= 0.65 hard min, >= 0.80 preferred"
+      - name: patient_level_sensitivity
+        hard_gate: true
+        threshold: ">= 0.80 hard min, >= 0.90 preferred"
+      - name: patient_level_brier_score
+        hard_gate: true
+        threshold: "<= 0.20 hard max, <= 0.12 preferred"
+      - name: expected_calibration_error
+        hard_gate: true
+        threshold: "<= 0.20 hard max, <= 0.10 preferred"
+      - name: posthoc_calibration_diagnostic
+        hard_gate: false
+        threshold: "diagnostic available"
+      - name: false_negative_rate
+        hard_gate: true
+        threshold: "<= 0.20 hard max, <= 0.10 preferred"
+      - name: bootstrap_ci_stability
+        hard_gate: false
+        threshold: "CI width <= 0.10 preferred"
+      - name: subgroup_performance_review
+        hard_gate: true
+        threshold: "no failed subgroup gate"
+
+  monitoring:
+    checks:
+      - name: training_serving_drift_proxy
+        hard_gate: true
+        threshold: "no failed drift features"
+      - name: longitudinal_data_coverage
+        hard_gate: true
+        threshold: "coverage passed or acceptable"
+
+  feature_store:
+    checks:
+      - name: local_feature_store_materialized
+        hard_gate: false
+        threshold: "feature_store_manifest.json exists"
+      - name: feature_store_source_matches_training
+        hard_gate: false
+        threshold: "manifest source matches readiness CSV"
+
+  lifecycle:
+    checks:
+      - name: model_registry_ready
+        hard_gate: false
+        threshold: ">= 1 active/champion registry row"
+      - name: experiment_tracking_ready
+        hard_gate: false
+        threshold: ">= 1 completed ML experiment run"
+      - name: prediction_audit_logging
+        hard_gate: false
+        threshold: ">= 1 prediction audit log"
+      - name: rollback_metadata_ready
+        hard_gate: false
+        threshold: ">= 1 registered artifact"
+
+  safety_regression:
+    checks:
+      - name: agent_regression_pass_rate
+        hard_gate: true
+        threshold: ">= 0.80 hard min, >= 0.90 preferred"
+      - name: attack_block_rate
+        hard_gate: true
+        threshold: "must be 1.0"
+      - name: expected_source_hit_rate
+        hard_gate: true
+        threshold: ">= 0.67 hard min, >= 0.80 preferred"
