@@ -12,6 +12,8 @@ from backend.models import (
     Treatment,
 )
 
+QIN_EPISODE_GAP_DAYS = 7
+
 
 SUPPORTED_IMPORT_TYPES = {
     "patients",
@@ -160,21 +162,24 @@ def import_qin_breast_02_clinical_xlsx(db, file_path):
             ))
             imaging_reports_created += 1
 
-        for cycle, agent_number in enumerate(range(1, 6), start=1):
+        treatment_items = []
+        for agent_number in range(1, 6):
             agent_col = "NAC Agent  #5" if agent_number == 5 else f"NAC Agent #{agent_number}"
             start_col = f"Start date #{agent_number}"
             agent = _value(row, agent_col)
             start_date = _value(row, start_col)
             if not agent or not start_date:
                 continue
+            treatment_items.append((_parse_date(start_date), str(agent)))
 
-            treatment_date = _parse_date(start_date)
-            if not _treatment_exists(db, patient_id, treatment_date, cycle, str(agent)):
+        for cycle, (treatment_date, agents) in enumerate(_group_qin_treatment_episodes(treatment_items), start=1):
+            regimen = _merge_treatment_agents(agents)
+            if not _treatment_exists(db, patient_id, treatment_date, cycle, regimen):
                 db.add(Treatment(
                     patient_id=patient_id,
                     date=treatment_date,
                     cycle=cycle,
-                    drug=str(agent),
+                    drug=regimen,
                 ))
                 treatments_created += 1
 
@@ -240,6 +245,39 @@ def _infer_subtype(er_status, pr_status, her2_status):
     if "negative" in er and "negative" in pr and not her2_positive:
         return "Triple-negative"
     return None
+
+
+def _merge_treatment_agents(agents):
+    cleaned = []
+    for agent in agents:
+        value = str(agent or "").strip()
+        if value and value not in cleaned:
+            cleaned.append(value)
+    return " + ".join(cleaned) if cleaned else "unspecified regimen"
+
+
+def _group_qin_treatment_episodes(treatment_items):
+    episodes = []
+    current_date = None
+    current_agents = []
+    last_date = None
+    for treatment_date, agent in sorted(treatment_items, key=lambda item: item[0]):
+        if current_date is None:
+            current_date = treatment_date
+            last_date = treatment_date
+            current_agents = [agent]
+            continue
+        if (treatment_date - last_date).days <= QIN_EPISODE_GAP_DAYS:
+            current_agents.append(agent)
+            last_date = treatment_date
+            continue
+        episodes.append((current_date, current_agents))
+        current_date = treatment_date
+        last_date = treatment_date
+        current_agents = [agent]
+    if current_date is not None:
+        episodes.append((current_date, current_agents))
+    return episodes
 
 
 def _imaging_report_exists(db, patient_id, report_date, report_type):

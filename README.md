@@ -311,12 +311,18 @@ Models trained on synthetic longitudinal rows:
 - gradient boosting
 - SVM
 - MLP
+- baseline temporal CNN over patient treatment-cycle sequences
 - temporal 1D CNN over patient treatment-cycle sequences: Conv1D encoder over cycle-ordered feature sequences with binary cross-entropy objective
 - temporal GRU over patient treatment-cycle sequences: GRU sequence encoder over cycle-ordered features with binary cross-entropy objective
+- response-score regressors: ridge, random forest, extra trees, gradient boosting, and SVR
 
 Main target:
 
 - `treatment_success_binary`
+
+Continuous response target:
+
+- `response_score_percent`: synthetic MRI percent tumor-size reduction from baseline. Positive values mean shrinkage in the simulator; negative values mean growth/progression signal in the simulator. This is an engineering target, not a clinical response claim.
 
 Best current result on patient-level test split:
 
@@ -332,8 +338,10 @@ Best current result on patient-level test split:
 Other response models:
 
 - Logistic regression patient-level ROC AUC: 0.983
+- Baseline temporal CNN patient-level ROC AUC is tracked separately from the regularized CNN.
 - Temporal 1D CNN patient-level ROC AUC: 0.959
 - Temporal GRU patient-level ROC AUC: 0.929
+- Best response regressor: random forest regressor, patient-level MAE about 0.829 percentage points and R2 about 0.993 on the synthetic simulator split.
 
 Cycle-level monitoring classifiers were also trained for `toxicity_risk_binary` and `support_intervention_needed`. These are simulator-learning tasks because the labels are generated from CBC/symptom/intervention rules.
 
@@ -355,12 +363,14 @@ The admin/MLE dashboard reports:
 - Expected calibration error and calibration bins.
 - Bootstrap confidence intervals.
 - False-negative review cases.
+- Regression MAE/RMSE/R2 for the synthetic response score.
 - Decision-curve net benefit.
 - Threshold operating points across multiple cutoffs.
 - Cost-sensitive threshold policies for safety-first, balanced, and precision-first review workflows.
 - Decision-impact simulation categories for clinician-review routing.
 - Subgroup performance by stage, subtype, age band, and treatment regimen.
 - Drift, data-quality, data-coverage, and clinician-loop metrics.
+- Patient-data coherence checks for synchronized treatment cycles, CBC windows, MRI reports, symptoms, and synthetic outcome labels.
 - Real-vs-synthetic evidence separation so simulator results are not confused with real-dataset baselines.
 - MRI-derived feature inventory documenting current tabular imaging features and the planned raw-MRI boundary.
 

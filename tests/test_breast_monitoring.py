@@ -5,7 +5,7 @@ import tempfile
 import uuid
 import zipfile
 import base64
-from datetime import datetime, timezone, timedelta
+from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -45,7 +45,9 @@ from backend.services.mle_readiness import build_mle_readiness_summary, _poc_dem
 from backend.services.mlops_tracking import log_completed_run
 from backend.services.model_artifacts import promote_model_version, register_complete_synthetic_champion, rollback_model_version
 from backend.services.mri_derived_features import build_mri_derived_feature_summary
+from backend.services.patient_data_quality import audit_patient_data_coherence
 from backend.services.patient_uploads import save_patient_upload
+from backend.services.qin_treatment_sync import sync_qin_treatment_cycles
 from backend.services.rag_analytics import build_rag_evaluation_summary
 from backend.services.rag_vector_index import build_rag_vector_index, search_hybrid_index
 from backend.services.security_guardrails import detect_multilingual_medical_danger, detect_prompt_injection_or_exfiltration
@@ -311,6 +313,40 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertTrue((output_dir / "outcomes.csv").exists())
             self.assertEqual(db.query(TreatmentOutcome).count(), 3)
             self.assertGreater(db.query(ClinicalIntervention).count(), 0)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_qin_cycle_sync_merges_agents_and_restores_cbc_density(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="QIN-BREAST-02-UNIT", name="QIN Unit", diagnosis="Breast cancer demo"))
+            db.add_all([
+                Treatment(patient_id="QIN-BREAST-02-UNIT", date=date(2026, 1, 1), cycle=1, drug="Doxorubicin"),
+                Treatment(patient_id="QIN-BREAST-02-UNIT", date=date(2026, 1, 1), cycle=2, drug="Cyclophosphamide"),
+                Treatment(patient_id="QIN-BREAST-02-UNIT", date=date(2026, 1, 4), cycle=3, drug="Paclitaxel"),
+                Treatment(patient_id="QIN-BREAST-02-UNIT", date=date(2026, 2, 1), cycle=4, drug="Trastuzumab"),
+            ])
+            db.commit()
+
+            before = audit_patient_data_coherence(db, output_path=None)
+            unit_before = next(row for row in before["patients"] if row["patient_id"] == "QIN-BREAST-02-UNIT")
+            self.assertTrue(any(issue["code"] == "same_date_treatment_components" for issue in unit_before["issues"]))
+
+            sync_result = sync_qin_treatment_cycles(db)
+
+            treatments = db.query(Treatment).filter(Treatment.patient_id == "QIN-BREAST-02-UNIT").order_by(Treatment.cycle).all()
+            self.assertEqual(sync_result["patients_updated"], 1)
+            self.assertEqual(len(treatments), 2)
+            self.assertEqual(treatments[0].cycle, 1)
+            self.assertIn("Doxorubicin", treatments[0].drug)
+            self.assertIn("Cyclophosphamide", treatments[0].drug)
+            self.assertIn("Paclitaxel", treatments[0].drug)
+            self.assertEqual(db.query(LabResult).filter(LabResult.patient_id == "QIN-BREAST-02-UNIT").count(), 5)
+
+            after = audit_patient_data_coherence(db, output_path=None)
+            unit_after = next(row for row in after["patients"] if row["patient_id"] == "QIN-BREAST-02-UNIT")
+            self.assertEqual(unit_after["status"], "passed")
         finally:
             db.close()
             db.bind.dispose()

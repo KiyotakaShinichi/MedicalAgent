@@ -8,6 +8,7 @@ This project is an AI-assisted oncology monitoring proof of concept. The models 
 
 - Summarize longitudinal treatment signals for review.
 - Estimate a synthetic treatment-response probability from cycle-level monitoring features.
+- Estimate a continuous synthetic MRI response score from cycle-level monitoring features.
 - Route simulated clinician-review categories such as routine monitoring, close monitoring, toxicity review, or response-trend review.
 - Support MLE/admin evaluation with calibration, threshold, subgroup, drift, and feedback metrics.
 
@@ -39,10 +40,21 @@ These rules run before LLM adjudication and are part of the safety architecture,
 
 ### Temporal Neural Baselines
 
+- Baseline temporal CNN over patient treatment-cycle sequences.
 - Temporal 1D CNN over patient treatment-cycle sequences.
 - Temporal GRU over patient treatment-cycle sequences.
 
 These are sequence baselines, not clinically validated temporal foundation models.
+
+### Continuous Response Regressors
+
+- Ridge regression
+- Random forest regressor
+- Extra trees regressor
+- Gradient boosting regressor
+- SVR with RBF kernel
+
+These estimate `response_score_percent`, a synthetic continuous MRI response signal. Positive values represent percent tumor-size reduction from baseline in the simulator; negative values represent growth/progression signal in the simulator. This is a model-engineering target, not a clinically validated response measurement.
 
 ### Imaging / CNN Direction
 
@@ -91,6 +103,12 @@ Additional cycle-level tasks:
 
 These are simulator-learning tasks based on generated CBC, symptom, and intervention rules.
 
+Continuous exploratory target:
+
+- `response_score_percent`
+
+This target is derived from MRI percent change from baseline. It is useful for regression experiments, calibration/error analysis, and patient-level response-trajectory modeling, but it must not be described as confirmed treatment response.
+
 ## Current Evaluation
 
 The admin/MLE dashboard reports:
@@ -100,6 +118,7 @@ The admin/MLE dashboard reports:
 - Expected calibration error.
 - Bootstrap confidence intervals.
 - False-negative review cases.
+- Regression MAE, RMSE, and R2 for the synthetic response score.
 - Decision-curve net benefit.
 - Threshold operating points.
 - Cost-sensitive threshold policies.

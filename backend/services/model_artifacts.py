@@ -421,7 +421,7 @@ def _file_sha256(path):
 
 
 def _complete_synthetic_artifact_path(artifact_dir, model_name, target):
-    extension = ".pt" if model_name in {"temporal_1d_cnn", "temporal_gru"} else ".joblib"
+    extension = ".pt" if model_name in {"temporal_baseline_cnn", "temporal_1d_cnn", "temporal_gru"} else ".joblib"
     return Path(artifact_dir) / f"{model_name}_{target}{extension}"
 
 

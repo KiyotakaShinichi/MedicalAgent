@@ -611,6 +611,7 @@ def _ml_row(
         "recovery_platelets": recovery["platelets"],
         "mri_tumor_size_cm": mri_size,
         "mri_percent_change_from_baseline": round(((mri_size - baseline_size) / baseline_size) * 100, 2),
+        "response_score_percent": round(-((mri_size - baseline_size) / baseline_size) * 100, 2),
         "max_symptom_severity": max_symptom,
         "symptom_count": len(symptoms),
         "intervention_count": len(interventions),
@@ -831,6 +832,6 @@ def _data_dictionary():
         "interventions": "Clinical support events such as growth-factor support, transfusions, antibiotics, or urgent review.",
         "outcomes": "Synthetic end-of-journey response labels and maintenance status.",
         "temporal_ml_rows": "Training-ready cycle-level features with final outcome labels.",
-        "extra_labels": "Synthetic labels include treatment_success_binary, maintenance_needed, toxicity_risk_binary, support_intervention_needed, urgent_intervention_needed, final_response_multiclass, and cycle_response_trend_class.",
+        "extra_labels": "Synthetic labels include treatment_success_binary, response_score_percent, maintenance_needed, toxicity_risk_binary, support_intervention_needed, urgent_intervention_needed, final_response_multiclass, and cycle_response_trend_class.",
         "warning": "All tables are synthetic and should be used only for engineering demos and ML practice.",
     }

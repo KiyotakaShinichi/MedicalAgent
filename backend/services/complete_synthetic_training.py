@@ -7,8 +7,9 @@ import pandas as pd
 import torch
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import ExtraTreesRegressor, GradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
@@ -16,7 +17,10 @@ from sklearn.metrics import (
     brier_score_loss,
     confusion_matrix,
     f1_score,
+    mean_absolute_error,
+    mean_squared_error,
     precision_score,
+    r2_score,
     recall_score,
     roc_auc_score,
 )
@@ -24,13 +28,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.svm import SVC
+from sklearn.svm import SVC, SVR
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
 
 DEFAULT_ML_CSV_PATH = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
 DEFAULT_OUTPUT_DIR = "Data/complete_synthetic_training"
+RESPONSE_REGRESSION_TARGET = "response_score_percent"
 
 NUMERIC_FEATURES = [
     "cycle",
@@ -65,6 +70,7 @@ EXCLUDED_COLUMNS = {
     "patient_id",
     "treatment_date",
     "latent_response_strength",
+    "response_score_percent",
     "final_response_category",
     "final_cancer_status",
     "final_response_multiclass",
@@ -86,7 +92,7 @@ def train_complete_synthetic_models(
     cnn_epochs: int = 20,
     cnn_batch_size: int = 16,
 ):
-    rows = pd.read_csv(ml_csv_path)
+    rows = _ensure_response_regression_columns(pd.read_csv(ml_csv_path))
     _validate_training_frame(rows, target)
     train_patients, test_patients = _patient_split(rows, target, test_size, seed)
     train_rows = rows[rows["patient_id"].isin(train_patients)].copy()
@@ -101,6 +107,15 @@ def train_complete_synthetic_models(
     predictions = classical_results["predictions"]
     sequence_note = None
     if target not in ROW_LEVEL_TARGETS:
+        baseline_cnn_results = _train_sequence_cnn_baseline(
+            train_rows=train_rows,
+            test_rows=test_rows,
+            target=target,
+            output_path=output_path,
+            seed=seed,
+            epochs=cnn_epochs,
+            batch_size=cnn_batch_size,
+        )
         cnn_results = _train_sequence_cnn(
             train_rows=train_rows,
             test_rows=test_rows,
@@ -119,11 +134,17 @@ def train_complete_synthetic_models(
             epochs=cnn_epochs,
             batch_size=cnn_batch_size,
         )
+        all_models["temporal_baseline_cnn"] = baseline_cnn_results["metrics"]
         all_models["temporal_1d_cnn"] = cnn_results["metrics"]
         all_models["temporal_gru"] = gru_results["metrics"]
+        artifacts["temporal_baseline_cnn"] = baseline_cnn_results["artifact_path"]
         artifacts["temporal_1d_cnn"] = cnn_results["artifact_path"]
         artifacts["temporal_gru"] = gru_results["artifact_path"]
         predictions = predictions.merge(
+            baseline_cnn_results["predictions"],
+            on=["patient_id", "actual_label"],
+            how="outer",
+        ).merge(
             cnn_results["predictions"],
             on=["patient_id", "actual_label"],
             how="outer",
@@ -135,6 +156,7 @@ def train_complete_synthetic_models(
     else:
         sequence_note = "Sequence CNN/GRU skipped because this is a cycle-level monitoring target."
 
+    response_regression = _train_response_regression(train_rows, test_rows, output_path, seed)
     best_model = max(
         all_models,
         key=lambda name: (
@@ -156,12 +178,18 @@ def train_complete_synthetic_models(
             "numeric": NUMERIC_FEATURES,
             "categorical": CATEGORICAL_FEATURES,
             "excluded": sorted(EXCLUDED_COLUMNS),
+            "response_regression_target": RESPONSE_REGRESSION_TARGET,
         },
         "models": all_models,
+        "response_regression": response_regression["metrics"],
+        "best_response_regressor_by_patient_level_mae": response_regression["best_model"],
+        "dl_experiment_report": _dl_experiment_report(all_models),
         "best_model_by_patient_level_roc_auc": best_model,
         "artifacts": {
             **artifacts,
+            **response_regression["artifacts"],
             "predictions_csv": str(output_path / "complete_synthetic_model_predictions.csv"),
+            "response_regression_predictions_csv": response_regression["predictions_csv"],
         },
         "sequence_note": sequence_note,
         "warning": (
@@ -176,6 +204,20 @@ def train_complete_synthetic_models(
         encoding="utf-8",
     )
     return metrics
+
+
+def _ensure_response_regression_columns(rows):
+    rows = rows.copy()
+    if RESPONSE_REGRESSION_TARGET not in rows.columns and "mri_percent_change_from_baseline" in rows.columns:
+        rows[RESPONSE_REGRESSION_TARGET] = -pd.to_numeric(rows["mri_percent_change_from_baseline"], errors="coerce")
+    if RESPONSE_REGRESSION_TARGET in rows.columns:
+        rows[RESPONSE_REGRESSION_TARGET] = pd.to_numeric(rows[RESPONSE_REGRESSION_TARGET], errors="coerce")
+        rows[RESPONSE_REGRESSION_TARGET] = (
+            rows.groupby("patient_id")[RESPONSE_REGRESSION_TARGET]
+            .transform(lambda series: series.ffill().bfill())
+            .clip(-100, 100)
+        )
+    return rows
 
 
 def _validate_training_frame(rows, target):
@@ -301,6 +343,121 @@ def _train_classical_models(train_rows, test_rows, target, output_path, seed):
     }
 
 
+def _train_response_regression(train_rows, test_rows, output_path, seed):
+    target = RESPONSE_REGRESSION_TARGET
+    if target not in train_rows.columns or target not in test_rows.columns:
+        return {
+            "metrics": {"status": "unavailable", "reason": f"{target} column is missing"},
+            "best_model": None,
+            "artifacts": {},
+            "predictions_csv": None,
+        }
+
+    train = train_rows.dropna(subset=[target]).copy()
+    test = test_rows.dropna(subset=[target]).copy()
+    if train.empty or test.empty:
+        return {
+            "metrics": {"status": "unavailable", "reason": "No non-null response regression labels"},
+            "best_model": None,
+            "artifacts": {},
+            "predictions_csv": None,
+        }
+
+    X_train = train[NUMERIC_FEATURES + CATEGORICAL_FEATURES]
+    y_train = train[target].astype(float)
+    X_test = test[NUMERIC_FEATURES + CATEGORICAL_FEATURES]
+    y_test = test[target].astype(float)
+    models = {
+        "ridge_regression": Pipeline([
+            ("preprocess", _preprocessor(scale_numeric=True)),
+            ("regressor", Ridge(alpha=1.0)),
+        ]),
+        "random_forest_regressor": Pipeline([
+            ("preprocess", _preprocessor(scale_numeric=False)),
+            ("regressor", RandomForestRegressor(
+                n_estimators=300,
+                max_depth=8,
+                min_samples_leaf=3,
+                random_state=seed,
+            )),
+        ]),
+        "extra_trees_regressor": Pipeline([
+            ("preprocess", _preprocessor(scale_numeric=False)),
+            ("regressor", ExtraTreesRegressor(
+                n_estimators=350,
+                max_depth=8,
+                min_samples_leaf=3,
+                random_state=seed,
+            )),
+        ]),
+        "gradient_boosting_regressor": Pipeline([
+            ("preprocess", _preprocessor(scale_numeric=False)),
+            ("regressor", GradientBoostingRegressor(random_state=seed)),
+        ]),
+        "svr_rbf_regressor": Pipeline([
+            ("preprocess", _preprocessor(scale_numeric=True)),
+            ("regressor", SVR(C=2.0, kernel="rbf")),
+        ]),
+    }
+
+    model_metrics = {}
+    artifacts = {}
+    predictions = _base_patient_regression_rows(test, target)
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        row_predictions = model.predict(X_test)
+        patient_predictions = _aggregate_patient_regression_predictions(test, target, row_predictions, name)
+        model_metrics[name] = {
+            **_regression_metrics(y_test, row_predictions),
+            **_regression_metrics(
+                patient_predictions["actual_response_score_percent"],
+                patient_predictions[f"{name}_response_score_percent"],
+                prefix="patient_level_",
+            ),
+            "model_type": "cycle_tabular_regressor",
+            "target": target,
+            "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator.",
+        }
+        artifact_path = output_path / f"{name}_{target}.joblib"
+        joblib.dump(model, artifact_path)
+        artifacts[f"{name}_response_regression"] = str(artifact_path)
+        predictions = predictions.merge(patient_predictions, on=["patient_id", "actual_response_score_percent"], how="left")
+
+    best_model = min(
+        model_metrics,
+        key=lambda name: model_metrics[name].get("patient_level_mae", float("inf")),
+    )
+    predictions_csv = output_path / "complete_synthetic_response_regression_predictions.csv"
+    predictions.to_csv(predictions_csv, index=False)
+    return {
+        "metrics": {
+            "status": "trained",
+            "task": "response_score_regression",
+            "target": target,
+            "models": model_metrics,
+            "best_model_by_patient_level_mae": best_model,
+            "target_definition": "Continuous MRI response signal: baseline-to-current tumor-size reduction percent; higher is stronger shrinkage, negative means growth.",
+        },
+        "best_model": best_model,
+        "artifacts": artifacts,
+        "predictions_csv": str(predictions_csv),
+    }
+
+
+def _train_sequence_cnn_baseline(train_rows, test_rows, target, output_path, seed, epochs, batch_size):
+    return _train_sequence_torch_model(
+        model_name="temporal_baseline_cnn",
+        model_factory=lambda input_features: BaselineTemporalCnn(input_features=input_features),
+        train_rows=train_rows,
+        test_rows=test_rows,
+        target=target,
+        output_path=output_path,
+        seed=seed,
+        epochs=epochs,
+        batch_size=batch_size,
+    )
+
+
 def _train_sequence_cnn(train_rows, test_rows, target, output_path, seed, epochs, batch_size):
     return _train_sequence_torch_model(
         model_name="temporal_1d_cnn",
@@ -366,12 +523,21 @@ def _train_sequence_torch_model(model_name, model_factory, train_rows, test_rows
         })
 
     probabilities = _predict_cnn(model, X_test)
+    prediction_frame = pd.DataFrame({
+        "patient_id": test_patient_ids,
+        "actual_label": y_test.astype(int),
+        f"{model_name}_probability": np.round(probabilities, 6),
+        f"{model_name}_predicted_label": (probabilities >= 0.5).astype(int),
+    })
     metrics = {
         **_binary_metrics(y_test.astype(int), probabilities, prefix="patient_level_"),
         "model_type": f"patient_sequence_{model_name}",
         "epochs": int(epochs),
         "batch_size": int(batch_size),
         "history": history,
+        "learning_curve": history,
+        "false_negative_examples": _false_negative_examples(prediction_frame, model_name),
+        "temporal_saliency_examples": _temporal_saliency_examples(model, X_test, test_patient_ids),
     }
     artifact_path = output_path / f"{model_name}_{target}.pt"
     torch.save({
@@ -384,16 +550,10 @@ def _train_sequence_torch_model(model_name, model_factory, train_rows, test_rows
     }, artifact_path)
     joblib.dump(preprocessor, output_path / f"{model_name}_preprocessor_{target}.joblib")
 
-    predictions = pd.DataFrame({
-        "patient_id": test_patient_ids,
-        "actual_label": y_test.astype(int),
-        f"{model_name}_probability": np.round(probabilities, 6),
-        f"{model_name}_predicted_label": (probabilities >= 0.5).astype(int),
-    })
     return {
         "metrics": metrics,
         "artifact_path": str(artifact_path),
-        "predictions": predictions,
+        "predictions": prediction_frame,
     }
 
 
@@ -431,6 +591,37 @@ def _aggregate_patient_predictions(test_rows, target, probabilities, model_name)
     return grouped
 
 
+def _base_patient_regression_rows(test_rows, target):
+    last_rows = (
+        test_rows.sort_values(["patient_id", "cycle"])
+        .groupby("patient_id", as_index=False)
+        .tail(1)
+    )
+    return (
+        last_rows[["patient_id", target]]
+        .rename(columns={target: "actual_response_score_percent"})
+        .sort_values("patient_id")
+        .reset_index(drop=True)
+    )
+
+
+def _aggregate_patient_regression_predictions(test_rows, target, predictions, model_name):
+    rows = test_rows[["patient_id", "cycle", target]].copy()
+    rows["prediction"] = predictions
+    last_rows = (
+        rows.sort_values(["patient_id", "cycle"])
+        .groupby("patient_id", as_index=False)
+        .tail(1)
+        .rename(columns={target: "actual_response_score_percent", "prediction": f"{model_name}_response_score_percent"})
+    )
+    last_rows[f"{model_name}_response_score_percent"] = last_rows[f"{model_name}_response_score_percent"].round(3)
+    return (
+        last_rows[["patient_id", "actual_response_score_percent", f"{model_name}_response_score_percent"]]
+        .sort_values("patient_id")
+        .reset_index(drop=True)
+    )
+
+
 def _binary_metrics(labels, probabilities, prefix=""):
     predictions = (np.asarray(probabilities) >= 0.5).astype(int)
     labels = np.asarray(labels).astype(int)
@@ -443,6 +634,7 @@ def _binary_metrics(labels, probabilities, prefix=""):
         f"{prefix}sensitivity": round(float(recall_score(labels, predictions, zero_division=0)), 3),
         f"{prefix}specificity": round(float(tn / (tn + fp)), 3) if (tn + fp) else None,
         f"{prefix}brier_score": round(float(brier_score_loss(labels, probabilities)), 3),
+        f"{prefix}calibration": _probability_calibration_diagnostics(labels, probabilities),
         f"{prefix}confusion_matrix": {
             "true_negative": int(tn),
             "false_positive": int(fp),
@@ -457,6 +649,63 @@ def _binary_metrics(labels, probabilities, prefix=""):
         metrics[f"{prefix}roc_auc"] = None
         metrics[f"{prefix}average_precision"] = None
     return metrics
+
+
+def _probability_calibration_diagnostics(labels, probabilities):
+    labels = np.asarray(labels).astype(int)
+    probabilities = np.clip(np.asarray(probabilities).astype(float), 1e-5, 1 - 1e-5)
+    before = {
+        "brier_score": round(float(brier_score_loss(labels, probabilities)), 4),
+        "ece": _expected_calibration_error(labels, probabilities),
+    }
+    best_temperature = 1.0
+    best_brier = before["brier_score"]
+    best_probs = probabilities
+    logits = np.log(probabilities / (1 - probabilities))
+    for temperature in np.linspace(0.5, 3.0, 26):
+        scaled = 1 / (1 + np.exp(-(logits / temperature)))
+        brier = float(brier_score_loss(labels, scaled))
+        if brier < best_brier:
+            best_brier = brier
+            best_temperature = float(temperature)
+            best_probs = scaled
+    return {
+        "before_temperature_scaling": before,
+        "after_temperature_scaling": {
+            "temperature": round(best_temperature, 3),
+            "brier_score": round(best_brier, 4),
+            "ece": _expected_calibration_error(labels, best_probs),
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split",
+    }
+
+
+def _expected_calibration_error(labels, probabilities, bins=10):
+    labels = np.asarray(labels).astype(int)
+    probabilities = np.asarray(probabilities).astype(float)
+    edges = np.linspace(0, 1, bins + 1)
+    ece = 0.0
+    for low, high in zip(edges[:-1], edges[1:]):
+        mask = (probabilities >= low) & (probabilities < high)
+        if high == 1:
+            mask = (probabilities >= low) & (probabilities <= high)
+        if not np.any(mask):
+            continue
+        confidence = float(np.mean(probabilities[mask]))
+        accuracy = float(np.mean(labels[mask]))
+        ece += (float(np.mean(mask)) * abs(accuracy - confidence))
+    return round(ece, 4)
+
+
+def _regression_metrics(labels, predictions, prefix=""):
+    labels = np.asarray(labels).astype(float)
+    predictions = np.asarray(predictions).astype(float)
+    rmse = np.sqrt(mean_squared_error(labels, predictions))
+    return {
+        f"{prefix}mae": round(float(mean_absolute_error(labels, predictions)), 3),
+        f"{prefix}rmse": round(float(rmse), 3),
+        f"{prefix}r2": round(float(r2_score(labels, predictions)), 3) if len(labels) >= 2 else None,
+    }
 
 
 def _confusion_counts(labels, predictions):
@@ -485,6 +734,24 @@ def _sequence_tensor(rows, target, preprocessor):
         sequences[seq_idx, cycle_idx, :] = transformed[row_idx]
         labels[seq_idx] = max(labels[seq_idx], int(row[target]))
     return sequences, labels, patient_ids
+
+
+class BaselineTemporalCnn(nn.Module):
+    def __init__(self, input_features):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Conv1d(input_features, 24, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool1d(1),
+        )
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(24, 1),
+        )
+
+    def forward(self, x):
+        x = x.transpose(1, 2)
+        return self.classifier(self.encoder(x))
 
 
 class TemporalCnn(nn.Module):
@@ -540,3 +807,72 @@ def _predict_cnn(model, sequences):
     with torch.no_grad():
         logits = model(torch.from_numpy(sequences)).squeeze(1)
         return torch.sigmoid(logits).numpy()
+
+
+def _false_negative_examples(predictions, model_name, limit=10):
+    probability_col = f"{model_name}_probability"
+    label_col = f"{model_name}_predicted_label"
+    if probability_col not in predictions.columns or label_col not in predictions.columns:
+        return []
+    rows = predictions[
+        (predictions["actual_label"].astype(int) == 1)
+        & (predictions[label_col].astype(int) == 0)
+    ].copy()
+    rows = rows.sort_values(probability_col, ascending=False).head(limit)
+    return [
+        {
+            "patient_id": row["patient_id"],
+            "actual_label": int(row["actual_label"]),
+            "predicted_probability": round(float(row[probability_col]), 6),
+            "review_note": "Synthetic false-negative example for error analysis; not a clinical miss.",
+        }
+        for _, row in rows.iterrows()
+    ]
+
+
+def _temporal_saliency_examples(model, sequences, patient_ids, limit=5):
+    if len(sequences) == 0:
+        return []
+    model.eval()
+    tensor = torch.from_numpy(sequences[:limit]).clone().detach().requires_grad_(True)
+    logits = model(tensor).squeeze(1)
+    logits.sum().backward()
+    saliency = (tensor.grad.detach().abs() * tensor.detach().abs()).sum(dim=2).numpy()
+    examples = []
+    for index, patient_id in enumerate(patient_ids[:limit]):
+        cycle_scores = saliency[index]
+        total = float(np.sum(cycle_scores)) or 1.0
+        examples.append({
+            "patient_id": patient_id,
+            "cycle_saliency": [
+                {
+                    "cycle": int(cycle + 1),
+                    "relative_saliency": round(float(score / total), 4),
+                }
+                for cycle, score in enumerate(cycle_scores)
+            ],
+            "method": "absolute gradient times input aggregated by treatment cycle",
+            "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality.",
+        })
+    return examples
+
+
+def _dl_experiment_report(models):
+    sequence_names = [name for name in ["temporal_baseline_cnn", "temporal_1d_cnn", "temporal_gru"] if name in models]
+    return {
+        "implemented": {
+            "baseline_cnn": "temporal_baseline_cnn" in models,
+            "regularized_cnn": "temporal_1d_cnn" in models,
+            "recurrent_sequence_baseline": "temporal_gru" in models,
+            "augmentation_experiment": "synthetic generator applies noise and missingness; image augmentation remains in BreastDCEDL CNN path.",
+            "learning_curves": {name: bool(models[name].get("learning_curve")) for name in sequence_names},
+            "confusion_and_error_examples": {name: bool(models[name].get("false_negative_examples") is not None) for name in sequence_names},
+            "calibration_before_after_temperature_scaling": True,
+            "simple_visual_explanation": {name: "temporal_saliency_examples" in models[name] for name in sequence_names},
+        },
+        "not_overclaimed": {
+            "transfer_learning_baseline": "Not run for the temporal tabular CNN. Use the BreastDCEDL imaging CNN endpoint for image-transfer experiments when pretrained weights/data are available.",
+            "grad_cam": "Not applicable to the temporal tabular CNN; temporal saliency is provided instead. Use Grad-CAM only for image CNN experiments.",
+        },
+        "claim_boundary": "These are synthetic-data ML discipline checks and do not validate clinical response prediction.",
+    }

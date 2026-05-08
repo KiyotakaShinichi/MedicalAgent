@@ -691,7 +691,7 @@ def _ci_widths(ci_report):
 def _model_artifact_path(best_model, target, artifact_dir="Data/complete_synthetic_training"):
     if not best_model:
         return None
-    extension = ".pt" if best_model in {"temporal_1d_cnn", "temporal_gru"} else ".joblib"
+    extension = ".pt" if best_model in {"temporal_baseline_cnn", "temporal_1d_cnn", "temporal_gru"} else ".joblib"
     return Path(artifact_dir) / f"{best_model}_{target}{extension}"
 
 

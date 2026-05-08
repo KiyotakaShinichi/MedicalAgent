@@ -114,6 +114,7 @@ The ML layer produces exploratory monitoring signals, not clinical conclusions.
 Current/implemented signals:
 
 - Synthetic longitudinal treatment-response score.
+- Synthetic continuous MRI response-regression score.
 - BreastDCEDL pCR baseline prediction signal from MRI-derived tabular features.
 - SHAP-style explanation payloads where available.
 - Deterministic CBC/symptom risk flags.
@@ -139,6 +140,7 @@ Current evaluation families:
 - RAG regression: intent accuracy, source hit rate, citation presence, guardrail status, grounding proxy, hallucination proxy, cache path, latency, and token estimates.
 - Safety regression: prompt injection, privacy/data exfiltration, urgent symptoms, treatment-decision boundaries, multilingual and encoded attacks.
 - ML readiness: artifacts, data contract, feature store, model quality, drift proxy, calibration, subgroup checks, lifecycle, registry, audit logs, and safety regression.
+- Patient-data coherence: checks that treatment cycles, CBC windows, MRI reports, symptoms, and synthetic outcome labels are aligned across demo and imported cohorts.
 - Workflow telemetry: clinician approve/edit/reject decisions, explanation quality score, model usefulness score, patient feedback, app events, and prediction audit logs.
 
 The strict MLE readiness status can remain `unideal` while `poc_demo_readiness` is `ready_with_limitations`. That is expected for a synthetic-data healthcare PoC.

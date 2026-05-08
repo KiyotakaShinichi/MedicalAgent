@@ -1,0 +1,6 @@
+name,coverage_rate,status,detail
+Longitudinal depth,1.0,passed,300/300 patients have at least 6 cycles.
+CBC coverage,0.977,passed,8/8 expected columns present.
+MRI trend coverage,0.948,acceptable,2/2 expected columns present.
+Treatment schedule coverage,1.0,passed,3/3 expected columns present.
+Symptom/toxicity coverage,0.983,passed,3/3 expected columns present.
