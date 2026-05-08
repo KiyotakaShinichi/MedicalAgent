@@ -4,7 +4,7 @@ from datetime import date, timedelta
 
 from groq import Groq
 
-from backend.config import get_groq_api_key, get_groq_model
+from backend.config import get_groq_api_key, get_groq_model, get_llm_adjudication_enabled
 from backend.models import (
     ChatMessage,
     ClinicalIntervention,
@@ -18,6 +18,7 @@ from backend.models import (
 from backend.services.agent_rag import run_patient_agent_pipeline, route_intent, safety_scope_check
 from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_imaging_report_payload, validate_symptom_payload
+from backend.services.local_llm import select_support_tools_with_local_llm
 from backend.services.security_guardrails import detect_multilingual_medical_danger, normalize_security_text
 
 
@@ -62,11 +63,28 @@ Rules:
 - Keep the tone calm and practical. Maximum 120 words. Plain text only.
 """
 
+ALLOWED_SUPPORT_TOOLS = {
+    "none",
+    "save_symptom",
+    "request_symptom_details",
+    "save_complete_cbc",
+    "request_missing_cbc_fields",
+    "save_medication",
+    "save_imaging_report",
+    "request_missing_imaging_details",
+}
+
 
 def handle_patient_chat(db, patient_id, message):
     normalized = message.strip()
     if not normalized:
         raise ValueError("Message cannot be empty")
+
+    urgent_flags = _detect_urgent_flags(normalized)
+    routing_safety = safety_scope_check(normalized, urgent_flags)
+    extracted = _extract_candidate_inputs(normalized)
+    deterministic_plan = _deterministic_tool_plan(normalized, extracted, routing_safety)
+    tool_plan = _select_tool_plan(normalized, extracted, deterministic_plan, routing_safety)
 
     user_record = ChatMessage(
         patient_id=patient_id,
@@ -77,26 +95,33 @@ def handle_patient_chat(db, patient_id, message):
     db.add(user_record)
 
     actions = []
-    urgent_flags = _detect_urgent_flags(normalized)
+    selected_tools = set(tool_plan["selected_tools"])
 
-    symptom = _extract_symptom(normalized)
-    if symptom:
-        validate_symptom_payload(symptom["symptom"], symptom["severity"])
+    symptom = extracted["symptom"]
+    if "save_symptom" in selected_tools and symptom:
+        severity = symptom["severity"] if symptom["severity"] is not None else 5
+        validate_symptom_payload(symptom["symptom"], severity)
         db.add(SymptomReport(
             patient_id=patient_id,
             date=_extract_date(normalized),
             symptom=symptom["symptom"],
-            severity=symptom["severity"],
+            severity=severity,
             notes=f"Captured from support chat: {normalized}",
         ))
         actions.append({
             "type": "saved_symptom",
             "symptom": symptom["symptom"],
-            "severity": symptom["severity"],
+            "severity": severity,
+        })
+    elif "request_symptom_details" in selected_tools and symptom:
+        actions.append({
+            "type": "partial_symptom_detected",
+            "symptom": symptom["symptom"],
+            "message": f"I noticed {symptom['symptom']} wording. If you want me to log it, send the severity from 0-10, for example: {symptom['symptom']} severity 6/10 today.",
         })
 
-    labs = _extract_complete_labs(normalized)
-    if labs:
+    labs = extracted["labs"]
+    if "save_complete_cbc" in selected_tools and labs:
         validate_cbc_values(labs["wbc"], labs["hemoglobin"], labs["platelets"])
         lab_alerts = _clinical_lab_alerts(labs)
         db.add(LabResult(
@@ -116,14 +141,14 @@ def handle_patient_chat(db, patient_id, message):
                 "message": "CBC safety rule triggered before RAG retrieval.",
             })
             urgent_flags.extend([alert["rule"] for alert in lab_alerts])
-    elif _looks_like_partial_labs(normalized):
+    elif "request_missing_cbc_fields" in selected_tools and extracted["partial_labs"]:
         actions.append({
             "type": "partial_labs_detected",
             "message": "I saw lab information, but I need WBC, hemoglobin, and platelets together to save a CBC row.",
         })
 
-    imaging_report = _extract_imaging_report(normalized)
-    if imaging_report:
+    imaging_report = extracted["imaging_report"]
+    if "save_imaging_report" in selected_tools and imaging_report:
         validate_imaging_report_payload(
             imaging_report["modality"],
             imaging_report["report_type"],
@@ -146,14 +171,14 @@ def handle_patient_chat(db, patient_id, message):
             "date": imaging_report["date"].isoformat(),
             "report_type": imaging_report["report_type"],
         })
-    elif _looks_like_partial_imaging(normalized):
+    elif "request_missing_imaging_details" in selected_tools and extracted["partial_imaging"]:
         actions.append({
             "type": "partial_imaging_detected",
             "message": "I saw MRI/imaging wording. To save it as an imaging report, paste the report date plus findings or impression text.",
         })
 
-    medication = _extract_medication(normalized)
-    if medication:
+    medication = extracted["medication"]
+    if "save_medication" in selected_tools and medication:
         db.add(MedicationLog(
             patient_id=patient_id,
             date=_extract_date(normalized),
@@ -166,7 +191,6 @@ def handle_patient_chat(db, patient_id, message):
 
     patient_context = _recent_patient_context(db, patient_id)
     fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
-    routing_safety = safety_scope_check(normalized, urgent_flags)
     routing_intent = route_intent(normalized, actions=actions, safety=routing_safety)
     if _should_use_llm_direct_reply(routing_intent, routing_safety, actions, urgent_flags):
         fallback_response = _generate_llm_response(normalized, actions, urgent_flags, patient_context, fallback_response)
@@ -187,6 +211,7 @@ def handle_patient_chat(db, patient_id, message):
         intent="patient_support_response",
         saved_actions_json=json.dumps({
             "saved_actions": actions,
+            "tool_plan": tool_plan,
             "agent_pipeline": {
                 "intent": agent_result.get("intent"),
                 "safety": agent_result.get("safety"),
@@ -211,6 +236,7 @@ def handle_patient_chat(db, patient_id, message):
             "intent": agent_result.get("intent"),
             "safety_level": (agent_result.get("safety") or {}).get("level"),
             "cache": agent_result.get("cache"),
+            "tool_plan": tool_plan,
         },
         output_payload={
             "citation_count": len(agent_result.get("citations") or []),
@@ -221,6 +247,7 @@ def handle_patient_chat(db, patient_id, message):
     return {
         "reply": response,
         "saved_actions": actions,
+        "tool_plan": tool_plan,
         "urgent_flags": urgent_flags,
         "agent_pipeline": {
             "intent": agent_result.get("intent"),
@@ -237,6 +264,176 @@ def handle_patient_chat(db, patient_id, message):
     }
 
 
+def _extract_candidate_inputs(message):
+    labs = _extract_complete_labs(message)
+    imaging_report = _extract_imaging_report(message)
+    symptom = _extract_symptom(message)
+    return {
+        "symptom": symptom,
+        "labs": labs,
+        "partial_labs": bool(not labs and _looks_like_partial_labs(message) and not _is_general_lab_question(message)),
+        "imaging_report": imaging_report,
+        "partial_imaging": bool(not imaging_report and _looks_like_partial_imaging(message)),
+        "medication": _extract_medication(message),
+    }
+
+
+def _deterministic_tool_plan(message, extracted, safety):
+    tools = []
+    force_tools = []
+
+    if extracted.get("symptom"):
+        if _should_save_symptom(message, extracted["symptom"]):
+            tools.append("save_symptom")
+            force_tools.append("save_symptom")
+        elif _should_request_symptom_details(message, extracted["symptom"]):
+            tools.append("request_symptom_details")
+
+    if extracted.get("labs"):
+        tools.append("save_complete_cbc")
+        force_tools.append("save_complete_cbc")
+    elif extracted.get("partial_labs"):
+        tools.append("request_missing_cbc_fields")
+        if _is_short_record_hint(message):
+            force_tools.append("request_missing_cbc_fields")
+
+    if extracted.get("imaging_report"):
+        tools.append("save_imaging_report")
+        force_tools.append("save_imaging_report")
+    elif extracted.get("partial_imaging"):
+        tools.append("request_missing_imaging_details")
+        if _is_short_record_hint(message):
+            force_tools.append("request_missing_imaging_details")
+
+    if extracted.get("medication"):
+        tools.append("save_medication")
+        force_tools.append("save_medication")
+
+    tools = _dedupe_tools(tools) or ["none"]
+    return {
+        "intent": "data_entry_confirmation" if tools != ["none"] else _rough_chat_intent(message, safety),
+        "selected_tools": tools,
+        "force_tools": _dedupe_tools(force_tools),
+        "source": "deterministic_extractors",
+        "confidence": 1.0 if tools != ["none"] else 0.55,
+        "reason": "validated local extractors and record-hint heuristics",
+    }
+
+
+def _select_tool_plan(message, extracted, deterministic_plan, safety):
+    llm = select_support_tools_with_local_llm(
+        message,
+        deterministic_tools=deterministic_plan["selected_tools"],
+        deterministic_intent=deterministic_plan["intent"],
+        safety=safety,
+    )
+    selected = deterministic_plan["selected_tools"]
+    source = deterministic_plan["source"]
+    confidence = deterministic_plan["confidence"]
+    reason = deterministic_plan["reason"]
+
+    if llm.get("available") and float(llm.get("confidence") or 0) >= 0.6:
+        selected = _normalize_selected_tools(llm.get("selected_tools") or llm.get("tools") or [])
+        selected = _reconcile_selected_tools(selected, extracted, message)
+        source = f"llm_{llm.get('provider')}"
+        confidence = float(llm.get("confidence") or 0)
+        reason = llm.get("reason") or "LLM support-tool router"
+
+    selected = _reconcile_selected_tools(selected, extracted, message)
+    selected = _dedupe_tools([tool for tool in selected if tool != "none"] + deterministic_plan.get("force_tools", []))
+    if not selected:
+        selected = ["none"]
+
+    return {
+        "intent": "data_entry_confirmation" if selected != ["none"] else _rough_chat_intent(message, safety),
+        "selected_tools": selected,
+        "deterministic_tools": deterministic_plan["selected_tools"],
+        "forced_tools": deterministic_plan.get("force_tools", []),
+        "source": source,
+        "confidence": round(confidence, 3),
+        "reason": reason,
+    }
+
+
+def _normalize_selected_tools(raw_tools):
+    if isinstance(raw_tools, str):
+        raw_tools = [raw_tools]
+    tools = []
+    for tool in raw_tools or []:
+        normalized = str(tool or "").strip().lower().replace("-", "_").replace(" ", "_")
+        if normalized in ALLOWED_SUPPORT_TOOLS:
+            tools.append(normalized)
+    return _dedupe_tools(tools) or ["none"]
+
+
+def _reconcile_selected_tools(selected, extracted, message):
+    reconciled = []
+    selected = set(selected or [])
+    symptom = extracted.get("symptom")
+
+    if "save_symptom" in selected:
+        if symptom and _should_save_symptom(message, symptom):
+            reconciled.append("save_symptom")
+        elif symptom and _should_request_symptom_details(message, symptom):
+            reconciled.append("request_symptom_details")
+    if "request_symptom_details" in selected and symptom and _should_request_symptom_details(message, symptom):
+        reconciled.append("request_symptom_details")
+
+    if "save_complete_cbc" in selected:
+        if extracted.get("labs"):
+            reconciled.append("save_complete_cbc")
+        elif extracted.get("partial_labs"):
+            reconciled.append("request_missing_cbc_fields")
+    if "request_missing_cbc_fields" in selected and extracted.get("partial_labs"):
+        reconciled.append("request_missing_cbc_fields")
+
+    if "save_imaging_report" in selected:
+        if extracted.get("imaging_report"):
+            reconciled.append("save_imaging_report")
+        elif extracted.get("partial_imaging"):
+            reconciled.append("request_missing_imaging_details")
+    if "request_missing_imaging_details" in selected and extracted.get("partial_imaging"):
+        reconciled.append("request_missing_imaging_details")
+
+    if "save_medication" in selected and extracted.get("medication"):
+        reconciled.append("save_medication")
+
+    return _dedupe_tools(reconciled) or ["none"]
+
+
+def _dedupe_tools(tools):
+    seen = set()
+    deduped = []
+    for tool in tools or []:
+        if tool == "none" and len(tools) > 1:
+            continue
+        if tool not in seen:
+            seen.add(tool)
+            deduped.append(tool)
+    return deduped
+
+
+def _rough_chat_intent(message, safety):
+    lower = message.lower()
+    if safety.get("scope") == "treatment_decision_request":
+        return "treatment_decision_boundary"
+    if safety.get("scope") in {"urgent_or_safety_related", "diagnosis_or_outcome_claim"}:
+        return "safety_boundary"
+    if _is_conversational_prompt(message):
+        return "conversation"
+    if any(term in lower for term in ["remember", "what did i tell", "what did i say", "last message", "previous message", "chat history"]):
+        return "patient_memory"
+    if any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment", "working", "progress"]):
+        return "patient_timeline_monitoring"
+    if any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add"]):
+        return "portal_help"
+    if any(term in lower for term in ["pcr", "response", "mri", "cbc", "wbc", "hemoglobin", "platelets", "chemo", "chemotherapy", "side effect", "breast cancer", "neutropenia", "infection risk"]):
+        return "education"
+    if any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed"]):
+        return "emotional_support"
+    return "general_support"
+
+
 def _extract_symptom(message):
     lower = message.lower()
     symptom_name = None
@@ -251,8 +448,60 @@ def _extract_symptom(message):
     severity = _extract_severity(lower)
     return {
         "symptom": symptom_name,
-        "severity": severity if severity is not None else 5,
+        "severity": severity,
+        "severity_provided": severity is not None,
     }
+
+
+def _should_save_symptom(message, symptom):
+    lower = message.lower()
+    if _is_general_symptom_question(lower):
+        return False
+    if symptom.get("severity_provided"):
+        return True
+    if _explicit_tracking_request(lower) and _has_self_scoped_symptom_wording(lower):
+        return True
+    if symptom.get("symptom") == "fever" and _has_self_scoped_symptom_wording(lower):
+        return True
+    return False
+
+
+def _should_request_symptom_details(message, symptom):
+    lower = message.lower()
+    if not symptom or _should_save_symptom(message, symptom) or _is_general_symptom_question(lower):
+        return False
+    if symptom.get("symptom") in {"anxiety", "sadness"} and not _explicit_tracking_request(lower):
+        return False
+    return _has_self_scoped_symptom_wording(lower) or _explicit_tracking_request(lower)
+
+
+def _explicit_tracking_request(lower_message):
+    return any(term in lower_message for term in ["log ", "save ", "record ", "report ", "track ", "add "])
+
+
+def _has_self_scoped_symptom_wording(lower_message):
+    patterns = [
+        "i have",
+        "i feel",
+        "i am feeling",
+        "i'm feeling",
+        "i am having",
+        "i'm having",
+        "my ",
+        "ako",
+        "may ",
+        "masakit",
+        "nakakaramdam",
+    ]
+    return any(pattern in lower_message for pattern in patterns)
+
+
+def _is_general_symptom_question(lower_message):
+    stripped = lower_message.strip()
+    if "my " in stripped or " i " in f" {stripped} ":
+        return False
+    question_starts = ("what is", "what are", "what does", "how does", "why", "can you explain", "explain", "tell me about")
+    return stripped.endswith("?") or stripped.startswith(question_starts)
 
 
 def _extract_severity(lower_message):
@@ -286,6 +535,18 @@ def _extract_complete_labs(message):
 def _looks_like_partial_labs(message):
     lower = message.lower()
     return any(term in lower for term in ["wbc", "white blood", "hemoglobin", "hgb", "platelet", "platelets", "plt"])
+
+
+def _is_general_lab_question(message):
+    lower = message.lower().strip()
+    if any(term in lower for term in ["my wbc", "my hemoglobin", "my hgb", "my platelet", "my cbc", "i got", "i have"]):
+        return False
+    question_starts = ("what is", "what are", "what does", "how does", "why", "can you explain", "explain", "tell me about")
+    return lower.endswith("?") or lower.startswith(question_starts)
+
+
+def _is_short_record_hint(message):
+    return len(re.findall(r"[a-zA-Z0-9]+", message)) <= 4
 
 
 def _extract_imaging_report(message):
@@ -525,7 +786,7 @@ def _build_response(message, actions, urgent_flags, patient_context):
         parts.extend(action["message"] for action in partial_actions if action.get("message"))
     else:
         contextual = _contextual_reply(message, patient_context)
-        parts.append(contextual or "I heard you. I saved this in the chat history so it can be reviewed with the rest of your portal record.")
+        parts.append(contextual or "I heard you. I can chat normally, answer low-risk education questions with sources when needed, or help log symptoms, CBC values, medications, and MRI report text.")
 
     partial_labs = [action for action in actions if action["type"] == "partial_labs_detected"]
     if partial_labs and saved:
@@ -637,6 +898,8 @@ def _should_use_llm_direct_reply(intent, safety, actions, urgent_flags):
 
 
 def _generate_llm_response(message, actions, urgent_flags, patient_context, fallback_response):
+    if not get_llm_adjudication_enabled():
+        return fallback_response
     api_key = get_groq_api_key()
     if not api_key:
         return fallback_response

@@ -101,6 +101,45 @@ def route_intent_with_local_llm(text, deterministic_intent=None, safety=None):
     return _adjudicate_json(system=system, prompt=json.dumps(prompt, ensure_ascii=False))
 
 
+def select_support_tools_with_local_llm(text, deterministic_tools=None, deterministic_intent=None, safety=None):
+    system = (
+        "You are the tool-selection router for a breast cancer monitoring patient-support assistant. "
+        "Return only JSON. Choose tools only when the user is clearly trying to log or provide patient data. "
+        "Do not choose save tools for greetings, casual conversation, general education, research questions, "
+        "identity questions, or emotional support unless the user gives concrete trackable data. "
+        "Allowed tools: none, save_symptom, request_symptom_details, save_complete_cbc, "
+        "request_missing_cbc_fields, save_medication, save_imaging_report, request_missing_imaging_details. "
+        "Prefer none for normal chatbot replies. Prefer request_* when the user mentions a record type but not enough fields. "
+        "Never invent missing values."
+    )
+    prompt = {
+        "task": "patient_support_tool_selection",
+        "user_text": text,
+        "deterministic_tools": deterministic_tools or [],
+        "deterministic_intent": deterministic_intent,
+        "safety": safety or {},
+        "return_json_schema": {
+            "intent": (
+                "conversation | education | portal_help | patient_memory | emotional_support | "
+                "patient_timeline_monitoring | data_entry_confirmation | safety_boundary | treatment_decision_boundary"
+            ),
+            "selected_tools": [
+                "none",
+                "save_symptom",
+                "request_symptom_details",
+                "save_complete_cbc",
+                "request_missing_cbc_fields",
+                "save_medication",
+                "save_imaging_report",
+                "request_missing_imaging_details",
+            ],
+            "confidence": "0.0-1.0",
+            "reason": "short string",
+        },
+    }
+    return _adjudicate_json(system=system, prompt=json.dumps(prompt, ensure_ascii=False))
+
+
 def decide_cache_with_local_llm(text, deterministic_cacheable, intent, safety):
     system = (
         "You are a cache safety classifier for a medical RAG assistant. Return only JSON. "

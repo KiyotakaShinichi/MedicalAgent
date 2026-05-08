@@ -430,7 +430,7 @@ def route_intent(query, actions=None, safety=None):
     }
     candidate = llm.get("intent")
     if llm.get("available") and candidate in allowed and float(llm.get("confidence") or 0) >= 0.72:
-        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation", "conversation", "patient_memory", "patient_timeline_monitoring", "general_support", "emotional_support"}:
+        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation", "conversation", "patient_memory", "patient_timeline_monitoring", "emotional_support"}:
             return deterministic
         return candidate
     return deterministic

@@ -826,6 +826,12 @@
     max-width: 85%;
   }
 
+  .msg.typing {
+    align-self: flex-start;
+    color: var(--muted);
+    font-style: italic;
+  }
+
   .msg-citations {
     margin-top: 8px;
     padding-top: 7px;
@@ -895,6 +901,27 @@
   }
 
   .chat-compose textarea:focus { border-color: var(--rose); }
+
+  .chat-send-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chat-send-row .chat-enter-hint {
+    flex: 1;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  #chatSendBtn {
+    min-width: 82px;
+  }
+
+  #chatSendBtn:disabled {
+    opacity: 0.65;
+    cursor: wait;
+  }
 
   .chat-safety {
     font-size: 11px;
@@ -1402,18 +1429,21 @@
   <div class="chat-panel-head">
     <div>
       <div class="chat-panel-head-title">Support Agent</div>
-      <div class="chat-panel-head-sub">Log symptoms, labs, medications.</div>
+      <div class="chat-panel-head-sub">Chat, learn, or log records.</div>
     </div>
     <button class="chat-close" onclick="toggleChat()">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M12.7 3.3L8 8 3.3 3.3 2 4.7 6.6 8 2 11.3l1.3 1.4L8 9.4l4.7 4.3 1.3-1.4L9.4 8l4.6-3.3z"/></svg>
     </button>
   </div>
   <div class="chat-messages" id="chatThread">
-    <div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div>
+    <div class="msg assistant">Hi, I can chat normally, answer low-risk questions with sources, and log symptoms, CBC values, medications, or MRI report text when you provide record details. I cannot diagnose or decide treatment.</div>
   </div>
   <div class="chat-compose">
-    <textarea id="chatInput" placeholder="E.g. Nausea severity 6/10. Taking tamoxifen 20mg daily."></textarea>
-    <button class="btn btn-primary" onclick="sendChat()">Send & Save</button>
+    <textarea id="chatInput" placeholder="Message the support agent..."></textarea>
+    <div class="chat-send-row">
+      <span class="chat-enter-hint">Enter to send. Shift+Enter for a new line.</span>
+      <button class="btn btn-primary" id="chatSendBtn" onclick="sendChat()">Send</button>
+    </div>
     <div class="chat-safety">For severe or sudden symptoms, contact your oncology team or emergency services immediately.</div>
   </div>
 </div>
@@ -1429,6 +1459,7 @@
   let currentPatientId = resolvePatientId();
   let accessToken = localStorage.getItem("patientPortalAccessToken") || null;
   let labChart = null;
+  let chatSending = false;
 
   function resolvePatientId() {
     const params = new URLSearchParams(window.location.search);
@@ -1525,7 +1556,7 @@
   function renderChat(messages) {
     const thread = document.getElementById("chatThread");
     if (!messages || !messages.length) {
-      thread.innerHTML = '<div class="msg assistant">I can help log your symptoms, CBC values, and medications. I cannot diagnose or decide treatment.</div>';
+      thread.innerHTML = '<div class="msg assistant">Hi, I can chat normally, answer low-risk questions with sources, and log symptoms, CBC values, medications, or MRI report text when you provide record details. I cannot diagnose or decide treatment.</div>';
       return;
     }
     thread.innerHTML = messages.map(m =>
@@ -1540,17 +1571,9 @@
     const citations = pipeline.citations || [];
     const citationHtml = citations.length
       ? `<div class="msg-citations">${citations.slice(0, 3).map(c => `<div>${esc(c.source_name || "Source")}: ${esc(c.title || c.id)}</div>`).join("")}</div>`
-      : '<div class="msg-citations">No citations used for this answer.</div>';
+      : "";
     const feedbackHtml = message.id ? `
       <div class="agent-feedback">
-        <span>Rate answer</span>
-        <select id="feedback-rating-${message.id}" aria-label="Rate answer">
-          <option value="5">5</option>
-          <option value="4">4</option>
-          <option value="3">3</option>
-          <option value="2">2</option>
-          <option value="1">1</option>
-        </select>
         <button class="feedback-btn" onclick="submitAgentFeedback(${Number(message.id)}, true)">Helpful</button>
         <button class="feedback-btn" onclick="submitAgentFeedback(${Number(message.id)}, false)">Not helpful</button>
       </div>
@@ -1792,10 +1815,42 @@
       });
   }
 
+  function appendChatBubble(role, message, extraClass = "") {
+    const thread = document.getElementById("chatThread");
+    const emptyIntro = thread.querySelector(".msg.assistant:only-child");
+    if (emptyIntro && emptyIntro.textContent.startsWith("Hi, I can chat")) thread.innerHTML = "";
+    const bubble = document.createElement("div");
+    bubble.className = `msg ${role} ${extraClass}`.trim();
+    bubble.textContent = message;
+    thread.appendChild(bubble);
+    thread.scrollTop = thread.scrollHeight;
+    return bubble;
+  }
+
+  function setChatSending(isSending) {
+    chatSending = isSending;
+    const button = document.getElementById("chatSendBtn");
+    const input = document.getElementById("chatInput");
+    if (button) {
+      button.disabled = isSending;
+      button.textContent = isSending ? "Sending" : "Send";
+    }
+    if (input) input.disabled = isSending;
+  }
+
+  function savedRecordCount(actions) {
+    return (actions || []).filter(action => String(action.type || "").startsWith("saved_")).length;
+  }
+
   function sendChat() {
     const input = document.getElementById("chatInput");
     const message = input.value.trim();
     if (!message) { toast("Please write a message first."); return; }
+    if (chatSending) return;
+    input.value = "";
+    appendChatBubble("user", message);
+    const typing = appendChatBubble("assistant", "Thinking...", "typing");
+    setChatSending(true);
     fetch(`${API_BASE}/me/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...authHeaders() },
@@ -1803,11 +1858,20 @@
     })
     .then(r => { if (!r.ok) throw new Error(`Chat failed (${r.status})`); return r.json(); })
     .then(result => {
-      input.value = "";
-      toast(result.saved_actions?.length ? "Saved to your record." : "Message saved.");
+      typing.remove();
+      appendChatBubble("assistant", result.reply || "Message received.");
+      const savedCount = savedRecordCount(result.saved_actions);
+      if (savedCount) toast("Saved to your record.");
+      else if ((result.saved_actions || []).length) toast("I asked for the missing details.");
+      else toast("Message sent.");
       loadPatient();
     })
-    .catch(err => toast(err.message));
+    .catch(err => {
+      typing.remove();
+      input.value = message;
+      toast(err.message);
+    })
+    .finally(() => setChatSending(false));
   }
 
   function uploadRecord() {
@@ -1837,6 +1901,13 @@
     };
     reader.readAsDataURL(file);
   }
+
+  document.getElementById("chatInput").addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendChat();
+    }
+  });
 
   ensurePatientSession();
 </script>

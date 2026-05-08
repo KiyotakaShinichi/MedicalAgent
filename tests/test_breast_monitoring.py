@@ -1208,6 +1208,46 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
+    def test_chat_does_not_autosave_casual_emotional_message(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P006", name="Casual Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P006",
+                message="I'm worried about this app, can you just talk with me?",
+            )
+
+            self.assertEqual(db.query(SymptomReport).count(), 0)
+            self.assertFalse([action for action in result["saved_actions"] if action["type"].startswith("saved_")])
+            self.assertIn(result["agent_pipeline"]["intent"], {"emotional_support", "general_support", "conversation"})
+            self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_short_mri_hint_requests_details_without_saving(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P007", name="Short MRI Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P007",
+                message="mri",
+            )
+
+            self.assertEqual(db.query(ImagingReport).count(), 0)
+            self.assertTrue(any(action["type"] == "partial_imaging_detected" for action in result["saved_actions"]))
+            self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+            self.assertEqual(result["agent_pipeline"]["citations"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
     def test_chat_saves_mri_report_text_as_imaging_report(self):
         db = _temp_db_session()
         try:
