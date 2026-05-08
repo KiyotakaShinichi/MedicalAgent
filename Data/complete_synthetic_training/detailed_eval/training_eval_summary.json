@@ -1,0 +1,92 @@
+{
+  "schema_version": "detailed_training_eval_v1",
+  "best_classifier": "gradient_boosting",
+  "best_regressor": "random_forest_regressor",
+  "test_patients": 105,
+  "classification_review": {
+    "model": "gradient_boosting",
+    "probability_column": "gradient_boosting_calibrated_probability",
+    "test_patients": 105,
+    "false_negatives": 3,
+    "false_positives": 0,
+    "false_negative_examples": [
+      "COMPV4-BRCA-0100",
+      "COMPV4-BRCA-0263",
+      "COMPV4-BRCA-0365"
+    ],
+    "false_positive_examples": []
+  },
+  "hybrid_review_summary": [
+    {
+      "hybrid_review_category": "toxicity_review",
+      "patients": 76,
+      "mean_hybrid_score": 63.441,
+      "mean_probability": 0.538,
+      "mean_response_score": 42.325,
+      "toxicity_rule_rate": 1.0,
+      "response_review_rule_rate": 0.487,
+      "patient_rate": 0.724
+    },
+    {
+      "hybrid_review_category": "routine_monitoring",
+      "patients": 14,
+      "mean_hybrid_score": 99.627,
+      "mean_probability": 1.0,
+      "mean_response_score": 63.686,
+      "toxicity_rule_rate": 0.0,
+      "response_review_rule_rate": 0.0,
+      "patient_rate": 0.133
+    },
+    {
+      "hybrid_review_category": "discordant_signal_review",
+      "patients": 9,
+      "mean_hybrid_score": 37.71,
+      "mean_probability": 0.102,
+      "mean_response_score": 41.065,
+      "toxicity_rule_rate": 0.0,
+      "response_review_rule_rate": 0.889,
+      "patient_rate": 0.086
+    },
+    {
+      "hybrid_review_category": "response_trend_review",
+      "patients": 6,
+      "mean_hybrid_score": 10.279,
+      "mean_probability": 0.0,
+      "mean_response_score": -20.632,
+      "toxicity_rule_rate": 0.0,
+      "response_review_rule_rate": 1.0,
+      "patient_rate": 0.057
+    }
+  ],
+  "regression_slice_count": 21,
+  "residual_review_count": 25,
+  "metrics_summary": {
+    "best_classifier": "gradient_boosting",
+    "classifier_patient_level_roc_auc": 0.995,
+    "classifier_patient_level_average_precision": 0.996,
+    "classifier_patient_level_brier_score": 0.05,
+    "classifier_patient_level_confusion_matrix": {
+      "true_negative": 47,
+      "false_positive": 3,
+      "false_negative": 1,
+      "true_positive": 54
+    },
+    "calibrated_champion_status": "trained",
+    "calibrated_validation_ece": 0.0298,
+    "best_regressor": "random_forest_regressor",
+    "regressor_patient_level_mae": 2.921,
+    "regressor_patient_level_rmse": 11.673,
+    "regressor_patient_level_r2": 0.915
+  },
+  "files": {
+    "test_set_predictions_detailed_csv": "Data\\complete_synthetic_training\\detailed_eval\\test_set_predictions_detailed.csv",
+    "regression_slice_metrics_csv": "Data\\complete_synthetic_training\\detailed_eval\\regression_slice_metrics.csv",
+    "regression_residual_review_csv": "Data\\complete_synthetic_training\\detailed_eval\\regression_residual_review.csv",
+    "hybrid_threshold_policy_csv": "Data\\complete_synthetic_training\\detailed_eval\\hybrid_threshold_policy.csv",
+    "hybrid_review_summary_csv": "Data\\complete_synthetic_training\\detailed_eval\\hybrid_review_summary.csv",
+    "training_eval_summary_json": "Data\\complete_synthetic_training\\detailed_eval\\training_eval_summary.json",
+    "markdown_report": "Data\\complete_synthetic_training\\detailed_eval\\training_eval_report.md",
+    "html_report": "Data\\complete_synthetic_training\\detailed_eval\\training_eval_report.html"
+  },
+  "claim_boundary": "Synthetic-data engineering evaluation only. Not clinical validation."
+}

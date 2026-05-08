@@ -1,0 +1,5 @@
+category,count,rate,meaning
+discordant_response_toxicity_review,51,0.486,"Response looks favorable, but toxicity signals still need review."
+response_concern_review,1,0.01,Low response signal would prompt clinician response-trend review.
+routine_monitoring,1,0.01,No additional simulated review route from the current model/timeline signals.
+toxicity_review,52,0.495,CBC or symptom toxicity signal would prompt clinician review.

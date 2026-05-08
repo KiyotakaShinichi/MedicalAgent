@@ -73,6 +73,7 @@ Details: [docs/synthetic_data.md](docs/synthetic_data.md) and [DATA_CARD.md](DAT
 ## Evaluation suite
 - RAG regression, safety regression, ML metrics, and workflow feedback tracking.
 - Heuristic grounding and hallucination proxies until labeled RAG data exists.
+- Detailed synthetic training report exports patient-level test predictions, regression residuals, slice metrics, and hybrid review-rule routing.
 - System proof table and claim mapping are tracked in [docs/system_proof.md](docs/system_proof.md).
 
 Details: [docs/evaluation.md](docs/evaluation.md) and [evals/README.md](evals/README.md).

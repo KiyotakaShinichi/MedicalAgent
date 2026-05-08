@@ -162,9 +162,13 @@ def _response_probability(synthetic_prediction, mri_signal):
     if hybrid.get("classification_probability") is not None:
         return float(hybrid["classification_probability"])
     for key in [
+        "gradient_boosting_calibrated_probability",
         "gradient_boosting_probability",
+        "extra_trees_calibrated_probability",
         "extra_trees_probability",
+        "random_forest_calibrated_probability",
         "random_forest_probability",
+        "logistic_regression_calibrated_probability",
         "logistic_regression_probability",
         "temporal_1d_cnn_probability",
         "temporal_gru_probability",

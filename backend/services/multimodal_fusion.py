@@ -153,9 +153,13 @@ def _mri_response_signal(patient_id, report, predictions_csv_path, shap_explanat
 
 def _synthetic_response_probability(prediction):
     for key in [
+        "gradient_boosting_calibrated_probability",
         "gradient_boosting_probability",
+        "extra_trees_calibrated_probability",
         "extra_trees_probability",
+        "random_forest_calibrated_probability",
         "random_forest_probability",
+        "logistic_regression_calibrated_probability",
         "logistic_regression_probability",
         "temporal_gru_probability",
         "temporal_1d_cnn_probability",
@@ -169,16 +173,20 @@ def _synthetic_response_probability(prediction):
 
 def _synthetic_probability_source(prediction):
     for key in [
+        "gradient_boosting_calibrated_probability",
         "gradient_boosting_probability",
+        "extra_trees_calibrated_probability",
         "extra_trees_probability",
+        "random_forest_calibrated_probability",
         "random_forest_probability",
+        "logistic_regression_calibrated_probability",
         "logistic_regression_probability",
         "temporal_gru_probability",
         "temporal_1d_cnn_probability",
         "temporal_baseline_cnn_probability",
     ]:
         if prediction.get(key) is not None:
-            return key.replace("_probability", "")
+            return key.replace("_calibrated_probability", "").replace("_probability", "")
     return "unknown"
 
 

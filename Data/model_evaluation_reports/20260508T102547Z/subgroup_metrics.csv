@@ -1,0 +1,18 @@
+group,value,n,positive_rate,roc_auc,average_precision,brier_score,sensitivity,specificity,status
+Age band,<45,29,0.586,0.995,0.994,0.04,0.882,1.0,passed
+Age band,45-54,27,0.556,0.994,0.996,0.022,0.933,1.0,passed
+Age band,65-74,25,0.48,1.0,1.0,0.007,1.0,1.0,passed
+Age band,55-64,24,0.458,1.0,1.0,0.011,1.0,1.0,passed
+Cancer stage,IIB,32,0.594,1.0,1.0,0.025,0.947,1.0,passed
+Cancer stage,IIA,26,0.577,1.0,1.0,0.023,0.933,1.0,passed
+Cancer stage,IIIA,24,0.458,1.0,1.0,0.005,1.0,1.0,passed
+Cancer stage,IIIB,19,0.526,0.989,0.991,0.036,0.9,1.0,passed
+Cancer stage,IV,4,0.0,,,0.0,,1.0,low_support
+Molecular subtype,HR+/HER2-,47,0.404,0.997,0.995,0.027,0.895,1.0,passed
+Molecular subtype,HER2+,25,0.64,0.997,0.996,0.025,0.938,1.0,passed
+Molecular subtype,triple-negative,25,0.6,1.0,1.0,0.013,1.0,1.0,passed
+Molecular subtype,HR+/HER2+,8,0.625,1.0,1.0,0.0,1.0,1.0,passed
+Treatment regimen,dose-dense AC then paclitaxel,47,0.404,0.997,0.995,0.027,0.895,1.0,passed
+Treatment regimen,TCHP,25,0.64,0.997,0.996,0.025,0.938,1.0,passed
+Treatment regimen,paclitaxel + carboplatin then AC,25,0.6,1.0,1.0,0.013,1.0,1.0,passed
+Treatment regimen,TCHP then endocrine therapy,8,0.625,1.0,1.0,0.0,1.0,1.0,passed

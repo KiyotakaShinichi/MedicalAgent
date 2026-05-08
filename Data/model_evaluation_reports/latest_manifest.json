@@ -1,21 +1,21 @@
 {
-  "run_id": "20260508T033042Z",
-  "created_at": "2026-05-08T03:30:42.696567+00:00",
-  "output_dir": "Data\\model_evaluation_reports\\20260508T033042Z",
-  "advanced_evaluation_status": "unideal",
+  "run_id": "20260508T102547Z",
+  "created_at": "2026-05-08T10:25:47.673938+00:00",
+  "output_dir": "Data\\model_evaluation_reports\\20260508T102547Z",
+  "advanced_evaluation_status": "acceptable",
   "champion_model": "gradient_boosting",
   "files": {
-    "evaluation_report_json": "Data\\model_evaluation_reports\\20260508T033042Z\\evaluation_report.json",
-    "metric_definitions_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\metric_definitions.csv",
-    "calibration_bins_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\calibration_bins.csv",
-    "threshold_operating_points_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\threshold_operating_points.csv",
-    "cost_sensitive_thresholds_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\cost_sensitive_thresholds.csv",
-    "false_negative_cases_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\false_negative_cases.csv",
-    "subgroup_metrics_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\subgroup_metrics.csv",
-    "decision_impact_categories_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\decision_impact_categories.csv",
-    "decision_impact_examples_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\decision_impact_examples.csv",
-    "data_coverage_csv": "Data\\model_evaluation_reports\\20260508T033042Z\\data_coverage.csv",
-    "manifest_json": "Data\\model_evaluation_reports\\20260508T033042Z\\manifest.json"
+    "evaluation_report_json": "Data\\model_evaluation_reports\\20260508T102547Z\\evaluation_report.json",
+    "metric_definitions_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\metric_definitions.csv",
+    "calibration_bins_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\calibration_bins.csv",
+    "threshold_operating_points_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\threshold_operating_points.csv",
+    "cost_sensitive_thresholds_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\cost_sensitive_thresholds.csv",
+    "false_negative_cases_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\false_negative_cases.csv",
+    "subgroup_metrics_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\subgroup_metrics.csv",
+    "decision_impact_categories_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\decision_impact_categories.csv",
+    "decision_impact_examples_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\decision_impact_examples.csv",
+    "data_coverage_csv": "Data\\model_evaluation_reports\\20260508T102547Z\\data_coverage.csv",
+    "manifest_json": "Data\\model_evaluation_reports\\20260508T102547Z\\manifest.json"
   },
   "safety_note": "Evaluation reports are engineering artifacts. They are not clinical validation."
 }

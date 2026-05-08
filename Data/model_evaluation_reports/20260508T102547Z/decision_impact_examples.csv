@@ -1,0 +1,13 @@
+patient_id,category,action,probability,latest_mri_percent_change,max_symptom_severity,nadir_wbc,intervention_count
+COMPV4-BRCA-0004,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.0,10.72,8.0,0.61,7.0
+COMPV4-BRCA-0006,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-91.18,8.0,0.58,7.0
+COMPV4-BRCA-0012,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-55.19,7.0,0.6,4.0
+COMPV4-BRCA-0019,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.0,19.17,7.0,0.61,6.0
+COMPV4-BRCA-0020,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-50.56,9.0,0.59,9.0
+COMPV4-BRCA-0029,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.0,34.21,7.0,0.59,11.0
+COMPV4-BRCA-0032,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.0,-70.0,7.0,0.58,3.0
+COMPV4-BRCA-0035,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.333,-40.91,5.0,0.61,3.0
+COMPV4-BRCA-0043,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.25,-43.89,8.0,0.58,4.0
+COMPV4-BRCA-0044,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.0,14.44,7.0,0.58,9.0
+COMPV4-BRCA-0046,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-86.33,9.0,0.59,4.0
+COMPV4-BRCA-0067,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-64.46,9.0,0.59,9.0

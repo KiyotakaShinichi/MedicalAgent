@@ -209,11 +209,16 @@ def _build_hybrid_mle_signal(classification_prediction, regression_prediction, m
 def _best_probability(prediction, best_classifier):
     keys = []
     if best_classifier:
+        keys.append(f"{best_classifier}_calibrated_probability")
         keys.append(f"{best_classifier}_probability")
     keys.extend([
+        "gradient_boosting_calibrated_probability",
         "gradient_boosting_probability",
+        "extra_trees_calibrated_probability",
         "extra_trees_probability",
+        "random_forest_calibrated_probability",
         "random_forest_probability",
+        "logistic_regression_calibrated_probability",
         "logistic_regression_probability",
         "temporal_gru_probability",
         "temporal_1d_cnn_probability",
@@ -222,7 +227,7 @@ def _best_probability(prediction, best_classifier):
     for key in keys:
         value = (prediction or {}).get(key)
         if value is not None:
-            return float(value), key.replace("_probability", "")
+            return float(value), key.replace("_calibrated_probability", "").replace("_probability", "")
     return None, None
 
 

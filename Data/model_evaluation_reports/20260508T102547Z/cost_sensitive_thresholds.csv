@@ -1,0 +1,4 @@
+name,false_negative_cost,false_positive_cost,purpose,recommended_threshold,weighted_error,sensitivity,specificity,false_negative,false_positive,status
+safety_first,5,1,"Prioritizes avoiding missed positive/benefit cases, accepting more review flags.",0.3,0.076,0.982,0.94,1,3,strong
+balanced,2,1,Keeps false negatives more expensive while limiting unnecessary review burden.,0.3,0.048,0.982,0.94,1,3,passed
+precision_first,1,2,Prioritizes fewer false alarms when review capacity is limited.,0.35,0.029,0.945,1.0,3,0,passed

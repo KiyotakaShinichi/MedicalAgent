@@ -116,6 +116,12 @@ Hybrid MLE signal:
 - Reports agreement between classifier and regressor bands (`aligned`, `partially_aligned`, `conflicting`, or `single_signal_available`).
 - Used as an exploratory monitoring signal for dashboards and summaries, not as clinical treatment-response confirmation.
 
+Calibrated probability head:
+
+- The current champion exports an isotonic-regression calibrated probability column.
+- Calibration is fitted on a synthetic holdout calibration split and evaluated on its validation half.
+- This improves engineering probability behavior, but it is still synthetic-data evidence and not clinical validation.
+
 ## Current Evaluation
 
 The admin/MLE dashboard reports:

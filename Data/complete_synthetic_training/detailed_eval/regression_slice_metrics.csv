@@ -1,0 +1,22 @@
+slice,value,n,mae,rmse,r2,status
+age_band,65-74,25,4.823,14.465,0.879,acceptable
+age_band,<45,29,3.124,10.586,0.884,acceptable
+molecular_subtype,HER2+,25,5.84,15.158,0.856,acceptable
+regimen,TCHP,25,5.84,15.158,0.856,acceptable
+stage,IIIA,24,5.005,16.083,0.888,acceptable
+stage,IIIB,19,5.745,14.712,0.752,acceptable
+stage,IV,4,0.081,0.088,1.0,low_support
+hybrid_review_category,discordant_signal_review,9,8.944,25.202,0.175,needs_review
+molecular_subtype,HR+/HER2+,8,6.617,17.884,0.823,needs_review
+regimen,TCHP then endocrine therapy,8,6.617,17.884,0.823,needs_review
+age_band,45-54,27,2.946,14.546,0.889,strong
+age_band,55-64,24,0.665,2.169,0.997,strong
+hybrid_review_category,response_trend_review,6,0.236,0.301,0.999,strong
+hybrid_review_category,routine_monitoring,14,1.786,6.481,0.791,strong
+hybrid_review_category,toxicity_review,76,2.628,10.261,0.936,strong
+molecular_subtype,HR+/HER2-,47,1.882,11.035,0.932,strong
+molecular_subtype,triple-negative,25,0.771,3.353,0.988,strong
+regimen,dose-dense AC then paclitaxel,47,1.882,11.035,0.932,strong
+regimen,paclitaxel + carboplatin then AC,25,0.771,3.353,0.988,strong
+stage,IIA,26,2.738,12.378,0.861,strong
+stage,IIB,32,0.184,0.32,1.0,strong

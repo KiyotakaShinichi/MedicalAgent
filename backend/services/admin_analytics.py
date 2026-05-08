@@ -253,7 +253,9 @@ def _advanced_model_evaluation(synthetic_metrics, predictions, training_rows, mr
             "message": "Synthetic prediction artifacts are required for advanced evaluation.",
         }
 
-    probability_column = f"{best_model}_probability"
+    calibrated_column = f"{best_model}_calibrated_probability"
+    raw_probability_column = f"{best_model}_probability"
+    probability_column = calibrated_column if calibrated_column in predictions.columns else raw_probability_column
     if probability_column not in predictions.columns or "actual_label" not in predictions.columns:
         return {
             "status": "unavailable",
@@ -290,6 +292,8 @@ def _advanced_model_evaluation(synthetic_metrics, predictions, training_rows, mr
             cost_sensitive["status"],
         ]),
         "champion_model": best_model,
+        "probability_column": probability_column,
+        "probability_source": "calibrated_champion" if probability_column == calibrated_column else "raw_champion",
         "threshold": 0.5,
         "evaluated_patients": int(len(frame)),
         "calibration": calibration,

@@ -1,0 +1,26 @@
+patient_id,actual_response_score_percent,random_forest_regressor_response_score_percent,response_residual,absolute_response_residual,stage,molecular_subtype,regimen,hybrid_score,hybrid_review_category,rule_explanation,latest_mri_percent_change,max_symptom_severity,nadir_wbc,nadir_anc
+COMPV4-BRCA-0154,-38.08,37.483,75.56299999999999,75.56299999999999,IIIA,HR+/HER2-,dose-dense AC then paclitaxel,30.619,discordant_signal_review,classifier/regressor conflict; low hybrid or weak MRI improvement,21.92,7.0,0.59,0.29
+COMPV4-BRCA-0104,-29.03,34.0,63.03,63.03,IIA,HER2+,TCHP,29.4,toxicity_review,CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement,11.29,9.0,0.61,0.27
+COMPV4-BRCA-0156,89.05,38.503,-50.547,50.547,IIIB,HR+/HER2+,TCHP then endocrine therapy,95.976,toxicity_review,CBC/symptom toxicity rule,-73.33,9.0,0.59,0.26
+COMPV4-BRCA-0287,70.18,39.109,-31.071000000000005,31.071000000000005,IIIB,HER2+,TCHP,96.188,toxicity_review,CBC/symptom toxicity rule,-54.04,8.0,0.61,0.29
+COMPV4-BRCA-0097,62.92,38.671,-24.249000000000002,24.249000000000002,IIIB,HER2+,TCHP,96.035,routine_monitoring,no major synthetic review rule,-40.21,4.0,0.61,0.33
+COMPV4-BRCA-0246,88.62,71.881,-16.739000000000004,16.739000000000004,IIIA,triple-negative,paclitaxel + carboplatin then AC,100.0,toxicity_review,CBC/symptom toxicity rule,-70.34,8.0,0.58,0.28
+COMPV4-BRCA-0200,61.43,71.796,10.366000000000007,10.366000000000007,IIIA,HER2+,TCHP,100.0,toxicity_review,CBC/symptom toxicity rule,-46.79,9.0,0.6,0.39
+COMPV4-BRCA-0224,-52.16,-42.008,10.151999999999994,10.151999999999994,IIIA,HER2+,TCHP,2.797,toxicity_review,CBC/symptom toxicity rule; low hybrid or weak MRI improvement,52.16,8.0,0.58,0.26
+COMPV4-BRCA-0213,31.2,33.356,2.1560000000000024,2.1560000000000024,IIA,HR+/HER2-,dose-dense AC then paclitaxel,29.175,toxicity_review,CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement,-31.2,8.0,0.61,0.32
+COMPV4-BRCA-0348,28.94,30.813,1.8729999999999976,1.8729999999999976,IIA,HR+/HER2+,TCHP then endocrine therapy,28.285,discordant_signal_review,classifier/regressor conflict; low hybrid or weak MRI improvement,-28.94,7.0,0.62,0.29
+COMPV4-BRCA-0108,33.33,35.106,1.7760000000000034,1.7760000000000034,IIIB,HER2+,TCHP,29.787,toxicity_review,CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement,-28.22,8.0,0.58,0.27
+COMPV4-BRCA-0214,-38.41,-40.061,-1.6510000000000034,1.6510000000000034,IIIA,HR+/HER2-,dose-dense AC then paclitaxel,3.479,toxicity_review,CBC/symptom toxicity rule; low hybrid or weak MRI improvement,38.41,9.0,0.6,0.26
+COMPV4-BRCA-0378,30.0,31.552,1.5519999999999996,1.5519999999999996,IIIA,HER2+,TCHP,28.543,toxicity_review,CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement,-30.0,8.0,0.58,0.26
+COMPV4-BRCA-0188,30.3,31.442,1.1419999999999995,1.1419999999999995,IIA,HR+/HER2-,dose-dense AC then paclitaxel,28.505,discordant_signal_review,classifier/regressor conflict; low hybrid or weak MRI improvement,-30.3,7.0,0.58,0.26
+COMPV4-BRCA-0278,31.08,32.045,0.9650000000000034,0.9650000000000034,IIIA,HR+/HER2-,dose-dense AC then paclitaxel,28.716,discordant_signal_review,classifier/regressor conflict; low hybrid or weak MRI improvement,-31.08,7.0,0.58,0.28
+COMPV4-BRCA-0174,-29.56,-30.493,-0.9329999999999998,0.9329999999999998,IIB,HR+/HER2-,dose-dense AC then paclitaxel,6.827,toxicity_review,CBC/symptom toxicity rule; low hybrid or weak MRI improvement,29.56,8.0,0.59,0.28
+COMPV4-BRCA-0274,-29.51,-30.37,-0.8599999999999994,0.8599999999999994,IIB,HR+/HER2-,dose-dense AC then paclitaxel,6.87,toxicity_review,CBC/symptom toxicity rule; low hybrid or weak MRI improvement,29.51,9.0,0.59,0.29
+COMPV4-BRCA-0329,-30.43,-31.287,-0.8569999999999993,0.8569999999999993,IIB,HR+/HER2-,dose-dense AC then paclitaxel,6.55,toxicity_review,CBC/symptom toxicity rule; low hybrid or weak MRI improvement,30.43,7.0,0.59,0.28
+COMPV4-BRCA-0128,34.15,33.317,-0.8329999999999984,0.8329999999999984,IIIB,HER2+,TCHP,29.161,toxicity_review,CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement,-34.15,9.0,0.59,0.27
+COMPV4-BRCA-0364,-29.66,-30.453,-0.7929999999999993,0.7929999999999993,IIIA,HR+/HER2-,dose-dense AC then paclitaxel,6.841,toxicity_review,CBC/symptom toxicity rule; low hybrid or weak MRI improvement,29.66,9.0,0.62,0.35
+COMPV4-BRCA-0208,31.27,32.048,0.7780000000000022,0.7780000000000022,IIA,triple-negative,paclitaxel + carboplatin then AC,28.717,discordant_signal_review,classifier/regressor conflict; low hybrid or weak MRI improvement,-31.27,7.0,0.59,0.33
+COMPV4-BRCA-0366,93.44,94.073,0.6329999999999956,0.6329999999999956,IIB,HER2+,TCHP,100.0,toxicity_review,CBC/symptom toxicity rule,-93.44,8.0,0.59,0.29
+COMPV4-BRCA-0119,-30.81,-31.414,-0.6040000000000028,0.6040000000000028,IIIA,HER2+,TCHP,6.505,response_trend_review,low hybrid or weak MRI improvement,30.81,7.0,0.62,0.33
+COMPV4-BRCA-0131,75.42,74.97,-0.45000000000000284,0.45000000000000284,IIB,HER2+,TCHP,100.0,toxicity_review,CBC/symptom toxicity rule,-75.42,9.0,0.58,0.25
+COMPV4-BRCA-0384,-36.25,-35.8,0.45000000000000284,0.45000000000000284,IIA,HR+/HER2-,dose-dense AC then paclitaxel,4.97,toxicity_review,CBC/symptom toxicity rule; low hybrid or weak MRI improvement,36.25,8.0,0.59,0.26

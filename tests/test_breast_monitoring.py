@@ -27,6 +27,7 @@ from backend.services.auth import create_demo_session, create_demo_session_from_
 from backend.services.clinician_feedback import create_clinical_summary_review
 from backend.services import admin_analytics, agent_rag, support_chat_agent
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
+from backend.services.detailed_training_report import generate_detailed_training_report
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
 from backend.services.app_logging import build_app_monitoring_summary, log_app_event
 from backend.services import security_guardrails
@@ -370,6 +371,71 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertEqual(hybrid["classification_model"], "gradient_boosting")
         self.assertEqual(hybrid["regression_model"], "random_forest_regressor")
         self.assertAlmostEqual(hybrid["hybrid_score"], 81.8)
+
+    def test_detailed_training_report_exports_hybrid_rules_and_residuals(self):
+        test_dir = _make_temp_dir(_temp_root())
+        rows = []
+        for idx in range(6):
+            patient_id = f"RPT-P{idx:03d}"
+            for cycle in [1, 2]:
+                rows.append({
+                    "patient_id": patient_id,
+                    "cycle": cycle,
+                    "age": 48 + idx,
+                    "stage": "IIB",
+                    "molecular_subtype": "HR+/HER2-",
+                    "regimen": "AC-T",
+                    "mri_percent_change_from_baseline": -20.0 - idx,
+                    "mri_tumor_size_cm": 2.0,
+                    "max_symptom_severity": 4 + (idx % 2),
+                    "symptom_count": 2,
+                    "nadir_wbc": 2.2,
+                    "nadir_anc": 1.1,
+                    "nadir_hemoglobin": 10.5,
+                    "nadir_platelets": 140,
+                    "intervention_count": 0,
+                    "dose_delayed": 0,
+                    "dose_reduced": 0,
+                    "final_cancer_status": "minimal_residual_disease",
+                    "final_response_category": "partial_response",
+                    "treatment_success_binary": 1 if idx >= 3 else 0,
+                    "response_score_percent": 20.0 + idx,
+                })
+        training_path = test_dir / "rows.csv"
+        classification_path = test_dir / "classification.csv"
+        regression_path = test_dir / "regression.csv"
+        metrics_path = test_dir / "metrics.json"
+        pd.DataFrame(rows).to_csv(training_path, index=False)
+        pd.DataFrame({
+            "patient_id": [f"RPT-P{idx:03d}" for idx in range(6)],
+            "actual_label": [0, 0, 0, 1, 1, 1],
+            "gradient_boosting_calibrated_probability": [0.1, 0.2, 0.3, 0.8, 0.9, 0.95],
+            "gradient_boosting_probability": [0.12, 0.25, 0.35, 0.76, 0.87, 0.92],
+        }).to_csv(classification_path, index=False)
+        pd.DataFrame({
+            "patient_id": [f"RPT-P{idx:03d}" for idx in range(6)],
+            "actual_response_score_percent": [20, 21, 22, 23, 24, 25],
+            "random_forest_regressor_response_score_percent": [19, 20, 23, 23, 25, 26],
+        }).to_csv(regression_path, index=False)
+        metrics_path.write_text(json.dumps({
+            "best_model_by_patient_level_roc_auc": "gradient_boosting",
+            "best_response_regressor_by_patient_level_mae": "random_forest_regressor",
+            "models": {"gradient_boosting": {"patient_level_roc_auc": 0.9}},
+            "response_regression": {"models": {"random_forest_regressor": {"patient_level_mae": 1.0}}},
+        }), encoding="utf-8")
+
+        report = generate_detailed_training_report(
+            training_rows_path=str(training_path),
+            classification_predictions_path=str(classification_path),
+            regression_predictions_path=str(regression_path),
+            metrics_path=str(metrics_path),
+            output_dir=str(test_dir / "report"),
+        )
+
+        self.assertTrue(Path(report["files"]["test_set_predictions_detailed_csv"]).exists())
+        self.assertTrue(Path(report["files"]["regression_residual_review_csv"]).exists())
+        self.assertEqual(report["best_classifier"], "gradient_boosting")
+        self.assertEqual(report["best_regressor"], "random_forest_regressor")
 
     def test_qin_cycle_sync_merges_agents_and_restores_cbc_density(self):
         db = _temp_db_session()
