@@ -1,0 +1,9 @@
+error_type,count,rate,example_patient_ids,meaning
+delayed_toxicity_detection,68,0.453,COMPV5-BRCA-0007; COMPV5-BRCA-0032; COMPV5-BRCA-0038; COMPV5-BRCA-0055; COMPV5-BRCA-0057; COMPV5-BRCA-0061; COMPV5-BRCA-0065; COMPV5-BRCA-0079; COMPV5-BRCA-0088; COMPV5-BRCA-0089,Deterministic CBC/symptom toxicity rule triggers even though the response classifier is favorable.
+subtype_confusion,13,0.087,COMPV5-BRCA-0044; COMPV5-BRCA-0046; COMPV5-BRCA-0096; COMPV5-BRCA-0112; COMPV5-BRCA-0126; COMPV5-BRCA-0162; COMPV5-BRCA-0244; COMPV5-BRCA-0394; COMPV5-BRCA-0494; COMPV5-BRCA-0508,HER2-related subgroup where classifier and response-regressor disagree.
+regimen_shift_uncertainty,5,0.033,COMPV5-BRCA-0184; COMPV5-BRCA-0194; COMPV5-BRCA-0018; COMPV5-BRCA-0354; COMPV5-BRCA-0454,Regimen-specific review gap for HR+/HER2+ TCHP followed by endocrine therapy.
+false_negative_favorable_response,2,0.013,COMPV5-BRCA-0046; COMPV5-BRCA-0096,Classifier missed a synthetically favorable final outcome. In medicine this is reviewed carefully because false negatives can hide benefit signals.
+false_positive_overoptimism,2,0.013,COMPV5-BRCA-0199; COMPV5-BRCA-0376,Classifier predicted favorable response for an unfavorable synthetic outcome. This can over-reassure a review workflow.
+response_regression_outlier,2,0.013,COMPV5-BRCA-0046; COMPV5-BRCA-0514,Continuous response estimate differs from the synthetic MRI-derived label by at least 20 percentage points.
+calibration_boundary_case,0,0.0,,Probability is close to the operating threshold; threshold changes may flip routing.
+sparse_history_instability,0,0.0,,Limited temporal history or missing model signal makes the patient-level estimate less stable.

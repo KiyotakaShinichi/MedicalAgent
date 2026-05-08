@@ -1,0 +1,4 @@
+range,count,mean_probability,observed_positive_rate,gap
+0.0-0.1,66,0.0,0.015,0.015
+0.3-0.4,1,0.388,1.0,0.612
+0.9-1.0,83,1.0,0.976,0.024

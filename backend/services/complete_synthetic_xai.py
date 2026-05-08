@@ -240,9 +240,12 @@ def _best_response_score(regression_prediction, metrics):
     if best_regressor:
         keys.append(f"{best_regressor}_response_score_percent")
     keys.extend([
+        "robust_response_ensemble_response_score_percent",
         "random_forest_regressor_response_score_percent",
         "extra_trees_regressor_response_score_percent",
         "gradient_boosting_regressor_response_score_percent",
+        "gradient_boosting_huber_regressor_response_score_percent",
+        "huber_regressor_response_score_percent",
         "ridge_regression_response_score_percent",
         "svr_rbf_regressor_response_score_percent",
     ])

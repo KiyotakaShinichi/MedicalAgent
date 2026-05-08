@@ -1,0 +1,106 @@
+{
+  "schema_version": "temporal_leakage_audit_v1",
+  "generated_at": "2026-05-08T11:04:20.156058+00:00",
+  "status": "passed",
+  "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "feature_columns": [
+    "cycle",
+    "age",
+    "pre_wbc",
+    "pre_anc",
+    "pre_hemoglobin",
+    "pre_platelets",
+    "nadir_wbc",
+    "nadir_anc",
+    "nadir_hemoglobin",
+    "nadir_platelets",
+    "recovery_wbc",
+    "recovery_hemoglobin",
+    "recovery_platelets",
+    "mri_tumor_size_cm",
+    "mri_percent_change_from_baseline",
+    "max_symptom_severity",
+    "symptom_count",
+    "intervention_count",
+    "dose_delayed",
+    "dose_reduced",
+    "stage",
+    "molecular_subtype",
+    "regimen"
+  ],
+  "findings": [
+    {
+      "name": "feature_columns_present",
+      "status": "passed",
+      "evidence": {
+        "missing": []
+      },
+      "meaning": "The training feature contract must resolve to columns in temporal_ml_rows.csv."
+    },
+    {
+      "name": "no_future_or_label_named_features",
+      "status": "passed",
+      "evidence": {
+        "suspicious_features": []
+      },
+      "meaning": "Feature names should not include final outcomes, labels, or assessment-only variables."
+    },
+    {
+      "name": "excluded_columns_not_used_as_features",
+      "status": "passed",
+      "evidence": {
+        "excluded_columns_available_in_dataset": [
+          "cycle_response_trend_class",
+          "final_cancer_status",
+          "final_response_category",
+          "final_response_multiclass",
+          "latent_response_strength",
+          "maintenance_needed",
+          "patient_id",
+          "response_score_percent",
+          "support_intervention_needed",
+          "toxicity_risk_binary",
+          "treatment_date",
+          "treatment_success_binary",
+          "urgent_intervention_needed"
+        ],
+        "excluded_columns_used_as_features": []
+      },
+      "meaning": "Outcome and bookkeeping columns may exist in the dataset but must not be used by the model."
+    },
+    {
+      "name": "one_row_per_patient_cycle",
+      "status": "passed",
+      "evidence": {
+        "duplicate_patient_cycle_rows": 0
+      },
+      "meaning": "Duplicate patient-cycle rows can leak repeated labels or overweight specific visits."
+    },
+    {
+      "name": "cycle_order_monotonic_by_patient",
+      "status": "passed",
+      "evidence": {
+        "example_non_monotonic_patients": []
+      },
+      "meaning": "Temporal rows should be ordered by observed treatment cycle."
+    },
+    {
+      "name": "treatment_dates_follow_cycle_order",
+      "status": "passed",
+      "evidence": {
+        "example_inconsistent_patients": []
+      },
+      "meaning": "Later cycles should not have earlier treatment dates."
+    },
+    {
+      "name": "response_regression_label_is_mri_transform",
+      "status": "passed",
+      "evidence": {
+        "max_absolute_transform_gap": 0.0
+      },
+      "meaning": "The continuous response label is a transparent transform of the observed MRI percent-change signal."
+    }
+  ],
+  "interpretation": "This audit verifies that model features are current-cycle or historical monitoring fields. Final outcome labels are present for supervised learning but excluded from model inputs.",
+  "claim_boundary": "A passed audit reduces obvious synthetic timeline leakage risk; it is not proof against every clinical data leakage mode."
+}

@@ -1,0 +1,19 @@
+{
+  "model_type": "median_prediction_ensemble",
+  "target": "response_score_percent",
+  "members": [
+    "random_forest_regressor",
+    "extra_trees_regressor",
+    "gradient_boosting_regressor",
+    "gradient_boosting_huber_regressor",
+    "huber_regressor"
+  ],
+  "member_artifacts": {
+    "random_forest_regressor": "Data\\complete_synthetic_training\\random_forest_regressor_response_score_percent.joblib",
+    "extra_trees_regressor": "Data\\complete_synthetic_training\\extra_trees_regressor_response_score_percent.joblib",
+    "gradient_boosting_regressor": "Data\\complete_synthetic_training\\gradient_boosting_regressor_response_score_percent.joblib",
+    "gradient_boosting_huber_regressor": "Data\\complete_synthetic_training\\gradient_boosting_huber_regressor_response_score_percent.joblib",
+    "huber_regressor": "Data\\complete_synthetic_training\\huber_regressor_response_score_percent.joblib"
+  },
+  "warning": "Synthetic-data ensemble metadata. Recreate member models before inference."
+}

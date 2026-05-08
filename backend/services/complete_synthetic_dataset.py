@@ -32,6 +32,7 @@ def generate_complete_synthetic_breast_dataset(
     write_db=True,
     patient_prefix=COMPLETE_SYNTHETIC_PREFIX,
     balanced_outcomes=True,
+    balanced_subgroups=True,
     missing_rate=0.04,
     noise_level=0.03,
 ):
@@ -57,13 +58,16 @@ def generate_complete_synthetic_breast_dataset(
             created["patients_skipped"] += 1
             continue
 
-        forced_response_band = _balanced_response_band(index) if balanced_outcomes else None
+        forced_response_band = _balanced_response_band(
+            index + ((index - 1) // 10 if balanced_subgroups else 0)
+        ) if balanced_outcomes else None
         journey = _build_patient_journey(
             patient_id=patient_id,
             index=index,
             cycles=cycles,
             rng=rng,
             forced_response_band=forced_response_band,
+            balanced_subgroups=balanced_subgroups,
             missing_rate=missing_rate,
             noise_level=noise_level,
         )
@@ -83,9 +87,14 @@ def generate_complete_synthetic_breast_dataset(
         "table_counts": {name: len(rows) for name, rows in tables.items()},
         "files": file_manifest,
         "generation_options": {
+            "seed": seed,
+            "cycles": cycles,
+            "count_requested": count,
             "balanced_outcomes": balanced_outcomes,
+            "balanced_subgroups": balanced_subgroups,
             "missing_rate": missing_rate,
             "noise_level": noise_level,
+            "schema_version": "complete_synthetic_breast_journey_v2",
         },
         "warning": (
             "Fully synthetic data for engineering and ML practice only. "
@@ -115,8 +124,17 @@ def _empty_tables():
     }
 
 
-def _build_patient_journey(patient_id, index, cycles, rng, forced_response_band=None, missing_rate=0.04, noise_level=0.03):
-    profile = _sample_profile(index, rng)
+def _build_patient_journey(
+    patient_id,
+    index,
+    cycles,
+    rng,
+    forced_response_band=None,
+    balanced_subgroups=True,
+    missing_rate=0.04,
+    noise_level=0.03,
+):
+    profile = _sample_profile(index, rng, balanced_subgroups=balanced_subgroups)
     start_date = date(2025, 1, 6) + timedelta(days=index * 2)
     diagnosis_date = start_date - timedelta(days=rng.randint(14, 45))
     baseline_size = profile["baseline_tumor_size_cm"]
@@ -294,12 +312,29 @@ def _balanced_response_band(index):
     return bands[(index - 1) % len(bands)]
 
 
-def _sample_profile(index, rng):
-    subtype = rng.choices(
-        ["HR+/HER2-", "HER2+", "triple-negative", "HR+/HER2+"],
-        weights=[0.45, 0.22, 0.23, 0.10],
-        k=1,
-    )[0]
+def _sample_profile(index, rng, balanced_subgroups=True):
+    if balanced_subgroups:
+        # Keep common patterns common, but force enough HR+/HER2+ and TCHP/endocrine cases
+        # so subgroup metrics are visible in the locked synthetic holdout.
+        subtype_cycle = [
+            "HR+/HER2-",
+            "HER2+",
+            "triple-negative",
+            "HR+/HER2+",
+            "HR+/HER2-",
+            "HER2+",
+            "triple-negative",
+            "HR+/HER2+",
+            "HR+/HER2-",
+            "HR+/HER2-",
+        ]
+        subtype = subtype_cycle[(index - 1) % len(subtype_cycle)]
+    else:
+        subtype = rng.choices(
+            ["HR+/HER2-", "HER2+", "triple-negative", "HR+/HER2+"],
+            weights=[0.45, 0.22, 0.23, 0.10],
+            k=1,
+        )[0]
     stages = ["IIA", "IIB", "IIIA", "IIIB", "IV"]
     stage = rng.choices(stages, weights=[0.25, 0.30, 0.25, 0.15, 0.05], k=1)[0]
     receptor_map = {

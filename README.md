@@ -58,6 +58,8 @@ Implementation: [backend/services/security_guardrails.py](backend/services/secur
 - Synthetic longitudinal modeling for treatment success, toxicity risk, and support-intervention flags.
 - Hybrid response modeling: binary classification estimates whether a synthetic journey looks favorable, while regression estimates a continuous `response_score_percent` from MRI-size change.
 - The patient report exposes `hybrid_mle_signal`, currently 65% classifier probability score plus 35% normalized response-regression score, with an agreement label between classifier and regressor bands.
+- Robust response-regression selection uses Huber/tree regressors plus a median ensemble and an outlier-aware score that penalizes RMSE.
+- Current artifacts include temporal leakage audit, dataset lineage hashes/schema signatures, a locked synthetic holdout manifest, error taxonomy, and cost-sensitive threshold evaluation.
 - BreastDCEDL baseline response classifier using MRI-derived tabular features.
 - Model artifacts, registry metadata, promotion/rollback, and local MLOps tracking.
 - Versioned evaluation reports and MLE readiness gates.
@@ -74,6 +76,7 @@ Details: [docs/synthetic_data.md](docs/synthetic_data.md) and [DATA_CARD.md](DAT
 - RAG regression, safety regression, ML metrics, and workflow feedback tracking.
 - Heuristic grounding and hallucination proxies until labeled RAG data exists.
 - Detailed synthetic training report exports patient-level test predictions, regression residuals, slice metrics, and hybrid review-rule routing.
+- Detailed MLE report also exports error taxonomy and cost-sensitive threshold policy tables.
 - System proof table and claim mapping are tracked in [docs/system_proof.md](docs/system_proof.md).
 
 Details: [docs/evaluation.md](docs/evaluation.md) and [evals/README.md](evals/README.md).

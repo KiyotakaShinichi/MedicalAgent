@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
+from datetime import datetime, timezone
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, r2_score
 
 
 DEFAULT_TRAINING_ROWS_PATH = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
@@ -22,6 +23,7 @@ def generate_detailed_training_report(
 ):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
+    locked_output_path = None
 
     training_rows = pd.read_csv(training_rows_path)
     classification = pd.read_csv(classification_predictions_path)
@@ -48,6 +50,8 @@ def generate_detailed_training_report(
     hybrid_policy = _hybrid_threshold_policy()
     hybrid_summary = _hybrid_summary(detailed)
     classification_review = _classification_review(detailed, best_classifier)
+    error_taxonomy = _error_taxonomy(detailed, best_classifier, best_regressor)
+    cost_sensitive = _cost_sensitive_evaluation(detailed)
     metrics_summary = _metrics_summary(metrics, detailed, best_classifier, best_regressor)
 
     files = {
@@ -56,34 +60,73 @@ def generate_detailed_training_report(
         "regression_residual_review_csv": str(output_path / "regression_residual_review.csv"),
         "hybrid_threshold_policy_csv": str(output_path / "hybrid_threshold_policy.csv"),
         "hybrid_review_summary_csv": str(output_path / "hybrid_review_summary.csv"),
+        "error_taxonomy_csv": str(output_path / "error_taxonomy.csv"),
+        "cost_sensitive_evaluation_csv": str(output_path / "cost_sensitive_evaluation.csv"),
         "training_eval_summary_json": str(output_path / "training_eval_summary.json"),
         "markdown_report": str(output_path / "training_eval_report.md"),
         "html_report": str(output_path / "training_eval_report.html"),
     }
-    detailed.to_csv(files["test_set_predictions_detailed_csv"], index=False)
-    regression_slices.to_csv(files["regression_slice_metrics_csv"], index=False)
-    residual_review.to_csv(files["regression_residual_review_csv"], index=False)
-    hybrid_policy.to_csv(files["hybrid_threshold_policy_csv"], index=False)
-    hybrid_summary.to_csv(files["hybrid_review_summary_csv"], index=False)
+    try:
+        _write_report_tables(files, detailed, regression_slices, residual_review, hybrid_policy, hybrid_summary, error_taxonomy, cost_sensitive)
+    except PermissionError:
+        locked_output_path = output_path
+        output_path = output_path.parent / f"detailed_eval_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
+        output_path.mkdir(parents=True, exist_ok=True)
+        files = {
+            "test_set_predictions_detailed_csv": str(output_path / "test_set_predictions_detailed.csv"),
+            "regression_slice_metrics_csv": str(output_path / "regression_slice_metrics.csv"),
+            "regression_residual_review_csv": str(output_path / "regression_residual_review.csv"),
+            "hybrid_threshold_policy_csv": str(output_path / "hybrid_threshold_policy.csv"),
+            "hybrid_review_summary_csv": str(output_path / "hybrid_review_summary.csv"),
+            "error_taxonomy_csv": str(output_path / "error_taxonomy.csv"),
+            "cost_sensitive_evaluation_csv": str(output_path / "cost_sensitive_evaluation.csv"),
+            "training_eval_summary_json": str(output_path / "training_eval_summary.json"),
+            "markdown_report": str(output_path / "training_eval_report.md"),
+            "html_report": str(output_path / "training_eval_report.html"),
+        }
+        _write_report_tables(files, detailed, regression_slices, residual_review, hybrid_policy, hybrid_summary, error_taxonomy, cost_sensitive)
 
     summary = {
-        "schema_version": "detailed_training_eval_v1",
+        "schema_version": "detailed_training_eval_v2",
         "best_classifier": best_classifier,
         "best_regressor": best_regressor,
         "test_patients": int(len(detailed)),
         "classification_review": classification_review,
         "hybrid_review_summary": hybrid_summary.to_dict(orient="records"),
+        "error_taxonomy": error_taxonomy.to_dict(orient="records"),
+        "cost_sensitive_evaluation": cost_sensitive.to_dict(orient="records"),
         "regression_slice_count": int(len(regression_slices)),
         "residual_review_count": int(len(residual_review)),
         "metrics_summary": metrics_summary,
         "files": files,
+        "locked_output_path": str(locked_output_path) if locked_output_path else None,
         "claim_boundary": "Synthetic-data engineering evaluation only. Not clinical validation.",
     }
     Path(files["training_eval_summary_json"]).write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    markdown = _markdown_report(summary, detailed, regression_slices, residual_review, hybrid_policy)
+    markdown = _markdown_report(summary, detailed, regression_slices, residual_review, hybrid_policy, error_taxonomy, cost_sensitive)
     Path(files["markdown_report"]).write_text(markdown, encoding="utf-8")
     Path(files["html_report"]).write_text(_html_report(markdown), encoding="utf-8")
+    latest_manifest = Path(DEFAULT_OUTPUT_DIR).parent / "latest_detailed_eval_manifest.json"
+    latest_manifest.write_text(
+        json.dumps({
+            "schema_version": "latest_detailed_eval_manifest_v1",
+            "summary_path": files["training_eval_summary_json"],
+            "html_report": files["html_report"],
+            "files": files,
+        }, indent=2),
+        encoding="utf-8",
+    )
     return summary
+
+
+def _write_report_tables(files, detailed, regression_slices, residual_review, hybrid_policy, hybrid_summary, error_taxonomy, cost_sensitive):
+    detailed.to_csv(files["test_set_predictions_detailed_csv"], index=False)
+    regression_slices.to_csv(files["regression_slice_metrics_csv"], index=False)
+    residual_review.to_csv(files["regression_residual_review_csv"], index=False)
+    hybrid_policy.to_csv(files["hybrid_threshold_policy_csv"], index=False)
+    hybrid_summary.to_csv(files["hybrid_review_summary_csv"], index=False)
+    error_taxonomy.to_csv(files["error_taxonomy_csv"], index=False)
+    cost_sensitive.to_csv(files["cost_sensitive_evaluation_csv"], index=False)
 
 
 def _load_json(path):
@@ -343,6 +386,104 @@ def _classification_review(frame, best_classifier):
     }
 
 
+def _error_taxonomy(frame, best_classifier, best_regressor):
+    rows = []
+    prob = pd.to_numeric(frame.get("champion_probability"), errors="coerce")
+    labels = pd.to_numeric(frame.get("actual_label"), errors="coerce")
+    pred = (prob >= 0.5).astype(int)
+    residual_col = f"{best_regressor}_response_score_percent"
+    residual = None
+    if residual_col in frame.columns and "actual_response_score_percent" in frame.columns:
+        residual = (
+            pd.to_numeric(frame[residual_col], errors="coerce")
+            - pd.to_numeric(frame["actual_response_score_percent"], errors="coerce")
+        )
+
+    definitions = [
+        (
+            "false_negative_favorable_response",
+            (labels.eq(1) & pred.eq(0)),
+            "Classifier missed a synthetically favorable final outcome. In medicine this is reviewed carefully because false negatives can hide benefit signals.",
+        ),
+        (
+            "false_positive_overoptimism",
+            (labels.eq(0) & pred.eq(1)),
+            "Classifier predicted favorable response for an unfavorable synthetic outcome. This can over-reassure a review workflow.",
+        ),
+        (
+            "delayed_toxicity_detection",
+            frame.get("toxicity_rule_triggered", pd.Series(False, index=frame.index)).astype(bool)
+            & prob.ge(0.66),
+            "Deterministic CBC/symptom toxicity rule triggers even though the response classifier is favorable.",
+        ),
+        (
+            "subtype_confusion",
+            frame.get("molecular_subtype", pd.Series("", index=frame.index)).astype(str).isin(["HR+/HER2+", "HER2+"])
+            & frame.get("model_agreement", pd.Series("", index=frame.index)).eq("conflicting"),
+            "HER2-related subgroup where classifier and response-regressor disagree.",
+        ),
+        (
+            "sparse_history_instability",
+            pd.to_numeric(frame.get("cycles_observed", pd.Series(0, index=frame.index)), errors="coerce").lt(4)
+            | frame[["champion_probability", "champion_response_score_percent"]].isna().any(axis=1),
+            "Limited temporal history or missing model signal makes the patient-level estimate less stable.",
+        ),
+        (
+            "regimen_shift_uncertainty",
+            frame.get("regimen", pd.Series("", index=frame.index)).astype(str).str.contains("TCHP then endocrine", case=False, na=False)
+            & frame.get("hybrid_review_category", pd.Series("", index=frame.index)).isin(["discordant_signal_review", "response_trend_review"]),
+            "Regimen-specific review gap for HR+/HER2+ TCHP followed by endocrine therapy.",
+        ),
+        (
+            "calibration_boundary_case",
+            prob.between(0.40, 0.60, inclusive="both"),
+            "Probability is close to the operating threshold; threshold changes may flip routing.",
+        ),
+    ]
+    if residual is not None:
+        definitions.append((
+            "response_regression_outlier",
+            residual.abs().ge(20),
+            "Continuous response estimate differs from the synthetic MRI-derived label by at least 20 percentage points.",
+        ))
+
+    for error_type, mask, meaning in definitions:
+        examples = frame.loc[mask.fillna(False), "patient_id"].head(10).tolist()
+        rows.append({
+            "error_type": error_type,
+            "count": int(mask.fillna(False).sum()),
+            "rate": round(float(mask.fillna(False).mean()), 3),
+            "example_patient_ids": "; ".join(examples),
+            "meaning": meaning,
+        })
+    return pd.DataFrame(rows).sort_values(["count", "error_type"], ascending=[False, True])
+
+
+def _cost_sensitive_evaluation(frame):
+    labels = pd.to_numeric(frame["actual_label"], errors="coerce").astype(int)
+    probabilities = pd.to_numeric(frame["champion_probability"], errors="coerce").astype(float)
+    rows = []
+    for fn_cost, fp_cost in [(5, 1), (10, 1), (3, 1)]:
+        for threshold in [0.30, 0.40, 0.50, 0.60, 0.70]:
+            predicted = (probabilities >= threshold).astype(int)
+            tn, fp, fn, tp = confusion_matrix(labels, predicted, labels=[0, 1]).ravel()
+            weighted_cost = (fn_cost * fn) + (fp_cost * fp)
+            rows.append({
+                "threshold": threshold,
+                "fn_cost": fn_cost,
+                "fp_cost": fp_cost,
+                "weighted_cost": int(weighted_cost),
+                "true_negative": int(tn),
+                "false_positive": int(fp),
+                "false_negative": int(fn),
+                "true_positive": int(tp),
+                "sensitivity": round(float(tp / max(tp + fn, 1)), 3),
+                "specificity": round(float(tn / max(tn + fp, 1)), 3),
+                "interpretation": "Lower weighted_cost is better for this synthetic threshold policy.",
+            })
+    return pd.DataFrame(rows).sort_values(["fn_cost", "weighted_cost", "threshold"], ascending=[False, True, True])
+
+
 def _metrics_summary(metrics, frame, best_classifier, best_regressor):
     model_metrics = (metrics.get("models") or {}).get(best_classifier) or {}
     regression_metrics = ((metrics.get("response_regression") or {}).get("models") or {}).get(best_regressor) or {}
@@ -432,7 +573,7 @@ def _md_cell(value):
     return text.replace("|", "\\|").replace("\n", " ")[:120]
 
 
-def _markdown_report(summary, detailed, regression_slices, residual_review, hybrid_policy):
+def _markdown_report(summary, detailed, regression_slices, residual_review, hybrid_policy, error_taxonomy, cost_sensitive):
     metrics = summary["metrics_summary"]
     return f"""# Detailed Synthetic Training Evaluation Report
 
@@ -463,6 +604,14 @@ Synthetic-data engineering evaluation only. This report helps visualize model be
 ## Hybrid Routing Summary
 
 {_markdown_table(pd.DataFrame(summary["hybrid_review_summary"]), limit=20)}
+
+## Error Taxonomy
+
+{_markdown_table(error_taxonomy, limit=20)}
+
+## Cost-Sensitive Threshold Evaluation
+
+{_markdown_table(cost_sensitive, limit=20)}
 
 ## Example Test-Set Predictions
 

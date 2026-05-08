@@ -52,7 +52,10 @@ These are sequence baselines, not clinically validated temporal foundation model
 - Random forest regressor
 - Extra trees regressor
 - Gradient boosting regressor
+- Gradient boosting regressor with Huber loss
+- Huber regressor
 - SVR with RBF kernel
+- Robust median response ensemble
 
 These estimate `response_score_percent`, a synthetic continuous MRI response signal. Positive values represent percent tumor-size reduction from baseline in the simulator; negative values represent growth/progression signal in the simulator. This is a model-engineering target, not a clinically validated response measurement.
 
@@ -115,6 +118,7 @@ Hybrid MLE signal:
 - Current formula: 65% classification probability score + 35% normalized regression response score.
 - Reports agreement between classifier and regressor bands (`aligned`, `partially_aligned`, `conflicting`, or `single_signal_available`).
 - Used as an exploratory monitoring signal for dashboards and summaries, not as clinical treatment-response confirmation.
+- Current selected response regressor: robust median response ensemble, selected with an outlier-aware score: patient-level MAE + 0.15 * patient-level RMSE.
 
 Calibrated probability head:
 
@@ -138,14 +142,35 @@ The admin/MLE dashboard reports:
 - Subgroup performance by stage, subtype, age band, and regimen.
 - Drift and missingness checks.
 - Clinician-loop review and LLM-summary quality proxies.
+- Temporal leakage audit status.
+- Dataset lineage hashes, schema signatures, generation seed, and feature lineage.
+- Locked holdout manifest and patient split hash.
+- Error taxonomy: delayed toxicity detection, subtype confusion, sparse-history instability, regimen-shift uncertainty, false-negative favorable response, false-positive overoptimism, and response-regression outliers.
 
 Metric statuses such as `passed`, `strong`, or `acceptable` are project engineering gates only. They are not clinical validation.
+
+Latest local synthetic run:
+
+- Dataset: 600 synthetic patients, 3,600 treatment-cycle rows.
+- Champion classifier: gradient boosting.
+- Patient-level AUROC: 0.998.
+- Patient-level AUPRC: 0.999.
+- Patient-level Brier score: 0.051.
+- Patient-level confusion matrix: TN 67, FP 0, FN 3, TP 80.
+- Calibrated validation ECE: 0.0481.
+- Best continuous response regressor: robust response ensemble.
+- Patient-level response MAE: 0.974 percentage points.
+- Patient-level response RMSE: 3.582 percentage points.
+- Patient-level response R2: 0.992.
+- MLE readiness: acceptable for supervised PoC demo with limitations; hard gates passed.
 
 ## Current Known Limitations
 
 - Training labels are synthetic.
 - No real-world clinical validation has been performed.
 - Synthetic data does not fully capture real hospital noise, scanner variation, missingness, clinical practice variation, or bias.
+- Subgroup metrics are synthetic simulator checks. They can reveal generator/model brittleness, but they do not prove subgroup safety in real populations.
+- Cost-sensitive thresholds are engineering policy simulations. They should be interpreted as "which synthetic threshold is safer under assumed FN/FP costs," not as clinical operating points.
 - MRI integration is currently MRI-derived feature integration, not full raw-image clinical interpretation.
 - QLoRA/local fine-tuning, when added, should be treated as behavior-formatting research only.
 - The model has no authority to recommend treatment changes.

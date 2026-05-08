@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detailed Synthetic Training Evaluation</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 32px; max-width: 1180px; color: #172033; line-height: 1.55; }
+    pre { white-space: pre-wrap; background: #f5f7fb; border: 1px solid #dfe5ee; padding: 18px; overflow-x: auto; }
+  </style>
+</head>
+<body><pre># Detailed Synthetic Training Evaluation Report
+
+Generated from the current local synthetic training artifacts.
+
+## Claim Boundary
+
+Synthetic-data engineering evaluation only. This report helps visualize model behavior, rule routing, and error modes. It is not clinical validation.
+
+## Headline Results
+
+- Test patients: 150
+- Best classifier: `gradient_boosting`
+- Best regressor: `robust_response_ensemble`
+- Classifier patient-level AUROC: `0.998`
+- Classifier patient-level AUPRC: `0.999`
+- Classifier patient-level Brier score: `0.051`
+- Calibrated champion status: `trained`
+- Calibrated validation ECE: `0.0481`
+- Regressor patient-level MAE: `0.974`
+- Regressor patient-level RMSE: `3.582`
+- Regressor patient-level R2: `0.992`
+
+## Hybrid Ruleset
+
+| rule_order | category | condition | reason |
+| --- | --- | --- | --- |
+| 1 | toxicity_review | (max_symptom_severity &gt;= 8 AND (nadir_wbc &lt; 1.0 OR nadir_anc &lt; 0.5)) OR nadir_wbc &lt; 0.5 OR nadir_anc &lt; 0.2 OR nadir_plat | Only severe CBC/symptom patterns override favorable ML signal; routine chemo nadirs should not dominate every route. |
+| 2 | discordant_signal_review | classification band conflicts with regression band | Classifier and continuous response estimate disagree. |
+| 3 | response_trend_review | hybrid_score &lt; 55 OR latest_mri_percent_change &gt; -20 | Lower or weak response signal needs review. |
+| 4 | watch_closely | 55 &lt;= hybrid_score &lt; 75 | Mixed signal; monitor closely. |
+| 5 | routine_monitoring | hybrid_score &gt;= 75 and no override rules | Favorable synthetic monitoring signal with no major rule trigger. |
+
+## Hybrid Routing Summary
+
+| hybrid_review_category | patients | mean_hybrid_score | mean_probability | mean_response_score | toxicity_rule_rate | response_review_rule_rate | patient_rate |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| toxicity_review | 117 | 66.899 | 0.585 | 43.88 | 1.0 | 0.419 | 0.78 |
+| routine_monitoring | 15 | 99.338 | 1.0 | 60.915 | 0.0 | 0.0 | 0.1 |
+| response_trend_review | 10 | 7.715 | 0.0 | -27.958 | 0.0 | 1.0 | 0.067 |
+| discordant_signal_review | 8 | 30.572 | 0.0 | 43.07 | 0.0 | 1.0 | 0.053 |
+
+## Error Taxonomy
+
+| error_type | count | rate | example_patient_ids | meaning |
+| --- | --- | --- | --- | --- |
+| delayed_toxicity_detection | 68 | 0.453 | COMPV5-BRCA-0007; COMPV5-BRCA-0032; COMPV5-BRCA-0038; COMPV5-BRCA-0055; COMPV5-BRCA-0057; COMPV5-BRCA-0061; COMPV5-BRCA- | Deterministic CBC/symptom toxicity rule triggers even though the response classifier is favorable. |
+| subtype_confusion | 13 | 0.087 | COMPV5-BRCA-0044; COMPV5-BRCA-0046; COMPV5-BRCA-0096; COMPV5-BRCA-0112; COMPV5-BRCA-0126; COMPV5-BRCA-0162; COMPV5-BRCA- | HER2-related subgroup where classifier and response-regressor disagree. |
+| regimen_shift_uncertainty | 5 | 0.033 | COMPV5-BRCA-0184; COMPV5-BRCA-0194; COMPV5-BRCA-0018; COMPV5-BRCA-0354; COMPV5-BRCA-0454 | Regimen-specific review gap for HR+/HER2+ TCHP followed by endocrine therapy. |
+| false_negative_favorable_response | 2 | 0.013 | COMPV5-BRCA-0046; COMPV5-BRCA-0096 | Classifier missed a synthetically favorable final outcome. In medicine this is reviewed carefully because false negative |
+| false_positive_overoptimism | 2 | 0.013 | COMPV5-BRCA-0199; COMPV5-BRCA-0376 | Classifier predicted favorable response for an unfavorable synthetic outcome. This can over-reassure a review workflow. |
+| response_regression_outlier | 2 | 0.013 | COMPV5-BRCA-0046; COMPV5-BRCA-0514 | Continuous response estimate differs from the synthetic MRI-derived label by at least 20 percentage points. |
+| calibration_boundary_case | 0 | 0.0 |  | Probability is close to the operating threshold; threshold changes may flip routing. |
+| sparse_history_instability | 0 | 0.0 |  | Limited temporal history or missing model signal makes the patient-level estimate less stable. |
+
+## Cost-Sensitive Threshold Evaluation
+
+| threshold | fn_cost | fp_cost | weighted_cost | true_negative | false_positive | false_negative | true_positive | sensitivity | specificity | interpretation |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.3 | 10 | 1 | 12 | 65 | 2 | 1 | 82 | 0.988 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.4 | 10 | 1 | 22 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.5 | 10 | 1 | 22 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.6 | 10 | 1 | 22 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.7 | 10 | 1 | 22 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.3 | 5 | 1 | 7 | 65 | 2 | 1 | 82 | 0.988 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.4 | 5 | 1 | 12 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.5 | 5 | 1 | 12 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.6 | 5 | 1 | 12 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.7 | 5 | 1 | 12 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.3 | 3 | 1 | 5 | 65 | 2 | 1 | 82 | 0.988 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.4 | 3 | 1 | 8 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.5 | 3 | 1 | 8 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.6 | 3 | 1 | 8 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+| 0.7 | 3 | 1 | 8 | 65 | 2 | 2 | 81 | 0.976 | 0.97 | Lower weighted_cost is better for this synthetic threshold policy. |
+
+## Example Test-Set Predictions
+
+| patient_id | actual_label | champion_probability | actual_response_score_percent | champion_response_score_percent | hybrid_score | model_agreement | hybrid_review_category | rule_explanation |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| COMPV5-BRCA-0004 | 0 | 0.0 | -42.5 | -40.053 | 3.481 | aligned | toxicity_review | CBC/symptom toxicity rule; low hybrid or weak MRI improvement |
+| COMPV5-BRCA-0007 | 1 | 1.0 | 74.91 | 74.757 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0021 | 0 | 0.0 | 29.22 | 29.434 | 27.802 | conflicting | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement |
+| COMPV5-BRCA-0032 | 1 | 1.0 | 51.17 | 51.17 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0035 | 0 | 0.0 | 37.38 | 37.38 | 30.583 | conflicting | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement |
+| COMPV5-BRCA-0038 | 1 | 1.0 | 93.86 | 93.821 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0044 | 0 | 0.0 | 31.36 | 36.003 | 30.101 | conflicting | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement |
+| COMPV5-BRCA-0046 | 1 | 0.388411 | 47.23 | 26.564 | 52.044 | conflicting | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement |
+| COMPV5-BRCA-0053 | 0 | 0.0 | 32.8 | 34.367 | 29.528 | conflicting | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement |
+| COMPV5-BRCA-0054 | 0 | 0.0 | -9.38 | -9.593 | 14.142 | partially_aligned | toxicity_review | CBC/symptom toxicity rule; low hybrid or weak MRI improvement |
+| COMPV5-BRCA-0055 | 1 | 1.0 | 55.14 | 55.14 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0057 | 1 | 1.0 | 59.66 | 59.598 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0061 | 1 | 1.0 | 67.32 | 67.32 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0065 | 1 | 1.0 | 87.73 | 87.73 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0079 | 1 | 1.0 | 82.76 | 83.04 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0085 | 0 | 0.0 | 38.57 | 38.452 | 30.958 | conflicting | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement |
+| COMPV5-BRCA-0088 | 1 | 1.0 | 92.43 | 92.167 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0089 | 1 | 1.0 | 61.22 | 60.939 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0091 | 1 | 1.0 | 51.82 | 51.82 | 100.0 | aligned | toxicity_review | CBC/symptom toxicity rule |
+| COMPV5-BRCA-0096 | 1 | 0.0 | 53.61 | 53.61 | 35.0 | conflicting | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement |
+
+## Regression Slice Metrics
+
+| slice | value | n | mae | rmse | r2 | status |
+| --- | --- | --- | --- | --- | --- | --- |
+| age_band | 45-54 | 39 | 0.585 | 2.137 | 0.996 | strong |
+| age_band | 55-64 | 35 | 0.772 | 2.505 | 0.997 | strong |
+| age_band | 65-74 | 31 | 2.366 | 6.541 | 0.969 | strong |
+| age_band | &lt;45 | 45 | 0.51 | 2.111 | 0.997 | strong |
+| hybrid_review_category | discordant_signal_review | 8 | 1.201 | 2.89 | 0.973 | strong |
+| hybrid_review_category | response_trend_review | 10 | 0.089 | 0.153 | 1.0 | strong |
+| hybrid_review_category | routine_monitoring | 15 | 1.821 | 6.775 | 0.737 | strong |
+| hybrid_review_category | toxicity_review | 117 | 0.926 | 3.161 | 0.993 | strong |
+| molecular_subtype | HER2+ | 29 | 1.284 | 4.49 | 0.985 | strong |
+| molecular_subtype | HR+/HER2+ | 27 | 1.614 | 5.334 | 0.983 | strong |
+| molecular_subtype | HR+/HER2- | 62 | 0.565 | 2.107 | 0.997 | strong |
+| molecular_subtype | triple-negative | 32 | 0.945 | 3.045 | 0.994 | strong |
+| regimen | TCHP | 29 | 1.284 | 4.49 | 0.985 | strong |
+| regimen | TCHP then endocrine therapy | 27 | 1.614 | 5.334 | 0.983 | strong |
+| regimen | dose-dense AC then paclitaxel | 62 | 0.565 | 2.107 | 0.997 | strong |
+| regimen | paclitaxel + carboplatin then AC | 32 | 0.945 | 3.045 | 0.994 | strong |
+| stage | IIA | 32 | 1.261 | 4.407 | 0.991 | strong |
+| stage | IIB | 49 | 1.179 | 4.356 | 0.983 | strong |
+| stage | IIIA | 41 | 0.874 | 2.78 | 0.994 | strong |
+| stage | IIIB | 20 | 0.224 | 0.507 | 1.0 | strong |
+| stage | IV | 8 | 0.954 | 2.531 | 0.993 | strong |
+
+## Largest Regression Residuals
+
+| patient_id | actual_response_score_percent | robust_response_ensemble_response_score_percent | response_residual | absolute_response_residual | stage | molecular_subtype | regimen | hybrid_score | hybrid_review_category | rule_explanation | latest_mri_percent_change | max_symptom_severity | nadir_wbc | nadir_anc |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| COMPV5-BRCA-0514 | 53.82 | 27.588 | -26.232 | 26.232 | IIB | HR+/HER2+ | TCHP then endocrine therapy | 92.156 | routine_monitoring | no major synthetic review rule | -48.0 | 7.0 | 0.59 | 0.35 |
+| COMPV5-BRCA-0046 | 47.23 | 26.564 | -20.665999999999997 | 20.665999999999997 | IIA | HER2+ | TCHP | 52.044 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -40.64 | 9.0 | 0.58 | 0.3 |
+| COMPV5-BRCA-0235 | 34.55 | 48.178 | 13.628 | 13.628 | IIA | HR+/HER2- | dose-dense AC then paclitaxel | 34.362 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -24.09 | 8.0 | 0.59 | 0.27 |
+| COMPV5-BRCA-0112 | 36.35 | 24.004 | -12.346 | 12.346 | IIB | HER2+ | TCHP | 25.901 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -32.06 | 8.0 | 0.6 | 0.31 |
+| COMPV5-BRCA-0553 | 46.82 | 59.069 | 12.249000000000002 | 12.249000000000002 | IIIA | triple-negative | paclitaxel + carboplatin then AC | 100.0 | toxicity_review | CBC/symptom toxicity rule | -32.27 | 8.0 | 0.58 | 0.26 |
+| COMPV5-BRCA-0563 | -12.24 | -0.448 | 11.792 | 11.792 | IIIA | triple-negative | paclitaxel + carboplatin then AC | 17.343 | toxicity_review | CBC/symptom toxicity rule; low hybrid or weak MRI improvement | -1.79 | 8.0 | 0.6 | 0.34 |
+| COMPV5-BRCA-0549 | 33.92 | 25.8 | -8.120000000000001 | 8.120000000000001 | IIB | HR+/HER2- | dose-dense AC then paclitaxel | 26.53 | discordant_signal_review | classifier/regressor conflict; low hybrid or weak MRI improvement | -30.0 | 7.0 | 0.6 | 0.33 |
+| COMPV5-BRCA-0244 | 32.86 | 25.708 | -7.152000000000001 | 7.152000000000001 | IV | HR+/HER2+ | TCHP then endocrine therapy | 26.498 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -22.5 | 9.0 | 0.61 | 0.27 |
+| COMPV5-BRCA-0044 | 31.36 | 36.003 | 4.643000000000001 | 4.643000000000001 | IIIA | HR+/HER2+ | TCHP then endocrine therapy | 30.101 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -31.36 | 8.0 | 0.58 | 0.26 |
+| COMPV5-BRCA-0145 | -41.43 | -37.718 | 3.711999999999996 | 3.711999999999996 | IIB | HR+/HER2- | dose-dense AC then paclitaxel | 4.299 | toxicity_review | CBC/symptom toxicity rule; low hybrid or weak MRI improvement | 41.43 | 8.0 | 0.58 | 0.26 |
+| COMPV5-BRCA-0285 | 28.0 | 30.699 | 2.6990000000000016 | 2.6990000000000016 | IIA | HR+/HER2- | dose-dense AC then paclitaxel | 28.245 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -28.0 | 9.0 | 0.59 | 0.37 |
+| COMPV5-BRCA-0004 | -42.5 | -40.053 | 2.4470000000000027 | 2.4470000000000027 | IIB | HR+/HER2+ | TCHP then endocrine therapy | 3.481 | toxicity_review | CBC/symptom toxicity rule; low hybrid or weak MRI improvement | 42.5 | 6.0 | 0.58 | 0.27 |
+| COMPV5-BRCA-0206 | 85.42 | 83.324 | -2.0960000000000036 | 2.0960000000000036 | IIIA | HER2+ | TCHP | 100.0 | toxicity_review | CBC/symptom toxicity rule | -55.0 | 8.0 | 0.58 | 0.28 |
+| COMPV5-BRCA-0527 | -41.79 | -39.696 | 2.094000000000001 | 2.094000000000001 | IIIB | triple-negative | paclitaxel + carboplatin then AC | 3.606 | toxicity_review | CBC/symptom toxicity rule; low hybrid or weak MRI improvement | 41.79 | 8.0 | 0.59 | 0.32 |
+| COMPV5-BRCA-0053 | 32.8 | 34.367 | 1.5670000000000002 | 1.5670000000000002 | IIB | triple-negative | paclitaxel + carboplatin then AC | 29.528 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -32.8 | 9.0 | 0.6 | 0.31 |
+| COMPV5-BRCA-0194 | 33.33 | 34.041 | 0.7109999999999985 | 0.7109999999999985 | IIIA | HR+/HER2+ | TCHP then endocrine therapy | 29.414 | discordant_signal_review | classifier/regressor conflict; low hybrid or weak MRI improvement | -33.33 | 7.0 | 0.59 | 0.41 |
+| COMPV5-BRCA-0379 | 96.42 | 95.717 | -0.703000000000003 | 0.703000000000003 | IIA | HR+/HER2- | dose-dense AC then paclitaxel | 100.0 | toxicity_review | CBC/symptom toxicity rule | -96.42 | 8.0 | 0.58 | 0.37 |
+| COMPV5-BRCA-0349 | 34.62 | 35.266 | 0.6460000000000008 | 0.6460000000000008 | IIB | HR+/HER2- | dose-dense AC then paclitaxel | 29.843 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -34.62 | 8.0 | 0.58 | 0.29 |
+| COMPV5-BRCA-0203 | 30.3 | 30.926 | 0.6259999999999977 | 0.6259999999999977 | IIA | triple-negative | paclitaxel + carboplatin then AC | 28.324 | discordant_signal_review | classifier/regressor conflict; low hybrid or weak MRI improvement | -30.3 | 7.0 | 0.61 | 0.39 |
+| COMPV5-BRCA-0330 | 67.16 | 66.555 | -0.6049999999999898 | 0.6049999999999898 | IIIA | HR+/HER2- | dose-dense AC then paclitaxel | 100.0 | toxicity_review | CBC/symptom toxicity rule | -67.16 | 9.0 | 0.59 | 0.3 |
+| COMPV5-BRCA-0342 | 84.47 | 83.9 | -0.5699999999999932 | 0.5699999999999932 | IIB | HER2+ | TCHP | 100.0 | toxicity_review | CBC/symptom toxicity rule | -84.47 | 7.0 | 0.58 | 0.4 |
+| COMPV5-BRCA-0348 | 70.0 | 69.521 | -0.4789999999999992 | 0.4789999999999992 | IIIA | HR+/HER2+ | TCHP then endocrine therapy | 100.0 | toxicity_review | CBC/symptom toxicity rule | -70.0 | 8.0 | 0.6 | 0.27 |
+| COMPV5-BRCA-0043 | 61.71 | 61.268 | -0.44200000000000017 | 0.44200000000000017 | IIIB | triple-negative | paclitaxel + carboplatin then AC | 100.0 | routine_monitoring | no major synthetic review rule | -61.71 | 7.0 | 0.61 | 0.32 |
+| COMPV5-BRCA-0494 | 30.0 | 30.434 | 0.43400000000000105 | 0.43400000000000105 | IIIB | HR+/HER2+ | TCHP then endocrine therapy | 28.152 | toxicity_review | CBC/symptom toxicity rule; classifier/regressor conflict; low hybrid or weak MRI improvement | -23.51 | 8.0 | 0.58 | 0.28 |
+| COMPV5-BRCA-0310 | 61.3 | 60.93 | -0.36999999999999744 | 0.36999999999999744 | IIA | HR+/HER2- | dose-dense AC then paclitaxel | 100.0 | toxicity_review | CBC/symptom toxicity rule | -61.3 | 9.0 | 0.58 | 0.36 |
+
+## Output Files
+
+- `test_set_predictions_detailed_csv`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\test_set_predictions_detailed.csv`
+- `regression_slice_metrics_csv`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\regression_slice_metrics.csv`
+- `regression_residual_review_csv`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\regression_residual_review.csv`
+- `hybrid_threshold_policy_csv`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\hybrid_threshold_policy.csv`
+- `hybrid_review_summary_csv`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\hybrid_review_summary.csv`
+- `error_taxonomy_csv`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\error_taxonomy.csv`
+- `cost_sensitive_evaluation_csv`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\cost_sensitive_evaluation.csv`
+- `training_eval_summary_json`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\training_eval_summary.json`
+- `markdown_report`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\training_eval_report.md`
+- `html_report`: `Data\complete_synthetic_training\detailed_eval_20260508T111121Z\training_eval_report.html`
+</pre></body>
+</html>

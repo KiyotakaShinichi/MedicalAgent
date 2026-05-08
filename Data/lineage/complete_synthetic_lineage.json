@@ -1,0 +1,313 @@
+{
+  "schema_version": "dataset_lineage_v1",
+  "generated_at": "2026-05-08T11:04:18.758952+00:00",
+  "dataset_dir": "Data\\complete_synthetic_breast_journeys",
+  "dataset_hash": "f399656d0732b8d57e24630bd70ab9dfe8fc0549312cd2c5ec05659cab7241a7",
+  "source": "synthetic_complete_breast_journey",
+  "generation_options": {
+    "seed": 20280508,
+    "cycles": 6,
+    "count_requested": 600,
+    "balanced_outcomes": true,
+    "balanced_subgroups": true,
+    "missing_rate": 0.06,
+    "noise_level": 0.04,
+    "schema_version": "complete_synthetic_breast_journey_v2"
+  },
+  "patients_created": 600,
+  "cycles_per_patient": 6,
+  "table_counts": {
+    "patients": 600,
+    "diagnoses": 600,
+    "treatment_sessions": 3600,
+    "labs": 10800,
+    "medications": 13898,
+    "symptoms": 6754,
+    "mri_reports": 4200,
+    "interventions": 3830,
+    "outcomes": 600,
+    "temporal_ml_rows": 3600
+  },
+  "files": [
+    {
+      "table": "diagnoses",
+      "path": "Data\\complete_synthetic_breast_journeys\\diagnoses.csv",
+      "sha256": "ff3b572eb57396782fe2a1be6ad1dc659cc976f8e255061177853bb9d4e8911d",
+      "row_count": 600,
+      "columns": [
+        "patient_id",
+        "diagnosis_date",
+        "primary_diagnosis",
+        "stage",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "molecular_subtype",
+        "grade",
+        "menopausal_status",
+        "baseline_tumor_size_cm",
+        "baseline_nodal_status",
+        "treatment_intent"
+      ],
+      "schema_signature": "f589249d0d7cf2fefbae0e8fe19ac915e0024c9bd11340b1eed24144091f5889"
+    },
+    {
+      "table": "interventions",
+      "path": "Data\\complete_synthetic_breast_journeys\\interventions.csv",
+      "sha256": "82ccec2fae87bbd6259c3165e68981df48b22a9b06fb623cd069bcee9789e818",
+      "row_count": 3830,
+      "columns": [
+        "patient_id",
+        "date",
+        "cycle",
+        "intervention_type",
+        "reason",
+        "medication_or_product",
+        "dose",
+        "notes",
+        "source"
+      ],
+      "schema_signature": "da16027118eb2b44ffb2e4aa27d6003365a4fda17e44b5a6839cab821b567142"
+    },
+    {
+      "table": "labs",
+      "path": "Data\\complete_synthetic_breast_journeys\\labs.csv",
+      "sha256": "802400f345a917cec9fa06317cd8cca31b4c595d6bf338ab41b7f7d441bcf06f",
+      "row_count": 10800,
+      "columns": [
+        "patient_id",
+        "date",
+        "cycle",
+        "lab_timepoint",
+        "wbc",
+        "anc",
+        "rbc",
+        "hemoglobin",
+        "platelets",
+        "source",
+        "note"
+      ],
+      "schema_signature": "cc7485de63231a41a99a9c69bb2136f351f1df9610a4d34a4caee7f52bc54931"
+    },
+    {
+      "table": "medications",
+      "path": "Data\\complete_synthetic_breast_journeys\\medications.csv",
+      "sha256": "8e881295f50a735d4954eac11c40aad62e973bfe42d042bbde8320675a28e7c9",
+      "row_count": 13898,
+      "columns": [
+        "patient_id",
+        "date",
+        "cycle",
+        "medication",
+        "dose",
+        "frequency",
+        "purpose",
+        "notes",
+        "source"
+      ],
+      "schema_signature": "37252856498d54e0643d83a94e2c51d63ee305f2298dcc46bb5b9135a6b6c99c"
+    },
+    {
+      "table": "mri_reports",
+      "path": "Data\\complete_synthetic_breast_journeys\\mri_reports.csv",
+      "sha256": "dbab3b8f0acf92901fdbad12c01df0beef501f42888704e33bab6706b58c01e0",
+      "row_count": 4200,
+      "columns": [
+        "patient_id",
+        "date",
+        "cycle",
+        "timepoint",
+        "modality",
+        "breast_side",
+        "location",
+        "tumor_size_cm",
+        "percent_change_from_baseline",
+        "response_text",
+        "bi_rads",
+        "source"
+      ],
+      "schema_signature": "5bbc4b8ff1212b97d098f2919be1fb37cd0edcdf053b29f3d823960954c1f276"
+    },
+    {
+      "table": "outcomes",
+      "path": "Data\\complete_synthetic_breast_journeys\\outcomes.csv",
+      "sha256": "56bef657325d74889091a12b9d48fb22fc449f5166742a8516d26e4e3878e3ca",
+      "row_count": 600,
+      "columns": [
+        "patient_id",
+        "assessment_date",
+        "response_category",
+        "final_tumor_size_cm",
+        "percent_change_from_baseline",
+        "cancer_status",
+        "maintenance_plan",
+        "recurrence_risk_band",
+        "notes",
+        "source"
+      ],
+      "schema_signature": "ffe62f29067a3072192f0037c72a5ea13782a88c687d61ec17d33a4f1347fb54"
+    },
+    {
+      "table": "patients",
+      "path": "Data\\complete_synthetic_breast_journeys\\patients.csv",
+      "sha256": "18f5e0a57efe9cb830e89f2ba73defe881d93edc765f9be7dade051414cc1c77",
+      "row_count": 600,
+      "columns": [
+        "patient_id",
+        "name",
+        "age",
+        "sex",
+        "diagnosis",
+        "created_source"
+      ],
+      "schema_signature": "3541230185dd0ec80470c17e2d9fa850781a68baa70058b6f3973f8dc97d8f16"
+    },
+    {
+      "table": "symptoms",
+      "path": "Data\\complete_synthetic_breast_journeys\\symptoms.csv",
+      "sha256": "85ecacf8965e0b07470f217906808f3f8d5ed519c6a075e09ec70cf05c13d144",
+      "row_count": 6754,
+      "columns": [
+        "patient_id",
+        "date",
+        "cycle",
+        "symptom",
+        "severity",
+        "notes",
+        "source"
+      ],
+      "schema_signature": "0381d73cbc9cb584cc65eacd75119337d94e421c14c85e4290deaaa6708565de"
+    },
+    {
+      "table": "temporal_ml_rows",
+      "path": "Data\\complete_synthetic_breast_journeys\\temporal_ml_rows.csv",
+      "sha256": "44a845011924e1f0473a0fb317fa3f7743f052b5a1e86c0be47bf9e5fdc6bc88",
+      "row_count": 3600,
+      "columns": [
+        "patient_id",
+        "cycle",
+        "treatment_date",
+        "age",
+        "stage",
+        "molecular_subtype",
+        "regimen",
+        "pre_wbc",
+        "pre_anc",
+        "pre_hemoglobin",
+        "pre_platelets",
+        "nadir_wbc",
+        "nadir_anc",
+        "nadir_hemoglobin",
+        "nadir_platelets",
+        "recovery_wbc",
+        "recovery_hemoglobin",
+        "recovery_platelets",
+        "mri_tumor_size_cm",
+        "mri_percent_change_from_baseline",
+        "response_score_percent",
+        "max_symptom_severity",
+        "symptom_count",
+        "intervention_count",
+        "dose_delayed",
+        "dose_reduced",
+        "latent_response_strength",
+        "toxicity_risk_binary",
+        "urgent_intervention_needed",
+        "support_intervention_needed",
+        "cycle_response_trend_class",
+        "final_response_category",
+        "final_cancer_status",
+        "treatment_success_binary",
+        "maintenance_needed",
+        "final_response_multiclass"
+      ],
+      "schema_signature": "4927cfd8666550c9a8514ceb436220d1dab0720947f769951e73397648a9596d"
+    },
+    {
+      "table": "treatment_sessions",
+      "path": "Data\\complete_synthetic_breast_journeys\\treatment_sessions.csv",
+      "sha256": "b0218549eb63220e3c1dd7286df69685a5e3716e7eea319de76fc20354c01ff0",
+      "row_count": 3600,
+      "columns": [
+        "patient_id",
+        "cycle",
+        "planned_date",
+        "actual_date",
+        "regimen",
+        "drugs",
+        "cycle_status",
+        "dose_adjustment",
+        "intent",
+        "source"
+      ],
+      "schema_signature": "c71ac96d9c958c10bfa85af6cd5203a758c6567eb788a9a843106374d2bf97cc"
+    }
+  ],
+  "feature_contract": {
+    "numeric_features": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced"
+    ],
+    "categorical_features": [
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "response_regression_target": "response_score_percent",
+    "label_columns": [
+      "treatment_success_binary",
+      "final_response_category",
+      "final_cancer_status",
+      "toxicity_risk_binary",
+      "support_intervention_needed",
+      "urgent_intervention_needed",
+      "cycle_response_trend_class"
+    ]
+  },
+  "feature_lineage": {
+    "cycle": "treatment_sessions.cycle and temporal_ml_rows.cycle",
+    "demographics": "patients.age",
+    "diagnosis_profile": "diagnoses.stage, diagnoses.molecular_subtype, diagnoses.receptor_status",
+    "regimen": "treatment_sessions.regimen",
+    "pre_cycle_labs": "labs rows where lab_timepoint=pre_cycle",
+    "nadir_labs": "labs rows where lab_timepoint=post_cycle_nadir",
+    "recovery_labs": "labs rows where lab_timepoint=recovery",
+    "mri_response_features": "mri_reports tumor size and percent_change_from_baseline available up to current cycle",
+    "symptom_features": "symptoms aggregated inside the current treatment cycle",
+    "intervention_features": "interventions aggregated inside the current treatment cycle",
+    "outcome_labels": "outcomes final response labels attached after journey generation and excluded from model features",
+    "table_purposes": {
+      "patients": "One row per synthetic patient.",
+      "diagnoses": "Synthetic diagnosis and receptor/subtype profile.",
+      "treatment_sessions": "One row per scheduled treatment cycle with regimen, dates, and dose status.",
+      "labs": "CBC rows at baseline/pre-cycle/nadir/recovery, with WBC, ANC, RBC, hemoglobin, and platelets.",
+      "medications": "Anti-cancer regimen entries, supportive medications, and intervention medications/products.",
+      "symptoms": "Patient-reported symptoms around treatment cycles.",
+      "mri_reports": "Synthetic MRI measurements at baseline and every treatment cycle.",
+      "interventions": "Clinical support events such as growth-factor support, transfusions, antibiotics, or urgent review.",
+      "outcomes": "Synthetic end-of-journey response labels and maintenance status.",
+      "temporal_ml_rows": "Training-ready cycle-level features with final outcome labels.",
+      "extra_labels": "Synthetic labels include treatment_success_binary, response_score_percent, maintenance_needed, toxicity_risk_binary, support_intervention_needed, urgent_intervention_needed, final_response_multiclass, and cycle_response_trend_class.",
+      "warning": "All tables are synthetic and should be used only for engineering demos and ML practice."
+    }
+  },
+  "claim_boundary": "Synthetic data lineage for engineering reproducibility only; not clinical provenance."
+}

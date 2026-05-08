@@ -9,9 +9,13 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from backend.database import SessionLocal
 from backend.services.complete_synthetic_training import train_complete_synthetic_models
+from backend.services.dataset_lineage import build_complete_synthetic_lineage
+from backend.services.detailed_training_report import generate_detailed_training_report
 from backend.services.evaluation_reports import generate_versioned_evaluation_report
+from backend.services.locked_holdout import create_locked_holdout_manifest
 from backend.services.mlops_tracking import finish_experiment_run, start_experiment_run
 from backend.services.model_artifacts import register_complete_synthetic_champion
+from backend.services.temporal_leakage_audit import run_temporal_leakage_audit
 
 
 def main():
@@ -81,6 +85,16 @@ def main():
                 promotion_status="candidate",
                 promotion_reason="Pipeline-registered synthetic champion for engineering evaluation.",
             )
+        detailed_report = generate_detailed_training_report(
+            training_rows_path=args.ml_csv_path,
+            metrics_path=str(Path(args.training_output_dir) / "complete_synthetic_model_metrics.json"),
+            classification_predictions_path=str(Path(args.training_output_dir) / "complete_synthetic_model_predictions.csv"),
+            regression_predictions_path=str(Path(args.training_output_dir) / "complete_synthetic_response_regression_predictions.csv"),
+            output_dir=str(Path(args.training_output_dir) / "detailed_eval"),
+        )
+        lineage = build_complete_synthetic_lineage()
+        leakage_audit = run_temporal_leakage_audit(training_rows_path=args.ml_csv_path)
+        locked_holdout = create_locked_holdout_manifest(training_rows_path=args.ml_csv_path)
         report = generate_versioned_evaluation_report(
             db=db,
             output_root=args.evaluation_output_root,
@@ -94,9 +108,17 @@ def main():
                 "metrics": str(Path(args.training_output_dir) / "complete_synthetic_model_metrics.json"),
                 "predictions": str(Path(args.training_output_dir) / "complete_synthetic_model_predictions.csv"),
                 "evaluation_report": (report.get("files") or {}).get("evaluation_report_json"),
+                "detailed_training_report": (detailed_report.get("files") or {}).get("html_report"),
+                "dataset_lineage": "Data/lineage/complete_synthetic_lineage.json",
+                "temporal_leakage_audit": "Data/complete_synthetic_training/leakage_audit/temporal_leakage_audit.json",
+                "locked_holdout_manifest": (locked_holdout.get("files") or {}).get("manifest_json"),
                 "registered_artifact": (registry_model or {}).get("artifact_path"),
             },
-            tags={"registered": bool(registry_model)},
+            tags={
+                "registered": bool(registry_model),
+                "leakage_audit_status": leakage_audit.get("status"),
+                "dataset_hash": lineage.get("dataset_hash"),
+            },
         )
     finally:
         db.close()
@@ -105,8 +127,12 @@ def main():
         "mlops_run_id": run["run_id"],
         "training_ran": not args.skip_training,
         "best_model": (training_metrics or {}).get("best_model_by_patient_level_roc_auc"),
+        "best_regressor": (training_metrics or {}).get("best_response_regressor_by_patient_level_mae"),
         "registered_model": registry_model,
         "evaluation_report": report,
+        "detailed_training_report": detailed_report,
+        "temporal_leakage_audit": leakage_audit,
+        "locked_holdout": locked_holdout,
         "warning": "Synthetic training pipeline is for engineering practice and reproducibility, not clinical validation.",
     }
     print(json.dumps(result, indent=2, default=str))

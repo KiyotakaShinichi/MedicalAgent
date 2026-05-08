@@ -239,6 +239,7 @@ class CompleteSyntheticDatasetRequest(BaseModel):
     write_db: bool = True
     patient_prefix: str = "COMP-BRCA-"
     balanced_outcomes: bool = True
+    balanced_subgroups: bool = True
     missing_rate: float = 0.04
     noise_level: float = 0.03
 
@@ -421,6 +422,7 @@ def admin_dashboard():
 
 # Serve frontend static files
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+app.mount("/artifacts", StaticFiles(directory="Data"), name="artifacts")
 
 
 @app.post("/auth/demo-login")
@@ -808,6 +810,30 @@ def generate_admin_evaluation_report_endpoint(
             output_root=payload.output_root,
             run_id=payload.run_id,
         ),
+    }
+
+
+@app.post("/admin/training-evaluation-report")
+def generate_admin_training_evaluation_report_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.detailed_training_report import generate_detailed_training_report
+
+    return {
+        "message": "Detailed training evaluation report generated.",
+        "result": generate_detailed_training_report(),
+    }
+
+
+@app.get("/admin/training-evaluation-report")
+def get_admin_training_evaluation_report_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.detailed_training_report import generate_detailed_training_report
+
+    return {
+        "message": "Detailed training evaluation report loaded.",
+        "result": generate_detailed_training_report(),
     }
 
 
@@ -1237,6 +1263,7 @@ def generate_complete_synthetic_breast_dataset_endpoint(
             write_db=payload.write_db,
             patient_prefix=payload.patient_prefix,
             balanced_outcomes=payload.balanced_outcomes,
+            balanced_subgroups=payload.balanced_subgroups,
             missing_rate=payload.missing_rate,
             noise_level=payload.noise_level,
         ),

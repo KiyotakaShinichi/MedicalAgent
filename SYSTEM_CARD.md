@@ -80,6 +80,7 @@ Clinician portal:
 Admin/MLE dashboard:
 
 - Monitor prediction counts, failure rates, registry status, calibration, threshold policy, false-negative cases, subgroup checks, drift proxies, RAG evaluation, cache behavior, guardrail pass/fail counts, and clinician feedback.
+- Review detailed training reports with patient-level predictions, hybrid routing, response-regression residuals, error taxonomy, cost-sensitive thresholds, temporal leakage audit status, dataset lineage, and locked holdout artifacts.
 
 ## Safety Architecture
 
@@ -122,6 +123,7 @@ Current/implemented signals:
 
 - Synthetic longitudinal treatment-response score.
 - Synthetic continuous MRI response-regression score.
+- Hybrid MLE signal combining calibrated classifier probability and continuous response-regression score.
 - BreastDCEDL pCR baseline prediction signal from MRI-derived tabular features.
 - SHAP-style explanation payloads where available.
 - Deterministic CBC/symptom risk flags.
@@ -149,10 +151,15 @@ Current evaluation families:
 - RAG regression: intent accuracy, source hit rate, citation presence, guardrail status, grounding proxy, hallucination proxy, cache path, latency, and token estimates.
 - Safety regression: prompt injection, privacy/data exfiltration, urgent symptoms, treatment-decision boundaries, multilingual and encoded attacks.
 - ML readiness: artifacts, data contract, feature store, model quality, drift proxy, calibration, subgroup checks, lifecycle, registry, audit logs, and safety regression.
+- Temporal leakage audit: verifies future/outcome columns are excluded from features, patient-cycle rows are unique and ordered, treatment dates follow cycle order, and response-regression labels are transparent MRI transforms.
+- Dataset lineage: hashes CSV artifacts, records schema signatures, feature lineage, generation seed/options, and table counts.
+- Locked holdout: freezes a patient-level synthetic holdout split for later model comparisons.
+- Error taxonomy: delayed toxicity detection, subtype confusion, sparse-history instability, regimen-shift uncertainty, false-negative favorable response, false-positive overoptimism, and response-regression outliers.
+- Cost-sensitive evaluation: compares thresholds when false negatives are weighted higher than false positives.
 - Patient-data coherence: checks that treatment cycles, CBC windows, MRI reports, symptoms, and synthetic outcome labels are aligned across demo and imported cohorts.
 - Workflow telemetry: clinician approve/edit/reject decisions, explanation quality score, model usefulness score, patient feedback, app events, and prediction audit logs.
 
-The strict MLE readiness status can remain `unideal` while `poc_demo_readiness` is `ready_with_limitations`. That is expected for a synthetic-data healthcare PoC.
+The strict MLE readiness status can remain `acceptable` or `unideal` while `poc_demo_readiness` is `ready_with_limitations`. That is expected for a synthetic-data healthcare PoC.
 
 ## Known Risks
 

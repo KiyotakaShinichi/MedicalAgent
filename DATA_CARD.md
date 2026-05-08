@@ -57,15 +57,32 @@ QIN-BREAST-02 supports DICOM workflow exploration, series indexing, and clinical
 
 The complete synthetic dataset currently includes approximately:
 
-- 300 synthetic patients.
-- 1,800 treatment sessions.
-- 5,400 CBC rows.
-- 7,028 medication/support rows.
-- 3,420 symptom rows.
-- 2,100 synthetic MRI report rows.
-- 1,990 support intervention rows.
-- 300 final outcome rows.
-- 1,800 training-ready temporal ML rows.
+- 600 synthetic patients.
+- 3,600 treatment sessions.
+- 10,800 CBC rows.
+- 13,898 medication/support rows.
+- 6,754 symptom rows.
+- 4,200 synthetic MRI report rows.
+- 3,830 support intervention rows.
+- 600 final outcome rows.
+- 3,600 training-ready temporal ML rows.
+
+Latest generator options:
+
+- seed: `20280508`
+- cycles per patient: `6`
+- balanced outcomes: `true`
+- balanced subgroups: `true`
+- missing rate: `0.06`
+- noise level: `0.04`
+- schema version: `complete_synthetic_breast_journey_v2`
+
+Lineage artifacts:
+
+- Dataset lineage: `Data/lineage/complete_synthetic_lineage.json`
+- Temporal leakage audit: `Data/complete_synthetic_training/leakage_audit/temporal_leakage_audit.json`
+- Locked holdout manifest: `Data/complete_synthetic_training/locked_holdout/locked_holdout_manifest.json`
+- Current dataset SHA-256: `44a845011924e1f0473a0fb317fa3f7743f052b5a1e86c0be47bf9e5fdc6bc88`
 
 ## Label Definitions
 
@@ -131,6 +148,10 @@ These are tabular features derived from synthetic MRI measurements or imaging re
 Use:
 
 > patient-level held-out synthetic split
+
+Also use:
+
+> locked synthetic holdout for model-comparison discipline
 
 Do not call it:
 

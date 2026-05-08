@@ -9,7 +9,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier, RandomForestClassifier
 from sklearn.ensemble import ExtraTreesRegressor, GradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
-from sklearn.linear_model import LogisticRegression, Ridge
+from sklearn.linear_model import HuberRegressor, LogisticRegression, Ridge
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
@@ -399,6 +399,14 @@ def _train_response_regression(train_rows, test_rows, output_path, seed):
             ("preprocess", _preprocessor(scale_numeric=False)),
             ("regressor", GradientBoostingRegressor(random_state=seed)),
         ]),
+        "gradient_boosting_huber_regressor": Pipeline([
+            ("preprocess", _preprocessor(scale_numeric=False)),
+            ("regressor", GradientBoostingRegressor(loss="huber", alpha=0.90, random_state=seed)),
+        ]),
+        "huber_regressor": Pipeline([
+            ("preprocess", _preprocessor(scale_numeric=True)),
+            ("regressor", HuberRegressor(epsilon=1.35, alpha=0.0005, max_iter=1000)),
+        ]),
         "svr_rbf_regressor": Pipeline([
             ("preprocess", _preprocessor(scale_numeric=True)),
             ("regressor", SVR(C=2.0, kernel="rbf")),
@@ -408,8 +416,10 @@ def _train_response_regression(train_rows, test_rows, output_path, seed):
     model_metrics = {}
     artifacts = {}
     predictions = _base_patient_regression_rows(test, target)
+    fitted_models = {}
     for name, model in models.items():
         model.fit(X_train, y_train)
+        fitted_models[name] = model
         row_predictions = model.predict(X_test)
         patient_predictions = _aggregate_patient_regression_predictions(test, target, row_predictions, name)
         model_metrics[name] = {
@@ -428,9 +438,64 @@ def _train_response_regression(train_rows, test_rows, output_path, seed):
         artifacts[f"{name}_response_regression"] = str(artifact_path)
         predictions = predictions.merge(patient_predictions, on=["patient_id", "actual_response_score_percent"], how="left")
 
+    robust_members = [
+        name for name in [
+            "random_forest_regressor",
+            "extra_trees_regressor",
+            "gradient_boosting_regressor",
+            "gradient_boosting_huber_regressor",
+            "huber_regressor",
+        ]
+        if name in fitted_models
+    ]
+    if len(robust_members) >= 3:
+        row_matrix = np.column_stack([fitted_models[name].predict(X_test) for name in robust_members])
+        row_predictions = np.median(row_matrix, axis=1)
+        patient_predictions = _aggregate_patient_regression_predictions(
+            test,
+            target,
+            row_predictions,
+            "robust_response_ensemble",
+        )
+        model_metrics["robust_response_ensemble"] = {
+            **_regression_metrics(y_test, row_predictions),
+            **_regression_metrics(
+                patient_predictions["actual_response_score_percent"],
+                patient_predictions["robust_response_ensemble_response_score_percent"],
+                prefix="patient_level_",
+            ),
+            "model_type": "cycle_tabular_regressor_ensemble",
+            "target": target,
+            "members": robust_members,
+            "selection_note": (
+                "Median ensemble over tree and robust linear regressors. Selected with an outlier-aware "
+                "score that combines MAE and RMSE."
+            ),
+            "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator.",
+        }
+        ensemble_path = output_path / f"robust_response_ensemble_{target}.json"
+        ensemble_path.write_text(
+            json.dumps(
+                {
+                    "model_type": "median_prediction_ensemble",
+                    "target": target,
+                    "members": robust_members,
+                    "member_artifacts": {
+                        member: artifacts.get(f"{member}_response_regression")
+                        for member in robust_members
+                    },
+                    "warning": "Synthetic-data ensemble metadata. Recreate member models before inference.",
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        artifacts["robust_response_ensemble_response_regression"] = str(ensemble_path)
+        predictions = predictions.merge(patient_predictions, on=["patient_id", "actual_response_score_percent"], how="left")
+
     best_model = min(
         model_metrics,
-        key=lambda name: model_metrics[name].get("patient_level_mae", float("inf")),
+        key=lambda name: _regression_selection_score(model_metrics[name]),
     )
     predictions_csv = output_path / "complete_synthetic_response_regression_predictions.csv"
     predictions.to_csv(predictions_csv, index=False)
@@ -441,12 +506,24 @@ def _train_response_regression(train_rows, test_rows, output_path, seed):
             "target": target,
             "models": model_metrics,
             "best_model_by_patient_level_mae": best_model,
+            "best_model_selection_score": _regression_selection_score(model_metrics[best_model]),
+            "selection_policy": "minimize patient_level_mae + 0.15 * patient_level_rmse to reduce large response outliers",
             "target_definition": "Continuous MRI response signal: baseline-to-current tumor-size reduction percent; higher is stronger shrinkage, negative means growth.",
         },
         "best_model": best_model,
         "artifacts": artifacts,
         "predictions_csv": str(predictions_csv),
     }
+
+
+def _regression_selection_score(metrics):
+    mae = metrics.get("patient_level_mae")
+    rmse = metrics.get("patient_level_rmse")
+    if mae is None:
+        return float("inf")
+    if rmse is None:
+        return float(mae)
+    return round(float(mae) + (0.15 * float(rmse)), 6)
 
 
 def _train_sequence_cnn_baseline(train_rows, test_rows, target, output_path, seed, epochs, batch_size):

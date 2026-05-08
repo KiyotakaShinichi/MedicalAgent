@@ -1,0 +1,16 @@
+threshold,fn_cost,fp_cost,weighted_cost,true_negative,false_positive,false_negative,true_positive,sensitivity,specificity,interpretation
+0.3,10,1,12,65,2,1,82,0.988,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.4,10,1,22,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.5,10,1,22,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.6,10,1,22,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.7,10,1,22,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.3,5,1,7,65,2,1,82,0.988,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.4,5,1,12,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.5,5,1,12,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.6,5,1,12,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.7,5,1,12,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.3,3,1,5,65,2,1,82,0.988,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.4,3,1,8,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.5,3,1,8,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.6,3,1,8,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.
+0.7,3,1,8,65,2,2,81,0.976,0.97,Lower weighted_cost is better for this synthetic threshold policy.

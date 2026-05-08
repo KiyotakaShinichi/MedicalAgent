@@ -1,0 +1,23 @@
+{
+  "schema_version": "locked_holdout_manifest_v1",
+  "generated_at": "2026-05-08T11:04:20.467631+00:00",
+  "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "target": "treatment_success_binary",
+  "seed": 314159,
+  "holdout_size": 0.2,
+  "dataset_hash": "44a845011924e1f0473a0fb317fa3f7743f052b5a1e86c0be47bf9e5fdc6bc88",
+  "development_patients": 480,
+  "locked_holdout_patients": 120,
+  "development_rows": 2880,
+  "locked_holdout_rows": 720,
+  "development_positive_rate": 0.5541666666666667,
+  "locked_holdout_positive_rate": 0.55,
+  "locked_holdout_patient_ids_sha256": "db625edf4f4a1ef2bf5601c1c93dc49d5f2260e11bf561ad8f1b4c22faa33fd1",
+  "files": {
+    "locked_holdout_rows_csv": "Data\\complete_synthetic_training\\locked_holdout\\locked_holdout_rows.csv",
+    "development_rows_csv": "Data\\complete_synthetic_training\\locked_holdout\\development_rows.csv",
+    "manifest_json": "Data\\complete_synthetic_training\\locked_holdout\\locked_holdout_manifest.json"
+  },
+  "usage_policy": "Keep this split frozen for model comparison. Do not tune thresholds, features, or generator logic against the locked holdout.",
+  "claim_boundary": "Locked synthetic holdout supports engineering discipline only; it is not external clinical validation."
+}

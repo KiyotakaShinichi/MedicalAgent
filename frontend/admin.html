@@ -677,6 +677,16 @@
           <pre id="mleJson">No run loaded.</pre>
         </div>
       </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header">
+          <span class="card-title">Detailed Training Report</span>
+          <button class="btn btn-sm btn-primary" onclick="runTrainingReport()" id="runTrainingReportBtn">Generate Report</button>
+        </div>
+        <div class="metric-list" id="trainingReportMetrics">
+          <div class="empty">No detailed report loaded yet.</div>
+        </div>
+      </div>
     </section>
 
     <!-- Model & Drift -->
@@ -964,6 +974,7 @@
       { name: "Champion",          value: model.champion_model || "--",                    why: "Current evaluated synthetic champion model." },
       { name: "Evaluated patients",value: asNum(model.evaluated_patients),                 why: "Patient-level evaluation sample count." },
       { name: "Calibration",       value: model.calibration?.status || "--",              why: "Probability reliability gate." },
+      { name: "Probability source",value: model.probability_source || "--",               why: "Shows whether admin metrics use raw or calibrated probabilities." },
       { name: "Decision impact",   value: model.decision_impact_simulation?.status || "--", why: "Simulated clinician-review routing impact." },
     ]);
     renderDriftRows(drift.features || []);
@@ -1049,9 +1060,47 @@
       .finally(() => { btn.disabled = false; btn.textContent = "▶ Run Gates"; });
   }
 
+  function runTrainingReport() {
+    const btn = document.getElementById("runTrainingReportBtn");
+    btn.disabled = true;
+    btn.textContent = "Generating...";
+    adminFetch("/admin/training-evaluation-report", { method: "POST" })
+      .then(data => {
+        toast("Detailed training report generated.");
+        renderTrainingReport(data.result || {});
+      })
+      .catch(err => toast(err.message, true))
+      .finally(() => { btn.disabled = false; btn.textContent = "Generate Report"; });
+  }
+
+  function renderTrainingReport(report) {
+    const files = report.files || {};
+    const htmlUrl = files.html_report
+      ? "/artifacts/" + files.html_report.replace(/^Data[\\/]/, "").replace(/\\/g, "/")
+      : "";
+    const summary = report.metrics_summary || {};
+    const errorTypes = (report.error_taxonomy || []).slice(0, 4)
+      .map(it => `${it.error_type}: ${it.count}`)
+      .join(" | ");
+    document.getElementById("trainingReportMetrics").innerHTML = rows([
+      { name: "Test patients", value: asNum(report.test_patients), why: "Patient-level test set shown in the detailed report." },
+      { name: "Classifier", value: report.best_classifier || "--", why: "Champion classifier used for probability routing." },
+      { name: "Regressor", value: report.best_regressor || "--", why: "Response-score model used in the hybrid MLE signal." },
+      { name: "AUROC / Brier", value: `${asNum(summary.classifier_patient_level_roc_auc)} / ${asNum(summary.classifier_patient_level_brier_score)}`, why: "Discrimination and probability error on synthetic patient-level holdout." },
+      { name: "MAE / RMSE", value: `${asNum(summary.regressor_patient_level_mae)} / ${asNum(summary.regressor_patient_level_rmse)}`, why: "Continuous MRI response regression error; RMSE exposes large outliers." },
+      { name: "Error taxonomy", value: errorTypes || "--", why: "Named failure modes for review and interview discussion." },
+      { name: "Open report", value: htmlUrl || "--", why: htmlUrl ? "Paste this local artifact URL in the browser, or open it from this admin card." : "Report artifact not available." },
+    ]);
+  }
+
   function loadAll() {
     return adminFetch("/admin/analytics")
-      .then(renderAnalytics)
+      .then(data => {
+        renderAnalytics(data);
+        return adminFetch("/admin/training-evaluation-report")
+          .then(report => renderTrainingReport(report.result || {}))
+          .catch(() => {});
+      })
       .catch(err => toast(err.message, true));
   }
 

@@ -18,6 +18,9 @@ DEFAULT_METRICS_PATH = "Data/complete_synthetic_training/complete_synthetic_mode
 DEFAULT_PREDICTIONS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
 DEFAULT_EVALUATION_MANIFEST_PATH = "Data/model_evaluation_reports/latest_manifest.json"
 DEFAULT_OUTPUT_PATH = "Data/mle_monitoring/latest_mle_readiness.json"
+DEFAULT_LINEAGE_PATH = "Data/lineage/complete_synthetic_lineage.json"
+DEFAULT_LEAKAGE_AUDIT_PATH = "Data/complete_synthetic_training/leakage_audit/temporal_leakage_audit.json"
+DEFAULT_LOCKED_HOLDOUT_PATH = "Data/complete_synthetic_training/locked_holdout/locked_holdout_manifest.json"
 
 
 REQUIRED_TEMPORAL_COLUMNS = {
@@ -76,17 +79,24 @@ def build_mle_readiness_summary(
     evaluation_manifest_path=DEFAULT_EVALUATION_MANIFEST_PATH,
     agent_regression_path=DEFAULT_AGENT_REGRESSION_PATH,
     output_path=None,
+    lineage_path=DEFAULT_LINEAGE_PATH,
+    leakage_audit_path=DEFAULT_LEAKAGE_AUDIT_PATH,
+    locked_holdout_path=DEFAULT_LOCKED_HOLDOUT_PATH,
 ):
     training_rows = _load_csv(training_csv)
     metrics = _load_json(metrics_path)
     predictions = _load_csv(predictions_path)
     evaluation_report = _load_latest_evaluation_report(evaluation_manifest_path)
     agent_regression = load_latest_agent_regression_report(agent_regression_path)
+    lineage = _load_json(lineage_path)
+    leakage_audit = _load_json(leakage_audit_path)
+    locked_holdout = _load_json(locked_holdout_path)
 
     checks = []
     checks.extend(_artifact_checks(metrics, metrics_path, predictions_path, training_csv, evaluation_report))
     checks.extend(_data_contract_checks(training_rows))
     checks.extend(_feature_store_checks(training_csv))
+    checks.extend(_lineage_leakage_holdout_checks(lineage, leakage_audit, locked_holdout))
     checks.extend(_performance_checks(metrics, evaluation_report))
     checks.extend(_lifecycle_checks(db, metrics))
     checks.extend(_agent_quality_checks(agent_regression))
@@ -417,6 +427,48 @@ def _feature_store_checks(training_csv):
             meaning="Training and serving should reference the same feature source contract.",
             hard_gate=False,
             remediation="Materialize the feature store using the same training CSV used by readiness checks.",
+        ),
+    ]
+
+
+def _lineage_leakage_holdout_checks(lineage, leakage_audit, locked_holdout):
+    lineage = lineage or {}
+    leakage_audit = leakage_audit or {}
+    locked_holdout = locked_holdout or {}
+    return [
+        _check(
+            name="dataset_lineage_manifest_present",
+            category="lineage",
+            status="passed" if lineage.get("dataset_hash") else "unideal",
+            value={"dataset_hash": lineage.get("dataset_hash"), "schema_version": lineage.get("schema_version")},
+            threshold="dataset hash and schema version recorded",
+            meaning="Dataset hashes, generation seeds, schema signatures, and feature lineage make runs reproducible.",
+            hard_gate=False,
+            remediation="Run python scripts/generate_mle_maturity_artifacts.py.",
+        ),
+        _check(
+            name="temporal_leakage_audit_passed",
+            category="lineage",
+            status="passed" if leakage_audit.get("status") == "passed" else "failed",
+            value=leakage_audit.get("status") or "missing",
+            threshold="passed",
+            meaning="Checks that final outcomes and future-only fields are not model inputs.",
+            hard_gate=True,
+            remediation="Inspect Data/complete_synthetic_training/leakage_audit/temporal_leakage_audit.json.",
+        ),
+        _check(
+            name="locked_holdout_manifest_present",
+            category="lineage",
+            status="passed" if locked_holdout.get("locked_holdout_patients") else "unideal",
+            value={
+                "locked_holdout_patients": locked_holdout.get("locked_holdout_patients"),
+                "seed": locked_holdout.get("seed"),
+                "dataset_hash": locked_holdout.get("dataset_hash"),
+            },
+            threshold="frozen patient-level holdout split recorded",
+            meaning="A frozen holdout prevents tuning directly against every synthetic test artifact.",
+            hard_gate=False,
+            remediation="Run python scripts/generate_mle_maturity_artifacts.py.",
         ),
     ]
 

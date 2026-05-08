@@ -1,0 +1,3 @@
+patient_id,probability,stage,molecular_subtype,latest_mri_percent_change,max_symptom_severity,nadir_wbc,final_cancer_status
+COMPV5-BRCA-0046,0.388,IIA,HER2+,-40.64,9.0,0.58,minimal_residual_disease
+COMPV5-BRCA-0096,0.0,IIIA,HER2+,-53.61,8.0,1.07,minimal_residual_disease
