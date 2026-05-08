@@ -6,6 +6,16 @@ from backend.models import AccessSession, Patient, UserAccount
 
 
 VALID_ROLES = {"patient", "clinician", "admin"}
+DEMO_ROLE_CREDENTIALS = {
+    "admin": {
+        "aliases": {"admin", "admin@demo.local", "demo-admin"},
+        "password": "admin-demo",
+    },
+    "clinician": {
+        "aliases": {"clinician", "clinician@demo.local", "demo-clinician"},
+        "password": "clinician-demo",
+    },
+}
 
 
 @dataclass
@@ -44,6 +54,26 @@ def create_demo_session(db, role: str, patient_id: str | None = None):
         "expires_at": session.expires_at.isoformat(),
         "warning": "Demo session only. Replace with real authentication before deployment.",
     }
+
+
+def create_demo_session_from_credentials(db, username: str, password: str):
+    normalized_username = (username or "").strip().lower()
+    normalized_password = (password or "").strip()
+    if not normalized_username or not normalized_password:
+        raise ValueError("username and password are required")
+
+    for role, credential in DEMO_ROLE_CREDENTIALS.items():
+        if (
+            normalized_username in credential["aliases"]
+            and normalized_password == credential["password"]
+        ):
+            return create_demo_session(db, role=role)
+
+    patient = _patient_from_demo_username(db, normalized_username)
+    if patient is not None and normalized_password in {"patient-demo", normalized_username, patient.id}:
+        return create_demo_session(db, role="patient", patient_id=patient.id)
+
+    raise ValueError("Invalid demo credentials")
 
 
 def get_context_from_authorization(db, authorization_header: str | None):
@@ -92,3 +122,15 @@ def _ensure_demo_account(db, role, patient_id):
         patient_id=patient_id if role == "patient" else None,
         display_name=f"Demo {role.title()}",
     ))
+
+
+def _patient_from_demo_username(db, normalized_username):
+    if not normalized_username:
+        return None
+    exact = db.query(Patient).filter(Patient.id == normalized_username).first()
+    if exact is not None:
+        return exact
+    for patient in db.query(Patient).all():
+        if patient.id.lower() == normalized_username:
+            return patient
+    return None

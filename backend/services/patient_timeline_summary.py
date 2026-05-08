@@ -127,7 +127,7 @@ def _uncertainty_notes(report, mri_signal, synthetic_prediction):
     notes = []
     if report.get("has_synthetic_labs"):
         notes.append("CBC rows are synthetic demo data in this project build.")
-    if mri_signal.get("source") == "complete_synthetic_longitudinal_model":
+    if mri_signal.get("source") in {"complete_synthetic_longitudinal_model", "hybrid_complete_synthetic_classification_regression"}:
         notes.append("The displayed response model is trained on synthetic longitudinal data, not clinically validated outcomes.")
     if not synthetic_prediction and mri_signal.get("source") == "none":
         notes.append("No model prediction is available for this patient.")
@@ -158,13 +158,17 @@ def _clinician_summary(overall_status, clinical_signal, symptom_signal, risks, t
 
 
 def _response_probability(synthetic_prediction, mri_signal):
+    hybrid = synthetic_prediction.get("hybrid_mle_signal") or mri_signal.get("hybrid_mle_signal") or {}
+    if hybrid.get("classification_probability") is not None:
+        return float(hybrid["classification_probability"])
     for key in [
-        "logistic_regression_probability",
         "gradient_boosting_probability",
-        "random_forest_probability",
         "extra_trees_probability",
+        "random_forest_probability",
+        "logistic_regression_probability",
         "temporal_1d_cnn_probability",
         "temporal_gru_probability",
+        "temporal_baseline_cnn_probability",
         "response_probability",
         "pcr_probability",
     ]:

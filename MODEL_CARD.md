@@ -109,6 +109,13 @@ Continuous exploratory target:
 
 This target is derived from MRI percent change from baseline. It is useful for regression experiments, calibration/error analysis, and patient-level response-trajectory modeling, but it must not be described as confirmed treatment response.
 
+Hybrid MLE signal:
+
+- Combines the best patient-level classifier probability with the best response-regression score.
+- Current formula: 65% classification probability score + 35% normalized regression response score.
+- Reports agreement between classifier and regressor bands (`aligned`, `partially_aligned`, `conflicting`, or `single_signal_available`).
+- Used as an exploratory monitoring signal for dashboards and summaries, not as clinical treatment-response confirmation.
+
 ## Current Evaluation
 
 The admin/MLE dashboard reports:

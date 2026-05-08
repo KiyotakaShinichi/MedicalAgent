@@ -573,17 +573,12 @@
     <span class="brand-role">Clinician</span>
   </div>
 
-  <nav class="topbar-center">
-    <a class="nav-tab" href="/patient">Patient</a>
-    <a class="nav-tab active" href="/clinician">Clinician</a>
-    <a class="nav-tab" href="/admin">Admin / MLE</a>
-  </nav>
-
   <div class="topbar-right">
     <div class="patient-selector">
       <label for="patientSelect">Patient</label>
       <select id="patientSelect"></select>
     </div>
+    <button class="btn btn-ghost" onclick="logoutClinician()">Sign Out</button>
   </div>
 </header>
 
@@ -1139,17 +1134,28 @@
     return clinicianToken ? { Authorization: `Bearer ${clinicianToken}` } : {};
   }
 
-  function loginClinician() {
-    return fetch(`${API_BASE}/auth/demo-login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role: "clinician" })
-    }).then(r => {
-      if (!r.ok) throw new Error(`Clinician login failed (${r.status})`);
+  function redirectToLogin() {
+    localStorage.removeItem("clinicianAccessToken");
+    localStorage.removeItem("clinicianToken");
+    window.location.href = "/login";
+  }
+
+  function ensureClinicianSession() {
+    if (!clinicianToken) {
+      redirectToLogin();
+      return Promise.reject(new Error("Clinician login required."));
+    }
+    return fetch(`${API_BASE}/auth/whoami`, { headers: clinicianHeaders() }).then(r => {
+      if (!r.ok) throw new Error("Clinician login required.");
       return r.json();
-    }).then(s => {
-      clinicianToken = s.access_token;
-      localStorage.setItem("clinicianAccessToken", clinicianToken);
+    }).then(session => {
+      if (session.role === "clinician") return session;
+      if (session.role === "admin") window.location.href = "/admin";
+      else if (session.role === "patient") window.location.href = "/patient";
+      throw new Error("Clinician login required.");
+    }).catch(err => {
+      redirectToLogin();
+      throw err;
     });
   }
 
@@ -1159,7 +1165,10 @@
       headers: { ...(options.headers || {}), ...clinicianHeaders() }
     });
     return req().then(r => {
-      if (r.status === 401 || r.status === 403) return loginClinician().then(req);
+      if (r.status === 401 || r.status === 403) {
+        redirectToLogin();
+        throw new Error("Clinician login required.");
+      }
       return r;
     }).then(r => {
       if (!r.ok) throw new Error(`${path} → ${r.status}`);
@@ -1177,6 +1186,12 @@
   }
 
   function getPatientId() { return document.getElementById("patientSelect").value; }
+
+  function logoutClinician() {
+    localStorage.removeItem("clinicianAccessToken");
+    localStorage.removeItem("clinicianToken");
+    window.location.href = "/login";
+  }
 
   function esc(v) {
     return String(v ?? "")
@@ -1344,6 +1359,7 @@
     const clinical = assessment.signals?.clinical_monitoring || {};
     const symptoms = assessment.signals?.symptoms || {};
     const pcr      = mri.pcr_probability !== undefined ? ` · pCR probability ${mri.pcr_probability}` : "";
+    const hybrid   = mri.hybrid_mle_signal ? ` · hybrid score ${mri.hybrid_mle_signal.hybrid_score}/100` : "";
     const xai      = mri.xai;
     const xaiHtml  = xai ? `
       <div class="radio-field"><strong>XAI → pCR:</strong> ${(xai.positive_contributions || []).slice(0,3).map(i => `${esc(i.feature)} (${esc(i.shap_value)})`).join(", ") || "none"}</div>
@@ -1357,7 +1373,7 @@
       <div class="radio-field"><strong>Monitoring score:</strong> ${esc(String(assessment.treatment_monitoring_score ?? "—"))}/100</div>
       <div class="radio-field"><strong>Status:</strong> ${esc(assessment.overall_status)}</div>
       <div class="radio-field">${esc(assessment.overall_message)}</div>
-      <div class="radio-field"><strong>MRI response:</strong> ${esc(mri.status || "unavailable")}${esc(pcr)}<br><span style="color:var(--muted-2);font-size:11px">${esc(mri.message || "")}</span></div>
+      <div class="radio-field"><strong>MRI response:</strong> ${esc(mri.status || "unavailable")}${esc(pcr)}${esc(hybrid)}<br><span style="color:var(--muted-2);font-size:11px">${esc(mri.message || "")}</span></div>
       ${xaiHtml}
       <div class="radio-field"><strong>Clinical monitoring:</strong> ${esc(clinical.status || "unavailable")}<br><span style="color:var(--muted-2);font-size:11px">${esc(clinical.message || "")}</span></div>
       <div class="radio-field"><strong>Symptoms:</strong> ${esc(symptoms.status || "unavailable")}<br><span style="color:var(--muted-2);font-size:11px">${esc(symptoms.message || "")}</span></div>
@@ -1726,7 +1742,7 @@
   }
 
   /* ── Boot ── */
-  loginClinician()
+  ensureClinicianSession()
     .then(() => apiFetch("/patients"))
     .then(patients => {
       const sel = document.getElementById("patientSelect");

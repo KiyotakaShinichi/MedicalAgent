@@ -382,44 +382,29 @@
       <div class="login-head">
         <div>
           <div class="eyebrow">Demo Access</div>
-          <h2>Choose a workspace.</h2>
+          <h2>Sign in to your assigned workspace.</h2>
         </div>
         <p class="demo-note">This is a local demo login. Production auth would use verified identity, MFA, and scoped
           clinical permissions.</p>
       </div>
 
-      <div class="role-grid" id="roleGrid">
-        <button class="role-btn active" data-role="patient" onclick="selectRole('patient')">
-          <div class="role-icon"><svg viewBox="0 0 24 24">
-              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
-            </svg></div>
-          <div class="role-title">Patient</div>
-          <div class="role-sub">Personal portal and support agent.</div>
-        </button>
-        <button class="role-btn" data-role="clinician" onclick="selectRole('clinician')">
-          <div class="role-icon"><svg viewBox="0 0 24 24">
-              <path d="M10 3h4v5h5v4h-5v5h-4v-5H5V8h5V3Z" />
-            </svg></div>
-          <div class="role-title">Clinician</div>
-          <div class="role-sub">Review queue and patient timelines.</div>
-        </button>
-        <button class="role-btn" data-role="admin" onclick="selectRole('admin')">
-          <div class="role-icon"><svg viewBox="0 0 24 24">
-              <path d="M4 4h16v4H4V4Zm0 6h10v4H4v-4Zm0 6h16v4H4v-4Zm12-6h4v4h-4v-4Z" />
-            </svg></div>
-          <div class="role-title">Admin</div>
-          <div class="role-sub">RAG, safety, readiness, and model ops.</div>
-        </button>
-      </div>
-
-      <div class="patient-box" id="patientBox">
-        <div class="field-label"><span>Patient Demo ID</span><span>Required</span></div>
+      <div class="patient-box" id="credentialBox">
+        <div class="field-label"><span>Account Credentials</span><span>Role resolved by login</span></div>
+        <div class="row">
+          <input id="username" autocomplete="username" placeholder="P001, clinician, or admin">
+          <input id="password" type="password" autocomplete="current-password" placeholder="Password">
+        </div>
         <div class="row">
           <select id="patientSelect">
-            <option value="">Loading demo patients...</option>
+            <option value="">Loading patient demo accounts...</option>
           </select>
-          <input id="patientId" placeholder="Or type patient ID">
+          <button class="btn" onclick="useSelectedPatient()">Use Patient Demo</button>
         </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="fillCredentials('clinician','clinician-demo')">Use Clinician Demo</button>
+        <button class="btn" onclick="fillCredentials('admin','admin-demo')">Use Admin Demo</button>
       </div>
 
       <div class="actions">
@@ -429,6 +414,8 @@
       <div class="error" id="errorBox"></div>
 
       <p class="fine-print">
+        Demo examples: patient account <strong>P001</strong> / <strong>patient-demo</strong>,
+        clinician / clinician-demo, admin / admin-demo.<br>
         The app is positioned as monitoring support only. It does not diagnose cancer, decide treatment,
         or replace clinician review.
       </p>
@@ -437,14 +424,6 @@
 
   <script>
     const API_BASE = window.location.origin;
-    let selectedRole = "patient";
-
-    function selectRole(role) {
-      selectedRole = role;
-      document.querySelectorAll(".role-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.role === role));
-      document.getElementById("patientBox").style.display = role === "patient" ? "grid" : "none";
-      setError("");
-    }
 
     function setError(message) {
       document.getElementById("errorBox").textContent = message || "";
@@ -461,25 +440,35 @@
       setError("Local demo sessions cleared.");
     }
 
-    function selectedPatientId() {
-      return document.getElementById("patientId").value.trim() || document.getElementById("patientSelect").value;
+    function fillCredentials(username, password) {
+      document.getElementById("username").value = username || "";
+      document.getElementById("password").value = password || "";
+      setError("");
+    }
+
+    function useSelectedPatient() {
+      const patientId = document.getElementById("patientSelect").value;
+      if (!patientId) {
+        setError("Choose a patient demo account first.");
+        return;
+      }
+      fillCredentials(patientId, "patient-demo");
     }
 
     function login() {
       setError("");
       const button = document.getElementById("loginBtn");
-      const payload = { role: selectedRole };
-      if (selectedRole === "patient") {
-        const patientId = selectedPatientId();
-        if (!patientId) {
-          setError("Choose or enter a patient demo ID.");
-          return;
-        }
-        payload.patient_id = patientId;
+      const payload = {
+        username: document.getElementById("username").value.trim(),
+        password: document.getElementById("password").value
+      };
+      if (!payload.username || !payload.password) {
+        setError("Enter an account and password.");
+        return;
       }
 
       button.disabled = true;
-      fetch(`${API_BASE}/auth/demo-login`, {
+      fetch(`${API_BASE}/auth/demo-credential-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -487,21 +476,34 @@
         .then(response => response.json().then(body => ({ ok: response.ok, body })))
         .then(({ ok, body }) => {
           if (!ok) throw new Error(body.detail || "Login failed.");
-          if (selectedRole === "patient") {
+          clearStoredSessions();
+          if (body.role === "patient") {
             localStorage.setItem("patientPortalAccessToken", body.access_token);
             localStorage.setItem("patientPortalPatientId", body.patient_id);
             window.location.href = "/patient";
-          } else if (selectedRole === "clinician") {
+          } else if (body.role === "clinician") {
             localStorage.setItem("clinicianAccessToken", body.access_token);
             localStorage.setItem("clinicianToken", body.access_token);
             window.location.href = "/clinician";
-          } else {
+          } else if (body.role === "admin") {
             localStorage.setItem("adminAccessToken", body.access_token);
             window.location.href = "/admin";
+          } else {
+            throw new Error("Login succeeded but returned an unknown role.");
           }
         })
         .catch(error => setError(error.message))
         .finally(() => { button.disabled = false; });
+    }
+
+    function clearStoredSessions() {
+      [
+        "patientPortalAccessToken",
+        "patientPortalPatientId",
+        "clinicianAccessToken",
+        "clinicianToken",
+        "adminAccessToken"
+      ].forEach(key => localStorage.removeItem(key));
     }
 
     function loadDemoPatients() {
@@ -522,8 +524,7 @@
     function applyQueryPatient() {
       const patient = new URLSearchParams(window.location.search).get("patient");
       if (patient) {
-        document.getElementById("patientId").value = patient;
-        selectRole("patient");
+        fillCredentials(patient, "patient-demo");
       }
     }
 
@@ -534,6 +535,10 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
     }
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Enter") login();
+    });
 
     loadDemoPatients();
     applyQueryPatient();

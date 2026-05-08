@@ -726,17 +726,27 @@
     return adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
   }
 
-  function loginAdmin() {
-    return fetch(`${API_BASE}/auth/demo-login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role: "admin" })
-    }).then(r => {
-      if (!r.ok) throw new Error(`Admin login failed (${r.status})`);
+  function redirectToLogin() {
+    localStorage.removeItem("adminAccessToken");
+    window.location.href = "/login";
+  }
+
+  function ensureAdminSession() {
+    if (!adminToken) {
+      redirectToLogin();
+      return Promise.reject(new Error("Admin login required."));
+    }
+    return fetch(`${API_BASE}/auth/whoami`, { headers: headers() }).then(r => {
+      if (!r.ok) throw new Error("Admin login required.");
       return r.json();
-    }).then(s => {
-      adminToken = s.access_token;
-      localStorage.setItem("adminAccessToken", adminToken);
+    }).then(session => {
+      if (session.role === "admin") return session;
+      if (session.role === "clinician") window.location.href = "/clinician";
+      else if (session.role === "patient") window.location.href = "/patient";
+      throw new Error("Admin login required.");
+    }).catch(err => {
+      redirectToLogin();
+      throw err;
     });
   }
 
@@ -746,7 +756,10 @@
       headers: { ...(options.headers || {}), ...headers() }
     });
     return req().then(r => {
-      if (r.status === 401 || r.status === 403) return loginAdmin().then(req);
+      if (r.status === 401 || r.status === 403) {
+        redirectToLogin();
+        throw new Error("Admin login required.");
+      }
       return r;
     }).then(r => {
       if (!r.ok) throw new Error(`${path} failed (${r.status})`);
@@ -1047,7 +1060,7 @@
     window.location.href = "/login";
   }
 
-  loadAll();
+  ensureAdminSession().then(loadAll).catch(err => toast(err.message, true));
 </script>
 </body>
 </html>

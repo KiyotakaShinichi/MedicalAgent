@@ -1145,9 +1145,6 @@
       <div class="topbar-sub">My Oncology Journey</div>
     </div>
     <div class="topbar-actions">
-      <a class="surface-link active" href="/patient">Patient</a>
-      <a class="surface-link" href="/clinician">Clinician</a>
-      <a class="surface-link" href="/admin">Admin/MLE</a>
       <button class="btn" onclick="logoutPatient()">
         Sign Out
       </button>
@@ -1649,7 +1646,31 @@
     const pred = data.synthetic_model_prediction;
     const el = document.getElementById("modelSignal");
     if (!pred) { el.innerHTML = '<div class="signal-item"><span class="signal-dot gray"></span>No synthetic model prediction found.</div>'; return; }
-    const keys = ["logistic_regression_probability","extra_trees_probability","random_forest_probability","gradient_boosting_probability","temporal_gru_probability","temporal_1d_cnn_probability"];
+    const hybrid = pred.hybrid_mle_signal;
+    if (hybrid) {
+      const score = Number(hybrid.hybrid_score);
+      const dot = score >= 70 ? "green" : score < 45 ? "red" : "amber";
+      const label = score >= 70 ? "Favorable hybrid signal" : score < 45 ? "Lower hybrid signal" : "Mixed hybrid signal";
+      const probability = hybrid.classification_probability !== null && hybrid.classification_probability !== undefined
+        ? `<div class="signal-item" style="margin-top:6px"><span class="signal-dot gray"></span>Classifier: <strong>${Math.round(Number(hybrid.classification_probability) * 1000) / 10}%</strong> (${esc(hybrid.classification_model || "model")})</div>`
+        : "";
+      const regression = hybrid.response_score_percent !== null && hybrid.response_score_percent !== undefined
+        ? `<div class="signal-item" style="margin-top:6px"><span class="signal-dot gray"></span>Regression response score: <strong>${esc(hybrid.response_score_percent)}%</strong> (${esc(hybrid.regression_model || "regressor")})</div>`
+        : "";
+      const actual = pred.actual_label !== undefined ? `<div class="signal-item" style="margin-top:6px"><span class="signal-dot gray"></span>Held-out label: ${esc(pred.actual_label)}</div>` : "";
+      el.innerHTML = `
+        <div class="signal-item">
+          <span class="signal-dot ${dot}"></span><strong>${esc(score)}</strong>/100 — ${label}<br>
+          <span style="color:var(--muted);font-size:11px">Hybrid MLE: classification + response regression · ${esc(hybrid.agreement || "agreement unknown")}</span>
+        </div>
+        ${probability}
+        ${regression}
+        ${actual}
+        <div class="signal-item" style="margin-top:6px"><span class="signal-dot amber"></span>Trained on generated data. Not clinically validated.</div>
+      `;
+      return;
+    }
+    const keys = ["gradient_boosting_probability","extra_trees_probability","random_forest_probability","logistic_regression_probability","temporal_gru_probability","temporal_1d_cnn_probability","temporal_baseline_cnn_probability"];
     const found = keys.map(k => ({ k, v: pred[k] })).find(x => x.v !== undefined && x.v !== null && x.v !== "");
     if (!found) { el.innerHTML = '<div class="signal-item"><span class="signal-dot gray"></span>No model signal available.</div>'; return; }
     const pct = Math.round(found.v * 1000) / 10;

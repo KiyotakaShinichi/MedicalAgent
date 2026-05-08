@@ -266,6 +266,11 @@ class DemoLoginRequest(BaseModel):
     patient_id: str | None = "COMPV4-BRCA-0001"
 
 
+class DemoCredentialLoginRequest(BaseModel):
+    username: str
+    password: str
+
+
 class PatientUploadCreate(BaseModel):
     upload_type: str = "document"
     file_name: str
@@ -426,6 +431,16 @@ def demo_login(payload: DemoLoginRequest, db: Session = Depends(get_db)):
         return create_demo_session(db, role=payload.role, patient_id=payload.patient_id)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.post("/auth/demo-credential-login")
+def demo_credential_login(payload: DemoCredentialLoginRequest, db: Session = Depends(get_db)):
+    from backend.services.auth import create_demo_session_from_credentials
+
+    try:
+        return create_demo_session_from_credentials(db, username=payload.username, password=payload.password)
+    except ValueError as exc:
+        raise HTTPException(status_code=401, detail=str(exc)) from exc
 
 
 @app.get("/auth/demo-patients")

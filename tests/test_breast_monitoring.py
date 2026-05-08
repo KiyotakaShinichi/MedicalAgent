@@ -23,7 +23,7 @@ from backend.processing.radiology_analysis import (
 from backend.services.mri_series_indexer import classify_mri_series_role
 from backend.services.mri_manifest import select_model_input_series
 from backend.services.mri_preprocessing import normalize_pixels
-from backend.services.auth import create_demo_session, get_context_from_authorization, require_admin_context, require_patient_context
+from backend.services.auth import create_demo_session, create_demo_session_from_credentials, get_context_from_authorization, require_admin_context, require_patient_context
 from backend.services.clinician_feedback import create_clinical_summary_review
 from backend.services import admin_analytics, agent_rag, support_chat_agent
 from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
@@ -44,6 +44,7 @@ from backend.config import get_groq_config, get_groq_model
 from backend.services.mle_readiness import build_mle_readiness_summary, _poc_demo_readiness
 from backend.services.mlops_tracking import log_completed_run
 from backend.services.model_artifacts import promote_model_version, register_complete_synthetic_champion, rollback_model_version
+from backend.services.complete_synthetic_xai import load_complete_synthetic_patient_prediction
 from backend.services.mri_derived_features import build_mri_derived_feature_summary
 from backend.services.patient_data_quality import audit_patient_data_coherence
 from backend.services.patient_uploads import save_patient_upload
@@ -293,6 +294,24 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
+    def test_demo_credentials_resolve_role_without_ui_role_picker(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="P001", name="Patient P001", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            patient_session = create_demo_session_from_credentials(db, "p001", "patient-demo")
+            clinician_session = create_demo_session_from_credentials(db, "clinician", "clinician-demo")
+            admin_session = create_demo_session_from_credentials(db, "admin", "admin-demo")
+
+            self.assertEqual(patient_session["role"], "patient")
+            self.assertEqual(patient_session["patient_id"], "P001")
+            self.assertEqual(clinician_session["role"], "clinician")
+            self.assertEqual(admin_session["role"], "admin")
+        finally:
+            db.close()
+            db.bind.dispose()
+
     def test_complete_synthetic_dataset_exports_training_tables(self):
         db = _temp_db_session()
         output_dir = _make_temp_dir(_temp_root()) / "complete_bundle"
@@ -316,6 +335,41 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         finally:
             db.close()
             db.bind.dispose()
+
+    def test_hybrid_mle_signal_combines_classification_and_regression(self):
+        test_dir = _make_temp_dir(_temp_root())
+        predictions_path = test_dir / "classification.csv"
+        regression_path = test_dir / "regression.csv"
+        metrics_path = test_dir / "metrics.json"
+        pd.DataFrame([{
+            "patient_id": "HYB-P001",
+            "actual_label": 1,
+            "gradient_boosting_probability": 0.8,
+        }]).to_csv(predictions_path, index=False)
+        pd.DataFrame([{
+            "patient_id": "HYB-P001",
+            "actual_response_score_percent": 34.0,
+            "random_forest_regressor_response_score_percent": 35.0,
+        }]).to_csv(regression_path, index=False)
+        metrics_path.write_text(json.dumps({
+            "best_model_by_patient_level_roc_auc": "gradient_boosting",
+            "response_regression": {
+                "best_model_by_patient_level_mae": "random_forest_regressor"
+            },
+        }), encoding="utf-8")
+
+        prediction = load_complete_synthetic_patient_prediction(
+            "HYB-P001",
+            predictions_csv_path=str(predictions_path),
+            response_regression_predictions_csv_path=str(regression_path),
+            metrics_json_path=str(metrics_path),
+        )
+
+        hybrid = prediction["hybrid_mle_signal"]
+        self.assertEqual(hybrid["status"], "favorable_response_signal")
+        self.assertEqual(hybrid["classification_model"], "gradient_boosting")
+        self.assertEqual(hybrid["regression_model"], "random_forest_regressor")
+        self.assertAlmostEqual(hybrid["hybrid_score"], 81.8)
 
     def test_qin_cycle_sync_merges_agents_and_restores_cbc_density(self):
         db = _temp_db_session()

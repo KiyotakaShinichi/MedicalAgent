@@ -56,6 +56,8 @@ Implementation: [backend/services/security_guardrails.py](backend/services/secur
 
 ## ML / MLE layer
 - Synthetic longitudinal modeling for treatment success, toxicity risk, and support-intervention flags.
+- Hybrid response modeling: binary classification estimates whether a synthetic journey looks favorable, while regression estimates a continuous `response_score_percent` from MRI-size change.
+- The patient report exposes `hybrid_mle_signal`, currently 65% classifier probability score plus 35% normalized response-regression score, with an agreement label between classifier and regressor bands.
 - BreastDCEDL baseline response classifier using MRI-derived tabular features.
 - Model artifacts, registry metadata, promotion/rollback, and local MLOps tracking.
 - Versioned evaluation reports and MLE readiness gates.
@@ -114,6 +116,13 @@ Implementation: [backend/services/app_logging.py](backend/services/app_logging.p
 
 ## Demo flow
 See [docs/demo_flow.md](docs/demo_flow.md) for a step-by-step patient, clinician, and admin demo walkthrough.
+
+Demo credential routing:
+- Patient demo: `P001` / `patient-demo` or any valid demo patient ID / `patient-demo`.
+- Clinician demo: `clinician` / `clinician-demo`.
+- Admin demo: `admin` / `admin-demo`.
+
+The login form resolves the account role from credentials and redirects to the correct portal. The portals no longer expose role-switching links in the top navigation.
 
 ## Limitations
 - Synthetic data is not clinical evidence; it is for engineering practice only.

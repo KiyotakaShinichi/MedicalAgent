@@ -8,7 +8,8 @@ CHECKS = {
     "frontend/login.html": [
         "Oncology Monitor",
         "Demo Access",
-        "Choose a workspace",
+        "Sign in to your assigned workspace",
+        "demo-credential-login",
         "patientPortalAccessToken",
         "adminAccessToken",
     ],
@@ -27,9 +28,9 @@ CHECKS = {
     "frontend/patient.html": [
         "Oncology Monitor",
         "My Oncology Journey",
-        "Admin/MLE",
         "Enter to send",
         "Message the support agent",
+        "Hybrid MLE",
         "msg-citations",
         "submitAgentFeedback",
     ],
@@ -37,7 +38,7 @@ CHECKS = {
         "OncoTrack",
         "Clinician",
         "Review Queue",
-        "Admin / MLE",
+        "logoutClinician",
         "btn-ghost",
     ],
 }

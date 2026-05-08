@@ -66,6 +66,31 @@ def _mri_response_signal(patient_id, report, predictions_csv_path, shap_explanat
         }
 
     synthetic_prediction = report.get("synthetic_model_prediction") or {}
+    hybrid_signal = synthetic_prediction.get("hybrid_mle_signal")
+    if hybrid_signal:
+        hybrid_score = float(hybrid_signal.get("hybrid_score", 50))
+        status = hybrid_signal.get("status") or _status_from_score(hybrid_score)
+        if status == "favorable_response_signal":
+            message = "Hybrid synthetic MLE signal leans toward favorable treatment response."
+        elif "lower" in status:
+            message = "Hybrid synthetic MLE signal leans toward lower response or closer review."
+        else:
+            message = "Hybrid synthetic MLE signal is mixed or uncertain."
+
+        return {
+            "status": status,
+            "source": "hybrid_complete_synthetic_classification_regression",
+            "response_probability": hybrid_signal.get("classification_probability"),
+            "response_score_percent": hybrid_signal.get("response_score_percent"),
+            "hybrid_score": round(hybrid_score, 1),
+            "response_signal_score": round(hybrid_score),
+            "model": "hybrid_mle_signal_v1",
+            "hybrid_mle_signal": hybrid_signal,
+            "xai": report.get("synthetic_model_explanation"),
+            "message": message,
+            "caveat": "Hybrid signal is trained on synthetic simulator data and is not clinically validated.",
+        }
+
     synthetic_probability = _synthetic_response_probability(synthetic_prediction)
     if synthetic_probability is not None:
         explanation = report.get("synthetic_model_explanation")
@@ -128,12 +153,13 @@ def _mri_response_signal(patient_id, report, predictions_csv_path, shap_explanat
 
 def _synthetic_response_probability(prediction):
     for key in [
-        "logistic_regression_probability",
+        "gradient_boosting_probability",
         "extra_trees_probability",
         "random_forest_probability",
-        "gradient_boosting_probability",
+        "logistic_regression_probability",
         "temporal_gru_probability",
         "temporal_1d_cnn_probability",
+        "temporal_baseline_cnn_probability",
     ]:
         value = prediction.get(key)
         if value is not None:
@@ -143,16 +169,25 @@ def _synthetic_response_probability(prediction):
 
 def _synthetic_probability_source(prediction):
     for key in [
-        "logistic_regression_probability",
+        "gradient_boosting_probability",
         "extra_trees_probability",
         "random_forest_probability",
-        "gradient_boosting_probability",
+        "logistic_regression_probability",
         "temporal_gru_probability",
         "temporal_1d_cnn_probability",
+        "temporal_baseline_cnn_probability",
     ]:
         if prediction.get(key) is not None:
             return key.replace("_probability", "")
     return "unknown"
+
+
+def _status_from_score(score):
+    if score >= 70:
+        return "favorable_response_signal"
+    if score < 45:
+        return "lower_response_signal_or_review_needed"
+    return "mixed_response_signal"
 
 
 def _clinical_monitoring_signal(report):
