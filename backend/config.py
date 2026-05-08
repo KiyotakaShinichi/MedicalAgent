@@ -21,15 +21,33 @@ def get_groq_api_key():
 
 
 def get_groq_model():
+    """Primary answer-generation model used for chat and clinical summaries."""
     load_environment()
-    return os.environ.get("GROQ_MODEL") or os.environ.get("GROQ_CHAT_MODEL") or "openai/gpt-oss-120b"
+    return (
+        os.environ.get("GROQ_ANSWER_MODEL")
+        or os.environ.get("GROQ_MODEL")
+        or os.environ.get("GROQ_CHAT_MODEL")
+        or "openai/gpt-oss-120b"
+    )
+
+
+def get_groq_router_model():
+    """Fast/cheap model used for JSON intent routing, safety adjudication, and tool selection."""
+    load_environment()
+    return (
+        os.environ.get("GROQ_ROUTER_MODEL")
+        or os.environ.get("GROQ_ADJUDICATION_MODEL")
+        or "llama-3.3-70b-versatile"
+    )
 
 
 def get_groq_config():
     load_environment()
     return {
         "api_key": os.environ.get("GROQ_API_KEY"),
-        "model": get_groq_model(),
+        "model": get_groq_router_model(),
+        "answer_model": get_groq_model(),
+        "router_model": get_groq_router_model(),
         "timeout_seconds": float(os.environ.get("GROQ_ADJUDICATION_TIMEOUT_SECONDS", "3")),
     }
 

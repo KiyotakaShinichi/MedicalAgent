@@ -74,6 +74,19 @@ ALLOWED_SUPPORT_TOOLS = {
     "request_missing_imaging_details",
 }
 
+ALLOWED_SUPPORT_INTENTS = {
+    "conversation",
+    "education",
+    "portal_help",
+    "patient_memory",
+    "emotional_support",
+    "patient_timeline_monitoring",
+    "general_support",
+    "data_entry_confirmation",
+    "safety_boundary",
+    "treatment_decision_boundary",
+}
+
 
 def handle_patient_chat(db, patient_id, message):
     normalized = message.strip()
@@ -191,7 +204,7 @@ def handle_patient_chat(db, patient_id, message):
 
     patient_context = _recent_patient_context(db, patient_id)
     fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
-    routing_intent = route_intent(normalized, actions=actions, safety=routing_safety)
+    routing_intent = tool_plan["intent"] if tool_plan.get("intent") in ALLOWED_SUPPORT_INTENTS else route_intent(normalized, actions=actions, safety=routing_safety)
     if _should_use_llm_direct_reply(routing_intent, routing_safety, actions, urgent_flags):
         fallback_response = _generate_llm_response(normalized, actions, urgent_flags, patient_context, fallback_response)
     agent_result = run_patient_agent_pipeline(
@@ -202,6 +215,7 @@ def handle_patient_chat(db, patient_id, message):
         fallback_response=fallback_response,
         actions=actions,
         urgent_flags=urgent_flags,
+        preselected_intent=routing_intent,
     )
     response = agent_result["reply"]
     assistant_record = ChatMessage(
@@ -331,10 +345,14 @@ def _select_tool_plan(message, extracted, deterministic_plan, safety):
     source = deterministic_plan["source"]
     confidence = deterministic_plan["confidence"]
     reason = deterministic_plan["reason"]
+    planned_intent = deterministic_plan["intent"]
 
     if llm.get("available") and float(llm.get("confidence") or 0) >= 0.6:
         selected = _normalize_selected_tools(llm.get("selected_tools") or llm.get("tools") or [])
         selected = _reconcile_selected_tools(selected, extracted, message)
+        candidate_intent = str(llm.get("intent") or "").strip()
+        if candidate_intent in ALLOWED_SUPPORT_INTENTS:
+            planned_intent = candidate_intent
         source = f"llm_{llm.get('provider')}"
         confidence = float(llm.get("confidence") or 0)
         reason = llm.get("reason") or "LLM support-tool router"
@@ -343,9 +361,17 @@ def _select_tool_plan(message, extracted, deterministic_plan, safety):
     selected = _dedupe_tools([tool for tool in selected if tool != "none"] + deterministic_plan.get("force_tools", []))
     if not selected:
         selected = ["none"]
+    if selected != ["none"]:
+        planned_intent = "data_entry_confirmation"
+    elif planned_intent == "data_entry_confirmation":
+        planned_intent = _rough_chat_intent(message, safety)
+    elif safety.get("scope") == "treatment_decision_request":
+        planned_intent = "treatment_decision_boundary"
+    elif safety.get("scope") in {"urgent_or_safety_related", "diagnosis_or_outcome_claim"}:
+        planned_intent = "safety_boundary"
 
     return {
-        "intent": "data_entry_confirmation" if selected != ["none"] else _rough_chat_intent(message, safety),
+        "intent": planned_intent if planned_intent in ALLOWED_SUPPORT_INTENTS else _rough_chat_intent(message, safety),
         "selected_tools": selected,
         "deterministic_tools": deterministic_plan["selected_tools"],
         "forced_tools": deterministic_plan.get("force_tools", []),

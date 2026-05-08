@@ -12,6 +12,7 @@ from backend.models import (
     Treatment,
 )
 from backend.schema_migrations import ensure_schema
+from backend.services.demo_patient_sync import sync_demo_patient_journey
 
 
 ensure_schema()
@@ -90,6 +91,7 @@ db.add_all(symptoms)
 db.add_all(imaging_reports)
 
 db.commit()
+sync_demo_patient_journey(db)
 db.close()
 
 print("Seed data inserted.")

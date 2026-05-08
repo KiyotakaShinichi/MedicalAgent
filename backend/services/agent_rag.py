@@ -105,7 +105,7 @@ KNOWLEDGE_SNIPPETS = [
 ]
 
 
-def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_response, actions=None, urgent_flags=None):
+def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_response, actions=None, urgent_flags=None, preselected_intent=None):
     started = perf_counter()
     actions = actions or []
     urgent_flags = urgent_flags or []
@@ -153,7 +153,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             input_guardrails=input_guardrails,
             started=started,
         )
-    intent = route_intent(query, actions, safety)
+    intent = _validated_preselected_intent(preselected_intent, safety) or route_intent(query, actions, safety)
     rewritten = rewrite_and_decompose(query, intent)
     cacheable = is_cacheable(query, intent, safety, actions, urgent_flags)
     knowledge_fingerprint = knowledge_base_fingerprint()
@@ -434,6 +434,28 @@ def route_intent(query, actions=None, safety=None):
             return deterministic
         return candidate
     return deterministic
+
+
+def _validated_preselected_intent(intent, safety):
+    allowed = {
+        "safety_boundary",
+        "treatment_decision_boundary",
+        "data_entry_confirmation",
+        "portal_help",
+        "patient_timeline_monitoring",
+        "education",
+        "emotional_support",
+        "general_support",
+        "conversation",
+        "patient_memory",
+    }
+    if intent not in allowed:
+        return None
+    if safety.get("scope") == "treatment_decision_request":
+        return "treatment_decision_boundary"
+    if safety.get("scope") in {"urgent_or_safety_related", "diagnosis_or_outcome_claim"}:
+        return "safety_boundary"
+    return intent
 
 
 def _uses_direct_support_lane(intent, safety):

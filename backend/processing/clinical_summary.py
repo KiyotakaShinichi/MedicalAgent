@@ -2,7 +2,7 @@ import json
 
 from groq import Groq
 
-from backend.config import get_groq_api_key
+from backend.config import get_groq_api_key, get_groq_model
 
 SYSTEM_PROMPT = """\
 You are a clinical support AI for longitudinal breast cancer monitoring.
@@ -31,6 +31,7 @@ Return valid JSON with these keys:
 - limitations: concise list of safety limitations.
 
 Do not include markdown fences. Do not make diagnoses.
+Return strict JSON only. Do not put raw line breaks inside string values.
 If SHAP/XAI is available, include the strongest toward-pCR and away-from-pCR contributors in plain language.
 """
 
@@ -60,6 +61,8 @@ def _fallback_summary(patient_state, reason):
             "Breast imaging findings are extracted from report text and require clinician interpretation.",
             "Risk flags are decision-support signals, not medical orders.",
         ],
+        "summary_source": "fallback",
+        "model": None,
     }
 
 
@@ -75,24 +78,99 @@ def generate_clinical_summary(patient_state):
     )
 
     try:
-        client = Groq(api_key=api_key)
-        response = client.chat.completions.create(
-            model="openai/gpt-oss-120b",
-            temperature=0.2,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt},
-            ],
-        )
+        model = get_groq_model()
+        client = Groq(api_key=api_key, timeout=8)
+        response = _request_summary_completion(client, model, user_prompt, json_mode=True)
     except Exception as exc:
-        return _fallback_summary(patient_state, f"LLM request failed: {exc.__class__.__name__}")
+        if exc.__class__.__name__ != "BadRequestError":
+            return _fallback_summary(patient_state, f"LLM request failed: {exc.__class__.__name__}")
+        try:
+            response = _request_summary_completion(client, model, user_prompt, json_mode=False)
+        except Exception as retry_exc:
+            return _fallback_summary(patient_state, f"LLM request failed: {retry_exc.__class__.__name__}")
 
     content = response.choices[0].message.content
 
-    try:
-        parsed = json.loads(content)
-    except json.JSONDecodeError:
+    parsed = _parse_summary_json(content)
+    if not parsed:
         parsed = _fallback_summary(patient_state, "LLM returned non-JSON text")
         parsed["clinical_summary"] = content
 
+    parsed.setdefault("summary_source", "groq")
+    parsed.setdefault("model", get_groq_model())
     return parsed
+
+
+def _request_summary_completion(client, model, user_prompt, json_mode):
+    params = {
+        "model": model,
+        "temperature": 0.2,
+        "max_tokens": 900,
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
+    }
+    if json_mode:
+        params["response_format"] = {"type": "json_object"}
+    return client.chat.completions.create(**params)
+
+
+def _parse_summary_json(content):
+    text = str(content or "").strip()
+    if not text:
+        return None
+
+    candidates = [text]
+    if text.startswith("```"):
+        stripped = text.strip("`").strip()
+        if stripped.lower().startswith("json"):
+            stripped = stripped[4:].strip()
+        candidates.append(stripped)
+
+    start = text.find("{")
+    end = text.rfind("}")
+    if start != -1 and end > start:
+        candidates.append(text[start:end + 1])
+
+    for candidate in candidates:
+        for repaired in (candidate, _escape_control_chars_inside_json_strings(candidate)):
+            try:
+                parsed = json.loads(repaired)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(parsed, dict):
+                return parsed
+    return None
+
+
+def _escape_control_chars_inside_json_strings(text):
+    output = []
+    in_string = False
+    escaped = False
+    for char in str(text or ""):
+        if in_string:
+            if escaped:
+                output.append(char)
+                escaped = False
+            elif char == "\\":
+                output.append(char)
+                escaped = True
+            elif char == '"':
+                output.append(char)
+                in_string = False
+            elif char == "\n":
+                output.append("\\n")
+            elif char == "\r":
+                output.append("\\r")
+            elif char == "\t":
+                output.append("\\t")
+            elif ord(char) < 32:
+                continue
+            else:
+                output.append(char)
+        else:
+            output.append(char)
+            if char == '"':
+                in_string = True
+    return "".join(output)

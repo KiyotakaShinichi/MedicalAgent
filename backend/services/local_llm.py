@@ -40,9 +40,12 @@ def configured_llm_providers():
 
 def describe_llm_adjudication():
     providers = configured_llm_providers()
+    groq = get_groq_config()
     return {
         "enabled": get_llm_adjudication_enabled(),
         "primary_provider": providers[0]["provider"] if providers else "deterministic_only",
+        "answer_model": groq.get("answer_model") if groq.get("api_key") else None,
+        "router_model": groq.get("router_model") if groq.get("api_key") else None,
         "providers": providers,
         "fallback": "deterministic_guardrails_and_routing",
         "purpose": (

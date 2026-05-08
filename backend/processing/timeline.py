@@ -1,9 +1,22 @@
 def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
     events = []
+    seen = set()
+
+    def add_event(event):
+        key = (
+            str(event.get("date", ""))[:10],
+            event.get("type"),
+            event.get("title"),
+            event.get("summary"),
+        )
+        if key in seen:
+            return
+        seen.add(key)
+        events.append(event)
 
     if labs is not None and not labs.empty:
         for _, row in labs.iterrows():
-            events.append({
+            add_event({
                 "date": str(row["date"]),
                 "type": "lab",
                 "title": "CBC result",
@@ -12,7 +25,7 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
 
     if treatments is not None and not treatments.empty:
         for _, row in treatments.iterrows():
-            events.append({
+            add_event({
                 "date": str(row["date"]),
                 "type": "treatment",
                 "title": f"Treatment cycle {row['cycle']}",
@@ -22,7 +35,7 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
     if imaging_reports is not None and not imaging_reports.empty:
         for _, row in imaging_reports.iterrows():
             modality = row.get("modality", "Imaging")
-            events.append({
+            add_event({
                 "date": str(row["date"]),
                 "type": "imaging",
                 "title": f"{modality} - {row['report_type']}",
@@ -32,7 +45,7 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
     if symptoms is not None and not symptoms.empty:
         for _, row in symptoms.iterrows():
             note = f" - {row['notes']}" if row.get("notes") else ""
-            events.append({
+            add_event({
                 "date": str(row["date"]),
                 "type": "symptom",
                 "title": f"Symptom: {row['symptom']}",
@@ -43,7 +56,7 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
         evidence = risk.get("evidence") or {}
         risk_date = evidence.get("date")
         if risk_date:
-            events.append({
+            add_event({
                 "date": str(risk_date),
                 "type": "risk",
                 "title": f"Risk flag: {risk.get('type')}",

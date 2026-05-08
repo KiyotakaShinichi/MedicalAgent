@@ -34,11 +34,13 @@ from backend.services.agent_rag import AGENT_CACHE_SCHEMA_VERSION, knowledge_bas
 from backend.services.agent_regression_eval import run_agent_regression_suite
 from backend.services.agent_feedback import build_agent_feedback_summary, create_agent_response_feedback
 from backend.services.data_availability import build_data_availability
+from backend.services.demo_patient_sync import sync_demo_patient_journey
 from backend.services.input_validation import validate_cbc_values, validate_symptom_payload
 from backend.services.inference_service import describe_inference_service, get_inference_service
 from backend.services.feature_store import load_feature_row, load_feature_store_manifest, materialize_feature_store
 from backend.services.kb_ingestion import ingest_knowledge_base, load_ingested_chunks
 from backend.services.local_llm import configured_llm_providers, describe_llm_adjudication
+from backend.config import get_groq_config, get_groq_model
 from backend.services.mle_readiness import build_mle_readiness_summary, _poc_demo_readiness
 from backend.services.mlops_tracking import log_completed_run
 from backend.services.model_artifacts import promote_model_version, register_complete_synthetic_champion, rollback_model_version
@@ -516,6 +518,23 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertEqual(statuses["Model signal"], "model_unavailable")
         self.assertIn("Interpret with limitations", availability["clinician_style_summary"])
 
+    def test_demo_patient_sync_creates_coherent_cycle_lab_timeline(self):
+        db = _temp_db_session()
+        try:
+            result = sync_demo_patient_journey(db)
+
+            treatments = db.query(Treatment).filter(Treatment.patient_id == "P001").order_by(Treatment.cycle).all()
+            labs = db.query(LabResult).filter(LabResult.patient_id == "P001").all()
+            imaging = db.query(ImagingReport).filter(ImagingReport.patient_id == "P001").all()
+
+            self.assertEqual(result["treatments"], 6)
+            self.assertEqual([row.cycle for row in treatments], [1, 2, 3, 4, 5, 6])
+            self.assertGreaterEqual(len(labs), 12)
+            self.assertEqual(len(imaging), 3)
+        finally:
+            db.close()
+            db.bind.dispose()
+
     def test_app_monitoring_counts_failures_and_prediction_confidence(self):
         db = _temp_db_session()
         try:
@@ -681,6 +700,33 @@ class BreastMonitoringNLPTests(unittest.TestCase):
 
             os.environ["LLM_ADJUDICATION_ENABLED"] = "false"
             self.assertEqual(configured_llm_providers(), [])
+        finally:
+            for key, value in original.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+
+    def test_groq_answer_and_router_models_are_split(self):
+        managed_keys = [
+            "GROQ_API_KEY",
+            "GROQ_MODEL",
+            "GROQ_ANSWER_MODEL",
+            "GROQ_ROUTER_MODEL",
+            "GROQ_ADJUDICATION_MODEL",
+            "LLM_ADJUDICATION_ENABLED",
+        ]
+        original = {key: os.environ.get(key) for key in managed_keys}
+        try:
+            os.environ["GROQ_API_KEY"] = "test-key"
+            os.environ.pop("GROQ_MODEL", None)
+            os.environ["GROQ_ANSWER_MODEL"] = "openai/gpt-oss-120b"
+            os.environ["GROQ_ROUTER_MODEL"] = "llama-3.3-70b-versatile"
+            os.environ["LLM_ADJUDICATION_ENABLED"] = "true"
+
+            self.assertEqual(get_groq_model(), "openai/gpt-oss-120b")
+            self.assertEqual(get_groq_config()["model"], "llama-3.3-70b-versatile")
+            self.assertEqual(configured_llm_providers()[0]["model"], "llama-3.3-70b-versatile")
         finally:
             for key, value in original.items():
                 if value is None:

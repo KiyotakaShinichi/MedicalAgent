@@ -485,6 +485,37 @@
     color: var(--muted);
   }
 
+  .llm-summary-grid {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .llm-summary-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--light);
+    padding: 14px;
+    min-width: 0;
+  }
+
+  .llm-summary-title {
+    font-size: 11px;
+    color: var(--rose);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .llm-summary-text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--slate);
+    white-space: pre-wrap;
+  }
+
   /* ── GRID LAYOUTS ───────────────────────────── */
   .grid { display: grid; gap: 16px; }
   .grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -1039,7 +1070,7 @@
     .sidebar { width: 200px; }
     .main-wrap { margin-left: 200px; }
     .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
-    .snapshot-columns { grid-template-columns: 1fr; }
+    .snapshot-columns, .llm-summary-grid { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 660px) {
@@ -1178,6 +1209,16 @@
           <div class="snapshot-col uncertain">
             <div class="snapshot-col-title">Data Gaps & Uncertainty</div>
             <ul id="summaryUncertainty"><li>Loading…</li></ul>
+          </div>
+        </div>
+        <div class="llm-summary-grid">
+          <div class="llm-summary-panel">
+            <div class="llm-summary-title">Groq AI Patient Summary <span id="aiSummaryModel" style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;"></span></div>
+            <div class="llm-summary-text" id="aiPatientExplanation">Loading AI-generated patient explanation...</div>
+          </div>
+          <div class="llm-summary-panel">
+            <div class="llm-summary-title">Clinician-Facing AI Summary</div>
+            <div class="llm-summary-text" id="aiClinicalSummary">Loading clinician summary...</div>
           </div>
         </div>
       </div>
@@ -1665,10 +1706,20 @@
     if (el) el.innerHTML = `<span class="signal-dot ${dotColor || 'gray'}"></span>${esc(message || "—")}`;
   }
 
+  function summaryTextValue(value, fallback) {
+    if (Array.isArray(value)) return value.filter(Boolean).join("\n");
+    return value || fallback;
+  }
+
   function renderPatientSummary(data) {
     const summary = data.patient_timeline_summary || {};
+    const aiSummary = data.ai_summary || {};
     document.getElementById("summaryHeadline").textContent = summary.headline || "Monitoring summary unavailable.";
     document.getElementById("summaryText").textContent = summary.patient_summary || "More timeline data is needed.";
+    document.getElementById("aiPatientExplanation").textContent = summaryTextValue(aiSummary.patient_explanation, "No Groq patient-facing summary was returned.");
+    document.getElementById("aiClinicalSummary").textContent = summaryTextValue(aiSummary.clinical_summary, "No Groq clinician-facing summary was returned.");
+    const modelLabel = aiSummary.model ? `(${aiSummary.model})` : (aiSummary.summary_source ? `(${aiSummary.summary_source})` : "");
+    document.getElementById("aiSummaryModel").textContent = modelLabel;
 
     const listItems = (arr, fallback) => (arr || []).filter(Boolean).slice(0,5).map(i => `<li>${esc(i)}</li>`).join("") || `<li>${esc(fallback)}</li>`;
     document.getElementById("summaryKeyPoints").innerHTML = listItems(summary.key_points, "No signals yet.");

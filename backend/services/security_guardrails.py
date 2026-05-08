@@ -307,30 +307,49 @@ def detect_prompt_injection_or_exfiltration(text):
         issues.append("urgent_medical_or_self_harm")
         signals.extend({"category": "urgent_medical_or_self_harm", "match": item} for item in medical["matches"][:5])
 
-    llm_assessment = assess_security_with_local_llm(
-        text,
-        deterministic_context={"issues": sorted(set(issues)), "signals": signals[:10]},
+    benign_self_entry = not issues and (
+        _is_benign_self_data_entry(normalized)
+        or _is_benign_self_memory_query(normalized)
+    )
+    obvious_low_risk = not issues and _is_obvious_low_risk_support_or_education(normalized)
+    should_ask_llm = bool(issues) or not obvious_low_risk
+    llm_assessment = (
+        assess_security_with_local_llm(
+            text,
+            deterministic_context={"issues": sorted(set(issues)), "signals": signals[:10]},
+        )
+        if should_ask_llm
+        else {
+            "available": False,
+            "reason": "skipped_for_obvious_low_risk_support_or_education",
+        }
     )
     llm_wants_block = (
         llm_assessment.get("available")
         and llm_assessment.get("blocked")
         and float(llm_assessment.get("confidence") or 0) >= 0.7
     )
-    benign_self_entry = not issues and (
-        _is_benign_self_data_entry(normalized)
-        or _is_benign_self_memory_query(normalized)
+    llm_confidence = float(llm_assessment.get("confidence") or 0)
+    llm_can_block_without_deterministic_issue = (
+        _has_security_or_privacy_anchor(normalized)
+        or llm_confidence >= 0.95
     )
-    if llm_wants_block and not benign_self_entry:
+    if (
+        llm_wants_block
+        and not benign_self_entry
+        and not obvious_low_risk
+        and (issues or llm_can_block_without_deterministic_issue)
+    ):
         issues.extend(str(issue) for issue in llm_assessment.get("issues") or ["llm_security_boundary"])
         signals.append({
             "category": "local_llm_security_assessment",
             "match": llm_assessment.get("reason") or "blocked",
             "confidence": llm_assessment.get("confidence"),
         })
-    elif llm_wants_block and benign_self_entry:
+    elif llm_wants_block and (benign_self_entry or obvious_low_risk):
         signals.append({
             "category": "llm_security_assessment_suppressed",
-            "match": "benign self-scoped portal data-entry wording",
+            "match": "benign self-scoped or low-risk support/education wording",
             "confidence": llm_assessment.get("confidence"),
         })
 
@@ -471,6 +490,73 @@ def _is_benign_self_memory_query(normalized):
         "api key",
     ]
     return any(term in normalized for term in memory_terms) and not any(term in normalized for term in risky_scope_terms)
+
+
+def _is_obvious_low_risk_support_or_education(normalized):
+    if _has_security_or_privacy_anchor(normalized):
+        return False
+    if len(normalized.split()) <= 6 and any(term in normalized for term in [
+        "hi",
+        "hello",
+        "hey",
+        "kumusta",
+        "kamusta",
+        "who are you",
+        "how are you",
+        "what can you do",
+    ]):
+        return True
+    low_risk_terms = [
+        "what is pcr",
+        "what does pcr",
+        "cbc trends",
+        "what is cbc",
+        "what do cbc",
+        "wbc",
+        "hemoglobin",
+        "platelets",
+        "side effect",
+        "breast cancer monitoring",
+        "chemotherapy",
+    ]
+    return any(term in normalized for term in low_risk_terms)
+
+
+def _has_security_or_privacy_anchor(normalized):
+    anchor_terms = [
+        "ignore",
+        "disregard",
+        "bypass",
+        "override",
+        "jailbreak",
+        "developer mode",
+        "system prompt",
+        "developer message",
+        "hidden instruction",
+        "chain of thought",
+        "database",
+        "sql",
+        "schema",
+        "table",
+        "other patient",
+        "all patients",
+        "patient records",
+        "patient data",
+        "knowledge base",
+        "raw documents",
+        "api key",
+        "secret",
+        "token",
+        "credentials",
+        "wag sundin",
+        "huwag sundin",
+        "pasyente",
+        "ibang pasyente",
+        "lahat ng pasyente",
+        "base de datos",
+        "registros de pacientes",
+    ]
+    return any(_term_present(normalized, term) for term in anchor_terms)
 
 
 def _term_present(normalized, term):
