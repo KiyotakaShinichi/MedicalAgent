@@ -687,6 +687,16 @@
           <div class="empty">No detailed report loaded yet.</div>
         </div>
       </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header">
+          <span class="card-title">Locked Holdout Evaluation</span>
+          <button class="btn btn-sm btn-primary" onclick="runLockedHoldout()" id="runLockedHoldoutBtn">Evaluate Holdout</button>
+        </div>
+        <div class="metric-list" id="lockedHoldoutMetrics">
+          <div class="empty">No locked holdout report loaded yet.</div>
+        </div>
+      </div>
     </section>
 
     <!-- Model & Drift -->
@@ -716,6 +726,26 @@
               <thead><tr><th>Feature</th><th>Std. Mean Shift</th><th>Status</th></tr></thead>
               <tbody id="driftRows"><tr><td colspan="3" class="empty">Loading drift metrics…</td></tr></tbody>
             </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">External Validation Direction</span>
+            <button class="btn btn-sm btn-primary" onclick="runExternalValidation()" id="runExternalValidationBtn">Refresh</button>
+          </div>
+          <div class="card-body">
+            <div class="metric-list" id="externalValidationMetrics"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Model Comparison</span>
+            <button class="btn btn-sm btn-primary" onclick="runModelComparison()" id="runModelComparisonBtn">Compare Runs</button>
+          </div>
+          <div class="card-body">
+            <div class="metric-list" id="modelComparisonMetrics"></div>
           </div>
         </div>
 
@@ -1093,6 +1123,88 @@
     ]);
   }
 
+  function renderLockedHoldout(report) {
+    const cls = report.classification || {};
+    const calibrated = cls.calibrated_probability || cls.raw_probability || {};
+    const reg = report.regression || {};
+    const uncertainty = report.response_uncertainty || {};
+    document.getElementById("lockedHoldoutMetrics").innerHTML = rows([
+      { name: "Patients", value: asNum(report.patients), why: "Frozen synthetic holdout patients not used for training or calibration." },
+      { name: "Classifier", value: report.best_classifier || "--", why: "Champion trained on development rows, then evaluated once on holdout." },
+      { name: "Holdout AUROC", value: asNum(calibrated.patient_level_roc_auc), why: "Discrimination on the frozen synthetic holdout." },
+      { name: "Holdout Brier", value: asNum(calibrated.patient_level_brier_score), why: "Probability error on the frozen synthetic holdout; lower is better." },
+      { name: "Holdout sensitivity", value: asNum(calibrated.patient_level_sensitivity), why: "How many positive synthetic response cases were caught." },
+      { name: "Regressor MAE / RMSE", value: `${asNum(reg.patient_level_mae)} / ${asNum(reg.patient_level_rmse)}`, why: "Continuous MRI-response score error on holdout." },
+      { name: "Uncertainty", value: `${asNum(uncertainty.mean_width)} mean width`, why: "10th-to-90th percentile spread across response regressors." },
+    ]);
+  }
+
+  function renderExternalValidation(report) {
+    const m = report.model_metrics || {};
+    const cnn = report.cnn_baseline || {};
+    document.getElementById("externalValidationMetrics").innerHTML = rows([
+      { name: "Status", value: report.status || "--", why: "Exploratory BreastDCEDL/I-SPY1 derived-feature baseline." },
+      { name: "Rows", value: asNum(report.rows), why: "Real-data derived-feature rows with pCR labels." },
+      { name: "Best model", value: report.best_model || "--", why: "Cross-validated tabular baseline, not clinical validation." },
+      { name: "AUROC / AUPRC", value: `${asNum(m.roc_auc)} / ${asNum(m.average_precision)}`, why: "Real-data exploratory discrimination metrics." },
+      { name: "Balanced accuracy", value: asNum(m.balanced_accuracy), why: "Accuracy adjusted for pCR/non-pCR imbalance." },
+      { name: "CNN baseline AUROC", value: asNum(cnn.val_roc_auc), why: "Small CPU CNN baseline; weak result is honest and useful." },
+    ]);
+  }
+
+  function renderModelComparison(report) {
+    const latest = (report.rows || []).slice(-1)[0] || {};
+    const delta = report.latest_delta || {};
+    document.getElementById("modelComparisonMetrics").innerHTML = rows([
+      { name: "Runs compared", value: asNum(report.runs_compared), why: "Versioned local evaluation reports included." },
+      { name: "Latest run", value: latest.run_id || "--", why: "Most recent evaluation report." },
+      { name: "Latest status", value: latest.status || "--", why: "Advanced evaluation status for latest run." },
+      { name: "AUROC delta", value: asNum(delta.patient_level_roc_auc_delta), why: "Latest minus previous patient-level AUROC." },
+      { name: "Brier delta", value: asNum(delta.patient_level_brier_score_delta), why: "Latest minus previous Brier; negative is better." },
+      { name: "ECE delta", value: asNum(delta.expected_calibration_error_delta), why: "Latest minus previous calibration error; negative is better." },
+      { name: "FN delta", value: asNum(delta.false_negative_count_delta), why: "Latest minus previous false-negative count; negative is better." },
+    ]);
+  }
+
+  function runLockedHoldout() {
+    const btn = document.getElementById("runLockedHoldoutBtn");
+    btn.disabled = true;
+    btn.textContent = "Evaluating...";
+    adminFetch("/admin/locked-holdout-evaluation", { method: "POST" })
+      .then(data => {
+        toast("Locked holdout evaluation completed.");
+        renderLockedHoldout(data.result || {});
+      })
+      .catch(err => toast(err.message, true))
+      .finally(() => { btn.disabled = false; btn.textContent = "Evaluate Holdout"; });
+  }
+
+  function runExternalValidation() {
+    const btn = document.getElementById("runExternalValidationBtn");
+    btn.disabled = true;
+    btn.textContent = "Refreshing...";
+    adminFetch("/admin/external-validation", { method: "POST" })
+      .then(data => {
+        toast("External validation report refreshed.");
+        renderExternalValidation(data.result || {});
+      })
+      .catch(err => toast(err.message, true))
+      .finally(() => { btn.disabled = false; btn.textContent = "Refresh"; });
+  }
+
+  function runModelComparison() {
+    const btn = document.getElementById("runModelComparisonBtn");
+    btn.disabled = true;
+    btn.textContent = "Comparing...";
+    adminFetch("/admin/model-comparison", { method: "POST" })
+      .then(data => {
+        toast("Model comparison generated.");
+        renderModelComparison(data.result || {});
+      })
+      .catch(err => toast(err.message, true))
+      .finally(() => { btn.disabled = false; btn.textContent = "Compare Runs"; });
+  }
+
   function loadAll() {
     return adminFetch("/admin/analytics")
       .then(data => {
@@ -1101,6 +1213,9 @@
           .then(report => renderTrainingReport(report.result || {}))
           .catch(() => {});
       })
+      .then(() => adminFetch("/admin/locked-holdout-evaluation").then(report => renderLockedHoldout(report.result || {})).catch(() => {}))
+      .then(() => adminFetch("/admin/external-validation").then(report => renderExternalValidation(report.result || {})).catch(() => {}))
+      .then(() => adminFetch("/admin/model-comparison").then(report => renderModelComparison(report.result || {})).catch(() => {}))
       .catch(err => toast(err.message, true));
   }
 

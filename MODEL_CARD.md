@@ -149,20 +149,35 @@ The admin/MLE dashboard reports:
 
 Metric statuses such as `passed`, `strong`, or `acceptable` are project engineering gates only. They are not clinical validation.
 
-Latest local synthetic run:
+Latest local synthetic development run:
 
 - Dataset: 600 synthetic patients, 3,600 treatment-cycle rows.
+- Training discipline: train/calibrate on 480-patient development split, then evaluate once on a frozen 120-patient locked holdout.
 - Champion classifier: gradient boosting.
-- Patient-level AUROC: 0.998.
-- Patient-level AUPRC: 0.999.
-- Patient-level Brier score: 0.051.
-- Patient-level confusion matrix: TN 67, FP 0, FN 3, TP 80.
-- Calibrated validation ECE: 0.0481.
-- Best continuous response regressor: robust response ensemble.
-- Patient-level response MAE: 0.974 percentage points.
-- Patient-level response RMSE: 3.582 percentage points.
-- Patient-level response R2: 0.992.
+- Internal development-test patient-level AUROC: 0.995.
+- Internal development-test AUPRC: 0.996.
+- Internal development-test Brier score: 0.047.
+- Internal development-test calibrated validation ECE: 0.0597.
+- Locked holdout calibrated AUROC: 0.963.
+- Locked holdout calibrated AUPRC: 0.966.
+- Locked holdout calibrated Brier score: 0.048.
+- Locked holdout calibrated confusion matrix: TN 52, FP 2, FN 4, TP 62.
+- Best continuous response regressor: random forest regressor for this locked workflow.
+- Locked holdout response MAE: 1.242 percentage points.
+- Locked holdout response RMSE: 5.226 percentage points.
+- Locked holdout response R2: 0.984.
+- Response uncertainty on locked holdout: 113 narrow, 5 moderate, 2 wide; mean 10th-to-90th percentile width 2.039.
 - MLE readiness: acceptable for supervised PoC demo with limitations; hard gates passed.
+
+External validation direction:
+
+- BreastDCEDL/I-SPY1 MRI-derived tabular baseline: 159 rows.
+- Best exploratory real-data baseline: logistic regression.
+- AUROC: 0.637.
+- AUPRC: 0.388.
+- Balanced accuracy: 0.630.
+- Small CNN baseline validation AUROC: 0.420.
+- Interpretation: weak external signal, useful as an honest real-data direction, not clinical validation.
 
 ## Current Known Limitations
 

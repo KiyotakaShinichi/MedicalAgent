@@ -1,17 +1,17 @@
 {
   "schema_version": "latest_detailed_eval_manifest_v1",
-  "summary_path": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\training_eval_summary.json",
-  "html_report": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\training_eval_report.html",
+  "summary_path": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\training_eval_summary.json",
+  "html_report": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\training_eval_report.html",
   "files": {
-    "test_set_predictions_detailed_csv": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\test_set_predictions_detailed.csv",
-    "regression_slice_metrics_csv": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\regression_slice_metrics.csv",
-    "regression_residual_review_csv": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\regression_residual_review.csv",
-    "hybrid_threshold_policy_csv": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\hybrid_threshold_policy.csv",
-    "hybrid_review_summary_csv": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\hybrid_review_summary.csv",
-    "error_taxonomy_csv": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\error_taxonomy.csv",
-    "cost_sensitive_evaluation_csv": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\cost_sensitive_evaluation.csv",
-    "training_eval_summary_json": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\training_eval_summary.json",
-    "markdown_report": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\training_eval_report.md",
-    "html_report": "Data\\complete_synthetic_training\\detailed_eval_20260508T111121Z\\training_eval_report.html"
+    "test_set_predictions_detailed_csv": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\test_set_predictions_detailed.csv",
+    "regression_slice_metrics_csv": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\regression_slice_metrics.csv",
+    "regression_residual_review_csv": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\regression_residual_review.csv",
+    "hybrid_threshold_policy_csv": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\hybrid_threshold_policy.csv",
+    "hybrid_review_summary_csv": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\hybrid_review_summary.csv",
+    "error_taxonomy_csv": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\error_taxonomy.csv",
+    "cost_sensitive_evaluation_csv": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\cost_sensitive_evaluation.csv",
+    "training_eval_summary_json": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\training_eval_summary.json",
+    "markdown_report": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\training_eval_report.md",
+    "html_report": "Data\\test_tmp\\unit_055387168c324cedaa84c2aa5f0818db\\report\\training_eval_report.html"
   }
 }

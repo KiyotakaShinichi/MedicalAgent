@@ -1,0 +1,94 @@
+{
+  "schema_version": "locked_holdout_evaluation_v1",
+  "generated_at": "2026-05-08T11:33:40.808812+00:00",
+  "model_dir": "Data\\complete_synthetic_training",
+  "metrics_path": "Data/complete_synthetic_training/complete_synthetic_model_metrics.json",
+  "locked_holdout_rows_path": "Data/complete_synthetic_training/locked_holdout/locked_holdout_rows.csv",
+  "patients": 120,
+  "rows": 720,
+  "best_classifier": "gradient_boosting",
+  "best_regressor": "random_forest_regressor",
+  "classification": {
+    "status": "evaluated",
+    "raw_probability": {
+      "patient_level_accuracy": 0.942,
+      "patient_level_balanced_accuracy": 0.939,
+      "patient_level_f1": 0.948,
+      "patient_level_precision": 0.928,
+      "patient_level_sensitivity": 0.97,
+      "patient_level_specificity": 0.907,
+      "patient_level_brier_score": 0.052,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0523,
+          "ece": 0.1144
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.0409,
+          "ece": 0.0296
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 49,
+        "false_positive": 5,
+        "false_negative": 2,
+        "true_positive": 64
+      },
+      "patient_level_roc_auc": 0.99,
+      "patient_level_average_precision": 0.992
+    },
+    "calibrated_probability": {
+      "patient_level_accuracy": 0.95,
+      "patient_level_balanced_accuracy": 0.951,
+      "patient_level_f1": 0.954,
+      "patient_level_precision": 0.969,
+      "patient_level_sensitivity": 0.939,
+      "patient_level_specificity": 0.963,
+      "patient_level_brier_score": 0.048,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0483,
+          "ece": 0.037
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.9,
+          "brier_score": 0.0482,
+          "ece": 0.0352
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 52,
+        "false_positive": 2,
+        "false_negative": 4,
+        "true_positive": 62
+      },
+      "patient_level_roc_auc": 0.963,
+      "patient_level_average_precision": 0.966
+    },
+    "probability_used_for_routing": "calibrated_probability"
+  },
+  "regression": {
+    "status": "evaluated",
+    "patient_level_mae": 1.242,
+    "patient_level_rmse": 5.226,
+    "patient_level_r2": 0.984
+  },
+  "response_uncertainty": {
+    "status": "available",
+    "band_counts": {
+      "narrow": 113,
+      "moderate": 5,
+      "wide": 2
+    },
+    "mean_width": 2.039,
+    "interpretation": "Width is the 10th-to-90th percentile spread across response-regression model family predictions."
+  },
+  "files": {
+    "locked_holdout_predictions_csv": "Data\\complete_synthetic_training\\locked_holdout_eval\\locked_holdout_predictions.csv",
+    "locked_holdout_summary_json": "Data\\complete_synthetic_training\\locked_holdout_eval\\locked_holdout_summary.json"
+  },
+  "claim_boundary": "This is a locked synthetic holdout evaluation. It is stronger engineering discipline than an ordinary internal split, but it is not external clinical validation."
+}

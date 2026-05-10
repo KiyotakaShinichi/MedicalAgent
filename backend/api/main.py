@@ -837,6 +837,78 @@ def get_admin_training_evaluation_report_endpoint(
     }
 
 
+@app.post("/admin/locked-holdout-evaluation")
+def generate_admin_locked_holdout_evaluation_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.locked_holdout_evaluation import evaluate_locked_holdout
+
+    return {
+        "message": "Locked holdout evaluation generated.",
+        "result": evaluate_locked_holdout(),
+    }
+
+
+@app.get("/admin/locked-holdout-evaluation")
+def get_admin_locked_holdout_evaluation_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.locked_holdout_evaluation import evaluate_locked_holdout
+
+    return {
+        "message": "Locked holdout evaluation loaded.",
+        "result": evaluate_locked_holdout(),
+    }
+
+
+@app.post("/admin/external-validation")
+def generate_admin_external_validation_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.external_validation_report import build_external_validation_report
+
+    return {
+        "message": "External validation report generated.",
+        "result": build_external_validation_report(),
+    }
+
+
+@app.get("/admin/external-validation")
+def get_admin_external_validation_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.external_validation_report import build_external_validation_report
+
+    return {
+        "message": "External validation report loaded.",
+        "result": build_external_validation_report(),
+    }
+
+
+@app.post("/admin/model-comparison")
+def generate_admin_model_comparison_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.model_comparison_report import build_model_comparison_report
+
+    return {
+        "message": "Model comparison report generated.",
+        "result": build_model_comparison_report(),
+    }
+
+
+@app.get("/admin/model-comparison")
+def get_admin_model_comparison_endpoint(
+    context=Depends(get_admin_access_context),
+):
+    from backend.services.model_comparison_report import build_model_comparison_report
+
+    return {
+        "message": "Model comparison report loaded.",
+        "result": build_model_comparison_report(),
+    }
+
+
 @app.post("/admin/agent-regression")
 def run_admin_agent_regression_endpoint(
     context=Depends(get_admin_access_context),

@@ -13,7 +13,7 @@ from backend.services.agent_regression_eval import (
 from backend.services.feature_store import load_feature_store_manifest
 
 
-DEFAULT_TRAINING_CSV = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
+DEFAULT_TRAINING_CSV = "Data/complete_synthetic_training/locked_holdout/development_rows.csv"
 DEFAULT_METRICS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
 DEFAULT_PREDICTIONS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
 DEFAULT_EVALUATION_MANIFEST_PATH = "Data/model_evaluation_reports/latest_manifest.json"

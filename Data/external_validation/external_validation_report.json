@@ -1,0 +1,90 @@
+{
+  "schema_version": "external_validation_report_v1",
+  "generated_at": "2026-05-08T11:33:18.037931+00:00",
+  "status": "weak_external_signal",
+  "dataset": "BreastDCEDL / I-SPY1 derived-feature baseline",
+  "rows": 159,
+  "positive_pcr": 44,
+  "negative_pcr": 115,
+  "best_model": "logistic_regression",
+  "probability_column": "logistic_regression_pcr_probability",
+  "model_metrics": {
+    "accuracy": 0.616,
+    "balanced_accuracy": 0.63,
+    "precision": 0.387,
+    "sensitivity": 0.659,
+    "specificity": 0.6,
+    "brier_score": 0.241,
+    "roc_auc": 0.637,
+    "average_precision": 0.388,
+    "confusion_matrix": {
+      "true_negative": 69,
+      "false_positive": 46,
+      "false_negative": 15,
+      "true_positive": 29
+    }
+  },
+  "cross_validation_metrics": {
+    "logistic_regression": {
+      "accuracy": 0.616,
+      "balanced_accuracy": 0.63,
+      "roc_auc": 0.637
+    },
+    "random_forest": {
+      "accuracy": 0.654,
+      "balanced_accuracy": 0.543,
+      "roc_auc": 0.579
+    }
+  },
+  "cnn_baseline": {
+    "status": "exploratory_baseline",
+    "model_type": "small_2d_cnn_dce_slice",
+    "rows": 120,
+    "validation_rows": 30,
+    "val_accuracy": 0.733,
+    "val_balanced_accuracy": 0.5,
+    "val_roc_auc": 0.42,
+    "warning": "Exploratory PoC only. CPU-trained small CNN, not clinically validated."
+  },
+  "subgroup_metrics": [
+    {
+      "group": "molecular_subtype",
+      "value": "HER2pos",
+      "n": 50,
+      "positive_rate": 0.44,
+      "roc_auc": 0.461,
+      "average_precision": 0.448,
+      "sensitivity": 0.864,
+      "specificity": 0.143,
+      "status": "review"
+    },
+    {
+      "group": "molecular_subtype",
+      "value": "HRposHER2neg",
+      "n": 66,
+      "positive_rate": 0.106,
+      "roc_auc": 0.358,
+      "average_precision": 0.089,
+      "sensitivity": 0.0,
+      "specificity": 0.949,
+      "status": "review"
+    },
+    {
+      "group": "molecular_subtype",
+      "value": "TripleNeg",
+      "n": 40,
+      "positive_rate": 0.35,
+      "roc_auc": 0.486,
+      "average_precision": 0.392,
+      "sensitivity": 0.714,
+      "specificity": 0.269,
+      "status": "review"
+    }
+  ],
+  "interpretation": "This is an exploratory real-data direction using MRI-derived tabular features and cross-validated predictions. It is useful as an external sanity check, not as clinical validation.",
+  "claim_boundary": "Do not compare synthetic metrics and BreastDCEDL metrics as apples-to-apples clinical performance.",
+  "files": {
+    "external_validation_json": "Data\\external_validation\\external_validation_report.json",
+    "external_validation_subgroups_csv": "Data\\external_validation\\external_validation_subgroups.csv"
+  }
+}

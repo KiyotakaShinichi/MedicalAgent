@@ -154,8 +154,10 @@ Current evaluation families:
 - Temporal leakage audit: verifies future/outcome columns are excluded from features, patient-cycle rows are unique and ordered, treatment dates follow cycle order, and response-regression labels are transparent MRI transforms.
 - Dataset lineage: hashes CSV artifacts, records schema signatures, feature lineage, generation seed/options, and table counts.
 - Locked holdout: freezes a patient-level synthetic holdout split for later model comparisons.
+- Locked holdout evaluation: current model is trained/calibrated on development rows and scored once on the frozen 120-patient holdout.
 - Error taxonomy: delayed toxicity detection, subtype confusion, sparse-history instability, regimen-shift uncertainty, false-negative favorable response, false-positive overoptimism, and response-regression outliers.
 - Cost-sensitive evaluation: compares thresholds when false negatives are weighted higher than false positives.
+- External validation direction: BreastDCEDL/I-SPY1 MRI-derived tabular baseline is reported separately as weak exploratory real-data evidence, not as validation of the synthetic longitudinal model.
 - Patient-data coherence: checks that treatment cycles, CBC windows, MRI reports, symptoms, and synthetic outcome labels are aligned across demo and imported cohorts.
 - Workflow telemetry: clinician approve/edit/reject decisions, explanation quality score, model usefulness score, patient feedback, app events, and prediction audit logs.
 

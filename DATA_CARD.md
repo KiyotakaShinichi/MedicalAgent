@@ -84,6 +84,15 @@ Lineage artifacts:
 - Locked holdout manifest: `Data/complete_synthetic_training/locked_holdout/locked_holdout_manifest.json`
 - Current dataset SHA-256: `44a845011924e1f0473a0fb317fa3f7743f052b5a1e86c0be47bf9e5fdc6bc88`
 
+Current split discipline:
+
+- Development patients: 480.
+- Locked holdout patients: 120.
+- Development rows: 2,880.
+- Locked holdout rows: 720.
+- Locked holdout seed: `314159`.
+- The feature store is materialized from the development rows for the current trained model.
+
 ## Label Definitions
 
 Primary longitudinal model target:

@@ -42,6 +42,7 @@ def generate_detailed_training_report(
         detailed = detailed.merge(regression, on="patient_id", how="left")
 
     detailed = _add_hybrid_columns(detailed, best_classifier, best_regressor)
+    detailed = _add_response_uncertainty_columns(detailed, best_regressor)
     detailed = _add_rule_columns(detailed)
     detailed = detailed.sort_values(["hybrid_review_priority", "patient_id"]).reset_index(drop=True)
 
@@ -209,6 +210,46 @@ def _add_hybrid_columns(frame, best_classifier, best_regressor):
     return output
 
 
+def _add_response_uncertainty_columns(frame, best_regressor):
+    output = frame.copy()
+    member_cols = [
+        column for column in output.columns
+        if column.endswith("_response_score_percent")
+        and not column.startswith("actual_")
+        and column != f"{best_regressor}_response_score_percent"
+    ]
+    robust_col = "robust_response_ensemble_response_score_percent"
+    if robust_col in output.columns and robust_col not in member_cols and best_regressor != "robust_response_ensemble":
+        member_cols.append(robust_col)
+    if len(member_cols) < 2:
+        output["response_uncertainty_lower"] = np.nan
+        output["response_uncertainty_upper"] = np.nan
+        output["response_uncertainty_width"] = np.nan
+        output["response_uncertainty_band"] = "unavailable"
+        output["response_uncertainty_sources"] = ""
+        return output
+
+    matrix = output[member_cols].apply(pd.to_numeric, errors="coerce")
+    output["response_uncertainty_lower"] = matrix.quantile(0.10, axis=1).round(3)
+    output["response_uncertainty_upper"] = matrix.quantile(0.90, axis=1).round(3)
+    output["response_uncertainty_width"] = (
+        output["response_uncertainty_upper"] - output["response_uncertainty_lower"]
+    ).round(3)
+    output["response_uncertainty_band"] = output["response_uncertainty_width"].apply(_uncertainty_band)
+    output["response_uncertainty_sources"] = ", ".join(member_cols)
+    return output
+
+
+def _uncertainty_band(width):
+    if pd.isna(width):
+        return "unavailable"
+    if width <= 5:
+        return "narrow"
+    if width <= 15:
+        return "moderate"
+    return "wide"
+
+
 def _add_rule_columns(frame):
     output = frame.copy()
     max_symptom = pd.to_numeric(output["max_symptom_severity"], errors="coerce")
@@ -306,6 +347,10 @@ def _regression_residual_review(frame, best_regressor, limit=25):
         "hybrid_score",
         "hybrid_review_category",
         "rule_explanation",
+        "response_uncertainty_lower",
+        "response_uncertainty_upper",
+        "response_uncertainty_width",
+        "response_uncertainty_band",
         "latest_mri_percent_change",
         "max_symptom_severity",
         "nadir_wbc",
@@ -624,7 +669,9 @@ Synthetic-data engineering evaluation only. This report helps visualize model be
     "hybrid_score",
     "model_agreement",
     "hybrid_review_category",
-    "rule_explanation",
+        "rule_explanation",
+        "response_uncertainty_width",
+        "response_uncertainty_band",
 ]], limit=20)}
 
 ## Regression Slice Metrics

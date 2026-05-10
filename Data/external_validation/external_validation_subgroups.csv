@@ -1,0 +1,4 @@
+group,value,n,positive_rate,roc_auc,average_precision,sensitivity,specificity,status
+molecular_subtype,HER2pos,50,0.44,0.461,0.448,0.864,0.143,review
+molecular_subtype,HRposHER2neg,66,0.106,0.358,0.089,0.0,0.949,review
+molecular_subtype,TripleNeg,40,0.35,0.486,0.392,0.714,0.269,review

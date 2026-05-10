@@ -1,82 +1,349 @@
 {
-  "schema_version": "detailed_training_eval_v1",
+  "schema_version": "detailed_training_eval_v2",
   "best_classifier": "gradient_boosting",
   "best_regressor": "random_forest_regressor",
-  "test_patients": 105,
+  "test_patients": 120,
   "classification_review": {
     "model": "gradient_boosting",
     "probability_column": "gradient_boosting_calibrated_probability",
-    "test_patients": 105,
+    "test_patients": 120,
     "false_negatives": 3,
-    "false_positives": 0,
+    "false_positives": 1,
     "false_negative_examples": [
-      "COMPV4-BRCA-0100",
-      "COMPV4-BRCA-0263",
-      "COMPV4-BRCA-0365"
+      "COMPV5-BRCA-0555",
+      "COMPV5-BRCA-0587",
+      "COMPV5-BRCA-0369"
     ],
-    "false_positive_examples": []
+    "false_positive_examples": [
+      "COMPV5-BRCA-0346"
+    ]
   },
   "hybrid_review_summary": [
     {
       "hybrid_review_category": "toxicity_review",
-      "patients": 76,
-      "mean_hybrid_score": 63.441,
-      "mean_probability": 0.538,
-      "mean_response_score": 42.325,
+      "patients": 87,
+      "mean_hybrid_score": 68.674,
+      "mean_probability": 0.584,
+      "mean_response_score": 51.234,
       "toxicity_rule_rate": 1.0,
-      "response_review_rule_rate": 0.487,
-      "patient_rate": 0.724
+      "response_review_rule_rate": 0.391,
+      "patient_rate": 0.725
     },
     {
       "hybrid_review_category": "routine_monitoring",
-      "patients": 14,
-      "mean_hybrid_score": 99.627,
-      "mean_probability": 1.0,
-      "mean_response_score": 63.686,
+      "patients": 11,
+      "mean_hybrid_score": 98.143,
+      "mean_probability": 0.974,
+      "mean_response_score": 70.249,
       "toxicity_rule_rate": 0.0,
       "response_review_rule_rate": 0.0,
-      "patient_rate": 0.133
-    },
-    {
-      "hybrid_review_category": "discordant_signal_review",
-      "patients": 9,
-      "mean_hybrid_score": 37.71,
-      "mean_probability": 0.102,
-      "mean_response_score": 41.065,
-      "toxicity_rule_rate": 0.0,
-      "response_review_rule_rate": 0.889,
-      "patient_rate": 0.086
+      "patient_rate": 0.092
     },
     {
       "hybrid_review_category": "response_trend_review",
-      "patients": 6,
-      "mean_hybrid_score": 10.279,
+      "patients": 11,
+      "mean_hybrid_score": 8.79,
       "mean_probability": 0.0,
-      "mean_response_score": -20.632,
+      "mean_response_score": -24.885,
       "toxicity_rule_rate": 0.0,
       "response_review_rule_rate": 1.0,
-      "patient_rate": 0.057
+      "patient_rate": 0.092
+    },
+    {
+      "hybrid_review_category": "discordant_signal_review",
+      "patients": 10,
+      "mean_hybrid_score": 32.454,
+      "mean_probability": 0.026,
+      "mean_response_score": 41.296,
+      "toxicity_rule_rate": 0.0,
+      "response_review_rule_rate": 1.0,
+      "patient_rate": 0.083
+    },
+    {
+      "hybrid_review_category": "watch_closely",
+      "patients": 1,
+      "mean_hybrid_score": 74.612,
+      "mean_probability": 0.624,
+      "mean_response_score": 47.29,
+      "toxicity_rule_rate": 0.0,
+      "response_review_rule_rate": 0.0,
+      "patient_rate": 0.008
     }
   ],
-  "regression_slice_count": 21,
+  "error_taxonomy": [
+    {
+      "error_type": "delayed_toxicity_detection",
+      "count": 52,
+      "rate": 0.433,
+      "example_patient_ids": "COMPV5-BRCA-0005; COMPV5-BRCA-0014; COMPV5-BRCA-0079; COMPV5-BRCA-0088; COMPV5-BRCA-0092; COMPV5-BRCA-0102; COMPV5-BRCA-0115; COMPV5-BRCA-0119; COMPV5-BRCA-0133; COMPV5-BRCA-0193",
+      "meaning": "Deterministic CBC/symptom toxicity rule triggers even though the response classifier is favorable."
+    },
+    {
+      "error_type": "subtype_confusion",
+      "count": 12,
+      "rate": 0.1,
+      "example_patient_ids": "COMPV5-BRCA-0112; COMPV5-BRCA-0176; COMPV5-BRCA-0244; COMPV5-BRCA-0326; COMPV5-BRCA-0444; COMPV5-BRCA-0508; COMPV5-BRCA-0528; COMPV5-BRCA-0544; COMPV5-BRCA-0576; COMPV5-BRCA-0062",
+      "meaning": "HER2-related subgroup where classifier and response-regressor disagree."
+    },
+    {
+      "error_type": "regimen_shift_uncertainty",
+      "count": 4,
+      "rate": 0.033,
+      "example_patient_ids": "COMPV5-BRCA-0144; COMPV5-BRCA-0594; COMPV5-BRCA-0154; COMPV5-BRCA-0354",
+      "meaning": "Regimen-specific review gap for HR+/HER2+ TCHP followed by endocrine therapy."
+    },
+    {
+      "error_type": "false_negative_favorable_response",
+      "count": 3,
+      "rate": 0.025,
+      "example_patient_ids": "COMPV5-BRCA-0555; COMPV5-BRCA-0587; COMPV5-BRCA-0369",
+      "meaning": "Classifier missed a synthetically favorable final outcome. In medicine this is reviewed carefully because false negatives can hide benefit signals."
+    },
+    {
+      "error_type": "response_regression_outlier",
+      "count": 3,
+      "rate": 0.025,
+      "example_patient_ids": "COMPV5-BRCA-0277; COMPV5-BRCA-0337; COMPV5-BRCA-0507",
+      "meaning": "Continuous response estimate differs from the synthetic MRI-derived label by at least 20 percentage points."
+    },
+    {
+      "error_type": "false_positive_overoptimism",
+      "count": 1,
+      "rate": 0.008,
+      "example_patient_ids": "COMPV5-BRCA-0346",
+      "meaning": "Classifier predicted favorable response for an unfavorable synthetic outcome. This can over-reassure a review workflow."
+    },
+    {
+      "error_type": "calibration_boundary_case",
+      "count": 0,
+      "rate": 0.0,
+      "example_patient_ids": "",
+      "meaning": "Probability is close to the operating threshold; threshold changes may flip routing."
+    },
+    {
+      "error_type": "sparse_history_instability",
+      "count": 0,
+      "rate": 0.0,
+      "example_patient_ids": "",
+      "meaning": "Limited temporal history or missing model signal makes the patient-level estimate less stable."
+    }
+  ],
+  "cost_sensitive_evaluation": [
+    {
+      "threshold": 0.3,
+      "fn_cost": 10,
+      "fp_cost": 1,
+      "weighted_cost": 21,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 2,
+      "true_positive": 64,
+      "sensitivity": 0.97,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.4,
+      "fn_cost": 10,
+      "fp_cost": 1,
+      "weighted_cost": 31,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.5,
+      "fn_cost": 10,
+      "fp_cost": 1,
+      "weighted_cost": 31,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.6,
+      "fn_cost": 10,
+      "fp_cost": 1,
+      "weighted_cost": 31,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.7,
+      "fn_cost": 10,
+      "fp_cost": 1,
+      "weighted_cost": 41,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 4,
+      "true_positive": 62,
+      "sensitivity": 0.939,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.3,
+      "fn_cost": 5,
+      "fp_cost": 1,
+      "weighted_cost": 11,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 2,
+      "true_positive": 64,
+      "sensitivity": 0.97,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.4,
+      "fn_cost": 5,
+      "fp_cost": 1,
+      "weighted_cost": 16,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.5,
+      "fn_cost": 5,
+      "fp_cost": 1,
+      "weighted_cost": 16,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.6,
+      "fn_cost": 5,
+      "fp_cost": 1,
+      "weighted_cost": 16,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.7,
+      "fn_cost": 5,
+      "fp_cost": 1,
+      "weighted_cost": 21,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 4,
+      "true_positive": 62,
+      "sensitivity": 0.939,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.3,
+      "fn_cost": 3,
+      "fp_cost": 1,
+      "weighted_cost": 7,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 2,
+      "true_positive": 64,
+      "sensitivity": 0.97,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.4,
+      "fn_cost": 3,
+      "fp_cost": 1,
+      "weighted_cost": 10,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.5,
+      "fn_cost": 3,
+      "fp_cost": 1,
+      "weighted_cost": 10,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.6,
+      "fn_cost": 3,
+      "fp_cost": 1,
+      "weighted_cost": 10,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 3,
+      "true_positive": 63,
+      "sensitivity": 0.955,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    },
+    {
+      "threshold": 0.7,
+      "fn_cost": 3,
+      "fp_cost": 1,
+      "weighted_cost": 13,
+      "true_negative": 53,
+      "false_positive": 1,
+      "false_negative": 4,
+      "true_positive": 62,
+      "sensitivity": 0.939,
+      "specificity": 0.981,
+      "interpretation": "Lower weighted_cost is better for this synthetic threshold policy."
+    }
+  ],
+  "regression_slice_count": 22,
   "residual_review_count": 25,
   "metrics_summary": {
     "best_classifier": "gradient_boosting",
     "classifier_patient_level_roc_auc": 0.995,
     "classifier_patient_level_average_precision": 0.996,
-    "classifier_patient_level_brier_score": 0.05,
+    "classifier_patient_level_brier_score": 0.047,
     "classifier_patient_level_confusion_matrix": {
-      "true_negative": 47,
-      "false_positive": 3,
-      "false_negative": 1,
-      "true_positive": 54
+      "true_negative": 50,
+      "false_positive": 4,
+      "false_negative": 0,
+      "true_positive": 66
     },
     "calibrated_champion_status": "trained",
-    "calibrated_validation_ece": 0.0298,
+    "calibrated_validation_ece": 0.0597,
     "best_regressor": "random_forest_regressor",
-    "regressor_patient_level_mae": 2.921,
-    "regressor_patient_level_rmse": 11.673,
-    "regressor_patient_level_r2": 0.915
+    "regressor_patient_level_mae": 1.48,
+    "regressor_patient_level_rmse": 6.479,
+    "regressor_patient_level_r2": 0.971
   },
   "files": {
     "test_set_predictions_detailed_csv": "Data\\complete_synthetic_training\\detailed_eval\\test_set_predictions_detailed.csv",
@@ -84,9 +351,12 @@
     "regression_residual_review_csv": "Data\\complete_synthetic_training\\detailed_eval\\regression_residual_review.csv",
     "hybrid_threshold_policy_csv": "Data\\complete_synthetic_training\\detailed_eval\\hybrid_threshold_policy.csv",
     "hybrid_review_summary_csv": "Data\\complete_synthetic_training\\detailed_eval\\hybrid_review_summary.csv",
+    "error_taxonomy_csv": "Data\\complete_synthetic_training\\detailed_eval\\error_taxonomy.csv",
+    "cost_sensitive_evaluation_csv": "Data\\complete_synthetic_training\\detailed_eval\\cost_sensitive_evaluation.csv",
     "training_eval_summary_json": "Data\\complete_synthetic_training\\detailed_eval\\training_eval_summary.json",
     "markdown_report": "Data\\complete_synthetic_training\\detailed_eval\\training_eval_report.md",
     "html_report": "Data\\complete_synthetic_training\\detailed_eval\\training_eval_report.html"
   },
+  "locked_output_path": null,
   "claim_boundary": "Synthetic-data engineering evaluation only. Not clinical validation."
 }

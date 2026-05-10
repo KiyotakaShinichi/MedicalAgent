@@ -1,0 +1,7 @@
+run_id,status,champion_model,probability_source,evaluated_patients,patient_level_roc_auc,patient_level_average_precision,patient_level_brier_score,expected_calibration_error,subgroup_status,low_support_group_count,false_negative_count,cost_policy_threshold,cost_policy_weighted_error
+20260507T060600Z,unideal,gradient_boosting,,75,0.99,0.993,0.062,0.113,acceptable,3,1,0.45,0.08
+20260508T031401Z,unideal,gradient_boosting,,75,0.99,0.993,0.062,0.113,acceptable,3,1,0.45,0.08
+20260508T033042Z,unideal,gradient_boosting,,75,0.99,0.993,0.062,0.113,acceptable,3,1,0.45,0.08
+20260508T102547Z,acceptable,gradient_boosting,calibrated_champion,105,0.995,0.996,0.05,0.015,acceptable,1,3,0.3,0.076
+20260508T110424Z,strong,gradient_boosting,calibrated_champion,150,0.998,0.999,0.051,0.024,passed,0,2,0.1,0.047
+20260508T113103Z,passed,gradient_boosting,calibrated_champion,120,0.995,0.996,0.047,0.03,passed,0,3,0.1,0.05

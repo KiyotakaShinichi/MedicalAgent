@@ -1,0 +1,26 @@
+{
+  "schema_version": "qlora_behavior_experiment_v1",
+  "purpose": "Behavior-only fine-tuning experiment for local/Ollama learning.",
+  "not_for": "Medical knowledge injection, diagnosis, treatment recommendation, or clinical validation.",
+  "base_model_placeholder": "local Ollama model to be selected later",
+  "training_target": [
+    "JSON validity for tool intents",
+    "non-diagnostic wording",
+    "refusal/escalation behavior",
+    "patient-friendly explanations",
+    "citation-aware answer style",
+    "insufficient-evidence responses"
+  ],
+  "evaluation_metrics": [
+    "JSON validity rate",
+    "refusal accuracy",
+    "unsafe advice rate",
+    "escalation accuracy",
+    "citation-format adherence",
+    "summary completeness"
+  ],
+  "files": {
+    "jsonl": "experiments\\qlora_behavior\\behavior_tuning_examples.jsonl",
+    "readme": "experiments\\qlora_behavior\\README.md"
+  }
+}

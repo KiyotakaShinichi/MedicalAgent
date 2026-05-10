@@ -60,6 +60,9 @@ Implementation: [backend/services/security_guardrails.py](backend/services/secur
 - The patient report exposes `hybrid_mle_signal`, currently 65% classifier probability score plus 35% normalized response-regression score, with an agreement label between classifier and regressor bands.
 - Robust response-regression selection uses Huber/tree regressors plus a median ensemble and an outlier-aware score that penalizes RMSE.
 - Current artifacts include temporal leakage audit, dataset lineage hashes/schema signatures, a locked synthetic holdout manifest, error taxonomy, and cost-sensitive threshold evaluation.
+- Current training discipline uses development rows for training/calibration and evaluates once on a frozen locked synthetic holdout.
+- Response uncertainty bands show when response-regression model families disagree.
+- External validation direction is reported separately through the BreastDCEDL/I-SPY1 MRI-derived feature baseline.
 - BreastDCEDL baseline response classifier using MRI-derived tabular features.
 - Model artifacts, registry metadata, promotion/rollback, and local MLOps tracking.
 - Versioned evaluation reports and MLE readiness gates.
@@ -77,6 +80,7 @@ Details: [docs/synthetic_data.md](docs/synthetic_data.md) and [DATA_CARD.md](DAT
 - Heuristic grounding and hallucination proxies until labeled RAG data exists.
 - Detailed synthetic training report exports patient-level test predictions, regression residuals, slice metrics, and hybrid review-rule routing.
 - Detailed MLE report also exports error taxonomy and cost-sensitive threshold policy tables.
+- Admin/MLE dashboard includes detailed training report, locked holdout evaluation, external validation direction, and model-comparison cards.
 - System proof table and claim mapping are tracked in [docs/system_proof.md](docs/system_proof.md).
 
 Details: [docs/evaluation.md](docs/evaluation.md) and [evals/README.md](evals/README.md).
