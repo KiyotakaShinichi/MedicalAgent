@@ -11,6 +11,18 @@ from backend.services.agent_regression_eval import (
     load_latest_agent_regression_report,
 )
 from backend.services.feature_store import load_feature_store_manifest
+from backend.services.temporal_eval import (
+    DEFAULT_TEMPORAL_EVAL_PATH,
+    run_temporal_eval,
+)
+from backend.services.noise_eval import (
+    DEFAULT_NOISE_EVAL_PATH,
+    run_noise_eval,
+)
+from backend.services.calibration_eval import (
+    DEFAULT_CALIBRATION_EVAL_PATH,
+    run_calibration_eval,
+)
 
 
 DEFAULT_TRAINING_CSV = "Data/complete_synthetic_training/locked_holdout/development_rows.csv"
@@ -104,6 +116,14 @@ def build_mle_readiness_summary(
     ablation = _hybrid_weight_ablation(predictions)
     temporal_gen = _temporal_generalization_eval(training_rows, predictions)
 
+    # -- Run advanced robustness evals (lightweight; cached to disk)
+    temporal_eval_report = run_temporal_eval()
+    noise_eval_report = run_noise_eval()
+    calibration_report = run_calibration_eval()
+
+    # Inject their status as advisory (non-blocking) checks
+    checks.extend(_robustness_checks(temporal_eval_report, noise_eval_report, calibration_report))
+
     category_statuses = _category_statuses(checks)
     hard_failures = [check for check in checks if check["hard_gate"] and check["status"] == "failed"]
     summary = {
@@ -124,6 +144,9 @@ def build_mle_readiness_summary(
         "next_actions": _next_actions(checks),
         "hybrid_weight_ablation": ablation,
         "temporal_generalization_eval": temporal_gen,
+        "temporal_eval_report": temporal_eval_report,
+        "noise_eval_report": noise_eval_report,
+        "calibration_eval_report": calibration_report,
         "claim_boundary": (
             "These gates make the engineering workflow more production-like. They do not convert synthetic-data "
             "results into clinical validation."
@@ -851,6 +874,80 @@ def _round(value, digits=3):
         return round(float(value), digits)
     except (TypeError, ValueError):
         return value
+
+
+# -- Robustness eval checks (temporal, noise, calibration) --------------------
+
+def _robustness_checks(temporal_report, noise_report, calibration_report):
+    """Advisory (non-blocking) checks from the three robustness evaluations."""
+    checks = []
+
+    # Temporal generalisation
+    t_status = (temporal_report or {}).get("status", "unavailable")
+    t_map = {"stable": "passed", "mild_drift": "unideal", "significant_drift": "failed",
+              "unavailable": "unavailable"}
+    checks.append(_check(
+        name="temporal_generalization",
+        category="monitoring",
+        status=t_map.get(t_status, "unavailable"),
+        value=t_status,
+        threshold="stable preferred (gap >= -0.03 AUROC)",
+        meaning=(
+            "Patient-timeline split eval: trains on earlier synthetic cohort, "
+            "evaluates on later cohort. Stable means no significant distribution shift."
+        ),
+        hard_gate=False,
+        remediation="Investigate simulator cohort effects or add online retraining.",
+    ))
+
+    # Noise robustness
+    n_status = (noise_report or {}).get("status", "unavailable")
+    n_map = {"robust": "passed", "mild_degradation": "acceptable",
+              "significant_degradation": "unideal", "unavailable": "unavailable"}
+    max_drop = None
+    summary = (noise_report or {}).get("summary") or []
+    if summary:
+        drops = [r.get("auroc_drop") for r in summary if r.get("auroc_drop") is not None]
+        max_drop = round(max(drops), 4) if drops else None
+    checks.append(_check(
+        name="noise_robustness",
+        category="monitoring",
+        status=n_map.get(n_status, "unavailable"),
+        value=max_drop,
+        threshold="max AUROC drop <= 0.05 robust, <= 0.12 mild, > 0.12 significant",
+        meaning=(
+            "Five EHR noise perturbations applied to test set. Measures model "
+            "brittleness to lab missingness, jitter, unit errors, batch effects, "
+            "and contradictory symptom records."
+        ),
+        hard_gate=False,
+        remediation=(
+            "Add missingness-robust imputation, outlier clipping, or feature "
+            "normalisation to reduce noise sensitivity."
+        ),
+    ))
+
+    # Calibration
+    c_status = (calibration_report or {}).get("status", "unavailable")
+    best_ece = (calibration_report or {}).get("best_ece")
+    checks.append(_check(
+        name="calibration_comparison",
+        category="monitoring",
+        status=c_status,
+        value=best_ece,
+        threshold="ECE <= 0.03 passed, <= 0.06 strong, <= 0.10 acceptable",
+        meaning=(
+            "Best ECE across raw, isotonic, Platt, and temperature scaling methods. "
+            "Informs which probability source is safest to surface in the dashboard."
+        ),
+        hard_gate=False,
+        remediation=(
+            "Use the recommended_source from calibration_eval_report. "
+            "Fit calibration on a locked split before patient-facing probability claims."
+        ),
+    ))
+
+    return checks
 
 
 # -- Ablation sweep: hybrid classification/regression weight -------------------

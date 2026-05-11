@@ -1,0 +1,84 @@
+{
+  "chart_type": "horizontal_bar",
+  "title": "Synthetic Champion Model - Global Feature Explanation",
+  "subtitle": "SHAP LinearExplainer (logistic regression)",
+  "disclaimer": "Synthetic data only - not clinical evidence.",
+  "x_label": "Mean |contribution|",
+  "data": [
+    {
+      "feature": "mri_percent_change_from_baseline",
+      "importance": 2.782347,
+      "meaning": "MRI tumor size change over treatment cycles."
+    },
+    {
+      "feature": "mri_tumor_size_cm",
+      "importance": 1.411083,
+      "meaning": "Latest per-cycle synthetic MRI tumor size."
+    },
+    {
+      "feature": "cycle",
+      "importance": 0.789669,
+      "meaning": "Synthetic model input feature."
+    },
+    {
+      "feature": "stage_IV",
+      "importance": 0.743642,
+      "meaning": "Synthetic cancer stage category."
+    },
+    {
+      "feature": "stage_IIB",
+      "importance": 0.378202,
+      "meaning": "Synthetic cancer stage category."
+    },
+    {
+      "feature": "stage_IIIA",
+      "importance": 0.139577,
+      "meaning": "Synthetic cancer stage category."
+    },
+    {
+      "feature": "stage_IIA",
+      "importance": 0.123294,
+      "meaning": "Synthetic cancer stage category."
+    },
+    {
+      "feature": "stage_IIIB",
+      "importance": 0.118361,
+      "meaning": "Synthetic cancer stage category."
+    },
+    {
+      "feature": "pre_wbc",
+      "importance": 0.092812,
+      "meaning": "Synthetic model input feature."
+    },
+    {
+      "feature": "pre_anc",
+      "importance": 0.074718,
+      "meaning": "Synthetic model input feature."
+    },
+    {
+      "feature": "nadir_hemoglobin",
+      "importance": 0.074228,
+      "meaning": "Lowest hemoglobin signal after treatment."
+    },
+    {
+      "feature": "nadir_anc",
+      "importance": 0.068838,
+      "meaning": "Lowest neutrophil count signal after treatment."
+    },
+    {
+      "feature": "dose_delayed",
+      "importance": 0.04573,
+      "meaning": "Whether a treatment cycle was delayed."
+    },
+    {
+      "feature": "age",
+      "importance": 0.039682,
+      "meaning": "Synthetic model input feature."
+    },
+    {
+      "feature": "molecular_subtype_triple-negative",
+      "importance": 0.037834,
+      "meaning": "Synthetic molecular subtype category."
+    }
+  ]
+}

@@ -6,9 +6,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 CHECKS = {
     "frontend/login.html": [
-        "Oncology Monitor",
+        "OncoTrack",
         "Demo Access",
-        "Sign in to your assigned workspace",
+        "Sign in to your workspace",
         "demo-credential-login",
         "patientPortalAccessToken",
         "adminAccessToken",

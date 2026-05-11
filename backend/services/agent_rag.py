@@ -25,6 +25,7 @@ KNOWLEDGE_SNIPPETS = [
         "source_name": "CDC",
         "source_url": "https://www.cdc.gov/cancer-preventing-infections/patients/fever.html",
         "tags": ["fever", "infection", "chemotherapy", "urgent", "wbc", "neutropenia"],
+        "builtin": True,
         "text": (
             "During chemotherapy, fever can be a sign of infection risk and should be treated as urgent. "
             "A patient should contact the oncology team immediately for fever or feeling seriously unwell."
@@ -37,6 +38,7 @@ KNOWLEDGE_SNIPPETS = [
         "source_name": "National Cancer Institute",
         "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects",
         "tags": ["side effects", "symptoms", "fatigue", "nausea", "doctor", "treatment"],
+        "builtin": True,
         "text": (
             "Cancer treatment can cause side effects, and patients should tell their doctor about symptoms so the care team "
             "can help manage problems. Monitoring symptoms over time is useful for clinical review."
@@ -49,8 +51,9 @@ KNOWLEDGE_SNIPPETS = [
         "source_name": "National Cancer Institute",
         "source_url": "https://www.cancer.gov/types/breast/treatment/chemotherapy",
         "tags": ["breast cancer", "chemotherapy", "neoadjuvant", "adjuvant", "treatment"],
+        "builtin": True,
         "text": (
-            "Breast cancer chemotherapy may be given before surgery to shrink tumor burden or after surgery to reduce recurrence risk. "
+            "Breast cancer chemotherapy may be given before surgery (neoadjuvant) to shrink tumor burden or after surgery to reduce recurrence risk. "
             "The exact plan depends on clinician-directed staging, subtype, and treatment goals."
         ),
     },
@@ -61,6 +64,7 @@ KNOWLEDGE_SNIPPETS = [
         "source_name": "American Cancer Society",
         "source_url": "https://www.cancer.org/cancer/managing-cancer/treatment-types/chemotherapy/chemotherapy-side-effects.html",
         "tags": ["chemotherapy", "wbc", "hemoglobin", "platelets", "cbc", "infection", "anemia", "fatigue"],
+        "builtin": True,
         "text": (
             "Chemotherapy side effects can include lower white blood cells, anemia, fatigue, nausea, and infection risk. "
             "CBC trends help clinicians monitor toxicity and recovery during treatment."
@@ -73,9 +77,11 @@ KNOWLEDGE_SNIPPETS = [
         "source_name": "Project model card",
         "source_url": "MODEL_CARD.md",
         "tags": ["pcr", "pathologic complete response", "response", "mri", "classification", "score"],
+        "builtin": True,
         "text": (
-            "In this PoC, pCR means pathologic complete response, a treatment-response label used in some breast cancer research datasets. "
-            "The project treats it as a classification target, not as a diagnosis or patient-facing clinical conclusion."
+            "In this PoC, pCR means pathologic complete response — defined as the absence of residual invasive tumor after neoadjuvant treatment. "
+            "It is used as a classification target in breast cancer research datasets. "
+            "The project treats it as an engineering label, not as a diagnosis or patient-facing clinical conclusion."
         ),
     },
     {
@@ -85,9 +91,62 @@ KNOWLEDGE_SNIPPETS = [
         "source_name": "Project safety policy",
         "source_url": "README.md",
         "tags": ["score", "probability", "model", "response", "monitoring", "classification"],
+        "builtin": True,
         "text": (
             "The treatment monitoring score is an exploratory engineering signal that combines model response signals with CBC and symptom concerns. "
             "It is for trend discussion and clinician review, not a treatment decision."
+        ),
+    },
+    {
+        "id": "nci-her2-breast",
+        "parent_id": "breast-treatment-basics",
+        "title": "HER2 in breast cancer",
+        "source_name": "National Cancer Institute",
+        "source_url": "https://www.cancer.gov/types/breast/treatment/her2",
+        "tags": ["her2", "breast", "cancer", "targeted therapy", "receptor"],
+        "builtin": True,
+        "text": (
+            "HER2 is a protein receptor that can be overexpressed in some breast cancers. "
+            "HER2-positive breast cancer status is determined by testing and affects treatment planning."
+        ),
+    },
+    {
+        "id": "nci-chemo-nadir",
+        "parent_id": "treatment-side-effects",
+        "title": "Chemotherapy nadir and blood counts",
+        "source_name": "National Cancer Institute",
+        "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/low-blood-counts",
+        "tags": ["nadir", "chemotherapy", "wbc", "cbc", "neutropenia", "blood counts"],
+        "builtin": True,
+        "text": (
+            "A nadir is the lowest point in blood cell counts after a chemotherapy dose. "
+            "The nadir typically occurs 7 to 14 days after chemotherapy and increases infection risk."
+        ),
+    },
+    {
+        "id": "nci-febrile-neutropenia",
+        "parent_id": "treatment-side-effects",
+        "title": "Febrile neutropenia during chemotherapy",
+        "source_name": "National Cancer Institute",
+        "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/infection/infection-hp-pdq",
+        "tags": ["neutropenia", "fever", "chemotherapy", "infection", "urgent", "anc"],
+        "builtin": True,
+        "text": (
+            "Febrile neutropenia is a fever occurring when neutrophil counts are critically low during chemotherapy. "
+            "Neutropenia with fever requires urgent oncology evaluation due to high infection risk."
+        ),
+    },
+    {
+        "id": "nci-chemo-dose-delay",
+        "parent_id": "treatment-side-effects",
+        "title": "Chemotherapy dose delays",
+        "source_name": "National Cancer Institute",
+        "source_url": "https://www.cancer.gov/about-cancer/treatment/drugs",
+        "tags": ["dose", "delay", "chemotherapy", "blood counts", "toxicity", "treatment"],
+        "builtin": True,
+        "text": (
+            "Chemotherapy dose delays occur when blood counts are too low to safely proceed. "
+            "A clinician evaluates whether to delay the next dose based on CBC results and recovery."
         ),
     },
     {
@@ -97,6 +156,7 @@ KNOWLEDGE_SNIPPETS = [
         "source_name": "Project patient portal guide",
         "source_url": "README.md",
         "tags": ["upload", "portal", "cbc", "mri", "symptoms", "medications", "labs"],
+        "builtin": True,
         "text": (
             "The patient portal is designed to store CBC/lab values, MRI or imaging files, imaging report text, medications, treatments, "
             "and symptoms so changes can be summarized over time."
@@ -349,6 +409,12 @@ def safety_scope_check(query, urgent_flags=None):
         "am i cancer free",
         "is my cancer gone",
         "diagnose me",
+        "will i survive",
+        "will i beat",
+        "how long do i have",
+        "my prognosis",
+        "survival rate",
+        "survival chances",
     ]
     medical_danger = detect_multilingual_medical_danger(query)
     if (
@@ -403,14 +469,14 @@ def route_intent(query, actions=None, safety=None):
         deterministic = "conversation"
     elif any(term in lower for term in ["remember", "what did i tell", "what did i say", "last message", "previous message", "chat history"]):
         deterministic = "patient_memory"
-    elif any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add"]):
+    elif any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed"]):
+        deterministic = "emotional_support"
+    elif any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add", "enter my", "where do i enter", "how do i enter"]):
         deterministic = "portal_help"
-    elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment", "working", "progress"]):
+    elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment plan", "my treatment response", "my treatment results", "working", "progress"]):
         deterministic = "patient_timeline_monitoring"
     elif any(term in lower for term in ["pcr", "response", "mri", "cbc", "wbc", "hemoglobin", "platelets", "chemo", "chemotherapy", "side effect", "breast cancer", "neutropenia", "infection risk"]):
         deterministic = "education"
-    elif any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed"]):
-        deterministic = "emotional_support"
     else:
         deterministic = "general_support"
 
@@ -430,7 +496,7 @@ def route_intent(query, actions=None, safety=None):
     }
     candidate = llm.get("intent")
     if llm.get("available") and candidate in allowed and float(llm.get("confidence") or 0) >= 0.72:
-        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation", "conversation", "patient_memory", "patient_timeline_monitoring", "emotional_support"}:
+        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation", "conversation", "patient_memory", "patient_timeline_monitoring", "emotional_support", "portal_help"}:
             return deterministic
         return candidate
     return deterministic
@@ -584,7 +650,9 @@ def hybrid_retrieval(rewritten, intent):
             intent_boost = _intent_boost(intent, item)
             domain_boost = _domain_boost(query_tokens, item)
             section_boost = _section_boost(item)
-            score = float(item.get("retrieval_score", 0)) + intent_boost + domain_boost + section_boost
+            is_curated = item.get("builtin") or item.get("source_name") in _CURATED_SOURCES
+            curated_boost = 1.0 if is_curated else 0.0
+            score = float(item.get("retrieval_score", 0)) + intent_boost + domain_boost + section_boost + curated_boost
             rows.append({
                 **item,
                 "retrieval_score": round(score, 4),
@@ -601,6 +669,7 @@ def hybrid_retrieval(rewritten, intent):
                     "agent_intent_boost": round(intent_boost, 4),
                     "agent_domain_boost": round(domain_boost, 4),
                     "agent_section_boost": round(section_boost, 4),
+                    "agent_curated_boost": round(curated_boost, 4),
                 },
             })
         return sorted(rows, key=lambda row: row["retrieval_score"], reverse=True)[:5]
@@ -664,6 +733,18 @@ def knowledge_base_fingerprint():
     return corpus_fingerprint(_knowledge_snippets())
 
 
+_CURATED_SOURCES = {
+    "CDC",
+    "National Cancer Institute",
+    "American Cancer Society",
+    "Project model card",
+    "Project safety policy",
+    "Project patient portal guide",
+    "Project feature rationale",
+    "Project agent design",
+}
+
+
 def rerank_context(expanded, rewritten, intent, safety):
     query_tokens = set(_tokenize(rewritten["expanded_query"]))
     reranked = []
@@ -671,7 +752,8 @@ def rerank_context(expanded, rewritten, intent, safety):
         tags = set(item["tags"])
         coverage = len(query_tokens & tags)
         safety_boost = 0.4 if safety.get("level") == "high_risk" and "urgent" in tags else 0
-        source_boost = 0.2 if item["source_name"] in {"CDC", "National Cancer Institute", "American Cancer Society"} else 0.05
+        is_curated = item.get("builtin") or item.get("source_name") in _CURATED_SOURCES
+        source_boost = 1.0 if is_curated else 0.05
         final_score = float(item.get("retrieval_score", 0)) + coverage * 0.18 + safety_boost + source_boost
         reranked.append({**item, "rerank_score": round(final_score, 4)})
     return sorted(reranked, key=lambda row: row["rerank_score"], reverse=True)[:5]
@@ -1149,7 +1231,7 @@ def _safety_reply(fallback_response, compressed_context, safety):
         )
     return (
         f"{fallback_response} I cannot safely make diagnosis or treatment decisions. "
-        "Please contact the oncology care team for medical review."
+        "Please contact your clinician or the oncology care team for medical review."
     )
 
 

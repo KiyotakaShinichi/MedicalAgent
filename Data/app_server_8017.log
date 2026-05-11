@@ -1,41 +1,33 @@
-INFO:     127.0.0.1:1239 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1238 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1240 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1300 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1302 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1301 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1300 - "GET /patients HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1302 - "GET /admin/analytics HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1301 - "GET /me/patient-report HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1322 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1322 - "GET /me/patient-report HTTP/1.1" 200 OK
-INFO:     127.0.0.1:11977 - "GET / HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:11979 - "GET /frontend/login.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:11979 - "GET /login HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:11977 - "GET /patient HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:11984 - "GET /admin HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:11986 - "GET /frontend/admin.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:11987 - "GET /clinician HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:11985 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:11979 - "GET /frontend/patient.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:11989 - "GET /frontend/login.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:11977 - "GET /frontend/admin.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:11984 - "GET /frontend/index.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:15893 - "GET /login HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:15895 - "GET /frontend/login.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:25647 - "GET /login HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:25647 - "GET /frontend/login.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:25647 - "GET /auth/demo-patients HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1292 - "GET / HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:1295 - "GET /frontend/login.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1295 - "GET /patient HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:1292 - "GET /clinician HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:1301 - "GET /admin HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:1302 - "GET /frontend/login.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1295 - "GET /frontend/index.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1303 - "GET /frontend/admin.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1305 - "GET /login HTTP/1.1" 307 Temporary Redirect
-INFO:     127.0.0.1:1292 - "GET /frontend/admin.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1300 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1307 - "GET /frontend/patient.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:1301 - "GET /frontend/login.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:9638 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:21661 - "GET /login HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:21661 - "GET /frontend/login.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:21661 - "GET /auth/demo-patients HTTP/1.1" 200 OK
+INFO:     127.0.0.1:2350 - "GET /login HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:2350 - "GET /frontend/login.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:2350 - "GET /auth/demo-patients HTTP/1.1" 200 OK
+INFO:     127.0.0.1:2350 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:2350 - "GET /patient HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:2350 - "GET /frontend/patient.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:2350 - "GET /auth/whoami HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:2350 - "GET /login?patient=P001 HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:2350 - "GET /auth/demo-patients HTTP/1.1" 200 OK
+INFO:     127.0.0.1:23475 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:23475 - "GET /patient HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:23475 - "GET /auth/whoami HTTP/1.1" 200 OK
+INFO:     127.0.0.1:23475 - "GET /me/patient-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59942 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:59946 - "GET /frontend/login.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59946 - "GET /patient HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:59942 - "GET /clinician HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:59955 - "GET /admin HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:59946 - "GET /frontend/index.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59958 - "GET /frontend/login.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59957 - "GET /frontend/admin.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59959 - "GET /frontend/index.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59956 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59961 - "GET /frontend/patient.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59942 - "GET /frontend/admin.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59963 - "GET /login HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:59960 - "GET /artifacts/complete_synthetic_training/detailed_eval_20260508T111121Z/training_eval_report.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59965 - "GET /frontend/patient.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59956 - "GET /frontend/login.html HTTP/1.1" 200 OK
