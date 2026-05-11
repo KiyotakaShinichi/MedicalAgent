@@ -1,0 +1,94 @@
+# Safety threshold configuration — breast cancer monitoring PoC
+#
+# VERSION THIS FILE when thresholds change.  The version string is embedded in
+# every risk-flag evidence payload so that audit logs stay reproducible.
+#
+# Re-evaluation policy: review whenever
+#   (1) training data distribution changes significantly,
+#   (2) a new external validation dataset is added,
+#   (3) clinical protocol changes, or
+#   (4) six months have elapsed since last_reviewed.
+#
+# CLAIM BOUNDARY: These thresholds are deterministic engineering flags that
+# prompt clinical attention.  They are NOT diagnostic criteria and must be
+# reviewed by the oncology care team.
+
+threshold_config_version: "v1.1.0"
+last_reviewed: "2026-05-11"
+purpose: >
+  Deterministic CBC and symptom risk flags for oncology monitoring support.
+  All flags require clinician review; none constitute diagnosis or treatment orders.
+
+# ── CBC / lab thresholds (used by detect_risks & detect_trend_risk) ───────────
+lab_thresholds:
+  wbc:
+    watch: 4.0
+    urgent_review: 3.0
+    unit: "x10^3/uL"
+    label: "WBC"
+    risk_type: "low_wbc"
+    concern: "possible treatment-related white blood cell suppression"
+  platelets:
+    watch: 150
+    urgent_review: 100
+    unit: "x10^3/uL"
+    label: "Platelets"
+    risk_type: "low_platelets"
+    concern: "possible thrombocytopenia"
+  hemoglobin:
+    watch: 11.0
+    urgent_review: 10.0
+    unit: "g/dL"
+    label: "Hemoglobin"
+    risk_type: "low_hemoglobin"
+    concern: "possible anemia"
+
+# ── Deterministic clinical-rule thresholds (used by detect_clinical_rule_risks) ─
+clinical_rules:
+  critical_wbc_suppression:
+    threshold: 2.0
+    unit: "x10^3/uL"
+    severity: "urgent_review"
+    rationale: "WBC < 2.0 indicates severe neutropenia risk during chemotherapy"
+  critical_platelet_suppression:
+    threshold: 50
+    unit: "x10^3/uL"
+    severity: "urgent_review"
+    rationale: "Platelets < 50 indicates severe bleeding risk"
+  hemoglobin_critical_low:
+    threshold: 8.0
+    unit: "g/dL"
+    severity: "urgent_review"
+    rationale: "Hgb < 8.0 indicates severe anemia requiring clinical review"
+  hemoglobin_significant_drop:
+    threshold: 2.0
+    unit: "g/dL"
+    severity: "watch"
+    rationale: "Drop >= 2.0 g/dL from baseline is clinically significant"
+  wbc_drop_percent:
+    threshold: 50
+    unit: "%"
+    severity: "urgent_review"
+    rationale: "Drop >= 50 % from baseline is a major trend signal"
+  fever_after_chemo_window_days:
+    threshold: 14
+    unit: "days"
+    severity: "urgent_review"
+    rationale: "Fever within 14 days after chemotherapy is a safety signal"
+  cbc_symptom_combo_window_days:
+    threshold: 3
+    unit: "days"
+    severity: "urgent_review"
+    rationale: "Fever + low WBC within 3 days suggests neutropenic fever risk"
+  low_wbc_for_combo_rule:
+    threshold: 3.0
+    unit: "x10^3/uL"
+    rationale: "WBC < 3.0 activates CBC+symptom combination rule"
+
+# ── Symptom thresholds ────────────────────────────────────────────────────────
+symptom_thresholds:
+  high_severity:
+    threshold: 7
+    unit: "1-10 scale"
+    severity: "urgent_review"
+    rationale: "Patient-reported severity >= 7 triggers a clinical review flag"

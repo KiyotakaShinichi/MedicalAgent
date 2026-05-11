@@ -589,10 +589,15 @@ def hybrid_retrieval(rewritten, intent):
                 **item,
                 "retrieval_score": round(score, 4),
                 "retrieval_trace": {
-                    "backend": item.get("retrieval_backend"),
+                    "backend": item.get("backend") or item.get("retrieval_backend"),
+                    "sparse_score": item.get("sparse_score"),
+                    "dense_score": item.get("dense_score"),
+                    "rrf_score": item.get("rrf_score"),
+                    "fusion_score": item.get("fusion_score"),
+                    "metadata_score": item.get("metadata_score"),
+                    # backward-compat aliases
                     "vector_score": item.get("vector_score"),
                     "lexical_score": item.get("lexical_score"),
-                    "metadata_score": item.get("metadata_score"),
                     "agent_intent_boost": round(intent_boost, 4),
                     "agent_domain_boost": round(domain_boost, 4),
                     "agent_section_boost": round(section_boost, 4),

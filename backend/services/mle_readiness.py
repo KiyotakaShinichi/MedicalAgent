@@ -101,6 +101,9 @@ def build_mle_readiness_summary(
     checks.extend(_lifecycle_checks(db, metrics))
     checks.extend(_agent_quality_checks(agent_regression))
 
+    ablation = _hybrid_weight_ablation(predictions)
+    temporal_gen = _temporal_generalization_eval(training_rows, predictions)
+
     category_statuses = _category_statuses(checks)
     hard_failures = [check for check in checks if check["hard_gate"] and check["status"] == "failed"]
     summary = {
@@ -119,6 +122,8 @@ def build_mle_readiness_summary(
         "checks": checks,
         "artifact_hashes": _artifact_hashes([training_csv, metrics_path, predictions_path, evaluation_manifest_path]),
         "next_actions": _next_actions(checks),
+        "hybrid_weight_ablation": ablation,
+        "temporal_generalization_eval": temporal_gen,
         "claim_boundary": (
             "These gates make the engineering workflow more production-like. They do not convert synthetic-data "
             "results into clinical validation."
@@ -846,3 +851,199 @@ def _round(value, digits=3):
         return round(float(value), digits)
     except (TypeError, ValueError):
         return value
+
+
+# ── Ablation sweep: hybrid classification/regression weight ───────────────────
+
+def _hybrid_weight_ablation(predictions):
+    """
+    Sweep classification_weight from 1.0→0.0 (regression_weight = 1 - cls_weight).
+    At each weight, form hybrid_score = cls_weight * cls_prob + reg_weight * reg_normalized,
+    then compute AUROC vs actual_label.  Reports the optimal weight and whether the
+    default 65/35 split is near-optimal.
+
+    This is a sensitivity analysis on synthetic data only.
+    """
+    if predictions is None or predictions.empty:
+        return {
+            "status": "unavailable",
+            "message": "Prediction CSV required for ablation sweep.",
+        }
+
+    # Find usable probability column
+    prob_col = None
+    for suffix in ["_calibrated_probability", "_probability"]:
+        candidates = [c for c in predictions.columns if c.endswith(suffix) and "regression" not in c]
+        if candidates:
+            prob_col = candidates[0]
+            break
+
+    # Find regression score column
+    reg_col = None
+    for c in predictions.columns:
+        if c.endswith("_response_score_percent"):
+            reg_col = c
+            break
+
+    has_label = "actual_label" in predictions.columns
+    if not has_label or prob_col is None:
+        return {
+            "status": "unavailable",
+            "message": f"Need actual_label and a probability column. Found prob={prob_col}, reg={reg_col}.",
+        }
+
+    df = predictions[["patient_id", "actual_label", prob_col]].copy().dropna()
+    if reg_col and reg_col in predictions.columns:
+        df = df.join(predictions[[reg_col]], how="left")
+        # Normalize regression score: response_score_percent → [0,1] via clamp(0,100)/100
+        df["reg_normalized"] = ((df[reg_col].fillna(0) + 50).clip(0, 100)) / 100.0
+    else:
+        df["reg_normalized"] = None
+
+    labels = df["actual_label"].astype(int).to_numpy()
+    cls_probs = df[prob_col].astype(float).to_numpy()
+    has_reg = bool(df["reg_normalized"].notna().any())
+    reg_scores = df["reg_normalized"].fillna(0.5).to_numpy() if has_reg else None
+
+    if len(set(labels.tolist())) < 2:
+        return {"status": "unavailable", "message": "Need both classes in labels for AUROC."}
+
+    from sklearn.metrics import roc_auc_score
+
+    sweep_weights = [0.0, 0.10, 0.20, 0.30, 0.35, 0.40, 0.50, 0.60, 0.65, 0.70, 0.80, 0.90, 1.0]
+    rows = []
+    for cls_w in sweep_weights:
+        reg_w = round(1.0 - cls_w, 2)
+        if reg_scores is not None:
+            hybrid = cls_w * cls_probs + reg_w * reg_scores
+        else:
+            hybrid = cls_probs  # regression unavailable; weight makes no difference
+        try:
+            auroc = round(float(roc_auc_score(labels, hybrid)), 4)
+        except Exception:
+            auroc = None
+        rows.append({
+            "classification_weight": cls_w,
+            "regression_weight": reg_w,
+            "hybrid_auroc": auroc,
+            "is_default": cls_w == 0.65,
+        })
+
+    best = max((r for r in rows if r["hybrid_auroc"] is not None), key=lambda r: r["hybrid_auroc"], default=None)
+    default_row = next((r for r in rows if r["is_default"]), None)
+    auroc_gap = None
+    if best and default_row and default_row["hybrid_auroc"] is not None and best["hybrid_auroc"] is not None:
+        auroc_gap = round(best["hybrid_auroc"] - default_row["hybrid_auroc"], 4)
+
+    return {
+        "status": "available" if rows else "unavailable",
+        "purpose": (
+            "Sensitivity analysis: how much does the 65/35 classifier/regressor weight choice matter? "
+            "Sweep shows AUROC at each weight combination on synthetic data."
+        ),
+        "regression_available": has_reg,
+        "probability_column": prob_col,
+        "regression_column": reg_col,
+        "default_weight": {"classification": 0.65, "regression": 0.35},
+        "best_weight": best,
+        "default_auroc": default_row["hybrid_auroc"] if default_row else None,
+        "auroc_gap_from_optimal": auroc_gap,
+        "sweep": rows,
+        "interpretation": (
+            "Small AUROC gap means the 65/35 default is near-optimal. "
+            "Large gap suggests the weight deserves tuning via cross-validation on a dev set."
+        ),
+        "warning": "Synthetic data only — not clinical evidence.",
+    }
+
+
+# ── Temporal generalization eval ──────────────────────────────────────────────
+
+def _temporal_generalization_eval(training_rows, predictions):
+    """
+    Split patients into early-cycle and late-cycle groups by median first_cycle.
+    Compare AUROC and positive rate between groups to estimate temporal generalization.
+
+    This is a cheap proxy for 'train on earlier cohort, evaluate on later' when
+    we don't have a true time-ordered train/test split.
+    """
+    if training_rows is None or training_rows.empty:
+        return {"status": "unavailable", "message": "Training rows required for temporal eval."}
+    if predictions is None or predictions.empty:
+        return {"status": "unavailable", "message": "Prediction CSV required for temporal eval."}
+
+    required = {"patient_id", "cycle"}
+    if not required.issubset(training_rows.columns):
+        return {"status": "unavailable", "message": "patient_id and cycle columns required."}
+
+    # Each patient's first observed cycle
+    first_cycle = training_rows.groupby("patient_id")["cycle"].min().reset_index()
+    first_cycle.columns = ["patient_id", "first_cycle"]
+    median_first = float(first_cycle["first_cycle"].median())
+
+    early_ids = set(first_cycle[first_cycle["first_cycle"] <= median_first]["patient_id"])
+    late_ids = set(first_cycle[first_cycle["first_cycle"] > median_first]["patient_id"])
+
+    if not early_ids or not late_ids:
+        return {"status": "unavailable", "message": "Cannot split into early/late patient groups."}
+
+    has_label = "actual_label" in predictions.columns
+    prob_col = None
+    for suffix in ["_calibrated_probability", "_probability"]:
+        candidates = [c for c in predictions.columns if c.endswith(suffix) and "regression" not in c]
+        if candidates:
+            prob_col = candidates[0]
+            break
+
+    if not has_label or prob_col is None:
+        return {"status": "unavailable", "message": "Need actual_label and probability column."}
+
+    from sklearn.metrics import roc_auc_score
+
+    def _group_metrics(pids):
+        subset = predictions[predictions["patient_id"].isin(pids)][["patient_id", "actual_label", prob_col]].dropna()
+        if len(subset) < 5:
+            return None
+        labels = subset["actual_label"].astype(int).to_numpy()
+        probs = subset[prob_col].astype(float).to_numpy()
+        if len(set(labels.tolist())) < 2:
+            return {"n": len(subset), "auroc": None, "positive_rate": round(float(labels.mean()), 3)}
+        return {
+            "n": len(subset),
+            "auroc": round(float(roc_auc_score(labels, probs)), 4),
+            "positive_rate": round(float(labels.mean()), 3),
+        }
+
+    early_m = _group_metrics(early_ids)
+    late_m = _group_metrics(late_ids)
+
+    auroc_delta = None
+    if early_m and late_m and early_m.get("auroc") and late_m.get("auroc"):
+        auroc_delta = round(late_m["auroc"] - early_m["auroc"], 4)
+
+    status = "unavailable"
+    if auroc_delta is not None:
+        if abs(auroc_delta) <= 0.05:
+            status = "stable"
+        elif abs(auroc_delta) <= 0.10:
+            status = "mild_drift"
+        else:
+            status = "significant_drift"
+
+    return {
+        "status": status,
+        "purpose": (
+            "Proxy for temporal generalization: compares AUROC and outcome rate between patients "
+            "with early vs late first observed cycles. Large delta suggests time-dependent performance decay."
+        ),
+        "median_first_cycle": median_first,
+        "early_cohort": {**early_m, "first_cycle_threshold": f"<= {median_first}"} if early_m else None,
+        "late_cohort": {**late_m, "first_cycle_threshold": f"> {median_first}"} if late_m else None,
+        "auroc_delta_late_minus_early": auroc_delta,
+        "interpretation": (
+            "auroc_delta ≈ 0 → stable across cycles. "
+            "auroc_delta << 0 → model degrades on later-cycle patients (possible distribution shift). "
+            "Next step: true temporal train/eval split on a real longitudinal dataset."
+        ),
+        "warning": "Synthetic data only — temporal structure is simulator-generated, not real patient time.",
+    }

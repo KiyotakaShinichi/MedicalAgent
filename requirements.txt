@@ -16,3 +16,12 @@ joblib
 torch
 torchvision
 shap
+pyyaml
+matplotlib
+
+# True hybrid RAG (dense FAISS + BM25 + sentence-transformers)
+# Install all three to enable local_dense_faiss_hybrid_index backend.
+# If unavailable, the app falls back to local_sparse_tfidf_bm25_index.
+sentence-transformers
+faiss-cpu
+rank-bm25

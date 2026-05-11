@@ -1,3 +1,16 @@
+"""
+Feature-contribution explanations for the synthetic champion model.
+
+Method: SHAP LinearExplainer (logistic regression) when SHAP is available;
+        falls back to exact linear coefficient × transformed-feature value
+        (mathematically equivalent for logistic regression without calibration).
+
+All explanations and plots are labelled as "feature contribution / model
+explanation" — NOT clinical causality or SHAP for a non-linear model.
+
+CLAIM BOUNDARY: explains a model trained on synthetic data only.
+"""
+
 import json
 from pathlib import Path
 
@@ -7,8 +20,26 @@ import pandas as pd
 
 from backend.services.complete_synthetic_training import CATEGORICAL_FEATURES, NUMERIC_FEATURES
 
+# Optional: SHAP for LinearExplainer
+try:
+    import shap as _shap
+    _SHAP_AVAILABLE = True
+except ImportError:
+    _SHAP_AVAILABLE = False
+
+# Optional: matplotlib for PNG plot
+try:
+    import matplotlib
+    matplotlib.use("Agg")  # headless
+    import matplotlib.pyplot as plt
+    _MPL_AVAILABLE = True
+except ImportError:
+    _MPL_AVAILABLE = False
+
 
 DEFAULT_SYNTHETIC_XAI_PATH = "Data/complete_synthetic_training/synthetic_xai_explanations.json"
+DEFAULT_XAI_PLOT_PATH = "Data/complete_synthetic_training/xai_global_feature_importance.png"
+DEFAULT_XAI_PLOT_JSON_PATH = "Data/complete_synthetic_training/xai_global_feature_importance_chart.json"
 
 
 def generate_complete_synthetic_xai(
@@ -16,52 +47,72 @@ def generate_complete_synthetic_xai(
     model_path: str = "Data/complete_synthetic_training/logistic_regression_treatment_success_binary.joblib",
     predictions_csv_path: str = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv",
     output_json_path: str = DEFAULT_SYNTHETIC_XAI_PATH,
+    plot_path: str = DEFAULT_XAI_PLOT_PATH,
+    plot_json_path: str = DEFAULT_XAI_PLOT_JSON_PATH,
     top_n: int = 6,
 ):
     model = joblib.load(model_path)
     rows = pd.read_csv(ml_csv_path)
-    predictions = pd.read_csv(predictions_csv_path) if Path(predictions_csv_path).exists() else pd.DataFrame()
+    predictions = (
+        pd.read_csv(predictions_csv_path)
+        if Path(predictions_csv_path).exists()
+        else pd.DataFrame()
+    )
 
     preprocessor = model.named_steps["preprocess"]
     classifier = model.named_steps["classifier"]
-    transformed = preprocessor.transform(rows[NUMERIC_FEATURES + CATEGORICAL_FEATURES])
+    X_raw = rows[NUMERIC_FEATURES + CATEGORICAL_FEATURES]
+    transformed = preprocessor.transform(X_raw)
     if hasattr(transformed, "toarray"):
         transformed = transformed.toarray()
     transformed = np.asarray(transformed)
-    feature_names = [_clean_feature_name(name) for name in preprocessor.get_feature_names_out()]
+    feature_names = [_clean_feature_name(n) for n in preprocessor.get_feature_names_out()]
 
     if not hasattr(classifier, "coef_"):
-        raise ValueError("Synthetic XAI currently expects a linear classifier with coef_")
-    coefficients = classifier.coef_[0]
-    row_contributions = transformed * coefficients
+        raise ValueError("Synthetic XAI currently expects a linear classifier with coef_.")
 
-    explanations = {}
+    # ── Explanation method ────────────────────────────────────────────────────
+    if _SHAP_AVAILABLE:
+        explainer = _shap.LinearExplainer(classifier, transformed, feature_perturbation="correlation_dependent")
+        shap_values = explainer.shap_values(transformed)  # shape (N, F)
+        row_contributions = shap_values
+        method = "shap_linear_explainer_logistic_regression"
+        method_label = "SHAP LinearExplainer (logistic regression)"
+    else:
+        coefficients = classifier.coef_[0]
+        row_contributions = transformed * coefficients
+        method = "linear_model_coefficient_contribution"
+        method_label = "Linear coefficient × transformed feature (equivalent to SHAP for log-reg)"
+
+    # ── Per-patient explanations ──────────────────────────────────────────────
+    explanations: dict = {}
     for patient_id, group in rows.reset_index(drop=True).groupby("patient_id"):
         indices = group.index.to_numpy()
         patient_contrib = np.mean(row_contributions[indices], axis=0)
         contributions = [
             {
-                "feature": feature_names[index],
-                "contribution": round(float(value), 6),
-                "direction": "toward_success" if value > 0 else "toward_non_success",
-                "meaning": _feature_meaning(feature_names[index]),
+                "feature": feature_names[i],
+                "contribution": round(float(v), 6),
+                "direction": "toward_success" if v > 0 else "toward_non_success",
+                "meaning": _feature_meaning(feature_names[i]),
             }
-            for index, value in enumerate(patient_contrib)
+            for i, v in enumerate(patient_contrib)
         ]
         positive = sorted(
-            [item for item in contributions if item["contribution"] > 0],
-            key=lambda item: abs(item["contribution"]),
+            [c for c in contributions if c["contribution"] > 0],
+            key=lambda c: abs(c["contribution"]),
             reverse=True,
         )[:top_n]
         negative = sorted(
-            [item for item in contributions if item["contribution"] < 0],
-            key=lambda item: abs(item["contribution"]),
+            [c for c in contributions if c["contribution"] < 0],
+            key=lambda c: abs(c["contribution"]),
             reverse=True,
         )[:top_n]
         prediction_row = _prediction_for_patient(predictions, patient_id)
         explanations[patient_id] = {
             "patient_id": patient_id,
-            "method": "linear model contribution approximation on logistic regression pipeline",
+            "method": method,
+            "method_label": method_label,
             "target": "treatment_success_binary",
             "prediction": prediction_row,
             "positive_contributions": positive,
@@ -73,25 +124,53 @@ def generate_complete_synthetic_xai(
             },
         }
 
+    # ── Global feature importance ─────────────────────────────────────────────
+    global_mean_abs = np.mean(np.abs(row_contributions), axis=0)
     global_importance = sorted(
         [
-            {"feature": feature_names[index], "importance": round(float(abs(coefficients[index])), 6)}
-            for index in range(len(feature_names))
+            {
+                "feature": feature_names[i],
+                "importance": round(float(global_mean_abs[i]), 6),
+                "meaning": _feature_meaning(feature_names[i]),
+            }
+            for i in range(len(feature_names))
         ],
-        key=lambda item: item["importance"],
+        key=lambda x: x["importance"],
         reverse=True,
     )
+
+    # ── Generate PNG plot ─────────────────────────────────────────────────────
+    plot_artifact_path = None
+    plot_chart_path = None
+    if _MPL_AVAILABLE:
+        plot_artifact_path = _save_importance_plot(global_importance, plot_path, method_label)
+    plot_chart_path = _save_importance_chart_json(global_importance, plot_json_path, method_label)
+
     payload = {
+        "method": method,
+        "method_label": method_label,
+        "shap_available": _SHAP_AVAILABLE,
+        "plot_png_path": plot_artifact_path,
+        "plot_chart_json_path": plot_chart_path,
         "patients": explanations,
         "global_importance": global_importance[:25],
-        "warning": "Synthetic model explanation only. Not clinical evidence.",
+        "warning": (
+            "Feature contribution explains a synthetic-data model only. "
+            "This is not clinical evidence or causal reasoning."
+        ),
     }
-    output_path = Path(output_json_path)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    output = Path(output_json_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
     return {
         "patients_explained": len(explanations),
-        "output_json_path": str(output_path),
+        "method": method,
+        "method_label": method_label,
+        "shap_available": _SHAP_AVAILABLE,
+        "output_json_path": str(output),
+        "plot_png_path": plot_artifact_path,
+        "plot_chart_json_path": plot_chart_path,
         "top_global_features": global_importance[:10],
     }
 
@@ -112,8 +191,7 @@ def load_complete_synthetic_patient_prediction(
     payload = _jsonable(row.iloc[0].to_dict())
     metrics = _load_metrics(metrics_json_path)
     regression_prediction = _load_patient_regression_prediction(
-        patient_id,
-        response_regression_predictions_csv_path,
+        patient_id, response_regression_predictions_csv_path
     )
     if regression_prediction:
         payload["response_regression_prediction"] = regression_prediction
@@ -128,6 +206,81 @@ def load_complete_synthetic_patient_xai(patient_id, xai_json_path: str = DEFAULT
     payload = json.loads(path.read_text(encoding="utf-8"))
     return payload.get("patients", {}).get(patient_id)
 
+
+def load_xai_global_importance(xai_json_path: str = DEFAULT_SYNTHETIC_XAI_PATH):
+    """Return global feature importance list and plot paths from saved XAI payload."""
+    path = Path(xai_json_path)
+    if not path.exists():
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    return {
+        "method": payload.get("method"),
+        "method_label": payload.get("method_label"),
+        "shap_available": payload.get("shap_available"),
+        "plot_png_path": payload.get("plot_png_path"),
+        "plot_chart_json_path": payload.get("plot_chart_json_path"),
+        "global_importance": payload.get("global_importance") or [],
+        "warning": payload.get("warning"),
+    }
+
+
+# ── Plot helpers ──────────────────────────────────────────────────────────────
+
+def _save_importance_plot(global_importance, plot_path: str, method_label: str) -> str | None:
+    try:
+        top = global_importance[:15]
+        features = [item["feature"] for item in reversed(top)]
+        importances = [item["importance"] for item in reversed(top)]
+
+        fig, ax = plt.subplots(figsize=(9, 6))
+        bars = ax.barh(features, importances, color="#4C72B0", edgecolor="white", height=0.7)
+        ax.set_xlabel("Mean |contribution| (feature explanation units)", fontsize=10)
+        ax.set_title(
+            f"Synthetic Champion Model — Global Feature Explanation\n({method_label})",
+            fontsize=11,
+            pad=12,
+        )
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        fig.text(
+            0.5, -0.04,
+            "Synthetic data only — not clinical evidence.",
+            ha="center", fontsize=8, color="gray",
+        )
+        fig.tight_layout()
+        out = Path(plot_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out, dpi=150, bbox_inches="tight")
+        plt.close(fig)
+        return str(out)
+    except Exception:
+        return None
+
+
+def _save_importance_chart_json(global_importance, chart_path: str, method_label: str) -> str | None:
+    """Save a chart-data JSON so the frontend can render it without matplotlib."""
+    try:
+        top = global_importance[:15]
+        chart = {
+            "chart_type": "horizontal_bar",
+            "title": "Synthetic Champion Model — Global Feature Explanation",
+            "subtitle": method_label,
+            "disclaimer": "Synthetic data only — not clinical evidence.",
+            "x_label": "Mean |contribution|",
+            "data": [
+                {"feature": item["feature"], "importance": item["importance"], "meaning": item["meaning"]}
+                for item in top
+            ],
+        }
+        out = Path(chart_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(chart, indent=2), encoding="utf-8")
+        return str(out)
+    except Exception:
+        return None
+
+
+# ── Prediction / hybrid signal helpers ───────────────────────────────────────
 
 def _prediction_for_patient(predictions, patient_id):
     if predictions.empty:
@@ -298,11 +451,13 @@ def _signal_agreement(classification_band, regression_band):
     return "conflicting"
 
 
+# ── Utilities ─────────────────────────────────────────────────────────────────
+
 def _jsonable(value):
     if isinstance(value, dict):
-        return {key: _jsonable(item) for key, item in value.items()}
+        return {k: _jsonable(v) for k, v in value.items()}
     if isinstance(value, list):
-        return [_jsonable(item) for item in value]
+        return [_jsonable(v) for v in value]
     if isinstance(value, np.integer):
         return int(value)
     if isinstance(value, np.floating):
@@ -312,12 +467,11 @@ def _jsonable(value):
     return value
 
 
-def _clean_feature_name(name):
-    cleaned = name.replace("numeric__", "").replace("categorical__", "")
-    return cleaned
+def _clean_feature_name(name: str) -> str:
+    return name.replace("numeric__", "").replace("categorical__", "")
 
 
-def _feature_meaning(feature):
+def _feature_meaning(feature: str) -> str:
     meanings = {
         "mri_percent_change_from_baseline": "MRI tumor size change over treatment cycles.",
         "mri_tumor_size_cm": "Latest per-cycle synthetic MRI tumor size.",

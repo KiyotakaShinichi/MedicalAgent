@@ -15,6 +15,11 @@ from backend.services.agent_feedback import build_agent_feedback_summary
 from backend.services.agent_regression_eval import load_latest_agent_regression_report
 from backend.services.clinician_feedback import clinical_feedback_summary
 from backend.services.mle_readiness import build_mle_readiness_summary
+from backend.services.complete_synthetic_xai import (
+    DEFAULT_XAI_PLOT_JSON_PATH,
+    DEFAULT_XAI_PLOT_PATH,
+    load_xai_global_importance,
+)
 from backend.services.mri_derived_features import (
     build_mri_derived_feature_summary as build_mri_derived_feature_summary_service,
 )
@@ -37,6 +42,7 @@ def build_admin_analytics(db):
     mri_reports = _load_csv(DEFAULT_SYNTHETIC_MRI_REPORTS_CSV)
     audit_and_feedback = _audit_and_feedback(db)
 
+    advanced_eval = _advanced_model_evaluation(synthetic_metrics, predictions, training_rows, mri_reports)
     return {
         "roles": {
             "patient": "Personal portal, uploads, symptom/CBC/medication logging, support agent.",
@@ -46,7 +52,11 @@ def build_admin_analytics(db):
         "model_performance": _model_performance(synthetic_metrics, breastdcedl_metrics),
         "evidence_separation": _evidence_separation(synthetic_metrics, breastdcedl_metrics),
         "metric_interpretation_guide": _metric_interpretation_guide(),
-        "advanced_model_evaluation": _advanced_model_evaluation(synthetic_metrics, predictions, training_rows, mri_reports),
+        "advanced_model_evaluation": advanced_eval,
+        "confusion_matrix": _confusion_matrix_panel(advanced_eval),
+        "calibration_panel": _calibration_panel(advanced_eval),
+        "feature_explanation": _feature_explanation_panel(),
+        "evaluation_report_links": _evaluation_report_links(),
         "drift_monitoring": _drift_monitoring(training_rows),
         "ab_testing": _ab_testing(synthetic_metrics, predictions),
         "audit_and_feedback": audit_and_feedback,
@@ -1346,3 +1356,156 @@ def _status_meaning(status):
         "unavailable": "Metric could not be computed.",
     }
     return meanings.get(status, "Status not recognized.")
+
+
+# ── Dashboard panels (XAI, confusion matrix, calibration, report links) ───────
+
+def _confusion_matrix_panel(advanced_eval):
+    """Extract the locked-holdout confusion matrix at threshold 0.5 for the dashboard."""
+    if not advanced_eval or advanced_eval.get("status") == "unavailable":
+        return {"status": "unavailable", "message": "Run model training to generate predictions."}
+
+    ops = advanced_eval.get("threshold_operating_points") or {}
+    rows = ops.get("rows") or []
+    at_50 = next((r for r in rows if r.get("threshold") == 0.5), None)
+    if not at_50:
+        return {"status": "unavailable", "message": "Threshold operating points not found."}
+
+    tp = at_50.get("true_positive", 0)
+    fp = at_50.get("false_positive", 0)
+    fn = at_50.get("false_negative", 0)
+    tn = at_50.get("true_negative", 0)
+    total = tp + fp + fn + tn or 1
+    return {
+        "status": "available",
+        "threshold": 0.5,
+        "champion_model": advanced_eval.get("champion_model"),
+        "matrix": {
+            "true_positive": tp,
+            "false_positive": fp,
+            "false_negative": fn,
+            "true_negative": tn,
+            "total": total,
+        },
+        "rates": {
+            "sensitivity": at_50.get("sensitivity"),
+            "specificity": at_50.get("specificity"),
+            "precision": at_50.get("precision"),
+            "false_negative_rate": at_50.get("false_negative_rate"),
+            "false_positive_rate": at_50.get("false_positive_rate"),
+        },
+        "display_hint": "2×2 confusion matrix at threshold=0.5 on locked holdout predictions.",
+        "warning": "Synthetic data only — not clinical validation.",
+    }
+
+
+def _calibration_panel(advanced_eval):
+    """Surface calibration bins and ECE for the dashboard reliability diagram."""
+    if not advanced_eval or advanced_eval.get("status") == "unavailable":
+        return {"status": "unavailable", "message": "Calibration data unavailable."}
+
+    calibration = advanced_eval.get("calibration") or {}
+    bins = calibration.get("bins") or []
+    if not bins:
+        return {"status": "unavailable", "message": "No calibration bins computed."}
+
+    return {
+        "status": calibration.get("status", "unavailable"),
+        "expected_calibration_error": calibration.get("expected_calibration_error"),
+        "brier_score": calibration.get("brier_score"),
+        "bins": bins,
+        "display_hint": (
+            "Reliability diagram: each bin shows mean predicted probability vs observed positive rate. "
+            "Perfect calibration = diagonal line."
+        ),
+        "recommendation": calibration.get("recommendation"),
+        "warning": "Synthetic data only — not clinical validation.",
+    }
+
+
+def _feature_explanation_panel():
+    """Load saved XAI global importance for the dashboard."""
+    xai = load_xai_global_importance()
+    if xai is None:
+        return {
+            "status": "unavailable",
+            "message": (
+                "Run generate_complete_synthetic_xai() to produce feature explanations. "
+                "The plot and chart JSON will appear here."
+            ),
+        }
+
+    top = (xai.get("global_importance") or [])[:15]
+    return {
+        "status": "available",
+        "method": xai.get("method"),
+        "method_label": xai.get("method_label"),
+        "shap_available": xai.get("shap_available"),
+        "plot_png_path": xai.get("plot_png_path"),
+        "plot_chart_json_path": xai.get("plot_chart_json_path"),
+        "top_features": top,
+        "warning": xai.get("warning"),
+        "display_hint": (
+            "Bar chart of mean |contribution| per feature across all synthetic patients. "
+            "Higher bar = larger average impact on model output direction."
+        ),
+    }
+
+
+def _evaluation_report_links():
+    """Return structured links to all evaluation artifacts so the dashboard can link them."""
+    artifacts = [
+        {
+            "name": "Detailed training report",
+            "path": "Data/model_evaluation_reports/latest_detailed_training_report.json",
+            "description": "Per-model metrics, confusion matrices, training curves, and feature importances.",
+        },
+        {
+            "name": "Locked holdout report",
+            "path": "Data/complete_synthetic_training/locked_holdout/locked_holdout_manifest.json",
+            "description": "Held-out evaluation on rows never seen during training.",
+        },
+        {
+            "name": "External validation report",
+            "path": "Data/model_evaluation_reports/latest_external_validation_report.json",
+            "description": "BreastDCEDL / I-SPY1 domain-gap evaluation (AUROC ~0.637 — honest gap evidence).",
+        },
+        {
+            "name": "Model comparison report",
+            "path": "Data/model_evaluation_reports/latest_model_comparison_report.json",
+            "description": "Side-by-side champion vs challenger comparison across metrics.",
+        },
+        {
+            "name": "Temporal leakage audit",
+            "path": "Data/complete_synthetic_training/leakage_audit/temporal_leakage_audit.json",
+            "description": "Verifies no future-cycle data leaked into training rows.",
+        },
+        {
+            "name": "Feature explanation JSON",
+            "path": "Data/complete_synthetic_training/synthetic_xai_explanations.json",
+            "description": "Per-patient and global feature contributions from the champion model.",
+        },
+        {
+            "name": "Feature explanation plot (PNG)",
+            "path": DEFAULT_XAI_PLOT_PATH,
+            "description": "Global feature importance bar chart (matplotlib PNG).",
+        },
+        {
+            "name": "Feature explanation chart data (JSON)",
+            "path": DEFAULT_XAI_PLOT_JSON_PATH,
+            "description": "Chart-data JSON for frontend rendering of the feature importance bar chart.",
+        },
+        {
+            "name": "MLE readiness report",
+            "path": "Data/mle_monitoring/latest_mle_readiness.json",
+            "description": "End-to-end readiness gates: data contract, artifacts, performance, registry, audit.",
+        },
+    ]
+    enriched = []
+    for artifact in artifacts:
+        exists = Path(artifact["path"]).exists()
+        enriched.append({**artifact, "exists": exists})
+    return {
+        "purpose": "Links to all evaluation artifacts for dashboard navigation.",
+        "artifacts": enriched,
+    }
