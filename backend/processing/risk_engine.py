@@ -6,7 +6,7 @@ and auditable.  The threshold_config_version is embedded in every evidence
 payload; audit logs therefore remain reproducible across threshold changes.
 
 CLAIM BOUNDARY: these flags are engineering signals for clinical attention
-prompts — not diagnostic criteria or treatment orders.
+prompts - not diagnostic criteria or treatment orders.
 """
 
 from __future__ import annotations
@@ -54,13 +54,13 @@ def _symptom_cfg(key: str) -> dict:
     return (_cfg().get("symptom_thresholds") or {}).get(key, {})
 
 
-# ── Lab threshold helpers (keep dict for backward compat callers) ─────────────
+# -- Lab threshold helpers (keep dict for backward compat callers) -------------
 
 def _lab_thresholds_dict() -> dict[str, dict]:
     raw = (_cfg().get("lab_thresholds") or {})
     if raw:
         return raw
-    # Hard-coded fallback — identical to previous v1.0 values
+    # Hard-coded fallback - identical to previous v1.0 values
     return {
         "wbc": {
             "watch": 4.0, "urgent_review": 3.0,
@@ -85,7 +85,7 @@ def _lab_thresholds_dict() -> dict[str, dict]:
 LAB_THRESHOLDS: dict[str, Any] = _lab_thresholds_dict()
 
 
-# ── Internal helpers ──────────────────────────────────────────────────────────
+# -- Internal helpers ----------------------------------------------------------
 
 def _severity_for_value(value: float, thresholds: dict) -> str | None:
     if value < thresholds["urgent_review"]:
@@ -112,7 +112,7 @@ def _base_evidence(**kwargs) -> dict:
     return {"threshold_config_version": _threshold_version(), **kwargs}
 
 
-# ── Public API ────────────────────────────────────────────────────────────────
+# -- Public API ----------------------------------------------------------------
 
 def detect_risks(labs_df):
     risks = []
@@ -206,7 +206,7 @@ def detect_symptom_risks(symptoms_df):
 def detect_clinical_rule_risks(labs_df, symptoms_df, treatments_df):
     """Deterministic multi-signal oncology monitoring rules.
 
-    Conservative clinical-support flags — not diagnosis or treatment orders.
+    Conservative clinical-support flags - not diagnosis or treatment orders.
     """
     risks = []
     risks.extend(_critical_cbc_rules(labs_df))

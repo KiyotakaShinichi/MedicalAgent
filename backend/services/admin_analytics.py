@@ -1358,7 +1358,7 @@ def _status_meaning(status):
     return meanings.get(status, "Status not recognized.")
 
 
-# ── Dashboard panels (XAI, confusion matrix, calibration, report links) ───────
+# -- Dashboard panels (XAI, confusion matrix, calibration, report links) -------
 
 def _confusion_matrix_panel(advanced_eval):
     """Extract the locked-holdout confusion matrix at threshold 0.5 for the dashboard."""
@@ -1394,8 +1394,8 @@ def _confusion_matrix_panel(advanced_eval):
             "false_negative_rate": at_50.get("false_negative_rate"),
             "false_positive_rate": at_50.get("false_positive_rate"),
         },
-        "display_hint": "2×2 confusion matrix at threshold=0.5 on locked holdout predictions.",
-        "warning": "Synthetic data only — not clinical validation.",
+        "display_hint": "2x2 confusion matrix at threshold=0.5 on locked holdout predictions.",
+        "warning": "Synthetic data only - not clinical validation.",
     }
 
 
@@ -1419,7 +1419,7 @@ def _calibration_panel(advanced_eval):
             "Perfect calibration = diagonal line."
         ),
         "recommendation": calibration.get("recommendation"),
-        "warning": "Synthetic data only — not clinical validation.",
+        "warning": "Synthetic data only - not clinical validation.",
     }
 
 
@@ -1468,7 +1468,7 @@ def _evaluation_report_links():
         {
             "name": "External validation report",
             "path": "Data/model_evaluation_reports/latest_external_validation_report.json",
-            "description": "BreastDCEDL / I-SPY1 domain-gap evaluation (AUROC ~0.637 — honest gap evidence).",
+            "description": "BreastDCEDL / I-SPY1 domain-gap evaluation (AUROC ~0.637 - honest gap evidence).",
         },
         {
             "name": "Model comparison report",

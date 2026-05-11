@@ -2,11 +2,11 @@
 Feature-contribution explanations for the synthetic champion model.
 
 Method: SHAP LinearExplainer (logistic regression) when SHAP is available;
-        falls back to exact linear coefficient × transformed-feature value
+        falls back to exact linear coefficient x transformed-feature value
         (mathematically equivalent for logistic regression without calibration).
 
 All explanations and plots are labelled as "feature contribution / model
-explanation" — NOT clinical causality or SHAP for a non-linear model.
+explanation" - NOT clinical causality or SHAP for a non-linear model.
 
 CLAIM BOUNDARY: explains a model trained on synthetic data only.
 """
@@ -71,7 +71,7 @@ def generate_complete_synthetic_xai(
     if not hasattr(classifier, "coef_"):
         raise ValueError("Synthetic XAI currently expects a linear classifier with coef_.")
 
-    # ── Explanation method ────────────────────────────────────────────────────
+    # -- Explanation method ----------------------------------------------------
     if _SHAP_AVAILABLE:
         explainer = _shap.LinearExplainer(classifier, transformed, feature_perturbation="correlation_dependent")
         shap_values = explainer.shap_values(transformed)  # shape (N, F)
@@ -82,9 +82,9 @@ def generate_complete_synthetic_xai(
         coefficients = classifier.coef_[0]
         row_contributions = transformed * coefficients
         method = "linear_model_coefficient_contribution"
-        method_label = "Linear coefficient × transformed feature (equivalent to SHAP for log-reg)"
+        method_label = "Linear coefficient x transformed feature (equivalent to SHAP for log-reg)"
 
-    # ── Per-patient explanations ──────────────────────────────────────────────
+    # -- Per-patient explanations ----------------------------------------------
     explanations: dict = {}
     for patient_id, group in rows.reset_index(drop=True).groupby("patient_id"):
         indices = group.index.to_numpy()
@@ -124,7 +124,7 @@ def generate_complete_synthetic_xai(
             },
         }
 
-    # ── Global feature importance ─────────────────────────────────────────────
+    # -- Global feature importance ---------------------------------------------
     global_mean_abs = np.mean(np.abs(row_contributions), axis=0)
     global_importance = sorted(
         [
@@ -139,7 +139,7 @@ def generate_complete_synthetic_xai(
         reverse=True,
     )
 
-    # ── Generate PNG plot ─────────────────────────────────────────────────────
+    # -- Generate PNG plot -----------------------------------------------------
     plot_artifact_path = None
     plot_chart_path = None
     if _MPL_AVAILABLE:
@@ -224,7 +224,7 @@ def load_xai_global_importance(xai_json_path: str = DEFAULT_SYNTHETIC_XAI_PATH):
     }
 
 
-# ── Plot helpers ──────────────────────────────────────────────────────────────
+# -- Plot helpers --------------------------------------------------------------
 
 def _save_importance_plot(global_importance, plot_path: str, method_label: str) -> str | None:
     try:
@@ -236,7 +236,7 @@ def _save_importance_plot(global_importance, plot_path: str, method_label: str) 
         bars = ax.barh(features, importances, color="#4C72B0", edgecolor="white", height=0.7)
         ax.set_xlabel("Mean |contribution| (feature explanation units)", fontsize=10)
         ax.set_title(
-            f"Synthetic Champion Model — Global Feature Explanation\n({method_label})",
+            f"Synthetic Champion Model - Global Feature Explanation\n({method_label})",
             fontsize=11,
             pad=12,
         )
@@ -244,7 +244,7 @@ def _save_importance_plot(global_importance, plot_path: str, method_label: str) 
         ax.spines["right"].set_visible(False)
         fig.text(
             0.5, -0.04,
-            "Synthetic data only — not clinical evidence.",
+            "Synthetic data only - not clinical evidence.",
             ha="center", fontsize=8, color="gray",
         )
         fig.tight_layout()
@@ -263,9 +263,9 @@ def _save_importance_chart_json(global_importance, chart_path: str, method_label
         top = global_importance[:15]
         chart = {
             "chart_type": "horizontal_bar",
-            "title": "Synthetic Champion Model — Global Feature Explanation",
+            "title": "Synthetic Champion Model - Global Feature Explanation",
             "subtitle": method_label,
-            "disclaimer": "Synthetic data only — not clinical evidence.",
+            "disclaimer": "Synthetic data only - not clinical evidence.",
             "x_label": "Mean |contribution|",
             "data": [
                 {"feature": item["feature"], "importance": item["importance"], "meaning": item["meaning"]}
@@ -280,7 +280,7 @@ def _save_importance_chart_json(global_importance, chart_path: str, method_label
         return None
 
 
-# ── Prediction / hybrid signal helpers ───────────────────────────────────────
+# -- Prediction / hybrid signal helpers ---------------------------------------
 
 def _prediction_for_patient(predictions, patient_id):
     if predictions.empty:
@@ -451,7 +451,7 @@ def _signal_agreement(classification_band, regression_band):
     return "conflicting"
 
 
-# ── Utilities ─────────────────────────────────────────────────────────────────
+# -- Utilities -----------------------------------------------------------------
 
 def _jsonable(value):
     if isinstance(value, dict):

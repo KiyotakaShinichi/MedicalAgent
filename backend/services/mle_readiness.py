@@ -853,11 +853,11 @@ def _round(value, digits=3):
         return value
 
 
-# ── Ablation sweep: hybrid classification/regression weight ───────────────────
+# -- Ablation sweep: hybrid classification/regression weight -------------------
 
 def _hybrid_weight_ablation(predictions):
     """
-    Sweep classification_weight from 1.0→0.0 (regression_weight = 1 - cls_weight).
+    Sweep classification_weight from 1.0->0.0 (regression_weight = 1 - cls_weight).
     At each weight, form hybrid_score = cls_weight * cls_prob + reg_weight * reg_normalized,
     then compute AUROC vs actual_label.  Reports the optimal weight and whether the
     default 65/35 split is near-optimal.
@@ -895,7 +895,7 @@ def _hybrid_weight_ablation(predictions):
     df = predictions[["patient_id", "actual_label", prob_col]].copy().dropna()
     if reg_col and reg_col in predictions.columns:
         df = df.join(predictions[[reg_col]], how="left")
-        # Normalize regression score: response_score_percent → [0,1] via clamp(0,100)/100
+        # Normalize regression score: response_score_percent -> [0,1] via clamp(0,100)/100
         df["reg_normalized"] = ((df[reg_col].fillna(0) + 50).clip(0, 100)) / 100.0
     else:
         df["reg_normalized"] = None
@@ -953,11 +953,11 @@ def _hybrid_weight_ablation(predictions):
             "Small AUROC gap means the 65/35 default is near-optimal. "
             "Large gap suggests the weight deserves tuning via cross-validation on a dev set."
         ),
-        "warning": "Synthetic data only — not clinical evidence.",
+        "warning": "Synthetic data only - not clinical evidence.",
     }
 
 
-# ── Temporal generalization eval ──────────────────────────────────────────────
+# -- Temporal generalization eval ----------------------------------------------
 
 def _temporal_generalization_eval(training_rows, predictions):
     """
@@ -1041,9 +1041,9 @@ def _temporal_generalization_eval(training_rows, predictions):
         "late_cohort": {**late_m, "first_cycle_threshold": f"> {median_first}"} if late_m else None,
         "auroc_delta_late_minus_early": auroc_delta,
         "interpretation": (
-            "auroc_delta ≈ 0 → stable across cycles. "
-            "auroc_delta << 0 → model degrades on later-cycle patients (possible distribution shift). "
+            "auroc_delta ≈ 0 -> stable across cycles. "
+            "auroc_delta << 0 -> model degrades on later-cycle patients (possible distribution shift). "
             "Next step: true temporal train/eval split on a real longitudinal dataset."
         ),
-        "warning": "Synthetic data only — temporal structure is simulator-generated, not real patient time.",
+        "warning": "Synthetic data only - temporal structure is simulator-generated, not real patient time.",
     }

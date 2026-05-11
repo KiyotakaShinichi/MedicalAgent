@@ -400,6 +400,66 @@
   /* ── Divider ── */
   .divider { border: none; border-top: 1px solid var(--line); margin: 4px 0; }
 
+  /* ── Confusion matrix 2x2 ── */
+  .cm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    max-width: 300px;
+    margin-bottom: 14px;
+  }
+  .cm-cell {
+    padding: 14px 10px;
+    text-align: center;
+    border-radius: 3px;
+  }
+  .cm-label {
+    display: block;
+    font: 600 9px var(--mono);
+    color: var(--muted-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .cm-count { display: block; font: 700 24px var(--mono); line-height: 1; }
+  .cm-cell.tp { background: rgba(76,195,138,0.13); border: 1px solid rgba(76,195,138,0.28); }
+  .cm-cell.tn { background: rgba(76,195,138,0.13); border: 1px solid rgba(76,195,138,0.28); }
+  .cm-cell.fp { background: rgba(229,162,61,0.12);  border: 1px solid rgba(229,162,61,0.28); }
+  .cm-cell.fn { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.28); }
+
+  /* ── Feature importance bars ── */
+  .feat-bar-wrap { display: flex; flex-direction: column; gap: 6px; }
+  .feat-row {
+    display: grid;
+    grid-template-columns: 150px 1fr 56px;
+    gap: 8px;
+    align-items: center;
+  }
+  .feat-name {
+    font: 400 11px var(--mono);
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .feat-bar-bg { background: rgba(255,255,255,0.06); border-radius: 2px; height: 10px; }
+  .feat-bar-fill { background: var(--blue); border-radius: 2px; height: 10px; transition: width .3s; }
+  .feat-val { font: 600 10px var(--mono); color: var(--text); text-align: right; }
+
+  /* ── Report artifact links ── */
+  .link-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .link-item:last-child { border-bottom: none; }
+  .link-text { flex: 1; min-width: 0; }
+  .link-name { font: 600 12px var(--body); color: var(--text); margin-bottom: 2px; }
+  .link-desc { font-size: 11px; color: var(--muted-2); line-height: 1.4; }
+  .link-path { font: 400 10px var(--mono); color: var(--muted-2); margin-top: 2px; word-break: break-all; }
+
   /* ── Responsive ── */
   @media (max-width: 1080px) {
     .tiles { grid-template-columns: repeat(2, 1fr); }
@@ -482,6 +542,10 @@
     <a class="nav-item" href="#drift" onclick="scrollTo('drift',this)">
       <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 11l3-4 2 2 3-5 2 3 2-2v5H2v1Zm0-9h12v1H2V2Z"/></svg>
       Model & Drift
+    </a>
+    <a class="nav-item" href="#xai" onclick="scrollTo('xai',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2ZM7 5h2v4H7V5Zm0 5h2v2H7v-2Z"/></svg>
+      Explainability
     </a>
   </nav>
 
@@ -752,6 +816,80 @@
       </div>
     </section>
 
+    <!-- ML Explainability & Diagnostics -->
+    <section class="section" id="xai">
+      <div class="section-header">
+        <span class="section-title">ML Explainability &amp; Diagnostics</span>
+        <span style="margin-left:auto;font:400 11px var(--mono);color:var(--muted-2)">Synthetic data only — not clinical evidence</span>
+      </div>
+      <div class="grid g2">
+
+        <!-- Confusion Matrix -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Confusion Matrix</span>
+            <span class="tag">threshold = 0.5</span>
+          </div>
+          <div class="card-body" id="confusionMatrixPanel">
+            <div class="skeleton" style="width:90%;height:90px;margin-bottom:10px"></div>
+            <div class="skeleton" style="width:70%"></div>
+          </div>
+        </div>
+
+        <!-- Feature Importance -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Feature Importance</span>
+            <span class="tag loading" id="xaiMethodTag">loading</span>
+          </div>
+          <div class="card-body" id="featureImportancePanel">
+            <div class="skeleton" style="width:100%"></div>
+            <div class="skeleton" style="width:85%"></div>
+            <div class="skeleton" style="width:70%"></div>
+          </div>
+        </div>
+
+        <!-- Calibration Reliability -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Calibration Reliability</span>
+            <span class="tag loading" id="calibrationTag">loading</span>
+          </div>
+          <div class="card-body" style="padding-bottom:0" id="calibrationPanel"></div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Bin range</th>
+                  <th>Count</th>
+                  <th>Mean P̂</th>
+                  <th>Obs. rate</th>
+                  <th>Gap</th>
+                </tr>
+              </thead>
+              <tbody id="calibrationRows">
+                <tr><td colspan="5" class="empty">Loading calibration bins…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Evaluation Artifacts -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Evaluation Artifacts</span>
+            <span class="tag">report links</span>
+          </div>
+          <div class="card-body" style="padding-bottom:0" id="evalReportLinks">
+            <div class="skeleton" style="width:80%"></div>
+            <div class="skeleton" style="width:65%"></div>
+            <div class="skeleton" style="width:75%"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -1011,6 +1149,9 @@
 
     /* Feedback table (async) */
     renderFeedbackRows();
+
+    /* New ML explainability panels */
+    renderXAIPanels(data);
   }
 
   function renderFeedbackRows() {
@@ -1222,6 +1363,144 @@
   function logout() {
     localStorage.removeItem("adminAccessToken");
     window.location.href = "/login";
+  }
+
+  /* ── ML Explainability panels ── */
+
+  function renderXAIPanels(data) {
+    renderConfusionMatrix(data.confusion_matrix || {});
+    renderCalibrationPanel(data.calibration_panel || {});
+    renderFeatureImportance(data.feature_explanation || {});
+    renderEvalReportLinks(data.evaluation_report_links || {});
+  }
+
+  function renderConfusionMatrix(cm) {
+    const el = document.getElementById("confusionMatrixPanel");
+    if (!el) return;
+    if (cm.status !== "available") {
+      el.innerHTML = `<div class="empty">${esc(cm.message || "Run model training to populate the confusion matrix.")}</div>`;
+      return;
+    }
+    const m = cm.matrix || {};
+    const r = cm.rates || {};
+    el.innerHTML = `
+      <div class="cm-grid">
+        <div class="cm-cell tp">
+          <span class="cm-label">True Positive</span>
+          <span class="cm-count" style="color:var(--green)">${m.true_positive ?? "--"}</span>
+        </div>
+        <div class="cm-cell fp">
+          <span class="cm-label">False Positive</span>
+          <span class="cm-count" style="color:var(--amber)">${m.false_positive ?? "--"}</span>
+        </div>
+        <div class="cm-cell fn">
+          <span class="cm-label">False Negative</span>
+          <span class="cm-count" style="color:var(--red)">${m.false_negative ?? "--"}</span>
+        </div>
+        <div class="cm-cell tn">
+          <span class="cm-label">True Negative</span>
+          <span class="cm-count" style="color:var(--green)">${m.true_negative ?? "--"}</span>
+        </div>
+      </div>
+      <div class="metric-list">
+        ${rows([
+          { name: "Sensitivity (recall)", value: asNum(r.sensitivity),        why: "Fraction of positive cases correctly flagged." },
+          { name: "Specificity",          value: asNum(r.specificity),        why: "Fraction of negative cases correctly cleared." },
+          { name: "Precision (PPV)",      value: asNum(r.precision),          why: "Of all flagged cases, fraction truly positive." },
+          { name: "False-negative rate",  value: asNum(r.false_negative_rate),why: "Missed positives — lower is safer." },
+        ])}
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:var(--muted-2)">${esc(cm.warning || "")}</div>`;
+  }
+
+  function renderCalibrationPanel(cal) {
+    setTag("calibrationTag", cal.status || "unavailable");
+    const panelEl = document.getElementById("calibrationPanel");
+    if (panelEl) {
+      panelEl.innerHTML = rows([
+        { name: "ECE",         value: asNum(cal.expected_calibration_error), why: "Expected calibration error — lower is better. Perfect = 0." },
+        { name: "Brier score", value: asNum(cal.brier_score),               why: "Probability error. Lower is better. Random = 0.25." },
+      ]);
+    }
+    const tbody = document.getElementById("calibrationRows");
+    if (!tbody) return;
+    const bins = cal.bins || [];
+    if (!bins.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">Calibration bins unavailable.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = bins.map(b => {
+      const gap = parseFloat(b.gap) || 0;
+      const gapColor = gap > 0.15 ? "var(--red)" : gap > 0.08 ? "var(--amber)" : "var(--green)";
+      return `<tr>
+        <td><strong>${esc(b.range)}</strong></td>
+        <td>${esc(b.count)}</td>
+        <td><span style="font:500 12px var(--mono)">${asNum(b.mean_probability)}</span></td>
+        <td><span style="font:500 12px var(--mono)">${asNum(b.observed_positive_rate)}</span></td>
+        <td><span style="font:600 12px var(--mono);color:${gapColor}">${asNum(b.gap)}</span></td>
+      </tr>`;
+    }).join("");
+  }
+
+  function renderFeatureImportance(xai) {
+    const el = document.getElementById("featureImportancePanel");
+    const tagEl = document.getElementById("xaiMethodTag");
+    if (!el) return;
+    if (tagEl) {
+      tagEl.className = "tag";
+      tagEl.textContent = xai.method_label ? "SHAP / coef" : "unavailable";
+    }
+    if (xai.status !== "available") {
+      el.innerHTML = `<div class="empty">${esc(xai.message || "Feature importance unavailable. Run XAI generation first.")}</div>`;
+      return;
+    }
+    const features = xai.top_features || [];
+    if (!features.length) {
+      el.innerHTML = '<div class="empty">No feature importance data available.</div>';
+      return;
+    }
+    const maxImp = features[0]?.importance || 1;
+    const bars = features.slice(0, 12).map(f => {
+      const pct = Math.round(((f.importance || 0) / maxImp) * 100);
+      return `<div class="feat-row">
+        <div class="feat-name" title="${esc(f.feature)}">${esc(f.feature)}</div>
+        <div class="feat-bar-bg"><div class="feat-bar-fill" style="width:${pct}%"></div></div>
+        <div class="feat-val">${asNum(f.importance)}</div>
+      </div>`;
+    }).join("");
+    const pngNote = xai.plot_png_path
+      ? `<div style="margin-top:10px;font-size:11px;color:var(--muted-2)">Plot saved: <span style="font-family:var(--mono);word-break:break-all">${esc(xai.plot_png_path)}</span></div>`
+      : "";
+    const warning = xai.warning
+      ? `<div style="margin-top:8px;font-size:10px;color:var(--muted-2)">${esc(xai.warning)}</div>`
+      : "";
+    const methodNote = xai.method_label
+      ? `<div style="font:400 10px var(--mono);color:var(--muted-2);margin-bottom:10px">${esc(xai.method_label)}</div>`
+      : "";
+    el.innerHTML = methodNote + `<div class="feat-bar-wrap">${bars}</div>` + pngNote + warning;
+  }
+
+  function renderEvalReportLinks(links) {
+    const el = document.getElementById("evalReportLinks");
+    if (!el) return;
+    const artifacts = links.artifacts || [];
+    if (!artifacts.length) {
+      el.innerHTML = '<div class="empty">No artifact links available.</div>';
+      return;
+    }
+    el.innerHTML = artifacts.map(a => {
+      const badge = a.exists
+        ? `<span class="tag passed" style="flex-shrink:0">exists</span>`
+        : `<span class="tag unavailable" style="flex-shrink:0">missing</span>`;
+      return `<div class="link-item">
+        <div>${badge}</div>
+        <div class="link-text">
+          <div class="link-name">${esc(a.name)}</div>
+          <div class="link-desc">${esc(a.description || "")}</div>
+          <div class="link-path">${esc(a.path)}</div>
+        </div>
+      </div>`;
+    }).join("");
   }
 
   ensureAdminSession().then(loadAll).catch(err => toast(err.message, true));

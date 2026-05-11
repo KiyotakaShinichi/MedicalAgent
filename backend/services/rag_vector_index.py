@@ -3,12 +3,12 @@ RAG vector index with true hybrid retrieval.
 
 Backend selection (automatic at build time, based on installed dependencies):
 
-  Dense hybrid  – sentence-transformers/all-MiniLM-L6-v2 + FAISS IndexFlatIP + BM25Okapi
+  Dense hybrid  - sentence-transformers/all-MiniLM-L6-v2 + FAISS IndexFlatIP + BM25Okapi
                   schema_version  = "local_dense_faiss_hybrid_index_v2"
                   retrieval_backend = "local_dense_faiss_hybrid_index"
                   Fusion: Reciprocal Rank Fusion (RRF k=60) of dense + sparse lists
 
-  Sparse fallback – BM25Okapi + TF-IDF bigram cosine (no sentence-transformers / faiss required)
+  Sparse fallback - BM25Okapi + TF-IDF bigram cosine (no sentence-transformers / faiss required)
                   schema_version  = "local_sparse_tfidf_bm25_index_v2"
                   retrieval_backend = "local_sparse_tfidf_bm25_index"
 
@@ -29,7 +29,7 @@ import joblib
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-# ── Optional dense-retrieval dependencies ─────────────────────────────────────
+# -- Optional dense-retrieval dependencies -------------------------------------
 try:
     from sentence_transformers import SentenceTransformer as _SentenceTransformer
     import faiss as _faiss
@@ -37,14 +37,14 @@ try:
 except ImportError:
     _DENSE_AVAILABLE = False
 
-# ── Optional BM25 dependency ──────────────────────────────────────────────────
+# -- Optional BM25 dependency --------------------------------------------------
 try:
     from rank_bm25 import BM25Okapi as _BM25Okapi
     _BM25_AVAILABLE = True
 except ImportError:
     _BM25_AVAILABLE = False
 
-# ── Constants ─────────────────────────────────────────────────────────────────
+# -- Constants -----------------------------------------------------------------
 _DENSE_ENCODER_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 _ENCODER_CACHE: dict = {}
 
@@ -57,7 +57,7 @@ DEFAULT_RAG_INDEX_PATH = "Data/rag_index/local_hybrid_rag_index.joblib"
 RAG_INDEX_SCHEMA_VERSION = DENSE_HYBRID_SCHEMA_VERSION if _DENSE_AVAILABLE else SPARSE_BM25_SCHEMA_VERSION
 
 
-# ── Backend helpers ───────────────────────────────────────────────────────────
+# -- Backend helpers -----------------------------------------------------------
 
 def _current_schema_version() -> str:
     return DENSE_HYBRID_SCHEMA_VERSION if _DENSE_AVAILABLE else SPARSE_BM25_SCHEMA_VERSION
@@ -73,7 +73,7 @@ def _get_encoder():
     return _ENCODER_CACHE.get("model")
 
 
-# ── Public API ────────────────────────────────────────────────────────────────
+# -- Public API ----------------------------------------------------------------
 
 def build_rag_vector_index(corpus, index_path=DEFAULT_RAG_INDEX_PATH, knowledge_fingerprint=None):
     documents = [_normalize_document(item) for item in corpus if item.get("id") and item.get("text")]
@@ -83,7 +83,7 @@ def build_rag_vector_index(corpus, index_path=DEFAULT_RAG_INDEX_PATH, knowledge_
 
     fingerprint = knowledge_fingerprint or corpus_fingerprint(documents)
 
-    # TF-IDF – always built (used as dense-unavailable fallback and backward-compat)
+    # TF-IDF - always built (used as dense-unavailable fallback and backward-compat)
     vectorizer = TfidfVectorizer(
         lowercase=True,
         ngram_range=(1, 2),
@@ -161,7 +161,7 @@ def search_hybrid_index(
     query_tokens = _tokenize(query)
     query_token_set = set(query_tokens)
 
-    # ── Sparse scores (BM25 preferred, TF-IDF cosine as fallback) ────────────
+    # -- Sparse scores (BM25 preferred, TF-IDF cosine as fallback) ------------
     bm25_raw = _compute_bm25_scores(index, query_tokens)
     if bm25_raw is not None:
         bm25_max = max(bm25_raw) if bm25_raw else 1.0
@@ -170,13 +170,13 @@ def search_hybrid_index(
     else:
         sparse_scores = _compute_tfidf_scores(index, query)
 
-    # ── Dense scores (sentence-transformer + FAISS, if available) ────────────
+    # -- Dense scores (sentence-transformer + FAISS, if available) ------------
     dense_scores = _compute_dense_scores(index, query)
 
-    # ── Metadata scores ───────────────────────────────────────────────────────
+    # -- Metadata scores -------------------------------------------------------
     meta_scores = [_metadata_score(query_token_set, doc) for doc in documents]
 
-    # ── Fusion ────────────────────────────────────────────────────────────────
+    # -- Fusion ----------------------------------------------------------------
     if dense_scores is not None:
         rrf_scores = _rrf_fuse(sparse_scores, dense_scores, k=60)
         backend = "local_dense_faiss_hybrid_index"
@@ -214,14 +214,14 @@ def search_hybrid_index(
             **document["payload"],
             "retrieval_backend": backend,
             "retrieval_score": round(score, 4),
-            # ── Honest retrieval trace ────────────────────────────────────────
+            # -- Honest retrieval trace ----------------------------------------
             "sparse_score": sparse_s,
             "dense_score": dense_s,
             "rrf_score": rrf_s,
             "fusion_score": rrf_s,  # alias kept for API clarity
             "metadata_score": meta_s,
             "backend": backend,
-            # ── Backward-compat aliases ───────────────────────────────────────
+            # -- Backward-compat aliases ---------------------------------------
             "vector_score": (
                 dense_s if dense_s is not None else round(float(tfidf_scores[i]), 4)
             ),
@@ -311,7 +311,7 @@ def corpus_fingerprint(corpus):
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:16]
 
 
-# ── Score computation helpers ─────────────────────────────────────────────────
+# -- Score computation helpers -------------------------------------------------
 
 def _compute_bm25_scores(index, query_tokens):
     """Returns list of raw BM25 scores (not normalised), or None if unavailable."""
@@ -362,7 +362,7 @@ def _compute_dense_scores(index, query):
     return ordered.tolist()
 
 
-# ── RRF ───────────────────────────────────────────────────────────────────────
+# -- RRF -----------------------------------------------------------------------
 
 def _rrf_fuse(sparse_scores, dense_scores, k=60):
     """Reciprocal Rank Fusion of two normalised score lists; output is normalised to [0,1]."""
@@ -376,7 +376,7 @@ def _rrf_fuse(sparse_scores, dense_scores, k=60):
 
 
 def _scores_to_ranks(scores):
-    """Convert score list to 1-based ranks (higher score → rank 1)."""
+    """Convert score list to 1-based ranks (higher score -> rank 1)."""
     indexed = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)
     ranks = [0] * len(scores)
     for rank, (idx, _) in enumerate(indexed):
@@ -384,7 +384,7 @@ def _scores_to_ranks(scores):
     return ranks
 
 
-# ── Document normalisation ────────────────────────────────────────────────────
+# -- Document normalisation ----------------------------------------------------
 
 def _normalize_document(item):
     payload = dict(item)
@@ -424,7 +424,7 @@ def _document_text_from_payload(payload):
     ])
 
 
-# ── Index freshness ───────────────────────────────────────────────────────────
+# -- Index freshness -----------------------------------------------------------
 
 def _is_current_index(payload, knowledge_fingerprint):
     """Stale if schema doesn't match current backend capability or fingerprint changed."""
@@ -435,7 +435,7 @@ def _is_current_index(payload, knowledge_fingerprint):
     )
 
 
-# ── Per-document scoring helpers ──────────────────────────────────────────────
+# -- Per-document scoring helpers ----------------------------------------------
 
 def _overlap_score(query_tokens, document_tokens):
     if not query_tokens:
@@ -467,7 +467,7 @@ def _intent_score(intent, document):
     return 0.08 if tokens & desired else 0.0
 
 
-# ── Tokenisation ──────────────────────────────────────────────────────────────
+# -- Tokenisation --------------------------------------------------------------
 
 def _tokenize(text):
     stopwords = {
