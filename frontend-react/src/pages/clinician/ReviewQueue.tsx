@@ -1,4 +1,4 @@
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Clock3 } from "lucide-react";
 import { Badge } from "../../components/ui/Badge";
 import { statusVariant } from "../../components/ui/badgeUtils";
 import { EmptyPane } from "../../components/ui/Spinner";
@@ -12,44 +12,47 @@ interface Props {
 
 export function ReviewQueue({ queue, selectedId, onSelect }: Props) {
   return (
-    <div className="flex flex-col gap-0">
+    <div className="review-queue-list">
       {queue.length === 0 && <EmptyPane label="Queue empty" />}
-      {queue.map((item) => (
-        <button
-          key={item.patient_id}
-          onClick={() => onSelect(item.patient_id)}
-          className="w-full text-left px-3 py-3 border-b transition-colors hover:opacity-90"
-          style={{
-            borderColor: "var(--border)",
-            background: selectedId === item.patient_id ? "rgba(244,63,94,0.08)" : "transparent",
-          }}
-        >
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-semibold" style={{ color: "var(--text)" }}>
-              {item.patient_name}
-            </span>
-            <Badge variant={statusVariant(item.overall_status ?? "")}>
-              {item.overall_status}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs tabular-nums" style={{ color: "var(--text-faint)" }}>
-              Priority {item.priority_score?.toFixed(0) ?? "-"}
-            </span>
-            {(item.urgent_flags?.length ?? 0) > 0 && (
-              <span className="flex items-center gap-1 text-xs" style={{ color: "var(--rose)" }}>
-                <AlertTriangle size={10} />
-                {item.urgent_flags.length} urgent
+      {queue.map((item) => {
+        const selected = selectedId === item.patient_id;
+        const urgentCount = item.urgent_flags?.length ?? 0;
+        return (
+          <button
+            key={item.patient_id}
+            type="button"
+            onClick={() => onSelect(item.patient_id)}
+            className={`review-queue-card${selected ? " is-selected" : ""}`}
+          >
+            <div className="review-queue-card-top">
+              <div className="review-queue-patient">
+                <strong>{item.patient_name}</strong>
+                <span>{item.patient_id}</span>
+              </div>
+              <Badge variant={statusVariant(item.overall_status ?? "")} className="review-queue-status">
+                {(item.overall_status ?? "review").replace(/_/g, " ")}
+              </Badge>
+            </div>
+
+            <div className="review-queue-meta">
+              <span>
+                <Clock3 size={12} aria-hidden="true" />
+                Priority {item.priority_score?.toFixed(0) ?? "-"}
               </span>
+              {urgentCount > 0 && (
+                <span className="is-urgent">
+                  <AlertTriangle size={12} aria-hidden="true" />
+                  {urgentCount} urgent
+                </span>
+              )}
+            </div>
+
+            {item.latest_decision && (
+              <p className="review-queue-decision">Last review: {item.latest_decision}</p>
             )}
-          </div>
-          {item.latest_decision && (
-            <p className="text-xs mt-0.5" style={{ color: "var(--text-faint)" }}>
-              Last: {item.latest_decision}
-            </p>
-          )}
-        </button>
-      ))}
+          </button>
+        );
+      })}
     </div>
   );
 }

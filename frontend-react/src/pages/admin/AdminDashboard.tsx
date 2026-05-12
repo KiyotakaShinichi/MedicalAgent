@@ -18,6 +18,7 @@ import { MleSection } from "./sections/MleSection";
 import { OverviewSection } from "./sections/OverviewSection";
 import { RagSection } from "./sections/RagSection";
 import { RegressionSection } from "./sections/RegressionSection";
+import { AgentTraceSection } from "./sections/AgentTraceSection";
 
 const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -29,15 +30,16 @@ const NAV = [
   { to: "/admin/model", label: "Model", icon: BarChart2 },
 ];
 
-type Section = "overview" | "rag" | "guardrails" | "mle" | "regression" | "feedback";
+type Section = "overview" | "rag" | "guardrails" | "mle" | "regression" | "feedback" | "trace";
 
 const SECTIONS: { id: Section; label: string }[] = [
-  { id: "overview", label: "Overview" },
-  { id: "rag", label: "RAG / Cost" },
+  { id: "overview",   label: "Overview" },
+  { id: "rag",        label: "RAG / Cost" },
   { id: "guardrails", label: "Guardrails" },
-  { id: "mle", label: "MLE Gates" },
+  { id: "mle",        label: "MLE Gates" },
   { id: "regression", label: "Regression" },
-  { id: "feedback", label: "Feedback" },
+  { id: "trace",      label: "Agent Trace" },
+  { id: "feedback",   label: "Feedback" },
 ];
 
 export default function AdminDashboard() {
@@ -74,7 +76,8 @@ export default function AdminDashboard() {
               {section === "guardrails" && <GuardrailsSection analytics={data} />}
               {section === "mle" && <MleSection analytics={data} onRefresh={refetch} />}
               {section === "regression" && <RegressionSection />}
-              {section === "feedback" && <FeedbackSection />}
+              {section === "trace"      && <AgentTraceSection />}
+              {section === "feedback"   && <FeedbackSection />}
             </>
           )}
         </div>

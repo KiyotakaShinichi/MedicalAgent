@@ -31,6 +31,8 @@ export default function ClinicianDashboard() {
   const [reviewKey, setReviewKey] = useState(0);
 
   const { data: queueData, status: queueStatus, error: queueError } = useApi(getReviewQueue, []);
+  const queue = queueData?.queue ?? [];
+  const activePatientId = selectedId ?? queue[0]?.patient_id ?? null;
   const {
     data: patientReport,
     status: reportStatus,
@@ -38,21 +40,19 @@ export default function ClinicianDashboard() {
     refetch: refetchReport,
   } = useApi(
     useCallback(
-      () => selectedId ? getPatientReport(selectedId) : Promise.resolve(null as unknown as PatientReport),
-      [selectedId]
+      () => activePatientId ? getPatientReport(activePatientId) : Promise.resolve(null as unknown as PatientReport),
+      [activePatientId]
     ),
-    [selectedId]
+    [activePatientId]
   );
 
   const { data: reviewsData } = useApi(
     useCallback(() => {
       void reviewKey;
-      return selectedId ? getSummaryReviews(selectedId) : Promise.resolve(null as unknown as { summary_reviews: [] });
-    }, [selectedId, reviewKey]),
-    [selectedId, reviewKey]
+      return activePatientId ? getSummaryReviews(activePatientId) : Promise.resolve(null as unknown as { summary_reviews: [] });
+    }, [activePatientId, reviewKey]),
+    [activePatientId, reviewKey]
   );
-
-  const queue = queueData?.queue ?? [];
 
   return (
     <AppShell
@@ -74,21 +74,19 @@ export default function ClinicianDashboard() {
           {queueStatus === "success" && (
             <ReviewQueue
               queue={queue}
-              selectedId={selectedId}
+              selectedId={activePatientId}
               onSelect={(id) => setSelectedId(id)}
             />
           )}
         </aside>
 
         <section className="clinician-review-panel">
-          {!selectedId && (
-            <EmptyPane label="Select a patient from the queue to begin review" />
-          )}
+          {!activePatientId && <EmptyPane label="Select a patient from the queue to begin review" />}
 
-          {selectedId && reportStatus === "loading" && <LoadingPane label="Loading patient..." />}
-          {selectedId && reportStatus === "error" && <ErrorPane message={reportError ?? ""} />}
+          {activePatientId && reportStatus === "loading" && <LoadingPane label="Loading patient..." />}
+          {activePatientId && reportStatus === "error" && <ErrorPane message={reportError ?? ""} />}
 
-          {selectedId && reportStatus === "success" && patientReport && (
+          {activePatientId && reportStatus === "success" && patientReport && (
             <div className="dashboard-content clinician-detail">
               <div className="review-patient-header">
                 <div
@@ -123,7 +121,7 @@ export default function ClinicianDashboard() {
               )}
 
               <ReviewPanel
-                patientId={selectedId}
+                patientId={activePatientId}
                 currentSummary={
                   Array.isArray(patientReport.ai_summary?.patient_explanation)
                     ? patientReport.ai_summary!.patient_explanation.join(" ")
@@ -141,7 +139,7 @@ export default function ClinicianDashboard() {
                   <ChatPanel
                     messages={patientReport.chat_history ?? []}
                     onSend={async (text) => {
-                      const res = await sendClinicianChat(selectedId, text);
+                      const res = await sendClinicianChat(activePatientId, text);
                       return {
                         reply: res.reply,
                         saved_actions: res.saved_actions,

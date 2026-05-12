@@ -388,6 +388,9 @@ def safety_scope_check(query, urgent_flags=None):
         "can i stop",
         "can i start",
         "can i change",
+        "write me a prescription",
+        "prescription for",
+        "prescribe me",
         "can i delay",
         "do i need to delay",
         "what dose",
@@ -469,9 +472,9 @@ def route_intent(query, actions=None, safety=None):
         deterministic = "conversation"
     elif any(term in lower for term in ["remember", "what did i tell", "what did i say", "last message", "previous message", "chat history"]):
         deterministic = "patient_memory"
-    elif any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed"]):
+    elif any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed", "exhausted", "can't keep", "cannot keep", "overwhelmed"]):
         deterministic = "emotional_support"
-    elif any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add", "enter my", "where do i enter", "how do i enter"]):
+    elif any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add", "enter my", "where do i enter", "how do i enter", "where do i put", "put my results", "where should i"]):
         deterministic = "portal_help"
     elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment plan", "my treatment response", "my treatment results", "working", "progress"]):
         deterministic = "patient_timeline_monitoring"

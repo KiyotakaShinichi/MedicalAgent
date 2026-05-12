@@ -144,6 +144,121 @@ The login form resolves the account role from credentials and redirects to the c
 - Harden production security controls and PHI handling for real deployment.
 - Add clinician-reviewed gold cases for summary quality evaluation.
 
+## For Recruiters and Interviewers
+
+### What this project demonstrates
+
+**Applied AI/ML engineering** — not a toy demo. Key capabilities:
+
+| Area | What was built |
+|------|----------------|
+| RAG pipeline | Hybrid BM25-lexical + TF-IDF vector retrieval, curated-source boost, parent-child window expansion, reranking, contextual compression, semantic cache |
+| Safety-first agent | Deterministic priority gates before LLM: injection detection, multilingual attack patterns, PHI boundary, treatment/diagnosis refusal |
+| ML evaluation | AUROC, PR-AUC, Brier, ECE, sensitivity/specificity/FNR, cost-sensitive threshold (FN costlier than FP), locked holdout, external validation direction |
+| Agent regression suite | 48 labeled test cases: education, portal_help, clinical_safety, security, conversation, tool_use — 100% pass rate |
+| Model lifecycle | Register, promote, rollback, audit; calibration comparison (isotonic / Platt / temperature scaling) |
+| Frontend | React + TypeScript + Vite, role-based routing, chat panel with tool-call confirmations, metric interpretation bands |
+| Governance | System card, model cards (3), RAG pipeline doc, MLE evaluation report, audit logs |
+
+### Architecture (Mermaid)
+
+```mermaid
+graph LR
+    subgraph Browser
+        Login --> RouteGuard
+        RouteGuard -->|patient| PatientDash
+        RouteGuard -->|clinician| ClinicianDash
+        RouteGuard -->|admin| AdminDash
+    end
+
+    subgraph FastAPI["FastAPI :8017"]
+        Auth["/auth/*"]
+        PatientAPI["/me/* /patients/*"]
+        AdminAPI["/admin/*"]
+        MLAPI["/models/* /train/*"]
+    end
+
+    subgraph Services
+        AgentRAG["agent_rag.py\nSafety → Intent → RAG → Answer"]
+        VectorIndex["rag_vector_index.py\nHybrid BM25 + TF-IDF"]
+        MLModels["complete_synthetic_training.py\nClassifier + Regressor + XAI"]
+        Calibration["calibration_eval.py\nIsotonic / Platt / Temperature"]
+        Guardrails["security_guardrails.py\nMultilingual injection detection"]
+    end
+
+    subgraph Storage
+        SQLite[("SQLite DB")]
+        VecIdx[("Vector Index")]
+        Artifacts[("Model Artifacts\n/Data")]
+    end
+
+    PatientDash -->|Bearer token| PatientAPI
+    ClinicianDash -->|Bearer token| PatientAPI
+    AdminDash -->|Bearer token| AdminAPI
+
+    PatientAPI --> AgentRAG
+    AgentRAG --> Guardrails
+    AgentRAG --> VectorIndex
+    VectorIndex --> VecIdx
+    AgentRAG --> SQLite
+
+    AdminAPI --> MLModels
+    AdminAPI --> Calibration
+    MLModels --> Artifacts
+```
+
+### Agent Flow (Mermaid)
+
+```mermaid
+flowchart TD
+    MSG["User message"] --> INJECT["1. Injection / PHI detection\n(multilingual, base64, cross-patient)"]
+    INJECT -->|blocked| BLOCK["Blocked response\n+ audit log"]
+    INJECT -->|passed| INTENT["2. Intent router\n(deterministic keyword match)"]
+    INTENT -->|security_boundary| BLOCK
+    INTENT -->|safety_boundary / treatment_boundary| SAFE["3a. Safety reply\n(escalate to clinician)"]
+    INTENT -->|emotional_support / conversation| CONV["3b. Conversational reply\n(no RAG)"]
+    INTENT -->|data_entry| TOOL["3c. Tool execution\n(save CBC / symptom / MRI)"]
+    INTENT -->|education / portal_help| CACHE{"4. Cache check\nSIM ≥ 0.86?"}
+    CACHE -->|hit| CACHED["Cached answer\n+ citation"]
+    CACHE -->|miss| RAG["5. RAG retrieval\nHybrid → rerank → compress"]
+    RAG --> GEN["6. LLM answer generation\n(grounded, cited)"]
+    GEN --> OUTGUARD["7. Output guardrail\ngrounding score / hallucination flag"]
+    OUTGUARD --> AUDIT["8. Audit log\n(intent, sources, latency, tokens)"]
+    AUDIT --> RESP["Response to user"]
+```
+
+### What this proves / What this does not prove
+
+**Proves:**
+- Ability to design and implement a multi-layer safety architecture for healthcare AI
+- Disciplined evaluation pipeline: regression suite, holdout, calibration, cost-sensitive thresholds
+- RAG engineering: retrieval, reranking, caching, grounding scoring, hallucination detection
+- ML lifecycle practice: training, versioning, promotion, rollback, model cards, audit logs
+- Full-stack integration: React SPA + FastAPI + SQLite + vector index + local ML models
+
+**Does not prove:**
+- Clinical validity — all model training and testing uses synthetic or non-validated data
+- HIPAA/regulatory compliance — no certified security controls are in place
+- Production scalability — SQLite and in-process models are for local/demo use only
+- Clinical decision support accuracy — the system is a monitoring and review aid, not a diagnostic tool
+
+### How to run (30 seconds)
+```bash
+# 1. Install Python dependencies
+pip install -r requirements.txt
+
+# 2. Start backend
+uvicorn backend.api.main:app --host 127.0.0.1 --port 8017 --reload
+
+# 3. In a new terminal, start React frontend
+cd frontend-react && npm install && npm run dev
+
+# 4. Open http://localhost:5173
+# Demo: P001 / patient-demo  |  clinician / clinician-demo  |  admin / admin-demo
+```
+
+---
+
 ## React Frontend (frontend-react/)
 
 A modern React + TypeScript + Vite frontend for the same backend. The legacy HTML files in `frontend/` remain untouched.

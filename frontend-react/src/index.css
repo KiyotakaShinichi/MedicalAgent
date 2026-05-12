@@ -969,14 +969,14 @@ a { color: inherit; text-decoration: none; }
 .clinician-workspace {
   min-height: 100%;
   display: grid;
-  grid-template-columns: 360px minmax(0, 1fr);
+  grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
 }
 
 .clinician-queue-panel {
   min-height: 100%;
   overflow-y: auto;
   border-right: 1px solid rgba(148, 163, 184, 0.14);
-  background: rgba(17, 24, 39, 0.72);
+  background: rgba(17, 24, 39, 0.74);
 }
 
 .panel-title-row {
@@ -987,6 +987,96 @@ a { color: inherit; text-decoration: none; }
   gap: 12px;
   padding: 20px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.review-queue-list {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.review-queue-card {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.13);
+  border-radius: 17px;
+  background: rgba(30, 37, 53, 0.56);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.16s, background 0.16s, transform 0.16s;
+}
+
+.review-queue-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(244, 63, 94, 0.34);
+  background: rgba(30, 37, 53, 0.82);
+}
+
+.review-queue-card.is-selected {
+  border-color: rgba(244, 63, 94, 0.62);
+  background:
+    linear-gradient(135deg, rgba(244, 63, 94, 0.16), transparent 58%),
+    rgba(30, 37, 53, 0.88);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+}
+
+.review-queue-card-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.review-queue-patient {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.review-queue-patient strong {
+  color: #f8fafc;
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.review-queue-patient span,
+.review-queue-decision {
+  color: #8494ad;
+  font-size: 0.78rem;
+}
+
+.review-queue-status {
+  max-width: 150px;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: lowercase;
+}
+
+.review-queue-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.review-queue-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: #a5b4c9;
+  background: rgba(15, 23, 42, 0.5);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.review-queue-meta .is-urgent {
+  color: #fecdd3;
+  background: rgba(244, 63, 94, 0.12);
 }
 
 .panel-title-row h2 {

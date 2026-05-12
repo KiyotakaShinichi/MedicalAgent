@@ -3,7 +3,8 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\L\\\\Downloads\\\\MedicalAgent\\\\scripts\\\\\" -File | Select-Object -ExpandProperty Name)",
       "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\L\\\\Downloads\\\\MedicalAgent\\\\backend\\\\services\\\\\" -File | Where-Object { $_.Name -match '\\(train|eval|mle|rag|synthetic\\)' } | Select-Object -ExpandProperty Name)",
-      "PowerShell(head -20)"
+      "PowerShell(head -20)",
+      "Bash(python -m unittest tests.test_access_control)"
     ]
   }
 }

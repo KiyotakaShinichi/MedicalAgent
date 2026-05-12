@@ -33,6 +33,10 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
     role === "patient" ? `Patient ${patientId ?? ""}` :
     role === "clinician" ? "Clinician" :
     role === "admin" ? "Admin / MLE" : "Workspace";
+  const activePath = [...navItems]
+    .sort((a, b) => b.to.length - a.to.length)
+    .find(({ to }) => location.pathname === to || location.pathname.startsWith(`${to}/`))
+    ?.to;
 
   return (
     <div className="app-shell">
@@ -69,7 +73,7 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
 
         <nav className="app-sidebar-nav" aria-label="Primary navigation">
           {navItems.map(({ to, label, icon: Icon }) => {
-            const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
+            const active = activePath === to;
             return (
               <Link
                 key={to}
