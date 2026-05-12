@@ -1,6 +1,6 @@
 {
   "schema_version": "external_validation_report_v1",
-  "generated_at": "2026-05-08T11:33:18.037931+00:00",
+  "generated_at": "2026-05-11T04:40:46.298755+00:00",
   "status": "weak_external_signal",
   "dataset": "BreastDCEDL / I-SPY1 derived-feature baseline",
   "rows": 159,

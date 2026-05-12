@@ -52,6 +52,7 @@
 ## ML limitations
 - Synthetic data does not prove real clinical performance
 - Imaging workflows use report text or tabular features, not validated raw-image models
+- Temporal, noise, and calibration reports are simulator stress tests only. They measure engineering robustness, not clinical deployment robustness.
 
 ## Privacy and security assumptions
 - Designed with healthcare privacy principles in mind, but not certified or validated for clinical deployment.
@@ -66,6 +67,7 @@
 - Deterministic safety gates and refusal behavior
 - Human-in-the-loop clinician review
 - Audit logs and evaluation reports
+- Admin/MLE dashboard surfaces temporal generalization, high-noise robustness, and calibration comparison reports with synthetic-data caveats.
 
 ## Clinical validation status
 - Not clinically validated and not approved for clinical use.

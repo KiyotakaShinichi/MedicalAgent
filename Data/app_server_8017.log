@@ -31,3 +31,23 @@ INFO:     127.0.0.1:59963 - "GET /login HTTP/1.1" 307 Temporary Redirect
 INFO:     127.0.0.1:59960 - "GET /artifacts/complete_synthetic_training/detailed_eval_20260508T111121Z/training_eval_report.html HTTP/1.1" 200 OK
 INFO:     127.0.0.1:59965 - "GET /frontend/patient.html HTTP/1.1" 200 OK
 INFO:     127.0.0.1:59956 - "GET /frontend/login.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:9479 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5830 - "GET /frontend/admin.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5830 - "GET /frontend/%5Bfonts.googleapis.com%5D%28https%3A//fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap) HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:45557 - "GET /auth/whoami HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:45557 - "GET /login HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:45557 - "GET /frontend/login.html HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:45557 - "GET /auth/demo-patients HTTP/1.1" 200 OK
+INFO:     127.0.0.1:8339 - "GET /frontend/%5Bfonts.googleapis.com%5D%28https%3A//fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap) HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:51203 - "GET /login HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:51203 - "GET /auth/demo-patients HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50701 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50701 - "GET /admin HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:50701 - "GET /frontend/%5Bfonts.googleapis.com%5D%28https%3A//fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap) HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:4568 - "GET /auth/whoami HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4568 - "GET /admin/analytics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4136 - "GET /agent-feedback?limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4568 - "GET /admin/training-evaluation-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4568 - "GET /admin/locked-holdout-evaluation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4568 - "GET /admin/external-validation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4568 - "GET /admin/model-comparison HTTP/1.1" 200 OK

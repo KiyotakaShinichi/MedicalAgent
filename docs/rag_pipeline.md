@@ -6,7 +6,7 @@ MedicalAgent uses a deterministic-first RAG pipeline with optional LLM adjudicat
 1. Scope and safety check: Determine urgent, diagnosis, treatment-decision, or security boundary conditions before retrieval. Evidence: [backend/services/agent_rag.py](backend/services/agent_rag.py), [backend/services/security_guardrails.py](backend/services/security_guardrails.py)
 2. Intent routing: Deterministic router with optional LLM adjudication for low-risk intents. Evidence: [backend/services/agent_rag.py](backend/services/agent_rag.py), [backend/services/local_llm.py](backend/services/local_llm.py)
 3. Query rewrite and decomposition: Normalize and expand queries into subqueries. Evidence: [backend/services/agent_rag.py](backend/services/agent_rag.py)
-4. Hybrid lexical + TF-IDF retrieval: Combine lexical overlap and TF-IDF vector similarity. Evidence: [backend/services/rag_vector_index.py](backend/services/rag_vector_index.py)
+4. Dense + sparse hybrid retrieval: Use local sentence-transformer embeddings + FAISS with BM25/RRF when dependencies are installed; otherwise fall back to sparse BM25 + TF-IDF with honest backend labels. Evidence: [backend/services/rag_vector_index.py](backend/services/rag_vector_index.py)
 5. Parent-child context expansion: Expand related snippets for context continuity. Evidence: [backend/services/agent_rag.py](backend/services/agent_rag.py)
 6. Reranking: Apply safety, domain, and source boosts for final ordering. Evidence: [backend/services/agent_rag.py](backend/services/agent_rag.py)
 7. Contextual compression: Trim context to size-limited, high-signal snippets. Evidence: [backend/services/agent_rag.py](backend/services/agent_rag.py)

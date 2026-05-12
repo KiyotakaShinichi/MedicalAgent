@@ -35,6 +35,7 @@ DEFAULT_TEMPORAL_EVAL_PATH = "Data/mle_monitoring/temporal_eval_report.json"
 _TARGET = "treatment_success_binary"
 _PATIENT_COL = "patient_id"
 _DATE_COL = "treatment_date"
+_FIRST_DATE_COL = "first_treatment_date"
 _CYCLE_COL = "cycle"
 _RANDOM_SEED = 42
 
@@ -108,10 +109,10 @@ def run_temporal_eval(
 
 def _timeline_split(patient_df: pd.DataFrame) -> dict:
     """Train on earlier 50% of patients (by first treatment date), eval on later 50%."""
-    if _DATE_COL not in patient_df.columns:
+    if _FIRST_DATE_COL not in patient_df.columns:
         return {"status": "unavailable", "reason": "first_treatment_date column missing"}
 
-    sorted_pts = patient_df.sort_values("first_treatment_date").reset_index(drop=True)
+    sorted_pts = patient_df.sort_values(_FIRST_DATE_COL).reset_index(drop=True)
     split_idx = len(sorted_pts) // 2
     train = sorted_pts.iloc[:split_idx]
     test = sorted_pts.iloc[split_idx:]
@@ -175,6 +176,11 @@ def _fit_eval(train_df: pd.DataFrame, test_df: pd.DataFrame, label: str) -> dict
     if len(set(y_test.tolist())) < 2:
         return {"status": "unavailable", "reason": "single class in evaluation split"}
 
+    # Train/test may contain different one-hot categories after temporal slicing.
+    # Align evaluation columns to the training design matrix so the split is
+    # a real out-of-time evaluation instead of a feature-shape artifact.
+    X_test = X_test.reindex(columns=X_train.columns, fill_value=0.0)
+
     model = Pipeline([
         ("scaler", StandardScaler()),
         ("lr", LogisticRegression(max_iter=1000, random_state=_RANDOM_SEED, C=1.0)),
@@ -221,7 +227,7 @@ def _patient_aggregate_from(rows: pd.DataFrame) -> pd.DataFrame | None:
     for col in cat_cols:
         agg_spec[col] = (col, "first")
     if _DATE_COL in rows.columns:
-        agg_spec["first_treatment_date"] = (_DATE_COL, "min")
+        agg_spec[_FIRST_DATE_COL] = (_DATE_COL, "min")
 
     try:
         patient_df = rows.groupby(_PATIENT_COL, as_index=False).agg(**agg_spec)
@@ -242,7 +248,7 @@ def _features_labels(patient_df: pd.DataFrame):
     X_cat = pd.get_dummies(patient_df[cat_cols], drop_first=True) if cat_cols else pd.DataFrame(index=patient_df.index)
     X = pd.concat([X_num, X_cat], axis=1).astype(float)
     y = patient_df[_TARGET].astype(int).to_numpy()
-    return X.to_numpy(), y
+    return X, y
 
 
 # -- Status and helpers --------------------------------------------------------

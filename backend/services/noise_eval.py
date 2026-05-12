@@ -101,6 +101,8 @@ def run_noise_eval(
             noise_results[mode] = {"status": "unavailable"}
 
     status = _aggregate_status(noise_results, clean_metrics)
+    summary = _summary(clean_metrics, noise_results)
+    max_auroc_drop = _max_auroc_drop(summary)
 
     result = {
         "schema_version": "noise_eval_v1",
@@ -116,7 +118,9 @@ def run_noise_eval(
         "clean_baseline": clean_metrics,
         "noise_modes": _NOISE_MODE_DESCRIPTIONS,
         "noise_results": noise_results,
-        "summary": _summary(clean_metrics, noise_results),
+        "summary": summary,
+        "max_auroc_drop": max_auroc_drop,
+        "interpretation": _interpretation(status, max_auroc_drop),
         "claim_boundary": (
             "Synthetic perturbations on synthetic data. Real EHR data quality "
             "issues may differ in type, frequency, and correlation structure."
@@ -213,17 +217,20 @@ def _score(model, df: pd.DataFrame) -> dict | None:
     if not numeric_cols or _TARGET not in df.columns:
         return None
 
-    # Fill nulls with column medians (mimics real inference pipeline)
-    X_num = df[numeric_cols].copy()
-    for col in X_num.columns:
-        X_num[col] = X_num[col].fillna(X_num[col].median())
-    X_cat = pd.get_dummies(df[cat_cols], drop_first=True) if cat_cols else pd.DataFrame(index=df.index)
-    X = pd.concat([X_num, X_cat], axis=1).astype(float)
+    # The saved classifier is a sklearn Pipeline with a ColumnTransformer.
+    # Pass the raw feature frame through that same inference path so the
+    # perturbation test measures data-quality brittleness, not feature schema
+    # mismatch from manually one-hot encoding at eval time.
+    feature_cols = numeric_cols + cat_cols
+    X = df[feature_cols].copy()
+    for col in numeric_cols:
+        X[col] = X[col].fillna(X[col].median())
+    for col in cat_cols:
+        X[col] = X[col].fillna("unknown")
 
     labels = df[_TARGET].fillna(0).astype(int).to_numpy()
 
     try:
-        # Align columns with model if it's a Pipeline with named steps
         probs = model.predict_proba(X)[:, 1]
     except Exception:
         return None
@@ -305,6 +312,30 @@ def _summary(clean: dict, noise_results: dict) -> list:
             ),
         })
     return sorted(rows, key=lambda r: -(r.get("auroc_drop") or 0))
+
+
+def _max_auroc_drop(summary: list) -> float | None:
+    drops = [row.get("auroc_drop") for row in summary if row.get("auroc_drop") is not None]
+    return _r(max(drops)) if drops else None
+
+
+def _interpretation(status: str, max_auroc_drop) -> str:
+    if max_auroc_drop is None:
+        return "Noise robustness could not be computed."
+    if status == "robust":
+        return (
+            f"Robust to the synthetic perturbation set (max AUROC drop={max_auroc_drop:.4f}). "
+            "Continue to frame this as simulator stress testing, not real-world EHR validation."
+        )
+    if status == "mild_degradation":
+        return (
+            f"Mild degradation under synthetic noise (max AUROC drop={max_auroc_drop:.4f}). "
+            "Inspect the worst perturbation and consider stronger imputation or clipping."
+        )
+    return (
+        f"Significant degradation under synthetic noise (max AUROC drop={max_auroc_drop:.4f}). "
+        "Do not promote probability claims until robustness improves."
+    )
 
 
 def _unavailable(reason: str) -> dict:

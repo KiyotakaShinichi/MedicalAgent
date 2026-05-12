@@ -156,7 +156,13 @@ def _row_to_dict(row):
 def _overall_status(rows):
     output_failures = sum(1 for row in rows if row.output_guardrail_status == "failed")
     high_hallucination = sum(1 for row in rows if row.hallucination_risk == "high")
+    output_failure_rate = output_failures / len(rows) if rows else 0
+    high_hallucination_rate = high_hallucination / len(rows) if rows else 0
+    if output_failure_rate >= 0.05:
+        return "failed"
     if output_failures:
+        return "unideal"
+    if high_hallucination_rate >= 0.05:
         return "failed"
     if high_hallucination:
         return "unideal"

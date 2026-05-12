@@ -12,13 +12,13 @@ from backend.services.noise_eval import run_noise_eval
 if __name__ == "__main__":
     result = run_noise_eval()
     print(json.dumps({
-        "output_path": result.get("noise_eval_report", "Data/mle_monitoring/noise_eval_report.json"),
+        "output_path": "Data/mle_monitoring/noise_eval_report.json",
         "status": result.get("status"),
-        "baseline_auroc": (result.get("baseline") or {}).get("auroc"),
+        "baseline_auroc": (result.get("clean_baseline") or {}).get("auroc"),
         "max_auroc_drop": result.get("max_auroc_drop"),
         "noise_results": {
             k: v.get("auroc_drop") if isinstance(v, dict) else None
-            for k, v in (result.get("noise_scenarios") or {}).items()
+            for k, v in (result.get("noise_results") or {}).items()
         },
         "interpretation": result.get("interpretation"),
     }, indent=2))

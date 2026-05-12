@@ -12,6 +12,10 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+# Keep unit tests local and fast. The application still uses dense FAISS
+# retrieval by default when dependencies are installed.
+os.environ.setdefault("RAG_FORCE_SPARSE", "1")
+
 from backend.database import Base
 from backend.models import AgentResponseCache, AgentResponseFeedback, AppEventLog, AsyncTask, ChatMessage, ClinicalIntervention, ClinicalSummaryReview, ImagingReport, LabResult, MedicationLog, MLExperimentRun, ModelRegistry, Patient, PatientUpload, PredictionAuditLog, RAGEvaluationLog, SymptomReport, Treatment, TreatmentOutcome
 from backend.processing.risk_engine import detect_clinical_rule_risks

@@ -20,7 +20,9 @@ Swap note: replace this service with Qdrant / pgvector / Pinecone while keeping 
 """
 
 import hashlib
+import importlib.util
 import json
+import os
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,12 +32,13 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # -- Optional dense-retrieval dependencies -------------------------------------
-try:
-    from sentence_transformers import SentenceTransformer as _SentenceTransformer
-    import faiss as _faiss
-    _DENSE_AVAILABLE = True
-except ImportError:
-    _DENSE_AVAILABLE = False
+_FORCE_SPARSE = os.getenv("RAG_FORCE_SPARSE", "").strip().lower() in {"1", "true", "yes"}
+
+_DENSE_AVAILABLE = (
+    not _FORCE_SPARSE
+    and importlib.util.find_spec("sentence_transformers") is not None
+    and importlib.util.find_spec("faiss") is not None
+)
 
 # -- Optional BM25 dependency --------------------------------------------------
 try:
@@ -69,8 +72,20 @@ def _current_backend_name() -> str:
 
 def _get_encoder():
     if _DENSE_AVAILABLE and "model" not in _ENCODER_CACHE:
-        _ENCODER_CACHE["model"] = _SentenceTransformer(_DENSE_ENCODER_MODEL)
+        from sentence_transformers import SentenceTransformer
+
+        _ENCODER_CACHE["model"] = SentenceTransformer(_DENSE_ENCODER_MODEL)
     return _ENCODER_CACHE.get("model")
+
+
+def _get_faiss():
+    if not _DENSE_AVAILABLE:
+        return None
+    if "faiss" not in _ENCODER_CACHE:
+        import faiss
+
+        _ENCODER_CACHE["faiss"] = faiss
+    return _ENCODER_CACHE.get("faiss")
 
 
 # -- Public API ----------------------------------------------------------------
@@ -350,7 +365,10 @@ def _compute_dense_scores(index, query):
 
     # Rebuild FAISS IndexFlatIP cheaply (microseconds for <200 docs)
     d = doc_embeddings.shape[1]
-    faiss_idx = _faiss.IndexFlatIP(d)
+    faiss_module = _get_faiss()
+    if faiss_module is None:
+        return None
+    faiss_idx = faiss_module.IndexFlatIP(d)
     faiss_idx.add(doc_embeddings)
     n = doc_embeddings.shape[0]
     scores, indices = faiss_idx.search(q_emb, n)

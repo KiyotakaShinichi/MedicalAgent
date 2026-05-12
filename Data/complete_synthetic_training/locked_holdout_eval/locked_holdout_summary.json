@@ -1,6 +1,6 @@
 {
   "schema_version": "locked_holdout_evaluation_v1",
-  "generated_at": "2026-05-08T11:33:40.808812+00:00",
+  "generated_at": "2026-05-11T04:40:46.117273+00:00",
   "model_dir": "Data\\complete_synthetic_training",
   "metrics_path": "Data/complete_synthetic_training/complete_synthetic_model_metrics.json",
   "locked_holdout_rows_path": "Data/complete_synthetic_training/locked_holdout/locked_holdout_rows.csv",

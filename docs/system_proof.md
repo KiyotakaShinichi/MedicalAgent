@@ -8,7 +8,7 @@ Status legend: Implemented = present in code, Partial = present but limited scop
 | Deterministic scope/safety checks | Implemented | [backend/services/agent_rag.py](backend/services/agent_rag.py), [backend/services/security_guardrails.py](backend/services/security_guardrails.py) | Deterministic guardrails run before optional LLM adjudication. |
 | Intent routing | Implemented | [backend/services/agent_rag.py](backend/services/agent_rag.py), [backend/services/local_llm.py](backend/services/local_llm.py) | LLM adjudication is optional. |
 | Query rewrite/decomposition | Implemented | [backend/services/agent_rag.py](backend/services/agent_rag.py) | Uses normalized and expanded query forms. |
-| Hybrid lexical + TF-IDF retrieval | Implemented | [backend/services/rag_vector_index.py](backend/services/rag_vector_index.py) | Local hybrid index. |
+| Dense + sparse hybrid retrieval | Implemented | [backend/services/rag_vector_index.py](backend/services/rag_vector_index.py) | Uses local sentence-transformer embeddings + FAISS with BM25/RRF when dependencies are available; falls back honestly to sparse BM25 + TF-IDF. |
 | Parent-child context expansion | Implemented | [backend/services/agent_rag.py](backend/services/agent_rag.py) | Expands related snippets. |
 | Reranking | Implemented | [backend/services/agent_rag.py](backend/services/agent_rag.py) | Safety and source boosts. |
 | Contextual compression | Implemented | [backend/services/agent_rag.py](backend/services/agent_rag.py) | Trims context to size limits. |
@@ -30,6 +30,7 @@ Status legend: Implemented = present in code, Partial = present but limited scop
 | Calibration/Brier evaluation | Implemented | [backend/services/admin_analytics.py](backend/services/admin_analytics.py), [backend/services/evaluation_reports.py](backend/services/evaluation_reports.py) | Synthetic pipeline only. |
 | Subgroup checks | Implemented | [backend/services/admin_analytics.py](backend/services/admin_analytics.py) | Synthetic pipeline only. |
 | Drift/missingness proxies | Implemented | [backend/services/admin_analytics.py](backend/services/admin_analytics.py), [backend/services/mle_readiness.py](backend/services/mle_readiness.py) | Proxies, not clinical drift detection. |
+| Temporal and noise robustness reports | Implemented | [backend/services/temporal_eval.py](backend/services/temporal_eval.py), [backend/services/noise_eval.py](backend/services/noise_eval.py), [backend/services/calibration_eval.py](backend/services/calibration_eval.py) | Synthetic-only monitoring stress tests surfaced in the admin dashboard. |
 | Versioned evaluation reports | Implemented | [backend/services/evaluation_reports.py](backend/services/evaluation_reports.py) | Versioned report artifacts. |
 | Model artifacts | Implemented | [backend/services/complete_synthetic_training.py](backend/services/complete_synthetic_training.py), [backend/services/model_artifacts.py](backend/services/model_artifacts.py) | PoC artifacts only. |
 | Model registry metadata | Implemented | [backend/models.py](backend/models.py), [backend/services/model_artifacts.py](backend/services/model_artifacts.py) | Local registry. |

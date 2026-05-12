@@ -29,9 +29,13 @@ Evidence: [backend/services/complete_synthetic_training.py](backend/services/com
 ## Metrics
 - Metrics are generated in the synthetic training pipeline and evaluation reports.
 - Use as engineering evidence only.
+- Temporal generalization report: `Data/mle_monitoring/temporal_eval_report.json`
+- High-noise robustness report: `Data/mle_monitoring/noise_eval_report.json`
+- Calibration comparison report: `Data/mle_monitoring/calibration_eval_report.json`
 
 ## Calibration
 - Calibration metrics are available for synthetic runs; clinical calibration is not established.
+- The calibration comparison tests raw probability, isotonic regression, Platt scaling, and temperature scaling on synthetic holdout predictions.
 
 ## Subgroup behavior
 - Subgroup checks are available for synthetic runs; not clinically validated.
@@ -39,6 +43,8 @@ Evidence: [backend/services/complete_synthetic_training.py](backend/services/com
 ## Failure modes
 - Simulator bias and simplified patterns.
 - Potential mismatch with real-world toxicity distributions.
+- Temporal instability if later patient timelines differ from earlier training timelines.
+- Data-quality brittleness under missing CBC values, lab jitter, unit-entry errors, site batch effects, and contradictory symptom records.
 
 ## Ethical and safety risks
 - Risk of over-reliance on synthetic signals.

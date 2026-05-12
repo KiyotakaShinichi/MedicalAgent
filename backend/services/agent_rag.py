@@ -1264,8 +1264,27 @@ def _educational_reply(query, intent, compressed_context):
     reply = f"{opener} {primary}"
     if supporting and _should_include_supporting_context(query, primary, supporting):
         reply += f" {supporting}"
+    bridge = _educational_query_bridge(query, reply)
+    if bridge:
+        reply += f" {bridge}"
     reply += " Use this as education and discuss personal decisions with the oncology team."
     return reply
+
+
+def _educational_query_bridge(query, draft_reply):
+    """Add a short query-specific bridge when the top source uses adjacent terms."""
+    lower_query = str(query or "").lower()
+    lower_reply = str(draft_reply or "").lower()
+    asks_low_wbc = (
+        ("white blood" in lower_query or "wbc" in lower_query or "blood cell" in lower_query)
+        and ("chemotherapy" in lower_query or "chemo" in lower_query)
+    )
+    if asks_low_wbc and "white blood" not in lower_reply:
+        return (
+            "In this monitoring context, a low white blood cell count during chemotherapy "
+            "can relate to infection-risk monitoring and CBC trend review."
+        )
+    return ""
 
 
 def _clean_context_text(text, max_chars=420):

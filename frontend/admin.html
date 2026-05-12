@@ -754,6 +754,26 @@
 
       <div class="card" style="margin-top:16px;">
         <div class="card-header">
+          <span class="card-title">Robustness &amp; Monitoring Stress Tests</span>
+          <span class="tag loading" id="robustnessTag">loading</span>
+        </div>
+        <div class="card-body" style="padding-bottom:0">
+          <div class="grid g3" style="margin-bottom:16px">
+            <div class="metric-list" id="robustnessMetrics">
+              <div class="empty">Run MLE gates to populate temporal, noise, and calibration stress tests.</div>
+            </div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Stress Test</th><th>Result</th><th>Interpretation</th></tr></thead>
+            <tbody id="robustnessRows"><tr><td colspan="3" class="empty">No robustness report loaded.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header">
           <span class="card-title">Locked Holdout Evaluation</span>
           <button class="btn btn-sm btn-primary" onclick="runLockedHoldout()" id="runLockedHoldoutBtn">Evaluate Holdout</button>
         </div>
@@ -1051,12 +1071,14 @@
     setTileState("tileFeedback", feedback.average_rating >= 4 ? "ok" : feedback.average_rating >= 3 ? "warn" : "err");
 
     /* Guardrail alert banner */
-    const hasFailure = Number(inputCounts.failed || 0) + Number(outputCounts.failed || 0) > 0;
+    const inputBlocks = Number(inputCounts.failed || 0);
+    const outputIssues = Number(outputCounts.failed || 0);
+    const hasFailure = inputBlocks + outputIssues > 0;
     const alertBadge = document.getElementById("alertBadge");
     if (hasFailure) {
       alertBadge.classList.add("show");
       document.getElementById("alertText").textContent =
-        `${Number(inputCounts.failed||0) + Number(outputCounts.failed||0)} guardrail failure(s)`;
+        `${inputBlocks} input block(s), ${outputIssues} output issue(s)`;
     } else {
       alertBadge.classList.remove("show");
     }
@@ -1126,6 +1148,7 @@
     ]);
     document.getElementById("mleJson").textContent =
       JSON.stringify(mle.category_statuses || mle, null, 2);
+    renderRobustnessPanels(mle);
 
     /* Sources */
     setTag("sourceTag", source.status);
@@ -1305,6 +1328,64 @@
       { name: "ECE delta", value: asNum(delta.expected_calibration_error_delta), why: "Latest minus previous calibration error; negative is better." },
       { name: "FN delta", value: asNum(delta.false_negative_count_delta), why: "Latest minus previous false-negative count; negative is better." },
     ]);
+  }
+
+  function renderRobustnessPanels(mle) {
+    const temporal = mle.temporal_eval_report || {};
+    const noise = mle.noise_eval_report || {};
+    const calibration = mle.calibration_eval_report || {};
+    const statuses = [temporal.status, noise.status, calibration.status].map(s => String(s || "").toLowerCase());
+    const overall = statuses.some(s => ["failed", "significant_drift", "significant_degradation"].includes(s))
+      ? "unideal"
+      : statuses.some(s => ["stable", "robust", "strong", "passed", "acceptable"].includes(s))
+        ? "passed"
+        : "unavailable";
+    setTag("robustnessTag", overall);
+
+    const worstNoise = (noise.summary || [])[0] || {};
+    document.getElementById("robustnessMetrics").innerHTML = rows([
+      {
+        name: "Temporal split",
+        value: `${temporal.status || "unavailable"} / AUROC ${asNum(temporal.temporal_split?.eval_auroc)}`,
+        why: "Train on earlier synthetic patient timelines, evaluate on later timelines."
+      },
+      {
+        name: "Noise stress",
+        value: `${noise.status || "unavailable"} / max drop ${asNum(noise.max_auroc_drop)}`,
+        why: "CBC missingness, jitter, unit errors, site batch shift, and contradictory symptoms."
+      },
+      {
+        name: "Calibration",
+        value: `${calibration.status || "unavailable"} / ECE ${asNum(calibration.best_ece)}`,
+        why: "Compares raw, isotonic, Platt, and temperature scaling probability reliability."
+      },
+    ]);
+
+    const rowsHtml = [
+      {
+        name: "Patient-timeline split",
+        result: `${temporal.status || "unavailable"}; gap ${asNum(temporal.generalization_gap)}`,
+        why: temporal.interpretation || temporal.reason || "No temporal interpretation available."
+      },
+      {
+        name: "High-noise synthetic stress",
+        result: `${noise.status || "unavailable"}; worst ${worstNoise.noise_mode || "--"} (${asNum(worstNoise.auroc_drop)} AUROC drop)`,
+        why: noise.interpretation || noise.reason || "No noise interpretation available."
+      },
+      {
+        name: "Calibration comparison",
+        result: `${calibration.status || "unavailable"}; ${calibration.best_method || "--"}`,
+        why: calibration.interpretation || calibration.recommendation || "No calibration interpretation available."
+      },
+    ];
+    const tbody = document.getElementById("robustnessRows");
+    if (!tbody) return;
+    tbody.innerHTML = rowsHtml.map(row => `
+      <tr>
+        <td><strong>${esc(row.name)}</strong></td>
+        <td>${esc(row.result)}</td>
+        <td>${esc(row.why)}</td>
+      </tr>`).join("");
   }
 
   function runLockedHoldout() {

@@ -143,3 +143,45 @@ The login form resolves the account role from credentials and redirects to the c
 - Expand multimodal signals with validated imaging workflows.
 - Harden production security controls and PHI handling for real deployment.
 - Add clinician-reviewed gold cases for summary quality evaluation.
+
+## React Frontend (frontend-react/)
+
+A modern React + TypeScript + Vite frontend for the same backend. The legacy HTML files in `frontend/` remain untouched.
+
+### Running the stack
+
+**1. Start the backend (port 8017)**
+```bash
+uvicorn backend.api.main:app --host 127.0.0.1 --port 8017 --reload
+```
+
+**2. Start the React dev server (port 5173)**
+```bash
+cd frontend-react
+npm install
+npm run dev
+```
+Open http://localhost:5173. The React API client calls http://127.0.0.1:8017 directly.
+
+### Available scripts (frontend-react/)
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Vite dev server on port 5173 |
+| `npm run build` | Type-check and build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+
+### Demo credentials
+| Username | Password | Destination |
+|----------|----------|-------------|
+| `P001` | `patient-demo` | Patient dashboard |
+| `P002` | `patient-demo` | Patient dashboard |
+| `clinician` | `clinician-demo` | Clinician review queue |
+| `admin` | `admin-demo` | Admin / MLE dashboard |
+
+Role is inferred from credentials — no manual role selection after login.
+
+### Pages
+- `/login` — credential form with demo quick-fill pills
+- `/patient` — timeline, labs, AI snapshot, model signal, chat support
+- `/clinician` — review queue, patient detail, approve/edit/reject workflow, audit trail
+- `/admin` — RAG metrics, guardrails, MLE gates, regression suite, feedback log

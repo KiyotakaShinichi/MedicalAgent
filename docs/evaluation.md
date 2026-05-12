@@ -40,17 +40,29 @@ python scripts/run_safety_eval.py
 - False-negative review
 - Subgroup checks
 - Drift and missingness proxies
+- Temporal generalization split: train on earlier synthetic patient timelines, evaluate on later timelines
+- High-noise stress test: missing CBC values, lab jitter, WBC unit-entry error, site batch effects, contradictory symptom records
+- Calibration comparison: raw probabilities versus isotonic, Platt, and temperature scaling
 
-Evidence: [backend/services/complete_synthetic_training.py](backend/services/complete_synthetic_training.py), [backend/services/admin_analytics.py](backend/services/admin_analytics.py), [backend/services/evaluation_reports.py](backend/services/evaluation_reports.py)
+Evidence: [backend/services/complete_synthetic_training.py](backend/services/complete_synthetic_training.py), [backend/services/admin_analytics.py](backend/services/admin_analytics.py), [backend/services/evaluation_reports.py](backend/services/evaluation_reports.py), [backend/services/temporal_eval.py](backend/services/temporal_eval.py), [backend/services/noise_eval.py](backend/services/noise_eval.py), [backend/services/calibration_eval.py](backend/services/calibration_eval.py)
 
 Run:
 ```
 python scripts/run_training_pipeline.py --skip-training --model-version synthetic-v1
 python scripts/generate_eval_report.py
 python scripts/run_mle_checks.py
+python scripts/run_temporal_eval.py
+python scripts/run_noise_eval.py
 ```
 
 Note: `--skip-training` expects existing artifacts under `Data/complete_synthetic_training`. Omit it to generate fresh artifacts.
+
+Current local robustness reports:
+- Temporal eval: `Data/mle_monitoring/temporal_eval_report.json`
+- Noise eval: `Data/mle_monitoring/noise_eval_report.json`
+- Calibration eval: `Data/mle_monitoring/calibration_eval_report.json`
+
+Claim boundary: these reports are synthetic engineering stress tests. They do not establish real-world clinical safety or effectiveness.
 
 ## Workflow evaluation
 - Clinician approve, edit, reject, and follow-up rates

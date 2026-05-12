@@ -1622,6 +1622,21 @@ def _evaluation_report_links():
             "path": "Data/mle_monitoring/latest_mle_readiness.json",
             "description": "End-to-end readiness gates: data contract, artifacts, performance, registry, audit.",
         },
+        {
+            "name": "Temporal generalization report",
+            "path": "Data/mle_monitoring/temporal_eval_report.json",
+            "description": "Earlier synthetic patient timelines vs later synthetic timelines.",
+        },
+        {
+            "name": "High-noise robustness report",
+            "path": "Data/mle_monitoring/noise_eval_report.json",
+            "description": "CBC missingness, jitter, unit errors, site batch shift, and contradictory symptom stress test.",
+        },
+        {
+            "name": "Calibration comparison report",
+            "path": "Data/mle_monitoring/calibration_eval_report.json",
+            "description": "Raw vs post-hoc calibrated probability reliability comparison.",
+        },
     ]
     enriched = []
     for artifact in artifacts:
