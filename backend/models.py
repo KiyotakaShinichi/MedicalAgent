@@ -281,6 +281,7 @@ class AppEventLog(Base):
     event_type = Column(String, nullable=False, index=True)
     actor_role = Column(String, nullable=True, index=True)
     patient_id = Column(String, ForeignKey("patients.id"), nullable=True, index=True)
+    request_id = Column(String, nullable=True, index=True)
     route = Column(String, nullable=True)
     status = Column(String, nullable=False, default="ok", index=True)
     input_json = Column(Text, nullable=True)
@@ -331,6 +332,7 @@ class RAGEvaluationLog(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     patient_id = Column(String, ForeignKey("patients.id"), nullable=True, index=True)
+    request_id = Column(String, nullable=True, index=True)
     query_hash = Column(String, nullable=False, index=True)
     query_preview = Column(String, nullable=True)
     intent = Column(String, nullable=False, index=True)

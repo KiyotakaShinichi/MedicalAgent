@@ -12,14 +12,19 @@ def ensure_schema():
     table_names = set(inspector.get_table_names())
     lab_columns = {column["name"] for column in inspector.get_columns("lab_results")}
     cache_columns = set()
+    app_event_columns = set()
     if "agent_response_cache" in table_names:
         cache_columns = {column["name"] for column in inspector.get_columns("agent_response_cache")}
+    if "app_event_logs" in table_names:
+        app_event_columns = {column["name"] for column in inspector.get_columns("app_event_logs")}
 
     with engine.begin() as connection:
         if "source" not in lab_columns:
             connection.execute(text("ALTER TABLE lab_results ADD COLUMN source VARCHAR DEFAULT 'manual' NOT NULL"))
         if "source_note" not in lab_columns:
             connection.execute(text("ALTER TABLE lab_results ADD COLUMN source_note TEXT"))
+        if "request_id" not in app_event_columns:
+            connection.execute(text("ALTER TABLE app_event_logs ADD COLUMN request_id VARCHAR"))
         if "knowledge_fingerprint" not in cache_columns:
             connection.execute(text("ALTER TABLE agent_response_cache ADD COLUMN knowledge_fingerprint VARCHAR"))
         if "cache_schema_version" not in cache_columns:
@@ -38,3 +43,5 @@ def ensure_schema():
     with engine.begin() as connection:
         if "query_preview" not in rag_log_columns:
             connection.execute(text("ALTER TABLE rag_evaluation_logs ADD COLUMN query_preview VARCHAR"))
+        if "request_id" not in rag_log_columns:
+            connection.execute(text("ALTER TABLE rag_evaluation_logs ADD COLUMN request_id VARCHAR"))

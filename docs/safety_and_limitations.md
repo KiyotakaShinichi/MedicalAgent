@@ -5,6 +5,7 @@
 - All patient-specific or urgent outputs must be reviewed by a qualified clinician.
 - RAG is used for grounded knowledge support, not autonomous medical decision-making.
 - ML outputs are monitoring signals and risk flags, not diagnoses.
+- Threat model and security controls are documented for PoC review.
 
 ## Guardrails
 - Deterministic scope and safety checks for urgent, diagnosis, and treatment-decision requests. Evidence: [backend/services/agent_rag.py](backend/services/agent_rag.py)

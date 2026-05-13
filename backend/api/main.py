@@ -5,7 +5,9 @@ This file wires together routers, middleware, static file mounts, and the
 health-check / redirect routes. All business logic lives in routers/.
 """
 
-from fastapi import Depends, FastAPI
+from uuid import uuid4
+
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -20,6 +22,7 @@ from backend.api.routers.patient import router as patient_router
 from backend.api.routers.admin import router as admin_router
 from backend.api.routers.model import router as model_router
 from backend.api.routers.admin_eval import build_admin_eval_router
+from backend.services.request_context import reset_request_id, set_request_id
 
 
 # ─── App setup ────────────────────────────────────────────────────────────────
@@ -34,6 +37,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next):
+    request_id = request.headers.get("x-request-id") or str(uuid4())
+    token = set_request_id(request_id)
+    response = await call_next(request)
+    response.headers["x-request-id"] = request_id
+    reset_request_id(token)
+    return response
 
 
 # ─── Routers ──────────────────────────────────────────────────────────────────

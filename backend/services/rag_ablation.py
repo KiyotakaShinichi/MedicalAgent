@@ -24,19 +24,30 @@ ABLATION_OUTPUT_PATH = "Data/agent_eval/rag_ablation.json"
 _EDUCATION_CASE_IDS = [
     "education-pcr-definition",
     "education-her2",
+    "education-her2-definition",
+    "education-her2-treatment-effect",
     "education-neoadjuvant",
+    "education-neoadjuvant-chemo",
     "education-low-wbc",
+    "education-wbc-infection-risk",
     "education-nadir",
+    "education-chemo-nadir-definition",
+    "education-nadir-timing",
     "education-neutropenia",
+    "education-febrile-neutropenia",
     "education-mri-response",
     "education-dose-delay",
+    "education-dose-delay-cause",
+    "education-side-effects-overview",
+    "education-cbc-anemia",
+    "education-treatment-response-classification",
     "education-triple-negative",
     "education-gcsf-prophylaxis",
 ]
 
 
 def run_rag_ablation(output_path: str = ABLATION_OUTPUT_PATH) -> dict:
-    from backend.services.agent_regression_eval import DEFAULT_AGENT_EVAL_CASES
+    from backend.services.agent_regression_eval import load_eval_cases
     from backend.services.agent_rag import (
         expand_parent_child_windows,
         get_rag_corpus,
@@ -47,7 +58,7 @@ def run_rag_ablation(output_path: str = ABLATION_OUTPUT_PATH) -> dict:
     )
     from backend.services.rag_vector_index import rag_index_status, search_hybrid_index
 
-    education_cases = [c for c in DEFAULT_AGENT_EVAL_CASES if c["id"] in _EDUCATION_CASE_IDS]
+    education_cases = [c for c in load_eval_cases() if c["id"] in _EDUCATION_CASE_IDS]
     corpus = get_rag_corpus()
     def bm25_only(rewritten: dict, intent: str) -> list[dict]:
         return _bm25_only_retrieval(rewritten["expanded_query"], corpus)

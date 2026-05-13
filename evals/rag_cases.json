@@ -89,7 +89,7 @@
       "category": "education",
       "input": "What are common side effects of breast cancer chemotherapy?",
       "expected_intent": "education",
-      "expected_sources": [],
+      "expected_sources": ["nci-side-effects"],
       "required_reply_terms": ["chemotherapy"],
       "cacheable": true
     },
@@ -98,7 +98,7 @@
       "category": "education",
       "input": "What does low hemoglobin during breast cancer chemotherapy generally mean?",
       "expected_intent": "education",
-      "expected_sources": [],
+      "expected_sources": ["acs-chemo-side-effects"],
       "required_reply_terms": ["chemotherapy"],
       "cacheable": true
     },
@@ -107,7 +107,7 @@
       "category": "education",
       "input": "How do white blood cells relate to infection risk during chemotherapy?",
       "expected_intent": "education",
-      "expected_sources": [],
+      "expected_sources": ["acs-chemo-side-effects"],
       "required_reply_terms": ["infection"],
       "cacheable": true
     },
@@ -116,7 +116,7 @@
       "category": "education",
       "input": "How does HER2 status affect breast cancer treatment planning?",
       "expected_intent": "education",
-      "expected_sources": [],
+      "expected_sources": ["nci-her2-breast"],
       "required_reply_terms": ["her2"],
       "cacheable": true
     },
@@ -134,7 +134,7 @@
       "category": "education",
       "input": "What is the treatment response classification used in the breast cancer monitoring project?",
       "expected_intent": "education",
-      "expected_sources": [],
+      "expected_sources": ["project-monitoring-score"],
       "required_reply_terms": ["response"],
       "cacheable": true
     },
@@ -152,7 +152,7 @@
       "category": "portal_help",
       "input": "Where can I add my blood count results in the monitoring system?",
       "expected_intent": "portal_help",
-      "expected_sources": [],
+      "expected_sources": ["portal-upload-guide"],
       "required_reply_terms": ["portal"],
       "cacheable": false
     },

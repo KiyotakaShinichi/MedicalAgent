@@ -61,6 +61,7 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             {
                 "id": row.id,
                 "patient_id": row.patient_id,
+                "request_id": getattr(row, "request_id", None),
                 "query_preview": row.query_preview or "(no preview)",
                 "intent": row.intent,
                 "safety_level": row.safety_level,
@@ -176,5 +177,35 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
         from backend.services.rag_ablation import ABLATION_OUTPUT_PATH, run_rag_ablation
 
         return {"message": "RAG ablation completed.", "result": run_rag_ablation(output_path=ABLATION_OUTPUT_PATH)}
+
+    @router.get("/admin/summary-quality")
+    def get_admin_summary_quality_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return cached summary quality evaluation or compute fresh."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.summary_quality_eval import DEFAULT_OUTPUT_PATH, build_summary_quality_report
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return build_summary_quality_report()
+
+    @router.post("/admin/summary-quality")
+    def run_admin_summary_quality_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Re-run summary quality evaluation and persist."""
+        from backend.services.summary_quality_eval import DEFAULT_OUTPUT_PATH, build_summary_quality_report
+
+        return {
+            "message": "Summary quality evaluation completed.",
+            "result": build_summary_quality_report(output_path=DEFAULT_OUTPUT_PATH),
+        }
 
     return router

@@ -144,6 +144,14 @@ The login form resolves the account role from credentials and redirects to the c
 - Harden production security controls and PHI handling for real deployment.
 - Add clinician-reviewed gold cases for summary quality evaluation.
 
+## Ops and governance docs
+- [docs/threat_model.md](docs/threat_model.md)
+- [docs/security_controls.md](docs/security_controls.md)
+- [docs/incident_response.md](docs/incident_response.md)
+- [docs/monitoring.md](docs/monitoring.md)
+- [docs/regulatory_positioning.md](docs/regulatory_positioning.md)
+- [docs/ci_cd.md](docs/ci_cd.md)
+
 ## For Recruiters and Interviewers
 
 ### What this project demonstrates

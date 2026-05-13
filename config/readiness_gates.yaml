@@ -89,6 +89,15 @@ categories:
         hard_gate: true
         threshold: "coverage passed or acceptable"
 
+  realism:
+    checks:
+      - name: synthetic_realism_report_present
+        hard_gate: false
+        threshold: "realism audit report exists"
+      - name: sim_to_real_gap_review
+        hard_gate: false
+        threshold: "KS/JS divergence within acceptable bounds"
+
   feature_store:
     checks:
       - name: local_feature_store_materialized

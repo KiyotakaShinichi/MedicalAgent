@@ -2,6 +2,8 @@ import json
 from datetime import datetime, timezone
 
 from backend.models import AgentResponseCache, AppEventLog, PredictionAuditLog
+from backend.services.pii_redaction import redact_payload, redact_text
+from backend.services.request_context import get_request_id
 
 
 def log_app_event(
@@ -14,16 +16,19 @@ def log_app_event(
     input_payload=None,
     output_payload=None,
     error_message=None,
+    request_id=None,
 ):
+    request_id = request_id or get_request_id()
     row = AppEventLog(
         event_type=event_type,
         actor_role=actor_role,
         patient_id=patient_id,
+        request_id=request_id,
         route=route,
         status=status,
-        input_json=_json_dumps(input_payload),
-        output_json=_json_dumps(output_payload),
-        error_message=str(error_message) if error_message else None,
+        input_json=_json_dumps(redact_payload(input_payload)),
+        output_json=_json_dumps(redact_payload(output_payload)),
+        error_message=redact_text(str(error_message)) if error_message else None,
     )
     db.add(row)
     db.commit()
@@ -74,6 +79,7 @@ def app_event_to_dict(row):
         "event_type": row.event_type,
         "actor_role": row.actor_role,
         "patient_id": row.patient_id,
+        "request_id": row.request_id,
         "route": row.route,
         "status": row.status,
         "input": _json_loads(row.input_json),

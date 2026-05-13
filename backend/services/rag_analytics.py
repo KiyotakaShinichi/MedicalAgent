@@ -135,6 +135,7 @@ def _row_to_dict(row):
     return {
         "id": row.id,
         "patient_id": row.patient_id,
+        "request_id": getattr(row, "request_id", None),
         "intent": row.intent,
         "safety_level": row.safety_level,
         "cache_status": row.cache_status,

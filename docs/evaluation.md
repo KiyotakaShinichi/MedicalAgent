@@ -43,6 +43,7 @@ python scripts/run_safety_eval.py
 - Temporal generalization split: train on earlier synthetic patient timelines, evaluate on later timelines
 - High-noise stress test: missing CBC values, lab jitter, WBC unit-entry error, site batch effects, contradictory symptom records
 - Calibration comparison: raw probabilities versus isotonic, Platt, and temperature scaling
+- Synthetic realism audit: lab threshold coverage and sim-to-real distribution checks against external MRI-feature baselines
 
 Evidence: [backend/services/complete_synthetic_training.py](backend/services/complete_synthetic_training.py), [backend/services/admin_analytics.py](backend/services/admin_analytics.py), [backend/services/evaluation_reports.py](backend/services/evaluation_reports.py), [backend/services/temporal_eval.py](backend/services/temporal_eval.py), [backend/services/noise_eval.py](backend/services/noise_eval.py), [backend/services/calibration_eval.py](backend/services/calibration_eval.py)
 
@@ -53,6 +54,7 @@ python scripts/generate_eval_report.py
 python scripts/run_mle_checks.py
 python scripts/run_temporal_eval.py
 python scripts/run_noise_eval.py
+python scripts/run_synthetic_realism_report.py
 ```
 
 Note: `--skip-training` expects existing artifacts under `Data/complete_synthetic_training`. Omit it to generate fresh artifacts.
@@ -61,6 +63,7 @@ Current local robustness reports:
 - Temporal eval: `Data/mle_monitoring/temporal_eval_report.json`
 - Noise eval: `Data/mle_monitoring/noise_eval_report.json`
 - Calibration eval: `Data/mle_monitoring/calibration_eval_report.json`
+- Synthetic realism: `Data/mle_monitoring/synthetic_realism_report.json`
 
 Claim boundary: these reports are synthetic engineering stress tests. They do not establish real-world clinical safety or effectiveness.
 
@@ -72,8 +75,14 @@ Claim boundary: these reports are synthetic engineering stress tests. They do no
 - App event error rate
 - Prediction audit count
 - Cache hit rate and latency
+- Summary quality proxy report using rubric + clinician reviews
 
-Evidence: [backend/services/clinician_feedback.py](backend/services/clinician_feedback.py), [backend/services/agent_feedback.py](backend/services/agent_feedback.py), [backend/services/app_logging.py](backend/services/app_logging.py)
+Evidence: [backend/services/clinician_feedback.py](backend/services/clinician_feedback.py), [backend/services/agent_feedback.py](backend/services/agent_feedback.py), [backend/services/app_logging.py](backend/services/app_logging.py), [backend/services/summary_quality_eval.py](backend/services/summary_quality_eval.py)
+
+Run:
+```
+python scripts/run_summary_quality_eval.py
+```
 
 ## Verification scripts
 - Cache safety policy check:

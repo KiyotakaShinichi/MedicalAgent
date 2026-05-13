@@ -15,9 +15,11 @@ MedicalAgent uses a local, account-free MLE workflow designed for engineering pr
    - Evidence: [backend/services/mle_readiness.py](backend/services/mle_readiness.py)
 6. Robustness monitoring reports
    - Evidence: [backend/services/temporal_eval.py](backend/services/temporal_eval.py), [backend/services/noise_eval.py](backend/services/noise_eval.py), [backend/services/calibration_eval.py](backend/services/calibration_eval.py)
-7. Registry metadata and promotion or rollback
+7. Synthetic realism and sim-to-real audit
+   - Evidence: [backend/services/synthetic_realism_report.py](backend/services/synthetic_realism_report.py)
+8. Registry metadata and promotion or rollback
    - Evidence: [backend/services/model_artifacts.py](backend/services/model_artifacts.py)
-8. Audit logging and monitoring
+9. Audit logging and monitoring
    - Evidence: [backend/services/app_logging.py](backend/services/app_logging.py), [backend/models.py](backend/models.py)
 
 ## Readiness gate configuration
@@ -31,12 +33,14 @@ python scripts/materialize_feature_store.py
 python scripts/run_mle_checks.py
 python scripts/run_temporal_eval.py
 python scripts/run_noise_eval.py
+python scripts/run_synthetic_realism_report.py
 ```
 
 ## Robustness reports
 - Temporal generalization: trains on earlier synthetic patient timelines and evaluates on later timelines.
 - High-noise stress: perturbs CBC values and symptom fields to estimate brittleness under common EHR-quality failure modes.
 - Calibration comparison: compares raw model probabilities with post-hoc calibration candidates.
+- Synthetic realism audit: compares synthetic distributions to lab threshold coverage and external MRI-feature baselines.
 
 These reports strengthen MLE discipline, but remain synthetic PoC evidence.
 

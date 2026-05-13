@@ -25,6 +25,7 @@ from backend.services.mri_derived_features import (
 )
 from backend.services.rag_analytics import build_rag_evaluation_summary
 from backend.services.rag_source_registry import build_rag_source_registry
+from backend.services.summary_quality_eval import build_summary_quality_report
 
 
 DEFAULT_SYNTHETIC_METRICS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
@@ -65,6 +66,7 @@ def build_admin_analytics(db):
         "rag_source_registry": build_rag_source_registry(),
         "agent_regression_evaluation": load_latest_agent_regression_report(),
         "agent_feedback": build_agent_feedback_summary(db),
+        "summary_quality_eval": build_summary_quality_report(db=db),
         "clinician_loop_metrics": _clinician_loop_metrics(audit_and_feedback["clinical_feedback"]),
         "data_quality": _data_quality(training_rows),
         "data_coverage": _data_coverage(training_rows),

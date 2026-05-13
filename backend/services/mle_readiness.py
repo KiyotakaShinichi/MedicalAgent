@@ -23,6 +23,10 @@ from backend.services.calibration_eval import (
     DEFAULT_CALIBRATION_EVAL_PATH,
     run_calibration_eval,
 )
+from backend.services.synthetic_realism_report import (
+    DEFAULT_OUTPUT_PATH as DEFAULT_REALISM_REPORT_PATH,
+    build_synthetic_realism_report,
+)
 
 
 DEFAULT_TRAINING_CSV = "Data/complete_synthetic_training/locked_holdout/development_rows.csv"
@@ -120,9 +124,14 @@ def build_mle_readiness_summary(
     temporal_eval_report = run_temporal_eval()
     noise_eval_report = run_noise_eval()
     calibration_report = run_calibration_eval()
+    realism_report = build_synthetic_realism_report(
+        training_csv=training_csv,
+        output_path=DEFAULT_REALISM_REPORT_PATH,
+    )
 
     # Inject their status as advisory (non-blocking) checks
     checks.extend(_robustness_checks(temporal_eval_report, noise_eval_report, calibration_report))
+    checks.extend(_realism_checks(realism_report))
 
     category_statuses = _category_statuses(checks)
     hard_failures = [check for check in checks if check["hard_gate"] and check["status"] == "failed"]
@@ -147,6 +156,7 @@ def build_mle_readiness_summary(
         "temporal_eval_report": temporal_eval_report,
         "noise_eval_report": noise_eval_report,
         "calibration_eval_report": calibration_report,
+        "synthetic_realism_report": realism_report,
         "claim_boundary": (
             "These gates make the engineering workflow more production-like. They do not convert synthetic-data "
             "results into clinical validation."
@@ -499,6 +509,52 @@ def _lineage_leakage_holdout_checks(lineage, leakage_audit, locked_holdout):
             remediation="Run python scripts/generate_mle_maturity_artifacts.py.",
         ),
     ]
+
+
+def _realism_checks(realism_report: dict) -> list[dict]:
+    if not realism_report or realism_report.get("status") == "unavailable":
+        return [_check(
+            name="synthetic_realism_report_present",
+            category="realism",
+            status="unideal",
+            value="missing",
+            threshold="realism report generated",
+            meaning="A realism audit compares synthetic distributions to basic clinical thresholds and external baselines.",
+            hard_gate=False,
+            remediation="Run python scripts/run_synthetic_realism_report.py to generate a report.",
+        )]
+
+    sim_to_real = (realism_report.get("sim_to_real_comparison") or {})
+    sim_status = sim_to_real.get("status") or realism_report.get("status")
+    checks = [
+        _check(
+            name="synthetic_realism_report_present",
+            category="realism",
+            status="passed",
+            value={
+                "training_patients": realism_report.get("training_patients"),
+                "training_rows": realism_report.get("training_rows"),
+            },
+            threshold="report present",
+            meaning="Synthetic realism should be audited before treating a PoC as MLE-ready.",
+            hard_gate=False,
+            remediation="Regenerate training data and rerun the realism audit.",
+        ),
+        _check(
+            name="sim_to_real_gap_review",
+            category="realism",
+            status=sim_status or "unavailable",
+            value={
+                "status": sim_status,
+                "comparisons": sim_to_real.get("comparisons"),
+            },
+            threshold="KS/JS divergence within acceptable bounds",
+            meaning="Sim-to-real checks flag distribution gaps that may limit external validity.",
+            hard_gate=False,
+            remediation="Tune the synthetic generator to align age, subtype, and baseline size distributions.",
+        ),
+    ]
+    return checks
 
 
 def _lifecycle_checks(db, metrics):

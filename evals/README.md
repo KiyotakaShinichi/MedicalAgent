@@ -53,6 +53,7 @@ Implemented now:
 - `backend/services/agent_regression_eval.py`
 - `backend/services/rag_analytics.py`
 - `Data/agent_eval/latest_agent_regression.json`
+- `evals/rag_cases.json` and `evals/safety_cases.json` are wired into the regression suite
 
 Future upgrade:
 
@@ -79,6 +80,7 @@ Implemented now:
 - Optional Groq adjudication after deterministic checks.
 - Ollama as local learning/fallback experiment.
 - Unit tests for encoded, CJK, Tagalog, Spanish, and self-scoped upload-help cases.
+- Expanded red-team cases in [evals/safety_cases.json](evals/safety_cases.json).
 
 ### Summary Eval
 
@@ -96,6 +98,7 @@ Target summary content:
 Current proxy:
 
 - Clinician summary review logs track approve/edit/reject, notes, explanation quality, and model usefulness.
+- Summary quality eval script computes rubric completeness and proxy safety rates.
 
 Future upgrade:
 

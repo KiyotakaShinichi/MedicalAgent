@@ -8,6 +8,8 @@ from backend.models import AgentResponseCache, RAGEvaluationLog
 from backend.services.kb_ingestion import load_ingested_chunks
 from backend.services.local_llm import configured_llm_providers, decide_cache_with_local_llm, route_intent_with_local_llm
 from backend.services.rag_vector_index import corpus_fingerprint, search_hybrid_index
+from backend.services.pii_redaction import redact_text
+from backend.services.request_context import get_request_id
 from backend.services.security_guardrails import detect_multilingual_medical_danger, detect_prompt_injection_or_exfiltration, normalize_security_text
 
 
@@ -1075,8 +1077,9 @@ def _store_rag_evaluation_log(db, patient_id, query, result, rag_evaluation, ret
     guardrails = rag_evaluation["guardrail_summary"]
     row = RAGEvaluationLog(
         patient_id=patient_id,
+        request_id=get_request_id(),
         query_hash=_query_hash(_normalize_query(query)),
-        query_preview=str(query or "")[:120],
+        query_preview=redact_text(str(query or ""))[:120],
         intent=result.get("intent") or "unknown",
         safety_level=(result.get("safety") or {}).get("level") or "unknown",
         cache_status=(result.get("cache") or {}).get("status"),
