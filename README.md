@@ -148,15 +148,21 @@ The login form resolves the account role from credentials and redirects to the c
 
 ### What this project demonstrates
 
-**Applied AI/ML engineering** — not a toy demo. Key capabilities:
+**Applied AI/ML engineering** - not a toy demo. Key capabilities:
 
 | Area | What was built |
 |------|----------------|
-| RAG pipeline | Hybrid BM25-lexical + TF-IDF vector retrieval, curated-source boost, parent-child window expansion, reranking, contextual compression, semantic cache |
+| RAG pipeline | Dense sentence-transformer retrieval with FAISS + BM25 sparse retrieval + RRF fusion when dependencies are available; BM25 + TF-IDF sparse fallback with honest backend labels |
 | Safety-first agent | Deterministic priority gates before LLM: injection detection, multilingual attack patterns, PHI boundary, treatment/diagnosis refusal |
 | ML evaluation | AUROC, PR-AUC, Brier, ECE, sensitivity/specificity/FNR, cost-sensitive threshold (FN costlier than FP), locked holdout, external validation direction |
-| Agent regression suite | 48 labeled test cases: education, portal_help, clinical_safety, security, conversation, tool_use — 100% pass rate |
+| Agent regression suite | 45 labeled test cases: education, portal_help, clinical_safety, security, conversation, tool_use - 100% pass rate |
 | Model lifecycle | Register, promote, rollback, audit; calibration comparison (isotonic / Platt / temperature scaling) |
+| Agent Trace Observatory | DB-backed per-call trace log: intent, safety level, guardrail status, RAG sources, grounding, latency, tokens - live in Admin dashboard |
+| RAG Ablation Study | BM25-only vs sparse BM25+TF-IDF vs dense FAISS+BM25+RRF vs full reranked pipeline on education eval cases |
+| Per-Prediction Error Table | TP/FP/TN/FN per synthetic holdout prediction; MAE, sensitivity, specificity, SHAP top-features per row |
+| Noise Robustness Eval | 5 EHR-realistic perturbations (missingness, jitter, unit error, batch effect, contradictory records) with AUROC/sensitivity degradation |
+| Temporal Generalization | Patient-timeline split + cycle-accumulation split vs random baseline; generalization gap reporting |
+| Progressive Chat UX | Pipeline-stage status labels while waiting (safety gate -> intent -> retrieval -> generation) |
 | Frontend | React + TypeScript + Vite, role-based routing, chat panel with tool-call confirmations, metric interpretation bands |
 | Governance | System card, model cards (3), RAG pipeline doc, MLE evaluation report, audit logs |
 
@@ -179,8 +185,8 @@ graph LR
     end
 
     subgraph Services
-        AgentRAG["agent_rag.py\nSafety → Intent → RAG → Answer"]
-        VectorIndex["rag_vector_index.py\nHybrid BM25 + TF-IDF"]
+        AgentRAG["agent_rag.py\nSafety -> Intent -> RAG -> Answer"]
+        VectorIndex["rag_vector_index.py\nDense FAISS + BM25 + RRF"]
         MLModels["complete_synthetic_training.py\nClassifier + Regressor + XAI"]
         Calibration["calibration_eval.py\nIsotonic / Platt / Temperature"]
         Guardrails["security_guardrails.py\nMultilingual injection detection"]
@@ -283,7 +289,19 @@ Open http://localhost:5173. The React API client calls http://127.0.0.1:8017 dir
 |---------|-------------|
 | `npm run dev` | Start Vite dev server on port 5173 |
 | `npm run build` | Type-check and build to `dist/` |
+| `npm run lint` | Run frontend lint checks |
+| `npm run test:e2e` | Run Playwright smoke tests for login, patient, clinician, admin, and route guards |
 | `npm run preview` | Serve the production build locally |
+
+### Quality gate
+```bash
+# Fast local gate: lint, build, backend tests, MLE readiness, RAG ablation,
+# and latest strong agent-regression artifact.
+python scripts/run_quality_gate.py --skip-slow-agent
+
+# Full UI smoke included. Requires: cd frontend-react && npx playwright install chromium
+python scripts/run_quality_gate.py --skip-slow-agent --include-e2e
+```
 
 ### Demo credentials
 | Username | Password | Destination |
@@ -299,4 +317,4 @@ Role is inferred from credentials — no manual role selection after login.
 - `/login` — credential form with demo quick-fill pills
 - `/patient` — timeline, labs, AI snapshot, model signal, chat support
 - `/clinician` — review queue, patient detail, approve/edit/reject workflow, audit trail
-- `/admin` — RAG metrics, guardrails, MLE gates, regression suite, feedback log
+- `/admin` — RAG metrics + ablation study, guardrails, Agent Trace Observatory, MLE gates + noise/temporal/error table, regression suite, feedback log

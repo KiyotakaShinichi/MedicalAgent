@@ -11,6 +11,11 @@ import type {
   MleReadinessSummary,
   AgentFeedbackItem,
   RagSourceEntry,
+  AgentTraceLogsResponse,
+  NoiseEvalResult,
+  TemporalEvalResult,
+  PredictionErrorTable,
+  RagAblationResult,
 } from "../types/api";
 
 const BASE = "http://127.0.0.1:8017";
@@ -151,3 +156,27 @@ export const getAgentFeedback = () =>
 
 export const getRagSourceRegistry = () =>
   get<{ sources: RagSourceEntry[]; metrics: unknown }>("/admin/rag-source-registry");
+
+export const getAgentTraceLogs = (limit = 50) =>
+  get<AgentTraceLogsResponse>(`/admin/agent-trace-logs?limit=${limit}`);
+
+export const getNoiseEval = () =>
+  get<NoiseEvalResult>("/admin/noise-eval");
+
+export const runNoiseEval = () =>
+  post<{ message: string; result: NoiseEvalResult }>("/admin/noise-eval");
+
+export const getTemporalEval = () =>
+  get<TemporalEvalResult>("/admin/temporal-eval");
+
+export const runTemporalEval = () =>
+  post<{ message: string; result: TemporalEvalResult }>("/admin/temporal-eval");
+
+export const getPredictionErrorTable = (limit = 100) =>
+  get<PredictionErrorTable>(`/admin/prediction-error-table?limit=${limit}`);
+
+export const getRagAblation = () =>
+  get<RagAblationResult>("/admin/rag-ablation");
+
+export const runRagAblation = () =>
+  post<{ message: string; result: RagAblationResult }>("/admin/rag-ablation");

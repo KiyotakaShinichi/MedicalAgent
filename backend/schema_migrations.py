@@ -30,3 +30,11 @@ def ensure_schema():
             connection.execute(text("ALTER TABLE agent_response_cache ADD COLUMN expires_at DATETIME"))
         if "last_hit_at" not in cache_columns:
             connection.execute(text("ALTER TABLE agent_response_cache ADD COLUMN last_hit_at DATETIME"))
+
+    rag_log_columns = set()
+    if "rag_evaluation_logs" in table_names:
+        rag_log_columns = {column["name"] for column in inspector.get_columns("rag_evaluation_logs")}
+
+    with engine.begin() as connection:
+        if "query_preview" not in rag_log_columns:
+            connection.execute(text("ALTER TABLE rag_evaluation_logs ADD COLUMN query_preview VARCHAR"))

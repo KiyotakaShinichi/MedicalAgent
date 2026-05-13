@@ -13,6 +13,10 @@ from backend.services.security_guardrails import detect_multilingual_medical_dan
 
 MAX_CONTEXT_CHARS = 1300
 AGENT_CACHE_TTL_DAYS = 30
+
+# Module-level cache for the merged KB corpus.  Avoids repeated disk reads on
+# every pipeline call.  Call _invalidate_kb_cache() after ingesting new chunks.
+_KB_CORPUS_CACHE: list | None = None
 AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v4"
 SEMANTIC_CACHE_MIN_SIMILARITY = 0.86
 
@@ -171,6 +175,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
     urgent_flags = urgent_flags or []
     safety = safety_scope_check(query, urgent_flags)
     input_guardrails = input_guardrail_check(query, safety)
+    t_safety = perf_counter()
     if input_guardrails["status"] == "failed":
         safety = {
             **safety,
@@ -215,6 +220,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
         )
     intent = _validated_preselected_intent(preselected_intent, safety) or route_intent(query, actions, safety)
     rewritten = rewrite_and_decompose(query, intent)
+    t_routing = perf_counter()
     cacheable = is_cacheable(query, intent, safety, actions, urgent_flags)
     knowledge_fingerprint = knowledge_base_fingerprint()
     cache_policy = _cache_policy_snapshot(knowledge_fingerprint)
@@ -292,8 +298,10 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
 
     retrieved = hybrid_retrieval(rewritten, intent)
     expanded = expand_parent_child_windows(retrieved)
+    t_retrieval = perf_counter()
     reranked = rerank_context(expanded, rewritten, intent, safety)
     compressed = contextual_compression(reranked)
+    t_rerank = perf_counter()
     generated = generate_answer(
         query=query,
         fallback_response=fallback_response,
@@ -304,6 +312,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
         patient_context=patient_context,
     )
     validated = validate_answer_and_citations(generated, compressed, safety)
+    t_generation = perf_counter()
 
     if cacheable and validated["validation"]["status"] == "passed":
         cache_row = store_cache(db, rewritten, intent, safety, validated, knowledge_fingerprint=knowledge_fingerprint)
@@ -323,10 +332,20 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             "policy": cache_policy,
         }
 
+    stage_ms = {
+        "safety_gate_ms": round((t_safety - started) * 1000, 2),
+        "intent_routing_ms": round((t_routing - t_safety) * 1000, 2),
+        "retrieval_ms": round((t_retrieval - t_routing) * 1000, 2),
+        "rerank_ms": round((t_rerank - t_retrieval) * 1000, 2),
+        "generation_ms": round((t_generation - t_rerank) * 1000, 2),
+    }
     result = {
         **validated,
         "cache": cache_status,
-        "pipeline_trace": _trace(safety, intent, rewritten, retrieved, reranked, compressed, "generated", cache_policy=cache_policy),
+        "pipeline_trace": {
+            **_trace(safety, intent, rewritten, retrieved, reranked, compressed, "generated", cache_policy=cache_policy),
+            "stage_ms": stage_ms,
+        },
     }
     return _finalize_result(
         db=db,
@@ -724,8 +743,16 @@ def expand_parent_child_windows(retrieved):
 
 
 def _knowledge_snippets():
-    external = load_ingested_chunks()
-    return KNOWLEDGE_SNIPPETS + external
+    global _KB_CORPUS_CACHE
+    if _KB_CORPUS_CACHE is None:
+        _KB_CORPUS_CACHE = KNOWLEDGE_SNIPPETS + load_ingested_chunks()
+    return _KB_CORPUS_CACHE
+
+
+def _invalidate_kb_cache():
+    """Call after ingesting new KB chunks so the next pipeline call reloads."""
+    global _KB_CORPUS_CACHE
+    _KB_CORPUS_CACHE = None
 
 
 def get_rag_corpus():
@@ -1049,6 +1076,7 @@ def _store_rag_evaluation_log(db, patient_id, query, result, rag_evaluation, ret
     row = RAGEvaluationLog(
         patient_id=patient_id,
         query_hash=_query_hash(_normalize_query(query)),
+        query_preview=str(query or "")[:120],
         intent=result.get("intent") or "unknown",
         safety_level=(result.get("safety") or {}).get("level") or "unknown",
         cache_status=(result.get("cache") or {}).get("status"),

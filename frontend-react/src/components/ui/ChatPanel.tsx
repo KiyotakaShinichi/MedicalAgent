@@ -4,6 +4,52 @@ import { clsx } from "clsx";
 import { Spinner } from "./Spinner";
 import type { ChatMessage, SavedAction } from "../../types/api";
 
+const PIPELINE_STAGES = [
+  { label: "Checking safety gate...", delay: 0 },
+  { label: "Routing intent...", delay: 300 },
+  { label: "Retrieving context...", delay: 700 },
+  { label: "Generating response...", delay: 1500 },
+];
+
+function usePipelineStatus(active: boolean) {
+  const [timing, setTiming] = useState<{ startedAt: number; now: number } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!active) {
+      window.setTimeout(() => {
+        if (!cancelled) setTiming(null);
+      }, 0);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const startedAt = Date.now();
+    window.setTimeout(() => {
+      if (!cancelled) setTiming({ startedAt, now: startedAt });
+    }, 0);
+
+    const interval = window.setInterval(() => {
+      setTiming((current) => current ? { ...current, now: Date.now() } : current);
+    }, 150);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [active]);
+
+  if (!active || !timing) {
+    return PIPELINE_STAGES[0].label;
+  }
+
+  const elapsedMs = Math.max(0, timing.now - timing.startedAt);
+  const stageIndex = PIPELINE_STAGES.findLastIndex((step) => elapsedMs >= step.delay);
+  return PIPELINE_STAGES[Math.max(0, stageIndex)].label;
+}
+
 interface Props {
   messages: ChatMessage[];
   onSend: (text: string) => Promise<{ reply: string; saved_actions?: SavedAction[]; citations?: string[] }>;
@@ -40,6 +86,7 @@ export function ChatPanel({ messages: initialMessages, onSend, disabled }: Props
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const pipelineLabel = usePipelineStatus(sending);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -150,14 +197,16 @@ export function ChatPanel({ messages: initialMessages, onSend, disabled }: Props
         {sending && (
           <div className="flex gap-2 items-center" style={{ color: "var(--text-dim)" }}>
             <span
-              className="w-6 h-6 rounded-full flex items-center justify-center"
+              className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
               style={{ background: "rgba(244,63,94,0.15)" }}
             >
               <Bot size={12} style={{ color: "var(--rose)" }} />
             </span>
-            <div className="flex gap-1 items-center px-3 py-2 rounded-lg" style={{ background: "var(--surface2)" }}>
+            <div className="flex gap-1.5 items-center px-3 py-2 rounded-lg" style={{ background: "var(--surface2)" }}>
               <Spinner size={12} />
-              <span className="text-xs">Thinking...</span>
+              <span className="text-xs transition-all duration-300" style={{ color: "var(--text-dim)" }}>
+                {pipelineLabel}
+              </span>
             </div>
           </div>
         )}

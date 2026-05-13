@@ -1,0 +1,3 @@
+category,count,rate,meaning
+discordant_response_toxicity_review,63,0.525,"Response looks favorable, but toxicity signals still need review."
+toxicity_review,57,0.475,CBC or symptom toxicity signal would prompt clinician review.

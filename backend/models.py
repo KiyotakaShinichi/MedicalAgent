@@ -332,6 +332,7 @@ class RAGEvaluationLog(Base):
     id = Column(Integer, primary_key=True, index=True)
     patient_id = Column(String, ForeignKey("patients.id"), nullable=True, index=True)
     query_hash = Column(String, nullable=False, index=True)
+    query_preview = Column(String, nullable=True)
     intent = Column(String, nullable=False, index=True)
     safety_level = Column(String, nullable=False, index=True)
     cache_status = Column(String, nullable=True, index=True)

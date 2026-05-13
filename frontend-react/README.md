@@ -29,6 +29,9 @@ Open:
 ```powershell
 npm run lint
 npm run build
+npm run test:e2e
 ```
 
 The frontend uses role-keyed localStorage tokens, typed API wrappers, route guards, and the `/me/*` patient-scoped API routes so patients only see their own records.
+
+Run the repository-level quality gate from the project root with `python scripts/run_quality_gate.py --skip-slow-agent --include-e2e`.

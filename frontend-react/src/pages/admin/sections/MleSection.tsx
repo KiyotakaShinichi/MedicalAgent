@@ -11,8 +11,9 @@ import { useApi } from "../../../hooks/useApi";
 import {
   runMleReadiness, getTrainingReport, getLockedHoldout,
   getExternalValidation, getModelComparison,
+  getNoiseEval, getTemporalEval, getPredictionErrorTable,
 } from "../../../api/client";
-import type { AdminAnalytics } from "../../../types/api";
+import type { AdminAnalytics, NoiseEvalResult, TemporalEvalResult, PredictionErrorTable } from "../../../types/api";
 
 interface Props { analytics: AdminAnalytics; onRefresh: () => void }
 
@@ -25,6 +26,9 @@ export function MleSection({ analytics, onRefresh }: Props) {
   const { data: holdout, status: holdoutStatus } = useApi(getLockedHoldout, []);
   const { data: extVal, status: extValStatus } = useApi(getExternalValidation, []);
   const { data: modelComp, status: modelCompStatus } = useApi(getModelComparison, []);
+  const { data: noiseEval, status: noiseStatus } = useApi(getNoiseEval, []);
+  const { data: temporalEval, status: temporalStatus } = useApi(getTemporalEval, []);
+  const { data: errorTable, status: errorStatus } = useApi(getPredictionErrorTable, []);
 
   async function runMle() {
     setRunningMle(true);
@@ -251,6 +255,57 @@ export function MleSection({ analytics, onRefresh }: Props) {
           )}
       </Card>
 
+      {/* Noise robustness */}
+      <Card>
+        <CardHeader>
+          <SectionTitle>Noise Robustness Evaluation</SectionTitle>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: "rgba(245,158,11,0.12)", color: "var(--amber)" }}>
+            Synthetic perturbations
+          </span>
+        </CardHeader>
+        {noiseStatus === "loading" ? <LoadingPane /> :
+         noiseStatus === "error" ? <ErrorPane message="Could not load noise eval" /> :
+         !noiseEval || (noiseEval as NoiseEvalResult).status === "unavailable" ? (
+          <EmptyPane label="No noise eval — run POST /admin/noise-eval first" />
+         ) : (
+          <NoiseEvalPanel data={noiseEval as NoiseEvalResult} />
+         )}
+      </Card>
+
+      {/* Temporal generalization */}
+      <Card>
+        <CardHeader>
+          <SectionTitle>Temporal Generalization</SectionTitle>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: "rgba(59,130,246,0.12)", color: "#93c5fd" }}>
+            Synthetic timeline splits
+          </span>
+        </CardHeader>
+        {temporalStatus === "loading" ? <LoadingPane /> :
+         temporalStatus === "error" ? <ErrorPane message="Could not load temporal eval" /> :
+         !temporalEval || (temporalEval as TemporalEvalResult).status === "unavailable" ? (
+          <EmptyPane label="No temporal eval — run POST /admin/temporal-eval first" />
+         ) : (
+          <TemporalEvalPanel data={temporalEval as TemporalEvalResult} />
+         )}
+      </Card>
+
+      {/* Per-prediction ML error table */}
+      <Card>
+        <CardHeader>
+          <SectionTitle>Per-Prediction Error Table</SectionTitle>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: "rgba(245,158,11,0.12)", color: "var(--amber)" }}>
+            Synthetic holdout
+          </span>
+        </CardHeader>
+        {errorStatus === "loading" ? <LoadingPane /> :
+         errorStatus === "error" ? <ErrorPane message="Could not load prediction error table" /> :
+         !errorTable || !(errorTable as PredictionErrorTable).rows?.length ? (
+          <EmptyPane label="No predictions — run training pipeline first" />
+         ) : (
+          <PredictionErrorPanel data={errorTable as PredictionErrorTable} />
+         )}
+      </Card>
+
       {/* Metric glossary toggle */}
       <Card>
         <CardHeader>
@@ -290,6 +345,166 @@ function CostCard({ label, level, color, description }: {
       <p className="text-xs font-semibold mb-0.5" style={{ color: "var(--text-faint)" }}>{label}</p>
       <p className="text-lg font-bold mb-1" style={{ color }}>{level}</p>
       <p className="text-xs" style={{ color: "var(--text-dim)" }}>{description}</p>
+    </div>
+  );
+}
+
+function NoiseEvalPanel({ data }: { data: NoiseEvalResult }) {
+  const base = data.clean_baseline;
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard label="Baseline AUROC"    value={base.auroc != null ? base.auroc.toFixed(3) : null}    status="green" />
+        <MetricCard label="Baseline Brier"    value={base.brier_score != null ? base.brier_score.toFixed(3) : null} status="green" />
+        <MetricCard label="Baseline Sensitivity" value={base.sensitivity != null ? base.sensitivity.toFixed(3) : null} status="green" />
+        <MetricCard label="Baseline PR-AUC"   value={base.pr_auc != null ? base.pr_auc.toFixed(3) : null}   status="green" />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+              {["Noise mode", "AUROC", "Δ AUROC", "Sensitivity", "Δ Sensitivity", "Status"].map(h => (
+                <th key={h} className="text-left py-2 pr-4 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.noise_results.map((r) => (
+              <tr key={r.mode} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
+                <td className="py-2 pr-4 font-medium" style={{ color: "var(--text)" }}>{r.mode.replace(/_/g, " ")}</td>
+                <td className="py-2 pr-4 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.auroc?.toFixed(3) ?? "—"}</td>
+                <td className="py-2 pr-4 tabular-nums" style={{ color: r.auroc_delta != null && r.auroc_delta < -0.05 ? "var(--rose)" : "var(--text-dim)" }}>
+                  {r.auroc_delta != null ? (r.auroc_delta >= 0 ? "+" : "") + r.auroc_delta.toFixed(3) : "—"}
+                </td>
+                <td className="py-2 pr-4 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.sensitivity?.toFixed(3) ?? "—"}</td>
+                <td className="py-2 pr-4 tabular-nums" style={{ color: r.sensitivity_delta != null && r.sensitivity_delta < -0.05 ? "var(--rose)" : "var(--text-dim)" }}>
+                  {r.sensitivity_delta != null ? (r.sensitivity_delta >= 0 ? "+" : "") + r.sensitivity_delta.toFixed(3) : "—"}
+                </td>
+                <td className="py-2">
+                  <Badge variant={r.status === "robust" ? "green" : r.status === "degraded" ? "amber" : "red"}>{r.status}</Badge>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {data.summary.worst_mode && (
+        <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+          Worst mode: <strong style={{ color: "var(--text-dim)" }}>{data.summary.worst_mode.replace(/_/g, " ")}</strong>
+          {data.summary.max_auroc_drop != null && ` · max AUROC drop ${data.summary.max_auroc_drop.toFixed(3)}`}
+        </p>
+      )}
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
+    </div>
+  );
+}
+
+function TemporalEvalPanel({ data }: { data: TemporalEvalResult }) {
+  const splits = [
+    { label: "Patient timeline split", metrics: data.temporal_split },
+    { label: "Cycle accumulation split", metrics: data.cycle_split },
+    { label: "Random baseline", metrics: data.random_split_baseline },
+  ] as const;
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid sm:grid-cols-3 gap-3">
+        {splits.map(({ label, metrics }) => (
+          <div key={label} className="rounded-md border p-3" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+            <p className="text-xs font-semibold mb-2" style={{ color: "var(--text-dim)" }}>{label}</p>
+            <div className="flex flex-col gap-1">
+              <Row label="AUROC"       value={metrics.auroc?.toFixed(3)} />
+              <Row label="Brier"       value={metrics.brier_score?.toFixed(3)} />
+              <Row label="Sensitivity" value={metrics.sensitivity?.toFixed(3)} />
+              <Row label="n train"     value={String(metrics.n_train)} />
+              <Row label="n eval"      value={String(metrics.n_eval)} />
+            </div>
+          </div>
+        ))}
+      </div>
+      {data.generalization_gap && (
+        <div className="flex gap-4">
+          <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+            Temporal gap: <span style={{ color: "var(--text-dim)" }}>{data.generalization_gap.temporal_auroc_gap?.toFixed(3) ?? "—"}</span>
+          </p>
+          <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+            Cycle gap: <span style={{ color: "var(--text-dim)" }}>{data.generalization_gap.cycle_auroc_gap?.toFixed(3) ?? "—"}</span>
+          </p>
+        </div>
+      )}
+      {data.interpretation && (
+        <p className="text-xs" style={{ color: "var(--text-dim)" }}>{data.interpretation}</p>
+      )}
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string | undefined }) {
+  return (
+    <div className="flex justify-between gap-2">
+      <span className="text-xs" style={{ color: "var(--text-faint)" }}>{label}</span>
+      <span className="text-xs tabular-nums font-medium" style={{ color: "var(--text-dim)" }}>{value ?? "—"}</span>
+    </div>
+  );
+}
+
+const CONFUSION_COLOR: Record<string, string> = {
+  TP: "var(--green)", FP: "var(--amber)", TN: "var(--text-dim)", FN: "var(--rose)"
+};
+
+function PredictionErrorPanel({ data }: { data: PredictionErrorTable }) {
+  const [showAll, setShowAll] = useState(false);
+  const rows = showAll ? data.rows : data.rows.slice(0, 20);
+  const cm = data.confusion_summary;
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard label="Sensitivity" value={data.sensitivity != null ? data.sensitivity.toFixed(3) : null}
+          status={data.sensitivity != null && data.sensitivity >= 0.75 ? "green" : "amber"} />
+        <MetricCard label="Specificity" value={data.specificity != null ? data.specificity.toFixed(3) : null} />
+        <MetricCard label="MAE"         value={data.mae != null ? data.mae.toFixed(4) : null} />
+        <MetricCard label="Threshold"   value={String(data.threshold)} />
+      </div>
+      <div className="flex gap-4">
+        {(["TP", "FP", "TN", "FN"] as const).map(k => (
+          <div key={k} className="flex flex-col items-center gap-0.5">
+            <span className="text-lg font-bold tabular-nums" style={{ color: CONFUSION_COLOR[k] }}>{cm[k]}</span>
+            <span className="text-xs" style={{ color: "var(--text-faint)" }}>{k}</span>
+          </div>
+        ))}
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+              {["ID", "Actual", "Prob", "Class", "Error", "Type"].map(h => (
+                <th key={h} className="text-left py-2 pr-3 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.patient_id} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
+                <td className="py-1.5 pr-3" style={{ color: "var(--text-dim)" }}>{r.patient_id}</td>
+                <td className="py-1.5 pr-3 tabular-nums" style={{ color: "var(--text)" }}>{r.actual_label}</td>
+                <td className="py-1.5 pr-3 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.predicted_probability.toFixed(3)}</td>
+                <td className="py-1.5 pr-3 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.predicted_class}</td>
+                <td className="py-1.5 pr-3 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.absolute_error.toFixed(4)}</td>
+                <td className="py-1.5">
+                  <span className="font-bold" style={{ color: CONFUSION_COLOR[r.confusion_type] }}>{r.confusion_type}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {data.rows.length > 20 && (
+        <Button variant="ghost" size="sm" onClick={() => setShowAll(v => !v)}>
+          {showAll ? `Show fewer` : `Show all ${data.rows.length} rows`}
+        </Button>
+      )}
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
     </div>
   );
 }
