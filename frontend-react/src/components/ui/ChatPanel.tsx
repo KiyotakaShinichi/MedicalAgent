@@ -79,7 +79,7 @@ function ActionChip({ action }: { action: SavedAction }) {
   );
 }
 
-export function ChatPanel({ messages: initialMessages, onSend, disabled }: Props) {
+export function ChatPanel({ messages: initialMessages, onSend, disabled, placeholder }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -91,6 +91,16 @@ export function ChatPanel({ messages: initialMessages, onSend, disabled }: Props
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, sending]);
+
+  // Auto-resize the textarea up to a max so the chat input grows
+  // with the message but never balloons the layout.
+  useEffect(() => {
+    const node = textareaRef.current;
+    if (!node) return;
+    node.style.height = "auto";
+    const max = 160;
+    node.style.height = `${Math.min(max, node.scrollHeight)}px`;
+  }, [input]);
 
   const send = useCallback(async () => {
     const text = input.trim();
@@ -129,17 +139,33 @@ export function ChatPanel({ messages: initialMessages, onSend, disabled }: Props
   return (
     <div
       className="flex flex-col"
-      style={{ height: "100%", minHeight: 0 }}
+      style={{ height: "100%", minHeight: 0, flex: 1, width: "100%" }}
     >
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-3" style={{ minHeight: 0 }}>
+      <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3" style={{ minHeight: 0 }}>
         {messages.length === 0 && (
           <div
-            className="flex flex-col items-center gap-2 pt-8 text-center"
-            style={{ color: "var(--text-faint)" }}
+            className="flex flex-col items-center gap-3 pt-12 pb-4 text-center mx-auto"
+            style={{ color: "var(--text-faint)", maxWidth: 460 }}
           >
-            <Bot size={28} />
-            <p className="text-sm">Ask about your monitoring data, symptoms, medications, or how this portal works.</p>
+            <span
+              className="inline-flex items-center justify-center"
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 16,
+                background: "rgba(244,63,94,0.12)",
+                color: "var(--rose)",
+              }}
+            >
+              <Bot size={22} aria-hidden="true" />
+            </span>
+            <p className="text-sm" style={{ color: "var(--text-dim)" }}>
+              Ask about your monitoring data, symptoms, medications, or how this portal works.
+            </p>
+            <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+              This assistant is for monitoring support only and does not diagnose or recommend treatment.
+            </p>
           </div>
         )}
         {messages.map((msg, i) => {
@@ -236,7 +262,7 @@ export function ChatPanel({ messages: initialMessages, onSend, disabled }: Props
 
       {/* Input */}
       <div
-        className="flex items-end gap-2 p-2 border-t"
+        className="flex items-end gap-2 p-3 border-t"
         style={{ borderColor: "var(--border)", background: "var(--surface)" }}
       >
         <textarea
@@ -244,26 +270,35 @@ export function ChatPanel({ messages: initialMessages, onSend, disabled }: Props
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Message... (Enter to send, Shift+Enter for newline)"
+          placeholder={placeholder ?? "Ask about your monitoring data... (Enter to send, Shift+Enter for newline)"}
           disabled={disabled || sending}
           rows={1}
-          className="flex-1 resize-none rounded-md px-3 py-2 text-sm outline-none"
+          className="flex-1 resize-none rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-1"
           style={{
             background: "var(--surface2)",
             border: "1px solid var(--border)",
             color: "var(--text)",
-            maxHeight: 120,
+            maxHeight: 160,
             lineHeight: 1.5,
           }}
         />
         <button
           onClick={send}
           disabled={!input.trim() || sending || disabled}
-          className="p-2 rounded-md transition-opacity hover:opacity-80 disabled:opacity-30"
-          style={{ background: "var(--rose)", color: "#fff", flexShrink: 0 }}
-          aria-label="Send"
+          className="rounded-lg transition-opacity hover:opacity-90 disabled:opacity-30"
+          style={{
+            background: "var(--rose)",
+            color: "#fff",
+            flexShrink: 0,
+            height: 40,
+            width: 40,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          aria-label="Send message"
         >
-          <Send size={14} />
+          <Send size={16} />
         </button>
       </div>
     </div>

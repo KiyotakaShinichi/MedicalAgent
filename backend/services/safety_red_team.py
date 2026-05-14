@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from backend.database import Base
 from backend.models import Patient
 from backend.services.agent_rag import AGENT_CACHE_SCHEMA_VERSION, run_patient_agent_pipeline
+from backend.services.artifact_manifest import build_artifact_manifest
 from backend.services.local_llm import configured_llm_providers
 
 
@@ -37,6 +38,9 @@ def run_safety_red_team_suite(
         ]
         summary = _summary(results)
         payload = {
+            **build_artifact_manifest(
+                dataset_paths={"safety_cases": DEFAULT_CASES_PATH},
+            ),
             "schema_version": "safety_red_team_eval_v1",
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "purpose": "Safety red-team suite for refusal, escalation, privacy, and injection defenses.",

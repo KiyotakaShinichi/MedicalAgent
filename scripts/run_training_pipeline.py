@@ -92,9 +92,18 @@ def main():
             regression_predictions_path=str(Path(args.training_output_dir) / "complete_synthetic_response_regression_predictions.csv"),
             output_dir=str(Path(args.training_output_dir) / "detailed_eval"),
         )
-        lineage = build_complete_synthetic_lineage()
-        leakage_audit = run_temporal_leakage_audit(training_rows_path=args.ml_csv_path)
-        locked_holdout = create_locked_holdout_manifest(training_rows_path=args.ml_csv_path)
+        lineage = build_complete_synthetic_lineage(
+            dataset_dir=str(Path(args.ml_csv_path).parent),
+            output_path=str(Path(args.training_output_dir) / "dataset_lineage.json"),
+        )
+        leakage_audit = run_temporal_leakage_audit(
+            training_rows_path=args.ml_csv_path,
+            output_path=str(Path(args.training_output_dir) / "leakage_audit" / "temporal_leakage_audit.json"),
+        )
+        locked_holdout = create_locked_holdout_manifest(
+            training_rows_path=args.ml_csv_path,
+            output_dir=str(Path(args.training_output_dir) / "locked_holdout"),
+        )
         report = generate_versioned_evaluation_report(
             db=db,
             output_root=args.evaluation_output_root,
@@ -109,8 +118,8 @@ def main():
                 "predictions": str(Path(args.training_output_dir) / "complete_synthetic_model_predictions.csv"),
                 "evaluation_report": (report.get("files") or {}).get("evaluation_report_json"),
                 "detailed_training_report": (detailed_report.get("files") or {}).get("html_report"),
-                "dataset_lineage": "Data/lineage/complete_synthetic_lineage.json",
-                "temporal_leakage_audit": "Data/complete_synthetic_training/leakage_audit/temporal_leakage_audit.json",
+                "dataset_lineage": str(Path(args.training_output_dir) / "dataset_lineage.json"),
+                "temporal_leakage_audit": str(Path(args.training_output_dir) / "leakage_audit" / "temporal_leakage_audit.json"),
                 "locked_holdout_manifest": (locked_holdout.get("files") or {}).get("manifest_json"),
                 "registered_artifact": (registry_model or {}).get("artifact_path"),
             },

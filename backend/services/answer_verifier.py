@@ -27,12 +27,20 @@ TREATMENT_DIRECTIVE_PATTERNS = (
 )
 
 
+REFUSAL_INTENTS_FOR_VERIFIER = frozenset({
+    "safety_boundary",
+    "treatment_decision_boundary",
+    "security_boundary",
+})
+
+
 def verify_patient_support_answer(
     reply: str,
     *,
     citations: list[dict[str, Any]] | None = None,
     retrieved_context: list[dict[str, Any]] | None = None,
     safety: dict[str, Any] | None = None,
+    intent: str | None = None,
 ) -> dict[str, Any]:
     reply = reply or ""
     lower = reply.lower()
@@ -42,7 +50,14 @@ def verify_patient_support_answer(
         issues.append("diagnostic_claim")
     if _matches_any(TREATMENT_DIRECTIVE_PATTERNS, lower):
         issues.append("treatment_directive")
-    if retrieved_context and not citations:
+    # Refusal intents intentionally strip citations on background context to
+    # avoid the appearance of evidence-backed clinical guidance — see
+    # generate_answer in agent_rag. Don't flag the deliberate absence here.
+    if (
+        retrieved_context
+        and not citations
+        and intent not in REFUSAL_INTENTS_FOR_VERIFIER
+    ):
         issues.append("retrieved_context_without_citations")
     if (safety or {}).get("level") == "high_risk":
         if not any(term in lower for term in ("emergency", "clinician", "oncology", "care team")):

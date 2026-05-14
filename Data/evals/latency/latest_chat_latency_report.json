@@ -1,0 +1,199 @@
+{
+  "schema_version": "chat_latency_report_v1",
+  "generated_at": "2026-05-14T10:08:06.561116+00:00",
+  "status": "available",
+  "sample_size": 118,
+  "p50_latency_ms": 1537.1,
+  "p95_latency_ms": 7763.1,
+  "mean_latency_ms": 4114.7,
+  "by_intent": {
+    "conversation": {
+      "count": 16,
+      "p50_ms": 3387.7,
+      "p95_ms": 6553.4,
+      "mean_ms": 3390.0
+    },
+    "data_entry_confirmation": {
+      "count": 8,
+      "p50_ms": 4399.4,
+      "p95_ms": 5613.8,
+      "mean_ms": 4317.4
+    },
+    "education": {
+      "count": 30,
+      "p50_ms": 1303.4,
+      "p95_ms": 27110.5,
+      "mean_ms": 4498.9
+    },
+    "emotional_support": {
+      "count": 3,
+      "p50_ms": 56.4,
+      "p95_ms": 4074.2,
+      "mean_ms": 1542.7
+    },
+    "general_support": {
+      "count": 15,
+      "p50_ms": 5445.4,
+      "p95_ms": 6933.1,
+      "mean_ms": 3685.5
+    },
+    "patient_memory": {
+      "count": 2,
+      "p50_ms": 3785.5,
+      "p95_ms": 4043.1,
+      "mean_ms": 3785.5
+    },
+    "patient_timeline_monitoring": {
+      "count": 2,
+      "p50_ms": 55.1,
+      "p95_ms": 61.7,
+      "mean_ms": 55.1
+    },
+    "portal_help": {
+      "count": 10,
+      "p50_ms": 1431.8,
+      "p95_ms": 27539.2,
+      "mean_ms": 6121.4
+    },
+    "safety_boundary": {
+      "count": 8,
+      "p50_ms": 1644.8,
+      "p95_ms": 57074.1,
+      "mean_ms": 14843.2
+    },
+    "security_boundary": {
+      "count": 16,
+      "p50_ms": 23.2,
+      "p95_ms": 477.1,
+      "mean_ms": 132.3
+    },
+    "treatment_decision_boundary": {
+      "count": 8,
+      "p50_ms": 1417.3,
+      "p95_ms": 2042.7,
+      "mean_ms": 1514.4
+    }
+  },
+  "by_cache_status": {
+    "blocked_by_input_guardrail": {
+      "count": 16,
+      "p50_ms": 23.2,
+      "p95_ms": 477.1,
+      "mean_ms": 132.3
+    },
+    "exact_cache_hit": {
+      "count": 18,
+      "p50_ms": 92.0,
+      "p95_ms": 6587.9,
+      "mean_ms": 1791.9
+    },
+    "not_cacheable": {
+      "count": 64,
+      "p50_ms": 1974.8,
+      "p95_ms": 8689.9,
+      "mean_ms": 4770.0
+    },
+    "stored": {
+      "count": 20,
+      "p50_ms": 1893.0,
+      "p95_ms": 43501.5,
+      "mean_ms": 7294.1
+    }
+  },
+  "slowest_traces": [
+    {
+      "id": 108,
+      "intent": "safety_boundary",
+      "cache_status": "not_cacheable",
+      "latency_ms": 62679.15,
+      "terminal_step": "generated",
+      "query_preview": "I have fever during chemo. What should I do?",
+      "created_at": "2026-05-13 14:58:36"
+    },
+    {
+      "id": 46,
+      "intent": "education",
+      "cache_status": "stored",
+      "latency_ms": 50206.41,
+      "terminal_step": "generated",
+      "query_preview": "What is pCR in this breast cancer monitoring project?",
+      "created_at": "2026-05-13 12:48:08"
+    },
+    {
+      "id": 75,
+      "intent": "portal_help",
+      "cache_status": "not_cacheable",
+      "latency_ms": 48733.59,
+      "terminal_step": "generated",
+      "query_preview": "Where can I put my CBC, medication, symptoms, and MRI uploads?",
+      "created_at": "2026-05-13 12:51:39"
+    },
+    {
+      "id": 102,
+      "intent": "safety_boundary",
+      "cache_status": "not_cacheable",
+      "latency_ms": 46664.58,
+      "terminal_step": "generated",
+      "query_preview": "I have fever during chemo. What should I do?",
+      "created_at": "2026-05-13 13:01:25"
+    },
+    {
+      "id": 45,
+      "intent": "education",
+      "cache_status": "stored",
+      "latency_ms": 43148.56,
+      "terminal_step": "generated",
+      "query_preview": null,
+      "created_at": "2026-05-11 04:15:31"
+    },
+    {
+      "id": 35,
+      "intent": "conversation",
+      "cache_status": "not_cacheable",
+      "latency_ms": 9206.39,
+      "terminal_step": "direct_support",
+      "query_preview": null,
+      "created_at": "2026-05-07 09:19:04"
+    },
+    {
+      "id": 40,
+      "intent": "education",
+      "cache_status": "stored",
+      "latency_ms": 7508.35,
+      "terminal_step": "generated",
+      "query_preview": null,
+      "created_at": "2026-05-08 01:34:45"
+    },
+    {
+      "id": 10,
+      "intent": "general_support",
+      "cache_status": "exact_cache_hit",
+      "latency_ms": 6959.38,
+      "terminal_step": "cache_hit",
+      "query_preview": null,
+      "created_at": "2026-05-07 06:33:30"
+    },
+    {
+      "id": 23,
+      "intent": "general_support",
+      "cache_status": "stored",
+      "latency_ms": 6921.9,
+      "terminal_step": "generated",
+      "query_preview": null,
+      "created_at": "2026-05-07 06:47:40"
+    },
+    {
+      "id": 9,
+      "intent": "general_support",
+      "cache_status": "exact_cache_hit",
+      "latency_ms": 6522.37,
+      "terminal_step": "cache_hit",
+      "query_preview": null,
+      "created_at": "2026-05-07 06:20:41"
+    }
+  ],
+  "recommendations": [
+    "p95 latency is high; keep SSE stage updates visible and prefer cached RAG when safe."
+  ],
+  "interpretation": "Use this to tune patient-chat responsiveness. Casual/tool routes should be fast; RAG routes can be slower if the UI streams stage updates."
+}

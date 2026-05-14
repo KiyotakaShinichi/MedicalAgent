@@ -1,0 +1,46 @@
+{
+  "patients_created": 240,
+  "patients_skipped": 0,
+  "cycles_per_patient": 6,
+  "patient_prefix": "REALISM-BRCA-",
+  "source": "synthetic_complete_breast_journey",
+  "output_dir": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2",
+  "table_counts": {
+    "patients": 240,
+    "diagnoses": 240,
+    "treatment_sessions": 1440,
+    "labs": 4320,
+    "medications": 4075,
+    "symptoms": 2511,
+    "mri_reports": 1680,
+    "interventions": 24,
+    "outcomes": 240,
+    "temporal_ml_rows": 1440
+  },
+  "files": {
+    "patients": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\patients.csv",
+    "diagnoses": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\diagnoses.csv",
+    "treatment_sessions": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\treatment_sessions.csv",
+    "labs": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\labs.csv",
+    "medications": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\medications.csv",
+    "symptoms": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\symptoms.csv",
+    "mri_reports": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\mri_reports.csv",
+    "interventions": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\interventions.csv",
+    "outcomes": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\outcomes.csv",
+    "temporal_ml_rows": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_breast_journeys_realism_v2\\temporal_ml_rows.csv"
+  },
+  "generation_options": {
+    "seed": 2031,
+    "cycles": 6,
+    "count_requested": 240,
+    "balanced_outcomes": true,
+    "balanced_subgroups": true,
+    "missing_rate": 0.08,
+    "noise_level": 0.05,
+    "realism_profile": "external_calibrated",
+    "toxicity_profile": "realistic",
+    "missingness_mode": "ehr_like",
+    "schema_version": "complete_synthetic_breast_journey_v2"
+  },
+  "warning": "Fully synthetic data for engineering and ML practice only. It is not clinical evidence and must not be used for patient care."
+}

@@ -35,6 +35,9 @@ def generate_complete_synthetic_breast_dataset(
     balanced_subgroups=True,
     missing_rate=0.04,
     noise_level=0.03,
+    realism_profile="balanced",
+    toxicity_profile="default",
+    missingness_mode="mcar",
 ):
     rng = random.Random(seed)
     output_path = Path(output_dir)
@@ -70,6 +73,9 @@ def generate_complete_synthetic_breast_dataset(
             balanced_subgroups=balanced_subgroups,
             missing_rate=missing_rate,
             noise_level=noise_level,
+            realism_profile=realism_profile,
+            toxicity_profile=toxicity_profile,
+            missingness_mode=missingness_mode,
         )
         for table_name, rows in journey.items():
             tables[table_name].extend(rows)
@@ -94,6 +100,9 @@ def generate_complete_synthetic_breast_dataset(
             "balanced_subgroups": balanced_subgroups,
             "missing_rate": missing_rate,
             "noise_level": noise_level,
+            "realism_profile": realism_profile,
+            "toxicity_profile": toxicity_profile,
+            "missingness_mode": missingness_mode,
             "schema_version": "complete_synthetic_breast_journey_v2",
         },
         "warning": (
@@ -133,8 +142,16 @@ def _build_patient_journey(
     balanced_subgroups=True,
     missing_rate=0.04,
     noise_level=0.03,
+    realism_profile="balanced",
+    toxicity_profile="default",
+    missingness_mode="mcar",
 ):
-    profile = _sample_profile(index, rng, balanced_subgroups=balanced_subgroups)
+    profile = _sample_profile(
+        index,
+        rng,
+        balanced_subgroups=balanced_subgroups,
+        realism_profile=realism_profile,
+    )
     start_date = date(2025, 1, 6) + timedelta(days=index * 2)
     diagnosis_date = start_date - timedelta(days=rng.randint(14, 45))
     baseline_size = profile["baseline_tumor_size_cm"]
@@ -196,7 +213,14 @@ def _build_patient_journey(
         pre_lab = _lab_values(pre_wbc, pre_hgb, pre_platelets, rng, noise_level=noise_level)
         tables["labs"].append(_lab_row(patient_id, pre_lab_date, cycle, "pre_cycle", pre_lab, "Pre-cycle CBC"))
 
-        nadir = _cycle_nadir(pre_lab, cycle, response_strength, rng, noise_level=noise_level)
+        nadir = _cycle_nadir(
+            pre_lab,
+            cycle,
+            response_strength,
+            rng,
+            noise_level=noise_level,
+            toxicity_profile=toxicity_profile,
+        )
         dose_delayed = _needs_delay(nadir)
         dose_reduced = _needs_reduction(nadir, cycle)
         if dose_delayed:
@@ -292,7 +316,7 @@ def _build_patient_journey(
             response_strength=response_strength,
         )
         _add_engineered_labels(ml_row, nadir, interventions, symptoms)
-        _apply_missingness(ml_row, rng, missing_rate)
+        _apply_missingness(ml_row, rng, missing_rate, mode=missingness_mode, cycle=cycle)
         tables["temporal_ml_rows"].append(ml_row)
 
     outcome = _final_outcome(patient_id, start_date, cycles, current_size, baseline_size, response_strength, profile, rng)
@@ -312,29 +336,54 @@ def _balanced_response_band(index):
     return bands[(index - 1) % len(bands)]
 
 
-def _sample_profile(index, rng, balanced_subgroups=True):
+def _sample_profile(index, rng, balanced_subgroups=True, realism_profile="balanced"):
     if balanced_subgroups:
         # Keep common patterns common, but force enough HR+/HER2+ and TCHP/endocrine cases
         # so subgroup metrics are visible in the locked synthetic holdout.
-        subtype_cycle = [
-            "HR+/HER2-",
-            "HER2+",
-            "triple-negative",
-            "HR+/HER2+",
-            "HR+/HER2-",
-            "HER2+",
-            "triple-negative",
-            "HR+/HER2+",
-            "HR+/HER2-",
-            "HR+/HER2-",
-        ]
+        if realism_profile == "external_calibrated":
+            # Approximate the small public BreastDCEDL/I-SPY1 feature file:
+            # HR+/HER2- 42%, HER2+ 32%, triple-negative 26%.
+            # We intentionally keep one HR+/HER2+ bucket for workflow coverage even
+            # though the external file groups HER2-positive cases together.
+            subtype_cycle = [
+                "HR+/HER2-",
+                "HER2+",
+                "triple-negative",
+                "HR+/HER2-",
+                "HER2+",
+                "triple-negative",
+                "HR+/HER2-",
+                "HER2+",
+                "HR+/HER2-",
+                "HR+/HER2+",
+            ]
+        else:
+            subtype_cycle = [
+                "HR+/HER2-",
+                "HER2+",
+                "triple-negative",
+                "HR+/HER2+",
+                "HR+/HER2-",
+                "HER2+",
+                "triple-negative",
+                "HR+/HER2+",
+                "HR+/HER2-",
+                "HR+/HER2-",
+            ]
         subtype = subtype_cycle[(index - 1) % len(subtype_cycle)]
     else:
-        subtype = rng.choices(
-            ["HR+/HER2-", "HER2+", "triple-negative", "HR+/HER2+"],
-            weights=[0.45, 0.22, 0.23, 0.10],
-            k=1,
-        )[0]
+        if realism_profile == "external_calibrated":
+            subtype = rng.choices(
+                ["HR+/HER2-", "HER2+", "triple-negative", "HR+/HER2+"],
+                weights=[0.42, 0.27, 0.26, 0.05],
+                k=1,
+            )[0]
+        else:
+            subtype = rng.choices(
+                ["HR+/HER2-", "HER2+", "triple-negative", "HR+/HER2+"],
+                weights=[0.45, 0.22, 0.23, 0.10],
+                k=1,
+            )[0]
     stages = ["IIA", "IIB", "IIIA", "IIIB", "IV"]
     stage = rng.choices(stages, weights=[0.25, 0.30, 0.25, 0.15, 0.05], k=1)[0]
     receptor_map = {
@@ -351,8 +400,15 @@ def _sample_profile(index, rng, balanced_subgroups=True):
     }
     regimen, drugs = regimen_map[subtype]
     er, pr, her2 = receptor_map[subtype]
+    if realism_profile == "external_calibrated":
+        age = int(round(max(28, min(69, rng.gauss(48.3, 8.9)))))
+        baseline_size_cm = round(max(1.9, min(16.6, rng.gauss(6.78, 2.9))), 1)
+    else:
+        age = rng.randint(31, 74)
+        baseline_size_cm = round(rng.uniform(2.1, 7.2), 1)
+
     return {
-        "age": rng.randint(31, 74),
+        "age": age,
         "stage": stage,
         "er_status": er,
         "pr_status": pr,
@@ -360,7 +416,7 @@ def _sample_profile(index, rng, balanced_subgroups=True):
         "subtype": subtype,
         "grade": rng.choice([2, 3, 3]),
         "menopausal_status": rng.choice(["premenopausal", "postmenopausal", "perimenopausal"]),
-        "baseline_tumor_size_cm": round(rng.uniform(2.1, 7.2), 1),
+        "baseline_tumor_size_cm": baseline_size_cm,
         "nodal_status": rng.choice(["N0", "N1", "N1", "N2", "N3"]),
         "treatment_intent": "palliative disease control" if stage == "IV" else "neoadjuvant curative-intent therapy",
         "regimen": regimen,
@@ -408,13 +464,21 @@ def _lab_values(wbc, hemoglobin, platelets, rng, noise_level=0.03):
     }
 
 
-def _cycle_nadir(pre_lab, cycle, response_strength, rng, noise_level=0.03):
+def _cycle_nadir(pre_lab, cycle, response_strength, rng, noise_level=0.03, toxicity_profile="default"):
     toxicity = rng.uniform(0.8, 1.35) + (cycle * 0.05)
     if response_strength > 0.7:
         toxicity += 0.10
-    wbc = max(0.6, pre_lab["wbc"] - rng.uniform(1.5, 3.8) * toxicity)
-    hgb = max(6.8, pre_lab["hemoglobin"] - rng.uniform(0.35, 1.25) * toxicity)
-    platelets = max(25, pre_lab["platelets"] - rng.uniform(30, 120) * toxicity)
+    if toxicity_profile == "realistic":
+        toxicity = rng.uniform(0.58, 1.05) + (cycle * 0.035)
+        if response_strength > 0.7:
+            toxicity += 0.06
+        wbc = max(1.0, pre_lab["wbc"] - rng.uniform(0.7, 2.75) * toxicity)
+        hgb = max(8.2, pre_lab["hemoglobin"] - rng.uniform(0.12, 0.82) * toxicity)
+        platelets = max(70, pre_lab["platelets"] - rng.uniform(12, 82) * toxicity)
+    else:
+        wbc = max(0.6, pre_lab["wbc"] - rng.uniform(1.5, 3.8) * toxicity)
+        hgb = max(6.8, pre_lab["hemoglobin"] - rng.uniform(0.35, 1.25) * toxicity)
+        platelets = max(25, pre_lab["platelets"] - rng.uniform(30, 120) * toxicity)
     return _lab_values(wbc, hgb, platelets, rng, noise_level=noise_level)
 
 
@@ -732,7 +796,7 @@ def _add_engineered_labels(ml_row, nadir, interventions, symptoms):
     ml_row["cycle_response_trend_class"] = trend
 
 
-def _apply_missingness(row, rng, missing_rate):
+def _apply_missingness(row, rng, missing_rate, mode="mcar", cycle=None):
     if missing_rate <= 0:
         return
     optional_columns = [
@@ -746,7 +810,20 @@ def _apply_missingness(row, rng, missing_rate):
         "max_symptom_severity",
     ]
     for column in optional_columns:
-        if rng.random() < missing_rate:
+        probability = missing_rate
+        if mode == "ehr_like":
+            # Simulate non-random clinical documentation: ANC/platelets are more
+            # likely missing in sparse uploads, while later-cycle symptom/MRI rows
+            # are usually more complete after monitoring is established.
+            if "anc" in column:
+                probability *= 1.8
+            elif "platelets" in column:
+                probability *= 1.25
+            elif column.startswith("mri_"):
+                probability *= 0.65 if (cycle or 1) >= 2 else 1.35
+            elif column == "max_symptom_severity":
+                probability *= 0.75 if (cycle or 1) >= 3 else 1.2
+        if rng.random() < min(0.45, probability):
             row[column] = None
 
 

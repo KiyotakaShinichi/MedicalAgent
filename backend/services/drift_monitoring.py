@@ -7,6 +7,8 @@ from statistics import mean
 
 import pandas as pd
 
+from backend.services.artifact_manifest import build_artifact_manifest
+
 
 DEFAULT_OUTPUT_PATH = "Data/evals/drift/latest_drift_report.json"
 DEFAULT_TRAINING_ROWS = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
@@ -55,6 +57,14 @@ def build_drift_report(output_path: str | None = DEFAULT_OUTPUT_PATH) -> dict:
     missing_cbc_rate = _missing_rate(training_rows, lab_features)
 
     payload = {
+        **build_artifact_manifest(
+            dataset_paths={
+                "training_rows": DEFAULT_TRAINING_ROWS,
+                "predictions": DEFAULT_PREDICTIONS,
+                "mri_reports": DEFAULT_MRI_REPORTS,
+                "metrics": DEFAULT_METRICS,
+            },
+        ),
         "schema_version": "drift_report_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "data_source": "synthetic_demo" if _is_synthetic(training_rows) else "mixed_demo",

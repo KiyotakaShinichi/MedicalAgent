@@ -135,7 +135,7 @@ export default function ClinicianDashboard() {
 
               <div className="chat-card-shell clinician-chat-shell">
                 <div className="chat-card-title">Patient chat</div>
-                <div style={{ height: "calc(100% - 42px)" }}>
+                <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
                   <ChatPanel
                     messages={patientReport.chat_history ?? []}
                     onSend={async (text) => {

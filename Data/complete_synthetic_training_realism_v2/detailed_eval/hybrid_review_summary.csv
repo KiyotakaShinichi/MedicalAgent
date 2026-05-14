@@ -1,0 +1,4 @@
+hybrid_review_category,patients,mean_hybrid_score,mean_probability,mean_response_score,toxicity_rule_rate,response_review_rule_rate,patient_rate
+routine_monitoring,33,99.722,1.0,63.878,0.0,0.0,0.55
+response_trend_review,16,9.903,0.0,-21.706,0.0,1.0,0.267
+discordant_signal_review,11,31.277,0.0,40.988,0.0,1.0,0.183

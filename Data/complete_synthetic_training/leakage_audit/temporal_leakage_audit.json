@@ -1,8 +1,8 @@
 {
   "schema_version": "temporal_leakage_audit_v1",
-  "generated_at": "2026-05-08T11:30:57.808526+00:00",
+  "generated_at": "2026-05-14T10:25:51.836832+00:00",
   "status": "passed",
-  "training_rows_path": "Data/complete_synthetic_training/locked_holdout/development_rows.csv",
+  "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
   "feature_columns": [
     "cycle",
     "age",

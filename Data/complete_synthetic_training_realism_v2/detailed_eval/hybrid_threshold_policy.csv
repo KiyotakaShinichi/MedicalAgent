@@ -1,0 +1,6 @@
+rule_order,category,condition,reason
+1,toxicity_review,(max_symptom_severity >= 8 AND (nadir_wbc < 1.0 OR nadir_anc < 0.5)) OR nadir_wbc < 0.5 OR nadir_anc < 0.2 OR nadir_platelets < 50,Only severe CBC/symptom patterns override favorable ML signal; routine chemo nadirs should not dominate every route.
+2,discordant_signal_review,classification band conflicts with regression band,Classifier and continuous response estimate disagree.
+3,response_trend_review,hybrid_score < 55 OR latest_mri_percent_change > -20,Lower or weak response signal needs review.
+4,watch_closely,55 <= hybrid_score < 75,Mixed signal; monitor closely.
+5,routine_monitoring,hybrid_score >= 75 and no override rules,Favorable synthetic monitoring signal with no major rule trigger.

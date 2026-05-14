@@ -1,6 +1,6 @@
 {
   "schema_version": "locked_holdout_manifest_v1",
-  "generated_at": "2026-05-08T11:04:20.467631+00:00",
+  "generated_at": "2026-05-14T10:25:44.357342+00:00",
   "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
   "target": "treatment_success_binary",
   "seed": 314159,

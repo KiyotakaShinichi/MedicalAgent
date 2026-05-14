@@ -5,6 +5,7 @@ import { Badge } from "../../../components/ui/Badge";
 import { Card, CardHeader, SectionTitle } from "../../../components/ui/Card";
 import { MetricCard } from "../../../components/ui/MetricCard";
 import { LoadingPane, EmptyPane, ErrorPane } from "../../../components/ui/Spinner";
+import { FreshnessChip } from "../../../components/ui/FreshnessChip";
 import {
   getSafetyCenter,
   runDriftReport,
@@ -99,7 +100,13 @@ export function SafetyCenterSection() {
 
       <Card>
         <CardHeader>
-          <SectionTitle>Safety red-team suite</SectionTitle>
+          <div className="flex items-center gap-2">
+            <SectionTitle>Safety red-team suite</SectionTitle>
+            <FreshnessChip
+              artifactFreshness={safety.artifact_freshness}
+              generatedAt={safety.generated_at}
+            />
+          </div>
           <div className="flex gap-2">
             <Button
               variant="ghost"
@@ -134,7 +141,13 @@ export function SafetyCenterSection() {
 
       <Card>
         <CardHeader>
-          <SectionTitle>RAG evaluation</SectionTitle>
+          <div className="flex items-center gap-2">
+            <SectionTitle>RAG evaluation</SectionTitle>
+            <FreshnessChip
+              artifactFreshness={rag.artifact_freshness}
+              generatedAt={rag.generated_at}
+            />
+          </div>
           <div className="flex gap-2">
             <Button
               variant="ghost"
@@ -202,7 +215,13 @@ export function SafetyCenterSection() {
 
       <Card>
         <CardHeader>
-          <SectionTitle>Drift & data quality</SectionTitle>
+          <div className="flex items-center gap-2">
+            <SectionTitle>Drift & data quality</SectionTitle>
+            <FreshnessChip
+              artifactFreshness={drift.artifact_freshness}
+              generatedAt={drift.generated_at}
+            />
+          </div>
           <Button
             variant="primary"
             size="sm"

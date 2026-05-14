@@ -530,4 +530,55 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": build_sim_to_public_imaging_report(output_path=DEFAULT_OUTPUT_PATH),
         }
 
+    @router.get("/admin/chat-latency-report")
+    def get_admin_chat_latency_report_endpoint(
+        context=Depends(get_admin_access_context),
+        db: Session = Depends(get_db),
+    ):
+        """Return cached/derived support-agent latency observability report."""
+        from backend.services.chat_latency_report import build_chat_latency_report
+
+        return build_chat_latency_report(db=db)
+
+    @router.post("/admin/chat-latency-report")
+    def run_admin_chat_latency_report_endpoint(
+        context=Depends(get_admin_access_context),
+        db: Session = Depends(get_db),
+    ):
+        """Rebuild support-agent latency report from trace logs."""
+        from backend.services.chat_latency_report import build_chat_latency_report
+
+        return {"message": "Chat latency report completed.", "result": build_chat_latency_report(db=db)}
+
+    @router.post("/admin/ai-ml-narrative-report")
+    def run_admin_ai_ml_narrative_report_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Generate a human-readable AI/ML evaluation narrative artifact."""
+        from backend.services.evaluation_narrative_report import build_ai_ml_narrative_report
+
+        return {"message": "AI/ML narrative report generated.", "result": build_ai_ml_narrative_report()}
+
+    @router.post("/admin/demo-storyline")
+    def run_admin_demo_storyline_endpoint(
+        patient_id: str = "P001",
+        context=Depends(get_admin_access_context),
+    ):
+        """Generate a repeatable demo storyline for a patient journey."""
+        from backend.services.demo_storyline import build_demo_storyline
+
+        return {"message": "Demo storyline generated.", "result": build_demo_storyline(patient_id=patient_id)}
+
+    @router.post("/admin/current-vs-realism-candidate")
+    def run_admin_current_vs_realism_candidate_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Compare the current synthetic champion with the realism-calibrated candidate."""
+        from backend.services.candidate_model_comparison import build_current_vs_candidate_report
+
+        return {
+            "message": "Current-vs-candidate comparison generated.",
+            "result": build_current_vs_candidate_report(),
+        }
+
     return router

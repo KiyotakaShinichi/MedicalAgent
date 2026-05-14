@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from backend.database import Base
 from backend.models import Patient
 from backend.services.agent_rag import rewrite_and_decompose, run_patient_agent_pipeline
+from backend.services.artifact_manifest import build_artifact_manifest
 
 
 DEFAULT_OUTPUT_PATH = "Data/evals/rag/latest_rag_eval.json"
@@ -36,6 +37,9 @@ def run_rag_eval_suite(
         ]
         summary = _summary(results)
         payload = {
+            **build_artifact_manifest(
+                dataset_paths={"rag_cases": DEFAULT_CASES_PATH},
+            ),
             "schema_version": "rag_eval_suite_v2",
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "purpose": "RAG regression eval: citation coverage, grounding/hallucination heuristics, refusal/escalation correctness, insufficient-evidence handling, unsafe-answer detection, rewrite quality.",

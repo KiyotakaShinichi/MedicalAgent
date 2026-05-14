@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from backend.services.app_logging import build_app_monitoring_summary
+from backend.services.artifact_manifest import freshness_status
 from backend.services.clinician_feedback import clinical_feedback_summary
 from backend.services.drift_monitoring import DEFAULT_OUTPUT_PATH as DRIFT_OUTPUT_PATH
 from backend.services.failure_case_gallery import load_failure_case_gallery
@@ -49,6 +50,15 @@ def build_safety_evaluation_center(db) -> dict:
 
 
 def _load_artifact(path: str) -> dict:
+    """Load an eval artifact and stamp it with a freshness status.
+
+    The returned payload always carries an ``artifact_freshness`` block
+    with ``status`` set to ``"fresh"``, ``"stale"``, or ``"unknown"`` so
+    the dashboard can show a freshness chip without parsing timestamps
+    itself. When the artifact was written by a current-generation runner
+    it already carries that block. We only flip ``status`` to ``"stale"``
+    if the ``generated_at`` is older than the TTL.
+    """
     artifact_path = Path(path)
     if not artifact_path.exists():
         return {
@@ -57,13 +67,29 @@ def _load_artifact(path: str) -> dict:
             "path": path,
         }
     try:
-        return json.loads(artifact_path.read_text(encoding="utf-8"))
+        payload = json.loads(artifact_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
         return {
             "status": "error",
             "message": f"Artifact could not be parsed: {path}",
             "path": path,
         }
+
+    generated_at = (payload.get("generated_at")
+                    or (payload.get("artifact_freshness") or {}).get("generated_at"))
+    freshness_block = payload.get("artifact_freshness") or {}
+    ttl_seconds = freshness_block.get("ttl_seconds")
+    try:
+        ttl_seconds = int(ttl_seconds)
+    except (TypeError, ValueError):
+        ttl_seconds = None
+
+    payload["artifact_freshness"] = {
+        **freshness_block,
+        "generated_at": generated_at,
+        "status": freshness_status(generated_at, ttl_seconds=ttl_seconds) if ttl_seconds else freshness_status(generated_at),
+    }
+    return payload
 
 
 def _category_summary(safety_red_team: dict, categories: list[str]) -> dict:

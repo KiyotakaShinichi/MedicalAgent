@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "../../components/layout/AppShell";
 import { useApi } from "../../hooks/useApi";
 import { getMyReport, sendMyChat, getMyChatHistory } from "../../api/client";
-import { LoadingPane, ErrorPane } from "../../components/ui/Spinner";
+import { ErrorPane } from "../../components/ui/Spinner";
+import { SkeletonDashboard } from "../../components/ui/Skeleton";
 import { PatientBanner } from "./PatientBanner";
 import { AiSummaryPanel } from "./AiSummaryPanel";
 import { LabsPanel } from "./LabsPanel";
@@ -47,37 +48,41 @@ export default function PatientDashboard() {
       title="Patient Portal"
       subtitle={report?.patient_name ?? patientId ?? ""}
     >
-      {status === "loading" && <LoadingPane label="Loading your records..." />}
+      {status === "loading" && <SkeletonDashboard label="Loading your records..." />}
       {status === "error"   && <ErrorPane message={error ?? "Failed to load"} />}
       {status === "success" && report && (
         <div className="dashboard-page">
           <PatientBanner report={report} />
 
           <div className="dashboard-tabbar">
-            {tabs.map(({ id, label }) => (
-              <button
-                key={id}
-                onClick={() => {
-                  setManualTab(id);
-                  navigate(id === "chat" ? "/patient/chat" : "/patient");
-                }}
-                className={tab === id ? "is-active" : undefined}
-              >
-                {label}
-              </button>
-            ))}
+            <div className="dashboard-tabbar-inner">
+              {tabs.map(({ id, label }) => (
+                <button
+                  key={id}
+                  onClick={() => {
+                    setManualTab(id);
+                    navigate(id === "chat" ? "/patient/chat" : "/patient");
+                  }}
+                  className={tab === id ? "is-active" : undefined}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {tab === "overview" && (
             <div className="dashboard-content dashboard-grid">
-              <div className="xl:col-span-2">
+              <div className="dashboard-grid-full">
                 <AiSummaryPanel summary={report.ai_summary ?? null} />
               </div>
               <LabsPanel report={report} />
               <ModelSignalPanel report={report} />
               <TimelinePanel events={report.timeline ?? []} />
               <SymptomsTable symptoms={report.symptoms ?? []} />
-              <MedLogPanel meds={report.medication_logs ?? []} />
+              <div className="dashboard-grid-full">
+                <MedLogPanel meds={report.medication_logs ?? []} />
+              </div>
             </div>
           )}
 

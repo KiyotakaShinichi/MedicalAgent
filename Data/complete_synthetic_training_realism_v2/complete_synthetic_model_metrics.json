@@ -1,0 +1,1722 @@
+{
+  "task": "treatment_success_binary",
+  "source_csv": "Data\\complete_synthetic_breast_journeys_realism_v2\\temporal_ml_rows.csv",
+  "rows": 1440,
+  "patients": 240,
+  "train_patients": 180,
+  "test_patients": 60,
+  "train_rows": 1080,
+  "test_rows": 360,
+  "features": {
+    "numeric": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced"
+    ],
+    "categorical": [
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "excluded": [
+      "cycle_response_trend_class",
+      "final_cancer_status",
+      "final_response_category",
+      "final_response_multiclass",
+      "latent_response_strength",
+      "maintenance_needed",
+      "patient_id",
+      "response_score_percent",
+      "support_intervention_needed",
+      "toxicity_risk_binary",
+      "treatment_date",
+      "treatment_success_binary",
+      "urgent_intervention_needed"
+    ],
+    "response_regression_target": "response_score_percent"
+  },
+  "models": {
+    "logistic_regression": {
+      "accuracy": 0.889,
+      "balanced_accuracy": 0.89,
+      "f1": 0.897,
+      "precision": 0.916,
+      "sensitivity": 0.879,
+      "specificity": 0.901,
+      "brier_score": 0.09,
+      "calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0905,
+          "ece": 0.0694
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.0852,
+          "ece": 0.049
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "confusion_matrix": {
+        "true_negative": 146,
+        "false_positive": 16,
+        "false_negative": 24,
+        "true_positive": 174
+      },
+      "roc_auc": 0.95,
+      "average_precision": 0.95,
+      "patient_level_accuracy": 0.933,
+      "patient_level_balanced_accuracy": 0.936,
+      "patient_level_f1": 0.938,
+      "patient_level_precision": 0.968,
+      "patient_level_sensitivity": 0.909,
+      "patient_level_specificity": 0.963,
+      "patient_level_brier_score": 0.065,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0652,
+          "ece": 0.1302
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.0438,
+          "ece": 0.0684
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 26,
+        "false_positive": 1,
+        "false_negative": 3,
+        "true_positive": 30
+      },
+      "patient_level_roc_auc": 0.99,
+      "patient_level_average_precision": 0.992,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "random_forest": {
+      "accuracy": 0.842,
+      "balanced_accuracy": 0.839,
+      "f1": 0.858,
+      "precision": 0.847,
+      "sensitivity": 0.869,
+      "specificity": 0.809,
+      "brier_score": 0.134,
+      "calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.1336,
+          "ece": 0.1435
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.112,
+          "ece": 0.0581
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "confusion_matrix": {
+        "true_negative": 131,
+        "false_positive": 31,
+        "false_negative": 26,
+        "true_positive": 172
+      },
+      "roc_auc": 0.921,
+      "average_precision": 0.931,
+      "patient_level_accuracy": 0.933,
+      "patient_level_balanced_accuracy": 0.929,
+      "patient_level_f1": 0.941,
+      "patient_level_precision": 0.914,
+      "patient_level_sensitivity": 0.97,
+      "patient_level_specificity": 0.889,
+      "patient_level_brier_score": 0.123,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.1233,
+          "ece": 0.2498
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.0828,
+          "ece": 0.1462
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 24,
+        "false_positive": 3,
+        "false_negative": 1,
+        "true_positive": 32
+      },
+      "patient_level_roc_auc": 0.963,
+      "patient_level_average_precision": 0.963,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "extra_trees": {
+      "accuracy": 0.775,
+      "balanced_accuracy": 0.768,
+      "f1": 0.804,
+      "precision": 0.772,
+      "sensitivity": 0.838,
+      "specificity": 0.698,
+      "brier_score": 0.179,
+      "calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.1793,
+          "ece": 0.1456
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.1588,
+          "ece": 0.0767
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "confusion_matrix": {
+        "true_negative": 113,
+        "false_positive": 49,
+        "false_negative": 32,
+        "true_positive": 166
+      },
+      "roc_auc": 0.856,
+      "average_precision": 0.892,
+      "patient_level_accuracy": 0.817,
+      "patient_level_balanced_accuracy": 0.81,
+      "patient_level_f1": 0.841,
+      "patient_level_precision": 0.806,
+      "patient_level_sensitivity": 0.879,
+      "patient_level_specificity": 0.741,
+      "patient_level_brier_score": 0.175,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.1747,
+          "ece": 0.1989
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.1435,
+          "ece": 0.1354
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 20,
+        "false_positive": 7,
+        "false_negative": 4,
+        "true_positive": 29
+      },
+      "patient_level_roc_auc": 0.901,
+      "patient_level_average_precision": 0.928,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "gradient_boosting": {
+      "accuracy": 0.919,
+      "balanced_accuracy": 0.921,
+      "f1": 0.925,
+      "precision": 0.947,
+      "sensitivity": 0.904,
+      "specificity": 0.938,
+      "brier_score": 0.059,
+      "calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0587,
+          "ece": 0.0453
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.6,
+          "brier_score": 0.0556,
+          "ece": 0.0344
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "confusion_matrix": {
+        "true_negative": 152,
+        "false_positive": 10,
+        "false_negative": 19,
+        "true_positive": 179
+      },
+      "roc_auc": 0.981,
+      "average_precision": 0.985,
+      "patient_level_accuracy": 0.95,
+      "patient_level_balanced_accuracy": 0.951,
+      "patient_level_f1": 0.954,
+      "patient_level_precision": 0.969,
+      "patient_level_sensitivity": 0.939,
+      "patient_level_specificity": 0.963,
+      "patient_level_brier_score": 0.044,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0435,
+          "ece": 0.0961
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.0295,
+          "ece": 0.0559
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 26,
+        "false_positive": 1,
+        "false_negative": 2,
+        "true_positive": 31
+      },
+      "patient_level_roc_auc": 0.994,
+      "patient_level_average_precision": 0.996,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "svm_rbf": {
+      "accuracy": 0.769,
+      "balanced_accuracy": 0.766,
+      "f1": 0.792,
+      "precision": 0.786,
+      "sensitivity": 0.798,
+      "specificity": 0.735,
+      "brier_score": 0.158,
+      "calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.1583,
+          "ece": 0.1128
+        },
+        "after_temperature_scaling": {
+          "temperature": 2.1,
+          "brier_score": 0.143,
+          "ece": 0.0612
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "confusion_matrix": {
+        "true_negative": 119,
+        "false_positive": 43,
+        "false_negative": 40,
+        "true_positive": 158
+      },
+      "roc_auc": 0.875,
+      "average_precision": 0.891,
+      "patient_level_accuracy": 0.8,
+      "patient_level_balanced_accuracy": 0.798,
+      "patient_level_f1": 0.818,
+      "patient_level_precision": 0.818,
+      "patient_level_sensitivity": 0.818,
+      "patient_level_specificity": 0.778,
+      "patient_level_brier_score": 0.126,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.1258,
+          "ece": 0.0707
+        },
+        "after_temperature_scaling": {
+          "temperature": 1.1,
+          "brier_score": 0.1257,
+          "ece": 0.0859
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 21,
+        "false_positive": 6,
+        "false_negative": 6,
+        "true_positive": 27
+      },
+      "patient_level_roc_auc": 0.899,
+      "patient_level_average_precision": 0.9,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "mlp": {
+      "accuracy": 0.756,
+      "balanced_accuracy": 0.755,
+      "f1": 0.774,
+      "precision": 0.786,
+      "sensitivity": 0.763,
+      "specificity": 0.747,
+      "brier_score": 0.224,
+      "calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.2241,
+          "ece": 0.2256
+        },
+        "after_temperature_scaling": {
+          "temperature": 3.0,
+          "brier_score": 0.1794,
+          "ece": 0.1481
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "confusion_matrix": {
+        "true_negative": 121,
+        "false_positive": 41,
+        "false_negative": 47,
+        "true_positive": 151
+      },
+      "roc_auc": 0.864,
+      "average_precision": 0.888,
+      "patient_level_accuracy": 0.817,
+      "patient_level_balanced_accuracy": 0.813,
+      "patient_level_f1": 0.836,
+      "patient_level_precision": 0.824,
+      "patient_level_sensitivity": 0.848,
+      "patient_level_specificity": 0.778,
+      "patient_level_brier_score": 0.155,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.1545,
+          "ece": 0.1814
+        },
+        "after_temperature_scaling": {
+          "temperature": 1.1,
+          "brier_score": 0.1544,
+          "ece": 0.1896
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 21,
+        "false_positive": 6,
+        "false_negative": 5,
+        "true_positive": 28
+      },
+      "patient_level_roc_auc": 0.865,
+      "patient_level_average_precision": 0.909,
+      "model_type": "cycle_tabular_classifier"
+    },
+    "temporal_baseline_cnn": {
+      "patient_level_accuracy": 0.767,
+      "patient_level_balanced_accuracy": 0.764,
+      "patient_level_f1": 0.788,
+      "patient_level_precision": 0.788,
+      "patient_level_sensitivity": 0.788,
+      "patient_level_specificity": 0.741,
+      "patient_level_brier_score": 0.223,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.2229,
+          "ece": 0.2248
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.2023,
+          "ece": 0.1846
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 20,
+        "false_positive": 7,
+        "false_negative": 7,
+        "true_positive": 26
+      },
+      "patient_level_roc_auc": 0.833,
+      "patient_level_average_precision": 0.85,
+      "model_type": "patient_sequence_temporal_baseline_cnn",
+      "epochs": 2,
+      "batch_size": 16,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.5984,
+          "accuracy": 0.683,
+          "balanced_accuracy": 0.685,
+          "f1": 0.698,
+          "precision": 0.733,
+          "sensitivity": 0.667,
+          "specificity": 0.704,
+          "brier_score": 0.237,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.2375,
+              "ece": 0.1534
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.2282,
+              "ece": 0.1242
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 19,
+            "false_positive": 8,
+            "false_negative": 11,
+            "true_positive": 22
+          },
+          "roc_auc": 0.715,
+          "average_precision": 0.73
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.5652,
+          "accuracy": 0.767,
+          "balanced_accuracy": 0.764,
+          "f1": 0.788,
+          "precision": 0.788,
+          "sensitivity": 0.788,
+          "specificity": 0.741,
+          "brier_score": 0.223,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.2229,
+              "ece": 0.2248
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.2023,
+              "ece": 0.1846
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 20,
+            "false_positive": 7,
+            "false_negative": 7,
+            "true_positive": 26
+          },
+          "roc_auc": 0.833,
+          "average_precision": 0.85
+        }
+      ],
+      "learning_curve": [
+        {
+          "epoch": 1,
+          "train_loss": 0.5984,
+          "accuracy": 0.683,
+          "balanced_accuracy": 0.685,
+          "f1": 0.698,
+          "precision": 0.733,
+          "sensitivity": 0.667,
+          "specificity": 0.704,
+          "brier_score": 0.237,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.2375,
+              "ece": 0.1534
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.2282,
+              "ece": 0.1242
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 19,
+            "false_positive": 8,
+            "false_negative": 11,
+            "true_positive": 22
+          },
+          "roc_auc": 0.715,
+          "average_precision": 0.73
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.5652,
+          "accuracy": 0.767,
+          "balanced_accuracy": 0.764,
+          "f1": 0.788,
+          "precision": 0.788,
+          "sensitivity": 0.788,
+          "specificity": 0.741,
+          "brier_score": 0.223,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.2229,
+              "ece": 0.2248
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.2023,
+              "ece": 0.1846
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 20,
+            "false_positive": 7,
+            "false_negative": 7,
+            "true_positive": 26
+          },
+          "roc_auc": 0.833,
+          "average_precision": 0.85
+        }
+      ],
+      "false_negative_examples": [
+        {
+          "patient_id": "REALISM-BRCA-0110",
+          "actual_label": 1,
+          "predicted_probability": 0.499471,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0085",
+          "actual_label": 1,
+          "predicted_probability": 0.496647,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0160",
+          "actual_label": 1,
+          "predicted_probability": 0.49514,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0001",
+          "actual_label": 1,
+          "predicted_probability": 0.491573,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0239",
+          "actual_label": 1,
+          "predicted_probability": 0.483833,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0023",
+          "actual_label": 1,
+          "predicted_probability": 0.473612,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0161",
+          "actual_label": 1,
+          "predicted_probability": 0.448136,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        }
+      ],
+      "temporal_saliency_examples": [
+        {
+          "patient_id": "REALISM-BRCA-0001",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.1015
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.1541
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1705
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.164
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.1963
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.2136
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0004",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.0873
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.1197
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1258
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1732
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2409
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.2531
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0005",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.1692
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.2038
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1393
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.0958
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.1931
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.1989
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0007",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.1417
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.1616
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1419
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1867
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2093
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.1588
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0008",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.105
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.186
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1664
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1946
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.169
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.1791
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        }
+      ]
+    },
+    "temporal_1d_cnn": {
+      "patient_level_accuracy": 0.833,
+      "patient_level_balanced_accuracy": 0.838,
+      "patient_level_f1": 0.839,
+      "patient_level_precision": 0.897,
+      "patient_level_sensitivity": 0.788,
+      "patient_level_specificity": 0.889,
+      "patient_level_brier_score": 0.182,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.1819,
+          "ece": 0.223
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.1509,
+          "ece": 0.2368
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 24,
+        "false_positive": 3,
+        "false_negative": 7,
+        "true_positive": 26
+      },
+      "patient_level_roc_auc": 0.886,
+      "patient_level_average_precision": 0.867,
+      "model_type": "patient_sequence_temporal_1d_cnn",
+      "epochs": 2,
+      "batch_size": 16,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.5836,
+          "accuracy": 0.683,
+          "balanced_accuracy": 0.705,
+          "f1": 0.627,
+          "precision": 0.889,
+          "sensitivity": 0.485,
+          "specificity": 0.926,
+          "brier_score": 0.229,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.2294,
+              "ece": 0.1451
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.2143,
+              "ece": 0.2306
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 25,
+            "false_positive": 2,
+            "false_negative": 17,
+            "true_positive": 16
+          },
+          "roc_auc": 0.863,
+          "average_precision": 0.872
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.4796,
+          "accuracy": 0.833,
+          "balanced_accuracy": 0.838,
+          "f1": 0.839,
+          "precision": 0.897,
+          "sensitivity": 0.788,
+          "specificity": 0.889,
+          "brier_score": 0.182,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.1819,
+              "ece": 0.223
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.1509,
+              "ece": 0.2368
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 24,
+            "false_positive": 3,
+            "false_negative": 7,
+            "true_positive": 26
+          },
+          "roc_auc": 0.886,
+          "average_precision": 0.867
+        }
+      ],
+      "learning_curve": [
+        {
+          "epoch": 1,
+          "train_loss": 0.5836,
+          "accuracy": 0.683,
+          "balanced_accuracy": 0.705,
+          "f1": 0.627,
+          "precision": 0.889,
+          "sensitivity": 0.485,
+          "specificity": 0.926,
+          "brier_score": 0.229,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.2294,
+              "ece": 0.1451
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.2143,
+              "ece": 0.2306
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 25,
+            "false_positive": 2,
+            "false_negative": 17,
+            "true_positive": 16
+          },
+          "roc_auc": 0.863,
+          "average_precision": 0.872
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.4796,
+          "accuracy": 0.833,
+          "balanced_accuracy": 0.838,
+          "f1": 0.839,
+          "precision": 0.897,
+          "sensitivity": 0.788,
+          "specificity": 0.889,
+          "brier_score": 0.182,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.1819,
+              "ece": 0.223
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.1509,
+              "ece": 0.2368
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 24,
+            "false_positive": 3,
+            "false_negative": 7,
+            "true_positive": 26
+          },
+          "roc_auc": 0.886,
+          "average_precision": 0.867
+        }
+      ],
+      "false_negative_examples": [
+        {
+          "patient_id": "REALISM-BRCA-0061",
+          "actual_label": 1,
+          "predicted_probability": 0.497769,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0210",
+          "actual_label": 1,
+          "predicted_probability": 0.485166,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0184",
+          "actual_label": 1,
+          "predicted_probability": 0.471104,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0160",
+          "actual_label": 1,
+          "predicted_probability": 0.463667,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0085",
+          "actual_label": 1,
+          "predicted_probability": 0.436831,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0005",
+          "actual_label": 1,
+          "predicted_probability": 0.368334,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0023",
+          "actual_label": 1,
+          "predicted_probability": 0.351995,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        }
+      ],
+      "temporal_saliency_examples": [
+        {
+          "patient_id": "REALISM-BRCA-0001",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.1149
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.1601
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1603
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1607
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2043
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.1998
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0004",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.0985
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.1494
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1828
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1954
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.1609
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.213
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0005",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.1783
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.2278
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1877
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1424
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.1579
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.1059
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0007",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.1516
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.1557
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1041
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1461
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2547
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.1877
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0008",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.114
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.1514
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.1689
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.2033
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2063
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.1561
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        }
+      ]
+    },
+    "temporal_gru": {
+      "patient_level_accuracy": 0.8,
+      "patient_level_balanced_accuracy": 0.791,
+      "patient_level_f1": 0.829,
+      "patient_level_precision": 0.784,
+      "patient_level_sensitivity": 0.879,
+      "patient_level_specificity": 0.704,
+      "patient_level_brier_score": 0.209,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.2089,
+          "ece": 0.2427
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.1786,
+          "ece": 0.1886
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 19,
+        "false_positive": 8,
+        "false_negative": 4,
+        "true_positive": 29
+      },
+      "patient_level_roc_auc": 0.911,
+      "patient_level_average_precision": 0.931,
+      "model_type": "patient_sequence_temporal_gru",
+      "epochs": 2,
+      "batch_size": 16,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.6146,
+          "accuracy": 0.65,
+          "balanced_accuracy": 0.628,
+          "f1": 0.727,
+          "precision": 0.636,
+          "sensitivity": 0.848,
+          "specificity": 0.407,
+          "brier_score": 0.234,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.234,
+              "ece": 0.1109
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.2231,
+              "ece": 0.108
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 11,
+            "false_positive": 16,
+            "false_negative": 5,
+            "true_positive": 28
+          },
+          "roc_auc": 0.741,
+          "average_precision": 0.792
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.5711,
+          "accuracy": 0.8,
+          "balanced_accuracy": 0.791,
+          "f1": 0.829,
+          "precision": 0.784,
+          "sensitivity": 0.879,
+          "specificity": 0.704,
+          "brier_score": 0.209,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.2089,
+              "ece": 0.2427
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.1786,
+              "ece": 0.1886
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 19,
+            "false_positive": 8,
+            "false_negative": 4,
+            "true_positive": 29
+          },
+          "roc_auc": 0.911,
+          "average_precision": 0.931
+        }
+      ],
+      "learning_curve": [
+        {
+          "epoch": 1,
+          "train_loss": 0.6146,
+          "accuracy": 0.65,
+          "balanced_accuracy": 0.628,
+          "f1": 0.727,
+          "precision": 0.636,
+          "sensitivity": 0.848,
+          "specificity": 0.407,
+          "brier_score": 0.234,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.234,
+              "ece": 0.1109
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.2231,
+              "ece": 0.108
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 11,
+            "false_positive": 16,
+            "false_negative": 5,
+            "true_positive": 28
+          },
+          "roc_auc": 0.741,
+          "average_precision": 0.792
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.5711,
+          "accuracy": 0.8,
+          "balanced_accuracy": 0.791,
+          "f1": 0.829,
+          "precision": 0.784,
+          "sensitivity": 0.879,
+          "specificity": 0.704,
+          "brier_score": 0.209,
+          "calibration": {
+            "before_temperature_scaling": {
+              "brier_score": 0.2089,
+              "ece": 0.2427
+            },
+            "after_temperature_scaling": {
+              "temperature": 0.5,
+              "brier_score": 0.1786,
+              "ece": 0.1886
+            },
+            "method": "posthoc_temperature_grid_on_evaluation_split"
+          },
+          "confusion_matrix": {
+            "true_negative": 19,
+            "false_positive": 8,
+            "false_negative": 4,
+            "true_positive": 29
+          },
+          "roc_auc": 0.911,
+          "average_precision": 0.931
+        }
+      ],
+      "false_negative_examples": [
+        {
+          "patient_id": "REALISM-BRCA-0023",
+          "actual_label": 1,
+          "predicted_probability": 0.49071,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0028",
+          "actual_label": 1,
+          "predicted_probability": 0.490612,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0085",
+          "actual_label": 1,
+          "predicted_probability": 0.489829,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0005",
+          "actual_label": 1,
+          "predicted_probability": 0.484197,
+          "review_note": "Synthetic false-negative example for error analysis; not a clinical miss."
+        }
+      ],
+      "temporal_saliency_examples": [
+        {
+          "patient_id": "REALISM-BRCA-0001",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.0438
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.0486
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.0835
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.101
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2651
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.4581
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0004",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.0321
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.0557
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.0769
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1274
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2109
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.497
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0005",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.0444
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.07
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.0894
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1164
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2341
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.4457
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0007",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.0428
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.0495
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.0529
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1479
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.2953
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.4116
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        },
+        {
+          "patient_id": "REALISM-BRCA-0008",
+          "cycle_saliency": [
+            {
+              "cycle": 1,
+              "relative_saliency": 0.0465
+            },
+            {
+              "cycle": 2,
+              "relative_saliency": 0.0674
+            },
+            {
+              "cycle": 3,
+              "relative_saliency": 0.0842
+            },
+            {
+              "cycle": 4,
+              "relative_saliency": 0.1312
+            },
+            {
+              "cycle": 5,
+              "relative_saliency": 0.238
+            },
+            {
+              "cycle": 6,
+              "relative_saliency": 0.4328
+            }
+          ],
+          "method": "absolute gradient times input aggregated by treatment cycle",
+          "safety": "Simple temporal model-behavior explanation on synthetic data, not clinical causality."
+        }
+      ]
+    }
+  },
+  "response_regression": {
+    "status": "trained",
+    "task": "response_score_regression",
+    "target": "response_score_percent",
+    "models": {
+      "ridge_regression": {
+        "mae": 2.309,
+        "rmse": 5.412,
+        "r2": 0.952,
+        "patient_level_mae": 2.903,
+        "patient_level_rmse": 6.827,
+        "patient_level_r2": 0.969,
+        "model_type": "cycle_tabular_regressor",
+        "target": "response_score_percent",
+        "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator."
+      },
+      "random_forest_regressor": {
+        "mae": 0.781,
+        "rmse": 3.516,
+        "r2": 0.98,
+        "patient_level_mae": 1.007,
+        "patient_level_rmse": 3.868,
+        "patient_level_r2": 0.99,
+        "model_type": "cycle_tabular_regressor",
+        "target": "response_score_percent",
+        "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator."
+      },
+      "extra_trees_regressor": {
+        "mae": 1.279,
+        "rmse": 4.283,
+        "r2": 0.97,
+        "patient_level_mae": 1.485,
+        "patient_level_rmse": 4.967,
+        "patient_level_r2": 0.984,
+        "model_type": "cycle_tabular_regressor",
+        "target": "response_score_percent",
+        "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator."
+      },
+      "gradient_boosting_regressor": {
+        "mae": 1.807,
+        "rmse": 5.328,
+        "r2": 0.953,
+        "patient_level_mae": 2.214,
+        "patient_level_rmse": 5.603,
+        "patient_level_r2": 0.979,
+        "model_type": "cycle_tabular_regressor",
+        "target": "response_score_percent",
+        "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator."
+      },
+      "gradient_boosting_huber_regressor": {
+        "mae": 1.316,
+        "rmse": 5.072,
+        "r2": 0.958,
+        "patient_level_mae": 2.108,
+        "patient_level_rmse": 7.909,
+        "patient_level_r2": 0.958,
+        "model_type": "cycle_tabular_regressor",
+        "target": "response_score_percent",
+        "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator."
+      },
+      "huber_regressor": {
+        "mae": 1.064,
+        "rmse": 5.423,
+        "r2": 0.952,
+        "patient_level_mae": 1.279,
+        "patient_level_rmse": 7.029,
+        "patient_level_r2": 0.967,
+        "model_type": "cycle_tabular_regressor",
+        "target": "response_score_percent",
+        "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator."
+      },
+      "svr_rbf_regressor": {
+        "mae": 7.271,
+        "rmse": 11.253,
+        "r2": 0.791,
+        "patient_level_mae": 15.661,
+        "patient_level_rmse": 20.676,
+        "patient_level_r2": 0.715,
+        "model_type": "cycle_tabular_regressor",
+        "target": "response_score_percent",
+        "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator."
+      },
+      "robust_response_ensemble": {
+        "mae": 0.882,
+        "rmse": 4.141,
+        "r2": 0.972,
+        "patient_level_mae": 1.188,
+        "patient_level_rmse": 5.199,
+        "patient_level_r2": 0.982,
+        "model_type": "cycle_tabular_regressor_ensemble",
+        "target": "response_score_percent",
+        "members": [
+          "random_forest_regressor",
+          "extra_trees_regressor",
+          "gradient_boosting_regressor",
+          "gradient_boosting_huber_regressor",
+          "huber_regressor"
+        ],
+        "selection_note": "Median ensemble over tree and robust linear regressors. Selected with an outlier-aware score that combines MAE and RMSE.",
+        "interpretation": "Positive values estimate tumor-size reduction percent; negative values indicate growth/progression signal in the synthetic simulator."
+      }
+    },
+    "best_model_by_patient_level_mae": "random_forest_regressor",
+    "best_model_selection_score": 1.5872,
+    "selection_policy": "minimize patient_level_mae + 0.15 * patient_level_rmse to reduce large response outliers",
+    "target_definition": "Continuous MRI response signal: baseline-to-current tumor-size reduction percent; higher is stronger shrinkage, negative means growth."
+  },
+  "best_response_regressor_by_patient_level_mae": "random_forest_regressor",
+  "calibrated_champion": {
+    "status": "trained",
+    "model_name": "gradient_boosting",
+    "method": "isotonic_regression",
+    "probability_column": "gradient_boosting_calibrated_probability",
+    "calibration_patients": 30,
+    "validation_patients": 30,
+    "raw_validation": {
+      "validation_accuracy": 0.933,
+      "validation_balanced_accuracy": 0.933,
+      "validation_f1": 0.938,
+      "validation_precision": 0.938,
+      "validation_sensitivity": 0.938,
+      "validation_specificity": 0.929,
+      "validation_brier_score": 0.044,
+      "validation_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0442,
+          "ece": 0.0891
+        },
+        "after_temperature_scaling": {
+          "temperature": 0.5,
+          "brier_score": 0.0367,
+          "ece": 0.0579
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "validation_confusion_matrix": {
+        "true_negative": 13,
+        "false_positive": 1,
+        "false_negative": 1,
+        "true_positive": 15
+      },
+      "validation_roc_auc": 0.991,
+      "validation_average_precision": 0.993
+    },
+    "calibrated_validation": {
+      "validation_accuracy": 0.933,
+      "validation_balanced_accuracy": 0.933,
+      "validation_f1": 0.938,
+      "validation_precision": 0.938,
+      "validation_sensitivity": 0.938,
+      "validation_specificity": 0.929,
+      "validation_brier_score": 0.067,
+      "validation_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0667,
+          "ece": 0.0667
+        },
+        "after_temperature_scaling": {
+          "temperature": 3.0,
+          "brier_score": 0.0643,
+          "ece": 0.0456
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "validation_confusion_matrix": {
+        "true_negative": 13,
+        "false_positive": 1,
+        "false_negative": 1,
+        "true_positive": 15
+      },
+      "validation_roc_auc": 0.933,
+      "validation_average_precision": 0.912
+    },
+    "all_holdout_calibrated": {
+      "patient_level_accuracy": 0.967,
+      "patient_level_balanced_accuracy": 0.966,
+      "patient_level_f1": 0.97,
+      "patient_level_precision": 0.97,
+      "patient_level_sensitivity": 0.97,
+      "patient_level_specificity": 0.963,
+      "patient_level_brier_score": 0.033,
+      "patient_level_calibration": {
+        "before_temperature_scaling": {
+          "brier_score": 0.0333,
+          "ece": 0.0333
+        },
+        "after_temperature_scaling": {
+          "temperature": 3.0,
+          "brier_score": 0.0324,
+          "ece": 0.0122
+        },
+        "method": "posthoc_temperature_grid_on_evaluation_split"
+      },
+      "patient_level_confusion_matrix": {
+        "true_negative": 26,
+        "false_positive": 1,
+        "false_negative": 1,
+        "true_positive": 32
+      },
+      "patient_level_roc_auc": 0.966,
+      "patient_level_average_precision": 0.957
+    },
+    "claim_boundary": "This calibrated probability head is trained on a synthetic holdout calibration split. It improves engineering probability behavior but is not clinical validation."
+  },
+  "dl_experiment_report": {
+    "implemented": {
+      "baseline_cnn": true,
+      "regularized_cnn": true,
+      "recurrent_sequence_baseline": true,
+      "augmentation_experiment": "synthetic generator applies noise and missingness; image augmentation remains in BreastDCEDL CNN path.",
+      "learning_curves": {
+        "temporal_baseline_cnn": true,
+        "temporal_1d_cnn": true,
+        "temporal_gru": true
+      },
+      "confusion_and_error_examples": {
+        "temporal_baseline_cnn": true,
+        "temporal_1d_cnn": true,
+        "temporal_gru": true
+      },
+      "calibration_before_after_temperature_scaling": true,
+      "simple_visual_explanation": {
+        "temporal_baseline_cnn": true,
+        "temporal_1d_cnn": true,
+        "temporal_gru": true
+      }
+    },
+    "not_overclaimed": {
+      "transfer_learning_baseline": "Not run for the temporal tabular CNN. Use the BreastDCEDL imaging CNN endpoint for image-transfer experiments when pretrained weights/data are available.",
+      "grad_cam": "Not applicable to the temporal tabular CNN; temporal saliency is provided instead. Use Grad-CAM only for image CNN experiments."
+    },
+    "claim_boundary": "These are synthetic-data ML discipline checks and do not validate clinical response prediction."
+  },
+  "best_model_by_patient_level_roc_auc": "gradient_boosting",
+  "artifacts": {
+    "logistic_regression": "Data\\complete_synthetic_training_realism_v2\\logistic_regression_treatment_success_binary.joblib",
+    "random_forest": "Data\\complete_synthetic_training_realism_v2\\random_forest_treatment_success_binary.joblib",
+    "extra_trees": "Data\\complete_synthetic_training_realism_v2\\extra_trees_treatment_success_binary.joblib",
+    "gradient_boosting": "Data\\complete_synthetic_training_realism_v2\\gradient_boosting_treatment_success_binary.joblib",
+    "svm_rbf": "Data\\complete_synthetic_training_realism_v2\\svm_rbf_treatment_success_binary.joblib",
+    "mlp": "Data\\complete_synthetic_training_realism_v2\\mlp_treatment_success_binary.joblib",
+    "temporal_baseline_cnn": "Data\\complete_synthetic_training_realism_v2\\temporal_baseline_cnn_treatment_success_binary.pt",
+    "temporal_1d_cnn": "Data\\complete_synthetic_training_realism_v2\\temporal_1d_cnn_treatment_success_binary.pt",
+    "temporal_gru": "Data\\complete_synthetic_training_realism_v2\\temporal_gru_treatment_success_binary.pt",
+    "ridge_regression_response_regression": "Data\\complete_synthetic_training_realism_v2\\ridge_regression_response_score_percent.joblib",
+    "random_forest_regressor_response_regression": "Data\\complete_synthetic_training_realism_v2\\random_forest_regressor_response_score_percent.joblib",
+    "extra_trees_regressor_response_regression": "Data\\complete_synthetic_training_realism_v2\\extra_trees_regressor_response_score_percent.joblib",
+    "gradient_boosting_regressor_response_regression": "Data\\complete_synthetic_training_realism_v2\\gradient_boosting_regressor_response_score_percent.joblib",
+    "gradient_boosting_huber_regressor_response_regression": "Data\\complete_synthetic_training_realism_v2\\gradient_boosting_huber_regressor_response_score_percent.joblib",
+    "huber_regressor_response_regression": "Data\\complete_synthetic_training_realism_v2\\huber_regressor_response_score_percent.joblib",
+    "svr_rbf_regressor_response_regression": "Data\\complete_synthetic_training_realism_v2\\svr_rbf_regressor_response_score_percent.joblib",
+    "robust_response_ensemble_response_regression": "Data\\complete_synthetic_training_realism_v2\\robust_response_ensemble_response_score_percent.json",
+    "gradient_boosting_isotonic_calibrator": "Data\\complete_synthetic_training_realism_v2\\gradient_boosting_isotonic_calibrator_treatment_success_binary.joblib",
+    "predictions_csv": "Data\\complete_synthetic_training_realism_v2\\complete_synthetic_model_predictions.csv",
+    "response_regression_predictions_csv": "Data\\complete_synthetic_training_realism_v2\\complete_synthetic_response_regression_predictions.csv"
+  },
+  "sequence_note": null,
+  "warning": "Models were trained only on synthetic data. Results measure ability to learn the simulator, not clinical performance."
+}

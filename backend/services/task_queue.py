@@ -25,6 +25,11 @@ SUPPORTED_TASK_TYPES = {
     "ultrasound_segmentation_baseline",
     "ct_lesion_workflow",
     "sim_to_public_imaging",
+    "chat_latency_report",
+    "ai_ml_narrative_report",
+    "demo_storyline",
+    "realism_calibrated_dataset",
+    "current_vs_realism_candidate",
 }
 
 
@@ -224,6 +229,62 @@ def _dispatch_task(db, task_type, payload):
         from backend.services.sim_to_public_imaging_report import DEFAULT_OUTPUT_PATH, build_sim_to_public_imaging_report
 
         return build_sim_to_public_imaging_report(output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH)
+
+    if task_type == "chat_latency_report":
+        from backend.services.chat_latency_report import DEFAULT_OUTPUT_PATH, build_chat_latency_report
+
+        return build_chat_latency_report(
+            db=db,
+            output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH,
+            limit=int(payload.get("limit") or 500),
+        )
+
+    if task_type == "ai_ml_narrative_report":
+        from backend.services.evaluation_narrative_report import DEFAULT_OUTPUT_DIR, build_ai_ml_narrative_report
+
+        return build_ai_ml_narrative_report(output_dir=payload.get("output_dir") or DEFAULT_OUTPUT_DIR)
+
+    if task_type == "demo_storyline":
+        from backend.services.demo_storyline import DEFAULT_OUTPUT_DIR, build_demo_storyline
+
+        return build_demo_storyline(
+            patient_id=payload.get("patient_id") or "P001",
+            output_dir=payload.get("output_dir") or DEFAULT_OUTPUT_DIR,
+        )
+
+    if task_type == "realism_calibrated_dataset":
+        from backend.services.complete_synthetic_dataset import generate_complete_synthetic_breast_dataset
+        from backend.services.synthetic_realism_report import build_synthetic_realism_report
+
+        output_dir = payload.get("output_dir") or "Data/complete_synthetic_breast_journeys_realism_v2"
+        report_path = payload.get("report_path") or "Data/mle_monitoring/synthetic_realism_candidate_report.json"
+        summary = generate_complete_synthetic_breast_dataset(
+            db=None,
+            count=int(payload.get("count") or 240),
+            seed=int(payload.get("seed") or 2031),
+            cycles=int(payload.get("cycles") or 6),
+            output_dir=output_dir,
+            write_db=False,
+            patient_prefix=payload.get("patient_prefix") or "REALISM-BRCA-",
+            missing_rate=float(payload.get("missing_rate") or 0.08),
+            noise_level=float(payload.get("noise_level") or 0.05),
+            realism_profile="external_calibrated",
+            toxicity_profile="realistic",
+            missingness_mode="ehr_like",
+        )
+        report = build_synthetic_realism_report(
+            training_csv=f"{output_dir}/temporal_ml_rows.csv",
+            output_path=report_path,
+        )
+        return {"summary": summary, "realism_report": report}
+
+    if task_type == "current_vs_realism_candidate":
+        from backend.services.candidate_model_comparison import (
+            DEFAULT_OUTPUT_PATH,
+            build_current_vs_candidate_report,
+        )
+
+        return build_current_vs_candidate_report(output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH)
 
     raise ValueError(f"No dispatcher for task_type={task_type}")
 

@@ -632,12 +632,33 @@ export interface SafetyRedTeamCase {
   timestamp: string;
 }
 
+export interface ArtifactFreshness {
+  generated_at?: string | null;
+  ttl_seconds?: number | null;
+  expires_at?: string | null;
+  status?: "fresh" | "stale" | "unknown" | string | null;
+}
+
+export interface ReproducibilityManifest {
+  git_commit?: string | null;
+  git_dirty?: boolean | null;
+  python_version?: string | null;
+  platform?: string | null;
+  dataset_fingerprints?: Record<string, string | null>;
+  knowledge_base_fingerprint?: string | null;
+  model_registry_fingerprint?: string | null;
+  seed?: number | null;
+  generated_at?: string | null;
+}
+
 export interface SafetyRedTeamArtifact {
   schema_version?: string;
   generated_at?: string;
   status?: string;
   message?: string;
   case_count?: number;
+  reproducibility?: ReproducibilityManifest;
+  artifact_freshness?: ArtifactFreshness;
   summary?: {
     status: string;
     pass_rate: number | null;
@@ -679,6 +700,8 @@ export interface RagEvalArtifact {
   status?: string;
   message?: string;
   case_count?: number;
+  reproducibility?: ReproducibilityManifest;
+  artifact_freshness?: ArtifactFreshness;
   summary?: {
     status: string;
     pass_rate: number | null;
@@ -712,6 +735,8 @@ export interface DriftReport {
   generated_at?: string;
   status?: string;
   message?: string;
+  reproducibility?: ReproducibilityManifest;
+  artifact_freshness?: ArtifactFreshness;
   data_source?: string;
   missing_cbc_rate?: number | null;
   data_completeness_score?: number | null;
