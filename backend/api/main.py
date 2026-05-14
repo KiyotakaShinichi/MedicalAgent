@@ -19,6 +19,7 @@ from backend.schema_migrations import ensure_schema
 from backend.api.deps import get_access_context, get_admin_access_context, get_db
 from backend.api.routers.auth import router as auth_router
 from backend.api.routers.patient import router as patient_router
+from backend.api.routers.clinician_review import router as clinician_review_router
 from backend.api.routers.admin import router as admin_router
 from backend.api.routers.model import router as model_router
 from backend.api.routers.admin_eval import build_admin_eval_router
@@ -53,6 +54,7 @@ async def request_id_middleware(request: Request, call_next):
 
 app.include_router(auth_router)
 app.include_router(patient_router)
+app.include_router(clinician_review_router)
 app.include_router(admin_router)
 app.include_router(model_router)
 app.include_router(build_admin_eval_router(get_admin_access_context, get_db))

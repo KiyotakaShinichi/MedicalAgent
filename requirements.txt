@@ -5,6 +5,7 @@ google-genai
 groq
 python-dotenv
 sqlalchemy
+alembic
 openpyxl
 pypdf
 pydicom

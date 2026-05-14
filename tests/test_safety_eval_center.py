@@ -78,7 +78,7 @@ class RagEvalSuiteTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "rag.json"
             payload = run_rag_eval_suite(output_path=str(output))
-            self.assertEqual(payload["schema_version"], "rag_eval_suite_v1")
+            self.assertEqual(payload["schema_version"], "rag_eval_suite_v2")
             self.assertIn("summary", payload)
             self.assertIn("cases", payload)
             summary = payload["summary"]

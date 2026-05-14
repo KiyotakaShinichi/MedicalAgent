@@ -137,6 +137,18 @@ The login form resolves the account role from credentials and redirects to the c
 - RAG metrics are heuristic proxies until labeled KB evaluation sets exist.
 - Imaging analysis is derived from report text or tabular features, not validated clinical imaging models.
 - No clinical validation, regulatory approval, or production privacy/security controls are claimed.
+- **Not approved for real PHI.** See [docs/PHI_PRIVACY_LIMITATIONS.md](docs/PHI_PRIVACY_LIMITATIONS.md) for the explicit boundary and what real PHI handling would require.
+
+## Database & migrations
+
+The default config is local SQLite (`medical_agent.db`). Demo / dev still works via `python seed_db.py`. For any non-demo deployment, use Alembic:
+
+```
+alembic upgrade head            # apply all migrations to a fresh DB
+alembic stamp head              # mark an existing DB as up-to-date (one-time)
+alembic revision --autogenerate -m "describe change"   # create a new migration
+alembic downgrade -1            # roll back one revision
+```
 
 ## Future work
 - Add labeled RAG evaluation sets and formal groundedness scoring.

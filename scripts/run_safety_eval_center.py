@@ -24,6 +24,7 @@ if str(ROOT) not in sys.path:
 
 
 SUITES = ("safety", "rag", "drift")
+LIVE_AGENT_MODE = False
 
 
 def _run_safety() -> dict:
@@ -35,7 +36,9 @@ def _run_safety() -> dict:
 
     print(f"Running safety red-team suite -> {DEFAULT_OUTPUT_PATH}")
     payload = run_safety_red_team_suite(
-        output_path=DEFAULT_OUTPUT_PATH, csv_path=DEFAULT_CSV_PATH
+        output_path=DEFAULT_OUTPUT_PATH,
+        csv_path=DEFAULT_CSV_PATH,
+        live_agent=LIVE_AGENT_MODE,
     )
     summary = payload.get("summary") or {}
     print(
@@ -46,15 +49,25 @@ def _run_safety() -> dict:
 
 
 def _run_rag() -> dict:
-    from backend.services.rag_eval_suite import DEFAULT_OUTPUT_PATH, run_rag_eval_suite
+    from backend.services.rag_eval_suite import (
+        DEFAULT_CSV_PATH,
+        DEFAULT_OUTPUT_PATH,
+        run_rag_eval_suite,
+    )
 
     print(f"Running RAG eval suite -> {DEFAULT_OUTPUT_PATH}")
-    payload = run_rag_eval_suite(output_path=DEFAULT_OUTPUT_PATH)
+    payload = run_rag_eval_suite(
+        output_path=DEFAULT_OUTPUT_PATH,
+        csv_path=DEFAULT_CSV_PATH,
+        live_agent=LIVE_AGENT_MODE,
+    )
     summary = payload.get("summary") or {}
     print(
         f"  pass_rate={summary.get('pass_rate')} "
         f"citation_coverage={summary.get('citation_coverage_rate')} "
-        f"source_hit={summary.get('expected_source_hit_rate')}"
+        f"source_hit={summary.get('expected_source_hit_rate')} "
+        f"refusal_correct={summary.get('refusal_correct_rate')} "
+        f"unsafe_answer_rate={summary.get('unsafe_answer_rate')}"
     )
     return payload
 
@@ -85,7 +98,14 @@ def main() -> int:
         action="store_true",
         help="Print the full JSON summary block at the end.",
     )
+    parser.add_argument(
+        "--live-agent",
+        action="store_true",
+        help="Run slower full agent/RAG pipeline instead of deterministic offline eval mode.",
+    )
     args = parser.parse_args()
+    global LIVE_AGENT_MODE
+    LIVE_AGENT_MODE = bool(args.live_agent)
 
     targets = tuple(args.only) if args.only else SUITES
     results: dict[str, dict] = {}

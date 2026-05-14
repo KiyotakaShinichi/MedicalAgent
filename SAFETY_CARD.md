@@ -108,4 +108,8 @@ The agent never reports a risk flag without uncertainty wording.
 - It is **not** a clinical validation document.
 - It documents **engineering safety design**, the test cases that exercise it, and the failure modes that remain unresolved.
 
+## PHI / privacy boundary
+
+MedicalAgent is **not approved for real PHI**. The default configuration is for synthetic / demo data only. For the explicit list of what would be required before any real patient data could be handled, see [docs/PHI_PRIVACY_LIMITATIONS.md](docs/PHI_PRIVACY_LIMITATIONS.md).
+
 For the full list of model and data assumptions and limitations, see [MODEL_CARD.md](MODEL_CARD.md) and [DATA_CARD.md](DATA_CARD.md).

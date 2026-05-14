@@ -149,15 +149,25 @@ The admin/MLE dashboard reports:
 
 Metric statuses such as `passed`, `strong`, or `acceptable` are project engineering gates only. They are not clinical validation.
 
-Latest local synthetic development run:
+### Read this first — honest framing
+
+The headline numbers below come from a **synthetic** dataset (600 simulated patients, 3,600 treatment-cycle rows). The synthetic generator is part of the project — a model that fits its own simulator perfectly is not a clinical claim. The real-data direction lands at **AUROC 0.637**, which is the honest signal for how well this work currently generalises.
+
+External real-data direction (the number that matters for clinical readability):
+
+- BreastDCEDL/I-SPY1 MRI-derived tabular baseline: 159 rows.
+- Best exploratory real-data baseline: logistic regression.
+- **AUROC: 0.637.**
+- AUPRC: 0.388.
+- Balanced accuracy: 0.630.
+- Small CNN baseline validation AUROC: 0.420.
+- Interpretation: weak external signal, useful as an honest real-data direction, **not clinical validation**.
+
+Locked synthetic holdout (engineering monitoring evidence — synthetic only):
 
 - Dataset: 600 synthetic patients, 3,600 treatment-cycle rows.
 - Training discipline: train/calibrate on 480-patient development split, then evaluate once on a frozen 120-patient locked holdout.
 - Champion classifier: gradient boosting.
-- Internal development-test patient-level AUROC: 0.995.
-- Internal development-test AUPRC: 0.996.
-- Internal development-test Brier score: 0.047.
-- Internal development-test calibrated validation ECE: 0.0597.
 - Locked holdout calibrated AUROC: 0.963.
 - Locked holdout calibrated AUPRC: 0.966.
 - Locked holdout calibrated Brier score: 0.048.
@@ -169,15 +179,12 @@ Latest local synthetic development run:
 - Response uncertainty on locked holdout: 113 narrow, 5 moderate, 2 wide; mean 10th-to-90th percentile width 2.039.
 - MLE readiness: acceptable for supervised PoC demo with limitations; hard gates passed.
 
-External validation direction:
+Internal development-test reference (do not use this as a portfolio headline — it is essentially the model fitting the simulator):
 
-- BreastDCEDL/I-SPY1 MRI-derived tabular baseline: 159 rows.
-- Best exploratory real-data baseline: logistic regression.
-- AUROC: 0.637.
-- AUPRC: 0.388.
-- Balanced accuracy: 0.630.
-- Small CNN baseline validation AUROC: 0.420.
-- Interpretation: weak external signal, useful as an honest real-data direction, not clinical validation.
+- Internal development-test patient-level AUROC: 0.995.
+- Internal development-test AUPRC: 0.996.
+- Internal development-test Brier score: 0.047.
+- Internal development-test calibrated validation ECE: 0.0597.
 
 ## Current Known Limitations
 
