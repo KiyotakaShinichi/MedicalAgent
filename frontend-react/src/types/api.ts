@@ -74,12 +74,27 @@ export interface AiSummary {
   review_reasons: string[];
 }
 
+export interface UncertaintyBlock {
+  confidence_level?: "low" | "moderate" | "high" | string | null;
+  uncertainty_reason?: string | null;
+  missing_data_indicators?: string[] | null;
+  clinician_review_required?: boolean | null;
+}
+
 export interface TimelineEvent {
   date: string;
   type: string;
   severity: string;
   title: string;
   summary: string;
+  /** Optional uncertainty block produced by the risk_engine / agent layer. */
+  uncertainty?: UncertaintyBlock | null;
+  /** True when this event was produced by an AI/model layer (vs. raw record). */
+  ai_generated?: boolean | null;
+  /** Free-text source/evidence reference, e.g. "risk_engine", "rag_agent". */
+  evidence_source?: string | null;
+  /** Model identifier for the AI output, when available. */
+  model_version?: string | null;
 }
 
 export interface TreatmentEffect {
@@ -552,6 +567,205 @@ export interface CtLesionWorkflowReport {
   sample_metadata_files?: string[];
   recommended_model_track?: string[];
   claim_boundary: string;
+}
+
+// ─── Safety & Evaluation Center ──────────────────────────────────────────────
+export interface SafetyRedTeamCase {
+  case_id: string;
+  category: string;
+  input_message: string;
+  expected_behavior?: string | null;
+  expected_route?: string | null;
+  expected_refusal_type?: string | null;
+  expected_safety_level?: string | null;
+  expected_guardrail_status?: string | null;
+  observed: {
+    intent?: string | null;
+    safety_level?: string | null;
+    input_guardrail_status?: string | null;
+    refusal_type?: string | null;
+    reply_preview?: string | null;
+  };
+  checks: { name: string; passed: boolean; expected: unknown; observed: unknown }[];
+  pass: boolean;
+  reason: string | null;
+  timestamp: string;
+}
+
+export interface SafetyRedTeamArtifact {
+  schema_version?: string;
+  generated_at?: string;
+  status?: string;
+  message?: string;
+  case_count?: number;
+  summary?: {
+    status: string;
+    pass_rate: number | null;
+    total_cases: number;
+    failed_cases: string[];
+    category_counts: Record<string, number>;
+    refusal_type_counts: Record<string, number>;
+  };
+  cases?: SafetyRedTeamCase[];
+  limitations?: string[];
+}
+
+export interface RagEvalCase {
+  case_id: string;
+  input: string;
+  intent?: string | null;
+  expected_sources?: string[];
+  requires_citations?: boolean;
+  requires_refusal?: boolean;
+  metrics: {
+    citation_present?: boolean;
+    expected_source_hit?: boolean;
+    grounding_score?: number | null;
+    hallucination_score?: number | null;
+    retrieval_precision_at_3?: number | null;
+    domain_relevance?: boolean;
+    rewrite_subquery_count?: number;
+    rewrite_term_hit?: boolean | null;
+  };
+  checks: { name: string; passed: boolean; expected: unknown; observed: unknown }[];
+  pass: boolean;
+  reply_preview?: string;
+  timestamp: string;
+}
+
+export interface RagEvalArtifact {
+  schema_version?: string;
+  generated_at?: string;
+  status?: string;
+  message?: string;
+  case_count?: number;
+  summary?: {
+    status: string;
+    pass_rate: number | null;
+    citation_coverage_rate: number | null;
+    expected_source_hit_rate: number | null;
+    refusal_correct_rate: number | null;
+    domain_relevance_rate: number | null;
+    rewrite_term_hit_rate: number | null;
+    average_grounding_score: number | null;
+    average_hallucination_score: number | null;
+    average_retrieval_precision_at_3: number | null;
+  };
+  cases?: RagEvalCase[];
+  limitations?: string[];
+}
+
+export interface DriftFeatureRow {
+  feature?: string;
+  keyword?: string;
+  baseline_mean?: number;
+  current_mean?: number;
+  baseline_rate?: number;
+  current_rate?: number;
+  standardized_shift?: number;
+  shift?: number;
+  status: string;
+}
+
+export interface DriftReport {
+  schema_version?: string;
+  generated_at?: string;
+  status?: string;
+  message?: string;
+  data_source?: string;
+  missing_cbc_rate?: number | null;
+  data_completeness_score?: number | null;
+  lab_distribution_shift?: { label: string; status: string; feature_count: number; features: DriftFeatureRow[] };
+  symptom_frequency_shift?: { label: string; status: string; feature_count: number; features: DriftFeatureRow[] };
+  imaging_keyword_shift?: { status: string; keywords: DriftFeatureRow[] };
+  model_confidence_drift?: {
+    status: string;
+    probability_column?: string;
+    baseline_mean?: number;
+    current_mean?: number;
+    standardized_shift?: number;
+    message?: string;
+  };
+  calibration_drift?: {
+    status: string;
+    probability_column?: string;
+    baseline_ece?: number | null;
+    current_ece?: number | null;
+    delta_ece?: number | null;
+    message?: string;
+  };
+  subgroup_performance_drift?: {
+    status: string;
+    groups: {
+      group: string;
+      value: string;
+      baseline_positive_rate: number;
+      current_positive_rate: number;
+      shift: number;
+      status: string;
+    }[];
+  };
+  limitations?: string[];
+}
+
+export interface SafetyCenterCategorySummary {
+  status: string;
+  pass_rate: number | null;
+  case_count: number;
+  categories: string[];
+}
+
+export interface FailureCaseEntry {
+  id: string;
+  category: string;
+  what_happened: string;
+  why_risky: string;
+  system_response: string;
+  mitigation: string;
+  unresolved: string;
+}
+
+export interface FailureCaseGallery {
+  schema_version?: string;
+  generated_at?: string;
+  status?: string;
+  cases: FailureCaseEntry[];
+  message?: string;
+}
+
+export interface SafetyCenter {
+  generated_at: string;
+  safety_red_team: SafetyRedTeamArtifact;
+  prompt_injection_defense: SafetyCenterCategorySummary;
+  urgent_symptom_escalation: SafetyCenterCategorySummary;
+  medication_refusal: SafetyCenterCategorySummary;
+  privacy_exfiltration: SafetyCenterCategorySummary;
+  rag_eval: RagEvalArtifact;
+  rag_trace_summary: unknown;
+  calibration_metrics: {
+    status: string;
+    best_model?: string;
+    brier_score?: number | null;
+    ece_before?: number | null;
+    ece_after?: number | null;
+    temperature?: number | null;
+    method?: string | null;
+    message?: string;
+    note?: string;
+  };
+  drift_report: DriftReport;
+  data_quality: unknown;
+  clinician_feedback: {
+    review_count: number;
+    decision_counts: Record<string, number>;
+    reason_category_counts: Record<string, number>;
+    review_target_counts: Record<string, number>;
+    average_explanation_quality_score: number | null;
+    average_model_usefulness_score: number | null;
+  };
+  failure_case_gallery: FailureCaseGallery;
+  audit_log_summary: unknown;
+  safety_note: string;
 }
 
 export interface SimToPublicImagingReport {

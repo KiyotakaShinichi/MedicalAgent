@@ -123,3 +123,62 @@ Production build output: `dist/` (~650 kB JS gzipped ~194 kB).
 - Chat disclaimer: "Not a substitute for clinical advice. Always consult your care team."
 - AI summary always includes a "About this summary" panel explaining LLM limitations
 - Model signal panel shows amber warning: "Exploratory engineering signal only — not a clinical prediction."
+
+---
+
+## Shared safe-language primitives
+
+The following components are the **canonical** surface for any AI/model output. Inlining color codes or building one-off chips is a regression — use these instead.
+
+| Primitive | File | Purpose |
+|-----------|------|---------|
+| `RiskBadge` | [components/ui/RiskBadge.tsx](../frontend-react/src/components/ui/RiskBadge.tsx) | Risk-level chip (`info` / `watch` / `urgent_review`) — never says "diagnosis" |
+| `ConfidenceBadge` | [components/ui/ConfidenceBadge.tsx](../frontend-react/src/components/ui/ConfidenceBadge.tsx) | Confidence chip (`low` / `moderate` / `high`) — never says "certainty" |
+| `ReviewStatusBadge` | [components/ui/ReviewStatusBadge.tsx](../frontend-react/src/components/ui/ReviewStatusBadge.tsx) | Clinician decision chip mirroring [REVIEW_DECISIONS](../frontend-react/src/lib/constants.ts) |
+| `AIGeneratedLabel` | [components/ui/AIGeneratedLabel.tsx](../frontend-react/src/components/ui/AIGeneratedLabel.tsx) | "AI-generated • confidence • clinician review required • source/model · timestamp" row |
+| `EmptyState`, `LoadingState`, `ErrorState` | [components/ui/states.ts](../frontend-react/src/components/ui/states.ts) | Re-exports of `EmptyPane` / `LoadingPane` / `ErrorPane` |
+
+### Shared constants
+
+[`lib/constants.ts`](../frontend-react/src/lib/constants.ts) is the single TypeScript source of truth for:
+
+- `REVIEW_DECISIONS` / `REVIEW_DECISION_LABELS`
+- `REVIEW_TARGETS`
+- `REVIEW_REASON_CATEGORIES` / `REVIEW_REASON_LABELS`
+- `RISK_LEVELS` / `RISK_LEVEL_LABELS`
+- `CONFIDENCE_LEVELS`
+- `ARTIFACT_STATUSES`
+- `SAFETY_DISCLAIMER_SHORT` / `SAFETY_DISCLAIMER_LONG`
+- `AI_GENERATED_LABEL` / `CLINICIAN_REVIEW_REQUIRED_LABEL`
+
+These mirror [backend/services/review_constants.py](../backend/services/review_constants.py); update both when changing any string.
+
+### Safe-language rule
+
+- ✅ "For clinician review", "Possible concern", "Needs review", "Insufficient evidence", "Urgent escalation recommended", "Not a diagnosis"
+- ❌ "Cancer detected", "Metastasis confirmed", "Diagnosis", "Treatment failed", "Guaranteed response"
+
+If a label feels diagnostic when you read it back, replace it with one of the safe phrases above.
+
+### Where new work goes
+
+| If you are adding...    | Put it in... |
+|-------------------------|--------------|
+| A new API call          | `api/client.ts` + a type in `types/api.ts` |
+| A new admin section     | `pages/admin/sections/XxxSection.tsx` |
+| A new shared chip       | `components/ui/XxxBadge.tsx` |
+| A new role-scoped page  | `pages/<role>/XxxPage.tsx` and wire it in `App.tsx` |
+| A new safe label        | `lib/constants.ts` (so the BE mirror gets updated too) |
+
+### Loading / error / empty discipline
+
+Every async surface must render all four cases:
+
+```tsx
+if (status === "loading") return <LoadingState label="Loading patients..." />;
+if (status === "error")   return <ErrorState message={error ?? "Failed to load"} />;
+if (!data)                return <EmptyState label="No data" />;
+return <ActualUI data={data} />;
+```
+
+Pages that consume optional artifacts (Safety & Eval Center cards) must render a "not yet generated" state instead of crashing — the backend returns `{ status: "not_generated", message, path }` for any missing artifact.

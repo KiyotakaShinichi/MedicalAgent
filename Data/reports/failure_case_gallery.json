@@ -1,0 +1,78 @@
+{
+  "schema_version": "failure_case_gallery_v1",
+  "generated_at": "2026-05-14T00:00:00Z",
+  "cases": [
+    {
+      "id": "wrong_retrieval",
+      "category": "wrong_retrieval",
+      "what_happened": "The agent retrieved a general chemotherapy side-effects snippet for a question about HER2 testing.",
+      "why_risky": "Mismatched evidence can mislead clinicians or patients about the topic being discussed.",
+      "system_response": "Displayed the wrong citation set and issued a generic answer.",
+      "mitigation": "Retrieval precision checks and expected-source regression cases flag this mismatch.",
+      "unresolved": "Needs labeled KB examples to improve reranking precision for subtype-specific queries."
+    },
+    {
+      "id": "insufficient_evidence",
+      "category": "insufficient_evidence",
+      "what_happened": "User asked for a specific tumor marker not present in the KB or record.",
+      "why_risky": "Answering without evidence would be a hallucination.",
+      "system_response": "Returned a limitation and asked for clinician review or report upload.",
+      "mitigation": "RAG eval checks for refusal when evidence is missing.",
+      "unresolved": "Needs more explicit UI prompt to request missing report files."
+    },
+    {
+      "id": "vague_patient_input",
+      "category": "vague_input",
+      "what_happened": "Patient typed 'I feel bad' without symptoms or dates.",
+      "why_risky": "Low specificity can hide urgent issues and reduce monitoring quality.",
+      "system_response": "Asked follow-up questions and suggested contacting the care team if urgent.",
+      "mitigation": "Symptom intake prompts and safety escalation language.",
+      "unresolved": "Still relies on patient to provide details; needs structured symptom capture."
+    },
+    {
+      "id": "conflicting_signals",
+      "category": "conflicting_signals",
+      "what_happened": "MRI trend suggested improvement while CBC showed worsening neutropenia.",
+      "why_risky": "Conflicting signals can lead to incorrect confidence in treatment response.",
+      "system_response": "Raised a discordance alert and recommended clinician review.",
+      "mitigation": "Discordance checks and uncertainty notes in the timeline summary.",
+      "unresolved": "No real-world clinical adjudication available in synthetic data."
+    },
+    {
+      "id": "missing_imaging_followup",
+      "category": "missing_data",
+      "what_happened": "No MRI follow-up existed after cycle 2.",
+      "why_risky": "Response estimation becomes less reliable without imaging evidence.",
+      "system_response": "Marked low confidence and highlighted missing imaging data.",
+      "mitigation": "Data availability panel and uncertainty layer.",
+      "unresolved": "Requires operational workflow to ensure imaging uploads are captured."
+    },
+    {
+      "id": "unsafe_user_request",
+      "category": "unsafe_request",
+      "what_happened": "User requested a chemotherapy dose change.",
+      "why_risky": "Treatment directives are out of scope and unsafe.",
+      "system_response": "Refused and routed to clinician review.",
+      "mitigation": "Deterministic treatment-decision guardrails.",
+      "unresolved": "Need more examples of partial decision requests for improved detection."
+    },
+    {
+      "id": "prompt_injection_attempt",
+      "category": "prompt_injection",
+      "what_happened": "Prompt injection attempted to reveal database contents.",
+      "why_risky": "Would expose cross-patient data and system secrets.",
+      "system_response": "Blocked at input guardrails.",
+      "mitigation": "Multilingual injection detection and privacy boundary checks.",
+      "unresolved": "Encoded variants still need expanded coverage."
+    },
+    {
+      "id": "clinician_rejection",
+      "category": "clinician_rejection",
+      "what_happened": "Clinician rejected the AI summary due to missing evidence and wrong escalation level.",
+      "why_risky": "Incorrect summary could mislead clinical review.",
+      "system_response": "Logged the rejection and tracked reason categories.",
+      "mitigation": "Clinician feedback loop and summary quality evaluation.",
+      "unresolved": "Needs more clinician-reviewed gold cases to improve summary completeness."
+    }
+  ]
+}

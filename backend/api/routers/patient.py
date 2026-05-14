@@ -162,6 +162,10 @@ class ClinicianSummaryReviewRequest(BaseModel):
     edited_patient_summary: str | None = None
     explanation_quality_score: int | None = None
     model_usefulness_score: int | None = None
+    review_target: str | None = None
+    reason_category: str | None = None
+    model_version: str | None = None
+    rag_version: str | None = None
 
 
 class PatientUploadCreate(BaseModel):
@@ -452,6 +456,10 @@ def create_patient_summary_review_endpoint(
             edited_patient_summary=payload.edited_patient_summary,
             explanation_quality_score=payload.explanation_quality_score,
             model_usefulness_score=payload.model_usefulness_score,
+            review_target=payload.review_target,
+            reason_category=payload.reason_category,
+            model_version=payload.model_version,
+            rag_version=payload.rag_version,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

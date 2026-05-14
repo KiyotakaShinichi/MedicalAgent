@@ -114,6 +114,10 @@ export const submitSummaryReview = (
     edited_patient_summary?: string;
     explanation_quality_score?: number;
     model_usefulness_score?: number;
+    review_target?: string;
+    reason_category?: string;
+    model_version?: string;
+    rag_version?: string;
   }
 ) => post<{ message: string; review: SummaryReview }>(`/patients/${patientId}/summary-review`, payload);
 
@@ -215,3 +219,31 @@ export const getSimToPublicImaging = () =>
 
 export const runSimToPublicImaging = () =>
   post<{ message: string; result: SimToPublicImagingReport }>("/admin/sim-to-public-imaging");
+
+// Safety & evaluation center
+export const getSafetyCenter = () =>
+  get<import("../types/api").SafetyCenter>("/admin/safety-center");
+
+export const getSafetyRedTeam = () =>
+  get<import("../types/api").SafetyRedTeamArtifact>("/admin/safety-red-team");
+
+export const runSafetyRedTeam = () =>
+  post<{ message: string; result: import("../types/api").SafetyRedTeamArtifact }>(
+    "/admin/safety-red-team"
+  );
+
+export const getRagEvalArtifact = () =>
+  get<import("../types/api").RagEvalArtifact>("/admin/rag-eval");
+
+export const runRagEvalArtifact = () =>
+  post<{ message: string; result: import("../types/api").RagEvalArtifact }>(
+    "/admin/rag-eval"
+  );
+
+export const getDriftReport = () =>
+  get<import("../types/api").DriftReport>("/admin/drift-report");
+
+export const runDriftReport = () =>
+  post<{ message: string; result: import("../types/api").DriftReport }>(
+    "/admin/drift-report"
+  );

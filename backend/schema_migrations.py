@@ -45,3 +45,28 @@ def ensure_schema():
             connection.execute(text("ALTER TABLE rag_evaluation_logs ADD COLUMN query_preview VARCHAR"))
         if "request_id" not in rag_log_columns:
             connection.execute(text("ALTER TABLE rag_evaluation_logs ADD COLUMN request_id VARCHAR"))
+
+    clinical_review_columns = set()
+    if "clinical_summary_reviews" in table_names:
+        clinical_review_columns = {
+            column["name"]
+            for column in inspector.get_columns("clinical_summary_reviews")
+        }
+
+    with engine.begin() as connection:
+        if "review_target" not in clinical_review_columns:
+            connection.execute(text(
+                "ALTER TABLE clinical_summary_reviews ADD COLUMN review_target VARCHAR DEFAULT 'summary'"
+            ))
+        if "reason_category" not in clinical_review_columns:
+            connection.execute(text(
+                "ALTER TABLE clinical_summary_reviews ADD COLUMN reason_category VARCHAR"
+            ))
+        if "model_version" not in clinical_review_columns:
+            connection.execute(text(
+                "ALTER TABLE clinical_summary_reviews ADD COLUMN model_version VARCHAR"
+            ))
+        if "rag_version" not in clinical_review_columns:
+            connection.execute(text(
+                "ALTER TABLE clinical_summary_reviews ADD COLUMN rag_version VARCHAR"
+            ))

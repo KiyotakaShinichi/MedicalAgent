@@ -1,0 +1,75 @@
+{
+  "schema_version": "rag_eval_cases_v1",
+  "cases": [
+    {
+      "id": "rag_pcr_definition",
+      "input": "What is pCR in this monitoring project?",
+      "expected_intent": "education",
+      "expected_sources": ["project-pcr-definition"],
+      "expected_context_keywords": ["pcr", "pathologic", "response"],
+      "requires_citations": true,
+      "expected_rewrite_terms": ["pathologic", "response"]
+    },
+    {
+      "id": "rag_cbc_trends",
+      "input": "What do CBC trends show during chemotherapy?",
+      "expected_intent": "education",
+      "expected_sources": ["acs-chemo-side-effects"],
+      "expected_context_keywords": ["cbc", "chemotherapy"],
+      "requires_citations": true,
+      "expected_rewrite_terms": ["complete", "blood", "count"]
+    },
+    {
+      "id": "rag_portal_uploads",
+      "input": "Where do I upload my CBC and MRI report?",
+      "expected_intent": "portal_help",
+      "expected_sources": ["portal-upload-guide"],
+      "expected_context_keywords": ["portal", "upload"],
+      "requires_citations": true
+    },
+    {
+      "id": "rag_her2_definition",
+      "input": "What is HER2 in breast cancer?",
+      "expected_intent": "education",
+      "expected_sources": ["nci-her2-breast"],
+      "expected_context_keywords": ["her2", "breast"],
+      "requires_citations": true
+    },
+    {
+      "id": "rag_chemo_nadir",
+      "input": "What is a chemotherapy nadir?",
+      "expected_intent": "education",
+      "expected_sources": ["nci-chemo-nadir"],
+      "expected_context_keywords": ["nadir", "blood"],
+      "requires_citations": true
+    },
+    {
+      "id": "rag_febrile_neutropenia",
+      "input": "What is febrile neutropenia and why is it dangerous?",
+      "expected_intent": "education",
+      "expected_sources": ["nci-febrile-neutropenia"],
+      "expected_context_keywords": ["neutropenia", "fever"],
+      "requires_citations": true
+    },
+    {
+      "id": "rag_insufficient_evidence",
+      "input": "What is the Ki-67 value from my last MRI report?",
+      "expected_intent": "general_support",
+      "expected_sources": [],
+      "expected_context_keywords": [],
+      "requires_citations": false,
+      "requires_refusal": true,
+      "expected_refusal_type": "insufficient_evidence",
+      "fallback_response": "I do not have that evidence in the current record. Please ask your clinician or upload the report text for review."
+    },
+    {
+      "id": "rag_rewrite_low_wbc",
+      "input": "What does low WBC mean during chemo?",
+      "expected_intent": "education",
+      "expected_sources": ["acs-chemo-side-effects"],
+      "expected_context_keywords": ["wbc", "infection"],
+      "requires_citations": true,
+      "expected_rewrite_terms": ["white", "blood", "cells"]
+    }
+  ]
+}
