@@ -1,0 +1,122 @@
+{
+  "schema_version": "public_imaging_manifest_v1",
+  "generated_at": "2026-05-14T03:14:03.525242+00:00",
+  "dataset_root": "Datasets",
+  "status": "datasets_not_downloaded",
+  "available_dataset_count": 0,
+  "datasets": [
+    {
+      "id": "busi_breast_ultrasound",
+      "name": "BUSI Breast Ultrasound",
+      "source_url": "https://www.kaggle.com/datasets/subhajournal/busi-breast-ultrasound-images-dataset/data",
+      "expected_roots": [
+        "BUSI",
+        "busi",
+        "Dataset_BUSI_with_GT",
+        "Breast Ultrasound Images Dataset"
+      ],
+      "task": "breast_ultrasound_segmentation_or_classification",
+      "modality": "ultrasound",
+      "claim_boundary": "Benign/malignant/normal image experiment only; not diagnosis.",
+      "available": false,
+      "local_path": null,
+      "file_count": 0,
+      "image_count": 0,
+      "mask_count": 0,
+      "metadata_count": 0,
+      "class_counts": {},
+      "sample_files": [],
+      "readiness": "missing_download"
+    },
+    {
+      "id": "bus_uclm_breast_ultrasound",
+      "name": "BUS-UCLM Breast Ultrasound",
+      "source_url": "https://www.nature.com/articles/s41597-025-04562-3",
+      "expected_roots": [
+        "BUS-UCLM",
+        "bus-uclm",
+        "BUS_UCLM"
+      ],
+      "task": "breast_ultrasound_segmentation",
+      "modality": "ultrasound",
+      "claim_boundary": "Segmentation benchmark only; not diagnosis.",
+      "available": false,
+      "local_path": null,
+      "file_count": 0,
+      "image_count": 0,
+      "mask_count": 0,
+      "metadata_count": 0,
+      "class_counts": {},
+      "sample_files": [],
+      "readiness": "missing_download"
+    },
+    {
+      "id": "nih_deeplesion",
+      "name": "NIH DeepLesion",
+      "source_url": "https://nihcc.app.box.com/v/DeepLesion",
+      "expected_roots": [
+        "DeepLesion",
+        "deeplesion"
+      ],
+      "task": "ct_lesion_detection_pretraining_or_benchmark",
+      "modality": "ct",
+      "claim_boundary": "Lesion localization experiment only; not metastatic breast cancer diagnosis.",
+      "available": false,
+      "local_path": null,
+      "file_count": 0,
+      "image_count": 0,
+      "mask_count": 0,
+      "metadata_count": 0,
+      "class_counts": {},
+      "sample_files": [],
+      "readiness": "missing_download"
+    },
+    {
+      "id": "tcia_fdg_pet_ct_lesions",
+      "name": "TCIA FDG-PET-CT-Lesions",
+      "source_url": "https://www.cancerimagingarchive.net/collection/fdg-pet-ct-lesions/",
+      "expected_roots": [
+        "FDG-PET-CT-Lesions",
+        "fdg_pet_ct_lesions",
+        "FDG_PET_CT_Lesions"
+      ],
+      "task": "pet_ct_lesion_segmentation_workflow",
+      "modality": "pet_ct",
+      "claim_boundary": "Whole-body lesion workflow experiment only; not disease-origin diagnosis.",
+      "available": false,
+      "local_path": null,
+      "file_count": 0,
+      "image_count": 0,
+      "mask_count": 0,
+      "metadata_count": 0,
+      "class_counts": {},
+      "sample_files": [],
+      "readiness": "missing_download"
+    },
+    {
+      "id": "tcia_qin_breast",
+      "name": "TCIA QIN-BREAST",
+      "source_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "expected_roots": [
+        "QIN-BREAST",
+        "qin_breast",
+        "QIN_BREAST"
+      ],
+      "task": "breast_pet_ct_mri_response_workflow",
+      "modality": "pet_ct_mri",
+      "claim_boundary": "Imaging workflow exploration only; not clinical validation.",
+      "available": false,
+      "local_path": null,
+      "file_count": 0,
+      "image_count": 0,
+      "mask_count": 0,
+      "metadata_count": 0,
+      "class_counts": {},
+      "sample_files": [],
+      "readiness": "missing_download"
+    }
+  ],
+  "recommended_next_task": "Download one public dataset into Datasets/ and rebuild this manifest.",
+  "claim_boundary": "Public imaging datasets are used for narrow engineering experiments. They do not make MedicalAgent a diagnostic CT or ultrasound reader.",
+  "manifest_hash": "3e931f263d348532"
+}

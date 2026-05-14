@@ -8,6 +8,21 @@ from backend.models import MRIFileRegistry, PatientUpload
 
 
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
+IMAGING_UPLOAD_TYPES = {
+    "mri",
+    "breast_mri",
+    "imaging",
+    "ct",
+    "ct_scan",
+    "cat_scan",
+    "pet_ct",
+    "pet-ct",
+    "ultrasound",
+    "us",
+    "sonogram",
+    "breast_ultrasound",
+    "abdominal_ultrasound",
+}
 
 
 def save_patient_upload(db, patient_id, upload_type, file_name, content_type, content_base64, notes=None, scan_date=None):
@@ -34,11 +49,11 @@ def save_patient_upload(db, patient_id, upload_type, file_name, content_type, co
     )
     db.add(upload)
 
-    if safe_type in {"mri", "breast_mri", "imaging"}:
+    if safe_type in IMAGING_UPLOAD_TYPES:
         db.add(MRIFileRegistry(
             patient_id=patient_id,
             scan_date=scan_date,
-            modality="Breast MRI",
+            modality=_infer_upload_modality(safe_type, file_name, notes),
             series_description=file_name,
             local_path=str(output_path),
             notes=notes or "Uploaded from patient portal.",
@@ -88,3 +103,22 @@ def _safe_filename(value):
     name = Path(value or "upload.bin").name
     cleaned = re.sub(r"[^A-Za-z0-9_. -]+", "_", name).strip(" .")
     return cleaned or "upload.bin"
+
+
+def _infer_upload_modality(upload_type, file_name, notes):
+    text = f"{upload_type} {file_name or ''} {notes or ''}".lower()
+    if "pet_ct" in text or "pet-ct" in text or "pet/ct" in text or "pet ct" in text:
+        return "FDG PET/CT"
+    if "cat_scan" in text or "cat scan" in text or re.search(r"\bct\b", text):
+        if any(term in text for term in ["abdomen", "abdominal", "pelvis", "liver", "ascites", "peritoneal"]):
+            return "CT abdomen/pelvis"
+        if any(term in text for term in ["chest", "lung", "pleural", "mediastinal"]):
+            return "CT chest"
+        return "CT scan"
+    if "ultrasound" in text or "sonogram" in text or text.startswith("us "):
+        if any(term in text for term in ["abdomen", "abdominal", "liver", "ascites", "peritoneal"]):
+            return "Abdominal ultrasound"
+        return "Breast ultrasound"
+    if "mammogram" in text or "mammography" in text:
+        return "Mammogram"
+    return "Breast MRI"

@@ -1,0 +1,65 @@
+{
+  "schema_version": "sim_to_public_imaging_gap_v1",
+  "generated_at": "2026-05-14T03:15:40.190785+00:00",
+  "status": "computed",
+  "synthetic_summary": {
+    "status": "loaded",
+    "path": "Data/complete_synthetic_breast_journeys/mri_reports.csv",
+    "row_count": 4200,
+    "patient_count": 600,
+    "modalities": {
+      "Breast MRI": 4200
+    },
+    "report_type_counts": {},
+    "size_cm": {
+      "mean": 3.5023,
+      "median": 3.3,
+      "p10": 1.51,
+      "p90": 5.9
+    },
+    "metastatic_keyword_rows": 0
+  },
+  "public_imaging_availability": {
+    "status": "datasets_not_downloaded",
+    "available_dataset_count": 0,
+    "available_modalities": []
+  },
+  "gap_table": [
+    {
+      "area": "breast_mri_response",
+      "synthetic_coverage": "covered",
+      "public_coverage": "covered_if_downloaded",
+      "available_now": false,
+      "gap": "Synthetic MRI response exists; public MRI/PET-CT data must be downloaded for image-level validation."
+    },
+    {
+      "area": "breast_ultrasound",
+      "synthetic_coverage": "not_modeled",
+      "public_coverage": "covered_if_downloaded",
+      "available_now": false,
+      "gap": "Ultrasound is not part of the synthetic treatment timeline yet; use public US as a separate narrow imaging benchmark."
+    },
+    {
+      "area": "ct_pet_ct_lesions",
+      "synthetic_coverage": "report_text_only",
+      "public_coverage": "partially_covered_if_downloaded",
+      "available_now": false,
+      "gap": "CT/PET-CT public data can support lesion workflows, but disease-origin and metastatic breast cancer labels remain limited."
+    },
+    {
+      "area": "ascites_peritoneal_disease",
+      "synthetic_coverage": "report_text_indicator_rules",
+      "public_coverage": "labels_not_selected",
+      "available_now": false,
+      "gap": "Current safest support is report-text extraction. Image-level ascites requires curated labels or annotation."
+    }
+  ],
+  "recommended_actions": [
+    "Keep report-text extraction as the patient-facing CT/US route until image labels are task-specific.",
+    "Download BUSI or BUS-UCLM first for the fastest image-model proof of work.",
+    "Use DeepLesion or FDG-PET-CT-Lesions for CT/PET-CT ingestion and lesion-localization workflow only.",
+    "Add synthetic ultrasound/CT report events only as monitoring signals, not diagnosis labels.",
+    "Show missing public datasets explicitly in the admin dashboard to avoid overclaiming."
+  ],
+  "claim_boundary": "This report identifies engineering coverage gaps. It does not validate clinical performance."
+}

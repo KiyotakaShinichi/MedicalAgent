@@ -168,16 +168,42 @@ PUBLIC_DATA_SOURCES: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "future_metastatic_imaging",
-        "name": "Future metastatic-imaging extension",
-        "provider": "To be selected from TCIA/Kaggle/Grand Challenge/clinical-public sources",
-        "url": "",
-        "access": "not yet integrated",
-        "modalities": ["CT", "ultrasound", "radiology report text"],
+        "id": "tcia_qin_breast",
+        "name": "QIN-BREAST",
+        "provider": "The Cancer Imaging Archive",
+        "url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+        "access": "public TCIA collection; follow TCIA data citation and use terms",
+        "modalities": ["PET/CT", "quantitative MRI", "longitudinal treatment assessment"],
         "use_in_project": [
-            "Support extraction of metastatic indicator wording from reports",
-            "Possible segmentation/classification experiments for ascites, liver lesions, pleural effusion, or bone lesions",
-            "Route suspicious findings to clinician review instead of diagnosis",
+            "Longitudinal PET/CT and MRI workflow exploration",
+            "Neoadjuvant treatment-assessment imaging priors",
+            "Future external-direction testing for response monitoring",
+        ],
+        "covers": {
+            "breast_cancer": True,
+            "treatment_response": True,
+            "longitudinal_imaging": True,
+            "cbc_labs": False,
+            "symptoms": False,
+            "ct_ultrasound": True,
+            "metastatic_indicators": False,
+        },
+        "limitations": [
+            "Imaging-focused; does not include CBC, patient symptoms, or full care-team workflow data.",
+            "Useful for narrow imaging experiments, not direct clinical deployment.",
+        ],
+    },
+    {
+        "id": "tcia_fdg_pet_ct_lesions",
+        "name": "FDG-PET-CT-Lesions",
+        "provider": "The Cancer Imaging Archive",
+        "url": "https://www.cancerimagingarchive.net/collection/fdg-pet-ct-lesions/",
+        "access": "public TCIA collection; follow TCIA data citation and use terms",
+        "modalities": ["whole-body FDG PET/CT", "DICOM segmentations", "tumor lesion masks"],
+        "use_in_project": [
+            "Future whole-body lesion segmentation baseline",
+            "PET/CT DICOM ingestion and mask-handling tests",
+            "Non-diagnostic metastatic-indicator workflow experiments",
         ],
         "covers": {
             "breast_cancer": False,
@@ -189,8 +215,86 @@ PUBLIC_DATA_SOURCES: list[dict[str, Any]] = [
             "metastatic_indicators": True,
         },
         "limitations": [
-            "Not implemented as a diagnostic reader.",
-            "Requires modality-specific labels and radiology expertise before any model claim.",
+            "Not breast-cancer specific.",
+            "Lesion segmentation labels do not by themselves establish metastatic breast cancer origin.",
+        ],
+    },
+    {
+        "id": "nih_deeplesion",
+        "name": "DeepLesion",
+        "provider": "NIH Clinical Center",
+        "url": "https://nihcc.app.box.com/v/DeepLesion",
+        "access": "public NIH-hosted dataset; check NIH use/citation guidance",
+        "modalities": ["CT slices", "lesion boxes", "size measurements", "body-wide lesion annotations"],
+        "use_in_project": [
+            "Future CT lesion detection pretraining or benchmarking",
+            "Whole-body lesion-size and location priors",
+            "Stress testing CT image ingestion separate from breast-specific claims",
+        ],
+        "covers": {
+            "breast_cancer": False,
+            "treatment_response": False,
+            "longitudinal_imaging": False,
+            "cbc_labs": False,
+            "symptoms": False,
+            "ct_ultrasound": True,
+            "metastatic_indicators": True,
+        },
+        "limitations": [
+            "Not cancer-type specific and not a breast cancer treatment-response dataset.",
+            "Bounding boxes identify lesions, not clinical diagnosis or disease origin.",
+        ],
+    },
+    {
+        "id": "busi_breast_ultrasound",
+        "name": "BUSI - Breast Ultrasound Images Dataset",
+        "provider": "Al-Dhabyani et al. / public mirrors",
+        "url": "https://www.kaggle.com/datasets/subhajournal/busi-breast-ultrasound-images-dataset/data",
+        "access": "public mirror; verify original paper citation and mirror license before redistribution",
+        "modalities": ["breast ultrasound", "benign/malignant/normal labels", "segmentation masks"],
+        "use_in_project": [
+            "Future breast ultrasound segmentation baseline",
+            "Benign/malignant label handling experiments with strict non-diagnostic language",
+            "UI/report workflow for ultrasound uploads",
+        ],
+        "covers": {
+            "breast_cancer": True,
+            "treatment_response": False,
+            "longitudinal_imaging": False,
+            "cbc_labs": False,
+            "symptoms": False,
+            "ct_ultrasound": True,
+            "metastatic_indicators": False,
+        },
+        "limitations": [
+            "Breast lesion dataset only; does not cover abdominal ascites or metastatic spread.",
+            "Small and commonly re-hosted; requires careful split and duplicate checks.",
+        ],
+    },
+    {
+        "id": "bus_uclm_breast_ultrasound",
+        "name": "BUS-UCLM Breast Ultrasound Lesion Segmentation",
+        "provider": "Scientific Data",
+        "url": "https://www.nature.com/articles/s41597-025-04562-3",
+        "access": "public dataset described in Scientific Data; follow article/data repository terms",
+        "modalities": ["breast ultrasound", "lesion segmentation masks"],
+        "use_in_project": [
+            "Second-source breast ultrasound segmentation evaluation",
+            "Cross-dataset ultrasound robustness check",
+            "Dataset-shift demonstration against BUSI",
+        ],
+        "covers": {
+            "breast_cancer": True,
+            "treatment_response": False,
+            "longitudinal_imaging": False,
+            "cbc_labs": False,
+            "symptoms": False,
+            "ct_ultrasound": True,
+            "metastatic_indicators": False,
+        },
+        "limitations": [
+            "Breast ultrasound only; not a metastatic or ascites dataset.",
+            "Should be used for segmentation/robustness experiments, not diagnosis claims.",
         ],
     },
 ]
@@ -222,10 +326,22 @@ FEATURE_NEEDS: list[dict[str, Any]] = [
         "project_action": "Use public trial schemas and guideline/paper schedules as priors, not as patient-level ground truth.",
     },
     {
-        "need": "Metastatic CT/ultrasound indicators",
-        "status": "future_extension",
-        "sources": ["future_metastatic_imaging"],
-        "project_action": "Start with report-text extraction and clinician-review routing; only later add image models with labeled data.",
+        "need": "Metastatic CT/PET-CT lesion support",
+        "status": "partially_covered",
+        "sources": ["tcia_qin_breast", "tcia_fdg_pet_ct_lesions", "nih_deeplesion"],
+        "project_action": "Use for DICOM ingestion, whole-body lesion workflow experiments, and non-diagnostic clinician-review signals.",
+    },
+    {
+        "need": "Breast ultrasound lesion support",
+        "status": "partially_covered",
+        "sources": ["busi_breast_ultrasound", "bus_uclm_breast_ultrasound"],
+        "project_action": "Use for future breast ultrasound segmentation baselines with careful split, duplicate, and non-diagnostic caveats.",
+    },
+    {
+        "need": "Ascites/peritoneal disease monitoring",
+        "status": "report_text_supported_image_labels_not_selected",
+        "sources": ["tcia_fdg_pet_ct_lesions", "nih_deeplesion"],
+        "project_action": "Implement report-text extraction now; add image tasks only after ascites/peritoneal labels are curated or annotated.",
     },
     {
         "need": "End-to-end real treatment journey",
@@ -247,8 +363,9 @@ def build_public_data_manifest(output_path: str | None = DEFAULT_OUTPUT_PATH) ->
         ),
         "recommended_strategy": (
             "Use a source-calibrated synthetic patient journey benchmark: real public MRI-response datasets for imaging "
-            "signals, MIMIC-IV for lab-distribution realism, SEER/TCGA/METABRIC for subtype and outcome priors, and "
-            "explicit documentation for all synthetic fields."
+            "signals, QIN-BREAST/FDG-PET-CT-Lesions/DeepLesion for CT/PET-CT workflow experiments, BUSI/BUS-UCLM for "
+            "breast ultrasound segmentation experiments, MIMIC-IV for lab-distribution realism, SEER/TCGA/METABRIC "
+            "for subtype and outcome priors, and explicit documentation for all synthetic fields."
         ),
         "sources": PUBLIC_DATA_SOURCES,
         "feature_feasibility": FEATURE_NEEDS,

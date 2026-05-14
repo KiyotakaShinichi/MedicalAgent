@@ -4,6 +4,7 @@ import {
   Cpu,
   Database,
   FlaskConical,
+  Image,
   LayoutDashboard,
   ShieldCheck,
   Star,
@@ -19,24 +20,27 @@ import { OverviewSection } from "./sections/OverviewSection";
 import { RagSection } from "./sections/RagSection";
 import { RegressionSection } from "./sections/RegressionSection";
 import { AgentTraceSection } from "./sections/AgentTraceSection";
+import { ImagingSection } from "./sections/ImagingSection";
 
 const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
   { to: "/admin/rag", label: "RAG / Cost", icon: Database },
   { to: "/admin/guardrails", label: "Guardrails", icon: ShieldCheck },
   { to: "/admin/mle", label: "MLE Gates", icon: Cpu },
+  { to: "/admin/imaging", label: "Imaging MLE", icon: Image },
   { to: "/admin/regression", label: "Regression", icon: FlaskConical },
   { to: "/admin/feedback", label: "Feedback", icon: Star },
   { to: "/admin/model", label: "Model", icon: BarChart2 },
 ];
 
-type Section = "overview" | "rag" | "guardrails" | "mle" | "regression" | "feedback" | "trace";
+type Section = "overview" | "rag" | "guardrails" | "mle" | "imaging" | "regression" | "feedback" | "trace";
 
 const SECTIONS: { id: Section; label: string }[] = [
   { id: "overview",   label: "Overview" },
   { id: "rag",        label: "RAG / Cost" },
   { id: "guardrails", label: "Guardrails" },
   { id: "mle",        label: "MLE Gates" },
+  { id: "imaging",    label: "Imaging MLE" },
   { id: "regression", label: "Regression" },
   { id: "trace",      label: "Agent Trace" },
   { id: "feedback",   label: "Feedback" },
@@ -75,6 +79,7 @@ export default function AdminDashboard() {
               {section === "rag" && <RagSection analytics={data} />}
               {section === "guardrails" && <GuardrailsSection analytics={data} />}
               {section === "mle" && <MleSection analytics={data} onRefresh={refetch} />}
+              {section === "imaging" && <ImagingSection />}
               {section === "regression" && <RegressionSection />}
               {section === "trace"      && <AgentTraceSection />}
               {section === "feedback"   && <FeedbackSection />}

@@ -80,6 +80,22 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         indicators = detect_possible_metastatic_indicators(text)
         self.assertTrue(any(item["site"] == "liver" for item in indicators))
 
+    def test_ct_ascites_and_peritoneal_wording_are_flagged(self):
+        text = "CT abdomen/pelvis impression: New moderate ascites and peritoneal nodularity concerning for metastatic disease."
+        indicators = detect_possible_metastatic_indicators(text)
+        sites = {item["site"] for item in indicators}
+        self.assertIn("ascites", sites)
+        self.assertIn("peritoneum", sites)
+
+    def test_negated_ascites_is_not_flagged(self):
+        text = "CT abdomen/pelvis impression: No ascites or peritoneal carcinomatosis."
+        self.assertEqual(detect_possible_metastatic_indicators(text), [])
+
+    def test_abdominal_ultrasound_liver_lesion_is_flagged(self):
+        text = "Ultrasound abdomen shows a new hepatic lesion concerning for metastatic disease."
+        indicators = detect_possible_metastatic_indicators(text)
+        self.assertTrue(any(item["site"] == "liver" for item in indicators))
+
     def test_breast_mri_size_decrease_is_detected(self):
         df = pd.DataFrame([
             {
@@ -1486,6 +1502,57 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertIn("mri report", result["reply"].lower())
             self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
             self.assertEqual(result["agent_pipeline"]["citations"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_saves_ct_report_and_flags_metastatic_indicators(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P008", name="CT Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P008",
+                message=(
+                    "CT abdomen/pelvis report on 2026-03-01 impression: "
+                    "new ascites and peritoneal nodularity concerning for metastatic disease."
+                ),
+            )
+
+            saved_imaging = [action for action in result["saved_actions"] if action["type"] == "saved_imaging_report"]
+            indicator_actions = [action for action in result["saved_actions"] if action["type"] == "possible_metastatic_indicator"]
+            self.assertEqual(len(saved_imaging), 1)
+            self.assertEqual(len(indicator_actions), 1)
+            self.assertEqual(db.query(ImagingReport).count(), 1)
+            report = db.query(ImagingReport).first()
+            self.assertEqual(report.modality, "CT abdomen/pelvis")
+            self.assertEqual(report.body_site, "Abdomen/pelvis")
+            self.assertEqual(str(report.date), "2026-03-01")
+            self.assertIn("ascites", report.impression.lower())
+            self.assertIn("clinician review", result["reply"].lower())
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_saves_abdominal_ultrasound_report(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P009", name="Ultrasound Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P009",
+                message="Ultrasound abdomen report on 2026-03-04 impression: new hepatic lesion.",
+            )
+
+            saved_imaging = [action for action in result["saved_actions"] if action["type"] == "saved_imaging_report"]
+            self.assertEqual(len(saved_imaging), 1)
+            report = db.query(ImagingReport).first()
+            self.assertEqual(report.modality, "Abdominal ultrasound")
+            self.assertEqual(report.body_site, "Abdomen")
         finally:
             db.close()
             db.bind.dispose()

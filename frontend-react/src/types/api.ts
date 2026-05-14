@@ -480,3 +480,105 @@ export interface PublicDataManifest {
   claim_boundary: string;
   manifest_hash: string;
 }
+
+// Public imaging / image-model readiness
+export interface PublicImagingDataset {
+  id: string;
+  name: string;
+  source_url: string;
+  modality: string;
+  task: string;
+  available: boolean;
+  local_path: string | null;
+  file_count: number;
+  image_count: number;
+  mask_count: number;
+  metadata_count: number;
+  class_counts: Record<string, number>;
+  readiness: string;
+  claim_boundary: string;
+}
+
+export interface PublicImagingManifest {
+  schema_version: string;
+  generated_at: string;
+  status: string;
+  dataset_root: string;
+  available_dataset_count: number;
+  datasets: PublicImagingDataset[];
+  recommended_next_task: string;
+  claim_boundary: string;
+  manifest_hash: string;
+}
+
+export interface UltrasoundBaselineResult {
+  schema_version: string;
+  generated_at: string;
+  status: string;
+  reason?: string;
+  expected_layout?: string;
+  dataset_root?: string;
+  task?: string;
+  model_family?: string;
+  image_count?: number;
+  train_count?: number;
+  test_count?: number;
+  label_counts?: Record<string, number>;
+  models?: Record<string, {
+    accuracy: number;
+    balanced_accuracy: number;
+    macro_f1: number;
+    auroc?: number | null;
+    auroc_ovr?: number | null;
+    confusion_matrix: number[][];
+    classes: string[];
+  }>;
+  best_model?: string;
+  predictions_path?: string;
+  claim_boundary: string;
+}
+
+export interface CtLesionWorkflowReport {
+  schema_version: string;
+  generated_at: string;
+  status: string;
+  reason?: string;
+  expected_layout?: string;
+  dataset_root?: string;
+  image_file_count?: number;
+  metadata_file_count?: number;
+  estimated_annotation_rows?: number | null;
+  sample_image_files?: string[];
+  sample_metadata_files?: string[];
+  recommended_model_track?: string[];
+  claim_boundary: string;
+}
+
+export interface SimToPublicImagingReport {
+  schema_version: string;
+  generated_at: string;
+  status: string;
+  synthetic_summary: {
+    status: string;
+    path: string;
+    row_count: number;
+    patient_count?: number | null;
+    modalities: Record<string, number>;
+    report_type_counts: Record<string, number>;
+    metastatic_keyword_rows: number;
+  };
+  public_imaging_availability: {
+    status: string;
+    available_dataset_count: number;
+    available_modalities: string[];
+  };
+  gap_table: Array<{
+    area: string;
+    synthetic_coverage: string;
+    public_coverage: string;
+    available_now: boolean;
+    gap: string;
+  }>;
+  recommended_actions: string[];
+  claim_boundary: string;
+}

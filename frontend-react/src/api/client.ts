@@ -17,6 +17,10 @@ import type {
   PredictionErrorTable,
   RagAblationResult,
   PublicDataManifest,
+  PublicImagingManifest,
+  UltrasoundBaselineResult,
+  CtLesionWorkflowReport,
+  SimToPublicImagingReport,
 } from "../types/api";
 
 const BASE = "http://127.0.0.1:8017";
@@ -187,3 +191,27 @@ export const getPublicDataManifest = () =>
 
 export const runPublicDataManifest = () =>
   post<{ message: string; result: PublicDataManifest }>("/admin/public-data-manifest");
+
+export const getPublicImagingManifest = () =>
+  get<PublicImagingManifest>("/admin/public-imaging-manifest");
+
+export const runPublicImagingManifest = () =>
+  post<{ message: string; result: PublicImagingManifest }>("/admin/public-imaging-manifest");
+
+export const getUltrasoundBaseline = () =>
+  get<UltrasoundBaselineResult>("/admin/ultrasound-baseline");
+
+export const runUltrasoundBaseline = () =>
+  post<{ message: string; result: UltrasoundBaselineResult }>("/admin/ultrasound-baseline");
+
+export const getCtLesionWorkflow = () =>
+  get<CtLesionWorkflowReport>("/admin/ct-lesion-workflow");
+
+export const runCtLesionWorkflow = () =>
+  post<{ message: string; result: CtLesionWorkflowReport }>("/admin/ct-lesion-workflow");
+
+export const getSimToPublicImaging = () =>
+  get<SimToPublicImagingReport>("/admin/sim-to-public-imaging");
+
+export const runSimToPublicImaging = () =>
+  post<{ message: string; result: SimToPublicImagingReport }>("/admin/sim-to-public-imaging");

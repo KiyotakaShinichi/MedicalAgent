@@ -152,7 +152,9 @@ These are tabular features derived from synthetic MRI measurements or imaging re
 - Synthetic data may encode simplified assumptions and easier signal relationships than real data.
 - Real hospitals introduce missingness, inconsistent documentation, scanner/protocol variation, comorbidities, bias, and treatment changes.
 - No single public dataset currently used by the project contains the full desired monitoring journey: CBC trends, symptoms, medications, treatment cycles, breast MRI response, CT/ultrasound metastatic indicators, clinician notes, and outcomes in one longitudinal record.
-- Public datasets should be treated as source-specific calibration and validation aids: TCIA/I-SPY/Duke for breast MRI response, MIMIC-IV for lab realism, and SEER/TCGA/METABRIC for demographic, subtype, and outcome priors.
+- Public datasets should be treated as source-specific calibration and validation aids: TCIA/I-SPY/Duke/BreastDCEDL for breast MRI response, QIN-BREAST for breast PET/CT and MRI workflow exploration, FDG-PET-CT-Lesions and NIH DeepLesion for CT/PET-CT lesion workflow experiments, BUSI/BUS-UCLM for breast ultrasound segmentation experiments, MIMIC-IV for lab realism, and SEER/TCGA/METABRIC for demographic, subtype, and outcome priors.
+- CT and ultrasound support currently means report-text/metadata handling plus clinician-review routing. It is not a diagnostic image reader.
+- Public imaging readiness artifacts are stored under `Data/public_imaging/`: dataset manifest, ultrasound baseline metrics, CT lesion workflow readiness, and synthetic-to-public imaging gap report.
 - No prospective validation, clinician study, or regulatory review has been performed.
 
 ## Recommended Evaluation Split Language

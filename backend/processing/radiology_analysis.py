@@ -64,6 +64,10 @@ METASTATIC_INDICATOR_PATTERNS = [
     ("brain", r"\b(brain|intracranial)\b.*\b(lesion|metasta|deposit)\b"),
     ("adrenal", r"\b(adrenal)\b.*\b(nodule|mass|lesion|metasta)\b"),
     ("pleura", r"\b(pleural)\b.*\b(nodularity|nodule|metasta|effusion)\b"),
+    ("pericardium", r"\b(pericardial)\b.*\b(effusion|nodularity|nodule|metasta)\b"),
+    ("peritoneum", r"\b(peritoneal|omental)\b.*\b(nodularity|nodule|implant|deposit|metasta|thickening|caking)\b"),
+    ("peritoneum", r"\b(peritoneal carcinomatosis|omental caking)\b"),
+    ("ascites", r"\b(ascites|free fluid|peritoneal fluid)\b"),
     ("distant_lymph_nodes", r"\b(supraclavicular|internal mammary|mediastinal|abdominal|retroperitoneal)\b.*\b(lymph node|node|adenopathy)\b"),
 ]
 
@@ -142,6 +146,22 @@ def _is_negated(sentence):
         "without evidence of",
         "negative for",
         "no definite",
+        "no suspicious",
+        "no metastatic",
+        "without metastatic",
+        "no ascites",
+        "without ascites",
+        "ascites absent",
+        "no free fluid",
+        "without free fluid",
+        "no peritoneal",
+        "without peritoneal",
+        "no omental",
+        "without omental",
+        "no pleural effusion",
+        "without pleural effusion",
+        "no pericardial effusion",
+        "without pericardial effusion",
     ]
     return any(phrase in sentence for phrase in negations)
 

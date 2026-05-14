@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-14T10:35:56+0800",
+  "generated_at": "2026-05-14T11:26:25+0800",
   "status": "passed",
   "failed_checks": [],
   "checks": [
@@ -7,7 +7,7 @@
       "name": "frontend lint",
       "passed": true,
       "returncode": 0,
-      "duration_s": 21.89,
+      "duration_s": 57.88,
       "command": "C:\\Program Files\\nodejs\\npm.CMD run lint",
       "output_tail": "\n> frontend-react@0.0.0 lint\n> eslint .\n\n"
     },
@@ -15,31 +15,31 @@
       "name": "frontend build",
       "passed": true,
       "returncode": 0,
-      "duration_s": 14.4,
+      "duration_s": 48.89,
       "command": "C:\\Program Files\\nodejs\\npm.CMD run build",
-      "output_tail": "\n> frontend-react@0.0.0 build\n> tsc -b && vite build\n\n\u001b[36mvite v8.0.12 \u001b[32mbuilding client environment for production...\u001b[36m\u001b[39m\n\u001b[2K\ntransforming...\u00e2\u0153\u201c 2331 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                               0.56 kB \u00e2\u201d\u201a gzip:   0.35 kB\ndist/assets/index-CWIrmKln.css               32.70 kB \u00e2\u201d\u201a gzip:   7.86 kB\ndist/assets/star-BJAQb4c_.js                  0.61 kB \u00e2\u201d\u201a gzip:   0.36 kB\ndist/assets/cpu-CAPOf-aV.js                   0.74 kB \u00e2\u201d\u201a gzip:   0.33 kB\ndist/assets/Badge-Kksqri8w.js                 6.64 kB \u00e2\u201d\u201a gzip:   2.49 kB\ndist/assets/ClinicianDashboard-Bz3o14o_.js    8.76 kB \u00e2\u201d\u201a gzip:   3.01 kB\ndist/assets/PatientDashboard-CUXh-qFn.js     10.28 kB \u00e2\u201d\u201a gzip:   3.10 kB\ndist/assets/AdminDashboard-ArZybkTB.js       54.46 kB \u00e2\u201d\u201a gzip:  12.89 kB\ndist/assets/clsx-DiNxYtBZ.js                 55.20 kB \u00e2\u201d\u201a gzip:  19.92 kB\ndist/assets/index-B71WPYWn.js               192.07 kB \u00e2\u201d\u201a gzip:  60.90 kB\ndist/assets/ChatPanel-DHGhN1Yn.js           362.17 kB \u00e2\u201d\u201a gzip: 105.98 kB\n\n\u001b[32m\u00e2\u0153\u201c built in 2.82s\u001b[39m\n"
+      "output_tail": "\n> frontend-react@0.0.0 build\n> tsc -b && vite build\n\n\u001b[36mvite v8.0.12 \u001b[32mbuilding client environment for production...\u001b[36m\u001b[39m\n\u001b[2K\ntransforming...\u00e2\u0153\u201c 2332 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                               0.56 kB \u00e2\u201d\u201a gzip:   0.35 kB\ndist/assets/index-hLTb8d-o.css               32.83 kB \u00e2\u201d\u201a gzip:   7.89 kB\ndist/assets/star-Bq1-kvAJ.js                  0.61 kB \u00e2\u201d\u201a gzip:   0.36 kB\ndist/assets/cpu-dEDzJQmp.js                   0.74 kB \u00e2\u201d\u201a gzip:   0.33 kB\ndist/assets/Badge-CCu3abID.js                 6.65 kB \u00e2\u201d\u201a gzip:   2.49 kB\ndist/assets/ClinicianDashboard-DLqyeCPt.js    8.76 kB \u00e2\u201d\u201a gzip:   3.01 kB\ndist/assets/PatientDashboard-DSFwIxtn.js     10.29 kB \u00e2\u201d\u201a gzip:   3.09 kB\ndist/assets/clsx-BI4dvvy0.js                 55.59 kB \u00e2\u201d\u201a gzip:  20.04 kB\ndist/assets/AdminDashboard-Bcz3lFcG.js       64.72 kB \u00e2\u201d\u201a gzip:  14.52 kB\ndist/assets/index-C69w9QKd.js               192.07 kB \u00e2\u201d\u201a gzip:  60.90 kB\ndist/assets/ChatPanel-Bp3iEfe7.js           362.18 kB \u00e2\u201d\u201a gzip: 105.97 kB\n\n\u001b[32m\u00e2\u0153\u201c built in 5.08s\u001b[39m\n"
     },
     {
       "name": "backend fast tests",
       "passed": true,
       "returncode": 0,
-      "duration_s": 55.79,
+      "duration_s": 90.71,
       "command": "C:\\Users\\L\\Downloads\\MedicalAgent\\.venv\\Scripts\\python.exe -m pytest tests/test_access_control.py -q",
-      "output_tail": "...................                                                      [100%]\n19 passed in 45.61s\n"
+      "output_tail": "...................                                                      [100%]\n19 passed in 78.73s (0:01:18)\n"
     },
     {
       "name": "public data manifest",
       "passed": true,
       "returncode": 0,
-      "duration_s": 0.53,
+      "duration_s": 0.44,
       "command": "C:\\Users\\L\\Downloads\\MedicalAgent\\.venv\\Scripts\\python.exe scripts/build_public_data_manifest.py",
-      "output_tail": "{\n  \"status\": \"usable_with_limitations\",\n  \"sources\": 7,\n  \"feature_needs\": 6,\n  \"manifest_hash\": \"10241e0ed6ce7774\",\n  \"output_path\": \"Data/data_lineage/public_data_manifest.json\"\n}\n"
+      "output_tail": "{\n  \"status\": \"usable_with_limitations\",\n  \"sources\": 11,\n  \"feature_needs\": 8,\n  \"manifest_hash\": \"68ecb3e9e99dc433\",\n  \"output_path\": \"Data/data_lineage/public_data_manifest.json\"\n}\n"
     },
     {
       "name": "MLE readiness",
       "passed": true,
       "returncode": 0,
-      "duration_s": 34.54,
+      "duration_s": 42.41,
       "command": "C:\\Users\\L\\Downloads\\MedicalAgent\\.venv\\Scripts\\python.exe scripts/run_mle_checks.py",
       "output_tail": "{\n  \"output_path\": \"Data/mle_monitoring/latest_mle_readiness.json\",\n  \"status\": \"unideal\",\n  \"release_recommendation\": \"candidate_only_fix_calibration_or_slice_gaps_before_strong_claims\",\n  \"hard_gate_status\": \"passed\",\n  \"hard_gate_failures\": 0,\n  \"poc_demo_readiness\": \"ready_with_limitations\",\n  \"poc_demo_recommendation\": \"ok_for_supervised_engineering_demo_with_disclaimers\",\n  \"category_statuses\": {\n    \"artifacts\": \"passed\",\n    \"data_contract\": \"passed\",\n    \"feature_store\": \"passed\",\n    \"lineage\": \"passed\",\n    \"model_quality\": \"passed\",\n    \"monitoring\": \"acceptable\",\n    \"lifecycle\": \"passed\",\n    \"safety_regression\": \"strong\",\n    \"realism\": \"unideal\"\n  }\n}\n"
     },

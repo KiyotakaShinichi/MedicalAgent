@@ -1,0 +1,8 @@
+{
+  "schema_version": "ct_lesion_workflow_v1",
+  "generated_at": "2026-05-14T03:14:04.339884+00:00",
+  "status": "unavailable",
+  "reason": "DeepLesion or PET/CT lesion dataset not found locally.",
+  "expected_layout": "Place DeepLesion under Datasets/DeepLesion or PET/CT DICOM/NIfTI data under Datasets/FDG-PET-CT-Lesions.",
+  "claim_boundary": "Unavailable artifacts are explicit so the dashboard does not imply hidden validation."
+}

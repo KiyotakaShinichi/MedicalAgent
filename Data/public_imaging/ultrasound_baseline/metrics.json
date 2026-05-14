@@ -1,0 +1,8 @@
+{
+  "schema_version": "breast_ultrasound_baseline_v1",
+  "generated_at": "2026-05-14T03:14:04.348725+00:00",
+  "status": "unavailable",
+  "reason": "Dataset is missing, too small, or has fewer than two labels.",
+  "expected_layout": "Put BUSI images under Datasets/BUSI with benign/malignant/normal folders.",
+  "claim_boundary": "Unavailable artifacts are explicit so the dashboard does not imply hidden validation."
+}

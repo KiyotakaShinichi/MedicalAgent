@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 from datetime import date
 
+import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -47,7 +48,7 @@ from backend.models import (
     SymptomReport,
     Treatment,
 )
-from backend.processing.radiology_analysis import analyze_breast_imaging_reports, analyze_radiology_reports
+from backend.processing.radiology_analysis import analyze_breast_imaging_reports
 from backend.processing.patient_state import build_patient_state
 from backend.processing.risk_engine import (
     detect_clinical_rule_risks,
@@ -188,6 +189,33 @@ def _profile_to_dict(profile):
     }
 
 
+def _combined_imaging_reports(imaging_reports, ct_reports):
+    columns = ["date", "modality", "report_type", "body_site", "findings", "impression"]
+    frames = []
+
+    if imaging_reports is not None and not imaging_reports.empty:
+        frame = imaging_reports.copy()
+        for column in columns:
+            if column not in frame.columns:
+                frame[column] = None
+        frames.append(frame[columns])
+
+    if ct_reports is not None and not ct_reports.empty:
+        frame = ct_reports.copy()
+        frame["modality"] = "CT chest/abdomen/pelvis"
+        frame["body_site"] = "Chest/abdomen/pelvis"
+        for column in columns:
+            if column not in frame.columns:
+                frame[column] = None
+        frames.append(frame[columns])
+
+    if not frames:
+        return pd.DataFrame(columns=columns)
+
+    combined = pd.concat(frames, ignore_index=True)
+    return combined.sort_values("date")
+
+
 def build_patient_report_response(patient_id: str, db: Session):
     patient = get_patient(db, patient_id)
     if not patient:
@@ -197,6 +225,7 @@ def build_patient_report_response(patient_id: str, db: Session):
     treatments = get_treatments_df(db, patient_id)
     imaging_reports = get_imaging_reports_df(db, patient_id)
     ct_reports = get_ct_reports_df(db, patient_id)
+    combined_imaging_reports = _combined_imaging_reports(imaging_reports, ct_reports)
     symptoms = get_symptoms_df(db, patient_id)
     mri_registry = get_mri_registry(db, patient_id)
     mri_series_index = get_mri_series_index(db, patient_id)
@@ -221,10 +250,8 @@ def build_patient_report_response(patient_id: str, db: Session):
         treatment_effects = align_labs_with_treatment(labs, treatments)
 
     radiology_summary = None
-    if not imaging_reports.empty:
-        radiology_summary = analyze_breast_imaging_reports(imaging_reports)
-    elif not ct_reports.empty:
-        radiology_summary = analyze_radiology_reports(ct_reports)
+    if not combined_imaging_reports.empty:
+        radiology_summary = analyze_breast_imaging_reports(combined_imaging_reports)
 
     radiology_risks = []
     if radiology_summary:
@@ -246,7 +273,7 @@ def build_patient_report_response(patient_id: str, db: Session):
     timeline = build_clinical_timeline(
         labs=labs,
         treatments=treatments,
-        imaging_reports=imaging_reports,
+        imaging_reports=combined_imaging_reports,
         symptoms=symptoms,
         risks=all_risks,
     )

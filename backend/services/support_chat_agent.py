@@ -15,6 +15,7 @@ from backend.models import (
     Treatment,
     TreatmentOutcome,
 )
+from backend.processing.radiology_analysis import detect_possible_metastatic_indicators
 from backend.services.agent_rag import run_patient_agent_pipeline, route_intent, safety_scope_check
 from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_imaging_report_payload, validate_symptom_payload
@@ -184,10 +185,24 @@ def handle_patient_chat(db, patient_id, message):
             "date": imaging_report["date"].isoformat(),
             "report_type": imaging_report["report_type"],
         })
+        indicators = detect_possible_metastatic_indicators(
+            f"{imaging_report['findings']} {imaging_report['impression']}"
+        )
+        if indicators:
+            sites = sorted({indicator["site"] for indicator in indicators})
+            actions.append({
+                "type": "possible_metastatic_indicator",
+                "sites": sites,
+                "message": (
+                    "Report wording mentions possible distant-disease indicators. "
+                    "This is not a diagnosis and should be reviewed by the oncology team."
+                ),
+            })
+            urgent_flags.extend([f"imaging_{site}" for site in sites])
     elif "request_missing_imaging_details" in selected_tools and extracted["partial_imaging"]:
         actions.append({
             "type": "partial_imaging_detected",
-            "message": "I saw MRI/imaging wording. To save it as an imaging report, paste the report date plus findings or impression text.",
+            "message": "I saw imaging wording. To save it as a report, paste the report date plus findings or impression text.",
         })
 
     medication = extracted["medication"]
@@ -593,23 +608,39 @@ def _extract_imaging_report(message):
         "stable",
         "interval",
         "response",
+        "ct",
+        "pet/ct",
+        "pet ct",
+        "hepatic",
+        "liver",
+        "lung",
+        "pleural",
+        "pericardial",
+        "ascites",
+        "free fluid",
+        "peritoneal",
+        "omental",
+        "carcinomatosis",
+        "lymph node",
+        "adenopathy",
+        "metastatic",
+        "metastasis",
+        "metastases",
     ]
     if not any(term in lower for term in report_terms):
         return None
     if _is_general_imaging_question(lower):
         return None
 
-    modality = "Breast MRI"
-    if "mammogram" in lower or "mammography" in lower:
-        modality = "Mammogram"
-    elif "ultrasound" in lower or "sonogram" in lower:
-        modality = "Breast ultrasound"
+    modality, body_site = _infer_imaging_modality_and_body_site(lower)
 
     report_type = "Patient-entered imaging note"
     if any(term in lower for term in ["follow-up", "follow up", "interval", "decreased", "increased", "stable"]):
         report_type = "Follow-up"
     elif "baseline" in lower:
         report_type = "Baseline"
+    elif any(term in lower for term in ["staging", "restaging", "metastatic", "metastasis", "metastases", "ascites", "peritoneal"]):
+        report_type = "Staging/follow-up"
 
     impression = _extract_report_section(message, "impression") or _best_imaging_sentence(message) or message
     findings = _extract_report_section(message, "findings") or message
@@ -617,7 +648,7 @@ def _extract_imaging_report(message):
         "date": _extract_date(message),
         "modality": modality,
         "report_type": report_type,
-        "body_site": "Breast",
+        "body_site": body_site,
         "findings": findings.strip()[:12000],
         "impression": impression.strip()[:4000],
     }
@@ -629,12 +660,27 @@ def _looks_like_partial_imaging(message):
         return False
     if not _has_imaging_term(lower):
         return False
-    self_scoped_terms = ["my", "report", "scan", "result", "uploaded", "impression", "findings"]
+    self_scoped_terms = ["my", "report", "scan", "result", "uploaded", "impression", "findings", "ct", "pet", "ultrasound"]
     return len(lower.split()) <= 6 or any(term in lower for term in self_scoped_terms)
 
 
 def _has_imaging_term(lower_message):
-    return any(term in lower_message for term in ["mri", "imaging", "scan", "bi-rads", "birads", "mammogram", "ultrasound"])
+    return any(term in lower_message for term in [
+        "mri",
+        "imaging",
+        "scan",
+        "bi-rads",
+        "birads",
+        "mammogram",
+        "ultrasound",
+        "sonogram",
+        "ct ",
+        " ct",
+        "ct/",
+        "pet/ct",
+        "pet ct",
+        "cat scan",
+    ])
 
 
 def _is_general_imaging_question(lower_message):
@@ -652,9 +698,67 @@ def _extract_report_section(message, label):
     return section if section else None
 
 
+def _infer_imaging_modality_and_body_site(lower):
+    abdominal_terms = [
+        "abdomen",
+        "abdominal",
+        "pelvis",
+        "pelvic",
+        "liver",
+        "hepatic",
+        "ascites",
+        "free fluid",
+        "peritoneal",
+        "omental",
+        "carcinomatosis",
+        "retroperitoneal",
+    ]
+    chest_terms = ["chest", "lung", "pulmonary", "pleural", "mediastinal", "pericardial"]
+
+    if "pet/ct" in lower or "pet ct" in lower:
+        return "FDG PET/CT", "Whole body"
+    if re.search(r"\bct\b", lower) or "cat scan" in lower:
+        if any(term in lower for term in abdominal_terms) and any(term in lower for term in chest_terms):
+            return "CT chest/abdomen/pelvis", "Chest/abdomen/pelvis"
+        if any(term in lower for term in abdominal_terms):
+            return "CT abdomen/pelvis", "Abdomen/pelvis"
+        if any(term in lower for term in chest_terms):
+            return "CT chest", "Chest"
+        return "CT scan", "Unspecified"
+    if "mammogram" in lower or "mammography" in lower:
+        return "Mammogram", "Breast"
+    if "ultrasound" in lower or "sonogram" in lower:
+        if any(term in lower for term in abdominal_terms):
+            return "Abdominal ultrasound", "Abdomen"
+        return "Breast ultrasound", "Breast"
+    return "Breast MRI", "Breast"
+
+
 def _best_imaging_sentence(message):
     sentences = [part.strip() for part in re.split(r"(?<=[.!?])\s+|[;\n]", message) if part.strip()]
-    terms = ["mass", "tumor", "lesion", "bi-rads", "birads", "cm", "decreased", "increased", "stable", "interval"]
+    terms = [
+        "mass",
+        "tumor",
+        "lesion",
+        "bi-rads",
+        "birads",
+        "cm",
+        "decreased",
+        "increased",
+        "stable",
+        "interval",
+        "ascites",
+        "free fluid",
+        "peritoneal",
+        "omental",
+        "pleural",
+        "hepatic",
+        "liver",
+        "metastatic",
+        "metastasis",
+        "metastases",
+        "adenopathy",
+    ]
     for sentence in sentences:
         if any(term in sentence.lower() for term in terms):
             return sentence
@@ -812,7 +916,7 @@ def _build_response(message, actions, urgent_flags, patient_context):
         parts.extend(action["message"] for action in partial_actions if action.get("message"))
     else:
         contextual = _contextual_reply(message, patient_context)
-        parts.append(contextual or "I heard you. I can chat normally, answer low-risk education questions with sources when needed, or help log symptoms, CBC values, medications, and MRI report text.")
+        parts.append(contextual or "I heard you. I can chat normally, answer low-risk education questions with sources when needed, or help log symptoms, CBC values, medications, and imaging report text.")
 
     partial_labs = [action for action in actions if action["type"] == "partial_labs_detected"]
     if partial_labs and saved:
@@ -832,6 +936,14 @@ def _build_response(message, actions, urgent_flags, patient_context):
             "A deterministic CBC safety rule flagged this for clinician review: "
             + "; ".join(labels)
             + ". Please contact your oncology care team for medical guidance."
+        )
+
+    imaging_alerts = [action for action in actions if action["type"] == "possible_metastatic_indicator"]
+    if imaging_alerts:
+        sites = ", ".join(imaging_alerts[0].get("sites") or ["unspecified"])
+        parts.append(
+            "The imaging text includes wording that may need clinician review "
+            f"({sites}). I am only logging the report text and cannot diagnose metastasis."
         )
 
     parts.append(

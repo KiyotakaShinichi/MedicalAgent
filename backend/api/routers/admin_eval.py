@@ -238,4 +238,124 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": build_public_data_manifest(output_path=DEFAULT_OUTPUT_PATH),
         }
 
+    @router.get("/admin/public-imaging-manifest")
+    def get_admin_public_imaging_manifest_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return local public-imaging dataset availability and experiment readiness."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.public_imaging_datasets import DEFAULT_OUTPUT_PATH, build_public_imaging_manifest
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return build_public_imaging_manifest(output_path=DEFAULT_OUTPUT_PATH)
+
+    @router.post("/admin/public-imaging-manifest")
+    def run_admin_public_imaging_manifest_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild public-imaging dataset availability and readiness artifact."""
+        from backend.services.public_imaging_datasets import DEFAULT_OUTPUT_PATH, build_public_imaging_manifest
+
+        return {
+            "message": "Public imaging manifest rebuilt.",
+            "result": build_public_imaging_manifest(output_path=DEFAULT_OUTPUT_PATH),
+        }
+
+    @router.get("/admin/ultrasound-baseline")
+    def get_admin_ultrasound_baseline_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return public ultrasound baseline metrics or an explicit unavailable artifact."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.imaging_baseline_experiments import DEFAULT_ULTRASOUND_OUTPUT_PATH, run_ultrasound_baseline
+
+        saved = Path(DEFAULT_ULTRASOUND_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return run_ultrasound_baseline()
+
+    @router.post("/admin/ultrasound-baseline")
+    def run_admin_ultrasound_baseline_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Run public breast ultrasound baseline if dataset files are available."""
+        from backend.services.imaging_baseline_experiments import DEFAULT_ULTRASOUND_OUTPUT_PATH, run_ultrasound_baseline
+
+        return {
+            "message": "Ultrasound baseline completed.",
+            "result": run_ultrasound_baseline(output_path=DEFAULT_ULTRASOUND_OUTPUT_PATH),
+        }
+
+    @router.get("/admin/ct-lesion-workflow")
+    def get_admin_ct_lesion_workflow_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return CT/PET-CT lesion workflow readiness report."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.imaging_baseline_experiments import DEFAULT_CT_WORKFLOW_PATH, build_ct_lesion_workflow_report
+
+        saved = Path(DEFAULT_CT_WORKFLOW_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return build_ct_lesion_workflow_report(output_path=DEFAULT_CT_WORKFLOW_PATH)
+
+    @router.post("/admin/ct-lesion-workflow")
+    def run_admin_ct_lesion_workflow_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild CT/PET-CT lesion workflow readiness report."""
+        from backend.services.imaging_baseline_experiments import DEFAULT_CT_WORKFLOW_PATH, build_ct_lesion_workflow_report
+
+        return {
+            "message": "CT lesion workflow report completed.",
+            "result": build_ct_lesion_workflow_report(output_path=DEFAULT_CT_WORKFLOW_PATH),
+        }
+
+    @router.get("/admin/sim-to-public-imaging")
+    def get_admin_sim_to_public_imaging_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return synthetic-to-public imaging gap report."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.sim_to_public_imaging_report import DEFAULT_OUTPUT_PATH, build_sim_to_public_imaging_report
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return build_sim_to_public_imaging_report(output_path=DEFAULT_OUTPUT_PATH)
+
+    @router.post("/admin/sim-to-public-imaging")
+    def run_admin_sim_to_public_imaging_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild synthetic-to-public imaging gap report."""
+        from backend.services.sim_to_public_imaging_report import DEFAULT_OUTPUT_PATH, build_sim_to_public_imaging_report
+
+        return {
+            "message": "Synthetic-to-public imaging gap report completed.",
+            "result": build_sim_to_public_imaging_report(output_path=DEFAULT_OUTPUT_PATH),
+        }
+
     return router
