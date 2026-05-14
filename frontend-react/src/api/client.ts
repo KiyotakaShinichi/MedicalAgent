@@ -208,6 +208,22 @@ export const getUltrasoundBaseline = () =>
 export const runUltrasoundBaseline = () =>
   post<{ message: string; result: UltrasoundBaselineResult }>("/admin/ultrasound-baseline");
 
+export const getUltrasoundTransferBaseline = () =>
+  get<import("../types/api").UltrasoundTransferBaselineResult>("/admin/ultrasound-transfer-baseline");
+
+export const runUltrasoundTransferBaseline = (pretrained = false) =>
+  post<{ message: string; result: import("../types/api").UltrasoundTransferBaselineResult }>(
+    `/admin/ultrasound-transfer-baseline?pretrained=${pretrained ? "true" : "false"}`
+  );
+
+export const getUltrasoundSegmentationBaseline = () =>
+  get<import("../types/api").UltrasoundSegmentationBaselineResult>("/admin/ultrasound-segmentation-baseline");
+
+export const runUltrasoundSegmentationBaseline = () =>
+  post<{ message: string; result: import("../types/api").UltrasoundSegmentationBaselineResult }>(
+    "/admin/ultrasound-segmentation-baseline"
+  );
+
 export const getCtLesionWorkflow = () =>
   get<CtLesionWorkflowReport>("/admin/ct-lesion-workflow");
 
@@ -227,17 +243,17 @@ export const getSafetyCenter = () =>
 export const getSafetyRedTeam = () =>
   get<import("../types/api").SafetyRedTeamArtifact>("/admin/safety-red-team");
 
-export const runSafetyRedTeam = () =>
+export const runSafetyRedTeam = (liveAgent = false) =>
   post<{ message: string; result: import("../types/api").SafetyRedTeamArtifact }>(
-    "/admin/safety-red-team"
+    `/admin/safety-red-team?live_agent=${liveAgent ? "true" : "false"}`
   );
 
 export const getRagEvalArtifact = () =>
   get<import("../types/api").RagEvalArtifact>("/admin/rag-eval");
 
-export const runRagEvalArtifact = () =>
+export const runRagEvalArtifact = (liveAgent = false) =>
   post<{ message: string; result: import("../types/api").RagEvalArtifact }>(
-    "/admin/rag-eval"
+    `/admin/rag-eval?live_agent=${liveAgent ? "true" : "false"}`
   );
 
 export const getDriftReport = () =>

@@ -7,9 +7,24 @@ from backend.models import AsyncTask
 SUPPORTED_TASK_TYPES = {
     "build_rag_index",
     "agent_regression",
+    "safety_red_team",
+    "safety_red_team_live",
+    "rag_eval",
+    "rag_eval_live",
+    "rag_ablation",
+    "drift_report",
+    "noise_eval",
+    "temporal_eval",
     "mle_readiness",
     "evaluation_report",
     "materialize_feature_store",
+    "public_data_manifest",
+    "public_imaging_manifest",
+    "ultrasound_baseline",
+    "ultrasound_transfer_baseline",
+    "ultrasound_segmentation_baseline",
+    "ct_lesion_workflow",
+    "sim_to_public_imaging",
 }
 
 
@@ -114,6 +129,44 @@ def _dispatch_task(db, task_type, payload):
 
         return run_agent_regression_suite(output_path=payload.get("output_path") or DEFAULT_AGENT_REGRESSION_PATH)
 
+    if task_type in {"safety_red_team", "safety_red_team_live"}:
+        from backend.services.safety_red_team import DEFAULT_OUTPUT_PATH, DEFAULT_CSV_PATH, run_safety_red_team_suite
+
+        return run_safety_red_team_suite(
+            output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH,
+            csv_path=payload.get("csv_path") or DEFAULT_CSV_PATH,
+            live_agent=task_type.endswith("_live") or bool(payload.get("live_agent")),
+        )
+
+    if task_type in {"rag_eval", "rag_eval_live"}:
+        from backend.services.rag_eval_suite import DEFAULT_CSV_PATH, DEFAULT_OUTPUT_PATH, run_rag_eval_suite
+
+        return run_rag_eval_suite(
+            output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH,
+            csv_path=payload.get("csv_path") or DEFAULT_CSV_PATH,
+            live_agent=task_type.endswith("_live") or bool(payload.get("live_agent")),
+        )
+
+    if task_type == "rag_ablation":
+        from backend.services.rag_ablation import ABLATION_OUTPUT_PATH, run_rag_ablation
+
+        return run_rag_ablation(output_path=payload.get("output_path") or ABLATION_OUTPUT_PATH)
+
+    if task_type == "drift_report":
+        from backend.services.drift_monitoring import DEFAULT_OUTPUT_PATH, build_drift_report
+
+        return build_drift_report(output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH)
+
+    if task_type == "noise_eval":
+        from backend.services.noise_eval import DEFAULT_NOISE_EVAL_PATH, run_noise_eval
+
+        return run_noise_eval(output_path=payload.get("output_path") or DEFAULT_NOISE_EVAL_PATH)
+
+    if task_type == "temporal_eval":
+        from backend.services.temporal_eval import DEFAULT_TEMPORAL_EVAL_PATH, run_temporal_eval
+
+        return run_temporal_eval(output_path=payload.get("output_path") or DEFAULT_TEMPORAL_EVAL_PATH)
+
     if task_type == "mle_readiness":
         from backend.services.mle_readiness import DEFAULT_OUTPUT_PATH, build_mle_readiness_summary
 
@@ -136,6 +189,41 @@ def _dispatch_task(db, task_type, payload):
             output_dir=payload.get("output_dir") or DEFAULT_FEATURE_STORE_DIR,
             entity_column=payload.get("entity_column") or "patient_id",
         )
+
+    if task_type == "public_data_manifest":
+        from backend.services.public_data_manifest import DEFAULT_OUTPUT_PATH, build_public_data_manifest
+
+        return build_public_data_manifest(output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH)
+
+    if task_type == "public_imaging_manifest":
+        from backend.services.public_imaging_datasets import DEFAULT_OUTPUT_PATH, build_public_imaging_manifest
+
+        return build_public_imaging_manifest(output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH)
+
+    if task_type == "ultrasound_baseline":
+        from backend.services.imaging_baseline_experiments import DEFAULT_ULTRASOUND_OUTPUT_PATH, run_ultrasound_baseline
+
+        return run_ultrasound_baseline(output_path=payload.get("output_path") or DEFAULT_ULTRASOUND_OUTPUT_PATH)
+
+    if task_type == "ultrasound_transfer_baseline":
+        from backend.services.ultrasound_transfer_baseline import DEFAULT_OUTPUT_PATH, run_ultrasound_transfer_baseline
+
+        return run_ultrasound_transfer_baseline(**{**payload, "output_path": payload.get("output_path") or DEFAULT_OUTPUT_PATH})
+
+    if task_type == "ultrasound_segmentation_baseline":
+        from backend.services.ultrasound_segmentation_baseline import DEFAULT_OUTPUT_PATH, run_ultrasound_segmentation_baseline
+
+        return run_ultrasound_segmentation_baseline(**{**payload, "output_path": payload.get("output_path") or DEFAULT_OUTPUT_PATH})
+
+    if task_type == "ct_lesion_workflow":
+        from backend.services.imaging_baseline_experiments import DEFAULT_CT_WORKFLOW_PATH, build_ct_lesion_workflow_report
+
+        return build_ct_lesion_workflow_report(output_path=payload.get("output_path") or DEFAULT_CT_WORKFLOW_PATH)
+
+    if task_type == "sim_to_public_imaging":
+        from backend.services.sim_to_public_imaging_report import DEFAULT_OUTPUT_PATH, build_sim_to_public_imaging_report
+
+        return build_sim_to_public_imaging_report(output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH)
 
     raise ValueError(f"No dispatcher for task_type={task_type}")
 

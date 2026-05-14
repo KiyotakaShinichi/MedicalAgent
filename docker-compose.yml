@@ -1,14 +1,51 @@
 services:
-  medical-agent:
-    build: .
-    container_name: medical-agent
+  postgres:
+    image: postgres:16-alpine
+    container_name: medical-agent-postgres
+    environment:
+      POSTGRES_DB: medical_agent
+      POSTGRES_USER: medical_agent
+      POSTGRES_PASSWORD: medical_agent
     ports:
-      - "8017:8017"
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medical_agent -d medical_agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: medical-agent-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: medical-agent-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     env_file:
       - .env.example
     environment:
       APP_ENV: docker
-      DATABASE_URL: sqlite:////app/Data/medical_agent.db
+      DATABASE_URL: postgresql+psycopg2://medical_agent:medical_agent@postgres:5432/medical_agent
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8017:8017"
     volumes:
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase
@@ -17,4 +54,38 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 20s
+      start_period: 30s
+
+  worker:
+    build: .
+    container_name: medical-agent-worker
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    environment:
+      APP_ENV: docker
+      DATABASE_URL: postgresql+psycopg2://medical_agent:medical_agent@postgres:5432/medical_agent
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./Data:/app/Data
+      - ./KnowledgeBase:/app/KnowledgeBase
+    command: ["python", "scripts/run_task_worker.py", "--poll-seconds", "5"]
+
+  frontend:
+    image: node:20-alpine
+    container_name: medical-agent-frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    working_dir: /app
+    volumes:
+      - ./frontend-react:/app
+    ports:
+      - "5173:5173"
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+
+volumes:
+  postgres_data:
+  redis_data:

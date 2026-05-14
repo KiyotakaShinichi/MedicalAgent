@@ -11,21 +11,29 @@ import {
   getPublicImagingManifest,
   getSimToPublicImaging,
   getUltrasoundBaseline,
+  getUltrasoundSegmentationBaseline,
+  getUltrasoundTransferBaseline,
   runCtLesionWorkflow,
   runPublicImagingManifest,
   runSimToPublicImaging,
   runUltrasoundBaseline,
+  runUltrasoundSegmentationBaseline,
+  runUltrasoundTransferBaseline,
 } from "../../../api/client";
 import type {
   CtLesionWorkflowReport,
   PublicImagingManifest,
   SimToPublicImagingReport,
   UltrasoundBaselineResult,
+  UltrasoundSegmentationBaselineResult,
+  UltrasoundTransferBaselineResult,
 } from "../../../types/api";
 
 export function ImagingSection() {
   const manifest = useApi(getPublicImagingManifest, []);
   const ultrasound = useApi(getUltrasoundBaseline, []);
+  const transfer = useApi(getUltrasoundTransferBaseline, []);
+  const segmentation = useApi(getUltrasoundSegmentationBaseline, []);
   const ct = useApi(getCtLesionWorkflow, []);
   const gap = useApi(getSimToPublicImaging, []);
   const [running, setRunning] = useState<string | null>(null);
@@ -88,6 +96,44 @@ export function ImagingSection() {
            ultrasound.status === "error" ? <ErrorPane message={ultrasound.error ?? "Could not load ultrasound baseline"} /> :
            ultrasound.data ? <UltrasoundPanel data={ultrasound.data as UltrasoundBaselineResult} /> :
            <EmptyPane label="No ultrasound baseline artifact" />}
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <SectionTitle>Ultrasound Transfer Baseline</SectionTitle>
+            <Button
+              size="sm"
+              variant="secondary"
+              icon={<Activity size={12} />}
+              loading={running === "transfer"}
+              onClick={() => void rerun("transfer", () => runUltrasoundTransferBaseline(false), transfer.refetch)}
+            >
+              Run
+            </Button>
+          </CardHeader>
+          {transfer.status === "loading" ? <LoadingPane /> :
+           transfer.status === "error" ? <ErrorPane message={transfer.error ?? "Could not load transfer baseline"} /> :
+           transfer.data ? <TransferPanel data={transfer.data as UltrasoundTransferBaselineResult} /> :
+           <EmptyPane label="No transfer baseline artifact" />}
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <SectionTitle>Ultrasound Segmentation Baseline</SectionTitle>
+            <Button
+              size="sm"
+              variant="secondary"
+              icon={<Activity size={12} />}
+              loading={running === "segmentation"}
+              onClick={() => void rerun("segmentation", runUltrasoundSegmentationBaseline, segmentation.refetch)}
+            >
+              Run
+            </Button>
+          </CardHeader>
+          {segmentation.status === "loading" ? <LoadingPane /> :
+           segmentation.status === "error" ? <ErrorPane message={segmentation.error ?? "Could not load segmentation baseline"} /> :
+           segmentation.data ? <SegmentationPanel data={segmentation.data as UltrasoundSegmentationBaselineResult} /> :
+           <EmptyPane label="No segmentation baseline artifact" />}
         </Card>
 
         <Card>
@@ -203,6 +249,47 @@ function UltrasoundPanel({ data }: { data: UltrasoundBaselineResult }) {
       )}
       <p className="text-xs" style={{ color: "var(--text-faint)" }}>
         Labels: {formatCounts(data.label_counts ?? {})}. Predictions: {data.predictions_path ?? "not written"}.
+      </p>
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
+    </div>
+  );
+}
+
+function TransferPanel({ data }: { data: UltrasoundTransferBaselineResult }) {
+  if (data.status === "unavailable") {
+    return <Unavailable reason={data.reason} expected={data.expected_layout} boundary={data.claim_boundary} />;
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard label="Images" value={String(data.image_count ?? 0)} />
+        <MetricCard label="Model" value={data.model_family ?? "unknown"} />
+        <MetricCard label="Balanced Acc." value={data.balanced_accuracy?.toFixed(3) ?? null} />
+        <MetricCard label="Macro F1" value={data.macro_f1?.toFixed(3) ?? null} />
+      </div>
+      <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+        Device: {data.device ?? "unknown"}. Classes: {(data.classes ?? []).join(", ") || "unknown"}.
+        Matrix: {JSON.stringify(data.confusion_matrix ?? [])}
+      </p>
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
+    </div>
+  );
+}
+
+function SegmentationPanel({ data }: { data: UltrasoundSegmentationBaselineResult }) {
+  if (data.status === "unavailable") {
+    return <Unavailable reason={data.reason} expected={data.expected_layout} boundary={data.claim_boundary} />;
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard label="Mask Pairs" value={String(data.pair_count ?? 0)} />
+        <MetricCard label="Mean Dice" value={data.mean_dice?.toFixed(3) ?? null} />
+        <MetricCard label="Median Dice" value={data.median_dice?.toFixed(3) ?? null} />
+        <MetricCard label="Mean IoU" value={data.mean_iou?.toFixed(3) ?? null} />
+      </div>
+      <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+        Label breakdown: {JSON.stringify(data.label_breakdown ?? {})}
       </p>
       <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
     </div>

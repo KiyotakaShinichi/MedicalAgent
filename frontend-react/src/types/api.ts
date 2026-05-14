@@ -553,6 +553,46 @@ export interface UltrasoundBaselineResult {
   claim_boundary: string;
 }
 
+export interface UltrasoundTransferBaselineResult {
+  schema_version: string;
+  generated_at: string;
+  status: string;
+  reason?: string;
+  expected_layout?: string;
+  dataset_root?: string;
+  task?: string;
+  model_family?: string;
+  pretrained_requested?: boolean;
+  device?: string;
+  image_count?: number;
+  train_count?: number;
+  test_count?: number;
+  epochs?: number;
+  classes?: string[];
+  balanced_accuracy?: number | null;
+  macro_f1?: number | null;
+  confusion_matrix?: number[][];
+  final_train_loss?: number | null;
+  claim_boundary: string;
+}
+
+export interface UltrasoundSegmentationBaselineResult {
+  schema_version: string;
+  generated_at: string;
+  status: string;
+  reason?: string;
+  expected_layout?: string;
+  dataset_root?: string;
+  task?: string;
+  model_family?: string;
+  pair_count?: number;
+  mean_dice?: number | null;
+  median_dice?: number | null;
+  mean_iou?: number | null;
+  label_breakdown?: Record<string, { count: number; mean_dice: number; mean_iou: number }>;
+  claim_boundary: string;
+}
+
 export interface CtLesionWorkflowReport {
   schema_version: string;
   generated_at: string;

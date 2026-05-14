@@ -62,11 +62,12 @@ export function SafetyCenterSection() {
     void load();
   }, []);
 
-  async function regenerate(kind: "safety" | "rag" | "drift") {
-    setRunning(kind);
+  async function regenerate(kind: "safety" | "rag" | "drift", liveAgent = false) {
+    const runKey = liveAgent ? `${kind}-live` : kind;
+    setRunning(runKey);
     try {
-      if (kind === "safety") await runSafetyRedTeam();
-      if (kind === "rag") await runRagEvalArtifact();
+      if (kind === "safety") await runSafetyRedTeam(liveAgent);
+      if (kind === "rag") await runRagEvalArtifact(liveAgent);
       if (kind === "drift") await runDriftReport();
       await load();
     } catch (e) {
@@ -99,15 +100,26 @@ export function SafetyCenterSection() {
       <Card>
         <CardHeader>
           <SectionTitle>Safety red-team suite</SectionTitle>
-          <Button
-            variant="primary"
-            size="sm"
-            icon={<Play size={12} />}
-            loading={running === "safety"}
-            onClick={() => void regenerate("safety")}
-          >
-            Re-run
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={<Play size={12} />}
+              loading={running === "safety"}
+              onClick={() => void regenerate("safety", false)}
+            >
+              Fast
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              icon={<Play size={12} />}
+              loading={running === "safety-live"}
+              onClick={() => void regenerate("safety", true)}
+            >
+              Live agent
+            </Button>
+          </div>
         </CardHeader>
         <SafetyRedTeamBlock artifact={safety} />
         <CategoryGrid
@@ -123,15 +135,26 @@ export function SafetyCenterSection() {
       <Card>
         <CardHeader>
           <SectionTitle>RAG evaluation</SectionTitle>
-          <Button
-            variant="primary"
-            size="sm"
-            icon={<Play size={12} />}
-            loading={running === "rag"}
-            onClick={() => void regenerate("rag")}
-          >
-            Re-run
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={<Play size={12} />}
+              loading={running === "rag"}
+              onClick={() => void regenerate("rag", false)}
+            >
+              Fast
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              icon={<Play size={12} />}
+              loading={running === "rag-live"}
+              onClick={() => void regenerate("rag", true)}
+            >
+              Live agent
+            </Button>
+          </div>
         </CardHeader>
         <RagEvalBlock artifact={rag} />
       </Card>

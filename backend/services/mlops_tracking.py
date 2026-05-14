@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -113,6 +114,7 @@ def finish_experiment_run(
         db.commit()
         db.refresh(row)
 
+    _mirror_to_mlflow(payload)
     return payload
 
 
@@ -251,3 +253,37 @@ def _json_loads(value):
         return json.loads(value)
     except json.JSONDecodeError:
         return None
+
+
+def _mirror_to_mlflow(payload):
+    if os.getenv("MLFLOW_ENABLED", "").strip().lower() not in {"1", "true", "yes"}:
+        return
+    try:
+        import mlflow
+    except Exception:
+        return
+
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
+    if tracking_uri:
+        mlflow.set_tracking_uri(tracking_uri)
+    experiment_name = payload.get("experiment_name") or "MedicalAgent"
+    mlflow.set_experiment(experiment_name)
+    with mlflow.start_run(run_name=payload.get("run_name") or payload.get("run_id")):
+        for key, value in (payload.get("params") or {}).items():
+            mlflow.log_param(key, _mlflow_scalar(value))
+        for key, value in (payload.get("metrics") or {}).items():
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                mlflow.log_metric(key, float(value))
+        for key, value in (payload.get("tags") or {}).items():
+            mlflow.set_tag(key, _mlflow_scalar(value))
+        mlflow.set_tag("medical_agent_run_id", payload.get("run_id"))
+        for _, value in (payload.get("artifacts") or {}).items():
+            path = Path(str(value))
+            if path.exists() and path.is_file():
+                mlflow.log_artifact(str(path))
+
+
+def _mlflow_scalar(value):
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    return json.dumps(value, default=str)

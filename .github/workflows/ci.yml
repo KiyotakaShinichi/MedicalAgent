@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI
 
 on:
   push:
@@ -6,8 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  quality-gates:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: sqlite:///./Data/test_tmp/ci_medical_agent.db
+      LLM_ADJUDICATION_ENABLED: "false"
+      RAG_FORCE_SPARSE: "true"
+      RAG_ENABLE_CROSS_ENCODER: "false"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -17,45 +22,64 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend-react/package-lock.json
+
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Install frontend dependencies
+        working-directory: frontend-react
+        run: npm ci
+
       - name: Secret scan
         run: python scripts/ci_secret_scan.py
 
-      - name: Compile backend
-        run: python -m compileall backend
+      - name: Compile backend and scripts
+        run: python -m compileall backend scripts
 
-      - name: Run tests
+      - name: Backend unit and regression tests
+        run: |
+          mkdir -p Data/test_tmp
+          python -m pytest \
+            tests/test_constants_sync.py \
+            tests/test_timeline_uncertainty.py \
+            tests/test_safety_eval_center.py \
+            tests/test_access_control.py \
+            tests/test_public_imaging_services.py
+
+      - name: Legacy full monitoring regression
         run: python -m unittest tests/test_breast_monitoring.py
 
-      - name: Frontend smoke checks
-        run: python scripts/smoke_frontend.py
+      - name: Frontend TypeScript build
+        working-directory: frontend-react
+        run: npm run build
 
-      - name: Knowledge base ingestion smoke
+      - name: Knowledge-base ingestion smoke
         run: |
           mkdir -p KnowledgeBase/raw Data/test_tmp
           printf "# Breast cancer chemotherapy\n\nCBC monitoring can help track WBC, hemoglobin, platelets, and treatment toxicity." > KnowledgeBase/raw/ci_smoke.md
           python scripts/ingest_knowledge_base.py --input-dir KnowledgeBase/raw --output-path Data/test_tmp/rag_chunks.json
 
       - name: Agent RAG regression suite
-        run: python scripts/evaluate_agent_rag.py --output-path Data/test_tmp/agent_regression.json
+        run: python scripts/evaluate_agent_rag.py --output-path Data/test_tmp/agent_regression.json --max-cases 8
 
-      - name: Summary quality eval
-        env:
-          DATABASE_URL: sqlite:///./Data/test_tmp/ci_medical_agent.db
-        run: python scripts/run_summary_quality_eval.py --output-path Data/test_tmp/summary_quality_eval.json
+      - name: RAG gold-set evaluation
+        run: python scripts/evaluate_rag_gold_set.py --output-path Data/test_tmp/rag_gold_eval.json --print-summary
+
+      - name: Safety evaluation center
+        run: python scripts/run_safety_eval_center.py --print-summary
 
       - name: MLE readiness checks
-        env:
-          DATABASE_URL: sqlite:///./Data/test_tmp/ci_medical_agent.db
         run: python scripts/run_mle_checks.py --output-path Data/test_tmp/mle_readiness.json
 
       - name: API smoke checks
-        env:
-          DATABASE_URL: sqlite:///./Data/test_tmp/ci_medical_agent.db
         run: |
           python -m uvicorn backend.api.main:app --host 127.0.0.1 --port 8017 &
           echo $! > uvicorn.pid
@@ -65,10 +89,10 @@ jobs:
 
   docker-build:
     runs-on: ubuntu-latest
-    needs: test
+    needs: quality-gates
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build Docker image
+      - name: Build backend Docker image
         run: docker build -t medical-agent:ci .

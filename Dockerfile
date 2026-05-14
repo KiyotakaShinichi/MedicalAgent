@@ -17,6 +17,9 @@ RUN python -m pip install --upgrade pip \
 COPY backend backend
 COPY frontend frontend
 COPY scripts scripts
+COPY config config
+COPY evals evals
+COPY alembic alembic
 COPY README.md MODEL_CARD.md DATA_CARD.md ./
 
 RUN mkdir -p Data KnowledgeBase/raw KnowledgeBase/processed

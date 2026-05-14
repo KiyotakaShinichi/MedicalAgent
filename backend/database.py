@@ -10,10 +10,16 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./medical_agent.db")
 
-engine = create_engine(
-	DATABASE_URL,
-	connect_args={"check_same_thread": False},
-)
+engine_kwargs = {}
+if DATABASE_URL.startswith("sqlite"):
+	engine_kwargs["connect_args"] = {
+		"check_same_thread": False,
+		"timeout": int(os.environ.get("SQLITE_TIMEOUT_SECONDS", "30")),
+	}
+else:
+	engine_kwargs["pool_pre_ping"] = True
+
+engine = create_engine(DATABASE_URL, **engine_kwargs)
 
 SessionLocal = sessionmaker(
 	autocommit=False,

@@ -1,0 +1,247 @@
+{
+  "schema_version": "drift_report_v1",
+  "generated_at": "2026-05-14T08:50:30.916602+00:00",
+  "data_source": "synthetic_demo",
+  "missing_cbc_rate": 0.028,
+  "data_completeness_score": 0.972,
+  "lab_distribution_shift": {
+    "label": "lab",
+    "status": "passed",
+    "feature_count": 11,
+    "features": [
+      {
+        "feature": "pre_wbc",
+        "baseline_mean": 4.843,
+        "current_mean": 4.716,
+        "standardized_shift": 0.064,
+        "status": "passed"
+      },
+      {
+        "feature": "pre_anc",
+        "baseline_mean": 2.753,
+        "current_mean": 2.669,
+        "standardized_shift": 0.069,
+        "status": "passed"
+      },
+      {
+        "feature": "pre_hemoglobin",
+        "baseline_mean": 11.439,
+        "current_mean": 11.574,
+        "standardized_shift": 0.094,
+        "status": "passed"
+      },
+      {
+        "feature": "pre_platelets",
+        "baseline_mean": 229.202,
+        "current_mean": 230.704,
+        "standardized_shift": 0.02,
+        "status": "passed"
+      },
+      {
+        "feature": "nadir_wbc",
+        "baseline_mean": 2.049,
+        "current_mean": 1.956,
+        "standardized_shift": 0.054,
+        "status": "passed"
+      },
+      {
+        "feature": "nadir_anc",
+        "baseline_mean": 1.162,
+        "current_mean": 1.105,
+        "standardized_shift": 0.057,
+        "status": "passed"
+      },
+      {
+        "feature": "nadir_hemoglobin",
+        "baseline_mean": 10.425,
+        "current_mean": 10.56,
+        "standardized_shift": 0.088,
+        "status": "passed"
+      },
+      {
+        "feature": "nadir_platelets",
+        "baseline_mean": 137.951,
+        "current_mean": 139.062,
+        "standardized_shift": 0.014,
+        "status": "passed"
+      },
+      {
+        "feature": "recovery_wbc",
+        "baseline_mean": 3.998,
+        "current_mean": 3.875,
+        "standardized_shift": 0.069,
+        "status": "passed"
+      },
+      {
+        "feature": "recovery_hemoglobin",
+        "baseline_mean": 10.849,
+        "current_mean": 11.004,
+        "standardized_shift": 0.101,
+        "status": "passed"
+      },
+      {
+        "feature": "recovery_platelets",
+        "baseline_mean": 206.983,
+        "current_mean": 208.306,
+        "standardized_shift": 0.017,
+        "status": "passed"
+      }
+    ]
+  },
+  "symptom_frequency_shift": {
+    "label": "symptom",
+    "status": "passed",
+    "feature_count": 2,
+    "features": [
+      {
+        "feature": "max_symptom_severity",
+        "baseline_mean": 5.39,
+        "current_mean": 5.408,
+        "standardized_shift": 0.009,
+        "status": "passed"
+      },
+      {
+        "feature": "symptom_count",
+        "baseline_mean": 1.878,
+        "current_mean": 1.874,
+        "standardized_shift": 0.004,
+        "status": "passed"
+      }
+    ]
+  },
+  "imaging_keyword_shift": {
+    "status": "passed",
+    "keywords": [
+      {
+        "keyword": "decrease",
+        "baseline_rate": 0.416,
+        "current_rate": 0.422,
+        "shift": 0.006,
+        "status": "passed"
+      },
+      {
+        "keyword": "increase",
+        "baseline_rate": 0.043,
+        "current_rate": 0.044,
+        "shift": 0.001,
+        "status": "passed"
+      },
+      {
+        "keyword": "stable",
+        "baseline_rate": 0.39,
+        "current_rate": 0.384,
+        "shift": 0.007,
+        "status": "passed"
+      },
+      {
+        "keyword": "progression",
+        "baseline_rate": 0.043,
+        "current_rate": 0.044,
+        "shift": 0.001,
+        "status": "passed"
+      },
+      {
+        "keyword": "metastatic",
+        "baseline_rate": 0.0,
+        "current_rate": 0.0,
+        "shift": 0.0,
+        "status": "passed"
+      }
+    ]
+  },
+  "model_confidence_drift": {
+    "status": "passed",
+    "probability_column": "gradient_boosting_calibrated_probability",
+    "baseline_mean": 0.463,
+    "current_mean": 0.567,
+    "standardized_shift": 0.213
+  },
+  "calibration_drift": {
+    "status": "passed",
+    "probability_column": "gradient_boosting_calibrated_probability",
+    "baseline_ece": 0.019,
+    "current_ece": 0.043,
+    "delta_ece": 0.024
+  },
+  "subgroup_performance_drift": {
+    "status": "watch",
+    "groups": [
+      {
+        "group": "stage",
+        "value": "IIIB",
+        "baseline_positive_rate": 0.778,
+        "current_positive_rate": 0.538,
+        "shift": 0.239,
+        "status": "watch"
+      },
+      {
+        "group": "stage",
+        "value": "IIA",
+        "baseline_positive_rate": 0.333,
+        "current_positive_rate": 0.571,
+        "shift": 0.238,
+        "status": "watch"
+      },
+      {
+        "group": "molecular_subtype",
+        "value": "HER2+",
+        "baseline_positive_rate": 0.545,
+        "current_positive_rate": 0.75,
+        "shift": 0.205,
+        "status": "watch"
+      },
+      {
+        "group": "stage",
+        "value": "IIIA",
+        "baseline_positive_rate": 0.467,
+        "current_positive_rate": 0.611,
+        "shift": 0.144,
+        "status": "watch"
+      },
+      {
+        "group": "molecular_subtype",
+        "value": "triple-negative",
+        "baseline_positive_rate": 0.364,
+        "current_positive_rate": 0.471,
+        "shift": 0.107,
+        "status": "passed"
+      },
+      {
+        "group": "stage",
+        "value": "IIB",
+        "baseline_positive_rate": 0.6,
+        "current_positive_rate": 0.706,
+        "shift": 0.106,
+        "status": "passed"
+      },
+      {
+        "group": "molecular_subtype",
+        "value": "HR+/HER2-",
+        "baseline_positive_rate": 0.524,
+        "current_positive_rate": 0.615,
+        "shift": 0.092,
+        "status": "passed"
+      },
+      {
+        "group": "stage",
+        "value": "IV",
+        "baseline_positive_rate": 0.0,
+        "current_positive_rate": 0.0,
+        "shift": 0.0,
+        "status": "passed"
+      },
+      {
+        "group": "molecular_subtype",
+        "value": "HR+/HER2+",
+        "baseline_positive_rate": 0.455,
+        "current_positive_rate": 0.455,
+        "shift": 0.0,
+        "status": "passed"
+      }
+    ]
+  },
+  "limitations": [
+    "Drift is computed on synthetic or demo data unless real monitoring data is present.",
+    "Use this report for engineering monitoring only, not clinical validity claims."
+  ]
+}

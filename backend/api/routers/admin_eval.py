@@ -208,6 +208,117 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": build_summary_quality_report(output_path=DEFAULT_OUTPUT_PATH),
         }
 
+    @router.get("/admin/safety-center")
+    def get_admin_safety_center_endpoint(
+        context=Depends(get_admin_access_context),
+        db: Session = Depends(get_db),
+    ):
+        """Return the unified safety/evaluation center artifact bundle."""
+        from backend.services.safety_eval_center import build_safety_evaluation_center
+
+        return build_safety_evaluation_center(db=db)
+
+    @router.get("/admin/safety-red-team")
+    def get_admin_safety_red_team_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return cached safety red-team artifact or compute fast offline fallback."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.safety_red_team import DEFAULT_OUTPUT_PATH, run_safety_red_team_suite
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return run_safety_red_team_suite(output_path=DEFAULT_OUTPUT_PATH, live_agent=False)
+
+    @router.post("/admin/safety-red-team")
+    def run_admin_safety_red_team_endpoint(
+        live_agent: bool = False,
+        context=Depends(get_admin_access_context),
+    ):
+        """Re-run safety red-team suite.
+
+        live_agent=false is deterministic and fast for dashboards/CI.
+        live_agent=true exercises the full patient-agent pipeline.
+        """
+        from backend.services.safety_red_team import DEFAULT_CSV_PATH, DEFAULT_OUTPUT_PATH, run_safety_red_team_suite
+
+        return {
+            "message": "Safety red-team suite completed.",
+            "result": run_safety_red_team_suite(
+                output_path=DEFAULT_OUTPUT_PATH,
+                csv_path=DEFAULT_CSV_PATH,
+                live_agent=live_agent,
+            ),
+        }
+
+    @router.get("/admin/rag-eval")
+    def get_admin_rag_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return cached RAG eval artifact or compute fast offline fallback."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.rag_eval_suite import DEFAULT_OUTPUT_PATH, run_rag_eval_suite
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return run_rag_eval_suite(output_path=DEFAULT_OUTPUT_PATH, live_agent=False)
+
+    @router.post("/admin/rag-eval")
+    def run_admin_rag_eval_endpoint(
+        live_agent: bool = False,
+        context=Depends(get_admin_access_context),
+    ):
+        """Re-run RAG regression suite in fast offline or full live-agent mode."""
+        from backend.services.rag_eval_suite import DEFAULT_CSV_PATH, DEFAULT_OUTPUT_PATH, run_rag_eval_suite
+
+        return {
+            "message": "RAG eval suite completed.",
+            "result": run_rag_eval_suite(
+                output_path=DEFAULT_OUTPUT_PATH,
+                csv_path=DEFAULT_CSV_PATH,
+                live_agent=live_agent,
+            ),
+        }
+
+    @router.get("/admin/drift-report")
+    def get_admin_drift_report_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return cached drift report or compute fallback."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.drift_monitoring import DEFAULT_OUTPUT_PATH, build_drift_report
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return build_drift_report(output_path=DEFAULT_OUTPUT_PATH)
+
+    @router.post("/admin/drift-report")
+    def run_admin_drift_report_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Re-run drift/data-quality proxy report."""
+        from backend.services.drift_monitoring import DEFAULT_OUTPUT_PATH, build_drift_report
+
+        return {"message": "Drift report completed.", "result": build_drift_report(output_path=DEFAULT_OUTPUT_PATH)}
+
     @router.get("/admin/public-data-manifest")
     def get_admin_public_data_manifest_endpoint(
         context=Depends(get_admin_access_context),
@@ -296,6 +407,67 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
         return {
             "message": "Ultrasound baseline completed.",
             "result": run_ultrasound_baseline(output_path=DEFAULT_ULTRASOUND_OUTPUT_PATH),
+        }
+
+    @router.get("/admin/ultrasound-transfer-baseline")
+    def get_admin_ultrasound_transfer_baseline_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return BUSI transfer-learning baseline metrics or explicit unavailable artifact."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.ultrasound_transfer_baseline import DEFAULT_OUTPUT_PATH, run_ultrasound_transfer_baseline
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return run_ultrasound_transfer_baseline(output_path=DEFAULT_OUTPUT_PATH)
+
+    @router.post("/admin/ultrasound-transfer-baseline")
+    def run_admin_ultrasound_transfer_baseline_endpoint(
+        pretrained: bool = False,
+        context=Depends(get_admin_access_context),
+    ):
+        """Run hardware-friendly transfer-learning baseline if BUSI exists locally."""
+        from backend.services.ultrasound_transfer_baseline import DEFAULT_OUTPUT_PATH, run_ultrasound_transfer_baseline
+
+        return {
+            "message": "Ultrasound transfer baseline completed.",
+            "result": run_ultrasound_transfer_baseline(output_path=DEFAULT_OUTPUT_PATH, pretrained=pretrained),
+        }
+
+    @router.get("/admin/ultrasound-segmentation-baseline")
+    def get_admin_ultrasound_segmentation_baseline_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return BUSI mask segmentation baseline metrics or explicit unavailable artifact."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.ultrasound_segmentation_baseline import DEFAULT_OUTPUT_PATH, run_ultrasound_segmentation_baseline
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return run_ultrasound_segmentation_baseline(output_path=DEFAULT_OUTPUT_PATH)
+
+    @router.post("/admin/ultrasound-segmentation-baseline")
+    def run_admin_ultrasound_segmentation_baseline_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Run classical BUSI segmentation baseline if masks exist locally."""
+        from backend.services.ultrasound_segmentation_baseline import DEFAULT_OUTPUT_PATH, run_ultrasound_segmentation_baseline
+
+        return {
+            "message": "Ultrasound segmentation baseline completed.",
+            "result": run_ultrasound_segmentation_baseline(output_path=DEFAULT_OUTPUT_PATH),
         }
 
     @router.get("/admin/ct-lesion-workflow")

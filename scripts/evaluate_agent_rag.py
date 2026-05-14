@@ -10,6 +10,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from backend.services.agent_regression_eval import (  # noqa: E402
     DEFAULT_AGENT_REGRESSION_PATH,
+    load_eval_cases,
     run_agent_regression_suite,
 )
 
@@ -17,9 +18,13 @@ from backend.services.agent_regression_eval import (  # noqa: E402
 def main():
     parser = argparse.ArgumentParser(description="Run offline patient-agent RAG/guardrail regression checks.")
     parser.add_argument("--output-path", default=DEFAULT_AGENT_REGRESSION_PATH)
+    parser.add_argument("--max-cases", type=int, default=None, help="Run only the first N cases for CI smoke checks.")
     args = parser.parse_args()
 
-    report = run_agent_regression_suite(output_path=args.output_path)
+    cases = load_eval_cases()
+    if args.max_cases:
+        cases = cases[: max(args.max_cases, 1)]
+    report = run_agent_regression_suite(output_path=args.output_path, cases=cases)
     print(json.dumps({
         "output_path": args.output_path,
         "case_count": report["case_count"],

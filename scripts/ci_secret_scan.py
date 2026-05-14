@@ -1,4 +1,5 @@
 import re
+import os
 from pathlib import Path
 
 
@@ -13,6 +14,10 @@ SKIP_DIRS = {
     "Data",
     "KnowledgeBase/raw",
     "KnowledgeBase/processed",
+    "node_modules",
+    "dist",
+    "playwright-report",
+    "test-results",
 }
 SKIP_SUFFIXES = {".db", ".sqlite", ".nii", ".gz", ".dcm", ".png", ".jpg", ".jpeg", ".xlsx", ".zip", ".pt", ".joblib", ".pyc"}
 ALLOWLIST = {
@@ -28,23 +33,27 @@ PATTERNS = [
 
 def main():
     findings = []
-    for path in ROOT.rglob("*"):
-        if not path.is_file() or _should_skip(path):
-            continue
-        try:
-            text = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            continue
-        for name, pattern in PATTERNS:
-            for match in pattern.finditer(text):
-                value = match.group(0)
-                if any(allowed in value for allowed in ALLOWLIST):
-                    continue
-                findings.append({
-                    "pattern": name,
-                    "path": str(path.relative_to(ROOT)),
-                    "line": text[:match.start()].count("\n") + 1,
-                })
+    for dirpath, dirnames, filenames in os.walk(ROOT):
+        current = Path(dirpath)
+        dirnames[:] = [name for name in dirnames if not _should_skip_dir(current / name)]
+        for filename in filenames:
+            path = current / filename
+            if _should_skip(path):
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            for name, pattern in PATTERNS:
+                for match in pattern.finditer(text):
+                    value = match.group(0)
+                    if any(allowed in value for allowed in ALLOWLIST):
+                        continue
+                    findings.append({
+                        "pattern": name,
+                        "path": str(path.relative_to(ROOT)),
+                        "line": text[:match.start()].count("\n") + 1,
+                    })
     if findings:
         for finding in findings:
             print(f"{finding['path']}:{finding['line']} possible {finding['pattern']}")
@@ -65,6 +74,18 @@ def _should_skip(path):
     if path.suffix.lower() in SKIP_SUFFIXES:
         return True
     return False
+
+
+def _should_skip_dir(path: Path) -> bool:
+    try:
+        relative = path.relative_to(ROOT)
+    except ValueError:
+        return False
+    parts = set(relative.parts)
+    if parts & SKIP_DIRS:
+        return True
+    as_posix = relative.as_posix()
+    return any(as_posix == skip or as_posix.startswith(skip + "/") for skip in SKIP_DIRS)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ groq
 python-dotenv
 sqlalchemy
 alembic
+psycopg2-binary
 openpyxl
 pypdf
 pydicom
@@ -19,6 +20,7 @@ torchvision
 shap
 pyyaml
 matplotlib
+pytest
 
 # True hybrid RAG (dense FAISS + BM25 + sentence-transformers)
 # Install all three to enable local_dense_faiss_hybrid_index backend.
@@ -26,3 +28,6 @@ matplotlib
 sentence-transformers
 faiss-cpu
 rank-bm25
+
+# Optional external queue/cache adapter; the default local queue remains DB-backed.
+redis

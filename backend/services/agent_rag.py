@@ -1,5 +1,7 @@
 import hashlib
+import importlib.util
 import json
+import os
 import re
 from time import perf_counter
 from datetime import datetime, timezone, timedelta
@@ -21,6 +23,7 @@ AGENT_CACHE_TTL_DAYS = 30
 _KB_CORPUS_CACHE: list | None = None
 AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v4"
 SEMANTIC_CACHE_MIN_SIMILARITY = 0.86
+_CROSS_ENCODER_CACHE: dict = {}
 
 
 KNOWLEDGE_SNIPPETS = [
@@ -785,16 +788,75 @@ _CURATED_SOURCES = {
 
 def rerank_context(expanded, rewritten, intent, safety):
     query_tokens = set(_tokenize(rewritten["expanded_query"]))
+    cross_scores = _cross_encoder_scores(rewritten["expanded_query"], expanded)
     reranked = []
-    for item in expanded:
+    for idx, item in enumerate(expanded):
         tags = set(item["tags"])
         coverage = len(query_tokens & tags)
         safety_boost = 0.4 if safety.get("level") == "high_risk" and "urgent" in tags else 0
         is_curated = item.get("builtin") or item.get("source_name") in _CURATED_SOURCES
         source_boost = 1.0 if is_curated else 0.05
         final_score = float(item.get("retrieval_score", 0)) + coverage * 0.18 + safety_boost + source_boost
-        reranked.append({**item, "rerank_score": round(final_score, 4)})
+        cross_score = cross_scores[idx] if cross_scores is not None and idx < len(cross_scores) else None
+        if cross_score is not None:
+            final_score = 0.55 * final_score + 0.45 * cross_score
+        reranked.append({
+            **item,
+            "rerank_score": round(final_score, 4),
+            "cross_encoder_score": round(float(cross_score), 4) if cross_score is not None else None,
+            "reranker_backend": _reranker_backend(cross_score),
+        })
     return sorted(reranked, key=lambda row: row["rerank_score"], reverse=True)[:5]
+
+
+def _cross_encoder_enabled() -> bool:
+    if os.getenv("RAG_ENABLE_CROSS_ENCODER", "").strip().lower() not in {"1", "true", "yes"}:
+        return False
+    return importlib.util.find_spec("sentence_transformers") is not None
+
+
+def _get_cross_encoder():
+    if not _cross_encoder_enabled():
+        return None
+    if "model" not in _CROSS_ENCODER_CACHE:
+        try:
+            from sentence_transformers import CrossEncoder
+
+            model_name = os.getenv("RAG_CROSS_ENCODER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
+            _CROSS_ENCODER_CACHE["model"] = CrossEncoder(model_name)
+            _CROSS_ENCODER_CACHE["name"] = model_name
+        except Exception as exc:
+            _CROSS_ENCODER_CACHE["error"] = str(exc)
+            return None
+    return _CROSS_ENCODER_CACHE.get("model")
+
+
+def _cross_encoder_scores(query: str, expanded: list[dict]) -> list[float] | None:
+    model = _get_cross_encoder()
+    if model is None or not expanded:
+        return None
+    pairs = [(query, (item.get("title") or "") + "\n" + (item.get("text") or "")) for item in expanded]
+    try:
+        raw_scores = model.predict(pairs)
+    except Exception as exc:
+        _CROSS_ENCODER_CACHE["error"] = str(exc)
+        return None
+    values = [float(score) for score in raw_scores]
+    if not values:
+        return []
+    lo = min(values)
+    hi = max(values)
+    if hi == lo:
+        return [0.5 for _ in values]
+    return [(value - lo) / (hi - lo) for value in values]
+
+
+def _reranker_backend(cross_score) -> str:
+    if cross_score is not None:
+        return f"cross_encoder:{_CROSS_ENCODER_CACHE.get('name') or 'enabled'}"
+    if _CROSS_ENCODER_CACHE.get("error"):
+        return f"heuristic_fallback:{_CROSS_ENCODER_CACHE['error'][:80]}"
+    return "heuristic_metadata_safety_reranker"
 
 
 def contextual_compression(reranked):
@@ -814,6 +876,8 @@ def contextual_compression(reranked):
             "confidence": item.get("confidence"),
             "text": text,
             "score": item.get("rerank_score", item.get("retrieval_score")),
+            "reranker_backend": item.get("reranker_backend"),
+            "cross_encoder_score": item.get("cross_encoder_score"),
             "retrieval_backend": item.get("retrieval_backend"),
             "retrieval_trace": item.get("retrieval_trace"),
         })
@@ -856,6 +920,8 @@ def generate_answer(query, fallback_response, safety, intent, compressed_context
 
 
 def validate_answer_and_citations(generated, compressed_context, safety):
+    from backend.services.answer_verifier import safe_repair_reply, verify_patient_support_answer
+
     reply = generated.get("reply") or ""
     citations = generated.get("citations") or []
     issues = []
@@ -868,18 +934,28 @@ def validate_answer_and_citations(generated, compressed_context, safety):
         issues.append("high_risk_reply_missing_escalation")
     if _contains_diagnostic_or_treatment_claim(reply):
         issues.append("diagnostic_or_treatment_claim_detected")
+    verifier = verify_patient_support_answer(
+        reply,
+        citations=citations,
+        retrieved_context=compressed_context,
+        safety=safety,
+    )
+    issues.extend(issue for issue in verifier.get("issues") or [] if issue not in issues)
 
     status = "passed" if not issues else "failed"
     if issues:
-        generated["reply"] = (
-            "I cannot safely answer that as a treatment or diagnosis decision. "
-            "Please contact your oncology care team for medical review. "
-            "If symptoms feel sudden, severe, or unsafe, use local emergency services."
-        )
+        generated["reply"] = safe_repair_reply(reply, verifier)
+        if generated["reply"] == reply:
+            generated["reply"] = (
+                "I cannot safely answer that as a treatment or diagnosis decision. "
+                "Please contact your oncology care team for medical review. "
+                "If symptoms feel sudden, severe, or unsafe, use local emergency services."
+            )
     generated["validation"] = {
         "status": status,
         "issues": issues,
         "citation_count": len(citations),
+        "verifier": verifier,
     }
     return generated
 
