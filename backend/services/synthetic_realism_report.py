@@ -190,6 +190,16 @@ def _patient_level_series(frame: pd.DataFrame, column: str) -> pd.Series:
     return subset[column]
 
 
+def _patient_level_categorical(frame: pd.DataFrame, column: str) -> pd.Series:
+    if column not in frame.columns or "patient_id" not in frame.columns:
+        return pd.Series(dtype=str)
+    subset = frame[["patient_id", column]].dropna().copy()
+    if subset.empty:
+        return pd.Series(dtype=str)
+    subset = subset.drop_duplicates(subset=["patient_id"])
+    return subset[column].astype(str)
+
+
 def _baseline_tumor_size(frame: pd.DataFrame) -> pd.Series:
     if "mri_tumor_size_cm" not in frame.columns:
         return pd.Series(dtype=float)

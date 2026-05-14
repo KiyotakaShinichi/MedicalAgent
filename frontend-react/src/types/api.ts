@@ -449,3 +449,34 @@ export interface RagAblationResult {
   limitations: string[];
   claim_boundary: string;
 }
+
+export interface PublicDataSource {
+  id: string;
+  name: string;
+  provider: string;
+  url: string;
+  access: string;
+  modalities: string[];
+  use_in_project: string[];
+  covers: Record<string, boolean>;
+  limitations: string[];
+}
+
+export interface PublicDataNeed {
+  need: string;
+  status: string;
+  sources: string[];
+  project_action: string;
+}
+
+export interface PublicDataManifest {
+  schema_version: string;
+  generated_at: string;
+  status: string;
+  central_data_reality: string;
+  recommended_strategy: string;
+  sources: PublicDataSource[];
+  feature_feasibility: PublicDataNeed[];
+  claim_boundary: string;
+  manifest_hash: string;
+}

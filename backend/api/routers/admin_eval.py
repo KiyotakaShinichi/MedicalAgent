@@ -208,4 +208,34 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": build_summary_quality_report(output_path=DEFAULT_OUTPUT_PATH),
         }
 
+    @router.get("/admin/public-data-manifest")
+    def get_admin_public_data_manifest_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return public-data feasibility, source lineage, and dataset-use limitations."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.public_data_manifest import DEFAULT_OUTPUT_PATH, build_public_data_manifest
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return build_public_data_manifest(output_path=DEFAULT_OUTPUT_PATH)
+
+    @router.post("/admin/public-data-manifest")
+    def run_admin_public_data_manifest_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild public-data feasibility and source lineage artifact."""
+        from backend.services.public_data_manifest import DEFAULT_OUTPUT_PATH, build_public_data_manifest
+
+        return {
+            "message": "Public data manifest rebuilt.",
+            "result": build_public_data_manifest(output_path=DEFAULT_OUTPUT_PATH),
+        }
+
     return router

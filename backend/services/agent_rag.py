@@ -563,11 +563,17 @@ def _uses_direct_support_lane(intent, safety):
 def rewrite_and_decompose(query, intent):
     normalized = _normalize_query(query)
     expanded = normalized
+    if intent == "portal_help":
+        expanded = (
+            f"{expanded} portal upload guide patient portal cbc labs blood count results "
+            "symptoms medications mri imaging report"
+        )
     synonyms = {
         "wbc": "white blood cells cbc infection neutropenia",
         "hgb": "hemoglobin anemia cbc",
         "hb": "hemoglobin anemia cbc",
         "plt": "platelets cbc bleeding",
+        "cbc": "complete blood count lab values blood count results",
         "mri": "imaging response breast mri",
         "pcr": "pathologic complete response treatment response classification",
         "chemo": "chemotherapy treatment side effects",

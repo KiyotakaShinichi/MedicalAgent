@@ -16,6 +16,7 @@ import type {
   TemporalEvalResult,
   PredictionErrorTable,
   RagAblationResult,
+  PublicDataManifest,
 } from "../types/api";
 
 const BASE = "http://127.0.0.1:8017";
@@ -180,3 +181,9 @@ export const getRagAblation = () =>
 
 export const runRagAblation = () =>
   post<{ message: string; result: RagAblationResult }>("/admin/rag-ablation");
+
+export const getPublicDataManifest = () =>
+  get<PublicDataManifest>("/admin/public-data-manifest");
+
+export const runPublicDataManifest = () =>
+  post<{ message: string; result: PublicDataManifest }>("/admin/public-data-manifest");
