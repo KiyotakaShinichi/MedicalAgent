@@ -1,0 +1,88 @@
+{
+  "schema_version": "synthetic_realism_checks_v1",
+  "generated_at": "2026-05-14T14:25:05.756462+00:00",
+  "status": "needs_attention",
+  "training_csv": "Data/complete_synthetic_training/locked_holdout/development_rows.csv",
+  "cbc_ranges": {
+    "pre_wbc": {
+      "status": "passed",
+      "pass_rate": 1.0,
+      "min": 1.0,
+      "max": 20.0,
+      "min_pass_rate": 0.95
+    },
+    "pre_anc": {
+      "status": "passed",
+      "pass_rate": 1.0,
+      "min": 0.2,
+      "max": 12.0,
+      "min_pass_rate": 0.95
+    },
+    "pre_hemoglobin": {
+      "status": "passed",
+      "pass_rate": 1.0,
+      "min": 6.0,
+      "max": 17.0,
+      "min_pass_rate": 0.95
+    },
+    "pre_platelets": {
+      "status": "passed",
+      "pass_rate": 1.0,
+      "min": 40.0,
+      "max": 650.0,
+      "min_pass_rate": 0.95
+    },
+    "nadir_wbc": {
+      "status": "passed",
+      "pass_rate": 1.0,
+      "min": 0.1,
+      "max": 15.0,
+      "min_pass_rate": 0.95
+    },
+    "nadir_anc": {
+      "status": "passed",
+      "pass_rate": 1.0,
+      "min": 0.0,
+      "max": 8.0,
+      "min_pass_rate": 0.95
+    },
+    "nadir_hemoglobin": {
+      "status": "passed",
+      "pass_rate": 1.0,
+      "min": 5.0,
+      "max": 16.0,
+      "min_pass_rate": 0.95
+    },
+    "nadir_platelets": {
+      "status": "passed",
+      "pass_rate": 1.0,
+      "min": 20.0,
+      "max": 600.0,
+      "min_pass_rate": 0.95
+    }
+  },
+  "cycle_interval_days": {
+    "status": "passed",
+    "pass_rate": 1.0,
+    "count": 2400
+  },
+  "toxicity_patterns": {
+    "status": "needs_attention",
+    "enrichment_ratio": null
+  },
+  "mri_response_trend": {
+    "status": "passed",
+    "improving_rate": 0.812,
+    "within_range_rate": 1.0
+  },
+  "symptom_toxicity_correlation": {
+    "status": "passed",
+    "correlation": 0.414
+  },
+  "subtype_distribution": {
+    "status": "passed",
+    "categories": 4,
+    "dominant_share": 0.402
+  },
+  "claim_boundary": "Engineering realism checks only. Not clinical validation."
+}

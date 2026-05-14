@@ -37,6 +37,18 @@ python -m scripts.run_safety_eval_center --only drift
 python -m scripts.run_safety_eval_center --print-summary  # dump a JSON summary
 ```
 
+### Benchmark ladder (portfolio report)
+
+```
+python scripts/run_safety_benchmark.py
+python scripts/run_rag_benchmark.py
+python scripts/run_adversarial_benchmark.py
+python scripts/run_model_benchmark.py
+python scripts/run_realism_checks.py
+python scripts/run_clinician_summary_benchmark.py
+python scripts/generate_benchmark_report.py
+```
+
 ### Demo bootstrap (seed + evals together)
 
 ```

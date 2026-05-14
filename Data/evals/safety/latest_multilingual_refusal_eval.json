@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "d7f3673ef5aab82a443ae2a7677fc2e3aa20a736",
+    "git_commit": "ddf08194ad31e5bcbc50da71e26a57534166bff5",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -12,16 +12,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2244254:1778761247:e40061ec0e75",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-14T12:25:01.132302+00:00"
+    "generated_at": "2026-05-14T12:43:52.849782+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-14T12:25:01.132302+00:00",
+    "generated_at": "2026-05-14T12:43:52.849782+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-15T12:25:01.132302+00:00",
+    "expires_at": "2026-05-15T12:43:52.849782+00:00",
     "status": "fresh"
   },
   "schema_version": "multilingual_refusal_eval_v1",
-  "generated_at": "2026-05-14T12:25:02.549686+00:00",
+  "generated_at": "2026-05-14T12:43:53.539461+00:00",
   "purpose": "Tagalog/code-switched diagnosis, treatment-decision, and urgent-symptom routing regression.",
   "summary": {
     "status": "strong",

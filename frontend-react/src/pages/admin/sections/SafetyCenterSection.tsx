@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Play, AlertTriangle, ShieldCheck, Activity } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { Badge } from "../../../components/ui/Badge";
@@ -8,12 +8,19 @@ import { LoadingPane, EmptyPane, ErrorPane } from "../../../components/ui/Spinne
 import { FreshnessChip } from "../../../components/ui/FreshnessChip";
 import {
   getSafetyCenter,
+  getLlmJudgeEval,
+  getMultilingualRefusalEval,
+  runLlmJudgeEval,
   runDriftReport,
+  runMultilingualRefusalEval,
   runRagEvalArtifact,
   runSafetyRedTeam,
 } from "../../../api/client";
 import type {
+  BenchmarkLadderSummary,
   DriftReport,
+  LlmJudgeEval,
+  MultilingualRefusalEval,
   RagEvalArtifact,
   SafetyCenter,
   SafetyCenterCategorySummary,
@@ -45,6 +52,8 @@ export function SafetyCenterSection() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [running, setRunning] = useState<string | null>(null);
+  const [multilingual, setMultilingual] = useState<MultilingualRefusalEval | null>(null);
+  const [llmJudge, setLlmJudge] = useState<LlmJudgeEval | null>(null);
 
   async function load() {
     setStatus("loading");
@@ -52,6 +61,12 @@ export function SafetyCenterSection() {
     try {
       const result = await getSafetyCenter();
       setData(result);
+      const [multiResult, judgeResult] = await Promise.allSettled([
+        getMultilingualRefusalEval(),
+        getLlmJudgeEval(),
+      ]);
+      if (multiResult.status === "fulfilled") setMultilingual(multiResult.value);
+      if (judgeResult.status === "fulfilled") setLlmJudge(judgeResult.value);
       setStatus("success");
     } catch (e) {
       setError((e as Error).message);
@@ -78,6 +93,24 @@ export function SafetyCenterSection() {
     }
   }
 
+  async function regenerateExtra(kind: "multilingual" | "llm_judge") {
+    setRunning(kind);
+    try {
+      if (kind === "multilingual") {
+        const response = await runMultilingualRefusalEval();
+        setMultilingual(response.result);
+      }
+      if (kind === "llm_judge") {
+        const response = await runLlmJudgeEval(30);
+        setLlmJudge(response.result);
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setRunning(null);
+    }
+  }
+
   if (status === "loading" && !data) return <LoadingPane label="Loading safety & evaluation center..." />;
   if (status === "error") return <ErrorPane message={error ?? "Failed to load safety center"} />;
   if (!data) return <EmptyPane label="No safety center data" />;
@@ -88,6 +121,7 @@ export function SafetyCenterSection() {
   const calibration = data.calibration_metrics;
   const feedback = data.clinician_feedback;
   const gallery = data.failure_case_gallery;
+  const benchmark = data.benchmark_ladder;
 
   return (
     <div className="flex flex-col gap-4">
@@ -170,6 +204,63 @@ export function SafetyCenterSection() {
           </div>
         </CardHeader>
         <RagEvalBlock artifact={rag} />
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <SectionTitle>Benchmark ladder</SectionTitle>
+            <FreshnessChip
+              artifactFreshness={benchmark?.artifact_freshness}
+              generatedAt={benchmark?.generated_at}
+            />
+          </div>
+        </CardHeader>
+        <BenchmarkLadderBlock artifact={benchmark} />
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <SectionTitle>Multilingual refusal benchmark</SectionTitle>
+            <FreshnessChip
+              artifactFreshness={multilingual?.artifact_freshness}
+              generatedAt={multilingual?.generated_at}
+            />
+          </div>
+          <Button
+            variant="primary"
+            size="sm"
+            icon={<Play size={12} />}
+            loading={running === "multilingual"}
+            onClick={() => void regenerateExtra("multilingual")}
+          >
+            Run
+          </Button>
+        </CardHeader>
+        <MultilingualRefusalBlock artifact={multilingual} />
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <SectionTitle>Optional LLM-judge eval</SectionTitle>
+            <FreshnessChip
+              artifactFreshness={llmJudge?.artifact_freshness}
+              generatedAt={llmJudge?.generated_at}
+            />
+          </div>
+          <Button
+            variant="primary"
+            size="sm"
+            icon={<Play size={12} />}
+            loading={running === "llm_judge"}
+            onClick={() => void regenerateExtra("llm_judge")}
+          >
+            Run judge
+          </Button>
+        </CardHeader>
+        <LlmJudgeBlock artifact={llmJudge} />
       </Card>
 
       <Card>
@@ -388,6 +479,282 @@ function SafetyRedTeamBlock({ artifact }: { artifact: SafetyRedTeamArtifact }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function MultilingualRefusalBlock({ artifact }: { artifact: MultilingualRefusalEval | null }) {
+  if (!artifact || artifact.status === "not_generated") {
+    return <EmptyPane label="No multilingual refusal benchmark has been generated yet." />;
+  }
+  if (artifact.status === "error") {
+    return <ErrorPane message={artifact.message ?? "Multilingual refusal artifact error"} />;
+  }
+  const summary = artifact.summary;
+  if (!summary) return <EmptyPane label="Artifact missing summary block." />;
+  const rows = artifact.cases ?? [];
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard label="Status" value={summary.status ?? "unknown"} status={statusBadge(summary.status)} />
+        <MetricCard label="Pass rate" value={fmtRate(summary.pass_rate)} status={summary.pass_rate === 1 ? "green" : "amber"} />
+        <MetricCard label="Cases" value={summary.case_count ?? rows.length} status="muted" />
+        <MetricCard label="Failed" value={summary.failed_cases?.length ?? 0} status={(summary.failed_cases?.length ?? 0) ? "red" : "green"} />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+              {["Case", "Language", "Expected", "Observed", "Pass"].map((h) => (
+                <th key={h} className="text-left py-2 pr-4 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.slice(0, 8).map((row) => (
+              <tr key={row.case_id} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
+                <td className="py-2 pr-4 font-medium" style={{ color: "var(--text)" }}>{row.case_id}</td>
+                <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{row.language}</td>
+                <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{row.expected_intent}</td>
+                <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{row.observed_intent}</td>
+                <td className="py-2 pr-4"><Badge variant={row.pass ? "green" : "red"}>{row.pass ? "pass" : "fail"}</Badge></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>
+        Tagalog/Taglish safety routing benchmark. It is regression coverage, not proof of broad multilingual safety.
+      </p>
+    </div>
+  );
+}
+
+function LlmJudgeBlock({ artifact }: { artifact: LlmJudgeEval | null }) {
+  if (!artifact || artifact.status === "not_generated") {
+    return <EmptyPane label="No LLM-judge report has been generated yet." />;
+  }
+  if (artifact.status === "unavailable") {
+    return (
+      <div className="rounded-md border p-3 text-xs" style={{ background: "var(--surface2)", borderColor: "var(--border)", color: "var(--text-dim)" }}>
+        {artifact.message ?? "LLM adjudication is disabled or no provider is configured."}
+        <br />
+        <span style={{ color: "var(--text-faint)" }}>{artifact.claim_boundary}</span>
+      </div>
+    );
+  }
+  const summary = artifact.summary;
+  if (!summary) return <EmptyPane label="Artifact missing summary block." />;
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard label="Status" value={artifact.status ?? "unknown"} status={statusBadge(artifact.status)} />
+        <MetricCard label="Pass rate" value={fmtRate(summary.pass_rate)} status={summary.pass_rate === 1 ? "green" : "amber"} />
+        <MetricCard label="Judge coverage" value={fmtRate(summary.coverage_rate)} status={summary.coverage_rate === 1 ? "green" : "amber"} />
+        <MetricCard label="Groundedness" value={fmtScore(summary.average_groundedness_score)} status="muted" />
+        <MetricCard label="Unsafe advice" value={fmtRate(summary.unsafe_medical_advice_rate)} status={summary.unsafe_medical_advice_rate ? "red" : "green"} />
+      </div>
+      <p className="text-xs" style={{ color: "var(--text-dim)" }}>
+        Provider: {artifact.provider ?? "none"} {artifact.model ? `(${artifact.model})` : ""}. This is an optional LLM-as-judge heuristic.
+      </p>
+      {artifact.claim_boundary && (
+        <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{artifact.claim_boundary}</p>
+      )}
+    </div>
+  );
+}
+
+function BenchmarkLadderBlock({ artifact }: { artifact: BenchmarkLadderSummary | null }) {
+  if (!artifact || artifact.status === "not_generated") {
+    return <EmptyPane label="Benchmark ladder not generated yet. Run scripts/generate_benchmark_report.py." />;
+  }
+  if (artifact.status === "error") {
+    return <ErrorPane message={artifact.message ?? "Benchmark ladder artifact error"} />;
+  }
+
+  const benchmarks = artifact.benchmarks ?? {};
+  const safety = benchmarks.safety;
+  const adversarial = benchmarks.adversarial;
+  const rag = benchmarks.rag;
+  const model = benchmarks.model;
+  const realism = benchmarks.realism;
+  const clinician = benchmarks.clinician_summary;
+
+  const highIsGood = (value: number | null | undefined, good = 0.9, warn = 0.8) => {
+    if (value === null || value === undefined) return "muted";
+    if (value >= good) return "green";
+    if (value >= warn) return "amber";
+    return "red";
+  };
+
+  const lowIsGood = (value: number | null | undefined, good = 0.0, warn = 0.02) => {
+    if (value === null || value === undefined) return "muted";
+    if (value <= good) return "green";
+    if (value <= warn) return "amber";
+    return "red";
+  };
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <BenchmarkGroup title="Safety benchmark" status={safety?.status}>
+          <div className="grid grid-cols-2 gap-2">
+            <MetricCard
+              label="Unsafe pass rate"
+              value={fmtRate(safety?.unsafe_pass_rate)}
+              status={lowIsGood(safety?.unsafe_pass_rate)}
+            />
+            <MetricCard
+              label="Urgent escalation recall"
+              value={fmtRate(safety?.urgent_escalation_recall)}
+              status={highIsGood(safety?.urgent_escalation_recall)}
+            />
+            <MetricCard
+              label="Privacy leak rate"
+              value={fmtRate(safety?.privacy_leak_rate)}
+              status={lowIsGood(safety?.privacy_leak_rate)}
+            />
+            <MetricCard
+              label="Injection resistance"
+              value={fmtRate(safety?.prompt_injection_resistance)}
+              status={highIsGood(safety?.prompt_injection_resistance)}
+            />
+          </div>
+        </BenchmarkGroup>
+
+        <BenchmarkGroup title="Adversarial benchmark" status={adversarial?.status}>
+          <div className="grid grid-cols-2 gap-2">
+            <MetricCard
+              label="Attack block rate"
+              value={fmtRate(adversarial?.attack_block_rate)}
+              status={highIsGood(adversarial?.attack_block_rate)}
+            />
+          </div>
+        </BenchmarkGroup>
+
+        <BenchmarkGroup title="RAG benchmark" status={rag?.status}>
+          <div className="grid grid-cols-2 gap-2">
+            <MetricCard
+              label="Pass rate"
+              value={fmtRate(rag?.pass_rate)}
+              status={highIsGood(rag?.pass_rate)}
+            />
+            <MetricCard
+              label="Citation precision"
+              value={fmtRate(rag?.citation_coverage)}
+              status={highIsGood(rag?.citation_coverage)}
+            />
+            <MetricCard
+              label="Source hit"
+              value={fmtRate(rag?.expected_source_hit)}
+              status={highIsGood(rag?.expected_source_hit)}
+            />
+            <MetricCard
+              label="Refusal correctness"
+              value={fmtRate(rag?.refusal_correct)}
+              status={highIsGood(rag?.refusal_correct)}
+            />
+            <MetricCard
+              label="Unsafe answer rate"
+              value={fmtRate(rag?.unsafe_answer_rate)}
+              status={lowIsGood(rag?.unsafe_answer_rate, 0.0, 0.05)}
+            />
+          </div>
+        </BenchmarkGroup>
+
+        <BenchmarkGroup title="Model benchmark" status={model?.status}>
+          <div className="grid grid-cols-2 gap-2">
+            <MetricCard
+              label="AUROC"
+              value={fmtScore(model?.synthetic_champion_auroc, 3)}
+              status="muted"
+            />
+            <MetricCard
+              label="AUPRC"
+              value={fmtScore(model?.synthetic_champion_auprc, 3)}
+              status="muted"
+            />
+            <MetricCard
+              label="Brier"
+              value={fmtScore(model?.synthetic_champion_brier, 3)}
+              status="muted"
+            />
+            <MetricCard
+              label="ECE (post-temp)"
+              value={fmtScore(model?.synthetic_champion_ece_after, 3)}
+              status="muted"
+            />
+          </div>
+        </BenchmarkGroup>
+
+        <BenchmarkGroup title="Synthetic realism" status={realism?.status}>
+          <div className="grid grid-cols-2 gap-2">
+            <MetricCard
+              label="Alignment score"
+              value={fmtScore(realism?.alignment_score, 3)}
+              status={statusBadge(realism?.status)}
+            />
+            <MetricCard
+              label="Checks status"
+              value={realism?.realism_checks_status ?? "—"}
+              status={statusBadge(realism?.status)}
+            />
+          </div>
+        </BenchmarkGroup>
+
+        <BenchmarkGroup title="Clinician summary" status={clinician?.status}>
+          <div className="grid grid-cols-2 gap-2">
+            <MetricCard
+              label="Completeness"
+              value={fmtRate(clinician?.summary_completeness_rate)}
+              status={highIsGood(clinician?.summary_completeness_rate, 0.85, 0.7)}
+            />
+            <MetricCard
+              label="Unsafe advice"
+              value={fmtRate(clinician?.unsafe_advice_rate)}
+              status={lowIsGood(clinician?.unsafe_advice_rate, 0.0, 0.05)}
+            />
+          </div>
+        </BenchmarkGroup>
+      </div>
+
+      {(artifact.report_path || artifact.csv_path) && (
+        <div className="text-xs" style={{ color: "var(--text-dim)" }}>
+          {artifact.report_path && <span>Report: {artifact.report_path}</span>}
+          {artifact.report_path && artifact.csv_path && <span> · </span>}
+          {artifact.csv_path && <span>CSV: {artifact.csv_path}</span>}
+        </div>
+      )}
+      {artifact.claim_boundary && (
+        <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>
+          {artifact.claim_boundary}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function BenchmarkGroup({
+  title,
+  status,
+  children,
+}: {
+  title: string;
+  status?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className="p-3 rounded-md border"
+      style={{ background: "var(--surface2)", borderColor: "var(--border)" }}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs font-semibold" style={{ color: "var(--text)" }}>
+          {title}
+        </p>
+        <Badge variant={statusBadge(status)}>{status ?? "n/a"}</Badge>
+      </div>
+      {children}
     </div>
   );
 }

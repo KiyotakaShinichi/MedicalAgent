@@ -1,0 +1,17 @@
+benchmark,model,metric,value,dataset,notes
+model,gradient_boosting,roc_auc,0.995,synthetic_champion,patient_level
+model,gradient_boosting,auprc,0.996,synthetic_champion,patient_level
+model,gradient_boosting,brier,0.047,synthetic_champion,patient_level
+model,gradient_boosting,ece_after,0.064,synthetic_champion,patient_level
+response_regression,random_forest_regressor,mae,1.48,synthetic,patient_level
+response_regression,random_forest_regressor,rmse,6.479,synthetic,patient_level
+response_regression,random_forest_regressor,r2,0.971,synthetic,patient_level
+baseline,logistic_regression,roc_auc,0.637,breastdcedl_baseline,public
+baseline,logistic_regression,accuracy,0.616,breastdcedl_baseline,public
+baseline,logistic_regression,balanced_accuracy,0.63,breastdcedl_baseline,public
+baseline,random_forest,roc_auc,0.579,breastdcedl_baseline,public
+baseline,random_forest,accuracy,0.654,breastdcedl_baseline,public
+baseline,random_forest,balanced_accuracy,0.543,breastdcedl_baseline,public
+baseline,small_cnn,roc_auc,0.42,breastdcedl_cnn,public
+baseline,small_cnn,accuracy,0.733,breastdcedl_cnn,public
+baseline,small_cnn,balanced_accuracy,0.5,breastdcedl_cnn,public

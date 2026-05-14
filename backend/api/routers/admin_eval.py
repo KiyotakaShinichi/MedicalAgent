@@ -581,4 +581,65 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": build_current_vs_candidate_report(),
         }
 
+    @router.get("/admin/current-vs-realism-candidate")
+    def get_admin_current_vs_realism_candidate_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return cached current-vs-realism-candidate comparison if present."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.candidate_model_comparison import DEFAULT_OUTPUT_PATH, build_current_vs_candidate_report
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return build_current_vs_candidate_report(output_path=DEFAULT_OUTPUT_PATH)
+
+    @router.get("/admin/multilingual-refusal-eval")
+    def get_admin_multilingual_refusal_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return cached multilingual refusal routing benchmark."""
+        from backend.services.multilingual_refusal_eval import load_multilingual_refusal_eval
+
+        return load_multilingual_refusal_eval()
+
+    @router.post("/admin/multilingual-refusal-eval")
+    def run_admin_multilingual_refusal_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Run Tagalog/Taglish diagnosis/treatment/urgent routing checks."""
+        from backend.services.multilingual_refusal_eval import run_multilingual_refusal_eval
+
+        return {
+            "message": "Multilingual refusal eval completed.",
+            "result": run_multilingual_refusal_eval(),
+        }
+
+    @router.get("/admin/llm-judge-eval")
+    def get_admin_llm_judge_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return optional LLM-as-judge artifact if generated."""
+        from backend.services.llm_judge_eval import load_llm_judge_eval
+
+        return load_llm_judge_eval()
+
+    @router.post("/admin/llm-judge-eval")
+    def run_admin_llm_judge_eval_endpoint(
+        max_cases: int = 30,
+        context=Depends(get_admin_access_context),
+    ):
+        """Run optional LLM-as-judge eval. Returns unavailable when no provider is configured."""
+        from backend.services.llm_judge_eval import run_llm_judge_eval
+
+        return {
+            "message": "LLM-judge eval completed.",
+            "result": run_llm_judge_eval(max_cases=max(1, min(max_cases, 50))),
+        }
+
     return router

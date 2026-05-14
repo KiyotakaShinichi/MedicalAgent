@@ -13,6 +13,8 @@ import {
   getExternalValidation, getModelComparison,
   getNoiseEval, getTemporalEval, getPredictionErrorTable,
   getPublicDataManifest,
+  getCurrentVsRealismCandidate,
+  runCurrentVsRealismCandidate,
 } from "../../../api/client";
 import type {
   AdminAnalytics,
@@ -20,6 +22,7 @@ import type {
   TemporalEvalResult,
   PredictionErrorTable,
   PublicDataManifest,
+  CurrentVsRealismCandidateReport,
 } from "../../../types/api";
 
 interface Props { analytics: AdminAnalytics; onRefresh: () => void }
@@ -37,10 +40,22 @@ export function MleSection({ analytics, onRefresh }: Props) {
   const { data: temporalEval, status: temporalStatus } = useApi(getTemporalEval, []);
   const { data: errorTable, status: errorStatus } = useApi(getPredictionErrorTable, []);
   const { data: dataManifest, status: dataManifestStatus } = useApi(getPublicDataManifest, []);
+  const { data: candidateComparison, status: candidateStatus, refetch: refetchCandidate } = useApi(getCurrentVsRealismCandidate, []);
+  const [runningCandidate, setRunningCandidate] = useState(false);
 
   async function runMle() {
     setRunningMle(true);
     try { await runMleReadiness(); onRefresh(); } finally { setRunningMle(false); }
+  }
+
+  async function runCandidateComparison() {
+    setRunningCandidate(true);
+    try {
+      await runCurrentVsRealismCandidate();
+      await refetchCandidate();
+    } finally {
+      setRunningCandidate(false);
+    }
   }
 
   const tr = (trainingReport as { result?: Record<string, unknown> } | null)?.result;
@@ -139,6 +154,26 @@ export function MleSection({ analytics, onRefresh }: Props) {
             </div>
           ))}
         </div>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <SectionTitle>Current vs Realism-Calibrated Candidate</SectionTitle>
+          <Button
+            variant="secondary"
+            size="sm"
+            loading={runningCandidate}
+            icon={<RefreshCw size={12} />}
+            onClick={() => void runCandidateComparison()}
+          >
+            Compare
+          </Button>
+        </CardHeader>
+        {candidateStatus === "loading" ? <LoadingPane /> :
+         candidateStatus === "error" ? <ErrorPane message="Could not load current-vs-candidate report" /> :
+         !candidateComparison ? <EmptyPane label="No current-vs-candidate report available" /> : (
+          <CandidateComparisonPanel data={candidateComparison} />
+        )}
       </Card>
 
       {/* Training report */}
@@ -431,6 +466,68 @@ function CostCard({ label, level, color, description }: {
       <p className="text-xs font-semibold mb-0.5" style={{ color: "var(--text-faint)" }}>{label}</p>
       <p className="text-lg font-bold mb-1" style={{ color }}>{level}</p>
       <p className="text-xs" style={{ color: "var(--text-dim)" }}>{description}</p>
+    </div>
+  );
+}
+
+function CandidateComparisonPanel({ data }: { data: CurrentVsRealismCandidateReport }) {
+  const current = data.current ?? {};
+  const candidate = data.candidate ?? {};
+  const rec = data.recommendation ?? {};
+  const decision = rec.decision ?? "not_available";
+  const promote = decision === "promote_candidate_after_review";
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard
+          label="Current AUROC"
+          value={current.patient_level_roc_auc != null ? current.patient_level_roc_auc.toFixed(3) : null}
+          status="muted"
+        />
+        <MetricCard
+          label="Candidate AUROC"
+          value={candidate.patient_level_roc_auc != null ? candidate.patient_level_roc_auc.toFixed(3) : null}
+          status={promote ? "green" : "amber"}
+        />
+        <MetricCard
+          label="AUROC delta"
+          value={rec.auc_delta != null ? `${rec.auc_delta >= 0 ? "+" : ""}${rec.auc_delta.toFixed(3)}` : null}
+          status={rec.auc_delta != null && rec.auc_delta >= -0.03 ? "green" : "amber"}
+        />
+        <MetricCard
+          label="Realism delta"
+          value={rec.realism_delta != null ? `+${rec.realism_delta.toFixed(3)}` : null}
+          status={rec.realism_delta != null && rec.realism_delta > 0 ? "green" : "amber"}
+        />
+      </div>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div className="rounded-md border p-3" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+          <p className="text-xs font-semibold mb-2" style={{ color: "var(--text-dim)" }}>Current champion</p>
+          <Row label="Realism" value={`${current.realism_status ?? "unknown"} (${current.realism_alignment_score?.toFixed(3) ?? "n/a"})`} />
+          <Row label="Sim-to-real" value={current.sim_to_real_status ?? "unknown"} />
+          <Row label="Threshold coverage" value={current.threshold_coverage_status ?? "unknown"} />
+        </div>
+        <div className="rounded-md border p-3" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+          <p className="text-xs font-semibold mb-2" style={{ color: "var(--text-dim)" }}>Realism-v2 candidate</p>
+          <Row label="Realism" value={`${candidate.realism_status ?? "unknown"} (${candidate.realism_alignment_score?.toFixed(3) ?? "n/a"})`} />
+          <Row label="Sim-to-real" value={candidate.sim_to_real_status ?? "unknown"} />
+          <Row label="Threshold coverage" value={candidate.threshold_coverage_status ?? "unknown"} />
+        </div>
+      </div>
+      <div
+        className="rounded-md border p-3 text-xs"
+        style={{
+          background: promote ? "rgba(16,185,129,0.07)" : "rgba(245,158,11,0.07)",
+          borderColor: promote ? "rgba(16,185,129,0.25)" : "rgba(245,158,11,0.25)",
+          color: promote ? "var(--green)" : "var(--amber)",
+        }}
+      >
+        <strong>{decision.replace(/_/g, " ")}</strong>
+        {rec.rationale ? <span style={{ color: "var(--text-dim)" }}> - {rec.rationale}</span> : null}
+      </div>
+      {data.claim_boundary && (
+        <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
+      )}
     </div>
   );
 }

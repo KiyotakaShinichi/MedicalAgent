@@ -72,3 +72,20 @@ Lead with this:
 5. One failure case gallery showing what still breaks.
 
 Do not lead with synthetic AUROC alone.
+
+## Implemented benchmark ladder
+
+The benchmark ladder is implemented under `benchmarks/` with JSONL case sets and
+scripts under `scripts/` to generate CSV and markdown artifacts.
+
+Run:
+
+```text
+python scripts/run_safety_benchmark.py
+python scripts/run_rag_benchmark.py
+python scripts/run_adversarial_benchmark.py
+python scripts/run_model_benchmark.py
+python scripts/run_realism_checks.py
+python scripts/run_clinician_summary_benchmark.py
+python scripts/generate_benchmark_report.py
+```

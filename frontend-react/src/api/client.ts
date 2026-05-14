@@ -236,6 +236,30 @@ export const getSimToPublicImaging = () =>
 export const runSimToPublicImaging = () =>
   post<{ message: string; result: SimToPublicImagingReport }>("/admin/sim-to-public-imaging");
 
+export const getCurrentVsRealismCandidate = () =>
+  get<import("../types/api").CurrentVsRealismCandidateReport>("/admin/current-vs-realism-candidate");
+
+export const runCurrentVsRealismCandidate = () =>
+  post<{ message: string; result: import("../types/api").CurrentVsRealismCandidateReport }>(
+    "/admin/current-vs-realism-candidate"
+  );
+
+export const getMultilingualRefusalEval = () =>
+  get<import("../types/api").MultilingualRefusalEval>("/admin/multilingual-refusal-eval");
+
+export const runMultilingualRefusalEval = () =>
+  post<{ message: string; result: import("../types/api").MultilingualRefusalEval }>(
+    "/admin/multilingual-refusal-eval"
+  );
+
+export const getLlmJudgeEval = () =>
+  get<import("../types/api").LlmJudgeEval>("/admin/llm-judge-eval");
+
+export const runLlmJudgeEval = (maxCases = 30) =>
+  post<{ message: string; result: import("../types/api").LlmJudgeEval }>(
+    `/admin/llm-judge-eval?max_cases=${maxCases}`
+  );
+
 // Safety & evaluation center
 export const getSafetyCenter = () =>
   get<import("../types/api").SafetyCenter>("/admin/safety-center");

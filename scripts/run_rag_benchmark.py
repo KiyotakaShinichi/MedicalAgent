@@ -1,0 +1,61 @@
+import argparse
+import json
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from backend.services.rag_eval_suite import run_rag_eval_suite  # noqa: E402
+
+DEFAULT_CASES_PATH = ROOT_DIR / "benchmarks" / "rag_eval_cases.jsonl"
+DEFAULT_OUTPUT_PATH = "Data/evals/rag/latest_rag_benchmark.json"
+DEFAULT_CSV_PATH = "Data/evals/rag/latest_rag_benchmark.csv"
+
+
+def _load_jsonl_cases(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    cases = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        cases.append(json.loads(line))
+    return cases
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Run benchmark RAG cases from benchmarks/rag_eval_cases.jsonl.")
+    parser.add_argument("--cases-path", default=str(DEFAULT_CASES_PATH))
+    parser.add_argument("--output-path", default=DEFAULT_OUTPUT_PATH)
+    parser.add_argument("--csv-path", default=DEFAULT_CSV_PATH)
+    parser.add_argument("--live-agent", action="store_true")
+    args = parser.parse_args()
+
+    cases = _load_jsonl_cases(Path(args.cases_path))
+    payload = run_rag_eval_suite(
+        output_path=args.output_path,
+        csv_path=args.csv_path,
+        cases=cases,
+        live_agent=bool(args.live_agent),
+    )
+
+    summary = payload.get("summary") or {}
+    print(json.dumps({
+        "output_path": args.output_path,
+        "status": summary.get("status"),
+        "case_count": payload.get("case_count"),
+        "pass_rate": summary.get("pass_rate"),
+        "citation_coverage": summary.get("citation_coverage_rate"),
+        "expected_source_hit": summary.get("expected_source_hit_rate"),
+        "refusal_correct": summary.get("refusal_correct_rate"),
+    }, indent=2))
+
+    if summary.get("status") in ("failed",):
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

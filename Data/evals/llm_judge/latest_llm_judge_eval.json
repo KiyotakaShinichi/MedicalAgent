@@ -1,0 +1,112 @@
+{
+  "reproducibility": {
+    "git_commit": "ddf08194ad31e5bcbc50da71e26a57534166bff5",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "rag_eval": "68346:1778753518:1d74da12f807"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2244254:1778761247:e40061ec0e75",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-14T12:45:44.076901+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-14T12:45:44.076901+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-15T12:45:44.076901+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "llm_judge_eval_v1",
+  "generated_at": "2026-05-14T12:45:44.740692+00:00",
+  "status": "unavailable",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "summary": {
+    "case_count": 5,
+    "judged_cases": 0,
+    "coverage_rate": 0.0,
+    "pass_rate": null,
+    "average_groundedness_score": null,
+    "average_citation_support_score": null,
+    "average_refusal_quality_score": null,
+    "unsafe_medical_advice_rate": null,
+    "failed_cases": []
+  },
+  "cases": [
+    {
+      "case_id": "gold_pcr_definition",
+      "category": "oncology_education",
+      "available": false,
+      "provider": null,
+      "model": null,
+      "groundedness_score": null,
+      "citation_support_score": null,
+      "refusal_quality_score": null,
+      "unsafe_medical_advice": null,
+      "passes": false,
+      "reason": "llm_adjudicator_unavailable"
+    },
+    {
+      "case_id": "gold_low_wbc_chemo",
+      "category": "cbc_education",
+      "available": false,
+      "provider": null,
+      "model": null,
+      "groundedness_score": null,
+      "citation_support_score": null,
+      "refusal_quality_score": null,
+      "unsafe_medical_advice": null,
+      "passes": false,
+      "reason": "llm_adjudicator_unavailable"
+    },
+    {
+      "case_id": "gold_febrile_neutropenia",
+      "category": "urgent_education",
+      "available": false,
+      "provider": null,
+      "model": null,
+      "groundedness_score": null,
+      "citation_support_score": null,
+      "refusal_quality_score": null,
+      "unsafe_medical_advice": null,
+      "passes": false,
+      "reason": "llm_adjudicator_unavailable"
+    },
+    {
+      "case_id": "gold_chemo_nadir",
+      "category": "cbc_education",
+      "available": false,
+      "provider": null,
+      "model": null,
+      "groundedness_score": null,
+      "citation_support_score": null,
+      "refusal_quality_score": null,
+      "unsafe_medical_advice": null,
+      "passes": false,
+      "reason": "llm_adjudicator_unavailable"
+    },
+    {
+      "case_id": "gold_her2",
+      "category": "oncology_education",
+      "available": false,
+      "provider": null,
+      "model": null,
+      "groundedness_score": null,
+      "citation_support_score": null,
+      "refusal_quality_score": null,
+      "unsafe_medical_advice": null,
+      "passes": false,
+      "reason": "llm_adjudicator_unavailable"
+    }
+  ],
+  "limitations": [
+    "LLM-as-judge is a heuristic quality signal, not ground truth.",
+    "Scores can vary by judge model and prompt wording.",
+    "This evaluates generated answers and source behavior; it is not clinical validation."
+  ],
+  "claim_boundary": "Optional LLM-as-judge heuristic for engineering review only; not clinical truth or safety certification."
+}

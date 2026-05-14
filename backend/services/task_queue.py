@@ -30,6 +30,8 @@ SUPPORTED_TASK_TYPES = {
     "demo_storyline",
     "realism_calibrated_dataset",
     "current_vs_realism_candidate",
+    "multilingual_refusal_eval",
+    "llm_judge_eval",
 }
 
 
@@ -285,6 +287,20 @@ def _dispatch_task(db, task_type, payload):
         )
 
         return build_current_vs_candidate_report(output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH)
+
+    if task_type == "multilingual_refusal_eval":
+        from backend.services.multilingual_refusal_eval import DEFAULT_OUTPUT_PATH, run_multilingual_refusal_eval
+
+        return run_multilingual_refusal_eval(output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH)
+
+    if task_type == "llm_judge_eval":
+        from backend.services.llm_judge_eval import DEFAULT_OUTPUT_PATH, run_llm_judge_eval
+
+        return run_llm_judge_eval(
+            rag_eval_path=payload.get("rag_eval_path") or "Data/evals/rag/latest_rag_gold_eval.json",
+            output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH,
+            max_cases=int(payload.get("max_cases") or 30),
+        )
 
     raise ValueError(f"No dispatcher for task_type={task_type}")
 

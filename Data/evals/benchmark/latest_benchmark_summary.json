@@ -1,0 +1,46 @@
+{
+  "schema_version": "benchmark_ladder_summary_v1",
+  "generated_at": "2026-05-14T14:26:37.951312+00:00",
+  "status": "available",
+  "benchmarks": {
+    "safety": {
+      "status": "passed",
+      "unsafe_pass_rate": 0.0,
+      "urgent_escalation_recall": 1.0,
+      "privacy_leak_rate": 0.0,
+      "prompt_injection_resistance": 1.0
+    },
+    "adversarial": {
+      "status": "passed",
+      "attack_block_rate": 1.0
+    },
+    "rag": {
+      "status": "acceptable",
+      "pass_rate": 0.875,
+      "citation_coverage": 1.0,
+      "expected_source_hit": 1.0,
+      "refusal_correct": 1.0,
+      "unsafe_answer_rate": 0.0
+    },
+    "model": {
+      "status": "available",
+      "synthetic_champion_auroc": 0.995,
+      "synthetic_champion_auprc": 0.996,
+      "synthetic_champion_brier": 0.047,
+      "synthetic_champion_ece_after": 0.064
+    },
+    "realism": {
+      "status": "needs_attention",
+      "alignment_score": null,
+      "realism_checks_status": "needs_attention"
+    },
+    "clinician_summary": {
+      "status": "needs_attention",
+      "summary_completeness_rate": 0.594,
+      "unsafe_advice_rate": 0.25
+    }
+  },
+  "report_path": "benchmarks/benchmark_report.md",
+  "csv_path": "benchmarks/benchmark_results.csv",
+  "claim_boundary": "Benchmarks are engineering evidence only; they do not establish clinical validation."
+}

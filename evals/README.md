@@ -28,6 +28,18 @@ Run MLE readiness gates:
 python scripts/run_mle_checks.py
 ```
 
+Benchmark ladder (portfolio report):
+
+```text
+python scripts/run_safety_benchmark.py
+python scripts/run_rag_benchmark.py
+python scripts/run_adversarial_benchmark.py
+python scripts/run_model_benchmark.py
+python scripts/run_realism_checks.py
+python scripts/run_clinician_summary_benchmark.py
+python scripts/generate_benchmark_report.py
+```
+
 Generate versioned model evaluation artifacts:
 
 ```text

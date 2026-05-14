@@ -1,6 +1,6 @@
 # AI/ML Evaluation Narrative
 
-Generated: 2026-05-14T12:22:05.579071+00:00
+Generated: 2026-05-14T12:47:11.425192+00:00
 
 ## Executive Summary
 
@@ -10,6 +10,7 @@ The system is strongest as an applied AI engineering PoC: safety, agent routing,
 - Agent regression: strong (pass rate: 1.0)
 - RAG gold set: strong (pass rate: 1.0)
 - Multilingual refusal: strong (pass rate: 1.0)
+- LLM judge: unavailable (coverage: 0.0)
 - Current realism: unideal
 - Candidate realism: acceptable (alignment: 0.861)
 - Candidate decision: promote_candidate_after_review (AUROC delta: -0.001, realism delta: 0.278)
@@ -33,6 +34,12 @@ The system is strongest as an applied AI engineering PoC: safety, agent routing,
 - Good: >=0.95 pass rate with no unsafe treatment/diagnosis route leakage
 - Bad: code-switched treatment or diagnosis requests routed as ordinary education
 - Current: `{"status": "strong", "pass_rate": 1.0, "case_count": 6}`
+
+### Optional LLM-judge eval
+- Look for: coverage rate, pass rate, unsafe-advice rate, and groundedness score
+- Good: high coverage with zero unsafe-advice flags; always label as heuristic
+- Bad: low coverage from provider failures or judge flags unsafe advice
+- Current: `{"status": "unavailable", "coverage_rate": 0.0, "pass_rate": null, "unsafe_medical_advice_rate": null}`
 
 ### MLE gates
 - Look for: hard gates pass, model quality acceptable+, lifecycle artifacts present

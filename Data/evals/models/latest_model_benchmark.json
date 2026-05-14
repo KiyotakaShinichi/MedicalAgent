@@ -1,0 +1,185 @@
+{
+  "schema_version": "model_benchmark_v1",
+  "generated_at": "2026-05-14T14:25:03.002820+00:00",
+  "status": "available",
+  "synthetic_classification": [
+    {
+      "label": "synthetic_champion",
+      "model": "gradient_boosting",
+      "roc_auc": 0.995,
+      "auprc": 0.996,
+      "f1": 0.971,
+      "recall": 1.0,
+      "precision": 0.943,
+      "brier": 0.047,
+      "ece_before": 0.126,
+      "ece_after": 0.064,
+      "brier_before": 0.047,
+      "brier_after": 0.03,
+      "temperature": 0.5
+    }
+  ],
+  "synthetic_response_regression": {
+    "model": "random_forest_regressor",
+    "mae": 1.48,
+    "rmse": 6.479,
+    "r2": 0.971,
+    "target": "response_score_percent"
+  },
+  "external_baselines": [
+    {
+      "label": "breastdcedl_baseline",
+      "model": "logistic_regression",
+      "roc_auc": 0.637,
+      "accuracy": 0.616,
+      "balanced_accuracy": 0.63
+    },
+    {
+      "label": "breastdcedl_baseline",
+      "model": "random_forest",
+      "roc_auc": 0.579,
+      "accuracy": 0.654,
+      "balanced_accuracy": 0.543
+    }
+  ],
+  "external_cnn": {
+    "label": "breastdcedl_cnn",
+    "roc_auc": 0.42,
+    "accuracy": 0.733,
+    "balanced_accuracy": 0.5
+  },
+  "calibration_report": {
+    "schema_version": "calibration_eval_v1",
+    "generated_at": "2026-05-14T11:52:47.907302+00:00",
+    "purpose": "Compares calibration methods on the synthetic champion model holdout. Informs which probability source to surface in the admin dashboard.",
+    "status": "strong",
+    "champion_model": "gradient_boosting",
+    "calibration_patients": 60,
+    "validation_patients": 60,
+    "raw": {
+      "method": "raw",
+      "ece": 0.1498,
+      "brier": 0.0436,
+      "status": "unideal"
+    },
+    "isotonic": {
+      "method": "isotonic_regression",
+      "ece": 0.0597,
+      "brier": 0.0364,
+      "status": "strong"
+    },
+    "platt": {
+      "method": "platt_scaling",
+      "ece": 0.2191,
+      "brier": 0.0642,
+      "status": "failed"
+    },
+    "temperature": {
+      "method": "temperature_scaling",
+      "ece": 0.0653,
+      "brier": 0.0186,
+      "status": "acceptable",
+      "best_temperature": 0.5
+    },
+    "training_pipeline_isotonic": {
+      "method": "training_pipeline_isotonic",
+      "ece": 0.0597,
+      "brier": 0.0364,
+      "status": "strong"
+    },
+    "best_method": "isotonic_regression",
+    "best_ece": 0.0597,
+    "best_brier": 0.0364,
+    "recommended_source": "training_pipeline_isotonic",
+    "recommendation_reason": "The isotonic calibrator from the training pipeline has the lowest or equal ECE. Prefer the artifact already serialised during training to avoid extra hold-out leakage.",
+    "reliability_diagram": [
+      {
+        "range": "0.0-0.1",
+        "count": 25,
+        "fraction_of_total": 0.2083,
+        "mean_predicted_probability": 0.0305,
+        "observed_positive_rate": 0.0,
+        "gap": 0.0305
+      },
+      {
+        "range": "0.1-0.2",
+        "count": 7,
+        "fraction_of_total": 0.0583,
+        "mean_predicted_probability": 0.1457,
+        "observed_positive_rate": 0.0,
+        "gap": 0.1457
+      },
+      {
+        "range": "0.2-0.3",
+        "count": 7,
+        "fraction_of_total": 0.0583,
+        "mean_predicted_probability": 0.2434,
+        "observed_positive_rate": 0.0,
+        "gap": 0.2434
+      },
+      {
+        "range": "0.3-0.4",
+        "count": 8,
+        "fraction_of_total": 0.0667,
+        "mean_predicted_probability": 0.3452,
+        "observed_positive_rate": 0.0,
+        "gap": 0.3452
+      },
+      {
+        "range": "0.4-0.5",
+        "count": 3,
+        "fraction_of_total": 0.025,
+        "mean_predicted_probability": 0.441,
+        "observed_positive_rate": 0.0,
+        "gap": 0.441
+      },
+      {
+        "range": "0.5-0.6",
+        "count": 3,
+        "fraction_of_total": 0.025,
+        "mean_predicted_probability": 0.5709,
+        "observed_positive_rate": 0.3333,
+        "gap": 0.2376
+      },
+      {
+        "range": "0.6-0.7",
+        "count": 8,
+        "fraction_of_total": 0.0667,
+        "mean_predicted_probability": 0.6524,
+        "observed_positive_rate": 0.875,
+        "gap": 0.2226
+      },
+      {
+        "range": "0.7-0.8",
+        "count": 7,
+        "fraction_of_total": 0.0583,
+        "mean_predicted_probability": 0.7489,
+        "observed_positive_rate": 1.0,
+        "gap": 0.2511
+      },
+      {
+        "range": "0.8-0.9",
+        "count": 19,
+        "fraction_of_total": 0.1583,
+        "mean_predicted_probability": 0.8675,
+        "observed_positive_rate": 0.9474,
+        "gap": 0.0799
+      },
+      {
+        "range": "0.9-1.0",
+        "count": 33,
+        "fraction_of_total": 0.275,
+        "mean_predicted_probability": 0.9448,
+        "observed_positive_rate": 1.0,
+        "gap": 0.0552
+      }
+    ],
+    "claim_boundary": "Calibration fitted on synthetic holdout data only. Real-world probability reliability requires external validation.",
+    "display_hint": "Reliability diagram: each bin shows mean predicted probability vs observed positive rate. Perfect calibration = diagonal. ECE <= 0.06 is acceptable for PoC monitoring language with caveats."
+  },
+  "claim_boundary": "Model benchmarks are synthetic or public-data baselines, not clinical validation.",
+  "limitations": [
+    "Synthetic metrics are not real-world clinical performance.",
+    "BreastDCEDL baselines use MRI-derived tabular features and are not a full clinical pipeline."
+  ]
+}

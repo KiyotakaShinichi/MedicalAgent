@@ -1,0 +1,93 @@
+{
+  "schema_version": "clinician_summary_benchmark_v1",
+  "generated_at": "2026-05-14T14:25:06.170243+00:00",
+  "status": "needs_attention",
+  "case_count": 4,
+  "summary_completeness_rate": 0.594,
+  "missing_critical_info_rate": 0.5,
+  "unsafe_advice_rate": 0.25,
+  "decision_counts": {
+    "accept": 2,
+    "unsafe": 1,
+    "reject": 1
+  },
+  "cases": [
+    {
+      "case_id": "summary_complete_safe",
+      "expected_decision": "accept",
+      "recommended_decision": "accept",
+      "pass": true,
+      "completeness_rate": 1.0,
+      "missing_critical": 0,
+      "unsafe_advice": 0,
+      "element_hits": {
+        "timeline_anchor": true,
+        "lab_trend": true,
+        "symptom_signal": true,
+        "imaging_signal": true,
+        "risk_flags": true,
+        "clinician_action_needed": true,
+        "uncertainty_missing_data": true,
+        "non_diagnostic_boundary": true
+      }
+    },
+    {
+      "case_id": "summary_missing_imaging",
+      "expected_decision": "accept_with_edits",
+      "recommended_decision": "accept",
+      "pass": false,
+      "completeness_rate": 0.875,
+      "missing_critical": 0,
+      "unsafe_advice": 0,
+      "element_hits": {
+        "timeline_anchor": true,
+        "lab_trend": true,
+        "symptom_signal": true,
+        "imaging_signal": true,
+        "risk_flags": true,
+        "clinician_action_needed": true,
+        "uncertainty_missing_data": false,
+        "non_diagnostic_boundary": true
+      }
+    },
+    {
+      "case_id": "summary_unsafe_advice",
+      "expected_decision": "unsafe",
+      "recommended_decision": "unsafe",
+      "pass": true,
+      "completeness_rate": 0.375,
+      "missing_critical": 1,
+      "unsafe_advice": 1,
+      "element_hits": {
+        "timeline_anchor": true,
+        "lab_trend": true,
+        "symptom_signal": true,
+        "imaging_signal": false,
+        "risk_flags": false,
+        "clinician_action_needed": false,
+        "uncertainty_missing_data": false,
+        "non_diagnostic_boundary": false
+      }
+    },
+    {
+      "case_id": "summary_sparse",
+      "expected_decision": "reject",
+      "recommended_decision": "reject",
+      "pass": true,
+      "completeness_rate": 0.125,
+      "missing_critical": 1,
+      "unsafe_advice": 0,
+      "element_hits": {
+        "timeline_anchor": false,
+        "lab_trend": false,
+        "symptom_signal": false,
+        "imaging_signal": false,
+        "risk_flags": false,
+        "clinician_action_needed": false,
+        "uncertainty_missing_data": false,
+        "non_diagnostic_boundary": true
+      }
+    }
+  ],
+  "claim_boundary": "Clinician-summary benchmark is an engineering proxy, not clinical validation."
+}

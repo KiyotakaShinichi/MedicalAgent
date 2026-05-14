@@ -780,6 +780,59 @@ export interface SafetyCenterCategorySummary {
   categories: string[];
 }
 
+export interface BenchmarkLadderSummary {
+  schema_version?: string;
+  generated_at?: string;
+  status?: string;
+  message?: string;
+  artifact_freshness?: {
+    status?: string;
+    generated_at?: string;
+    ttl_seconds?: number;
+  };
+  benchmarks?: {
+    safety?: {
+      status?: string;
+      unsafe_pass_rate?: number | null;
+      urgent_escalation_recall?: number | null;
+      privacy_leak_rate?: number | null;
+      prompt_injection_resistance?: number | null;
+    };
+    adversarial?: {
+      status?: string;
+      attack_block_rate?: number | null;
+    };
+    rag?: {
+      status?: string;
+      pass_rate?: number | null;
+      citation_coverage?: number | null;
+      expected_source_hit?: number | null;
+      refusal_correct?: number | null;
+      unsafe_answer_rate?: number | null;
+    };
+    model?: {
+      status?: string;
+      synthetic_champion_auroc?: number | null;
+      synthetic_champion_auprc?: number | null;
+      synthetic_champion_brier?: number | null;
+      synthetic_champion_ece_after?: number | null;
+    };
+    realism?: {
+      status?: string;
+      alignment_score?: number | null;
+      realism_checks_status?: string | null;
+    };
+    clinician_summary?: {
+      status?: string;
+      summary_completeness_rate?: number | null;
+      unsafe_advice_rate?: number | null;
+    };
+  };
+  report_path?: string;
+  csv_path?: string;
+  claim_boundary?: string;
+}
+
 export interface FailureCaseEntry {
   id: string;
   category: string;
@@ -807,6 +860,7 @@ export interface SafetyCenter {
   privacy_exfiltration: SafetyCenterCategorySummary;
   rag_eval: RagEvalArtifact;
   rag_trace_summary: unknown;
+  benchmark_ladder: BenchmarkLadderSummary;
   calibration_metrics: {
     status: string;
     best_model?: string;
@@ -860,4 +914,100 @@ export interface SimToPublicImagingReport {
   }>;
   recommended_actions: string[];
   claim_boundary: string;
+}
+
+export interface CurrentVsRealismCandidateReport {
+  schema_version?: string;
+  generated_at?: string;
+  current?: {
+    best_classifier?: string | null;
+    patient_level_roc_auc?: number | null;
+    patient_level_average_precision?: number | null;
+    patient_level_brier_score?: number | null;
+    realism_status?: string | null;
+    realism_alignment_score?: number | null;
+    sim_to_real_status?: string | null;
+    threshold_coverage_status?: string | null;
+  };
+  candidate?: {
+    best_classifier?: string | null;
+    patient_level_roc_auc?: number | null;
+    patient_level_average_precision?: number | null;
+    patient_level_brier_score?: number | null;
+    realism_status?: string | null;
+    realism_alignment_score?: number | null;
+    sim_to_real_status?: string | null;
+    threshold_coverage_status?: string | null;
+  };
+  recommendation?: {
+    decision?: string | null;
+    auc_delta?: number | null;
+    realism_delta?: number | null;
+    rationale?: string | null;
+  };
+  claim_boundary?: string;
+}
+
+export interface MultilingualRefusalEval {
+  schema_version?: string;
+  generated_at?: string;
+  status?: string;
+  message?: string;
+  reproducibility?: ReproducibilityManifest;
+  artifact_freshness?: ArtifactFreshness;
+  summary?: {
+    status?: string;
+    case_count?: number;
+    passed?: number;
+    pass_rate?: number | null;
+    failed_cases?: string[];
+  };
+  cases?: Array<{
+    case_id?: string;
+    language?: string;
+    query?: string;
+    expected_scope?: string;
+    observed_scope?: string;
+    expected_intent?: string;
+    observed_intent?: string;
+    pass?: boolean;
+  }>;
+  limitations?: string[];
+}
+
+export interface LlmJudgeEval {
+  schema_version?: string;
+  generated_at?: string;
+  status?: string;
+  message?: string;
+  provider?: string;
+  model?: string;
+  reproducibility?: ReproducibilityManifest;
+  artifact_freshness?: ArtifactFreshness;
+  summary?: {
+    case_count?: number;
+    judged_cases?: number;
+    coverage_rate?: number | null;
+    pass_rate?: number | null;
+    average_groundedness_score?: number | null;
+    average_citation_support_score?: number | null;
+    average_refusal_quality_score?: number | null;
+    unsafe_medical_advice_rate?: number | null;
+    failed_cases?: string[];
+  };
+  cases?: Array<{
+    case_id?: string;
+    category?: string;
+    available?: boolean;
+    provider?: string;
+    model?: string;
+    groundedness_score?: number | null;
+    citation_support_score?: number | null;
+    refusal_quality_score?: number | null;
+    unsafe_medical_advice?: boolean | null;
+    passes?: boolean;
+    reason?: string | null;
+  }>;
+  limitations?: string[];
+  claim_boundary?: string;
 }

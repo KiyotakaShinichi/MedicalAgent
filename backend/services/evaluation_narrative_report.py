@@ -19,6 +19,7 @@ def build_ai_ml_narrative_report(output_dir: str = DEFAULT_OUTPUT_DIR) -> dict:
         "agent_regression": _load_json("Data/agent_eval/latest_agent_regression.json"),
         "rag_gold": _load_json("Data/evals/rag/latest_rag_gold_eval.json"),
         "multilingual_refusal": _load_json("Data/evals/safety/latest_multilingual_refusal_eval.json"),
+        "llm_judge": _load_json("Data/evals/llm_judge/latest_llm_judge_eval.json"),
         "noise_eval": _load_json("Data/evals/noise/latest_noise_eval.json"),
         "temporal_eval": _load_json("Data/evals/temporal/latest_temporal_eval.json"),
         "calibration_eval": _load_json("Data/evals/calibration/latest_calibration_eval.json"),
@@ -56,6 +57,7 @@ def _executive_summary(artifacts: dict) -> dict:
     agent = _summary(artifacts.get("agent_regression") or {})
     rag_gold = _summary(artifacts.get("rag_gold") or {})
     multilingual = _summary(artifacts.get("multilingual_refusal") or {})
+    llm_judge = _summary(artifacts.get("llm_judge") or {})
     current_realism = artifacts.get("realism_current") or {}
     candidate_realism = artifacts.get("realism_candidate") or {}
     comparison = artifacts.get("candidate_comparison") or {}
@@ -69,6 +71,8 @@ def _executive_summary(artifacts: dict) -> dict:
         "rag_gold_pass_rate": rag_gold.get("pass_rate"),
         "multilingual_refusal_status": multilingual.get("status", "unavailable"),
         "multilingual_refusal_pass_rate": multilingual.get("pass_rate"),
+        "llm_judge_status": (artifacts.get("llm_judge") or {}).get("status", "unavailable"),
+        "llm_judge_coverage_rate": llm_judge.get("coverage_rate"),
         "current_realism_status": current_realism.get("status", "unavailable"),
         "candidate_realism_status": candidate_realism.get("status", "unavailable"),
         "candidate_alignment_score": (candidate_realism.get("realism_alignment_score") or {}).get("score"),
@@ -89,6 +93,8 @@ def _metric_interpretation(artifacts: dict) -> list[dict]:
     rag_gold = _summary(artifacts.get("rag_gold") or {})
     latency = artifacts.get("latency") or {}
     multilingual = _summary(artifacts.get("multilingual_refusal") or {})
+    llm_judge = artifacts.get("llm_judge") or {}
+    llm_summary = _summary(llm_judge)
     return [
         {
             "area": "Safety and agent regression",
@@ -122,6 +128,18 @@ def _metric_interpretation(artifacts: dict) -> list[dict]:
             },
             "good": ">=0.95 pass rate with no unsafe treatment/diagnosis route leakage",
             "bad": "code-switched treatment or diagnosis requests routed as ordinary education",
+        },
+        {
+            "area": "Optional LLM-judge eval",
+            "what_to_look_for": "coverage rate, pass rate, unsafe-advice rate, and groundedness score",
+            "current": {
+                "status": llm_judge.get("status"),
+                "coverage_rate": llm_summary.get("coverage_rate"),
+                "pass_rate": llm_summary.get("pass_rate"),
+                "unsafe_medical_advice_rate": llm_summary.get("unsafe_medical_advice_rate"),
+            },
+            "good": "high coverage with zero unsafe-advice flags; always label as heuristic",
+            "bad": "low coverage from provider failures or judge flags unsafe advice",
         },
         {
             "area": "MLE gates",
@@ -186,6 +204,7 @@ def _markdown(report: dict) -> str:
         f"- Agent regression: {summary['agent_regression_status']} (pass rate: {summary['agent_regression_pass_rate']})",
         f"- RAG gold set: {summary['rag_gold_status']} (pass rate: {summary['rag_gold_pass_rate']})",
         f"- Multilingual refusal: {summary['multilingual_refusal_status']} (pass rate: {summary['multilingual_refusal_pass_rate']})",
+        f"- LLM judge: {summary['llm_judge_status']} (coverage: {summary['llm_judge_coverage_rate']})",
         f"- Current realism: {summary['current_realism_status']}",
         f"- Candidate realism: {summary['candidate_realism_status']} (alignment: {summary['candidate_alignment_score']})",
         f"- Candidate decision: {summary.get('candidate_decision')} (AUROC delta: {summary.get('candidate_auc_delta')}, realism delta: {summary.get('candidate_realism_delta')})",
