@@ -1,4 +1,4 @@
-import { LayoutDashboard, FlaskConical, Activity, Clock, MessageSquare, Pill } from "lucide-react";
+import { LayoutDashboard, FlaskConical, Activity, Clock, MessageSquare, Pill, Dna } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
@@ -12,6 +12,7 @@ import { LabsPanel } from "./LabsPanel";
 import { TimelinePanel } from "./TimelinePanel";
 import { SymptomsTable } from "./SymptomsTable";
 import { ModelSignalPanel } from "./ModelSignalPanel";
+import { GeneticCounselingPanel } from "./GeneticCounselingPanel";
 import { SectionCard } from "../../components/ui/SectionCard";
 import { EmptyPane } from "../../components/ui/Spinner";
 import { ChatPanel, describeSavedAction } from "../../components/ui/ChatPanel";
@@ -25,6 +26,7 @@ const NAV = [
   { to: "/patient#labs",     label: "Labs",      icon: FlaskConical },
   { to: "/patient#signals",  label: "Signals",   icon: Activity },
   { to: "/patient#timeline", label: "Timeline",  icon: Clock },
+  { to: "/patient#genetics", label: "Family & Genetics", icon: Dna },
   { to: "/patient/chat",     label: "Support",   icon: MessageSquare },
 ];
 
@@ -109,6 +111,12 @@ export default function PatientDashboard() {
                 <TimelinePanel events={report.timeline ?? []} lastFetchedAt={reportFetchedAt} />
               </div>
               {/* Row 4 — medications full-width */}
+              <div className="dashboard-grid-full" data-section="genetics">
+                <GeneticCounselingPanel
+                  readiness={report.genetic_counseling_readiness ?? null}
+                  onSaved={refetchReport}
+                />
+              </div>
               <div className="dashboard-grid-full" data-section="medications">
                 <MedLogPanel meds={report.medication_logs ?? []} />
               </div>
@@ -182,9 +190,23 @@ export default function PatientDashboard() {
   );
 }
 
-function buildChatKey(scope: string, messages: ChatMessage[]) {
-  const last = messages.at(-1);
-  return [scope, messages.length, last?.role ?? "none", (last?.message ?? "").slice(0, 40)].join(":");
+/**
+ * Stable chat key — keyed only on the patient id, NOT on the message list.
+ *
+ * The previous implementation embedded `messages.length` and the last
+ * message's content, which forced ChatPanel to remount every time a message
+ * was sent or the history was refetched.  That remount dropped in-flight
+ * streaming state (the optimistic assistant bubble + its streamId), and
+ * combined with React StrictMode it caused the streaming setMessages
+ * updater to read a stale closure index and crash with
+ * `Cannot read properties of undefined (reading 'message')`.
+ *
+ * ChatPanel now syncs from props internally (only when not sending), so
+ * we never need to remount the panel just because the message list changed.
+ */
+function buildChatKey(scope: string, _messages: ChatMessage[]) {
+  void _messages; // intentionally unused — keyed only on patient/session scope
+  return `chat:${scope}`;
 }
 
 function MedLogPanel({ meds }: { meds: MedicationLog[] }) {

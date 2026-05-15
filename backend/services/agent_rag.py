@@ -264,6 +264,33 @@ KNOWLEDGE_SNIPPETS = [
         ),
     },
     {
+        "id": "curated-ct-ascites-monitoring",
+        "parent_id": "imaging-monitoring",
+        "title": "CT ascites report wording monitoring",
+        "source_name": "Curated imaging report monitoring",
+        "source_url": "KnowledgeBase/raw/curated_medical_kb/05_imaging/ct_ascites_report_monitoring.md",
+        "tags": [
+            "ct",
+            "ascites",
+            "peritoneal",
+            "imaging",
+            "clinician",
+            "oncology monitoring",
+            "report wording",
+            "metastasis",
+        ],
+        "topic": "ct_report_monitoring",
+        "modality": ["CT", "imaging", "ascites"],
+        "care_stage": "treatment_monitoring",
+        "trust_level": "patient_education",
+        "builtin": True,
+        "text": (
+            "CT reports may mention ascites, peritoneal nodularity, liver lesions, effusion, or other findings. "
+            "OncoTrack can track the exact report wording for clinician review alongside symptoms, labs, prior imaging, "
+            "and treatment history. It must not diagnose metastasis, recurrence, or treatment response from CT wording alone."
+        ),
+    },
+    {
         "id": "curated-model-signal-boundary",
         "parent_id": "portal-help",
         "title": "Model signal explanation",
@@ -537,6 +564,11 @@ def safety_scope_check(query, urgent_flags=None):
         "do i need to delay",
         "what dose",
         "change my dose",
+        "what treatment should i take",
+        "should i change chemo",
+        "should i change chemotherapy",
+        "should i change treatment",
+        "should i change surgery",
         "increase my dose",
         "decrease my dose",
         "stop chemo",
@@ -578,6 +610,12 @@ def safety_scope_check(query, urgent_flags=None):
     ]
     diagnostic_terms = [
         "do i have cancer",
+        "do i have brca",
+        "do i have brca1",
+        "do i have brca2",
+        "will i get cancer",
+        "will my relatives get cancer",
+        "will my family get cancer",
         "is it metastatic",
         "am i cancer free",
         "is my cancer gone",
@@ -674,7 +712,7 @@ def route_intent(query, actions=None, safety=None):
         deterministic = "portal_help"
     elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment plan", "my treatment response", "my treatment results", "working", "progress"]):
         deterministic = "patient_timeline_monitoring"
-    elif any(term in lower for term in ["pcr", "response", "mri", "ct", "ultrasound", "imaging", "ascites", "cbc", "wbc", "anc", "hemoglobin", "platelets", "chemo", "chemotherapy", "treatment", "side effect", "breast cancer", "triple-negative", "stage iv", "her2", "er/pr", "neutropenia", "neuropathy", "paclitaxel", "doxorubicin", "cyclophosphamide", "carboplatin", "docetaxel", "trastuzumab", "tamoxifen", "infection risk", "supplement", "supplements", "antioxidant", "turmeric", "herbal", "herb", "vitamin", "st. john", "st john", "acupuncture", "acupressure", "nutrition", "exercise", "yoga", "meditation"]):
+    elif any(term in lower for term in ["pcr", "response", "mri", "ct", "ultrasound", "imaging", "ascites", "cbc", "wbc", "anc", "hemoglobin", "platelets", "chemo", "chemotherapy", "treatment", "side effect", "breast cancer", "triple-negative", "stage iv", "her2", "er/pr", "er ", "pr ", "ki-67", "ki67", "brca", "brca1", "brca2", "palb2", "tp53", "pten", "chek2", "atm", "genetic counseling", "genetic test", "germline", "somatic", "vus", "variant of uncertain", "multigene panel", "ca 15-3", "ca 27.29", "cea", "tumor marker", "biomarker", "neutropenia", "neuropathy", "paclitaxel", "doxorubicin", "cyclophosphamide", "carboplatin", "docetaxel", "trastuzumab", "tamoxifen", "infection risk", "supplement", "supplements", "antioxidant", "turmeric", "herbal", "herb", "vitamin", "st. john", "st john", "acupuncture", "acupressure", "nutrition", "exercise", "yoga", "meditation"]):
         deterministic = "education"
     else:
         deterministic = "general_support"
@@ -750,6 +788,8 @@ def rewrite_and_decompose(query, intent):
         "plt": "platelets cbc bleeding",
         "cbc": "complete blood count lab values blood count results",
         "mri": "imaging response breast mri",
+        "ct": "ct imaging report ascites peritoneal clinician review oncology monitoring metastasis wording",
+        "ascites": "ct imaging report ascites peritoneal clinician review oncology monitoring metastasis wording",
         "pcr": "pathologic complete response treatment response classification",
         "chemo": "chemotherapy treatment side effects",
         "neutropenia": "neutropenia infection low white blood cells fever",
@@ -1695,7 +1735,7 @@ def _intent_boost(intent, snippet):
     tags = set(snippet["tags"])
     boosts = {
         "portal_help": {"upload", "portal", "labs", "mri"},
-        "education": {"pcr", "cbc", "wbc", "chemotherapy", "side effects", "mri", "radiomics", "machine learning"},
+        "education": {"pcr", "cbc", "wbc", "chemotherapy", "side effects", "mri", "ct", "ascites", "imaging", "radiomics", "machine learning"},
         "patient_timeline_monitoring": {"score", "monitoring", "cbc", "response", "mri_response_monitoring"},
         "safety_boundary": {"urgent", "fever", "infection", "clinical safety", "cbc_toxicity_monitoring"},
         "treatment_decision_boundary": {"treatment", "doctor", "chemotherapy"},
@@ -1766,6 +1806,9 @@ def _domain_boost(query_tokens, snippet):
     if query_tokens & {"mri", "dce", "radiomics", "imaging", "pcr", "response"}:
         if "MRI".lower() in modalities or "mri" in tags or "mri" in topic:
             boost += 0.2
+    if query_tokens & {"ct", "ascites", "peritoneal"}:
+        if {"ct", "ascites", "peritoneal"} & (tags | modalities) or "ct_report" in topic:
+            boost += 0.45
     if query_tokens & {"cbc", "wbc", "anc", "neutropenia", "platelets", "hemoglobin", "fever"}:
         if "CBC".lower() in modalities or "cbc" in tags or "toxicity" in tags or "neutropenia" in topic:
             boost += 0.2

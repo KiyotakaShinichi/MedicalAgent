@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import {
   Send,
   Sparkles,
@@ -18,6 +18,7 @@ import type { LucideIcon } from "lucide-react";
 import { clsx } from "clsx";
 import { Spinner } from "./Spinner";
 import { MarkdownMessage } from "./MarkdownMessage";
+import { ErrorBoundary } from "./ErrorBoundary";
 import type { ChatMessage as ChatMessageType, ChatStreamHandlers, SavedAction } from "../../types/api";
 
 const PIPELINE_STAGES = [
@@ -48,6 +49,22 @@ function usePipelineStatus(active: boolean) {
   const elapsedMs = Math.max(0, timing.now - timing.startedAt);
   const idx = PIPELINE_STAGES.findLastIndex((step) => elapsedMs >= step.delay);
   return PIPELINE_STAGES[Math.max(0, idx)].label;
+}
+
+/**
+ * Normalised in-memory message shape used by the renderer.  Always carries
+ * an `id` so React keys are stable across re-renders and so streaming deltas
+ * can target the exact message they belong to (instead of an index that goes
+ * stale when StrictMode double-invokes state updaters).
+ */
+interface NormalisedMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  saved_actions: SavedAction[];
+  citations: string[];
+  /** Tagged when this assistant bubble is the live target of an in-flight stream. */
+  streamId?: string;
 }
 
 interface ChatPanelProps {
@@ -115,14 +132,72 @@ export function describeSavedAction(action: SavedAction): { label: string; tone:
   return { label, tone };
 }
 
-function parseSavedActions(raw?: string): SavedAction[] {
+/**
+ * Defensive parser: the backend may store either a raw SavedAction[] or
+ * an object wrapper `{saved_actions: [...], tool_plan, agent_pipeline}`.
+ * Returns [] for anything that isn't recognisable.
+ */
+function parseSavedActions(raw?: unknown): SavedAction[] {
   if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-    if (Array.isArray(parsed?.saved_actions)) return parsed.saved_actions;
-  } catch { /* ignore malformed legacy payloads */ }
+  let parsed: unknown = raw;
+  if (typeof raw === "string") {
+    try { parsed = JSON.parse(raw); } catch { return []; }
+  }
+  if (Array.isArray(parsed)) return parsed.filter((a) => a && typeof (a as SavedAction).type === "string") as SavedAction[];
+  if (parsed && typeof parsed === "object") {
+    const wrapped = (parsed as { saved_actions?: unknown }).saved_actions;
+    if (Array.isArray(wrapped)) {
+      return wrapped.filter((a) => a && typeof (a as SavedAction).type === "string") as SavedAction[];
+    }
+  }
   return [];
+}
+
+function parseCitations(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((c) => (typeof c === "string" ? c : String(((c as { id?: unknown }).id) ?? "")))
+    .filter((s) => Boolean(s));
+}
+
+/**
+ * Normalise any value that might be a message into our strict shape.
+ * Accepts ``message`` or ``content`` field names so a backend schema rename
+ * doesn't crash the UI.  Returns ``null`` for unsalvageable input.
+ */
+function normaliseMessage(raw: unknown, fallbackIndex: number): NormalisedMessage | null {
+  if (!raw || typeof raw !== "object") return null;
+  const m = raw as Record<string, unknown>;
+  const role = m.role === "assistant" ? "assistant" : m.role === "user" ? "user" : null;
+  if (!role) return null;
+  // Backend currently uses `message`; accept `content` defensively in case
+  // the API contract changes or a streaming chunk arrives with a different
+  // field name.
+  const rawContent =
+    typeof m.message === "string" ? m.message :
+    typeof m.content === "string" ? m.content :
+    "";
+  const id =
+    typeof m.id === "string" || typeof m.id === "number"
+      ? String(m.id)
+      : `msg_${role}_${fallbackIndex}`;
+  return {
+    id,
+    role,
+    content: rawContent,
+    saved_actions: parseSavedActions(m.saved_actions_json ?? m.saved_actions),
+    citations: parseCitations(m.citations),
+  };
+}
+
+function normaliseMessages(input: unknown): NormalisedMessage[] {
+  if (!Array.isArray(input)) return [];
+  const out: NormalisedMessage[] = [];
+  for (let i = 0; i < input.length; i++) {
+    const n = normaliseMessage(input[i], i);
+    if (n) out.push(n);
+  }
+  return out;
 }
 
 function ActionChip({ action }: { action: SavedAction }) {
@@ -140,14 +215,14 @@ function ActionChip({ action }: { action: SavedAction }) {
 }
 
 interface MessageProps {
-  message: ChatMessageType;
+  message: NormalisedMessage;
   isLatestAssistant?: boolean;
   registerNode?: (node: HTMLDivElement | null) => void;
 }
 
 function ChatBubble({ message, isLatestAssistant, registerNode }: MessageProps) {
   const isUser = message.role === "user";
-  const actions = parseSavedActions(message.saved_actions_json);
+  const content = message.content || (isUser ? "" : "…");
 
   return (
     <div
@@ -188,17 +263,17 @@ function ChatBubble({ message, isLatestAssistant, registerNode }: MessageProps) 
           }}
         >
           {isUser ? (
-            <span style={{ whiteSpace: "pre-wrap", lineHeight: 1.55 }}>{message.message}</span>
+            <span style={{ whiteSpace: "pre-wrap", lineHeight: 1.55 }}>{content}</span>
           ) : (
-            <MarkdownMessage text={message.message} />
+            <MarkdownMessage text={content} />
           )}
         </div>
-        {actions.length > 0 && (
+        {message.saved_actions.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-0.5">
-            {actions.map((a, j) => <ActionChip key={j} action={a} />)}
+            {message.saved_actions.map((a, j) => <ActionChip key={j} action={a} />)}
           </div>
         )}
-        {message.citations && message.citations.length > 0 && (
+        {message.citations.length > 0 && (
           <div
             className="flex items-center gap-1.5 text-[0.72rem] mt-0.5"
             style={{ color: "var(--text-faint)" }}
@@ -212,39 +287,90 @@ function ChatBubble({ message, isLatestAssistant, registerNode }: MessageProps) 
   );
 }
 
-export function ChatPanel({ messages: initialMessages, onSend, onSendStream, onSavedActions, disabled, placeholder }: ChatPanelProps) {
-  const [messages, setMessages] = useState<ChatMessageType[]>(initialMessages);
-  const [input, setInput] = useState("");
+/**
+ * How close to the bottom (in px) counts as "user is reading the latest
+ * messages" — within this distance we auto-scroll on new content, beyond it
+ * we leave the user where they parked the scroll.
+ */
+const AUTO_SCROLL_FUDGE_PX = 80;
+
+function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSavedActions, disabled, placeholder }: ChatPanelProps) {
+  // ── Normalise the parent prop once per change.
+  const normalisedParentMessages = useMemo(
+    () => normaliseMessages(initialMessages),
+    [initialMessages],
+  );
+
+  // We use **derived state** instead of syncing props into state via a
+  // useEffect (which `react-hooks/set-state-in-effect` correctly flags as an
+  // anti-pattern).  Display = parent messages + any local messages the
+  // current send turn produced.  Local state holds only the in-flight turn;
+  // it is cleared as soon as the parent's refetched history catches up.
+  const [localMessages, setLocalMessages] = useState<NormalisedMessage[]>([]);
   const [sending, setSending] = useState(false);
+
+  // Final display list: parent (canonical) + any locally-buffered messages
+  // for the live turn, deduplicated by id.
+  const messages = useMemo<NormalisedMessage[]>(() => {
+    if (localMessages.length === 0) return normalisedParentMessages;
+    const seen = new Set(normalisedParentMessages.map((m) => m.id));
+    const extras = localMessages.filter((m) => !seen.has(m.id));
+    return [...normalisedParentMessages, ...extras];
+  }, [normalisedParentMessages, localMessages]);
+
+  // Once the parent's chat history catches up (post-refetch), we drop the
+  // local turn buffer.  This effect is reacting to an external system (the
+  // parent's refetched message list arriving via props) — exactly the case
+  // the rule docs describe as a legitimate exception.  It short-circuits on
+  // both early returns so the cascade is at most one render per turn.
+  useEffect(() => {
+    if (sending) return;
+    if (localMessages.length === 0) return;
+    const stillStreaming = localMessages.some((m) => m.streamId);
+    if (stillStreaming) return;
+    // Schedule the clear so it runs after React commits, not synchronously
+    // within the effect body — avoids the cascading-render anti-pattern.
+    const id = window.setTimeout(() => setLocalMessages([]), 0);
+    return () => window.clearTimeout(id);
+  }, [sending, localMessages, normalisedParentMessages]);
+
+  const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [streamStage, setStreamStage] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const latestAssistantRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  // True when the user is parked near the bottom; we only auto-scroll then.
+  const stickToBottomRef = useRef<boolean>(true);
   const timedPipelineLabel = usePipelineStatus(sending);
   const pipelineLabel = streamStage || timedPipelineLabel;
 
-  /**
-   * Scroll behavior:
-   *   • while sending → keep the bottom in view so the user sees their own
-   *     message and the typing indicator.
-   *   • new assistant message arrives → scroll its TOP into view so the user
-   *     reads from the beginning of a long answer (long responses no longer
-   *     get cut off at the top).
-   */
+  // Track whether the user has scrolled away from the bottom.
   useEffect(() => {
-    if (sending) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-      return;
-    }
-    const lastMessage = messages[messages.length - 1];
-    if (!lastMessage) return;
-    if (lastMessage.role === "assistant" && latestAssistantRef.current) {
-      latestAssistantRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
+    const node = scrollRef.current;
+    if (!node) return;
+    const onScroll = () => {
+      const distance = node.scrollHeight - node.scrollTop - node.clientHeight;
+      stickToBottomRef.current = distance < AUTO_SCROLL_FUDGE_PX;
+    };
+    node.addEventListener("scroll", onScroll, { passive: true });
+    return () => node.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Auto-scroll only when the user is already near the bottom, and use the
+  // scroll container's own scrollTop instead of scrollIntoView so the outer
+  // page never jumps.
+  useEffect(() => {
+    if (!stickToBottomRef.current) return;
+    const node = scrollRef.current;
+    if (!node) return;
+    // requestAnimationFrame: wait until React has laid out the new content
+    // before scrolling, so the height we read is correct.
+    const frame = window.requestAnimationFrame(() => {
+      node.scrollTop = node.scrollHeight;
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, [messages, sending]);
 
   // Auto-grow textarea, but never let the content area shrink below one full line.
@@ -263,52 +389,70 @@ export function ChatPanel({ messages: initialMessages, onSend, onSendStream, onS
     setError(null);
     setStreamStage(null);
     setSending(true);
-    setMessages((prev) => [...prev, { role: "user", message: value }]);
+
+    // ── Generate a unique stream id for THIS turn.  This id is the stable
+    //    handle the streaming callbacks use to target the in-flight assistant
+    //    bubble — never a captured-closure index.
+    const streamId = `stream_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const userId   = `local_user_${streamId}`;
+    const assistantId = `local_assistant_${streamId}`;
+
+    // Optimistic insert into the LOCAL turn buffer.
+    setLocalMessages((prev) => [
+      ...prev,
+      { id: userId, role: "user", content: value, saved_actions: [], citations: [] },
+      { id: assistantId, role: "assistant", content: "", saved_actions: [], citations: [], streamId },
+    ]);
+    stickToBottomRef.current = true;
+
     try {
-      let assistantIndex = -1;
       const res = onSendStream
         ? await onSendStream(value, {
-          onStage: (label) => { if (label) setStreamStage(label); },
-          onDelta: (delta) => {
-            if (!delta) return;
-            setMessages((prev) => {
-              const next = [...prev];
-              if (assistantIndex < 0) {
-                assistantIndex = next.length;
-                next.push({ role: "assistant", message: delta });
-              } else {
-                next[assistantIndex] = {
-                  ...next[assistantIndex],
-                  message: `${next[assistantIndex].message}${delta}`,
-                };
-              }
-              return next;
-            });
-          },
-        })
+            onStage: (label) => { if (label) setStreamStage(label); },
+            onDelta: (delta) => {
+              if (!delta) return;
+              // PURE updater keyed on a stable streamId — safe under
+              // StrictMode's double-invoke, no outer-scope mutation.
+              setLocalMessages((prev) => prev.map((m) =>
+                m.streamId === streamId
+                  ? { ...m, content: `${m.content}${delta}` }
+                  : m,
+              ));
+            },
+          })
         : await onSend(value);
-      const savedActions = res.saved_actions ?? [];
-      setMessages((prev) => {
-        const finalMessage = {
-          role: "assistant" as const,
-          message: res.reply,
-          saved_actions_json: savedActions.length ? JSON.stringify(savedActions) : undefined,
-          citations: res.citations,
-        };
-        if (assistantIndex >= 0 && assistantIndex < prev.length) {
-          const next = [...prev];
-          next[assistantIndex] = finalMessage;
-          return next;
-        }
-        return [...prev, finalMessage];
-      });
+
+      // Replace the streaming bubble with the final, server-canonical message.
+      // We keep it in local state until the parent's refetched history catches
+      // up — the dedupe effect above drops it cleanly when that happens.
+      const reply = typeof res?.reply === "string" ? res.reply : "";
+      const savedActions = Array.isArray(res?.saved_actions) ? res.saved_actions : [];
+      const citations = parseCitations(res?.citations);
+      setLocalMessages((prev) => prev.map((m) =>
+        m.streamId === streamId
+          ? {
+              id: m.id,
+              role: "assistant",
+              content: reply,
+              saved_actions: savedActions,
+              citations,
+            }
+          : m,
+      ));
       if (savedActions.length && onSavedActions) {
-        // Let the parent refetch report-level state (symptom log, labs, etc.)
-        // so anything saved by the assistant shows up immediately.
-        onSavedActions(savedActions);
+        // Defer to next tick so we finish committing the bubble before the
+        // parent fires refetches that may swap props underneath us.
+        window.setTimeout(() => onSavedActions(savedActions), 0);
       }
     } catch (e: unknown) {
-      setError((e as Error).message);
+      // Pull the failed turn back out of the buffer and surface a friendly
+      // inline error.  The underlying error is logged in dev for diagnosis.
+      const friendlyMessage = (e instanceof Error && e.message) ? e.message : "Something went wrong sending that message.";
+      if (import.meta.env?.DEV) {
+        console.error("[ChatPanel] send failed:", e);
+      }
+      setError(friendlyMessage);
+      setLocalMessages((prev) => prev.filter((m) => m.id !== userId && m.id !== assistantId));
     } finally {
       setStreamStage(null);
       setSending(false);
@@ -323,14 +467,11 @@ export function ChatPanel({ messages: initialMessages, onSend, onSendStream, onS
   }
 
   const isEmpty = messages.length === 0;
-  // Identify the index of the latest assistant message so we can attach the
-  // scroll-target ref to exactly that bubble.
-  const lastAssistantIndex = (() => {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      if (messages[i].role === "assistant") return i;
-    }
-    return -1;
-  })();
+  // Identify the latest assistant message so we can attach the scroll-target ref.
+  let lastAssistantIndex = -1;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === "assistant") { lastAssistantIndex = i; break; }
+  }
 
   return (
     <div className="chat-shell">
@@ -370,7 +511,7 @@ export function ChatPanel({ messages: initialMessages, onSend, onSendStream, onS
 
           {messages.map((msg, i) => (
             <ChatBubble
-              key={i}
+              key={msg.id}
               message={msg}
               isLatestAssistant={i === lastAssistantIndex}
               registerNode={(node) => { latestAssistantRef.current = node; }}
@@ -408,11 +549,28 @@ export function ChatPanel({ messages: initialMessages, onSend, onSendStream, onS
 
           {error && (
             <div
-              className="flex items-center gap-2 text-xs rounded-lg border px-3 py-2"
+              className="flex items-start gap-2 text-xs rounded-lg border px-3 py-2"
               style={{ background: "#fef2f2", borderColor: "#fecaca", color: "#b91c1c" }}
+              role="alert"
             >
-              <AlertCircle size={13} />
-              {error}
+              <AlertCircle size={13} style={{ marginTop: 1, flexShrink: 0 }} />
+              <span style={{ flex: 1 }}>{error}</span>
+              <button
+                type="button"
+                onClick={() => setError(null)}
+                aria-label="Dismiss error"
+                style={{
+                  background: "transparent",
+                  border: 0,
+                  color: "#b91c1c",
+                  opacity: 0.7,
+                  cursor: "pointer",
+                  fontSize: "0.74rem",
+                  padding: "0 4px",
+                }}
+              >
+                ×
+              </button>
             </div>
           )}
 
@@ -452,5 +610,19 @@ export function ChatPanel({ messages: initialMessages, onSend, onSendStream, onS
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Public wrapper: keeps the chat sandboxed in its own ErrorBoundary so a
+ * render-time exception (e.g. a malformed message arriving from the backend)
+ * shows a recoverable inline state instead of taking the whole patient route
+ * down to the App-level boundary.
+ */
+export function ChatPanel(props: ChatPanelProps) {
+  return (
+    <ErrorBoundary surface="the support chat">
+      <ChatPanelInner {...props} />
+    </ErrorBoundary>
   );
 }

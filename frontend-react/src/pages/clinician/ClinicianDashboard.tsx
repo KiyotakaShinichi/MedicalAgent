@@ -17,6 +17,7 @@ import { TimelinePanel } from "../patient/TimelinePanel";
 import { AiSummaryPanel } from "../patient/AiSummaryPanel";
 import { ReviewQueue } from "./ReviewQueue";
 import { ReviewPanel } from "./ReviewPanel";
+import { GeneticReadinessCard } from "./GeneticReadinessCard";
 import { ChatPanel } from "../../components/ui/ChatPanel";
 import type { ChatMessage, PatientReport } from "../../types/api";
 
@@ -113,6 +114,12 @@ export default function ClinicianDashboard() {
               {patientReport.breast_cancer_profile && (
                 <BreastProfileCard profile={patientReport.breast_cancer_profile} />
               )}
+
+              <GeneticReadinessCard
+                patientId={activePatientId}
+                readiness={patientReport.genetic_counseling_readiness ?? null}
+                onReviewed={refetchReport}
+              />
 
               <AiSummaryPanel summary={patientReport.ai_summary ?? null} />
               <LabsPanel report={patientReport} />

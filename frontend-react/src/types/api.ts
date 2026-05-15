@@ -138,6 +138,91 @@ export interface PatientUpload {
   notes: string;
 }
 
+export interface FamilyCancerHistoryRecord {
+  id: number;
+  relationship: string;
+  family_side: string;
+  cancer_type: string;
+  age_at_diagnosis?: number | null;
+  relative_status?: string | null;
+  multiple_relatives_affected?: string | null;
+  male_breast_cancer?: string | null;
+  known_familial_mutation?: string | null;
+  notes?: string | null;
+  review_status?: string | null;
+  source?: string | null;
+  created_at?: string | null;
+}
+
+export interface GeneticTestRecord {
+  id: number;
+  test_type: string;
+  sample_type: string;
+  gene?: string | null;
+  variant_text?: string | null;
+  classification?: string | null;
+  report_date?: string | null;
+  lab_provider?: string | null;
+  upload_reference?: string | null;
+  reviewed_by_genetic_counselor?: string | null;
+  clinician_review_status?: string | null;
+  notes?: string | null;
+  created_at?: string | null;
+}
+
+export interface BiomarkerRecord {
+  id: number;
+  source: string;
+  er_status?: string | null;
+  pr_status?: string | null;
+  her2_status?: string | null;
+  ki67_percent?: number | null;
+  grade?: string | null;
+  stage?: string | null;
+  report_date?: string | null;
+  report_text?: string | null;
+  upload_reference?: string | null;
+  clinician_review_needed?: boolean | null;
+  review_status?: string | null;
+  created_at?: string | null;
+}
+
+export interface TumorMarkerRecord {
+  id: number;
+  marker: string;
+  value: number;
+  unit?: string | null;
+  reference_range?: string | null;
+  date_collected?: string | null;
+  trend_direction?: string | null;
+  notes?: string | null;
+  review_status?: string | null;
+  created_at?: string | null;
+}
+
+export interface GeneticCounselingReviewNote {
+  id: number;
+  reviewer_role: string;
+  decision: string;
+  notes?: string | null;
+  created_at?: string | null;
+}
+
+export interface GeneticCounselingReadiness {
+  schema_version: string;
+  patient_id: string;
+  boundary_note: string;
+  family_history: FamilyCancerHistoryRecord[];
+  genetic_test_records: GeneticTestRecord[];
+  biomarker_records: BiomarkerRecord[];
+  tumor_marker_records: TumorMarkerRecord[];
+  review_notes: GeneticCounselingReviewNote[];
+  flags: string[];
+  missing_data: string[];
+  readiness_status: string;
+  questions_to_ask: string[];
+}
+
 export interface PatientReport {
   patient_id: string;
   patient_name: string;
@@ -159,6 +244,7 @@ export interface PatientReport {
   treatment_outcome: TreatmentOutcome | null;
   clinical_interventions: ClinicalIntervention[];
   breast_cancer_profile?: BreastCancerProfile;
+  genetic_counseling_readiness?: GeneticCounselingReadiness | null;
 }
 
 // ─── Chat ─────────────────────────────────────────────────────────────────────

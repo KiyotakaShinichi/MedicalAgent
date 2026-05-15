@@ -30,7 +30,7 @@ Key components:
 
 ## AI / Agentic RAG layer
 - Deterministic scope and safety checks, then intent routing and query rewrite/decomposition.
-- Hybrid lexical + TF-IDF retrieval, parent-child expansion, reranking, and contextual compression.
+- Dense/sparse retrieval when local dependencies are available: sentence-transformer embeddings with FAISS, BM25 sparse retrieval, reciprocal-rank fusion, parent-child expansion, reranking, and contextual compression/windowing. A BM25 + TF-IDF sparse fallback is labeled honestly when dense dependencies are unavailable.
 - Citation-checked answer generation with refusal/escalation on unsafe requests.
 - Optional LLM adjudication for routing and cache safety, with deterministic fallback.
 
@@ -53,6 +53,19 @@ Policy details: [docs/cache_policy.md](docs/cache_policy.md). Implementation: [b
 - ML outputs are monitoring signals and risk flags, not diagnoses.
 
 Implementation: [backend/services/security_guardrails.py](backend/services/security_guardrails.py), [backend/services/agent_rag.py](backend/services/agent_rag.py). Details: [docs/safety_and_limitations.md](docs/safety_and_limitations.md).
+
+## Genetic Counseling Readiness
+This project includes a non-diagnostic hereditary-risk support module. It organizes family cancer history, genetic-test records, biomarker/pathology results, and tumor-marker trends for clinician or genetic-counselor review. It does not diagnose inherited risk, interpret genetic variants as medical advice, predict whether a patient or relative will develop cancer, or recommend treatment changes.
+
+Supported records:
+- Family cancer history with relationship, maternal/paternal side, cancer type, age at diagnosis, male breast cancer flag, known familial mutation status, and privacy reminder.
+- Genetic test records with germline/somatic/tumor sequencing type, blood/saliva/tissue sample type, gene, variant text, classification, report date, lab/provider, and genetic-counselor review status.
+- Biomarker/pathology records for ER, PR, HER2, Ki-67, grade/stage text when present, report text, and clinician-review flag.
+- Tumor-marker records for CA 15-3, CA 27.29, CEA, value, unit, reference range, date, and trend direction.
+
+The RAG KB includes source-backed education for genetic counseling, hereditary breast/ovarian cancer, BRCA1/BRCA2 and related genes, germline vs somatic testing, VUS, multigene panels, ER/PR/HER2/Ki-67, and tumor-marker limitations. Safety checks refuse genetic overclaims, VUS-as-positive language, tumor-marker diagnosis claims, treatment-change requests, and uploads of identifiable relative records without consent.
+
+Implementation: [backend/services/genetic_counseling.py](backend/services/genetic_counseling.py), [backend/services/genetic_counseling_eval.py](backend/services/genetic_counseling_eval.py), [frontend-react/src/pages/patient/GeneticCounselingPanel.tsx](frontend-react/src/pages/patient/GeneticCounselingPanel.tsx), [frontend-react/src/pages/clinician/GeneticReadinessCard.tsx](frontend-react/src/pages/clinician/GeneticReadinessCard.tsx).
 
 ## ML / MLE layer
 - Synthetic longitudinal modeling for treatment success, toxicity risk, and support-intervention flags.
@@ -77,6 +90,7 @@ Details: [docs/synthetic_data.md](docs/synthetic_data.md) and [DATA_CARD.md](DAT
 
 ## Evaluation suite
 - RAG regression, safety regression, ML metrics, and workflow feedback tracking.
+- Genetic Counseling Readiness benchmark covers overclaim rate, VUS handling, germline/somatic correctness, referral correctness, treatment-advice leakage, family privacy boundaries, biomarker safety, tumor-marker overclaim rate, citation coverage, and clinician-review routing.
 - Heuristic grounding and hallucination proxies until labeled RAG data exists.
 - Detailed synthetic training report exports patient-level test predictions, regression residuals, slice metrics, and hybrid review-rule routing.
 - Detailed MLE report also exports error taxonomy and cost-sensitive threshold policy tables.

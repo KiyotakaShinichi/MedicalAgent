@@ -155,6 +155,61 @@ class AgentFeedbackRequest(BaseModel):
     feedback_text: str | None = None
 
 
+class FamilyHistoryCreate(BaseModel):
+    relationship: str
+    family_side: str | None = None
+    cancer_type: str
+    age_at_diagnosis: int | None = None
+    relative_status: str | None = None
+    multiple_relatives_affected: str | None = "unknown"
+    male_breast_cancer: str | None = "unknown"
+    known_familial_mutation: str | None = "unknown"
+    notes: str | None = None
+
+
+class GeneticTestRecordCreate(BaseModel):
+    test_type: str
+    sample_type: str | None = "unknown"
+    gene: str | None = None
+    variant_text: str | None = None
+    classification: str | None = "unknown"
+    report_date: date | None = None
+    lab_provider: str | None = None
+    upload_reference: str | None = None
+    reviewed_by_genetic_counselor: str | None = "unknown"
+    clinician_review_status: str | None = "pending"
+    notes: str | None = None
+
+
+class BiomarkerRecordCreate(BaseModel):
+    source: str
+    er_status: str | None = "unknown"
+    pr_status: str | None = "unknown"
+    her2_status: str | None = "unknown"
+    ki67_percent: float | None = None
+    grade: str | None = None
+    stage: str | None = None
+    report_date: date | None = None
+    report_text: str | None = None
+    upload_reference: str | None = None
+    clinician_review_needed: str | None = "yes"
+
+
+class TumorMarkerRecordCreate(BaseModel):
+    marker: str
+    value: float
+    unit: str | None = None
+    reference_range: str | None = None
+    date_collected: date
+    trend_direction: str | None = "unknown"
+    notes: str | None = None
+
+
+class GeneticReviewCreate(BaseModel):
+    decision: str
+    notes: str | None = None
+
+
 # Note: TimelineQuestionRequest and ClinicianSummaryReviewRequest have moved
 # to backend/api/routers/clinician_review.py alongside the endpoints that
 # consume them.
@@ -326,6 +381,11 @@ def build_patient_report_response(patient_id: str, db: Session):
     report["timeline_intelligence"] = build_timeline_intelligence(report)
     report["data_availability"] = build_data_availability(report)
     try:
+        from backend.services.genetic_counseling import build_genetic_counseling_readiness
+        report["genetic_counseling_readiness"] = build_genetic_counseling_readiness(db, patient.id)
+    except Exception:
+        report["genetic_counseling_readiness"] = None
+    try:
         from backend.services.clinician_feedback import latest_clinical_summary_review
         report["latest_clinician_review"] = latest_clinical_summary_review(db, patient.id)
     except Exception:
@@ -431,6 +491,97 @@ def get_my_patient_report(
     db: Session = Depends(get_db),
 ):
     return build_patient_report_response(context.patient_id, db)
+
+
+@router.get("/me/genetic-counseling-readiness")
+def get_my_genetic_counseling_readiness(
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.genetic_counseling import build_genetic_counseling_readiness
+
+    return build_genetic_counseling_readiness(db, context.patient_id)
+
+
+@router.get("/patients/{patient_id}/genetic-counseling-readiness")
+def get_patient_genetic_counseling_readiness(
+    patient_id: str,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.genetic_counseling import build_genetic_counseling_readiness
+
+    if not get_patient(db, patient_id):
+        raise HTTPException(status_code=404, detail="Patient not found")
+    return build_genetic_counseling_readiness(db, patient_id)
+
+
+@router.post("/me/family-history")
+def add_my_family_history(
+    payload: FamilyHistoryCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.genetic_counseling import GENETIC_BOUNDARY_NOTE, create_family_history_record
+
+    record = create_family_history_record(db, context.patient_id, payload.dict(), actor_role=context.role)
+    _invalidate_report_cache(context.patient_id)
+    return {"message": "Family history saved for review.", "record": record, "safety_note": GENETIC_BOUNDARY_NOTE}
+
+
+@router.post("/me/genetic-test-records")
+def add_my_genetic_test_record(
+    payload: GeneticTestRecordCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.genetic_counseling import GENETIC_BOUNDARY_NOTE, create_genetic_test_record
+
+    record = create_genetic_test_record(db, context.patient_id, payload.dict(), actor_role=context.role)
+    _invalidate_report_cache(context.patient_id)
+    return {"message": "Genetic test record saved for genetics/oncology review.", "record": record, "safety_note": GENETIC_BOUNDARY_NOTE}
+
+
+@router.post("/me/biomarker-records")
+def add_my_biomarker_record(
+    payload: BiomarkerRecordCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.genetic_counseling import GENETIC_BOUNDARY_NOTE, create_biomarker_record
+
+    record = create_biomarker_record(db, context.patient_id, payload.dict(), actor_role=context.role)
+    _invalidate_report_cache(context.patient_id)
+    return {"message": "Biomarker/pathology record saved for review.", "record": record, "safety_note": GENETIC_BOUNDARY_NOTE}
+
+
+@router.post("/me/tumor-marker-records")
+def add_my_tumor_marker_record(
+    payload: TumorMarkerRecordCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.genetic_counseling import GENETIC_BOUNDARY_NOTE, create_tumor_marker_record
+
+    record = create_tumor_marker_record(db, context.patient_id, payload.dict(), actor_role=context.role)
+    _invalidate_report_cache(context.patient_id)
+    return {"message": "Tumor marker record saved for review.", "record": record, "safety_note": GENETIC_BOUNDARY_NOTE}
+
+
+@router.post("/patients/{patient_id}/genetic-counseling-review")
+def save_genetic_counseling_review(
+    patient_id: str,
+    payload: GeneticReviewCreate,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    from backend.services.genetic_counseling import create_genetic_review_note
+
+    if not get_patient(db, patient_id):
+        raise HTTPException(status_code=404, detail="Patient not found")
+    record = create_genetic_review_note(db, patient_id, context.role, payload.decision, payload.notes)
+    _invalidate_report_cache(patient_id)
+    return {"message": "Genetic counseling readiness review saved.", "review": record}
 
 
 # Timeline-question, summary-review, summary-reviews list, and review-queue

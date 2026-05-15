@@ -22,6 +22,7 @@ import type {
   UltrasoundBaselineResult,
   CtLesionWorkflowReport,
   SimToPublicImagingReport,
+  GeneticCounselingReadiness,
 } from "../types/api";
 
 /**
@@ -200,11 +201,65 @@ export const uploadFile = (payload: {
   scan_date?: string;
 }) => post<{ message: string; upload: unknown }>("/me/uploads", payload);
 
+export const getMyGeneticCounselingReadiness = () =>
+  get<GeneticCounselingReadiness>("/me/genetic-counseling-readiness");
+
+export const addMyFamilyHistory = (payload: {
+  relationship: string;
+  family_side: string;
+  cancer_type: string;
+  age_at_diagnosis?: number | null;
+  relative_status?: string | null;
+  multiple_relatives_affected?: string | null;
+  male_breast_cancer?: string | null;
+  known_familial_mutation?: string | null;
+  notes?: string | null;
+}) => post<{ message: string; record: unknown; boundary_note: string }>("/me/family-history", payload);
+
+export const addMyGeneticTestRecord = (payload: {
+  test_type: string;
+  sample_type: string;
+  gene?: string | null;
+  variant_text?: string | null;
+  classification?: string | null;
+  report_date?: string | null;
+  lab_provider?: string | null;
+  upload_reference?: string | null;
+  reviewed_by_genetic_counselor?: string | null;
+  notes?: string | null;
+}) => post<{ message: string; record: unknown; boundary_note: string }>("/me/genetic-test-records", payload);
+
+export const addMyBiomarkerRecord = (payload: {
+  source: string;
+  er_status?: string | null;
+  pr_status?: string | null;
+  her2_status?: string | null;
+  ki67_percent?: number | null;
+  grade?: string | null;
+  stage?: string | null;
+  report_date?: string | null;
+  report_text?: string | null;
+  upload_reference?: string | null;
+}) => post<{ message: string; record: unknown; boundary_note: string }>("/me/biomarker-records", payload);
+
+export const addMyTumorMarkerRecord = (payload: {
+  marker: string;
+  value: number;
+  unit?: string | null;
+  reference_range?: string | null;
+  date_collected?: string | null;
+  trend_direction?: string | null;
+  notes?: string | null;
+}) => post<{ message: string; record: unknown; boundary_note: string }>("/me/tumor-marker-records", payload);
+
 // Clinician
 export const getPatients = () => get<PatientSummary[]>("/patients");
 
 export const getPatientReport = (patientId: string) =>
   get<PatientReport>(`/patient-report/${patientId}`);
+
+export const getPatientGeneticCounselingReadiness = (patientId: string) =>
+  get<GeneticCounselingReadiness>(`/patients/${patientId}/genetic-counseling-readiness`);
 
 export const getReviewQueue = () =>
   get<{ queue: ReviewQueueItem[] }>("/clinician/review-queue?limit=25");
@@ -228,6 +283,11 @@ export const submitSummaryReview = (
     rag_version?: string;
   }
 ) => post<{ message: string; review: SummaryReview }>(`/patients/${patientId}/summary-review`, payload);
+
+export const submitGeneticCounselingReview = (
+  patientId: string,
+  payload: { decision: string; notes?: string | null }
+) => post<{ message: string; review: unknown }>(`/patients/${patientId}/genetic-counseling-review`, payload);
 
 export const addLab = (
   patientId: string,

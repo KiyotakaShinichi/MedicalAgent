@@ -672,4 +672,34 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": build_benchmark_registry(),
         }
 
+    @router.get("/admin/genetic-counseling-eval")
+    def get_admin_genetic_counseling_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return cached Genetic Counseling Readiness safety benchmark."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.genetic_counseling_eval import DEFAULT_OUTPUT_PATH, run_genetic_counseling_eval
+
+        saved = Path(DEFAULT_OUTPUT_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return run_genetic_counseling_eval()
+
+    @router.post("/admin/genetic-counseling-eval")
+    def run_admin_genetic_counseling_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Run genetic-counseling overclaim, VUS, privacy, and referral checks."""
+        from backend.services.genetic_counseling_eval import run_genetic_counseling_eval
+
+        return {
+            "message": "Genetic counseling safety eval completed.",
+            "result": run_genetic_counseling_eval(),
+        }
+
     return router

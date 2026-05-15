@@ -163,6 +163,92 @@ class ImagingReport(Base):
     impression = Column(Text, nullable=False)
 
 
+class FamilyCancerHistoryRecord(Base):
+    __tablename__ = "family_cancer_history_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    relationship = Column(String, nullable=False)
+    family_side = Column(String, nullable=True)
+    cancer_type = Column(String, nullable=False)
+    age_at_diagnosis = Column(Integer, nullable=True)
+    relative_status = Column(String, nullable=True)
+    multiple_relatives_affected = Column(String, nullable=True)
+    male_breast_cancer = Column(String, nullable=True)
+    known_familial_mutation = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
+    review_status = Column(String, nullable=False, default="pending")
+    source = Column(String, nullable=False, default="patient_entered")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class GeneticTestRecord(Base):
+    __tablename__ = "genetic_test_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    test_type = Column(String, nullable=False)
+    sample_type = Column(String, nullable=True)
+    gene = Column(String, nullable=True)
+    variant_text = Column(Text, nullable=True)
+    classification = Column(String, nullable=True)
+    report_date = Column(Date, nullable=True)
+    lab_provider = Column(String, nullable=True)
+    upload_reference = Column(Text, nullable=True)
+    reviewed_by_genetic_counselor = Column(String, nullable=True)
+    clinician_review_status = Column(String, nullable=False, default="pending")
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class BiomarkerRecord(Base):
+    __tablename__ = "biomarker_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    source = Column(String, nullable=False)
+    er_status = Column(String, nullable=True)
+    pr_status = Column(String, nullable=True)
+    her2_status = Column(String, nullable=True)
+    ki67_percent = Column(Float, nullable=True)
+    grade = Column(String, nullable=True)
+    stage = Column(String, nullable=True)
+    report_date = Column(Date, nullable=True)
+    report_text = Column(Text, nullable=True)
+    upload_reference = Column(Text, nullable=True)
+    clinician_review_needed = Column(String, nullable=False, default="yes")
+    review_status = Column(String, nullable=False, default="pending")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class TumorMarkerRecord(Base):
+    __tablename__ = "tumor_marker_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    marker = Column(String, nullable=False)
+    value = Column(Float, nullable=False)
+    unit = Column(String, nullable=True)
+    reference_range = Column(String, nullable=True)
+    date_collected = Column(Date, nullable=False)
+    trend_direction = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
+    review_status = Column(String, nullable=False, default="pending")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class GeneticCounselingReviewNote(Base):
+    __tablename__ = "genetic_counseling_review_notes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), index=True)
+    reviewer_role = Column(String, nullable=False)
+    decision = Column(String, nullable=False)
+    notes = Column(Text, nullable=True)
+    readiness_snapshot_json = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class MRIFileRegistry(Base):
     __tablename__ = "mri_file_registry"
 

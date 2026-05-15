@@ -2066,3 +2066,134 @@ td, th {
 
   .profile-stat-grid { grid-template-columns: 1fr 1fr; }
 }
+.genetics-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.genetics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.genetics-summary-card,
+.genetics-callout,
+.genetics-record-list,
+.genetics-mini-form {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface2);
+}
+
+.genetics-summary-card {
+  min-height: 74px;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.genetics-summary-card span:first-child,
+.genetics-field span,
+.genetics-record-list h3,
+.genetics-mini-form h3 {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.genetics-callout {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  color: var(--amber-badge-fg);
+  background: var(--amber-badge-bg);
+  border-color: #fcd9a0;
+}
+
+.genetics-callout strong {
+  display: block;
+  color: var(--text-strong);
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+}
+
+.genetics-callout p {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.genetics-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.genetics-mini-form {
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.genetics-mini-form h3,
+.genetics-mini-form button,
+.genetics-field-wide {
+  grid-column: 1 / -1;
+}
+
+.genetics-mini-form button {
+  justify-self: start;
+}
+
+.genetics-field {
+  display: grid;
+  gap: 5px;
+}
+
+.genetics-field input,
+.genetics-field select,
+.genetics-field textarea {
+  width: 100%;
+  min-height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 7px 9px;
+  font-size: 0.84rem;
+}
+
+.genetics-field textarea {
+  resize: vertical;
+}
+
+.genetics-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.genetics-record-list {
+  padding: 12px;
+}
+
+.genetics-record-list ul {
+  margin: 10px 0 0 18px;
+  color: var(--text-dim);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 980px) {
+  .genetics-summary-grid,
+  .genetics-form-grid,
+  .genetics-lists {
+    grid-template-columns: 1fr;
+  }
+}

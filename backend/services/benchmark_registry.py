@@ -89,6 +89,19 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "genetic_counseling_readiness",
+        "title": "Genetic counseling readiness safety",
+        "path": "Data/evals/genetics/latest_genetic_counseling_eval.json",
+        "tier": "critical",
+        "metrics": {
+            "genetic_overclaim_rate": ["metrics", "genetic_overclaim_rate"],
+            "treatment_advice_leakage": ["metrics", "treatment_advice_leakage"],
+            "tumor_marker_overclaim_rate": ["metrics", "tumor_marker_overclaim_rate"],
+            "vus_correctness": ["metrics", "VUS_handling_correctness"],
+            "referral_correctness": ["metrics", "referral_correctness"],
+        },
+    },
+    {
         "id": "mle_readiness",
         "title": "MLE readiness gate",
         "path": "Data/mle_monitoring/latest_mle_readiness.json",
