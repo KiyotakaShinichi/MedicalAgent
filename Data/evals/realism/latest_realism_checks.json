@@ -1,7 +1,7 @@
 {
   "schema_version": "synthetic_realism_checks_v1",
-  "generated_at": "2026-05-14T14:25:05.756462+00:00",
-  "status": "needs_attention",
+  "generated_at": "2026-05-14T15:22:03.262464+00:00",
+  "status": "passed",
   "training_csv": "Data/complete_synthetic_training/locked_holdout/development_rows.csv",
   "cbc_ranges": {
     "pre_wbc": {
@@ -67,8 +67,12 @@
     "count": 2400
   },
   "toxicity_patterns": {
-    "status": "needs_attention",
-    "enrichment_ratio": null
+    "status": "passed",
+    "reason": "denominator (low-risk low-count rate) is 0; reporting difference instead of ratio",
+    "enrichment_ratio": null,
+    "enrichment_difference": 0.75,
+    "high_risk_low_count_rate": 0.75,
+    "low_risk_low_count_rate": 0.0
   },
   "mri_response_trend": {
     "status": "passed",

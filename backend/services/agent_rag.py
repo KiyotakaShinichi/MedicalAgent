@@ -604,6 +604,11 @@ def rewrite_and_decompose(query, intent):
         "mri": "imaging response breast mri",
         "pcr": "pathologic complete response treatment response classification",
         "chemo": "chemotherapy treatment side effects",
+        "neutropenia": "neutropenia infection low white blood cells fever",
+        "anemia": "anemia hemoglobin low red blood cells fatigue",
+        "nadir": "nadir lowest point blood counts chemotherapy",
+        "her2": "her2 receptor breast cancer subtype",
+        "fever": "fever infection urgent chemotherapy",
     }
     for term, expansion in synonyms.items():
         if term in normalized.split():

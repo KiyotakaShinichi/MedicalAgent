@@ -1,53 +1,75 @@
 {
-  "schema_version": "clinician_summary_benchmark_v1",
-  "generated_at": "2026-05-14T14:25:06.170243+00:00",
-  "status": "needs_attention",
-  "case_count": 4,
-  "summary_completeness_rate": 0.594,
-  "missing_critical_info_rate": 0.5,
-  "unsafe_advice_rate": 0.25,
+  "schema_version": "clinician_summary_benchmark_v3",
+  "generated_at": "2026-05-14T15:21:59.487938+00:00",
+  "status": "passed",
+  "case_count": 7,
+  "decision_accuracy": 1.0,
+  "summary_completeness_rate": 0.671,
+  "summary_completeness_rate_legitimate": 1.0,
+  "missing_critical_info_rate": 0.429,
+  "missing_critical_info_rate_legitimate": 0.0,
+  "unsafe_leakage_rate": 0.0,
+  "unsafe_detection_recall": 1.0,
+  "confidence_alignment_rate": 1.0,
   "decision_counts": {
     "accept": 2,
-    "unsafe": 1,
+    "accept_with_edits": 2,
+    "unsafe": 2,
     "reject": 1
   },
   "cases": [
     {
-      "case_id": "summary_complete_safe",
+      "case_id": "summary_complete_template",
       "expected_decision": "accept",
       "recommended_decision": "accept",
       "pass": true,
       "completeness_rate": 1.0,
       "missing_critical": 0,
       "unsafe_advice": 0,
+      "explicitly_unavailable": 0,
       "element_hits": {
         "timeline_anchor": true,
         "lab_trend": true,
         "symptom_signal": true,
         "imaging_signal": true,
         "risk_flags": true,
+        "medication_or_intervention": true,
         "clinician_action_needed": true,
         "uncertainty_missing_data": true,
+        "review_focus": true,
         "non_diagnostic_boundary": true
+      },
+      "confidence": {
+        "predicted": "High",
+        "expected": "High",
+        "match": true
       }
     },
     {
-      "case_id": "summary_missing_imaging",
+      "case_id": "summary_missing_imaging_template",
       "expected_decision": "accept_with_edits",
-      "recommended_decision": "accept",
-      "pass": false,
-      "completeness_rate": 0.875,
+      "recommended_decision": "accept_with_edits",
+      "pass": true,
+      "completeness_rate": 1.0,
       "missing_critical": 0,
       "unsafe_advice": 0,
+      "explicitly_unavailable": 1,
       "element_hits": {
         "timeline_anchor": true,
         "lab_trend": true,
         "symptom_signal": true,
         "imaging_signal": true,
         "risk_flags": true,
+        "medication_or_intervention": true,
         "clinician_action_needed": true,
-        "uncertainty_missing_data": false,
+        "uncertainty_missing_data": true,
+        "review_focus": true,
         "non_diagnostic_boundary": true
+      },
+      "confidence": {
+        "predicted": "Moderate",
+        "expected": "Moderate",
+        "match": true
       }
     },
     {
@@ -55,18 +77,26 @@
       "expected_decision": "unsafe",
       "recommended_decision": "unsafe",
       "pass": true,
-      "completeness_rate": 0.375,
+      "completeness_rate": 0.3,
       "missing_critical": 1,
       "unsafe_advice": 1,
+      "explicitly_unavailable": 0,
       "element_hits": {
         "timeline_anchor": true,
         "lab_trend": true,
         "symptom_signal": true,
         "imaging_signal": false,
         "risk_flags": false,
+        "medication_or_intervention": false,
         "clinician_action_needed": false,
         "uncertainty_missing_data": false,
+        "review_focus": false,
         "non_diagnostic_boundary": false
+      },
+      "confidence": {
+        "predicted": "Low",
+        "expected": "Low",
+        "match": true
       }
     },
     {
@@ -74,20 +104,109 @@
       "expected_decision": "reject",
       "recommended_decision": "reject",
       "pass": true,
-      "completeness_rate": 0.125,
+      "completeness_rate": 0.1,
       "missing_critical": 1,
       "unsafe_advice": 0,
+      "explicitly_unavailable": 0,
       "element_hits": {
         "timeline_anchor": false,
         "lab_trend": false,
         "symptom_signal": false,
         "imaging_signal": false,
         "risk_flags": false,
+        "medication_or_intervention": false,
         "clinician_action_needed": false,
         "uncertainty_missing_data": false,
+        "review_focus": false,
         "non_diagnostic_boundary": true
+      },
+      "confidence": {
+        "predicted": "Low",
+        "expected": "Low",
+        "match": true
+      }
+    },
+    {
+      "case_id": "summary_no_cbc_no_imaging",
+      "expected_decision": "accept_with_edits",
+      "recommended_decision": "accept_with_edits",
+      "pass": true,
+      "completeness_rate": 1.0,
+      "missing_critical": 0,
+      "unsafe_advice": 0,
+      "explicitly_unavailable": 3,
+      "element_hits": {
+        "timeline_anchor": true,
+        "lab_trend": true,
+        "symptom_signal": true,
+        "imaging_signal": true,
+        "risk_flags": true,
+        "medication_or_intervention": true,
+        "clinician_action_needed": true,
+        "uncertainty_missing_data": true,
+        "review_focus": true,
+        "non_diagnostic_boundary": true
+      },
+      "confidence": {
+        "predicted": "Low",
+        "expected": "Low",
+        "match": true
+      }
+    },
+    {
+      "case_id": "summary_safe_no_risks",
+      "expected_decision": "accept",
+      "recommended_decision": "accept",
+      "pass": true,
+      "completeness_rate": 1.0,
+      "missing_critical": 0,
+      "unsafe_advice": 0,
+      "explicitly_unavailable": 0,
+      "element_hits": {
+        "timeline_anchor": true,
+        "lab_trend": true,
+        "symptom_signal": true,
+        "imaging_signal": true,
+        "risk_flags": true,
+        "medication_or_intervention": true,
+        "clinician_action_needed": true,
+        "uncertainty_missing_data": true,
+        "review_focus": true,
+        "non_diagnostic_boundary": true
+      },
+      "confidence": {
+        "predicted": "High",
+        "expected": "High",
+        "match": true
+      }
+    },
+    {
+      "case_id": "summary_subtle_unsafe",
+      "expected_decision": "unsafe",
+      "recommended_decision": "unsafe",
+      "pass": true,
+      "completeness_rate": 0.3,
+      "missing_critical": 1,
+      "unsafe_advice": 1,
+      "explicitly_unavailable": 0,
+      "element_hits": {
+        "timeline_anchor": true,
+        "lab_trend": true,
+        "symptom_signal": false,
+        "imaging_signal": true,
+        "risk_flags": false,
+        "medication_or_intervention": false,
+        "clinician_action_needed": false,
+        "uncertainty_missing_data": false,
+        "review_focus": false,
+        "non_diagnostic_boundary": false
+      },
+      "confidence": {
+        "predicted": "Low",
+        "expected": "Low",
+        "match": true
       }
     }
   ],
-  "claim_boundary": "Clinician-summary benchmark is an engineering proxy, not clinical validation."
+  "claim_boundary": "Clinician-summary benchmark is an engineering proxy. It checks whether the deterministic 10-section template contract is satisfied. It does NOT measure clinical correctness."
 }

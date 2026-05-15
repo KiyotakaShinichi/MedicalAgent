@@ -1027,7 +1027,10 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             self.assertEqual(safety["level"], "high_risk")
             self.assertFalse(result["cache"]["cacheable"])
             self.assertIn("oncology", result["reply"].lower())
-            self.assertGreaterEqual(len(result["citations"]), 1)
+            # Per REFUSAL_INTENTS policy in agent_rag, citations are stripped
+            # on safety_boundary so the refusal does not read as evidence-backed
+            # medical advice. Retrieval still ran — verify via retrieval_context.
+            self.assertGreaterEqual(len(result.get("retrieval_context") or []), 1)
             self.assertEqual(db.query(AgentResponseCache).count(), 0)
         finally:
             db.close()
