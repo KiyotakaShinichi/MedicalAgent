@@ -5,6 +5,7 @@ This file wires together routers, middleware, static file mounts, and the
 health-check / redirect routes. All business logic lives in routers/.
 """
 
+import os
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, Request
@@ -31,12 +32,31 @@ from backend.services.request_context import reset_request_id, set_request_id
 app = FastAPI(title="AI Breast Cancer Monitoring System")
 ensure_schema()
 
+# CORS — explicit origin list.  FastAPI/Starlette warns that the combination
+# ``allow_origins=["*"] + allow_credentials=True`` is unsafe; browsers also
+# refuse credentialed requests against a wildcard.  Override via the
+# ``ONCOTRACK_CORS_ORIGINS`` env var (comma-separated) for non-default
+# deployments — e.g. a staging frontend at https://app.example.com.
+_DEFAULT_CORS_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:8017",
+    "http://127.0.0.1:8017",
+]
+_cors_env = os.environ.get("ONCOTRACK_CORS_ORIGINS")
+_cors_origins = (
+    [origin.strip() for origin in _cors_env.split(",") if origin.strip()]
+    if _cors_env
+    else _DEFAULT_CORS_ORIGINS
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+    expose_headers=["X-Request-ID", "X-Analytics-Cache"],
 )
 
 

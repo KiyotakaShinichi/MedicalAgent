@@ -31,6 +31,11 @@ from sklearn.preprocessing import StandardScaler
 from backend.services.complete_synthetic_training import CATEGORICAL_FEATURES, NUMERIC_FEATURES
 
 DEFAULT_TEMPORAL_EVAL_PATH = "Data/mle_monitoring/temporal_eval_report.json"
+DEFAULT_ML_CSV_PATH = (
+    "Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv"
+    if Path("Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv").exists()
+    else "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
+)
 
 _TARGET = "treatment_success_binary"
 _PATIENT_COL = "patient_id"
@@ -41,7 +46,7 @@ _RANDOM_SEED = 42
 
 
 def run_temporal_eval(
-    ml_csv_path: str = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+    ml_csv_path: str = DEFAULT_ML_CSV_PATH,
     output_path: str = DEFAULT_TEMPORAL_EVAL_PATH,
 ) -> dict:
     """

@@ -23,6 +23,7 @@ the LLM is unavailable or returns junk.
 from __future__ import annotations
 
 import json
+import os
 import re
 from typing import Any
 
@@ -112,7 +113,7 @@ def _compute_data_availability(state: dict) -> dict:
     baseline_labs = state.get("baseline_labs")
     symptoms = state.get("symptoms") or []
     radiology = state.get("radiology") or {}
-    treatment_effects = state.get("treatment_effects") or {}
+    treatment_effects = _normalise_treatment_effects(state.get("treatment_effects"))
     risk_flags = state.get("risk_flags") or []
 
     cbc_available = bool(labs) and any(
@@ -209,7 +210,7 @@ def _section_treatment_cycle(state: dict, availability: dict) -> str:
     if not availability["treatment_cycle_available"]:
         lines.append("   - Treatment cycle and date information are not available in the provided record, so timing context cannot be inferred from this summary.")
         return "\n".join(lines)
-    effects = state.get("treatment_effects") or {}
+    effects = _normalise_treatment_effects(state.get("treatment_effects"))
     latest_cycle = effects.get("latest_cycle")
     latest_date = effects.get("latest_treatment_date")
     if latest_cycle is not None:
@@ -270,9 +271,9 @@ def _section_symptoms(state: dict, availability: dict) -> str:
 
 
 def _section_imaging(state: dict, availability: dict) -> str:
-    lines = ["5. Imaging and MRI notes"]
+    lines = ["5. Imaging notes"]
     if not availability["imaging_available"]:
-        lines.append("   - Imaging and MRI information is not available in the provided record, so response assessment cannot be inferred from imaging data in this summary.")
+        lines.append("   - Imaging information is not available in the provided record, so response assessment cannot be inferred from imaging data in this summary.")
         return "\n".join(lines)
     radiology = state.get("radiology") or {}
     size_status = radiology.get("size_status")
@@ -298,7 +299,7 @@ def _section_medications(state: dict, availability: dict) -> str:
     if not availability["medication_available"]:
         lines.append("   - Medication and intervention log is not available in the provided record, so treatment-response context is limited in this summary.")
         return "\n".join(lines)
-    effects = state.get("treatment_effects") or {}
+    effects = _normalise_treatment_effects(state.get("treatment_effects"))
     meds = effects.get("recent_medications") or effects.get("medication_log") or []
     if isinstance(meds, list):
         for med in meds[:5]:
@@ -312,6 +313,45 @@ def _section_medications(state: dict, availability: dict) -> str:
     if len(lines) == 1:
         lines.append("   - Medication records present but not listable in this summary.")
     return "\n".join(lines)
+
+
+def _normalise_treatment_effects(value: Any) -> dict:
+    """Accept both legacy list rows and newer structured treatment-effect dicts."""
+    if isinstance(value, dict):
+        return value
+    if not isinstance(value, list):
+        return {}
+
+    cycles = [row for row in value if isinstance(row, dict)]
+    if not cycles:
+        return {}
+
+    def _cycle_key(row: dict) -> tuple[int, str]:
+        cycle = row.get("cycle")
+        try:
+            cycle_number = int(cycle)
+        except (TypeError, ValueError):
+            cycle_number = -1
+        return (cycle_number, str(row.get("cycle_date") or row.get("date") or ""))
+
+    cycles = sorted(cycles, key=_cycle_key)
+    latest = cycles[-1]
+    medications = []
+    for row in cycles:
+        drug = row.get("drug") or row.get("regimen") or row.get("medication")
+        if drug:
+            medications.append({
+                "drug": drug,
+                "date": row.get("cycle_date") or row.get("date"),
+            })
+
+    return {
+        "cycles": cycles,
+        "cycle_count": len(cycles),
+        "latest_cycle": latest.get("cycle"),
+        "latest_treatment_date": latest.get("cycle_date") or latest.get("date"),
+        "recent_medications": medications[-5:],
+    }
 
 
 def _section_safety_flags(state: dict, availability: dict) -> str:
@@ -497,17 +537,23 @@ Return strict JSON only (no markdown fences, no raw line breaks inside string va
 
 def _try_llm_enrichment(patient_state: dict) -> tuple[dict | None, dict]:
     """Try to enrich the template with LLM narrative. Returns (result, meta)."""
+    if os.environ.get("CLINICAL_SUMMARY_ENABLE_LLM", "").strip().lower() not in {"1", "true", "yes"}:
+        return None, {"status": "disabled_for_fast_dashboard_loads", "model": None}
     if Groq is None:
         return None, {"status": "groq_not_installed", "model": None}
     api_key = get_groq_api_key()
     if not api_key:
         return None, {"status": "no_api_key", "model": None}
     model = get_groq_model()
-    user_prompt = USER_PROMPT_TEMPLATE.format(
-        patient_state=json.dumps(patient_state, indent=2, default=str),
-    )
+    # Keep dashboard report loads bounded. The deterministic template is the
+    # safety-critical summary; LLM text is only a short optional supplement.
+    state_json = json.dumps(patient_state, indent=2, default=str)
+    if len(state_json) > 9000:
+        state_json = state_json[:9000] + "\n... [truncated for bounded dashboard enrichment]"
+    user_prompt = USER_PROMPT_TEMPLATE.format(patient_state=state_json)
     try:
-        client = Groq(api_key=api_key, timeout=8)
+        timeout_seconds = float(os.environ.get("CLINICAL_SUMMARY_LLM_TIMEOUT_SECONDS", "2.0"))
+        client = Groq(api_key=api_key, timeout=timeout_seconds)
         response = client.chat.completions.create(
             model=model,
             temperature=0.2,

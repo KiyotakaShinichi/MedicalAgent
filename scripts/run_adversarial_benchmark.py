@@ -42,6 +42,16 @@ def main():
         live_agent=bool(args.live_agent),
     )
 
+    # Augment the suite report with per-category attack-block recall so a
+    # reviewer can read "did we block X% of prompt-injection attacks" rather
+    # than just a global pass_rate.  Recall is computed per category as
+    # (passed_cases_in_category / total_cases_in_category).
+    per_category = _per_category_recall(payload.get("cases") or [])
+    payload.setdefault("by_category", per_category)
+    payload.setdefault("category_attack_block_recall",
+                       {cat: cat_stats["recall"] for cat, cat_stats in per_category.items()})
+    Path(args.output_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
     summary = payload.get("summary") or {}
     print(json.dumps({
         "output_path": args.output_path,
@@ -49,10 +59,36 @@ def main():
         "case_count": summary.get("total_cases"),
         "pass_rate": summary.get("pass_rate"),
         "failed_cases": summary.get("failed_cases"),
+        "category_attack_block_recall": payload.get("category_attack_block_recall"),
     }, indent=2))
 
     if summary.get("status") not in (None, "passed"):
         raise SystemExit(1)
+
+
+def _per_category_recall(cases: list[dict]) -> dict:
+    """Aggregate per-category counts + recall from a flat list of case rows.
+
+    The suite uses ``case["pass"]`` (boolean) as the per-case verdict.
+    Recall = passed / total within each adversarial category.
+    """
+    buckets: dict[str, dict[str, int]] = {}
+    for case in cases:
+        category = str(case.get("category") or "uncategorized")
+        # The suite emits ``pass`` (true/false). Some legacy callers used
+        # ``passed`` — accept both so a schema change doesn't silently break.
+        passed = bool(case.get("pass") if "pass" in case else case.get("passed"))
+        bucket = buckets.setdefault(category, {"passed": 0, "total": 0})
+        bucket["total"] += 1
+        if passed:
+            bucket["passed"] += 1
+    return {
+        category: {
+            **bucket,
+            "recall": round(bucket["passed"] / bucket["total"], 3) if bucket["total"] else None,
+        }
+        for category, bucket in buckets.items()
+    }
 
 
 if __name__ == "__main__":

@@ -20,6 +20,16 @@ from sklearn.metrics import brier_score_loss
 from sklearn.model_selection import StratifiedShuffleSplit
 
 DEFAULT_CALIBRATION_EVAL_PATH = "Data/mle_monitoring/calibration_eval_report.json"
+DEFAULT_PREDICTIONS_CSV_PATH = (
+    "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv"
+    if Path("Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv").exists()
+    else "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
+)
+DEFAULT_METRICS_JSON_PATH = (
+    "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_metrics.json"
+    if Path("Data/complete_synthetic_training_realism_v2/complete_synthetic_model_metrics.json").exists()
+    else "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
+)
 
 _TARGET = "actual_label"
 _RANDOM_SEED = 42
@@ -28,8 +38,8 @@ _TEMP_GRID = list(np.linspace(0.3, 4.0, 38))
 
 
 def run_calibration_eval(
-    predictions_csv_path: str = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv",
-    metrics_json_path: str = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json",
+    predictions_csv_path: str = DEFAULT_PREDICTIONS_CSV_PATH,
+    metrics_json_path: str = DEFAULT_METRICS_JSON_PATH,
     output_path: str = DEFAULT_CALIBRATION_EVAL_PATH,
 ) -> dict:
     """

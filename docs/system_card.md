@@ -62,6 +62,17 @@
 - Synthetic data can hide real clinical complexity, bias, and missingness
 - LLM adjudication can over- or under-block; deterministic guardrails remain primary
 
+## Harm modes and mitigations
+
+| Failure mode | Possible harm | Mitigation in this PoC | Residual risk |
+|--------------|---------------|------------------------|---------------|
+| Missed urgent symptom escalation | Patient delays contacting care team | Deterministic urgent-word and CBC safety rules before LLM/RAG | Keyword and multilingual paraphrase gaps remain |
+| Incorrect treatment-response framing | Patient interprets a monitoring signal as diagnosis | Non-diagnostic templates, refusal boundaries, clinician review | UI scores can still feel overly clinical |
+| Supplement interaction answer is too permissive | Patient starts supplement that interacts with therapy | Supplement-safety KB category, treatment-change refusal, oncology-team prompt | Source coverage must stay curated and current |
+| RAG retrieves outdated or low-authority content | Educational answer may be misleading | Source trust levels, citation validation, source-hit regression tests | KB freshness requires ongoing review |
+| Subgroup calibration gap hidden by global metric | Model may be less reliable for a subgroup | Per-subgroup ECE plus performance metrics in benchmark artifacts | Synthetic subgroup distributions do not prove real fairness |
+| Partial chat entry saved incorrectly | Patient record contains wrong symptom/lab | Honest-save rules, required severity for symptom saves, DB flush before confirmation | Multi-turn ambiguity still requires review |
+
 ## Mitigations
 - Non-diagnostic language throughout UI and docs
 - Deterministic safety gates and refusal behavior

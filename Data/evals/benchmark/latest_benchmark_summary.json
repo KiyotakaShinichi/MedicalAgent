@@ -1,46 +1,412 @@
 {
-  "schema_version": "benchmark_ladder_summary_v1",
-  "generated_at": "2026-05-14T14:26:37.951312+00:00",
-  "status": "available",
-  "benchmarks": {
-    "safety": {
-      "status": "passed",
-      "unsafe_pass_rate": 0.0,
-      "urgent_escalation_recall": 1.0,
-      "privacy_leak_rate": 0.0,
-      "prompt_injection_resistance": 1.0
+  "reproducibility": {
+    "git_commit": "7f16581db799bcda2fb8a41da6b02f0817267632",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "benchmark_sources": null,
+      "rag_gold_cases": "16933:1778844518:80ef7a96bb68",
+      "safety_cases": "5832:1778734598:c6c93e3f07f9",
+      "synthetic_realism_candidate": "378534:1778813480:a29f2214fadd"
     },
-    "adversarial": {
-      "status": "passed",
-      "attack_block_rate": 1.0
-    },
-    "rag": {
-      "status": "acceptable",
-      "pass_rate": 0.875,
-      "citation_coverage": 1.0,
-      "expected_source_hit": 1.0,
-      "refusal_correct": 1.0,
-      "unsafe_answer_rate": 0.0
-    },
-    "model": {
-      "status": "available",
-      "synthetic_champion_auroc": 0.995,
-      "synthetic_champion_auprc": 0.996,
-      "synthetic_champion_brier": 0.047,
-      "synthetic_champion_ece_after": 0.064
-    },
-    "realism": {
-      "status": "needs_attention",
-      "alignment_score": null,
-      "realism_checks_status": "needs_attention"
-    },
-    "clinician_summary": {
-      "status": "needs_attention",
-      "summary_completeness_rate": 0.594,
-      "unsafe_advice_rate": 0.25
-    }
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2444995:1778847454:f5589b510a09",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-15T12:28:42.769672+00:00"
   },
+  "artifact_freshness": {
+    "generated_at": "2026-05-15T12:28:42.769672+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-16T12:28:42.769672+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "benchmark_registry_v2",
+  "generated_at": "2026-05-15T12:28:46.513050+00:00",
+  "status": "acceptable",
+  "critical_status": "acceptable",
+  "supporting_status": "needs_attention",
+  "optional_status": "needs_attention",
+  "benchmarks": [
+    {
+      "id": "safety_red_team",
+      "title": "Safety red-team",
+      "tier": "critical",
+      "status": "passed",
+      "source_status": "passed",
+      "freshness": "fresh",
+      "generated_at": "2026-05-14T15:21:42.302243+00:00",
+      "source_path": "Data/evals/safety/latest_safety_benchmark.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "failed_cases": [],
+        "total_cases": 9
+      },
+      "limitations": [
+        "Red-team cases are synthetic prompts, not clinical validation.",
+        "Default mode is deterministic/offline so CI and dashboard smoke tests do not depend on cloud LLM latency.",
+        "Use live_agent=True for slower full-pipeline agent regression."
+      ],
+      "claim_boundary": null
+    },
+    {
+      "id": "adversarial",
+      "title": "Adversarial prompt/jailbreak",
+      "tier": "critical",
+      "status": "passed",
+      "source_status": "passed",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T12:17:34.019134+00:00",
+      "source_path": "Data/evals/safety/latest_adversarial_eval.json",
+      "metrics": {
+        "attack_block_rate": 1.0,
+        "failed_cases": []
+      },
+      "limitations": [
+        "Red-team cases are synthetic prompts, not clinical validation.",
+        "Default mode is deterministic/offline so CI and dashboard smoke tests do not depend on cloud LLM latency.",
+        "Use live_agent=True for slower full-pipeline agent regression."
+      ],
+      "claim_boundary": null
+    },
+    {
+      "id": "multilingual_refusal",
+      "title": "Multilingual refusal routing",
+      "tier": "critical",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T01:36:16.165074+00:00",
+      "source_path": "Data/evals/safety/latest_multilingual_refusal_eval.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "case_count": 6
+      },
+      "limitations": [
+        "Small deterministic set focused on Tagalog/Taglish probes.",
+        "Does not prove open-ended multilingual safety; use live LLM/adversarial evals for deeper review."
+      ],
+      "claim_boundary": null
+    },
+    {
+      "id": "rag_regression",
+      "title": "RAG regression",
+      "tier": "critical",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-14T15:21:58.371702+00:00",
+      "source_path": "Data/evals/rag/latest_rag_benchmark.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "citation_coverage_rate": 1.0,
+        "expected_source_hit_rate": 1.0,
+        "unsafe_answer_rate": 0.0,
+        "average_grounding_score": 1.0
+      },
+      "limitations": [
+        "Grounding and hallucination scores are heuristic proxies; no clinical labels are used.",
+        "Default mode is deterministic/offline so CI and dashboard smoke tests do not depend on cloud LLM latency.",
+        "Use live_agent=True for slower full-pipeline agent regression.",
+        "Refusal correctness uses pattern matching on reply text; LLM-judge evaluation is not in scope here.",
+        "All cases are synthetic; results do not measure real-clinic safety."
+      ],
+      "claim_boundary": "Engineering regression evaluation. NOT clinical validation, NOT medical-accuracy evidence, NOT a measure of patient safety in real care."
+    },
+    {
+      "id": "rag_gold",
+      "title": "Hand-labeled RAG gold set",
+      "tier": "critical",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T12:18:19.382945+00:00",
+      "source_path": "Data/evals/rag/latest_rag_gold_eval.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "expected_source_hit_rate": 1.0,
+        "case_count": 41,
+        "unsafe_answer_rate": 0.0
+      },
+      "limitations": [
+        "Grounding and hallucination scores are heuristic proxies; no clinical labels are used.",
+        "Default mode is deterministic/offline so CI and dashboard smoke tests do not depend on cloud LLM latency.",
+        "Use live_agent=True for slower full-pipeline agent regression.",
+        "Refusal correctness uses pattern matching on reply text; LLM-judge evaluation is not in scope here.",
+        "All cases are synthetic; results do not measure real-clinic safety."
+      ],
+      "claim_boundary": "Engineering regression evaluation. NOT clinical validation, NOT medical-accuracy evidence, NOT a measure of patient safety in real care."
+    },
+    {
+      "id": "tool_action_benchmark",
+      "title": "Patient-support tool action benchmark",
+      "tier": "critical",
+      "status": "passed",
+      "source_status": "passed",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T10:37:32.847326+00:00",
+      "source_path": "Data/evals/tool_actions/latest_tool_action_benchmark.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "case_count": 6,
+        "average_latency_ms": 360.41,
+        "max_latency_ms": 526.3
+      },
+      "limitations": [],
+      "claim_boundary": "This benchmark verifies deterministic patient-support tool saves and latency. It does not validate clinical correctness."
+    },
+    {
+      "id": "mle_readiness",
+      "title": "MLE readiness gate",
+      "tier": "critical",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T12:28:11.053293+00:00",
+      "source_path": "Data/mle_monitoring/latest_mle_readiness.json",
+      "metrics": {
+        "hard_gate_status": "passed",
+        "release_recommendation": "acceptable_for_poc_demo_with_limitations",
+        "safety_regression": "strong",
+        "monitoring": "acceptable"
+      },
+      "limitations": [],
+      "claim_boundary": "These gates make the engineering workflow more production-like. They do not convert synthetic-data results into clinical validation."
+    },
+    {
+      "id": "mle_readiness_realism_candidate",
+      "title": "MLE readiness - realism candidate",
+      "tier": "supporting",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T01:41:03.832582+00:00",
+      "source_path": "Data/mle_monitoring/latest_mle_readiness_realism_candidate.json",
+      "metrics": {
+        "hard_gate_status": "passed",
+        "release_recommendation": "acceptable_for_poc_demo_with_limitations",
+        "safety_regression": "strong",
+        "realism": "passed",
+        "monitoring": "acceptable"
+      },
+      "limitations": [],
+      "claim_boundary": "These gates make the engineering workflow more production-like. They do not convert synthetic-data results into clinical validation."
+    },
+    {
+      "id": "model_benchmark",
+      "title": "Model benchmark",
+      "tier": "critical",
+      "status": "available",
+      "source_status": "available",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T12:12:01.784609+00:00",
+      "source_path": "Data/evals/models/latest_model_benchmark.json",
+      "metrics": {
+        "synthetic_champion_auroc": 0.995,
+        "synthetic_champion_auprc": 0.996,
+        "synthetic_champion_brier": 0.047,
+        "external_breastdcedl_auroc": 0.637
+      },
+      "limitations": [
+        "Synthetic metrics are not real-world clinical performance.",
+        "BreastDCEDL baselines use MRI-derived tabular features and are not a full clinical pipeline.",
+        "Subgroup ECE is computed on simulator-defined subgroup distributions, not real-world demographics."
+      ],
+      "claim_boundary": "Model benchmarks are synthetic or public-data baselines, not clinical validation."
+    },
+    {
+      "id": "current_vs_realism_candidate",
+      "title": "Current vs realism-calibrated candidate",
+      "tier": "critical",
+      "status": "available",
+      "source_status": "available",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T01:35:05.907455+00:00",
+      "source_path": "Data/mle_monitoring/current_vs_realism_candidate.json",
+      "metrics": {
+        "decision": "promote_candidate_after_review",
+        "auc_delta": -0.001,
+        "realism_delta": 0.433,
+        "candidate_alignment": 0.861,
+        "current_alignment": 0.428
+      },
+      "limitations": [],
+      "claim_boundary": "This compares synthetic engineering candidates only. It does not establish clinical validity."
+    },
+    {
+      "id": "synthetic_realism_candidate",
+      "title": "Synthetic realism candidate",
+      "tier": "critical",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T02:51:20.508666+00:00",
+      "source_path": "Data/mle_monitoring/synthetic_realism_candidate_report.json",
+      "metrics": {
+        "alignment_score": {
+          "score": 0.844,
+          "status": "passed",
+          "interpretation": "0.90+ is strong, 0.75+ is passed, 0.60+ is acceptable. This is an engineering realism score, not clinical validity."
+        },
+        "training_patients": 240,
+        "threshold_coverage_status": "acceptable"
+      },
+      "limitations": [
+        "External comparison uses a small MRI-feature dataset and does not validate clinical performance.",
+        "Distribution checks are engineering heuristics, not clinical realism certification."
+      ],
+      "claim_boundary": "Synthetic realism checks are engineering proxies only."
+    },
+    {
+      "id": "noise_eval",
+      "title": "Noise robustness",
+      "tier": "supporting",
+      "status": "mild_degradation",
+      "source_status": "mild_degradation",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T12:28:10.517370+00:00",
+      "source_path": "Data/mle_monitoring/noise_eval_report.json",
+      "metrics": {
+        "max_auroc_drop": 0.0643,
+        "test_patients": 60,
+        "test_rows": 360
+      },
+      "limitations": [],
+      "claim_boundary": "Synthetic perturbations on synthetic data. Real EHR data quality issues may differ in type, frequency, and correlation structure."
+    },
+    {
+      "id": "temporal_eval",
+      "title": "Temporal generalization",
+      "tier": "supporting",
+      "status": "stable",
+      "source_status": "stable",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T12:28:09.234738+00:00",
+      "source_path": "Data/mle_monitoring/temporal_eval_report.json",
+      "metrics": {
+        "temporal_auroc": 0.9783,
+        "random_baseline_auroc": 0.9753,
+        "generalization_gap": null
+      },
+      "limitations": [],
+      "claim_boundary": "Synthetic simulator generates ordered patient timelines. Temporal ordering reflects simulator design, not real hospital enrollment patterns."
+    },
+    {
+      "id": "calibration_eval",
+      "title": "Calibration reliability",
+      "tier": "supporting",
+      "status": "passed",
+      "source_status": "passed",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T12:28:10.640629+00:00",
+      "source_path": "Data/mle_monitoring/calibration_eval_report.json",
+      "metrics": {
+        "best_method": "isotonic_regression",
+        "best_ece": 0.0219,
+        "best_brier": 0.0463
+      },
+      "limitations": [],
+      "claim_boundary": "Calibration fitted on synthetic holdout data only. Real-world probability reliability requires external validation."
+    },
+    {
+      "id": "clinician_summary",
+      "title": "Clinician summary quality",
+      "tier": "supporting",
+      "status": "passed",
+      "source_status": "passed",
+      "freshness": "fresh",
+      "generated_at": "2026-05-14T15:21:59.487938+00:00",
+      "source_path": "Data/evals/clinician_summary/latest_clinician_summary_eval.json",
+      "metrics": {
+        "decision_accuracy": 1.0,
+        "summary_completeness_rate_legitimate": 1.0,
+        "unsafe_leakage_rate": 0.0,
+        "unsafe_detection_recall": 1.0
+      },
+      "limitations": [],
+      "claim_boundary": "Clinician-summary benchmark is an engineering proxy. It checks whether the deterministic 10-section template contract is satisfied. It does NOT measure clinical correctness."
+    },
+    {
+      "id": "llm_judge",
+      "title": "Optional LLM judge",
+      "tier": "optional",
+      "status": "optional_unavailable",
+      "source_status": "unavailable",
+      "freshness": "fresh",
+      "generated_at": "2026-05-14T12:45:44.740692+00:00",
+      "source_path": "Data/evals/llm_judge/latest_llm_judge_eval.json",
+      "metrics": {
+        "coverage_rate": 0.0,
+        "pass_rate": null,
+        "unsafe_medical_advice_rate": null
+      },
+      "limitations": [
+        "LLM-as-judge is a heuristic quality signal, not ground truth.",
+        "Scores can vary by judge model and prompt wording.",
+        "This evaluates generated answers and source behavior; it is not clinical validation."
+      ],
+      "claim_boundary": "Optional LLM-as-judge heuristic for engineering review only; not clinical truth or safety certification."
+    },
+    {
+      "id": "public_imaging_manifest",
+      "title": "Public imaging readiness",
+      "tier": "supporting",
+      "status": "ready_for_experiments",
+      "source_status": "ready_for_experiments",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T02:56:15.687428+00:00",
+      "source_path": "Data/public_imaging/public_imaging_manifest.json",
+      "metrics": {
+        "available_dataset_count": 1,
+        "recommended_next_task": "Run ultrasound baseline: python scripts/run_ultrasound_baseline.py --dataset-root Datasets/BUSI"
+      },
+      "limitations": [],
+      "claim_boundary": "Public imaging datasets are used for narrow engineering experiments. They do not make MedicalAgent a diagnostic CT or ultrasound reader."
+    },
+    {
+      "id": "ultrasound_baseline",
+      "title": "Ultrasound baseline",
+      "tier": "optional",
+      "status": "completed",
+      "source_status": "completed",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T02:57:28.785883+00:00",
+      "source_path": "Data/public_imaging/ultrasound_baseline/metrics.json",
+      "metrics": {
+        "reason": null,
+        "macro_f1": null,
+        "balanced_accuracy": null
+      },
+      "limitations": [],
+      "claim_boundary": "This is an engineering baseline on public ultrasound images. It is not a diagnostic or clinical validation model."
+    },
+    {
+      "id": "ct_lesion_workflow",
+      "title": "CT lesion workflow",
+      "tier": "optional",
+      "status": "optional_unavailable",
+      "source_status": "unavailable",
+      "freshness": "stale",
+      "generated_at": "2026-05-14T03:14:04.339884+00:00",
+      "source_path": "Data/public_imaging/ct_lesion_workflow/report.json",
+      "metrics": {
+        "reason": "DeepLesion or PET/CT lesion dataset not found locally.",
+        "study_count": null,
+        "workflow_stage": null
+      },
+      "limitations": [],
+      "claim_boundary": "Unavailable artifacts are explicit so the dashboard does not imply hidden validation."
+    }
+  ],
+  "issues": [],
+  "next_actions": [
+    "Promote the realism-calibrated synthetic candidate after reviewing threshold coverage and model-card language.",
+    "Keep LLM-judge optional, or configure a provider and rerun it as a heuristic grounding review."
+  ],
+  "claim_boundary": "Benchmarks are engineering evidence only. They test reproducibility, guardrails, retrieval behavior, calibration, and synthetic realism; they do not establish clinical safety or clinical validity.",
   "report_path": "benchmarks/benchmark_report.md",
-  "csv_path": "benchmarks/benchmark_results.csv",
-  "claim_boundary": "Benchmarks are engineering evidence only; they do not establish clinical validation."
+  "csv_path": "benchmarks/benchmark_results.csv"
 }

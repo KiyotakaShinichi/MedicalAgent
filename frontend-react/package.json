@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "typegen": "npx -y openapi-typescript http://127.0.0.1:8017/openapi.json -o src/types/generated-openapi.d.ts",
+    "typegen:file": "npx -y openapi-typescript ../Data/openapi.json -o src/types/generated-openapi.d.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

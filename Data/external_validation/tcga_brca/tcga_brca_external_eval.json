@@ -1,0 +1,43 @@
+{
+  "schema_version": "tcga_brca_external_eval_v1",
+  "generated_at": "2026-05-15T13:01:37.726713+00:00",
+  "dataset": "TCGA-BRCA public clinical snapshot via NCI GDC",
+  "status": "external_distribution_available_model_metrics_not_computed",
+  "message": "TCGA-BRCA clinical rows were loaded, but the public snapshot does not include OncoTrack's longitudinal CBC/treatment-response target. Use it for distribution checks unless a mapped prediction CSV is provided.",
+  "rows": 1098,
+  "download": {
+    "status": "downloaded",
+    "error": null,
+    "source_url": "https://api.gdc.cancer.gov/cases"
+  },
+  "applicability": {
+    "status": "partial_overlap",
+    "available_feature_families": [
+      "age",
+      "stage"
+    ],
+    "missing_feature_families": [
+      "days_since_treatment",
+      "hemoglobin",
+      "imaging_response_signal",
+      "molecular_subtype",
+      "platelets",
+      "symptom_severity",
+      "treatment_cycle",
+      "wbc"
+    ],
+    "target_label_available": false,
+    "target_label_note": "The public clinical snapshot does not provide the same longitudinal treatment-success/CBC monitoring label used by the synthetic model.",
+    "recommended_use": [
+      "External distribution sanity check",
+      "Stage/age/demographic coverage comparison",
+      "Future mapped-label evaluation if a compatible target is curated"
+    ]
+  },
+  "mapped_prediction_metrics": null,
+  "files": {
+    "clinical_snapshot_csv": "Data\\external_validation\\tcga_brca\\tcga_brca_clinical_snapshot.csv",
+    "report_json": "Data\\external_validation\\tcga_brca\\tcga_brca_external_eval.json"
+  },
+  "claim_boundary": "TCGA-BRCA is a real external public cohort, but this report is not clinical validation of the synthetic monitoring model unless mapped labels/predictions with the same target are supplied."
+}

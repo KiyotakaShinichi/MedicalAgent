@@ -30,7 +30,21 @@ from sklearn.metrics import average_precision_score, brier_score_loss, roc_auc_s
 from backend.services.complete_synthetic_training import CATEGORICAL_FEATURES, NUMERIC_FEATURES
 
 DEFAULT_NOISE_EVAL_PATH = "Data/mle_monitoring/noise_eval_report.json"
-DEFAULT_MODEL_PATH = "Data/complete_synthetic_training/logistic_regression_treatment_success_binary.joblib"
+DEFAULT_MODEL_PATH = (
+    "Data/complete_synthetic_training_realism_v2/logistic_regression_treatment_success_binary.joblib"
+    if Path("Data/complete_synthetic_training_realism_v2/logistic_regression_treatment_success_binary.joblib").exists()
+    else "Data/complete_synthetic_training/logistic_regression_treatment_success_binary.joblib"
+)
+DEFAULT_ML_CSV_PATH = (
+    "Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv"
+    if Path("Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv").exists()
+    else "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
+)
+DEFAULT_PREDICTIONS_CSV_PATH = (
+    "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv"
+    if Path("Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv").exists()
+    else "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
+)
 
 _TARGET = "treatment_success_binary"
 _PATIENT_COL = "patient_id"
@@ -47,9 +61,9 @@ _INTERVENTION_COL = "intervention_count"
 
 
 def run_noise_eval(
-    ml_csv_path: str = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+    ml_csv_path: str = DEFAULT_ML_CSV_PATH,
     model_path: str = DEFAULT_MODEL_PATH,
-    predictions_csv_path: str = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv",
+    predictions_csv_path: str = DEFAULT_PREDICTIONS_CSV_PATH,
     output_path: str = DEFAULT_NOISE_EVAL_PATH,
 ) -> dict:
     """

@@ -1,4 +1,5 @@
-import { AlertCircle, Inbox } from "lucide-react";
+import { AlertCircle, Inbox, RotateCw } from "lucide-react";
+import { API_BASE } from "../../api/client";
 
 export function Spinner({ size = 20 }: { size?: number }) {
   return (
@@ -31,11 +32,66 @@ export function LoadingPane({ label = "Loading..." }: { label?: string }) {
   );
 }
 
-export function ErrorPane({ message }: { message: string }) {
+const BACKEND_BASE = (() => {
+  try {
+    const u = new URL(API_BASE);
+    return `${u.hostname}:${u.port || (u.protocol === "https:" ? "443" : "80")}`;
+  } catch {
+    return API_BASE;
+  }
+})();
+
+function isNetworkError(message: string): boolean {
+  const lower = message.toLowerCase();
+  return (
+    lower.includes("failed to fetch") ||
+    lower.includes("networkerror") ||
+    lower.includes("load failed") ||
+    lower.includes("err_connection")
+  );
+}
+
+interface ErrorPaneProps {
+  message: string;
+  /** Optional retry callback. When provided, renders a "Try again" button. */
+  onRetry?: () => void;
+}
+
+export function ErrorPane({ message, onRetry }: ErrorPaneProps) {
+  const network = isNetworkError(message);
   return (
     <div className="state-pane is-error">
-      <AlertCircle size={18} aria-hidden="true" />
-      <span>{message}</span>
+      <AlertCircle size={16} aria-hidden="true" style={{ flexShrink: 0, marginTop: 1 }} />
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 4 }}>
+        <span style={{ fontWeight: 600 }}>
+          {network ? `Backend API unavailable at ${BACKEND_BASE}` : "Request failed"}
+        </span>
+        <span style={{ color: "#9f1239", fontWeight: 400, fontSize: "0.78rem", lineHeight: 1.45 }}>
+          {network
+            ? "Check that the FastAPI server is running and reachable, then retry."
+            : message}
+        </span>
+        {onRetry && (
+          <button
+            type="button"
+            onClick={onRetry}
+            className="inline-flex items-center gap-1.5 rounded-md border self-start"
+            style={{
+              marginTop: 4,
+              padding: "4px 10px",
+              fontSize: "0.78rem",
+              fontWeight: 600,
+              background: "#ffffff",
+              borderColor: "#fecaca",
+              color: "#b91c1c",
+              cursor: "pointer",
+            }}
+          >
+            <RotateCw size={12} />
+            Try again
+          </button>
+        )}
+      </div>
     </div>
   );
 }

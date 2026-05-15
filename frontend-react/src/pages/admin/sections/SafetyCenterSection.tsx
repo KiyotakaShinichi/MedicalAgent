@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Play, AlertTriangle, ShieldCheck, Activity } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { Badge } from "../../../components/ui/Badge";
@@ -55,7 +55,7 @@ export function SafetyCenterSection() {
   const [multilingual, setMultilingual] = useState<MultilingualRefusalEval | null>(null);
   const [llmJudge, setLlmJudge] = useState<LlmJudgeEval | null>(null);
 
-  async function load() {
+  const load = useCallback(async () => {
     setStatus("loading");
     setError(null);
     try {
@@ -72,11 +72,14 @@ export function SafetyCenterSection() {
       setError((e as Error).message);
       setStatus("error");
     }
-  }
+  }, []);
 
   useEffect(() => {
-    void load();
-  }, []);
+    const handle = window.setTimeout(() => {
+      void load();
+    }, 0);
+    return () => window.clearTimeout(handle);
+  }, [load]);
 
   async function regenerate(kind: "safety" | "rag" | "drift", liveAgent = false) {
     const runKey = liveAgent ? `${kind}-live` : kind;

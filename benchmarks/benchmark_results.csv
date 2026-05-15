@@ -1,19 +1,67 @@
-benchmark,metric,value,status,source_path,generated_at,notes
-safety,unsafe_pass_rate,0.0,passed,Data/evals/safety/latest_safety_benchmark.json,2026-05-14T14:26:37.949400+00:00,
-safety,urgent_escalation_recall,1.0,passed,Data/evals/safety/latest_safety_benchmark.json,2026-05-14T14:26:37.949425+00:00,
-safety,privacy_leak_rate,0.0,passed,Data/evals/safety/latest_safety_benchmark.json,2026-05-14T14:26:37.949434+00:00,
-safety,prompt_injection_resistance,1.0,passed,Data/evals/safety/latest_safety_benchmark.json,2026-05-14T14:26:37.949438+00:00,
-adversarial,attack_block_rate,1.0,passed,Data/evals/safety/latest_adversarial_eval.json,2026-05-14T14:26:37.949451+00:00,
-rag,pass_rate,0.875,acceptable,Data/evals/rag/latest_rag_benchmark.json,2026-05-14T14:26:37.949458+00:00,
-rag,citation_coverage,1.0,acceptable,Data/evals/rag/latest_rag_benchmark.json,2026-05-14T14:26:37.949464+00:00,
-rag,expected_source_hit,1.0,acceptable,Data/evals/rag/latest_rag_benchmark.json,2026-05-14T14:26:37.949472+00:00,
-rag,refusal_correct,1.0,acceptable,Data/evals/rag/latest_rag_benchmark.json,2026-05-14T14:26:37.949479+00:00,
-rag,unsafe_answer_rate,0.0,acceptable,Data/evals/rag/latest_rag_benchmark.json,2026-05-14T14:26:37.949486+00:00,
-model,auroc,0.995,available,Data/evals/models/latest_model_benchmark.json,2026-05-14T14:26:37.949493+00:00,synthetic_champion
-model,auprc,0.996,available,Data/evals/models/latest_model_benchmark.json,2026-05-14T14:26:37.949498+00:00,synthetic_champion
-model,brier,0.047,available,Data/evals/models/latest_model_benchmark.json,2026-05-14T14:26:37.949504+00:00,synthetic_champion
-model,ece_after,0.064,available,Data/evals/models/latest_model_benchmark.json,2026-05-14T14:26:37.949509+00:00,synthetic_champion
-realism,alignment_score,,needs_attention,Data/mle_monitoring/synthetic_realism_report.json,2026-05-14T14:26:37.949514+00:00,synthetic_realism_report
-realism,realism_checks_status,needs_attention,needs_attention,Data/evals/realism/latest_realism_checks.json,2026-05-14T14:26:37.949521+00:00,realism_checks
-clinician_summary,summary_completeness_rate,0.594,needs_attention,Data/evals/clinician_summary/latest_clinician_summary_eval.json,2026-05-14T14:26:37.949526+00:00,clinician_summary
-clinician_summary,unsafe_advice_rate,0.25,needs_attention,Data/evals/clinician_summary/latest_clinician_summary_eval.json,2026-05-14T14:26:37.949531+00:00,clinician_summary
+benchmark_id,title,tier,status,source_status,freshness,source_path,metric,value
+safety_red_team,Safety red-team,critical,passed,passed,fresh,Data/evals/safety/latest_safety_benchmark.json,pass_rate,1.0
+safety_red_team,Safety red-team,critical,passed,passed,fresh,Data/evals/safety/latest_safety_benchmark.json,failed_cases,[]
+safety_red_team,Safety red-team,critical,passed,passed,fresh,Data/evals/safety/latest_safety_benchmark.json,total_cases,9
+adversarial,Adversarial prompt/jailbreak,critical,passed,passed,fresh,Data/evals/safety/latest_adversarial_eval.json,attack_block_rate,1.0
+adversarial,Adversarial prompt/jailbreak,critical,passed,passed,fresh,Data/evals/safety/latest_adversarial_eval.json,failed_cases,[]
+multilingual_refusal,Multilingual refusal routing,critical,strong,strong,fresh,Data/evals/safety/latest_multilingual_refusal_eval.json,pass_rate,1.0
+multilingual_refusal,Multilingual refusal routing,critical,strong,strong,fresh,Data/evals/safety/latest_multilingual_refusal_eval.json,passed,6
+multilingual_refusal,Multilingual refusal routing,critical,strong,strong,fresh,Data/evals/safety/latest_multilingual_refusal_eval.json,case_count,6
+rag_regression,RAG regression,critical,strong,strong,fresh,Data/evals/rag/latest_rag_benchmark.json,pass_rate,1.0
+rag_regression,RAG regression,critical,strong,strong,fresh,Data/evals/rag/latest_rag_benchmark.json,citation_coverage_rate,1.0
+rag_regression,RAG regression,critical,strong,strong,fresh,Data/evals/rag/latest_rag_benchmark.json,expected_source_hit_rate,1.0
+rag_regression,RAG regression,critical,strong,strong,fresh,Data/evals/rag/latest_rag_benchmark.json,unsafe_answer_rate,0.0
+rag_regression,RAG regression,critical,strong,strong,fresh,Data/evals/rag/latest_rag_benchmark.json,average_grounding_score,1.0
+rag_gold,Hand-labeled RAG gold set,critical,strong,strong,fresh,Data/evals/rag/latest_rag_gold_eval.json,pass_rate,1.0
+rag_gold,Hand-labeled RAG gold set,critical,strong,strong,fresh,Data/evals/rag/latest_rag_gold_eval.json,expected_source_hit_rate,1.0
+rag_gold,Hand-labeled RAG gold set,critical,strong,strong,fresh,Data/evals/rag/latest_rag_gold_eval.json,case_count,41
+rag_gold,Hand-labeled RAG gold set,critical,strong,strong,fresh,Data/evals/rag/latest_rag_gold_eval.json,unsafe_answer_rate,0.0
+tool_action_benchmark,Patient-support tool action benchmark,critical,passed,passed,fresh,Data/evals/tool_actions/latest_tool_action_benchmark.json,pass_rate,1.0
+tool_action_benchmark,Patient-support tool action benchmark,critical,passed,passed,fresh,Data/evals/tool_actions/latest_tool_action_benchmark.json,case_count,6
+tool_action_benchmark,Patient-support tool action benchmark,critical,passed,passed,fresh,Data/evals/tool_actions/latest_tool_action_benchmark.json,average_latency_ms,360.41
+tool_action_benchmark,Patient-support tool action benchmark,critical,passed,passed,fresh,Data/evals/tool_actions/latest_tool_action_benchmark.json,max_latency_ms,526.3
+mle_readiness,MLE readiness gate,critical,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness.json,hard_gate_status,passed
+mle_readiness,MLE readiness gate,critical,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness.json,release_recommendation,acceptable_for_poc_demo_with_limitations
+mle_readiness,MLE readiness gate,critical,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness.json,safety_regression,strong
+mle_readiness,MLE readiness gate,critical,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness.json,monitoring,acceptable
+mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,hard_gate_status,passed
+mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,release_recommendation,acceptable_for_poc_demo_with_limitations
+mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,safety_regression,strong
+mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,realism,passed
+mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,acceptable,acceptable,fresh,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,monitoring,acceptable
+model_benchmark,Model benchmark,critical,available,available,fresh,Data/evals/models/latest_model_benchmark.json,synthetic_champion_auroc,0.995
+model_benchmark,Model benchmark,critical,available,available,fresh,Data/evals/models/latest_model_benchmark.json,synthetic_champion_auprc,0.996
+model_benchmark,Model benchmark,critical,available,available,fresh,Data/evals/models/latest_model_benchmark.json,synthetic_champion_brier,0.047
+model_benchmark,Model benchmark,critical,available,available,fresh,Data/evals/models/latest_model_benchmark.json,external_breastdcedl_auroc,0.637
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,available,available,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,decision,promote_candidate_after_review
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,available,available,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,auc_delta,-0.001
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,available,available,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,realism_delta,0.433
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,available,available,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,candidate_alignment,0.861
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,available,available,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,current_alignment,0.428
+synthetic_realism_candidate,Synthetic realism candidate,critical,acceptable,acceptable,fresh,Data/mle_monitoring/synthetic_realism_candidate_report.json,alignment_score,"{'score': 0.844, 'status': 'passed', 'interpretation': '0.90+ is strong, 0.75+ is passed, 0.60+ is acceptable. This is an engineering realism score, not clinical validity.'}"
+synthetic_realism_candidate,Synthetic realism candidate,critical,acceptable,acceptable,fresh,Data/mle_monitoring/synthetic_realism_candidate_report.json,training_patients,240
+synthetic_realism_candidate,Synthetic realism candidate,critical,acceptable,acceptable,fresh,Data/mle_monitoring/synthetic_realism_candidate_report.json,threshold_coverage_status,acceptable
+noise_eval,Noise robustness,supporting,mild_degradation,mild_degradation,fresh,Data/mle_monitoring/noise_eval_report.json,max_auroc_drop,0.0643
+noise_eval,Noise robustness,supporting,mild_degradation,mild_degradation,fresh,Data/mle_monitoring/noise_eval_report.json,test_patients,60
+noise_eval,Noise robustness,supporting,mild_degradation,mild_degradation,fresh,Data/mle_monitoring/noise_eval_report.json,test_rows,360
+temporal_eval,Temporal generalization,supporting,stable,stable,fresh,Data/mle_monitoring/temporal_eval_report.json,temporal_auroc,0.9783
+temporal_eval,Temporal generalization,supporting,stable,stable,fresh,Data/mle_monitoring/temporal_eval_report.json,random_baseline_auroc,0.9753
+temporal_eval,Temporal generalization,supporting,stable,stable,fresh,Data/mle_monitoring/temporal_eval_report.json,generalization_gap,
+calibration_eval,Calibration reliability,supporting,passed,passed,fresh,Data/mle_monitoring/calibration_eval_report.json,best_method,isotonic_regression
+calibration_eval,Calibration reliability,supporting,passed,passed,fresh,Data/mle_monitoring/calibration_eval_report.json,best_ece,0.0219
+calibration_eval,Calibration reliability,supporting,passed,passed,fresh,Data/mle_monitoring/calibration_eval_report.json,best_brier,0.0463
+clinician_summary,Clinician summary quality,supporting,passed,passed,fresh,Data/evals/clinician_summary/latest_clinician_summary_eval.json,decision_accuracy,1.0
+clinician_summary,Clinician summary quality,supporting,passed,passed,fresh,Data/evals/clinician_summary/latest_clinician_summary_eval.json,summary_completeness_rate_legitimate,1.0
+clinician_summary,Clinician summary quality,supporting,passed,passed,fresh,Data/evals/clinician_summary/latest_clinician_summary_eval.json,unsafe_leakage_rate,0.0
+clinician_summary,Clinician summary quality,supporting,passed,passed,fresh,Data/evals/clinician_summary/latest_clinician_summary_eval.json,unsafe_detection_recall,1.0
+llm_judge,Optional LLM judge,optional,optional_unavailable,unavailable,fresh,Data/evals/llm_judge/latest_llm_judge_eval.json,coverage_rate,0.0
+llm_judge,Optional LLM judge,optional,optional_unavailable,unavailable,fresh,Data/evals/llm_judge/latest_llm_judge_eval.json,pass_rate,
+llm_judge,Optional LLM judge,optional,optional_unavailable,unavailable,fresh,Data/evals/llm_judge/latest_llm_judge_eval.json,unsafe_medical_advice_rate,
+public_imaging_manifest,Public imaging readiness,supporting,ready_for_experiments,ready_for_experiments,fresh,Data/public_imaging/public_imaging_manifest.json,available_dataset_count,1
+public_imaging_manifest,Public imaging readiness,supporting,ready_for_experiments,ready_for_experiments,fresh,Data/public_imaging/public_imaging_manifest.json,recommended_next_task,Run ultrasound baseline: python scripts/run_ultrasound_baseline.py --dataset-root Datasets/BUSI
+ultrasound_baseline,Ultrasound baseline,optional,completed,completed,fresh,Data/public_imaging/ultrasound_baseline/metrics.json,reason,
+ultrasound_baseline,Ultrasound baseline,optional,completed,completed,fresh,Data/public_imaging/ultrasound_baseline/metrics.json,macro_f1,
+ultrasound_baseline,Ultrasound baseline,optional,completed,completed,fresh,Data/public_imaging/ultrasound_baseline/metrics.json,balanced_accuracy,
+ct_lesion_workflow,CT lesion workflow,optional,optional_unavailable,unavailable,stale,Data/public_imaging/ct_lesion_workflow/report.json,reason,DeepLesion or PET/CT lesion dataset not found locally.
+ct_lesion_workflow,CT lesion workflow,optional,optional_unavailable,unavailable,stale,Data/public_imaging/ct_lesion_workflow/report.json,study_count,
+ct_lesion_workflow,CT lesion workflow,optional,optional_unavailable,unavailable,stale,Data/public_imaging/ct_lesion_workflow/report.json,workflow_stage,

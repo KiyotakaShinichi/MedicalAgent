@@ -16,12 +16,32 @@ from backend.services.mle_readiness import DEFAULT_OUTPUT_PATH, build_mle_readin
 def main():
     parser = argparse.ArgumentParser(description="Run MLE readiness gates for data, artifacts, model quality, and lifecycle.")
     parser.add_argument("--output-path", default=DEFAULT_OUTPUT_PATH)
+    parser.add_argument("--training-csv", default=None)
+    parser.add_argument("--metrics-path", default=None)
+    parser.add_argument("--predictions-path", default=None)
+    parser.add_argument("--evaluation-manifest-path", default=None)
+    parser.add_argument("--lineage-path", default=None)
+    parser.add_argument("--leakage-audit-path", default=None)
+    parser.add_argument("--locked-holdout-path", default=None)
     args = parser.parse_args()
 
     ensure_schema()
     db = SessionLocal()
     try:
-        report = build_mle_readiness_summary(db=db, output_path=args.output_path)
+        kwargs = {"db": db, "output_path": args.output_path}
+        for arg_name, kwarg_name in [
+            ("training_csv", "training_csv"),
+            ("metrics_path", "metrics_path"),
+            ("predictions_path", "predictions_path"),
+            ("evaluation_manifest_path", "evaluation_manifest_path"),
+            ("lineage_path", "lineage_path"),
+            ("leakage_audit_path", "leakage_audit_path"),
+            ("locked_holdout_path", "locked_holdout_path"),
+        ]:
+            value = getattr(args, arg_name)
+            if value:
+                kwargs[kwarg_name] = value
+        report = build_mle_readiness_summary(**kwargs)
     finally:
         db.close()
 

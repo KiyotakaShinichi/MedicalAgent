@@ -1,8 +1,8 @@
 {
   "schema_version": "dataset_lineage_v1",
-  "generated_at": "2026-05-14T10:25:47.454307+00:00",
+  "generated_at": "2026-05-15T02:55:24.889833+00:00",
   "dataset_dir": "Data\\complete_synthetic_breast_journeys_realism_v2",
-  "dataset_hash": "435169c563c0eaa5064b98965c8bafa60f208ca1e090ff3ebc00575d77f2cd7f",
+  "dataset_hash": "09a7f2c5749035c3c6b30be03799261a2e425c7717536f691b66e9783e8043eb",
   "source": "synthetic_complete_breast_journey",
   "generation_options": {
     "seed": 2031,
@@ -24,10 +24,10 @@
     "diagnoses": 240,
     "treatment_sessions": 1440,
     "labs": 4320,
-    "medications": 4075,
-    "symptoms": 2511,
-    "mri_reports": 1680,
-    "interventions": 24,
+    "medications": 4044,
+    "symptoms": 2513,
+    "mri_reports": 2500,
+    "interventions": 13,
     "outcomes": 240,
     "temporal_ml_rows": 1440
   },
@@ -35,7 +35,7 @@
     {
       "table": "diagnoses",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\diagnoses.csv",
-      "sha256": "3e1845c351bf15bba45c9c5fd0f46ea19725c12d9fc2438f56e9faa777452663",
+      "sha256": "617041d61824a278e95cad63052f0c289ad138e193750456d3cdcb44e9eadf49",
       "row_count": 240,
       "columns": [
         "patient_id",
@@ -57,8 +57,8 @@
     {
       "table": "interventions",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\interventions.csv",
-      "sha256": "d2684c8c1d769ca754514099f1edd18520689e99eab58f132f478a9232381440",
-      "row_count": 24,
+      "sha256": "3b0e8cdbf66116516af9f0bf397e60ee6f6e032404faf05be15e992a888e1c68",
+      "row_count": 13,
       "columns": [
         "patient_id",
         "date",
@@ -75,7 +75,7 @@
     {
       "table": "labs",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\labs.csv",
-      "sha256": "c5be38bf01910e6afde495d90bc037489a881c958a6f5d10e92b984bb8bd056e",
+      "sha256": "ed435a1f6a2f5c2817a666201341e527c24b7fb6b4af86ec023df974d2fea8d9",
       "row_count": 4320,
       "columns": [
         "patient_id",
@@ -95,8 +95,8 @@
     {
       "table": "medications",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\medications.csv",
-      "sha256": "7044013547969305dbc4c87ae51a0fa2be6c3744b2dab5e8828c629a5ab0fa46",
-      "row_count": 4075,
+      "sha256": "9cd90e6acd06f3e67a9f4873ea3d5ec57aae85e25348c45f4210626df1ff1720",
+      "row_count": 4044,
       "columns": [
         "patient_id",
         "date",
@@ -113,14 +113,15 @@
     {
       "table": "mri_reports",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\mri_reports.csv",
-      "sha256": "e30aa2037ceb4807f1b20719ffcfee8af522a4da6207eed82b7c4a19b2188e5b",
-      "row_count": 1680,
+      "sha256": "ccc5318e13228e17ccc9f2cebb1d2ed65eb97803d67a629791200bdfa7e3ec0b",
+      "row_count": 2500,
       "columns": [
         "patient_id",
         "date",
         "cycle",
         "timepoint",
         "modality",
+        "body_site",
         "breast_side",
         "location",
         "tumor_size_cm",
@@ -129,12 +130,12 @@
         "bi_rads",
         "source"
       ],
-      "schema_signature": "5bbc4b8ff1212b97d098f2919be1fb37cd0edcdf053b29f3d823960954c1f276"
+      "schema_signature": "70c1ec277dcdb55674b80c13823a5e84d52d7af0d04b23220622b373ca6019b6"
     },
     {
       "table": "outcomes",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\outcomes.csv",
-      "sha256": "a3191e9b6c61d3e768290620a7ae0da84667ec88dafe115bbf6ce8b7bd307a48",
+      "sha256": "64c5ae3774649f361fc16c22e11c80f524c5486874612e958b924dfa984448c2",
       "row_count": 240,
       "columns": [
         "patient_id",
@@ -153,7 +154,7 @@
     {
       "table": "patients",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\patients.csv",
-      "sha256": "8bbf323dafd5151bb3eac41400c9e4034850a301f7360ade185f2befcf10f0c7",
+      "sha256": "53b364aa7b737c8b2a75ce7de86fd252597ad19f0754846244b72550389e67d7",
       "row_count": 240,
       "columns": [
         "patient_id",
@@ -168,8 +169,8 @@
     {
       "table": "symptoms",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\symptoms.csv",
-      "sha256": "05733af29eff9b92c923c4937adb3e6f9139e9f216965d98e31b53a24fc907ac",
-      "row_count": 2511,
+      "sha256": "334054a937951bbaf7feb9c7d22fe84019488d782f3829009015aea023e86975",
+      "row_count": 2513,
       "columns": [
         "patient_id",
         "date",
@@ -184,7 +185,7 @@
     {
       "table": "temporal_ml_rows",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\temporal_ml_rows.csv",
-      "sha256": "77340633ecdb989de7c8bd0554fa47d7b4d11d09c2d5211fc2ce0ae6a47eb1e2",
+      "sha256": "a29f2214fadd403a8a52fa215586b6c1b11ecb88c997d60738239cb20f97935f",
       "row_count": 1440,
       "columns": [
         "patient_id",
@@ -207,6 +208,10 @@
         "recovery_platelets",
         "mri_tumor_size_cm",
         "mri_percent_change_from_baseline",
+        "has_mri",
+        "has_ct",
+        "has_ultrasound",
+        "imaging_modality_count",
         "response_score_percent",
         "max_symptom_severity",
         "symptom_count",
@@ -224,12 +229,12 @@
         "maintenance_needed",
         "final_response_multiclass"
       ],
-      "schema_signature": "4927cfd8666550c9a8514ceb436220d1dab0720947f769951e73397648a9596d"
+      "schema_signature": "89de0ba80d03bbb22b744a84c331cc4b75c3485fcdda31172399b524a197f664"
     },
     {
       "table": "treatment_sessions",
       "path": "Data\\complete_synthetic_breast_journeys_realism_v2\\treatment_sessions.csv",
-      "sha256": "7e0ca59644ebba4136d7d122428989ee19d78b9527189d6fa1bf4d7840470d61",
+      "sha256": "1bb577dded55eb7c7e12f5a4f5c4e0f767196c0dbd47e959993bacc363322b6e",
       "row_count": 1440,
       "columns": [
         "patient_id",
@@ -304,7 +309,7 @@
       "labs": "CBC rows at baseline/pre-cycle/nadir/recovery, with WBC, ANC, RBC, hemoglobin, and platelets.",
       "medications": "Anti-cancer regimen entries, supportive medications, and intervention medications/products.",
       "symptoms": "Patient-reported symptoms around treatment cycles.",
-      "mri_reports": "Synthetic MRI measurements at baseline and every treatment cycle.",
+      "mri_reports": "Synthetic imaging report events. MRI is common; CT and ultrasound are optional monitoring/staging signals and are not required for every patient.",
       "interventions": "Clinical support events such as growth-factor support, transfusions, antibiotics, or urgent review.",
       "outcomes": "Synthetic end-of-journey response labels and maintenance status.",
       "temporal_ml_rows": "Training-ready cycle-level features with final outcome labels.",

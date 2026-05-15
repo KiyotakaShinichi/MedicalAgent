@@ -1,9 +1,9 @@
 error_type,count,rate,example_patient_ids,meaning
-subtype_confusion,5,0.083,REALISM-BRCA-0008; REALISM-BRCA-0110; REALISM-BRCA-0128; REALISM-BRCA-0135; REALISM-BRCA-0230,HER2-related subgroup where classifier and response-regressor disagree.
-regimen_shift_uncertainty,3,0.05,REALISM-BRCA-0110; REALISM-BRCA-0230; REALISM-BRCA-0200,Regimen-specific review gap for HR+/HER2+ TCHP followed by endocrine therapy.
-false_negative_favorable_response,1,0.017,REALISM-BRCA-0110,Classifier missed a synthetically favorable final outcome. In medicine this is reviewed carefully because false negatives can hide benefit signals.
-false_positive_overoptimism,1,0.017,REALISM-BRCA-0219,Classifier predicted favorable response for an unfavorable synthetic outcome. This can over-reassure a review workflow.
-response_regression_outlier,1,0.017,REALISM-BRCA-0080,Continuous response estimate differs from the synthetic MRI-derived label by at least 20 percentage points.
-calibration_boundary_case,0,0.0,,Probability is close to the operating threshold; threshold changes may flip routing.
+calibration_boundary_case,10,0.167,REALISM-BRCA-0058; REALISM-BRCA-0073; REALISM-BRCA-0076; REALISM-BRCA-0082; REALISM-BRCA-0117; REALISM-BRCA-0137; REALISM-BRCA-0205; REALISM-BRCA-0217; REALISM-BRCA-0240; REALISM-BRCA-0187,Probability is close to the operating threshold; threshold changes may flip routing.
+subtype_confusion,7,0.117,REALISM-BRCA-0008; REALISM-BRCA-0058; REALISM-BRCA-0082; REALISM-BRCA-0162; REALISM-BRCA-0205; REALISM-BRCA-0235; REALISM-BRCA-0240,HER2-related subgroup where classifier and response-regressor disagree.
+false_negative_favorable_response,4,0.067,REALISM-BRCA-0073; REALISM-BRCA-0082; REALISM-BRCA-0240; REALISM-BRCA-0187,Classifier missed a synthetically favorable final outcome. In medicine this is reviewed carefully because false negatives can hide benefit signals.
+regimen_shift_uncertainty,3,0.05,REALISM-BRCA-0240; REALISM-BRCA-0050; REALISM-BRCA-0200,Regimen-specific review gap for HR+/HER2+ TCHP followed by endocrine therapy.
+response_regression_outlier,1,0.017,REALISM-BRCA-0131,Continuous response estimate differs from the synthetic MRI-derived label by at least 20 percentage points.
 delayed_toxicity_detection,0,0.0,,Deterministic CBC/symptom toxicity rule triggers even though the response classifier is favorable.
+false_positive_overoptimism,0,0.0,,Classifier predicted favorable response for an unfavorable synthetic outcome. This can over-reassure a review workflow.
 sparse_history_instability,0,0.0,,Limited temporal history or missing model signal makes the patient-level estimate less stable.

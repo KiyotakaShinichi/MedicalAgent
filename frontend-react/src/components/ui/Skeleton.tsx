@@ -57,18 +57,22 @@ export function SkeletonDashboard({
 }) {
   return (
     <div className="dashboard-page" role="status" aria-label={label}>
-      <div
-        className="patient-hero"
-        style={{ background: "rgba(23, 28, 39, 0.7)" }}
-      >
-        <div style={{ display: "grid", gap: 10 }}>
-          <SkeletonBlock width="30%" height={10} />
-          <SkeletonBlock width="55%" height={22} />
-          <SkeletonBlock width="40%" height={12} />
+      {/* Mirror the real PatientBanner layout — no inline overrides, so the
+          loading state matches the eventual content. */}
+      <div className="patient-hero">
+        <div style={{ display: "grid", gap: 12, alignContent: "start" }}>
+          <SkeletonBlock width="22%" height={10} />
+          <SkeletonBlock width="40%" height={26} />
+          <SkeletonBlock width="80%" height={12} />
+          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+            <SkeletonBlock width={130} height={28} style={{ borderRadius: 999 }} />
+            <SkeletonBlock width={110} height={28} style={{ borderRadius: 999 }} />
+            <SkeletonBlock width={90}  height={28} style={{ borderRadius: 999 }} />
+          </div>
         </div>
-        <div style={{ display: "grid", gap: 10 }}>
-          <SkeletonBlock width="100%" height={48} />
-          <SkeletonBlock width="100%" height={48} />
+        <div style={{ display: "grid", gap: 10, alignContent: "start" }}>
+          <SkeletonBlock width="100%" height={64} style={{ borderRadius: 10 }} />
+          <SkeletonBlock width="100%" height={56} style={{ borderRadius: 10 }} />
         </div>
       </div>
       <div className="dashboard-content">

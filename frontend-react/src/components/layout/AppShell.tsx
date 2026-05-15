@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { clsx } from "clsx";
-import { Activity, ChevronLeft, LogOut, Menu, ShieldCheck } from "lucide-react";
+import { Ribbon, ChevronLeft, LogOut, Menu, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import type { LucideIcon } from "lucide-react";
 
@@ -33,17 +33,28 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
     role === "patient" ? `Patient ${patientId ?? ""}` :
     role === "clinician" ? "Clinician" :
     role === "admin" ? "Admin / MLE" : "Workspace";
-  const activePath = [...navItems]
-    .sort((a, b) => b.to.length - a.to.length)
-    .find(({ to }) => location.pathname === to || location.pathname.startsWith(`${to}/`))
-    ?.to;
+
+  // Active link detection. Items can be plain paths ("/patient/chat") or
+  // hash anchors ("/patient#labs"). A hash item is active when its hash
+  // matches the current URL; otherwise the longest pathname prefix wins.
+  const currentHashKey = `${location.pathname}${location.hash}`;
+  const hashItems = navItems.filter((item) => item.to.includes("#"));
+  const pathItems = navItems.filter((item) => !item.to.includes("#"));
+  const hashActive = hashItems.find((item) => item.to === currentHashKey)?.to;
+  const pathActive = !hashActive && !location.hash
+    ? [...pathItems]
+        .sort((a, b) => b.to.length - a.to.length)
+        .find(({ to }) => location.pathname === to || location.pathname.startsWith(`${to}/`))
+        ?.to
+    : undefined;
+  const activePath = hashActive ?? pathActive;
 
   return (
     <div className="app-shell">
       <aside className={clsx("app-sidebar", sidebarOpen ? "is-open" : "is-collapsed")}>
         <div className="app-sidebar-brand">
           <span className="app-sidebar-logo">
-            <Activity size={22} aria-hidden="true" />
+            <Ribbon size={22} aria-hidden="true" />
           </span>
           {sidebarOpen && (
             <div className="app-sidebar-brand-text">
@@ -104,14 +115,16 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
       <div className="app-frame">
         <header className="app-topbar">
           <div>
-            <p className="app-topbar-kicker">{roleLabel}</p>
             <h1>{title}</h1>
-            {subtitle && <span>{subtitle}</span>}
+            {/* Subtitle is shown only when it adds info beyond the role kicker. */}
+            {subtitle && subtitle !== roleLabel && (
+              <span>{subtitle}</span>
+            )}
           </div>
           <div className="app-topbar-actions">
             <span className="app-safety-pill">
-              <ShieldCheck size={15} aria-hidden="true" />
-              PoC - not for clinical use
+              <ShieldCheck size={13} aria-hidden="true" />
+              PoC — not for clinical use
             </span>
           </div>
         </header>

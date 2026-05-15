@@ -8,6 +8,7 @@ POST /patients/{patient_id}/chat/stream.
 from __future__ import annotations
 
 import json
+import time
 from datetime import date
 
 import pandas as pd
@@ -78,6 +79,8 @@ from backend.services.timeline_intelligence import answer_timeline_question, bui
 from backend.services.data_availability import build_data_availability
 
 router = APIRouter(tags=["patient"])
+_REPORT_CACHE_TTL_SECONDS = 120
+_REPORT_CACHE: dict[str, tuple[float, dict]] = {}
 
 
 # ─── Request models ───────────────────────────────────────────────────────────
@@ -210,6 +213,10 @@ def _combined_imaging_reports(imaging_reports, ct_reports):
 
 
 def build_patient_report_response(patient_id: str, db: Session):
+    cached = _get_cached_report(patient_id)
+    if cached is not None:
+        return cached
+
     patient = get_patient(db, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -324,7 +331,30 @@ def build_patient_report_response(patient_id: str, db: Session):
     except Exception:
         report["latest_clinician_review"] = None
 
+    _set_cached_report(patient_id, report)
     return report
+
+
+def _get_cached_report(patient_id: str) -> dict | None:
+    item = _REPORT_CACHE.get(patient_id)
+    if not item:
+        return None
+    created_at, report = item
+    if time.monotonic() - created_at > _REPORT_CACHE_TTL_SECONDS:
+        _REPORT_CACHE.pop(patient_id, None)
+        return None
+    return report
+
+
+def _set_cached_report(patient_id: str, report: dict) -> None:
+    _REPORT_CACHE[patient_id] = (time.monotonic(), report)
+
+
+def _invalidate_report_cache(patient_id: str | None = None) -> None:
+    if patient_id is None:
+        _REPORT_CACHE.clear()
+    else:
+        _REPORT_CACHE.pop(patient_id, None)
 
 
 # ─── Patient CRUD ─────────────────────────────────────────────────────────────
@@ -433,6 +463,8 @@ def chat_with_patient_agent(
     try:
         validate_chat_message(payload.message)
         result = handle_patient_chat(db, patient_id, payload.message)
+        if result.get("saved_actions"):
+            _invalidate_report_cache(patient_id)
     except ValueError as exc:
         log_app_event(
             db=db, event_type="chat_error", patient_id=patient_id,
@@ -460,6 +492,8 @@ def chat_with_my_patient_agent(
     try:
         validate_chat_message(payload.message)
         result = handle_patient_chat(db, context.patient_id, payload.message)
+        if result.get("saved_actions"):
+            _invalidate_report_cache(context.patient_id)
     except ValueError as exc:
         log_app_event(
             db=db, event_type="chat_error", actor_role=context.role,
@@ -476,7 +510,14 @@ def _sse_event(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data)}\n\n"
 
 
-def _stream_agent_pipeline(db: Session, patient_id: str, message: str):
+def _chunk_text(text: str, chunk_size: int = 42):
+    """Yield small display chunks after all safety/output guardrails have passed."""
+    text = text or ""
+    for index in range(0, len(text), chunk_size):
+        yield text[index:index + chunk_size]
+
+
+def _stream_agent_pipeline(db: Session, patient_id: str, message: str, *, persist_support_chat: bool = False):
     """
     Generator that streams pipeline stage events then the final answer as SSE.
 
@@ -503,12 +544,19 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str):
 
     yield _sse_event("pipeline_stage", {"stage": "safety_gate", "label": "Checking safety gate…"})
 
+    yield _sse_event("pipeline_stage", {"stage": "intent_routing", "label": "Routing intent..."})
+
     try:
-        result = run_patient_agent_pipeline(
-            db=db,
-            patient_id=patient_id,
-            query=message,
-        )
+        if persist_support_chat:
+            result = handle_patient_chat(db, patient_id, message)
+            if result.get("saved_actions"):
+                _invalidate_report_cache(patient_id)
+        else:
+            result = run_patient_agent_pipeline(
+                db=db,
+                patient_id=patient_id,
+                query=message,
+            )
     except Exception as exc:
         yield _sse_event("error", {"error": "Agent pipeline failed. Please try again.", "code": "pipeline_error"})
         yield _sse_event("done", {})
@@ -518,18 +566,24 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str):
     yield _sse_event("pipeline_stage", {"stage": "retrieval", "label": "Retrieving context…"})
     yield _sse_event("pipeline_stage", {"stage": "generation", "label": "Generating response…"})
 
-    citations = result.get("citations") or []
+    agent_pipeline = result.get("agent_pipeline") or {}
+    citations = result.get("citations") or agent_pipeline.get("citations") or []
+    reply = result.get("reply") or ""
+    for chunk in _chunk_text(reply):
+        yield _sse_event("answer_delta", {"text": chunk})
+
     answer_payload = {
-        "reply": result.get("reply") or "",
+        "reply": reply,
         "citations": [
             {"id": c.get("id"), "title": c.get("title"), "source_name": c.get("source_name"), "source_url": c.get("source_url")}
             for c in citations
             if isinstance(c, dict)
         ],
-        "intent": result.get("intent"),
-        "safety_level": (result.get("safety") or {}).get("level"),
-        "cache_status": (result.get("cache") or {}).get("status"),
+        "intent": result.get("intent") or agent_pipeline.get("intent"),
+        "safety_level": (result.get("safety") or agent_pipeline.get("safety") or {}).get("level"),
+        "cache_status": (result.get("cache") or agent_pipeline.get("cache") or {}).get("status"),
         "saved_actions": result.get("saved_actions") or [],
+        "assistant_message_id": result.get("assistant_message_id"),
     }
     yield _sse_event("answer", answer_payload)
     yield _sse_event("done", {})
@@ -547,7 +601,7 @@ def stream_my_patient_chat(
     Preserves all safety guardrails; chain-of-thought is never exposed.
     """
     return StreamingResponse(
-        _stream_agent_pipeline(db, context.patient_id, payload.message),
+        _stream_agent_pipeline(db, context.patient_id, payload.message, persist_support_chat=True),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
@@ -666,6 +720,7 @@ def create_my_upload(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    _invalidate_report_cache(context.patient_id)
     return {"message": "Upload saved to patient record", "upload": upload}
 
 
@@ -689,6 +744,7 @@ def add_lab_result(
     lab = LabResult(patient_id=patient_id, date=payload.date, wbc=payload.wbc, hemoglobin=payload.hemoglobin, platelets=payload.platelets, source=payload.source or "manual", source_note=payload.source_note)
     db.add(lab)
     db.commit()
+    _invalidate_report_cache(patient_id)
     log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/labs", status="ok", input_payload=payload.dict(), output_payload={"lab_id": lab.id, "warning_count": len(validation_warnings)})
     return {"message": "Lab result added", "validation_warnings": validation_warnings, "error_state": None}
 
@@ -711,6 +767,7 @@ def add_treatment(
     treatment = Treatment(patient_id=patient_id, date=payload.date, cycle=payload.cycle, drug=payload.drug)
     db.add(treatment)
     db.commit()
+    _invalidate_report_cache(patient_id)
     log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/treatments", status="ok", input_payload=payload.dict(), output_payload={"treatment_id": treatment.id})
     return {"message": "Treatment added", "validation_warnings": validation_warnings, "error_state": None}
 
@@ -733,6 +790,7 @@ def add_symptom_report(
     symptom = SymptomReport(patient_id=patient_id, date=payload.date, symptom=payload.symptom, severity=payload.severity, notes=payload.notes)
     db.add(symptom)
     db.commit()
+    _invalidate_report_cache(patient_id)
     log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/symptoms", status="ok", input_payload=payload.dict(), output_payload={"symptom_id": symptom.id, "warning_count": len(validation_warnings)})
     return {"message": "Symptom report added", "validation_warnings": validation_warnings, "error_state": None}
 
@@ -755,6 +813,7 @@ def add_imaging_report(
     report = ImagingReport(patient_id=patient_id, date=payload.date, modality=payload.modality, report_type=payload.report_type, body_site=payload.body_site, findings=payload.findings, impression=payload.impression)
     db.add(report)
     db.commit()
+    _invalidate_report_cache(patient_id)
     log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/imaging-reports", status="ok", input_payload={**payload.dict(), "findings": "[redacted]", "impression": "[redacted]"}, output_payload={"imaging_report_id": report.id, "warning_count": len(validation_warnings)})
     return {"message": "Imaging report added", "validation_warnings": validation_warnings, "error_state": None}
 
@@ -771,6 +830,7 @@ def add_mri_registry_entry(
     entry = MRIFileRegistry(patient_id=patient_id, scan_date=payload.scan_date, modality=payload.modality, series_description=payload.series_description, local_path=payload.local_path, notes=payload.notes)
     db.add(entry)
     db.commit()
+    _invalidate_report_cache(patient_id)
     return {"message": "MRI registry entry added", "id": entry.id}
 
 
@@ -792,5 +852,6 @@ def add_ct_report(
     report = CTReport(patient_id=patient_id, date=payload.date, report_type=payload.report_type, findings=payload.findings, impression=payload.impression)
     db.add(report)
     db.commit()
+    _invalidate_report_cache(patient_id)
     log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/ct-reports", status="ok", input_payload={**payload.dict(), "findings": "[redacted]", "impression": "[redacted]"}, output_payload={"ct_report_id": report.id, "warning_count": len(validation_warnings)})
     return {"message": "CT report added", "validation_warnings": validation_warnings, "error_state": None}

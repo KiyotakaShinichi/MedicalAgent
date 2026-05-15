@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { RouteGuard } from "./components/layout/RouteGuard";
 import { LoadingPane } from "./components/ui/Spinner";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import LoginPage from "./pages/Login";
 
 const PatientDashboard = lazy(() => import("./pages/patient/PatientDashboard"));
@@ -29,7 +30,9 @@ export default function App() {
               path="/patient/*"
               element={
                 <RouteGuard role="patient">
-                  <PatientDashboard />
+                  <ErrorBoundary surface="the patient portal">
+                    <PatientDashboard />
+                  </ErrorBoundary>
                 </RouteGuard>
               }
             />
@@ -38,7 +41,9 @@ export default function App() {
               path="/clinician/*"
               element={
                 <RouteGuard role="clinician">
-                  <ClinicianDashboard />
+                  <ErrorBoundary surface="the clinician workspace">
+                    <ClinicianDashboard />
+                  </ErrorBoundary>
                 </RouteGuard>
               }
             />
@@ -47,7 +52,9 @@ export default function App() {
               path="/admin/*"
               element={
                 <RouteGuard role="admin">
-                  <AdminDashboard />
+                  <ErrorBoundary surface="the admin dashboard">
+                    <AdminDashboard />
+                  </ErrorBoundary>
                 </RouteGuard>
               }
             />

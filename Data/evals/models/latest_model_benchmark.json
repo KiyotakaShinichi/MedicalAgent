@@ -1,6 +1,6 @@
 {
-  "schema_version": "model_benchmark_v1",
-  "generated_at": "2026-05-14T15:05:30.903997+00:00",
+  "schema_version": "model_benchmark_v2",
+  "generated_at": "2026-05-15T13:04:25.899993+00:00",
   "status": "available",
   "synthetic_classification": [
     {
@@ -50,136 +50,327 @@
   },
   "calibration_report": {
     "schema_version": "calibration_eval_v1",
-    "generated_at": "2026-05-14T11:52:47.907302+00:00",
+    "generated_at": "2026-05-15T12:28:10.640629+00:00",
     "purpose": "Compares calibration methods on the synthetic champion model holdout. Informs which probability source to surface in the admin dashboard.",
-    "status": "strong",
+    "status": "passed",
     "champion_model": "gradient_boosting",
-    "calibration_patients": 60,
-    "validation_patients": 60,
+    "calibration_patients": 30,
+    "validation_patients": 30,
     "raw": {
       "method": "raw",
-      "ece": 0.1498,
-      "brier": 0.0436,
+      "ece": 0.1357,
+      "brier": 0.0632,
       "status": "unideal"
     },
     "isotonic": {
       "method": "isotonic_regression",
-      "ece": 0.0597,
-      "brier": 0.0364,
-      "status": "strong"
+      "ece": 0.0219,
+      "brier": 0.0463,
+      "status": "passed"
     },
     "platt": {
       "method": "platt_scaling",
-      "ece": 0.2191,
-      "brier": 0.0642,
+      "ece": 0.2743,
+      "brier": 0.1202,
       "status": "failed"
     },
     "temperature": {
       "method": "temperature_scaling",
-      "ece": 0.0653,
-      "brier": 0.0186,
+      "ece": 0.0728,
+      "brier": 0.0407,
       "status": "acceptable",
-      "best_temperature": 0.5
+      "best_temperature": 0.4
     },
     "training_pipeline_isotonic": {
       "method": "training_pipeline_isotonic",
-      "ece": 0.0597,
-      "brier": 0.0364,
-      "status": "strong"
+      "ece": 0.0219,
+      "brier": 0.0463,
+      "status": "passed"
     },
     "best_method": "isotonic_regression",
-    "best_ece": 0.0597,
-    "best_brier": 0.0364,
+    "best_ece": 0.0219,
+    "best_brier": 0.0463,
     "recommended_source": "training_pipeline_isotonic",
     "recommendation_reason": "The isotonic calibrator from the training pipeline has the lowest or equal ECE. Prefer the artifact already serialised during training to avoid extra hold-out leakage.",
     "reliability_diagram": [
       {
         "range": "0.0-0.1",
-        "count": 25,
-        "fraction_of_total": 0.2083,
-        "mean_predicted_probability": 0.0305,
+        "count": 7,
+        "fraction_of_total": 0.1167,
+        "mean_predicted_probability": 0.0509,
         "observed_positive_rate": 0.0,
-        "gap": 0.0305
+        "gap": 0.0509
       },
       {
         "range": "0.1-0.2",
-        "count": 7,
-        "fraction_of_total": 0.0583,
-        "mean_predicted_probability": 0.1457,
+        "count": 6,
+        "fraction_of_total": 0.1,
+        "mean_predicted_probability": 0.1362,
         "observed_positive_rate": 0.0,
-        "gap": 0.1457
+        "gap": 0.1362
       },
       {
         "range": "0.2-0.3",
-        "count": 7,
-        "fraction_of_total": 0.0583,
-        "mean_predicted_probability": 0.2434,
+        "count": 6,
+        "fraction_of_total": 0.1,
+        "mean_predicted_probability": 0.244,
         "observed_positive_rate": 0.0,
-        "gap": 0.2434
+        "gap": 0.244
       },
       {
         "range": "0.3-0.4",
-        "count": 8,
-        "fraction_of_total": 0.0667,
-        "mean_predicted_probability": 0.3452,
-        "observed_positive_rate": 0.0,
-        "gap": 0.3452
+        "count": 3,
+        "fraction_of_total": 0.05,
+        "mean_predicted_probability": 0.3241,
+        "observed_positive_rate": 0.3333,
+        "gap": 0.0092
       },
       {
         "range": "0.4-0.5",
-        "count": 3,
-        "fraction_of_total": 0.025,
-        "mean_predicted_probability": 0.441,
+        "count": 2,
+        "fraction_of_total": 0.0333,
+        "mean_predicted_probability": 0.4845,
         "observed_positive_rate": 0.0,
-        "gap": 0.441
+        "gap": 0.4845
       },
       {
         "range": "0.5-0.6",
-        "count": 3,
-        "fraction_of_total": 0.025,
-        "mean_predicted_probability": 0.5709,
-        "observed_positive_rate": 0.3333,
-        "gap": 0.2376
+        "count": 7,
+        "fraction_of_total": 0.1167,
+        "mean_predicted_probability": 0.5315,
+        "observed_positive_rate": 0.4286,
+        "gap": 0.1029
       },
       {
         "range": "0.6-0.7",
-        "count": 8,
-        "fraction_of_total": 0.0667,
-        "mean_predicted_probability": 0.6524,
-        "observed_positive_rate": 0.875,
-        "gap": 0.2226
+        "count": 3,
+        "fraction_of_total": 0.05,
+        "mean_predicted_probability": 0.6584,
+        "observed_positive_rate": 1.0,
+        "gap": 0.3416
       },
       {
         "range": "0.7-0.8",
-        "count": 7,
-        "fraction_of_total": 0.0583,
-        "mean_predicted_probability": 0.7489,
+        "count": 5,
+        "fraction_of_total": 0.0833,
+        "mean_predicted_probability": 0.7775,
         "observed_positive_rate": 1.0,
-        "gap": 0.2511
+        "gap": 0.2225
       },
       {
         "range": "0.8-0.9",
-        "count": 19,
-        "fraction_of_total": 0.1583,
-        "mean_predicted_probability": 0.8675,
-        "observed_positive_rate": 0.9474,
-        "gap": 0.0799
+        "count": 9,
+        "fraction_of_total": 0.15,
+        "mean_predicted_probability": 0.8579,
+        "observed_positive_rate": 1.0,
+        "gap": 0.1421
       },
       {
         "range": "0.9-1.0",
-        "count": 33,
-        "fraction_of_total": 0.275,
-        "mean_predicted_probability": 0.9448,
+        "count": 12,
+        "fraction_of_total": 0.2,
+        "mean_predicted_probability": 0.941,
         "observed_positive_rate": 1.0,
-        "gap": 0.0552
+        "gap": 0.059
       }
     ],
     "claim_boundary": "Calibration fitted on synthetic holdout data only. Real-world probability reliability requires external validation.",
     "display_hint": "Reliability diagram: each bin shows mean predicted probability vs observed positive rate. Perfect calibration = diagonal. ECE <= 0.06 is acceptable for PoC monitoring language with caveats."
   },
+  "subgroup_calibration": {
+    "status": "needs_attention",
+    "model": "gradient_boosting",
+    "n_bins": 10,
+    "min_bucket_size": 10,
+    "global_ece": 0.1413,
+    "subgroups": {
+      "molecular_subtype": {
+        "HER2+": {
+          "n": 15,
+          "ece": 0.1682,
+          "roc_auc": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 0.875,
+          "brier_score": 0.0763,
+          "precision": 0.875,
+          "positive_rate": 0.4667,
+          "status": "passed"
+        },
+        "HR+/HER2+": {
+          "n": 5,
+          "ece": null,
+          "roc_auc": null,
+          "sensitivity": null,
+          "specificity": null,
+          "brier_score": null,
+          "precision": null,
+          "positive_rate": null,
+          "status": "too_few_samples"
+        },
+        "HR+/HER2-": {
+          "n": 27,
+          "ece": 0.1664,
+          "roc_auc": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 0.7273,
+          "brier_score": 0.0647,
+          "precision": 0.8421,
+          "positive_rate": 0.5926,
+          "status": "passed"
+        },
+        "triple-negative": {
+          "n": 13,
+          "ece": 0.1913,
+          "roc_auc": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "brier_score": 0.0578,
+          "precision": 1.0,
+          "positive_rate": 0.5385,
+          "status": "passed"
+        }
+      },
+      "stage": {
+        "IIA": {
+          "n": 14,
+          "ece": 0.1623,
+          "roc_auc": 0.9792,
+          "sensitivity": 0.8333,
+          "specificity": 1.0,
+          "brier_score": 0.0721,
+          "precision": 1.0,
+          "positive_rate": 0.4286,
+          "status": "passed"
+        },
+        "IIB": {
+          "n": 23,
+          "ece": 0.1911,
+          "roc_auc": 0.9923,
+          "sensitivity": 1.0,
+          "specificity": 0.6,
+          "brier_score": 0.0833,
+          "precision": 0.7647,
+          "positive_rate": 0.5652,
+          "status": "passed"
+        },
+        "IIIA": {
+          "n": 13,
+          "ece": 0.1563,
+          "roc_auc": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "brier_score": 0.0404,
+          "precision": 1.0,
+          "positive_rate": 0.7692,
+          "status": "passed"
+        },
+        "IIIB": {
+          "n": 9,
+          "ece": null,
+          "roc_auc": null,
+          "sensitivity": null,
+          "specificity": null,
+          "brier_score": null,
+          "precision": null,
+          "positive_rate": null,
+          "status": "too_few_samples"
+        },
+        "IV": {
+          "n": 1,
+          "ece": null,
+          "roc_auc": null,
+          "sensitivity": null,
+          "specificity": null,
+          "brier_score": null,
+          "precision": null,
+          "positive_rate": null,
+          "status": "too_few_samples"
+        }
+      },
+      "age_bucket": {
+        "40-49": {
+          "n": 31,
+          "ece": 0.1382,
+          "roc_auc": 0.9818,
+          "sensitivity": 0.95,
+          "specificity": 0.8182,
+          "brier_score": 0.0684,
+          "precision": 0.9048,
+          "positive_rate": 0.6452,
+          "status": "passed"
+        },
+        "50-59": {
+          "n": 15,
+          "ece": 0.2,
+          "roc_auc": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "brier_score": 0.0565,
+          "precision": 1.0,
+          "positive_rate": 0.6,
+          "status": "passed"
+        },
+        "60-69": {
+          "n": 4,
+          "ece": null,
+          "roc_auc": null,
+          "sensitivity": null,
+          "specificity": null,
+          "brier_score": null,
+          "precision": null,
+          "positive_rate": null,
+          "status": "too_few_samples"
+        },
+        "<40": {
+          "n": 10,
+          "ece": 0.1346,
+          "roc_auc": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 0.8571,
+          "brier_score": 0.084,
+          "precision": 0.75,
+          "positive_rate": 0.3,
+          "status": "passed"
+        }
+      }
+    },
+    "max_disparity_by_column": {
+      "molecular_subtype": 0.0249,
+      "stage": 0.0348,
+      "age_bucket": 0.0654
+    },
+    "performance_disparity_by_column": {
+      "molecular_subtype": {
+        "roc_auc": 0.0,
+        "sensitivity": 0.0,
+        "specificity": 0.2727,
+        "brier_score": 0.0185,
+        "precision": 0.1579
+      },
+      "stage": {
+        "roc_auc": 0.0208,
+        "sensitivity": 0.1667,
+        "specificity": 0.4,
+        "brier_score": 0.0429,
+        "precision": 0.2353
+      },
+      "age_bucket": {
+        "roc_auc": 0.0182,
+        "sensitivity": 0.05,
+        "specificity": 0.1818,
+        "brier_score": 0.0275,
+        "precision": 0.25
+      }
+    },
+    "max_overall_disparity": 0.0654,
+    "disparity_alert_threshold": 0.05,
+    "claim_boundary": "Subgroup ECE is computed on synthetic-data buckets. The subgroup distribution reflects simulator choices, not real-world demographics. Disparity numbers here are an engineering signal, not a fairness claim."
+  },
+  "honest_reporting_note": "Synthetic AUROC and external-baseline AUROC must always be read together. Synthetic numbers reflect simulator-defined correlations the classifier can exploit cleanly; the BreastDCEDL external baselines are the closer signal of real-world performance. Never quote the synthetic AUROC without pairing it with at least one external baseline.",
   "claim_boundary": "Model benchmarks are synthetic or public-data baselines, not clinical validation.",
   "limitations": [
     "Synthetic metrics are not real-world clinical performance.",
-    "BreastDCEDL baselines use MRI-derived tabular features and are not a full clinical pipeline."
+    "BreastDCEDL baselines use MRI-derived tabular features and are not a full clinical pipeline.",
+    "Subgroup ECE is computed on simulator-defined subgroup distributions, not real-world demographics."
   ]
 }

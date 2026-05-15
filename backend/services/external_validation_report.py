@@ -20,6 +20,7 @@ DEFAULT_METRICS_PATH = "Data/breastdcedl_spy1_baseline_metrics.json"
 DEFAULT_PREDICTIONS_PATH = "Data/breastdcedl_spy1_model_predictions.csv"
 DEFAULT_CNN_METRICS_PATH = "Data/breastdcedl_spy1_cnn_metrics.json"
 DEFAULT_OUTPUT_DIR = "Data/external_validation"
+DEFAULT_TCGA_REPORT_PATH = "Data/external_validation/tcga_brca/tcga_brca_external_eval.json"
 
 
 def build_external_validation_report(
@@ -51,6 +52,12 @@ def build_external_validation_report(
     files = {
         "external_validation_json": str(output_path / "external_validation_report.json"),
         "external_validation_subgroups_csv": str(output_path / "external_validation_subgroups.csv"),
+        "tcga_brca_external_eval_json": DEFAULT_TCGA_REPORT_PATH,
+    }
+    report["tcga_brca"] = _load_json(DEFAULT_TCGA_REPORT_PATH) or {
+        "status": "not_run",
+        "message": "Run scripts/evaluate_on_tcga_brca.py to download the public clinical snapshot and create the applicability report.",
+        "claim_boundary": "TCGA-BRCA is not counted as model validation until compatible mapped labels/predictions are supplied.",
     }
     Path(files["external_validation_json"]).write_text(json.dumps({**report, "files": files}, indent=2), encoding="utf-8")
     pd.DataFrame(report.get("subgroup_metrics") or []).to_csv(files["external_validation_subgroups_csv"], index=False)

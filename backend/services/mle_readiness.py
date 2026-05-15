@@ -30,13 +30,15 @@ from backend.services.synthetic_realism_report import (
 
 
 DEFAULT_TRAINING_CSV = "Data/complete_synthetic_training/locked_holdout/development_rows.csv"
-DEFAULT_METRICS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
-DEFAULT_PREDICTIONS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
-DEFAULT_EVALUATION_MANIFEST_PATH = "Data/model_evaluation_reports/latest_manifest.json"
+if Path("Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv").exists():
+    DEFAULT_TRAINING_CSV = "Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv"
+DEFAULT_METRICS_PATH = "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_metrics.json" if Path("Data/complete_synthetic_training_realism_v2/complete_synthetic_model_metrics.json").exists() else "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
+DEFAULT_PREDICTIONS_PATH = "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv" if Path("Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv").exists() else "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
+DEFAULT_EVALUATION_MANIFEST_PATH = "Data/model_evaluation_reports_realism_v2/latest_manifest.json" if Path("Data/model_evaluation_reports_realism_v2/latest_manifest.json").exists() else "Data/model_evaluation_reports/latest_manifest.json"
 DEFAULT_OUTPUT_PATH = "Data/mle_monitoring/latest_mle_readiness.json"
-DEFAULT_LINEAGE_PATH = "Data/lineage/complete_synthetic_lineage.json"
-DEFAULT_LEAKAGE_AUDIT_PATH = "Data/complete_synthetic_training/leakage_audit/temporal_leakage_audit.json"
-DEFAULT_LOCKED_HOLDOUT_PATH = "Data/complete_synthetic_training/locked_holdout/locked_holdout_manifest.json"
+DEFAULT_LINEAGE_PATH = "Data/complete_synthetic_training_realism_v2/dataset_lineage.json" if Path("Data/complete_synthetic_training_realism_v2/dataset_lineage.json").exists() else "Data/lineage/complete_synthetic_lineage.json"
+DEFAULT_LEAKAGE_AUDIT_PATH = "Data/complete_synthetic_training_realism_v2/leakage_audit/temporal_leakage_audit.json" if Path("Data/complete_synthetic_training_realism_v2/leakage_audit/temporal_leakage_audit.json").exists() else "Data/complete_synthetic_training/leakage_audit/temporal_leakage_audit.json"
+DEFAULT_LOCKED_HOLDOUT_PATH = "Data/complete_synthetic_training_realism_v2/locked_holdout/locked_holdout_manifest.json" if Path("Data/complete_synthetic_training_realism_v2/locked_holdout/locked_holdout_manifest.json").exists() else "Data/complete_synthetic_training/locked_holdout/locked_holdout_manifest.json"
 
 
 REQUIRED_TEMPORAL_COLUMNS = {
@@ -357,6 +359,7 @@ def _performance_checks(metrics, evaluation_report):
     calibration = advanced.get("calibration") or {}
     posthoc_calibration = calibration.get("posthoc_calibration") or {}
     false_negative = advanced.get("false_negative_review") or {}
+    operating_fnr = _operating_policy_false_negative_rate(advanced)
     ci_report = advanced.get("bootstrap_confidence_intervals") or {}
     subgroup = advanced.get("subgroup_performance") or {}
     drift = (evaluation_report or {}).get("drift_monitoring") or {}
@@ -382,7 +385,23 @@ def _performance_checks(metrics, evaluation_report):
             hard_gate=False,
             remediation="Lock a calibration split, register the calibrated head, and re-run threshold and subgroup checks.",
         ),
-        _metric_check("false_negative_rate", "model_quality", false_negative.get("false_negative_rate"), maximum=0.10, strong=0.05, hard_maximum=0.20, lower_is_better=True, meaning="Missed positive/benefit cases need special review in medical ML."),
+        _metric_check("operating_policy_false_negative_rate", "model_quality", operating_fnr.get("rate"), maximum=0.10, strong=0.05, hard_maximum=0.20, lower_is_better=True, meaning="False-negative rate under the declared cost-sensitive operating policy, not only the default 0.5 threshold."),
+        _check(
+            name="default_threshold_false_negative_review",
+            category="model_quality",
+            status=false_negative.get("status") or "unavailable",
+            value={
+                "threshold": 0.5,
+                "false_negative_rate": false_negative.get("false_negative_rate"),
+                "false_negative_count": false_negative.get("count"),
+                "positive_cases": false_negative.get("positive_cases"),
+                "operating_policy": operating_fnr,
+            },
+            threshold="0.5-threshold review documented; operating policy may use a lower safety-first threshold",
+            meaning="Keeps the default-threshold miss pattern visible while release gating uses the explicit safety-first policy.",
+            hard_gate=False,
+            remediation="Inspect false-negative cases and justify any lower threshold against review burden.",
+        ),
         _check(
             name="bootstrap_ci_stability",
             category="model_quality",
@@ -659,6 +678,36 @@ def _metric_check(name, category, value, minimum=None, maximum=None, strong=None
         hard_gate=hard_gate,
         remediation="Retrain, retune threshold/calibration, or inspect weak slices before promotion.",
     )
+
+
+def _operating_policy_false_negative_rate(advanced):
+    policies = ((advanced or {}).get("cost_sensitive_thresholds") or {}).get("policies") or []
+    safety_first = next((p for p in policies if p.get("name") == "safety_first"), None)
+    false_negative_review = (advanced or {}).get("false_negative_review") or {}
+    positive_cases = false_negative_review.get("positive_cases")
+
+    if safety_first and positive_cases:
+        false_negative_count = safety_first.get("false_negative")
+        if false_negative_count is not None:
+            return {
+                "source": "safety_first_cost_sensitive_policy",
+                "threshold": safety_first.get("recommended_threshold"),
+                "rate": round(float(false_negative_count) / float(positive_cases), 3),
+                "false_negative_count": false_negative_count,
+                "positive_cases": positive_cases,
+                "sensitivity": safety_first.get("sensitivity"),
+                "specificity": safety_first.get("specificity"),
+                "status": safety_first.get("status"),
+            }
+
+    return {
+        "source": "default_threshold_0_5",
+        "threshold": 0.5,
+        "rate": false_negative_review.get("false_negative_rate"),
+        "false_negative_count": false_negative_review.get("count"),
+        "positive_cases": positive_cases,
+        "status": false_negative_review.get("status"),
+    }
 
 
 def _check(name, category, status, value, threshold, meaning, hard_gate, remediation):

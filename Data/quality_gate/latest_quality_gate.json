@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-14T11:26:25+0800",
+  "generated_at": "2026-05-15T20:28:14+0800",
   "status": "passed",
   "failed_checks": [],
   "checks": [
@@ -7,7 +7,7 @@
       "name": "frontend lint",
       "passed": true,
       "returncode": 0,
-      "duration_s": 57.88,
+      "duration_s": 53.05,
       "command": "C:\\Program Files\\nodejs\\npm.CMD run lint",
       "output_tail": "\n> frontend-react@0.0.0 lint\n> eslint .\n\n"
     },
@@ -15,33 +15,33 @@
       "name": "frontend build",
       "passed": true,
       "returncode": 0,
-      "duration_s": 48.89,
+      "duration_s": 43.9,
       "command": "C:\\Program Files\\nodejs\\npm.CMD run build",
-      "output_tail": "\n> frontend-react@0.0.0 build\n> tsc -b && vite build\n\n\u001b[36mvite v8.0.12 \u001b[32mbuilding client environment for production...\u001b[36m\u001b[39m\n\u001b[2K\ntransforming...\u00e2\u0153\u201c 2332 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                               0.56 kB \u00e2\u201d\u201a gzip:   0.35 kB\ndist/assets/index-hLTb8d-o.css               32.83 kB \u00e2\u201d\u201a gzip:   7.89 kB\ndist/assets/star-Bq1-kvAJ.js                  0.61 kB \u00e2\u201d\u201a gzip:   0.36 kB\ndist/assets/cpu-dEDzJQmp.js                   0.74 kB \u00e2\u201d\u201a gzip:   0.33 kB\ndist/assets/Badge-CCu3abID.js                 6.65 kB \u00e2\u201d\u201a gzip:   2.49 kB\ndist/assets/ClinicianDashboard-DLqyeCPt.js    8.76 kB \u00e2\u201d\u201a gzip:   3.01 kB\ndist/assets/PatientDashboard-DSFwIxtn.js     10.29 kB \u00e2\u201d\u201a gzip:   3.09 kB\ndist/assets/clsx-BI4dvvy0.js                 55.59 kB \u00e2\u201d\u201a gzip:  20.04 kB\ndist/assets/AdminDashboard-Bcz3lFcG.js       64.72 kB \u00e2\u201d\u201a gzip:  14.52 kB\ndist/assets/index-C69w9QKd.js               192.07 kB \u00e2\u201d\u201a gzip:  60.90 kB\ndist/assets/ChatPanel-Bp3iEfe7.js           362.18 kB \u00e2\u201d\u201a gzip: 105.97 kB\n\n\u001b[32m\u00e2\u0153\u201c built in 5.08s\u001b[39m\n"
+      "output_tail": "\n> frontend-react@0.0.0 build\n> tsc -b && vite build\n\n\u001b[36mvite v8.0.12 \u001b[32mbuilding client environment for production...\u001b[36m\u001b[39m\n\u001b[2K\ntransforming...\u00e2\u0153\u201c 2349 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                               0.65 kB \u00e2\u201d\u201a gzip:   0.37 kB\ndist/assets/index-BPjZ_3RY.css               45.80 kB \u00e2\u201d\u201a gzip:  10.00 kB\ndist/assets/star-C0Al5Yf2.js                  0.61 kB \u00e2\u201d\u201a gzip:   0.36 kB\ndist/assets/wrench-81FXJeCT.js                0.94 kB \u00e2\u201d\u201a gzip:   0.44 kB\ndist/assets/StatusBadge-DhMOm8M1.js          10.34 kB \u00e2\u201d\u201a gzip:   3.76 kB\ndist/assets/ClinicianDashboard-C88LPxlU.js   10.34 kB \u00e2\u201d\u201a gzip:   3.51 kB\ndist/assets/clsx-ClepKKSK.js                 15.56 kB \u00e2\u201d\u201a gzip:   6.22 kB\ndist/assets/PatientDashboard-CXJhOcc-.js     20.80 kB \u00e2\u201d\u201a gzip:   6.54 kB\ndist/assets/ChatPanel-BVN9B7Dg.js            25.07 kB \u00e2\u201d\u201a gzip:   8.62 kB\ndist/assets/triangle-alert-BG0IzrG9.js       42.75 kB \u00e2\u201d\u201a gzip:  15.46 kB\ndist/assets/AdminDashboard-BdwOGoAA.js       97.95 kB \u00e2\u201d\u201a gzip:  20.64 kB\ndist/assets/index-BnBpvYUu.js               195.71 kB \u00e2\u201d\u201a gzip:  62.16 kB\ndist/assets/LabTrendsChart-DQtheEzF.js      345.00 kB \u00e2\u201d\u201a gzip: 101.34 kB\n\n\u001b[32m\u00e2\u0153\u201c built in 4.68s\u001b[39m\n"
     },
     {
       "name": "backend fast tests",
       "passed": true,
       "returncode": 0,
-      "duration_s": 90.71,
-      "command": "C:\\Users\\L\\Downloads\\MedicalAgent\\.venv\\Scripts\\python.exe -m pytest tests/test_access_control.py -q",
-      "output_tail": "...................                                                      [100%]\n19 passed in 78.73s (0:01:18)\n"
+      "duration_s": 69.5,
+      "command": "C:\\Python314\\python.exe -m pytest tests/test_access_control.py -q",
+      "output_tail": "...................                                                      [100%]\n19 passed in 52.37s\n"
     },
     {
       "name": "public data manifest",
       "passed": true,
       "returncode": 0,
-      "duration_s": 0.44,
-      "command": "C:\\Users\\L\\Downloads\\MedicalAgent\\.venv\\Scripts\\python.exe scripts/build_public_data_manifest.py",
+      "duration_s": 0.66,
+      "command": "C:\\Python314\\python.exe scripts/build_public_data_manifest.py",
       "output_tail": "{\n  \"status\": \"usable_with_limitations\",\n  \"sources\": 11,\n  \"feature_needs\": 8,\n  \"manifest_hash\": \"68ecb3e9e99dc433\",\n  \"output_path\": \"Data/data_lineage/public_data_manifest.json\"\n}\n"
     },
     {
       "name": "MLE readiness",
       "passed": true,
       "returncode": 0,
-      "duration_s": 42.41,
-      "command": "C:\\Users\\L\\Downloads\\MedicalAgent\\.venv\\Scripts\\python.exe scripts/run_mle_checks.py",
-      "output_tail": "{\n  \"output_path\": \"Data/mle_monitoring/latest_mle_readiness.json\",\n  \"status\": \"unideal\",\n  \"release_recommendation\": \"candidate_only_fix_calibration_or_slice_gaps_before_strong_claims\",\n  \"hard_gate_status\": \"passed\",\n  \"hard_gate_failures\": 0,\n  \"poc_demo_readiness\": \"ready_with_limitations\",\n  \"poc_demo_recommendation\": \"ok_for_supervised_engineering_demo_with_disclaimers\",\n  \"category_statuses\": {\n    \"artifacts\": \"passed\",\n    \"data_contract\": \"passed\",\n    \"feature_store\": \"passed\",\n    \"lineage\": \"passed\",\n    \"model_quality\": \"passed\",\n    \"monitoring\": \"acceptable\",\n    \"lifecycle\": \"passed\",\n    \"safety_regression\": \"strong\",\n    \"realism\": \"unideal\"\n  }\n}\n"
+      "duration_s": 71.53,
+      "command": "C:\\Python314\\python.exe scripts/run_mle_checks.py",
+      "output_tail": "{\n  \"output_path\": \"Data/mle_monitoring/latest_mle_readiness.json\",\n  \"status\": \"acceptable\",\n  \"release_recommendation\": \"acceptable_for_poc_demo_with_limitations\",\n  \"hard_gate_status\": \"passed\",\n  \"hard_gate_failures\": 0,\n  \"poc_demo_readiness\": \"ready_with_limitations\",\n  \"poc_demo_recommendation\": \"ok_for_supervised_engineering_demo_with_disclaimers\",\n  \"category_statuses\": {\n    \"artifacts\": \"passed\",\n    \"data_contract\": \"passed\",\n    \"feature_store\": \"passed\",\n    \"lineage\": \"passed\",\n    \"model_quality\": \"acceptable\",\n    \"monitoring\": \"acceptable\",\n    \"lifecycle\": \"passed\",\n    \"safety_regression\": \"strong\",\n    \"realism\": \"passed\"\n  }\n}\n"
     },
     {
       "name": "RAG ablation artifact",
@@ -49,7 +49,7 @@
       "returncode": 0,
       "duration_s": 0,
       "command": "read rag_ablation.json",
-      "output_tail": "{\n  \"active_index\": {\n    \"schema_version\": \"local_dense_faiss_hybrid_index_v2\",\n    \"path\": \"Data\\\\rag_index\\\\local_hybrid_rag_index.joblib\",\n    \"built_at\": \"2026-05-13T13:25:57.912447+00:00\",\n    \"knowledge_fingerprint\": \"de91a31c0d9569b2\",\n    \"document_count\": 196,\n    \"retrieval_backend\": \"local_dense_faiss_hybrid_index\",\n    \"dense_component\": \"sentence-transformer cosine via FAISS IndexFlatIP (sentence-transformers/all-MiniLM-L6-v2)\",\n    \"sparse_component\": \"BM25Okapi\",\n    \"fusion\": \"Reciprocal Rank Fusion (RRF k=60)\",\n    \"semantic_component\": \"sentence-transformer cosine via FAISS IndexFlatIP (sentence-transformers/all-MiniLM-L6-v2)\",\n    \"status\": \"current\",\n    \"expected_knowledge_fingerprint\": \"de91a31c0d9569b2\",\n    \"dense_available\": true,\n    \"bm25_available\": true\n  },\n  \"hybrid_reranked\": {\n    \"case_count\": 12,\n    \"pass_rate\": 1.0,\n    \"expected_source_hit_rate\": 1.0,\n    \"average_grounding_score\": null,\n    \"average_latency_ms\": 618.17,\n    \"backend\": \"hybrid_reranked, local_dense_faiss_hybrid_index\"\n  },\n  \"claim_boundary\": \"These ablation results support engineering comparison only. They do not validate clinical accuracy.\"\n}"
+      "output_tail": "{\n  \"active_index\": {\n    \"schema_version\": \"local_dense_faiss_hybrid_index_v2\",\n    \"path\": \"Data\\\\rag_index\\\\local_hybrid_rag_index.joblib\",\n    \"built_at\": \"2026-05-15T12:17:31.959044+00:00\",\n    \"knowledge_fingerprint\": \"6167c186e2a0c861\",\n    \"document_count\": 225,\n    \"retrieval_backend\": \"local_dense_faiss_hybrid_index\",\n    \"dense_component\": \"sentence-transformer cosine via FAISS IndexFlatIP (sentence-transformers/all-MiniLM-L6-v2)\",\n    \"sparse_component\": \"BM25Okapi\",\n    \"fusion\": \"Reciprocal Rank Fusion (RRF k=60)\",\n    \"semantic_component\": \"sentence-transformer cosine via FAISS IndexFlatIP (sentence-transformers/all-MiniLM-L6-v2)\",\n    \"status\": \"current\",\n    \"expected_knowledge_fingerprint\": \"6167c186e2a0c861\",\n    \"dense_available\": true,\n    \"bm25_available\": true\n  },\n  \"hybrid_reranked\": {\n    \"case_count\": 12,\n    \"pass_rate\": 1.0,\n    \"expected_source_hit_rate\": 1.0,\n    \"average_grounding_score\": null,\n    \"average_latency_ms\": 1142.98,\n    \"backend\": \"hybrid_reranked, local_dense_faiss_hybrid_index\"\n  },\n  \"claim_boundary\": \"These ablation results support engineering comparison only. They do not validate clinical accuracy.\"\n}"
     },
     {
       "name": "agent regression artifact",

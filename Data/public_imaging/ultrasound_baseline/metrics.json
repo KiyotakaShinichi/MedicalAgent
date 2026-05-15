@@ -1,8 +1,89 @@
 {
-  "schema_version": "breast_ultrasound_baseline_v1",
-  "generated_at": "2026-05-14T03:14:04.348725+00:00",
-  "status": "unavailable",
-  "reason": "Dataset is missing, too small, or has fewer than two labels.",
-  "expected_layout": "Put BUSI images under Datasets/BUSI with benign/malignant/normal folders.",
-  "claim_boundary": "Unavailable artifacts are explicit so the dashboard does not imply hidden validation."
+  "schema_version": "public_ultrasound_baseline_v1",
+  "generated_at": "2026-05-15T02:57:28.785883+00:00",
+  "status": "completed",
+  "dataset_root": "Datasets\\BUSI",
+  "task": "breast_ultrasound_image_classification_baseline",
+  "model_family": "handcrafted_image_features_plus_sklearn_baselines",
+  "image_count": 600,
+  "train_count": 450,
+  "test_count": 150,
+  "label_counts": {
+    "benign": 437,
+    "malignant": 163
+  },
+  "feature_names": [
+    "mean_intensity",
+    "std_intensity",
+    "p10",
+    "p25",
+    "p50",
+    "p75",
+    "p90",
+    "mean_gradient",
+    "std_gradient",
+    "bright_fraction",
+    "dark_fraction",
+    "hist_bin_00",
+    "hist_bin_01",
+    "hist_bin_02",
+    "hist_bin_03",
+    "hist_bin_04",
+    "hist_bin_05",
+    "hist_bin_06",
+    "hist_bin_07",
+    "hist_bin_08",
+    "hist_bin_09",
+    "hist_bin_10",
+    "hist_bin_11",
+    "hist_bin_12",
+    "hist_bin_13",
+    "hist_bin_14",
+    "hist_bin_15"
+  ],
+  "models": {
+    "logistic_regression": {
+      "accuracy": 0.7333,
+      "balanced_accuracy": 0.7557,
+      "macro_f1": 0.7082,
+      "confusion_matrix": [
+        [
+          77,
+          32
+        ],
+        [
+          8,
+          33
+        ]
+      ],
+      "classes": [
+        "benign",
+        "malignant"
+      ],
+      "auroc": 0.7923
+    },
+    "random_forest": {
+      "accuracy": 0.8333,
+      "balanced_accuracy": 0.756,
+      "macro_f1": 0.7737,
+      "confusion_matrix": [
+        [
+          101,
+          8
+        ],
+        [
+          17,
+          24
+        ]
+      ],
+      "classes": [
+        "benign",
+        "malignant"
+      ],
+      "auroc": 0.8776
+    }
+  },
+  "best_model": "random_forest",
+  "predictions_path": "Data/public_imaging/ultrasound_baseline/predictions.csv",
+  "claim_boundary": "This is an engineering baseline on public ultrasound images. It is not a diagnostic or clinical validation model."
 }

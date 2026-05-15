@@ -6,13 +6,19 @@ All routes require admin role via get_admin_access_context.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+import time
+import json
+
+from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from backend.api.deps import get_admin_access_context, get_db
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+
+_ADMIN_ANALYTICS_CACHE_TTL_SECONDS = 120
+_ADMIN_ANALYTICS_CACHE: dict[str, object] = {"expires_at": 0.0, "payload_json": None}
 
 
 # ─── Request models ───────────────────────────────────────────────────────────
@@ -36,7 +42,23 @@ def get_admin_analytics(
 ):
     from backend.services.admin_analytics import build_admin_analytics
 
-    return build_admin_analytics(db)
+    now = time.time()
+    if _ADMIN_ANALYTICS_CACHE["payload_json"] is not None and float(_ADMIN_ANALYTICS_CACHE["expires_at"]) > now:
+        return Response(
+            content=str(_ADMIN_ANALYTICS_CACHE["payload_json"]),
+            media_type="application/json",
+            headers={"X-Analytics-Cache": "hit"},
+        )
+
+    payload = build_admin_analytics(db)
+    payload_json = json.dumps(payload, default=str, separators=(",", ":"))
+    _ADMIN_ANALYTICS_CACHE["payload_json"] = payload_json
+    _ADMIN_ANALYTICS_CACHE["expires_at"] = now + _ADMIN_ANALYTICS_CACHE_TTL_SECONDS
+    return Response(
+        content=payload_json,
+        media_type="application/json",
+        headers={"X-Analytics-Cache": "miss"},
+    )
 
 
 # ─── Evaluation reports ───────────────────────────────────────────────────────

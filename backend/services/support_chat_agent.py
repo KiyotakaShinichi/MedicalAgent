@@ -27,6 +27,9 @@ SYMPTOM_KEYWORDS = {
     "fatigue": ["fatigue", "tired", "weak", "exhausted"],
     "nausea": ["nausea", "nauseous", "vomit", "vomiting"],
     "pain": ["pain", "ache", "aching", "sore"],
+    "bloody discharge": ["blood discharge", "bloody discharge", "bleeding discharge", "blood-stained discharge"],
+    "bleeding": ["bleeding", "blood loss", "spotting"],
+    "discharge": ["discharge"],
     "fever": ["fever", "temperature", "chills"],
     "shortness of breath": ["shortness of breath", "breathless", "difficulty breathing"],
     "neuropathy": ["neuropathy", "tingling", "numbness"],
@@ -43,6 +46,8 @@ URGENT_TERMS = [
     "fainted",
     "confused",
     "bleeding",
+    "blood discharge",
+    "bloody discharge",
     "fever",
     "suicidal",
     "self harm",
@@ -97,6 +102,9 @@ def handle_patient_chat(db, patient_id, message):
     urgent_flags = _detect_urgent_flags(normalized)
     routing_safety = safety_scope_check(normalized, urgent_flags)
     extracted = _extract_candidate_inputs(normalized)
+    resumed_symptom = _resume_pending_symptom_if_possible(db, patient_id, normalized, extracted)
+    if resumed_symptom:
+        extracted["symptom"] = resumed_symptom
     deterministic_plan = _deterministic_tool_plan(normalized, extracted, routing_safety)
     tool_plan = _select_tool_plan(normalized, extracted, deterministic_plan, routing_safety)
 
@@ -113,25 +121,61 @@ def handle_patient_chat(db, patient_id, message):
 
     symptom = extracted["symptom"]
     if "save_symptom" in selected_tools and symptom:
-        severity = symptom["severity"] if symptom["severity"] is not None else 5
-        validate_symptom_payload(symptom["symptom"], severity)
-        db.add(SymptomReport(
-            patient_id=patient_id,
-            date=_extract_date(normalized),
-            symptom=symptom["symptom"],
-            severity=severity,
-            notes=f"Captured from support chat: {normalized}",
-        ))
-        actions.append({
-            "type": "saved_symptom",
-            "symptom": symptom["symptom"],
-            "severity": severity,
-        })
+        # Honest-save rule: only persist when severity was explicitly provided.
+        # Auto-defaulting silently caused "I've logged your symptom" replies
+        # for messages that gave no severity, which is misleading.
+        if not symptom.get("severity_provided") or symptom["severity"] is None:
+            actions.append({
+                "type": "partial_symptom_detected",
+                "symptom": symptom["symptom"],
+                "message": (
+                    f"I noticed you mentioned {symptom['symptom']}, but I need a severity "
+                    f"before I can save it. Please send it on a 0-10 scale, for example: "
+                    f"\"{symptom['symptom']} severity 6/10 today\"."
+                ),
+            })
+        else:
+            severity = int(symptom["severity"])
+            try:
+                validate_symptom_payload(symptom["symptom"], severity)
+                db.add(SymptomReport(
+                    patient_id=patient_id,
+                    date=_extract_date(normalized),
+                    symptom=symptom["symptom"],
+                    severity=severity,
+                    notes=f"Captured from support chat: {normalized}",
+                ))
+                db.flush()  # surface DB errors here, before we claim a save happened
+                actions.append({
+                    "type": "saved_symptom",
+                    "symptom": symptom["symptom"],
+                    "severity": severity,
+                    "resumed_from_memory": bool(symptom.get("resumed_from_memory")),
+                })
+            except Exception as exc:
+                # Validation or DB write failed.  Roll back the pending change
+                # and surface a truthful "I couldn't save it yet" action.
+                db.rollback()
+                actions.append({
+                    "type": "symptom_save_failed",
+                    "symptom": symptom["symptom"],
+                    "severity": severity,
+                    "reason": str(exc)[:200],
+                    "message": (
+                        f"I couldn't save the {symptom['symptom']} entry just now — "
+                        f"there was a problem with the record. Please try again or "
+                        f"log it from the portal manually."
+                    ),
+                })
     elif "request_symptom_details" in selected_tools and symptom:
         actions.append({
             "type": "partial_symptom_detected",
             "symptom": symptom["symptom"],
-            "message": f"I noticed {symptom['symptom']} wording. If you want me to log it, send the severity from 0-10, for example: {symptom['symptom']} severity 6/10 today.",
+            "message": (
+                f"I noticed you mentioned {symptom['symptom']}. If you want me to log it, "
+                f"send the severity from 0-10, for example: "
+                f"\"{symptom['symptom']} severity 6/10 today\"."
+            ),
         })
 
     labs = extracted["labs"]
@@ -220,18 +264,40 @@ def handle_patient_chat(db, patient_id, message):
     patient_context = _recent_patient_context(db, patient_id)
     fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
     routing_intent = tool_plan["intent"] if tool_plan.get("intent") in ALLOWED_SUPPORT_INTENTS else route_intent(normalized, actions=actions, safety=routing_safety)
-    if _should_use_llm_direct_reply(routing_intent, routing_safety, actions, urgent_flags):
+    if _should_use_llm_direct_reply(routing_intent, routing_safety, actions, urgent_flags) and not _has_tool_action(actions):
         fallback_response = _generate_llm_response(normalized, actions, urgent_flags, patient_context, fallback_response)
-    agent_result = run_patient_agent_pipeline(
-        db=db,
-        patient_id=patient_id,
-        query=normalized,
-        patient_context=patient_context,
-        fallback_response=fallback_response,
-        actions=actions,
-        urgent_flags=urgent_flags,
-        preselected_intent=routing_intent,
-    )
+    if _should_bypass_rag_for_tool_actions(actions, routing_intent):
+        agent_result = {
+            "reply": fallback_response,
+            "intent": routing_intent,
+            "safety": routing_safety,
+            "citations": [],
+            "cache": {"status": "bypassed_for_deterministic_tool_action"},
+            "validation": {"status": "not_needed_for_tool_confirmation"},
+            "guardrails": {
+                "input_passed": routing_safety.get("level") != "blocked",
+                "output_passed": True,
+                "reason": "deterministic tool confirmation; no RAG generation",
+            },
+            "rag_evaluation": None,
+            "pipeline_trace": [
+                "safety_gate",
+                "intent_routing",
+                "deterministic_tool_action",
+                "confirmation_reply",
+            ],
+        }
+    else:
+        agent_result = run_patient_agent_pipeline(
+            db=db,
+            patient_id=patient_id,
+            query=normalized,
+            patient_context=patient_context,
+            fallback_response=fallback_response,
+            actions=actions,
+            urgent_flags=urgent_flags,
+            preselected_intent=routing_intent,
+        )
     response = agent_result["reply"]
     assistant_record = ChatMessage(
         patient_id=patient_id,
@@ -293,6 +359,28 @@ def handle_patient_chat(db, patient_id, message):
     }
 
 
+def _has_tool_action(actions):
+    return any(
+        action.get("type") in {
+            "saved_symptom",
+            "saved_labs",
+            "saved_medication",
+            "saved_imaging_report",
+            "partial_symptom_detected",
+            "partial_labs_detected",
+            "partial_imaging_detected",
+            "symptom_save_failed",
+        }
+        for action in actions
+    )
+
+
+def _should_bypass_rag_for_tool_actions(actions, routing_intent):
+    if routing_intent != "data_entry_confirmation":
+        return False
+    return _has_tool_action(actions)
+
+
 def _extract_candidate_inputs(message):
     labs = _extract_complete_labs(message)
     imaging_report = _extract_imaging_report(message)
@@ -305,6 +393,46 @@ def _extract_candidate_inputs(message):
         "partial_imaging": bool(not imaging_report and _looks_like_partial_imaging(message)),
         "medication": _extract_medication(message),
     }
+
+
+def _resume_pending_symptom_if_possible(db, patient_id, message, extracted):
+    """Resume a prior partial symptom save when the user replies with severity only."""
+    if extracted.get("symptom"):
+        return None
+    severity = _extract_severity(message.lower())
+    if severity is None:
+        return None
+    pending_symptom = _latest_pending_symptom(db, patient_id)
+    if not pending_symptom:
+        return None
+    return {
+        "symptom": pending_symptom,
+        "severity": severity,
+        "severity_provided": True,
+        "resumed_from_memory": True,
+    }
+
+
+def _latest_pending_symptom(db, patient_id):
+    rows = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.patient_id == patient_id, ChatMessage.role == "assistant")
+        .order_by(ChatMessage.created_at.desc(), ChatMessage.id.desc())
+        .limit(8)
+        .all()
+    )
+    for row in rows:
+        try:
+            payload = json.loads(row.saved_actions_json or "{}")
+        except (TypeError, ValueError):
+            continue
+        for action in payload.get("saved_actions") or []:
+            action_type = action.get("type")
+            if action_type == "saved_symptom":
+                return None
+            if action_type == "partial_symptom_detected" and action.get("symptom"):
+                return str(action["symptom"])
+    return None
 
 
 def _deterministic_tool_plan(message, extracted, safety):
@@ -350,12 +478,15 @@ def _deterministic_tool_plan(message, extracted, safety):
 
 
 def _select_tool_plan(message, extracted, deterministic_plan, safety):
-    llm = select_support_tools_with_local_llm(
-        message,
-        deterministic_tools=deterministic_plan["selected_tools"],
-        deterministic_intent=deterministic_plan["intent"],
-        safety=safety,
-    )
+    deterministic_tools = [tool for tool in deterministic_plan.get("selected_tools", []) if tool != "none"]
+    llm = {"available": False}
+    if not deterministic_tools:
+        llm = select_support_tools_with_local_llm(
+            message,
+            deterministic_tools=deterministic_plan["selected_tools"],
+            deterministic_intent=deterministic_plan["intent"],
+            safety=safety,
+        )
     selected = deterministic_plan["selected_tools"]
     source = deterministic_plan["source"]
     confidence = deterministic_plan["confidence"]
@@ -860,6 +991,31 @@ def _extract_date(message):
         return date(year, month, day)
     if "yesterday" in lower:
         return date.today() - timedelta(days=1)
+
+    month_match = re.search(
+        r"\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|"
+        r"sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*"
+        r"(\d{1,2})(?:st|nd|rd|th)?(?:,?\s*(20\d{2}))?\b",
+        lower,
+    )
+    if month_match:
+        month_name, day_text, year_text = month_match.groups()
+        month_lookup = {
+            "jan": 1, "january": 1,
+            "feb": 2, "february": 2,
+            "mar": 3, "march": 3,
+            "apr": 4, "april": 4,
+            "may": 5,
+            "jun": 6, "june": 6,
+            "jul": 7, "july": 7,
+            "aug": 8, "august": 8,
+            "sep": 9, "sept": 9, "september": 9,
+            "oct": 10, "october": 10,
+            "nov": 11, "november": 11,
+            "dec": 12, "december": 12,
+        }
+        year = int(year_text) if year_text else date.today().year
+        return date(year, month_lookup[month_name], int(day_text))
     return date.today()
 
 
@@ -899,6 +1055,7 @@ def _build_response(message, actions, urgent_flags, patient_context):
         )
 
     saved = [action for action in actions if action["type"].startswith("saved_")]
+    failed = [action for action in actions if action["type"].endswith("_save_failed")]
     partial_actions = [action for action in actions if action["type"].startswith("partial_")]
     if saved:
         labels = []
@@ -912,11 +1069,14 @@ def _build_response(message, actions, urgent_flags, patient_context):
             elif action["type"] == "saved_imaging_report":
                 labels.append(f"{action['modality']} report from {action['date']}")
         parts.append("I saved this to your patient record: " + "; ".join(labels) + ".")
-    elif partial_actions:
-        parts.extend(action["message"] for action in partial_actions if action.get("message"))
-    else:
-        contextual = _contextual_reply(message, patient_context)
-        parts.append(contextual or "I heard you. I can chat normally, answer low-risk education questions with sources when needed, or help log symptoms, CBC values, medications, and imaging report text.")
+    if failed:
+        parts.extend(action["message"] for action in failed if action.get("message"))
+    if not saved and not failed:
+        if partial_actions:
+            parts.extend(action["message"] for action in partial_actions if action.get("message"))
+        else:
+            contextual = _contextual_reply(message, patient_context)
+            parts.append(contextual or "I heard you. I can chat normally, answer low-risk education questions with sources when needed, or help log symptoms, CBC values, medications, and imaging report text.")
 
     partial_labs = [action for action in actions if action["type"] == "partial_labs_detected"]
     if partial_labs and saved:
@@ -1068,6 +1228,22 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
         return fallback_response
     if urgent_flags and "emergency" not in reply.lower() and "oncology" not in reply.lower():
         return fallback_response
+    # Honest-save guard: the LLM is allowed to rephrase the deterministic
+    # fallback, but it must never claim to have logged/saved/recorded something
+    # when no save action actually succeeded.  If the LLM hallucinates a save,
+    # discard its output and return the deterministic reply.
+    saved_count = sum(1 for action in actions if str(action.get("type", "")).startswith("saved_"))
+    if saved_count == 0:
+        lower_reply = reply.lower()
+        save_claim_terms = (
+            "i logged", "i've logged", "i have logged",
+            "i saved", "i've saved", "i have saved",
+            "i recorded", "i've recorded", "i have recorded",
+            "i added", "i've added", "i have added",
+            "added to your record", "saved to your record", "logged to your record",
+        )
+        if any(term in lower_reply for term in save_claim_terms):
+            return fallback_response
     return reply
 
 

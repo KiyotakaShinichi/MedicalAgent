@@ -1,0 +1,5 @@
+patient_id,probability,stage,molecular_subtype,latest_mri_percent_change,max_symptom_severity,nadir_wbc,final_cancer_status
+REALISM-BRCA-0187,0.405,IIIB,HR+/HER2-,-46.04,7.0,3.29,minimal_residual_disease
+REALISM-BRCA-0073,0.4,IIIA,triple-negative,-46.49,9.0,1.21,minimal_residual_disease
+REALISM-BRCA-0082,0.4,IIB,HER2+,-50.8,6.0,2.24,minimal_residual_disease
+REALISM-BRCA-0240,0.4,IIA,HR+/HER2+,-36.05,7.0,1.84,minimal_residual_disease

@@ -30,7 +30,6 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     // Keep console reporting; in a portfolio demo this is enough. In
     // production this is where Sentry / Datadog instrumentation would go.
-    // eslint-disable-next-line no-console
     console.error("[ErrorBoundary]", this.props.surface ?? "unknown", error, info);
   }
 

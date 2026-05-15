@@ -164,7 +164,8 @@ export interface PatientReport {
 // ─── Chat ─────────────────────────────────────────────────────────────────────
 export interface SavedAction {
   type: string;
-  data: Record<string, unknown>;
+  data?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export interface ChatMessage {
@@ -178,6 +179,12 @@ export interface ChatResponse {
   reply: string;
   saved_actions: SavedAction[];
   citations?: string[];
+  assistant_message_id?: string | number;
+}
+
+export interface ChatStreamHandlers {
+  onStage?: (label: string) => void;
+  onDelta?: (text: string) => void;
 }
 
 // ─── Clinician ────────────────────────────────────────────────────────────────

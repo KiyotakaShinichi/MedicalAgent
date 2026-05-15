@@ -1,0 +1,13 @@
+patient_id,category,action,probability,latest_mri_percent_change,max_symptom_severity,nadir_wbc,intervention_count
+REALISM-BRCA-0001,routine_monitoring,"Favorable response signal would remain in routine monitoring, assuming no clinician concern.",1.0,-91.26,6.0,3.63,0.0
+REALISM-BRCA-0004,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.0,18.89,7.0,5.07,0.0
+REALISM-BRCA-0005,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-58.41,7.0,3.82,0.0
+REALISM-BRCA-0007,routine_monitoring,"Favorable response signal would remain in routine monitoring, assuming no clinician concern.",1.0,-68.51,6.0,4.21,0.0
+REALISM-BRCA-0008,response_concern_review,Low response probability or weak MRI improvement would route to response-trend review.,0.0,-31.06,6.0,6.7,0.0
+REALISM-BRCA-0023,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-59.71,7.0,1.69,0.0
+REALISM-BRCA-0028,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-39.52,7.0,3.18,0.0
+REALISM-BRCA-0031,response_concern_review,Low response probability or weak MRI improvement would route to response-trend review.,0.0,11.63,6.0,6.28,0.0
+REALISM-BRCA-0041,routine_monitoring,"Favorable response signal would remain in routine monitoring, assuming no clinician concern.",1.0,-50.82,5.0,4.31,0.0
+REALISM-BRCA-0046,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-46.2,7.0,4.54,0.0
+REALISM-BRCA-0047,discordant_response_toxicity_review,"Favorable response signal, but toxicity signals would route to clinician review.",1.0,-88.64,7.0,1.28,1.0
+REALISM-BRCA-0050,toxicity_review,CBC/symptom toxicity signals would route to clinician review.,0.0,27.87,7.0,4.96,0.0

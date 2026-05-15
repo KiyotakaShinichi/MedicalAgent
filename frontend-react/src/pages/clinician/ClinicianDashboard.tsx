@@ -18,7 +18,7 @@ import { AiSummaryPanel } from "../patient/AiSummaryPanel";
 import { ReviewQueue } from "./ReviewQueue";
 import { ReviewPanel } from "./ReviewPanel";
 import { ChatPanel } from "../../components/ui/ChatPanel";
-import type { PatientReport } from "../../types/api";
+import type { ChatMessage, PatientReport } from "../../types/api";
 
 const NAV = [
   { to: "/clinician", label: "Review Queue", icon: Users },
@@ -53,6 +53,8 @@ export default function ClinicianDashboard() {
     }, [activePatientId, reviewKey]),
     [activePatientId, reviewKey]
   );
+  const activeChatMessages = patientReport?.chat_history ?? [];
+  const activeChatKey = buildChatKey(activePatientId ?? "none", activeChatMessages);
 
   return (
     <AppShell
@@ -137,7 +139,8 @@ export default function ClinicianDashboard() {
                 <div className="chat-card-title">Patient chat</div>
                 <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
                   <ChatPanel
-                    messages={patientReport.chat_history ?? []}
+                    key={activeChatKey}
+                    messages={activeChatMessages}
                     onSend={async (text) => {
                       const res = await sendClinicianChat(activePatientId, text);
                       return {
@@ -155,6 +158,11 @@ export default function ClinicianDashboard() {
       </div>
     </AppShell>
   );
+}
+
+function buildChatKey(scope: string, messages: ChatMessage[]) {
+  const last = messages.at(-1);
+  return [scope, messages.length, last?.role ?? "none", (last?.message ?? "").slice(0, 40)].join(":");
 }
 
 function BreastProfileCard({ profile }: { profile: NonNullable<PatientReport["breast_cancer_profile"]> }) {

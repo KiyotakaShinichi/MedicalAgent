@@ -5,10 +5,10 @@ type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const variantStyles: Record<Variant, React.CSSProperties> = {
-  primary:   { background: "var(--rose)",     color: "#fff",           border: "none" },
+  primary:   { background: "linear-gradient(135deg, var(--rose), var(--rose-strong))", color: "#fff", border: "none", boxShadow: "0 4px 12px rgba(236,72,153,0.20)" },
   secondary: { background: "var(--surface2)", color: "var(--text)",    border: "1px solid var(--border)" },
   ghost:     { background: "transparent",     color: "var(--text-dim)", border: "1px solid transparent" },
-  danger:    { background: "rgba(244,63,94,0.12)", color: "var(--rose)", border: "1px solid rgba(244,63,94,0.3)" },
+  danger:    { background: "var(--red-bg)",   color: "var(--red)",     border: "1px solid #fca5a5" },
 };
 
 const sizeStyles: Record<Size, string> = {

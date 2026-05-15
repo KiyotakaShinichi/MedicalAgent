@@ -1,0 +1,76 @@
+{
+  "schema_version": "tool_action_benchmark_v1",
+  "generated_at": "2026-05-15T10:37:32.847326+00:00",
+  "status": "passed",
+  "summary": {
+    "case_count": 6,
+    "passed": 6,
+    "pass_rate": 1.0,
+    "max_latency_ms": 526.3,
+    "average_latency_ms": 360.41
+  },
+  "cases": [
+    {
+      "id": "save_symptom_bloody_discharge",
+      "status": "passed",
+      "latency_ms": 526.3,
+      "action_types": [
+        "saved_symptom"
+      ],
+      "reply_preview": "I noticed possible urgent wording. If symptoms feel severe, sudden, or unsafe, contact your oncology team or local emergency services now. I saved this to your patient record: symptom: bloody discharge severity 9/10. I can help track what y",
+      "expected_action": "saved_symptom"
+    },
+    {
+      "id": "save_complete_cbc",
+      "status": "passed",
+      "latency_ms": 274.84,
+      "action_types": [
+        "saved_labs"
+      ],
+      "reply_preview": "I saved this to your patient record: CBC values. I can help track what you are feeling and summarize it for review, but I cannot diagnose or decide treatment.",
+      "expected_action": "saved_labs"
+    },
+    {
+      "id": "save_mri_report",
+      "status": "passed",
+      "latency_ms": 297.59,
+      "action_types": [
+        "saved_imaging_report"
+      ],
+      "reply_preview": "I saved this to your patient record: Breast MRI report from 2026-05-07. I can help track what you are feeling and summarize it for review, but I cannot diagnose or decide treatment.",
+      "expected_action": "saved_imaging_report"
+    },
+    {
+      "id": "save_ct_report_metastatic_indicator",
+      "status": "passed",
+      "latency_ms": 328.82,
+      "action_types": [
+        "saved_imaging_report",
+        "possible_metastatic_indicator"
+      ],
+      "reply_preview": "I noticed possible urgent wording. If symptoms feel severe, sudden, or unsafe, contact your oncology team or local emergency services now. I saved this to your patient record: CT abdomen/pelvis report from 2026-05-07. The imaging text inclu",
+      "expected_action": "saved_imaging_report"
+    },
+    {
+      "id": "save_ultrasound_report",
+      "status": "passed",
+      "latency_ms": 406.16,
+      "action_types": [
+        "saved_imaging_report"
+      ],
+      "reply_preview": "I saved this to your patient record: Breast ultrasound report from 2026-05-07. I can help track what you are feeling and summarize it for review, but I cannot diagnose or decide treatment.",
+      "expected_action": "saved_imaging_report"
+    },
+    {
+      "id": "partial_symptom_requires_severity",
+      "status": "passed",
+      "latency_ms": 328.73,
+      "action_types": [
+        "partial_symptom_detected"
+      ],
+      "reply_preview": "I noticed you mentioned nausea. If you want me to log it, send the severity from 0-10, for example: \"nausea severity 6/10 today\". I can help track what you are feeling and summarize it for review, but I cannot diagnose or decide treatment.",
+      "expected_action": "partial_symptom_detected"
+    }
+  ],
+  "claim_boundary": "This benchmark verifies deterministic patient-support tool saves and latency. It does not validate clinical correctness."
+}

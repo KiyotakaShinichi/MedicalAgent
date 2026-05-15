@@ -3,6 +3,7 @@ import type {
   DemoPatient,
   PatientReport,
   ChatResponse,
+  ChatStreamHandlers,
   PatientSummary,
   ReviewQueueItem,
   SummaryReview,
@@ -23,7 +24,19 @@ import type {
   SimToPublicImagingReport,
 } from "../types/api";
 
-const BASE = "http://127.0.0.1:8017";
+/**
+ * Backend base URL.  Resolved from (in order):
+ *   1. Vite `VITE_API_BASE` env var (set in .env.local for non-default hosts)
+ *   2. `http://127.0.0.1:8017` fallback for the local dev profile
+ *
+ * Exported so the ErrorPane + tool trace drawer can show the actual host
+ * the frontend is trying to talk to.
+ */
+export const API_BASE: string =
+  (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE
+    ?? "http://127.0.0.1:8017";
+
+const BASE = API_BASE;
 
 function getToken(): string | null {
   return (
@@ -75,6 +88,101 @@ export const getMyChatHistory = () =>
 
 export const sendMyChat = (message: string) =>
   post<ChatResponse>("/me/chat", { message });
+
+export async function sendMyChatStream(
+  message: string,
+  handlers: ChatStreamHandlers = {},
+): Promise<ChatResponse> {
+  return streamChat("/me/chat/stream", message, handlers);
+}
+
+async function streamChat(
+  path: string,
+  message: string,
+  handlers: ChatStreamHandlers,
+): Promise<ChatResponse> {
+  const token = getToken();
+  const res = await fetch(`${BASE}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ message }),
+  });
+  if (!res.ok || !res.body) {
+    const text = await res.text().catch(() => res.statusText);
+    throw new Error(`${res.status}: ${text}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let finalAnswer: ChatResponse | null = null;
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const events = buffer.split("\n\n");
+    buffer = events.pop() ?? "";
+    for (const eventBlock of events) {
+      const event = parseSseEvent(eventBlock);
+      if (!event) continue;
+      if (event.name === "pipeline_stage") {
+        handlers.onStage?.(String(event.data?.label ?? ""));
+      } else if (event.name === "answer_delta") {
+        handlers.onDelta?.(String(event.data?.text ?? ""));
+      } else if (event.name === "answer") {
+        finalAnswer = {
+          reply: String(event.data?.reply ?? ""),
+          saved_actions: Array.isArray(event.data?.saved_actions) ? event.data.saved_actions : [],
+          citations: normalizeCitationLabels(event.data?.citations),
+          assistant_message_id:
+            typeof event.data?.assistant_message_id === "string" || typeof event.data?.assistant_message_id === "number"
+              ? event.data.assistant_message_id
+              : undefined,
+        };
+      } else if (event.name === "error") {
+        throw new Error(String(event.data?.error ?? "Streaming chat failed"));
+      }
+    }
+  }
+
+  if (!finalAnswer) {
+    throw new Error("Streaming chat ended without an answer.");
+  }
+  return finalAnswer;
+}
+
+function parseSseEvent(block: string): { name: string; data: Record<string, unknown> } | null {
+  const eventLine = block.split("\n").find((line) => line.startsWith("event:"));
+  const dataLine = block.split("\n").find((line) => line.startsWith("data:"));
+  if (!eventLine || !dataLine) return null;
+  try {
+    return {
+      name: eventLine.replace("event:", "").trim(),
+      data: JSON.parse(dataLine.replace("data:", "").trim()),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function normalizeCitationLabels(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object") {
+        const source = item as { title?: unknown; source_name?: unknown; id?: unknown };
+        return String(source.title ?? source.source_name ?? source.id ?? "").trim();
+      }
+      return "";
+    })
+    .filter(Boolean);
+}
 
 export const submitFeedback = (payload: {
   chat_message_id?: string;
@@ -259,6 +367,12 @@ export const runLlmJudgeEval = (maxCases = 30) =>
   post<{ message: string; result: import("../types/api").LlmJudgeEval }>(
     `/admin/llm-judge-eval?max_cases=${maxCases}`
   );
+
+export const getBenchmarkRegistry = () =>
+  get<unknown>("/admin/benchmark-registry");
+
+export const runBenchmarkRegistry = () =>
+  post<{ message: string; result: unknown }>("/admin/benchmark-registry");
 
 // Safety & evaluation center
 export const getSafetyCenter = () =>

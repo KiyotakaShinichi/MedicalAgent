@@ -159,6 +159,124 @@ KNOWLEDGE_SNIPPETS = [
         ),
     },
     {
+        "id": "nci-msk-supplement-safety",
+        "parent_id": "supportive-care-safety",
+        "title": "Supplements during cancer treatment",
+        "source_name": "NCI / NCCIH / MSK",
+        "source_url": "https://www.cancer.gov/about-cancer/treatment/cam/patient/dietary-interactions-pdq",
+        "tags": [
+            "supplement",
+            "supplements",
+            "antioxidant",
+            "turmeric",
+            "herbal",
+            "vitamin",
+            "chemotherapy",
+            "interactions",
+            "oncology",
+            "pharmacist",
+        ],
+        "builtin": True,
+        "text": (
+            "Supplements, antioxidant products, vitamins, herbs, and turmeric can interact with chemotherapy, radiation, "
+            "targeted therapy, surgery, or supportive medicines. Patients should tell the oncology care team or oncology "
+            "pharmacist about every supplement they use or are considering. This system can provide general education and "
+            "log supplement questions for review, but it does not recommend starting, stopping, replacing, or dosing a "
+            "supplement as cancer treatment."
+        ),
+    },
+    {
+        "id": "curated-triple-negative-basics",
+        "parent_id": "breast-treatment-basics",
+        "title": "Triple-negative breast cancer",
+        "source_name": "Curated NCI breast cancer education",
+        "source_url": "https://www.cancer.gov/types/breast/hp/breast-treatment-pdq",
+        "tags": ["triple-negative", "tnbc", "er", "pr", "her2", "subtype", "breast cancer"],
+        "builtin": True,
+        "text": (
+            "Triple-negative breast cancer means the tumor is ER negative, PR negative, and HER2 negative by clinical testing. "
+            "It is a breast cancer subtype used by clinicians for treatment planning. OncoTrack can explain the term, but it cannot classify a patient from chat text."
+        ),
+    },
+    {
+        "id": "curated-stage-iv-basics",
+        "parent_id": "breast-treatment-basics",
+        "title": "Stage IV breast cancer boundary",
+        "source_name": "Curated NCI breast cancer education",
+        "source_url": "https://www.cancer.gov/types/breast/hp/breast-treatment-pdq",
+        "tags": ["stage iv", "metastatic", "staging", "breast cancer", "clinician"],
+        "builtin": True,
+        "text": (
+            "Stage IV breast cancer generally means metastatic disease, or cancer that has spread to distant organs. "
+            "Staging requires clinician interpretation of pathology and imaging. The assistant must not assign a patient's stage."
+        ),
+    },
+    {
+        "id": "curated-taxane-neuropathy",
+        "parent_id": "treatment-side-effects",
+        "title": "Paclitaxel and neuropathy monitoring",
+        "source_name": "Curated breast cancer treatment education",
+        "source_url": "https://www.cancer.org/cancer/types/breast-cancer/treatment/chemotherapy-for-breast-cancer.html",
+        "tags": ["paclitaxel", "docetaxel", "taxane", "neuropathy", "tingling", "numbness"],
+        "builtin": True,
+        "text": (
+            "Paclitaxel and other taxane chemotherapy drugs can be associated with neuropathy, such as tingling, numbness, burning, or pain in hands or feet. "
+            "Patients can log neuropathy severity for review, but the assistant must not recommend dose changes."
+        ),
+    },
+    {
+        "id": "curated-platelets-bleeding",
+        "parent_id": "cbc-monitoring",
+        "title": "Platelets and bleeding risk",
+        "source_name": "Curated CBC monitoring education",
+        "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/low-blood-counts",
+        "tags": ["platelets", "cbc", "bleeding", "clotting", "chemotherapy"],
+        "builtin": True,
+        "text": (
+            "Platelets help blood clot. Low platelet counts during treatment can increase bruising or bleeding risk. "
+            "Bleeding symptoms should be logged and reviewed by the oncology care team."
+        ),
+    },
+    {
+        "id": "curated-acupuncture-supportive-care",
+        "parent_id": "integrative-supportive-care",
+        "title": "Acupuncture and acupressure supportive care boundary",
+        "source_name": "Curated ASCO/SIO integrative oncology education",
+        "source_url": "https://pubmed.ncbi.nlm.nih.gov/29889605/",
+        "tags": ["acupuncture", "acupressure", "nausea", "supportive care", "oncology"],
+        "builtin": True,
+        "text": (
+            "Acupuncture or acupressure may be discussed as supportive care for symptoms such as nausea in some oncology settings. "
+            "Patients should ask the oncology team before using it, especially with low platelets, infection risk, anticoagulants, lymphedema risk, wounds, or implanted devices."
+        ),
+    },
+    {
+        "id": "curated-st-johns-wort-safety",
+        "parent_id": "supplement-safety",
+        "title": "St. Johns wort interaction safety",
+        "source_name": "Curated supplement interaction safety",
+        "source_url": "https://www.mskcc.org/cancer-care/patient-education/herbal-remedies-and-treatment",
+        "tags": ["st johns wort", "supplement", "herbal", "interact", "interaction", "oncology", "pharmacist"],
+        "builtin": True,
+        "text": (
+            "St. Johns wort can interact with many medicines through drug metabolism pathways. "
+            "During cancer treatment, patients should not start St. Johns wort without review by the oncology care team or oncology pharmacist."
+        ),
+    },
+    {
+        "id": "curated-model-signal-boundary",
+        "parent_id": "portal-help",
+        "title": "Model signal explanation",
+        "source_name": "OncoTrack project documentation",
+        "source_url": "README.md",
+        "tags": ["model signal", "monitoring score", "portal", "exploratory", "not diagnosis", "clinician review"],
+        "builtin": True,
+        "text": (
+            "The OncoTrack model signal is an exploratory engineering signal in this proof of concept. "
+            "It is not a diagnosis, not a treatment recommendation, and not clinical validation. It helps organize clinician review."
+        ),
+    },
+    {
         "id": "portal-upload-guide",
         "parent_id": "portal-help",
         "title": "What patients can upload",
@@ -429,6 +547,19 @@ def safety_scope_check(query, urgent_flags=None):
         "delay my next chemo",
         "skip chemo",
         "skip treatment",
+        "instead of chemotherapy",
+        "instead of chemo",
+        "replace chemotherapy",
+        "replace chemo",
+        "replace my chemotherapy",
+        "replace my chemo",
+        "use turmeric instead",
+        "use supplements instead",
+        "herbal instead of chemo",
+        "supplement instead of chemo",
+        "supplements instead of chemo",
+        "supplement instead of chemotherapy",
+        "supplements instead of chemotherapy",
         "dapat ko bang itigil",
         "pwede ko bang itigil",
         "pwede ko bang ihinto",
@@ -468,10 +599,27 @@ def safety_scope_check(query, urgent_flags=None):
         "prognosis ko",
     ]
     medical_danger = detect_multilingual_medical_danger(query)
+    urgent_terms = [
+        "fever",
+        "chest pain",
+        "cannot breathe",
+        "shortness of breath",
+        "uncontrolled bleeding",
+        "heavy bleeding",
+        "bleeding now",
+        "actively bleeding",
+        "cannot stop bleeding",
+        "bloody discharge",
+        "bloody breast discharge",
+        "blood discharge",
+        "blood breast discharge",
+        "suicidal",
+        "self harm",
+    ]
     if (
         urgent_flags
         or medical_danger["detected"]
-        or any(term in normalized for term in ["fever", "chest pain", "cannot breathe", "bleeding", "suicidal", "self harm"])
+        or any(term in normalized for term in urgent_terms)
     ):
         return {
             "level": "high_risk",
@@ -526,7 +674,7 @@ def route_intent(query, actions=None, safety=None):
         deterministic = "portal_help"
     elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment plan", "my treatment response", "my treatment results", "working", "progress"]):
         deterministic = "patient_timeline_monitoring"
-    elif any(term in lower for term in ["pcr", "response", "mri", "cbc", "wbc", "hemoglobin", "platelets", "chemo", "chemotherapy", "side effect", "breast cancer", "neutropenia", "infection risk"]):
+    elif any(term in lower for term in ["pcr", "response", "mri", "ct", "ultrasound", "imaging", "ascites", "cbc", "wbc", "anc", "hemoglobin", "platelets", "chemo", "chemotherapy", "treatment", "side effect", "breast cancer", "triple-negative", "stage iv", "her2", "er/pr", "neutropenia", "neuropathy", "paclitaxel", "doxorubicin", "cyclophosphamide", "carboplatin", "docetaxel", "trastuzumab", "tamoxifen", "infection risk", "supplement", "supplements", "antioxidant", "turmeric", "herbal", "herb", "vitamin", "st. john", "st john", "acupuncture", "acupressure", "nutrition", "exercise", "yoga", "meditation"]):
         deterministic = "education"
     else:
         deterministic = "general_support"
@@ -1088,8 +1236,15 @@ def evaluate_rag_response(query, rewritten, result, retrieved, reranked, compres
         citations=result.get("citations") or [],
         compressed=compressed,
     )
+
+    # Opt-in second scoring path: LLM-as-judge.  The heuristic above stays
+    # as `answer_grounding` / `hallucination` (metric_v1).  When the judge
+    # is enabled it adds `answer_grounding_v2_llm_judge` so a reviewer can
+    # see both side-by-side instead of a silent swap.
+    judge_result = _maybe_run_llm_judge(query, result.get("reply") or "", compressed)
+
     token_cost = estimate_token_and_cost(query, result.get("reply") or "", compressed)
-    return {
+    payload = {
         "retrieval_precision_at_3": retrieval_precision,
         "answer_grounding": grounding,
         "hallucination": hallucination,
@@ -1106,9 +1261,38 @@ def evaluate_rag_response(query, rewritten, result, retrieved, reranked, compres
             "output_issues": output_guardrails.get("issues") or [],
         },
         "metric_limitations": (
-            "Retrieval precision, grounding, and hallucination are heuristic proxy metrics until a labeled KB and RAGAS evaluation set are added."
+            "Retrieval precision and `answer_grounding`/`hallucination` are heuristic token-overlap proxies. "
+            "`answer_grounding_v2_llm_judge`, when present, is an LLM-as-judge second opinion — also a proxy, not clinical validation."
         ),
     }
+    if judge_result is not None:
+        payload["answer_grounding_v2_llm_judge"] = judge_result
+    return payload
+
+
+def _maybe_run_llm_judge(query, reply, compressed):
+    """Run the LLM judge if enabled.  Returns None when disabled so the
+    eval payload stays small in default runs.  Imports are local because
+    the judge is opt-in and we don't want to pull in groq on import."""
+    try:
+        from backend.services.llm_judge import is_judge_enabled, judge_rag_answer
+    except Exception:
+        return None
+    if not is_judge_enabled():
+        return None
+    try:
+        return judge_rag_answer(
+            question=query,
+            answer=reply,
+            context_chunks=compressed,
+        )
+    except Exception as exc:
+        # Never break the pipeline on a judge failure; record the reason.
+        return {
+            "status": "not_computed",
+            "reason": f"judge_unexpected_failure: {exc.__class__.__name__}",
+            "method": "llm_judge (engineering proxy)",
+        }
 
 
 def proxy_retrieval_precision_at_k(items, rewritten, k=3):

@@ -1,9 +1,9 @@
 {
   "schema_version": "public_imaging_manifest_v1",
-  "generated_at": "2026-05-14T03:14:03.525242+00:00",
+  "generated_at": "2026-05-15T02:56:15.687428+00:00",
   "dataset_root": "Datasets",
-  "status": "datasets_not_downloaded",
-  "available_dataset_count": 0,
+  "status": "ready_for_experiments",
+  "available_dataset_count": 1,
   "datasets": [
     {
       "id": "busi_breast_ultrasound",
@@ -18,15 +18,28 @@
       "task": "breast_ultrasound_segmentation_or_classification",
       "modality": "ultrasound",
       "claim_boundary": "Benign/malignant/normal image experiment only; not diagnosis.",
-      "available": false,
-      "local_path": null,
-      "file_count": 0,
-      "image_count": 0,
-      "mask_count": 0,
-      "metadata_count": 0,
-      "class_counts": {},
-      "sample_files": [],
-      "readiness": "missing_download"
+      "available": true,
+      "local_path": "Datasets\\BUSI",
+      "file_count": 1561,
+      "image_count": 1560,
+      "mask_count": 780,
+      "metadata_count": 1,
+      "class_counts": {
+        "benign": 874,
+        "malignant": 420,
+        "normal": 266
+      },
+      "sample_files": [
+        "benign\\benign_1.png",
+        "benign\\benign_10.png",
+        "benign\\benign_100.png",
+        "benign\\benign_100_mask.png",
+        "benign\\benign_101.png",
+        "benign\\benign_101_mask.png",
+        "benign\\benign_102.png",
+        "benign\\benign_102_mask.png"
+      ],
+      "readiness": "classification_and_segmentation_ready"
     },
     {
       "id": "bus_uclm_breast_ultrasound",
@@ -116,7 +129,7 @@
       "readiness": "missing_download"
     }
   ],
-  "recommended_next_task": "Download one public dataset into Datasets/ and rebuild this manifest.",
+  "recommended_next_task": "Run ultrasound baseline: python scripts/run_ultrasound_baseline.py --dataset-root Datasets/BUSI",
   "claim_boundary": "Public imaging datasets are used for narrow engineering experiments. They do not make MedicalAgent a diagnostic CT or ultrasound reader.",
-  "manifest_hash": "3e931f263d348532"
+  "manifest_hash": "41a6b430bc56769b"
 }

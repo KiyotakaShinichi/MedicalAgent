@@ -1,0 +1,6 @@
+category,count,rate,meaning
+close_monitoring,2,0.033,Model uncertainty would prompt closer monitoring or repeat data checks.
+discordant_response_toxicity_review,21,0.35,"Response looks favorable, but toxicity signals still need review."
+response_concern_review,12,0.2,Low response signal would prompt clinician response-trend review.
+routine_monitoring,8,0.133,No additional simulated review route from the current model/timeline signals.
+toxicity_review,17,0.283,CBC or symptom toxicity signal would prompt clinician review.

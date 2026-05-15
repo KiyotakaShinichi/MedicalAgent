@@ -1,21 +1,22 @@
 slice,value,n,mae,rmse,r2,status
-molecular_subtype,HR+/HER2+,8,3.528,9.446,0.891,acceptable
-regimen,TCHP then endocrine therapy,8,3.528,9.446,0.891,acceptable
-age_band,65-74,2,0.68,0.698,0.998,low_support
-stage,IV,4,0.307,0.341,1.0,low_support
-age_band,45-54,27,0.273,0.43,1.0,strong
-age_band,55-64,14,0.327,0.475,1.0,strong
-age_band,<45,17,2.773,7.229,0.973,strong
-hybrid_review_category,discordant_signal_review,11,0.518,0.977,0.99,strong
-hybrid_review_category,response_trend_review,16,0.564,0.66,0.993,strong
-hybrid_review_category,routine_monitoring,33,1.386,5.164,0.875,strong
-molecular_subtype,HER2+,17,1.06,3.142,0.993,strong
-molecular_subtype,HR+/HER2-,22,0.407,0.75,1.0,strong
-molecular_subtype,triple-negative,13,0.404,0.523,1.0,strong
-regimen,TCHP,17,1.06,3.142,0.993,strong
-regimen,dose-dense AC then paclitaxel,22,0.407,0.75,1.0,strong
-regimen,paclitaxel + carboplatin then AC,13,0.404,0.523,1.0,strong
-stage,IIA,11,2.73,8.068,0.953,strong
-stage,IIB,18,0.322,0.46,1.0,strong
-stage,IIIA,19,1.114,3.045,0.994,strong
-stage,IIIB,8,0.279,0.384,1.0,strong
+hybrid_review_category,response_trend_review,12,3.626,10.23,0.056,acceptable
+stage,IIA,14,4.16,10.118,0.928,acceptable
+age_band,65-74,1,0.013,0.013,,low_support
+hybrid_review_category,watch_closely,1,0.263,0.263,,low_support
+stage,IV,1,0.036,0.036,,low_support
+age_band,45-54,31,2.261,7.431,0.941,strong
+age_band,55-64,8,0.34,0.674,0.994,strong
+age_band,<45,20,1.499,4.388,0.99,strong
+hybrid_review_category,discordant_signal_review,18,1.025,3.174,0.843,strong
+hybrid_review_category,routine_monitoring,29,1.399,4.783,0.881,strong
+molecular_subtype,HER2+,15,1.389,4.578,0.976,strong
+molecular_subtype,HR+/HER2+,5,2.793,5.925,0.975,strong
+molecular_subtype,HR+/HER2-,27,2.183,7.644,0.944,strong
+molecular_subtype,triple-negative,13,0.697,1.597,0.999,strong
+regimen,TCHP,15,1.389,4.578,0.976,strong
+regimen,TCHP then endocrine therapy,5,2.793,5.925,0.975,strong
+regimen,dose-dense AC then paclitaxel,27,2.183,7.644,0.944,strong
+regimen,paclitaxel + carboplatin then AC,13,0.697,1.597,0.999,strong
+stage,IIB,23,0.221,0.424,1.0,strong
+stage,IIIA,13,2.945,7.141,0.965,strong
+stage,IIIB,9,0.128,0.182,1.0,strong

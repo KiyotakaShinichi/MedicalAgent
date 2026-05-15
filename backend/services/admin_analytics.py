@@ -28,10 +28,26 @@ from backend.services.rag_source_registry import build_rag_source_registry
 from backend.services.summary_quality_eval import build_summary_quality_report
 
 
-DEFAULT_SYNTHETIC_METRICS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
-DEFAULT_SYNTHETIC_PREDICTIONS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
-DEFAULT_SYNTHETIC_TRAINING_CSV = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
-DEFAULT_SYNTHETIC_MRI_REPORTS_CSV = "Data/complete_synthetic_breast_journeys/mri_reports.csv"
+def _prefer_existing(candidate: str, fallback: str) -> str:
+    return candidate if Path(candidate).exists() else fallback
+
+
+DEFAULT_SYNTHETIC_METRICS_PATH = _prefer_existing(
+    "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_metrics.json",
+    "Data/complete_synthetic_training/complete_synthetic_model_metrics.json",
+)
+DEFAULT_SYNTHETIC_PREDICTIONS_PATH = _prefer_existing(
+    "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv",
+    "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv",
+)
+DEFAULT_SYNTHETIC_TRAINING_CSV = _prefer_existing(
+    "Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv",
+    "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+)
+DEFAULT_SYNTHETIC_MRI_REPORTS_CSV = _prefer_existing(
+    "Data/complete_synthetic_breast_journeys_realism_v2/mri_reports.csv",
+    "Data/complete_synthetic_breast_journeys/mri_reports.csv",
+)
 DEFAULT_BREASTDCEDL_METRICS_PATH = "Data/breastdcedl_spy1_baseline_metrics.json"
 
 
@@ -44,6 +60,10 @@ def build_admin_analytics(db):
     audit_and_feedback = _audit_and_feedback(db)
 
     advanced_eval = _advanced_model_evaluation(synthetic_metrics, predictions, training_rows, mri_reports)
+    rag_summary = _frontend_rag_summary(build_rag_evaluation_summary(db))
+    regression_report = load_latest_agent_regression_report()
+    guardrails = _frontend_guardrail_summary(rag_summary, regression_report)
+    readiness = build_mle_readiness_summary(db=db)
     return {
         "roles": {
             "patient": "Personal portal, uploads, symptom/CBC/medication logging, support agent.",
@@ -62,19 +82,57 @@ def build_admin_analytics(db):
         "ab_testing": _ab_testing(synthetic_metrics, predictions),
         "audit_and_feedback": audit_and_feedback,
         "app_monitoring": build_app_monitoring_summary(db),
-        "rag_evaluation": build_rag_evaluation_summary(db),
+        "rag_evaluation": rag_summary,
+        "guardrails": guardrails,
         "rag_source_registry": build_rag_source_registry(),
-        "agent_regression_evaluation": load_latest_agent_regression_report(),
+        "agent_regression_evaluation": regression_report,
         "agent_feedback": build_agent_feedback_summary(db),
         "summary_quality_eval": build_summary_quality_report(db=db),
         "clinician_loop_metrics": _clinician_loop_metrics(audit_and_feedback["clinical_feedback"]),
         "data_quality": _data_quality(training_rows),
         "data_coverage": _data_coverage(training_rows),
-        "mle_readiness": build_mle_readiness_summary(db=db),
+        "mle_readiness": readiness,
+        "api_cost": {"estimated_cost_usd": rag_summary.get("estimated_cost_usd")},
         "domain_gap_analysis": _domain_gap_analysis(breastdcedl_metrics),
         "safety_positioning": (
             "Admin analytics are for ML engineering monitoring only. They do not diagnose or make treatment decisions."
         ),
+    }
+
+
+def _frontend_rag_summary(summary):
+    """Keep the React dashboard stable across old and new analytics schemas."""
+    summary = dict(summary or {})
+    summary.setdefault("evaluations", summary.get("call_count", 0))
+    summary.setdefault("grounding_score", summary.get("average_grounding_score"))
+    summary.setdefault("hallucination_score", summary.get("average_hallucination_score"))
+    summary.setdefault("precision_at_3", summary.get("average_retrieval_precision_at_3"))
+    summary.setdefault("estimated_cost_usd", summary.get("estimated_llm_cost_usd"))
+    api_costs = summary.get("api_costs") or {}
+    summary.setdefault("input_tokens", api_costs.get("estimated_input_tokens"))
+    summary.setdefault("output_tokens", api_costs.get("estimated_output_tokens"))
+    return summary
+
+
+def _frontend_guardrail_summary(rag_summary, regression_report):
+    regression_summary = (regression_report or {}).get("summary") or {}
+    input_counts = (rag_summary or {}).get("input_guardrail_counts") or {}
+    output_counts = (rag_summary or {}).get("output_guardrail_counts") or {}
+    input_blocks = sum(
+        int(count or 0)
+        for status, count in input_counts.items()
+        if status not in {"passed", "ok", "unknown"}
+    )
+    output_blocks = sum(
+        int(count or 0)
+        for status, count in output_counts.items()
+        if status not in {"passed", "ok", "unknown"}
+    )
+    return {
+        "input_blocks": input_blocks,
+        "output_blocks": output_blocks,
+        "attack_block_rate": regression_summary.get("attack_block_rate"),
+        "pass_rate": regression_summary.get("pass_rate"),
     }
 
 

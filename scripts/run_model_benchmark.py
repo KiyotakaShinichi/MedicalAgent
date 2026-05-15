@@ -10,13 +10,46 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from backend.services.calibration_eval import run_calibration_eval  # noqa: E402
+from backend.services.subgroup_calibration import compute_subgroup_ece  # noqa: E402
 
 DEFAULT_SYNTHETIC_METRICS = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
 DEFAULT_BASELINE_METRICS = "Data/breastdcedl_spy1_baseline_metrics.json"
 DEFAULT_CNN_METRICS = "Data/breastdcedl_spy1_cnn_metrics.json"
 DEFAULT_CALIBRATION_REPORT = "Data/mle_monitoring/calibration_eval_report.json"
+DEFAULT_SUBGROUP_PREDICTIONS_PATH = "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv"
+# Use the realism-v2 ML rows so patient IDs match the predictions cohort
+# (REALISM-BRCA-* prefix).  The non-v2 file uses an older COMPV5-* cohort
+# and would silently fail to join.
+DEFAULT_SUBGROUP_LOOKUP_PATH = "Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv"
 DEFAULT_OUTPUT_PATH = "Data/evals/models/latest_model_benchmark.json"
 DEFAULT_CSV_PATH = "Data/evals/models/latest_model_benchmark.csv"
+
+
+def _compute_subgroup_calibration(model_key: str) -> dict | None:
+    """Best-effort: load synthetic predictions + cohort metadata and compute
+    per-subgroup ECE.  Returns ``None`` when the inputs aren't on disk so the
+    benchmark stays runnable in environments without the synthetic-v2 data."""
+    try:
+        import pandas as pd  # noqa: PLC0415 — lazy: only needed when running this step
+    except Exception:
+        return None
+    pred_path = Path(DEFAULT_SUBGROUP_PREDICTIONS_PATH)
+    lookup_path = Path(DEFAULT_SUBGROUP_LOOKUP_PATH)
+    if not pred_path.exists() or not lookup_path.exists():
+        return {
+            "status": "not_computed",
+            "reason": f"predictions or lookup CSV missing ({pred_path.name} / {lookup_path.name})",
+        }
+    try:
+        predictions = pd.read_csv(pred_path)
+        lookup = pd.read_csv(lookup_path)
+    except Exception as exc:
+        return {"status": "not_computed", "reason": f"csv_read_failed: {exc.__class__.__name__}"}
+    return compute_subgroup_ece(
+        predictions=predictions,
+        subgroup_lookup=lookup,
+        model_key=model_key,
+    )
 
 
 def _load_json(path: str) -> dict | None:
@@ -168,8 +201,13 @@ def main():
 
     status = "available" if (classification or external_baselines or regression) else "unavailable"
 
+    # Per-subgroup ECE for the champion classifier — same model whose global
+    # ECE is reported above.  Surfaces fairness signals the global number hides.
+    champion_model_key = classification[0]["model"] if classification else None
+    subgroup_calibration = _compute_subgroup_calibration(champion_model_key) if champion_model_key else None
+
     payload = {
-        "schema_version": "model_benchmark_v1",
+        "schema_version": "model_benchmark_v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
         "synthetic_classification": classification,
@@ -177,10 +215,18 @@ def main():
         "external_baselines": external_baselines,
         "external_cnn": cnn_summary,
         "calibration_report": calibration_report,
+        "subgroup_calibration": subgroup_calibration,
+        "honest_reporting_note": (
+            "Synthetic AUROC and external-baseline AUROC must always be read together. "
+            "Synthetic numbers reflect simulator-defined correlations the classifier can exploit cleanly; "
+            "the BreastDCEDL external baselines are the closer signal of real-world performance. "
+            "Never quote the synthetic AUROC without pairing it with at least one external baseline."
+        ),
         "claim_boundary": "Model benchmarks are synthetic or public-data baselines, not clinical validation.",
         "limitations": [
             "Synthetic metrics are not real-world clinical performance.",
             "BreastDCEDL baselines use MRI-derived tabular features and are not a full clinical pipeline.",
+            "Subgroup ECE is computed on simulator-defined subgroup distributions, not real-world demographics.",
         ],
     }
 

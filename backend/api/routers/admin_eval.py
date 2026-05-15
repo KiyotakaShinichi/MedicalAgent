@@ -642,4 +642,34 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": run_llm_judge_eval(max_cases=max(1, min(max_cases, 50))),
         }
 
+    @router.get("/admin/benchmark-registry")
+    def get_admin_benchmark_registry_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the consolidated benchmark registry across safety, RAG, MLE, and imaging."""
+        import json as _json
+        from pathlib import Path
+
+        from backend.services.benchmark_registry import DEFAULT_JSON_PATH, build_benchmark_registry
+
+        saved = Path(DEFAULT_JSON_PATH)
+        if saved.exists():
+            try:
+                return _json.loads(saved.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return build_benchmark_registry(output_path=DEFAULT_JSON_PATH)
+
+    @router.post("/admin/benchmark-registry")
+    def run_admin_benchmark_registry_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild the consolidated benchmark registry."""
+        from backend.services.benchmark_registry import build_benchmark_registry
+
+        return {
+            "message": "Benchmark registry generated.",
+            "result": build_benchmark_registry(),
+        }
+
     return router

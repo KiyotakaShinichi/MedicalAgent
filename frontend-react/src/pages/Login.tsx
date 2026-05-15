@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Activity,
+  Ribbon,
   ArrowRight,
   BarChart3,
   Database,
@@ -91,7 +91,7 @@ export default function LoginPage() {
           <div>
             <div className="login-brand">
               <span className="login-brand-mark">
-                <Activity size={24} aria-hidden="true" />
+                <Ribbon size={24} aria-hidden="true" />
               </span>
               <div>
                 <p className="login-brand-kicker">MedicalAgent</p>

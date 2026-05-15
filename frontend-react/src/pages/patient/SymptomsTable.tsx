@@ -1,56 +1,95 @@
-import { Card, CardHeader, SectionTitle } from "../../components/ui/Card";
-import { EmptyPane } from "../../components/ui/Spinner";
+import { Activity } from "lucide-react";
+import { SectionCard } from "../../components/ui/SectionCard";
+import { RelativeTime } from "../../components/ui/RelativeTime";
+import { EmptyState } from "../../components/ui/states";
 import type { Symptom } from "../../types/api";
 
-interface Props { symptoms: Symptom[] }
+interface Props {
+  symptoms: Symptom[];
+  /** Compact mode = used as a side panel beside another card; trims notes
+   *  and shows fewer rows so it doesn't dwarf the column it sits in. */
+  compact?: boolean;
+  lastFetchedAt?: number | null;
+}
 
-function SeverityBar({ value }: { value: number }) {
-  const color = value >= 7 ? "var(--rose)" : value >= 4 ? "var(--amber)" : "var(--green)";
+function SeverityBar({ value, compact }: { value: number; compact?: boolean }) {
+  const color =
+    value >= 7 ? "#dc2626" :
+    value >= 4 ? "#d97706" : "#059669";
+  const label =
+    value >= 7 ? "Severe" :
+    value >= 4 ? "Moderate" : "Mild";
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 rounded-full h-1.5" style={{ background: "var(--border)" }}>
+      <div
+        className="flex-1 rounded-full"
+        style={{ height: 4, background: "var(--surface2)", minWidth: 24 }}
+      >
         <div
-          className="h-1.5 rounded-full"
-          style={{ width: `${(value / 10) * 100}%`, background: color }}
+          className="rounded-full transition-all"
+          style={{
+            width: `${(value / 10) * 100}%`,
+            height: 4,
+            background: color,
+          }}
         />
       </div>
-      <span className="text-xs tabular-nums w-4 text-right" style={{ color: "var(--text-dim)" }}>{value}</span>
+      <span
+        className="tabular-nums font-semibold"
+        style={{ color, fontSize: "0.8rem", minWidth: 18, textAlign: "right" }}
+      >
+        {value}
+      </span>
+      {!compact && (
+        <span
+          className="font-medium"
+          style={{ color: "var(--text-faint)", fontSize: "0.7rem", minWidth: 56, textAlign: "right" }}
+        >
+          {label}
+        </span>
+      )}
     </div>
   );
 }
 
-export function SymptomsTable({ symptoms }: Props) {
+export function SymptomsTable({ symptoms, compact = false, lastFetchedAt }: Props) {
   const sorted = [...(symptoms ?? [])].sort((a, b) => b.date.localeCompare(a.date));
+  const visibleLimit = compact ? 5 : 8;
+  const visible = sorted.slice(0, visibleLimit);
+
   return (
-    <Card>
-      <CardHeader>
-        <SectionTitle>Symptom Log</SectionTitle>
-      </CardHeader>
+    <SectionCard
+      title="Symptom log"
+      icon={Activity}
+      meta={
+        <span className="flex items-center gap-2">
+          {sorted.length > 0 && <span>{sorted.length} total</span>}
+          {sorted.length > 0 && lastFetchedAt != null && <span style={{ opacity: 0.6 }}>·</span>}
+          <RelativeTime timestamp={lastFetchedAt ?? null} prefix="updated" />
+        </span>
+      }
+    >
       {sorted.length === 0 ? (
-        <EmptyPane label="No symptoms recorded" />
+        <EmptyState label="No symptoms recorded — add new ones from the support chat." />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr style={{ borderBottom: "1px solid var(--border)" }}>
-                {["Date", "Symptom", "Severity", "Notes"].map((h) => (
-                  <th key={h} className="text-left py-2 pr-3 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((s, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
-                  <td className="py-2 pr-3 tabular-nums" style={{ color: "var(--text-dim)" }}>{s.date?.slice(0, 10)}</td>
-                  <td className="py-2 pr-3 font-medium" style={{ color: "var(--text)" }}>{s.symptom}</td>
-                  <td className="py-2 pr-4" style={{ minWidth: 100 }}><SeverityBar value={s.severity} /></td>
-                  <td className="py-2" style={{ color: "var(--text-dim)" }}>{s.notes || "-"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ul className={compact ? "symptom-list symptom-list--compact" : "symptom-list"}>
+          {visible.map((s, i) => (
+            <li key={i} className={compact ? "symptom-row symptom-row--compact" : "symptom-row"}>
+              <span className="symptom-date">{s.date?.slice(5, 10)}</span>
+              <div className="symptom-info">
+                <p className="symptom-name">{s.symptom}</p>
+                {!compact && s.notes && <p className="symptom-notes">{s.notes}</p>}
+              </div>
+              <div className="symptom-severity">
+                <SeverityBar value={s.severity} compact={compact} />
+              </div>
+            </li>
+          ))}
+          {sorted.length > visibleLimit && (
+            <p className="symptom-more">+ {sorted.length - visibleLimit} more in record</p>
+          )}
+        </ul>
       )}
-    </Card>
+    </SectionCard>
   );
 }

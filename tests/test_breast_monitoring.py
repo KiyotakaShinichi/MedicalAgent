@@ -1443,6 +1443,34 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
+    def test_chat_resumes_pending_symptom_save_when_user_provides_severity(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P010", name="Partial Symptom Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            first = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P010",
+                message="I have nausea today.",
+            )
+            self.assertTrue(any(action["type"] == "partial_symptom_detected" for action in first["saved_actions"]))
+            self.assertEqual(db.query(SymptomReport).count(), 0)
+
+            second = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P010",
+                message="severity 7/10",
+            )
+            saved = [action for action in second["saved_actions"] if action["type"] == "saved_symptom"]
+            self.assertEqual(len(saved), 1)
+            self.assertEqual(saved[0]["symptom"], "nausea")
+            self.assertTrue(saved[0].get("resumed_from_memory"))
+            self.assertEqual(db.query(SymptomReport).count(), 1)
+        finally:
+            db.close()
+            db.bind.dispose()
+
     def test_chat_does_not_autosave_casual_emotional_message(self):
         db = _temp_db_session()
         try:

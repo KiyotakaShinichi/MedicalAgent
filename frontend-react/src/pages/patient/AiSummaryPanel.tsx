@@ -1,5 +1,5 @@
-import { Brain, AlertTriangle, CheckCircle, HelpCircle } from "lucide-react";
-import { Card, CardHeader, SectionTitle } from "../../components/ui/Card";
+import { Sparkles, CheckCircle, AlertTriangle, Info } from "lucide-react";
+import { SectionCard } from "../../components/ui/SectionCard";
 import type { AiSummary } from "../../types/api";
 
 function toArray(v: string | string[] | undefined): string[] {
@@ -9,73 +9,100 @@ function toArray(v: string | string[] | undefined): string[] {
 
 interface Props { summary: AiSummary | null }
 
+function SummaryColumn({
+  icon: Icon,
+  title,
+  tone,
+  items,
+  empty,
+}: {
+  icon: typeof CheckCircle;
+  title: string;
+  tone: "success" | "warning";
+  items: string[];
+  empty: string;
+}) {
+  const palette =
+    tone === "success"
+      ? { bg: "#f0fdf4", border: "#bbf7d0", fg: "#047857", chip: "#dcfce7" }
+      : { bg: "#fffbeb", border: "#fde68a", fg: "#92400e", chip: "#fef3c7" };
+  return (
+    <div
+      className="rounded-lg border p-3.5 flex flex-col gap-2"
+      style={{ background: palette.bg, borderColor: palette.border }}
+    >
+      <div className="flex items-center gap-2">
+        <span
+          className="inline-flex items-center justify-center"
+          style={{
+            width: 22, height: 22,
+            borderRadius: 6,
+            background: palette.chip,
+            color: palette.fg,
+            flexShrink: 0,
+          }}
+        >
+          <Icon size={12} />
+        </span>
+        <span
+          className="text-[0.74rem] font-semibold uppercase tracking-wide"
+          style={{ color: palette.fg }}
+        >
+          {title}
+        </span>
+      </div>
+      {items.length > 0 ? (
+        <ul className="flex flex-col gap-1.5 pl-0.5">
+          {items.map((s, i) => (
+            <li
+              key={i}
+              className="text-[0.82rem] leading-relaxed"
+              style={{ color: "var(--text)" }}
+            >
+              {s}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-[0.78rem]" style={{ color: "var(--text-dim)" }}>{empty}</p>
+      )}
+    </div>
+  );
+}
+
 export function AiSummaryPanel({ summary }: Props) {
   if (!summary) return null;
   const explanation = toArray(summary.patient_explanation);
   const reasons = summary.review_reasons ?? [];
 
   return (
-    <Card>
-      <CardHeader>
-        <SectionTitle>AI Snapshot</SectionTitle>
-        <Brain size={14} style={{ color: "var(--text-faint)" }} />
-      </CardHeader>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        {/* Patient explanation */}
-        <div
-          className="rounded-md p-3 flex flex-col gap-1.5 border"
-          style={{ background: "rgba(16,185,129,0.05)", borderColor: "rgba(16,185,129,0.18)" }}
-        >
-          <div className="flex items-center gap-1.5">
-            <CheckCircle size={13} style={{ color: "var(--green)" }} />
-            <span className="text-xs font-semibold" style={{ color: "var(--green)" }}>Key signals</span>
-          </div>
-          {explanation.length > 0 ? (
-            <ul className="list-none flex flex-col gap-1">
-              {explanation.map((s, i) => (
-                <li key={i} className="text-xs" style={{ color: "var(--text-dim)" }}>{s}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-xs" style={{ color: "var(--text-faint)" }}>No summary available</p>
-          )}
-        </div>
-
-        {/* Review reasons */}
-        <div
-          className="rounded-md p-3 flex flex-col gap-1.5 border"
-          style={{ background: "rgba(245,158,11,0.05)", borderColor: "rgba(245,158,11,0.18)" }}
-        >
-          <div className="flex items-center gap-1.5">
-            <AlertTriangle size={13} style={{ color: "var(--amber)" }} />
-            <span className="text-xs font-semibold" style={{ color: "var(--amber)" }}>Review with care team</span>
-          </div>
-          {reasons.length > 0 ? (
-            <ul className="list-none flex flex-col gap-1">
-              {reasons.map((r, i) => (
-                <li key={i} className="text-xs" style={{ color: "var(--text-dim)" }}>{r}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-xs" style={{ color: "var(--text-faint)" }}>Nothing flagged</p>
-          )}
-        </div>
-
-        {/* Disclaimer column */}
-        <div
-          className="rounded-md p-3 flex flex-col gap-1.5 border"
-          style={{ background: "rgba(148,163,184,0.05)", borderColor: "var(--border)" }}
-        >
-          <div className="flex items-center gap-1.5">
-            <HelpCircle size={13} style={{ color: "var(--text-dim)" }} />
-            <span className="text-xs font-semibold" style={{ color: "var(--text-dim)" }}>About this summary</span>
-          </div>
-          <p className="text-xs" style={{ color: "var(--text-faint)" }}>
-            Generated by an AI assistant using your records. Not a clinical diagnosis. Discuss any concerns with your oncology team.
-          </p>
-        </div>
+    <SectionCard
+      title="AI snapshot"
+      icon={Sparkles}
+      meta="updated just now"
+      footer={
+        <span className="inline-flex items-center gap-1.5">
+          <Info size={11} aria-hidden="true" />
+          Generated by an AI assistant using your records. Not a clinical diagnosis — discuss with your oncology team.
+        </span>
+      }
+    >
+      <div className="grid gap-3 md:grid-cols-2">
+        <SummaryColumn
+          icon={CheckCircle}
+          title="Key signals"
+          tone="success"
+          items={explanation}
+          empty="No summary available yet."
+        />
+        <SummaryColumn
+          icon={AlertTriangle}
+          title="Review with care team"
+          tone="warning"
+          items={reasons}
+          empty="Nothing flagged today."
+        />
       </div>
-    </Card>
+    </SectionCard>
   );
 }

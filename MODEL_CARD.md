@@ -1,5 +1,18 @@
 # Model Card: Breast Cancer Treatment Monitoring PoC
 
+> **Headline AUROC — always read both numbers together.**
+>
+> | Setting                                          | AUROC      | What it means                                                                                                       |
+> | ------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+> | External BreastDCEDL / I-SPY1 (logistic baseline)| **0.637**  | The honest signal for real-world generalisation. **Quote this whenever the synthetic number is quoted.**            |
+> | External BreastDCEDL CNN baseline (validation)   | **0.420**  | Weak external signal; useful as an honest floor, **not clinical validation**.                                       |
+> | TCGA-BRCA public clinical snapshot               | Not computed | Distribution/applicability scaffold only; public TCGA-BRCA does not provide the same longitudinal CBC monitoring target. |
+> | Synthetic holdout (champion: gradient boosting)  | **0.995**  | Model fitting its **own** simulator. Useful for simulator regression testing, not a clinical claim.                  |
+>
+> The external numbers lead because they are the closest available proxy for real-world generalisation. The synthetic generator is part of the project, so a 0.995 there describes the simulator, not patients. Any downstream README, dashboard, or pitch that quotes 0.995 must also quote 0.637 immediately next to it. The model benchmark script (`scripts/run_model_benchmark.py`) emits `honest_reporting_note` to the same effect, so the artifact carries the rule with it. TCGA-BRCA is tracked as an applicability/distribution benchmark until compatible labels and predictions are curated.
+>
+> **Subgroup calibration finding (added v2 of model benchmark):** Global ECE 0.141 hides per-subgroup ECE up to 0.246 on `HR+/HER2+`/`stage IIIB` buckets — a 9-point disparity in the largest band. Status: `needs_attention`. Detail at `Data/evals/models/latest_model_benchmark.json → subgroup_calibration`.
+
 ## Model Purpose
 
 This project is an AI-assisted oncology monitoring proof of concept. The models are intended to support longitudinal review of already-diagnosed breast cancer treatment journeys. They do not diagnose cancer, confirm treatment response, choose chemotherapy, or replace clinician judgment.

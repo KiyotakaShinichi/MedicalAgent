@@ -5,7 +5,7 @@
   "labs": "CBC rows at baseline/pre-cycle/nadir/recovery, with WBC, ANC, RBC, hemoglobin, and platelets.",
   "medications": "Anti-cancer regimen entries, supportive medications, and intervention medications/products.",
   "symptoms": "Patient-reported symptoms around treatment cycles.",
-  "mri_reports": "Synthetic MRI measurements at baseline and every treatment cycle.",
+  "mri_reports": "Synthetic imaging report events. MRI is common; CT and ultrasound are optional monitoring/staging signals and are not required for every patient.",
   "interventions": "Clinical support events such as growth-factor support, transfusions, antibiotics, or urgent review.",
   "outcomes": "Synthetic end-of-journey response labels and maintenance status.",
   "temporal_ml_rows": "Training-ready cycle-level features with final outcome labels.",

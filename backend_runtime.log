@@ -1,0 +1,21 @@
+INFO:     127.0.0.1:52244 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43268 - "OPTIONS /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11440 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:11440 - "OPTIONS /me/patient-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:27942 - "OPTIONS /me/patient-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4752 - "OPTIONS /me/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:22463 - "OPTIONS /me/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44070 - "GET /me/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:21452 - "GET /me/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:21607 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:21606 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:9213 - "GET /me/patient-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:16895 - "GET /me/patient-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35184 - "POST /me/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5599 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37202 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:3385 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:3388 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:3385 - "GET /me/patient-report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:3388 - "GET /clinician/review-queue?limit=25 HTTP/1.1" 200 OK
+     

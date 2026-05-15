@@ -32,6 +32,7 @@ SUPPORTED_TASK_TYPES = {
     "current_vs_realism_candidate",
     "multilingual_refusal_eval",
     "llm_judge_eval",
+    "benchmark_registry",
 }
 
 
@@ -301,6 +302,11 @@ def _dispatch_task(db, task_type, payload):
             output_path=payload.get("output_path") or DEFAULT_OUTPUT_PATH,
             max_cases=int(payload.get("max_cases") or 30),
         )
+
+    if task_type == "benchmark_registry":
+        from backend.services.benchmark_registry import DEFAULT_JSON_PATH, build_benchmark_registry
+
+        return build_benchmark_registry(output_path=payload.get("output_path") or DEFAULT_JSON_PATH)
 
     raise ValueError(f"No dispatcher for task_type={task_type}")
 

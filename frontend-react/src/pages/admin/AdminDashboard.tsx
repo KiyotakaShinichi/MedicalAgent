@@ -23,6 +23,7 @@ import { RegressionSection } from "./sections/RegressionSection";
 import { AgentTraceSection } from "./sections/AgentTraceSection";
 import { ImagingSection } from "./sections/ImagingSection";
 import { SafetyCenterSection } from "./sections/SafetyCenterSection";
+import { ToolActionBenchmarkSection } from "./sections/ToolActionBenchmarkSection";
 
 const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -43,6 +44,7 @@ type Section =
   | "mle"
   | "imaging"
   | "regression"
+  | "tool_actions"
   | "feedback"
   | "trace";
 
@@ -54,6 +56,7 @@ const SECTIONS: { id: Section; label: string }[] = [
   { id: "mle",           label: "MLE Gates" },
   { id: "imaging",       label: "Imaging MLE" },
   { id: "regression",    label: "Regression" },
+  { id: "tool_actions",  label: "Tool Actions" },
   { id: "trace",         label: "Agent Trace" },
   { id: "feedback",      label: "Feedback" },
 ];
@@ -95,9 +98,10 @@ export default function AdminDashboard() {
               {section === "guardrails" && <GuardrailsSection analytics={data} />}
               {section === "mle" && <MleSection analytics={data} onRefresh={refetch} />}
               {section === "imaging" && <ImagingSection />}
-              {section === "regression" && <RegressionSection />}
-              {section === "trace"      && <AgentTraceSection />}
-              {section === "feedback"   && <FeedbackSection />}
+              {section === "regression"   && <RegressionSection />}
+              {section === "tool_actions" && <ToolActionBenchmarkSection />}
+              {section === "trace"        && <AgentTraceSection />}
+              {section === "feedback"     && <FeedbackSection />}
             </ErrorBoundary>
           )}
         </div>

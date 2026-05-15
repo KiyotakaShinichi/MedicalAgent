@@ -14,27 +14,8 @@ CLAIM BOUNDARY: explains a model trained on synthetic data only.
 import json
 from pathlib import Path
 
-import joblib
 import numpy as np
 import pandas as pd
-
-from backend.services.complete_synthetic_training import CATEGORICAL_FEATURES, NUMERIC_FEATURES
-
-# Optional: SHAP for LinearExplainer
-try:
-    import shap as _shap
-    _SHAP_AVAILABLE = True
-except ImportError:
-    _SHAP_AVAILABLE = False
-
-# Optional: matplotlib for PNG plot
-try:
-    import matplotlib
-    matplotlib.use("Agg")  # headless
-    import matplotlib.pyplot as plt
-    _MPL_AVAILABLE = True
-except ImportError:
-    _MPL_AVAILABLE = False
 
 
 DEFAULT_SYNTHETIC_XAI_PATH = "Data/complete_synthetic_training/synthetic_xai_explanations.json"
@@ -51,6 +32,25 @@ def generate_complete_synthetic_xai(
     plot_json_path: str = DEFAULT_XAI_PLOT_JSON_PATH,
     top_n: int = 6,
 ):
+    import joblib
+    from backend.services.complete_synthetic_training import CATEGORICAL_FEATURES, NUMERIC_FEATURES
+
+    try:
+        import shap as shap_module
+        shap_available = True
+    except ImportError:
+        shap_module = None
+        shap_available = False
+
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt_module
+        mpl_available = True
+    except ImportError:
+        plt_module = None
+        mpl_available = False
+
     model = joblib.load(model_path)
     rows = pd.read_csv(ml_csv_path)
     predictions = (
@@ -72,8 +72,8 @@ def generate_complete_synthetic_xai(
         raise ValueError("Synthetic XAI currently expects a linear classifier with coef_.")
 
     # -- Explanation method ----------------------------------------------------
-    if _SHAP_AVAILABLE:
-        explainer = _shap.LinearExplainer(classifier, transformed, feature_perturbation="correlation_dependent")
+    if shap_available and shap_module is not None:
+        explainer = shap_module.LinearExplainer(classifier, transformed, feature_perturbation="correlation_dependent")
         shap_values = explainer.shap_values(transformed)  # shape (N, F)
         row_contributions = shap_values
         method = "shap_linear_explainer_logistic_regression"
@@ -142,14 +142,14 @@ def generate_complete_synthetic_xai(
     # -- Generate PNG plot -----------------------------------------------------
     plot_artifact_path = None
     plot_chart_path = None
-    if _MPL_AVAILABLE:
-        plot_artifact_path = _save_importance_plot(global_importance, plot_path, method_label)
+    if mpl_available and plt_module is not None:
+        plot_artifact_path = _save_importance_plot(global_importance, plot_path, method_label, plt_module)
     plot_chart_path = _save_importance_chart_json(global_importance, plot_json_path, method_label)
 
     payload = {
         "method": method,
         "method_label": method_label,
-        "shap_available": _SHAP_AVAILABLE,
+        "shap_available": shap_available,
         "plot_png_path": plot_artifact_path,
         "plot_chart_json_path": plot_chart_path,
         "patients": explanations,
@@ -167,7 +167,7 @@ def generate_complete_synthetic_xai(
         "patients_explained": len(explanations),
         "method": method,
         "method_label": method_label,
-        "shap_available": _SHAP_AVAILABLE,
+        "shap_available": shap_available,
         "output_json_path": str(output),
         "plot_png_path": plot_artifact_path,
         "plot_chart_json_path": plot_chart_path,
@@ -226,7 +226,7 @@ def load_xai_global_importance(xai_json_path: str = DEFAULT_SYNTHETIC_XAI_PATH):
 
 # -- Plot helpers --------------------------------------------------------------
 
-def _save_importance_plot(global_importance, plot_path: str, method_label: str) -> str | None:
+def _save_importance_plot(global_importance, plot_path: str, method_label: str, plt) -> str | None:
     try:
         top = global_importance[:15]
         features = [item["feature"] for item in reversed(top)]

@@ -1,6 +1,6 @@
 {
   "schema_version": "public_data_manifest_v1",
-  "generated_at": "2026-05-14T03:25:42.934057+00:00",
+  "generated_at": "2026-05-15T12:27:02.727142+00:00",
   "status": "usable_with_limitations",
   "central_data_reality": "No single public dataset was identified that combines breast-cancer treatment cycles, CBC trends, symptoms, medications, MRI response, CT/ultrasound metastatic indicators, clinician notes, and outcomes.",
   "recommended_strategy": "Use a source-calibrated synthetic patient journey benchmark: real public MRI-response datasets for imaging signals, QIN-BREAST/FDG-PET-CT-Lesions/DeepLesion for CT/PET-CT workflow experiments, BUSI/BUS-UCLM for breast ultrasound segmentation experiments, MIMIC-IV for lab-distribution realism, SEER/TCGA/METABRIC for subtype and outcome priors, and explicit documentation for all synthetic fields.",
