@@ -172,8 +172,10 @@ export function labStatusLabel(status: LabStatus): string {
 export const IMAGING_MODALITIES = [
   { value: "MRI",        label: "MRI" },
   { value: "CT",         label: "CT" },
+  { value: "PET/CT",     label: "PET/CT" },
   { value: "Ultrasound", label: "Ultrasound" },
   { value: "Mammogram",  label: "Mammogram" },
+  { value: "DEXA",       label: "DEXA bone density" },
   { value: "Other",      label: "Other" },
 ] as const;
 
@@ -222,6 +224,8 @@ export const COMMON_SYMPTOMS = [
   { value: "Skin reaction",      label: "Skin reaction or rash" },
   { value: "Nail changes",       label: "Nail changes" },
   { value: "Neuropathy",         label: "Neuropathy (numbness/tingling in hands or feet)" },
+  { value: "Neuropathy - hands", label: "Neuropathy in hands" },
+  { value: "Neuropathy - feet",  label: "Neuropathy in feet" },
   { value: "Joint pain",         label: "Joint pain" },
   { value: "Muscle pain",        label: "Muscle pain" },
   { value: "Headache",           label: "Headache" },
@@ -234,6 +238,8 @@ export const COMMON_SYMPTOMS = [
   { value: "Anxiety",            label: "Anxiety" },
   { value: "Depression",         label: "Depression or low mood" },
   { value: "Brain fog",          label: "Brain fog (memory or focus problems)" },
+  { value: "Memory problems",    label: "Memory problems" },
+  { value: "Trouble concentrating", label: "Trouble concentrating" },
   { value: "Lymphedema",         label: "Swelling (lymphedema)" },
   { value: "Breast pain",        label: "Breast or chest-wall pain" },
 ] as const;

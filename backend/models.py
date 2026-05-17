@@ -500,6 +500,12 @@ class RAGEvaluationLog(Base):
     retrieved_source_ids_json = Column(Text, nullable=True)
     cited_source_ids_json = Column(Text, nullable=True)
     guardrail_issues_json = Column(Text, nullable=True)
+    rag_mode = Column(String, nullable=True, index=True)
+    rewritten_query = Column(Text, nullable=True)
+    evidence_grade_json = Column(Text, nullable=True)
+    claim_validation_json = Column(Text, nullable=True)
+    tier_filter_json = Column(Text, nullable=True)
+    post_gen_validator_json = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

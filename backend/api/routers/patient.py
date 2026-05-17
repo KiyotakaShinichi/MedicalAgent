@@ -72,6 +72,8 @@ from backend.services.input_validation import (
     validate_treatment_payload,
     validation_error_payload,
 )
+from backend.services.ctcae_mapping import map_symptom_to_ctcae_review_hint
+from backend.services.lab_reference_context import build_cbc_reference_context
 from backend.services.multimodal_fusion import build_multimodal_assessment
 from backend.services.patient_timeline_summary import build_patient_timeline_risk_summary
 from backend.services.support_chat_agent import handle_patient_chat
@@ -645,6 +647,12 @@ def add_my_symptom(
     if payload.notes:
         composed_notes_parts.append(payload.notes.strip())
     composed_notes = " | ".join(composed_notes_parts) or None
+    ctcae_hint = map_symptom_to_ctcae_review_hint(
+        symptom=payload.symptom,
+        severity=payload.severity,
+        urgent_flag=payload.urgent_flag,
+        notes=composed_notes,
+    )
 
     try:
         validation_warnings = validate_symptom_payload(payload.symptom, payload.severity, composed_notes)
@@ -684,6 +692,7 @@ def add_my_symptom(
             "symptom_id": symptom.id,
             "warning_count": len(validation_warnings),
             "urgent_flag": payload.urgent_flag,
+            "ctcae_hint": ctcae_hint,
         },
     )
     return {
@@ -691,6 +700,7 @@ def add_my_symptom(
         "symptom_id": symptom.id,
         "validation_warnings": validation_warnings,
         "urgent_flag": payload.urgent_flag,
+        "ctcae_review_hint": ctcae_hint,
         "safety_note": (
             "This record is for monitoring only and does not replace clinician judgement. "
             "Urgent symptoms should be discussed with your care team."
@@ -735,6 +745,11 @@ def add_my_lab(
     if payload.notes:
         note_parts.append(payload.notes.strip())
     source_note = " | ".join(note_parts) or None
+    reference_context = build_cbc_reference_context(
+        wbc=payload.wbc,
+        hemoglobin=payload.hemoglobin,
+        platelets=payload.platelets,
+    )
 
     lab = LabResult(
         patient_id=patient_id,
@@ -752,12 +767,17 @@ def add_my_lab(
         db=db, event_type="patient_input", patient_id=patient_id,
         route="/me/labs", status="ok",
         input_payload=payload.dict(),
-        output_payload={"lab_id": lab.id, "warning_count": len(validation_warnings)},
+        output_payload={
+            "lab_id": lab.id,
+            "warning_count": len(validation_warnings),
+            "reference_context": reference_context,
+        },
     )
     return {
         "message": "Lab values logged to your patient record.",
         "lab_id": lab.id,
         "validation_warnings": validation_warnings,
+        "reference_context": reference_context,
         "safety_note": (
             "Lab entries here are for tracking. Reference ranges shown in the portal "
             "are general guides — your clinical team uses lab-specific ranges."
@@ -870,6 +890,21 @@ def add_my_medication(
     if payload.notes:
         note_parts.append(payload.notes.strip())
     notes = " | ".join(note_parts) or None
+    from backend.services.medication_interactions import check_medication_interactions
+
+    current_medications = [
+        row.medication
+        for row in db.query(MedicationLog)
+        .filter(MedicationLog.patient_id == patient_id)
+        .order_by(MedicationLog.date.desc(), MedicationLog.id.desc())
+        .limit(25)
+        .all()
+    ]
+    interaction_check = check_medication_interactions(
+        medication,
+        current_medications=current_medications,
+        notes=notes,
+    )
 
     med = MedicationLog(
         patient_id=patient_id,
@@ -894,6 +929,7 @@ def add_my_medication(
         "safety_note": (
             "Use this to track what you are taking. Dose changes must be agreed with your care team."
         ),
+        "interaction_check": interaction_check,
     }
 
 
@@ -1334,12 +1370,13 @@ def add_lab_result(
         log_app_event(db=db, event_type="validation_error", patient_id=patient_id, route="/patients/{patient_id}/labs", status="error", input_payload=payload.dict(), error_message=str(exc))
         raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients/{patient_id}/labs")) from exc
 
+    reference_context = build_cbc_reference_context(wbc=payload.wbc, hemoglobin=payload.hemoglobin, platelets=payload.platelets)
     lab = LabResult(patient_id=patient_id, date=payload.date, wbc=payload.wbc, hemoglobin=payload.hemoglobin, platelets=payload.platelets, source=payload.source or "manual", source_note=payload.source_note)
     db.add(lab)
     db.commit()
     _invalidate_report_cache(patient_id)
-    log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/labs", status="ok", input_payload=payload.dict(), output_payload={"lab_id": lab.id, "warning_count": len(validation_warnings)})
-    return {"message": "Lab result added", "validation_warnings": validation_warnings, "error_state": None}
+    log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/labs", status="ok", input_payload=payload.dict(), output_payload={"lab_id": lab.id, "warning_count": len(validation_warnings), "reference_context": reference_context})
+    return {"message": "Lab result added", "validation_warnings": validation_warnings, "reference_context": reference_context, "error_state": None}
 
 
 @router.post("/patients/{patient_id}/treatments")
@@ -1380,12 +1417,13 @@ def add_symptom_report(
         log_app_event(db=db, event_type="validation_error", patient_id=patient_id, route="/patients/{patient_id}/symptoms", status="error", input_payload=payload.dict(), error_message=str(exc))
         raise HTTPException(status_code=400, detail=validation_error_payload(exc, route="/patients/{patient_id}/symptoms")) from exc
 
+    ctcae_hint = map_symptom_to_ctcae_review_hint(symptom=payload.symptom, severity=payload.severity, notes=payload.notes)
     symptom = SymptomReport(patient_id=patient_id, date=payload.date, symptom=payload.symptom, severity=payload.severity, notes=payload.notes)
     db.add(symptom)
     db.commit()
     _invalidate_report_cache(patient_id)
-    log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/symptoms", status="ok", input_payload=payload.dict(), output_payload={"symptom_id": symptom.id, "warning_count": len(validation_warnings)})
-    return {"message": "Symptom report added", "validation_warnings": validation_warnings, "error_state": None}
+    log_app_event(db=db, event_type="patient_input", patient_id=patient_id, route="/patients/{patient_id}/symptoms", status="ok", input_payload=payload.dict(), output_payload={"symptom_id": symptom.id, "warning_count": len(validation_warnings), "ctcae_hint": ctcae_hint})
+    return {"message": "Symptom report added", "validation_warnings": validation_warnings, "ctcae_review_hint": ctcae_hint, "error_state": None}
 
 
 @router.post("/patients/{patient_id}/imaging-reports")

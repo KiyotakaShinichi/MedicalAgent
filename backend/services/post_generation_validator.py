@@ -38,6 +38,8 @@ import re
 from dataclasses import dataclass, field
 from typing import Iterable
 
+from backend.services.medical_claim_boundary import classify_medical_claim
+
 
 # ─── Pattern catalog ─────────────────────────────────────────────────────────
 # Patterns are intentionally precise — they target *claims*, not discussion.
@@ -162,6 +164,7 @@ class ValidatorDecision:
     matched_excerpts: list[dict[str, str]] = field(default_factory=list)
     suggested_response: str | None = None  # safe replacement when blocked
     severity: str = "low"    # "low" when allowed, otherwise highest rule
+    claim_boundary: dict | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -170,6 +173,7 @@ class ValidatorDecision:
             "matched_excerpts": list(self.matched_excerpts),
             "suggested_response": self.suggested_response,
             "severity": self.severity,
+            "claim_boundary": self.claim_boundary,
         }
 
 
@@ -196,7 +200,9 @@ def validate_reply(
     the suggested response into the user-facing payload.
     """
     if not reply or not isinstance(reply, str):
-        return ValidatorDecision(decision="allowed")
+        return ValidatorDecision(decision="allowed", claim_boundary=classify_medical_claim(reply or ""))
+
+    claim_boundary = classify_medical_claim(reply)
 
     triggered: list[str] = []
     excerpts: list[dict[str, str]] = []
@@ -220,7 +226,21 @@ def validate_reply(
                 break
 
     if not triggered:
-        return ValidatorDecision(decision="allowed")
+        if claim_boundary.get("decision") == "blocked":
+            triggered = list(claim_boundary.get("blocked_claim_types") or ["medical_claim_boundary"])
+            return ValidatorDecision(
+                decision="blocked",
+                triggered_rules=triggered,
+                matched_excerpts=[
+                    {"rule": item["claim_type"], "excerpt": item["excerpt"]}
+                    for item in claim_boundary.get("matched_claims", [])
+                    if item.get("decision") == "blocked"
+                ],
+                suggested_response=safe_refusal,
+                severity="high",
+                claim_boundary=claim_boundary,
+            )
+        return ValidatorDecision(decision="allowed", claim_boundary=claim_boundary)
 
     return ValidatorDecision(
         decision="blocked",
@@ -228,6 +248,7 @@ def validate_reply(
         matched_excerpts=excerpts,
         suggested_response=safe_refusal,
         severity=severity,
+        claim_boundary=claim_boundary,
     )
 
 

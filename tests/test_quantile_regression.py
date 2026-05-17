@@ -191,7 +191,7 @@ class InferenceWithQuantileArtifacts(unittest.TestCase):
 
     def test_uses_quantile_model_version_and_returns_band(self) -> None:
         r = predict_response_score_with_abstention(self._full_row())
-        self.assertEqual(r.model_version, "quantile_gbm_p10_p50_p90_response_score_percent")
+        self.assertIn("quantile_gbm_p10_p50_p90_response_score_percent", r.model_version)
         self.assertIsNotNone(r.uncertainty_band)
         lo, hi = r.uncertainty_band
         # Sorted contract: lo ≤ score ≤ hi after the per-row sort.
@@ -258,7 +258,7 @@ class InferenceFallback(unittest.TestCase):
             quantile_p90_path="/nonexistent_p90.joblib",
         )
         # Should NOT report the quantile model_version when artifacts are absent.
-        self.assertNotEqual(r.model_version, "quantile_gbm_p10_p50_p90_response_score_percent")
+        self.assertNotIn("quantile_gbm_p10_p50_p90_response_score_percent", r.model_version)
         self.assertIsNotNone(r.uncertainty_band)
         self.assertNotEqual(r.decision, "insufficient_evidence")
 

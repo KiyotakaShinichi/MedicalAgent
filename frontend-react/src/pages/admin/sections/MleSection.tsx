@@ -19,6 +19,8 @@ import {
   runPublicBiomarkerMappingReadiness,
   getCbioportalBiomarkerSchemaMapping,
   runCbioportalBiomarkerSchemaMapping,
+  getFullFeatureGroupAblation,
+  runFullFeatureGroupAblation,
   getCurrentVsRealismCandidate,
   runCurrentVsRealismCandidate,
   getLeakageAudit,
@@ -28,6 +30,10 @@ import {
   getPredictionTraces,
   getModalityRobustnessComparison,
   runModalityRobustnessComparison,
+  getResponseConformalCalibration,
+  runResponseConformalCalibration,
+  getRobustnessStress,
+  runRobustnessStress,
   getSyntheticGeneratorCard,
   runSyntheticGeneratorCard,
   getFailureModeRegistry,
@@ -44,11 +50,14 @@ import type {
   PublicBiomarkerDatasetManifest,
   PublicBiomarkerMappingReadiness,
   CbioportalBiomarkerSchemaMapping,
+  FullFeatureGroupAblationReport,
   CurrentVsRealismCandidateReport,
   LeakageAuditReport,
   EvidenceAbstentionEvalReport,
   PredictionTraceResponse,
   ModalityRobustnessComparisonReport,
+  ResponseConformalCalibrationReport,
+  RobustnessStressReport,
   SyntheticGeneratorCard,
   FailureModeRegistry,
   KbSourceGovernanceReport,
@@ -72,6 +81,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
   const { data: biomarkerManifest, status: biomarkerManifestStatus, refetch: refetchBiomarkerManifest } = useApi(getPublicBiomarkerDatasetManifest, []);
   const { data: biomarkerMapping, status: biomarkerMappingStatus, refetch: refetchBiomarkerMapping } = useApi(getPublicBiomarkerMappingReadiness, []);
   const { data: cbioMapping, status: cbioMappingStatus, refetch: refetchCbioMapping } = useApi(getCbioportalBiomarkerSchemaMapping, []);
+  const { data: fullFeatureAblation, status: fullFeatureAblationStatus, refetch: refetchFullFeatureAblation } = useApi(getFullFeatureGroupAblation, []);
   const { data: candidateComparison, status: candidateStatus, refetch: refetchCandidate } = useApi(getCurrentVsRealismCandidate, []);
   const { data: leakageAudit, status: leakageStatus, refetch: refetchLeakageAudit } = useApi(getLeakageAudit, []);
   const { data: abstentionEval, status: abstentionStatus, refetch: refetchAbstentionEval } = useApi(getEvidenceAbstentionEval, []);
@@ -83,6 +93,14 @@ export function MleSection({ analytics, onRefresh }: Props) {
     getModalityRobustnessComparison, [],
   );
   const [runningModalityComparison, setRunningModalityComparison] = useState(false);
+  const { data: conformalCalibration, status: conformalStatus, refetch: refetchConformalCalibration } = useApi(
+    getResponseConformalCalibration, [],
+  );
+  const { data: robustnessStress, status: robustnessStressStatus, refetch: refetchRobustnessStress } = useApi(
+    getRobustnessStress, [],
+  );
+  const [runningConformalCalibration, setRunningConformalCalibration] = useState(false);
+  const [runningRobustnessStress, setRunningRobustnessStress] = useState(false);
 
   const { data: generatorCard, status: generatorCardStatus, refetch: refetchGeneratorCard } = useApi(getSyntheticGeneratorCard, []);
   const { data: failureRegistry, status: failureRegistryStatus, refetch: refetchFailureRegistry } = useApi(getFailureModeRegistry, []);
@@ -96,6 +114,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
   const [runningBiomarkerManifest, setRunningBiomarkerManifest] = useState(false);
   const [runningBiomarkerMapping, setRunningBiomarkerMapping] = useState(false);
   const [runningCbioMapping, setRunningCbioMapping] = useState(false);
+  const [runningFullFeatureAblation, setRunningFullFeatureAblation] = useState(false);
 
   async function runMle() {
     setRunningMle(true);
@@ -162,6 +181,26 @@ export function MleSection({ analytics, onRefresh }: Props) {
     }
   }
 
+  async function refreshConformalCalibration() {
+    setRunningConformalCalibration(true);
+    try {
+      await runResponseConformalCalibration();
+      await refetchConformalCalibration();
+    } finally {
+      setRunningConformalCalibration(false);
+    }
+  }
+
+  async function refreshRobustnessStress() {
+    setRunningRobustnessStress(true);
+    try {
+      await runRobustnessStress();
+      await refetchRobustnessStress();
+    } finally {
+      setRunningRobustnessStress(false);
+    }
+  }
+
   async function refreshGeneratorCard() {
     setRunningGeneratorCard(true);
     try {
@@ -199,6 +238,16 @@ export function MleSection({ analytics, onRefresh }: Props) {
       await refetchCbioMapping();
     } finally {
       setRunningCbioMapping(false);
+    }
+  }
+
+  async function refreshFullFeatureAblation() {
+    setRunningFullFeatureAblation(true);
+    try {
+      await runFullFeatureGroupAblation();
+      await refetchFullFeatureAblation();
+    } finally {
+      setRunningFullFeatureAblation(false);
     }
   }
 
@@ -283,6 +332,20 @@ export function MleSection({ analytics, onRefresh }: Props) {
       {/* Prediction traceability — one row per live evidence-aware call,
           showing decision, modalities used, model + threshold + calibration
           provenance, and validator verdict. */}
+      <ResponseConformalCalibrationCard
+        report={conformalCalibration as ResponseConformalCalibrationReport | null}
+        loading={conformalStatus === "loading"}
+        running={runningConformalCalibration}
+        onRefresh={refreshConformalCalibration}
+      />
+
+      <RobustnessStressCard
+        report={robustnessStress as RobustnessStressReport | null}
+        loading={robustnessStressStatus === "loading"}
+        running={runningRobustnessStress}
+        onRefresh={refreshRobustnessStress}
+      />
+
       <PredictionTraceCard
         response={predictionTraces as PredictionTraceResponse | null}
         loading={predictionTracesStatus === "loading"}
@@ -578,6 +641,28 @@ export function MleSection({ analytics, onRefresh }: Props) {
         )}
       </Card>
 
+      <Card>
+        <CardHeader>
+          <SectionTitle>Full Feature-Group Ablation</SectionTitle>
+          <Button
+            variant="secondary"
+            size="sm"
+            loading={runningFullFeatureAblation}
+            icon={<RefreshCw size={12} />}
+            onClick={() => void refreshFullFeatureAblation()}
+          >
+            Rerun ablation
+          </Button>
+        </CardHeader>
+        {fullFeatureAblationStatus === "loading" ? <LoadingPane /> :
+         fullFeatureAblationStatus === "error" ? <ErrorPane message="Could not load full feature-group ablation" /> :
+         !fullFeatureAblation || (fullFeatureAblation as FullFeatureGroupAblationReport).status === "missing" ? (
+          <EmptyPane label="No full feature-group ablation available" />
+         ) : (
+          <FullFeatureGroupAblationPanel data={fullFeatureAblation as FullFeatureGroupAblationReport} />
+        )}
+      </Card>
+
       {/* Noise robustness */}
       <Card>
         <CardHeader>
@@ -814,6 +899,72 @@ function PublicBiomarkerMappingPanel({ data }: { data: PublicBiomarkerMappingRea
       </div>
 
       <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.tumor_marker_boundary}</p>
+    </div>
+  );
+}
+
+function FullFeatureGroupAblationPanel({ data }: { data: FullFeatureGroupAblationReport }) {
+  const groups = Object.entries(data.feature_groups ?? {});
+  const recommendation = data.recommendation;
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid sm:grid-cols-4 gap-3">
+        <MetricCard
+          label="Full vs clinical AUROC"
+          value={data.deltas?.full_vs_clinical_auroc_delta != null ? formatDelta(data.deltas.full_vs_clinical_auroc_delta) : null}
+          status={(data.deltas?.full_vs_clinical_auroc_delta ?? 0) >= 0 ? "green" : "amber"}
+        />
+        <MetricCard
+          label="Full vs clinical Brier"
+          value={data.deltas?.full_vs_clinical_brier_delta != null ? data.deltas.full_vs_clinical_brier_delta.toFixed(4) : null}
+          status={(data.deltas?.full_vs_clinical_brier_delta ?? 1) <= 0 ? "green" : "amber"}
+        />
+        <MetricCard
+          label="Full vs clinical ECE"
+          value={data.deltas?.full_vs_clinical_ece_delta != null ? data.deltas.full_vs_clinical_ece_delta.toFixed(4) : null}
+          status={(data.deltas?.full_vs_clinical_ece_delta ?? 1) <= 0.02 ? "green" : "amber"}
+        />
+        <MetricCard
+          label="Recommended use"
+          value={recommendation?.recommended_use?.replace(/_/g, " ") ?? "monitor only"}
+          status={recommendation?.promote_feature_set ? "amber" : "muted"}
+        />
+      </div>
+
+      {recommendation?.reason && (
+        <p className="text-xs" style={{ color: "var(--text-dim)" }}>{recommendation.reason}</p>
+      )}
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-faint)" }}>
+              <th className="text-left py-2 pr-3 font-medium">Feature group</th>
+              <th className="text-left py-2 pr-3 font-medium">Modalities</th>
+              <th className="text-right py-2 pr-3 font-medium">AUROC</th>
+              <th className="text-right py-2 pr-3 font-medium">Brier</th>
+              <th className="text-right py-2 pr-3 font-medium">ECE</th>
+              <th className="text-right py-2 pr-3 font-medium">FN</th>
+              <th className="text-right py-2 pr-3 font-medium">Reg. MAE</th>
+            </tr>
+          </thead>
+          <tbody>
+            {groups.map(([name, group]) => (
+              <tr key={name} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
+                <td className="py-2 pr-3 font-medium" style={{ color: "var(--text)" }}>{name.replace(/_/g, " ")}</td>
+                <td className="py-2 pr-3" style={{ color: "var(--text-dim)" }}>{(group.modalities ?? []).join(", ")}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.patient_level_auroc?.toFixed(3) ?? group.classification?.auroc?.toFixed(3) ?? "—"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.brier?.toFixed(3) ?? "—"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.ece?.toFixed(3) ?? "—"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.false_negative_count ?? "—"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.regression?.mae?.toFixed(3) ?? "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
     </div>
   );
 }
@@ -1573,6 +1724,191 @@ function formatDelta(value: number | null | undefined): string {
   if (value == null) return "—";
   const sign = value > 0 ? "+" : "";
   return `${sign}${(value * 100).toFixed(2)}pp`;
+}
+
+function ResponseConformalCalibrationCard({
+  report,
+  loading,
+  running,
+  onRefresh,
+}: {
+  report: ResponseConformalCalibrationReport | null;
+  loading: boolean;
+  running: boolean;
+  onRefresh: () => void;
+}) {
+  const status = report?.status ?? "missing";
+  const adjustedMeetsNominal =
+    report?.adjusted_coverage != null &&
+    report?.nominal_coverage != null &&
+    report.adjusted_coverage >= report.nominal_coverage - 0.01;
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <ShieldCheck size={14} style={{ color: "var(--blue, #1e3a8a)" }} aria-hidden="true" />
+          <SectionTitle>Response-score conformal calibration</SectionTitle>
+          <Badge variant={statusVariant(
+            status === "strong" ? "strong" :
+            status === "acceptable" ? "acceptable" :
+            status === "missing" ? "stale" : "needs_attention",
+          )}>
+            {status.toUpperCase()}
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
+          {running ? "Running..." : "Rerun calibration"}
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Split-conformal adjustment for the response-score regression interval.
+        The raw quantile band is widened by a held-out residual quantile so the
+        interval is calibrated as an engineering reliability signal, not a
+        clinical guarantee.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading conformal calibration..." />
+      ) : !report || status === "missing" ? (
+        <EmptyPane label={report?.message ?? "Conformal calibration has not been generated yet."} />
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-4 gap-3 mb-3">
+            <MetricCard label="Nominal coverage" value={formatRate(report.nominal_coverage)} status="muted" />
+            <MetricCard
+              label="Raw coverage"
+              value={formatRate(report.raw_coverage)}
+              status={(report.raw_coverage ?? 0) >= (report.nominal_coverage ?? 1) ? "green" : "amber"}
+            />
+            <MetricCard
+              label="Adjusted coverage"
+              value={formatRate(report.adjusted_coverage)}
+              status={adjustedMeetsNominal ? "green" : "amber"}
+            />
+            <MetricCard
+              label="qhat widen"
+              value={report.qhat_percent != null ? report.qhat_percent.toFixed(3) : null}
+              status="muted"
+            />
+          </div>
+          {report.interpretation && (
+            <p className="text-xs mb-2" style={{ color: "var(--text-dim)" }}>{report.interpretation}</p>
+          )}
+          {report.generated_at && (
+            <p className="text-[0.7rem]" style={{ color: "var(--text-faint)" }}>
+              Last run: {new Date(report.generated_at).toLocaleString()}
+              {report.calibration_rows != null && <> Â· calibration rows: {report.calibration_rows}</>}
+            </p>
+          )}
+        </>
+      )}
+    </Card>
+  );
+}
+
+function RobustnessStressCard({
+  report,
+  loading,
+  running,
+  onRefresh,
+}: {
+  report: RobustnessStressReport | null;
+  loading: boolean;
+  running: boolean;
+  onRefresh: () => void;
+}) {
+  const status = report?.status ?? "missing";
+  const summary = report?.summary ?? {};
+  const cases = report?.cases ?? [];
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <ShieldAlert size={14} style={{ color: "var(--amber, #92400e)" }} aria-hidden="true" />
+          <SectionTitle>Synthetic robustness stress suite</SectionTitle>
+          <Badge variant={statusVariant(
+            status === "strong" ? "strong" :
+            status === "acceptable" ? "acceptable" :
+            status === "missing" ? "stale" : "needs_attention",
+          )}>
+            {status.toUpperCase()}
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
+          {running ? "Running..." : "Rerun stress"}
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Fault-injection suite for missing labs, missing imaging, wrong units,
+        contradictory symptoms, delayed reports, noisy tumor markers,
+        incomplete family history, and ambiguous biomarkers. Passing means the
+        system routes to uncertainty, abstention, or clinician review instead
+        of overconfident clinical claims.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading robustness stress report..." />
+      ) : !report || status === "missing" ? (
+        <EmptyPane label={report?.message ?? "Robustness stress report has not been generated yet."} />
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-3 gap-3 mb-3">
+            <MetricCard
+              label="Pass rate"
+              value={formatRate(summary.pass_rate)}
+              status={(summary.pass_rate ?? 0) >= 0.95 ? "green" : "amber"}
+            />
+            <MetricCard label="Stress cases" value={summary.case_count ?? cases.length} status="muted" />
+            <MetricCard
+              label="Abstain/review route"
+              value={formatRate(summary.abstention_or_review_rate)}
+              status={(summary.abstention_or_review_rate ?? 0) >= 0.90 ? "green" : "amber"}
+            />
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
+              <thead>
+                <tr style={{ color: "var(--text-faint)" }}>
+                  <th className="text-left font-semibold py-1.5 pr-3" style={{ borderBottom: "1px solid var(--border)" }}>Case</th>
+                  <th className="text-left font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Category</th>
+                  <th className="text-left font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Expected</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Review</th>
+                  <th className="text-right font-semibold py-1.5 pl-2" style={{ borderBottom: "1px solid var(--border)" }}>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cases.slice(0, 10).map((c, index) => {
+                  const name = c.case ?? c.case_id ?? `case_${index + 1}`;
+                  const review = c.clinician_review_routed ?? c.clinician_review ?? c.abstained_any_head ?? c.abstained ?? false;
+                  return (
+                    <tr key={name}>
+                      <td className="py-1.5 pr-3" style={{ borderBottom: "1px solid var(--border-soft)", fontWeight: 600 }}>{name.replace(/_/g, " ")}</td>
+                      <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>{c.category}</td>
+                      <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>{(c.expected ?? c.expected_behavior ?? "safe routing").replace(/_/g, " ")}</td>
+                      <td className="py-1.5 px-2 text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{review ? "yes" : "no"}</td>
+                      <td className="py-1.5 pl-2 text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                        <Badge variant={c.passed ? "green" : "red"}>{c.passed ? "passed" : "failed"}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {report.generated_at && (
+            <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
+              Last run: {new Date(report.generated_at).toLocaleString()}
+            </p>
+          )}
+        </>
+      )}
+    </Card>
+  );
 }
 
 function PredictionTraceCard({

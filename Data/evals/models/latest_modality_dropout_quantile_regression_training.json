@@ -1,0 +1,320 @@
+{
+  "schema_version": "modality_dropout_quantile_regression_training_v1",
+  "generated_at": "2026-05-17T05:36:52.345217+00:00",
+  "status": "acceptable",
+  "target": "response_score_percent",
+  "ml_csv_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "seed": 42,
+  "quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "artifact_paths": {
+    "p10": "Data/complete_synthetic_training/modality_dropout_quantile_gbm_p10_response_score_percent.joblib",
+    "p50": "Data/complete_synthetic_training/modality_dropout_quantile_gbm_p50_response_score_percent.joblib",
+    "p90": "Data/complete_synthetic_training/modality_dropout_quantile_gbm_p90_response_score_percent.joblib"
+  },
+  "patient_split": {
+    "train_patient_count": 450,
+    "test_patient_count": 150,
+    "split_disjoint": true
+  },
+  "training_config": {
+    "n_aug_per_row": 3,
+    "p_drop_per_modality": 0.3,
+    "max_simultaneous_dropouts": 3,
+    "protected_modalities": [
+      "demographics"
+    ],
+    "test_size": 0.25
+  },
+  "augmentation_stats": {
+    "input_rows": 2700,
+    "output_rows": 8100,
+    "augmented_rows_added": 5400,
+    "total_dropouts_applied": 9271,
+    "mean_dropouts_per_augmented_row": 1.7169,
+    "dropouts_by_modality": {
+      "cbc_pre": 1531,
+      "cbc_nadir": 1558,
+      "cbc_recovery": 1551,
+      "imaging": 1564,
+      "symptoms": 1558,
+      "interventions": 1509
+    },
+    "protected_modalities": [
+      "demographics"
+    ],
+    "droppable_modalities": [
+      "cbc_pre",
+      "cbc_nadir",
+      "cbc_recovery",
+      "imaging",
+      "symptoms",
+      "interventions"
+    ]
+  },
+  "test_rows": 900,
+  "per_quantile_metrics": {
+    "p10": {
+      "quantile": 0.1,
+      "pinball_loss": 0.4349553504397795,
+      "mae": 3.620893268332112,
+      "mean_prediction": 22.493416235128752
+    },
+    "p50": {
+      "quantile": 0.5,
+      "pinball_loss": 0.5782283396902793,
+      "mae": 1.1564566793805586,
+      "mean_prediction": 26.074638505867544
+    },
+    "p90": {
+      "quantile": 0.9,
+      "pinball_loss": 0.9125680215808775,
+      "mae": 8.655308274210576,
+      "mean_prediction": 34.46985973325547
+    }
+  },
+  "interval": {
+    "lower_quantile": 0.1,
+    "upper_quantile": 0.9,
+    "nominal_coverage": 0.8,
+    "empirical_coverage": 0.7311111111111112,
+    "median_band_width": 5.630898252729703,
+    "monotonic_rate_p10_p50_p90": 0.6888888888888889,
+    "coverage_method": "per-row sorted p10/p90 interval, matching inference-time crossing guard"
+  },
+  "scenario_comparison": {
+    "legacy_available": true,
+    "scenario_count": 8,
+    "robust_mae_wins": 4,
+    "robust_mae_losses": 0,
+    "scenarios": [
+      {
+        "scenario": "full_data",
+        "stripped_modalities": [],
+        "rows_evaluated": 3600,
+        "coverage_rate": 1.0,
+        "robust": {
+          "p50_mae": 1.3035,
+          "p50_rmse": 5.673,
+          "empirical_coverage": 0.8097,
+          "coverage_gap": 0.0097,
+          "median_band_width": 5.6686
+        },
+        "legacy": {
+          "p50_mae": 1.3743,
+          "p50_rmse": 5.8326,
+          "empirical_coverage": 0.825,
+          "coverage_gap": 0.025,
+          "median_band_width": 3.5843
+        },
+        "deltas": {
+          "p50_mae_robust_minus_legacy": -0.0708,
+          "coverage_gap_robust_minus_legacy": -0.0153
+        }
+      },
+      {
+        "scenario": "no_imaging",
+        "stripped_modalities": [
+          "imaging"
+        ],
+        "rows_evaluated": 3600,
+        "coverage_rate": 1.0,
+        "robust": {
+          "p50_mae": 16.5557,
+          "p50_rmse": 22.9533,
+          "empirical_coverage": 0.7825,
+          "coverage_gap": 0.0175,
+          "median_band_width": 51.1357
+        },
+        "legacy": {
+          "p50_mae": 19.1755,
+          "p50_rmse": 24.7013,
+          "empirical_coverage": 0.5872,
+          "coverage_gap": 0.2128,
+          "median_band_width": 38.8925
+        },
+        "deltas": {
+          "p50_mae_robust_minus_legacy": -2.6198,
+          "coverage_gap_robust_minus_legacy": -0.1953
+        }
+      },
+      {
+        "scenario": "no_nadir_cbc",
+        "stripped_modalities": [
+          "cbc_nadir"
+        ],
+        "rows_evaluated": 3600,
+        "coverage_rate": 0.9958,
+        "robust": {
+          "p50_mae": 1.3052,
+          "p50_rmse": 5.6734,
+          "empirical_coverage": 0.7914,
+          "coverage_gap": 0.0086,
+          "median_band_width": 5.5027
+        },
+        "legacy": {
+          "p50_mae": 1.3745,
+          "p50_rmse": 5.8327,
+          "empirical_coverage": 0.8619,
+          "coverage_gap": 0.0619,
+          "median_band_width": 3.7122
+        },
+        "deltas": {
+          "p50_mae_robust_minus_legacy": -0.0693,
+          "coverage_gap_robust_minus_legacy": -0.0533
+        }
+      },
+      {
+        "scenario": "no_recovery_cbc",
+        "stripped_modalities": [
+          "cbc_recovery"
+        ],
+        "rows_evaluated": 3600,
+        "coverage_rate": 0.9958,
+        "robust": {
+          "p50_mae": 1.3072,
+          "p50_rmse": 5.676,
+          "empirical_coverage": 0.8075,
+          "coverage_gap": 0.0075,
+          "median_band_width": 5.584
+        },
+        "legacy": {
+          "p50_mae": 1.3749,
+          "p50_rmse": 5.8318,
+          "empirical_coverage": 0.8278,
+          "coverage_gap": 0.0278,
+          "median_band_width": 3.6339
+        },
+        "deltas": {
+          "p50_mae_robust_minus_legacy": -0.0677,
+          "coverage_gap_robust_minus_legacy": -0.0203
+        }
+      },
+      {
+        "scenario": "imaging_only",
+        "stripped_modalities": [
+          "cbc_pre",
+          "cbc_nadir",
+          "cbc_recovery",
+          "symptoms",
+          "interventions"
+        ],
+        "rows_evaluated": 3600,
+        "coverage_rate": 0.9958,
+        "robust": {
+          "p50_mae": 1.3082,
+          "p50_rmse": 5.6852,
+          "empirical_coverage": 0.7847,
+          "coverage_gap": 0.0153,
+          "median_band_width": 5.5182
+        },
+        "legacy": {
+          "p50_mae": 1.3756,
+          "p50_rmse": 5.832,
+          "empirical_coverage": 0.7975,
+          "coverage_gap": 0.0025,
+          "median_band_width": 3.4089
+        },
+        "deltas": {
+          "p50_mae_robust_minus_legacy": -0.0674,
+          "coverage_gap_robust_minus_legacy": 0.0128
+        }
+      },
+      {
+        "scenario": "cbc_pre_only",
+        "stripped_modalities": [
+          "cbc_nadir",
+          "cbc_recovery",
+          "imaging",
+          "symptoms",
+          "interventions"
+        ],
+        "rows_evaluated": 3600,
+        "coverage_rate": 0.0,
+        "robust": {
+          "p50_mae": 16.5937,
+          "p50_rmse": 22.9879,
+          "empirical_coverage": 0.7819,
+          "coverage_gap": 0.0181,
+          "median_band_width": 51.151
+        },
+        "legacy": {
+          "p50_mae": 19.1688,
+          "p50_rmse": 24.6972,
+          "empirical_coverage": 0.5847,
+          "coverage_gap": 0.2153,
+          "median_band_width": 38.8738
+        },
+        "deltas": {
+          "p50_mae_robust_minus_legacy": -2.5751,
+          "coverage_gap_robust_minus_legacy": -0.1972
+        }
+      },
+      {
+        "scenario": "demographics_only",
+        "stripped_modalities": [
+          "cbc_pre",
+          "cbc_nadir",
+          "cbc_recovery",
+          "imaging",
+          "symptoms",
+          "interventions"
+        ],
+        "rows_evaluated": 3600,
+        "coverage_rate": 0.0,
+        "robust": {
+          "p50_mae": 16.6537,
+          "p50_rmse": 23.0304,
+          "empirical_coverage": 0.7792,
+          "coverage_gap": 0.0208,
+          "median_band_width": 49.176
+        },
+        "legacy": {
+          "p50_mae": 19.1688,
+          "p50_rmse": 24.6975,
+          "empirical_coverage": 0.5775,
+          "coverage_gap": 0.2225,
+          "median_band_width": 38.8663
+        },
+        "deltas": {
+          "p50_mae_robust_minus_legacy": -2.5151,
+          "coverage_gap_robust_minus_legacy": -0.2017
+        }
+      },
+      {
+        "scenario": "symptoms_only",
+        "stripped_modalities": [
+          "cbc_pre",
+          "cbc_nadir",
+          "cbc_recovery",
+          "imaging",
+          "interventions"
+        ],
+        "rows_evaluated": 3600,
+        "coverage_rate": 0.0,
+        "robust": {
+          "p50_mae": 16.6537,
+          "p50_rmse": 23.0304,
+          "empirical_coverage": 0.7792,
+          "coverage_gap": 0.0208,
+          "median_band_width": 49.176
+        },
+        "legacy": {
+          "p50_mae": 19.1688,
+          "p50_rmse": 24.6975,
+          "empirical_coverage": 0.5775,
+          "coverage_gap": 0.2225,
+          "median_band_width": 38.8663
+        },
+        "deltas": {
+          "p50_mae_robust_minus_legacy": -2.5151,
+          "coverage_gap_robust_minus_legacy": -0.2017
+        }
+      }
+    ]
+  },
+  "claim_boundary": "Synthetic engineering artifact only. Modality-dropout quantile heads improve interval behavior under simulated missingness; they do not establish clinical treatment-response validity."
+}

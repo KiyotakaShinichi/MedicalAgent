@@ -1,0 +1,47 @@
+{
+  "reproducibility": {
+    "git_commit": "4b562c218d93b8f8ededa3c6e067af722d4d1f99",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "toxicity_model": "146701:1778980359:990ce152c109",
+      "shortcut_audit": "2200:1779001142:2d0514c1a886"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T10:36:55.604330+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T10:36:55.604330+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T10:36:55.604330+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "toxicity_model_metadata_v1",
+  "generated_at": "2026-05-17T10:36:56.396771+00:00",
+  "status": "needs_attention",
+  "model_path": "Data/complete_synthetic_training/gradient_boosting_toxicity_risk_binary.joblib",
+  "model_exists": true,
+  "task": "toxicity_risk_binary",
+  "label_source": "synthetic_generator_threshold_label",
+  "known_shortcut_risk": {
+    "status": "needs_attention",
+    "direct_rule_reconstruction": true,
+    "rule_accuracy": 0.9808,
+    "rule_auroc": 0.9851
+  },
+  "recommended_use": {
+    "current": "review_flag_or_deterministic_monitoring_rule",
+    "not_supported": [
+      "learned clinical toxicity prediction",
+      "patient-specific treatment adjustment",
+      "clinical adverse-event grading without clinician review"
+    ],
+    "promotion_requirement": "Replace the deterministic synthetic label with clinician-reviewed adverse-event labels, lagged pre-outcome features, calibrated uncertainty, and external validation."
+  },
+  "claim_boundary": "This metadata documents a synthetic toxicity head whose label is largely reconstructable from generator rules. It is a transparency artifact, not evidence of clinical toxicity prediction."
+}

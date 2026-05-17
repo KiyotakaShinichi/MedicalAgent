@@ -227,6 +227,16 @@ export interface AddMySymptomResponse {
   symptom_id: number;
   validation_warnings: { field: string; level: string; message: string }[];
   urgent_flag: boolean;
+  ctcae_review_hint?: {
+    schema_version: string;
+    patient_severity: number;
+    patient_severity_bucket: string;
+    ctcae_hint: string;
+    urgent_review: boolean;
+    red_flag_terms: string[];
+    review_focus: string[];
+    claim_boundary: string;
+  };
   safety_note: string;
 }
 
@@ -249,6 +259,20 @@ export interface AddMyLabResponse {
   message: string;
   lab_id: number;
   validation_warnings: { field: string; level: string; message: string }[];
+  reference_context?: {
+    schema_version: string;
+    demographics_used: Record<string, unknown>;
+    context_type: string;
+    labs: Record<string, {
+      value: number;
+      unit: string;
+      reference_range: { low: number; high: number };
+      status: string;
+      range_source: string;
+    }>;
+    limitations: string[];
+    claim_boundary: string;
+  };
   safety_note: string;
 }
 
@@ -289,6 +313,19 @@ export interface AddMyMedicationResponse {
   message: string;
   medication_id: number;
   safety_note: string;
+  interaction_check?: {
+    checker_version: string;
+    status: string;
+    flags: Array<{
+      rule_id: string;
+      severity: string;
+      message: string;
+      clinician_action: string;
+      matched_trigger_terms?: string[];
+      matched_context_terms?: string[];
+    }>;
+    claim_boundary: string;
+  };
 }
 
 export const addMyMedication = (payload: AddMyMedicationPayload) =>
@@ -560,6 +597,14 @@ export const getBiomarkerFeatureBenchmark = () =>
 export const runBiomarkerFeatureBenchmark = () =>
   post<{ message: string; result: unknown }>("/admin/biomarker-feature-benchmark");
 
+export const getFullFeatureGroupAblation = () =>
+  get<import("../types/api").FullFeatureGroupAblationReport>("/admin/full-feature-group-ablation");
+
+export const runFullFeatureGroupAblation = () =>
+  post<{ message: string; result: import("../types/api").FullFeatureGroupAblationReport }>(
+    "/admin/full-feature-group-ablation",
+  );
+
 export const getLeakageAudit = () =>
   get<import("../types/api").LeakageAuditReport>("/admin/leakage-audit");
 
@@ -600,6 +645,24 @@ export const getModalityRobustnessComparison = () =>
 export const runModalityRobustnessComparison = () =>
   post<{ message: string; result: import("../types/api").ModalityRobustnessComparisonReport }>(
     "/admin/modality-robustness-comparison",
+  );
+
+export const getResponseConformalCalibration = () =>
+  get<import("../types/api").ResponseConformalCalibrationReport>(
+    "/admin/response-conformal-calibration",
+  );
+
+export const runResponseConformalCalibration = () =>
+  post<{ message: string; result: import("../types/api").ResponseConformalCalibrationReport }>(
+    "/admin/response-conformal-calibration",
+  );
+
+export const getRobustnessStress = () =>
+  get<import("../types/api").RobustnessStressReport>("/admin/robustness-stress");
+
+export const runRobustnessStress = () =>
+  post<{ message: string; result: import("../types/api").RobustnessStressReport }>(
+    "/admin/robustness-stress",
   );
 
 export const getClinicianPatientPredictionTraces = (patient_id: string, params?: {

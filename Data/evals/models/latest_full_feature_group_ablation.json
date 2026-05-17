@@ -1,0 +1,1065 @@
+{
+  "reproducibility": {
+    "git_commit": "4b562c218d93b8f8ededa3c6e067af722d4d1f99",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_rows": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": 42,
+    "generated_at": "2026-05-17T06:59:30.150051+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T06:59:30.150051+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T06:59:30.150051+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "full_feature_group_ablation_v1",
+  "generated_at": "2026-05-17T06:59:30.311162+00:00",
+  "status": "strong",
+  "claim_boundary": "Synthetic feature-group ablation only. Results test engineering behavior of feature groups, missingness masks, leakage controls, calibration, and monitor-only promotion logic. They do not validate clinical utility or prove that biomarkers, genetics-readiness, tumor markers, labs, or imaging predict real treatment response.",
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "rows": 3600,
+  "patients": 600,
+  "train_patients": 450,
+  "test_patients": 150,
+  "feature_groups": {
+    "clinical_timeline_only": {
+      "classification": {
+        "auroc": 0.5742,
+        "auprc": 0.6121,
+        "brier": 0.2454,
+        "ece": 0.1247,
+        "sensitivity": 0.7771,
+        "specificity": 0.2836,
+        "precision": 0.5733,
+        "false_negative_count": 111,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 114,
+          "fp": 288,
+          "fn": 111,
+          "tp": 387
+        },
+        "patient_level_auroc": 0.57,
+        "patient_level_auprc": 0.6069,
+        "patient_level_brier": 0.245,
+        "patient_level_ece": 0.1198,
+        "patient_level_sensitivity": 0.7711,
+        "patient_level_specificity": 0.2687,
+        "patient_level_precision": 0.5664,
+        "patient_level_false_negative_count": 19,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 18,
+          "fp": 49,
+          "fn": 19,
+          "tp": 64
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.218
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.1766
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.1018
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.3308
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.2825
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.2161
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1481
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.1484
+          }
+        },
+        "subgroup_ece_max": 0.3308,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.1198,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 16.106,
+        "rmse": 23.2463,
+        "r2": 0.1652
+      },
+      "purpose": "Age, stage/subtype/regimen, cycle, and intervention context only.",
+      "modalities": [
+        "demographics",
+        "treatment_timeline"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "cycle",
+          "intervention_count",
+          "dose_delayed",
+          "dose_reduced"
+        ],
+        "categorical": [
+          "stage",
+          "regimen",
+          "molecular_subtype"
+        ]
+      }
+    },
+    "labs_only": {
+      "classification": {
+        "auroc": 0.4917,
+        "auprc": 0.539,
+        "brier": 0.26,
+        "ece": 0.0752,
+        "sensitivity": 0.7088,
+        "specificity": 0.301,
+        "precision": 0.5568,
+        "false_negative_count": 145,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 121,
+          "fp": 281,
+          "fn": 145,
+          "tp": 353
+        },
+        "patient_level_auroc": 0.4839,
+        "patient_level_auprc": 0.5387,
+        "patient_level_brier": 0.2551,
+        "patient_level_ece": 0.072,
+        "patient_level_sensitivity": 0.7349,
+        "patient_level_specificity": 0.2537,
+        "patient_level_precision": 0.5495,
+        "patient_level_false_negative_count": 22,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 17,
+          "fp": 50,
+          "fn": 22,
+          "tp": 61
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.1143
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.1851
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.0638
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.2703
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.1943
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.1722
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1112
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.0659
+          }
+        },
+        "subgroup_ece_max": 0.2703,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.072,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 17.3375,
+        "rmse": 23.9791,
+        "r2": 0.1118
+      },
+      "purpose": "CBC trend signal only, plus age for minimal demographic context.",
+      "modalities": [
+        "demographics",
+        "labs"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "pre_wbc",
+          "pre_anc",
+          "pre_hemoglobin",
+          "pre_platelets",
+          "nadir_wbc",
+          "nadir_anc",
+          "nadir_hemoglobin",
+          "nadir_platelets",
+          "recovery_wbc",
+          "recovery_hemoglobin",
+          "recovery_platelets"
+        ],
+        "categorical": []
+      }
+    },
+    "symptoms_only": {
+      "classification": {
+        "auroc": 0.51,
+        "auprc": 0.5691,
+        "brier": 0.2618,
+        "ece": 0.1211,
+        "sensitivity": 0.6526,
+        "specificity": 0.3035,
+        "precision": 0.5372,
+        "false_negative_count": 173,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 122,
+          "fp": 280,
+          "fn": 173,
+          "tp": 325
+        },
+        "patient_level_auroc": 0.5154,
+        "patient_level_auprc": 0.5688,
+        "patient_level_brier": 0.2592,
+        "patient_level_ece": 0.1156,
+        "patient_level_sensitivity": 0.6988,
+        "patient_level_specificity": 0.2537,
+        "patient_level_precision": 0.537,
+        "patient_level_false_negative_count": 25,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 17,
+          "fp": 50,
+          "fn": 25,
+          "tp": 58
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.1755
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.208
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.0933
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.2223
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.3783
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.1862
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1692
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.1256
+          }
+        },
+        "subgroup_ece_max": 0.3783,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.1156,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 19.9816,
+        "rmse": 25.3644,
+        "r2": 0.0062
+      },
+      "purpose": "Symptom burden only, plus age.",
+      "modalities": [
+        "demographics",
+        "symptoms"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "max_symptom_severity",
+          "symptom_count"
+        ],
+        "categorical": []
+      }
+    },
+    "imaging_only": {
+      "classification": {
+        "auroc": 0.8347,
+        "auprc": 0.8427,
+        "brier": 0.1603,
+        "ece": 0.0523,
+        "sensitivity": 0.8394,
+        "specificity": 0.6692,
+        "precision": 0.7586,
+        "false_negative_count": 80,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 269,
+          "fp": 133,
+          "fn": 80,
+          "tp": 418
+        },
+        "patient_level_auroc": 0.8979,
+        "patient_level_auprc": 0.8714,
+        "patient_level_brier": 0.1292,
+        "patient_level_ece": 0.1509,
+        "patient_level_sensitivity": 0.988,
+        "patient_level_specificity": 0.7463,
+        "patient_level_precision": 0.8283,
+        "patient_level_false_negative_count": 1,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 50,
+          "fp": 17,
+          "fn": 1,
+          "tp": 82
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.2059
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.1289
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.1729
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.2217
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.2454
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.2008
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1397
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.1846
+          }
+        },
+        "subgroup_ece_max": 0.2454,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.1509,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 1.4496,
+        "rmse": 4.5865,
+        "r2": 0.9675
+      },
+      "purpose": "MRI/CT/ultrasound-style response signal only, plus age.",
+      "modalities": [
+        "demographics",
+        "imaging"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "mri_tumor_size_cm",
+          "mri_percent_change_from_baseline"
+        ],
+        "categorical": []
+      }
+    },
+    "clinical_plus_labs": {
+      "classification": {
+        "auroc": 0.5331,
+        "auprc": 0.5746,
+        "brier": 0.246,
+        "ece": 0.0995,
+        "sensitivity": 0.7751,
+        "specificity": 0.2338,
+        "precision": 0.5562,
+        "false_negative_count": 112,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 94,
+          "fp": 308,
+          "fn": 112,
+          "tp": 386
+        },
+        "patient_level_auroc": 0.5253,
+        "patient_level_auprc": 0.5842,
+        "patient_level_brier": 0.243,
+        "patient_level_ece": 0.1127,
+        "patient_level_sensitivity": 0.7952,
+        "patient_level_specificity": 0.1791,
+        "patient_level_precision": 0.5455,
+        "patient_level_false_negative_count": 17,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 12,
+          "fp": 55,
+          "fn": 17,
+          "tp": 66
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.1485
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.0939
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.0746
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.2205
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.2785
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.1156
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1501
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.1105
+          }
+        },
+        "subgroup_ece_max": 0.2785,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.1127,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 16.1623,
+        "rmse": 23.4674,
+        "r2": 0.1493
+      },
+      "purpose": "Clinical/treatment context plus CBC trends.",
+      "modalities": [
+        "demographics",
+        "treatment_timeline",
+        "labs"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "cycle",
+          "intervention_count",
+          "dose_delayed",
+          "dose_reduced",
+          "pre_wbc",
+          "pre_anc",
+          "pre_hemoglobin",
+          "pre_platelets",
+          "nadir_wbc",
+          "nadir_anc",
+          "nadir_hemoglobin",
+          "nadir_platelets",
+          "recovery_wbc",
+          "recovery_hemoglobin",
+          "recovery_platelets"
+        ],
+        "categorical": [
+          "stage",
+          "regimen",
+          "molecular_subtype"
+        ]
+      }
+    },
+    "clinical_labs_imaging": {
+      "classification": {
+        "auroc": 0.9679,
+        "auprc": 0.9749,
+        "brier": 0.0738,
+        "ece": 0.0427,
+        "sensitivity": 0.8956,
+        "specificity": 0.903,
+        "precision": 0.9196,
+        "false_negative_count": 52,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 363,
+          "fp": 39,
+          "fn": 52,
+          "tp": 446
+        },
+        "patient_level_auroc": 0.9982,
+        "patient_level_auprc": 0.9986,
+        "patient_level_brier": 0.0511,
+        "patient_level_ece": 0.1468,
+        "patient_level_sensitivity": 0.9639,
+        "patient_level_specificity": 1.0,
+        "patient_level_precision": 1.0,
+        "patient_level_false_negative_count": 3,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 67,
+          "fp": 0,
+          "fn": 3,
+          "tp": 80
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.1386
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.16
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.1554
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.1632
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.1261
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.1779
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1469
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.1601
+          }
+        },
+        "subgroup_ece_max": 0.1779,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.1468,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 1.6265,
+        "rmse": 4.415,
+        "r2": 0.9699
+      },
+      "purpose": "Core monitoring model without biomarkers, genetics-readiness, or tumor markers.",
+      "modalities": [
+        "demographics",
+        "treatment_timeline",
+        "labs",
+        "symptoms",
+        "imaging"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "cycle",
+          "intervention_count",
+          "dose_delayed",
+          "dose_reduced",
+          "pre_wbc",
+          "pre_anc",
+          "pre_hemoglobin",
+          "pre_platelets",
+          "nadir_wbc",
+          "nadir_anc",
+          "nadir_hemoglobin",
+          "nadir_platelets",
+          "recovery_wbc",
+          "recovery_hemoglobin",
+          "recovery_platelets",
+          "max_symptom_severity",
+          "symptom_count",
+          "mri_tumor_size_cm",
+          "mri_percent_change_from_baseline"
+        ],
+        "categorical": [
+          "stage",
+          "regimen",
+          "molecular_subtype"
+        ]
+      }
+    },
+    "clinical_labs_imaging_biomarkers": {
+      "classification": {
+        "auroc": 0.9667,
+        "auprc": 0.974,
+        "brier": 0.0754,
+        "ece": 0.0509,
+        "sensitivity": 0.8775,
+        "specificity": 0.8881,
+        "precision": 0.9066,
+        "false_negative_count": 61,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 357,
+          "fp": 45,
+          "fn": 61,
+          "tp": 437
+        },
+        "patient_level_auroc": 0.9957,
+        "patient_level_auprc": 0.9966,
+        "patient_level_brier": 0.0528,
+        "patient_level_ece": 0.1232,
+        "patient_level_sensitivity": 0.9639,
+        "patient_level_specificity": 0.9254,
+        "patient_level_precision": 0.9412,
+        "patient_level_false_negative_count": 3,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 62,
+          "fp": 5,
+          "fn": 3,
+          "tp": 80
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.1375
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.1572
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.1453
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.168
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.1292
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.1609
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1475
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.1175
+          }
+        },
+        "subgroup_ece_max": 0.168,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.1232,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 1.6341,
+        "rmse": 4.3638,
+        "r2": 0.9706
+      },
+      "purpose": "Adds ER/PR/HER2/Ki-67/pathology-style context to the core monitoring set.",
+      "modalities": [
+        "demographics",
+        "treatment_timeline",
+        "labs",
+        "symptoms",
+        "imaging",
+        "biomarkers"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "cycle",
+          "intervention_count",
+          "dose_delayed",
+          "dose_reduced",
+          "pre_wbc",
+          "pre_anc",
+          "pre_hemoglobin",
+          "pre_platelets",
+          "nadir_wbc",
+          "nadir_anc",
+          "nadir_hemoglobin",
+          "nadir_platelets",
+          "recovery_wbc",
+          "recovery_hemoglobin",
+          "recovery_platelets",
+          "max_symptom_severity",
+          "symptom_count",
+          "mri_tumor_size_cm",
+          "mri_percent_change_from_baseline",
+          "er_positive_synthetic",
+          "pr_positive_synthetic",
+          "her2_positive_synthetic",
+          "triple_negative_synthetic",
+          "ki67_percent_synthetic",
+          "pathology_high_grade_synthetic"
+        ],
+        "categorical": [
+          "stage",
+          "regimen",
+          "molecular_subtype"
+        ]
+      }
+    },
+    "clinical_labs_imaging_biomarkers_genetics": {
+      "classification": {
+        "auroc": 0.9662,
+        "auprc": 0.9737,
+        "brier": 0.0759,
+        "ece": 0.0418,
+        "sensitivity": 0.8835,
+        "specificity": 0.8905,
+        "precision": 0.9091,
+        "false_negative_count": 58,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 358,
+          "fp": 44,
+          "fn": 58,
+          "tp": 440
+        },
+        "patient_level_auroc": 0.996,
+        "patient_level_auprc": 0.997,
+        "patient_level_brier": 0.0531,
+        "patient_level_ece": 0.1244,
+        "patient_level_sensitivity": 0.9639,
+        "patient_level_specificity": 0.9403,
+        "patient_level_precision": 0.9524,
+        "patient_level_false_negative_count": 3,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 63,
+          "fp": 4,
+          "fn": 3,
+          "tp": 80
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.1374
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.1592
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.1473
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.1698
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.1322
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.1621
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1485
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.1589
+          }
+        },
+        "subgroup_ece_max": 0.1698,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.1244,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 1.6155,
+        "rmse": 4.3316,
+        "r2": 0.971
+      },
+      "purpose": "Adds genetic-counseling readiness flag as workflow context, not diagnosis.",
+      "modalities": [
+        "demographics",
+        "treatment_timeline",
+        "labs",
+        "symptoms",
+        "imaging",
+        "biomarkers",
+        "genetic_readiness"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "cycle",
+          "intervention_count",
+          "dose_delayed",
+          "dose_reduced",
+          "pre_wbc",
+          "pre_anc",
+          "pre_hemoglobin",
+          "pre_platelets",
+          "nadir_wbc",
+          "nadir_anc",
+          "nadir_hemoglobin",
+          "nadir_platelets",
+          "recovery_wbc",
+          "recovery_hemoglobin",
+          "recovery_platelets",
+          "max_symptom_severity",
+          "symptom_count",
+          "mri_tumor_size_cm",
+          "mri_percent_change_from_baseline",
+          "er_positive_synthetic",
+          "pr_positive_synthetic",
+          "her2_positive_synthetic",
+          "triple_negative_synthetic",
+          "ki67_percent_synthetic",
+          "pathology_high_grade_synthetic",
+          "germline_high_risk_gene_flag_synthetic"
+        ],
+        "categorical": [
+          "stage",
+          "regimen",
+          "molecular_subtype"
+        ]
+      }
+    },
+    "clinical_labs_imaging_biomarkers_genetics_tumor_markers": {
+      "classification": {
+        "auroc": 0.966,
+        "auprc": 0.9731,
+        "brier": 0.0758,
+        "ece": 0.0355,
+        "sensitivity": 0.8916,
+        "specificity": 0.8806,
+        "precision": 0.9024,
+        "false_negative_count": 54,
+        "threshold": 0.5,
+        "confusion_matrix": {
+          "tn": 354,
+          "fp": 48,
+          "fn": 54,
+          "tp": 444
+        },
+        "patient_level_auroc": 0.9953,
+        "patient_level_auprc": 0.9963,
+        "patient_level_brier": 0.0527,
+        "patient_level_ece": 0.1208,
+        "patient_level_sensitivity": 0.9759,
+        "patient_level_specificity": 0.9254,
+        "patient_level_precision": 0.9419,
+        "patient_level_false_negative_count": 2,
+        "patient_level_threshold": 0.5,
+        "patient_level_confusion_matrix": {
+          "tn": 62,
+          "fp": 5,
+          "fn": 2,
+          "tp": 81
+        },
+        "subgroup_ece": {
+          "molecular_subtype:HER2+": {
+            "n": 29,
+            "ece": 0.1348
+          },
+          "molecular_subtype:HR+/HER2+": {
+            "n": 27,
+            "ece": 0.1593
+          },
+          "molecular_subtype:HR+/HER2-": {
+            "n": 62,
+            "ece": 0.147
+          },
+          "molecular_subtype:triple-negative": {
+            "n": 32,
+            "ece": 0.166
+          },
+          "stage:IIA": {
+            "n": 32,
+            "ece": 0.1315
+          },
+          "stage:IIB": {
+            "n": 49,
+            "ece": 0.1648
+          },
+          "stage:IIIA": {
+            "n": 41,
+            "ece": 0.1239
+          },
+          "stage:IIIB": {
+            "n": 20,
+            "ece": 0.1578
+          }
+        },
+        "subgroup_ece_max": 0.166,
+        "abstention_rate": 0.0,
+        "uncertainty_calibration": {
+          "method": "ece_proxy_from_patient_level_probabilities",
+          "ece": 0.1208,
+          "note": "Formal abstention is evaluated in latest_evidence_abstention_eval.json; this ablation force-scores all rows."
+        }
+      },
+      "regression": {
+        "mae": 1.6193,
+        "rmse": 4.4129,
+        "r2": 0.9699
+      },
+      "purpose": "Full candidate feature set with tumor-marker trends as context only.",
+      "modalities": [
+        "demographics",
+        "treatment_timeline",
+        "labs",
+        "symptoms",
+        "imaging",
+        "biomarkers",
+        "genetic_readiness",
+        "tumor_markers"
+      ],
+      "features": {
+        "numeric": [
+          "age",
+          "cycle",
+          "intervention_count",
+          "dose_delayed",
+          "dose_reduced",
+          "pre_wbc",
+          "pre_anc",
+          "pre_hemoglobin",
+          "pre_platelets",
+          "nadir_wbc",
+          "nadir_anc",
+          "nadir_hemoglobin",
+          "nadir_platelets",
+          "recovery_wbc",
+          "recovery_hemoglobin",
+          "recovery_platelets",
+          "max_symptom_severity",
+          "symptom_count",
+          "mri_tumor_size_cm",
+          "mri_percent_change_from_baseline",
+          "er_positive_synthetic",
+          "pr_positive_synthetic",
+          "her2_positive_synthetic",
+          "triple_negative_synthetic",
+          "ki67_percent_synthetic",
+          "pathology_high_grade_synthetic",
+          "germline_high_risk_gene_flag_synthetic",
+          "ca15_3_value_synthetic",
+          "ca27_29_value_synthetic",
+          "cea_value_synthetic",
+          "tumor_marker_rising_synthetic",
+          "tumor_marker_missing_indicator"
+        ],
+        "categorical": [
+          "stage",
+          "regimen",
+          "molecular_subtype"
+        ]
+      }
+    }
+  },
+  "deltas": {
+    "full_vs_clinical_auroc_delta": 0.4253,
+    "full_vs_clinical_brier_delta": -0.1696,
+    "full_vs_clinical_ece_delta": -0.0892,
+    "full_vs_clinical_regression_mae_delta": -14.4867
+  },
+  "leakage_audit": {
+    "status": "passed",
+    "forbidden_columns": [
+      "cycle_response_trend_class",
+      "final_cancer_status",
+      "final_response_category",
+      "final_response_multiclass",
+      "latent_response_strength",
+      "maintenance_needed",
+      "response_score_percent",
+      "support_intervention_needed",
+      "toxicity_risk_binary",
+      "treatment_success_binary",
+      "urgent_intervention_needed"
+    ],
+    "violations": []
+  },
+  "recommendation": {
+    "status": "strong",
+    "promote_feature_set": true,
+    "recommended_use": "candidate_for_external_validation",
+    "reason": "Full feature set improved AUROC without worsening Brier/ECE beyond guardrails.",
+    "guardrails": {
+      "min_patient_level_auroc_delta": 0.01,
+      "max_brier_delta": 0.0,
+      "max_ece_delta": 0.02
+    }
+  }
+}

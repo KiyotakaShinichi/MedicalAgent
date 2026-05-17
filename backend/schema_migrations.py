@@ -45,6 +45,20 @@ def ensure_schema():
             connection.execute(text("ALTER TABLE rag_evaluation_logs ADD COLUMN query_preview VARCHAR"))
         if "request_id" not in rag_log_columns:
             connection.execute(text("ALTER TABLE rag_evaluation_logs ADD COLUMN request_id VARCHAR"))
+        # Canonical schema history lives in Alembic revision 0003.  These
+        # idempotent startup patches keep existing local SQLite demo DBs from
+        # silently returning null Phase 11 trace replay fields before the user
+        # runs `alembic upgrade head`.
+        for name, ddl in {
+            "rag_mode": "ALTER TABLE rag_evaluation_logs ADD COLUMN rag_mode VARCHAR",
+            "rewritten_query": "ALTER TABLE rag_evaluation_logs ADD COLUMN rewritten_query TEXT",
+            "evidence_grade_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN evidence_grade_json TEXT",
+            "claim_validation_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN claim_validation_json TEXT",
+            "tier_filter_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN tier_filter_json TEXT",
+            "post_gen_validator_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN post_gen_validator_json TEXT",
+        }.items():
+            if name not in rag_log_columns:
+                connection.execute(text(ddl))
 
     # ClinicalSummaryReview schema changes are now owned by Alembic revisions
     # under backend/migrations/. Keep this startup patcher for legacy demo

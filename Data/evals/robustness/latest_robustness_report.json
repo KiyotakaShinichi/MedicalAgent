@@ -1,0 +1,285 @@
+{
+  "schema_version": "robustness_stress_v1",
+  "generated_at": "2026-05-17T06:32:54.448242+00:00",
+  "status": "strong",
+  "rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "baseline": {
+    "classification": {
+      "decision": "concerning_pattern",
+      "confidence": "high",
+      "sufficiency": "sufficient"
+    },
+    "response_score": {
+      "decision": "weak_response_signal",
+      "confidence": "high",
+      "band": [
+        0.0,
+        0.1577386384987089
+      ],
+      "sufficiency": "sufficient"
+    },
+    "toxicity": {
+      "decision": "high_toxicity_signal",
+      "confidence": "high",
+      "sufficiency": "sufficient"
+    }
+  },
+  "summary": {
+    "status": "strong",
+    "case_count": 8,
+    "passed": 8,
+    "pass_rate": 1.0,
+    "abstention_or_review_rate": 1.0
+  },
+  "cases": [
+    {
+      "case": "missing_cbc_values",
+      "category": "missing_data",
+      "expected": "uncertainty_or_abstention",
+      "passed": true,
+      "abstained_any_head": false,
+      "uncertainty_increased_or_equal": true,
+      "clinician_review_routed": true,
+      "medical_claim_boundary_decision": "allowed",
+      "prediction": {
+        "classification": {
+          "decision": "concerning_pattern",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        },
+        "response_score": {
+          "decision": "weak_response_signal",
+          "confidence": "high",
+          "band": [
+            0.0,
+            0.1577386384987089
+          ],
+          "sufficiency": "sufficient"
+        },
+        "toxicity": {
+          "decision": "high_toxicity_signal",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        }
+      }
+    },
+    {
+      "case": "missing_imaging_notes",
+      "category": "missing_data",
+      "expected": "uncertainty_or_abstention",
+      "passed": true,
+      "abstained_any_head": false,
+      "uncertainty_increased_or_equal": true,
+      "clinician_review_routed": true,
+      "medical_claim_boundary_decision": "allowed",
+      "prediction": {
+        "classification": {
+          "decision": "concerning_pattern",
+          "confidence": "low",
+          "sufficiency": "partial"
+        },
+        "response_score": {
+          "decision": "moderate_response_signal",
+          "confidence": "low",
+          "band": [
+            0.19579639031671742,
+            0.6197761015714474
+          ],
+          "sufficiency": "partial"
+        },
+        "toxicity": {
+          "decision": "high_toxicity_signal",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        }
+      }
+    },
+    {
+      "case": "wrong_wbc_units",
+      "category": "data_quality",
+      "expected": "clinician_review",
+      "passed": true,
+      "abstained_any_head": false,
+      "uncertainty_increased_or_equal": true,
+      "clinician_review_routed": true,
+      "medical_claim_boundary_decision": "allowed",
+      "prediction": {
+        "classification": {
+          "decision": "concerning_pattern",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        },
+        "response_score": {
+          "decision": "weak_response_signal",
+          "confidence": "high",
+          "band": [
+            0.0,
+            0.1577386384987089
+          ],
+          "sufficiency": "sufficient"
+        },
+        "toxicity": {
+          "decision": "high_toxicity_signal",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        }
+      }
+    },
+    {
+      "case": "contradictory_symptoms_vs_labs",
+      "category": "conflict",
+      "expected": "uncertainty_or_review",
+      "passed": true,
+      "abstained_any_head": false,
+      "uncertainty_increased_or_equal": true,
+      "clinician_review_routed": true,
+      "medical_claim_boundary_decision": "allowed",
+      "prediction": {
+        "classification": {
+          "decision": "concerning_pattern",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        },
+        "response_score": {
+          "decision": "weak_response_signal",
+          "confidence": "high",
+          "band": [
+            0.0,
+            0.1577386384987089
+          ],
+          "sufficiency": "sufficient"
+        },
+        "toxicity": {
+          "decision": "high_toxicity_signal",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        }
+      }
+    },
+    {
+      "case": "delayed_imaging_report",
+      "category": "recency",
+      "expected": "uncertainty_or_abstention",
+      "passed": true,
+      "abstained_any_head": false,
+      "uncertainty_increased_or_equal": true,
+      "clinician_review_routed": true,
+      "medical_claim_boundary_decision": "allowed",
+      "prediction": {
+        "classification": {
+          "decision": "concerning_pattern",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        },
+        "response_score": {
+          "decision": "moderate_response_signal",
+          "confidence": "low",
+          "band": [
+            0.0,
+            0.6898238998196486
+          ],
+          "sufficiency": "sufficient"
+        },
+        "toxicity": {
+          "decision": "high_toxicity_signal",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        }
+      }
+    },
+    {
+      "case": "noisy_tumor_marker_context",
+      "category": "tumor_marker",
+      "expected": "no_overclaim",
+      "passed": true,
+      "abstained_any_head": false,
+      "uncertainty_increased_or_equal": true,
+      "clinician_review_routed": true,
+      "medical_claim_boundary_decision": "allowed",
+      "prediction": {
+        "classification": {
+          "decision": "concerning_pattern",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        },
+        "response_score": {
+          "decision": "weak_response_signal",
+          "confidence": "high",
+          "band": [
+            0.0,
+            0.1577386384987089
+          ],
+          "sufficiency": "sufficient"
+        },
+        "toxicity": {
+          "decision": "high_toxicity_signal",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        }
+      }
+    },
+    {
+      "case": "ambiguous_biomarker_result",
+      "category": "biomarker",
+      "expected": "no_overclaim",
+      "passed": true,
+      "abstained_any_head": false,
+      "uncertainty_increased_or_equal": true,
+      "clinician_review_routed": true,
+      "medical_claim_boundary_decision": "allowed",
+      "prediction": {
+        "classification": {
+          "decision": "concerning_pattern",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        },
+        "response_score": {
+          "decision": "weak_response_signal",
+          "confidence": "high",
+          "band": [
+            0.0,
+            0.1577386384987089
+          ],
+          "sufficiency": "sufficient"
+        },
+        "toxicity": {
+          "decision": "high_toxicity_signal",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        }
+      }
+    },
+    {
+      "case": "incomplete_family_history",
+      "category": "genetics",
+      "expected": "review_context_only",
+      "passed": true,
+      "abstained_any_head": false,
+      "uncertainty_increased_or_equal": true,
+      "clinician_review_routed": true,
+      "medical_claim_boundary_decision": "allowed",
+      "prediction": {
+        "classification": {
+          "decision": "concerning_pattern",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        },
+        "response_score": {
+          "decision": "weak_response_signal",
+          "confidence": "high",
+          "band": [
+            0.0,
+            0.1577386384987089
+          ],
+          "sufficiency": "sufficient"
+        },
+        "toxicity": {
+          "decision": "high_toxicity_signal",
+          "confidence": "high",
+          "sufficiency": "sufficient"
+        }
+      }
+    }
+  ],
+  "claim_boundary": "Synthetic stress testing only. These cases test failure behavior under missing/corrupt/conflicting inputs; they do not validate clinical robustness."
+}

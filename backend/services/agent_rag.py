@@ -1221,6 +1221,7 @@ def _finalize_result(db, patient_id, query, rewritten, result, retrieved, rerank
             "decision": "blocked",
             "triggered_rules": pgv_decision.triggered_rules,
             "matched_excerpts": pgv_decision.matched_excerpts,
+            "medical_claim_boundary": pgv_decision.claim_boundary,
             "original_reply_preview": (original_reply or "")[:240],
         }
         # Surface the block in the output-guardrail block too so existing
@@ -1234,7 +1235,71 @@ def _finalize_result(db, patient_id, query, rewritten, result, retrieved, rerank
             )
             output_guardrails["issues"] = existing_issues
     else:
-        result["post_gen_validator"] = {"decision": "allowed", "triggered_rules": []}
+        result["post_gen_validator"] = {
+            "decision": "allowed",
+            "triggered_rules": [],
+            "medical_claim_boundary": pgv_decision.claim_boundary,
+        }
+
+    # ─── Intent-aware RAG layer (Phase 11) ─────────────────────────────
+    # Resolves the mode for the classified intent, filters retrieved
+    # chunks against the mode's allowed tiers + use intents, runs the
+    # claim-level citation validator, and produces an EvidenceGrade
+    # envelope embedded into ``result["evidence_grade"]``.
+    #
+    # The mode/grade fields are advisory by default — they do NOT alter
+    # the reply text (post-gen validator already did that).  When the
+    # grade is ``insufficient`` AND the post-gen validator did not
+    # already block, we substitute the mode's insufficient_evidence
+    # default reply so the patient never sees a forced answer on weak
+    # evidence.
+    try:
+        from backend.services.rag_intent_modes import select_mode
+        from backend.services.rag_tier_filter import filter_chunks_by_mode
+        from backend.services.rag_claim_validator import validate_claims
+        from backend.services.rag_evidence_grading import grade_evidence
+
+        actor_role = (result.get("actor_role")
+                      or (input_guardrails or {}).get("actor_role"))
+        mode = select_mode(result.get("intent"), actor_role=actor_role)
+        if mode is not None:
+            chunks_for_filter = result.get("retrieval_context") or retrieved or []
+            filter_result = filter_chunks_by_mode(chunks_for_filter, mode)
+            claim_validation = validate_claims(
+                result.get("reply") or "",
+                filter_result.kept_chunks,
+            )
+            grade = grade_evidence(
+                mode=mode,
+                filter_result=filter_result,
+                claim_validation=claim_validation,
+                retrieved_count_before_filter=len(chunks_for_filter),
+            )
+            result["rag_mode"] = mode.mode
+            result["mode_allowed_tiers"] = list(mode.allowed_tiers)
+            result["mode_allowed_use"] = list(mode.allowed_use)
+            result["tier_filter"] = filter_result.to_dict()
+            result["claim_validation"] = claim_validation.to_dict()
+            result["evidence_grade"] = grade.to_dict()
+
+            # Substitute the mode's insufficient-evidence default when
+            # grading collapses AND the validator hadn't already blocked.
+            if (
+                grade.grade == "insufficient"
+                and pgv_decision.decision != "blocked"
+                and mode.insufficient_evidence_default
+            ):
+                result["reply"] = mode.insufficient_evidence_default
+                result["citations"] = []
+                result["insufficient_evidence_substitution"] = {
+                    "reason": grade.reasoning,
+                    "mode": mode.mode,
+                }
+    except Exception as exc:  # noqa: BLE001 — the new layer must never crash chat
+        result["evidence_grade"] = {
+            "grade": "missing",
+            "reasoning": f"intent_aware_rag_layer_skipped: {exc!s}",
+        }
 
     rag_evaluation = evaluate_rag_response(
         query=query,
@@ -1501,6 +1566,12 @@ def _store_rag_evaluation_log(db, patient_id, query, result, rag_evaluation, ret
             "input": guardrails.get("input_issues") or [],
             "output": guardrails.get("output_issues") or [],
         }),
+        rag_mode=result.get("rag_mode"),
+        rewritten_query=result.get("rewritten_query"),
+        evidence_grade_json=json.dumps(result.get("evidence_grade")) if result.get("evidence_grade") is not None else None,
+        claim_validation_json=json.dumps(result.get("claim_validation")) if result.get("claim_validation") is not None else None,
+        tier_filter_json=json.dumps(result.get("tier_filter")) if result.get("tier_filter") is not None else None,
+        post_gen_validator_json=json.dumps(result.get("post_gen_validator")) if result.get("post_gen_validator") is not None else None,
     )
     db.add(row)
     db.commit()

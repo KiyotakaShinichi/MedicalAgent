@@ -1,0 +1,444 @@
+{
+  "schema_version": "medical_safety_contract_v1",
+  "generated_at": "2026-05-17T06:32:55.787399+00:00",
+  "status": "strong",
+  "clinical_ontology": {
+    "version": "clinical_ontology_v1_2026_05",
+    "record_types": {
+      "symptom": {
+        "symptom": {
+          "name": "symptom",
+          "allowed_values": [
+            "fatigue",
+            "nausea",
+            "vomiting",
+            "fever",
+            "mouth_sores",
+            "neuropathy",
+            "diarrhea",
+            "bleeding",
+            "wound_discharge",
+            "pain",
+            "shortness_of_breath",
+            "chest_pain",
+            "other"
+          ],
+          "required": true,
+          "description": "Patient-reported symptom category.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "severity": {
+          "name": "severity",
+          "allowed_values": [],
+          "required": true,
+          "description": "0-10 patient-reported severity.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "imaging": {
+        "modality": {
+          "name": "modality",
+          "allowed_values": [
+            "mri",
+            "ct",
+            "ultrasound",
+            "pet_ct",
+            "xray",
+            "other"
+          ],
+          "required": true,
+          "description": "Imaging/report modality. Images do not diagnose genetics.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "report_type": {
+          "name": "report_type",
+          "allowed_values": [
+            "baseline",
+            "interim",
+            "end_of_course",
+            "follow_up",
+            "unknown"
+          ],
+          "required": false,
+          "description": "Clinical timing category for report organization.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "biomarker": {
+        "er_status": {
+          "name": "er_status",
+          "allowed_values": [
+            "positive",
+            "negative",
+            "low_positive",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "pr_status": {
+          "name": "pr_status",
+          "allowed_values": [
+            "positive",
+            "negative",
+            "low_positive",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "her2_status": {
+          "name": "her2_status",
+          "allowed_values": [
+            "positive",
+            "negative",
+            "equivocal",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "ihc_score": {
+          "name": "ihc_score",
+          "allowed_values": [
+            "0",
+            "1+",
+            "2+",
+            "3+",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "fish_status": {
+          "name": "fish_status",
+          "allowed_values": [
+            "amplified",
+            "not_amplified",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "ki67_percent": {
+          "name": "ki67_percent",
+          "allowed_values": [],
+          "required": false,
+          "description": "Numeric percent if shown on pathology report.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "genetic_test": {
+        "test_type": {
+          "name": "test_type",
+          "allowed_values": [
+            "germline",
+            "somatic",
+            "tumor_sequencing",
+            "multigene_panel",
+            "brca_only",
+            "unknown"
+          ],
+          "required": true,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "sample_type": {
+          "name": "sample_type",
+          "allowed_values": [
+            "blood",
+            "saliva",
+            "tumor_tissue",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "gene": {
+          "name": "gene",
+          "allowed_values": [
+            "BRCA1",
+            "BRCA2",
+            "PALB2",
+            "TP53",
+            "PTEN",
+            "CHEK2",
+            "ATM",
+            "other"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "classification": {
+          "name": "classification",
+          "allowed_values": [
+            "pathogenic",
+            "likely_pathogenic",
+            "vus",
+            "likely_benign",
+            "benign",
+            "unknown"
+          ],
+          "required": false,
+          "description": "Variant classification copied from a report; not interpreted by OncoTrack.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "tumor_marker": {
+        "marker": {
+          "name": "marker",
+          "allowed_values": [
+            "CA 15-3",
+            "CA 27.29",
+            "CEA",
+            "other"
+          ],
+          "required": true,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "value": {
+          "name": "value",
+          "allowed_values": [],
+          "required": true,
+          "description": "Numeric value as shown on the lab report.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "unit": {
+          "name": "unit",
+          "allowed_values": [],
+          "required": false,
+          "description": "Unit copied from the lab report.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      }
+    },
+    "claim_boundary": "The ontology constrains structured data entry and agent extraction. It does not interpret records, diagnose, or recommend treatment."
+  },
+  "minimum_evidence_standards": {
+    "version": "minimum_evidence_standards_v1_2026_05",
+    "standards": {
+      "general_education": {
+        "required": [
+          "trusted_kb_source"
+        ],
+        "answer_policy": "RAG answer with citation; no patient-specific decision."
+      },
+      "response_classification": {
+        "required_any": [
+          "imaging",
+          "complete_longitudinal_cbc"
+        ],
+        "required_all": [
+          "demographics"
+        ],
+        "answer_policy": "May emit monitor-only pattern signal; abstain if missing response evidence."
+      },
+      "response_regression": {
+        "required_any": [
+          "imaging",
+          "complete_longitudinal_cbc"
+        ],
+        "required_all": [
+          "demographics"
+        ],
+        "answer_policy": "May emit score only with uncertainty band and claim boundary."
+      },
+      "toxicity_classification": {
+        "required_any": [
+          "any_cbc",
+          "symptoms"
+        ],
+        "required_all": [
+          "demographics"
+        ],
+        "answer_policy": "May emit toxicity monitoring signal; urgent symptoms route to care team."
+      },
+      "genetic_result_organization": {
+        "required_any": [
+          "uploaded_report",
+          "typed_report_fields"
+        ],
+        "answer_policy": "Organize fields only; route to genetic counselor/clinician review."
+      },
+      "biomarker_explanation": {
+        "required_any": [
+          "pathology_report_text",
+          "typed_biomarker_fields",
+          "trusted_kb_source"
+        ],
+        "answer_policy": "Explain terminology only; no treatment recommendation."
+      },
+      "tumor_marker_trend": {
+        "required_any": [
+          "marker_value",
+          "trend_values"
+        ],
+        "answer_policy": "Context-dependent monitoring only; never diagnose recurrence."
+      },
+      "treatment_decision": {
+        "required": [],
+        "answer_policy": "Blocked. Refer to oncology team."
+      },
+      "diagnosis_or_prognosis": {
+        "required": [],
+        "answer_policy": "Blocked. Refer to clinician/emergency services when urgent."
+      }
+    },
+    "claim_boundary": "Minimum evidence standards are engineering guardrails that decide when the system may answer, must hedge, or must abstain. They are not clinical practice guidelines."
+  },
+  "medical_claim_boundary": {
+    "version": "medical_claim_boundary_v1_2026_05",
+    "claim_types": [
+      {
+        "code": "general_education",
+        "decision": "allowed",
+        "description": "General educational explanation without patient-specific decision."
+      },
+      {
+        "code": "record_organization",
+        "decision": "allowed",
+        "description": "Organizes user-provided data without interpreting it clinically."
+      },
+      {
+        "code": "monitoring_signal",
+        "decision": "caution",
+        "description": "Monitor-only signal that requires clinician review and uncertainty language."
+      },
+      {
+        "code": "diagnosis_claim",
+        "decision": "blocked",
+        "description": "Asserts diagnosis, malignancy, metastasis, recurrence, or cancer status."
+      },
+      {
+        "code": "treatment_recommendation",
+        "decision": "blocked",
+        "description": "Recommends starting/stopping/changing treatment or medications."
+      },
+      {
+        "code": "dosage_instruction",
+        "decision": "blocked",
+        "description": "Gives specific dosage or medication schedule."
+      },
+      {
+        "code": "prognosis_estimate",
+        "decision": "blocked",
+        "description": "Predicts survival, life expectancy, cure chance, or recurrence probability."
+      },
+      {
+        "code": "genetic_risk_overclaim",
+        "decision": "blocked",
+        "description": "Treats VUS or unclear genetic data as a confirmed genetic diagnosis/risk."
+      },
+      {
+        "code": "tumor_marker_overclaim",
+        "decision": "blocked",
+        "description": "Uses tumor marker value alone to claim recurrence/progression."
+      }
+    ]
+  },
+  "journey_phase_model": {
+    "version": "breast_cancer_journey_phase_v1_2026_05",
+    "phases": {
+      "diagnosis_baseline": {
+        "order": 1,
+        "signals": [
+          "diagnosis",
+          "baseline imaging",
+          "biopsy",
+          "pathology"
+        ],
+        "allowed_ai_role": "organize baseline context and missing data."
+      },
+      "biomarker_pathology_workup": {
+        "order": 2,
+        "signals": [
+          "ER",
+          "PR",
+          "HER2",
+          "Ki-67",
+          "IHC",
+          "FISH"
+        ],
+        "allowed_ai_role": "extract stated biomarkers and route for review."
+      },
+      "genetic_counseling_readiness": {
+        "order": 3,
+        "signals": [
+          "BRCA",
+          "germline",
+          "family history",
+          "VUS"
+        ],
+        "allowed_ai_role": "organize hereditary-risk context; do not interpret genetic risk."
+      },
+      "treatment_cycles": {
+        "order": 4,
+        "signals": [
+          "cycle",
+          "chemotherapy",
+          "paclitaxel",
+          "doxorubicin",
+          "trastuzumab"
+        ],
+        "allowed_ai_role": "track cycle timing and side-effect context."
+      },
+      "monitoring_side_effects": {
+        "order": 5,
+        "signals": [
+          "CBC",
+          "WBC",
+          "ANC",
+          "hemoglobin",
+          "platelets",
+          "symptom"
+        ],
+        "allowed_ai_role": "surface monitoring signals and urgent review flags."
+      },
+      "imaging_response_review": {
+        "order": 6,
+        "signals": [
+          "MRI",
+          "CT",
+          "ultrasound",
+          "impression",
+          "lesion",
+          "ascites"
+        ],
+        "allowed_ai_role": "summarize report wording; do not diagnose response."
+      },
+      "survivorship_supportive_care": {
+        "order": 7,
+        "signals": [
+          "fatigue",
+          "neuropathy",
+          "lymphedema",
+          "sleep",
+          "nutrition",
+          "exercise"
+        ],
+        "allowed_ai_role": "support question preparation and symptom organization."
+      },
+      "recurrence_metastatic_monitoring": {
+        "order": 8,
+        "signals": [
+          "tumor marker",
+          "CA 15-3",
+          "CA 27.29",
+          "CEA",
+          "metastatic"
+        ],
+        "allowed_ai_role": "trend/context only; never confirm recurrence."
+      }
+    },
+    "claim_boundary": "Workflow organization only, not diagnosis or treatment planning."
+  },
+  "claim_boundary": "This artifact documents engineering guardrails for allowed data values, minimum evidence, and blocked medical claim types. It is not clinical validation and is not a medical policy substitute."
+}

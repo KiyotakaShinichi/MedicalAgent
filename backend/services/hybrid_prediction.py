@@ -42,6 +42,7 @@ from backend.services.predict_with_abstention import (
     _model_version_tag,
     predict_with_abstention,
 )
+from backend.services.response_conformal_calibration import conformal_adjustment
 
 
 DEFAULT_REGRESSION_MODEL_PATH = (
@@ -65,6 +66,15 @@ DEFAULT_QUANTILE_P50_PATH = (
 )
 DEFAULT_QUANTILE_P90_PATH = (
     "Data/complete_synthetic_training/quantile_gbm_p90_response_score_percent.joblib"
+)
+DEFAULT_ROBUST_QUANTILE_P10_PATH = (
+    "Data/complete_synthetic_training/modality_dropout_quantile_gbm_p10_response_score_percent.joblib"
+)
+DEFAULT_ROBUST_QUANTILE_P50_PATH = (
+    "Data/complete_synthetic_training/modality_dropout_quantile_gbm_p50_response_score_percent.joblib"
+)
+DEFAULT_ROBUST_QUANTILE_P90_PATH = (
+    "Data/complete_synthetic_training/modality_dropout_quantile_gbm_p90_response_score_percent.joblib"
 )
 
 # Response-score thresholds on the normalised [0,1] scale.  Anything in the
@@ -155,6 +165,43 @@ def _load_pipeline(model_path: str) -> Any | None:
     return joblib.load(model_path)
 
 
+def _quantile_candidate_paths(
+    override_p10: str | None,
+    override_p50: str | None,
+    override_p90: str | None,
+) -> list[tuple[str, str, str, str]]:
+    """Return quantile model trios in preference order.
+
+    Explicit overrides are used exactly as provided for tests/backward
+    compatibility. In normal runtime, modality-dropout quantile heads are
+    preferred because they were trained to handle missing-modality patterns;
+    plain quantile heads remain the fallback.
+    """
+    if override_p10 or override_p50 or override_p90:
+        if override_p10 and override_p50 and override_p90:
+            return [(
+                override_p10,
+                override_p50,
+                override_p90,
+                "custom_quantile_gbm_p10_p50_p90_response_score_percent",
+            )]
+        return []
+    return [
+        (
+            DEFAULT_ROBUST_QUANTILE_P10_PATH,
+            DEFAULT_ROBUST_QUANTILE_P50_PATH,
+            DEFAULT_ROBUST_QUANTILE_P90_PATH,
+            "modality_dropout_quantile_gbm_p10_p50_p90_response_score_percent",
+        ),
+        (
+            DEFAULT_QUANTILE_P10_PATH,
+            DEFAULT_QUANTILE_P50_PATH,
+            DEFAULT_QUANTILE_P90_PATH,
+            "quantile_gbm_p10_p50_p90_response_score_percent",
+        ),
+    ]
+
+
 # ─── Per-head predict functions ──────────────────────────────────────────────
 
 
@@ -162,9 +209,9 @@ def predict_response_score_with_abstention(
     row: Mapping[str, Any],
     *,
     model_path: str = DEFAULT_REGRESSION_MODEL_PATH,
-    quantile_p10_path: str | None = DEFAULT_QUANTILE_P10_PATH,
-    quantile_p50_path: str | None = DEFAULT_QUANTILE_P50_PATH,
-    quantile_p90_path: str | None = DEFAULT_QUANTILE_P90_PATH,
+    quantile_p10_path: str | None = None,
+    quantile_p50_path: str | None = None,
+    quantile_p90_path: str | None = None,
 ) -> EvidenceAwareRegression:
     """Regression head.  Uses the same sufficiency rules as the classification
     head — both require imaging OR longitudinal CBC — but emits a continuous
@@ -202,7 +249,11 @@ def predict_response_score_with_abstention(
     modifier = evidence.confidence_modifier
 
     # Preferred path: three quantile heads, sorted per row.
-    if quantile_p10_path and quantile_p50_path and quantile_p90_path:
+    for quantile_p10_path, quantile_p50_path, quantile_p90_path, version_tag in _quantile_candidate_paths(
+        quantile_p10_path,
+        quantile_p50_path,
+        quantile_p90_path,
+    ):
         p10_model = _load_pipeline(quantile_p10_path)
         p50_model = _load_pipeline(quantile_p50_path)
         p90_model = _load_pipeline(quantile_p90_path)
@@ -226,6 +277,7 @@ def predict_response_score_with_abstention(
                 upper=shrunk_hi,
                 evidence=evidence,
             )
+            band = _apply_conformal_adjustment(band, version_tag)
             return EvidenceAwareRegression(
                 decision=_response_decision(shrunk_mid),
                 response_score=shrunk_mid,
@@ -233,9 +285,12 @@ def predict_response_score_with_abstention(
                 uncertainty_band=band,
                 confidence=_response_confidence_bucket(shrunk_mid, evidence.sufficiency, band),
                 evidence=evidence,
-                model_version="quantile_gbm_p10_p50_p90_response_score_percent",
+                model_version=version_tag,
                 question="response_score_regression",
-                uncertainty_method="quantile_gbm_p10_p90_evidence_adjusted",
+                uncertainty_method=(
+                    "quantile_gbm_p10_p90_evidence_adjusted"
+                    + ("_conformal" if conformal_adjustment() > 0 else "")
+                ),
             )
 
     # Fallback: legacy point regressor + heuristic band.
@@ -406,6 +461,22 @@ def _evidence_adjusted_interval(
     return (
         max(0.0, center - half_width),
         min(1.0, center + half_width),
+    )
+
+
+def _apply_conformal_adjustment(
+    band: tuple[float, float],
+    model_version: str,
+) -> tuple[float, float]:
+    """Apply split-conformal widening to robust quantile intervals only."""
+    if not model_version.startswith("modality_dropout_quantile"):
+        return band
+    qhat = conformal_adjustment()
+    if qhat <= 0:
+        return band
+    return (
+        max(0.0, band[0] - qhat),
+        min(1.0, band[1] + qhat),
     )
 
 

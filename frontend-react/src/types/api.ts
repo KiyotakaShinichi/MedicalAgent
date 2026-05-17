@@ -731,6 +731,47 @@ export interface CbioportalBiomarkerSchemaMapping {
   mapping_hash: string;
 }
 
+export interface FullFeatureGroupAblationReport {
+  schema_version?: string;
+  status: "strong" | "acceptable" | "needs_attention" | "missing" | string;
+  generated_at?: string;
+  feature_groups?: Record<string, {
+    purpose?: string;
+    modalities?: string[];
+    classification?: {
+      patient_level_auroc?: number | null;
+      auroc?: number | null;
+      auprc?: number | null;
+      brier?: number | null;
+      ece?: number | null;
+      sensitivity?: number | null;
+      specificity?: number | null;
+      false_negative_count?: number | null;
+      subgroup_ece_max?: number | null;
+    };
+    regression?: {
+      mae?: number | null;
+      rmse?: number | null;
+      r2?: number | null;
+    };
+  }>;
+  deltas?: {
+    full_vs_clinical_auroc_delta?: number | null;
+    full_vs_clinical_brier_delta?: number | null;
+    full_vs_clinical_ece_delta?: number | null;
+    full_vs_clinical_regression_mae_delta?: number | null;
+  };
+  leakage_audit?: { status?: string; violations?: unknown[] };
+  recommendation?: {
+    status?: string;
+    promote_feature_set?: boolean;
+    recommended_use?: string;
+    reason?: string;
+  };
+  claim_boundary?: string;
+  message?: string;
+}
+
 export interface ClinicalSafetyReviewChecklist {
   schema_version: string;
   generated_at: string;
@@ -912,6 +953,59 @@ export interface ModalityRobustnessComparisonReport {
     full_data_accuracy_delta?: number | null;
     full_data_brier_delta?: number | null;
   };
+  interpretation?: string;
+  claim_boundary?: string;
+  message?: string;
+}
+
+export interface ResponseConformalCalibrationReport {
+  schema_version?: string;
+  status: "strong" | "acceptable" | "needs_attention" | "missing" | string;
+  generated_at?: string;
+  nominal_coverage?: number | null;
+  raw_coverage?: number | null;
+  adjusted_coverage?: number | null;
+  qhat_percent?: number | null;
+  qhat_normalized?: number | null;
+  calibration_rows?: number | null;
+  model_paths?: Record<string, string | null>;
+  interpretation?: string;
+  claim_boundary?: string;
+  message?: string;
+}
+
+export interface RobustnessStressCase {
+  case?: string;
+  case_id?: string;
+  category: string;
+  description?: string;
+  expected?: string;
+  expected_behavior?: string;
+  passed: boolean;
+  abstained_any_head?: boolean;
+  decision?: string | null;
+  evidence_sufficiency?: string | null;
+  abstained?: boolean;
+  clinician_review?: boolean;
+  clinician_review_routed?: boolean;
+  uncertainty_increased?: boolean;
+  uncertainty_increased_or_equal?: boolean;
+  safety_correct?: boolean;
+  medical_claim_boundary_decision?: string | null;
+  notes?: string[];
+}
+
+export interface RobustnessStressReport {
+  schema_version?: string;
+  status: "strong" | "acceptable" | "needs_attention" | "missing" | string;
+  generated_at?: string;
+  summary?: {
+    case_count?: number;
+    passed?: number;
+    pass_rate?: number | null;
+    abstention_or_review_rate?: number | null;
+  };
+  cases?: RobustnessStressCase[];
   interpretation?: string;
   claim_boundary?: string;
   message?: string;

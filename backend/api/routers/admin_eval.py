@@ -723,6 +723,48 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": run_biomarker_feature_benchmark(),
         }
 
+    @router.get("/admin/full-feature-group-ablation")
+    def get_admin_full_feature_group_ablation_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the full modality-group ablation matrix if present."""
+        from backend.services.full_feature_group_ablation import load_full_feature_group_ablation
+
+        return load_full_feature_group_ablation()
+
+    @router.post("/admin/full-feature-group-ablation")
+    def run_admin_full_feature_group_ablation_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Run the full clinical/lab/symptom/imaging/biomarker/genetic/tumor-marker ablation."""
+        from backend.services.full_feature_group_ablation import run_full_feature_group_ablation
+
+        return {
+            "message": "Full feature-group ablation completed.",
+            "result": run_full_feature_group_ablation(),
+        }
+
+    @router.get("/admin/toxicity-shortcut-audit")
+    def get_admin_toxicity_shortcut_audit_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the toxicity-label shortcut audit artifact."""
+        from backend.services.toxicity_shortcut_audit import load_toxicity_shortcut_audit
+
+        return load_toxicity_shortcut_audit()
+
+    @router.post("/admin/toxicity-shortcut-audit")
+    def run_admin_toxicity_shortcut_audit_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rerun the toxicity-label shortcut audit."""
+        from backend.services.toxicity_shortcut_audit import run_toxicity_shortcut_audit
+
+        return {
+            "message": "Toxicity shortcut audit completed.",
+            "result": run_toxicity_shortcut_audit(),
+        }
+
     @router.get("/admin/leakage-audit")
     def get_admin_leakage_audit_endpoint(
         context=Depends(get_admin_access_context),
@@ -824,6 +866,110 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "message": "KB source governance rebuilt.",
             "result": build_kb_source_governance(),
         }
+
+    # ─── Phase 11: intent-aware RAG artifacts ──────────────────────────
+
+    @router.get("/admin/rag-intent-modes")
+    def get_admin_rag_intent_modes_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the configured RAG mode registry (config-as-API)."""
+        from backend.services.rag_intent_modes import INTENT_TO_MODE, list_modes
+        modes = {
+            name: {
+                "mode": cfg.mode,
+                "description": cfg.description,
+                "audience": cfg.audience,
+                "allowed_tiers": list(cfg.allowed_tiers),
+                "allowed_use": list(cfg.allowed_use),
+                "allow_citations": cfg.allow_citations,
+                "insufficient_evidence_default": cfg.insufficient_evidence_default,
+                "banned_claim_categories": list(cfg.banned_claim_categories),
+                "max_retrieved_chunks": cfg.max_retrieved_chunks,
+                "require_clinician_handoff_clause": cfg.require_clinician_handoff_clause,
+            }
+            for name, cfg in list_modes().items()
+        }
+        return {"modes": modes, "intent_to_mode": dict(INTENT_TO_MODE)}
+
+    @router.get("/admin/rag-intent-aware-eval")
+    def get_admin_rag_intent_aware_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the most recent intent-aware RAG benchmark artifact."""
+        from backend.services.rag_intent_aware_eval import load_intent_aware_eval
+        return load_intent_aware_eval()
+
+    @router.get("/admin/rag-tier-ablation")
+    def get_admin_rag_tier_ablation_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the most recent source-tier ablation artifact."""
+        from backend.services.rag_tier_ablation import load_tier_ablation
+        return load_tier_ablation()
+
+    @router.get("/admin/taglish-safety-parity")
+    def get_admin_taglish_safety_parity_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the Taglish ↔ English safety-route parity artifact."""
+        from backend.services.taglish_safety_parity import load_taglish_safety_parity
+        return load_taglish_safety_parity()
+
+    @router.get("/admin/rag-trace-replay")
+    def get_admin_rag_trace_replay_endpoint(
+        limit: int = 25,
+        context=Depends(get_admin_access_context),
+        db: Session = Depends(get_db),
+    ):
+        """Return recent RAG evaluation log rows with Phase 11 fields
+        (intent, rewrite, retrieved sources, source tiers, claim
+        validation, post-gen validator, evidence grade, final answer)
+        flattened into a single per-call shape ready for the trace
+        replay panel."""
+        import json as _json
+        from backend.models import RAGEvaluationLog
+
+        safe_limit = max(1, min(limit, 200))
+        rows = (
+            db.query(RAGEvaluationLog)
+            .order_by(RAGEvaluationLog.created_at.desc(), RAGEvaluationLog.id.desc())
+            .limit(safe_limit)
+            .all()
+        )
+
+        def _safe_loads(value):
+            try:
+                return _json.loads(value) if value else None
+            except Exception:
+                return None
+
+        # Phase 11 columns now live on the model (migration 0003) — direct
+        # attribute access, no more silent None defaults via getattr.
+        traces = []
+        for row in rows:
+            traces.append({
+                "id": row.id,
+                "created_at": str(row.created_at) if row.created_at else None,
+                "patient_id": row.patient_id,
+                "query_preview": row.query_preview,
+                "intent": row.intent,
+                "safety_level": row.safety_level,
+                "rag_mode": row.rag_mode,
+                "rewritten_query": row.rewritten_query,
+                "retrieved_source_ids": _safe_loads(row.retrieved_source_ids_json) or [],
+                "cited_source_ids": _safe_loads(row.cited_source_ids_json) or [],
+                "evidence_grade": _safe_loads(row.evidence_grade_json),
+                "claim_validation": _safe_loads(row.claim_validation_json),
+                "tier_filter": _safe_loads(row.tier_filter_json),
+                "post_gen_validator": _safe_loads(row.post_gen_validator_json),
+                "grounding_score": row.grounding_score,
+                "hallucination_score": row.hallucination_score,
+                "latency_ms": row.latency_ms,
+                "input_guardrail": row.input_guardrail_status,
+                "output_guardrail": row.output_guardrail_status,
+            })
+        return {"count": len(traces), "traces": traces}
 
     @router.get("/admin/synthetic-generator-card")
     def get_admin_synthetic_generator_card_endpoint(
@@ -964,6 +1110,94 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
         return {
             "message": "Regression robustness comparison completed.",
             "result": run_regression_robustness_comparison(),
+        }
+
+    @router.get("/admin/modality-dropout-quantile-regression")
+    def get_admin_modality_dropout_quantile_regression_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return modality-dropout quantile regression metadata."""
+        from backend.services.modality_dropout_quantile_regression_training import (
+            load_modality_dropout_quantile_regression_metadata,
+        )
+
+        return load_modality_dropout_quantile_regression_metadata()
+
+    @router.post("/admin/modality-dropout-quantile-regression")
+    def run_admin_modality_dropout_quantile_regression_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Train modality-dropout p10/p50/p90 response-score quantile heads."""
+        from backend.services.modality_dropout_quantile_regression_training import (
+            train_modality_dropout_quantile_regression_heads,
+        )
+
+        return {
+            "message": "Modality-dropout quantile regression heads retrained.",
+            "result": train_modality_dropout_quantile_regression_heads(),
+        }
+
+    @router.get("/admin/response-conformal-calibration")
+    def get_admin_response_conformal_calibration_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return response-score conformal interval calibration."""
+        from backend.services.response_conformal_calibration import load_response_conformal_calibration
+
+        return load_response_conformal_calibration()
+
+    @router.post("/admin/response-conformal-calibration")
+    def run_admin_response_conformal_calibration_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Recompute response-score conformal interval calibration."""
+        from backend.services.response_conformal_calibration import build_response_conformal_calibration
+
+        return {
+            "message": "Response-score conformal calibration completed.",
+            "result": build_response_conformal_calibration(),
+        }
+
+    @router.get("/admin/robustness-stress")
+    def get_admin_robustness_stress_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return synthetic robustness stress-suite artifact."""
+        from backend.services.robustness_stress import load_robustness_stress_report
+
+        return load_robustness_stress_report()
+
+    @router.post("/admin/robustness-stress")
+    def run_admin_robustness_stress_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Run missing/corrupt/conflicting-data stress cases."""
+        from backend.services.robustness_stress import run_robustness_stress_suite
+
+        return {
+            "message": "Robustness stress suite completed.",
+            "result": run_robustness_stress_suite(),
+        }
+
+    @router.get("/admin/medical-safety-contract")
+    def get_admin_medical_safety_contract_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return clinical ontology, minimum evidence, and claim boundary contract."""
+        from backend.services.medical_safety_contract import load_medical_safety_contract
+
+        return load_medical_safety_contract()
+
+    @router.post("/admin/medical-safety-contract")
+    def run_admin_medical_safety_contract_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Regenerate the medical-safety contract artifact."""
+        from backend.services.medical_safety_contract import build_medical_safety_contract
+
+        return {
+            "message": "Medical safety contract generated.",
+            "result": build_medical_safety_contract(),
         }
 
     @router.post("/admin/evidence-abstention-eval")

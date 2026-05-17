@@ -1,0 +1,19 @@
+{
+  "schema_version": "response_conformal_calibration_v1",
+  "generated_at": "2026-05-17T06:59:39.510399+00:00",
+  "status": "strong",
+  "target": "response_score_percent",
+  "ml_csv_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "model_family": "modality_dropout_quantile_gbm",
+  "nominal_coverage": 0.8,
+  "calibration_rows": 900,
+  "q_level": 0.8011111111111111,
+  "qhat_percent": 0.016922340126384938,
+  "qhat_normalized": 0.00016922340126384938,
+  "raw_coverage": 0.7311111111111112,
+  "adjusted_coverage": 0.8022222222222222,
+  "raw_median_band_width": 5.630898252729703,
+  "adjusted_median_band_width": 5.664742932982473,
+  "median_p50_mae": 1.1564566793805586,
+  "claim_boundary": "Synthetic split-conformal interval calibration only. It improves coverage on a held-out synthetic patient split and does not prove clinical response-score validity."
+}

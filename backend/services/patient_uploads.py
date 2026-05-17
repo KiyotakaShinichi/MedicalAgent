@@ -1,10 +1,13 @@
 import base64
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 import re
 
 from backend.config import UPLOAD_DIR, ensure_runtime_dirs
 from backend.models import MRIFileRegistry, PatientUpload
+from backend.services.breast_cancer_journey import infer_journey_phase
+from backend.services.medical_report_parser import parse_report
 
 
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
@@ -76,6 +79,7 @@ def get_patient_uploads(db, patient_id, limit=50):
 
 
 def upload_to_dict(row):
+    parsed_report = _parse_upload_metadata(row)
     return {
         "id": row.id,
         "patient_id": row.patient_id,
@@ -84,6 +88,12 @@ def upload_to_dict(row):
         "content_type": row.content_type,
         "local_path": row.local_path,
         "notes": row.notes,
+        "parsed_report": parsed_report,
+        "journey_phase": infer_journey_phase({
+            "upload_type": row.upload_type,
+            "modality": parsed_report.get("report_type") if isinstance(parsed_report, dict) else row.upload_type,
+            "notes": row.notes,
+        }),
         "created_at": str(row.created_at),
     }
 
@@ -122,3 +132,49 @@ def _infer_upload_modality(upload_type, file_name, notes):
     if "mammogram" in text or "mammography" in text:
         return "Mammogram"
     return "Breast MRI"
+
+
+def _parse_upload_metadata(row):
+    text = _extract_text_for_parser(row.local_path, row.content_type, row.original_filename)
+    if row.notes:
+        text = f"{text}\n\nUpload notes:\n{row.notes}" if text else row.notes
+    if not text:
+        return {
+            "report_type": "non_text_upload",
+            "parser_version": "medical_report_parser_v1_2026_05",
+            "fields": {},
+            "confidence": "not_parsed",
+            "requires_review": True,
+            "claim_boundary": "Upload stored only. Non-text/image/PDF files require manual clinician review or explicit OCR before structured extraction.",
+        }
+    try:
+        return parse_report(text, filename=row.original_filename)
+    except Exception as exc:
+        return {
+            "report_type": "parse_error",
+            "parser_version": "medical_report_parser_v1_2026_05",
+            "fields": {},
+            "confidence": "not_parsed",
+            "requires_review": True,
+            "error": str(exc),
+            "claim_boundary": "Parser failure does not imply absence of clinical information. The uploaded record should be reviewed manually.",
+        }
+
+
+def _extract_text_for_parser(local_path, content_type, file_name):
+    path = Path(local_path or "")
+    if not path.exists() or not path.is_file():
+        return ""
+    content_type = (content_type or "").lower()
+    suffix = (Path(file_name or path.name).suffix or "").lower()
+    if content_type.startswith("text/") or suffix in {".txt", ".md", ".csv", ".tsv", ".json"}:
+        raw = path.read_bytes()[:200_000]
+        for encoding in ("utf-8", "utf-16", "latin-1"):
+            try:
+                text = raw.decode(encoding)
+                if suffix == ".json":
+                    return json.dumps(json.loads(text), ensure_ascii=True)
+                return text
+            except Exception:
+                continue
+    return ""
