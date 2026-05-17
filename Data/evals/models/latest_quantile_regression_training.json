@@ -1,0 +1,57 @@
+{
+  "schema_version": "quantile_regression_training_v1",
+  "generated_at": "2026-05-17T05:13:03.534593+00:00",
+  "status": "strong",
+  "target": "response_score_percent",
+  "ml_csv_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "seed": 42,
+  "quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "artifact_paths": {
+    "p10": "Data/complete_synthetic_training/quantile_gbm_p10_response_score_percent.joblib",
+    "p50": "Data/complete_synthetic_training/quantile_gbm_p50_response_score_percent.joblib",
+    "p90": "Data/complete_synthetic_training/quantile_gbm_p90_response_score_percent.joblib"
+  },
+  "patient_split": {
+    "train_patient_count": 450,
+    "test_patient_count": 150,
+    "split_disjoint": true
+  },
+  "test_rows": 900,
+  "per_quantile_metrics": {
+    "p10": {
+      "quantile": 0.1,
+      "pinball_loss": 0.5493292298713404,
+      "mae": 4.72328563940474,
+      "mean_prediction": 21.40136046986687
+    },
+    "p50": {
+      "quantile": 0.5,
+      "pinball_loss": 0.5991090945023126,
+      "mae": 1.1982181890046253,
+      "mean_prediction": 25.940303193267905
+    },
+    "p90": {
+      "quantile": 0.9,
+      "pinball_loss": 0.5960435893738092,
+      "mae": 5.260487093625501,
+      "mean_prediction": 31.017644338041794
+    }
+  },
+  "interval": {
+    "lower_quantile": 0.1,
+    "upper_quantile": 0.9,
+    "nominal_coverage": 0.8,
+    "empirical_coverage": 0.7744444444444445,
+    "empirical_coverage_sorted": 0.7744444444444445,
+    "empirical_coverage_raw": 0.7622222222222222,
+    "median_band_width": 3.8774889645126063,
+    "median_band_width_raw": 3.8774889645126063,
+    "coverage_method": "per-row sorted p10/p90 interval, matching inference-time crossing guard"
+  },
+  "monotonic_rate_p10_p50_p90": 0.72,
+  "claim_boundary": "Engineering artifact only.  Coverage near nominal means the quantile heads produced a calibrated 80% band on the synthetic test split \u2014 it does not establish clinical interval validity."
+}

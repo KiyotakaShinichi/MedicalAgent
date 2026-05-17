@@ -12,8 +12,12 @@ amber badge. See [SAFETY_CARD.md](../../SAFETY_CARD.md) for why every
 AI/model output must surface these fields together.
 """
 
+from pathlib import Path
 
-def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
+
+def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks, media_records=None):
+    media_records = media_records or []
+
     events = []
     seen = set()
 
@@ -39,6 +43,16 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
                     f"WBC {row['wbc']}, hemoglobin {row['hemoglobin']}, "
                     f"platelets {row['platelets']}"
                 ),
+                "detail": {
+                    "kind": "lab",
+                    "title": "CBC result",
+                    "fields": {
+                        "WBC": row.get("wbc"),
+                        "Hemoglobin": row.get("hemoglobin"),
+                        "Platelets": row.get("platelets"),
+                    },
+                    "notes": "CBC values are shown for monitoring context only and require care-team interpretation.",
+                },
                 "ai_generated": False,
                 "evidence_source": "lab_record",
             })
@@ -50,6 +64,15 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
                 "type": "treatment",
                 "title": f"Treatment cycle {row['cycle']}",
                 "summary": str(row["drug"]),
+                "detail": {
+                    "kind": "treatment",
+                    "title": f"Treatment cycle {row.get('cycle')}",
+                    "fields": {
+                        "Cycle": row.get("cycle"),
+                        "Drug/regimen": row.get("drug"),
+                    },
+                    "notes": "Treatment entries document timeline context; the system does not recommend dose or regimen changes.",
+                },
                 "ai_generated": False,
                 "evidence_source": "treatment_record",
             })
@@ -62,6 +85,19 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
                 "type": "imaging",
                 "title": f"{modality} - {row['report_type']}",
                 "summary": row["impression"],
+                "detail": {
+                    "kind": "imaging",
+                    "title": f"{modality} - {row.get('report_type')}",
+                    "fields": {
+                        "Modality": modality,
+                        "Report type": row.get("report_type"),
+                        "Body site": row.get("body_site"),
+                    },
+                    "findings": row.get("findings"),
+                    "impression": row.get("impression"),
+                    "media": _matching_media(media_records, row),
+                    "notes": "Imaging report text and preview files are for clinician review. OncoTrack does not diagnose response, recurrence, or metastasis from images or wording.",
+                },
                 "ai_generated": False,
                 "evidence_source": "imaging_report",
             })
@@ -74,6 +110,15 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
                 "type": "symptom",
                 "title": f"Symptom: {row['symptom']}",
                 "summary": f"Severity {row['severity']}/10{note}",
+                "detail": {
+                    "kind": "symptom",
+                    "title": f"Symptom: {row.get('symptom')}",
+                    "fields": {
+                        "Symptom": row.get("symptom"),
+                        "Severity": f"{row.get('severity')}/10",
+                    },
+                    "notes": row.get("notes") or "No notes recorded.",
+                },
                 "ai_generated": False,
                 "evidence_source": "patient_report",
             })
@@ -88,6 +133,18 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
                 "title": f"Risk flag: {risk.get('type')}",
                 "summary": risk.get("message"),
                 "severity": risk.get("severity"),
+                "detail": {
+                    "kind": "risk_flag",
+                    "title": f"Risk flag: {risk.get('type')}",
+                    "fields": {
+                        "Severity": risk.get("severity"),
+                        "Category": risk.get("category"),
+                        "Source": "deterministic risk engine",
+                    },
+                    "message": risk.get("message"),
+                    "evidence": evidence,
+                    "notes": "Risk flags are deterministic monitoring signals for clinician review, not diagnoses.",
+                },
                 "ai_generated": True,
                 "evidence_source": "risk_engine",
                 "model_version": evidence.get("threshold_config_version"),
@@ -95,3 +152,61 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks):
             })
 
     return sorted(events, key=lambda event: event["date"])
+
+
+def _matching_media(media_records, row):
+    event_date = str(row.get("date", ""))[:10]
+    modality = str(row.get("modality") or "").lower()
+    matches = []
+    for record in media_records:
+        record_date = str(record.get("scan_date") or record.get("created_at") or "")[:10]
+        record_modality = str(record.get("modality") or record.get("upload_type") or "").lower()
+        if event_date and record_date and event_date != record_date:
+            continue
+        if modality and record_modality and not _modality_overlap(modality, record_modality):
+            continue
+        path = record.get("local_path") or record.get("folder")
+        matches.append({
+            "label": record.get("series_description") or record.get("original_filename") or record.get("modality") or "Uploaded file",
+            "modality": record.get("modality") or record.get("upload_type"),
+            "local_path": path,
+            "artifact_url": _artifact_url(path),
+            "content_type": record.get("content_type"),
+            "previewable": _is_previewable(path, record.get("content_type")),
+            "notes": record.get("notes"),
+        })
+    return matches[:6]
+
+
+def _modality_overlap(left, right):
+    groups = [
+        {"mri", "breast mri", "mr"},
+        {"ct", "ct scan", "cat scan", "pet/ct", "pet-ct", "fdg pet/ct", "ct abdomen/pelvis", "ct chest"},
+        {"ultrasound", "us", "sonogram", "breast ultrasound", "abdominal ultrasound"},
+        {"mammogram", "mammography"},
+    ]
+    left_tokens = {left, *left.replace("/", " ").replace("-", " ").split()}
+    right_tokens = {right, *right.replace("/", " ").replace("-", " ").split()}
+    for group in groups:
+        if left_tokens & group and right_tokens & group:
+            return True
+    return bool(left_tokens & right_tokens)
+
+
+def _artifact_url(path):
+    if not path:
+        return None
+    text = str(path).replace("\\", "/")
+    marker = "/Data/"
+    if marker in text:
+        return "/artifacts/" + text.split(marker, 1)[1]
+    if text.startswith("Data/"):
+        return "/artifacts/" + text[len("Data/"):]
+    return None
+
+
+def _is_previewable(path, content_type):
+    if content_type and str(content_type).lower().startswith("image/"):
+        return True
+    suffix = Path(str(path or "")).suffix.lower()
+    return suffix in {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp"}

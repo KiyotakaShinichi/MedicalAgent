@@ -7,13 +7,19 @@ import {
   AlertTriangle,
   Brain,
   Sparkles,
+  X,
+  ExternalLink,
+  FileText,
+  Image as ImageIcon,
 } from "lucide-react";
+import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { SectionCard } from "../../components/ui/SectionCard";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { RelativeTime } from "../../components/ui/RelativeTime";
 import { EmptyState } from "../../components/ui/states";
 import { AIGeneratedLabel } from "../../components/ui/AIGeneratedLabel";
+import { API_BASE } from "../../api/client";
 import type { TimelineEvent } from "../../types/api";
 
 interface Props {
@@ -97,9 +103,10 @@ function TimelineDateGroup({ primary, secondary, count, children }: TimelineDate
 
 interface TimelineEventCardProps {
   event: TimelineEvent;
+  onSelect: (event: TimelineEvent) => void;
 }
 
-function TimelineEventCard({ event }: TimelineEventCardProps) {
+function TimelineEventCard({ event, onSelect }: TimelineEventCardProps) {
   const { Icon, tone, label } = eventIcon(event.type);
   const palette = toneStyle[tone];
   const isAi = isAiFlagEvent(event);
@@ -107,47 +114,168 @@ function TimelineEventCard({ event }: TimelineEventCardProps) {
   const uncertainty = event.uncertainty;
   return (
     <li className="timeline-event-card">
-      <span
-        className="timeline-event-icon"
-        style={{ background: palette.bg, color: palette.fg }}
-        aria-hidden="true"
+      <button
+        type="button"
+        className="timeline-event-open"
+        onClick={() => onSelect(event)}
+        aria-label={`Open details for ${event.title}`}
       >
-        <Icon size={15} />
-      </span>
-      <div className="timeline-event-body">
-        <div className="timeline-event-headline">
-          <span className="timeline-event-title">{event.title}</span>
-          <StatusBadge tone="accent" size="sm">{label}</StatusBadge>
-          {event.severity && sevTone !== "neutral" && (
-            <StatusBadge tone={sevTone} size="sm">{event.severity}</StatusBadge>
+        <span
+          className="timeline-event-icon"
+          style={{ background: palette.bg, color: palette.fg }}
+          aria-hidden="true"
+        >
+          <Icon size={15} />
+        </span>
+        <div className="timeline-event-body">
+          <div className="timeline-event-headline">
+            <span className="timeline-event-title">{event.title}</span>
+            <StatusBadge tone="accent" size="sm">{label}</StatusBadge>
+            {event.severity && sevTone !== "neutral" && (
+              <StatusBadge tone={sevTone} size="sm">{event.severity}</StatusBadge>
+            )}
+          </div>
+          {event.summary && (
+            <p className="timeline-event-summary">{event.summary}</p>
           )}
-        </div>
-        {event.summary && (
-          <p className="timeline-event-summary">{event.summary}</p>
-        )}
 
-        {isAi && (
-          <AIGeneratedLabel
-            className="mt-2"
-            confidence={uncertainty?.confidence_level ?? null}
-            uncertaintyReason={uncertainty?.uncertainty_reason ?? null}
-            clinicianReviewRequired={uncertainty?.clinician_review_required ?? null}
-            timestamp={event.date}
-            source={event.evidence_source ?? "risk_engine"}
-            modelVersion={event.model_version ?? null}
-          />
-        )}
-        {!isAi && uncertainty?.missing_data_indicators?.length ? (
-          <p className="timeline-event-missing">
-            Missing data: {uncertainty.missing_data_indicators.join(", ")}
-          </p>
-        ) : null}
-      </div>
+          {isAi && (
+            <AIGeneratedLabel
+              className="mt-2"
+              confidence={uncertainty?.confidence_level ?? null}
+              uncertaintyReason={uncertainty?.uncertainty_reason ?? null}
+              clinicianReviewRequired={uncertainty?.clinician_review_required ?? null}
+              timestamp={event.date}
+              source={event.evidence_source ?? "risk_engine"}
+              modelVersion={event.model_version ?? null}
+            />
+          )}
+          {!isAi && uncertainty?.missing_data_indicators?.length ? (
+            <p className="timeline-event-missing">
+              Missing data: {uncertainty.missing_data_indicators.join(", ")}
+            </p>
+          ) : null}
+        </div>
+      </button>
     </li>
   );
 }
 
+function artifactHref(path?: string | null): string | null {
+  if (!path) return null;
+  try {
+    return new URL(path, API_BASE).toString();
+  } catch {
+    return path;
+  }
+}
+
+function renderValue(value: unknown): string {
+  if (value === null || value === undefined || value === "") return "Not recorded";
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+function TimelineDetailModal({ event, onClose }: { event: TimelineEvent; onClose: () => void }) {
+  const detail = event.detail;
+  const fields = Object.entries(detail?.fields ?? {}).filter(([, value]) => value !== undefined);
+  const media = detail?.media ?? [];
+
+  return (
+    <div className="timeline-detail-backdrop" role="presentation" onMouseDown={onClose}>
+      <section
+        className="timeline-detail-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="timeline-detail-title"
+        onMouseDown={(event_) => event_.stopPropagation()}
+      >
+        <header className="timeline-detail-header">
+          <div>
+            <p className="timeline-detail-kicker">{event.type} - {String(event.date).slice(0, 10)}</p>
+            <h3 id="timeline-detail-title">{detail?.title ?? event.title}</h3>
+          </div>
+          <button type="button" className="timeline-detail-close" onClick={onClose} aria-label="Close details">
+            <X size={18} />
+          </button>
+        </header>
+
+        {event.summary && <p className="timeline-detail-summary">{event.summary}</p>}
+
+        {fields.length > 0 && (
+          <dl className="timeline-detail-fields">
+            {fields.map(([key, value]) => (
+              <div key={key}>
+                <dt>{key}</dt>
+                <dd>{renderValue(value)}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        {detail?.findings && (
+          <section className="timeline-detail-section">
+            <h4>Findings</h4>
+            <p>{detail.findings}</p>
+          </section>
+        )}
+
+        {detail?.impression && (
+          <section className="timeline-detail-section">
+            <h4>Impression</h4>
+            <p>{detail.impression}</p>
+          </section>
+        )}
+
+        {detail?.message && (
+          <section className="timeline-detail-section">
+            <h4>Signal</h4>
+            <p>{detail.message}</p>
+          </section>
+        )}
+
+        {media.length > 0 && (
+          <section className="timeline-detail-section">
+            <h4>Attached media / reports</h4>
+            <div className="timeline-media-grid">
+              {media.map((item, index) => {
+                const href = artifactHref(item.artifact_url);
+                return (
+                  <article className="timeline-media-card" key={`${item.label ?? "media"}-${index}`}>
+                    {href && item.previewable ? (
+                      <img src={href} alt={item.label ?? "Timeline media preview"} />
+                    ) : (
+                      <div className="timeline-media-placeholder">
+                        {item.previewable ? <ImageIcon size={22} /> : <FileText size={22} />}
+                      </div>
+                    )}
+                    <div>
+                      <strong>{item.label ?? "Uploaded file"}</strong>
+                      <span>{item.modality ?? item.content_type ?? "Record"}</span>
+                      {item.notes && <p>{item.notes}</p>}
+                      {href && (
+                        <a href={href} target="_blank" rel="noreferrer">
+                          Open artifact <ExternalLink size={13} />
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {detail?.notes && (
+          <p className="timeline-detail-note">{detail.notes}</p>
+        )}
+      </section>
+    </div>
+  );
+}
+
 export function TimelinePanel({ events, lastFetchedAt }: Props) {
+  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const sorted = [...(events ?? [])].sort((a, b) => b.date.localeCompare(a.date));
 
   // Group by YYYY-MM-DD bucket so the timeline reads like a clinical record.
@@ -185,10 +313,15 @@ export function TimelinePanel({ events, lastFetchedAt }: Props) {
               secondary={group.heading.secondary}
               count={group.items.length}
             >
-              {group.items.map((ev, i) => <TimelineEventCard key={i} event={ev} />)}
+              {group.items.map((ev, i) => (
+                <TimelineEventCard key={i} event={ev} onSelect={setSelectedEvent} />
+              ))}
             </TimelineDateGroup>
           ))}
         </div>
+      )}
+      {selectedEvent && (
+        <TimelineDetailModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
       )}
     </SectionCard>
   );

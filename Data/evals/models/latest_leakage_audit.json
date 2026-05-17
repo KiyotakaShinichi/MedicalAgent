@@ -1,0 +1,411 @@
+{
+  "schema_version": "leakage_audit_v1",
+  "generated_at": "2026-05-16T10:39:37.869729+00:00",
+  "status": "passed",
+  "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "feature_columns": [
+    "cycle",
+    "age",
+    "pre_wbc",
+    "pre_anc",
+    "pre_hemoglobin",
+    "pre_platelets",
+    "nadir_wbc",
+    "nadir_anc",
+    "nadir_hemoglobin",
+    "nadir_platelets",
+    "recovery_wbc",
+    "recovery_hemoglobin",
+    "recovery_platelets",
+    "mri_tumor_size_cm",
+    "mri_percent_change_from_baseline",
+    "max_symptom_severity",
+    "symptom_count",
+    "intervention_count",
+    "dose_delayed",
+    "dose_reduced",
+    "stage",
+    "molecular_subtype",
+    "regimen"
+  ],
+  "row_level_targets": [
+    "support_intervention_needed",
+    "toxicity_risk_binary",
+    "urgent_intervention_needed"
+  ],
+  "known_label_proxies": [
+    "latent_response_strength",
+    "response_score_percent",
+    "final_response_category",
+    "final_response_multiclass",
+    "final_cancer_status",
+    "treatment_success_binary",
+    "maintenance_needed",
+    "cycle_response_trend_class"
+  ],
+  "findings": [
+    {
+      "name": "known_label_proxies_excluded_from_features",
+      "status": "passed",
+      "evidence": {
+        "label_proxies_in_features": [],
+        "checked_proxies": [
+          "latent_response_strength",
+          "response_score_percent",
+          "final_response_category",
+          "final_response_multiclass",
+          "final_cancer_status",
+          "treatment_success_binary",
+          "maintenance_needed",
+          "cycle_response_trend_class"
+        ]
+      },
+      "meaning": "Generator latent strength, final outcomes, and the regression target are derived from the label and must never be used as model inputs \u2014 using them inflates metrics without learning."
+    },
+    {
+      "name": "exclusion_set_covers_all_known_proxies",
+      "status": "passed",
+      "evidence": {
+        "proxies_missing_from_exclusion_set": [],
+        "current_exclusion_set_size": 13
+      },
+      "meaning": "The EXCLUDED_COLUMNS denylist in complete_synthetic_training.py is the single source of truth for what cannot be a feature. Any known proxy not in that set is a latent regression risk."
+    },
+    {
+      "name": "label_identity_check::treatment_success_binary",
+      "status": "passed",
+      "evidence": {
+        "target": "treatment_success_binary",
+        "features_equal_to_target": []
+      },
+      "meaning": "A feature column that is numerically identical to the label indicates a copy/rename regression that would trivialise the classifier."
+    },
+    {
+      "name": "label_identity_check::toxicity_risk_binary",
+      "status": "passed",
+      "evidence": {
+        "target": "toxicity_risk_binary",
+        "features_equal_to_target": []
+      },
+      "meaning": "A feature column that is numerically identical to the label indicates a copy/rename regression that would trivialise the classifier."
+    },
+    {
+      "name": "label_identity_check::urgent_intervention_needed",
+      "status": "passed",
+      "evidence": {
+        "target": "urgent_intervention_needed",
+        "features_equal_to_target": []
+      },
+      "meaning": "A feature column that is numerically identical to the label indicates a copy/rename regression that would trivialise the classifier."
+    },
+    {
+      "name": "label_identity_check::support_intervention_needed",
+      "status": "passed",
+      "evidence": {
+        "target": "support_intervention_needed",
+        "features_equal_to_target": []
+      },
+      "meaning": "A feature column that is numerically identical to the label indicates a copy/rename regression that would trivialise the classifier."
+    },
+    {
+      "name": "patient_split_disjoint::treatment_success_binary::seed0",
+      "status": "passed",
+      "evidence": {
+        "target": "treatment_success_binary",
+        "seed": 0,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::treatment_success_binary::seed7",
+      "status": "passed",
+      "evidence": {
+        "target": "treatment_success_binary",
+        "seed": 7,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::treatment_success_binary::seed42",
+      "status": "passed",
+      "evidence": {
+        "target": "treatment_success_binary",
+        "seed": 42,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::treatment_success_binary::seed123",
+      "status": "passed",
+      "evidence": {
+        "target": "treatment_success_binary",
+        "seed": 123,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::toxicity_risk_binary::seed0",
+      "status": "passed",
+      "evidence": {
+        "target": "toxicity_risk_binary",
+        "seed": 0,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::toxicity_risk_binary::seed7",
+      "status": "passed",
+      "evidence": {
+        "target": "toxicity_risk_binary",
+        "seed": 7,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::toxicity_risk_binary::seed42",
+      "status": "passed",
+      "evidence": {
+        "target": "toxicity_risk_binary",
+        "seed": 42,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::toxicity_risk_binary::seed123",
+      "status": "passed",
+      "evidence": {
+        "target": "toxicity_risk_binary",
+        "seed": 123,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::urgent_intervention_needed::seed0",
+      "status": "passed",
+      "evidence": {
+        "target": "urgent_intervention_needed",
+        "seed": 0,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::urgent_intervention_needed::seed7",
+      "status": "passed",
+      "evidence": {
+        "target": "urgent_intervention_needed",
+        "seed": 7,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::urgent_intervention_needed::seed42",
+      "status": "passed",
+      "evidence": {
+        "target": "urgent_intervention_needed",
+        "seed": 42,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::urgent_intervention_needed::seed123",
+      "status": "passed",
+      "evidence": {
+        "target": "urgent_intervention_needed",
+        "seed": 123,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::support_intervention_needed::seed0",
+      "status": "passed",
+      "evidence": {
+        "target": "support_intervention_needed",
+        "seed": 0,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::support_intervention_needed::seed7",
+      "status": "passed",
+      "evidence": {
+        "target": "support_intervention_needed",
+        "seed": 7,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::support_intervention_needed::seed42",
+      "status": "passed",
+      "evidence": {
+        "target": "support_intervention_needed",
+        "seed": 42,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_split_disjoint::support_intervention_needed::seed123",
+      "status": "passed",
+      "evidence": {
+        "target": "support_intervention_needed",
+        "seed": 123,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "overlapping_patient_count": 0,
+        "example_overlap": []
+      },
+      "meaning": "Patient IDs must not appear in both train and test. Even one overlap means cycle-level rows from the same patient leak across the split."
+    },
+    {
+      "name": "patient_cycle_pair_is_unique",
+      "status": "passed",
+      "evidence": {
+        "duplicate_patient_cycle_row_count": 0,
+        "total_rows": 3600
+      },
+      "meaning": "(patient_id, cycle) is the natural primary key for temporal training rows.  Any duplicate biases metrics by overweighting those visits."
+    }
+  ],
+  "temporal_sub_audit": {
+    "status": "passed",
+    "findings": [
+      {
+        "name": "feature_columns_present",
+        "status": "passed",
+        "evidence": {
+          "missing": []
+        },
+        "meaning": "The training feature contract must resolve to columns in temporal_ml_rows.csv."
+      },
+      {
+        "name": "no_future_or_label_named_features",
+        "status": "passed",
+        "evidence": {
+          "suspicious_features": []
+        },
+        "meaning": "Feature names should not include final outcomes, labels, or assessment-only variables."
+      },
+      {
+        "name": "excluded_columns_not_used_as_features",
+        "status": "passed",
+        "evidence": {
+          "excluded_columns_available_in_dataset": [
+            "cycle_response_trend_class",
+            "final_cancer_status",
+            "final_response_category",
+            "final_response_multiclass",
+            "latent_response_strength",
+            "maintenance_needed",
+            "patient_id",
+            "response_score_percent",
+            "support_intervention_needed",
+            "toxicity_risk_binary",
+            "treatment_date",
+            "treatment_success_binary",
+            "urgent_intervention_needed"
+          ],
+          "excluded_columns_used_as_features": []
+        },
+        "meaning": "Outcome and bookkeeping columns may exist in the dataset but must not be used by the model."
+      },
+      {
+        "name": "one_row_per_patient_cycle",
+        "status": "passed",
+        "evidence": {
+          "duplicate_patient_cycle_rows": 0
+        },
+        "meaning": "Duplicate patient-cycle rows can leak repeated labels or overweight specific visits."
+      },
+      {
+        "name": "cycle_order_monotonic_by_patient",
+        "status": "passed",
+        "evidence": {
+          "example_non_monotonic_patients": []
+        },
+        "meaning": "Temporal rows should be ordered by observed treatment cycle."
+      },
+      {
+        "name": "treatment_dates_follow_cycle_order",
+        "status": "passed",
+        "evidence": {
+          "example_inconsistent_patients": []
+        },
+        "meaning": "Later cycles should not have earlier treatment dates."
+      },
+      {
+        "name": "response_regression_label_is_mri_transform",
+        "status": "passed",
+        "evidence": {
+          "max_absolute_transform_gap": 0.0
+        },
+        "meaning": "The continuous response label is a transparent transform of the observed MRI percent-change signal."
+      }
+    ]
+  },
+  "summary": {
+    "checks_total": 23,
+    "checks_passed": 23,
+    "checks_failed": 0
+  },
+  "interpretation": "A passing audit means the configured feature contract and patient-aware split are free of the known engineering leakage patterns.  It is not a guarantee of clinical validity; only real-world prospective validation can establish that.",
+  "claim_boundary": "Engineering evidence only.  Synthetic dataset audit; does not establish absence of clinical leakage in real patient records."
+}

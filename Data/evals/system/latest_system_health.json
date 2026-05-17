@@ -1,0 +1,147 @@
+{
+  "schema_version": "system_health_v1",
+  "generated_at": "2026-05-16T01:12:34.223765+00:00",
+  "status": "needs_attention",
+  "backend": {
+    "python_version": "3.14.3",
+    "database_url_kind": "sqlite_demo",
+    "database": {
+      "status": "ok",
+      "message": "Database responded to SELECT 1."
+    }
+  },
+  "environment": {
+    "groq_configured": true,
+    "rag_judge_enabled": false,
+    "cors_origins_configured": false
+  },
+  "dependencies": [
+    {
+      "package": "fastapi",
+      "purpose": "API serving",
+      "available": true
+    },
+    {
+      "package": "sqlalchemy",
+      "purpose": "database ORM",
+      "available": true
+    },
+    {
+      "package": "sentence_transformers",
+      "purpose": "dense retrieval",
+      "available": true
+    },
+    {
+      "package": "faiss",
+      "purpose": "dense vector index",
+      "available": true
+    },
+    {
+      "package": "rank_bm25",
+      "purpose": "sparse BM25 retrieval",
+      "available": true
+    },
+    {
+      "package": "sklearn",
+      "purpose": "classical ML baselines",
+      "available": true
+    },
+    {
+      "package": "torch",
+      "purpose": "optional imaging/deep-learning baselines",
+      "available": true
+    },
+    {
+      "package": "shap",
+      "purpose": "optional explainability",
+      "available": true
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "benchmark_registry",
+      "path": "Data/evals/benchmark/latest_benchmark_summary.json",
+      "exists": true,
+      "status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-05-16T01:12:28.644357+00:00"
+    },
+    {
+      "name": "rag_eval",
+      "path": "Data/evals/rag/latest_rag_benchmark.json",
+      "exists": true,
+      "status": "strong",
+      "freshness": "stale",
+      "generated_at": "2026-05-14T15:21:58.371702+00:00"
+    },
+    {
+      "name": "safety_red_team",
+      "path": "Data/evals/safety/latest_safety_benchmark.json",
+      "exists": true,
+      "status": "passed",
+      "freshness": "stale",
+      "generated_at": "2026-05-14T15:21:42.302243+00:00"
+    },
+    {
+      "name": "mle_readiness",
+      "path": "Data/mle_monitoring/latest_mle_readiness.json",
+      "exists": true,
+      "status": "unideal",
+      "freshness": "fresh",
+      "generated_at": "2026-05-15T13:28:19.709599+00:00"
+    },
+    {
+      "name": "biomarker_feature_benchmark",
+      "path": "Data/mle_monitoring/biomarker_feature_benchmark.json",
+      "exists": true,
+      "status": "passed",
+      "freshness": "fresh",
+      "generated_at": "2026-05-16T00:11:07.462562+00:00"
+    },
+    {
+      "name": "public_biomarker_mapping",
+      "path": "Data/mle_monitoring/public_biomarker_mapping_readiness.json",
+      "exists": true,
+      "status": "ready",
+      "freshness": "fresh",
+      "generated_at": "2026-05-16T00:08:48.004804+00:00"
+    },
+    {
+      "name": "cbioportal_mapping",
+      "path": "Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json",
+      "exists": true,
+      "status": "ready",
+      "freshness": "fresh",
+      "generated_at": "2026-05-16T00:59:35.206520+00:00"
+    },
+    {
+      "name": "clinical_safety_checklist",
+      "path": "Data/evals/safety/clinical_safety_review_checklist.json",
+      "exists": true,
+      "status": "ready_for_review",
+      "freshness": "fresh",
+      "generated_at": "2026-05-16T00:49:30.091605+00:00"
+    }
+  ],
+  "frontend": {
+    "react_app_present": true,
+    "production_build_present": true,
+    "dist_index": "frontend-react/dist/index.html"
+  },
+  "issues": [
+    {
+      "area": "artifact",
+      "severity": "info",
+      "message": "rag_eval is stale."
+    },
+    {
+      "area": "artifact",
+      "severity": "info",
+      "message": "safety_red_team is stale."
+    }
+  ],
+  "next_actions": [
+    "Regenerate stale/missing eval artifacts with scripts/run_quality_gate.py or the Admin dashboard run buttons."
+  ],
+  "claim_boundary": "System health checks operational readiness for the engineering demo. Passing health checks do not establish clinical safety, HIPAA readiness, or production availability."
+}

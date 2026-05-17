@@ -17,6 +17,41 @@ MedicalAgent is not an AI doctor, diagnosis bot, or treatment recommendation sys
 - This system is not clinically validated.
 - Synthetic data is used for POC workflow and safety testing, not clinical validation.
 
+## Engineering maturity
+
+Nine hardening phases sit between the trained synthetic model and the patient-facing UI. Each ships with its own test suite and a corresponding admin-dashboard card. See **[docs/demo_storyline.md](docs/demo_storyline.md)** for a reviewer-facing walkthrough that exercises every phase end-to-end.
+
+| # | Phase | What it guards | Hard CI gate | Live numbers |
+|---|---|---|---|---|
+| 1 | **Leakage audit** ([service](backend/services/leakage_audit.py)) | No label proxy enters the feature contract; patient IDs never overlap train/test; no feature is byte-identical to a label. | `tests/test_leakage_audit.py` — fails the build on regression. | 23/23 checks pass on production CSV across 4 seeds × multiple targets. |
+| 2 | **Evidence-aware abstention layer** ([service](backend/services/evidence_sufficiency.py), [wrapper](backend/services/predict_with_abstention.py)) | Model returns `insufficient_evidence` when the input row lacks the modalities required for the question. Partial evidence shrinks the probability toward the prior. | `tests/test_evidence_abstention.py` — 18 rule + integration tests; 8-scenario sweep at `Data/evals/models/latest_evidence_abstention_eval.json`. | Full-evidence: 100% coverage, 92.4% accuracy. Demographics-only: 100% abstention. |
+| 3 | **Prediction traceability** ([service](backend/services/prediction_trace.py)) | Every live prediction lands in `PredictionTrace` with model + feature-set + threshold + calibration + safety-trigger + validator-decision + RAG-source + abstention-state provenance. | `tests/test_prediction_trace.py` — 8 schema-completeness + filter tests. | 21-column table, populated by `predict_and_trace` on every patient-report fetch. |
+| 4 | **Modality-dropout retraining** ([service](backend/services/modality_dropout_training.py), [comparison](backend/services/modality_robustness_comparison.py)) | Champion classifier retrained on augmented rows where random modality groups are masked. Head-to-head against the original model. | `tests/test_modality_robustness.py` — 9 tests including a production-data comparison gate. | +8.3pp accuracy and −7.3 Brier on `no_imaging` scenario vs. champion; no regression on `full_data`. |
+| 5 | **Live evidence-aware inference** ([service](backend/services/live_evidence_prediction.py)) | Every `/me/report` fetch resolves the patient's most-recent cycle row, runs the abstention-aware classifier, persists a trace, and embeds the envelope in the response. | `tests/test_live_evidence_prediction.py` — 5 cohort + trace-persistence contract tests. | Patient dashboard shows decision, modalities used, confidence, claim boundary. |
+| 6 | **Provenance + failure-mode registry** ([generator card](backend/services/synthetic_generator_card.py), [failure registry](backend/services/failure_mode_registry.py)) | Synthetic generator card pins schema, fingerprints rows, documents causal assumptions / known shortcuts / unsupported claims. Failure-mode registry consolidates engineering risks + failure case gallery + safety red-team failures + drift findings into one auditable table. | `tests/test_provenance_artifacts.py` — 9 structure + aggregation tests. | Generator card: passed, schema in sync. Registry: 17 entries, 6 high-severity, status reflects honest unresolved gaps. |
+| 7 | **Clinician dashboard parity** ([trace endpoint](backend/api/routers/clinician_review.py), [PredictionTracesPanel](frontend-react/src/pages/clinician/PredictionTracesPanel.tsx)) | Clinician sees the same evidence-aware envelope the patient sees, plus an auditable trace log per patient (filter by abstention, summary chips). | `tests/test_clinician_prediction_traces.py` — 9 access-control + contract tests. | Endpoint gated to clinician + admin roles, patients blocked. |
+| 8 | **Form catalogs + RAG governance + post-gen validator** ([catalogs](frontend-react/src/lib/clinical-constants.ts), [governance](backend/services/kb_source_governance.py), [validator](backend/services/post_generation_validator.py)) | Curated symptom/medication dropdowns with "Other" fallback. KB sources mapped to T1–T5 tiers with `allowed_use`. Post-gen validator blocks 6 banned-claim categories (diagnosis, treatment, prognosis, dosage, genetic-risk, tumor-marker) even when the LLM tries to make them. | `SelectWithCustom.test.tsx` (9) + `tests/test_rag_governance.py` (20). | 28 symptoms + 22 medications. 24 KB sources mapped (T1=2, T2=10, T3=11, T4=1, 0 issues). 6 rules in validator catalog. |
+| 9 | **Hybrid completion** ([hybrid_prediction.py](backend/services/hybrid_prediction.py)) | Classification + regression + toxicity heads, each through its own abstention sufficiency rules, bundled per patient view. Three trace rows per fresh report build (one per head, grouped by snapshot hash). | `tests/test_hybrid_prediction.py` — 9 per-head + bundle + live-integration tests. | Toxicity head scores when imaging is missing while response heads abstain — independent per-head sufficiency working. |
+
+Run them all locally:
+
+```
+python scripts/run_leakage_audit.py
+python scripts/run_evidence_abstention_eval.py
+python scripts/run_modality_dropout_training.py
+python scripts/run_modality_robustness_comparison.py
+python scripts/run_synthetic_generator_card.py
+python scripts/run_failure_mode_registry.py
+python scripts/run_kb_source_governance.py
+pytest tests/test_leakage_audit.py tests/test_evidence_abstention.py \
+       tests/test_prediction_trace.py tests/test_modality_robustness.py \
+       tests/test_live_evidence_prediction.py tests/test_provenance_artifacts.py \
+       tests/test_hybrid_prediction.py tests/test_clinician_prediction_traces.py \
+       tests/test_rag_governance.py
+```
+
+What this is *not*: any of these passing is engineering evidence, not clinical validation. The synthetic-to-real gap is itself the first entry in the failure-mode registry.
+
 ## Architecture overview
 Flow:
 Frontend / Dashboards -> Timeline and data-entry tools -> Deterministic scope/safety gate -> Intent router -> RAG / ML / tool workflow -> Validation and guardrails -> Clinician review -> Audit logs -> Evaluation and MLE dashboard
@@ -77,6 +112,8 @@ Implementation: [backend/services/genetic_counseling.py](backend/services/geneti
 - Response uncertainty bands show when response-regression model families disagree.
 - External validation direction is reported separately through the BreastDCEDL/I-SPY1 MRI-derived feature baseline.
 - BreastDCEDL baseline response classifier using MRI-derived tabular features.
+- Biomarker/tumor-marker retraining readiness is tracked as a separate feature-ablation benchmark. It compares monitoring-only features, the current default subtype-aware feature set, and an enhanced candidate with structured ER/PR/HER2/Ki-67, synthetic germline-risk flag, and CA 15-3/CA 27.29/CEA tumor-marker trend features.
+- The biomarker feature benchmark reports feature lineage, missingness, leakage caveats, classification deltas, response-regression deltas, and a promotion recommendation. Current status is `monitor_only`: enhanced synthetic features are roughly comparable to the current default and should not be promoted without temporal and external/public-data validation.
 - Model artifacts, registry metadata, promotion/rollback, and local MLOps tracking.
 - Versioned evaluation reports and MLE readiness gates.
 
@@ -149,7 +186,9 @@ Demo credential routing:
 The login form resolves the account role from credentials and redirects to the correct portal. The portals no longer expose role-switching links in the top navigation.
 
 ## Limitations
-- Synthetic data is not clinical evidence; it is for engineering practice only.
+- Synthetic data is not clinical evidence; it is for engineering practice only. The synthetic-to-real gap is the first entry in the [failure-mode registry](backend/services/failure_mode_registry.py); see the generator card for the causal assumptions baked into the dataset and the shortcuts the model could exploit.
+- The evidence-aware abstention rules are *defaults*, not learned — they need clinical-advisor sign-off before relaxation. The over-cautious failure mode is benchmarked as `false_abstention_rate` per scenario.
+- The modality-dropout retraining establishes that the model handles synthetic missingness; clinical missingness in real patient records may follow different patterns.
 - RAG metrics are heuristic proxies until labeled KB evaluation sets exist.
 - Imaging analysis is derived from report text or tabular features, not validated clinical imaging models.
 - No clinical validation, regulatory approval, or production privacy/security controls are claimed.
@@ -171,6 +210,9 @@ alembic downgrade -1            # roll back one revision
 - Expand multimodal signals with validated imaging workflows.
 - Harden production security controls and PHI handling for real deployment.
 - Add clinician-reviewed gold cases for summary quality evaluation.
+- Replace rule-based abstention with a learned evidence-sufficiency head; current rules are explicit defaults a clinical advisor can review and override.
+- Wire `predict_and_trace` into the clinician review surface so traces correlate with reviewer decisions in `ClinicalSummaryReview`.
+- Bring the clinician dashboard up to the patient-portal's SectionCard + structured-form standard.
 
 ## Ops and governance docs
 - [docs/threat_model.md](docs/threat_model.md)
@@ -201,6 +243,11 @@ alembic downgrade -1            # roll back one revision
 | Progressive Chat UX | Pipeline-stage status labels while waiting (safety gate -> intent -> retrieval -> generation) |
 | Frontend | React + TypeScript + Vite, role-based routing, chat panel with tool-call confirmations, metric interpretation bands |
 | Governance | System card, model cards (3), RAG pipeline doc, MLE evaluation report, audit logs |
+| Leakage audit (CI gate) | Hard build-failure check: patient-ID split disjointness across multiple seeds, 8-entry known label-proxy denylist, feature-vs-label byte-identity detection — 23/23 production checks pass |
+| Evidence-aware abstention | Rule-based sufficiency layer + abstention envelope (`decision`/`probability`/`confidence`/`evidence`/`model_version`); refuses to score 100% of demographics-only rows while keeping 100% coverage and 92.4% accuracy on full-evidence rows |
+| Prediction traceability | 21-column `PredictionTrace` table — every live inference records model + feature-set + threshold + calibration + safety-trigger + validator-decision + modalities-present provenance; live in admin dashboard |
+| Modality-dropout retraining | Champion classifier retrained on rows with stochastically masked modality groups; head-to-head vs. original shows +8.3pp accuracy and −7.3 Brier on `no_imaging` with no regression on `full_data` |
+| Generator card + failure-mode registry | Synthetic generator card pins schema/seed/cohort/fingerprint + documents causal assumptions, known shortcuts, unsupported claims; failure-mode registry consolidates 17 entries across engineering risks, narrative cases, safety-red-team failures, and drift findings |
 
 ### Architecture (Mermaid)
 
@@ -277,6 +324,8 @@ flowchart TD
 - RAG engineering: retrieval, reranking, caching, grounding scoring, hallucination detection
 - ML lifecycle practice: training, versioning, promotion, rollback, model cards, audit logs
 - Full-stack integration: React SPA + FastAPI + SQLite + vector index + local ML models
+- Data-hygiene discipline: leakage audit as a hard CI gate, every prediction emitted with explicit modality provenance, abstention as a first-class output state
+- Honest provenance: synthetic generator card with documented causal assumptions / known shortcuts / unsupported claims; consolidated failure-mode registry instead of hand-waving over known gaps
 
 **Does not prove:**
 - Clinical validity — all model training and testing uses synthetic or non-validated data

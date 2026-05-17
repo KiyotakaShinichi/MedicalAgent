@@ -1,0 +1,161 @@
+{
+  "schema_version": "synthetic_generator_card_v1",
+  "generator_card_version": "v2_2026_05",
+  "generated_at": "2026-05-16T17:05:11.689911+00:00",
+  "status": "passed",
+  "dataset_dir": "Data/complete_synthetic_breast_journeys",
+  "dataset_schema_version": "complete_synthetic_breast_journey_v2",
+  "card_version_matches_dataset": true,
+  "generation_options": {
+    "seed": 20280508,
+    "cycles": 6,
+    "count_requested": 600,
+    "balanced_outcomes": true,
+    "balanced_subgroups": true,
+    "missing_rate": 0.06,
+    "noise_level": 0.04,
+    "schema_version": "complete_synthetic_breast_journey_v2"
+  },
+  "cohort": {
+    "patients_created": 600,
+    "cycles_per_patient": 6,
+    "table_counts": {
+      "patients": 600,
+      "diagnoses": 600,
+      "treatment_sessions": 3600,
+      "labs": 10800,
+      "medications": 13898,
+      "symptoms": 6754,
+      "mri_reports": 4200,
+      "interventions": 3830,
+      "outcomes": 600,
+      "temporal_ml_rows": 3600
+    },
+    "rows_fingerprint": "44a845011924e1f0"
+  },
+  "supported_labels": [
+    "treatment_success_binary",
+    "toxicity_risk_binary",
+    "urgent_intervention_needed",
+    "support_intervention_needed",
+    "response_score_percent (regression)",
+    "final_response_category (multiclass)"
+  ],
+  "feature_distribution_summary": {
+    "row_count": 3600,
+    "numeric": {
+      "age": {
+        "count": 3600,
+        "mean": 52.64,
+        "std": 12.8372,
+        "min": 31.0,
+        "max": 74.0
+      },
+      "pre_wbc": {
+        "count": 3600,
+        "mean": 4.7798,
+        "std": 1.939,
+        "min": 2.3,
+        "max": 9.82
+      },
+      "pre_anc": {
+        "count": 3385,
+        "mean": 2.7106,
+        "std": 1.1866,
+        "min": 0.98,
+        "max": 6.93
+      },
+      "nadir_wbc": {
+        "count": 3600,
+        "mean": 2.0026,
+        "std": 1.6823,
+        "min": 0.58,
+        "max": 7.72
+      },
+      "mri_percent_change_from_baseline": {
+        "count": 3351,
+        "mean": -27.5291,
+        "std": 25.3107,
+        "min": -97.75,
+        "max": 49.26
+      },
+      "max_symptom_severity": {
+        "count": 3382,
+        "mean": 5.3992,
+        "std": 2.1053,
+        "min": 1.0,
+        "max": 9.0
+      },
+      "response_score_percent": {
+        "count": 3600,
+        "mean": 27.4821,
+        "std": 25.3062,
+        "min": -49.26,
+        "max": 97.75
+      }
+    },
+    "categorical": {
+      "stage": {
+        "IIB": 1050,
+        "IIIA": 930,
+        "IIA": 846,
+        "IIIB": 546,
+        "IV": 228
+      },
+      "molecular_subtype": {
+        "HR+/HER2-": 1440,
+        "HER2+": 720,
+        "triple-negative": 720,
+        "HR+/HER2+": 720
+      },
+      "regimen": {
+        "dose-dense AC then paclitaxel": 1440,
+        "TCHP": 720,
+        "paclitaxel + carboplatin then AC": 720,
+        "TCHP then endocrine therapy": 720
+      },
+      "final_response_category": {
+        "partial_response": 1326,
+        "stable_disease": 780,
+        "complete_response_signal": 666,
+        "progressive_disease": 630,
+        "disease_control": 198
+      },
+      "final_response_multiclass": {
+        "partial_response": 1326,
+        "stable_disease": 780,
+        "complete_response_signal": 666,
+        "progressive_disease": 630,
+        "disease_control": 198
+      }
+    },
+    "positive_label_rate": 0.5533
+  },
+  "causal_assumptions": [
+    "Each patient has a latent 'response strength' drawn at birth that drives outcome category, MRI percent-change trajectory, and final label.  All cycles for the same patient share that latent.",
+    "Toxicity events (low nadir CBC, dose delays/reductions) are sampled per cycle but conditioned on the same response-strength latent \u2014 non-responders trend toward higher toxicity counts on average.",
+    "Imaging response (mri_percent_change_from_baseline) is monotonic in absolute terms across cycles for a given patient \u2014 synthetic patients do not stop responding mid-treatment in this generator.",
+    "Symptom severity, symptom counts, and intervention counts are noisy but correlated with the same latent \u2014 no independent symptom-only subgroup is modelled.",
+    "Subtype (HR+/HER2+/TNBC) influences regimen selection and baseline lab profiles, but the latent response strength is sampled independently of subtype in the balanced-subgroups configuration."
+  ],
+  "known_shortcuts": [
+    "mri_percent_change_from_baseline is computed from the same latent that produces response_score_percent \u2014 leakage_audit covers this by excluding the regression target from features.",
+    "Patients with very low nadir CBC + multiple dose modifications are almost always non-responders in the synthetic distribution; real-world data is much noisier.",
+    "Cycle 1 features alone can already separate responders from non-responders better than would be realistic, because the latent shows up in cycle-1 imaging response.",
+    "Patient IDs follow a deterministic prefix+index pattern; never use the ID string as a feature."
+  ],
+  "unsupported_claims": [
+    "Real clinical performance \u2014 every reported metric is synthetic.",
+    "Calibration of the model on real patient populations.",
+    "Subgroup fairness on real demographic strata.  The generator's subgroup balance is deliberately uniform.",
+    "Behavior under genuine out-of-distribution patients (rare subtypes, very old/young patients, metastatic-only journeys).",
+    "Response to treatment regimens not in the generator's regimen menu."
+  ],
+  "realism_checks_referenced": [
+    "synthetic_realism_candidate alignment score (separate artifact)",
+    "noise_eval AUROC drop under feature corruption (separate artifact)",
+    "temporal_eval generalization gap (separate artifact)",
+    "drift_report subgroup performance (separate artifact)"
+  ],
+  "claim_boundary": "Fully synthetic data for engineering and ML practice only. Not clinical evidence.  Real patient data may violate every causal assumption listed above."
+}

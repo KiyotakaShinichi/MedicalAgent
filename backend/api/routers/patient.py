@@ -120,6 +120,89 @@ class SymptomCreate(BaseModel):
     notes: str | None = None
 
 
+class MySymptomCreate(BaseModel):
+    """Patient-scoped variant of :class:`SymptomCreate`.
+
+    Has the same data shape but is submitted by the patient themselves via
+    ``POST /me/symptoms``.  Adds two optional fields the manual-entry form
+    surfaces but the clinician-side route never needed:
+
+    - ``duration``     — free text describing how long the symptom has lasted
+                         (e.g. "since this morning", "2 days").
+    - ``urgent_flag``  — checkbox the patient set explicitly.  When True we
+                         tag the saved record's notes with ``[urgent flag]``
+                         so the clinician review queue picks it up — we do
+                         NOT auto-route anything; the safety promise is that
+                         the system only *surfaces* the flag, it never decides
+                         on it.
+    """
+
+    date: date
+    symptom: str
+    severity: int
+    notes: str | None = None
+    duration: str | None = None
+    urgent_flag: bool = False
+
+
+class MyLabCreate(BaseModel):
+    """Patient-scoped CBC save (manual-entry form).
+
+    Adds ``anc`` and ``lab_source`` over the clinician-side :class:`LabCreate`.
+    ``anc`` is not part of the LabResult table schema yet — when present we
+    fold it into ``source_note`` so we do not need a migration.  Replace
+    with a first-class column when the schema is next updated.
+    """
+
+    date: date
+    wbc: float
+    hemoglobin: float
+    platelets: float
+    anc: float | None = None
+    lab_source: str | None = None  # e.g. "Quest", "Home draw", or a clinic name
+    notes: str | None = None
+
+
+class MyImagingReportCreate(BaseModel):
+    """Patient-scoped imaging save (manual-entry form).
+
+    Modality is one of MRI/CT/Ultrasound/Mammogram/Other; the backend stores
+    it verbatim.  ``report_type`` defaults to "Patient-entered report" when
+    the patient hasn't typed one — keeps the existing schema happy.
+    """
+
+    date: date
+    modality: str
+    report_type: str | None = None
+    body_site: str | None = None
+    findings: str | None = None
+    impression: str | None = None
+    notes: str | None = None
+
+
+class MyMedicationCreate(BaseModel):
+    medication: str
+    dose: str | None = None
+    frequency: str | None = None
+    date: date
+    side_effects: str | None = None
+    notes: str | None = None
+
+
+class MyTreatmentCreate(BaseModel):
+    """Patient-scoped treatment-cycle note.
+
+    The clinician :class:`TreatmentCreate` requires an integer cycle number.
+    Patients often don't remember the cycle — accept it as optional and
+    default to 0 so the row still slots into the treatments table.
+    """
+
+    date: date
+    drug: str
+    cycle: int | None = None
+    notes: str | None = None
+
+
 class ImagingReportCreate(BaseModel):
     date: date
     modality: str
@@ -284,6 +367,7 @@ def build_patient_report_response(patient_id: str, db: Session):
     symptoms = get_symptoms_df(db, patient_id)
     mri_registry = get_mri_registry(db, patient_id)
     mri_series_index = get_mri_series_index(db, patient_id)
+    patient_uploads = get_patient_uploads(db, patient.id, limit=25)
     medication_logs = get_medication_logs(db, patient_id)
     chat_history = get_chat_messages(db, patient_id, limit=12)
     clinical_interventions = get_clinical_interventions(db, patient_id)
@@ -331,6 +415,7 @@ def build_patient_report_response(patient_id: str, db: Session):
         imaging_reports=combined_imaging_reports,
         symptoms=symptoms,
         risks=all_risks,
+        media_records=[*mri_registry, *patient_uploads],
     )
     patient_state = build_patient_state(
         patient=patient,
@@ -363,7 +448,7 @@ def build_patient_report_response(patient_id: str, db: Session):
     report["mri_series_index"] = mri_series_index
     report["medication_logs"] = medication_logs
     report["chat_history"] = chat_history
-    report["uploads"] = get_patient_uploads(db, patient.id, limit=25)
+    report["uploads"] = patient_uploads
     report["clinical_interventions"] = clinical_interventions
     report["treatment_outcome"] = treatment_outcome
     try:
@@ -376,6 +461,22 @@ def build_patient_report_response(patient_id: str, db: Session):
     except Exception:
         report["synthetic_model_prediction"] = None
         report["synthetic_model_explanation"] = None
+    # Live hybrid prediction: runs classification + regression + toxicity
+    # through the abstention layer, persists one trace per head, and embeds
+    # the bundle on the report.  Also publishes the classification slice
+    # under the old `evidence_aware_prediction` key for backward compat with
+    # the existing patient-dashboard card.  None when the patient is not in
+    # the synthetic cohort or the trained model isn't on disk.
+    try:
+        from backend.services.live_evidence_prediction import build_hybrid_prediction
+        bundle = build_hybrid_prediction(patient.id, db, actor_role="patient")
+        report["hybrid_prediction"] = bundle
+        report["evidence_aware_prediction"] = (
+            bundle.get("classification") if bundle else None
+        )
+    except Exception:
+        report["hybrid_prediction"] = None
+        report["evidence_aware_prediction"] = None
     report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
     report["patient_timeline_summary"] = build_patient_timeline_risk_summary(report)
     report["timeline_intelligence"] = build_timeline_intelligence(report)
@@ -514,6 +615,343 @@ def get_patient_genetic_counseling_readiness(
     if not get_patient(db, patient_id):
         raise HTTPException(status_code=404, detail="Patient not found")
     return build_genetic_counseling_readiness(db, patient_id)
+
+
+@router.post("/me/symptoms")
+def add_my_symptom(
+    payload: MySymptomCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Patient-scoped symptom save (manual-entry form).
+
+    Mirrors the clinician-side :func:`add_symptom_report` route but trusts
+    the bearer-token's patient_id rather than reading it from the URL.  The
+    new ``duration`` and ``urgent_flag`` fields are folded into the notes
+    column so the existing schema does not need to change — the clinician
+    review queue picks the urgent tag up via its existing text scan.
+    """
+    patient_id = context.patient_id
+    if not patient_id:
+        raise HTTPException(status_code=403, detail="Patient context required.")
+    if not get_patient(db, patient_id):
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    composed_notes_parts: list[str] = []
+    if payload.urgent_flag:
+        composed_notes_parts.append("[urgent flag set by patient]")
+    if payload.duration:
+        composed_notes_parts.append(f"Duration: {payload.duration.strip()}")
+    if payload.notes:
+        composed_notes_parts.append(payload.notes.strip())
+    composed_notes = " | ".join(composed_notes_parts) or None
+
+    try:
+        validation_warnings = validate_symptom_payload(payload.symptom, payload.severity, composed_notes)
+    except ValueError as exc:
+        log_app_event(
+            db=db,
+            event_type="validation_error",
+            patient_id=patient_id,
+            route="/me/symptoms",
+            status="error",
+            input_payload=payload.dict(),
+            error_message=str(exc),
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=validation_error_payload(exc, route="/me/symptoms"),
+        ) from exc
+
+    symptom = SymptomReport(
+        patient_id=patient_id,
+        date=payload.date,
+        symptom=payload.symptom,
+        severity=payload.severity,
+        notes=composed_notes,
+    )
+    db.add(symptom)
+    db.commit()
+    _invalidate_report_cache(patient_id)
+    log_app_event(
+        db=db,
+        event_type="patient_input",
+        patient_id=patient_id,
+        route="/me/symptoms",
+        status="ok",
+        input_payload=payload.dict(),
+        output_payload={
+            "symptom_id": symptom.id,
+            "warning_count": len(validation_warnings),
+            "urgent_flag": payload.urgent_flag,
+        },
+    )
+    return {
+        "message": "Symptom logged to your patient record.",
+        "symptom_id": symptom.id,
+        "validation_warnings": validation_warnings,
+        "urgent_flag": payload.urgent_flag,
+        "safety_note": (
+            "This record is for monitoring only and does not replace clinician judgement. "
+            "Urgent symptoms should be discussed with your care team."
+        ),
+    }
+
+
+@router.post("/me/labs")
+def add_my_lab(
+    payload: MyLabCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Patient-scoped CBC save.  Mirrors :func:`add_lab_result` but trusts
+    the bearer-token's patient_id rather than the URL.  ``anc`` and
+    ``lab_source``/``notes`` are folded into ``source_note`` to avoid a
+    schema migration on the LabResult table."""
+    patient_id = context.patient_id
+    if not patient_id:
+        raise HTTPException(status_code=403, detail="Patient context required.")
+    if not get_patient(db, patient_id):
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    try:
+        validation_warnings = validate_cbc_values(payload.wbc, payload.hemoglobin, payload.platelets)
+    except ValueError as exc:
+        log_app_event(
+            db=db, event_type="validation_error", patient_id=patient_id,
+            route="/me/labs", status="error",
+            input_payload=payload.dict(), error_message=str(exc),
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=validation_error_payload(exc, route="/me/labs"),
+        ) from exc
+
+    note_parts: list[str] = []
+    if payload.anc is not None:
+        note_parts.append(f"ANC={payload.anc:g} K/uL")
+    if payload.lab_source:
+        note_parts.append(f"Source: {payload.lab_source.strip()}")
+    if payload.notes:
+        note_parts.append(payload.notes.strip())
+    source_note = " | ".join(note_parts) or None
+
+    lab = LabResult(
+        patient_id=patient_id,
+        date=payload.date,
+        wbc=payload.wbc,
+        hemoglobin=payload.hemoglobin,
+        platelets=payload.platelets,
+        source="manual",
+        source_note=source_note,
+    )
+    db.add(lab)
+    db.commit()
+    _invalidate_report_cache(patient_id)
+    log_app_event(
+        db=db, event_type="patient_input", patient_id=patient_id,
+        route="/me/labs", status="ok",
+        input_payload=payload.dict(),
+        output_payload={"lab_id": lab.id, "warning_count": len(validation_warnings)},
+    )
+    return {
+        "message": "Lab values logged to your patient record.",
+        "lab_id": lab.id,
+        "validation_warnings": validation_warnings,
+        "safety_note": (
+            "Lab entries here are for tracking. Reference ranges shown in the portal "
+            "are general guides — your clinical team uses lab-specific ranges."
+        ),
+    }
+
+
+@router.post("/me/imaging-reports")
+def add_my_imaging_report(
+    payload: MyImagingReportCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Patient-scoped imaging save.  Either ``findings`` or ``impression``
+    must be present; otherwise the entry is rejected so we never store an
+    empty imaging row."""
+    patient_id = context.patient_id
+    if not patient_id:
+        raise HTTPException(status_code=403, detail="Patient context required.")
+    if not get_patient(db, patient_id):
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    findings = (payload.findings or "").strip()
+    impression = (payload.impression or "").strip()
+    if not findings and not impression:
+        raise HTTPException(
+            status_code=400,
+            detail="Please paste either the report findings or the impression text.",
+        )
+    body_site = (payload.body_site or "Breast").strip() or "Breast"
+    report_type = (payload.report_type or "Patient-entered report").strip()
+
+    try:
+        validation_warnings = validate_imaging_report_payload(
+            payload.modality, report_type, findings or impression, impression or findings, body_site,
+        )
+    except ValueError as exc:
+        log_app_event(
+            db=db, event_type="validation_error", patient_id=patient_id,
+            route="/me/imaging-reports", status="error",
+            input_payload=payload.dict(), error_message=str(exc),
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=validation_error_payload(exc, route="/me/imaging-reports"),
+        ) from exc
+
+    composed_impression = impression
+    if payload.notes:
+        composed_impression = f"{composed_impression}\n[Patient note] {payload.notes.strip()}".strip()
+
+    report = ImagingReport(
+        patient_id=patient_id,
+        date=payload.date,
+        modality=payload.modality,
+        report_type=report_type,
+        body_site=body_site,
+        findings=findings,
+        impression=composed_impression,
+    )
+    db.add(report)
+    db.commit()
+    _invalidate_report_cache(patient_id)
+    log_app_event(
+        db=db, event_type="patient_input", patient_id=patient_id,
+        route="/me/imaging-reports", status="ok",
+        # Redact the free-text fields from the audit log — keep only metadata.
+        input_payload={
+            **payload.dict(),
+            "findings": "[redacted report text]",
+            "impression": "[redacted report text]",
+        },
+        output_payload={"imaging_report_id": report.id, "warning_count": len(validation_warnings)},
+    )
+    return {
+        "message": "Imaging report logged to your patient record.",
+        "imaging_report_id": report.id,
+        "modality": payload.modality,
+        "validation_warnings": validation_warnings,
+        "safety_note": (
+            "Imaging text is recorded as-is; this system does not interpret images. "
+            "Your care team makes any clinical decisions."
+        ),
+    }
+
+
+@router.post("/me/medications")
+def add_my_medication(
+    payload: MyMedicationCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Patient-scoped medication save.  Stored in the MedicationLog table
+    (the same table the chat agent's save_medication path writes to)."""
+    patient_id = context.patient_id
+    if not patient_id:
+        raise HTTPException(status_code=403, detail="Patient context required.")
+    if not get_patient(db, patient_id):
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    medication = payload.medication.strip()
+    if not medication:
+        raise HTTPException(status_code=400, detail="Medication name is required.")
+    if len(medication) > 120:
+        raise HTTPException(status_code=400, detail="Medication name must be 120 characters or less.")
+
+    note_parts: list[str] = []
+    if payload.side_effects:
+        note_parts.append(f"Side effects: {payload.side_effects.strip()}")
+    if payload.notes:
+        note_parts.append(payload.notes.strip())
+    notes = " | ".join(note_parts) or None
+
+    med = MedicationLog(
+        patient_id=patient_id,
+        date=payload.date,
+        medication=medication,
+        dose=(payload.dose or "").strip() or None,
+        frequency=(payload.frequency or "").strip() or None,
+        notes=notes,
+    )
+    db.add(med)
+    db.commit()
+    _invalidate_report_cache(patient_id)
+    log_app_event(
+        db=db, event_type="patient_input", patient_id=patient_id,
+        route="/me/medications", status="ok",
+        input_payload=payload.dict(),
+        output_payload={"medication_id": med.id},
+    )
+    return {
+        "message": "Medication logged to your patient record.",
+        "medication_id": med.id,
+        "safety_note": (
+            "Use this to track what you are taking. Dose changes must be agreed with your care team."
+        ),
+    }
+
+
+@router.post("/me/treatments")
+def add_my_treatment(
+    payload: MyTreatmentCreate,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Patient-scoped treatment-cycle note.  Cycle defaults to 0 when the
+    patient doesn't remember the number; the existing Treatment row schema
+    requires an integer."""
+    patient_id = context.patient_id
+    if not patient_id:
+        raise HTTPException(status_code=403, detail="Patient context required.")
+    if not get_patient(db, patient_id):
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    drug = payload.drug.strip()
+    if not drug:
+        raise HTTPException(status_code=400, detail="Treatment/drug name is required.")
+    cycle = payload.cycle if payload.cycle is not None else 0
+    try:
+        validation_warnings = validate_treatment_payload(cycle, drug)
+    except ValueError as exc:
+        log_app_event(
+            db=db, event_type="validation_error", patient_id=patient_id,
+            route="/me/treatments", status="error",
+            input_payload=payload.dict(), error_message=str(exc),
+        )
+        raise HTTPException(
+            status_code=400,
+            detail=validation_error_payload(exc, route="/me/treatments"),
+        ) from exc
+
+    treatment = Treatment(
+        patient_id=patient_id, date=payload.date, cycle=cycle, drug=drug,
+    )
+    db.add(treatment)
+    db.commit()
+    _invalidate_report_cache(patient_id)
+    log_app_event(
+        db=db, event_type="patient_input", patient_id=patient_id,
+        route="/me/treatments", status="ok",
+        input_payload=payload.dict(),
+        output_payload={
+            "treatment_id": treatment.id,
+            "warning_count": len(validation_warnings),
+        },
+    )
+    return {
+        "message": "Treatment note logged to your patient record.",
+        "treatment_id": treatment.id,
+        "validation_warnings": validation_warnings,
+        "safety_note": (
+            "This is a tracking note. Treatment decisions stay with your oncology team."
+        ),
+    }
 
 
 @router.post("/me/family-history")
@@ -693,6 +1131,10 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str, *, persis
         yield _sse_event("done", {})
         return
 
+    yield _sse_event("stream_mode", {
+        "mode": "post_guardrail_display_stream",
+        "reason": "Patient-facing medical replies are chunked only after safety/output checks pass.",
+    })
     yield _sse_event("pipeline_stage", {"stage": "safety_gate", "label": "Checking safety gate…"})
 
     yield _sse_event("pipeline_stage", {"stage": "intent_routing", "label": "Routing intent..."})
@@ -721,7 +1163,7 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str, *, persis
     citations = result.get("citations") or agent_pipeline.get("citations") or []
     reply = result.get("reply") or ""
     for chunk in _chunk_text(reply):
-        yield _sse_event("answer_delta", {"text": chunk})
+        yield _sse_event("answer_delta", {"text": chunk, "mode": "post_guardrail_display_stream"})
 
     answer_payload = {
         "reply": reply,

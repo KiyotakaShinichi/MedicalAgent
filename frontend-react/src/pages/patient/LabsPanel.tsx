@@ -1,8 +1,9 @@
-import { lazy, Suspense } from "react";
-import { FlaskConical, Droplet, Heart, Shield } from "lucide-react";
+import { lazy, Suspense, useMemo } from "react";
+import { FlaskConical, Droplet, Heart, Shield, Info } from "lucide-react";
 import { SectionCard } from "../../components/ui/SectionCard";
-import { MetricCard } from "../../components/ui/MetricCard";
+import { LabCard } from "../../components/ui/LabCard";
 import { RelativeTime } from "../../components/ui/RelativeTime";
+import { NON_DIAGNOSTIC_DISCLAIMER } from "../../lib/clinical-constants";
 import type { PatientReport } from "../../types/api";
 
 // Recharts is ~200 KB gzipped — code-split so the chart only loads when the
@@ -28,40 +29,27 @@ function ChartFallback() {
   );
 }
 
-type Trend = "up" | "down" | "neutral";
-
-function labStatus(val: number | null, key: string): "green" | "amber" | "red" | "muted" {
-  if (val == null) return "muted";
-  if (key === "wbc")        return val < 2 ? "red" : val < 4 ? "amber" : "green";
-  if (key === "hemoglobin") return val < 8 ? "red" : val < 11 ? "amber" : "green";
-  if (key === "platelets")  return val < 50 ? "red" : val < 100 ? "amber" : "green";
-  return "muted";
-}
-
-function computeTrend(history: number[], threshold = 0.05): { trend: Trend; label: string } {
-  if (history.length < 2) return { trend: "neutral", label: "Stable" };
-  const last = history[history.length - 1];
-  const baseline = history[0];
-  if (baseline === 0) return { trend: "neutral", label: "Stable" };
-  const change = (last - baseline) / Math.abs(baseline);
-  if (Math.abs(change) < threshold) return { trend: "neutral", label: "Stable" };
-  const pct = Math.round(Math.abs(change) * 100);
-  return change > 0
-    ? { trend: "up",   label: `+${pct}% vs baseline` }
-    : { trend: "down", label: `-${pct}% vs baseline` };
-}
-
 interface Props { report: PatientReport; lastFetchedAt?: number | null }
 
+/**
+ * Lab values panel.  Replaces the older trio of generic ``MetricCard``s with
+ * domain-aware ``LabCard``s that read their reference ranges, status
+ * thresholds, and tooltip copy from ``lib/clinical-constants.ts`` — the
+ * single source of truth shared with the CBC entry form.
+ */
 export function LabsPanel({ report, lastFetchedAt }: Props) {
   const { latest_labs: labs, lab_history } = report;
-  const history = lab_history ?? [];
-  const wbcSeries = history.map((r) => Number(r.wbc)).filter((v) => Number.isFinite(v));
-  const hgbSeries = history.map((r) => Number(r.hemoglobin)).filter((v) => Number.isFinite(v));
-  const pltSeries = history.map((r) => Number(r.platelets)).filter((v) => Number.isFinite(v));
-  const wbcTrend = computeTrend(wbcSeries);
-  const hgbTrend = computeTrend(hgbSeries);
-  const pltTrend = computeTrend(pltSeries);
+  const history = useMemo(() => lab_history ?? [], [lab_history]);
+
+  // Pre-shaped histories per metric so LabCard can render a sparkline + delta
+  // without redoing the projection on every render.
+  const histories = useMemo(() => ({
+    wbc:        history.map((p) => ({ date: p.date, value: p.wbc })),
+    hemoglobin: history.map((p) => ({ date: p.date, value: p.hemoglobin })),
+    platelets:  history.map((p) => ({ date: p.date, value: p.platelets })),
+  }), [history]);
+
+  const lastSampleDate = history.length > 0 ? history[history.length - 1].date : null;
 
   return (
     <SectionCard
@@ -74,37 +62,37 @@ export function LabsPanel({ report, lastFetchedAt }: Props) {
           <RelativeTime timestamp={lastFetchedAt ?? null} prefix="updated" />
         </span>
       }
+      footer={
+        <span className="inline-flex items-start gap-1.5">
+          <Info size={11} aria-hidden="true" style={{ marginTop: 2, flexShrink: 0 }} />
+          <span>
+            Reference ranges shown are population defaults, not personalised to you.{" "}
+            {NON_DIAGNOSTIC_DISCLAIMER}
+          </span>
+        </span>
+      }
     >
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <MetricCard
-          label="WBC"
+        <LabCard
+          labKey="wbc"
           icon={Shield}
-          value={labs?.wbc != null ? labs.wbc.toFixed(1) : null}
-          unit="K/uL"
-          status={labStatus(labs?.wbc ?? null, "wbc")}
-          trend={wbcSeries.length > 1 ? wbcTrend.trend : undefined}
-          trendLabel={wbcSeries.length > 1 ? wbcTrend.label : undefined}
-          range="4.0-11.0"
+          value={labs?.wbc ?? null}
+          history={histories.wbc}
+          lastSampleDate={lastSampleDate}
         />
-        <MetricCard
-          label="Hemoglobin"
+        <LabCard
+          labKey="hemoglobin"
           icon={Heart}
-          value={labs?.hemoglobin != null ? labs.hemoglobin.toFixed(1) : null}
-          unit="g/dL"
-          status={labStatus(labs?.hemoglobin ?? null, "hemoglobin")}
-          trend={hgbSeries.length > 1 ? hgbTrend.trend : undefined}
-          trendLabel={hgbSeries.length > 1 ? hgbTrend.label : undefined}
-          range="12.0-16.0"
+          value={labs?.hemoglobin ?? null}
+          history={histories.hemoglobin}
+          lastSampleDate={lastSampleDate}
         />
-        <MetricCard
-          label="Platelets"
+        <LabCard
+          labKey="platelets"
           icon={Droplet}
-          value={labs?.platelets != null ? Math.round(labs.platelets) : null}
-          unit="K/uL"
-          status={labStatus(labs?.platelets ?? null, "platelets")}
-          trend={pltSeries.length > 1 ? pltTrend.trend : undefined}
-          trendLabel={pltSeries.length > 1 ? pltTrend.label : undefined}
-          range="150-400"
+          value={labs?.platelets ?? null}
+          history={histories.platelets}
+          lastSampleDate={lastSampleDate}
         />
       </div>
       <Suspense fallback={<ChartFallback />}>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RefreshCw, AlertTriangle, Info } from "lucide-react";
+import { RefreshCw, AlertTriangle, Info, ShieldCheck, ShieldAlert } from "lucide-react";
 import { Badge } from "../../../components/ui/Badge";
 import { statusVariant } from "../../../components/ui/badgeUtils";
 import { Card, CardHeader, SectionTitle } from "../../../components/ui/Card";
@@ -13,8 +13,27 @@ import {
   getExternalValidation, getModelComparison,
   getNoiseEval, getTemporalEval, getPredictionErrorTable,
   getPublicDataManifest,
+  getPublicBiomarkerDatasetManifest,
+  runPublicBiomarkerDatasetManifest,
+  getPublicBiomarkerMappingReadiness,
+  runPublicBiomarkerMappingReadiness,
+  getCbioportalBiomarkerSchemaMapping,
+  runCbioportalBiomarkerSchemaMapping,
   getCurrentVsRealismCandidate,
   runCurrentVsRealismCandidate,
+  getLeakageAudit,
+  runLeakageAudit,
+  getEvidenceAbstentionEval,
+  runEvidenceAbstentionEval,
+  getPredictionTraces,
+  getModalityRobustnessComparison,
+  runModalityRobustnessComparison,
+  getSyntheticGeneratorCard,
+  runSyntheticGeneratorCard,
+  getFailureModeRegistry,
+  runFailureModeRegistry,
+  getKbSourceGovernance,
+  runKbSourceGovernance,
 } from "../../../api/client";
 import type {
   AdminAnalytics,
@@ -22,7 +41,17 @@ import type {
   TemporalEvalResult,
   PredictionErrorTable,
   PublicDataManifest,
+  PublicBiomarkerDatasetManifest,
+  PublicBiomarkerMappingReadiness,
+  CbioportalBiomarkerSchemaMapping,
   CurrentVsRealismCandidateReport,
+  LeakageAuditReport,
+  EvidenceAbstentionEvalReport,
+  PredictionTraceResponse,
+  ModalityRobustnessComparisonReport,
+  SyntheticGeneratorCard,
+  FailureModeRegistry,
+  KbSourceGovernanceReport,
 } from "../../../types/api";
 
 interface Props { analytics: AdminAnalytics; onRefresh: () => void }
@@ -40,8 +69,33 @@ export function MleSection({ analytics, onRefresh }: Props) {
   const { data: temporalEval, status: temporalStatus } = useApi(getTemporalEval, []);
   const { data: errorTable, status: errorStatus } = useApi(getPredictionErrorTable, []);
   const { data: dataManifest, status: dataManifestStatus } = useApi(getPublicDataManifest, []);
+  const { data: biomarkerManifest, status: biomarkerManifestStatus, refetch: refetchBiomarkerManifest } = useApi(getPublicBiomarkerDatasetManifest, []);
+  const { data: biomarkerMapping, status: biomarkerMappingStatus, refetch: refetchBiomarkerMapping } = useApi(getPublicBiomarkerMappingReadiness, []);
+  const { data: cbioMapping, status: cbioMappingStatus, refetch: refetchCbioMapping } = useApi(getCbioportalBiomarkerSchemaMapping, []);
   const { data: candidateComparison, status: candidateStatus, refetch: refetchCandidate } = useApi(getCurrentVsRealismCandidate, []);
+  const { data: leakageAudit, status: leakageStatus, refetch: refetchLeakageAudit } = useApi(getLeakageAudit, []);
+  const { data: abstentionEval, status: abstentionStatus, refetch: refetchAbstentionEval } = useApi(getEvidenceAbstentionEval, []);
+  const { data: predictionTraces, status: predictionTracesStatus, refetch: refetchPredictionTraces } = useApi(
+    () => getPredictionTraces({ limit: 25 }),
+    [],
+  );
+  const { data: modalityComparison, status: modalityComparisonStatus, refetch: refetchModalityComparison } = useApi(
+    getModalityRobustnessComparison, [],
+  );
+  const [runningModalityComparison, setRunningModalityComparison] = useState(false);
+
+  const { data: generatorCard, status: generatorCardStatus, refetch: refetchGeneratorCard } = useApi(getSyntheticGeneratorCard, []);
+  const { data: failureRegistry, status: failureRegistryStatus, refetch: refetchFailureRegistry } = useApi(getFailureModeRegistry, []);
+  const { data: kbGovernance, status: kbGovernanceStatus, refetch: refetchKbGovernance } = useApi(getKbSourceGovernance, []);
+  const [runningGeneratorCard, setRunningGeneratorCard] = useState(false);
+  const [runningFailureRegistry, setRunningFailureRegistry] = useState(false);
+  const [runningKbGovernance, setRunningKbGovernance] = useState(false);
   const [runningCandidate, setRunningCandidate] = useState(false);
+  const [runningLeakageAudit, setRunningLeakageAudit] = useState(false);
+  const [runningAbstentionEval, setRunningAbstentionEval] = useState(false);
+  const [runningBiomarkerManifest, setRunningBiomarkerManifest] = useState(false);
+  const [runningBiomarkerMapping, setRunningBiomarkerMapping] = useState(false);
+  const [runningCbioMapping, setRunningCbioMapping] = useState(false);
 
   async function runMle() {
     setRunningMle(true);
@@ -55,6 +109,96 @@ export function MleSection({ analytics, onRefresh }: Props) {
       await refetchCandidate();
     } finally {
       setRunningCandidate(false);
+    }
+  }
+
+  async function refreshBiomarkerManifest() {
+    setRunningBiomarkerManifest(true);
+    try {
+      await runPublicBiomarkerDatasetManifest();
+      await refetchBiomarkerManifest();
+    } finally {
+      setRunningBiomarkerManifest(false);
+    }
+  }
+
+  async function refreshBiomarkerMapping() {
+    setRunningBiomarkerMapping(true);
+    try {
+      await runPublicBiomarkerMappingReadiness();
+      await refetchBiomarkerMapping();
+    } finally {
+      setRunningBiomarkerMapping(false);
+    }
+  }
+
+  async function refreshLeakageAudit() {
+    setRunningLeakageAudit(true);
+    try {
+      await runLeakageAudit();
+      await refetchLeakageAudit();
+    } finally {
+      setRunningLeakageAudit(false);
+    }
+  }
+
+  async function refreshAbstentionEval() {
+    setRunningAbstentionEval(true);
+    try {
+      await runEvidenceAbstentionEval();
+      await refetchAbstentionEval();
+    } finally {
+      setRunningAbstentionEval(false);
+    }
+  }
+
+  async function refreshModalityComparison() {
+    setRunningModalityComparison(true);
+    try {
+      await runModalityRobustnessComparison();
+      await refetchModalityComparison();
+    } finally {
+      setRunningModalityComparison(false);
+    }
+  }
+
+  async function refreshGeneratorCard() {
+    setRunningGeneratorCard(true);
+    try {
+      await runSyntheticGeneratorCard();
+      await refetchGeneratorCard();
+    } finally {
+      setRunningGeneratorCard(false);
+    }
+  }
+
+  async function refreshFailureRegistry() {
+    setRunningFailureRegistry(true);
+    try {
+      await runFailureModeRegistry();
+      await refetchFailureRegistry();
+    } finally {
+      setRunningFailureRegistry(false);
+    }
+  }
+
+  async function refreshKbGovernance() {
+    setRunningKbGovernance(true);
+    try {
+      await runKbSourceGovernance();
+      await refetchKbGovernance();
+    } finally {
+      setRunningKbGovernance(false);
+    }
+  }
+
+  async function refreshCbioMapping() {
+    setRunningCbioMapping(true);
+    try {
+      await runCbioportalBiomarkerSchemaMapping(true);
+      await refetchCbioMapping();
+    } finally {
+      setRunningCbioMapping(false);
     }
   }
 
@@ -83,6 +227,67 @@ export function MleSection({ analytics, onRefresh }: Props) {
           The locked holdout uses a frozen synthetic split; external validation uses BreastDCEDL/I-SPY1 tabular features.
         </span>
       </div>
+
+      {/* Synthetic generator card — provenance + documented assumptions. */}
+      <SyntheticGeneratorCardPanel
+        report={generatorCard as SyntheticGeneratorCard | null}
+        loading={generatorCardStatus === "loading"}
+        running={runningGeneratorCard}
+        onRefresh={refreshGeneratorCard}
+      />
+
+      {/* Consolidated failure-mode registry. */}
+      <FailureModeRegistryCard
+        report={failureRegistry as FailureModeRegistry | null}
+        loading={failureRegistryStatus === "loading"}
+        running={runningFailureRegistry}
+        onRefresh={refreshFailureRegistry}
+      />
+
+      {/* RAG source governance — per-source tier + allowed_use + staleness. */}
+      <KbSourceGovernanceCard
+        report={kbGovernance as KbSourceGovernanceReport | null}
+        loading={kbGovernanceStatus === "loading"}
+        running={runningKbGovernance}
+        onRefresh={refreshKbGovernance}
+      />
+
+      {/* Training-data leakage audit — the engineering data-hygiene gate. */}
+      <LeakageAuditCard
+        report={leakageAudit as LeakageAuditReport | null}
+        loading={leakageStatus === "loading"}
+        running={runningLeakageAudit}
+        onRefresh={refreshLeakageAudit}
+      />
+
+      {/* Evidence-aware abstention eval — modality-dropout sweep showing
+          coverage / accuracy / abstention rate per missing-modality scenario. */}
+      <EvidenceAbstentionCard
+        report={abstentionEval as EvidenceAbstentionEvalReport | null}
+        loading={abstentionStatus === "loading"}
+        running={runningAbstentionEval}
+        onRefresh={refreshAbstentionEval}
+      />
+
+      {/* Champion vs modality-robust comparison — head-to-head over all
+          modality-dropout scenarios.  Shows whether retraining with random
+          modality masking actually moved the classifier or just the
+          abstention rules. */}
+      <ModalityRobustnessCard
+        report={modalityComparison as ModalityRobustnessComparisonReport | null}
+        loading={modalityComparisonStatus === "loading"}
+        running={runningModalityComparison}
+        onRefresh={refreshModalityComparison}
+      />
+
+      {/* Prediction traceability — one row per live evidence-aware call,
+          showing decision, modalities used, model + threshold + calibration
+          provenance, and validator verdict. */}
+      <PredictionTraceCard
+        response={predictionTraces as PredictionTraceResponse | null}
+        loading={predictionTracesStatus === "loading"}
+        onRefresh={refetchPredictionTraces}
+      />
 
       {/* Cost-sensitive eval rationale */}
       <Card>
@@ -313,6 +518,66 @@ export function MleSection({ analytics, onRefresh }: Props) {
         )}
       </Card>
 
+      <Card>
+        <CardHeader>
+          <SectionTitle>Public Biomarker &amp; Tumor-Marker Sources</SectionTitle>
+          <Button
+            variant="secondary"
+            size="sm"
+            loading={runningBiomarkerManifest}
+            icon={<RefreshCw size={12} />}
+            onClick={() => void refreshBiomarkerManifest()}
+          >
+            Refresh manifest
+          </Button>
+        </CardHeader>
+        {biomarkerManifestStatus === "loading" ? <LoadingPane /> :
+         biomarkerManifestStatus === "error" ? <ErrorPane message="Could not load public biomarker manifest" /> :
+         !biomarkerManifest ? <EmptyPane label="No public biomarker manifest available" /> : (
+          <PublicBiomarkerManifestPanel data={biomarkerManifest as PublicBiomarkerDatasetManifest} />
+        )}
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <SectionTitle>Public Biomarker Mapping Readiness</SectionTitle>
+          <Button
+            variant="secondary"
+            size="sm"
+            loading={runningBiomarkerMapping}
+            icon={<RefreshCw size={12} />}
+            onClick={() => void refreshBiomarkerMapping()}
+          >
+            Rebuild mapping
+          </Button>
+        </CardHeader>
+        {biomarkerMappingStatus === "loading" ? <LoadingPane /> :
+         biomarkerMappingStatus === "error" ? <ErrorPane message="Could not load public biomarker mapping readiness" /> :
+         !biomarkerMapping ? <EmptyPane label="No public biomarker mapping readiness report available" /> : (
+          <PublicBiomarkerMappingPanel data={biomarkerMapping as PublicBiomarkerMappingReadiness} />
+        )}
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <SectionTitle>TCGA / METABRIC cBioPortal Mapping</SectionTitle>
+          <Button
+            variant="secondary"
+            size="sm"
+            loading={runningCbioMapping}
+            icon={<RefreshCw size={12} />}
+            onClick={() => void refreshCbioMapping()}
+          >
+            Fetch schema
+          </Button>
+        </CardHeader>
+        {cbioMappingStatus === "loading" ? <LoadingPane /> :
+         cbioMappingStatus === "error" ? <ErrorPane message="Could not load cBioPortal schema mapping" /> :
+         !cbioMapping ? <EmptyPane label="No cBioPortal mapping available" /> : (
+          <CbioPortalMappingPanel data={cbioMapping} />
+        )}
+      </Card>
+
       {/* Noise robustness */}
       <Card>
         <CardHeader>
@@ -453,6 +718,980 @@ function PublicDataManifestPanel({ data }: { data: PublicDataManifest }) {
         Manifest {data.manifest_hash}. {data.claim_boundary}
       </p>
     </div>
+  );
+}
+
+function PublicBiomarkerManifestPanel({ data }: { data: PublicBiomarkerDatasetManifest }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid sm:grid-cols-3 gap-3">
+        <MetricCard label="Candidate sources" value={String(data.dataset_count)} status="green" />
+        <MetricCard label="Manifest status" value={data.status.replace(/_/g, " ")} status="amber" />
+        <MetricCard label="Fingerprint" value={data.manifest_hash.slice(0, 8)} status="muted" />
+      </div>
+
+      <div className="rounded-md border p-3" style={{ background: "var(--surface2)", borderColor: "var(--border)" }}>
+        <p className="text-xs" style={{ color: "var(--text-dim)" }}>{data.next_step}</p>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+              {["Source", "Predictors", "Targets", "Use"].map((h) => (
+                <th key={h} className="text-left py-2 pr-4 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.datasets.map((source) => (
+              <tr key={source.id} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
+                <td className="py-2 pr-4">
+                  <a href={source.url} target="_blank" rel="noreferrer" className="font-semibold" style={{ color: "var(--text)" }}>
+                    {source.name}
+                  </a>
+                  <p style={{ color: "var(--text-faint)" }}>{source.provider}</p>
+                </td>
+                <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{source.predictor_fields.slice(0, 4).join(", ")}</td>
+                <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{source.target_fields.join(", ")}</td>
+                <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{source.use_in_project[0]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>
+        {data.claim_boundary}
+      </p>
+    </div>
+  );
+}
+
+function PublicBiomarkerMappingPanel({ data }: { data: PublicBiomarkerMappingReadiness }) {
+  const breastdcedl = data.datasets.breastdcedl;
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid sm:grid-cols-4 gap-3">
+        <MetricCard label="Mapping status" value={data.status} status={data.status === "ready" ? "green" : "amber"} />
+        <MetricCard label="BreastDCEDL rows" value={breastdcedl?.rows != null ? String(breastdcedl.rows) : "missing"} status={breastdcedl?.mapped_now ? "green" : "amber"} />
+        <MetricCard label="Patients" value={breastdcedl?.patients != null ? String(breastdcedl.patients) : "missing"} status="muted" />
+        <MetricCard label="Hash" value={data.mapping_hash.slice(0, 8)} status="muted" />
+      </div>
+
+      <div className="rounded-md border p-3" style={{ background: "var(--surface2)", borderColor: "var(--border)" }}>
+        <p className="text-xs font-semibold mb-1" style={{ color: "var(--text)" }}>Three-stage ablation</p>
+        <div className="grid sm:grid-cols-3 gap-2">
+          {Object.entries(data.three_stage_ablation_plan).map(([name, description]) => (
+            <div key={name} className="rounded-md border p-2" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+              <p className="text-xs font-semibold" style={{ color: "var(--text)" }}>{name.replace(/_/g, " ")}</p>
+              <p className="text-xs" style={{ color: "var(--text-dim)" }}>{description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+              {["Dataset", "Status", "Mapped", "Next action"].map((h) => (
+                <th key={h} className="text-left py-2 pr-4 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(data.datasets).map(([id, dataset]) => (
+              <tr key={id} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
+                <td className="py-2 pr-4 font-medium" style={{ color: "var(--text)" }}>{id.replace(/_/g, " ")}</td>
+                <td className="py-2 pr-4"><Badge variant={dataset.mapped_now ? "green" : dataset.status.includes("future") ? "blue" : "amber"}>{dataset.status.replace(/_/g, " ")}</Badge></td>
+                <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{dataset.mapped_now ? "Yes" : "No"}</td>
+                <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{dataset.next_action ?? dataset.role ?? dataset.target_to_map}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.tumor_marker_boundary}</p>
+    </div>
+  );
+}
+
+function CbioPortalMappingPanel({ data }: { data: CbioportalBiomarkerSchemaMapping }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid sm:grid-cols-3 gap-3">
+        <MetricCard label="Status" value={data.status.replace(/_/g, " ")} status={data.status === "ready" ? "green" : "amber"} />
+        <MetricCard label="Mapped studies" value={String(data.mapped_dataset_count ?? 0)} />
+        <MetricCard label="Mapping hash" value={data.mapping_hash?.slice(0, 8) ?? "n/a"} />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+              {["Study", "Status", "Core hits", "Mapped groups", "Next action"].map((h) => (
+                <th key={h} className="text-left py-2 pr-4 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(data.datasets).map(([id, dataset]) => {
+              const groupNames = Object.keys(dataset.mapped_groups ?? {});
+              return (
+                <tr key={id} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
+                  <td className="py-2 pr-4 font-medium" style={{ color: "var(--text)" }}>{dataset.label}</td>
+                  <td className="py-2 pr-4"><Badge variant={statusVariant(dataset.status)}>{dataset.status.replace(/_/g, " ")}</Badge></td>
+                  <td className="py-2 pr-4 tabular-nums" style={{ color: "var(--text-dim)" }}>{dataset.core_biomarker_group_hits ?? 0}</td>
+                  <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{groupNames.length ? groupNames.join(", ") : "none"}</td>
+                  <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{dataset.next_action ?? dataset.reason ?? "Inspect schema before use."}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
+    </div>
+  );
+}
+
+function LeakageAuditCard({
+  report,
+  loading,
+  running,
+  onRefresh,
+}: {
+  report: LeakageAuditReport | null;
+  loading: boolean;
+  running: boolean;
+  onRefresh: () => void;
+}) {
+  const status = report?.status ?? "missing";
+  const passed = status === "passed";
+  const failedFindings = (report?.findings ?? []).filter((f) => f.status !== "passed");
+  const tone =
+    status === "passed" ? { color: "var(--green, #047857)", icon: ShieldCheck, label: "PASSED" } :
+    status === "failed" ? { color: "var(--rose, #b91c1c)", icon: ShieldAlert, label: "FAILED" } :
+                          { color: "var(--text-faint)",     icon: ShieldAlert, label: "MISSING" };
+  const ToneIcon = tone.icon;
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <ToneIcon size={14} style={{ color: tone.color }} aria-hidden="true" />
+          <SectionTitle>Training-data leakage audit</SectionTitle>
+          <Badge variant={statusVariant(passed ? "strong" : status === "missing" ? "stale" : "failed")}>
+            {tone.label}
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
+          {running ? "Running…" : "Rerun audit"}
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Hard CI gate over the synthetic temporal training rows. Fails the build
+        if patient IDs overlap between train/test, if any known label proxy
+        appears in the feature contract, or if a feature column is numerically
+        identical to a classification label.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading leakage audit…" />
+      ) : !report || status === "missing" ? (
+        <EmptyPane label={report?.message ?? "Leakage audit has not been generated yet."} />
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-3 gap-3 mb-3">
+            <MetricCard
+              label="Checks passed"
+              value={report.summary?.checks_passed ?? null}
+              status={passed ? "green" : "amber"}
+            />
+            <MetricCard
+              label="Checks failed"
+              value={report.summary?.checks_failed ?? null}
+              status={(report.summary?.checks_failed ?? 0) === 0 ? "green" : "red"}
+            />
+            <MetricCard
+              label="Temporal sub-audit"
+              value={report.temporal_sub_audit?.status ?? "—"}
+              status={report.temporal_sub_audit?.status === "passed" ? "green" : "amber"}
+            />
+          </div>
+
+          {failedFindings.length > 0 && (
+            <div
+              className="rounded-md border p-3 mb-2"
+              style={{ background: "rgba(244,63,94,0.05)", borderColor: "rgba(244,63,94,0.25)" }}
+            >
+              <p className="text-xs font-semibold mb-1.5" style={{ color: "var(--rose, #b91c1c)" }}>
+                Failed checks ({failedFindings.length})
+              </p>
+              <ul className="text-xs flex flex-col gap-1.5" style={{ color: "var(--text)" }}>
+                {failedFindings.slice(0, 8).map((finding, i) => (
+                  <li key={i}>
+                    <code style={{ fontWeight: 600 }}>{finding.name}</code>
+                    {finding.meaning && (
+                      <span style={{ color: "var(--text-dim)" }}> — {finding.meaning}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {report.generated_at && (
+            <p className="text-[0.7rem]" style={{ color: "var(--text-faint)" }}>
+              Last run: {new Date(report.generated_at).toLocaleString()}
+              {report.training_rows_path && (
+                <> · source: <code>{report.training_rows_path}</code></>
+              )}
+            </p>
+          )}
+        </>
+      )}
+    </Card>
+  );
+}
+
+function EvidenceAbstentionCard({
+  report,
+  loading,
+  running,
+  onRefresh,
+}: {
+  report: EvidenceAbstentionEvalReport | null;
+  loading: boolean;
+  running: boolean;
+  onRefresh: () => void;
+}) {
+  const status = report?.status ?? "missing";
+  const summary = report?.summary ?? {};
+  const scenarios = report?.scenarios ?? [];
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <ShieldCheck size={14} style={{ color: "var(--blue, #1e3a8a)" }} aria-hidden="true" />
+          <SectionTitle>Evidence-aware abstention eval</SectionTitle>
+          <Badge variant={statusVariant(status === "strong" ? "strong" : status === "acceptable" ? "acceptable" : status === "missing" ? "stale" : "needs_attention")}>
+            {status.toUpperCase()}
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
+          {running ? "Running…" : "Rerun eval"}
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Sweeps modality-dropout scenarios over the test rows. Coverage is the
+        fraction the system chose to score; the rest were routed to clinician
+        review with <code>insufficient_evidence</code>. False-abstention rate
+        flags rows where we refused but the underlying model would have been
+        correct — high values mean the rules are too cautious.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading abstention eval…" />
+      ) : !report || status === "missing" ? (
+        <EmptyPane label={report?.message ?? "Abstention eval has not been generated yet."} />
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-3 gap-3 mb-3">
+            <MetricCard
+              label="Full-data coverage"
+              value={formatRate(summary.full_data_coverage_rate)}
+              status={(summary.full_data_coverage_rate ?? 0) >= 0.95 ? "green" : "amber"}
+            />
+            <MetricCard
+              label="Full-data accuracy"
+              value={formatRate(summary.full_data_covered_accuracy)}
+              status={(summary.full_data_covered_accuracy ?? 0) >= 0.80 ? "green" : "amber"}
+            />
+            <MetricCard
+              label="Demographics-only abstention"
+              value={formatRate(summary.demographics_only_abstention_rate)}
+              status={(summary.demographics_only_abstention_rate ?? 0) >= 0.95 ? "green" : "amber"}
+            />
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
+              <thead>
+                <tr style={{ color: "var(--text-faint)" }}>
+                  <th className="text-left font-semibold py-1.5 pr-3" style={{ borderBottom: "1px solid var(--border)" }}>Scenario</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Rows</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Coverage</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Abstention</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Covered accuracy</th>
+                  <th className="text-right font-semibold py-1.5 pl-2" style={{ borderBottom: "1px solid var(--border)" }}>False abstention</th>
+                </tr>
+              </thead>
+              <tbody>
+                {scenarios.map((s) => (
+                  <tr key={s.scenario}>
+                    <td className="py-1.5 pr-3" style={{ borderBottom: "1px solid var(--border-soft)", fontWeight: 600 }}>
+                      {s.scenario}
+                    </td>
+                    <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>{s.rows_evaluated}</td>
+                    <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{formatRate(s.coverage_rate)}</td>
+                    <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{formatRate(s.abstention_rate)}</td>
+                    <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{formatRate(s.covered_accuracy)}</td>
+                    <td className="py-1.5 pl-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{formatRate(s.false_abstention_rate)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {report.generated_at && (
+            <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
+              Last run: {new Date(report.generated_at).toLocaleString()} · {report.rows_evaluated ?? 0} rows
+            </p>
+          )}
+        </>
+      )}
+    </Card>
+  );
+}
+
+function formatRate(value: number | null | undefined): string {
+  if (value == null) return "—";
+  return `${(value * 100).toFixed(1)}%`;
+}
+
+function SyntheticGeneratorCardPanel({
+  report,
+  loading,
+  running,
+  onRefresh,
+}: {
+  report: SyntheticGeneratorCard | null;
+  loading: boolean;
+  running: boolean;
+  onRefresh: () => void;
+}) {
+  const status = report?.status ?? "missing";
+  const cohort = report?.cohort ?? {};
+  const dist = report?.feature_distribution_summary ?? {};
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <Info size={14} style={{ color: "var(--blue, #1e3a8a)" }} aria-hidden="true" />
+          <SectionTitle>Synthetic generator card</SectionTitle>
+          <Badge variant={statusVariant(status === "passed" ? "strong" : status === "missing" ? "stale" : "needs_attention")}>
+            {status.toUpperCase()}
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
+          {running ? "Rebuilding…" : "Rebuild"}
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Documents what the synthetic dataset is, the causal assumptions baked
+        into the generator, known shortcuts, and what cannot be claimed from
+        these numbers. Reviewer-facing provenance.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading generator card…" />
+      ) : !report || status === "missing" ? (
+        <EmptyPane label={report?.message ?? "Generator card has not been built yet."} />
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-4 gap-3 mb-3">
+            <MetricCard label="Patients" value={cohort.patients_created ?? 0} status="muted" />
+            <MetricCard label="Rows" value={dist.row_count ?? 0} status="muted" />
+            <MetricCard
+              label="Positive label rate"
+              value={dist.positive_label_rate != null ? `${(dist.positive_label_rate * 100).toFixed(1)}%` : "—"}
+              status="muted"
+            />
+            <MetricCard
+              label="Card ↔ dataset"
+              value={report.card_version_matches_dataset ? "in sync" : "drifted"}
+              status={report.card_version_matches_dataset ? "green" : "amber"}
+            />
+          </div>
+
+          {report.causal_assumptions && report.causal_assumptions.length > 0 && (
+            <ProvenanceNarrative title="Causal assumptions" items={report.causal_assumptions} tone="info" />
+          )}
+          {report.known_shortcuts && report.known_shortcuts.length > 0 && (
+            <ProvenanceNarrative title="Known shortcuts the model could exploit" items={report.known_shortcuts} tone="amber" />
+          )}
+          {report.unsupported_claims && report.unsupported_claims.length > 0 && (
+            <ProvenanceNarrative title="What this dataset CANNOT support claiming" items={report.unsupported_claims} tone="rose" />
+          )}
+
+          <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
+            Schema: <code>{report.dataset_schema_version ?? "unknown"}</code>{" · "}
+            Card: <code>{report.generator_card_version ?? "unknown"}</code>{" · "}
+            Rows fingerprint: <code>{cohort.rows_fingerprint ?? "—"}</code>
+          </p>
+        </>
+      )}
+    </Card>
+  );
+}
+
+function ProvenanceNarrative({ title, items, tone }: { title: string; items: string[]; tone: "info" | "amber" | "rose" }) {
+  const palette = tone === "amber"
+    ? { fg: "#92400e", bg: "rgba(245,158,11,0.06)", border: "rgba(245,158,11,0.25)" }
+    : tone === "rose"
+    ? { fg: "#b91c1c", bg: "rgba(244,63,94,0.05)", border: "rgba(244,63,94,0.25)" }
+    : { fg: "var(--text)", bg: "var(--surface2)", border: "var(--border)" };
+  return (
+    <div
+      className="rounded-md border p-3 mb-2"
+      style={{ background: palette.bg, borderColor: palette.border }}
+    >
+      <p className="text-[0.72rem] uppercase font-semibold mb-1.5" style={{ color: palette.fg }}>
+        {title}
+      </p>
+      <ul className="flex flex-col gap-1 pl-4" style={{ listStyle: "disc", color: "var(--text)" }}>
+        {items.map((item, i) => (
+          <li key={i} className="text-xs leading-relaxed">{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function FailureModeRegistryCard({
+  report,
+  loading,
+  running,
+  onRefresh,
+}: {
+  report: FailureModeRegistry | null;
+  loading: boolean;
+  running: boolean;
+  onRefresh: () => void;
+}) {
+  const status = report?.status ?? "missing";
+  const summary = report?.summary ?? {};
+  const entries = report?.entries ?? [];
+  const high = summary.by_severity?.high ?? 0;
+  const unresolved = summary.entries_with_unresolved_gap ?? 0;
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <ShieldAlert size={14} style={{ color: "var(--amber, #92400e)" }} aria-hidden="true" />
+          <SectionTitle>Failure-mode registry</SectionTitle>
+          <Badge variant={statusVariant(
+            status === "strong" ? "strong" :
+            status === "acceptable" ? "acceptable" :
+            status === "missing" ? "stale" : "needs_attention",
+          )}>
+            {status.toUpperCase()}
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
+          {running ? "Rebuilding…" : "Rebuild"}
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Consolidates engineering risks, failure case gallery entries, safety
+        red-team failures, and drift findings into one auditable list. Each
+        row carries category, severity, detection method, mitigation, and
+        remaining gap.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading failure-mode registry…" />
+      ) : !report || status === "missing" ? (
+        <EmptyPane label={report?.message ?? "Failure-mode registry has not been built yet."} />
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-3 gap-3 mb-3">
+            <MetricCard label="Entries" value={report.entry_count ?? entries.length} status="muted" />
+            <MetricCard
+              label="High severity"
+              value={high}
+              status={high > 0 ? "amber" : "green"}
+            />
+            <MetricCard
+              label="With unresolved gap"
+              value={unresolved}
+              status={unresolved > 0 ? "amber" : "green"}
+            />
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
+              <thead>
+                <tr style={{ color: "var(--text-faint)" }}>
+                  {["Name", "Category", "Severity", "Detection", "Remaining gap"].map((h) => (
+                    <th key={h} className="text-left font-semibold py-1.5 px-2"
+                        style={{ borderBottom: "1px solid var(--border)" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {entries.slice(0, 15).map((e) => {
+                  const severityColor = e.severity === "high"
+                    ? "var(--rose, #b91c1c)"
+                    : e.severity === "medium"
+                    ? "var(--amber, #92400e)"
+                    : "var(--text-dim)";
+                  return (
+                    <tr key={e.name}>
+                      <td className="py-1.5 px-2 font-semibold" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                        {e.name}
+                      </td>
+                      <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>
+                        {e.category}
+                      </td>
+                      <td className="py-1.5 px-2 font-semibold uppercase" style={{ borderBottom: "1px solid var(--border-soft)", color: severityColor, fontSize: "0.68rem" }}>
+                        {e.severity}
+                      </td>
+                      <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>
+                        {e.detection}
+                      </td>
+                      <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: e.remaining_gap ? "var(--amber, #92400e)" : "var(--text-faint)" }}>
+                        {e.remaining_gap ?? "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {entries.length > 15 && (
+            <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
+              Showing first 15 of {entries.length} entries.
+            </p>
+          )}
+        </>
+      )}
+    </Card>
+  );
+}
+
+function KbSourceGovernanceCard({
+  report,
+  loading,
+  running,
+  onRefresh,
+}: {
+  report: KbSourceGovernanceReport | null;
+  loading: boolean;
+  running: boolean;
+  onRefresh: () => void;
+}) {
+  const status = report?.status ?? "missing";
+  const tierDist = report?.tier_distribution ?? {};
+  const useDist = report?.allowed_use_distribution ?? {};
+  const staleDist = report?.staleness_distribution ?? {};
+  const issues = report?.governance_issues ?? [];
+  const sources = report?.sources ?? [];
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <Info size={14} style={{ color: "var(--blue, #1e3a8a)" }} aria-hidden="true" />
+          <SectionTitle>KB source governance</SectionTitle>
+          <Badge variant={statusVariant(
+            status === "strong" ? "strong" :
+            status === "acceptable" ? "acceptable" :
+            status === "missing" ? "stale" :
+            status === "error" ? "failed" : "needs_attention",
+          )}>
+            {status.toUpperCase()}
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
+          {running ? "Rebuilding…" : "Rebuild"}
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Per-source <code>tier</code> (T1 guidelines → T5 unmapped),
+        <code> allowed_use</code> (education / patient_safety / monitoring_context / portal_help / clinician_only),
+        and <code>staleness</code> (current / aging / needs_review) for the
+        RAG knowledge base. Drives what claims each chunk is allowed to back.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading KB governance…" />
+      ) : !report || status === "missing" || status === "error" ? (
+        <EmptyPane label={report?.message ?? "KB governance has not been generated yet."} />
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-3 gap-3 mb-3">
+            <MetricCard
+              label="Sources"
+              value={report.source_count ?? sources.length}
+              status="muted"
+            />
+            <MetricCard
+              label="Chunks"
+              value={report.chunk_count ?? 0}
+              status="muted"
+            />
+            <MetricCard
+              label="Governance issues"
+              value={issues.length}
+              status={issues.length === 0 ? "green" : "amber"}
+            />
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-3 mb-3 text-xs">
+            <DistroBlock label="Tier distribution" data={tierDist} />
+            <DistroBlock label="Allowed use" data={useDist} />
+            <DistroBlock label="Staleness" data={staleDist} />
+          </div>
+
+          {issues.length > 0 && (
+            <div
+              className="rounded-md border p-3 mb-3"
+              style={{ background: "rgba(245,158,11,0.06)", borderColor: "rgba(245,158,11,0.25)" }}
+            >
+              <p className="text-[0.72rem] uppercase font-semibold mb-1.5" style={{ color: "var(--amber, #92400e)" }}>
+                Governance issues ({issues.length})
+              </p>
+              <ul className="flex flex-col gap-1.5 text-xs" style={{ color: "var(--text)" }}>
+                {issues.map((i, idx) => (
+                  <li key={idx}>
+                    <code style={{ fontWeight: 600 }}>{i.code}</code> ({i.severity}) — {i.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
+              <thead>
+                <tr style={{ color: "var(--text-faint)" }}>
+                  {["Source", "Tier", "Allowed use", "Staleness", "Chunks"].map((h) => (
+                    <th key={h} className="text-left font-semibold py-1.5 px-2"
+                        style={{ borderBottom: "1px solid var(--border)" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sources.slice(0, 12).map((s) => (
+                  <tr key={s.source_id}>
+                    <td className="py-1.5 px-2 font-semibold" style={{ borderBottom: "1px solid var(--border-soft)", maxWidth: 280, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {s.title}
+                    </td>
+                    <td className="py-1.5 px-2 font-semibold" style={{ borderBottom: "1px solid var(--border-soft)", color: tierColor(s.tier) }}>
+                      {s.tier}
+                    </td>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>
+                      {s.allowed_use.length === 0 ? <span style={{ color: "var(--rose)" }}>none</span> : s.allowed_use.join(", ")}
+                    </td>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: stalenessColor(s.staleness_status) }}>
+                      {s.staleness_status}
+                    </td>
+                    <td className="py-1.5 px-2 tabular-nums" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                      {s.chunk_count}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {sources.length > 12 && (
+            <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
+              Showing first 12 of {sources.length} sources.
+            </p>
+          )}
+        </>
+      )}
+    </Card>
+  );
+}
+
+function DistroBlock({ label, data }: { label: string; data: Record<string, number> }) {
+  const entries = Object.entries(data);
+  return (
+    <div style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 6, padding: 8 }}>
+      <p className="text-[0.7rem] uppercase font-semibold mb-1" style={{ color: "var(--text-faint)" }}>{label}</p>
+      {entries.length === 0 ? (
+        <span style={{ color: "var(--text-faint)", fontSize: "0.74rem" }}>—</span>
+      ) : (
+        <ul className="flex flex-col gap-0.5">
+          {entries.map(([k, v]) => (
+            <li key={k} className="flex justify-between" style={{ fontSize: "0.74rem" }}>
+              <span style={{ color: "var(--text-dim)" }}>{k}</span>
+              <span className="tabular-nums" style={{ color: "var(--text)", fontWeight: 600 }}>{v}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function tierColor(tier: string): string {
+  switch (tier) {
+    case "T1": return "var(--green, #047857)";
+    case "T2": return "var(--blue, #1e3a8a)";
+    case "T3": return "var(--text)";
+    case "T4": return "var(--text-dim)";
+    case "T5": return "var(--rose, #b91c1c)";
+    default:   return "var(--text-faint)";
+  }
+}
+
+function stalenessColor(status: string): string {
+  switch (status) {
+    case "current":      return "var(--green, #047857)";
+    case "aging":        return "var(--amber, #92400e)";
+    case "needs_review": return "var(--rose, #b91c1c)";
+    default:             return "var(--text-faint)";
+  }
+}
+
+function ModalityRobustnessCard({
+  report,
+  loading,
+  running,
+  onRefresh,
+}: {
+  report: ModalityRobustnessComparisonReport | null;
+  loading: boolean;
+  running: boolean;
+  onRefresh: () => void;
+}) {
+  const status = report?.status ?? "missing";
+  const summary = report?.summary ?? {};
+  const scenarios = report?.scenarios ?? [];
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <ShieldCheck size={14} style={{ color: "var(--green, #047857)" }} aria-hidden="true" />
+          <SectionTitle>Champion vs modality-robust comparison</SectionTitle>
+          <Badge variant={statusVariant(
+            status === "robust" ? "strong" :
+            status === "acceptable" ? "acceptable" :
+            status === "missing" ? "stale" : "needs_attention",
+          )}>
+            {status.toUpperCase()}
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
+          {running ? "Running…" : "Rerun comparison"}
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Runs both classifiers against the same modality-dropout scenarios.
+        <strong> Force-score</strong> deltas isolate the trained model's
+        intrinsic robustness (no abstention rules applied);
+        <strong> with-abstention</strong> deltas match production behavior.
+        Positive accuracy delta = robust variant beats the champion.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading comparison…" />
+      ) : !report || status === "missing" ? (
+        <EmptyPane label={report?.message ?? "Comparison has not been generated yet."} />
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-3 gap-3 mb-3">
+            <MetricCard
+              label="Robust wins (force-score)"
+              value={summary.force_score_accuracy_wins_for_robust ?? 0}
+              status="green"
+            />
+            <MetricCard
+              label="Robust losses"
+              value={summary.force_score_accuracy_losses_for_robust ?? 0}
+              status={(summary.force_score_accuracy_losses_for_robust ?? 0) > 0 ? "amber" : "muted"}
+            />
+            <MetricCard
+              label="Full-data Δaccuracy"
+              value={formatDelta(summary.full_data_accuracy_delta)}
+              status={(summary.full_data_accuracy_delta ?? 0) >= -0.005 ? "green" : "amber"}
+            />
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
+              <thead>
+                <tr style={{ color: "var(--text-faint)" }}>
+                  <th className="text-left font-semibold py-1.5 pr-3" style={{ borderBottom: "1px solid var(--border)" }}>Scenario</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Champ acc.</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Robust acc.</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Δacc.</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Champ Brier</th>
+                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Robust Brier</th>
+                  <th className="text-right font-semibold py-1.5 pl-2" style={{ borderBottom: "1px solid var(--border)" }}>ΔBrier</th>
+                </tr>
+              </thead>
+              <tbody>
+                {scenarios.map((s) => {
+                  const delta = s.deltas.force_score_accuracy_robust_minus_champion ?? 0;
+                  const deltaColor = delta > 0.005 ? "var(--green, #047857)" : delta < -0.005 ? "var(--rose, #b91c1c)" : "var(--text-dim)";
+                  return (
+                    <tr key={s.scenario}>
+                      <td className="py-1.5 pr-3" style={{ borderBottom: "1px solid var(--border-soft)", fontWeight: 600 }}>{s.scenario}</td>
+                      <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{formatRate(s.force_score.champion.accuracy)}</td>
+                      <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{formatRate(s.force_score.robust.accuracy)}</td>
+                      <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)", color: deltaColor, fontWeight: 600 }}>{formatDelta(delta)}</td>
+                      <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{s.force_score.champion.brier?.toFixed(3) ?? "—"}</td>
+                      <td className="py-1.5 px-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{s.force_score.robust.brier?.toFixed(3) ?? "—"}</td>
+                      <td className="py-1.5 pl-2 tabular-nums text-right" style={{ borderBottom: "1px solid var(--border-soft)", color: (s.deltas.force_score_brier_robust_minus_champion ?? 0) < 0 ? "var(--green, #047857)" : "var(--text-dim)" }}>{formatDelta(s.deltas.force_score_brier_robust_minus_champion)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {report.generated_at && (
+            <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
+              Last run: {new Date(report.generated_at).toLocaleString()}
+            </p>
+          )}
+        </>
+      )}
+    </Card>
+  );
+}
+
+function formatDelta(value: number | null | undefined): string {
+  if (value == null) return "—";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${(value * 100).toFixed(2)}pp`;
+}
+
+function PredictionTraceCard({
+  response,
+  loading,
+  onRefresh,
+}: {
+  response: PredictionTraceResponse | null;
+  loading: boolean;
+  onRefresh: () => void;
+}) {
+  const traces = response?.traces ?? [];
+  const summary = response?.summary;
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <Info size={14} style={{ color: "var(--blue, #1e3a8a)" }} aria-hidden="true" />
+          <SectionTitle>Prediction trace log</SectionTitle>
+          <Badge variant={statusVariant((summary?.total ?? 0) > 0 ? "strong" : "stale")}>
+            {summary?.total ?? 0} TRACES
+          </Badge>
+        </div>
+        <Button onClick={onRefresh} disabled={loading} icon={<RefreshCw size={13} />}>
+          Refresh
+        </Button>
+      </CardHeader>
+
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        One row per live evidence-aware prediction.  Each trace records the
+        model + feature-set + threshold + calibration that were active, which
+        modalities were present, whether the abstention layer refused to
+        answer, and what the safety validator decided.
+      </p>
+
+      {loading ? (
+        <LoadingPane label="Loading prediction traces…" />
+      ) : traces.length === 0 ? (
+        <EmptyPane label="No prediction traces recorded yet — they are written by `predict_and_trace` when live inference fires." />
+      ) : (
+        <>
+          {summary && (
+            <div className="grid sm:grid-cols-3 gap-3 mb-3">
+              <MetricCard
+                label="Recent traces"
+                value={summary.total}
+                status="muted"
+              />
+              <MetricCard
+                label="Abstention rate"
+                value={formatRate(summary.abstention_rate)}
+                status={(summary.abstention_rate ?? 0) > 0.5 ? "amber" : "green"}
+              />
+              <MetricCard
+                label="Model versions seen"
+                value={summary.model_versions.length}
+                status={summary.model_versions.length > 1 ? "amber" : "muted"}
+              />
+            </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
+              <thead>
+                <tr style={{ color: "var(--text-faint)" }}>
+                  {[
+                    "When", "Patient", "Question", "Decision", "Prob.",
+                    "Conf.", "Evidence", "Modalities", "Validator",
+                  ].map((h) => (
+                    <th key={h} className="text-left font-semibold py-1.5 px-2"
+                        style={{ borderBottom: "1px solid var(--border)" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {traces.slice(0, 12).map((t) => (
+                  <tr key={t.id}>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>
+                      {t.created_at ? new Date(t.created_at).toLocaleString() : "—"}
+                    </td>
+                    <td className="py-1.5 px-2 font-semibold" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                      {t.patient_id ?? "—"}
+                    </td>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                      {t.question}
+                    </td>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: t.abstained ? "var(--amber)" : "var(--text)" }}>
+                      {t.decision}
+                    </td>
+                    <td className="py-1.5 px-2 tabular-nums" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                      {t.probability == null ? "—" : t.probability.toFixed(3)}
+                    </td>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                      {t.confidence ?? "—"}
+                    </td>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                      {t.evidence_sufficiency ?? "—"}
+                    </td>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>
+                      {t.modalities_present.length}/{t.modalities_present.length + t.modalities_missing.length}
+                    </td>
+                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)" }}>
+                      {t.validator_decision ?? "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {traces.length > 12 && (
+            <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
+              Showing first 12 of {traces.length} recent traces.
+            </p>
+          )}
+        </>
+      )}
+    </Card>
   );
 }
 

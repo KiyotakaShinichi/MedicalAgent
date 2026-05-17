@@ -1,0 +1,206 @@
+{
+  "schema_version": "public_biomarker_dataset_manifest_v1",
+  "generated_at": "2026-05-15T16:39:57.734008+00:00",
+  "status": "ready_for_candidate_mapping",
+  "dataset_count": 6,
+  "datasets": [
+    {
+      "id": "tcga_brca_cbioportal",
+      "name": "TCGA-BRCA via cBioPortal",
+      "provider": "TCGA / cBioPortal",
+      "url": "https://www.cbioportal.org/",
+      "access": "public cBioPortal exploration/API where permitted by study",
+      "predictor_fields": [
+        "PAM50/subtype",
+        "ER/PR/HER2-derived subtype fields",
+        "clinical stage",
+        "genomics",
+        "survival/status"
+      ],
+      "target_fields": [
+        "overall survival",
+        "disease-free/progression-free survival where available"
+      ],
+      "fit_for_oncotrack": "Good for external subtype/genomic sanity checks; not a treatment-cycle monitoring dataset.",
+      "use_in_project": [
+        "External predictor-source manifest",
+        "Subtype and genomics priors",
+        "Candidate external validation for biomarker feature extraction"
+      ],
+      "limitations": [
+        "Not a CBC/symptom/treatment-cycle timeline.",
+        "Tumor-marker blood values such as CA 15-3 / CA 27.29 are generally not the main TCGA-BRCA signal."
+      ],
+      "license_or_terms": "Follow source study and cBioPortal data-use terms.",
+      "source_evidence": "cBioPortal hosts TCGA and curated cancer studies for visualization, analysis, and download."
+    },
+    {
+      "id": "metabric_cbioportal",
+      "name": "METABRIC breast cancer via cBioPortal",
+      "provider": "METABRIC / cBioPortal",
+      "url": "https://www.cbioportal.org/study/summary?id=brca_metabric",
+      "access": "public cBioPortal exploration/API where permitted by study",
+      "predictor_fields": [
+        "ER status",
+        "PR status",
+        "HER2 status",
+        "PAM50/subtype",
+        "grade",
+        "stage",
+        "gene expression/copy-number features"
+      ],
+      "target_fields": [
+        "survival/outcome fields where available"
+      ],
+      "fit_for_oncotrack": "Strong candidate for biomarker/subtype predictor benchmarking, but not a longitudinal monitoring dataset.",
+      "use_in_project": [
+        "Compare subtype-aware synthetic priors",
+        "External biomarker feature sanity checks",
+        "Published-cohort context for model-card discussion"
+      ],
+      "limitations": [
+        "Does not provide OncoTrack-style chat symptoms, CBC nadirs, or serial upload workflow.",
+        "Feature names and availability vary by cBioPortal study version."
+      ],
+      "license_or_terms": "Follow study/cBioPortal data-use terms.",
+      "source_evidence": "METABRIC is a commonly used public breast cancer clinical/genomic cohort surfaced through cBioPortal."
+    },
+    {
+      "id": "aacr_genie_bpc_brca",
+      "name": "AACR GENIE BPC Breast Cancer v1.0-public",
+      "provider": "AACR Project GENIE",
+      "url": "https://www.aacr.org/professionals/research/aacr-project-genie/bpc/early-onset-brca/",
+      "access": "subset through GENIE cBioPortal; complete post-processed data through Synapse",
+      "predictor_fields": [
+        "clinical-grade NGS",
+        "ER status",
+        "PR status",
+        "HER2 status and summary",
+        "Oncotype DX recurrence score",
+        "multigene signature method/results",
+        "selected biomarkers such as PDL1/PD1/MSI"
+      ],
+      "target_fields": [
+        "real-world treatment response",
+        "PFS imaging",
+        "PFS medical oncology",
+        "overall survival"
+      ],
+      "fit_for_oncotrack": "Highest-value real-world biomarker source for future predictor integration, but access may require Synapse workflow.",
+      "use_in_project": [
+        "Future external benchmark for biomarker-informed response modeling",
+        "Real-world imaging/oncologist evaluation target definitions",
+        "Genomics + receptor feature engineering"
+      ],
+      "limitations": [
+        "Access and licensing workflow may be more involved than cBioPortal-only data.",
+        "Not appropriate for patient-facing claims without clinical validation."
+      ],
+      "license_or_terms": "Follow AACR GENIE, Synapse, and PRISSMM licensing requirements.",
+      "source_evidence": "AACR describes 1,130 breast cancer patients with genomic, pathology, imaging, oncology-evaluation, ER/PR/HER2, Oncotype, multigene-signature, and selected biomarker fields."
+    },
+    {
+      "id": "breastdcedl",
+      "name": "BreastDCEDL",
+      "provider": "Zenodo / TCIA-derived cohorts",
+      "url": "https://zenodo.org/records/18114231",
+      "access": "public research dataset; derivative license CC BY-NC 4.0",
+      "predictor_fields": [
+        "3D DCE-MRI",
+        "tumor segmentation",
+        "age",
+        "race",
+        "HR status",
+        "HER2 status"
+      ],
+      "target_fields": [
+        "pathologic complete response"
+      ],
+      "fit_for_oncotrack": "Best local imaging-response benchmark with HR/HER2 metadata; not a serum tumor-marker dataset.",
+      "use_in_project": [
+        "MRI response model benchmark",
+        "HR/HER2 metadata alignment",
+        "External imaging-feature sanity checks"
+      ],
+      "limitations": [
+        "Does not include CBC/symptom/treatment-cycle timeline.",
+        "License is non-commercial due to source constraints."
+      ],
+      "license_or_terms": "CC BY-NC 4.0 derivative dataset; honor source TCIA licenses.",
+      "source_evidence": "Dataset page reports 2,070 DCE-MRI patients with pCR, HR, HER2, age, and race metadata."
+    },
+    {
+      "id": "nci_edrn_breast_reference_set",
+      "name": "NCI-EDRN Breast Cancer Reference Set",
+      "provider": "NCI Early Detection Research Network",
+      "url": "https://edrn.cancer.gov/data-and-resources/publications/25471344-2344-construction-and-analysis-of-the-nci-edrn-breast-cancer-reference-set-for-circulating-markers-of-disease/",
+      "access": "research reference-set/samples; availability through EDRN procedures",
+      "predictor_fields": [
+        "CA15-3",
+        "CEA-family CEACAM5",
+        "CA125",
+        "CRP",
+        "EGFR",
+        "ERBB2",
+        "multiplexed serum/plasma proteins"
+      ],
+      "target_fields": [
+        "breast cancer vs benign/no-evidence groups in the reference-set publication"
+      ],
+      "fit_for_oncotrack": "Useful for circulating-marker realism and cautionary evidence; not a treatment-response monitoring dataset.",
+      "use_in_project": [
+        "Tumor-marker limitations education",
+        "Serum-marker distribution priors",
+        "Negative-result realism: markers may not distinguish benign from cancer reliably"
+      ],
+      "limitations": [
+        "Publication emphasizes limited diagnostic utility of tested circulating markers.",
+        "Not a longitudinal metastatic monitoring cohort with treatment cycles."
+      ],
+      "license_or_terms": "Follow EDRN data/sample access requirements.",
+      "source_evidence": "EDRN reports a multicenter reference set and 90 protein-marker analysis including CA15-3/CEACAM5-related markers."
+    },
+    {
+      "id": "seer_breast_biomarker_fields",
+      "name": "SEER breast cancer biomarker fields",
+      "provider": "NCI SEER",
+      "url": "https://seer.cancer.gov/data/",
+      "access": "SEER data-use agreement / SEER*Stat",
+      "predictor_fields": [
+        "ER",
+        "PR",
+        "HER2",
+        "breast subtype",
+        "stage",
+        "grade",
+        "treatment summary fields"
+      ],
+      "target_fields": [
+        "population-level survival/status"
+      ],
+      "fit_for_oncotrack": "Good population prior source for subtype/stage distributions; not patient-level monitoring.",
+      "use_in_project": [
+        "Synthetic cohort calibration",
+        "Population-level subtype and stage priors",
+        "Bias/subgroup distribution comparison"
+      ],
+      "limitations": [
+        "Registry data, not an imaging/CBC/symptom timeline.",
+        "Not suitable for autonomous treatment-response monitoring claims."
+      ],
+      "license_or_terms": "SEER data-use agreement.",
+      "source_evidence": "SEER includes breast biomarker variables and training documentation for ER/PR/HER2/Ki-67 concepts."
+    }
+  ],
+  "recommended_order": [
+    "breastdcedl",
+    "tcga_brca_cbioportal",
+    "metabric_cbioportal",
+    "aacr_genie_bpc_brca",
+    "nci_edrn_breast_reference_set",
+    "seer_breast_biomarker_fields"
+  ],
+  "next_step": "Map one public source at a time into an external predictor table. Start with BreastDCEDL HR/HER2/pCR because this project already has BreastDCEDL tooling, then add TCGA/METABRIC receptor/genomic fields. Treat serum tumor-marker sources as cautionary/supportive evidence unless a longitudinal treatment-response cohort is available.",
+  "claim_boundary": "This manifest identifies public predictor sources. It does not mean OncoTrack has clinically validated biomarker or tumor-marker predictors.",
+  "manifest_hash": "6a6e7277d295e383"
+}

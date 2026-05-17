@@ -189,3 +189,68 @@ def clinician_review_queue_endpoint(
             "It does not diagnose or choose treatment."
         ),
     }
+
+
+@router.get("/clinician/patients/{patient_id}/prediction-traces")
+def clinician_patient_prediction_traces_endpoint(
+    patient_id: str,
+    limit: int = 25,
+    abstained_only: bool = False,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    """Return the patient's prediction-trace history with provenance fields.
+
+    Each row carries the same envelope the patient sees on their dashboard
+    plus the model + feature-set + threshold + calibration provenance, so a
+    clinician reviewing the patient can audit which model produced which
+    decision and which modalities were available at the time.
+    """
+    from backend.services.prediction_trace import (
+        list_recent_traces,
+        summarise_traces,
+    )
+
+    if not get_patient(db, patient_id):
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    traces = list_recent_traces(
+        db,
+        limit=limit,
+        patient_id=patient_id,
+        abstained_only=abstained_only,
+    )
+    # Filter the global summary down to just this patient so the dashboard's
+    # headline tiles describe the patient under review, not the cohort.
+    from backend.models import PredictionTrace
+    patient_summary_base = (
+        db.query(PredictionTrace)
+        .filter(PredictionTrace.patient_id == patient_id)
+        .order_by(PredictionTrace.created_at.desc(), PredictionTrace.id.desc())
+        .limit(500)
+        .all()
+    )
+    abstained = sum(1 for row in patient_summary_base if row.abstained)
+    decisions: dict[str, int] = {}
+    for row in patient_summary_base:
+        decisions[row.decision] = decisions.get(row.decision, 0) + 1
+
+    return {
+        "patient_id": patient_id,
+        "traces": traces,
+        "patient_summary": {
+            "total": len(patient_summary_base),
+            "abstention_rate": (
+                round(abstained / len(patient_summary_base), 4)
+                if patient_summary_base else None
+            ),
+            "decision_counts": decisions,
+        },
+        # Cohort-level context — useful when a reviewer wants to know
+        # whether this patient's abstention rate is unusual.
+        "cohort_summary": summarise_traces(db),
+        "claim_boundary": (
+            "Engineering trace data only.  Each row records what the model "
+            "decided and why, not whether the decision was clinically correct."
+        ),
+    }

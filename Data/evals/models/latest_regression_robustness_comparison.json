@@ -1,0 +1,334 @@
+{
+  "schema_version": "regression_robustness_comparison_v1",
+  "generated_at": "2026-05-17T05:12:49.821698+00:00",
+  "status": "robust",
+  "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "output_path": "Data/evals/models/latest_regression_robustness_comparison.json",
+  "regressors_under_test": {
+    "legacy": "Data/complete_synthetic_training/random_forest_regressor_response_score_percent.joblib",
+    "robust": "Data/complete_synthetic_training/modality_robust_response_score_percent.joblib"
+  },
+  "scenarios": [
+    {
+      "scenario": "full_data",
+      "stripped_modalities": [],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "legacy": {
+          "mae": 1.1025,
+          "rmse": 4.2913,
+          "mean_prediction": 27.4774
+        },
+        "robust": {
+          "mae": 1.9115,
+          "rmse": 3.7224,
+          "mean_prediction": 27.5237
+        }
+      },
+      "with_abstention": {
+        "legacy": {
+          "coverage_rate": 1.0,
+          "abstention_rate": 0.0,
+          "mae_on_covered": 1.1025,
+          "covered_count": 3600
+        },
+        "robust": {
+          "coverage_rate": 1.0,
+          "abstention_rate": 0.0,
+          "mae_on_covered": 1.9115,
+          "covered_count": 3600
+        }
+      },
+      "deltas": {
+        "force_score_mae_robust_minus_legacy": 0.809,
+        "with_abstention_mae_robust_minus_legacy": 0.809
+      }
+    },
+    {
+      "scenario": "no_imaging",
+      "stripped_modalities": [
+        "imaging"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "legacy": {
+          "mae": 18.1556,
+          "rmse": 24.1874,
+          "mean_prediction": 23.0906
+        },
+        "robust": {
+          "mae": 14.1867,
+          "rmse": 20.6945,
+          "mean_prediction": 28.473
+        }
+      },
+      "with_abstention": {
+        "legacy": {
+          "coverage_rate": 1.0,
+          "abstention_rate": 0.0,
+          "mae_on_covered": 18.1556,
+          "covered_count": 3600
+        },
+        "robust": {
+          "coverage_rate": 1.0,
+          "abstention_rate": 0.0,
+          "mae_on_covered": 14.1867,
+          "covered_count": 3600
+        }
+      },
+      "deltas": {
+        "force_score_mae_robust_minus_legacy": -3.9689,
+        "with_abstention_mae_robust_minus_legacy": -3.9689
+      }
+    },
+    {
+      "scenario": "no_nadir_cbc",
+      "stripped_modalities": [
+        "cbc_nadir"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "legacy": {
+          "mae": 1.1216,
+          "rmse": 4.3995,
+          "mean_prediction": 27.4558
+        },
+        "robust": {
+          "mae": 1.9542,
+          "rmse": 3.8687,
+          "mean_prediction": 27.5698
+        }
+      },
+      "with_abstention": {
+        "legacy": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "mae_on_covered": 1.0403,
+          "covered_count": 3585
+        },
+        "robust": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "mae_on_covered": 1.9072,
+          "covered_count": 3585
+        }
+      },
+      "deltas": {
+        "force_score_mae_robust_minus_legacy": 0.8326,
+        "with_abstention_mae_robust_minus_legacy": 0.8669
+      }
+    },
+    {
+      "scenario": "no_recovery_cbc",
+      "stripped_modalities": [
+        "cbc_recovery"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "legacy": {
+          "mae": 1.1489,
+          "rmse": 4.4592,
+          "mean_prediction": 27.4021
+        },
+        "robust": {
+          "mae": 2.0403,
+          "rmse": 4.2129,
+          "mean_prediction": 27.824
+        }
+      },
+      "with_abstention": {
+        "legacy": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "mae_on_covered": 1.0682,
+          "covered_count": 3585
+        },
+        "robust": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "mae_on_covered": 1.9824,
+          "covered_count": 3585
+        }
+      },
+      "deltas": {
+        "force_score_mae_robust_minus_legacy": 0.8914,
+        "with_abstention_mae_robust_minus_legacy": 0.9142
+      }
+    },
+    {
+      "scenario": "imaging_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "legacy": {
+          "mae": 1.1879,
+          "rmse": 4.7257,
+          "mean_prediction": 27.3622
+        },
+        "robust": {
+          "mae": 1.7949,
+          "rmse": 4.2744,
+          "mean_prediction": 27.1467
+        }
+      },
+      "with_abstention": {
+        "legacy": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "mae_on_covered": 1.1022,
+          "covered_count": 3585
+        },
+        "robust": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "mae_on_covered": 1.7242,
+          "covered_count": 3585
+        }
+      },
+      "deltas": {
+        "force_score_mae_robust_minus_legacy": 0.607,
+        "with_abstention_mae_robust_minus_legacy": 0.622
+      }
+    },
+    {
+      "scenario": "cbc_pre_only",
+      "stripped_modalities": [
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "legacy": {
+          "mae": 18.57,
+          "rmse": 24.5243,
+          "mean_prediction": 22.477
+        },
+        "robust": {
+          "mae": 14.9592,
+          "rmse": 21.6063,
+          "mean_prediction": 27.2862
+        }
+      },
+      "with_abstention": {
+        "legacy": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "mae_on_covered": null,
+          "covered_count": 0
+        },
+        "robust": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "mae_on_covered": null,
+          "covered_count": 0
+        }
+      },
+      "deltas": {
+        "force_score_mae_robust_minus_legacy": -3.6108,
+        "with_abstention_mae_robust_minus_legacy": null
+      }
+    },
+    {
+      "scenario": "demographics_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "legacy": {
+          "mae": 18.8957,
+          "rmse": 24.8772,
+          "mean_prediction": 22.1561
+        },
+        "robust": {
+          "mae": 15.6496,
+          "rmse": 22.3067,
+          "mean_prediction": 25.5277
+        }
+      },
+      "with_abstention": {
+        "legacy": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "mae_on_covered": null,
+          "covered_count": 0
+        },
+        "robust": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "mae_on_covered": null,
+          "covered_count": 0
+        }
+      },
+      "deltas": {
+        "force_score_mae_robust_minus_legacy": -3.2461,
+        "with_abstention_mae_robust_minus_legacy": null
+      }
+    },
+    {
+      "scenario": "symptoms_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "legacy": {
+          "mae": 18.895,
+          "rmse": 24.8811,
+          "mean_prediction": 22.1427
+        },
+        "robust": {
+          "mae": 15.6373,
+          "rmse": 22.2988,
+          "mean_prediction": 25.6264
+        }
+      },
+      "with_abstention": {
+        "legacy": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "mae_on_covered": null,
+          "covered_count": 0
+        },
+        "robust": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "mae_on_covered": null,
+          "covered_count": 0
+        }
+      },
+      "deltas": {
+        "force_score_mae_robust_minus_legacy": -3.2577,
+        "with_abstention_mae_robust_minus_legacy": null
+      }
+    }
+  ],
+  "summary": {
+    "status": "robust",
+    "scenario_count": 8,
+    "force_score_mae_wins_for_robust": 4,
+    "force_score_mae_ties": 0,
+    "force_score_mae_losses_for_robust": 4,
+    "full_data_mae_delta": 0.809
+  },
+  "interpretation": "Negative force_score_mae deltas mean the modality-robust regressor produces lower error on rows the legacy regressor struggles with \u2014 the analog of the +8.3pp accuracy result the classifier got from dropout retraining.",
+  "claim_boundary": "Synthetic comparison only. Improvements describe how the regressor handles its own training-distribution missingness pattern, not clinical regression validity."
+}

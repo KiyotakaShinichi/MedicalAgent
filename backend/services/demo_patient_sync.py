@@ -7,6 +7,7 @@ from backend.models import (
     ImagingReport,
     LabResult,
     MedicationLog,
+    MRIFileRegistry,
     Patient,
     SymptomReport,
     Treatment,
@@ -48,6 +49,7 @@ def sync_demo_patient_journey(db, patient_id=DEMO_PATIENT_ID):
     for model in [
         CTReport,
         ImagingReport,
+        MRIFileRegistry,
         Treatment,
         LabResult,
         SymptomReport,
@@ -133,6 +135,33 @@ def sync_demo_patient_journey(db, patient_id=DEMO_PATIENT_ID):
         ),
     ]
 
+    mri_registry = [
+        MRIFileRegistry(
+            patient_id=patient_id,
+            scan_date=date(2026, 1, 3),
+            modality="Breast MRI",
+            series_description="Synthetic baseline DCE-MRI preview",
+            local_path="Data/breastdcedl_previews/ISPY1_1001_dce_mask_overlay.png",
+            notes="Synthetic demo image preview only; not a diagnostic patient image.",
+        ),
+        MRIFileRegistry(
+            patient_id=patient_id,
+            scan_date=date(2026, 2, 28),
+            modality="Breast MRI",
+            series_description="Synthetic interim response DCE-MRI preview",
+            local_path="Data/breastdcedl_previews/ISPY1_1002_dce_mask_overlay.png",
+            notes="Synthetic demo image preview only; not a diagnostic patient image.",
+        ),
+        MRIFileRegistry(
+            patient_id=patient_id,
+            scan_date=date(2026, 3, 30),
+            modality="Breast MRI",
+            series_description="Synthetic end-of-course DCE-MRI preview",
+            local_path="Data/breastdcedl_previews/ISPY1_1003_dce_mask_overlay.png",
+            notes="Synthetic demo image preview only; not a diagnostic patient image.",
+        ),
+    ]
+
     medications = [
         MedicationLog(patient_id=patient_id, date=date(2026, 1, 5), medication="ondansetron", dose="8 mg", frequency="as needed", notes="Synthetic anti-nausea support medication.", source=DEMO_SOURCE),
         MedicationLog(patient_id=patient_id, date=date(2026, 1, 6), medication="pegfilgrastim", dose="6 mg", frequency="once after AC cycle", notes="Synthetic growth-factor support after dose-dense AC.", source=DEMO_SOURCE),
@@ -163,7 +192,7 @@ def sync_demo_patient_journey(db, patient_id=DEMO_PATIENT_ID):
         source=DEMO_SOURCE,
     )
 
-    db.add_all(treatments + labs + symptoms + imaging_reports + medications + interventions + [outcome])
+    db.add_all(treatments + labs + symptoms + imaging_reports + mri_registry + medications + interventions + [outcome])
     db.commit()
 
     return {
@@ -172,6 +201,7 @@ def sync_demo_patient_journey(db, patient_id=DEMO_PATIENT_ID):
         "labs": len(labs),
         "symptoms": len(symptoms),
         "imaging_reports": len(imaging_reports),
+        "mri_registry": len(mri_registry),
         "medications": len(medications),
         "interventions": len(interventions),
         "source": DEMO_SOURCE,

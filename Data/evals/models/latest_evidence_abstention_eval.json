@@ -1,0 +1,362 @@
+{
+  "schema_version": "evidence_abstention_eval_v1",
+  "generated_at": "2026-05-16T11:02:29.658056+00:00",
+  "status": "strong",
+  "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "model_path": "Data/complete_synthetic_training/gradient_boosting_treatment_success_binary.joblib",
+  "calibrator_path": "Data/complete_synthetic_training/gradient_boosting_isotonic_calibrator_treatment_success_binary.joblib",
+  "label_column": "treatment_success_binary",
+  "rows_evaluated": 3600,
+  "summary": {
+    "overall_status": "strong",
+    "full_data_coverage_rate": 1.0,
+    "full_data_covered_accuracy": 0.9239,
+    "demographics_only_abstention_rate": 1.0,
+    "abstention_rates_by_scenario": {
+      "full_data": 0.0,
+      "no_imaging": 0.0,
+      "no_nadir_cbc": 0.0042,
+      "no_recovery_cbc": 0.0042,
+      "imaging_only": 0.0042,
+      "cbc_pre_only": 1.0,
+      "demographics_only": 1.0,
+      "symptoms_only": 1.0
+    },
+    "coverage_rates_by_scenario": {
+      "full_data": 1.0,
+      "no_imaging": 1.0,
+      "no_nadir_cbc": 0.9958,
+      "no_recovery_cbc": 0.9958,
+      "imaging_only": 0.9958,
+      "cbc_pre_only": 0.0,
+      "demographics_only": 0.0,
+      "symptoms_only": 0.0
+    },
+    "covered_accuracy_by_scenario": {
+      "full_data": 0.9239,
+      "no_imaging": 0.5439,
+      "no_nadir_cbc": 0.9225,
+      "no_recovery_cbc": 0.9225,
+      "imaging_only": 0.906,
+      "cbc_pre_only": null,
+      "demographics_only": null,
+      "symptoms_only": null
+    },
+    "scenario_count": 8
+  },
+  "scenarios": [
+    {
+      "scenario": "full_data",
+      "stripped_modalities": [],
+      "rows_evaluated": 3600,
+      "coverage_rate": 1.0,
+      "abstention_rate": 0.0,
+      "false_abstention_rate": null,
+      "covered_accuracy": 0.9239,
+      "decision_counts": {
+        "favorable_pattern": 1884,
+        "uncertain": 260,
+        "concerning_pattern": 1456
+      },
+      "covered_mean_probability": 0.5562,
+      "calibration_bins": [
+        {
+          "range": "0.00-0.20",
+          "count": 1112,
+          "mean_predicted": 0.054,
+          "observed_rate": 0.0045
+        },
+        {
+          "range": "0.20-0.40",
+          "count": 344,
+          "mean_predicted": 0.2909,
+          "observed_rate": 0.1715
+        },
+        {
+          "range": "0.40-0.60",
+          "count": 260,
+          "mean_predicted": 0.5001,
+          "observed_rate": 0.5154
+        },
+        {
+          "range": "0.60-0.80",
+          "count": 275,
+          "mean_predicted": 0.7033,
+          "observed_rate": 0.7891
+        },
+        {
+          "range": "0.80-1.00",
+          "count": 1609,
+          "mean_predicted": 0.9438,
+          "observed_rate": 0.9801
+        }
+      ]
+    },
+    {
+      "scenario": "no_imaging",
+      "stripped_modalities": [
+        "imaging"
+      ],
+      "rows_evaluated": 3600,
+      "coverage_rate": 1.0,
+      "abstention_rate": 0.0,
+      "false_abstention_rate": null,
+      "covered_accuracy": 0.5439,
+      "decision_counts": {
+        "favorable_pattern": 1446,
+        "uncertain": 866,
+        "concerning_pattern": 1288
+      },
+      "covered_mean_probability": 0.5148,
+      "calibration_bins": [
+        {
+          "range": "0.00-0.20",
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null
+        },
+        {
+          "range": "0.20-0.40",
+          "count": 1288,
+          "mean_predicted": 0.3111,
+          "observed_rate": 0.4651
+        },
+        {
+          "range": "0.40-0.60",
+          "count": 866,
+          "mean_predicted": 0.4888,
+          "observed_rate": 0.6028
+        },
+        {
+          "range": "0.60-0.80",
+          "count": 1446,
+          "mean_predicted": 0.712,
+          "observed_rate": 0.6024
+        },
+        {
+          "range": "0.80-1.00",
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null
+        }
+      ]
+    },
+    {
+      "scenario": "no_nadir_cbc",
+      "stripped_modalities": [
+        "cbc_nadir"
+      ],
+      "rows_evaluated": 3600,
+      "coverage_rate": 0.9958,
+      "abstention_rate": 0.0042,
+      "false_abstention_rate": 0.5333,
+      "covered_accuracy": 0.9225,
+      "decision_counts": {
+        "favorable_pattern": 1785,
+        "uncertain": 454,
+        "concerning_pattern": 1346,
+        "insufficient_evidence": 15
+      },
+      "covered_mean_probability": 0.5329,
+      "calibration_bins": [
+        {
+          "range": "0.00-0.20",
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null
+        },
+        {
+          "range": "0.20-0.40",
+          "count": 1346,
+          "mean_predicted": 0.2547,
+          "observed_rate": 0.026
+        },
+        {
+          "range": "0.40-0.60",
+          "count": 454,
+          "mean_predicted": 0.4968,
+          "observed_rate": 0.5066
+        },
+        {
+          "range": "0.60-0.80",
+          "count": 1785,
+          "mean_predicted": 0.7518,
+          "observed_rate": 0.963
+        },
+        {
+          "range": "0.80-1.00",
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null
+        }
+      ]
+    },
+    {
+      "scenario": "no_recovery_cbc",
+      "stripped_modalities": [
+        "cbc_recovery"
+      ],
+      "rows_evaluated": 3600,
+      "coverage_rate": 0.9958,
+      "abstention_rate": 0.0042,
+      "false_abstention_rate": 0.5333,
+      "covered_accuracy": 0.9225,
+      "decision_counts": {
+        "favorable_pattern": 1795,
+        "uncertain": 452,
+        "concerning_pattern": 1338,
+        "insufficient_evidence": 15
+      },
+      "covered_mean_probability": 0.5343,
+      "calibration_bins": [
+        {
+          "range": "0.00-0.20",
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null
+        },
+        {
+          "range": "0.20-0.40",
+          "count": 1338,
+          "mean_predicted": 0.2542,
+          "observed_rate": 0.0247
+        },
+        {
+          "range": "0.40-0.60",
+          "count": 452,
+          "mean_predicted": 0.4969,
+          "observed_rate": 0.4912
+        },
+        {
+          "range": "0.60-0.80",
+          "count": 1795,
+          "mean_predicted": 0.7526,
+          "observed_rate": 0.9632
+        },
+        {
+          "range": "0.80-1.00",
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null
+        }
+      ]
+    },
+    {
+      "scenario": "imaging_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "coverage_rate": 0.9958,
+      "abstention_rate": 0.0042,
+      "false_abstention_rate": 0.5333,
+      "covered_accuracy": 0.906,
+      "decision_counts": {
+        "favorable_pattern": 1846,
+        "uncertain": 478,
+        "concerning_pattern": 1261,
+        "insufficient_evidence": 15
+      },
+      "covered_mean_probability": 0.5421,
+      "calibration_bins": [
+        {
+          "range": "0.00-0.20",
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null
+        },
+        {
+          "range": "0.20-0.40",
+          "count": 1261,
+          "mean_predicted": 0.2561,
+          "observed_rate": 0.0349
+        },
+        {
+          "range": "0.40-0.60",
+          "count": 478,
+          "mean_predicted": 0.497,
+          "observed_rate": 0.3891
+        },
+        {
+          "range": "0.60-0.80",
+          "count": 1846,
+          "mean_predicted": 0.7491,
+          "observed_rate": 0.9502
+        },
+        {
+          "range": "0.80-1.00",
+          "count": 0,
+          "mean_predicted": null,
+          "observed_rate": null
+        }
+      ]
+    },
+    {
+      "scenario": "cbc_pre_only",
+      "stripped_modalities": [
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "coverage_rate": 0.0,
+      "abstention_rate": 1.0,
+      "false_abstention_rate": 0.9239,
+      "covered_accuracy": null,
+      "decision_counts": {
+        "insufficient_evidence": 3600
+      },
+      "covered_mean_probability": null,
+      "calibration_bins": []
+    },
+    {
+      "scenario": "demographics_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "coverage_rate": 0.0,
+      "abstention_rate": 1.0,
+      "false_abstention_rate": 0.9239,
+      "covered_accuracy": null,
+      "decision_counts": {
+        "insufficient_evidence": 3600
+      },
+      "covered_mean_probability": null,
+      "calibration_bins": []
+    },
+    {
+      "scenario": "symptoms_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "coverage_rate": 0.0,
+      "abstention_rate": 1.0,
+      "false_abstention_rate": 0.9239,
+      "covered_accuracy": null,
+      "decision_counts": {
+        "insufficient_evidence": 3600
+      },
+      "covered_mean_probability": null,
+      "calibration_bins": []
+    }
+  ],
+  "interpretation": "Coverage is the fraction of rows the system chose to score; abstention rate is the complement.  False abstention rate is the fraction of abstained rows where the underlying model would have been correct \u2014 high values indicate the abstention rules are too aggressive.",
+  "claim_boundary": "Synthetic evaluation only.  Coverage and accuracy numbers cannot be interpreted as clinical performance \u2014 they describe the engineering trade-off between confidence and refusal."
+}

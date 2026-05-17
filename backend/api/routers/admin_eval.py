@@ -702,4 +702,388 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             "result": run_genetic_counseling_eval(),
         }
 
+    @router.get("/admin/biomarker-feature-benchmark")
+    def get_admin_biomarker_feature_benchmark_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return cached biomarker/tumor-marker feature ablation if present."""
+        from backend.services.biomarker_feature_benchmark import load_biomarker_feature_benchmark
+
+        return load_biomarker_feature_benchmark()
+
+    @router.post("/admin/biomarker-feature-benchmark")
+    def run_admin_biomarker_feature_benchmark_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Run synthetic biomarker/tumor-marker feature benchmark with leakage checks."""
+        from backend.services.biomarker_feature_benchmark import run_biomarker_feature_benchmark
+
+        return {
+            "message": "Biomarker/tumor-marker feature benchmark completed.",
+            "result": run_biomarker_feature_benchmark(),
+        }
+
+    @router.get("/admin/leakage-audit")
+    def get_admin_leakage_audit_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the most recent training-data leakage audit artifact."""
+        from backend.services.leakage_audit import load_leakage_audit
+
+        return load_leakage_audit()
+
+    @router.post("/admin/leakage-audit")
+    def run_admin_leakage_audit_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rerun the unified leakage audit and refresh the artifact on disk."""
+        from backend.services.leakage_audit import run_leakage_audit
+
+        return {
+            "message": "Leakage audit completed.",
+            "result": run_leakage_audit(),
+        }
+
+    @router.get("/admin/prediction-traces")
+    def get_admin_prediction_traces_endpoint(
+        limit: int = 50,
+        patient_id: str | None = None,
+        decision: str | None = None,
+        abstained_only: bool = False,
+        context=Depends(get_admin_access_context),
+        db: Session = Depends(get_db),
+    ):
+        """Return recent prediction traces with optional filtering + a summary."""
+        from backend.services.prediction_trace import (
+            list_recent_traces,
+            summarise_traces,
+        )
+
+        return {
+            "traces": list_recent_traces(
+                db,
+                limit=limit,
+                patient_id=patient_id,
+                decision=decision,
+                abstained_only=abstained_only,
+            ),
+            "summary": summarise_traces(db),
+        }
+
+    @router.get("/admin/evidence-abstention-eval")
+    def get_admin_evidence_abstention_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the most recent evidence-aware abstention eval artifact."""
+        from backend.services.evidence_abstention_eval import load_evidence_abstention_eval
+
+        return load_evidence_abstention_eval()
+
+    @router.get("/admin/modality-robustness-comparison")
+    def get_admin_modality_robustness_comparison_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the champion-vs-modality-robust comparison artifact."""
+        from backend.services.modality_robustness_comparison import (
+            load_modality_robustness_comparison,
+        )
+
+        return load_modality_robustness_comparison()
+
+    @router.post("/admin/modality-robustness-comparison")
+    def run_admin_modality_robustness_comparison_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rerun the champion-vs-robust comparison sweep."""
+        from backend.services.modality_robustness_comparison import (
+            run_modality_robustness_comparison,
+        )
+
+        return {
+            "message": "Modality-robustness comparison completed.",
+            "result": run_modality_robustness_comparison(),
+        }
+
+    @router.get("/admin/kb-source-governance")
+    def get_admin_kb_source_governance_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the KB source-governance artifact (tier + allowed_use + staleness)."""
+        from backend.services.kb_source_governance import load_kb_source_governance
+
+        return load_kb_source_governance()
+
+    @router.post("/admin/kb-source-governance")
+    def run_admin_kb_source_governance_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild the KB source-governance artifact from the current KB chunks."""
+        from backend.services.kb_source_governance import build_kb_source_governance
+
+        return {
+            "message": "KB source governance rebuilt.",
+            "result": build_kb_source_governance(),
+        }
+
+    @router.get("/admin/synthetic-generator-card")
+    def get_admin_synthetic_generator_card_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the synthetic-data generator card artifact."""
+        from backend.services.synthetic_generator_card import load_synthetic_generator_card
+
+        return load_synthetic_generator_card()
+
+    @router.post("/admin/synthetic-generator-card")
+    def run_admin_synthetic_generator_card_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild the generator card from the current dataset summary + rows."""
+        from backend.services.synthetic_generator_card import build_synthetic_generator_card
+
+        return {
+            "message": "Generator card refreshed.",
+            "result": build_synthetic_generator_card(),
+        }
+
+    @router.get("/admin/failure-mode-registry")
+    def get_admin_failure_mode_registry_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the consolidated failure-mode registry artifact."""
+        from backend.services.failure_mode_registry import load_failure_mode_registry
+
+        return load_failure_mode_registry()
+
+    @router.post("/admin/failure-mode-registry")
+    def run_admin_failure_mode_registry_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild the failure-mode registry by re-aggregating its source artifacts."""
+        from backend.services.failure_mode_registry import build_failure_mode_registry
+
+        return {
+            "message": "Failure-mode registry rebuilt.",
+            "result": build_failure_mode_registry(),
+        }
+
+    @router.get("/admin/modality-robust-training")
+    def get_admin_modality_robust_training_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the modality-robust training metadata artifact."""
+        from backend.services.modality_dropout_training import (
+            load_modality_robust_training_metadata,
+        )
+
+        return load_modality_robust_training_metadata()
+
+    @router.post("/admin/modality-robust-training")
+    def run_admin_modality_robust_training_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Retrain the modality-robust classifier and refresh both the model
+        artifact and the metadata report.  Long-running."""
+        from backend.services.modality_dropout_training import (
+            train_modality_robust_classifier,
+        )
+
+        return {
+            "message": "Modality-robust classifier retrained.",
+            "result": train_modality_robust_classifier(),
+        }
+
+    @router.get("/admin/quantile-regression-training")
+    def get_admin_quantile_regression_training_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the response-score quantile regression metadata artifact."""
+        from backend.services.quantile_regression_training import (
+            load_quantile_regression_training_metadata,
+        )
+
+        return load_quantile_regression_training_metadata()
+
+    @router.post("/admin/quantile-regression-training")
+    def run_admin_quantile_regression_training_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Retrain p10/p50/p90 response-score quantile heads."""
+        from backend.services.quantile_regression_training import train_quantile_regression_heads
+
+        return {
+            "message": "Quantile regression heads retrained.",
+            "result": train_quantile_regression_heads(),
+        }
+
+    @router.get("/admin/modality-robust-regression-training")
+    def get_admin_modality_robust_regression_training_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the modality-robust regression metadata artifact."""
+        from backend.services.modality_dropout_regression_training import (
+            load_modality_robust_regression_metadata,
+        )
+
+        return load_modality_robust_regression_metadata()
+
+    @router.post("/admin/modality-robust-regression-training")
+    def run_admin_modality_robust_regression_training_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Retrain the modality-robust response-score regressor."""
+        from backend.services.modality_dropout_regression_training import (
+            train_modality_robust_regressor,
+        )
+
+        return {
+            "message": "Modality-robust response-score regressor retrained.",
+            "result": train_modality_robust_regressor(),
+        }
+
+    @router.get("/admin/regression-robustness-comparison")
+    def get_admin_regression_robustness_comparison_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return legacy-vs-modality-robust response-score comparison."""
+        from backend.services.regression_robustness_comparison import (
+            load_regression_robustness_comparison,
+        )
+
+        return load_regression_robustness_comparison()
+
+    @router.post("/admin/regression-robustness-comparison")
+    def run_admin_regression_robustness_comparison_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rerun the response-score robustness comparison sweep."""
+        from backend.services.regression_robustness_comparison import (
+            run_regression_robustness_comparison,
+        )
+
+        return {
+            "message": "Regression robustness comparison completed.",
+            "result": run_regression_robustness_comparison(),
+        }
+
+    @router.post("/admin/evidence-abstention-eval")
+    def run_admin_evidence_abstention_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rerun the abstention sweep across modality-dropout scenarios."""
+        from backend.services.evidence_abstention_eval import run_evidence_abstention_eval
+
+        return {
+            "message": "Evidence abstention eval completed.",
+            "result": run_evidence_abstention_eval(),
+        }
+
+    @router.get("/admin/public-biomarker-dataset-manifest")
+    def get_admin_public_biomarker_dataset_manifest_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return public biomarker/tumor-marker predictor-source manifest."""
+        from backend.services.public_biomarker_datasets import load_public_biomarker_dataset_manifest
+
+        return load_public_biomarker_dataset_manifest()
+
+    @router.post("/admin/public-biomarker-dataset-manifest")
+    def run_admin_public_biomarker_dataset_manifest_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild public biomarker/tumor-marker predictor-source manifest."""
+        from backend.services.public_biomarker_datasets import build_public_biomarker_dataset_manifest
+
+        return {
+            "message": "Public biomarker dataset manifest generated.",
+            "result": build_public_biomarker_dataset_manifest(),
+        }
+
+    @router.get("/admin/public-biomarker-mapping-readiness")
+    def get_admin_public_biomarker_mapping_readiness_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return source-to-feature mapping readiness for public biomarker sources."""
+        from backend.services.public_biomarker_mapping import load_public_biomarker_mapping_readiness
+
+        return load_public_biomarker_mapping_readiness()
+
+    @router.post("/admin/public-biomarker-mapping-readiness")
+    def run_admin_public_biomarker_mapping_readiness_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild source-to-feature mapping readiness for public biomarker sources."""
+        from backend.services.public_biomarker_mapping import build_public_biomarker_mapping_readiness
+
+        return {
+            "message": "Public biomarker mapping readiness generated.",
+            "result": build_public_biomarker_mapping_readiness(),
+        }
+
+    @router.get("/admin/cbioportal-biomarker-schema-mapping")
+    def get_admin_cbioportal_biomarker_schema_mapping_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return TCGA-BRCA/METABRIC cBioPortal biomarker schema mapping readiness."""
+        from backend.services.cbioportal_biomarker_mapper import load_cbioportal_biomarker_schema_mapping
+
+        return load_cbioportal_biomarker_schema_mapping()
+
+    @router.post("/admin/cbioportal-biomarker-schema-mapping")
+    def run_admin_cbioportal_biomarker_schema_mapping_endpoint(
+        live_fetch: bool = True,
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild cBioPortal biomarker schema mapping from public API when available."""
+        from backend.services.cbioportal_biomarker_mapper import build_cbioportal_biomarker_schema_mapping
+
+        return {
+            "message": "cBioPortal biomarker schema mapping generated.",
+            "result": build_cbioportal_biomarker_schema_mapping(live_fetch=live_fetch),
+        }
+
+    @router.get("/admin/clinical-safety-review-checklist")
+    def get_admin_clinical_safety_review_checklist_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return clinical safety review checklist artifact."""
+        from backend.services.clinical_safety_checklist import load_clinical_safety_review_checklist
+
+        return load_clinical_safety_review_checklist()
+
+    @router.post("/admin/clinical-safety-review-checklist")
+    def run_admin_clinical_safety_review_checklist_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rebuild clinical safety review checklist artifact."""
+        from backend.services.clinical_safety_checklist import build_clinical_safety_review_checklist
+
+        return {
+            "message": "Clinical safety review checklist generated.",
+            "result": build_clinical_safety_review_checklist(),
+        }
+
+    @router.get("/admin/system-health")
+    def get_admin_system_health_endpoint(
+        context=Depends(get_admin_access_context),
+        db: Session = Depends(get_db),
+    ):
+        """Return backend/frontend/artifact/dependency health for the engineering demo."""
+        from backend.services.system_health import load_system_health_report
+
+        return load_system_health_report(db=db)
+
+    @router.post("/admin/system-health")
+    def run_admin_system_health_endpoint(
+        context=Depends(get_admin_access_context),
+        db: Session = Depends(get_db),
+    ):
+        """Rebuild system health report."""
+        from backend.services.system_health import build_system_health_report
+
+        return {
+            "message": "System health report generated.",
+            "result": build_system_health_report(db=db),
+        }
+
     return router

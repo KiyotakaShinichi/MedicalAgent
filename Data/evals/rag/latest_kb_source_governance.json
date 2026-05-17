@@ -1,0 +1,695 @@
+{
+  "schema_version": "kb_source_governance_v1",
+  "generated_at": "2026-05-17T01:39:45.895166+00:00",
+  "status": "strong",
+  "kb_chunks_path": "Data/rag_knowledge_base_chunks.json",
+  "source_count": 24,
+  "chunk_count": 215,
+  "tier_distribution": {
+    "T1": 2,
+    "T2": 10,
+    "T3": 11,
+    "T4": 1
+  },
+  "allowed_use_distribution": {
+    "patient_safety": 1,
+    "education": 23,
+    "clinician_only": 2,
+    "monitoring_context": 11,
+    "portal_help": 1
+  },
+  "staleness_distribution": {
+    "current": 24
+  },
+  "tier_map": {
+    "clinical_safety_policy": {
+      "tier": "T1",
+      "description": "Internal clinical-safety policy (refusal rules, escalation rules).",
+      "allowed_use": [
+        "patient_safety",
+        "education",
+        "clinician_only"
+      ]
+    },
+    "clinical_guideline_summary": {
+      "tier": "T1",
+      "description": "Summary of a published clinical guideline (NCCN, ASCO, ESMO equivalent).",
+      "allowed_use": [
+        "education",
+        "clinician_only",
+        "monitoring_context"
+      ]
+    },
+    "systematic_review": {
+      "tier": "T2",
+      "description": "Peer-reviewed systematic review / meta-analysis.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ]
+    },
+    "research_paper": {
+      "tier": "T2",
+      "description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ]
+    },
+    "patient_education": {
+      "tier": "T3",
+      "description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ]
+    },
+    "local_source": {
+      "tier": "T4",
+      "description": "Internal portal documentation or tool-help text.",
+      "allowed_use": [
+        "portal_help"
+      ]
+    }
+  },
+  "tier_order": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5"
+  ],
+  "allowed_use_vocabulary": [
+    "patient_safety",
+    "education",
+    "monitoring_context",
+    "portal_help",
+    "clinician_only"
+  ],
+  "staleness_ttl_days": 365,
+  "sources": [
+    {
+      "source_id": "918edc260afd2d63",
+      "title": "Diagnosis, Treatment, and Supplement Safety Boundaries",
+      "source_url": "https://www.cancer.gov/about-cancer/treatment/cam/patient/dietary-interactions-pdq",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\00_safety_boundaries\\diagnosis_treatment_and_supplement_boundaries.md",
+      "trust_level": "clinical_safety_policy",
+      "tier": "T1",
+      "tier_rank": 1,
+      "tier_description": "Internal clinical-safety policy (refusal rules, escalation rules).",
+      "allowed_use": [
+        "patient_safety",
+        "education",
+        "clinician_only"
+      ],
+      "ingested_at": "2026-05-15T15:27:48.989530+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "clinical_safety_boundaries"
+      ],
+      "modalities": [
+        "clinical",
+        "supplements",
+        "symptoms"
+      ]
+    },
+    {
+      "source_id": "9dbd1c506f6e0962",
+      "title": "Integrative and Supportive Care During Breast Cancer Treatment",
+      "source_url": "https://pubmed.ncbi.nlm.nih.gov/29889605/",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\06_integrative_supportive_care\\integrative_supportive_care.md",
+      "trust_level": "clinical_guideline_summary",
+      "tier": "T1",
+      "tier_rank": 1,
+      "tier_description": "Summary of a published clinical guideline (NCCN, ASCO, ESMO equivalent).",
+      "allowed_use": [
+        "education",
+        "clinician_only",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.052434+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "integrative_supportive_care"
+      ],
+      "modalities": [
+        "clinical",
+        "symptoms"
+      ]
+    },
+    {
+      "source_id": "7cd1e3e1103a156a",
+      "title": "The role of MRI in assessing residual disease and pCR after neoadjuvant chemotherapy",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3609956/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC3609956_the-role-of-mri-in-assessing-residual-disease-and-pcr-after-neoadjuvant-chemotherapy.txt",
+      "trust_level": "systematic_review",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Peer-reviewed systematic review / meta-analysis.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.200760+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 27,
+      "topics": [
+        "mri_response_monitoring"
+      ],
+      "modalities": [
+        "MRI"
+      ]
+    },
+    {
+      "source_id": "513e4b58992b3ee6",
+      "title": "Occurrence and risk factors of chemotherapy-induced neutropenia in breast cancer",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10898895/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC10898895_occurrence-and-risk-factors-of-chemotherapy-induced-neutropenia-in-breast-cancer.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.101756+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 26,
+      "topics": [
+        "cbc_toxicity_monitoring"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical"
+      ]
+    },
+    {
+      "source_id": "2524619e8115a75d",
+      "title": "DCE-MRI texture features for early breast cancer therapy response prediction",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5500247/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC5500247_dce-mri-texture-features-for-early-breast-cancer-therapy-response-prediction.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.344257+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 23,
+      "topics": [
+        "mri_radiomics_response"
+      ],
+      "modalities": [
+        "DCE-MRI",
+        "MRI"
+      ]
+    },
+    {
+      "source_id": "2a9f2ed73f0b189c",
+      "title": "Early treatment response prediction using DCE-MRI tumor heterogeneity changes",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6702160/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC6702160_early-treatment-response-prediction-using-dce-mri-tumor-heterogeneity-changes.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.407227+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 23,
+      "topics": [
+        "mri_response_prediction"
+      ],
+      "modalities": [
+        "DCE-MRI",
+        "MRI"
+      ]
+    },
+    {
+      "source_id": "5ff309c8a4b83b94",
+      "title": "Prophylaxis of chemotherapy-induced febrile neutropenia with G-CSF",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2846279/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC2846279_prophylaxis-of-chemotherapy-induced-febrile-neutropenia-with-g-csf.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.154476+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 19,
+      "topics": [
+        "febrile_neutropenia_supportive_care"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical"
+      ]
+    },
+    {
+      "source_id": "b6cee03f078d056a",
+      "title": "Risk of hematological toxicities in a SWOG breast cancer chemotherapy trial",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3940691/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC3940691_risk-of-hematological-toxicities-in-a-swog-breast-cancer-chemotherapy-trial.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.236628+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 19,
+      "topics": [
+        "cbc_toxicity_monitoring"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical"
+      ]
+    },
+    {
+      "source_id": "ecb3652df9db271c",
+      "title": "Primary febrile neutropenia prophylaxis for FEC-D chemotherapy in breast cancer",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6180804/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC6180804_primary-febrile-neutropenia-prophylaxis-for-fec-d-chemotherapy-in-breast-cancer.txt",
+      "trust_level": "systematic_review",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Peer-reviewed systematic review / meta-analysis.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.377157+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 17,
+      "topics": [
+        "febrile_neutropenia_supportive_care"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical"
+      ]
+    },
+    {
+      "source_id": "890d72c72f9459a3",
+      "title": "Patterns of chemotherapy-associated toxicity and supportive care in oncology practice",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3987093/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC3987093_patterns-of-chemotherapy-associated-toxicity-and-supportive-care-in-oncology-practice.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.270242+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 16,
+      "topics": [
+        "chemotherapy_toxicity_supportive_care"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical",
+        "symptoms"
+      ]
+    },
+    {
+      "source_id": "f1814d41c026b232",
+      "title": "Prognostic value of chemotherapy-induced neutropenia at first cycle in invasive breast cancer",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4998558/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC4998558_prognostic-value-of-chemotherapy-induced-neutropenia-at-first-cycle-in-invasive-breast-can.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.302816+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 15,
+      "topics": [
+        "cbc_toxicity_monitoring"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical"
+      ]
+    },
+    {
+      "source_id": "16cecf5419e1fe71",
+      "title": "Dietary supplements during active cancer treatment - safety notes for RAG",
+      "source_url": "KnowledgeBase\\raw\\research_papers\\supplements_cancer_treatment_safety_nci_msk_nccih.md",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\supplements_cancer_treatment_safety_nci_msk_nccih.md",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.418109+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "cbc_toxicity_monitoring"
+      ],
+      "modalities": [
+        "CBC",
+        "symptoms",
+        "treatment"
+      ]
+    },
+    {
+      "source_id": "4a6fee1c39db19c8",
+      "title": "Breast Cancer Treatment and Supportive Medication Reference",
+      "source_url": "https://www.cancer.gov/about-cancer/treatment/drugs",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\02_treatments\\breast_cancer_treatment_drug_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:48.998336+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 3,
+      "topics": [
+        "treatment_drug_education"
+      ],
+      "modalities": [
+        "medications",
+        "treatment"
+      ]
+    },
+    {
+      "source_id": "2c9cf580eb45af0e",
+      "title": "Supplements, Vitamins, Herbs, and Natural Remedy Interaction Safety",
+      "source_url": "https://www.mskcc.org/cancer-care/patient-education/herbal-remedies-and-treatment",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\07_supplements_interactions\\supplements_interactions_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.056260+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 3,
+      "topics": [
+        "supplement_interaction_safety"
+      ],
+      "modalities": [
+        "clinical",
+        "medications",
+        "supplements"
+      ]
+    },
+    {
+      "source_id": "32883832328b402b",
+      "title": "Breast Cancer Basics and Monitoring Terms",
+      "source_url": "https://www.cancer.gov/types/breast/hp/breast-treatment-pdq",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\01_breast_cancer_basics\\breast_cancer_basics_and_monitoring.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:48.993812+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "breast_cancer_basics"
+      ],
+      "modalities": [
+        "clinical"
+      ]
+    },
+    {
+      "source_id": "3ca1dfefbd3147b0",
+      "title": "Side Effects and Red Flags During Breast Cancer Treatment",
+      "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\03_side_effects\\side_effects_and_red_flags.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.002068+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "treatment_safety"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical",
+        "symptoms"
+      ]
+    },
+    {
+      "source_id": "36b7a3ffdb9205a4",
+      "title": "CBC Labs and Trend Monitoring",
+      "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/low-blood-counts",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\04_labs_and_monitoring\\cbc_labs_and_trend_monitoring.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.004267+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "cbc_toxicity_monitoring"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical"
+      ]
+    },
+    {
+      "source_id": "a734a844daed9ef7",
+      "title": "Imaging Report Monitoring: MRI, CT, Ultrasound, and Response Language",
+      "source_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\05_imaging\\imaging_report_monitoring.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.049460+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "imaging_response_monitoring"
+      ],
+      "modalities": [
+        "CT",
+        "MRI",
+        "imaging",
+        "ultrasound"
+      ]
+    },
+    {
+      "source_id": "5598e2371d2713c4",
+      "title": "Breast Cancer Biomarkers and Tumor Marker Safety",
+      "source_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\biomarkers_and_tumor_markers.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.063547+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "biomarkers_and_tumor_markers"
+      ],
+      "modalities": [
+        "biomarkers",
+        "labs",
+        "pathology",
+        "tumor_markers"
+      ]
+    },
+    {
+      "source_id": "ef3bcc511aad3c2c",
+      "title": "Genetic Counseling Readiness and Family History Intake",
+      "source_url": "https://www.cdc.gov/genomics-and-health/counseling-testing/genetic-counseling.html",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\genetic_counseling_readiness.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.066620+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "genetic_counseling_readiness"
+      ],
+      "modalities": [
+        "clinical",
+        "family_history",
+        "genetics"
+      ]
+    },
+    {
+      "source_id": "29f0f5dda9789b7e",
+      "title": "Germline Testing, Somatic Testing, VUS, and Multigene Panels",
+      "source_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/genetic-testing-fact-sheet",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\germline_somatic_vus_multigene_panels.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.068714+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "genetic_testing_terms"
+      ],
+      "modalities": [
+        "clinical",
+        "genetics",
+        "tumor_sequencing"
+      ]
+    },
+    {
+      "source_id": "dd8482fb188651cd",
+      "title": "Hereditary Breast/Ovarian Cancer and BRCA Education",
+      "source_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/brca-fact-sheet",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\hereditary_breast_ovarian_cancer_and_brca.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.070804+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 2,
+      "topics": [
+        "hereditary_breast_ovarian_cancer"
+      ],
+      "modalities": [
+        "clinical",
+        "genetics"
+      ]
+    },
+    {
+      "source_id": "287d2107cfeeb34a",
+      "title": "CT Ascites Report Wording in Oncology Monitoring",
+      "source_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\05_imaging\\ct_ascites_report_monitoring.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.046887+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 1,
+      "topics": [
+        "ct_report_monitoring"
+      ],
+      "modalities": [
+        "CT",
+        "ascites",
+        "clinical",
+        "imaging"
+      ]
+    },
+    {
+      "source_id": "c35c9264029ff9c9",
+      "title": "OncoTrack Portal Help and Data Entry",
+      "source_url": "README.md",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\08_portal_help\\onctrack_portal_help_and_data_entry.md",
+      "trust_level": "local_source",
+      "tier": "T4",
+      "tier_rank": 4,
+      "tier_description": "Internal portal documentation or tool-help text.",
+      "allowed_use": [
+        "portal_help"
+      ],
+      "ingested_at": "2026-05-15T15:27:49.060775+00:00",
+      "staleness_status": "current",
+      "staleness_days": 1,
+      "chunk_count": 1,
+      "topics": [
+        "portal_help"
+      ],
+      "modalities": [
+        "clinical",
+        "portal"
+      ]
+    }
+  ],
+  "governance_issues": [],
+  "interpretation": "T1/T2 sources can back clinician-facing claims when allowed_use includes the right intent. T3 is patient-education only. T4 is internal portal docs. T5 (unmapped trust_level) is do-not-cite \u2014 the post-generation validator must strip those citations.",
+  "claim_boundary": "Engineering provenance only. Tier mapping is a defensible default; clinical advisor sign-off is required before treating T1/T2 chunks as authoritative for any specific clinical claim."
+}

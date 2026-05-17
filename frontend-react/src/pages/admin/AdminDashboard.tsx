@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   BarChart2,
   Cpu,
@@ -6,6 +7,7 @@ import {
   FlaskConical,
   Image,
   LayoutDashboard,
+  Activity,
   ShieldCheck,
   Star,
 } from "lucide-react";
@@ -24,6 +26,7 @@ import { AgentTraceSection } from "./sections/AgentTraceSection";
 import { ImagingSection } from "./sections/ImagingSection";
 import { SafetyCenterSection } from "./sections/SafetyCenterSection";
 import { ToolActionBenchmarkSection } from "./sections/ToolActionBenchmarkSection";
+import { SystemHealthSection } from "./sections/SystemHealthSection";
 
 const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -34,6 +37,7 @@ const NAV = [
   { to: "/admin/regression", label: "Regression", icon: FlaskConical },
   { to: "/admin/feedback", label: "Feedback", icon: Star },
   { to: "/admin/model", label: "Model", icon: BarChart2 },
+  { to: "/admin/health", label: "System Health", icon: Activity },
 ];
 
 type Section =
@@ -45,6 +49,7 @@ type Section =
   | "imaging"
   | "regression"
   | "tool_actions"
+  | "system_health"
   | "feedback"
   | "trace";
 
@@ -58,12 +63,24 @@ const SECTIONS: { id: Section; label: string }[] = [
   { id: "regression",    label: "Regression" },
   { id: "tool_actions",  label: "Tool Actions" },
   { id: "trace",         label: "Agent Trace" },
+  { id: "system_health", label: "System Health" },
   { id: "feedback",      label: "Feedback" },
 ];
 
 export default function AdminDashboard() {
   const { data, status, error, refetch } = useApi(getAdminAnalytics, []);
   const [section, setSection] = useState<Section>("overview");
+  const location = useLocation();
+
+  // Sync the active section to the URL path.  Deferred to a setTimeout(0)
+  // so the setState is asynchronous, avoiding the cascading-render anti-
+  // pattern flagged by `react-hooks/set-state-in-effect`.
+  useEffect(() => {
+    const pathSection = pathToSection(location.pathname);
+    if (!pathSection) return;
+    const id = window.setTimeout(() => setSection(pathSection), 0);
+    return () => window.clearTimeout(id);
+  }, [location.pathname]);
 
   return (
     <AppShell
@@ -88,9 +105,14 @@ export default function AdminDashboard() {
         </div>
 
         <div className="dashboard-content">
-          {status === "loading" && <LoadingPane label="Loading analytics..." />}
-          {status === "error" && <ErrorPane message={error ?? "Failed to load"} />}
-          {status === "success" && data && (
+          {section === "system_health" && (
+            <ErrorBoundary surface="the system health section">
+              <SystemHealthSection />
+            </ErrorBoundary>
+          )}
+          {section !== "system_health" && status === "loading" && <LoadingPane label="Loading analytics..." />}
+          {section !== "system_health" && status === "error" && <ErrorPane message={error ?? "Failed to load"} />}
+          {section !== "system_health" && status === "success" && data && (
             <ErrorBoundary surface={`the ${section.replace(/_/g, " ")} section`}>
               {section === "overview" && <OverviewSection analytics={data} />}
               {section === "safety_center" && <SafetyCenterSection />}
@@ -108,4 +130,19 @@ export default function AdminDashboard() {
       </div>
     </AppShell>
   );
+}
+
+function pathToSection(pathname: string): Section | null {
+  if (pathname.includes("/safety")) return "safety_center";
+  if (pathname.includes("/rag")) return "rag";
+  if (pathname.includes("/guardrails")) return "guardrails";
+  if (pathname.includes("/mle")) return "mle";
+  if (pathname.includes("/imaging")) return "imaging";
+  if (pathname.includes("/regression")) return "regression";
+  if (pathname.includes("/tool")) return "tool_actions";
+  if (pathname.includes("/trace")) return "trace";
+  if (pathname.includes("/health")) return "system_health";
+  if (pathname.includes("/feedback")) return "feedback";
+  if (pathname.includes("/model")) return "mle";
+  return null;
 }

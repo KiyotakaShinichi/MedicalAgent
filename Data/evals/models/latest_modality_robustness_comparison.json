@@ -1,0 +1,343 @@
+{
+  "schema_version": "modality_robustness_comparison_v1",
+  "generated_at": "2026-05-16T16:11:13.494073+00:00",
+  "status": "robust",
+  "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "output_path": "Data/evals/models/latest_modality_robustness_comparison.json",
+  "models_under_test": {
+    "champion": "Data/complete_synthetic_training/gradient_boosting_treatment_success_binary.joblib",
+    "robust": "Data/complete_synthetic_training/modality_robust_treatment_success_binary.joblib"
+  },
+  "scenarios": [
+    {
+      "scenario": "full_data",
+      "stripped_modalities": [],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "champion": {
+          "accuracy": 0.9239,
+          "brier": 0.0573,
+          "mean_probability": 0.5562
+        },
+        "robust": {
+          "accuracy": 0.9261,
+          "brier": 0.0605,
+          "mean_probability": 0.5526
+        }
+      },
+      "with_abstention": {
+        "champion": {
+          "coverage_rate": 1.0,
+          "abstention_rate": 0.0,
+          "covered_accuracy": 0.9239,
+          "covered_mean_probability": 0.5562
+        },
+        "robust": {
+          "coverage_rate": 1.0,
+          "abstention_rate": 0.0,
+          "covered_accuracy": 0.9261,
+          "covered_mean_probability": 0.5524
+        }
+      },
+      "deltas": {
+        "force_score_accuracy_robust_minus_champion": 0.0022,
+        "force_score_brier_robust_minus_champion": 0.0032,
+        "with_abstention_accuracy_robust_minus_champion": 0.0022
+      }
+    },
+    {
+      "scenario": "no_imaging",
+      "stripped_modalities": [
+        "imaging"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "champion": {
+          "accuracy": 0.5439,
+          "brier": 0.2933,
+          "mean_probability": 0.5247
+        },
+        "robust": {
+          "accuracy": 0.6272,
+          "brier": 0.2204,
+          "mean_probability": 0.5635
+        }
+      },
+      "with_abstention": {
+        "champion": {
+          "coverage_rate": 1.0,
+          "abstention_rate": 0.0,
+          "covered_accuracy": 0.5439,
+          "covered_mean_probability": 0.5148
+        },
+        "robust": {
+          "coverage_rate": 1.0,
+          "abstention_rate": 0.0,
+          "covered_accuracy": 0.6272,
+          "covered_mean_probability": 0.5381
+        }
+      },
+      "deltas": {
+        "force_score_accuracy_robust_minus_champion": 0.0833,
+        "force_score_brier_robust_minus_champion": -0.0729,
+        "with_abstention_accuracy_robust_minus_champion": 0.0833
+      }
+    },
+    {
+      "scenario": "no_nadir_cbc",
+      "stripped_modalities": [
+        "cbc_nadir"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "champion": {
+          "accuracy": 0.9208,
+          "brier": 0.0591,
+          "mean_probability": 0.5547
+        },
+        "robust": {
+          "accuracy": 0.9247,
+          "brier": 0.0619,
+          "mean_probability": 0.5452
+        }
+      },
+      "with_abstention": {
+        "champion": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "covered_accuracy": 0.9225,
+          "covered_mean_probability": 0.5329
+        },
+        "robust": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "covered_accuracy": 0.9252,
+          "covered_mean_probability": 0.527
+        }
+      },
+      "deltas": {
+        "force_score_accuracy_robust_minus_champion": 0.0039,
+        "force_score_brier_robust_minus_champion": 0.0028,
+        "with_abstention_accuracy_robust_minus_champion": 0.0027
+      }
+    },
+    {
+      "scenario": "no_recovery_cbc",
+      "stripped_modalities": [
+        "cbc_recovery"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "champion": {
+          "accuracy": 0.9208,
+          "brier": 0.0593,
+          "mean_probability": 0.557
+        },
+        "robust": {
+          "accuracy": 0.9228,
+          "brier": 0.0625,
+          "mean_probability": 0.5521
+        }
+      },
+      "with_abstention": {
+        "champion": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "covered_accuracy": 0.9225,
+          "covered_mean_probability": 0.5343
+        },
+        "robust": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "covered_accuracy": 0.9238,
+          "covered_mean_probability": 0.5312
+        }
+      },
+      "deltas": {
+        "force_score_accuracy_robust_minus_champion": 0.002,
+        "force_score_brier_robust_minus_champion": 0.0032,
+        "with_abstention_accuracy_robust_minus_champion": 0.0013
+      }
+    },
+    {
+      "scenario": "imaging_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "champion": {
+          "accuracy": 0.9044,
+          "brier": 0.0679,
+          "mean_probability": 0.5702
+        },
+        "robust": {
+          "accuracy": 0.9119,
+          "brier": 0.0676,
+          "mean_probability": 0.5389
+        }
+      },
+      "with_abstention": {
+        "champion": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "covered_accuracy": 0.906,
+          "covered_mean_probability": 0.5421
+        },
+        "robust": {
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "covered_accuracy": 0.9132,
+          "covered_mean_probability": 0.5233
+        }
+      },
+      "deltas": {
+        "force_score_accuracy_robust_minus_champion": 0.0075,
+        "force_score_brier_robust_minus_champion": -0.0003,
+        "with_abstention_accuracy_robust_minus_champion": 0.0072
+      }
+    },
+    {
+      "scenario": "cbc_pre_only",
+      "stripped_modalities": [
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "champion": {
+          "accuracy": 0.5503,
+          "brier": 0.2829,
+          "mean_probability": 0.542
+        },
+        "robust": {
+          "accuracy": 0.6192,
+          "brier": 0.2227,
+          "mean_probability": 0.5613
+        }
+      },
+      "with_abstention": {
+        "champion": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "covered_accuracy": null,
+          "covered_mean_probability": null
+        },
+        "robust": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "covered_accuracy": null,
+          "covered_mean_probability": null
+        }
+      },
+      "deltas": {
+        "force_score_accuracy_robust_minus_champion": 0.0689,
+        "force_score_brier_robust_minus_champion": -0.0602,
+        "with_abstention_accuracy_robust_minus_champion": 0.0
+      }
+    },
+    {
+      "scenario": "demographics_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "symptoms",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "champion": {
+          "accuracy": 0.565,
+          "brier": 0.2687,
+          "mean_probability": 0.5829
+        },
+        "robust": {
+          "accuracy": 0.6147,
+          "brier": 0.2238,
+          "mean_probability": 0.5555
+        }
+      },
+      "with_abstention": {
+        "champion": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "covered_accuracy": null,
+          "covered_mean_probability": null
+        },
+        "robust": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "covered_accuracy": null,
+          "covered_mean_probability": null
+        }
+      },
+      "deltas": {
+        "force_score_accuracy_robust_minus_champion": 0.0497,
+        "force_score_brier_robust_minus_champion": -0.0449,
+        "with_abstention_accuracy_robust_minus_champion": 0.0
+      }
+    },
+    {
+      "scenario": "symptoms_only",
+      "stripped_modalities": [
+        "cbc_pre",
+        "cbc_nadir",
+        "cbc_recovery",
+        "imaging",
+        "interventions"
+      ],
+      "rows_evaluated": 3600,
+      "force_score": {
+        "champion": {
+          "accuracy": 0.5631,
+          "brier": 0.2692,
+          "mean_probability": 0.5803
+        },
+        "robust": {
+          "accuracy": 0.615,
+          "brier": 0.224,
+          "mean_probability": 0.554
+        }
+      },
+      "with_abstention": {
+        "champion": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "covered_accuracy": null,
+          "covered_mean_probability": null
+        },
+        "robust": {
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "covered_accuracy": null,
+          "covered_mean_probability": null
+        }
+      },
+      "deltas": {
+        "force_score_accuracy_robust_minus_champion": 0.0519,
+        "force_score_brier_robust_minus_champion": -0.0452,
+        "with_abstention_accuracy_robust_minus_champion": 0.0
+      }
+    }
+  ],
+  "summary": {
+    "status": "robust",
+    "scenario_count": 8,
+    "force_score_accuracy_wins_for_robust": 5,
+    "force_score_accuracy_ties": 3,
+    "force_score_accuracy_losses_for_robust": 0,
+    "full_data_accuracy_delta": 0.0022,
+    "full_data_brier_delta": 0.0032
+  },
+  "interpretation": "force_score view isolates the trained classifier (no abstention rules applied), with_abstention view matches production behavior. Positive accuracy deltas mean the robust variant beats the champion on the rows it scored; negative Brier deltas mean the robust variant is better-calibrated.",
+  "claim_boundary": "Synthetic comparison only.  Improvements here describe how the model handles its own training-distribution missingness pattern, not clinical robustness on real patient timelines."
+}

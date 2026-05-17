@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { LayoutDashboard, MessageSquare, Users } from "lucide-react";
+import { LayoutDashboard, MessageSquare, Users, ShieldCheck, FileText, History } from "lucide-react";
 import { AppShell } from "../../components/layout/AppShell";
 import { useApi } from "../../hooks/useApi";
 import {
@@ -7,19 +7,23 @@ import {
   getReviewQueue,
   getSummaryReviews,
   sendClinicianChat,
+  getClinicianPatientPredictionTraces,
 } from "../../api/client";
 import { EmptyPane, ErrorPane, LoadingPane } from "../../components/ui/Spinner";
 import { Badge } from "../../components/ui/Badge";
 import { statusVariant } from "../../components/ui/badgeUtils";
-import { Card, CardHeader, SectionTitle } from "../../components/ui/Card";
+import { SectionCard } from "../../components/ui/SectionCard";
 import { LabsPanel } from "../patient/LabsPanel";
 import { TimelinePanel } from "../patient/TimelinePanel";
 import { AiSummaryPanel } from "../patient/AiSummaryPanel";
+import { EvidenceAwarePredictionCard } from "../patient/EvidenceAwarePredictionCard";
+import { HybridPredictionCard } from "../patient/HybridPredictionCard";
 import { ReviewQueue } from "./ReviewQueue";
 import { ReviewPanel } from "./ReviewPanel";
 import { GeneticReadinessCard } from "./GeneticReadinessCard";
+import { PredictionTracesPanel } from "./PredictionTracesPanel";
 import { ChatPanel } from "../../components/ui/ChatPanel";
-import type { ChatMessage, PatientReport } from "../../types/api";
+import type { PatientReport, ClinicianPredictionTracesResponse } from "../../types/api";
 
 const NAV = [
   { to: "/clinician", label: "Review Queue", icon: Users },
@@ -54,8 +58,19 @@ export default function ClinicianDashboard() {
     }, [activePatientId, reviewKey]),
     [activePatientId, reviewKey]
   );
+  const { data: tracesData, status: tracesStatus, refetch: refetchTraces } = useApi(
+    useCallback(() => {
+      return activePatientId
+        ? getClinicianPatientPredictionTraces(activePatientId, { limit: 25 })
+        : Promise.resolve(null as unknown as ClinicianPredictionTracesResponse);
+    }, [activePatientId]),
+    [activePatientId, reviewKey],
+  );
   const activeChatMessages = patientReport?.chat_history ?? [];
-  const activeChatKey = buildChatKey(activePatientId ?? "none", activeChatMessages);
+  // Stable chat key — keyed only on patient scope, never on message contents.
+  // (Same fix the patient portal got: including length/last-message in the
+  // key forced ChatPanel to remount mid-stream and crashed under StrictMode.)
+  const activeChatKey = `clinician-chat:${activePatientId ?? "none"}`;
 
   return (
     <AppShell
@@ -122,8 +137,21 @@ export default function ClinicianDashboard() {
               />
 
               <AiSummaryPanel summary={patientReport.ai_summary ?? null} />
+              {patientReport.hybrid_prediction !== undefined && patientReport.hybrid_prediction !== null ? (
+                <HybridPredictionCard hybrid={patientReport.hybrid_prediction} />
+              ) : patientReport.evidence_aware_prediction !== undefined ? (
+                <EvidenceAwarePredictionCard
+                  prediction={patientReport.evidence_aware_prediction}
+                />
+              ) : null}
               <LabsPanel report={patientReport} />
               <TimelinePanel events={patientReport.timeline ?? []} />
+
+              <PredictionTracesPanel
+                data={tracesData as ClinicianPredictionTracesResponse | null}
+                loading={tracesStatus === "loading"}
+                onRefresh={refetchTraces}
+              />
 
               {(reviewsData?.summary_reviews ?? []).length > 0 && (
                 <AuditTrail reviews={reviewsData!.summary_reviews} />
@@ -139,6 +167,7 @@ export default function ClinicianDashboard() {
                 onReviewed={() => {
                   setReviewKey((k) => k + 1);
                   refetchReport();
+                  refetchTraces();
                 }}
               />
 
@@ -159,17 +188,33 @@ export default function ClinicianDashboard() {
                   />
                 </div>
               </div>
+
+              {/* Page-bottom safety footnote — mirrors the patient portal so
+                  the proof-of-concept boundary stays visible after scroll. */}
+              <p
+                className="inline-flex items-start gap-2 text-[0.74rem] leading-relaxed"
+                style={{
+                  color: "var(--text-faint)",
+                  margin: "12px 0 0",
+                  padding: "10px 12px",
+                  border: "1px solid var(--border)",
+                  borderRadius: 8,
+                  background: "var(--surface2)",
+                }}
+              >
+                <ShieldCheck size={13} style={{ color: "var(--rose-deep)", flexShrink: 0, marginTop: 1 }} aria-hidden="true" />
+                <span>
+                  <strong style={{ color: "var(--text-dim)" }}>Proof-of-concept</strong> — clinician review
+                  surface for engineering practice only. Model signals, RAG citations, and prediction traces
+                  are synthetic monitoring evidence and must not be used for treatment decisions.
+                </span>
+              </p>
             </div>
           )}
         </section>
       </div>
     </AppShell>
   );
-}
-
-function buildChatKey(scope: string, messages: ChatMessage[]) {
-  const last = messages.at(-1);
-  return [scope, messages.length, last?.role ?? "none", (last?.message ?? "").slice(0, 40)].join(":");
 }
 
 function BreastProfileCard({ profile }: { profile: NonNullable<PatientReport["breast_cancer_profile"]> }) {
@@ -182,8 +227,7 @@ function BreastProfileCard({ profile }: { profile: NonNullable<PatientReport["br
     { label: "Intent", value: profile.treatment_intent },
   ];
   return (
-    <Card>
-      <CardHeader><SectionTitle>Breast Cancer Profile</SectionTitle></CardHeader>
+    <SectionCard title="Breast cancer profile" icon={FileText}>
       <div className="profile-stat-grid">
         {items.map(({ label, value }) => (
           <div key={label} className="profile-stat">
@@ -192,14 +236,17 @@ function BreastProfileCard({ profile }: { profile: NonNullable<PatientReport["br
           </div>
         ))}
       </div>
-    </Card>
+    </SectionCard>
   );
 }
 
 function AuditTrail({ reviews }: { reviews: import("../../types/api").SummaryReview[] }) {
   return (
-    <Card>
-      <CardHeader><SectionTitle>Audit Trail</SectionTitle></CardHeader>
+    <SectionCard
+      title="Audit trail"
+      icon={History}
+      meta={reviews.length > 0 ? `${reviews.length} reviews` : undefined}
+    >
       <div className="flex flex-col gap-2">
         {reviews.slice(0, 5).map((r) => (
           <div key={r.id} className="audit-row">
@@ -211,6 +258,6 @@ function AuditTrail({ reviews }: { reviews: import("../../types/api").SummaryRev
           </div>
         ))}
       </div>
-    </Card>
+    </SectionCard>
   );
 }

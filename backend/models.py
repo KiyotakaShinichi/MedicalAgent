@@ -345,6 +345,63 @@ class PredictionAuditLog(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class PredictionTrace(Base):
+    """End-to-end traceability row for one evidence-aware prediction.
+
+    Every call to `predict_with_abstention` that opts into tracing writes
+    one row here.  The schema is a flat audit record — indexable fields for
+    filtering (status, decision, question, model_version), JSON columns for
+    list/dict payloads that don't need indexing.  All medical claims are
+    monitor-only; this table records what the system said, not what the
+    correct clinical answer is.
+    """
+
+    __tablename__ = "prediction_traces"
+
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=True, index=True)
+    request_id = Column(String, nullable=True, index=True)
+    actor_role = Column(String, nullable=True, index=True)
+
+    # What was asked + how it was answered.
+    question = Column(String, nullable=False, index=True)
+    decision = Column(String, nullable=False, index=True)
+    probability = Column(Float, nullable=True)
+    raw_probability = Column(Float, nullable=True)
+    calibrated = Column(Integer, nullable=False, default=0)
+    confidence = Column(String, nullable=True)
+
+    # Evidence-sufficiency snapshot.
+    evidence_sufficiency = Column(String, nullable=True, index=True)
+    abstained = Column(Integer, nullable=False, default=0, index=True)
+    abstain_reason = Column(String, nullable=True)
+    modalities_present_json = Column(Text, nullable=True)
+    modalities_missing_json = Column(Text, nullable=True)
+    confidence_modifier = Column(Float, nullable=True)
+
+    # Model + configuration provenance — the four "what was running" fields
+    # a reviewer needs to reproduce or audit a prediction.
+    model_version = Column(String, nullable=False)
+    feature_set_version = Column(String, nullable=True)
+    threshold_config_json = Column(Text, nullable=True)
+    calibration_config_json = Column(Text, nullable=True)
+
+    # Cross-layer linkage: safety rules that fired, the validator's verdict,
+    # and any RAG sources the response leaned on (when the trace is for a
+    # chat-driven inference, not a batch eval).
+    safety_triggers_json = Column(Text, nullable=True)
+    validator_decision = Column(String, nullable=True, index=True)
+    rag_source_ids_json = Column(Text, nullable=True)
+
+    # Optional snapshot fingerprint of the patient timeline that produced
+    # the row.  Lets a clinician reproduce the exact input later.
+    timeline_snapshot_hash = Column(String, nullable=True, index=True)
+
+    # Free-form notes the validator or caller wants to attach.
+    notes = Column(Text, nullable=True)
+
+
 class ClinicalSummaryReview(Base):
     __tablename__ = "clinical_summary_reviews"
 

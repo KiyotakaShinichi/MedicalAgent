@@ -1,0 +1,56 @@
+{
+  "schema_version": "modality_robust_regression_training_v1",
+  "generated_at": "2026-05-17T05:13:07.067298+00:00",
+  "status": "strong",
+  "target": "response_score_percent",
+  "ml_csv_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "model_path": "Data/complete_synthetic_training/modality_robust_response_score_percent.joblib",
+  "seed": 42,
+  "training_config": {
+    "n_aug_per_row": 3,
+    "p_drop_per_modality": 0.3,
+    "max_simultaneous_dropouts": 3,
+    "protected_modalities": [
+      "demographics"
+    ],
+    "test_size": 0.25
+  },
+  "patient_split": {
+    "train_patient_count": 450,
+    "test_patient_count": 150,
+    "split_disjoint": true
+  },
+  "augmentation_stats": {
+    "input_rows": 2700,
+    "output_rows": 8100,
+    "augmented_rows_added": 5400,
+    "total_dropouts_applied": 9271,
+    "mean_dropouts_per_augmented_row": 1.7169,
+    "dropouts_by_modality": {
+      "cbc_pre": 1531,
+      "cbc_nadir": 1558,
+      "cbc_recovery": 1551,
+      "imaging": 1564,
+      "symptoms": 1558,
+      "interventions": 1509
+    },
+    "protected_modalities": [
+      "demographics"
+    ],
+    "droppable_modalities": [
+      "cbc_pre",
+      "cbc_nadir",
+      "cbc_recovery",
+      "imaging",
+      "symptoms",
+      "interventions"
+    ]
+  },
+  "test_metrics": {
+    "mae": 2.5805925445526676,
+    "rmse": 5.059191392781151,
+    "mean_prediction": 26.254478638169036,
+    "test_rows": 900
+  },
+  "claim_boundary": "Engineering artifact only.  Modality-dropout augmentation teaches the regressor to handle synthetic missingness; it does not establish clinical regression robustness."
+}

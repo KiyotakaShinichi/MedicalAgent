@@ -21,6 +21,13 @@ from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_imaging_report_payload, validate_symptom_payload
 from backend.services.local_llm import select_support_tools_with_local_llm
 from backend.services.security_guardrails import detect_multilingual_medical_danger, normalize_security_text
+from backend.services.conversation_state import (
+    clear_pending_action,
+    get_pending_action,
+    remember_turn,
+    set_pending_action,
+    state_snapshot,
+)
 
 
 SYMPTOM_KEYWORDS = {
@@ -98,6 +105,7 @@ def handle_patient_chat(db, patient_id, message):
     normalized = message.strip()
     if not normalized:
         raise ValueError("Message cannot be empty")
+    remember_turn(patient_id, "user", normalized)
 
     urgent_flags = _detect_urgent_flags(normalized)
     routing_safety = safety_scope_check(normalized, urgent_flags)
@@ -134,6 +142,11 @@ def handle_patient_chat(db, patient_id, message):
                     f"\"{symptom['symptom']} severity 6/10 today\"."
                 ),
             })
+            set_pending_action(patient_id, "symptom_save", {
+                "type": "partial_symptom_detected",
+                "symptom": symptom["symptom"],
+                "source": "support_chat_agent",
+            })
         else:
             severity = int(symptom["severity"])
             try:
@@ -152,6 +165,7 @@ def handle_patient_chat(db, patient_id, message):
                     "severity": severity,
                     "resumed_from_memory": bool(symptom.get("resumed_from_memory")),
                 })
+                clear_pending_action(patient_id, "symptom_save")
             except Exception as exc:
                 # Validation or DB write failed.  Roll back the pending change
                 # and surface a truthful "I couldn't save it yet" action.
@@ -176,6 +190,11 @@ def handle_patient_chat(db, patient_id, message):
                 f"send the severity from 0-10, for example: "
                 f"\"{symptom['symptom']} severity 6/10 today\"."
             ),
+        })
+        set_pending_action(patient_id, "symptom_save", {
+            "type": "partial_symptom_detected",
+            "symptom": symptom["symptom"],
+            "source": "support_chat_agent",
         })
 
     labs = extracted["labs"]
@@ -307,6 +326,7 @@ def handle_patient_chat(db, patient_id, message):
         saved_actions_json=json.dumps({
             "saved_actions": actions,
             "tool_plan": tool_plan,
+            "conversation_state": state_snapshot(patient_id),
             "agent_pipeline": {
                 "intent": agent_result.get("intent"),
                 "safety": agent_result.get("safety"),
@@ -321,6 +341,7 @@ def handle_patient_chat(db, patient_id, message):
     db.add(assistant_record)
     db.commit()
     db.refresh(assistant_record)
+    remember_turn(patient_id, "assistant", response, actions=actions)
     log_app_event(
         db=db,
         event_type="agent_rag",
@@ -332,6 +353,9 @@ def handle_patient_chat(db, patient_id, message):
             "safety_level": (agent_result.get("safety") or {}).get("level"),
             "cache": agent_result.get("cache"),
             "tool_plan": tool_plan,
+            "conversation_state": {
+                "pending_actions": state_snapshot(patient_id).get("pending_actions"),
+            },
         },
         output_payload={
             "citation_count": len(agent_result.get("citations") or []),
@@ -343,6 +367,7 @@ def handle_patient_chat(db, patient_id, message):
         "reply": response,
         "saved_actions": actions,
         "tool_plan": tool_plan,
+        "conversation_state": state_snapshot(patient_id),
         "urgent_flags": urgent_flags,
         "agent_pipeline": {
             "intent": agent_result.get("intent"),
@@ -402,6 +427,15 @@ def _resume_pending_symptom_if_possible(db, patient_id, message, extracted):
     severity = _extract_severity(message.lower())
     if severity is None:
         return None
+    pending = get_pending_action(patient_id, "symptom_save")
+    if pending and pending.get("symptom"):
+        return {
+            "symptom": str(pending["symptom"]),
+            "severity": severity,
+            "severity_provided": True,
+            "resumed_from_memory": True,
+            "memory_source": "conversation_state",
+        }
     pending_symptom = _latest_pending_symptom(db, patient_id)
     if not pending_symptom:
         return None

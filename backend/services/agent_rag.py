@@ -1202,6 +1202,40 @@ def validate_answer_and_citations(generated, compressed_context, safety):
 def _finalize_result(db, patient_id, query, rewritten, result, retrieved, reranked, compressed, input_guardrails, started):
     latency_ms = round((perf_counter() - started) * 1000, 2)
     output_guardrails = output_guardrail_check(result)
+
+    # Post-generation validator: re-reads the generated reply and blocks
+    # output if the model is making a diagnosis, treatment-recommendation,
+    # prognosis-estimate, dosage, genetic-risk, or tumor-marker overclaim.
+    # Runs AFTER `output_guardrail_check` so the legacy heuristics and the
+    # new validator both contribute to the trace; the validator wins (it
+    # overrides the reply with a safe refusal when it fires).
+    from backend.services.post_generation_validator import validate_reply
+
+    pgv_decision = validate_reply(result.get("reply") or "")
+    if pgv_decision.decision == "blocked":
+        original_reply = result.get("reply")
+        result["reply"] = pgv_decision.suggested_response
+        # Strip citations since the blocked output cannot back them either.
+        result["citations"] = []
+        result["post_gen_validator"] = {
+            "decision": "blocked",
+            "triggered_rules": pgv_decision.triggered_rules,
+            "matched_excerpts": pgv_decision.matched_excerpts,
+            "original_reply_preview": (original_reply or "")[:240],
+        }
+        # Surface the block in the output-guardrail block too so existing
+        # consumers (RAG eval, trace log) see it without a new field.
+        if isinstance(output_guardrails, dict):
+            output_guardrails = dict(output_guardrails)
+            output_guardrails["status"] = "blocked_by_post_gen_validator"
+            existing_issues = list(output_guardrails.get("issues") or [])
+            existing_issues.extend(
+                f"post_gen::{rule}" for rule in pgv_decision.triggered_rules
+            )
+            output_guardrails["issues"] = existing_issues
+    else:
+        result["post_gen_validator"] = {"decision": "allowed", "triggered_rules": []}
+
     rag_evaluation = evaluate_rag_response(
         query=query,
         rewritten=rewritten,

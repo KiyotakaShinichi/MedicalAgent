@@ -19,6 +19,11 @@ import { clsx } from "clsx";
 import { Spinner } from "./Spinner";
 import { MarkdownMessage } from "./MarkdownMessage";
 import { ErrorBoundary } from "./ErrorBoundary";
+import {
+  normaliseMessages,
+  parseCitations,
+  type NormalisedMessage,
+} from "./chat-utils";
 import type { ChatMessage as ChatMessageType, ChatStreamHandlers, SavedAction } from "../../types/api";
 
 const PIPELINE_STAGES = [
@@ -49,22 +54,6 @@ function usePipelineStatus(active: boolean) {
   const elapsedMs = Math.max(0, timing.now - timing.startedAt);
   const idx = PIPELINE_STAGES.findLastIndex((step) => elapsedMs >= step.delay);
   return PIPELINE_STAGES[Math.max(0, idx)].label;
-}
-
-/**
- * Normalised in-memory message shape used by the renderer.  Always carries
- * an `id` so React keys are stable across re-renders and so streaming deltas
- * can target the exact message they belong to (instead of an index that goes
- * stale when StrictMode double-invokes state updaters).
- */
-interface NormalisedMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  saved_actions: SavedAction[];
-  citations: string[];
-  /** Tagged when this assistant bubble is the live target of an in-flight stream. */
-  streamId?: string;
 }
 
 interface ChatPanelProps {
@@ -130,74 +119,6 @@ const CHIP_STYLE: Record<ChipTone, { bg: string; fg: string; border: string }> =
 export function describeSavedAction(action: SavedAction): { label: string; tone: ChipTone } {
   const { label, tone } = chipDescriptor(action);
   return { label, tone };
-}
-
-/**
- * Defensive parser: the backend may store either a raw SavedAction[] or
- * an object wrapper `{saved_actions: [...], tool_plan, agent_pipeline}`.
- * Returns [] for anything that isn't recognisable.
- */
-function parseSavedActions(raw?: unknown): SavedAction[] {
-  if (!raw) return [];
-  let parsed: unknown = raw;
-  if (typeof raw === "string") {
-    try { parsed = JSON.parse(raw); } catch { return []; }
-  }
-  if (Array.isArray(parsed)) return parsed.filter((a) => a && typeof (a as SavedAction).type === "string") as SavedAction[];
-  if (parsed && typeof parsed === "object") {
-    const wrapped = (parsed as { saved_actions?: unknown }).saved_actions;
-    if (Array.isArray(wrapped)) {
-      return wrapped.filter((a) => a && typeof (a as SavedAction).type === "string") as SavedAction[];
-    }
-  }
-  return [];
-}
-
-function parseCitations(raw: unknown): string[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .map((c) => (typeof c === "string" ? c : String(((c as { id?: unknown }).id) ?? "")))
-    .filter((s) => Boolean(s));
-}
-
-/**
- * Normalise any value that might be a message into our strict shape.
- * Accepts ``message`` or ``content`` field names so a backend schema rename
- * doesn't crash the UI.  Returns ``null`` for unsalvageable input.
- */
-function normaliseMessage(raw: unknown, fallbackIndex: number): NormalisedMessage | null {
-  if (!raw || typeof raw !== "object") return null;
-  const m = raw as Record<string, unknown>;
-  const role = m.role === "assistant" ? "assistant" : m.role === "user" ? "user" : null;
-  if (!role) return null;
-  // Backend currently uses `message`; accept `content` defensively in case
-  // the API contract changes or a streaming chunk arrives with a different
-  // field name.
-  const rawContent =
-    typeof m.message === "string" ? m.message :
-    typeof m.content === "string" ? m.content :
-    "";
-  const id =
-    typeof m.id === "string" || typeof m.id === "number"
-      ? String(m.id)
-      : `msg_${role}_${fallbackIndex}`;
-  return {
-    id,
-    role,
-    content: rawContent,
-    saved_actions: parseSavedActions(m.saved_actions_json ?? m.saved_actions),
-    citations: parseCitations(m.citations),
-  };
-}
-
-function normaliseMessages(input: unknown): NormalisedMessage[] {
-  if (!Array.isArray(input)) return [];
-  const out: NormalisedMessage[] = [];
-  for (let i = 0; i < input.length; i++) {
-    const n = normaliseMessage(input[i], i);
-    if (n) out.push(n);
-  }
-  return out;
 }
 
 function ActionChip({ action }: { action: SavedAction }) {

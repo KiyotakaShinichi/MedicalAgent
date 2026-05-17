@@ -18,6 +18,11 @@ import type {
   PredictionErrorTable,
   RagAblationResult,
   PublicDataManifest,
+  PublicBiomarkerDatasetManifest,
+  PublicBiomarkerMappingReadiness,
+  CbioportalBiomarkerSchemaMapping,
+  ClinicalSafetyReviewChecklist,
+  SystemHealth,
   PublicImagingManifest,
   UltrasoundBaselineResult,
   CtLesionWorkflowReport,
@@ -201,6 +206,111 @@ export const uploadFile = (payload: {
   scan_date?: string;
 }) => post<{ message: string; upload: unknown }>("/me/uploads", payload);
 
+/**
+ * Patient-scoped symptom save (manual-entry form).  Mirrors POST /me/symptoms
+ * on the backend.  Date is yyyy-mm-dd.  ``urgent_flag`` is the explicit
+ * patient-set checkbox; the backend folds it into the notes column with an
+ * `[urgent flag]` tag so the existing review queue picks it up — it does
+ * NOT auto-trigger any safety routing on its own.
+ */
+export interface AddMySymptomPayload {
+  date: string;
+  symptom: string;
+  severity: number;
+  notes?: string;
+  duration?: string;
+  urgent_flag?: boolean;
+}
+
+export interface AddMySymptomResponse {
+  message: string;
+  symptom_id: number;
+  validation_warnings: { field: string; level: string; message: string }[];
+  urgent_flag: boolean;
+  safety_note: string;
+}
+
+export const addMySymptom = (payload: AddMySymptomPayload) =>
+  post<AddMySymptomResponse>("/me/symptoms", payload);
+
+// ─── Patient-scoped tool saves ───────────────────────────────────────────────
+
+export interface AddMyLabPayload {
+  date: string;
+  wbc: number;
+  hemoglobin: number;
+  platelets: number;
+  anc?: number;
+  lab_source?: string;
+  notes?: string;
+}
+
+export interface AddMyLabResponse {
+  message: string;
+  lab_id: number;
+  validation_warnings: { field: string; level: string; message: string }[];
+  safety_note: string;
+}
+
+export const addMyLab = (payload: AddMyLabPayload) =>
+  post<AddMyLabResponse>("/me/labs", payload);
+
+export interface AddMyImagingReportPayload {
+  date: string;
+  modality: string;          // MRI / CT / Ultrasound / Mammogram / Other
+  report_type?: string;
+  body_site?: string;
+  findings?: string;
+  impression?: string;
+  notes?: string;
+}
+
+export interface AddMyImagingReportResponse {
+  message: string;
+  imaging_report_id: number;
+  modality: string;
+  validation_warnings: { field: string; level: string; message: string }[];
+  safety_note: string;
+}
+
+export const addMyImagingReport = (payload: AddMyImagingReportPayload) =>
+  post<AddMyImagingReportResponse>("/me/imaging-reports", payload);
+
+export interface AddMyMedicationPayload {
+  medication: string;
+  dose?: string;
+  frequency?: string;
+  date: string;
+  side_effects?: string;
+  notes?: string;
+}
+
+export interface AddMyMedicationResponse {
+  message: string;
+  medication_id: number;
+  safety_note: string;
+}
+
+export const addMyMedication = (payload: AddMyMedicationPayload) =>
+  post<AddMyMedicationResponse>("/me/medications", payload);
+
+export interface AddMyTreatmentPayload {
+  date: string;
+  drug: string;
+  cycle?: number;
+  notes?: string;
+}
+
+export interface AddMyTreatmentResponse {
+  message: string;
+  treatment_id: number;
+  validation_warnings: { field: string; level: string; message: string }[];
+  safety_note: string;
+}
+
+export const addMyTreatment = (payload: AddMyTreatmentPayload) =>
+  post<AddMyTreatmentResponse>("/me/treatments", payload);
+
 export const getMyGeneticCounselingReadiness = () =>
   get<GeneticCounselingReadiness>("/me/genetic-counseling-readiness");
 
@@ -364,6 +474,38 @@ export const getPublicDataManifest = () =>
 export const runPublicDataManifest = () =>
   post<{ message: string; result: PublicDataManifest }>("/admin/public-data-manifest");
 
+export const getPublicBiomarkerDatasetManifest = () =>
+  get<PublicBiomarkerDatasetManifest>("/admin/public-biomarker-dataset-manifest");
+
+export const runPublicBiomarkerDatasetManifest = () =>
+  post<{ message: string; result: PublicBiomarkerDatasetManifest }>("/admin/public-biomarker-dataset-manifest");
+
+export const getPublicBiomarkerMappingReadiness = () =>
+  get<PublicBiomarkerMappingReadiness>("/admin/public-biomarker-mapping-readiness");
+
+export const runPublicBiomarkerMappingReadiness = () =>
+  post<{ message: string; result: PublicBiomarkerMappingReadiness }>("/admin/public-biomarker-mapping-readiness");
+
+export const getCbioportalBiomarkerSchemaMapping = () =>
+  get<CbioportalBiomarkerSchemaMapping>("/admin/cbioportal-biomarker-schema-mapping");
+
+export const runCbioportalBiomarkerSchemaMapping = (liveFetch = true) =>
+  post<{ message: string; result: CbioportalBiomarkerSchemaMapping }>(
+    `/admin/cbioportal-biomarker-schema-mapping?live_fetch=${liveFetch ? "true" : "false"}`
+  );
+
+export const getClinicalSafetyReviewChecklist = () =>
+  get<ClinicalSafetyReviewChecklist>("/admin/clinical-safety-review-checklist");
+
+export const runClinicalSafetyReviewChecklist = () =>
+  post<{ message: string; result: ClinicalSafetyReviewChecklist }>("/admin/clinical-safety-review-checklist");
+
+export const getSystemHealth = () =>
+  get<SystemHealth>("/admin/system-health");
+
+export const runSystemHealth = () =>
+  post<{ message: string; result: SystemHealth }>("/admin/system-health");
+
 export const getPublicImagingManifest = () =>
   get<PublicImagingManifest>("/admin/public-imaging-manifest");
 
@@ -410,6 +552,90 @@ export const getCurrentVsRealismCandidate = () =>
 export const runCurrentVsRealismCandidate = () =>
   post<{ message: string; result: import("../types/api").CurrentVsRealismCandidateReport }>(
     "/admin/current-vs-realism-candidate"
+  );
+
+export const getBiomarkerFeatureBenchmark = () =>
+  get<unknown>("/admin/biomarker-feature-benchmark");
+
+export const runBiomarkerFeatureBenchmark = () =>
+  post<{ message: string; result: unknown }>("/admin/biomarker-feature-benchmark");
+
+export const getLeakageAudit = () =>
+  get<import("../types/api").LeakageAuditReport>("/admin/leakage-audit");
+
+export const runLeakageAudit = () =>
+  post<{ message: string; result: import("../types/api").LeakageAuditReport }>(
+    "/admin/leakage-audit",
+  );
+
+export const getKbSourceGovernance = () =>
+  get<import("../types/api").KbSourceGovernanceReport>("/admin/kb-source-governance");
+
+export const runKbSourceGovernance = () =>
+  post<{ message: string; result: import("../types/api").KbSourceGovernanceReport }>(
+    "/admin/kb-source-governance",
+  );
+
+export const getSyntheticGeneratorCard = () =>
+  get<import("../types/api").SyntheticGeneratorCard>("/admin/synthetic-generator-card");
+
+export const runSyntheticGeneratorCard = () =>
+  post<{ message: string; result: import("../types/api").SyntheticGeneratorCard }>(
+    "/admin/synthetic-generator-card",
+  );
+
+export const getFailureModeRegistry = () =>
+  get<import("../types/api").FailureModeRegistry>("/admin/failure-mode-registry");
+
+export const runFailureModeRegistry = () =>
+  post<{ message: string; result: import("../types/api").FailureModeRegistry }>(
+    "/admin/failure-mode-registry",
+  );
+
+export const getModalityRobustnessComparison = () =>
+  get<import("../types/api").ModalityRobustnessComparisonReport>(
+    "/admin/modality-robustness-comparison",
+  );
+
+export const runModalityRobustnessComparison = () =>
+  post<{ message: string; result: import("../types/api").ModalityRobustnessComparisonReport }>(
+    "/admin/modality-robustness-comparison",
+  );
+
+export const getClinicianPatientPredictionTraces = (patient_id: string, params?: {
+  limit?: number;
+  abstained_only?: boolean;
+}) => {
+  const q = new URLSearchParams();
+  if (params?.limit != null) q.set("limit", String(params.limit));
+  if (params?.abstained_only) q.set("abstained_only", "true");
+  const suffix = q.toString() ? `?${q.toString()}` : "";
+  return get<import("../types/api").ClinicianPredictionTracesResponse>(
+    `/clinician/patients/${encodeURIComponent(patient_id)}/prediction-traces${suffix}`,
+  );
+};
+
+export const getPredictionTraces = (params?: {
+  limit?: number;
+  patient_id?: string;
+  decision?: string;
+  abstained_only?: boolean;
+}) => {
+  const q = new URLSearchParams();
+  if (params?.limit != null) q.set("limit", String(params.limit));
+  if (params?.patient_id) q.set("patient_id", params.patient_id);
+  if (params?.decision) q.set("decision", params.decision);
+  if (params?.abstained_only) q.set("abstained_only", "true");
+  const suffix = q.toString() ? `?${q.toString()}` : "";
+  return get<import("../types/api").PredictionTraceResponse>(`/admin/prediction-traces${suffix}`);
+};
+
+export const getEvidenceAbstentionEval = () =>
+  get<import("../types/api").EvidenceAbstentionEvalReport>("/admin/evidence-abstention-eval");
+
+export const runEvidenceAbstentionEval = () =>
+  post<{ message: string; result: import("../types/api").EvidenceAbstentionEvalReport }>(
+    "/admin/evidence-abstention-eval",
   );
 
 export const getMultilingualRefusalEval = () =>
