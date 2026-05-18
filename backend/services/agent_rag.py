@@ -15,7 +15,9 @@ from backend.services.request_context import get_request_id
 from backend.services.security_guardrails import detect_multilingual_medical_danger, detect_prompt_injection_or_exfiltration, normalize_security_text
 
 
-MAX_CONTEXT_CHARS = 1300
+# MAX_CONTEXT_CHARS + _CROSS_ENCODER_CACHE moved to
+# backend.services.agent_retrieval and are re-imported lower in this
+# module so existing references still resolve.
 AGENT_CACHE_TTL_DAYS = 30
 
 # Module-level cache for the merged KB corpus.  Avoids repeated disk reads on
@@ -23,7 +25,6 @@ AGENT_CACHE_TTL_DAYS = 30
 _KB_CORPUS_CACHE: list | None = None
 AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v4"
 SEMANTIC_CACHE_MIN_SIMILARITY = 0.86
-_CROSS_ENCODER_CACHE: dict = {}
 
 
 KNOWLEDGE_SNIPPETS = [
@@ -663,89 +664,9 @@ def semantic_cache_check(db, semantic_key, intent, min_similarity=SEMANTIC_CACHE
     }
 
 
-def hybrid_retrieval(rewritten, intent):
-    query_tokens = set(_tokenize(rewritten["expanded_query"]))
-    snippets = _knowledge_snippets()
-    indexed_rows = search_hybrid_index(
-        query=rewritten["expanded_query"],
-        corpus=snippets,
-        intent=intent,
-        knowledge_fingerprint=knowledge_base_fingerprint(),
-    )
-    if indexed_rows:
-        rows = []
-        for item in indexed_rows:
-            intent_boost = _intent_boost(intent, item)
-            domain_boost = _domain_boost(query_tokens, item)
-            section_boost = _section_boost(item)
-            is_curated = item.get("builtin") or item.get("source_name") in _CURATED_SOURCES
-            curated_boost = 1.0 if is_curated else 0.0
-            score = float(item.get("retrieval_score", 0)) + intent_boost + domain_boost + section_boost + curated_boost
-            rows.append({
-                **item,
-                "retrieval_score": round(score, 4),
-                "retrieval_trace": {
-                    "backend": item.get("backend") or item.get("retrieval_backend"),
-                    "sparse_score": item.get("sparse_score"),
-                    "dense_score": item.get("dense_score"),
-                    "rrf_score": item.get("rrf_score"),
-                    "fusion_score": item.get("fusion_score"),
-                    "metadata_score": item.get("metadata_score"),
-                    # backward-compat aliases
-                    "vector_score": item.get("vector_score"),
-                    "lexical_score": item.get("lexical_score"),
-                    "agent_intent_boost": round(intent_boost, 4),
-                    "agent_domain_boost": round(domain_boost, 4),
-                    "agent_section_boost": round(section_boost, 4),
-                    "agent_curated_boost": round(curated_boost, 4),
-                },
-            })
-        return sorted(rows, key=lambda row: row["retrieval_score"], reverse=True)[:5]
-
-    rows = []
-    for snippet in snippets:
-        metadata_text = " ".join([
-            snippet.get("title", ""),
-            snippet.get("text", ""),
-            " ".join(snippet.get("tags", [])),
-            snippet.get("topic") or "",
-            " ".join(snippet.get("modality", []) or []),
-            snippet.get("care_stage") or "",
-            snippet.get("section") or "",
-        ])
-        text_tokens = set(_tokenize(metadata_text))
-        lexical = len(query_tokens & text_tokens) / max(len(query_tokens), 1)
-        metadata_terms = set(snippet.get("tags", []))
-        metadata_terms.update(_tokenize(snippet.get("topic") or ""))
-        metadata_terms.update(_tokenize(" ".join(snippet.get("modality", []) or [])))
-        semantic = len(query_tokens & metadata_terms) / max(len(metadata_terms), 1)
-        intent_boost = _intent_boost(intent, snippet)
-        domain_boost = _domain_boost(query_tokens, snippet)
-        section_boost = _section_boost(snippet)
-        score = lexical + semantic + intent_boost + domain_boost + section_boost
-        if score > 0:
-            rows.append({
-                **snippet,
-                "retrieval_score": round(score, 4),
-                "matched_terms": sorted(query_tokens & text_tokens)[:10],
-            })
-    return sorted(rows, key=lambda row: row["retrieval_score"], reverse=True)[:5]
-
-
-def expand_parent_child_windows(retrieved):
-    seen = {item["id"] for item in retrieved}
-    expanded = list(retrieved)
-    parent_ids = {item["parent_id"] for item in retrieved}
-    for snippet in _knowledge_snippets():
-        if snippet["parent_id"] in parent_ids and snippet["id"] not in seen:
-            expanded.append({
-                **snippet,
-                "retrieval_score": 0.15,
-                "matched_terms": [],
-                "expansion": "parent_child_window",
-            })
-            seen.add(snippet["id"])
-    return expanded
+# hybrid_retrieval + expand_parent_child_windows moved to
+# backend.services.agent_retrieval as part of the agent_rag.py module
+# split.  Re-imported below alongside the rest of the retrieval module.
 
 
 def _knowledge_snippets():
@@ -769,118 +690,22 @@ def knowledge_base_fingerprint():
     return corpus_fingerprint(_knowledge_snippets())
 
 
-_CURATED_SOURCES = {
-    "CDC",
-    "National Cancer Institute",
-    "American Cancer Society",
-    "Project model card",
-    "Project safety policy",
-    "Project patient portal guide",
-    "Project feature rationale",
-    "Project agent design",
-}
-
-
-def rerank_context(expanded, rewritten, intent, safety):
-    query_tokens = set(_tokenize(rewritten["expanded_query"]))
-    cross_scores = _cross_encoder_scores(rewritten["expanded_query"], expanded)
-    reranked = []
-    for idx, item in enumerate(expanded):
-        tags = set(item["tags"])
-        coverage = len(query_tokens & tags)
-        safety_boost = 0.4 if safety.get("level") == "high_risk" and "urgent" in tags else 0
-        is_curated = item.get("builtin") or item.get("source_name") in _CURATED_SOURCES
-        source_boost = 1.0 if is_curated else 0.05
-        final_score = float(item.get("retrieval_score", 0)) + coverage * 0.18 + safety_boost + source_boost
-        cross_score = cross_scores[idx] if cross_scores is not None and idx < len(cross_scores) else None
-        if cross_score is not None:
-            final_score = 0.55 * final_score + 0.45 * cross_score
-        reranked.append({
-            **item,
-            "rerank_score": round(final_score, 4),
-            "cross_encoder_score": round(float(cross_score), 4) if cross_score is not None else None,
-            "reranker_backend": _reranker_backend(cross_score),
-        })
-    return sorted(reranked, key=lambda row: row["rerank_score"], reverse=True)[:5]
-
-
-def _cross_encoder_enabled() -> bool:
-    if os.getenv("RAG_ENABLE_CROSS_ENCODER", "").strip().lower() not in {"1", "true", "yes"}:
-        return False
-    return importlib.util.find_spec("sentence_transformers") is not None
-
-
-def _get_cross_encoder():
-    if not _cross_encoder_enabled():
-        return None
-    if "model" not in _CROSS_ENCODER_CACHE:
-        try:
-            from sentence_transformers import CrossEncoder
-
-            model_name = os.getenv("RAG_CROSS_ENCODER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
-            _CROSS_ENCODER_CACHE["model"] = CrossEncoder(model_name)
-            _CROSS_ENCODER_CACHE["name"] = model_name
-        except Exception as exc:
-            _CROSS_ENCODER_CACHE["error"] = str(exc)
-            return None
-    return _CROSS_ENCODER_CACHE.get("model")
-
-
-def _cross_encoder_scores(query: str, expanded: list[dict]) -> list[float] | None:
-    model = _get_cross_encoder()
-    if model is None or not expanded:
-        return None
-    pairs = [(query, (item.get("title") or "") + "\n" + (item.get("text") or "")) for item in expanded]
-    try:
-        raw_scores = model.predict(pairs)
-    except Exception as exc:
-        _CROSS_ENCODER_CACHE["error"] = str(exc)
-        return None
-    values = [float(score) for score in raw_scores]
-    if not values:
-        return []
-    lo = min(values)
-    hi = max(values)
-    if hi == lo:
-        return [0.5 for _ in values]
-    return [(value - lo) / (hi - lo) for value in values]
-
-
-def _reranker_backend(cross_score) -> str:
-    if cross_score is not None:
-        return f"cross_encoder:{_CROSS_ENCODER_CACHE.get('name') or 'enabled'}"
-    if _CROSS_ENCODER_CACHE.get("error"):
-        return f"heuristic_fallback:{_CROSS_ENCODER_CACHE['error'][:80]}"
-    return "heuristic_metadata_safety_reranker"
-
-
-def contextual_compression(reranked):
-    compressed = []
-    total = 0
-    for item in reranked:
-        text = item["text"]
-        if total + len(text) > MAX_CONTEXT_CHARS and compressed:
-            continue
-        compressed.append({
-            "id": item["id"],
-            "parent_id": item.get("parent_id"),
-            "title": item["title"],
-            "source_name": item["source_name"],
-            "source_url": item["source_url"],
-            "section": item.get("section"),
-            "topic": item.get("topic"),
-            "confidence": item.get("confidence"),
-            "text": text,
-            "score": item.get("rerank_score", item.get("retrieval_score")),
-            "reranker_backend": item.get("reranker_backend"),
-            "cross_encoder_score": item.get("cross_encoder_score"),
-            "retrieval_backend": item.get("retrieval_backend"),
-            "retrieval_trace": item.get("retrieval_trace"),
-        })
-        total += len(text)
-        if len(compressed) >= 3:
-            break
-    return compressed
+# rerank_context, contextual_compression, _CURATED_SOURCES,
+# _cross_encoder_* helpers moved to backend.services.agent_retrieval as
+# part of the agent_rag.py module split.  Re-imported below alongside
+# the rest of the retrieval module.
+from backend.services.agent_retrieval import (  # noqa: F401, E402
+    CURATED_SOURCES as _CURATED_SOURCES,
+    MAX_CONTEXT_CHARS,
+    _cross_encoder_enabled,
+    _cross_encoder_scores,
+    _get_cross_encoder,
+    _reranker_backend,
+    contextual_compression,
+    expand_parent_child_windows,
+    hybrid_retrieval,
+    rerank_context,
+)
 
 
 # generate_answer, validate_answer_and_citations, REFUSAL_INTENTS, and
@@ -1363,52 +1188,14 @@ def _security_block_reply(input_guardrails):
 # educational-reply pipeline.
 
 
-def _intent_boost(intent, snippet):
-    tags = set(snippet["tags"])
-    boosts = {
-        "portal_help": {"upload", "portal", "labs", "mri"},
-        "education": {"pcr", "cbc", "wbc", "chemotherapy", "side effects", "mri", "ct", "ascites", "imaging", "radiomics", "machine learning"},
-        "patient_timeline_monitoring": {"score", "monitoring", "cbc", "response", "mri_response_monitoring"},
-        "safety_boundary": {"urgent", "fever", "infection", "clinical safety", "cbc_toxicity_monitoring"},
-        "treatment_decision_boundary": {"treatment", "doctor", "chemotherapy"},
-        "emotional_support": {"symptoms", "doctor", "side effects"},
-    }
-    desired = boosts.get(intent, set())
-    topic = snippet.get("topic")
-    return 0.25 if (tags & desired or topic in desired) else 0
-
-
-# _is_conversation_opening / _is_identity_or_capability_question /
-# _is_social_checkin moved to backend.services.agent_intent_router and
-# re-imported at the top of this module.
-
-def _domain_boost(query_tokens, snippet):
-    tags = set(snippet.get("tags") or [])
-    topic = snippet.get("topic") or ""
-    modalities = {item.lower() for item in (snippet.get("modality") or [])}
-    boost = 0.0
-    if query_tokens & {"mri", "dce", "radiomics", "imaging", "pcr", "response"}:
-        if "MRI".lower() in modalities or "mri" in tags or "mri" in topic:
-            boost += 0.2
-    if query_tokens & {"ct", "ascites", "peritoneal"}:
-        if {"ct", "ascites", "peritoneal"} & (tags | modalities) or "ct_report" in topic:
-            boost += 0.45
-    if query_tokens & {"cbc", "wbc", "anc", "neutropenia", "platelets", "hemoglobin", "fever"}:
-        if "CBC".lower() in modalities or "cbc" in tags or "toxicity" in tags or "neutropenia" in topic:
-            boost += 0.2
-    if query_tokens & {"chemo", "chemotherapy", "neoadjuvant", "treatment"}:
-        if "chemotherapy" in tags or "treatment" in modalities or "treatment" in topic:
-            boost += 0.12
-    return boost
-
-
-def _section_boost(snippet):
-    section = snippet.get("section") or ""
-    if section in {"abstract", "conclusion", "conclusions", "clinical implications", "results"}:
-        return 0.08
-    if section in {"references"}:
-        return -0.25
-    return 0.0
+# _intent_boost / _domain_boost / _section_boost moved to
+# backend.services.agent_retrieval (re-imported via the agent_retrieval
+# import block earlier in this module).
+from backend.services.agent_retrieval import (  # noqa: F401, E402
+    _domain_boost,
+    _intent_boost,
+    _section_boost,
+)
 
 
 def _mark_cache_hit(db, row, now=None):
