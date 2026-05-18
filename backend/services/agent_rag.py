@@ -143,18 +143,17 @@ def run_patient_agent_pipeline(
     urgent_flags=None,
     preselected_intent=None,
 ):
-    """Main agent entry point.  Five terminal branches:
+    """Main agent entry point — a dispatcher.
 
-      1. Input-guardrail block (security / privacy)
-      2. Cache hit (exact or semantic)
-      3. Direct-support lane (conversation / memory / timeline /
-         emotional / general)
-      4. RAG-generated answer (retrieval -> rerank -> compress ->
-         generate -> validate -> optional cache write)
+    Resolves the safety envelope, runs the input guardrail, and routes
+    to one of four branch handlers based on the outcome:
 
-    Every branch ends in ``_finalize_result`` which runs the post-gen
-    validator, the intent-aware RAG layer, the eval scoring envelope,
-    and persists the RAGEvaluationLog row.
+      1. ``_run_input_guardrail_block_branch``   — security / privacy fail
+      2. ``_run_cache_hit_branch``               — exact or semantic cache hit
+      3. ``_run_direct_support_branch``          — conversation / memory / timeline
+      4. ``_run_rag_generation_branch``          — full retrieval + generation
+
+    Every branch finalizes through ``_finalize_result``.
     """
     started = perf_counter()
     actions = actions or []
@@ -163,49 +162,12 @@ def run_patient_agent_pipeline(
     input_guardrails = input_guardrail_check(query, safety)
     t_safety = perf_counter()
 
-    # Branch 1: input guardrail blocks the request entirely.
     if input_guardrails["status"] == "failed":
-        safety = {
-            **safety,
-            "level": "high_risk",
-            "scope": input_guardrails["scope"],
-            "cache_allowed": False,
-            "message": input_guardrails["message"],
-        }
-        intent = "security_boundary"
-        rewritten = rewrite_and_decompose(query, intent)
-        result = {
-            "reply": _security_block_reply(input_guardrails),
-            "citations": [],
-            "intent": intent,
-            "safety": safety,
-            "retrieval_context": [],
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-            "safety_note": (
-                "Security boundary: the assistant cannot reveal private records, system instructions, "
-                "database contents, secrets, or raw internal knowledge base data."
-            ),
-            "validation": {
-                "status": "passed",
-                "issues": [],
-                "citation_count": 0,
-            },
-            "cache": {
-                "status": "blocked_by_input_guardrail",
-                "cacheable": False,
-                "reason": input_guardrails["scope"],
-            },
-            "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "input_guardrail_block"),
-        }
-        return _finalize_result(
+        return _run_input_guardrail_block_branch(
             db=db,
             patient_id=patient_id,
             query=query,
-            rewritten=rewritten,
-            result=result,
-            retrieved=[],
-            reranked=[],
-            compressed=[],
+            safety=safety,
             input_guardrails=input_guardrails,
             started=started,
         )
@@ -217,82 +179,215 @@ def run_patient_agent_pipeline(
     knowledge_fingerprint = knowledge_base_fingerprint()
     cache_policy = _cache_policy_snapshot(knowledge_fingerprint)
 
-    # Branch 2: cache hit (exact or semantic).
-    cache_hit = None
-    if cacheable:
-        cache_hit = exact_cache_check(
-            db,
-            rewritten["normalized_query"],
-            intent=intent,
-            safety_level=safety.get("level"),
-            knowledge_fingerprint=knowledge_fingerprint,
-        )
-        if cache_hit is None:
-            cache_hit = semantic_cache_check(
-                db, rewritten["semantic_key"], intent, knowledge_fingerprint=knowledge_fingerprint,
-            )
+    cache_hit = _lookup_cache(db, cacheable, rewritten, intent, safety, knowledge_fingerprint)
     if cache_hit:
-        result = {
-            **cache_hit["response"],
-            "cache": {
-                "status": cache_hit["status"],
-                "cache_id": cache_hit["cache_id"],
-                "cacheable": True,
-                "expires_at": cache_hit.get("expires_at"),
-                "knowledge_fingerprint": cache_hit.get("knowledge_fingerprint"),
-                "policy": cache_hit.get("policy"),
-            },
-            "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "cache_hit", cache_policy=cache_policy),
-        }
-        return _finalize_result(
+        return _run_cache_hit_branch(
             db=db,
             patient_id=patient_id,
             query=query,
             rewritten=rewritten,
-            result=result,
-            retrieved=[],
-            reranked=[],
-            compressed=result.get("retrieval_context") or [],
+            intent=intent,
+            safety=safety,
+            cache_hit=cache_hit,
+            cache_policy=cache_policy,
             input_guardrails=input_guardrails,
             started=started,
         )
 
-    # Branch 3: direct-support lane — return fallback_response verbatim.
     if _uses_direct_support_lane(intent, safety):
-        generated = generate_answer(
+        return _run_direct_support_branch(
+            db=db,
+            patient_id=patient_id,
             query=query,
-            fallback_response=fallback_response,
-            safety=safety,
+            rewritten=rewritten,
             intent=intent,
-            compressed_context=[],
+            safety=safety,
+            fallback_response=fallback_response,
             actions=actions,
             patient_context=patient_context,
-        )
-        validated = validate_answer_and_citations(generated, [], safety)
-        result = {
-            **validated,
-            "cache": {
-                "status": "not_cacheable",
-                "cacheable": False,
-                "reason": f"intent_not_cacheable:{intent}",
-                "policy": cache_policy,
-            },
-            "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "direct_support", cache_policy=cache_policy),
-        }
-        return _finalize_result(
-            db=db,
-            patient_id=patient_id,
-            query=query,
-            rewritten=rewritten,
-            result=result,
-            retrieved=[],
-            reranked=[],
-            compressed=[],
+            cache_policy=cache_policy,
             input_guardrails=input_guardrails,
             started=started,
         )
 
-    # Branch 4: full RAG path — retrieval -> rerank -> compress -> generate -> validate -> cache.
+    return _run_rag_generation_branch(
+        db=db,
+        patient_id=patient_id,
+        query=query,
+        rewritten=rewritten,
+        intent=intent,
+        safety=safety,
+        fallback_response=fallback_response,
+        actions=actions,
+        urgent_flags=urgent_flags,
+        patient_context=patient_context,
+        cacheable=cacheable,
+        knowledge_fingerprint=knowledge_fingerprint,
+        cache_policy=cache_policy,
+        input_guardrails=input_guardrails,
+        started=started,
+        t_safety=t_safety,
+        t_routing=t_routing,
+    )
+
+
+# ─── Branch handlers ─────────────────────────────────────────────────────────
+
+
+def _run_input_guardrail_block_branch(
+    *, db, patient_id, query, safety, input_guardrails, started,
+):
+    """Branch 1: input guardrail rejected the request entirely.  Returns
+    the deterministic security refusal — no retrieval, no generation."""
+    safety = {
+        **safety,
+        "level": "high_risk",
+        "scope": input_guardrails["scope"],
+        "cache_allowed": False,
+        "message": input_guardrails["message"],
+    }
+    intent = "security_boundary"
+    rewritten = rewrite_and_decompose(query, intent)
+    result = {
+        "reply": _security_block_reply(input_guardrails),
+        "citations": [],
+        "intent": intent,
+        "safety": safety,
+        "retrieval_context": [],
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "safety_note": (
+            "Security boundary: the assistant cannot reveal private records, system instructions, "
+            "database contents, secrets, or raw internal knowledge base data."
+        ),
+        "validation": {
+            "status": "passed",
+            "issues": [],
+            "citation_count": 0,
+        },
+        "cache": {
+            "status": "blocked_by_input_guardrail",
+            "cacheable": False,
+            "reason": input_guardrails["scope"],
+        },
+        "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "input_guardrail_block"),
+    }
+    return _finalize_result(
+        db=db,
+        patient_id=patient_id,
+        query=query,
+        rewritten=rewritten,
+        result=result,
+        retrieved=[],
+        reranked=[],
+        compressed=[],
+        input_guardrails=input_guardrails,
+        started=started,
+    )
+
+
+def _lookup_cache(db, cacheable, rewritten, intent, safety, knowledge_fingerprint):
+    """Return the exact-cache hit envelope, falling back to semantic.
+    None when the request isn't cacheable or no fresh row matches."""
+    if not cacheable:
+        return None
+    hit = exact_cache_check(
+        db,
+        rewritten["normalized_query"],
+        intent=intent,
+        safety_level=safety.get("level"),
+        knowledge_fingerprint=knowledge_fingerprint,
+    )
+    if hit is None:
+        hit = semantic_cache_check(
+            db, rewritten["semantic_key"], intent, knowledge_fingerprint=knowledge_fingerprint,
+        )
+    return hit
+
+
+def _run_cache_hit_branch(
+    *, db, patient_id, query, rewritten, intent, safety,
+    cache_hit, cache_policy, input_guardrails, started,
+):
+    """Branch 2: exact or semantic cache hit.  Reuses the stored
+    response envelope and re-runs only the post-gen pipeline."""
+    result = {
+        **cache_hit["response"],
+        "cache": {
+            "status": cache_hit["status"],
+            "cache_id": cache_hit["cache_id"],
+            "cacheable": True,
+            "expires_at": cache_hit.get("expires_at"),
+            "knowledge_fingerprint": cache_hit.get("knowledge_fingerprint"),
+            "policy": cache_hit.get("policy"),
+        },
+        "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "cache_hit", cache_policy=cache_policy),
+    }
+    return _finalize_result(
+        db=db,
+        patient_id=patient_id,
+        query=query,
+        rewritten=rewritten,
+        result=result,
+        retrieved=[],
+        reranked=[],
+        compressed=result.get("retrieval_context") or [],
+        input_guardrails=input_guardrails,
+        started=started,
+    )
+
+
+def _run_direct_support_branch(
+    *, db, patient_id, query, rewritten, intent, safety,
+    fallback_response, actions, patient_context,
+    cache_policy, input_guardrails, started,
+):
+    """Branch 3: direct-support lane — return ``fallback_response``
+    verbatim (conversation / memory / timeline / emotional / general).
+    No retrieval, no caching."""
+    generated = generate_answer(
+        query=query,
+        fallback_response=fallback_response,
+        safety=safety,
+        intent=intent,
+        compressed_context=[],
+        actions=actions,
+        patient_context=patient_context,
+    )
+    validated = validate_answer_and_citations(generated, [], safety)
+    result = {
+        **validated,
+        "cache": {
+            "status": "not_cacheable",
+            "cacheable": False,
+            "reason": f"intent_not_cacheable:{intent}",
+            "policy": cache_policy,
+        },
+        "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "direct_support", cache_policy=cache_policy),
+    }
+    return _finalize_result(
+        db=db,
+        patient_id=patient_id,
+        query=query,
+        rewritten=rewritten,
+        result=result,
+        retrieved=[],
+        reranked=[],
+        compressed=[],
+        input_guardrails=input_guardrails,
+        started=started,
+    )
+
+
+def _run_rag_generation_branch(
+    *, db, patient_id, query, rewritten, intent, safety,
+    fallback_response, actions, urgent_flags, patient_context,
+    cacheable, knowledge_fingerprint, cache_policy,
+    input_guardrails, started, t_safety, t_routing,
+):
+    """Branch 4: full RAG path — retrieve, rerank, compress, generate,
+    validate.  Stores the response in the cache when validation passes
+    and the request is cacheable.  Embeds per-stage latency in the
+    pipeline_trace's ``stage_ms`` block."""
     retrieved = hybrid_retrieval(rewritten, intent)
     expanded = expand_parent_child_windows(retrieved)
     t_retrieval = perf_counter()
