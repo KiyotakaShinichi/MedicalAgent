@@ -636,48 +636,10 @@ def _uses_direct_support_lane(intent, safety):
     }
 
 
-def rewrite_and_decompose(query, intent):
-    normalized = _normalize_query(query)
-    expanded = normalized
-    if intent == "portal_help":
-        expanded = (
-            f"{expanded} portal upload guide patient portal cbc labs blood count results "
-            "symptoms medications mri imaging report"
-        )
-    synonyms = {
-        "wbc": "white blood cells cbc infection neutropenia",
-        "hgb": "hemoglobin anemia cbc",
-        "hb": "hemoglobin anemia cbc",
-        "plt": "platelets cbc bleeding",
-        "cbc": "complete blood count lab values blood count results",
-        "mri": "imaging response breast mri",
-        "ct": "ct imaging report ascites peritoneal clinician review oncology monitoring metastasis wording",
-        "ascites": "ct imaging report ascites peritoneal clinician review oncology monitoring metastasis wording",
-        "pcr": "pathologic complete response treatment response classification",
-        "chemo": "chemotherapy treatment side effects",
-        "neutropenia": "neutropenia infection low white blood cells fever",
-        "anemia": "anemia hemoglobin low red blood cells fatigue",
-        "nadir": "nadir lowest point blood counts chemotherapy",
-        "her2": "her2 receptor breast cancer subtype",
-        "fever": "fever infection urgent chemotherapy",
-    }
-    for term, expansion in synonyms.items():
-        if term in normalized.split():
-            expanded = f"{expanded} {expansion}"
-    parts = [
-        part.strip()
-        for part in re.split(r"\band\b|\?|,", normalized)
-        if part.strip()
-    ]
-    if not parts:
-        parts = [normalized]
-    return {
-        "original_query": query,
-        "normalized_query": normalized,
-        "expanded_query": expanded,
-        "subqueries": parts[:4],
-        "semantic_key": _semantic_key(expanded, intent),
-    }
+# rewrite_and_decompose moved to backend.services.agent_query_rewriting as
+# part of the agent_rag.py module split.  Re-exported so existing imports
+# keep working.
+from backend.services.agent_query_rewriting import rewrite_and_decompose  # noqa: F401, E402
 
 
 def exact_cache_check(db, normalized_query, intent=None, safety_level=None, knowledge_fingerprint=None, now=None):
@@ -1883,26 +1845,18 @@ def _trace(safety, intent, rewritten, retrieved, reranked, compressed, terminal_
     }
 
 
-def _semantic_key(expanded_query, intent):
-    tokens = sorted(set(_tokenize(f"{intent} {expanded_query}")))
-    return " ".join(tokens[:40])
+# _semantic_key, _normalize_query, _tokenize moved to
+# backend.services.agent_query_rewriting.  Re-imported below so the ~15
+# internal call sites in this module keep resolving via the same names.
+from backend.services.agent_query_rewriting import (  # noqa: E402
+    _normalize_query,
+    _semantic_key,
+    _tokenize,
+)
 
 
 def _query_hash(normalized_query):
     return hashlib.sha256(normalized_query.encode("utf-8")).hexdigest()
-
-
-def _normalize_query(query):
-    return " ".join(re.sub(r"[^a-z0-9\s/.-]", " ", query.lower()).split())
-
-
-def _tokenize(text):
-    stopwords = {
-        "a", "an", "and", "are", "as", "at", "be", "can", "do", "for", "from", "how", "i", "in",
-        "is", "it", "me", "my", "of", "on", "or", "the", "this", "to", "what", "when", "where",
-        "why", "with", "you", "your",
-    }
-    return [token for token in re.findall(r"[a-z0-9]+", text.lower()) if token not in stopwords and len(token) > 1]
 
 
 def _coerce_utc(value):
