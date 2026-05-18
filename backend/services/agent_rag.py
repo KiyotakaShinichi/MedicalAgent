@@ -548,6 +548,7 @@ def input_guardrail_check(query, safety):
 def safety_scope_check(query, urgent_flags=None):
     lower = query.lower()
     normalized = normalize_security_text(query)
+    haystack = f"{normalized} {lower}"
     urgent_flags = urgent_flags or []
     decision_terms = [
         "should i stop",
@@ -598,6 +599,8 @@ def safety_scope_check(query, urgent_flags=None):
         "itigil chemo",
         "ihinto chemo",
         "itigil chemotherapy",
+        "itigil yung chemo",
+        "itigil ang chemo",
         "palitan dose",
         "taasan dose",
         "babaan dose",
@@ -617,8 +620,15 @@ def safety_scope_check(query, urgent_flags=None):
         "will my relatives get cancer",
         "will my family get cancer",
         "is it metastatic",
+        "do i have metastatic",
+        "do i have metastatic disease",
+        "do i have metastasis",
         "am i cancer free",
         "is my cancer gone",
+        "does that mean my cancer came back",
+        "does this mean my cancer came back",
+        "does that mean recurrence",
+        "does this mean recurrence",
         "diagnose me",
         "will i survive",
         "will i beat",
@@ -628,7 +638,11 @@ def safety_scope_check(query, urgent_flags=None):
         "survival chances",
         "may cancer ba ako",
         "metastatic ba",
+        "meron na ba akong metastatic",
+        "may metastatic ba",
         "kumalat na ba",
+        "bumalik na ba",
+        "ibig sabihin ba bumalik",
         "gumaling na ba ako",
         "cancer free na ba ako",
         "diagnose mo ako",
@@ -653,11 +667,13 @@ def safety_scope_check(query, urgent_flags=None):
         "blood breast discharge",
         "suicidal",
         "self harm",
+        "lagnat",
+        "nilalagnat",
     ]
     if (
         urgent_flags
         or medical_danger["detected"]
-        or any(term in normalized for term in urgent_terms)
+        or any(term in haystack for term in urgent_terms)
     ):
         return {
             "level": "high_risk",
@@ -666,14 +682,14 @@ def safety_scope_check(query, urgent_flags=None):
             "message": "Urgent or safety-related wording detected; answer must route toward clinician/emergency review.",
             "matched_safety_terms": sorted(set(urgent_flags + medical_danger.get("matches", [])))[:10],
         }
-    if any(term in normalized for term in decision_terms):
+    if any(term in haystack for term in decision_terms):
         return {
             "level": "high_risk",
             "scope": "treatment_decision_request",
             "cache_allowed": False,
             "message": "Treatment decision wording detected; assistant must not recommend medication or treatment changes.",
         }
-    if any(term in normalized for term in diagnostic_terms):
+    if any(term in haystack for term in diagnostic_terms):
         return {
             "level": "high_risk",
             "scope": "diagnosis_or_outcome_claim",
@@ -1085,6 +1101,7 @@ def contextual_compression(reranked):
             continue
         compressed.append({
             "id": item["id"],
+            "parent_id": item.get("parent_id"),
             "title": item["title"],
             "source_name": item["source_name"],
             "source_url": item["source_url"],
@@ -1199,16 +1216,21 @@ def validate_answer_and_citations(generated, compressed_context, safety):
     return generated
 
 
-def _finalize_result(db, patient_id, query, rewritten, result, retrieved, reranked, compressed, input_guardrails, started):
-    latency_ms = round((perf_counter() - started) * 1000, 2)
-    output_guardrails = output_guardrail_check(result)
+def _apply_post_gen_validator(result, output_guardrails):
+    """Run the post-generation validator on ``result["reply"]`` and apply
+    the decision in-place.
 
-    # Post-generation validator: re-reads the generated reply and blocks
-    # output if the model is making a diagnosis, treatment-recommendation,
-    # prognosis-estimate, dosage, genetic-risk, or tumor-marker overclaim.
-    # Runs AFTER `output_guardrail_check` so the legacy heuristics and the
-    # new validator both contribute to the trace; the validator wins (it
-    # overrides the reply with a safe refusal when it fires).
+    Returns ``(maybe-updated output_guardrails, pgv_decision)``.  The
+    output_guardrails dict is replaced (not mutated) when the validator
+    blocks so caller code holds the right reference.
+
+    Why this is a separate step
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    The post-gen check is the LAST chance to refuse a diagnosis /
+    treatment / prognosis / dosage / genetic / tumor-marker overclaim
+    that slipped through generation.  Keeping it as a named function
+    makes the failure surface explicit in the call site.
+    """
     from backend.services.post_generation_validator import validate_reply
 
     pgv_decision = validate_reply(result.get("reply") or "")
@@ -1240,66 +1262,97 @@ def _finalize_result(db, patient_id, query, rewritten, result, retrieved, rerank
             "triggered_rules": [],
             "medical_claim_boundary": pgv_decision.claim_boundary,
         }
+    return output_guardrails, pgv_decision
 
-    # ─── Intent-aware RAG layer (Phase 11) ─────────────────────────────
-    # Resolves the mode for the classified intent, filters retrieved
-    # chunks against the mode's allowed tiers + use intents, runs the
-    # claim-level citation validator, and produces an EvidenceGrade
-    # envelope embedded into ``result["evidence_grade"]``.
-    #
-    # The mode/grade fields are advisory by default — they do NOT alter
-    # the reply text (post-gen validator already did that).  When the
-    # grade is ``insufficient`` AND the post-gen validator did not
-    # already block, we substitute the mode's insufficient_evidence
-    # default reply so the patient never sees a forced answer on weak
-    # evidence.
+
+def _apply_intent_aware_rag_layer(result, retrieved, input_guardrails, pgv_decision):
+    """Resolve the RAG mode for the classified intent, filter retrieved
+    chunks against the mode's allowed tiers + uses, run the claim-level
+    citation validator, and grade the evidence — mutating ``result`` in
+    place with: ``rag_mode``, ``mode_allowed_tiers``, ``mode_allowed_use``,
+    ``tier_filter``, ``claim_validation``, ``evidence_grade``.
+
+    Side-effect rule: when grade == ``insufficient`` AND the post-gen
+    validator did NOT already block, substitute the mode's
+    insufficient_evidence_default reply + strip citations.  This is the
+    Phase 11 "insufficient evidence is a first-class outcome" promise.
+
+    Wrapped in try/except: this layer must never crash chat — on any
+    exception we set ``evidence_grade.grade = "missing"`` with a reason
+    and continue.
+    """
     try:
-        from backend.services.rag_intent_modes import select_mode
-        from backend.services.rag_tier_filter import filter_chunks_by_mode
         from backend.services.rag_claim_validator import validate_claims
         from backend.services.rag_evidence_grading import grade_evidence
+        from backend.services.rag_intent_modes import select_mode
+        from backend.services.rag_tier_filter import filter_chunks_by_mode
 
-        actor_role = (result.get("actor_role")
-                      or (input_guardrails or {}).get("actor_role"))
+        actor_role = (
+            result.get("actor_role")
+            or (input_guardrails or {}).get("actor_role")
+        )
         mode = select_mode(result.get("intent"), actor_role=actor_role)
-        if mode is not None:
-            chunks_for_filter = result.get("retrieval_context") or retrieved or []
-            filter_result = filter_chunks_by_mode(chunks_for_filter, mode)
-            claim_validation = validate_claims(
-                result.get("reply") or "",
-                filter_result.kept_chunks,
-            )
-            grade = grade_evidence(
-                mode=mode,
-                filter_result=filter_result,
-                claim_validation=claim_validation,
-                retrieved_count_before_filter=len(chunks_for_filter),
-            )
-            result["rag_mode"] = mode.mode
-            result["mode_allowed_tiers"] = list(mode.allowed_tiers)
-            result["mode_allowed_use"] = list(mode.allowed_use)
-            result["tier_filter"] = filter_result.to_dict()
-            result["claim_validation"] = claim_validation.to_dict()
-            result["evidence_grade"] = grade.to_dict()
+        if mode is None:
+            return
 
-            # Substitute the mode's insufficient-evidence default when
-            # grading collapses AND the validator hadn't already blocked.
-            if (
-                grade.grade == "insufficient"
-                and pgv_decision.decision != "blocked"
-                and mode.insufficient_evidence_default
-            ):
-                result["reply"] = mode.insufficient_evidence_default
-                result["citations"] = []
-                result["insufficient_evidence_substitution"] = {
-                    "reason": grade.reasoning,
-                    "mode": mode.mode,
-                }
+        chunks_for_filter = result.get("retrieval_context") or retrieved or []
+        filter_result = filter_chunks_by_mode(chunks_for_filter, mode)
+        claim_validation = validate_claims(
+            result.get("reply") or "",
+            filter_result.kept_chunks,
+        )
+        grade = grade_evidence(
+            mode=mode,
+            filter_result=filter_result,
+            claim_validation=claim_validation,
+            retrieved_count_before_filter=len(chunks_for_filter),
+        )
+        result["rag_mode"] = mode.mode
+        result["mode_allowed_tiers"] = list(mode.allowed_tiers)
+        result["mode_allowed_use"] = list(mode.allowed_use)
+        result["tier_filter"] = filter_result.to_dict()
+        result["claim_validation"] = claim_validation.to_dict()
+        result["evidence_grade"] = grade.to_dict()
+
+        # Substitute the mode's insufficient-evidence default when
+        # grading collapses AND the validator hadn't already blocked.
+        if (
+            grade.grade == "insufficient"
+            and pgv_decision.decision != "blocked"
+            and mode.insufficient_evidence_default
+        ):
+            result["reply"] = mode.insufficient_evidence_default
+            result["citations"] = []
+            result["insufficient_evidence_substitution"] = {
+                "reason": grade.reasoning,
+                "mode": mode.mode,
+            }
     except Exception as exc:  # noqa: BLE001 — the new layer must never crash chat
         result["evidence_grade"] = {
             "grade": "missing",
             "reasoning": f"intent_aware_rag_layer_skipped: {exc!s}",
         }
+
+
+def _finalize_result(db, patient_id, query, rewritten, result, retrieved, reranked, compressed, input_guardrails, started):
+    """Orchestrate the post-generation pipeline:
+
+      1. Compute latency.
+      2. Run legacy output-guardrail heuristics.
+      3. Run the post-gen safety validator (may rewrite the reply).
+      4. Run the intent-aware RAG layer (mode → tier filter → claim
+         validation → evidence grade → optional insufficient-evidence
+         substitution).
+      5. Build the RAG evaluation telemetry block.
+      6. Persist the RAGEvaluationLog row.
+
+    Each step lives in a named helper so the failure surface is explicit
+    and the call site reads top-to-bottom.
+    """
+    latency_ms = round((perf_counter() - started) * 1000, 2)
+    output_guardrails = output_guardrail_check(result)
+    output_guardrails, pgv_decision = _apply_post_gen_validator(result, output_guardrails)
+    _apply_intent_aware_rag_layer(result, retrieved, input_guardrails, pgv_decision)
 
     rag_evaluation = evaluate_rag_response(
         query=query,
@@ -1735,14 +1788,17 @@ def _safety_reply(fallback_response, compressed_context, safety):
     regardless of which exact phrase the eval harness probes for.
 
     Background guidance is included only when retrieval surfaced relevant
-    educational context, and even then it is gated to non-treatment-decision
-    intents so the reply never accidentally reads as treatment advice.
+    educational context, and even then it is gated away from refusal scopes
+    where retrieved safety examples can trip the post-generation validator.
     """
     scope = (safety or {}).get("scope") or ""
     include_background = bool(compressed_context) and scope not in {
         "treatment_decision",
+        "treatment_decision_request",
         "medication_change",
         "treatment_decision_boundary",
+        "diagnosis_or_outcome_claim",
+        "urgent_or_safety_related",
     }
     pieces = [fallback_response.strip().rstrip(".")]
     pieces.append("This is monitoring support only - not a diagnosis or treatment recommendation")

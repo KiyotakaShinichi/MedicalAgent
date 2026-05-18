@@ -280,6 +280,12 @@ def handle_patient_chat(db, patient_id, message):
         ))
         actions.append({"type": "saved_medication", **medication})
 
+    # Lab/imaging extractors may have added urgent_flags after the initial
+    # safety scope check.  Recompute so the bypass path and the RAG pipeline
+    # both see the elevated safety level (e.g. very_low_wbc → high_risk).
+    if urgent_flags:
+        routing_safety = safety_scope_check(normalized, urgent_flags)
+
     patient_context = _recent_patient_context(db, patient_id)
     fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
     routing_intent = tool_plan["intent"] if tool_plan.get("intent") in ALLOWED_SUPPORT_INTENTS else route_intent(normalized, actions=actions, safety=routing_safety)
@@ -299,12 +305,21 @@ def handle_patient_chat(db, patient_id, message):
                 "reason": "deterministic tool confirmation; no RAG generation",
             },
             "rag_evaluation": None,
-            "pipeline_trace": [
-                "safety_gate",
-                "intent_routing",
-                "deterministic_tool_action",
-                "confirmation_reply",
-            ],
+            "pipeline_trace": {
+                "steps": [
+                    "safety_gate",
+                    "intent_routing",
+                    "deterministic_tool_action",
+                    "confirmation_reply",
+                ],
+                "terminal_step": "direct_support",
+                "safety_level": routing_safety.get("level"),
+                "intent": routing_intent,
+                "subquery_count": 0,
+                "retrieved_count": 0,
+                "reranked_count": 0,
+                "compressed_count": 0,
+            },
         }
     else:
         agent_result = run_patient_agent_pipeline(

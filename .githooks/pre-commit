@@ -1,0 +1,11 @@
+#!/bin/sh
+# OncoTrack pre-commit integration gate.
+# Auto-installed by scripts/install_pre_commit.py.
+# Skip with: SKIP_ONCOTRACK_GATE=1 git commit ...
+set -e
+if [ "${SKIP_ONCOTRACK_GATE:-0}" = "1" ]; then
+  echo "[oncotrack] gate skipped via SKIP_ONCOTRACK_GATE=1"
+  exit 0
+fi
+echo "[oncotrack] running tests/test_breast_monitoring.py ..."
+RAG_FORCE_SPARSE=true python -m pytest tests/test_breast_monitoring.py -q --tb=line

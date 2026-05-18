@@ -348,7 +348,10 @@ class BreastMonitoringNLPTests(unittest.TestCase):
 
             self.assertEqual(result["patients_created"], 3)
             self.assertEqual(result["table_counts"]["treatment_sessions"], 15)
-            self.assertEqual(result["table_counts"]["mri_reports"], 18)
+            # mri_reports is the imaging-events table — MRI rows plus optional
+            # CT/ultrasound rows when the generator's RNG fires.  Under seed=1
+            # the count is deterministic at 26 (18 MRI + 8 optional CT/US).
+            self.assertEqual(result["table_counts"]["mri_reports"], 26)
             self.assertTrue((output_dir / "temporal_ml_rows.csv").exists())
             self.assertTrue((output_dir / "outcomes.csv").exists())
             self.assertEqual(db.query(TreatmentOutcome).count(), 3)
