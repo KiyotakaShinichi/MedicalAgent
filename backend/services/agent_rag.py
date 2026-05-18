@@ -1818,31 +1818,10 @@ def _cache_rejection_reason(query, intent, safety, actions, urgent_flags):
     return "patient_specific_or_uncertain"
 
 
-def _trace(safety, intent, rewritten, retrieved, reranked, compressed, terminal_step, cache_policy=None):
-    return {
-        "steps": [
-            "safety_scope_check",
-            "intent_router",
-            "query_rewrite_decomposition",
-            "exact_cache_check",
-            "semantic_cache_check",
-            "hybrid_retrieval",
-            "parent_child_window_expansion",
-            "reranker",
-            "contextual_compression",
-            "answer_generation",
-            "validation_citation_check",
-            "safe_cache_store",
-        ],
-        "terminal_step": terminal_step,
-        "safety_level": safety.get("level"),
-        "intent": intent,
-        "subquery_count": len(rewritten.get("subqueries") or []),
-        "retrieved_count": len(retrieved),
-        "reranked_count": len(reranked),
-        "compressed_count": len(compressed),
-        "cache_policy": cache_policy,
-    }
+# _trace moved to backend.services.agent_trace as part of the
+# agent_rag.py module split.  Re-exported so existing imports keep
+# working.
+from backend.services.agent_trace import _trace  # noqa: F401, E402
 
 
 # _semantic_key, _normalize_query, _tokenize moved to
