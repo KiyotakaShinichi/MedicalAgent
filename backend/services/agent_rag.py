@@ -584,16 +584,9 @@ def _validated_preselected_intent(intent, safety):
     return intent
 
 
-def _uses_direct_support_lane(intent, safety):
-    if intent == "data_entry_confirmation" and safety.get("level") != "high_risk":
-        return True
-    return intent in {
-        "conversation",
-        "patient_memory",
-        "patient_timeline_monitoring",
-        "general_support",
-        "emotional_support",
-    }
+# _uses_direct_support_lane moved to backend.services.agent_answer_composition
+# as part of the agent_rag.py module split.  Re-imported below alongside
+# the rest of the answer-composition module.
 
 
 # rewrite_and_decompose moved to backend.services.agent_query_rewriting as
@@ -890,99 +883,16 @@ def contextual_compression(reranked):
     return compressed
 
 
-REFUSAL_INTENTS = frozenset({
-    "safety_boundary",
-    "treatment_decision_boundary",
-    "security_boundary",
-})
-
-
-def generate_answer(query, fallback_response, safety, intent, compressed_context, actions, patient_context):
-    citations = [
-        {
-            "id": item["id"],
-            "title": item["title"],
-            "source_name": item["source_name"],
-            "source_url": item["source_url"],
-        }
-        for item in compressed_context
-    ]
-    if _uses_direct_support_lane(intent, safety):
-        reply = fallback_response
-    elif safety.get("level") == "high_risk":
-        reply = _safety_reply(fallback_response, compressed_context, safety)
-    elif actions:
-        reply = _with_related_guidance(fallback_response, compressed_context)
-    elif intent in {"education", "portal_help", "general_support", "emotional_support"} and compressed_context:
-        reply = _educational_reply(query, intent, compressed_context)
-    else:
-        reply = fallback_response
-
-    # On any refusal intent - diagnosis refusal, treatment-decision refusal,
-    # or security boundary - citations must be stripped. Presenting citations
-    # next to a refusal reads as "here's the source for our refusal," which
-    # invites the reader to interpret it as evidence-backed clinical guidance.
-    # The deterministic RAG eval's insufficient-evidence and unsafe-answer
-    # checks also depend on this contract.
-    if intent in REFUSAL_INTENTS:
-        citations = []
-
-    return {
-        "reply": reply,
-        "citations": citations,
-        "intent": intent,
-        "safety": safety,
-        "retrieval_context": compressed_context,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "safety_note": "This assistant provides tracking support and education only. It does not diagnose or choose treatment.",
-    }
-
-
-def validate_answer_and_citations(generated, compressed_context, safety):
-    from backend.services.answer_verifier import safe_repair_reply, verify_patient_support_answer
-
-    reply = generated.get("reply") or ""
-    citations = generated.get("citations") or []
-    intent = generated.get("intent")
-    issues = []
-    # Refusal intents (safety / treatment-decision / security boundary) strip
-    # citations on purpose; see generate_answer. Don't penalize that here:
-    # presenting citations alongside a refusal reads as an evidence-backed
-    # clinical claim, which is precisely the thing we are refusing to make.
-    if compressed_context and not citations and intent not in REFUSAL_INTENTS:
-        issues.append("retrieved_context_without_citations")
-    unsafe_terms = ["you should stop", "you should start", "increase your dose", "decrease your dose", "skip chemo"]
-    if any(term in reply.lower() for term in unsafe_terms):
-        issues.append("treatment_directive_detected")
-    if safety.get("level") == "high_risk" and not any(term in reply.lower() for term in ["oncology", "emergency", "clinician", "care team"]):
-        issues.append("high_risk_reply_missing_escalation")
-    if _contains_diagnostic_or_treatment_claim(reply):
-        issues.append("diagnostic_or_treatment_claim_detected")
-    verifier = verify_patient_support_answer(
-        reply,
-        citations=citations,
-        retrieved_context=compressed_context,
-        safety=safety,
-        intent=intent,
-    )
-    issues.extend(issue for issue in verifier.get("issues") or [] if issue not in issues)
-
-    status = "passed" if not issues else "failed"
-    if issues:
-        generated["reply"] = safe_repair_reply(reply, verifier)
-        if generated["reply"] == reply:
-            generated["reply"] = (
-                "I cannot safely answer that as a treatment or diagnosis decision. "
-                "Please contact your oncology care team for medical review. "
-                "If symptoms feel sudden, severe, or unsafe, use local emergency services."
-            )
-    generated["validation"] = {
-        "status": status,
-        "issues": issues,
-        "citation_count": len(citations),
-        "verifier": verifier,
-    }
-    return generated
+# generate_answer, validate_answer_and_citations, REFUSAL_INTENTS, and
+# their helpers moved to backend.services.agent_answer_composition.
+# Re-imported so existing imports + the few in-module references keep
+# working.
+from backend.services.agent_answer_composition import (  # noqa: F401, E402
+    REFUSAL_INTENTS,
+    _uses_direct_support_lane,
+    generate_answer,
+    validate_answer_and_citations,
+)
 
 
 # _apply_post_gen_validator + _apply_intent_aware_rag_layer moved to
@@ -1292,19 +1202,8 @@ def _store_rag_evaluation_log(db, patient_id, query, result, rag_evaluation, ret
     return row
 
 
-def _contains_diagnostic_or_treatment_claim(reply):
-    lower = reply.lower()
-    blocked_patterns = [
-        "you are cancer free",
-        "your cancer is gone",
-        "you have metastasis",
-        "you do not have metastasis",
-        "stop chemotherapy",
-        "start chemotherapy",
-        "change your dose",
-    ]
-    return any(pattern in lower for pattern in blocked_patterns)
-
+# _contains_diagnostic_or_treatment_claim moved to
+# backend.services.agent_answer_composition (re-imported above).
 
 def _content_tokens(text):
     generic = {
@@ -1440,34 +1339,9 @@ def _cache_row_policy(row):
     }
 
 
-def _safety_reply(fallback_response, compressed_context, safety):
-    """Refusal reply for safety_boundary / treatment_decision_boundary intents.
-
-    The reply must always include both ``clinician`` / ``care team`` wording
-    AND an escalation phrase so the deterministic refusal checks pass
-    regardless of which exact phrase the eval harness probes for.
-
-    Background guidance is included only when retrieval surfaced relevant
-    educational context, and even then it is gated away from refusal scopes
-    where retrieved safety examples can trip the post-generation validator.
-    """
-    scope = (safety or {}).get("scope") or ""
-    include_background = bool(compressed_context) and scope not in {
-        "treatment_decision",
-        "treatment_decision_request",
-        "medication_change",
-        "treatment_decision_boundary",
-        "diagnosis_or_outcome_claim",
-        "urgent_or_safety_related",
-    }
-    pieces = [fallback_response.strip().rstrip(".")]
-    pieces.append("This is monitoring support only - not a diagnosis or treatment recommendation")
-    pieces.append("Please contact your oncology care team or clinician for medical review")
-    pieces.append("If symptoms feel sudden, severe, or unsafe, call your local emergency services")
-    if include_background:
-        context_text = " ".join(item["text"] for item in compressed_context[:2])
-        pieces.append(f"Background education: {context_text}")
-    return ". ".join(pieces) + "."
+# _safety_reply moved to backend.services.agent_answer_composition
+# (re-imported via _safety_reply alias below for back-compat).
+from backend.services.agent_answer_composition import _safety_reply  # noqa: F401, E402
 
 
 def _security_block_reply(input_guardrails):
@@ -1482,74 +1356,11 @@ def _security_block_reply(input_guardrails):
     )
 
 
-def _with_related_guidance(fallback_response, compressed_context):
-    if not compressed_context:
-        return fallback_response
-    guidance = compressed_context[0]["text"]
-    return f"{fallback_response} Related guidance: {guidance}"
-
-
-def _educational_reply(query, intent, compressed_context):
-    primary = _clean_context_text(compressed_context[0]["text"])
-    supporting = _clean_context_text(compressed_context[1]["text"], max_chars=220) if len(compressed_context) > 1 else None
-    if intent == "portal_help":
-        opener = "For this portal:"
-    else:
-        opener = "General information:"
-    reply = f"{opener} {primary}"
-    if supporting and _should_include_supporting_context(query, primary, supporting):
-        reply += f" {supporting}"
-    bridge = _educational_query_bridge(query, reply)
-    if bridge:
-        reply += f" {bridge}"
-    reply += " Use this as education and discuss personal decisions with the oncology team."
-    return reply
-
-
-def _educational_query_bridge(query, draft_reply):
-    """Add a short query-specific bridge when the top source uses adjacent terms."""
-    lower_query = str(query or "").lower()
-    lower_reply = str(draft_reply or "").lower()
-    asks_low_wbc = (
-        ("white blood" in lower_query or "wbc" in lower_query or "blood cell" in lower_query)
-        and ("chemotherapy" in lower_query or "chemo" in lower_query)
-    )
-    if asks_low_wbc and "white blood" not in lower_reply:
-        return (
-            "In this monitoring context, a low white blood cell count during chemotherapy "
-            "can relate to infection-risk monitoring and CBC trend review."
-        )
-    return ""
-
-
-def _clean_context_text(text, max_chars=420):
-    value = re.sub(r"\[[^\]]{1,40}\]", "", str(text or ""))
-    value = re.sub(r"\s+", " ", value).strip()
-    sentences = re.split(r"(?<=[.!?])\s+", value)
-    selected = []
-    total = 0
-    for sentence in sentences:
-        sentence = sentence.strip()
-        if not sentence:
-            continue
-        next_total = total + len(sentence) + (1 if selected else 0)
-        if selected and next_total > max_chars:
-            break
-        selected.append(sentence)
-        total = next_total
-        if total >= max_chars:
-            break
-    cleaned = " ".join(selected) if selected else value[:max_chars].strip()
-    return cleaned[:max_chars].rstrip(" ,;:")
-
-
-def _should_include_supporting_context(query, primary, supporting):
-    query_tokens = set(_tokenize(query))
-    primary_tokens = set(_tokenize(primary))
-    if {"what", "define", "meaning"} & query_tokens and len(primary_tokens & query_tokens) >= 1:
-        return False
-    supporting_tokens = set(_tokenize(supporting))
-    return len((supporting_tokens - primary_tokens) & query_tokens) >= 2
+# _with_related_guidance / _educational_reply / _educational_query_bridge /
+# _clean_context_text / _should_include_supporting_context moved to
+# backend.services.agent_answer_composition.  agent_rag doesn't reference
+# them directly anymore — the answer-composition module owns the full
+# educational-reply pipeline.
 
 
 def _intent_boost(intent, snippet):
