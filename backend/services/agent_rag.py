@@ -685,39 +685,9 @@ def _finalize_result(db, patient_id, query, rewritten, result, retrieved, rerank
     return result
 
 
-def output_guardrail_check(result):
-    reply = result.get("reply") or ""
-    validation = result.get("validation") or {}
-    issues = list(validation.get("issues") or [])
-    intent = result.get("intent")
-    unsafe_terms = [
-        "you should stop",
-        "you should start",
-        "increase your dose",
-        "decrease your dose",
-        "skip chemo",
-        "you are cancer free",
-        "you have metastasis",
-    ]
-    if any(term in reply.lower() for term in unsafe_terms):
-        issues.append("unsafe_output_directive_or_diagnosis")
-    # On refusal intents, citations are intentionally stripped; see
-    # generate_answer. The missing-citations check would otherwise fire on
-    # every safety_boundary / treatment_decision_boundary reply that surfaces
-    # background education context for context-only display.
-    if (
-        intent not in REFUSAL_INTENTS
-        and (result.get("retrieval_context") or [])
-        and not (result.get("citations") or [])
-    ):
-        issues.append("missing_citations")
-    safety = result.get("safety") or {}
-    if safety.get("level") == "high_risk" and not any(term in reply.lower() for term in ["oncology", "emergency", "clinician", "care team"]):
-        issues.append("missing_high_risk_escalation")
-    return {
-        "status": "passed" if not issues else "failed",
-        "issues": sorted(set(issues)),
-    }
+# output_guardrail_check moved to backend.services.agent_output_gate
+# (sibling of agent_input_gate).  Re-exported here for back-compat.
+from backend.services.agent_output_gate import output_guardrail_check  # noqa: F401, E402
 
 
 # evaluate_rag_response + the per-metric scorers moved to
