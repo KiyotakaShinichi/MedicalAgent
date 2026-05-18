@@ -216,7 +216,14 @@ def _evaluate_sentence(sentence: str, chunk_records: list[dict[str, object]], me
             if nli["supporting_chunk_ids"]:
                 supporting = list(nli["supporting_chunk_ids"])
             best_score = max(best_score, entailment_score)
-            if contradiction_score >= NLI_CONTRADICTION_THRESHOLD:
+            if contradiction_reason:
+                # Safety-first: the local heuristic catches narrow medical
+                # inversions that small generic MNLI models often
+                # over-entail. NLI may upgrade paraphrased support, but it
+                # must not override these explicit risk-boundary patterns.
+                status = "unsupported"
+                reason = contradiction_reason
+            elif contradiction_score >= NLI_CONTRADICTION_THRESHOLD:
                 status = "unsupported"
                 reason = "nli_contradiction_detected"
             elif entailment_score >= NLI_ENTAILMENT_THRESHOLD:
@@ -370,12 +377,15 @@ def _nli_scores(nli, *, premise: str, hypothesis: str) -> dict[str, float]:
 @lru_cache(maxsize=1)
 def _load_nli_pipeline():
     try:
-        from transformers import pipeline
+        from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
     except Exception:
         return None
     model_name = os.getenv(NLI_MODEL_ENV, "typeform/distilbert-base-uncased-mnli")
+    allow_download = os.getenv("ONCOTRACK_NLI_ALLOW_DOWNLOAD", "").strip().lower() in {"1", "true", "yes"}
     try:
-        return pipeline("text-classification", model=model_name, top_k=None)
+        tokenizer = AutoTokenizer.from_pretrained(model_name, local_files_only=not allow_download)
+        model = AutoModelForSequenceClassification.from_pretrained(model_name, local_files_only=not allow_download)
+        return pipeline("text-classification", model=model, tokenizer=tokenizer, top_k=None)
     except Exception:
         return None
 

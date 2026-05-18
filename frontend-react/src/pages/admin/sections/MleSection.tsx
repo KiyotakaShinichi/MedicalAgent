@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { RefreshCw, AlertTriangle, Info, ShieldCheck, ShieldAlert } from "lucide-react";
+﻿import { useState } from "react";
+import { RefreshCw, AlertTriangle, Info } from "lucide-react";
 import { Badge } from "../../../components/ui/Badge";
 import { statusVariant } from "../../../components/ui/badgeUtils";
 import { Card, CardHeader, SectionTitle } from "../../../components/ui/Card";
@@ -13,6 +13,9 @@ import { EvidenceAbstentionCard } from "./cards/EvidenceAbstentionCard";
 import { FailureModeRegistryCard } from "./cards/FailureModeRegistryCard";
 import { KbSourceGovernanceCard } from "./cards/KbSourceGovernanceCard";
 import { ModalityRobustnessCard } from "./cards/ModalityRobustnessCard";
+import { PredictionTraceCard } from "./cards/PredictionTraceCard";
+import { ResponseConformalCalibrationCard } from "./cards/ResponseConformalCalibrationCard";
+import { RobustnessStressCard } from "./cards/RobustnessStressCard";
 import { SyntheticGeneratorCardPanel } from "./cards/SyntheticGeneratorCardPanel";
 import {
   runMleReadiness, getTrainingReport, getLockedHoldout,
@@ -283,7 +286,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         </span>
       </div>
 
-      {/* Synthetic generator card — provenance + documented assumptions. */}
+      {/* Synthetic generator card â€” provenance + documented assumptions. */}
       <SyntheticGeneratorCardPanel
         report={generatorCard as SyntheticGeneratorCard | null}
         loading={generatorCardStatus === "loading"}
@@ -299,7 +302,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         onRefresh={refreshFailureRegistry}
       />
 
-      {/* RAG source governance — per-source tier + allowed_use + staleness. */}
+      {/* RAG source governance â€” per-source tier + allowed_use + staleness. */}
       <KbSourceGovernanceCard
         report={kbGovernance as KbSourceGovernanceReport | null}
         loading={kbGovernanceStatus === "loading"}
@@ -307,7 +310,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         onRefresh={refreshKbGovernance}
       />
 
-      {/* Training-data leakage audit — the engineering data-hygiene gate. */}
+      {/* Training-data leakage audit â€” the engineering data-hygiene gate. */}
       <LeakageAuditCard
         report={leakageAudit as LeakageAuditReport | null}
         loading={leakageStatus === "loading"}
@@ -315,7 +318,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         onRefresh={refreshLeakageAudit}
       />
 
-      {/* Evidence-aware abstention eval — modality-dropout sweep showing
+      {/* Evidence-aware abstention eval â€” modality-dropout sweep showing
           coverage / accuracy / abstention rate per missing-modality scenario. */}
       <EvidenceAbstentionCard
         report={abstentionEval as EvidenceAbstentionEvalReport | null}
@@ -324,7 +327,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         onRefresh={refreshAbstentionEval}
       />
 
-      {/* Champion vs modality-robust comparison — head-to-head over all
+      {/* Champion vs modality-robust comparison â€” head-to-head over all
           modality-dropout scenarios.  Shows whether retraining with random
           modality masking actually moved the classifier or just the
           abstention rules. */}
@@ -335,7 +338,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         onRefresh={refreshModalityComparison}
       />
 
-      {/* Prediction traceability — one row per live evidence-aware call,
+      {/* Prediction traceability â€” one row per live evidence-aware call,
           showing decision, modalities used, model + threshold + calibration
           provenance, and validator verdict. */}
       <ResponseConformalCalibrationCard
@@ -379,7 +382,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
           />
           <CostCard
             label="Operating Threshold"
-            level="≤ 0.40"
+            level="â‰¤ 0.40"
             color="var(--blue)"
             description="Decision threshold set below 0.50 to bias toward sensitivity. Reviewed per-model at training time."
           />
@@ -387,7 +390,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         <p className="text-xs" style={{ color: "var(--text-dim)" }}>
           This system uses a cost-sensitive approach: the classification threshold is chosen to minimise FNR at acceptable FPR,
           reflecting the assumption that missing a treatment non-response is more harmful than over-flagging for clinician review.
-          Weighted cost = FN_weight × FN + FP_weight × FP where FN_weight = 3, FP_weight = 1 (engineering heuristic, not clinical guidance).
+          Weighted cost = FN_weight Ã— FN + FP_weight Ã— FP where FN_weight = 3, FP_weight = 1 (engineering heuristic, not clinical guidance).
         </p>
       </Card>
 
@@ -460,7 +463,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         </CardHeader>
         {trStatus === "loading" ? <LoadingPane /> :
          trStatus === "error" ? <ErrorPane message="Could not load training report" /> :
-         !tr ? <EmptyPane label="No training report — run training first" /> : (
+         !tr ? <EmptyPane label="No training report â€” run training first" /> : (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
               {[
@@ -489,7 +492,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
               })}
             </div>
             <p className="text-xs" style={{ color: "var(--text-faint)" }}>
-              Metrics labelled with interpretation bands below. AUROC ≥ 0.85 = strong on synthetic; Brier &lt; 0.10 = well-calibrated; MAE &lt; 0.10 = good regression fit.
+              Metrics labelled with interpretation bands below. AUROC â‰¥ 0.85 = strong on synthetic; Brier &lt; 0.10 = well-calibrated; MAE &lt; 0.10 = good regression fit.
             </p>
           </>
         )}
@@ -504,7 +507,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
           </span>
         </CardHeader>
         {holdoutStatus === "loading" ? <LoadingPane /> :
-         !ho ? <EmptyPane label="No holdout evaluation — run holdout first" /> : (
+         !ho ? <EmptyPane label="No holdout evaluation â€” run holdout first" /> : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               ["AUROC",       ho.auroc,        0.80, "Higher = better discrimination"],
@@ -542,18 +545,18 @@ export function MleSection({ analytics, onRefresh }: Props) {
         </CardHeader>
         {extValStatus === "loading" ? <LoadingPane /> :
          !(extVal as { result?: unknown } | null)?.result
-           ? <EmptyPane label="No external validation data — run external validation first" />
+           ? <EmptyPane label="No external validation data â€” run external validation first" />
            : (
             <div className="flex flex-col gap-2">
               <p className="text-xs" style={{ color: "var(--text-dim)" }}>
                 External validation uses BreastDCEDL and I-SPY1 tabular MRI-derived features.
-                These are real datasets (non-synthetic) used for directional validation only —
+                These are real datasets (non-synthetic) used for directional validation only â€”
                 not a clinical performance claim.
               </p>
               <p className="text-xs px-2 py-1.5 rounded-md border" style={{
                 background: "rgba(139,92,246,0.07)", borderColor: "rgba(139,92,246,0.25)", color: "#c4b5fd"
               }}>
-                ✓ External validation report loaded. See <code>Data/external_validation/</code> for per-dataset metrics.
+                âœ“ External validation report loaded. See <code>Data/external_validation/</code> for per-dataset metrics.
               </p>
             </div>
           )}
@@ -567,7 +570,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
            ? <EmptyPane label="No model comparison available" />
            : (
             <p className="text-xs" style={{ color: "var(--text-dim)" }}>
-              Model comparison loaded. Δ AUROC, Δ Brier, Δ ECE, Δ FNR deltas available in <code>Data/model_comparison/</code>.
+              Model comparison loaded. Î” AUROC, Î” Brier, Î” ECE, Î” FNR deltas available in <code>Data/model_comparison/</code>.
             </p>
           )}
       </Card>
@@ -680,7 +683,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         {noiseStatus === "loading" ? <LoadingPane /> :
          noiseStatus === "error" ? <ErrorPane message="Could not load noise eval" /> :
          !noiseEval || (noiseEval as NoiseEvalResult).status === "unavailable" ? (
-          <EmptyPane label="No noise eval — run POST /admin/noise-eval first" />
+          <EmptyPane label="No noise eval â€” run POST /admin/noise-eval first" />
          ) : (
           <NoiseEvalPanel data={noiseEval as NoiseEvalResult} />
          )}
@@ -697,7 +700,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         {temporalStatus === "loading" ? <LoadingPane /> :
          temporalStatus === "error" ? <ErrorPane message="Could not load temporal eval" /> :
          !temporalEval || (temporalEval as TemporalEvalResult).status === "unavailable" ? (
-          <EmptyPane label="No temporal eval — run POST /admin/temporal-eval first" />
+          <EmptyPane label="No temporal eval â€” run POST /admin/temporal-eval first" />
          ) : (
           <TemporalEvalPanel data={temporalEval as TemporalEvalResult} />
          )}
@@ -714,7 +717,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
         {errorStatus === "loading" ? <LoadingPane /> :
          errorStatus === "error" ? <ErrorPane message="Could not load prediction error table" /> :
          !errorTable || !(errorTable as PredictionErrorTable).rows?.length ? (
-          <EmptyPane label="No predictions — run training pipeline first" />
+          <EmptyPane label="No predictions â€” run training pipeline first" />
          ) : (
           <PredictionErrorPanel data={errorTable as PredictionErrorTable} />
          )}
@@ -735,7 +738,7 @@ export function MleSection({ analytics, onRefresh }: Props) {
           <div className="flex flex-col gap-2">
             <p className="text-xs mb-2" style={{ color: "var(--text-dim)" }}>
               Each metric below shows its definition, why it matters in this context, and ideal / warning / bad interpretation bands.
-              Bands reflect engineering heuristics for a cancer monitoring PoC — not clinical validation thresholds.
+              Bands reflect engineering heuristics for a cancer monitoring PoC â€” not clinical validation thresholds.
             </p>
             <MetricGlossary specs={ALL_METRIC_SPECS} values={trValues} />
           </div>
@@ -959,11 +962,11 @@ function FullFeatureGroupAblationPanel({ data }: { data: FullFeatureGroupAblatio
               <tr key={name} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
                 <td className="py-2 pr-3 font-medium" style={{ color: "var(--text)" }}>{name.replace(/_/g, " ")}</td>
                 <td className="py-2 pr-3" style={{ color: "var(--text-dim)" }}>{(group.modalities ?? []).join(", ")}</td>
-                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.patient_level_auroc?.toFixed(3) ?? group.classification?.auroc?.toFixed(3) ?? "—"}</td>
-                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.brier?.toFixed(3) ?? "—"}</td>
-                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.ece?.toFixed(3) ?? "—"}</td>
-                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.false_negative_count ?? "—"}</td>
-                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.regression?.mae?.toFixed(3) ?? "—"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.patient_level_auroc?.toFixed(3) ?? group.classification?.auroc?.toFixed(3) ?? "â€”"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.brier?.toFixed(3) ?? "â€”"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.ece?.toFixed(3) ?? "â€”"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.classification?.false_negative_count ?? "â€”"}</td>
+                <td className="py-2 pr-3 tabular-nums text-right" style={{ color: "var(--text-dim)" }}>{group.regression?.mae?.toFixed(3) ?? "â€”"}</td>
               </tr>
             ))}
           </tbody>
@@ -1014,324 +1017,13 @@ function CbioPortalMappingPanel({ data }: { data: CbioportalBiomarkerSchemaMappi
 }
 
 // LeakageAuditCard extracted to ./cards/LeakageAuditCard.tsx
-
-function formatRate(value: number | null | undefined): string {
-  if (value == null) return "—";
-  return `${(value * 100).toFixed(1)}%`;
-}
-
 // KbSourceGovernanceCard extracted to ./cards/KbSourceGovernanceCard.tsx
 // ModalityRobustnessCard extracted to ./cards/ModalityRobustnessCard.tsx
 
 function formatDelta(value: number | null | undefined): string {
-  if (value == null) return "—";
+  if (value == null) return "â€”";
   const sign = value > 0 ? "+" : "";
   return `${sign}${(value * 100).toFixed(2)}pp`;
-}
-
-function ResponseConformalCalibrationCard({
-  report,
-  loading,
-  running,
-  onRefresh,
-}: {
-  report: ResponseConformalCalibrationReport | null;
-  loading: boolean;
-  running: boolean;
-  onRefresh: () => void;
-}) {
-  const status = report?.status ?? "missing";
-  const adjustedMeetsNominal =
-    report?.adjusted_coverage != null &&
-    report?.nominal_coverage != null &&
-    report.adjusted_coverage >= report.nominal_coverage - 0.01;
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <ShieldCheck size={14} style={{ color: "var(--blue, #1e3a8a)" }} aria-hidden="true" />
-          <SectionTitle>Response-score conformal calibration</SectionTitle>
-          <Badge variant={statusVariant(
-            status === "strong" ? "strong" :
-            status === "acceptable" ? "acceptable" :
-            status === "missing" ? "stale" : "needs_attention",
-          )}>
-            {status.toUpperCase()}
-          </Badge>
-        </div>
-        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
-          {running ? "Running..." : "Rerun calibration"}
-        </Button>
-      </CardHeader>
-
-      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
-        Split-conformal adjustment for the response-score regression interval.
-        The raw quantile band is widened by a held-out residual quantile so the
-        interval is calibrated as an engineering reliability signal, not a
-        clinical guarantee.
-      </p>
-
-      {loading ? (
-        <LoadingPane label="Loading conformal calibration..." />
-      ) : !report || status === "missing" ? (
-        <EmptyPane label={report?.message ?? "Conformal calibration has not been generated yet."} />
-      ) : (
-        <>
-          <div className="grid sm:grid-cols-4 gap-3 mb-3">
-            <MetricCard label="Nominal coverage" value={formatRate(report.nominal_coverage)} status="muted" />
-            <MetricCard
-              label="Raw coverage"
-              value={formatRate(report.raw_coverage)}
-              status={(report.raw_coverage ?? 0) >= (report.nominal_coverage ?? 1) ? "green" : "amber"}
-            />
-            <MetricCard
-              label="Adjusted coverage"
-              value={formatRate(report.adjusted_coverage)}
-              status={adjustedMeetsNominal ? "green" : "amber"}
-            />
-            <MetricCard
-              label="qhat widen"
-              value={report.qhat_percent != null ? report.qhat_percent.toFixed(3) : null}
-              status="muted"
-            />
-          </div>
-          {report.interpretation && (
-            <p className="text-xs mb-2" style={{ color: "var(--text-dim)" }}>{report.interpretation}</p>
-          )}
-          {report.generated_at && (
-            <p className="text-[0.7rem]" style={{ color: "var(--text-faint)" }}>
-              Last run: {new Date(report.generated_at).toLocaleString()}
-              {report.calibration_rows != null && <> Â· calibration rows: {report.calibration_rows}</>}
-            </p>
-          )}
-        </>
-      )}
-    </Card>
-  );
-}
-
-function RobustnessStressCard({
-  report,
-  loading,
-  running,
-  onRefresh,
-}: {
-  report: RobustnessStressReport | null;
-  loading: boolean;
-  running: boolean;
-  onRefresh: () => void;
-}) {
-  const status = report?.status ?? "missing";
-  const summary = report?.summary ?? {};
-  const cases = report?.cases ?? [];
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <ShieldAlert size={14} style={{ color: "var(--amber, #92400e)" }} aria-hidden="true" />
-          <SectionTitle>Synthetic robustness stress suite</SectionTitle>
-          <Badge variant={statusVariant(
-            status === "strong" ? "strong" :
-            status === "acceptable" ? "acceptable" :
-            status === "missing" ? "stale" : "needs_attention",
-          )}>
-            {status.toUpperCase()}
-          </Badge>
-        </div>
-        <Button onClick={onRefresh} disabled={running} icon={<RefreshCw size={13} />}>
-          {running ? "Running..." : "Rerun stress"}
-        </Button>
-      </CardHeader>
-
-      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
-        Fault-injection suite for missing labs, missing imaging, wrong units,
-        contradictory symptoms, delayed reports, noisy tumor markers,
-        incomplete family history, and ambiguous biomarkers. Passing means the
-        system routes to uncertainty, abstention, or clinician review instead
-        of overconfident clinical claims.
-      </p>
-
-      {loading ? (
-        <LoadingPane label="Loading robustness stress report..." />
-      ) : !report || status === "missing" ? (
-        <EmptyPane label={report?.message ?? "Robustness stress report has not been generated yet."} />
-      ) : (
-        <>
-          <div className="grid sm:grid-cols-3 gap-3 mb-3">
-            <MetricCard
-              label="Pass rate"
-              value={formatRate(summary.pass_rate)}
-              status={(summary.pass_rate ?? 0) >= 0.95 ? "green" : "amber"}
-            />
-            <MetricCard label="Stress cases" value={summary.case_count ?? cases.length} status="muted" />
-            <MetricCard
-              label="Abstain/review route"
-              value={formatRate(summary.abstention_or_review_rate)}
-              status={(summary.abstention_or_review_rate ?? 0) >= 0.90 ? "green" : "amber"}
-            />
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
-              <thead>
-                <tr style={{ color: "var(--text-faint)" }}>
-                  <th className="text-left font-semibold py-1.5 pr-3" style={{ borderBottom: "1px solid var(--border)" }}>Case</th>
-                  <th className="text-left font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Category</th>
-                  <th className="text-left font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Expected</th>
-                  <th className="text-right font-semibold py-1.5 px-2" style={{ borderBottom: "1px solid var(--border)" }}>Review</th>
-                  <th className="text-right font-semibold py-1.5 pl-2" style={{ borderBottom: "1px solid var(--border)" }}>Result</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cases.slice(0, 10).map((c, index) => {
-                  const name = c.case ?? c.case_id ?? `case_${index + 1}`;
-                  const review = c.clinician_review_routed ?? c.clinician_review ?? c.abstained_any_head ?? c.abstained ?? false;
-                  return (
-                    <tr key={name}>
-                      <td className="py-1.5 pr-3" style={{ borderBottom: "1px solid var(--border-soft)", fontWeight: 600 }}>{name.replace(/_/g, " ")}</td>
-                      <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>{c.category}</td>
-                      <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>{(c.expected ?? c.expected_behavior ?? "safe routing").replace(/_/g, " ")}</td>
-                      <td className="py-1.5 px-2 text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>{review ? "yes" : "no"}</td>
-                      <td className="py-1.5 pl-2 text-right" style={{ borderBottom: "1px solid var(--border-soft)" }}>
-                        <Badge variant={c.passed ? "green" : "red"}>{c.passed ? "passed" : "failed"}</Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          {report.generated_at && (
-            <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
-              Last run: {new Date(report.generated_at).toLocaleString()}
-            </p>
-          )}
-        </>
-      )}
-    </Card>
-  );
-}
-
-function PredictionTraceCard({
-  response,
-  loading,
-  onRefresh,
-}: {
-  response: PredictionTraceResponse | null;
-  loading: boolean;
-  onRefresh: () => void;
-}) {
-  const traces = response?.traces ?? [];
-  const summary = response?.summary;
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Info size={14} style={{ color: "var(--blue, #1e3a8a)" }} aria-hidden="true" />
-          <SectionTitle>Prediction trace log</SectionTitle>
-          <Badge variant={statusVariant((summary?.total ?? 0) > 0 ? "strong" : "stale")}>
-            {summary?.total ?? 0} TRACES
-          </Badge>
-        </div>
-        <Button onClick={onRefresh} disabled={loading} icon={<RefreshCw size={13} />}>
-          Refresh
-        </Button>
-      </CardHeader>
-
-      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
-        One row per live evidence-aware prediction.  Each trace records the
-        model + feature-set + threshold + calibration that were active, which
-        modalities were present, whether the abstention layer refused to
-        answer, and what the safety validator decided.
-      </p>
-
-      {loading ? (
-        <LoadingPane label="Loading prediction traces…" />
-      ) : traces.length === 0 ? (
-        <EmptyPane label="No prediction traces recorded yet — they are written by `predict_and_trace` when live inference fires." />
-      ) : (
-        <>
-          {summary && (
-            <div className="grid sm:grid-cols-3 gap-3 mb-3">
-              <MetricCard
-                label="Recent traces"
-                value={summary.total}
-                status="muted"
-              />
-              <MetricCard
-                label="Abstention rate"
-                value={formatRate(summary.abstention_rate)}
-                status={(summary.abstention_rate ?? 0) > 0.5 ? "amber" : "green"}
-              />
-              <MetricCard
-                label="Model versions seen"
-                value={summary.model_versions.length}
-                status={summary.model_versions.length > 1 ? "amber" : "muted"}
-              />
-            </div>
-          )}
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
-              <thead>
-                <tr style={{ color: "var(--text-faint)" }}>
-                  {[
-                    "When", "Patient", "Question", "Decision", "Prob.",
-                    "Conf.", "Evidence", "Modalities", "Validator",
-                  ].map((h) => (
-                    <th key={h} className="text-left font-semibold py-1.5 px-2"
-                        style={{ borderBottom: "1px solid var(--border)" }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {traces.slice(0, 12).map((t) => (
-                  <tr key={t.id}>
-                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>
-                      {t.created_at ? new Date(t.created_at).toLocaleString() : "—"}
-                    </td>
-                    <td className="py-1.5 px-2 font-semibold" style={{ borderBottom: "1px solid var(--border-soft)" }}>
-                      {t.patient_id ?? "—"}
-                    </td>
-                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)" }}>
-                      {t.question}
-                    </td>
-                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: t.abstained ? "var(--amber)" : "var(--text)" }}>
-                      {t.decision}
-                    </td>
-                    <td className="py-1.5 px-2 tabular-nums" style={{ borderBottom: "1px solid var(--border-soft)" }}>
-                      {t.probability == null ? "—" : t.probability.toFixed(3)}
-                    </td>
-                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)" }}>
-                      {t.confidence ?? "—"}
-                    </td>
-                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)" }}>
-                      {t.evidence_sufficiency ?? "—"}
-                    </td>
-                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)", color: "var(--text-dim)" }}>
-                      {t.modalities_present.length}/{t.modalities_present.length + t.modalities_missing.length}
-                    </td>
-                    <td className="py-1.5 px-2" style={{ borderBottom: "1px solid var(--border-soft)" }}>
-                      {t.validator_decision ?? "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {traces.length > 12 && (
-            <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
-              Showing first 12 of {traces.length} recent traces.
-            </p>
-          )}
-        </>
-      )}
-    </Card>
-  );
 }
 
 function CostCard({ label, level, color, description }: {
@@ -1424,7 +1116,7 @@ function NoiseEvalPanel({ data }: { data: NoiseEvalResult }) {
         <table className="w-full text-xs">
           <thead>
             <tr style={{ borderBottom: "1px solid var(--border)" }}>
-              {["Noise mode", "AUROC", "Δ AUROC", "Sensitivity", "Δ Sensitivity", "Status"].map(h => (
+              {["Noise mode", "AUROC", "Î” AUROC", "Sensitivity", "Î” Sensitivity", "Status"].map(h => (
                 <th key={h} className="text-left py-2 pr-4 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
               ))}
             </tr>
@@ -1433,13 +1125,13 @@ function NoiseEvalPanel({ data }: { data: NoiseEvalResult }) {
             {data.noise_results.map((r) => (
               <tr key={r.mode} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
                 <td className="py-2 pr-4 font-medium" style={{ color: "var(--text)" }}>{r.mode.replace(/_/g, " ")}</td>
-                <td className="py-2 pr-4 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.auroc?.toFixed(3) ?? "—"}</td>
+                <td className="py-2 pr-4 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.auroc?.toFixed(3) ?? "â€”"}</td>
                 <td className="py-2 pr-4 tabular-nums" style={{ color: r.auroc_delta != null && r.auroc_delta < -0.05 ? "var(--rose)" : "var(--text-dim)" }}>
-                  {r.auroc_delta != null ? (r.auroc_delta >= 0 ? "+" : "") + r.auroc_delta.toFixed(3) : "—"}
+                  {r.auroc_delta != null ? (r.auroc_delta >= 0 ? "+" : "") + r.auroc_delta.toFixed(3) : "â€”"}
                 </td>
-                <td className="py-2 pr-4 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.sensitivity?.toFixed(3) ?? "—"}</td>
+                <td className="py-2 pr-4 tabular-nums" style={{ color: "var(--text-dim)" }}>{r.sensitivity?.toFixed(3) ?? "â€”"}</td>
                 <td className="py-2 pr-4 tabular-nums" style={{ color: r.sensitivity_delta != null && r.sensitivity_delta < -0.05 ? "var(--rose)" : "var(--text-dim)" }}>
-                  {r.sensitivity_delta != null ? (r.sensitivity_delta >= 0 ? "+" : "") + r.sensitivity_delta.toFixed(3) : "—"}
+                  {r.sensitivity_delta != null ? (r.sensitivity_delta >= 0 ? "+" : "") + r.sensitivity_delta.toFixed(3) : "â€”"}
                 </td>
                 <td className="py-2">
                   <Badge variant={r.status === "robust" ? "green" : r.status === "degraded" ? "amber" : "red"}>{r.status}</Badge>
@@ -1452,7 +1144,7 @@ function NoiseEvalPanel({ data }: { data: NoiseEvalResult }) {
       {data.summary.worst_mode && (
         <p className="text-xs" style={{ color: "var(--text-faint)" }}>
           Worst mode: <strong style={{ color: "var(--text-dim)" }}>{data.summary.worst_mode.replace(/_/g, " ")}</strong>
-          {data.summary.max_auroc_drop != null && ` · max AUROC drop ${data.summary.max_auroc_drop.toFixed(3)}`}
+          {data.summary.max_auroc_drop != null && ` Â· max AUROC drop ${data.summary.max_auroc_drop.toFixed(3)}`}
         </p>
       )}
       <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{data.claim_boundary}</p>
@@ -1485,10 +1177,10 @@ function TemporalEvalPanel({ data }: { data: TemporalEvalResult }) {
       {data.generalization_gap && (
         <div className="flex gap-4">
           <p className="text-xs" style={{ color: "var(--text-faint)" }}>
-            Temporal gap: <span style={{ color: "var(--text-dim)" }}>{data.generalization_gap.temporal_auroc_gap?.toFixed(3) ?? "—"}</span>
+            Temporal gap: <span style={{ color: "var(--text-dim)" }}>{data.generalization_gap.temporal_auroc_gap?.toFixed(3) ?? "â€”"}</span>
           </p>
           <p className="text-xs" style={{ color: "var(--text-faint)" }}>
-            Cycle gap: <span style={{ color: "var(--text-dim)" }}>{data.generalization_gap.cycle_auroc_gap?.toFixed(3) ?? "—"}</span>
+            Cycle gap: <span style={{ color: "var(--text-dim)" }}>{data.generalization_gap.cycle_auroc_gap?.toFixed(3) ?? "â€”"}</span>
           </p>
         </div>
       )}
@@ -1504,7 +1196,7 @@ function Row({ label, value }: { label: string; value: string | undefined }) {
   return (
     <div className="flex justify-between gap-2">
       <span className="text-xs" style={{ color: "var(--text-faint)" }}>{label}</span>
-      <span className="text-xs tabular-nums font-medium" style={{ color: "var(--text-dim)" }}>{value ?? "—"}</span>
+      <span className="text-xs tabular-nums font-medium" style={{ color: "var(--text-dim)" }}>{value ?? "â€”"}</span>
     </div>
   );
 }

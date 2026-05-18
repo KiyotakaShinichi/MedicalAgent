@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "4b562c218d93b8f8ededa3c6e067af722d4d1f99",
+    "git_commit": "f3a3857e9e3f2c4f596e49276a70715268d77dcb",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -9,19 +9,19 @@
       "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
       "source_rows": "920991:1778238158:44a845011924"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": 42,
-    "generated_at": "2026-05-17T06:59:30.150051+00:00"
+    "generated_at": "2026-05-18T15:22:25.974649+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-17T06:59:30.150051+00:00",
+    "generated_at": "2026-05-18T15:22:25.974649+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-18T06:59:30.150051+00:00",
+    "expires_at": "2026-05-19T15:22:25.974649+00:00",
     "status": "fresh"
   },
   "schema_version": "full_feature_group_ablation_v1",
-  "generated_at": "2026-05-17T06:59:30.311162+00:00",
+  "generated_at": "2026-05-18T15:22:26.146972+00:00",
   "status": "strong",
   "claim_boundary": "Synthetic feature-group ablation only. Results test engineering behavior of feature groups, missingness masks, leakage controls, calibration, and monitor-only promotion logic. They do not validate clinical utility or prove that biomarkers, genetics-readiness, tumor markers, labs, or imaging predict real treatment response.",
   "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",

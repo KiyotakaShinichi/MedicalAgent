@@ -1,0 +1,410 @@
+{
+  "schema_version": "deep_learning_candidate_benchmark_v1",
+  "generated_at": "2026-05-18T16:16:20.836006+00:00",
+  "status": "strong",
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "patients": 600,
+  "rows": 3600,
+  "sequence_length": 6,
+  "feature_count": {
+    "base_plus_one_hot": 33,
+    "with_genetic_context": 44,
+    "with_treatment_context": 45,
+    "with_genetic_and_treatment_context": 56,
+    "synthetic_genetic_context": 11,
+    "synthetic_treatment_context": 12
+  },
+  "targets": {
+    "classification": "treatment_success_binary",
+    "regression": "final-cycle response_score_percent scaled to 0..1 for training and reported as percent MAE/RMSE"
+  },
+  "models": {
+    "without_genetic_context": {
+      "sequence_mlp": {
+        "classification": {
+          "auroc": 0.9717676676856681,
+          "pr_auc": 0.979842502318031,
+          "brier": 0.07159528136253357,
+          "accuracy": 0.9066666666666666
+        },
+        "regression": {
+          "mae_percent": 13.144567489624023,
+          "rmse_percent": 16.855480971171698,
+          "r2": 0.8125617504119873
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\without_genetic_context_sequence_mlp.pt"
+      },
+      "temporal_cnn": {
+        "classification": {
+          "auroc": 0.973925552958101,
+          "pr_auc": 0.9813538807340918,
+          "brier": 0.0665106475353241,
+          "accuracy": 0.9133333333333333
+        },
+        "regression": {
+          "mae_percent": 14.107672691345215,
+          "rmse_percent": 17.569482250281844,
+          "r2": 0.796345591545105
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\without_genetic_context_temporal_cnn.pt"
+      },
+      "bidirectional_gru": {
+        "classification": {
+          "auroc": 0.9786009710483726,
+          "pr_auc": 0.9855152497184815,
+          "brier": 0.06278298795223236,
+          "accuracy": 0.92
+        },
+        "regression": {
+          "mae_percent": 14.15965461730957,
+          "rmse_percent": 18.21852051474251,
+          "r2": 0.7810211777687073
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\without_genetic_context_bidirectional_gru.pt"
+      },
+      "tiny_transformer": {
+        "classification": {
+          "auroc": 0.9807588563208056,
+          "pr_auc": 0.9864706788339602,
+          "brier": 0.059509504586458206,
+          "accuracy": 0.9333333333333333
+        },
+        "regression": {
+          "mae_percent": 16.786102294921875,
+          "rmse_percent": 20.023524373104564,
+          "r2": 0.7354809641838074
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\without_genetic_context_tiny_transformer.pt"
+      }
+    },
+    "with_genetic_context": {
+      "sequence_mlp": {
+        "classification": {
+          "auroc": 0.968890487322424,
+          "pr_auc": 0.9769112811022956,
+          "brier": 0.0790981650352478,
+          "accuracy": 0.8933333333333333
+        },
+        "regression": {
+          "mae_percent": 13.52968978881836,
+          "rmse_percent": 17.064309942922538,
+          "r2": 0.8078885078430176
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_context_sequence_mlp.pt"
+      },
+      "temporal_cnn": {
+        "classification": {
+          "auroc": 0.9759036144578314,
+          "pr_auc": 0.982419424097771,
+          "brier": 0.06745042651891708,
+          "accuracy": 0.9
+        },
+        "regression": {
+          "mae_percent": 12.931221008300781,
+          "rmse_percent": 17.194539574007482,
+          "r2": 0.8049450516700745
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_context_temporal_cnn.pt"
+      },
+      "bidirectional_gru": {
+        "classification": {
+          "auroc": 0.9726667865491818,
+          "pr_auc": 0.980903524229295,
+          "brier": 0.07253149896860123,
+          "accuracy": 0.9133333333333333
+        },
+        "regression": {
+          "mae_percent": 15.721695899963379,
+          "rmse_percent": 19.3591022857103,
+          "r2": 0.7527443170547485
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_context_bidirectional_gru.pt"
+      },
+      "tiny_transformer": {
+        "classification": {
+          "auroc": 0.983276389138644,
+          "pr_auc": 0.9884776670520102,
+          "brier": 0.05228399857878685,
+          "accuracy": 0.92
+        },
+        "regression": {
+          "mae_percent": 17.17433738708496,
+          "rmse_percent": 20.350829221434687,
+          "r2": 0.7267626523971558
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_context_tiny_transformer.pt"
+      }
+    },
+    "with_treatment_context": {
+      "sequence_mlp": {
+        "classification": {
+          "auroc": 0.9723071390037763,
+          "pr_auc": 0.9798757817563873,
+          "brier": 0.08140651136636734,
+          "accuracy": 0.8866666666666667
+        },
+        "regression": {
+          "mae_percent": 13.025156021118164,
+          "rmse_percent": 16.525786623793625,
+          "r2": 0.8198226690292358
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_treatment_context_sequence_mlp.pt"
+      },
+      "temporal_cnn": {
+        "classification": {
+          "auroc": 0.9769825570940478,
+          "pr_auc": 0.9836181440524179,
+          "brier": 0.06463278830051422,
+          "accuracy": 0.9066666666666666
+        },
+        "regression": {
+          "mae_percent": 13.484766960144043,
+          "rmse_percent": 17.217092776987823,
+          "r2": 0.8044329881668091
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_treatment_context_temporal_cnn.pt"
+      },
+      "bidirectional_gru": {
+        "classification": {
+          "auroc": 0.9640352454594497,
+          "pr_auc": 0.9743858784082913,
+          "brier": 0.08278191834688187,
+          "accuracy": 0.8866666666666667
+        },
+        "regression": {
+          "mae_percent": 14.661457061767578,
+          "rmse_percent": 18.81527456309808,
+          "r2": 0.766440749168396
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_treatment_context_bidirectional_gru.pt"
+      },
+      "tiny_transformer": {
+        "classification": {
+          "auroc": 0.9786009710483725,
+          "pr_auc": 0.9837886187852636,
+          "brier": 0.06362193077802658,
+          "accuracy": 0.9066666666666666
+        },
+        "regression": {
+          "mae_percent": 16.77082061767578,
+          "rmse_percent": 20.132807952560604,
+          "r2": 0.7325857281684875
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_treatment_context_tiny_transformer.pt"
+      }
+    },
+    "with_genetic_and_treatment_context": {
+      "sequence_mlp": {
+        "classification": {
+          "auroc": 0.9697896061859378,
+          "pr_auc": 0.9778745901206725,
+          "brier": 0.07283142954111099,
+          "accuracy": 0.8933333333333333
+        },
+        "regression": {
+          "mae_percent": 12.784607887268066,
+          "rmse_percent": 16.50123452856776,
+          "r2": 0.8203576803207397
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_and_treatment_context_sequence_mlp.pt"
+      },
+      "temporal_cnn": {
+        "classification": {
+          "auroc": 0.9791404423664809,
+          "pr_auc": 0.9852133751110816,
+          "brier": 0.06432545930147171,
+          "accuracy": 0.9133333333333333
+        },
+        "regression": {
+          "mae_percent": 14.317991256713867,
+          "rmse_percent": 18.155870128341068,
+          "r2": 0.7825246453285217
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_and_treatment_context_temporal_cnn.pt"
+      },
+      "bidirectional_gru": {
+        "classification": {
+          "auroc": 0.9798597374572918,
+          "pr_auc": 0.9848741397666771,
+          "brier": 0.07245790213346481,
+          "accuracy": 0.9066666666666666
+        },
+        "regression": {
+          "mae_percent": 13.631574630737305,
+          "rmse_percent": 17.959793114097163,
+          "r2": 0.7871966361999512
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_and_treatment_context_bidirectional_gru.pt"
+      },
+      "tiny_transformer": {
+        "classification": {
+          "auroc": 0.9730264340945873,
+          "pr_auc": 0.9811606336310721,
+          "brier": 0.07067225128412247,
+          "accuracy": 0.9066666666666666
+        },
+        "regression": {
+          "mae_percent": 16.83820152282715,
+          "rmse_percent": 20.185611034156622,
+          "r2": 0.7311811447143555
+        },
+        "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_and_treatment_context_tiny_transformer.pt"
+      }
+    }
+  },
+  "best_model": {
+    "variant": "with_genetic_context",
+    "model": "tiny_transformer",
+    "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_context_tiny_transformer.pt",
+    "classification_auroc": 0.983276389138644,
+    "classification_brier": 0.05228399857878685,
+    "regression_mae_percent": 17.17433738708496,
+    "regression_r2": 0.7267626523971558
+  },
+  "best_models": {
+    "classification": {
+      "variant": "with_genetic_context",
+      "model": "tiny_transformer",
+      "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_context_tiny_transformer.pt",
+      "classification_auroc": 0.983276389138644,
+      "classification_brier": 0.05228399857878685,
+      "regression_mae_percent": 17.17433738708496,
+      "regression_r2": 0.7267626523971558
+    },
+    "regression": {
+      "variant": "with_genetic_and_treatment_context",
+      "model": "sequence_mlp",
+      "artifact_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\complete_synthetic_training\\deep_learning_candidates\\with_genetic_and_treatment_context_sequence_mlp.pt",
+      "classification_auroc": 0.9697896061859378,
+      "classification_brier": 0.07283142954111099,
+      "regression_mae_percent": 12.784607887268066,
+      "regression_r2": 0.8203576803207397
+    }
+  },
+  "genetic_context_ablation": {
+    "rows": [
+      {
+        "model": "sequence_mlp",
+        "classification_auroc_delta": -0.0029,
+        "classification_brier_delta": 0.0075,
+        "regression_mae_delta": 0.3851,
+        "regression_r2_delta": -0.0047
+      },
+      {
+        "model": "temporal_cnn",
+        "classification_auroc_delta": 0.002,
+        "classification_brier_delta": 0.0009,
+        "regression_mae_delta": -1.1765,
+        "regression_r2_delta": 0.0086
+      },
+      {
+        "model": "bidirectional_gru",
+        "classification_auroc_delta": -0.0059,
+        "classification_brier_delta": 0.0097,
+        "regression_mae_delta": 1.562,
+        "regression_r2_delta": -0.0283
+      },
+      {
+        "model": "tiny_transformer",
+        "classification_auroc_delta": 0.0025,
+        "classification_brier_delta": -0.0072,
+        "regression_mae_delta": 0.3882,
+        "regression_r2_delta": -0.0087
+      }
+    ],
+    "best_classification_auroc_delta": 0.0025,
+    "best_regression_mae_delta": -1.1765,
+    "decision": "candidate_for_external_validation_only",
+    "interpretation": "Synthetic genetic context can be benchmarked, but any gain must be treated as simulator-specific until real genetic-test records and external validation exist."
+  },
+  "treatment_context_ablation": {
+    "rows": [
+      {
+        "model": "sequence_mlp",
+        "classification_auroc_delta": 0.0005,
+        "classification_brier_delta": 0.0098,
+        "regression_mae_delta": -0.1194,
+        "regression_r2_delta": 0.0073
+      },
+      {
+        "model": "temporal_cnn",
+        "classification_auroc_delta": 0.0031,
+        "classification_brier_delta": -0.0019,
+        "regression_mae_delta": -0.6229,
+        "regression_r2_delta": 0.0081
+      },
+      {
+        "model": "bidirectional_gru",
+        "classification_auroc_delta": -0.0146,
+        "classification_brier_delta": 0.02,
+        "regression_mae_delta": 0.5018,
+        "regression_r2_delta": -0.0146
+      },
+      {
+        "model": "tiny_transformer",
+        "classification_auroc_delta": -0.0022,
+        "classification_brier_delta": 0.0041,
+        "regression_mae_delta": -0.0153,
+        "regression_r2_delta": -0.0029
+      }
+    ],
+    "best_classification_auroc_delta": 0.0031,
+    "best_regression_mae_delta": -0.6229,
+    "decision": "context_only_no_treatment_recommendation",
+    "interpretation": "Synthetic treatment-combination features can improve or stabilize offline signals, but they encode treatment context only. They must not be used to recommend a regimen or compare real-world efficacy."
+  },
+  "predictor_group_importance": [
+    {
+      "group": "imaging_response",
+      "classification_auroc_drop": 0.4181,
+      "regression_mae_increase": 22.6628,
+      "recommended_role": "highest direct response-monitoring signal when report timing is valid"
+    },
+    {
+      "group": "demographics_stage",
+      "classification_auroc_drop": 0.0354,
+      "regression_mae_increase": -0.1666,
+      "recommended_role": "baseline context; should not dominate"
+    },
+    {
+      "group": "treatment_context",
+      "classification_auroc_drop": 0.0032,
+      "regression_mae_increase": 1.0329,
+      "recommended_role": "context and temporal alignment signal"
+    },
+    {
+      "group": "symptoms_interventions",
+      "classification_auroc_drop": 0.0031,
+      "regression_mae_increase": 0.0835,
+      "recommended_role": "high review-routing signal; patient-reported and context-dependent"
+    },
+    {
+      "group": "biomarker_subtype",
+      "classification_auroc_drop": -0.0007,
+      "regression_mae_increase": -0.1106,
+      "recommended_role": "contextual modifier for expected treatment pathways"
+    },
+    {
+      "group": "cbc_labs",
+      "classification_auroc_drop": -0.0018,
+      "regression_mae_increase": -0.1575,
+      "recommended_role": "high toxicity/monitoring signal; response support only"
+    },
+    {
+      "group": "synthetic_genetic_context",
+      "classification_auroc_drop": -0.0029,
+      "regression_mae_increase": -0.1631,
+      "recommended_role": "genetic-counselor review and contextual modifier only"
+    }
+  ],
+  "recommended_weighting_policy": [
+    "Highest evidentiary weight: direct longitudinal response evidence such as imaging trend and clinician-reviewed report summaries.",
+    "High monitoring weight: CBC/lab trajectory, symptoms, treatment-cycle timing, and dose/intervention events.",
+    "Contextual weight: ER/PR/HER2/Ki-67 and known treatment regimen context.",
+    "Referral/context weight: germline genetic-test records and family-history readiness; useful for review routing, not standalone response proof.",
+    "Lowest standalone weight: tumor-marker trends; review context only, never recurrence/progression proof by themselves."
+  ],
+  "genetic_feature_boundary": "Synthetic genetic mutation features are included only as contextual candidate predictors. They are not inferred from imaging, not interpreted as medical advice, and not promoted without real genetic-test records plus external validation.",
+  "treatment_feature_boundary": "Synthetic treatment-combination features encode regimen/timeline context only. They are not treatment recommendations, do not compare real treatment efficacy, and cannot be used to tell a patient to start, stop, delay, or switch therapy.",
+  "claim_boundary": "Deep-learning results are synthetic engineering baselines. They measure ability to learn the simulator, not real patient response, prognosis, genetic risk, or clinical treatment utility."
+}

@@ -1,0 +1,229 @@
+{
+  "schema_version": "oncotrack_canonical_oncology_v1",
+  "generated_at": "2026-05-18T16:54:25.098969+00:00",
+  "status": "strong",
+  "fields": [
+    {
+      "name": "source_dataset",
+      "type": "string",
+      "required": true,
+      "meaning": "Public/synthetic source identifier."
+    },
+    {
+      "name": "source_record_id",
+      "type": "string",
+      "required": true,
+      "meaning": "Record identifier within the source dataset."
+    },
+    {
+      "name": "patient_id",
+      "type": "string",
+      "required": true,
+      "meaning": "Stable patient/case identifier after source namespacing."
+    },
+    {
+      "name": "timepoint_index",
+      "type": "integer",
+      "required": false,
+      "meaning": "Timepoint/cycle index when present."
+    },
+    {
+      "name": "age",
+      "type": "number",
+      "required": false,
+      "meaning": "Age at baseline/index where available."
+    },
+    {
+      "name": "sex",
+      "type": "string",
+      "required": false,
+      "allowed_values": [
+        "female",
+        "male",
+        "unknown"
+      ]
+    },
+    {
+      "name": "stage",
+      "type": "string",
+      "required": false,
+      "meaning": "Reported stage; do not infer if absent."
+    },
+    {
+      "name": "molecular_subtype",
+      "type": "string",
+      "required": false,
+      "meaning": "Dataset subtype label."
+    },
+    {
+      "name": "er_status",
+      "type": "string",
+      "required": false,
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ]
+    },
+    {
+      "name": "pr_status",
+      "type": "string",
+      "required": false,
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ]
+    },
+    {
+      "name": "her2_status",
+      "type": "string",
+      "required": false,
+      "allowed_values": [
+        "positive",
+        "negative",
+        "equivocal",
+        "unknown"
+      ]
+    },
+    {
+      "name": "ki67_percent",
+      "type": "number",
+      "required": false,
+      "meaning": "Use only when explicitly reported."
+    },
+    {
+      "name": "genetic_context_available",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "genetic_variant_classification",
+      "type": "string",
+      "required": false,
+      "meaning": "Pathogenic/likely/VUS/benign if reported."
+    },
+    {
+      "name": "treatment_phase",
+      "type": "string",
+      "required": false,
+      "allowed_values": [
+        "baseline",
+        "neoadjuvant",
+        "adjuvant",
+        "metastatic",
+        "survivorship",
+        "unknown"
+      ]
+    },
+    {
+      "name": "treatment_modalities",
+      "type": "array[string]",
+      "required": false,
+      "meaning": "Structured modalities, not recommendations."
+    },
+    {
+      "name": "treatment_combination_pattern",
+      "type": "string",
+      "required": false,
+      "meaning": "Canonical combination bucket."
+    },
+    {
+      "name": "regimen_text",
+      "type": "string",
+      "required": false,
+      "meaning": "Source-reported regimen/arm text."
+    },
+    {
+      "name": "cbc_available",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "symptoms_available",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "imaging_available",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "imaging_modality",
+      "type": "string",
+      "required": false,
+      "allowed_values": [
+        "MRI",
+        "CT",
+        "ultrasound",
+        "mammogram",
+        "PET/CT",
+        "unknown"
+      ]
+    },
+    {
+      "name": "imaging_features",
+      "type": "object",
+      "required": false,
+      "meaning": "Dataset-specific numeric imaging features."
+    },
+    {
+      "name": "tumor_marker_available",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "tumor_marker_context_only",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "outcome_label_name",
+      "type": "string",
+      "required": false,
+      "meaning": "Source outcome label, e.g. pCR."
+    },
+    {
+      "name": "outcome_label_value",
+      "type": "number|string|boolean",
+      "required": false
+    },
+    {
+      "name": "source_urls",
+      "type": "array[string]",
+      "required": false
+    },
+    {
+      "name": "claim_boundary",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "minimum_dataset_roles": {
+    "response_benchmark": [
+      "patient_id",
+      "imaging_available",
+      "outcome_label_name",
+      "outcome_label_value"
+    ],
+    "treatment_sequence_benchmark": [
+      "patient_id",
+      "treatment_modalities",
+      "treatment_combination_pattern"
+    ],
+    "biomarker_mapping": [
+      "patient_id",
+      "er_status",
+      "pr_status",
+      "her2_status",
+      "molecular_subtype"
+    ],
+    "genetic_context_mapping": [
+      "patient_id",
+      "genetic_context_available",
+      "genetic_variant_classification"
+    ]
+  },
+  "claim_boundary": "Canonical schema alignment is engineering interoperability only. It does not establish clinical validation or make treatment recommendations."
+}

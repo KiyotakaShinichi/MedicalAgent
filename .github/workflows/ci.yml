@@ -61,6 +61,17 @@ jobs:
         working-directory: frontend-react
         run: npm run build
 
+      - name: Frontend unit tests
+        working-directory: frontend-react
+        run: npm run test
+
+      - name: Export OpenAPI schema and verify frontend API types
+        run: |
+          python scripts/export_openapi_schema.py
+          cd frontend-react
+          npm run typegen:file
+          git diff --exit-code src/types/generated-openapi.d.ts
+
       - name: Knowledge-base ingestion smoke
         run: |
           mkdir -p KnowledgeBase/raw Data/test_tmp
@@ -84,6 +95,9 @@ jobs:
           python scripts/run_taglish_safety_parity.py
           python scripts/run_rag_intent_aware_eval.py
           python scripts/run_rag_tier_ablation.py
+          python scripts/run_rag_claim_validation_eval.py
+          python scripts/run_nli_claim_validation_eval.py
+          python scripts/run_live_rag_eval.py
           python scripts/run_learned_abstention_experiment.py
           python scripts/run_learned_abstention_eval.py
           python scripts/run_soft_toxicity_target_benchmark.py
@@ -96,6 +110,15 @@ jobs:
           python scripts/run_minimum_evidence_standards.py
           python scripts/run_medical_claim_boundary_eval.py
           python scripts/build_medical_advisor_review_packet.py
+
+      - name: Release gate
+        run: python scripts/run_release_gate.py
+
+      - name: Frontend Playwright smoke
+        working-directory: frontend-react
+        run: |
+          npx playwright install chromium
+          npm run test:e2e -- tests/e2e/smoke.spec.ts
 
       - name: API smoke checks
         run: |

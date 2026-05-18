@@ -1,0 +1,62 @@
+{
+  "schema_version": "nli_claim_validation_eval_v1",
+  "generated_at": "2026-05-18T10:33:32.513650+00:00",
+  "status": "strong",
+  "method": "nli_entailment_optional",
+  "summary": {
+    "case_count": 3,
+    "passed_when_nli_available": 3,
+    "hard_failures": 0,
+    "nli_required_cases": 2,
+    "nli_available_cases": 3
+  },
+  "cases": [
+    {
+      "id": "entails_wbc_infection_risk",
+      "expected_status": "supported",
+      "observed_status": "supported",
+      "observed_reason": null,
+      "validation_method": "nli",
+      "nli_required": false,
+      "nli_available": true,
+      "entailment_score": 0.9849,
+      "contradiction_score": 0.0064,
+      "passed": true
+    },
+    {
+      "id": "contradicts_st_johns_wort_safety",
+      "expected_status": "unsupported",
+      "observed_status": "unsupported",
+      "observed_reason": "heuristic_contradiction_safety_review_required",
+      "validation_method": "nli",
+      "nli_required": true,
+      "nli_available": true,
+      "entailment_score": 0.9848,
+      "contradiction_score": 0.0052,
+      "passed": true
+    },
+    {
+      "id": "contradicts_tumor_marker_overclaim",
+      "expected_status": "unsupported",
+      "observed_status": "unsupported",
+      "observed_reason": "heuristic_contradiction_tumor_marker_overclaim",
+      "validation_method": "nli",
+      "nli_required": true,
+      "nli_available": true,
+      "entailment_score": 0.9848,
+      "contradiction_score": 0.0051,
+      "passed": true
+    }
+  ],
+  "setup": {
+    "install": "pip install transformers torch",
+    "run": "python scripts/run_nli_claim_validation_eval.py",
+    "env": {
+      "ONCOTRACK_RAG_CLAIM_VALIDATOR": "nli",
+      "ONCOTRACK_RAG_NLI_MODEL": "typeform/distilbert-base-uncased-mnli",
+      "ONCOTRACK_NLI_ALLOW_DOWNLOAD": "1"
+    },
+    "default_behavior": "Uses only a locally cached NLI model by default. Set ONCOTRACK_NLI_ALLOW_DOWNLOAD=1 when you deliberately want the script to download the model."
+  },
+  "claim_boundary": "Optional local NLI/entailment validation is an engineering guardrail. It is not a clinical fact checker and remains outside the hard CI path unless the dependency and model are explicitly installed."
+}

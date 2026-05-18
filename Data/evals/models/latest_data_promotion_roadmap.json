@@ -1,0 +1,255 @@
+{
+  "schema_version": "data_promotion_roadmap_v1",
+  "generated_at": "2026-05-18T16:54:21.370736+00:00",
+  "status": "strong",
+  "artifact_inputs": {
+    "public_biomarker_readiness": {
+      "path": "Data/evals/models/latest_public_biomarker_dataset_readiness.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "public_treatment_readiness": {
+      "path": "Data/evals/models/latest_public_treatment_dataset_readiness.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "deep_learning_candidates": {
+      "path": "Data/evals/models/latest_deep_learning_candidate_benchmark.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "external_bridge": {
+      "path": "Data/evals/models/latest_external_data_bridge_eval.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "treatment_sequences": {
+      "path": "Data/evals/models/latest_treatment_sequence_feature_eval.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "shortcut_audit": {
+      "path": "Data/evals/models/latest_shortcut_audit.json",
+      "exists": true,
+      "status": "acceptable"
+    },
+    "toxicity_feature_audit": {
+      "path": "Data/evals/models/latest_toxicity_feature_audit.json",
+      "exists": true,
+      "status": "acceptable"
+    },
+    "subgroup_metrics": {
+      "path": "Data/evals/models/latest_hybrid_subgroup_metrics.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "per_head_calibration": {
+      "path": "Data/evals/models/latest_per_head_calibration.json",
+      "exists": true,
+      "status": "strong"
+    }
+  },
+  "summary": {
+    "model_head_count": 6,
+    "blocker_count": 13,
+    "current_global_policy": "monitor_only",
+    "may_influence_treatment": false
+  },
+  "model_heads": [
+    {
+      "head": "response_classification",
+      "current_policy": "monitor_only",
+      "current_evidence": [
+        "synthetic leakage-gated training and evaluation",
+        "modality-aware abstention and robustness checks",
+        "BreastDCEDL pCR/MRI bridge as external sanity-check only"
+      ],
+      "best_current_candidate": {
+        "synthetic_deep_learning_auroc": 0.983276389138644,
+        "external_breastdcedl_roc_auc": 0.637
+      },
+      "not_ready_because": [
+        "BreastDCEDL bridge supports pCR/MRI only, not the full OncoTrack timeline.",
+        "No external CBC/symptom/medication-cycle response labels are mapped.",
+        "Synthetic performance may reflect simulator structure."
+      ],
+      "promotion_requirements": [
+        "map at least one external cohort with response labels into canonical schema",
+        "evaluate candidate and champion under identical feature subsets",
+        "show calibrated performance and failure cases by subtype/stage"
+      ],
+      "external_roles_supported": {
+        "external_pcr_imaging_response_benchmark": true,
+        "full_oncotrack_timeline_training": false,
+        "treatment_combination_training": false,
+        "tumor_marker_response_training": false
+      }
+    },
+    {
+      "head": "response_regression",
+      "current_policy": "monitor_only",
+      "current_evidence": [
+        "synthetic response-score regression with uncertainty band",
+        "shortcut audit documenting MRI percent-change dependence",
+        "deep-learning regression candidate benchmark"
+      ],
+      "best_current_candidate": {
+        "regression_model": "sequence_mlp",
+        "regression_mae_percent": 12.784607887268066
+      },
+      "not_ready_because": [
+        "response score is simulator-defined and partly tied to MRI percent-change",
+        "external pCR is binary and not equivalent to the 0-100 synthetic response score"
+      ],
+      "promotion_requirements": [
+        "define an external ordinal/continuous response endpoint",
+        "calibrate interval coverage on external data",
+        "separate imaging-supported signal from unsupported model extrapolation"
+      ],
+      "shortcut_status": "acceptable"
+    },
+    {
+      "head": "toxicity_signal",
+      "current_policy": "review_hint_only",
+      "current_evidence": [
+        "synthetic toxicity classifier",
+        "softer toxicity target benchmark",
+        "feature audit documenting shortcut-prone legacy target"
+      ],
+      "not_ready_because": [
+        "legacy toxicity target is heavily determined by simulator-generated nadir CBC fields",
+        "no clinician-adjudicated toxicity labels are available"
+      ],
+      "promotion_requirements": [
+        "redesign toxicity target as review-priority label, not diagnosis",
+        "validate against clinician-reviewed adverse-event or triage labels",
+        "calibrate by CBC missingness and symptom-only cases"
+      ],
+      "audit_status": "acceptable"
+    },
+    {
+      "head": "genetic_biomarker_context",
+      "current_policy": "context_and_review_routing_only",
+      "current_evidence": [
+        "public biomarker dataset readiness map",
+        "synthetic genetic context ablation",
+        "canonical schema fields for ER/PR/HER2/Ki-67 and variant classification"
+      ],
+      "not_ready_because": [
+        "genetic features in synthetic rows are simulated context, not real genetic-test records",
+        "genetic information should not be treated as direct treatment-response proof"
+      ],
+      "promotion_requirements": [
+        "map real biomarker/genomic cohort fields with permitted use",
+        "separate germline, somatic, biomarker, and family-history roles",
+        "keep VUS and hereditary-risk outputs routed to counselor/clinician review"
+      ],
+      "candidate_training_recommended": true
+    },
+    {
+      "head": "tumor_marker_context",
+      "current_policy": "education_and_review_context_only",
+      "current_evidence": [
+        "tumor-marker source mapping",
+        "claim-boundary and overclaim refusal tests"
+      ],
+      "not_ready_because": [
+        "no longitudinal serum tumor-marker response cohort is mapped",
+        "CA 15-3, CA 27.29, and CEA cannot stand alone as response or recurrence proof"
+      ],
+      "promotion_requirements": [
+        "find or obtain longitudinal tumor-marker plus imaging/outcome data",
+        "evaluate markers as weak contextual trend features only",
+        "prespecify overclaim tests and clinician-review routing"
+      ],
+      "tumor_marker_response_train_ready": 0
+    },
+    {
+      "head": "treatment_sequence_context",
+      "current_policy": "timeline_context_only",
+      "current_evidence": [
+        "synthetic treatment-sequence artifact",
+        "public treatment-combination dataset readiness map",
+        "deep-learning treatment-context ablation"
+      ],
+      "not_ready_because": [
+        "synthetic treatment combinations are simulator context",
+        "no local real-world regimen-by-cycle dataset with outcomes is available"
+      ],
+      "promotion_requirements": [
+        "map treatment modalities from external cohort into canonical schema",
+        "run A/B comparisons with and without treatment-sequence features",
+        "prove features improve calibration without recommending treatment"
+      ],
+      "synthetic_pattern_count": 13,
+      "immediate_full_treatment_combo_training_ready": 0,
+      "best_future_real_world_treatment_dataset": "aacr_genie_bpc_brca"
+    }
+  ],
+  "cross_head_blockers": [
+    "response_classification: BreastDCEDL bridge supports pCR/MRI only, not the full OncoTrack timeline.",
+    "response_classification: No external CBC/symptom/medication-cycle response labels are mapped.",
+    "response_classification: Synthetic performance may reflect simulator structure.",
+    "response_regression: response score is simulator-defined and partly tied to MRI percent-change",
+    "response_regression: external pCR is binary and not equivalent to the 0-100 synthetic response score",
+    "toxicity_signal: legacy toxicity target is heavily determined by simulator-generated nadir CBC fields",
+    "toxicity_signal: no clinician-adjudicated toxicity labels are available",
+    "genetic_biomarker_context: genetic features in synthetic rows are simulated context, not real genetic-test records",
+    "genetic_biomarker_context: genetic information should not be treated as direct treatment-response proof",
+    "tumor_marker_context: no longitudinal serum tumor-marker response cohort is mapped",
+    "tumor_marker_context: CA 15-3, CA 27.29, and CEA cannot stand alone as response or recurrence proof",
+    "treatment_sequence_context: synthetic treatment combinations are simulator context",
+    "treatment_sequence_context: no local real-world regimen-by-cycle dataset with outcomes is available"
+  ],
+  "next_big_steps": [
+    {
+      "rank": 1,
+      "step": "Map one more public external cohort into the canonical schema",
+      "why": "BreastDCEDL is useful but narrow; a second external cohort reduces single-dataset tunnel vision.",
+      "student_feasible_now": true,
+      "suggested_target": "TCGA-BRCA or METABRIC schema/distribution mapping via public APIs"
+    },
+    {
+      "rank": 2,
+      "step": "Run strict feature-subset A/B tests",
+      "why": "Compare synthetic champion, deep-learning candidate, and external pCR baseline on common fields only.",
+      "student_feasible_now": true,
+      "suggested_target": "age + subtype + imaging features where available"
+    },
+    {
+      "rank": 3,
+      "step": "Improve toxicity labels from tautology to review-priority simulator target",
+      "why": "The current toxicity signal is useful as a review hint but too tied to generated nadir CBC.",
+      "student_feasible_now": true,
+      "suggested_target": "multi-factor label using symptoms, CBC trajectory, intervention, and missingness noise"
+    },
+    {
+      "rank": 4,
+      "step": "Build an external failure-case review table",
+      "why": "Reviewers trust projects more when external errors are visible and categorized.",
+      "student_feasible_now": true,
+      "suggested_target": "false positives/false negatives by subtype and confidence bucket"
+    },
+    {
+      "rank": 5,
+      "step": "Prepare data-access packet for future restricted cohorts",
+      "why": "GENIE BPC and SEER-Medicare are promising but require access steps.",
+      "student_feasible_now": true,
+      "suggested_target": "fields requested, use case, non-diagnostic analysis plan, privacy boundary"
+    }
+  ],
+  "promotion_policy": {
+    "current_global_policy": "monitor_only",
+    "may_show_to_patient": "only with non-diagnostic wording, evidence sufficiency, and clinician-review boundary",
+    "may_influence_treatment": false,
+    "minimum_future_evidence_for_any_promotion": [
+      "clinician-reviewed labels for the exact task",
+      "external temporal validation on data not generated by the simulator",
+      "leakage audit passing on mapped external features",
+      "calibration and subgroup reliability within prespecified thresholds",
+      "failure-case review and documented mitigation",
+      "clinical advisor review of language, thresholds, and workflow"
+    ]
+  },
+  "claim_boundary": "This roadmap is an engineering promotion plan under student-accessible constraints. It does not establish clinical validity, clinician sign-off, treatment efficacy, genetic-risk interpretation, or real patient prediction utility."
+}

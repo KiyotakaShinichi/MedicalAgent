@@ -1,0 +1,351 @@
+{
+  "schema_version": "public_biomarker_dataset_readiness_v1",
+  "generated_at": "2026-05-18T15:28:15.614778+00:00",
+  "status": "strong",
+  "summary": {
+    "biomarker_external_candidate_count": 6,
+    "mapped_or_api_ready_count": 3,
+    "access_controlled_candidate_count": 1,
+    "tumor_marker_context_only_count": 2,
+    "tumor_marker_response_train_ready": 0,
+    "dataset_count": 7,
+    "best_immediate_external_benchmark": "breastdcedl",
+    "best_schema_mapping_sources": [
+      "metabric_cbioportal",
+      "tcga_brca_pan_can_atlas"
+    ],
+    "best_future_real_world_candidate": "aacr_genie_bpc_brca",
+    "tumor_marker_policy": "context_only_until_longitudinal_treatment_response_data_exists"
+  },
+  "datasets": [
+    {
+      "id": "breastdcedl",
+      "name": "BreastDCEDL DCE-MRI treatment-response dataset",
+      "source_url": "https://zenodo.org/records/17274053",
+      "secondary_source_url": "https://www.nature.com/articles/s41597-026-06589-6",
+      "access": "public non-commercial research dataset",
+      "sample_count": 2070,
+      "biomarker_fields": [
+        "HR status",
+        "HER2 status"
+      ],
+      "tumor_marker_fields": [],
+      "imaging_fields": [
+        "3D DCE-MRI",
+        "tumor segmentation"
+      ],
+      "outcomes": [
+        "pathologic complete response"
+      ],
+      "readiness": "mapped_locally_external_benchmark",
+      "allowed_use": [
+        "external imaging plus HR/HER2 benchmark",
+        "pCR response modeling experiment",
+        "synthetic-to-public feature alignment"
+      ],
+      "limitations": [
+        "No CBC, symptom, medication, or longitudinal treatment-cycle timeline.",
+        "No CA 15-3, CA 27.29, or CEA serum tumor-marker trajectory.",
+        "Non-commercial derivative license must be respected."
+      ]
+    },
+    {
+      "id": "metabric_cbioportal",
+      "name": "METABRIC breast cancer cohort via cBioPortal",
+      "source_url": "https://www.cbioportal.org/api/studies/brca_metabric?projection=SUMMARY",
+      "secondary_source_url": "https://datacatalog.mskcc.org/dataset/11457",
+      "access": "public cBioPortal/API where permitted",
+      "sample_count": 2509,
+      "biomarker_fields": [
+        "ER status",
+        "PR status",
+        "HER2 status",
+        "PAM50/subtype",
+        "grade",
+        "stage"
+      ],
+      "tumor_marker_fields": [],
+      "omics_fields": [
+        "targeted sequencing",
+        "copy number",
+        "mRNA microarray"
+      ],
+      "outcomes": [
+        "survival/outcome fields"
+      ],
+      "readiness": "api_schema_ready_biomarker_external_check",
+      "allowed_use": [
+        "subtype/genomic external schema check",
+        "biomarker distribution alignment",
+        "non-longitudinal survival sanity check"
+      ],
+      "limitations": [
+        "Not an OncoTrack-style CBC/symptom/imaging-report timeline.",
+        "Not a public serum tumor-marker response cohort."
+      ],
+      "live_study_summary": {
+        "name": "Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)",
+        "description": "Targeted sequencing of 2509 primary breast tumors with 548 matched normals.",
+        "citation": "Pereira et al. Nat Commun 2016, Rueda et al. Nature 2019, Curtis et al. Nature 2012",
+        "pmid": "27161491,30867590,22522925",
+        "publicStudy": true,
+        "sequencedSampleCount": 2433,
+        "completeSampleCount": 1866,
+        "treatmentCount": 0
+      }
+    },
+    {
+      "id": "tcga_brca_pan_can_atlas",
+      "name": "TCGA-BRCA PanCancer Atlas via cBioPortal/GDC",
+      "source_url": "https://www.cbioportal.org/api/studies/brca_tcga_pan_can_atlas_2018?projection=SUMMARY",
+      "secondary_source_url": "https://api.gdc.cancer.gov/projects/TCGA-BRCA",
+      "access": "public GDC/cBioPortal APIs for open data; controlled files require token",
+      "sample_count": 1084,
+      "biomarker_fields": [
+        "subtype",
+        "stage",
+        "grade",
+        "genomic alteration fields",
+        "protein/RPPA where available"
+      ],
+      "tumor_marker_fields": [],
+      "omics_fields": [
+        "DNA",
+        "RNA",
+        "copy number",
+        "RPPA/proteomics where available"
+      ],
+      "outcomes": [
+        "OS",
+        "DFS",
+        "PFS where available"
+      ],
+      "readiness": "api_schema_ready_biomarker_external_check",
+      "allowed_use": [
+        "genomic/subtype external schema check",
+        "distribution comparison",
+        "model-card external-readiness evidence"
+      ],
+      "limitations": [
+        "Open TCGA/GDC data are not a serial monitoring workflow.",
+        "Controlled data access may require authorization.",
+        "Serum CA 15-3, CA 27.29, and CEA trends are not the core public signal."
+      ],
+      "live_study_summary": {
+        "name": "Breast Invasive Carcinoma (TCGA, PanCancer Atlas)",
+        "description": "Breast Invasive Carcinoma TCGA PanCancer data. The original data is <a href=\"https://gdc.cancer.gov/about-data/publications/pancanatlas\">here</a>. The publications are <a href=\"https://www.cell.com/pb-assets/consortium/pancanceratlas/pancani3/index.html\">here</a>.",
+        "citation": "TCGA, Cell 2018",
+        "pmid": "29625048,29596782,29622463,29617662,29625055,29625050,29617662,30643250,32214244,29625049,29850653,36334560",
+        "publicStudy": true,
+        "sequencedSampleCount": 1066,
+        "completeSampleCount": 994,
+        "treatmentCount": 790
+      }
+    },
+    {
+      "id": "cptac_breast_proteogenomic",
+      "name": "CPTAC breast cancer proteogenomic resources",
+      "source_url": "https://gdc.cancer.gov/about-gdc/contributed-genomic-data-cancer-research/clinical-proteomic-tumor-analysis-consortium-cptac",
+      "secondary_source_url": "https://dctd.cancer.gov/data-tools-biospecimens/data/pdc",
+      "access": "public PDC/GDC resources with source-specific access rules",
+      "sample_count": null,
+      "biomarker_fields": [
+        "ER",
+        "PR",
+        "HER2",
+        "PAM50/subtype",
+        "proteomics/phosphoproteomics"
+      ],
+      "tumor_marker_fields": [],
+      "omics_fields": [
+        "proteomics",
+        "phosphoproteomics",
+        "genomics"
+      ],
+      "outcomes": [
+        "clinical annotations; not OncoTrack treatment-cycle response"
+      ],
+      "readiness": "manual_download_external_proteomics_candidate",
+      "allowed_use": [
+        "future proteogenomic feature sanity check",
+        "biomarker biology context",
+        "distribution alignment after manual download"
+      ],
+      "limitations": [
+        "Requires manual data retrieval and schema normalization.",
+        "Not a serum tumor-marker monitoring cohort.",
+        "Not a patient-facing prediction validation source."
+      ]
+    },
+    {
+      "id": "aacr_genie_bpc_brca",
+      "name": "AACR GENIE BPC breast cancer",
+      "source_url": "https://genie.cbioportal.org/api/studies/genie_bpc_brca?projection=SUMMARY",
+      "secondary_source_url": "https://www.aacr.org/professionals/research/aacr-project-genie/",
+      "access": "access-controlled candidate",
+      "sample_count": null,
+      "biomarker_fields": [
+        "clinical-grade NGS",
+        "ER",
+        "PR",
+        "HER2",
+        "selected biomarkers"
+      ],
+      "tumor_marker_fields": [],
+      "outcomes": [
+        "real-world treatment and survival outcomes where accessible"
+      ],
+      "readiness": "access_controlled_future_candidate",
+      "allowed_use": [
+        "future real-world biomarker/treatment/outcome benchmark after access approval"
+      ],
+      "limitations": [
+        "Not immediately available for local student training without access workflow.",
+        "Do not claim validation from this source until data are actually mapped and evaluated."
+      ]
+    },
+    {
+      "id": "nci_edrn_breast_reference_set",
+      "name": "NCI-EDRN breast cancer reference set for circulating markers",
+      "source_url": "https://edrn.nci.nih.gov/data-and-resources/publications/25471344-2344-construction-and-analysis-of-the-nci-edrn-breast-cancer-reference-set-for-circulating-markers-of-disease/",
+      "secondary_source_url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+      "access": "research reference set / publication context",
+      "sample_count": 832,
+      "biomarker_fields": [
+        "serum/plasma protein markers"
+      ],
+      "tumor_marker_fields": [
+        "CA15-3",
+        "CEA-family/CEACAM5"
+      ],
+      "outcomes": [
+        "reference-set case/control labels, not treatment response"
+      ],
+      "readiness": "tumor_marker_context_only_not_response_training",
+      "allowed_use": [
+        "tumor-marker limitation education",
+        "serum-marker realism priors",
+        "negative-control reminder against standalone tumor-marker prediction"
+      ],
+      "limitations": [
+        "Not a longitudinal treatment-response cohort.",
+        "Does not support standalone recurrence/progression prediction in OncoTrack."
+      ]
+    },
+    {
+      "id": "nci_tumor_marker_common_use",
+      "name": "NCI tumor-marker test reference",
+      "source_url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+      "access": "public education/reference",
+      "sample_count": null,
+      "biomarker_fields": [],
+      "tumor_marker_fields": [
+        "CA15-3/CA27.29",
+        "CEA"
+      ],
+      "outcomes": [],
+      "readiness": "context_only_patient_education",
+      "allowed_use": [
+        "patient-safe tumor-marker explanation",
+        "RAG education source",
+        "claim-boundary support"
+      ],
+      "limitations": [
+        "Reference page, not a downloadable modeling cohort.",
+        "Must not be used to train response predictors."
+      ]
+    }
+  ],
+  "live_api_enrichment": [
+    {
+      "dataset_id": "metabric_cbioportal",
+      "url": "https://www.cbioportal.org/api/studies/brca_metabric?projection=SUMMARY",
+      "ok": true,
+      "fields": [
+        "allSampleCount",
+        "cnaSampleCount",
+        "completeSampleCount",
+        "massSpectrometrySampleCount",
+        "methylationHm27SampleCount",
+        "miRnaSampleCount",
+        "mrnaMicroarraySampleCount",
+        "mrnaRnaSeqSampleCount",
+        "mrnaRnaSeqV2SampleCount",
+        "name",
+        "publicStudy",
+        "rppaSampleCount",
+        "sequencedSampleCount",
+        "structuralVariantCount",
+        "treatmentCount"
+      ]
+    },
+    {
+      "dataset_id": "tcga_brca_pan_can_atlas",
+      "url": "https://www.cbioportal.org/api/studies/brca_tcga_pan_can_atlas_2018?projection=SUMMARY",
+      "ok": true,
+      "fields": [
+        "allSampleCount",
+        "cnaSampleCount",
+        "completeSampleCount",
+        "massSpectrometrySampleCount",
+        "methylationHm27SampleCount",
+        "miRnaSampleCount",
+        "mrnaMicroarraySampleCount",
+        "mrnaRnaSeqSampleCount",
+        "mrnaRnaSeqV2SampleCount",
+        "name",
+        "publicStudy",
+        "rppaSampleCount",
+        "sequencedSampleCount",
+        "structuralVariantCount",
+        "treatmentCount"
+      ]
+    },
+    {
+      "dataset_id": "tcga_brca_gdc",
+      "url": "https://api.gdc.cancer.gov/projects/TCGA-BRCA",
+      "ok": true,
+      "fields": [
+        "dbgap_accession_number",
+        "disease_type",
+        "name",
+        "primary_site",
+        "project_id",
+        "releasable",
+        "released",
+        "state"
+      ],
+      "error": null
+    }
+  ],
+  "a_b_testing_plan": {
+    "baseline": "current synthetic champion with evidence-aware abstention",
+    "candidate_a": "biomarker_context_candidate using ER/PR/HER2/Ki-67/genetic-readiness as contextual modifiers",
+    "candidate_b": "imaging_plus_biomarker_candidate after BreastDCEDL mapping",
+    "negative_control": "tumor_marker_standalone_candidate must be rejected",
+    "promotion_requirements": [
+      "No leakage audit failures.",
+      "No worse safety/refusal behavior.",
+      "Brier and ECE do not regress.",
+      "Counterfactual unacceptable flips remain zero.",
+      "External/public benchmark is reported separately from synthetic holdout metrics.",
+      "Tumor markers never act as standalone recurrence/progression proof."
+    ]
+  },
+  "retraining_decision": {
+    "production_retrain_now": false,
+    "candidate_training_recommended": true,
+    "recommended_next_training": "Train only an offline candidate table after mapping BreastDCEDL plus one cBioPortal source. Do not replace the champion until leakage, calibration, subgroup, counterfactual, and external checks pass.",
+    "why_not_promote_now": [
+      "Current biomarker feature benchmark remains monitor_only.",
+      "Tumor-marker sources found are context-only, not longitudinal response-training cohorts.",
+      "No clinician-reviewed or real-world OncoTrack-style outcome labels are available."
+    ],
+    "latest_synthetic_signals": {
+      "enhanced_vs_current_default_auroc_delta": -0.0029,
+      "full_vs_clinical_auroc_delta": 0.4253,
+      "full_feature_recommended_use": "candidate_for_external_validation"
+    }
+  },
+  "claim_boundary": "This artifact is public-data readiness and engineering planning only. It is not clinical validation, does not prove clinical utility, does not validate biomarker or tumor-marker predictors, and does not justify treatment recommendations."
+}

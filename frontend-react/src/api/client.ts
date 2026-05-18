@@ -728,6 +728,23 @@ export const getBenchmarkRegistry = () =>
 export const runBenchmarkRegistry = () =>
   post<{ message: string; result: unknown }>("/admin/benchmark-registry");
 
+export const getNormalizedBenchmarkArtifact = (artifactId: string) =>
+  get<import("../types/api").AdminBenchmarkResponse>(
+    `/admin/benchmark-artifacts/${encodeURIComponent(artifactId)}`,
+  );
+
+export const getLiveRagEval = () =>
+  get<unknown>("/admin/live-rag-eval");
+
+export const runLiveRagEval = () =>
+  post<{ message: string; result: unknown }>("/admin/live-rag-eval");
+
+export const getClaimLevelCitationEval = () =>
+  get<unknown>("/admin/claim-level-citation-eval");
+
+export const getRagTraceReplay = (limit = 12) =>
+  get<unknown>(`/admin/rag-trace-replay?limit=${limit}`);
+
 // Safety & evaluation center
 export const getSafetyCenter = () =>
   get<import("../types/api").SafetyCenter>("/admin/safety-center");

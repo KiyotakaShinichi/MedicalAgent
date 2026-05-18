@@ -67,6 +67,22 @@ artifacts:
     metric_thresholds:
       - {path: [summary, hard_failures], op: "==", value: 0}
 
+  - path: Data/evals/rag/latest_claim_level_citation_eval.json
+    required: true
+    max_age_days: 60
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [summary, hard_failures], op: "==", value: 0}
+
+  - path: Data/evals/rag/latest_live_rag_eval.json
+    required: true
+    max_age_days: 30
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [summary, pass_rate], op: ">=", value: 0.80}
+      - {path: [summary, unsafe_answer_rate], op: "<=", value: 0.0}
+      - {path: [summary, source_tier_correctness], op: ">=", value: 1.0}
+
   - path: Data/evals/rag/latest_rag_tier_ablation.json
     required: true
     max_age_days: 60
@@ -133,6 +149,63 @@ artifacts:
     required: false
     max_age_days: 60
     accepted_status: [strong, acceptable]
+
+  - path: Data/evals/models/latest_public_biomarker_dataset_readiness.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [summary, tumor_marker_response_train_ready], op: "==", value: 0}
+
+  - path: Data/evals/models/latest_public_treatment_dataset_readiness.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [summary, immediate_full_treatment_combo_training_ready], op: "==", value: 0}
+
+  - path: Data/evals/models/latest_deep_learning_candidate_benchmark.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [genetic_context_ablation, decision], op: "!=", value: promote_without_external_validation}
+
+  - path: Data/evals/models/latest_external_data_bridge_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [validation, status], op: "==", value: passed}
+      - {path: [coverage, roles_supported, full_oncotrack_timeline_training], op: "==", value: false}
+
+  - path: Data/evals/models/latest_external_failure_case_gallery.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+
+  - path: Data/evals/models/latest_treatment_sequence_feature_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [patient_count], op: ">", value: 0}
+      - {path: [modality_counts, chemotherapy], op: ">", value: 0}
+
+  - path: Data/evals/models/latest_data_promotion_roadmap.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [promotion_policy, current_global_policy], op: "==", value: monitor_only}
+      - {path: [promotion_policy, may_influence_treatment], op: "==", value: false}
+
+  - path: Data/evals/ab_tests/latest_ab_test_report.json
+    required: false
+    max_age_days: 60
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [expectations, failed], op: "==", value: 0}
 
   - path: Data/evals/medical/latest_medical_advisor_review_packet.json
     required: true

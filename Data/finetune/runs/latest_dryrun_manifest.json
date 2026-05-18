@@ -1,0 +1,62 @@
+{
+  "schema_version": "finetune_dryrun_manifest_v1",
+  "generated_at": "2026-05-18T11:57:56.762880+00:00",
+  "status": "dry_run_completed",
+  "dataset_path": "data\\finetune\\prepared\\dataset.jsonl",
+  "dataset_example_count": 27,
+  "plan": {
+    "base_model_placeholder": "local Ollama / quantized 7B-class model TBD",
+    "adapter_name_placeholder": "oncotrack-behavior-v0-dryrun",
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ],
+    "epochs": 3,
+    "batch_size": 4,
+    "learning_rate": 0.0002,
+    "warmup_steps": 10,
+    "max_seq_len": 2048,
+    "intended_behavior_targets": [
+      "clinician_summary",
+      "missing_data_disclosure",
+      "questions_to_ask_care_team",
+      "supplement_boundary",
+      "taglish_safety"
+    ],
+    "not_intended_for": [
+      "diagnosis",
+      "treatment_recommendation",
+      "dosage_change",
+      "prognosis_estimate",
+      "genetic_risk_prediction",
+      "tumor_marker_conclusion",
+      "supplement_safe_with_chemo_claim",
+      "any clinical decision support"
+    ],
+    "safety_validator_compatibility": [
+      "agent_safety.safety_scope_check",
+      "agent_input_gate.input_guardrail_check",
+      "agent_output_gate.output_guardrail_check",
+      "agent_post_gen.apply_post_gen_validator",
+      "medical_claim_boundary.classify_medical_claim",
+      "rag_claim_validator.validate_claims"
+    ]
+  },
+  "executed_steps": [
+    "verify_dataset_present",
+    "echo_training_plan",
+    "emit_model_card_stub"
+  ],
+  "skipped_steps": [
+    "load_base_model_weights",
+    "tokenize_dataset",
+    "instantiate_lora_adapter",
+    "trainer_loop",
+    "save_adapter_weights",
+    "evaluate_on_held_out"
+  ],
+  "skipped_reason": "Default scaffold runs without GPU / transformers / peft.",
+  "claim_boundary": "Dry-run: no model was trained. The manifest reflects the plan that a future training run would execute. Any real adapter must still pass the OncoTrack safety stack."
+}

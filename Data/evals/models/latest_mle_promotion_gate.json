@@ -1,0 +1,117 @@
+{
+  "schema_version": "mle_promotion_gate_v1",
+  "generated_at": "2026-05-18T15:28:43.263776+00:00",
+  "decision": "HOLD",
+  "reasons": [
+    "synthetic_realism_documented: [\"status 'needs_attention' not in ['acceptable', 'candidate', 'strong']\"]"
+  ],
+  "condition_count": 10,
+  "passing_count": 9,
+  "failing_count": 1,
+  "conditions": [
+    {
+      "name": "leakage_audit_passed",
+      "artifact": "Data/evals/models/latest_leakage_audit.json",
+      "required": true,
+      "critical": true,
+      "decision_on_fail": "REJECT",
+      "status_observed": "passed",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "shortcut_risk_acceptable",
+      "artifact": "Data/evals/models/latest_shortcut_audit.json",
+      "required": true,
+      "critical": false,
+      "decision_on_fail": "HOLD",
+      "status_observed": "acceptable",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "toxicity_feature_audit_acceptable",
+      "artifact": "Data/evals/models/latest_toxicity_feature_audit.json",
+      "required": true,
+      "critical": false,
+      "decision_on_fail": "HOLD",
+      "status_observed": "acceptable",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "calibration_thresholds_passed",
+      "artifact": "Data/evals/models/latest_per_head_calibration.json",
+      "required": true,
+      "critical": true,
+      "decision_on_fail": "HOLD",
+      "status_observed": "strong",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "counterfactual_stability_passed",
+      "artifact": "Data/evals/models/latest_counterfactual_stability.json",
+      "required": true,
+      "critical": true,
+      "decision_on_fail": "HOLD",
+      "status_observed": "strong",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "modality_robustness_passed",
+      "artifact": "Data/evals/models/latest_modality_robustness_comparison.json",
+      "required": true,
+      "critical": true,
+      "decision_on_fail": "HOLD",
+      "status_observed": "robust",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "no_full_data_regression",
+      "artifact": "Data/evals/models/latest_response_conformal_calibration.json",
+      "required": true,
+      "critical": true,
+      "decision_on_fail": "HOLD",
+      "status_observed": "strong",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "abstention_behavior_acceptable",
+      "artifact": "Data/evals/models/latest_learned_abstention.json",
+      "required": false,
+      "critical": false,
+      "decision_on_fail": "HOLD",
+      "status_observed": "strong",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "generator_card_current",
+      "artifact": "Data/evals/models/latest_synthetic_generator_card.json",
+      "required": true,
+      "critical": false,
+      "decision_on_fail": "HOLD",
+      "status_observed": "passed",
+      "issues": [],
+      "passed": true
+    },
+    {
+      "name": "synthetic_realism_documented",
+      "artifact": "Data/evals/models/latest_synthetic_realism_hardening.json",
+      "required": false,
+      "critical": false,
+      "decision_on_fail": "HOLD",
+      "status_observed": "needs_attention",
+      "issues": [
+        "status 'needs_attention' not in ['acceptable', 'candidate', 'strong']"
+      ],
+      "passed": false
+    }
+  ],
+  "config_path": "config\\mle_promotion_thresholds.yaml",
+  "claim_boundary": "This is an engineering promotion gate over synthetic-only audits. PROMOTE means the engineering proxies are satisfied \u2014 it is NOT clinical validation, regulatory approval, or evidence of real-world patient benefit. Any production deployment still requires deterministic safety gates, source-governed RAG, post-generation validators, the medical claim boundary checker, and clinician review.\n"
+}

@@ -138,6 +138,239 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/genetic-counseling-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get My Genetic Counseling Readiness */
+        get: operations["get_my_genetic_counseling_readiness_me_genetic_counseling_readiness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/patients/{patient_id}/genetic-counseling-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Patient Genetic Counseling Readiness */
+        get: operations["get_patient_genetic_counseling_readiness_patients__patient_id__genetic_counseling_readiness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/symptoms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add My Symptom
+         * @description Patient-scoped symptom save (manual-entry form).
+         *
+         *     Mirrors the clinician-side :func:`add_symptom_report` route but trusts
+         *     the bearer-token's patient_id rather than reading it from the URL.  The
+         *     new ``duration`` and ``urgent_flag`` fields are folded into the notes
+         *     column so the existing schema does not need to change — the clinician
+         *     review queue picks the urgent tag up via its existing text scan.
+         */
+        post: operations["add_my_symptom_me_symptoms_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/labs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add My Lab
+         * @description Patient-scoped CBC save.  Mirrors :func:`add_lab_result` but trusts
+         *     the bearer-token's patient_id rather than the URL.  ``anc`` and
+         *     ``lab_source``/``notes`` are folded into ``source_note`` to avoid a
+         *     schema migration on the LabResult table.
+         */
+        post: operations["add_my_lab_me_labs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/imaging-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add My Imaging Report
+         * @description Patient-scoped imaging save.  Either ``findings`` or ``impression``
+         *     must be present; otherwise the entry is rejected so we never store an
+         *     empty imaging row.
+         */
+        post: operations["add_my_imaging_report_me_imaging_reports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/medications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add My Medication
+         * @description Patient-scoped medication save.  Stored in the MedicationLog table
+         *     (the same table the chat agent's save_medication path writes to).
+         */
+        post: operations["add_my_medication_me_medications_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/treatments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add My Treatment
+         * @description Patient-scoped treatment-cycle note.  Cycle defaults to 0 when the
+         *     patient doesn't remember the number; the existing Treatment row schema
+         *     requires an integer.
+         */
+        post: operations["add_my_treatment_me_treatments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/family-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add My Family History */
+        post: operations["add_my_family_history_me_family_history_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/genetic-test-records": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add My Genetic Test Record */
+        post: operations["add_my_genetic_test_record_me_genetic_test_records_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/biomarker-records": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add My Biomarker Record */
+        post: operations["add_my_biomarker_record_me_biomarker_records_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/tumor-marker-records": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add My Tumor Marker Record */
+        post: operations["add_my_tumor_marker_record_me_tumor_marker_records_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/patients/{patient_id}/genetic-counseling-review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Save Genetic Counseling Review */
+        post: operations["save_genetic_counseling_review_patients__patient_id__genetic_counseling_review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/patients/{patient_id}/chat": {
         parameters: {
             query?: never;
@@ -431,6 +664,31 @@ export interface paths {
         };
         /** Clinician Review Queue Endpoint */
         get: operations["clinician_review_queue_endpoint_clinician_review_queue_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/clinician/patients/{patient_id}/prediction-traces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Clinician Patient Prediction Traces Endpoint
+         * @description Return the patient's prediction-trace history with provenance fields.
+         *
+         *     Each row carries the same envelope the patient sees on their dashboard
+         *     plus the model + feature-set + threshold + calibration provenance, so a
+         *     clinician reviewing the patient can audit which model produced which
+         *     decision and which modalities were available at the time.
+         */
+        get: operations["clinician_patient_prediction_traces_endpoint_clinician_patients__patient_id__prediction_traces_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1700,6 +1958,773 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/benchmark-artifacts/{artifact_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Normalized Benchmark Artifact Endpoint
+         * @description Return any registered benchmark artifact in the normalized admin shape.
+         */
+        get: operations["get_admin_normalized_benchmark_artifact_endpoint_admin_benchmark_artifacts__artifact_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/genetic-counseling-eval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Genetic Counseling Eval Endpoint
+         * @description Return cached Genetic Counseling Readiness safety benchmark.
+         */
+        get: operations["get_admin_genetic_counseling_eval_endpoint_admin_genetic_counseling_eval_get"];
+        put?: never;
+        /**
+         * Run Admin Genetic Counseling Eval Endpoint
+         * @description Run genetic-counseling overclaim, VUS, privacy, and referral checks.
+         */
+        post: operations["run_admin_genetic_counseling_eval_endpoint_admin_genetic_counseling_eval_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/biomarker-feature-benchmark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Biomarker Feature Benchmark Endpoint
+         * @description Return cached biomarker/tumor-marker feature ablation if present.
+         */
+        get: operations["get_admin_biomarker_feature_benchmark_endpoint_admin_biomarker_feature_benchmark_get"];
+        put?: never;
+        /**
+         * Run Admin Biomarker Feature Benchmark Endpoint
+         * @description Run synthetic biomarker/tumor-marker feature benchmark with leakage checks.
+         */
+        post: operations["run_admin_biomarker_feature_benchmark_endpoint_admin_biomarker_feature_benchmark_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/full-feature-group-ablation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Full Feature Group Ablation Endpoint
+         * @description Return the full modality-group ablation matrix if present.
+         */
+        get: operations["get_admin_full_feature_group_ablation_endpoint_admin_full_feature_group_ablation_get"];
+        put?: never;
+        /**
+         * Run Admin Full Feature Group Ablation Endpoint
+         * @description Run the full clinical/lab/symptom/imaging/biomarker/genetic/tumor-marker ablation.
+         */
+        post: operations["run_admin_full_feature_group_ablation_endpoint_admin_full_feature_group_ablation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/toxicity-shortcut-audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Toxicity Shortcut Audit Endpoint
+         * @description Return the toxicity-label shortcut audit artifact.
+         */
+        get: operations["get_admin_toxicity_shortcut_audit_endpoint_admin_toxicity_shortcut_audit_get"];
+        put?: never;
+        /**
+         * Run Admin Toxicity Shortcut Audit Endpoint
+         * @description Rerun the toxicity-label shortcut audit.
+         */
+        post: operations["run_admin_toxicity_shortcut_audit_endpoint_admin_toxicity_shortcut_audit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/leakage-audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Leakage Audit Endpoint
+         * @description Return the most recent training-data leakage audit artifact.
+         */
+        get: operations["get_admin_leakage_audit_endpoint_admin_leakage_audit_get"];
+        put?: never;
+        /**
+         * Run Admin Leakage Audit Endpoint
+         * @description Rerun the unified leakage audit and refresh the artifact on disk.
+         */
+        post: operations["run_admin_leakage_audit_endpoint_admin_leakage_audit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/prediction-traces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Prediction Traces Endpoint
+         * @description Return recent prediction traces with optional filtering + a summary.
+         */
+        get: operations["get_admin_prediction_traces_endpoint_admin_prediction_traces_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/evidence-abstention-eval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Evidence Abstention Eval Endpoint
+         * @description Return the most recent evidence-aware abstention eval artifact.
+         */
+        get: operations["get_admin_evidence_abstention_eval_endpoint_admin_evidence_abstention_eval_get"];
+        put?: never;
+        /**
+         * Run Admin Evidence Abstention Eval Endpoint
+         * @description Rerun the abstention sweep across modality-dropout scenarios.
+         */
+        post: operations["run_admin_evidence_abstention_eval_endpoint_admin_evidence_abstention_eval_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/modality-robustness-comparison": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Modality Robustness Comparison Endpoint
+         * @description Return the champion-vs-modality-robust comparison artifact.
+         */
+        get: operations["get_admin_modality_robustness_comparison_endpoint_admin_modality_robustness_comparison_get"];
+        put?: never;
+        /**
+         * Run Admin Modality Robustness Comparison Endpoint
+         * @description Rerun the champion-vs-robust comparison sweep.
+         */
+        post: operations["run_admin_modality_robustness_comparison_endpoint_admin_modality_robustness_comparison_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/kb-source-governance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Kb Source Governance Endpoint
+         * @description Return the KB source-governance artifact (tier + allowed_use + staleness).
+         */
+        get: operations["get_admin_kb_source_governance_endpoint_admin_kb_source_governance_get"];
+        put?: never;
+        /**
+         * Run Admin Kb Source Governance Endpoint
+         * @description Rebuild the KB source-governance artifact from the current KB chunks.
+         */
+        post: operations["run_admin_kb_source_governance_endpoint_admin_kb_source_governance_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rag-intent-modes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Rag Intent Modes Endpoint
+         * @description Return the configured RAG mode registry (config-as-API).
+         */
+        get: operations["get_admin_rag_intent_modes_endpoint_admin_rag_intent_modes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rag-intent-aware-eval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Rag Intent Aware Eval Endpoint
+         * @description Return the most recent intent-aware RAG benchmark artifact.
+         */
+        get: operations["get_admin_rag_intent_aware_eval_endpoint_admin_rag_intent_aware_eval_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/live-rag-eval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Live Rag Eval Endpoint
+         * @description Return the most recent live-agent RAG benchmark artifact.
+         */
+        get: operations["get_admin_live_rag_eval_endpoint_admin_live_rag_eval_get"];
+        put?: never;
+        /**
+         * Run Admin Live Rag Eval Endpoint
+         * @description Rerun the live-agent RAG benchmark.
+         */
+        post: operations["run_admin_live_rag_eval_endpoint_admin_live_rag_eval_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/claim-level-citation-eval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Claim Level Citation Eval Endpoint
+         * @description Return the claim-level citation validation artifact.
+         */
+        get: operations["get_admin_claim_level_citation_eval_endpoint_admin_claim_level_citation_eval_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rag-tier-ablation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Rag Tier Ablation Endpoint
+         * @description Return the most recent source-tier ablation artifact.
+         */
+        get: operations["get_admin_rag_tier_ablation_endpoint_admin_rag_tier_ablation_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/taglish-safety-parity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Taglish Safety Parity Endpoint
+         * @description Return the Taglish ↔ English safety-route parity artifact.
+         */
+        get: operations["get_admin_taglish_safety_parity_endpoint_admin_taglish_safety_parity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rag-trace-replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Rag Trace Replay Endpoint
+         * @description Return recent RAG evaluation log rows with Phase 11 fields
+         *     (intent, rewrite, retrieved sources, source tiers, claim
+         *     validation, post-gen validator, evidence grade, final answer)
+         *     flattened into a single per-call shape ready for the trace
+         *     replay panel.
+         */
+        get: operations["get_admin_rag_trace_replay_endpoint_admin_rag_trace_replay_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/toxicity-feature-audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Toxicity Feature Audit Endpoint
+         * @description Return the latest toxicity feature-importance audit + no-proxy
+         *     baseline.  Documents the synthetic generator's structural label
+         *     leakage so the headline toxicity AUC isn't quoted in isolation.
+         */
+        get: operations["get_admin_toxicity_feature_audit_endpoint_admin_toxicity_feature_audit_get"];
+        put?: never;
+        /**
+         * Run Admin Toxicity Feature Audit Endpoint
+         * @description Rerun the toxicity audit + write a fresh artifact.
+         */
+        post: operations["run_admin_toxicity_feature_audit_endpoint_admin_toxicity_feature_audit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/synthetic-generator-card": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Synthetic Generator Card Endpoint
+         * @description Return the synthetic-data generator card artifact.
+         */
+        get: operations["get_admin_synthetic_generator_card_endpoint_admin_synthetic_generator_card_get"];
+        put?: never;
+        /**
+         * Run Admin Synthetic Generator Card Endpoint
+         * @description Rebuild the generator card from the current dataset summary + rows.
+         */
+        post: operations["run_admin_synthetic_generator_card_endpoint_admin_synthetic_generator_card_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/failure-mode-registry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Failure Mode Registry Endpoint
+         * @description Return the consolidated failure-mode registry artifact.
+         */
+        get: operations["get_admin_failure_mode_registry_endpoint_admin_failure_mode_registry_get"];
+        put?: never;
+        /**
+         * Run Admin Failure Mode Registry Endpoint
+         * @description Rebuild the failure-mode registry by re-aggregating its source artifacts.
+         */
+        post: operations["run_admin_failure_mode_registry_endpoint_admin_failure_mode_registry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/modality-robust-training": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Modality Robust Training Endpoint
+         * @description Return the modality-robust training metadata artifact.
+         */
+        get: operations["get_admin_modality_robust_training_endpoint_admin_modality_robust_training_get"];
+        put?: never;
+        /**
+         * Run Admin Modality Robust Training Endpoint
+         * @description Retrain the modality-robust classifier and refresh both the model
+         *     artifact and the metadata report.  Long-running.
+         */
+        post: operations["run_admin_modality_robust_training_endpoint_admin_modality_robust_training_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/quantile-regression-training": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Quantile Regression Training Endpoint
+         * @description Return the response-score quantile regression metadata artifact.
+         */
+        get: operations["get_admin_quantile_regression_training_endpoint_admin_quantile_regression_training_get"];
+        put?: never;
+        /**
+         * Run Admin Quantile Regression Training Endpoint
+         * @description Retrain p10/p50/p90 response-score quantile heads.
+         */
+        post: operations["run_admin_quantile_regression_training_endpoint_admin_quantile_regression_training_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/modality-robust-regression-training": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Modality Robust Regression Training Endpoint
+         * @description Return the modality-robust regression metadata artifact.
+         */
+        get: operations["get_admin_modality_robust_regression_training_endpoint_admin_modality_robust_regression_training_get"];
+        put?: never;
+        /**
+         * Run Admin Modality Robust Regression Training Endpoint
+         * @description Retrain the modality-robust response-score regressor.
+         */
+        post: operations["run_admin_modality_robust_regression_training_endpoint_admin_modality_robust_regression_training_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/regression-robustness-comparison": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Regression Robustness Comparison Endpoint
+         * @description Return legacy-vs-modality-robust response-score comparison.
+         */
+        get: operations["get_admin_regression_robustness_comparison_endpoint_admin_regression_robustness_comparison_get"];
+        put?: never;
+        /**
+         * Run Admin Regression Robustness Comparison Endpoint
+         * @description Rerun the response-score robustness comparison sweep.
+         */
+        post: operations["run_admin_regression_robustness_comparison_endpoint_admin_regression_robustness_comparison_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/modality-dropout-quantile-regression": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Modality Dropout Quantile Regression Endpoint
+         * @description Return modality-dropout quantile regression metadata.
+         */
+        get: operations["get_admin_modality_dropout_quantile_regression_endpoint_admin_modality_dropout_quantile_regression_get"];
+        put?: never;
+        /**
+         * Run Admin Modality Dropout Quantile Regression Endpoint
+         * @description Train modality-dropout p10/p50/p90 response-score quantile heads.
+         */
+        post: operations["run_admin_modality_dropout_quantile_regression_endpoint_admin_modality_dropout_quantile_regression_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/response-conformal-calibration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Response Conformal Calibration Endpoint
+         * @description Return response-score conformal interval calibration.
+         */
+        get: operations["get_admin_response_conformal_calibration_endpoint_admin_response_conformal_calibration_get"];
+        put?: never;
+        /**
+         * Run Admin Response Conformal Calibration Endpoint
+         * @description Recompute response-score conformal interval calibration.
+         */
+        post: operations["run_admin_response_conformal_calibration_endpoint_admin_response_conformal_calibration_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/robustness-stress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Robustness Stress Endpoint
+         * @description Return synthetic robustness stress-suite artifact.
+         */
+        get: operations["get_admin_robustness_stress_endpoint_admin_robustness_stress_get"];
+        put?: never;
+        /**
+         * Run Admin Robustness Stress Endpoint
+         * @description Run missing/corrupt/conflicting-data stress cases.
+         */
+        post: operations["run_admin_robustness_stress_endpoint_admin_robustness_stress_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/medical-safety-contract": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Medical Safety Contract Endpoint
+         * @description Return clinical ontology, minimum evidence, and claim boundary contract.
+         */
+        get: operations["get_admin_medical_safety_contract_endpoint_admin_medical_safety_contract_get"];
+        put?: never;
+        /**
+         * Run Admin Medical Safety Contract Endpoint
+         * @description Regenerate the medical-safety contract artifact.
+         */
+        post: operations["run_admin_medical_safety_contract_endpoint_admin_medical_safety_contract_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/public-biomarker-dataset-manifest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Public Biomarker Dataset Manifest Endpoint
+         * @description Return public biomarker/tumor-marker predictor-source manifest.
+         */
+        get: operations["get_admin_public_biomarker_dataset_manifest_endpoint_admin_public_biomarker_dataset_manifest_get"];
+        put?: never;
+        /**
+         * Run Admin Public Biomarker Dataset Manifest Endpoint
+         * @description Rebuild public biomarker/tumor-marker predictor-source manifest.
+         */
+        post: operations["run_admin_public_biomarker_dataset_manifest_endpoint_admin_public_biomarker_dataset_manifest_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/public-biomarker-mapping-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Public Biomarker Mapping Readiness Endpoint
+         * @description Return source-to-feature mapping readiness for public biomarker sources.
+         */
+        get: operations["get_admin_public_biomarker_mapping_readiness_endpoint_admin_public_biomarker_mapping_readiness_get"];
+        put?: never;
+        /**
+         * Run Admin Public Biomarker Mapping Readiness Endpoint
+         * @description Rebuild source-to-feature mapping readiness for public biomarker sources.
+         */
+        post: operations["run_admin_public_biomarker_mapping_readiness_endpoint_admin_public_biomarker_mapping_readiness_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/cbioportal-biomarker-schema-mapping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Cbioportal Biomarker Schema Mapping Endpoint
+         * @description Return TCGA-BRCA/METABRIC cBioPortal biomarker schema mapping readiness.
+         */
+        get: operations["get_admin_cbioportal_biomarker_schema_mapping_endpoint_admin_cbioportal_biomarker_schema_mapping_get"];
+        put?: never;
+        /**
+         * Run Admin Cbioportal Biomarker Schema Mapping Endpoint
+         * @description Rebuild cBioPortal biomarker schema mapping from public API when available.
+         */
+        post: operations["run_admin_cbioportal_biomarker_schema_mapping_endpoint_admin_cbioportal_biomarker_schema_mapping_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/clinical-safety-review-checklist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Clinical Safety Review Checklist Endpoint
+         * @description Return clinical safety review checklist artifact.
+         */
+        get: operations["get_admin_clinical_safety_review_checklist_endpoint_admin_clinical_safety_review_checklist_get"];
+        put?: never;
+        /**
+         * Run Admin Clinical Safety Review Checklist Endpoint
+         * @description Rebuild clinical safety review checklist artifact.
+         */
+        post: operations["run_admin_clinical_safety_review_checklist_endpoint_admin_clinical_safety_review_checklist_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/system-health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin System Health Endpoint
+         * @description Return backend/frontend/artifact/dependency health for the engineering demo.
+         */
+        get: operations["get_admin_system_health_endpoint_admin_system_health_get"];
+        put?: never;
+        /**
+         * Run Admin System Health Endpoint
+         * @description Rebuild system health report.
+         */
+        post: operations["run_admin_system_health_endpoint_admin_system_health_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1740,6 +2765,43 @@ export interface components {
             payload?: {
                 [key: string]: unknown;
             } | null;
+        };
+        /** BiomarkerRecordCreate */
+        BiomarkerRecordCreate: {
+            /** Source */
+            source: string;
+            /**
+             * Er Status
+             * @default unknown
+             */
+            er_status: string | null;
+            /**
+             * Pr Status
+             * @default unknown
+             */
+            pr_status: string | null;
+            /**
+             * Her2 Status
+             * @default unknown
+             */
+            her2_status: string | null;
+            /** Ki67 Percent */
+            ki67_percent?: number | null;
+            /** Grade */
+            grade?: string | null;
+            /** Stage */
+            stage?: string | null;
+            /** Report Date */
+            report_date?: string | null;
+            /** Report Text */
+            report_text?: string | null;
+            /** Upload Reference */
+            upload_reference?: string | null;
+            /**
+             * Clinician Review Needed
+             * @default yes
+             */
+            clinician_review_needed: string | null;
         };
         /** BreastDCEDLBaselineRequest */
         BreastDCEDLBaselineRequest: {
@@ -2146,6 +3208,99 @@ export interface components {
             /** Run Id */
             run_id?: string | null;
         };
+        /** FamilyHistoryCreate */
+        FamilyHistoryCreate: {
+            /** Relationship */
+            relationship: string;
+            /** Family Side */
+            family_side?: string | null;
+            /** Cancer Type */
+            cancer_type: string;
+            /** Age At Diagnosis */
+            age_at_diagnosis?: number | null;
+            /** Relative Status */
+            relative_status?: string | null;
+            /**
+             * Multiple Relatives Affected
+             * @default unknown
+             */
+            multiple_relatives_affected: string | null;
+            /**
+             * Male Breast Cancer
+             * @default unknown
+             */
+            male_breast_cancer: string | null;
+            /**
+             * Known Familial Mutation
+             * @default unknown
+             */
+            known_familial_mutation: string | null;
+            /**
+             * Bilateral Breast Cancer
+             * @default unknown
+             */
+            bilateral_breast_cancer: string | null;
+            /**
+             * Multiple Primary Cancers
+             * @default unknown
+             */
+            multiple_primary_cancers: string | null;
+            /** Ancestry Ethnicity */
+            ancestry_ethnicity?: string | null;
+            /**
+             * Prior Breast Biopsy Atypia
+             * @default unknown
+             */
+            prior_breast_biopsy_atypia: string | null;
+            /** Relation Degree */
+            relation_degree?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** GeneticReviewCreate */
+        GeneticReviewCreate: {
+            /** Decision */
+            decision: string;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** GeneticTestRecordCreate */
+        GeneticTestRecordCreate: {
+            /** Test Type */
+            test_type: string;
+            /**
+             * Sample Type
+             * @default unknown
+             */
+            sample_type: string | null;
+            /** Gene */
+            gene?: string | null;
+            /** Variant Text */
+            variant_text?: string | null;
+            /**
+             * Classification
+             * @default unknown
+             */
+            classification: string | null;
+            /** Report Date */
+            report_date?: string | null;
+            /** Lab Provider */
+            lab_provider?: string | null;
+            /** Upload Reference */
+            upload_reference?: string | null;
+            /**
+             * Reviewed By Genetic Counselor
+             * @default unknown
+             */
+            reviewed_by_genetic_counselor: string | null;
+            /**
+             * Clinician Review Status
+             * @default pending
+             */
+            clinician_review_status: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -2266,6 +3421,137 @@ export interface components {
             /** Reason */
             reason?: string | null;
         };
+        /**
+         * MyImagingReportCreate
+         * @description Patient-scoped imaging save (manual-entry form).
+         *
+         *     Modality is one of MRI/CT/Ultrasound/Mammogram/Other; the backend stores
+         *     it verbatim.  ``report_type`` defaults to "Patient-entered report" when
+         *     the patient hasn't typed one — keeps the existing schema happy.
+         */
+        MyImagingReportCreate: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Modality */
+            modality: string;
+            /** Report Type */
+            report_type?: string | null;
+            /** Body Site */
+            body_site?: string | null;
+            /** Findings */
+            findings?: string | null;
+            /** Impression */
+            impression?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /**
+         * MyLabCreate
+         * @description Patient-scoped CBC save (manual-entry form).
+         *
+         *     Adds ``anc`` and ``lab_source`` over the clinician-side :class:`LabCreate`.
+         *     ``anc`` is not part of the LabResult table schema yet — when present we
+         *     fold it into ``source_note`` so we do not need a migration.  Replace
+         *     with a first-class column when the schema is next updated.
+         */
+        MyLabCreate: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Wbc */
+            wbc: number;
+            /** Hemoglobin */
+            hemoglobin: number;
+            /** Platelets */
+            platelets: number;
+            /** Anc */
+            anc?: number | null;
+            /** Lab Source */
+            lab_source?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** MyMedicationCreate */
+        MyMedicationCreate: {
+            /** Medication */
+            medication: string;
+            /** Dose */
+            dose?: string | null;
+            /** Frequency */
+            frequency?: string | null;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Side Effects */
+            side_effects?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /**
+         * MySymptomCreate
+         * @description Patient-scoped variant of :class:`SymptomCreate`.
+         *
+         *     Has the same data shape but is submitted by the patient themselves via
+         *     ``POST /me/symptoms``.  Adds two optional fields the manual-entry form
+         *     surfaces but the clinician-side route never needed:
+         *
+         *     - ``duration``     — free text describing how long the symptom has lasted
+         *                          (e.g. "since this morning", "2 days").
+         *     - ``urgent_flag``  — checkbox the patient set explicitly.  When True we
+         *                          tag the saved record's notes with ``[urgent flag]``
+         *                          so the clinician review queue picks it up — we do
+         *                          NOT auto-route anything; the safety promise is that
+         *                          the system only *surfaces* the flag, it never decides
+         *                          on it.
+         */
+        MySymptomCreate: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Symptom */
+            symptom: string;
+            /** Severity */
+            severity: number;
+            /** Notes */
+            notes?: string | null;
+            /** Duration */
+            duration?: string | null;
+            /**
+             * Urgent Flag
+             * @default false
+             */
+            urgent_flag: boolean;
+        };
+        /**
+         * MyTreatmentCreate
+         * @description Patient-scoped treatment-cycle note.
+         *
+         *     The clinician :class:`TreatmentCreate` requires an integer cycle number.
+         *     Patients often don't remember the cycle — accept it as optional and
+         *     default to 0 so the row still slots into the treatments table.
+         */
+        MyTreatmentCreate: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Drug */
+            drug: string;
+            /** Cycle */
+            cycle?: number | null;
+            /** Notes */
+            notes?: string | null;
+        };
         /** PatientChatRequest */
         PatientChatRequest: {
             /** Message */
@@ -2381,6 +3667,29 @@ export interface components {
             cycle: number;
             /** Drug */
             drug: string;
+        };
+        /** TumorMarkerRecordCreate */
+        TumorMarkerRecordCreate: {
+            /** Marker */
+            marker: string;
+            /** Value */
+            value: number;
+            /** Unit */
+            unit?: string | null;
+            /** Reference Range */
+            reference_range?: string | null;
+            /**
+             * Date Collected
+             * Format: date
+             */
+            date_collected: string;
+            /**
+             * Trend Direction
+             * @default unknown
+             */
+            trend_direction: string | null;
+            /** Notes */
+            notes?: string | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -2637,6 +3946,422 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_my_genetic_counseling_readiness_me_genetic_counseling_readiness_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_patient_genetic_counseling_readiness_patients__patient_id__genetic_counseling_readiness_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_symptom_me_symptoms_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MySymptomCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_lab_me_labs_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MyLabCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_imaging_report_me_imaging_reports_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MyImagingReportCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_medication_me_medications_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MyMedicationCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_treatment_me_treatments_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MyTreatmentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_family_history_me_family_history_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FamilyHistoryCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_genetic_test_record_me_genetic_test_records_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GeneticTestRecordCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_biomarker_record_me_biomarker_records_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BiomarkerRecordCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_my_tumor_marker_record_me_tumor_marker_records_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TumorMarkerRecordCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_genetic_counseling_review_patients__patient_id__genetic_counseling_review_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GeneticReviewCreate"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -3340,6 +5065,42 @@ export interface operations {
                 authorization?: string | null;
             };
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clinician_patient_prediction_traces_endpoint_clinician_patients__patient_id__prediction_traces_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                abstained_only?: boolean;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                patient_id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -6164,6 +7925,1815 @@ export interface operations {
         };
     };
     run_admin_benchmark_registry_endpoint_admin_benchmark_registry_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_normalized_benchmark_artifact_endpoint_admin_benchmark_artifacts__artifact_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_genetic_counseling_eval_endpoint_admin_genetic_counseling_eval_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_genetic_counseling_eval_endpoint_admin_genetic_counseling_eval_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_biomarker_feature_benchmark_endpoint_admin_biomarker_feature_benchmark_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_biomarker_feature_benchmark_endpoint_admin_biomarker_feature_benchmark_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_full_feature_group_ablation_endpoint_admin_full_feature_group_ablation_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_full_feature_group_ablation_endpoint_admin_full_feature_group_ablation_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_toxicity_shortcut_audit_endpoint_admin_toxicity_shortcut_audit_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_toxicity_shortcut_audit_endpoint_admin_toxicity_shortcut_audit_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_leakage_audit_endpoint_admin_leakage_audit_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_leakage_audit_endpoint_admin_leakage_audit_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_prediction_traces_endpoint_admin_prediction_traces_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                patient_id?: string | null;
+                decision?: string | null;
+                abstained_only?: boolean;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_evidence_abstention_eval_endpoint_admin_evidence_abstention_eval_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_evidence_abstention_eval_endpoint_admin_evidence_abstention_eval_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_modality_robustness_comparison_endpoint_admin_modality_robustness_comparison_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_modality_robustness_comparison_endpoint_admin_modality_robustness_comparison_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_kb_source_governance_endpoint_admin_kb_source_governance_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_kb_source_governance_endpoint_admin_kb_source_governance_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_rag_intent_modes_endpoint_admin_rag_intent_modes_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_rag_intent_aware_eval_endpoint_admin_rag_intent_aware_eval_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_live_rag_eval_endpoint_admin_live_rag_eval_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_live_rag_eval_endpoint_admin_live_rag_eval_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_claim_level_citation_eval_endpoint_admin_claim_level_citation_eval_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_rag_tier_ablation_endpoint_admin_rag_tier_ablation_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_taglish_safety_parity_endpoint_admin_taglish_safety_parity_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_rag_trace_replay_endpoint_admin_rag_trace_replay_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_toxicity_feature_audit_endpoint_admin_toxicity_feature_audit_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_toxicity_feature_audit_endpoint_admin_toxicity_feature_audit_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_synthetic_generator_card_endpoint_admin_synthetic_generator_card_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_synthetic_generator_card_endpoint_admin_synthetic_generator_card_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_failure_mode_registry_endpoint_admin_failure_mode_registry_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_failure_mode_registry_endpoint_admin_failure_mode_registry_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_modality_robust_training_endpoint_admin_modality_robust_training_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_modality_robust_training_endpoint_admin_modality_robust_training_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_quantile_regression_training_endpoint_admin_quantile_regression_training_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_quantile_regression_training_endpoint_admin_quantile_regression_training_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_modality_robust_regression_training_endpoint_admin_modality_robust_regression_training_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_modality_robust_regression_training_endpoint_admin_modality_robust_regression_training_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_regression_robustness_comparison_endpoint_admin_regression_robustness_comparison_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_regression_robustness_comparison_endpoint_admin_regression_robustness_comparison_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_modality_dropout_quantile_regression_endpoint_admin_modality_dropout_quantile_regression_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_modality_dropout_quantile_regression_endpoint_admin_modality_dropout_quantile_regression_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_response_conformal_calibration_endpoint_admin_response_conformal_calibration_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_response_conformal_calibration_endpoint_admin_response_conformal_calibration_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_robustness_stress_endpoint_admin_robustness_stress_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_robustness_stress_endpoint_admin_robustness_stress_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_medical_safety_contract_endpoint_admin_medical_safety_contract_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_medical_safety_contract_endpoint_admin_medical_safety_contract_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_public_biomarker_dataset_manifest_endpoint_admin_public_biomarker_dataset_manifest_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_public_biomarker_dataset_manifest_endpoint_admin_public_biomarker_dataset_manifest_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_public_biomarker_mapping_readiness_endpoint_admin_public_biomarker_mapping_readiness_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_public_biomarker_mapping_readiness_endpoint_admin_public_biomarker_mapping_readiness_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_cbioportal_biomarker_schema_mapping_endpoint_admin_cbioportal_biomarker_schema_mapping_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_cbioportal_biomarker_schema_mapping_endpoint_admin_cbioportal_biomarker_schema_mapping_post: {
+        parameters: {
+            query?: {
+                live_fetch?: boolean;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_clinical_safety_review_checklist_endpoint_admin_clinical_safety_review_checklist_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_clinical_safety_review_checklist_endpoint_admin_clinical_safety_review_checklist_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_system_health_endpoint_admin_system_health_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_admin_system_health_endpoint_admin_system_health_post: {
         parameters: {
             query?: never;
             header?: {

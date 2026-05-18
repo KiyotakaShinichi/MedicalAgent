@@ -1,17 +1,46 @@
 import { useApi } from "../../../hooks/useApi";
-import { getRagSourceRegistry, getRagAblation } from "../../../api/client";
+import { useState, type ReactNode } from "react";
+import {
+  getNormalizedBenchmarkArtifact,
+  getRagAblation,
+  getRagSourceRegistry,
+  getRagTraceReplay,
+  runLiveRagEval,
+} from "../../../api/client";
 import { MetricCard } from "../../../components/ui/MetricCard";
 import { Card, CardHeader, SectionTitle } from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
 import { Badge } from "../../../components/ui/Badge";
 import { LoadingPane, EmptyPane, ErrorPane } from "../../../components/ui/Spinner";
 import type { AdminAnalytics, RagAblationResult, AblationStrategyMetrics } from "../../../types/api";
+import { RefreshCw } from "lucide-react";
 
 interface Props { analytics: AdminAnalytics }
 
 export function RagSection({ analytics }: Props) {
   const { data: registry, status } = useApi(getRagSourceRegistry, []);
   const { data: ablation, status: ablationStatus } = useApi(getRagAblation, []);
+  const { data: liveRag, status: liveRagStatus, refetch: refetchLiveRag } = useApi(
+    () => getNormalizedBenchmarkArtifact("live_rag_eval"),
+    [],
+  );
+  const { data: claimCitation, status: claimCitationStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("claim_level_citation_eval"),
+    [],
+  );
+  const { data: traceReplay, status: traceReplayStatus } = useApi(() => getRagTraceReplay(8), []);
+  const [runningLiveRag, setRunningLiveRag] = useState(false);
   const rag = analytics.rag_evaluation;
+
+  async function refreshLiveRag() {
+    setRunningLiveRag(true);
+    try {
+      await runLiveRagEval();
+      await refetchLiveRag();
+    } finally {
+      setRunningLiveRag(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,6 +90,44 @@ export function RagSection({ analytics }: Props) {
          )}
       </Card>
 
+      <div className="grid lg:grid-cols-2 gap-4">
+        <ArtifactSummaryCard
+          title="Live-Agent RAG Eval"
+          status={liveRagStatus}
+          artifact={liveRag}
+          action={
+            <Button
+              variant="secondary"
+              size="sm"
+              loading={runningLiveRag}
+              icon={<RefreshCw size={12} />}
+              onClick={() => void refreshLiveRag()}
+            >
+              Rerun
+            </Button>
+          }
+          metrics={[
+            ["Pass rate", ["metrics", "pass_rate"], "percent"],
+            ["Claims", ["metrics", "claim_support_rate"], "percent"],
+            ["Tier correctness", ["metrics", "source_tier_correctness"], "percent"],
+            ["Unsafe answers", ["metrics", "unsafe_answer_rate"], "percent"],
+          ]}
+          emptyLabel="No live RAG eval yet - run scripts/run_live_rag_eval.py"
+        />
+        <ArtifactSummaryCard
+          title="Claim-Level Citation Eval"
+          status={claimCitationStatus}
+          artifact={claimCitation}
+          metrics={[
+            ["Cases", ["metrics", "case_count"], "number"],
+            ["Hard failures", ["metrics", "hard_failures"], "number"],
+            ["NLI-required", ["metrics", "nli_required_cases"], "number"],
+            ["NLI available", ["metrics", "nli_available_cases"], "number"],
+          ]}
+          emptyLabel="No claim citation eval yet - run scripts/run_rag_claim_validation_eval.py"
+        />
+      </div>
+
       <Card>
         <CardHeader><SectionTitle>Knowledge Base Sources</SectionTitle></CardHeader>
         {status === "loading" && <LoadingPane />}
@@ -100,7 +167,139 @@ export function RagSection({ analytics }: Props) {
           </>
         )}
       </Card>
+
+      <RagTraceReplayCard status={traceReplayStatus} artifact={traceReplay} />
     </div>
+  );
+}
+
+type MetricFormat = "number" | "percent";
+
+function ArtifactSummaryCard({
+  title,
+  status,
+  artifact,
+  action,
+  metrics,
+  emptyLabel,
+}: {
+  title: string;
+  status: "idle" | "loading" | "success" | "error";
+  artifact: unknown;
+  action?: ReactNode;
+  metrics: Array<[string, string[], MetricFormat]>;
+  emptyLabel: string;
+}) {
+  const record = asRecord(artifact);
+  const artifactStatus = readString(record, ["status"]);
+  const claimBoundary = readString(record, ["claim_boundary"]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <SectionTitle>{title}</SectionTitle>
+        <div className="flex items-center gap-2">
+          {artifactStatus && (
+            <Badge variant={artifactStatus === "strong" || artifactStatus === "acceptable" ? "green" : "amber"}>
+              {artifactStatus}
+            </Badge>
+          )}
+          {action}
+        </div>
+      </CardHeader>
+      {status === "loading" ? <LoadingPane /> :
+       status === "error" ? <ErrorPane message={`Could not load ${title}`} /> :
+       !record ? <EmptyPane label={emptyLabel} /> : (
+        <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-3">
+            {metrics.map(([label, path, format]) => (
+              <MetricCard key={label} label={label} value={formatMetric(readPath(record, path), format)} />
+            ))}
+          </div>
+          {claimBoundary && (
+            <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{claimBoundary}</p>
+          )}
+        </div>
+       )}
+    </Card>
+  );
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
+
+function readPath(record: Record<string, unknown> | null, path: string[]): unknown {
+  let current: unknown = record;
+  for (const key of path) {
+    if (!current || typeof current !== "object" || Array.isArray(current)) return null;
+    current = (current as Record<string, unknown>)[key];
+  }
+  return current;
+}
+
+function readString(record: Record<string, unknown> | null, path: string[]): string | null {
+  const value = readPath(record, path);
+  return typeof value === "string" ? value : null;
+}
+
+function formatMetric(value: unknown, format: MetricFormat): string | null {
+  if (typeof value !== "number") return null;
+  if (format === "percent") return `${(value * 100).toFixed(1)}%`;
+  return Number.isInteger(value) ? String(value) : value.toFixed(3);
+}
+
+function RagTraceReplayCard({
+  status,
+  artifact,
+}: {
+  status: "idle" | "loading" | "success" | "error";
+  artifact: unknown;
+}) {
+  const record = asRecord(artifact);
+  const traces = Array.isArray(record?.traces) ? record.traces : [];
+  return (
+    <Card>
+      <CardHeader>
+        <SectionTitle>RAG Trace Replay</SectionTitle>
+        <Badge variant={traces.length > 0 ? "green" : "muted"}>{traces.length} traces</Badge>
+      </CardHeader>
+      {status === "loading" ? <LoadingPane /> :
+       status === "error" ? <ErrorPane message="Could not load RAG trace replay" /> :
+       traces.length === 0 ? <EmptyPane label="No RAG trace rows recorded yet." /> : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                {["When", "Intent", "Mode", "Claims", "Post-gen", "Sources"].map((h) => (
+                  <th key={h} className="text-left py-2 pr-3 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {traces.slice(0, 8).map((trace, index) => {
+                const row = asRecord(trace);
+                const claim = asRecord(row?.claim_validation);
+                const postGen = asRecord(row?.post_gen_validator);
+                const sources = Array.isArray(row?.retrieved_source_ids) ? row.retrieved_source_ids.length : 0;
+                return (
+                  <tr key={String(row?.id ?? index)} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td className="py-2 pr-3" style={{ color: "var(--text-dim)" }}>{readString(row, ["created_at"]) ?? "—"}</td>
+                    <td className="py-2 pr-3">{readString(row, ["intent"]) ?? "—"}</td>
+                    <td className="py-2 pr-3">{readString(row, ["rag_mode"]) ?? "—"}</td>
+                    <td className="py-2 pr-3">{String(readPath(claim, ["citation_status"]) ?? "—")}</td>
+                    <td className="py-2 pr-3">{String(readPath(postGen, ["decision"]) ?? "—")}</td>
+                    <td className="py-2 pr-3 tabular-nums">{sources}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+       )}
+    </Card>
   );
 }
 

@@ -1,0 +1,105 @@
+schema_version: mle_promotion_thresholds_v1
+notes:
+  - "Thresholds for the synthetic-only MLE promotion gate."
+  - "Read-only aggregator: consumes existing audit artifacts under Data/evals/models/."
+  - "Critical conditions must ALL pass for PROMOTE."
+  - "If ANY critical condition fails, decision is HOLD or REJECT depending on severity."
+
+# Each condition references an artifact and a status/metric check.
+# - artifact: path under repo root
+# - required: when true, a missing artifact is itself a fail
+# - critical: when true, failure forces HOLD/REJECT (not just a warning)
+# - accepted_status: top-level statuses that satisfy the check
+# - metric_thresholds: optional numeric / value checks via JSON path
+# - decision_on_fail: "REJECT" forces reject; "HOLD" softens to hold
+
+conditions:
+  - name: leakage_audit_passed
+    artifact: Data/evals/models/latest_leakage_audit.json
+    required: true
+    critical: true
+    accepted_status: ["passed", "strong", "acceptable"]
+    metric_thresholds:
+      - path: ["summary", "checks_failed"]
+        op: "=="
+        value: 0
+    decision_on_fail: "REJECT"
+
+  - name: shortcut_risk_acceptable
+    artifact: Data/evals/models/latest_shortcut_audit.json
+    required: true
+    critical: false
+    accepted_status: ["strong", "acceptable", "needs_attention"]
+    decision_on_fail: "HOLD"
+
+  - name: toxicity_feature_audit_acceptable
+    artifact: Data/evals/models/latest_toxicity_feature_audit.json
+    required: true
+    critical: false
+    accepted_status: ["strong", "acceptable", "needs_attention"]
+    decision_on_fail: "HOLD"
+
+  - name: calibration_thresholds_passed
+    artifact: Data/evals/models/latest_per_head_calibration.json
+    required: true
+    critical: true
+    accepted_status: ["strong", "acceptable"]
+    decision_on_fail: "HOLD"
+
+  - name: counterfactual_stability_passed
+    artifact: Data/evals/models/latest_counterfactual_stability.json
+    required: true
+    critical: true
+    accepted_status: ["strong", "acceptable"]
+    metric_thresholds:
+      - path: ["summary", "unacceptable_flip_count"]
+        op: "=="
+        value: 0
+    decision_on_fail: "HOLD"
+
+  - name: modality_robustness_passed
+    artifact: Data/evals/models/latest_modality_robustness_comparison.json
+    required: true
+    critical: true
+    accepted_status: ["strong", "acceptable", "robust"]
+    decision_on_fail: "HOLD"
+
+  - name: no_full_data_regression
+    artifact: Data/evals/models/latest_response_conformal_calibration.json
+    required: true
+    critical: true
+    accepted_status: ["strong", "acceptable"]
+    metric_thresholds:
+      - path: ["adjusted_coverage"]
+        op: ">="
+        value: 0.75
+    decision_on_fail: "HOLD"
+
+  - name: abstention_behavior_acceptable
+    artifact: Data/evals/models/latest_learned_abstention.json
+    required: false
+    critical: false
+    accepted_status: ["strong", "acceptable", "needs_attention", "candidate"]
+    decision_on_fail: "HOLD"
+
+  - name: generator_card_current
+    artifact: Data/evals/models/latest_synthetic_generator_card.json
+    required: true
+    critical: false
+    max_age_days: 90
+    decision_on_fail: "HOLD"
+
+  - name: synthetic_realism_documented
+    artifact: Data/evals/models/latest_synthetic_realism_hardening.json
+    required: false
+    critical: false
+    accepted_status: ["strong", "acceptable", "candidate"]
+    decision_on_fail: "HOLD"
+
+claim_boundary: >
+  This is an engineering promotion gate over synthetic-only audits.
+  PROMOTE means the engineering proxies are satisfied — it is NOT
+  clinical validation, regulatory approval, or evidence of real-world
+  patient benefit. Any production deployment still requires deterministic
+  safety gates, source-governed RAG, post-generation validators, the
+  medical claim boundary checker, and clinician review.

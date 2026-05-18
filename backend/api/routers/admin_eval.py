@@ -660,6 +660,16 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
                 pass
         return build_benchmark_registry(output_path=DEFAULT_JSON_PATH)
 
+    @router.get("/admin/benchmark-artifacts/{artifact_id}")
+    def get_admin_normalized_benchmark_artifact_endpoint(
+        artifact_id: str,
+        context=Depends(get_admin_access_context),
+    ):
+        """Return any registered benchmark artifact in the normalized admin shape."""
+        from backend.services.admin_benchmark_response import get_normalized_benchmark_artifact
+
+        return get_normalized_benchmark_artifact(artifact_id)
+
     @router.post("/admin/benchmark-registry")
     def run_admin_benchmark_registry_endpoint(
         context=Depends(get_admin_access_context),
@@ -899,6 +909,33 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
         """Return the most recent intent-aware RAG benchmark artifact."""
         from backend.services.rag_intent_aware_eval import load_intent_aware_eval
         return load_intent_aware_eval()
+
+    @router.get("/admin/live-rag-eval")
+    def get_admin_live_rag_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the most recent live-agent RAG benchmark artifact."""
+        from backend.services.live_rag_eval import load_live_rag_eval
+        return load_live_rag_eval()
+
+    @router.post("/admin/live-rag-eval")
+    def run_admin_live_rag_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rerun the live-agent RAG benchmark."""
+        from backend.services.live_rag_eval import run_live_rag_eval
+        return {
+            "message": "Live RAG eval completed.",
+            "result": run_live_rag_eval(),
+        }
+
+    @router.get("/admin/claim-level-citation-eval")
+    def get_admin_claim_level_citation_eval_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the claim-level citation validation artifact."""
+        from backend.services.claim_level_citation_eval import load_claim_level_citation_eval
+        return load_claim_level_citation_eval()
 
     @router.get("/admin/rag-tier-ablation")
     def get_admin_rag_tier_ablation_endpoint(

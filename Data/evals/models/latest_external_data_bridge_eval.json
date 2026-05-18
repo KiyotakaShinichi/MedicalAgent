@@ -1,0 +1,109 @@
+{
+  "schema_version": "external_data_bridge_eval_v1",
+  "generated_at": "2026-05-18T16:41:36.908479+00:00",
+  "status": "strong",
+  "source_dataset": "breastdcedl_spy1",
+  "canonical_schema_path": "Data/external_bridge/canonical_oncology_schema.json",
+  "canonical_csv_path": "Data/external_bridge/canonical_breastdcedl_spy1.csv",
+  "row_count": 159,
+  "validation": {
+    "status": "passed",
+    "row_count": 159,
+    "issue_count": 0,
+    "issues": []
+  },
+  "coverage": {
+    "modality_counts": {
+      "imaging": 159
+    },
+    "molecular_subtype_counts": {
+      "HRposHER2neg": 66,
+      "TripleNeg": 40,
+      "HER2pos": 50,
+      "unknown": 3
+    },
+    "receptor_known_counts": {
+      "er_status": 106,
+      "her2_status": 156,
+      "pr_status": 40
+    },
+    "outcome_label_count": 159,
+    "roles_supported": {
+      "external_pcr_imaging_response_benchmark": true,
+      "full_oncotrack_timeline_training": false,
+      "treatment_combination_training": false,
+      "tumor_marker_response_training": false
+    }
+  },
+  "external_model_snapshot": {
+    "model_type": "cross_validated_tabular_baselines",
+    "rows": 159,
+    "positive_pcr": 44,
+    "negative_pcr": 115,
+    "best_model_by_roc_auc": "logistic_regression",
+    "models": {
+      "logistic_regression": {
+        "accuracy": 0.616,
+        "balanced_accuracy": 0.63,
+        "roc_auc": 0.637
+      },
+      "random_forest": {
+        "accuracy": 0.654,
+        "balanced_accuracy": 0.543,
+        "roc_auc": 0.579
+      }
+    },
+    "warning": "Exploratory PoC only. Not clinically validated."
+  },
+  "failure_gallery_path": "Data/evals/models/latest_external_failure_case_gallery.json",
+  "failure_gallery_summary": {
+    "case_count": 61,
+    "false_positive_count": 46,
+    "false_negative_count": 15,
+    "displayed_case_count": 10
+  },
+  "candidate_comparison_matrix": [
+    {
+      "candidate": "synthetic_classical_champion",
+      "dataset": "complete_synthetic_breast_journeys",
+      "primary_metric": 0.995,
+      "metric_name": "synthetic_patient_level_roc_auc",
+      "role": "current simulator benchmark",
+      "promotion_decision": "monitor_only_synthetic"
+    },
+    {
+      "candidate": "synthetic_deep_learning_candidate",
+      "dataset": "complete_synthetic_breast_journeys",
+      "primary_metric": 0.983276389138644,
+      "metric_name": "synthetic_holdout_roc_auc",
+      "role": "experimental A/B candidate",
+      "promotion_decision": "candidate_only_until_external_validation"
+    },
+    {
+      "candidate": "breastdcedl_logistic_regression",
+      "dataset": "breastdcedl_spy1",
+      "primary_metric": 0.637,
+      "metric_name": "external_pcr_cv_roc_auc",
+      "role": "public external imaging/pCR sanity check",
+      "promotion_decision": "not_promoted_external_context_only"
+    }
+  ],
+  "next_dataset_targets": [
+    {
+      "dataset": "AACR GENIE BPC Breast Cancer",
+      "role": "future real-world treatment/genomic/outcome benchmark after access workflow",
+      "reason_not_current_training": "not locally mapped into OncoTrack longitudinal features yet"
+    },
+    {
+      "dataset": "SEER / SEER-Medicare",
+      "role": "future treatment-combination distribution and claims-derived therapy context",
+      "reason_not_current_training": "requires agreement/application and does not provide the current CBC/symptom timeline"
+    },
+    {
+      "dataset": "Duke Breast Cancer MRI / TCIA",
+      "role": "future imaging externalization candidate",
+      "reason_not_current_training": "requires image normalization and manual label/schema mapping"
+    }
+  ],
+  "claim_boundary": "External bridge artifacts align public benchmark fields to the OncoTrack schema for engineering readiness only. BreastDCEDL/I-SPY is an imaging/pCR benchmark and is not a full OncoTrack longitudinal treatment, CBC, symptom, medication, tumor-marker, or clinical-validation dataset."
+}

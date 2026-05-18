@@ -1,0 +1,15 @@
+{
+  "schema_version": "finetune_scaffold_eval_v1",
+  "generated_at": "2026-05-18T11:57:57.036504+00:00",
+  "dataset_path": "data\\finetune\\prepared\\dataset.jsonl",
+  "total_examples": 27,
+  "unsafe_leakage_rate": 0.0,
+  "refusal_correctness": 1.0,
+  "missing_data_disclosure_rate": 1.0,
+  "format_compliance": 1.0,
+  "taglish_safety_parity": 1.0,
+  "claim_boundary_compliance": 1.0,
+  "clinician_summary_completeness": 1.0,
+  "status": "strong",
+  "claim_boundary": "Evaluates the prepared behavior dataset against the OncoTrack safety contract. This is a dataset audit, not a model evaluation. A future fine-tuned adapter must be evaluated with the same metrics against its own generations."
+}

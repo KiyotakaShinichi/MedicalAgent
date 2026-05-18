@@ -77,9 +77,15 @@ Key components:
 - Deterministic scope and safety checks, then intent routing and query rewrite/decomposition.
 - Dense/sparse retrieval when local dependencies are available: sentence-transformer embeddings with FAISS, BM25 sparse retrieval, reciprocal-rank fusion, parent-child expansion, reranking, and contextual compression/windowing. A BM25 + TF-IDF sparse fallback is labeled honestly when dense dependencies are unavailable.
 - Citation-checked answer generation with refusal/escalation on unsafe requests.
+- Source-governed RAG modes filter retrieved chunks by source tier, allowed use,
+  staleness, and patient-facing suitability before generation.
+- Claim-level citation validation runs after generation; unsupported or
+  contradicted medical claims trigger insufficient-evidence/refusal behavior.
+- Live-agent RAG evaluation now calls the real patient pipeline and writes
+  `Data/evals/rag/latest_live_rag_eval.json`; the release gate checks it.
 - Optional LLM adjudication for routing and cache safety, with deterministic fallback.
 
-Implementation: [backend/services/agent_rag.py](backend/services/agent_rag.py), [backend/services/rag_vector_index.py](backend/services/rag_vector_index.py), [backend/services/local_llm.py](backend/services/local_llm.py). Details: [docs/rag_pipeline.md](docs/rag_pipeline.md).
+Implementation: [backend/services/agent_rag.py](backend/services/agent_rag.py), [backend/services/retrieval_pipeline.py](backend/services/retrieval_pipeline.py), [backend/services/source_tier_filtering.py](backend/services/source_tier_filtering.py), [backend/services/claim_level_citation_validator.py](backend/services/claim_level_citation_validator.py), [backend/services/rag_vector_index.py](backend/services/rag_vector_index.py), [backend/services/local_llm.py](backend/services/local_llm.py). Details: [docs/rag_pipeline.md](docs/rag_pipeline.md) and [docs/ai_layer_maturity.md](docs/ai_layer_maturity.md).
 
 ## Cache policy
 - Exact and semantic caches with TTL and knowledge-base fingerprint invalidation.
@@ -435,6 +441,7 @@ python scripts/run_quality_gate.py --skip-slow-agent --include-e2e
 See [docs/pre_commit_gate.md](docs/pre_commit_gate.md) for hook install and
 manual run details. See [docs/how_to_use_precommit.md](docs/how_to_use_precommit.md)
 for the pre-commit framework option, [docs/release_gate.md](docs/release_gate.md)
+and [docs/swe_release_discipline.md](docs/swe_release_discipline.md)
 for artifact thresholds, and [docs/reviewer_evidence.md](docs/reviewer_evidence.md)
 for the proof map reviewers can use to inspect claims.
 

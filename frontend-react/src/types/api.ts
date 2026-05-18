@@ -429,6 +429,20 @@ export interface AdminAnalytics {
   api_cost?: { estimated_cost_usd: number | null };
 }
 
+export interface AdminBenchmarkResponse {
+  schema_version?: string;
+  generated_at?: string;
+  status: string;
+  headline_metric: string | null;
+  metrics: Record<string, unknown>;
+  rows: unknown[];
+  artifact_path: string | null;
+  last_run_at: string | null;
+  claim_boundary: string;
+  can_rerun: boolean;
+  errors: string[];
+}
+
 export interface RagSourceEntry {
   id: string;
   source_name: string;

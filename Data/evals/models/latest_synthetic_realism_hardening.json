@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_commit": "f3a3857e9e3f2c4f596e49276a70715268d77dcb",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -9,19 +9,19 @@
       "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
       "source_csv": "920991:1778238158:44a845011924"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-17T11:57:32.607219+00:00"
+    "generated_at": "2026-05-18T15:29:25.737810+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-17T11:57:32.607219+00:00",
+    "generated_at": "2026-05-18T15:29:25.737810+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-18T11:57:32.607219+00:00",
+    "expires_at": "2026-05-19T15:29:25.737810+00:00",
     "status": "fresh"
   },
   "schema_version": "synthetic_realism_hardening_v1",
-  "generated_at": "2026-05-17T11:57:33.040618+00:00",
+  "generated_at": "2026-05-18T15:29:25.869762+00:00",
   "status": "needs_attention",
   "config": {
     "modality_missingness": {

@@ -15,6 +15,7 @@ from backend.services.rag_claim_validator import validate_claims
 
 CASES_PATH = ROOT / "evals" / "rag_claim_validation_cases.json"
 OUTPUT_PATH = ROOT / "Data" / "evals" / "rag" / "latest_rag_claim_validation_eval.json"
+CLAIM_LEVEL_OUTPUT_PATH = ROOT / "Data" / "evals" / "rag" / "latest_claim_level_citation_eval.json"
 
 
 def main() -> int:
@@ -73,6 +74,16 @@ def main() -> int:
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    claim_level_payload = {
+        **payload,
+        "schema_version": "claim_level_citation_eval_v1",
+        "artifact_alias_of": "latest_rag_claim_validation_eval.json",
+        "purpose": (
+            "Claim-level citation validation artifact using the same validator "
+            "that runs in the patient RAG pipeline."
+        ),
+    }
+    CLAIM_LEVEL_OUTPUT_PATH.write_text(json.dumps(claim_level_payload, indent=2), encoding="utf-8")
     print(json.dumps({"status": payload["status"], "summary": payload["summary"]}, indent=2))
     return 0 if payload["status"] in {"strong", "acceptable"} else 1
 

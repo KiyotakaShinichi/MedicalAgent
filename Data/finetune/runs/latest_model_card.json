@@ -1,0 +1,36 @@
+{
+  "schema_version": "finetune_model_card_v1",
+  "generated_at": "2026-05-18T11:57:56.763978+00:00",
+  "base_model": "local Ollama / quantized 7B-class model TBD",
+  "adapter_name": "oncotrack-behavior-v0-dryrun",
+  "intended_behavior": [
+    "clinician_summary",
+    "missing_data_disclosure",
+    "questions_to_ask_care_team",
+    "supplement_boundary",
+    "taglish_safety"
+  ],
+  "not_intended_for": [
+    "diagnosis",
+    "treatment_recommendation",
+    "dosage_change",
+    "prognosis_estimate",
+    "genetic_risk_prediction",
+    "tumor_marker_conclusion",
+    "supplement_safe_with_chemo_claim",
+    "any clinical decision support"
+  ],
+  "evaluation_results": {
+    "status": "not_evaluated_dry_run",
+    "note": "Run scripts/evaluate_finetuned_behavior.py to populate."
+  },
+  "safety_validator_compatibility": [
+    "agent_safety.safety_scope_check",
+    "agent_input_gate.input_guardrail_check",
+    "agent_output_gate.output_guardrail_check",
+    "agent_post_gen.apply_post_gen_validator",
+    "medical_claim_boundary.classify_medical_claim",
+    "rag_claim_validator.validate_claims"
+  ],
+  "claim_boundary": "Dry-run: no model was trained. The manifest reflects the plan that a future training run would execute. Any real adapter must still pass the OncoTrack safety stack."
+}

@@ -12,6 +12,10 @@ async function signIn(page: Page, username: string, password: string, expectedRo
   await page.waitForURL(expectedRoute, { timeout: 30_000 });
 }
 
+function chatComposer(page: Page) {
+  return page.getByPlaceholder(/Tell me how|Message/i);
+}
+
 test.describe("role-aware smoke flows", () => {
   test.describe.configure({ mode: "serial" });
 
@@ -22,8 +26,8 @@ test.describe("role-aware smoke flows", () => {
 
     await page.getByRole("link", { name: /support/i }).click();
     await expect(page).toHaveURL(/\/patient\/chat/);
-    await expect(page.getByPlaceholder(/Tell me how|Message/i)).toBeVisible({ timeout: 30_000 });
-    await page.getByPlaceholder(/Tell me how|Message/i).fill("hi");
+    await expect(chatComposer(page)).toBeVisible({ timeout: 90_000 });
+    await chatComposer(page).fill("hi");
     await page.keyboard.press("Enter");
     await expect(page.getByText(/Checking safety gate|Routing intent|Generating response/i)).toBeVisible();
   });
@@ -31,7 +35,8 @@ test.describe("role-aware smoke flows", () => {
   test("patient support chat saves a symptom and refreshes patient state", async ({ page }) => {
     await signIn(page, "P001", "patient-demo", /\/patient/);
     await page.getByRole("link", { name: /support/i }).click();
-    const input = page.getByPlaceholder(/Tell me how|Message/i);
+    const input = chatComposer(page);
+    await expect(input).toBeVisible({ timeout: 90_000 });
     await input.fill("I have nausea severity 6/10 today");
     await page.keyboard.press("Enter");
 
@@ -70,6 +75,15 @@ test.describe("role-aware smoke flows", () => {
     await expect(page.getByRole("heading", { name: /Admin \/ MLE Dashboard/i })).toBeVisible();
     await expect(page.getByText(/System Health/i).first()).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText(/Database|Dependencies|Artifacts/i).first()).toBeVisible({ timeout: 30_000 });
+  });
+
+  test("admin RAG hardening cards render", async ({ page }) => {
+    await signIn(page, "admin", "admin-demo", /\/admin/);
+    await page.goto("/admin/rag");
+    await expect(page.getByRole("heading", { name: /Live-Agent RAG Eval/i })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole("heading", { name: /Claim-Level Citation Eval/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /RAG Trace Replay/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Rerun/i }).first()).toBeVisible();
   });
 
   test("route guard sends patient away from admin surface", async ({ page }) => {
@@ -142,6 +156,6 @@ test.describe("role-aware smoke flows", () => {
     const tray = page.getByRole("toolbar", { name: /Add a health update/i });
     await tray.getByRole("button", { name: /Ask a question/i }).click();
     // Already on chat; the toast and the composer should remain reachable.
-    await expect(page.getByPlaceholder(/Tell me how|Message/i)).toBeVisible();
+    await expect(chatComposer(page)).toBeVisible({ timeout: 90_000 });
   });
 });

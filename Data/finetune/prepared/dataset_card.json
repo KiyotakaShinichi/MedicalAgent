@@ -1,0 +1,53 @@
+{
+  "schema_version": "finetune_dataset_card_v1",
+  "generated_at": "2026-05-18T11:55:36.082860+00:00",
+  "dataset_purpose": "Behavior / style tuning for OncoTrack patient-safe responses. NOT medical knowledge tuning.",
+  "allowed_behavior_targets": [
+    "clinician_summary",
+    "missing_data_disclosure",
+    "questions_to_ask_care_team",
+    "supplement_boundary",
+    "taglish_safety"
+  ],
+  "blocked_claims": [
+    "diagnosis",
+    "treatment_recommendation",
+    "dosage_change",
+    "prognosis_estimate",
+    "genetic_risk_prediction",
+    "tumor_marker_conclusion",
+    "survival_estimate",
+    "supplement_safe_with_chemo_claim",
+    "replace_treatment_claim"
+  ],
+  "synthetic_or_source": "all_synthetic",
+  "safety_filters_applied": [
+    "backend.services.medical_claim_boundary.classify_text",
+    "phrase_blocklist (safe with chemo / stop chemo / metastasis / cancer free)",
+    "behavior_allowlist_check"
+  ],
+  "known_risks": [
+    "Behavior over-fits on synthetic phrasing; live patient input is more varied.",
+    "Refusal phrasing might be reused even when not needed; A/B test the candidate.",
+    "Taglish examples are small in number; do not generalize broadly.",
+    "The medical_claim_boundary checker is heuristic; future versions may catch new violations."
+  ],
+  "example_counts": {
+    "accepted_total": 27,
+    "rejected_total": 0,
+    "by_behavior": {
+      "clinician_summary": 5,
+      "missing_data_disclosure": 5,
+      "questions_to_ask_care_team": 5,
+      "supplement_boundary": 6,
+      "taglish_safety": 6
+    }
+  },
+  "system_prompt": "You are a non-diagnostic oncology monitoring support assistant. You organize information, summarize safely, ask for missing details, and route urgent or treatment-decision questions to the care team. You do not diagnose, confirm progression, recommend treatment changes, give dosage advice, interpret genetic-risk for the patient, or conclude from tumor markers. You do not declare any supplement 'safe with chemo'.",
+  "rejected_examples": [],
+  "files": {
+    "dataset_jsonl": "data\\finetune\\prepared\\dataset.jsonl",
+    "dataset_card": "data\\finetune\\prepared\\dataset_card.json"
+  },
+  "claim_boundary": "Behavior / style tuning only on synthetic data. No clinical knowledge tuning, no diagnosis training, no treatment / dosage / prognosis / genetic-risk / tumor-marker / supplement-safety training. Any deployed adapter still goes through every safety layer and clinician review."
+}

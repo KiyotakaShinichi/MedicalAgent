@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "11294c4d3886ec5570a1100b4d0ac1b3d5670c7c",
+    "git_commit": "f3a3857e9e3f2c4f596e49276a70715268d77dcb",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -12,16 +12,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-18T08:32:48.014970+00:00"
+    "generated_at": "2026-05-18T15:29:08.463633+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-18T08:32:48.014970+00:00",
+    "generated_at": "2026-05-18T15:29:08.463633+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-19T08:32:48.014970+00:00",
+    "expires_at": "2026-05-19T15:29:08.463633+00:00",
     "status": "fresh"
   },
   "schema_version": "shortcut_audit_v1",
-  "generated_at": "2026-05-18T08:32:48.713694+00:00",
+  "generated_at": "2026-05-18T15:29:08.607545+00:00",
   "status": "acceptable",
   "toxicity_audit": {
     "full_auc": 0.9997,

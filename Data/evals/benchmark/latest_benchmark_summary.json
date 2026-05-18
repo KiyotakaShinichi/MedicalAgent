@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_commit": "f3a3857e9e3f2c4f596e49276a70715268d77dcb",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -8,23 +8,23 @@
       "synthetic_training_rows": "920991:1778238158:44a845011924",
       "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
       "benchmark_sources": null,
-      "rag_gold_cases": "16933:1778844518:80ef7a96bb68",
+      "rag_gold_cases": "18520:1779069868:7b07971860dc",
       "safety_cases": "5832:1778734598:c6c93e3f07f9",
       "synthetic_realism_candidate": "378534:1778813480:a29f2214fadd"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-17T12:05:05.609660+00:00"
+    "generated_at": "2026-05-18T16:54:43.734965+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-17T12:05:05.609660+00:00",
+    "generated_at": "2026-05-18T16:54:43.734965+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-18T12:05:05.609660+00:00",
+    "expires_at": "2026-05-19T16:54:43.734965+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-05-17T12:05:06.089464+00:00",
+  "generated_at": "2026-05-18T16:54:44.412748+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -34,9 +34,9 @@
       "id": "safety_red_team",
       "title": "Safety red-team",
       "tier": "critical",
-      "status": "passed",
+      "status": "stale",
       "source_status": "passed",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:13:59.444683+00:00",
       "source_path": "Data/evals/safety/latest_safety_benchmark.json",
       "metrics": {
@@ -55,9 +55,9 @@
       "id": "adversarial",
       "title": "Adversarial prompt/jailbreak",
       "tier": "critical",
-      "status": "passed",
+      "status": "stale",
       "source_status": "passed",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:14:05.417945+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_eval.json",
       "metrics": {
@@ -75,9 +75,9 @@
       "id": "multilingual_refusal",
       "title": "Multilingual refusal routing",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:14:18.244028+00:00",
       "source_path": "Data/evals/safety/latest_multilingual_refusal_eval.json",
       "metrics": {
@@ -98,7 +98,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:19:18.484694+00:00",
+      "generated_at": "2026-05-18T03:14:29.632741+00:00",
       "source_path": "Data/evals/rag/latest_rag_benchmark.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -123,12 +123,12 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:18:42.781753+00:00",
+      "generated_at": "2026-05-18T03:14:29.632339+00:00",
       "source_path": "Data/evals/rag/latest_rag_gold_eval.json",
       "metrics": {
         "pass_rate": 1.0,
         "expected_source_hit_rate": 1.0,
-        "case_count": 41,
+        "case_count": 45,
         "unsafe_answer_rate": 0.0
       },
       "limitations": [
@@ -144,9 +144,9 @@
       "id": "tool_action_benchmark",
       "title": "Patient-support tool action benchmark",
       "tier": "critical",
-      "status": "passed",
+      "status": "stale",
       "source_status": "passed",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:14:41.991421+00:00",
       "source_path": "Data/evals/tool_actions/latest_tool_action_benchmark.json",
       "metrics": {
@@ -162,9 +162,9 @@
       "id": "genetic_counseling_readiness",
       "title": "Genetic counseling readiness safety",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:13:56.203103+00:00",
       "source_path": "Data/evals/genetics/latest_genetic_counseling_eval.json",
       "metrics": {
@@ -181,10 +181,10 @@
       "id": "biomarker_feature_benchmark",
       "title": "Biomarker and tumor-marker feature ablation",
       "tier": "supporting",
-      "status": "stale",
+      "status": "passed",
       "source_status": "passed",
-      "freshness": "stale",
-      "generated_at": "2026-05-16T00:11:07.462562+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T15:23:00.323024+00:00",
       "source_path": "Data/mle_monitoring/biomarker_feature_benchmark.json",
       "metrics": {
         "status": "passed",
@@ -204,7 +204,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T06:59:30.311162+00:00",
+      "generated_at": "2026-05-18T15:22:26.146972+00:00",
       "source_path": "Data/evals/models/latest_full_feature_group_ablation.json",
       "metrics": {
         "status": "strong",
@@ -221,9 +221,9 @@
       "id": "toxicity_shortcut_audit",
       "title": "Toxicity label shortcut audit",
       "tier": "critical",
-      "status": "needs_attention",
+      "status": "stale",
       "source_status": "needs_attention",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T06:59:02.044307+00:00",
       "source_path": "Data/evals/models/latest_toxicity_shortcut_audit.json",
       "metrics": {
@@ -240,9 +240,9 @@
       "id": "learned_abstention_experiment",
       "title": "Learned abstention-head experiment",
       "tier": "supporting",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:07:32.813943+00:00",
       "source_path": "Data/evals/models/latest_learned_abstention_experiment.json",
       "metrics": {
@@ -261,7 +261,7 @@
       "status": "candidate",
       "source_status": "candidate",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:05:53.556743+00:00",
+      "generated_at": "2026-05-18T08:24:01.882448+00:00",
       "source_path": "Data/evals/models/latest_soft_toxicity_target_benchmark.json",
       "metrics": {
         "status": "candidate",
@@ -276,9 +276,9 @@
       "id": "hybrid_subgroup_metrics",
       "title": "Hybrid prediction subgroup metrics",
       "tier": "supporting",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:06:37.827004+00:00",
       "source_path": "Data/evals/models/latest_hybrid_subgroup_metrics.json",
       "metrics": {
@@ -298,7 +298,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:57:33.040618+00:00",
+      "generated_at": "2026-05-18T15:29:25.869762+00:00",
       "source_path": "Data/evals/models/latest_synthetic_realism_hardening.json",
       "metrics": {
         "status": "needs_attention",
@@ -313,9 +313,9 @@
       "id": "self_supervised_timeline",
       "title": "Self-supervised synthetic timeline pretraining",
       "tier": "supporting",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:58:28.133218+00:00",
       "source_path": "Data/evals/models/latest_self_supervised_timeline.json",
       "metrics": {
@@ -332,16 +332,16 @@
       "id": "counterfactual_stability",
       "title": "Counterfactual stability",
       "tier": "critical",
-      "status": "needs_attention",
-      "source_status": "needs_attention",
+      "status": "strong",
+      "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:58:30.499839+00:00",
+      "generated_at": "2026-05-18T01:58:59.726349+00:00",
       "source_path": "Data/evals/models/latest_counterfactual_stability.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "strong",
         "scenario_count": 6,
-        "unacceptable_flip_count": 1,
-        "max_probability_delta": 0.3543
+        "unacceptable_flip_count": 0,
+        "max_probability_delta": 0.1631
       },
       "limitations": [],
       "claim_boundary": "Counterfactual stability is a synthetic engineering proxy. It checks brittleness, not clinical correctness."
@@ -350,9 +350,9 @@
       "id": "learned_abstention",
       "title": "Learned abstention head",
       "tier": "supporting",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:59:14.759471+00:00",
       "source_path": "Data/evals/models/latest_learned_abstention.json",
       "metrics": {
@@ -368,9 +368,9 @@
       "id": "per_head_calibration",
       "title": "Per-head hybrid calibration",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:58:37.533732+00:00",
       "source_path": "Data/evals/models/latest_per_head_calibration.json",
       "metrics": {
@@ -387,13 +387,13 @@
       "id": "shortcut_audit",
       "title": "Hybrid shortcut audit",
       "tier": "critical",
-      "status": "needs_attention",
-      "source_status": "needs_attention",
+      "status": "acceptable",
+      "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:59:46.225502+00:00",
+      "generated_at": "2026-05-18T15:29:08.607545+00:00",
       "source_path": "Data/evals/models/latest_shortcut_audit.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "acceptable",
         "toxicity_auc": 0.9997,
         "toxicity_auc_drop_without_nadir": 0.0056,
         "regression_mae_increase_without_mri": 9.6585
@@ -405,9 +405,9 @@
       "id": "medical_advisor_review_packet",
       "title": "Medical advisor review packet",
       "tier": "supporting",
-      "status": "ready_for_clinical_advisor_review",
+      "status": "stale",
       "source_status": "ready_for_clinical_advisor_review",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:11:06.783264+00:00",
       "source_path": "Data/evals/medical/latest_medical_advisor_review_packet.json",
       "metrics": {
@@ -421,9 +421,9 @@
       "id": "minimum_evidence_standards",
       "title": "Minimum evidence standards",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:57:06.311210+00:00",
       "source_path": "Data/evals/medical/latest_minimum_evidence_standards.json",
       "metrics": {
@@ -437,9 +437,9 @@
       "id": "medical_claim_boundary_eval",
       "title": "Medical claim-boundary eval",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:57:06.390923+00:00",
       "source_path": "Data/evals/safety/latest_medical_claim_boundary_eval.json",
       "metrics": {
@@ -485,6 +485,156 @@
       "claim_boundary": "This report maps public sources and ablation design. It is not clinical validation and does not prove biomarker or tumor-marker predictive utility."
     },
     {
+      "id": "public_biomarker_dataset_readiness",
+      "title": "Public biomarker/tumor-marker dataset readiness",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T15:28:15.614778+00:00",
+      "source_path": "Data/evals/models/latest_public_biomarker_dataset_readiness.json",
+      "metrics": {
+        "status": "strong",
+        "dataset_count": 7,
+        "biomarker_external_candidate_count": 6,
+        "tumor_marker_response_train_ready": 0,
+        "production_retrain_now": false,
+        "candidate_training_recommended": true
+      },
+      "limitations": [],
+      "claim_boundary": "This artifact is public-data readiness and engineering planning only. It is not clinical validation, does not prove clinical utility, does not validate biomarker or tumor-marker predictors, and does not justify treatment recommendations."
+    },
+    {
+      "id": "public_treatment_dataset_readiness",
+      "title": "Public treatment-combination dataset readiness",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T16:13:50.724034+00:00",
+      "source_path": "Data/evals/models/latest_public_treatment_dataset_readiness.json",
+      "metrics": {
+        "status": "strong",
+        "dataset_count": 7,
+        "treatment_combination_candidate_count": 5,
+        "immediate_full_treatment_combo_training_ready": 0,
+        "best_future_real_world_treatment_dataset": "aacr_genie_bpc_brca"
+      },
+      "limitations": [],
+      "claim_boundary": "This artifact maps treatment-combination data sources and a controlled treatment vocabulary. It does not recommend any treatment, compare treatment efficacy for real patients, or validate OncoTrack as a clinical treatment-response predictor."
+    },
+    {
+      "id": "deep_learning_candidate_benchmark",
+      "title": "Deep-learning classification/regression candidate benchmark",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T16:16:20.836006+00:00",
+      "source_path": "Data/evals/models/latest_deep_learning_candidate_benchmark.json",
+      "metrics": {
+        "status": "strong",
+        "best_model": "tiny_transformer",
+        "best_variant": "with_genetic_context",
+        "classification_auroc": 0.983276389138644,
+        "best_regression_model": "sequence_mlp",
+        "regression_mae_percent": 12.784607887268066,
+        "genetic_context_decision": "candidate_for_external_validation_only",
+        "treatment_context_decision": "context_only_no_treatment_recommendation"
+      },
+      "limitations": [],
+      "claim_boundary": "Deep-learning results are synthetic engineering baselines. They measure ability to learn the simulator, not real patient response, prognosis, genetic risk, or clinical treatment utility."
+    },
+    {
+      "id": "canonical_oncology_schema",
+      "title": "Canonical oncology schema bridge",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T16:54:25.098969+00:00",
+      "source_path": "Data/external_bridge/canonical_oncology_schema.json",
+      "metrics": {
+        "status": "strong",
+        "schema_version": "oncotrack_canonical_oncology_v1"
+      },
+      "limitations": [],
+      "claim_boundary": "Canonical schema alignment is engineering interoperability only. It does not establish clinical validation or make treatment recommendations."
+    },
+    {
+      "id": "external_data_bridge_eval",
+      "title": "External public-data canonical bridge",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T16:41:36.908479+00:00",
+      "source_path": "Data/evals/models/latest_external_data_bridge_eval.json",
+      "metrics": {
+        "status": "strong",
+        "row_count": 159,
+        "validation_status": "passed",
+        "breastdcedl_roc_auc": 0.637
+      },
+      "limitations": [],
+      "claim_boundary": "External bridge artifacts align public benchmark fields to the OncoTrack schema for engineering readiness only. BreastDCEDL/I-SPY is an imaging/pCR benchmark and is not a full OncoTrack longitudinal treatment, CBC, symptom, medication, tumor-marker, or clinical-validation dataset."
+    },
+    {
+      "id": "external_failure_case_gallery",
+      "title": "External benchmark failure-case gallery",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T16:41:36.905954+00:00",
+      "source_path": "Data/evals/models/latest_external_failure_case_gallery.json",
+      "metrics": {
+        "status": "strong",
+        "case_count": 61,
+        "false_positive_count": 46,
+        "false_negative_count": 15
+      },
+      "limitations": [],
+      "claim_boundary": "Failure cases expose external benchmark errors for debugging and portfolio transparency. They are not patient-level clinical errors or treatment guidance."
+    },
+    {
+      "id": "treatment_sequence_feature_eval",
+      "title": "Synthetic treatment-sequence feature eval",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T16:33:42.748714+00:00",
+      "source_path": "Data/evals/models/latest_treatment_sequence_feature_eval.json",
+      "metrics": {
+        "status": "strong",
+        "patient_count": 600,
+        "pattern_count": 13,
+        "chemotherapy_count": 600,
+        "targeted_anti_her2_count": 240
+      },
+      "limitations": [],
+      "claim_boundary": "Synthetic treatment-sequence features organize simulated treatment context only. This artifact does not compare real treatment efficacy, recommend a regimen, or tell a patient to start, stop, delay, or switch therapy."
+    },
+    {
+      "id": "data_promotion_roadmap",
+      "title": "Data-to-promotion roadmap",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T16:54:21.370736+00:00",
+      "source_path": "Data/evals/models/latest_data_promotion_roadmap.json",
+      "metrics": {
+        "status": "strong",
+        "model_head_count": 6,
+        "current_global_policy": "monitor_only",
+        "may_influence_treatment": false
+      },
+      "limitations": [],
+      "claim_boundary": "This roadmap is an engineering promotion plan under student-accessible constraints. It does not establish clinical validity, clinician sign-off, treatment efficacy, genetic-risk interpretation, or real patient prediction utility."
+    },
+    {
       "id": "cbioportal_biomarker_schema_mapping",
       "title": "TCGA/METABRIC cBioPortal schema mapping",
       "tier": "supporting",
@@ -502,12 +652,31 @@
       "claim_boundary": "This artifact maps public cBioPortal schema availability. It is not a clinical validation result and does not imply that OncoTrack can predict outcomes from TCGA/METABRIC without task-specific modeling."
     },
     {
+      "id": "offline_ab_eval_controls",
+      "title": "Offline A/B safety-control suite",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T15:26:54.507320+00:00",
+      "source_path": "Data/evals/ab_tests/latest_ab_test_report.json",
+      "metrics": {
+        "status": "strong",
+        "test_count": 3,
+        "overall_decision": "REJECT",
+        "expectations_passed": 3,
+        "expectations_failed": 0
+      },
+      "limitations": [],
+      "claim_boundary": "Offline engineering evaluation only. Cases here are synthetic / curated, not real patient interactions. PROMOTE/HOLD/REJECT verdicts are engineering signals. Real-patient deployment requires the live safety gates, source-governed RAG, the medical claim boundary checker, the post-generation validator, and clinician review.\n"
+    },
+    {
       "id": "mle_readiness",
       "title": "MLE readiness gate",
       "tier": "critical",
-      "status": "unideal",
+      "status": "stale",
       "source_status": "unideal",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:54:02.509599+00:00",
       "source_path": "Data/mle_monitoring/latest_mle_readiness.json",
       "metrics": {
@@ -542,9 +711,9 @@
       "id": "leakage_audit",
       "title": "Training-data leakage audit",
       "tier": "critical",
-      "status": "passed",
+      "status": "stale",
       "source_status": "passed",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:14:06.843448+00:00",
       "source_path": "Data/evals/models/latest_leakage_audit.json",
       "metrics": {
@@ -560,9 +729,9 @@
       "id": "evidence_abstention_eval",
       "title": "Evidence-aware abstention eval",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:18:50.773114+00:00",
       "source_path": "Data/evals/models/latest_evidence_abstention_eval.json",
       "metrics": {
@@ -579,9 +748,9 @@
       "id": "modality_robustness_comparison",
       "title": "Modality-dropout robustness comparison",
       "tier": "critical",
-      "status": "robust",
+      "status": "stale",
       "source_status": "robust",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-16T16:11:13.494073+00:00",
       "source_path": "Data/evals/models/latest_modality_robustness_comparison.json",
       "metrics": {
@@ -598,9 +767,9 @@
       "id": "modality_robust_training",
       "title": "Modality-robust classifier training",
       "tier": "supporting",
-      "status": "passed",
+      "status": "stale",
       "source_status": "passed",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-16T16:05:54.886389+00:00",
       "source_path": "Data/evals/models/latest_modality_robust_training.json",
       "metrics": {
@@ -617,9 +786,9 @@
       "id": "quantile_regression_training",
       "title": "Quantile response-score regression training",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T05:13:03.534593+00:00",
       "source_path": "Data/evals/models/latest_quantile_regression_training.json",
       "metrics": {
@@ -636,9 +805,9 @@
       "id": "modality_robust_regression_training",
       "title": "Modality-robust regression training",
       "tier": "supporting",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T05:13:07.067298+00:00",
       "source_path": "Data/evals/models/latest_modality_robust_regression_training.json",
       "metrics": {
@@ -655,9 +824,9 @@
       "id": "regression_robustness_comparison",
       "title": "Legacy vs modality-robust regression comparison",
       "tier": "critical",
-      "status": "robust",
+      "status": "stale",
       "source_status": "robust",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T05:45:28.449641+00:00",
       "source_path": "Data/evals/models/latest_regression_robustness_comparison.json",
       "metrics": {
@@ -674,9 +843,9 @@
       "id": "modality_dropout_quantile_regression",
       "title": "Modality-dropout quantile regression",
       "tier": "critical",
-      "status": "acceptable",
+      "status": "stale",
       "source_status": "acceptable",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T05:36:52.345217+00:00",
       "source_path": "Data/evals/models/latest_modality_dropout_quantile_regression_training.json",
       "metrics": {
@@ -693,9 +862,9 @@
       "id": "response_conformal_calibration",
       "title": "Response-score conformal calibration",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T06:59:39.510399+00:00",
       "source_path": "Data/evals/models/latest_response_conformal_calibration.json",
       "metrics": {
@@ -712,9 +881,9 @@
       "id": "robustness_stress",
       "title": "Synthetic robustness stress suite",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T06:32:54.448242+00:00",
       "source_path": "Data/evals/robustness/latest_robustness_report.json",
       "metrics": {
@@ -730,9 +899,9 @@
       "id": "synthetic_generator_card",
       "title": "Synthetic generator card",
       "tier": "supporting",
-      "status": "passed",
+      "status": "stale",
       "source_status": "passed",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T12:04:54.517420+00:00",
       "source_path": "Data/evals/models/latest_synthetic_generator_card.json",
       "metrics": {
@@ -749,9 +918,9 @@
       "id": "failure_mode_registry",
       "title": "Consolidated failure-mode registry",
       "tier": "supporting",
-      "status": "needs_attention",
+      "status": "stale",
       "source_status": "needs_attention",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-16T17:05:12.119878+00:00",
       "source_path": "Data/evals/safety/latest_failure_mode_registry.json",
       "metrics": {
@@ -770,12 +939,12 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T01:39:45.895166+00:00",
+      "generated_at": "2026-05-18T03:13:04.680972+00:00",
       "source_path": "Data/evals/rag/latest_kb_source_governance.json",
       "metrics": {
         "status": "strong",
-        "source_count": 24,
-        "chunk_count": 215,
+        "source_count": 44,
+        "chunk_count": 242,
         "governance_issue_count": []
       },
       "limitations": [],
@@ -785,13 +954,13 @@
       "id": "toxicity_feature_audit",
       "title": "Toxicity classifier feature-importance audit + no-proxy baseline",
       "tier": "critical",
-      "status": "needs_attention",
-      "source_status": "needs_attention",
+      "status": "acceptable",
+      "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:13:00.929371+00:00",
+      "generated_at": "2026-05-18T15:28:56.322084+00:00",
       "source_path": "Data/evals/models/latest_toxicity_feature_audit.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "acceptable",
         "dominant_features": [
           "intervention_count"
         ],
@@ -818,7 +987,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:39:40.557637+00:00",
+      "generated_at": "2026-05-18T03:14:23.087052+00:00",
       "source_path": "Data/evals/rag/latest_rag_intent_aware_eval.json",
       "metrics": {
         "status": "strong",
@@ -828,10 +997,72 @@
         "source_tier_correctness": 1.0,
         "refusal_correctness": 1.0,
         "unsafe_answer_rate": 0.0,
-        "latency_p50_ms": 0.01
+        "latency_p50_ms": 0.0
       },
       "limitations": [],
       "claim_boundary": "Engineering benchmark over a curated case set. Improvements describe how the RAG layer behaves on these cases \u2014 not clinical correctness on real patient queries."
+    },
+    {
+      "id": "live_rag_eval",
+      "title": "Live-agent RAG benchmark",
+      "tier": "critical",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T10:25:30.943279+00:00",
+      "source_path": "Data/evals/rag/latest_live_rag_eval.json",
+      "metrics": {
+        "status": "strong",
+        "pass_rate": 1.0,
+        "claim_support_rate": 0.7255,
+        "citation_precision": 1.0,
+        "source_tier_correctness": 1.0,
+        "refusal_correctness": 1.0,
+        "escalation_correctness": 1.0,
+        "unsafe_answer_rate": 0.0,
+        "taglish_safety_parity_rate": 1.0,
+        "latency_p50_ms": 5027.17
+      },
+      "limitations": [],
+      "claim_boundary": "Live-agent RAG evaluation is an engineering regression artifact. It exercises the real local pipeline but does not establish clinical medical correctness or patient safety in real care."
+    },
+    {
+      "id": "claim_level_citation_eval",
+      "title": "Claim-level citation validation",
+      "tier": "critical",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T10:49:35.505942+00:00",
+      "source_path": "Data/evals/rag/latest_claim_level_citation_eval.json",
+      "metrics": {
+        "status": "strong",
+        "case_count": 3,
+        "hard_failures": 0,
+        "nli_required_cases": 2,
+        "nli_available_cases": 0
+      },
+      "limitations": [],
+      "claim_boundary": "Claim validation is an engineering guardrail. Heuristic overlap is kept for CI; NLI contradiction checks are optional and must be validated before clinical use."
+    },
+    {
+      "id": "nli_claim_validation_eval",
+      "title": "Optional NLI/entailment claim validation",
+      "tier": "optional",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T10:33:32.513650+00:00",
+      "source_path": "Data/evals/rag/latest_nli_claim_validation_eval.json",
+      "metrics": {
+        "status": "strong",
+        "case_count": 3,
+        "hard_failures": 0,
+        "nli_required_cases": 2,
+        "nli_available_cases": 3
+      },
+      "limitations": [],
+      "claim_boundary": "Optional local NLI/entailment validation is an engineering guardrail. It is not a clinical fact checker and remains outside the hard CI path unless the dependency and model are explicitly installed."
     },
     {
       "id": "rag_tier_ablation",
@@ -840,7 +1071,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T11:34:21.921595+00:00",
+      "generated_at": "2026-05-18T08:31:22.019552+00:00",
       "source_path": "Data/evals/rag/latest_rag_tier_ablation.json",
       "metrics": {
         "status": "acceptable"
@@ -852,9 +1083,9 @@
       "id": "taglish_safety_parity",
       "title": "Taglish \u2194 English safety-route parity",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T11:02:46.776882+00:00",
       "source_path": "Data/evals/safety/latest_taglish_safety_parity.json",
       "metrics": {
@@ -939,7 +1170,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T12:03:57.565847+00:00",
+      "generated_at": "2026-05-18T16:49:34.224603+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -956,7 +1187,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T12:03:57.174255+00:00",
+      "generated_at": "2026-05-18T16:49:33.684749+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -973,7 +1204,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-05-17T12:03:57.599422+00:00",
+      "generated_at": "2026-05-18T16:49:34.307413+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -1106,9 +1337,9 @@
       "id": "medical_safety_contract",
       "title": "Medical safety contract",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-17T06:32:55.787399+00:00",
       "source_path": "Data/evals/safety/latest_medical_safety_contract.json",
       "metrics": {
@@ -1200,16 +1431,52 @@
   ],
   "issues": [
     {
-      "benchmark_id": "biomarker_feature_benchmark",
+      "benchmark_id": "safety_red_team",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "adversarial",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "multilingual_refusal",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "tool_action_benchmark",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "genetic_counseling_readiness",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "toxicity_shortcut_audit",
-      "severity": "high",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "learned_abstention_experiment",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "hybrid_subgroup_metrics",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "synthetic_realism_hardening",
@@ -1218,16 +1485,40 @@
       "message": "Benchmark needs review before using it as supporting evidence."
     },
     {
-      "benchmark_id": "counterfactual_stability",
-      "severity": "high",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "benchmark_id": "self_supervised_timeline",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "shortcut_audit",
-      "severity": "high",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "benchmark_id": "learned_abstention",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "per_head_calibration",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "medical_advisor_review_packet",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "minimum_evidence_standards",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "medical_claim_boundary_eval",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "public_biomarker_dataset_manifest",
@@ -1249,9 +1540,9 @@
     },
     {
       "benchmark_id": "mle_readiness",
-      "severity": "high",
-      "status": "unideal",
-      "message": "MLE readiness has one or more unideal categories; inspect category_statuses before promotion."
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "mle_readiness_realism_candidate",
@@ -1260,16 +1551,82 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "failure_mode_registry",
+      "benchmark_id": "leakage_audit",
       "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "toxicity_feature_audit",
-      "severity": "high",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "benchmark_id": "evidence_abstention_eval",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "modality_robustness_comparison",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "modality_robust_training",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "quantile_regression_training",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "modality_robust_regression_training",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "regression_robustness_comparison",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "modality_dropout_quantile_regression",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "response_conformal_calibration",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "robustness_stress",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "synthetic_generator_card",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "failure_mode_registry",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "taglish_safety_parity",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "model_benchmark",
@@ -1297,6 +1654,12 @@
     },
     {
       "benchmark_id": "clinical_safety_review_checklist",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "medical_safety_contract",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
