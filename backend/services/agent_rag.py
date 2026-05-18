@@ -512,38 +512,9 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
     )
 
 
-def input_guardrail_check(query, safety):
-    security = detect_prompt_injection_or_exfiltration(query)
-    lower = query.lower()
-    issues = []
-    if security["blocked"]:
-        issues.extend(security["issues"])
-    if safety.get("level") == "high_risk":
-        issues.append(safety.get("scope") or "high_risk_medical_scope")
-
-    blocking_issues = {
-        "prompt_injection_or_jailbreak",
-        "database_or_file_access_attempt",
-        "sensitive_data_exfiltration_attempt",
-        "privacy_boundary_request",
-    }
-    status = "failed" if any(issue in blocking_issues for issue in issues) else "passed"
-    if status == "failed":
-        scope = "input_guardrail_block"
-        message = security["message"]
-    else:
-        scope = safety.get("scope")
-        message = "Input guardrail passed."
-    return {
-        "status": status,
-        "scope": scope,
-        "issues": sorted(set(issues)),
-        "message": message,
-        "security": {
-            "confidence": security["confidence"],
-            "signals": security["signals"],
-        },
-    }
+# input_guardrail_check moved to backend.services.agent_input_gate as
+# part of the agent_rag.py module split.  Re-exported below.
+from backend.services.agent_input_gate import input_guardrail_check  # noqa: F401, E402
 
 
 # safety_scope_check moved to backend.services.agent_safety as part of the
@@ -1007,16 +978,8 @@ def _cost_latency_note(cache_status, latency_ms, total_tokens):
 from backend.services.agent_answer_composition import _safety_reply  # noqa: F401, E402
 
 
-def _security_block_reply(input_guardrails):
-    issues = ", ".join(input_guardrails.get("issues") or ["unsafe request"])
-    return (
-        "I blocked that request for security and privacy reasons. "
-        "I cannot reveal system instructions, database contents, secrets, raw internal knowledge-base data, "
-        "or any other patient's information. "
-        f"Detected category: {issues}. "
-        "You can ask general breast cancer treatment-monitoring questions or enter your own symptoms, labs, medications, and uploads. "
-        "For medical concerns, contact your oncology care team."
-    )
+# _security_block_reply moved to backend.services.agent_input_gate.
+from backend.services.agent_input_gate import _security_block_reply  # noqa: F401, E402
 
 
 # _with_related_guidance / _educational_reply / _educational_query_bridge /
