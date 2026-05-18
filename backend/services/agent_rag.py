@@ -22,9 +22,8 @@ from backend.services.security_guardrails import detect_multilingual_medical_dan
 # backend.services.agent_cache and are re-imported lower in this module
 # alongside the rest of the cache layer.
 
-# Module-level cache for the merged KB corpus.  Avoids repeated disk reads on
-# every pipeline call.  Call _invalidate_kb_cache() after ingesting new chunks.
-_KB_CORPUS_CACHE: list | None = None
+# _KB_CORPUS_CACHE moved to backend.services.agent_kb_corpus alongside
+# the loader functions that own it.
 
 
 # KNOWLEDGE_SNIPPETS moved to backend.services.agent_knowledge_snippets as
@@ -289,25 +288,17 @@ from backend.services.agent_query_rewriting import rewrite_and_decompose  # noqa
 # split.  Re-imported below alongside the rest of the retrieval module.
 
 
-def _knowledge_snippets():
-    global _KB_CORPUS_CACHE
-    if _KB_CORPUS_CACHE is None:
-        _KB_CORPUS_CACHE = KNOWLEDGE_SNIPPETS + load_ingested_chunks()
-    return _KB_CORPUS_CACHE
-
-
-def _invalidate_kb_cache():
-    """Call after ingesting new KB chunks so the next pipeline call reloads."""
-    global _KB_CORPUS_CACHE
-    _KB_CORPUS_CACHE = None
-
-
-def get_rag_corpus():
-    return _knowledge_snippets()
-
-
-def knowledge_base_fingerprint():
-    return corpus_fingerprint(_knowledge_snippets())
+# KB corpus loader (knowledge_snippets / invalidate_kb_cache /
+# get_rag_corpus / knowledge_base_fingerprint) moved to
+# backend.services.agent_kb_corpus.  Re-exported below so existing
+# import sites + the lazy imports inside agent_retrieval / agent_cache
+# keep working.
+from backend.services.agent_kb_corpus import (  # noqa: F401, E402
+    _invalidate_kb_cache,
+    _knowledge_snippets,
+    get_rag_corpus,
+    knowledge_base_fingerprint,
+)
 
 
 # rerank_context, contextual_compression, _CURATED_SOURCES,
