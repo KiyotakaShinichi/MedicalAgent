@@ -20,6 +20,14 @@ class FieldSpec:
     allowed_values: tuple[str, ...] = ()
     required: bool = False
     description: str = ""
+    patient_label: str = ""
+    clinician_label: str = ""
+    units: tuple[str, ...] = ()
+    reference_range: str | None = None
+    source_type: str = "structured_patient_or_report_field"
+    allowed_use: tuple[str, ...] = ("record_organization", "clinician_review")
+    blocked_claims: tuple[str, ...] = ("diagnosis", "treatment_recommendation")
+    review_notes: str = ""
     claim_boundary: str = "Record organization only; not clinical interpretation."
 
     def to_dict(self) -> dict[str, Any]:
@@ -28,30 +36,47 @@ class FieldSpec:
             "allowed_values": list(self.allowed_values),
             "required": self.required,
             "description": self.description,
+            "patient_label": self.patient_label or self.name.replace("_", " ").title(),
+            "clinician_label": self.clinician_label or self.name,
+            "units": list(self.units),
+            "reference_range": self.reference_range,
+            "source_type": self.source_type,
+            "allowed_use": list(self.allowed_use),
+            "blocked_claims": list(self.blocked_claims),
+            "review_notes": self.review_notes,
             "claim_boundary": self.claim_boundary,
         }
 
 
 CLINICAL_ONTOLOGY: dict[str, dict[str, FieldSpec]] = {
+    "lab": {
+        "wbc": FieldSpec("wbc", patient_label="White blood cells", clinician_label="WBC", units=("10^9/L", "K/uL"), reference_range="population default varies by lab", review_notes="Interpret with ANC, symptoms, treatment timing, and local lab range."),
+        "anc": FieldSpec("anc", patient_label="Absolute neutrophil count", clinician_label="ANC", units=("10^9/L", "K/uL"), reference_range="population default varies by lab", review_notes="Low ANC with fever is a review/escalation pattern."),
+        "hemoglobin": FieldSpec("hemoglobin", patient_label="Hemoglobin", clinician_label="Hgb", units=("g/dL",), reference_range="sex/age/lab dependent", review_notes="Population default range is not personalized."),
+        "platelets": FieldSpec("platelets", patient_label="Platelets", clinician_label="PLT", units=("10^9/L", "K/uL"), reference_range="lab dependent", review_notes="Low platelets plus bleeding symptoms requires clinician review."),
+    },
     "symptom": {
         "symptom": FieldSpec(
             "symptom",
             allowed_values=(
                 "fatigue", "nausea", "vomiting", "fever", "mouth_sores",
                 "neuropathy", "diarrhea", "bleeding", "wound_discharge",
-                "pain", "shortness_of_breath", "chest_pain", "other",
+                "pain", "shortness_of_breath", "chest_pain", "cognitive_changes",
+                "brain_fog", "lymphedema", "hot_flashes", "other",
             ),
             required=True,
             description="Patient-reported symptom category.",
+            review_notes="Patient severity is an organizing signal, not a clinician-assigned toxicity grade.",
         ),
         "severity": FieldSpec("severity", required=True, description="0-10 patient-reported severity."),
     },
     "imaging": {
         "modality": FieldSpec(
             "modality",
-            allowed_values=("mri", "ct", "ultrasound", "pet_ct", "xray", "other"),
+            allowed_values=("mri", "ct", "ultrasound", "mammogram", "pet_ct", "dexa", "xray", "other"),
             required=True,
             description="Imaging/report modality. Images do not diagnose genetics.",
+            blocked_claims=("diagnosis", "treatment_response_confirmation", "genetic_diagnosis"),
         ),
         "report_type": FieldSpec(
             "report_type",
@@ -85,6 +110,21 @@ CLINICAL_ONTOLOGY: dict[str, dict[str, FieldSpec]] = {
         "marker": FieldSpec("marker", allowed_values=("CA 15-3", "CA 27.29", "CEA", "other"), required=True),
         "value": FieldSpec("value", required=True, description="Numeric value as shown on the lab report."),
         "unit": FieldSpec("unit", description="Unit copied from the lab report."),
+    },
+    "supplement": {
+        "name": FieldSpec(
+            "name",
+            allowed_values=("st_johns_wort", "turmeric_curcumin", "green_tea_extract", "ginger", "garlic", "ginkgo", "cbd_cannabis", "high_dose_vitamin_c", "antioxidant", "probiotic", "other"),
+            required=True,
+            description="Supplement/vitamin/herbal product reported by patient.",
+            allowed_use=("interaction_safety_flag", "clinician_review", "education"),
+            blocked_claims=("safe_with_chemo", "replace_treatment", "cancer_treatment_claim"),
+            review_notes="Ask oncology team/pharmacist before use during active treatment.",
+        ),
+    },
+    "medication": {
+        "category": FieldSpec("category", allowed_values=("chemotherapy", "targeted_therapy", "endocrine_therapy", "immunotherapy", "supportive_care", "other")),
+        "name": FieldSpec("name", description="Medication name as entered or selected."),
     },
 }
 

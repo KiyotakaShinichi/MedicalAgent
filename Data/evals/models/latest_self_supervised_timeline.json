@@ -1,0 +1,62 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_csv": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T11:58:27.548460+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T11:58:27.548460+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T11:58:27.548460+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "self_supervised_timeline_v1",
+  "generated_at": "2026-05-17T11:58:28.133218+00:00",
+  "status": "strong",
+  "task": "masked_timeline_signal_prediction_from_prior_cycles",
+  "metrics": {
+    "masked_lab_mae": 0.2511,
+    "masked_symptom_f1": 0.8658,
+    "masked_imaging_signal_accuracy": 0.8618,
+    "leakage_check_status": "passed"
+  },
+  "rows": {
+    "train": 2108,
+    "test": 709
+  },
+  "features": [
+    "age",
+    "stage",
+    "molecular_subtype",
+    "regimen",
+    "cycle",
+    "prev_pre_wbc",
+    "prev_pre_anc",
+    "prev_pre_hemoglobin",
+    "prev_pre_platelets",
+    "prev_nadir_wbc",
+    "prev_nadir_anc",
+    "prev_nadir_hemoglobin",
+    "prev_nadir_platelets",
+    "prev_recovery_wbc",
+    "prev_recovery_hemoglobin",
+    "prev_recovery_platelets",
+    "prev_mri_percent_change_from_baseline",
+    "prev_max_symptom_severity",
+    "prev_symptom_count",
+    "prev_intervention_count",
+    "prev_dose_delayed",
+    "prev_dose_reduced"
+  ],
+  "claim_boundary": "Experimental synthetic-only representation/pretraining proxy. Uses prior-cycle features only and is not a production clinical model."
+}

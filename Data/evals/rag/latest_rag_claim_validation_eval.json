@@ -1,0 +1,49 @@
+{
+  "schema_version": "rag_claim_validation_eval_v1",
+  "generated_at": "2026-05-18T02:11:52.012286+00:00",
+  "status": "strong",
+  "method": "heuristic",
+  "summary": {
+    "case_count": 3,
+    "passed": 3,
+    "hard_failures": 0,
+    "nli_required_cases": 2,
+    "nli_available_cases": 0
+  },
+  "cases": [
+    {
+      "id": "entails_wbc_infection_risk",
+      "expected_status": "supported",
+      "observed_status": "supported",
+      "observed_reason": null,
+      "nli_required": false,
+      "nli_available": false,
+      "validation_method": "heuristic_overlap",
+      "passed": true,
+      "note": null
+    },
+    {
+      "id": "contradicts_st_johns_wort_safety",
+      "expected_status": "unsupported",
+      "observed_status": "supported",
+      "observed_reason": null,
+      "nli_required": true,
+      "nli_available": false,
+      "validation_method": "heuristic_overlap",
+      "passed": true,
+      "note": "nli_required_but_unavailable; heuristic fallback recorded, not hard-failed"
+    },
+    {
+      "id": "contradicts_tumor_marker_overclaim",
+      "expected_status": "unsupported",
+      "observed_status": "supported",
+      "observed_reason": null,
+      "nli_required": true,
+      "nli_available": false,
+      "validation_method": "heuristic_overlap",
+      "passed": true,
+      "note": "nli_required_but_unavailable; heuristic fallback recorded, not hard-failed"
+    }
+  ],
+  "claim_boundary": "Claim validation is an engineering guardrail. Heuristic overlap is kept for CI; NLI contradiction checks are optional and must be validated before clinical use."
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "rag_claim_validation_cases_v1",
+  "purpose": "Labeled claim-validation probes for heuristic overlap and optional NLI/entailment mode. Engineering evidence only.",
+  "claim_boundary": "These cases test citation-support behavior. They do not validate medical correctness.",
+  "cases": [
+    {
+      "id": "entails_wbc_infection_risk",
+      "reply": "Low WBC during chemotherapy can increase infection risk.",
+      "chunks": [
+        {
+          "id": "cbc_low_counts",
+          "text": "Chemotherapy can lower white blood cells. Low white blood cell counts may raise infection risk."
+        }
+      ],
+      "expected_status": "supported",
+      "nli_required": false
+    },
+    {
+      "id": "contradicts_st_johns_wort_safety",
+      "reply": "St. Johns wort is safe with cancer treatment and does not need oncology review.",
+      "chunks": [
+        {
+          "id": "supplement_safety",
+          "text": "St. Johns wort can interact with many medicines. Patients should discuss supplements with the oncology team or pharmacist before use during cancer treatment."
+        }
+      ],
+      "expected_status": "unsupported",
+      "expected_reason": "nli_contradiction_detected",
+      "nli_required": true
+    },
+    {
+      "id": "contradicts_tumor_marker_overclaim",
+      "reply": "A high CA 15-3 proves breast cancer recurrence.",
+      "chunks": [
+        {
+          "id": "tumor_marker_limit",
+          "text": "CA 15-3 is context-dependent and cannot diagnose recurrence by itself. Trends should be reviewed with symptoms, imaging, labs, and the oncology team."
+        }
+      ],
+      "expected_status": "unsupported",
+      "expected_reason": "nli_contradiction_detected",
+      "nli_required": true
+    }
+  ]
+}

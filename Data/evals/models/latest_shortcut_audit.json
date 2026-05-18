@@ -1,0 +1,114 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_csv": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T11:59:45.782845+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T11:59:45.782845+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T11:59:45.782845+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "shortcut_audit_v1",
+  "generated_at": "2026-05-17T11:59:46.225502+00:00",
+  "status": "needs_attention",
+  "toxicity_audit": {
+    "full_auc": 0.9997,
+    "no_nadir_cbc_auc": 0.9941,
+    "auc_drop_without_nadir": 0.0056,
+    "top_permutation_features": [
+      {
+        "feature": "nadir_anc",
+        "importance_mean": 0.0064
+      },
+      {
+        "feature": "intervention_count",
+        "importance_mean": 0.0045
+      },
+      {
+        "feature": "nadir_platelets",
+        "importance_mean": 0.003
+      },
+      {
+        "feature": "dose_delayed",
+        "importance_mean": 0.0022
+      },
+      {
+        "feature": "nadir_wbc",
+        "importance_mean": 0.0011
+      },
+      {
+        "feature": "nadir_hemoglobin",
+        "importance_mean": 0.0004
+      },
+      {
+        "feature": "max_symptom_severity",
+        "importance_mean": 0.0002
+      },
+      {
+        "feature": "symptom_count",
+        "importance_mean": 0.0
+      }
+    ],
+    "interpretation": "Large drop means toxicity label is strongly tied to nadir CBC generator logic."
+  },
+  "regression_audit": {
+    "full_mae": 0.9964,
+    "no_mri_percent_change_mae": 10.655,
+    "mae_increase_without_mri_percent_change": 9.6585,
+    "top_permutation_features": [
+      {
+        "feature": "mri_percent_change_from_baseline",
+        "importance_mean": 24.5036
+      },
+      {
+        "feature": "mri_tumor_size_cm",
+        "importance_mean": 1.8699
+      },
+      {
+        "feature": "cycle",
+        "importance_mean": 0.5096
+      },
+      {
+        "feature": "pre_hemoglobin",
+        "importance_mean": 0.0217
+      },
+      {
+        "feature": "pre_wbc",
+        "importance_mean": 0.0201
+      },
+      {
+        "feature": "recovery_hemoglobin",
+        "importance_mean": 0.015
+      },
+      {
+        "feature": "nadir_wbc",
+        "importance_mean": 0.0116
+      },
+      {
+        "feature": "nadir_hemoglobin",
+        "importance_mean": 0.0113
+      }
+    ],
+    "interpretation": "Large MAE increase means response regression is strongly tied to MRI percent-change."
+  },
+  "dominant_shortcut_features": [
+    {
+      "feature": "mri_percent_change_from_baseline",
+      "importance_mean": 24.5036
+    }
+  ],
+  "recommendation": "Treat very high synthetic metrics as generator-fit evidence. Prefer softer labels, feature-removal ablations, and external-readiness checks before promotion.",
+  "claim_boundary": "Shortcut audit is synthetic-only. It finds generator shortcuts, not clinical truth."
+}

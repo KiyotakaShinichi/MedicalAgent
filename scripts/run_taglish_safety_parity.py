@@ -12,13 +12,7 @@ from backend.services.taglish_safety_parity import run_parity_check
 
 
 def _safety_detector(query: str) -> dict:
-    # Lazy-import so the script doesn't crash when optional safety deps
-    # are missing in fresh checkouts.
-    try:
-        from backend.processing.safety_scope import detect_safety_scope
-        return detect_safety_scope(query) or {}
-    except Exception:
-        return {}
+    return safety_scope_check(query) or {}
 
 
 def _intent_router(query: str, safety: dict) -> str:
@@ -26,6 +20,8 @@ def _intent_router(query: str, safety: dict) -> str:
 
 
 if __name__ == "__main__":
+    from backend.services.agent_rag import safety_scope_check
+
     payload = run_parity_check(
         safety_detector=_safety_detector,
         intent_router=_intent_router,

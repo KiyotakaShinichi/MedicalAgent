@@ -1,0 +1,120 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_csv": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2154650:1779035773:d42fb152f3c0",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-18T01:58:59.184341+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-18T01:58:59.184341+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-19T01:58:59.184341+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "counterfactual_stability_v1",
+  "generated_at": "2026-05-18T01:58:59.726349+00:00",
+  "status": "strong",
+  "modeling_note": "This benchmark uses a shallow gradient-boosting probe model to measure counterfactual brittleness under small perturbations. The production hybrid model is evaluated by separate calibration, abstention, and modality-robustness artifacts.",
+  "summary": {
+    "scenario_count": 6,
+    "sample_rows": 240,
+    "unacceptable_flip_count": 0,
+    "max_probability_delta": 0.1631,
+    "max_response_score_delta": 5.4287
+  },
+  "scenarios": [
+    {
+      "scenario": "wbc_slight_change_same_range",
+      "prediction_flip_rate": 0.0,
+      "toxicity_signal_flip_rate": 0.0,
+      "mean_probability_delta": 0.0,
+      "max_probability_delta": 0.0,
+      "mean_toxicity_delta": 0.0,
+      "max_toxicity_delta": 0.0,
+      "mean_response_score_delta": 0.047,
+      "max_response_score_delta": 1.8455,
+      "abstention_flip_rate": 0.0,
+      "unacceptable_flip_count": 0
+    },
+    {
+      "scenario": "symptom_severity_3_to_4",
+      "prediction_flip_rate": 0.0,
+      "toxicity_signal_flip_rate": 0.0,
+      "mean_probability_delta": 0.0,
+      "max_probability_delta": 0.0,
+      "mean_toxicity_delta": 0.0,
+      "max_toxicity_delta": 0.0,
+      "mean_response_score_delta": 0.0,
+      "max_response_score_delta": 0.0,
+      "abstention_flip_rate": 0.0,
+      "unacceptable_flip_count": 0
+    },
+    {
+      "scenario": "tumor_marker_small_noisy_increase_proxy",
+      "prediction_flip_rate": 0.0,
+      "toxicity_signal_flip_rate": 0.0,
+      "mean_probability_delta": 0.0,
+      "max_probability_delta": 0.0,
+      "mean_toxicity_delta": 0.0,
+      "max_toxicity_delta": 0.0,
+      "mean_response_score_delta": 0.0,
+      "max_response_score_delta": 0.0,
+      "abstention_flip_rate": 0.0,
+      "unacceptable_flip_count": 0
+    },
+    {
+      "scenario": "imaging_minor_numeric_noise",
+      "prediction_flip_rate": 0.0083,
+      "toxicity_signal_flip_rate": 0.0,
+      "mean_probability_delta": 0.0127,
+      "max_probability_delta": 0.1631,
+      "mean_toxicity_delta": 0.0,
+      "max_toxicity_delta": 0.0,
+      "mean_response_score_delta": 0.905,
+      "max_response_score_delta": 3.3467,
+      "abstention_flip_rate": 0.0,
+      "unacceptable_flip_count": 0
+    },
+    {
+      "scenario": "missing_noncritical_field",
+      "prediction_flip_rate": 0.0,
+      "toxicity_signal_flip_rate": 0.0,
+      "mean_probability_delta": 0.0,
+      "max_probability_delta": 0.0,
+      "mean_toxicity_delta": 0.0,
+      "max_toxicity_delta": 0.0,
+      "mean_response_score_delta": 0.1305,
+      "max_response_score_delta": 5.4287,
+      "abstention_flip_rate": 0.0,
+      "unacceptable_flip_count": 0
+    },
+    {
+      "scenario": "medication_spelling_variation_proxy",
+      "prediction_flip_rate": 0.0,
+      "toxicity_signal_flip_rate": 0.0,
+      "mean_probability_delta": 0.0,
+      "max_probability_delta": 0.0,
+      "mean_toxicity_delta": 0.0,
+      "max_toxicity_delta": 0.0,
+      "mean_response_score_delta": 0.0159,
+      "max_response_score_delta": 0.7274,
+      "abstention_flip_rate": 0.0,
+      "unacceptable_flip_count": 0
+    }
+  ],
+  "gate": {
+    "policy": "Fail only on extreme instability under small clinically plausible perturbations.",
+    "unacceptable_probability_delta": 0.35,
+    "unacceptable_response_score_delta": 25.0
+  },
+  "claim_boundary": "Counterfactual stability is a synthetic engineering proxy. It checks brittleness, not clinical correctness."
+}

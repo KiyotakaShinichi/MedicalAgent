@@ -1,0 +1,218 @@
+{
+  "schema_version": "toxicity_feature_audit_v1",
+  "generated_at": "2026-05-17T11:13:00.929371+00:00",
+  "status": "needs_attention",
+  "target": "toxicity_risk_binary",
+  "ml_csv_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "model_path": "Data/complete_synthetic_training/gradient_boosting_toxicity_risk_binary.joblib",
+  "dominant_threshold": 0.5,
+  "near_label_identity_gap_threshold": 0.85,
+  "label_positive_rate": 0.6414,
+  "feature_rows": [
+    {
+      "feature": "intervention_count",
+      "importance": 0.8689,
+      "label_separation_gap": 0.9267,
+      "bottom_decile_rate": 0.0733,
+      "top_decile_rate": 1.0
+    },
+    {
+      "feature": "nadir_anc",
+      "importance": 0.0714,
+      "label_separation_gap": 0.9531,
+      "bottom_decile_rate": 1.0,
+      "top_decile_rate": 0.0469
+    },
+    {
+      "feature": "nadir_platelets",
+      "importance": 0.0341,
+      "label_separation_gap": 0.5265,
+      "bottom_decile_rate": 1.0,
+      "top_decile_rate": 0.4735
+    },
+    {
+      "feature": "nadir_wbc",
+      "importance": 0.0099,
+      "label_separation_gap": 0.9365,
+      "bottom_decile_rate": 1.0,
+      "top_decile_rate": 0.0635
+    },
+    {
+      "feature": "nadir_hemoglobin",
+      "importance": 0.0079,
+      "label_separation_gap": 0.6802,
+      "bottom_decile_rate": 0.989,
+      "top_decile_rate": 0.3087
+    },
+    {
+      "feature": "max_symptom_severity",
+      "importance": 0.0038,
+      "label_separation_gap": 0.6882,
+      "bottom_decile_rate": 0.3118,
+      "top_decile_rate": 1.0
+    },
+    {
+      "feature": "dose_delayed",
+      "importance": 0.0015,
+      "label_separation_gap": 0.8891,
+      "bottom_decile_rate": 0.1109,
+      "top_decile_rate": 1.0
+    },
+    {
+      "feature": "recovery_platelets",
+      "importance": 0.0005,
+      "label_separation_gap": 0.5016,
+      "bottom_decile_rate": 0.9941,
+      "top_decile_rate": 0.4926
+    },
+    {
+      "feature": "pre_wbc",
+      "importance": 0.0005,
+      "label_separation_gap": 0.9224,
+      "bottom_decile_rate": 1.0,
+      "top_decile_rate": 0.0776
+    },
+    {
+      "feature": "pre_anc",
+      "importance": 0.0003,
+      "label_separation_gap": 0.8909,
+      "bottom_decile_rate": 1.0,
+      "top_decile_rate": 0.1091
+    },
+    {
+      "feature": "recovery_wbc",
+      "importance": 0.0003,
+      "label_separation_gap": 0.9339,
+      "bottom_decile_rate": 1.0,
+      "top_decile_rate": 0.0661
+    },
+    {
+      "feature": "pre_hemoglobin",
+      "importance": 0.0002,
+      "label_separation_gap": 0.6584,
+      "bottom_decile_rate": 0.9723,
+      "top_decile_rate": 0.3139
+    },
+    {
+      "feature": "cycle",
+      "importance": 0.0002,
+      "label_separation_gap": 0.8867,
+      "bottom_decile_rate": 0.095,
+      "top_decile_rate": 0.9817
+    },
+    {
+      "feature": "pre_platelets",
+      "importance": 0.0001,
+      "label_separation_gap": 0.468,
+      "bottom_decile_rate": 0.9885,
+      "top_decile_rate": 0.5205
+    },
+    {
+      "feature": "mri_tumor_size_cm",
+      "importance": 0.0001,
+      "label_separation_gap": 0.4136,
+      "bottom_decile_rate": 0.9475,
+      "top_decile_rate": 0.5339
+    },
+    {
+      "feature": "recovery_hemoglobin",
+      "importance": 0.0001,
+      "label_separation_gap": 0.6684,
+      "bottom_decile_rate": 0.9753,
+      "top_decile_rate": 0.3068
+    },
+    {
+      "feature": "age",
+      "importance": 0.0001,
+      "label_separation_gap": 0.0058,
+      "bottom_decile_rate": 0.6526,
+      "top_decile_rate": 0.6583
+    },
+    {
+      "feature": "molecular_subtype",
+      "importance": 0.0,
+      "label_separation_gap": null,
+      "bottom_decile_rate": null,
+      "top_decile_rate": null
+    },
+    {
+      "feature": "symptom_count",
+      "importance": 0.0,
+      "label_separation_gap": 0.2826,
+      "bottom_decile_rate": 0.6547,
+      "top_decile_rate": 0.9373
+    },
+    {
+      "feature": "regimen",
+      "importance": 0.0,
+      "label_separation_gap": null,
+      "bottom_decile_rate": null,
+      "top_decile_rate": null
+    },
+    {
+      "feature": "mri_percent_change_from_baseline",
+      "importance": 0.0,
+      "label_separation_gap": 0.131,
+      "bottom_decile_rate": 0.9673,
+      "top_decile_rate": 0.8363
+    },
+    {
+      "feature": "dose_reduced",
+      "importance": 0.0,
+      "label_separation_gap": 0.7891,
+      "bottom_decile_rate": 0.2109,
+      "top_decile_rate": 1.0
+    },
+    {
+      "feature": "stage",
+      "importance": 0.0,
+      "label_separation_gap": null,
+      "bottom_decile_rate": null,
+      "top_decile_rate": null
+    }
+  ],
+  "dominant_features": [
+    "intervention_count"
+  ],
+  "near_label_proxy_features": [
+    "intervention_count",
+    "nadir_anc",
+    "nadir_wbc",
+    "dose_delayed",
+    "pre_wbc",
+    "pre_anc",
+    "recovery_wbc",
+    "cycle"
+  ],
+  "no_proxy_baseline": {
+    "status": "trained",
+    "auc": 1.0,
+    "brier": 0.0017,
+    "dropped_features": [
+      "intervention_count"
+    ],
+    "remaining_feature_count": 22,
+    "test_rows": 900,
+    "train_rows": 2700
+  },
+  "strict_no_proxy_baseline": {
+    "status": "trained",
+    "auc": 0.9677,
+    "brier": 0.0486,
+    "dropped_features": [
+      "cycle",
+      "dose_delayed",
+      "intervention_count",
+      "nadir_anc",
+      "nadir_wbc",
+      "pre_anc",
+      "pre_wbc",
+      "recovery_wbc"
+    ],
+    "remaining_feature_count": 15,
+    "test_rows": 900,
+    "train_rows": 2700
+  },
+  "interpretation": "Dominant feature(s) found: intervention_count. Even after stripping ALL 8 near-label-proxy features, AUC stays at 0.968. This means the synthetic generator wires the toxicity label to too many features to remove cleanly \u2014 the AUC is a property of the generator, not the model's learned skill. Quoting this AUC as model performance would be misleading; the model card must reference this audit.",
+  "claim_boundary": "Engineering audit only. Documents how the synthetic-trained toxicity classifier arrives at its synthetic AUC; does not establish clinical toxicity prediction validity."
+}

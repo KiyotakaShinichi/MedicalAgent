@@ -8,9 +8,13 @@ from backend.database import Base
 from backend.models import MedicationLog, Patient
 from backend.services.ctcae_mapping import map_symptom_to_ctcae_review_hint
 from backend.services.full_feature_group_ablation import run_full_feature_group_ablation
+from backend.services.hybrid_subgroup_metrics import run_hybrid_subgroup_metrics
 from backend.services.lab_reference_context import build_cbc_reference_context
+from backend.services.learned_abstention_experiment import run_learned_abstention_experiment
+from backend.services.medical_advisor_packet import build_medical_advisor_review_packet
 from backend.services.medication_interactions import check_medication_interactions
 from backend.services.patient_uploads import save_patient_upload
+from backend.services.soft_toxicity_target_benchmark import run_soft_toxicity_target_benchmark
 from backend.services.toxicity_model_metadata import build_toxicity_model_metadata
 
 
@@ -154,6 +158,41 @@ def test_toxicity_model_metadata_documents_shortcut_risk(tmp_path):
     assert metadata["task"] == "toxicity_risk_binary"
     assert metadata["recommended_use"]["current"] == "review_flag_or_deterministic_monitoring_rule"
     assert "learned clinical toxicity prediction" in metadata["recommended_use"]["not_supported"]
+
+
+def test_learned_abstention_experiment_artifact_is_claim_bounded(tmp_path):
+    report = run_learned_abstention_experiment(output_path=str(tmp_path / "learned_abstention.json"), max_rows=360)
+
+    assert report["schema_version"] == "learned_abstention_experiment_v1"
+    assert report["abstention_head"]["target"] == "base_model_was_correct_under_modality_dropout"
+    assert "not clinical validation" in report["claim_boundary"]
+
+
+def test_soft_toxicity_target_benchmark_reduces_shortcut_claim(tmp_path):
+    report = run_soft_toxicity_target_benchmark(output_path=str(tmp_path / "soft_toxicity.json"))
+
+    assert report["schema_version"] == "soft_toxicity_target_benchmark_v1"
+    assert report["shortcut_comparison"]["old_toxicity_rule_accuracy_against_soft_label"] < 0.98
+    assert "must not be claimed as clinical toxicity prediction" in report["claim_boundary"]
+
+
+def test_hybrid_subgroup_metrics_reports_synthetic_subgroups(tmp_path):
+    report = run_hybrid_subgroup_metrics(output_path=str(tmp_path / "hybrid_subgroups.json"), max_rows=60)
+
+    assert report["schema_version"] == "hybrid_subgroup_metrics_v1"
+    assert report["overall"]["n"] == 60
+    assert "simulator-defined" in report["claim_boundary"]
+
+
+def test_medical_advisor_packet_lists_review_scope(tmp_path):
+    packet = build_medical_advisor_review_packet(
+        output_path=str(tmp_path / "packet.json"),
+        md_path=str(tmp_path / "packet.md"),
+    )
+
+    assert packet["schema_version"] == "medical_advisor_review_packet_v1"
+    assert packet["status"] == "ready_for_clinical_advisor_review"
+    assert "genetics/VUS/tumor-marker refusal" in " ".join(packet["review_requested_for"])
 
 
 def _temp_patient_session():

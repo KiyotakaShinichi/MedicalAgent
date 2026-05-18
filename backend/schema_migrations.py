@@ -60,6 +60,21 @@ def ensure_schema():
             if name not in rag_log_columns:
                 connection.execute(text(ddl))
 
+    family_columns = set()
+    if "family_cancer_history_records" in table_names:
+        family_columns = {column["name"] for column in inspector.get_columns("family_cancer_history_records")}
+
+    with engine.begin() as connection:
+        for name in (
+            "bilateral_breast_cancer",
+            "multiple_primary_cancers",
+            "ancestry_ethnicity",
+            "prior_breast_biopsy_atypia",
+            "relation_degree",
+        ):
+            if family_columns and name not in family_columns:
+                connection.execute(text(f"ALTER TABLE family_cancer_history_records ADD COLUMN {name} VARCHAR"))
+
     # ClinicalSummaryReview schema changes are now owned by Alembic revisions
     # under backend/migrations/. Keep this startup patcher for legacy demo
     # columns only so schema evolution has a single source of truth.

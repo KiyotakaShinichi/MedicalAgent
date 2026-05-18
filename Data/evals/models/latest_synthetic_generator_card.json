@@ -1,7 +1,7 @@
 {
   "schema_version": "synthetic_generator_card_v1",
   "generator_card_version": "v2_2026_05",
-  "generated_at": "2026-05-16T17:05:11.689911+00:00",
+  "generated_at": "2026-05-17T12:04:54.517420+00:00",
   "status": "passed",
   "dataset_dir": "Data/complete_synthetic_breast_journeys",
   "dataset_schema_version": "complete_synthetic_breast_journey_v2",
@@ -144,6 +144,16 @@
     "Cycle 1 features alone can already separate responders from non-responders better than would be realistic, because the latent shows up in cycle-1 imaging response.",
     "Patient IDs follow a deterministic prefix+index pattern; never use the ID string as a feature."
   ],
+  "realism_hardening_features": {
+    "realistic_missingness_patterns_by_modality": "Optional lab/imaging/symptom fields may be missing; model consumers must use evidence sufficiency.",
+    "delayed_imaging_reports": "Missing cycle-level imaging signals are treated as delayed/unavailable imaging proxies.",
+    "noisy_tumor_marker_trends": "Tumor-marker behavior is context-only and should not drive standalone response/progression claims.",
+    "treatment_interruptions_and_dose_delays": "Dose delays/reductions and treatment interruptions are represented as workflow events.",
+    "incomplete_family_history": "Hereditary-risk readiness workflows assume unknown ages/relatives/mutation status can occur.",
+    "incomplete_biomarker_records": "Biomarker/pathology fields can be missing, unknown, low-positive, equivocal, or uploaded later.",
+    "contradictory_symptom_reports": "Patient-reported symptom patterns may conflict with labs or model signals and should increase review priority.",
+    "irregular_followup_intervals": "Follow-up timing can vary after delays and interruptions."
+  },
   "unsupported_claims": [
     "Real clinical performance \u2014 every reported metric is synthetic.",
     "Calibration of the model on real patient populations.",
@@ -153,6 +163,7 @@
   ],
   "realism_checks_referenced": [
     "synthetic_realism_candidate alignment score (separate artifact)",
+    "synthetic_realism_hardening missingness/delay/interruptions profile (separate artifact)",
     "noise_eval AUROC drop under feature corruption (separate artifact)",
     "temporal_eval generalization gap (separate artifact)",
     "drift_report subgroup performance (separate artifact)"

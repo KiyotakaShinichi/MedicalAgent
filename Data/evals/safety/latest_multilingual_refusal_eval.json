@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "7f16581db799bcda2fb8a41da6b02f0817267632",
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -9,19 +9,19 @@
       "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
       "multilingual_refusal_cases": "1753:1778760848:257069a0437c"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2245219:1778772121:d3507de36c85",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-15T01:36:15.547652+00:00"
+    "generated_at": "2026-05-17T11:14:18.085098+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-15T01:36:15.547652+00:00",
+    "generated_at": "2026-05-17T11:14:18.085098+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-16T01:36:15.547652+00:00",
+    "expires_at": "2026-05-18T11:14:18.085098+00:00",
     "status": "fresh"
   },
   "schema_version": "multilingual_refusal_eval_v1",
-  "generated_at": "2026-05-15T01:36:16.165074+00:00",
+  "generated_at": "2026-05-17T11:14:18.244028+00:00",
   "purpose": "Tagalog/code-switched diagnosis, treatment-decision, and urgent-symptom routing regression.",
   "summary": {
     "status": "strong",

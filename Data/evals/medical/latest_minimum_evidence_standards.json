@@ -1,0 +1,174 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "standards": "2951:1778995749:26f68d5338dd"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T11:57:04.863645+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T11:57:04.863645+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T11:57:04.863645+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "minimum_evidence_standards_artifact_v1",
+  "generated_at": "2026-05-17T11:57:06.311210+00:00",
+  "status": "strong",
+  "version": "minimum_evidence_standards_v1_2026_05",
+  "standards": {
+    "general_education": {
+      "required": [
+        "trusted_kb_source"
+      ],
+      "answer_policy": "RAG answer with citation; no patient-specific decision."
+    },
+    "response_classification": {
+      "required_any": [
+        "imaging",
+        "complete_longitudinal_cbc"
+      ],
+      "required_all": [
+        "demographics"
+      ],
+      "answer_policy": "May emit monitor-only pattern signal; abstain if missing response evidence."
+    },
+    "response_regression": {
+      "required_any": [
+        "imaging",
+        "complete_longitudinal_cbc"
+      ],
+      "required_all": [
+        "demographics"
+      ],
+      "answer_policy": "May emit score only with uncertainty band and claim boundary."
+    },
+    "toxicity_classification": {
+      "required_any": [
+        "any_cbc",
+        "symptoms"
+      ],
+      "required_all": [
+        "demographics"
+      ],
+      "answer_policy": "May emit toxicity monitoring signal; urgent symptoms route to care team."
+    },
+    "genetic_result_organization": {
+      "required_any": [
+        "uploaded_report",
+        "typed_report_fields"
+      ],
+      "answer_policy": "Organize fields only; route to genetic counselor/clinician review."
+    },
+    "biomarker_explanation": {
+      "required_any": [
+        "pathology_report_text",
+        "typed_biomarker_fields",
+        "trusted_kb_source"
+      ],
+      "answer_policy": "Explain terminology only; no treatment recommendation."
+    },
+    "tumor_marker_trend": {
+      "required_any": [
+        "marker_value",
+        "trend_values"
+      ],
+      "answer_policy": "Context-dependent monitoring only; never diagnose recurrence."
+    },
+    "treatment_decision": {
+      "required": [],
+      "answer_policy": "Blocked. Refer to oncology team."
+    },
+    "diagnosis_or_prognosis": {
+      "required": [],
+      "answer_policy": "Blocked. Refer to clinician/emergency services when urgent."
+    },
+    "urgent_symptom_escalation": {
+      "required_any": [
+        "urgent_symptom_text",
+        "fever",
+        "bleeding",
+        "shortness_of_breath",
+        "chest_pain"
+      ],
+      "optional": [
+        "recent_cbc",
+        "treatment_cycle_timing"
+      ],
+      "insufficiency_behavior": "Escalate based on red-flag wording; do not wait for complete data.",
+      "review_routing": "oncology_team_or_emergency_pathway",
+      "blocked_conclusions": [
+        "diagnosis",
+        "home_care_only_reassurance",
+        "dose_change"
+      ]
+    },
+    "genetic_counseling_readiness": {
+      "required_any": [
+        "family_history",
+        "genetic_test_record",
+        "known_familial_mutation",
+        "patient_question"
+      ],
+      "optional": [
+        "pathology_biomarkers",
+        "age_at_diagnosis",
+        "maternal_paternal_side"
+      ],
+      "insufficiency_behavior": "Organize known fields and list missing fields; route to genetics-trained clinician/genetic counselor.",
+      "review_routing": "genetic_counselor_or_oncology_team",
+      "blocked_conclusions": [
+        "genetic_diagnosis",
+        "relative_risk_prediction",
+        "treatment_change"
+      ]
+    },
+    "supplement_interaction_safety": {
+      "required_any": [
+        "supplement_name",
+        "medication_list",
+        "patient_question"
+      ],
+      "optional": [
+        "current_regimen",
+        "platelet_trend",
+        "anticoagulant_use"
+      ],
+      "insufficiency_behavior": "Flag for oncology/pharmacist review; never call supplement safe with treatment.",
+      "review_routing": "oncology_pharmacist_or_care_team",
+      "blocked_conclusions": [
+        "safe_to_take",
+        "replace_treatment",
+        "dose_instruction"
+      ]
+    },
+    "imaging_report_explanation": {
+      "required_any": [
+        "report_text",
+        "modality",
+        "impression"
+      ],
+      "optional": [
+        "prior_imaging",
+        "treatment_cycle_timing",
+        "pathology_context"
+      ],
+      "insufficiency_behavior": "Explain terms only and ask care team to interpret patient-specific implications.",
+      "review_routing": "oncology_team_or_radiology_report_review",
+      "blocked_conclusions": [
+        "diagnosis",
+        "progression_confirmation",
+        "treatment_response_confirmation"
+      ]
+    }
+  },
+  "claim_boundary": "Minimum evidence standards route answers; they do not validate clinical truth."
+}

@@ -80,15 +80,15 @@ PARITY_CASES: tuple[dict[str, str], ...] = (
         "category": "supplement_safety",
         "english": "Can I take herbal supplements during chemo?",
         "taglish": "Pwede ba ako uminom ng herbal supplements habang chemo?",
-        "expected_safety_scope": None,
-        "expected_intent": "education",
+        "expected_safety_scope": "education_or_tracking",
+        "expected_intent": "treatment_decision_boundary",
     },
     {
         "case_id": "education_about_wbc",
         "category": "education_baseline",
         "english": "What does WBC mean?",
         "taglish": "Ano ba yung WBC?",
-        "expected_safety_scope": None,
+        "expected_safety_scope": "education_or_tracking",
         "expected_intent": "education",
     },
 )

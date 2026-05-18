@@ -19,7 +19,7 @@ MedicalAgent is not an AI doctor, diagnosis bot, or treatment recommendation sys
 
 ## Engineering maturity
 
-Nine hardening phases sit between the trained synthetic model and the patient-facing UI. Each ships with its own test suite and a corresponding admin-dashboard card. See **[docs/demo_storyline.md](docs/demo_storyline.md)** for a reviewer-facing walkthrough that exercises every phase end-to-end.
+Eleven hardening phases sit between the trained synthetic model and the patient-facing UI. Each ships with its own test suite and a corresponding admin-dashboard card. See **[docs/demo_storyline.md](docs/demo_storyline.md)** for a reviewer-facing walkthrough that exercises every phase end-to-end.
 
 | # | Phase | What it guards | Hard CI gate | Live numbers |
 |---|---|---|---|---|
@@ -32,6 +32,8 @@ Nine hardening phases sit between the trained synthetic model and the patient-fa
 | 7 | **Clinician dashboard parity** ([trace endpoint](backend/api/routers/clinician_review.py), [PredictionTracesPanel](frontend-react/src/pages/clinician/PredictionTracesPanel.tsx)) | Clinician sees the same evidence-aware envelope the patient sees, plus an auditable trace log per patient (filter by abstention, summary chips). | `tests/test_clinician_prediction_traces.py` — 9 access-control + contract tests. | Endpoint gated to clinician + admin roles, patients blocked. |
 | 8 | **Form catalogs + RAG governance + post-gen validator** ([catalogs](frontend-react/src/lib/clinical-constants.ts), [governance](backend/services/kb_source_governance.py), [validator](backend/services/post_generation_validator.py)) | Curated symptom/medication dropdowns with "Other" fallback. KB sources mapped to T1–T5 tiers with `allowed_use`. Post-gen validator blocks 6 banned-claim categories (diagnosis, treatment, prognosis, dosage, genetic-risk, tumor-marker) even when the LLM tries to make them. | `SelectWithCustom.test.tsx` (9) + `tests/test_rag_governance.py` (20). | 28 symptoms + 22 medications. 24 KB sources mapped (T1=2, T2=10, T3=11, T4=1, 0 issues). 6 rules in validator catalog. |
 | 9 | **Hybrid completion** ([hybrid_prediction.py](backend/services/hybrid_prediction.py)) | Classification + regression + toxicity heads, each through its own abstention sufficiency rules, bundled per patient view. Three trace rows per fresh report build (one per head, grouped by snapshot hash). | `tests/test_hybrid_prediction.py` — 9 per-head + bundle + live-integration tests. | Toxicity head scores when imaging is missing while response heads abstain — independent per-head sufficiency working. |
+| 10 | **Regression hardening** ([quantile](backend/services/quantile_regression_training.py), [dropout](backend/services/modality_dropout_regression_training.py), [comparison](backend/services/regression_robustness_comparison.py)) | Response-score head no longer uses a heuristic uncertainty band: p10/p50/p90 quantile GBM heads emit a *genuine* 80% prediction interval sorted per row. Regression head also gets modality-dropout retraining; head-to-head shows the augmented variant wins on missing-imaging rows. Conformal calibration adds a residual qhat for empirical-coverage parity. | `tests/test_quantile_regression.py` (10) + `tests/test_regression_robustness.py` (8) + `tests/test_hybrid_prediction.py` regression slot. | Quantile coverage 76.2% vs 80% nominal (within 5pp). Modality-robust MAE on `no_imaging` drops 18.16 → 14.19 (Δ=-3.97 on 0–100 scale, the regression analog of the +8.3pp classifier result). |
+| 11 | **Intent-aware RAG layer** ([modes](backend/services/rag_intent_modes.py), [tier filter](backend/services/rag_tier_filter.py), [claim validator](backend/services/rag_claim_validator.py), [evidence grading](backend/services/rag_evidence_grading.py), [Taglish parity](backend/services/taglish_safety_parity.py)) | 5 RAG modes (education / urgent_safety / record_explanation / clinician_context / portal_help) route per intent + actor role. Retrieved chunks are filtered against `kb_source_governance` tier + `allowed_use`. Per-sentence claim-level citation validation runs over the kept chunks. `EvidenceGrade` envelope (high/moderate/low/insufficient + source_basis + citation_status + answer_scope) ships on every reply. Insufficient evidence is a first-class outcome — substituted with the mode's safe deferral. Taglish-vs-English safety-route parity is enforced for 6 canonical clinical-safety cases. | `tests/test_rag_intent_aware.py` (31) + `tests/test_rag_trace_replay.py` (4) + `tests/test_finalize_helpers.py` (8). | 31 unit tests covering modes, tier filter, claim validator, evidence grading, Taglish parity (English ↔ Taglish route + scope match), intent-aware benchmark, tier ablation. Trace replay round-trip writes + reads back every Phase 11 field via the new RAGEvaluationLog columns (migration 0003). |
 
 Run them all locally:
 
@@ -43,11 +45,19 @@ python scripts/run_modality_robustness_comparison.py
 python scripts/run_synthetic_generator_card.py
 python scripts/run_failure_mode_registry.py
 python scripts/run_kb_source_governance.py
+python scripts/run_quantile_regression_training.py
+python scripts/run_modality_dropout_regression_training.py
+python scripts/run_regression_robustness_comparison.py
+python scripts/run_taglish_safety_parity.py
+python scripts/run_rag_intent_aware_eval.py
 pytest tests/test_leakage_audit.py tests/test_evidence_abstention.py \
        tests/test_prediction_trace.py tests/test_modality_robustness.py \
        tests/test_live_evidence_prediction.py tests/test_provenance_artifacts.py \
        tests/test_hybrid_prediction.py tests/test_clinician_prediction_traces.py \
-       tests/test_rag_governance.py
+       tests/test_rag_governance.py \
+       tests/test_quantile_regression.py tests/test_regression_robustness.py \
+       tests/test_rag_intent_aware.py tests/test_rag_trace_replay.py \
+       tests/test_finalize_helpers.py
 ```
 
 What this is *not*: any of these passing is engineering evidence, not clinical validation. The synthetic-to-real gap is itself the first entry in the failure-mode registry.
@@ -205,6 +215,10 @@ alembic revision --autogenerate -m "describe change"   # create a new migration
 alembic downgrade -1            # roll back one revision
 ```
 
+`medical_agent.db` is local developer state and should not be committed. To
+rebuild it, run `python scripts/reset_local_db.py`. See
+[docs/local_database.md](docs/local_database.md).
+
 ## Future work
 - Add labeled RAG evaluation sets and formal groundedness scoring.
 - Expand multimodal signals with validated imaging workflows.
@@ -248,6 +262,7 @@ alembic downgrade -1            # roll back one revision
 | Prediction traceability | 21-column `PredictionTrace` table — every live inference records model + feature-set + threshold + calibration + safety-trigger + validator-decision + modalities-present provenance; live in admin dashboard |
 | Modality-dropout retraining | Champion classifier retrained on rows with stochastically masked modality groups; head-to-head vs. original shows +8.3pp accuracy and −7.3 Brier on `no_imaging` with no regression on `full_data` |
 | Generator card + failure-mode registry | Synthetic generator card pins schema/seed/cohort/fingerprint + documents causal assumptions, known shortcuts, unsupported claims; failure-mode registry consolidates 17 entries across engineering risks, narrative cases, safety-red-team failures, and drift findings |
+| Synthetic-only hardening phase | Self-supervised prior-timeline pretraining, counterfactual stability checks, learned-abstention candidate, per-head calibration, shortcut audits, minimum-evidence standards, and medical-claim-boundary evals. These are engineering proxy checks only, not clinical validation. |
 
 ### Architecture (Mermaid)
 
@@ -326,12 +341,29 @@ flowchart TD
 - Full-stack integration: React SPA + FastAPI + SQLite + vector index + local ML models
 - Data-hygiene discipline: leakage audit as a hard CI gate, every prediction emitted with explicit modality provenance, abstention as a first-class output state
 - Honest provenance: synthetic generator card with documented causal assumptions / known shortcuts / unsupported claims; consolidated failure-mode registry instead of hand-waving over known gaps
+- Hardening against synthetic-only overclaiming: shortcut audit flags generator-derived dependencies, counterfactual stability reports brittle cases as `needs_attention`, and per-head calibration reports separate uncertainty stories for response classification, response-score regression, toxicity, and abstention
 
 **Does not prove:**
 - Clinical validity — all model training and testing uses synthetic or non-validated data
 - HIPAA/regulatory compliance — no certified security controls are in place
 - Production scalability — SQLite and in-process models are for local/demo use only
 - Clinical decision support accuracy — the system is a monitoring and review aid, not a diagnostic tool
+- That biomarker, tumor-marker, genetic, or imaging features improve real outcomes — current improvements and failures are synthetic engineering signals only
+
+### Synthetic-only hardening commands
+
+```bash
+python scripts/run_synthetic_realism_hardening.py
+python scripts/run_self_supervised_timeline_pretraining.py
+python scripts/run_counterfactual_stability_eval.py
+python scripts/run_learned_abstention_eval.py
+python scripts/run_per_head_calibration.py
+python scripts/run_shortcut_audit.py
+python scripts/run_minimum_evidence_standards.py
+python scripts/run_medical_claim_boundary_eval.py
+```
+
+Honest reading: `needs_attention` can be a valid output. For example, shortcut and counterfactual reports are supposed to surface generator shortcuts or brittle perturbations rather than hide them behind a green badge.
 
 ### How to run (30 seconds)
 ```bash
@@ -380,6 +412,18 @@ Open http://localhost:5173. The React API client calls http://127.0.0.1:8017 dir
 
 ### Quality gate
 ```bash
+# Commit-time integration gate for chat/RAG/citation regressions.
+python scripts/install_pre_commit.py
+
+# Release gate: checks required benchmark artifacts for freshness/status/thresholds.
+python scripts/run_release_gate.py
+
+# Full local ship gate on machines with GNU make.
+make ship
+
+# Cross-platform ship gate for Windows/Linux without GNU make.
+python scripts/ship.py
+
 # Fast local gate: lint, build, backend tests, MLE readiness, RAG ablation,
 # and latest strong agent-regression artifact.
 python scripts/run_quality_gate.py --skip-slow-agent
@@ -387,6 +431,10 @@ python scripts/run_quality_gate.py --skip-slow-agent
 # Full UI smoke included. Requires: cd frontend-react && npx playwright install chromium
 python scripts/run_quality_gate.py --skip-slow-agent --include-e2e
 ```
+
+See [docs/pre_commit_gate.md](docs/pre_commit_gate.md) for hook install and
+manual run details. See [docs/reviewer_evidence.md](docs/reviewer_evidence.md)
+for the proof map reviewers can use to inspect claims.
 
 ### Demo credentials
 | Username | Password | Destination |

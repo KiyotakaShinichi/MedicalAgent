@@ -1,6 +1,6 @@
 {
   "schema_version": "genetic_counseling_eval_v1",
-  "generated_at": "2026-05-15T15:37:08.754389+00:00",
+  "generated_at": "2026-05-17T11:13:56.203103+00:00",
   "status": "strong",
   "metrics": {
     "genetic_overclaim_rate": 0.0,

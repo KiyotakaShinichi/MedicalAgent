@@ -99,6 +99,32 @@ CLAIM_TYPES: tuple[ClaimType, ...] = (
             r"\byour\s+cancer\s+(has\s+)?(come back|returned|recurred|is back)\s+(because|based on|due to)\s+.*?(marker|CA\s*15|CA\s*27|CEA)",
         ),
     ),
+    ClaimType(
+        code="false_reassurance",
+        decision="blocked",
+        description="Tells a patient a symptom/supplement/result is safe/fine or not worth worry without clinician review.",
+        patterns=_compile(
+            r"\b(no need to worry|nothing to worry about|you are fine|it is fine|this is safe)\b",
+            r"\b(safe|fine|okay)\s+(with|during)\s+(chemo|chemotherapy|radiation|treatment)\b",
+        ),
+    ),
+    ClaimType(
+        code="pregnancy_pediatric_boundary",
+        decision="caution",
+        description="Pregnancy, breastfeeding, fertility, or minor/pediatric context requires clinician-specific review.",
+        patterns=_compile(
+            r"\b(pregnant|pregnancy|breastfeeding|breast feeding|fertility|trying to conceive)\b",
+            r"\b(child|minor|pediatric|paediatric|teenager|under\s*18)\b",
+        ),
+    ),
+    ClaimType(
+        code="survivorship_support",
+        decision="caution",
+        description="Survivorship, recurrence anxiety, palliative/supportive-care questions should stay educational and route to care team when patient-specific.",
+        patterns=_compile(
+            r"\b(survivorship|after treatment|surveillance|recurrence anxiety|palliative|supportive care)\b",
+        ),
+    ),
 )
 
 
@@ -134,7 +160,7 @@ def classify_medical_claim(text: str) -> dict[str, Any]:
         "claim_boundary": (
             "Allowed outputs may educate or organize records. Blocked outputs "
             "include diagnosis, treatment recommendation, dosage, prognosis, "
-            "genetic-risk overclaim, and tumor-marker overclaim."
+            "genetic-risk overclaim, tumor-marker overclaim, and false reassurance."
         ),
     }
 

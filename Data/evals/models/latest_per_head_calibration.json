@@ -1,0 +1,137 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_csv": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T11:58:37.247859+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T11:58:37.247859+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T11:58:37.247859+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "per_head_calibration_v1",
+  "generated_at": "2026-05-17T11:58:37.533732+00:00",
+  "status": "strong",
+  "heads": {
+    "response_classification": {
+      "auroc": 0.9677,
+      "brier": 0.0722,
+      "ece": 0.0316,
+      "reliability_bins": [
+        {
+          "bin": "0.0-0.2",
+          "count": 305,
+          "mean_probability": 0.0314,
+          "empirical_rate": 0.0492
+        },
+        {
+          "bin": "0.2-0.4",
+          "count": 62,
+          "mean_probability": 0.3099,
+          "empirical_rate": 0.3065
+        },
+        {
+          "bin": "0.4-0.6",
+          "count": 75,
+          "mean_probability": 0.4968,
+          "empirical_rate": 0.52
+        },
+        {
+          "bin": "0.6-0.8",
+          "count": 66,
+          "mean_probability": 0.6979,
+          "empirical_rate": 0.7424
+        },
+        {
+          "bin": "0.8-1.0",
+          "count": 392,
+          "mean_probability": 0.9622,
+          "empirical_rate": 0.9745
+        }
+      ],
+      "uncertainty_story": "Isotonic-calibrated probability with Brier/ECE/reliability bins."
+    },
+    "toxicity": {
+      "auroc": 0.9984,
+      "brier": 0.0019,
+      "ece": 0.0021,
+      "reliability_bins": [
+        {
+          "bin": "0.0-0.2",
+          "count": 309,
+          "mean_probability": 0.0011,
+          "empirical_rate": 0.0
+        },
+        {
+          "bin": "0.2-0.4",
+          "count": 1,
+          "mean_probability": 0.2667,
+          "empirical_rate": 0.0
+        },
+        {
+          "bin": "0.4-0.6",
+          "count": 0,
+          "mean_probability": null,
+          "empirical_rate": null
+        },
+        {
+          "bin": "0.6-0.8",
+          "count": 1,
+          "mean_probability": 0.7855,
+          "empirical_rate": 0.0
+        },
+        {
+          "bin": "0.8-1.0",
+          "count": 589,
+          "mean_probability": 0.9991,
+          "empirical_rate": 0.9983
+        }
+      ],
+      "uncertainty_story": "Isotonic-calibrated probability with Brier/ECE/reliability bins."
+    },
+    "response_regression": {
+      "mae": 1.4983,
+      "interval_method": "absolute_residual_q80_synthetic_proxy",
+      "q80_absolute_error": 1.2861,
+      "empirical_coverage_q80": 0.8,
+      "uncertainty_story": "Prediction interval proxy from held-out synthetic residuals."
+    },
+    "abstention": {
+      "coverage_vs_error_tradeoff": [
+        {
+          "confidence_threshold": 0.55,
+          "coverage": 0.9611,
+          "covered_accuracy": 0.9156
+        },
+        {
+          "confidence_threshold": 0.65,
+          "coverage": 0.88,
+          "covered_accuracy": 0.9394
+        },
+        {
+          "confidence_threshold": 0.75,
+          "coverage": 0.8033,
+          "covered_accuracy": 0.9613
+        },
+        {
+          "confidence_threshold": 0.85,
+          "coverage": 0.72,
+          "covered_accuracy": 0.9738
+        }
+      ],
+      "uncertainty_story": "Higher confidence threshold lowers coverage and should raise covered accuracy."
+    }
+  },
+  "claim_boundary": "Per-head calibration is estimated on synthetic holdout rows only. It compares engineering uncertainty behavior, not clinical calibration."
+}

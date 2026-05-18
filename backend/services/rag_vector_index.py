@@ -259,7 +259,17 @@ def load_rag_vector_index(index_path=DEFAULT_RAG_INDEX_PATH):
     path = Path(index_path)
     if not path.exists():
         return None
-    payload = joblib.load(path)
+    try:
+        payload = joblib.load(path)
+    except Exception:
+        # Treat corrupted/partially-written local index files as cache misses.
+        # The caller can rebuild from the source KB corpus; crashing here makes
+        # a disposable retrieval cache look like an application failure.
+        try:
+            path.unlink(missing_ok=True)
+        except Exception:
+            pass
+        return None
     if not isinstance(payload, dict):
         return None
     return payload

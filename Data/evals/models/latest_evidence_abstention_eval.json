@@ -1,6 +1,6 @@
 {
   "schema_version": "evidence_abstention_eval_v1",
-  "generated_at": "2026-05-16T11:02:29.658056+00:00",
+  "generated_at": "2026-05-17T11:18:50.773114+00:00",
   "status": "strong",
   "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
   "model_path": "Data/complete_synthetic_training/gradient_boosting_treatment_success_binary.joblib",

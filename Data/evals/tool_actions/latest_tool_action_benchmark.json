@@ -1,19 +1,19 @@
 {
   "schema_version": "tool_action_benchmark_v1",
-  "generated_at": "2026-05-15T10:37:32.847326+00:00",
+  "generated_at": "2026-05-17T11:14:41.991421+00:00",
   "status": "passed",
   "summary": {
     "case_count": 6,
     "passed": 6,
     "pass_rate": 1.0,
-    "max_latency_ms": 526.3,
-    "average_latency_ms": 360.41
+    "max_latency_ms": 97.55,
+    "average_latency_ms": 68.91
   },
   "cases": [
     {
       "id": "save_symptom_bloody_discharge",
       "status": "passed",
-      "latency_ms": 526.3,
+      "latency_ms": 97.55,
       "action_types": [
         "saved_symptom"
       ],
@@ -23,7 +23,7 @@
     {
       "id": "save_complete_cbc",
       "status": "passed",
-      "latency_ms": 274.84,
+      "latency_ms": 77.66,
       "action_types": [
         "saved_labs"
       ],
@@ -33,7 +33,7 @@
     {
       "id": "save_mri_report",
       "status": "passed",
-      "latency_ms": 297.59,
+      "latency_ms": 60.13,
       "action_types": [
         "saved_imaging_report"
       ],
@@ -43,7 +43,7 @@
     {
       "id": "save_ct_report_metastatic_indicator",
       "status": "passed",
-      "latency_ms": 328.82,
+      "latency_ms": 63.56,
       "action_types": [
         "saved_imaging_report",
         "possible_metastatic_indicator"
@@ -54,7 +54,7 @@
     {
       "id": "save_ultrasound_report",
       "status": "passed",
-      "latency_ms": 406.16,
+      "latency_ms": 62.11,
       "action_types": [
         "saved_imaging_report"
       ],
@@ -64,7 +64,7 @@
     {
       "id": "partial_symptom_requires_severity",
       "status": "passed",
-      "latency_ms": 328.73,
+      "latency_ms": 52.46,
       "action_types": [
         "partial_symptom_detected"
       ],

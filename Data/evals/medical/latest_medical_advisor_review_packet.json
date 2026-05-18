@@ -1,0 +1,547 @@
+{
+  "schema_version": "medical_advisor_review_packet_v1",
+  "generated_at": "2026-05-17T11:11:06.783264+00:00",
+  "status": "ready_for_clinical_advisor_review",
+  "claim_boundary": "This packet is for expert review of an engineering prototype. It is not clinical sign-off, clinical validation, or authorization for patient care use.",
+  "review_requested_for": [
+    "urgent symptom/red-flag vocabulary",
+    "patient-reported severity to CTCAE-style review hints",
+    "CBC population-default reference context and limitations",
+    "supplement/medication interaction review-routing rules",
+    "genetics/VUS/tumor-marker refusal and education boundaries",
+    "minimum evidence standards for model and RAG outputs"
+  ],
+  "clinical_ontology": {
+    "version": "clinical_ontology_v1_2026_05",
+    "record_types": {
+      "symptom": {
+        "symptom": {
+          "name": "symptom",
+          "allowed_values": [
+            "fatigue",
+            "nausea",
+            "vomiting",
+            "fever",
+            "mouth_sores",
+            "neuropathy",
+            "diarrhea",
+            "bleeding",
+            "wound_discharge",
+            "pain",
+            "shortness_of_breath",
+            "chest_pain",
+            "other"
+          ],
+          "required": true,
+          "description": "Patient-reported symptom category.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "severity": {
+          "name": "severity",
+          "allowed_values": [],
+          "required": true,
+          "description": "0-10 patient-reported severity.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "imaging": {
+        "modality": {
+          "name": "modality",
+          "allowed_values": [
+            "mri",
+            "ct",
+            "ultrasound",
+            "pet_ct",
+            "xray",
+            "other"
+          ],
+          "required": true,
+          "description": "Imaging/report modality. Images do not diagnose genetics.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "report_type": {
+          "name": "report_type",
+          "allowed_values": [
+            "baseline",
+            "interim",
+            "end_of_course",
+            "follow_up",
+            "unknown"
+          ],
+          "required": false,
+          "description": "Clinical timing category for report organization.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "biomarker": {
+        "er_status": {
+          "name": "er_status",
+          "allowed_values": [
+            "positive",
+            "negative",
+            "low_positive",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "pr_status": {
+          "name": "pr_status",
+          "allowed_values": [
+            "positive",
+            "negative",
+            "low_positive",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "her2_status": {
+          "name": "her2_status",
+          "allowed_values": [
+            "positive",
+            "negative",
+            "equivocal",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "ihc_score": {
+          "name": "ihc_score",
+          "allowed_values": [
+            "0",
+            "1+",
+            "2+",
+            "3+",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "fish_status": {
+          "name": "fish_status",
+          "allowed_values": [
+            "amplified",
+            "not_amplified",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "ki67_percent": {
+          "name": "ki67_percent",
+          "allowed_values": [],
+          "required": false,
+          "description": "Numeric percent if shown on pathology report.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "genetic_test": {
+        "test_type": {
+          "name": "test_type",
+          "allowed_values": [
+            "germline",
+            "somatic",
+            "tumor_sequencing",
+            "multigene_panel",
+            "brca_only",
+            "unknown"
+          ],
+          "required": true,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "sample_type": {
+          "name": "sample_type",
+          "allowed_values": [
+            "blood",
+            "saliva",
+            "tumor_tissue",
+            "unknown"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "gene": {
+          "name": "gene",
+          "allowed_values": [
+            "BRCA1",
+            "BRCA2",
+            "PALB2",
+            "TP53",
+            "PTEN",
+            "CHEK2",
+            "ATM",
+            "other"
+          ],
+          "required": false,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "classification": {
+          "name": "classification",
+          "allowed_values": [
+            "pathogenic",
+            "likely_pathogenic",
+            "vus",
+            "likely_benign",
+            "benign",
+            "unknown"
+          ],
+          "required": false,
+          "description": "Variant classification copied from a report; not interpreted by OncoTrack.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "tumor_marker": {
+        "marker": {
+          "name": "marker",
+          "allowed_values": [
+            "CA 15-3",
+            "CA 27.29",
+            "CEA",
+            "other"
+          ],
+          "required": true,
+          "description": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "value": {
+          "name": "value",
+          "allowed_values": [],
+          "required": true,
+          "description": "Numeric value as shown on the lab report.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "unit": {
+          "name": "unit",
+          "allowed_values": [],
+          "required": false,
+          "description": "Unit copied from the lab report.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      }
+    },
+    "claim_boundary": "The ontology constrains structured data entry and agent extraction. It does not interpret records, diagnose, or recommend treatment."
+  },
+  "minimum_evidence_standards": {
+    "version": "minimum_evidence_standards_v1_2026_05",
+    "standards": {
+      "general_education": {
+        "required": [
+          "trusted_kb_source"
+        ],
+        "answer_policy": "RAG answer with citation; no patient-specific decision."
+      },
+      "response_classification": {
+        "required_any": [
+          "imaging",
+          "complete_longitudinal_cbc"
+        ],
+        "required_all": [
+          "demographics"
+        ],
+        "answer_policy": "May emit monitor-only pattern signal; abstain if missing response evidence."
+      },
+      "response_regression": {
+        "required_any": [
+          "imaging",
+          "complete_longitudinal_cbc"
+        ],
+        "required_all": [
+          "demographics"
+        ],
+        "answer_policy": "May emit score only with uncertainty band and claim boundary."
+      },
+      "toxicity_classification": {
+        "required_any": [
+          "any_cbc",
+          "symptoms"
+        ],
+        "required_all": [
+          "demographics"
+        ],
+        "answer_policy": "May emit toxicity monitoring signal; urgent symptoms route to care team."
+      },
+      "genetic_result_organization": {
+        "required_any": [
+          "uploaded_report",
+          "typed_report_fields"
+        ],
+        "answer_policy": "Organize fields only; route to genetic counselor/clinician review."
+      },
+      "biomarker_explanation": {
+        "required_any": [
+          "pathology_report_text",
+          "typed_biomarker_fields",
+          "trusted_kb_source"
+        ],
+        "answer_policy": "Explain terminology only; no treatment recommendation."
+      },
+      "tumor_marker_trend": {
+        "required_any": [
+          "marker_value",
+          "trend_values"
+        ],
+        "answer_policy": "Context-dependent monitoring only; never diagnose recurrence."
+      },
+      "treatment_decision": {
+        "required": [],
+        "answer_policy": "Blocked. Refer to oncology team."
+      },
+      "diagnosis_or_prognosis": {
+        "required": [],
+        "answer_policy": "Blocked. Refer to clinician/emergency services when urgent."
+      }
+    },
+    "claim_boundary": "Minimum evidence standards are engineering guardrails that decide when the system may answer, must hedge, or must abstain. They are not clinical practice guidelines."
+  },
+  "medical_claim_boundaries": {
+    "version": "medical_claim_boundary_v1_2026_05",
+    "claim_types": [
+      {
+        "code": "general_education",
+        "decision": "allowed",
+        "description": "General educational explanation without patient-specific decision."
+      },
+      {
+        "code": "record_organization",
+        "decision": "allowed",
+        "description": "Organizes user-provided data without interpreting it clinically."
+      },
+      {
+        "code": "monitoring_signal",
+        "decision": "caution",
+        "description": "Monitor-only signal that requires clinician review and uncertainty language."
+      },
+      {
+        "code": "diagnosis_claim",
+        "decision": "blocked",
+        "description": "Asserts diagnosis, malignancy, metastasis, recurrence, or cancer status."
+      },
+      {
+        "code": "treatment_recommendation",
+        "decision": "blocked",
+        "description": "Recommends starting/stopping/changing treatment or medications."
+      },
+      {
+        "code": "dosage_instruction",
+        "decision": "blocked",
+        "description": "Gives specific dosage or medication schedule."
+      },
+      {
+        "code": "prognosis_estimate",
+        "decision": "blocked",
+        "description": "Predicts survival, life expectancy, cure chance, or recurrence probability."
+      },
+      {
+        "code": "genetic_risk_overclaim",
+        "decision": "blocked",
+        "description": "Treats VUS or unclear genetic data as a confirmed genetic diagnosis/risk."
+      },
+      {
+        "code": "tumor_marker_overclaim",
+        "decision": "blocked",
+        "description": "Uses tumor marker value alone to claim recurrence/progression."
+      }
+    ]
+  },
+  "cbc_reference_context_example": {
+    "schema_version": "cbc_reference_context_v1",
+    "demographics_used": {
+      "sex": "not_available",
+      "age_years": "not_available"
+    },
+    "context_type": "oncology_monitoring",
+    "labs": {
+      "wbc": {
+        "value": 2.8,
+        "unit": "K/uL",
+        "reference_range": {
+          "low": 4.0,
+          "high": 11.0
+        },
+        "status": "low",
+        "range_source": "population_default"
+      },
+      "hemoglobin": {
+        "value": 11.4,
+        "unit": "g/dL",
+        "reference_range": {
+          "low": 12.0,
+          "high": 17.5
+        },
+        "status": "low",
+        "range_source": "broad_population_default_no_demographics"
+      },
+      "platelets": {
+        "value": 120.0,
+        "unit": "K/uL",
+        "reference_range": {
+          "low": 150.0,
+          "high": 400.0
+        },
+        "status": "low",
+        "range_source": "population_default"
+      }
+    },
+    "limitations": [
+      "Population defaults may differ from the reference ranges printed by a specific laboratory.",
+      "Hemoglobin ranges vary by sex, age, pregnancy status, altitude, and clinical context.",
+      "Chemotherapy monitoring thresholds can be more conservative than general population reference ranges."
+    ],
+    "claim_boundary": "Reference context is for monitoring support only. It is not a diagnosis, treatment recommendation, or replacement for lab-specific and clinician-reviewed ranges."
+  },
+  "urgent_symptom_terms": [
+    "blood discharge",
+    "chest pain",
+    "confusion",
+    "difficulty breathing",
+    "fainting",
+    "fever",
+    "severe headache",
+    "shortness of breath",
+    "uncontrolled bleeding"
+  ],
+  "interaction_rule_count": 5,
+  "interaction_rules": [
+    {
+      "rule_id": "st_johns_wort_cyp_interaction",
+      "trigger_terms": [
+        "st johns wort",
+        "st. johns wort",
+        "st john's wort",
+        "hypericum"
+      ],
+      "context_terms": [
+        "tamoxifen",
+        "palbociclib",
+        "ribociclib",
+        "abemaciclib",
+        "capecitabine",
+        "docetaxel",
+        "paclitaxel"
+      ],
+      "severity": "pharmacist_review",
+      "message": "St. John's wort can affect drug-metabolism pathways and may interact with oncology medicines. Do not start or stop it without oncology-team/pharmacist review.",
+      "clinician_action": "Review supplement use against the active medication list."
+    },
+    {
+      "rule_id": "grapefruit_cdk46_interaction",
+      "trigger_terms": [
+        "grapefruit",
+        "grapefruit juice"
+      ],
+      "context_terms": [
+        "palbociclib",
+        "ribociclib",
+        "abemaciclib"
+      ],
+      "severity": "pharmacist_review",
+      "message": "Grapefruit products can interact with several oral cancer medicines. Ask the oncology team or pharmacist before using them with CDK4/6 inhibitors.",
+      "clinician_action": "Check whether the patient is taking a CYP3A-sensitive oral anticancer medicine."
+    },
+    {
+      "rule_id": "bleeding_risk_supplements",
+      "trigger_terms": [
+        "ginkgo",
+        "garlic supplement",
+        "high dose garlic",
+        "turmeric",
+        "curcumin"
+      ],
+      "context_terms": [
+        "warfarin",
+        "apixaban",
+        "rivaroxaban",
+        "enoxaparin",
+        "aspirin",
+        "clopidogrel",
+        "platelets"
+      ],
+      "severity": "review_before_use",
+      "message": "Some supplements may affect bleeding risk or procedures. This system cannot determine safety; review with the care team/pharmacist before use.",
+      "clinician_action": "Review bleeding risk, platelet trend, anticoagulants/antiplatelets, and procedure timing."
+    },
+    {
+      "rule_id": "cbd_cyp_interaction",
+      "trigger_terms": [
+        "cbd",
+        "cannabidiol",
+        "cannabis",
+        "marijuana"
+      ],
+      "context_terms": [
+        "tamoxifen",
+        "palbociclib",
+        "ribociclib",
+        "abemaciclib",
+        "olaparib",
+        "talazoparib",
+        "anti nausea",
+        "ondansetron"
+      ],
+      "severity": "pharmacist_review",
+      "message": "CBD/cannabis products may interact with medicines or increase sedation/nausea effects. Discuss use with the oncology team/pharmacist first.",
+      "clinician_action": "Check product, dose, legality/context, sedating medicines, and oral anticancer medicines."
+    },
+    {
+      "rule_id": "antioxidants_during_treatment",
+      "trigger_terms": [
+        "high dose vitamin c",
+        "megadose vitamin c",
+        "high dose antioxidant",
+        "antioxidant supplement",
+        "vitamin e supplement"
+      ],
+      "context_terms": [
+        "chemotherapy",
+        "radiation",
+        "doxorubicin",
+        "cyclophosphamide",
+        "paclitaxel",
+        "docetaxel",
+        "carboplatin"
+      ],
+      "severity": "review_before_use",
+      "message": "High-dose antioxidant supplements during chemotherapy or radiation should be reviewed with the oncology team. Do not use them as a replacement for prescribed treatment.",
+      "clinician_action": "Clarify supplement dose and timing relative to chemotherapy/radiation."
+    }
+  ],
+  "genetics": {
+    "boundary_note": "Genetic Counseling Readiness organizes information for oncology/genetics review. It does not diagnose inherited risk, interpret variants as medical advice, or recommend treatment changes.",
+    "unsafe_phrases": [
+      "you have brca",
+      "you will get cancer",
+      "your relatives will get cancer",
+      "you should change chemo",
+      "you should stop treatment",
+      "you should start treatment",
+      "this mutation means your treatment must",
+      "no need for a genetic counselor",
+      "vus means positive",
+      "tumor marker proves cancer"
+    ],
+    "expanded_family_history_fields": [
+      "bilateral_breast_cancer",
+      "multiple_primary_cancers",
+      "ancestry_ethnicity",
+      "prior_breast_biopsy_atypia",
+      "relation_degree"
+    ]
+  },
+  "advisor_questions": [
+    "Which urgent symptom terms are missing or too broad?",
+    "Are CBC reference-context warnings phrased safely for patients?",
+    "Which supplement interaction rules should be added, removed, or clinician-only?",
+    "Are genetics/VUS/tumor-marker boundaries conservative enough?",
+    "Which family-history fields are required before genetic-counseling readiness is credible?"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_csv": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T11:05:53.158210+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T11:05:53.158210+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T11:05:53.158210+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "soft_toxicity_target_benchmark_v1",
+  "generated_at": "2026-05-17T11:05:53.556743+00:00",
+  "status": "candidate",
+  "claim_boundary": "Synthetic softer toxicity target. It reduces one-rule reconstruction pressure but remains simulator-built and must not be claimed as clinical toxicity prediction.",
+  "label_design": {
+    "positive_rate": 0.35,
+    "risk_score_quantile_threshold": 0.65,
+    "uses": [
+      "symptom persistence/severity",
+      "interventions and dose changes",
+      "lagged/pre-cycle vulnerability",
+      "noisy nadir contribution"
+    ]
+  },
+  "soft_target_model": {
+    "auroc": 0.9728,
+    "brier": 0.0597,
+    "accuracy": 0.9222
+  },
+  "shortcut_comparison": {
+    "old_toxicity_rule_accuracy_against_old_label": 0.9822,
+    "old_toxicity_rule_accuracy_against_soft_label": 0.71,
+    "old_toxicity_rule_auroc_against_soft_label": 0.8734
+  },
+  "recommendation": "Keep current toxicity head as review-only. Use the soft target as a better synthetic experiment, then require clinician-reviewed adverse-event labels before any stronger claim."
+}

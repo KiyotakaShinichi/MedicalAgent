@@ -249,6 +249,11 @@ class FamilyHistoryCreate(BaseModel):
     multiple_relatives_affected: str | None = "unknown"
     male_breast_cancer: str | None = "unknown"
     known_familial_mutation: str | None = "unknown"
+    bilateral_breast_cancer: str | None = "unknown"
+    multiple_primary_cancers: str | None = "unknown"
+    ancestry_ethnicity: str | None = None
+    prior_breast_biopsy_atypia: str | None = "unknown"
+    relation_degree: str | None = None
     notes: str | None = None
 
 
@@ -1181,10 +1186,16 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str, *, persis
             if result.get("saved_actions"):
                 _invalidate_report_cache(patient_id)
         else:
+            patient_context = build_patient_state(db, patient_id) if db is not None else {"patient_id": patient_id}
             result = run_patient_agent_pipeline(
                 db=db,
                 patient_id=patient_id,
                 query=message,
+                patient_context=patient_context,
+                fallback_response=(
+                    "I can provide monitoring support only. I cannot diagnose, predict outcomes, "
+                    "or recommend treatment changes. Please review concerns with the oncology care team."
+                ),
             )
     except Exception as exc:
         yield _sse_event("error", {"error": "Agent pipeline failed. Please try again.", "code": "pipeline_error"})

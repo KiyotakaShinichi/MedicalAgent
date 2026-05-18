@@ -171,6 +171,11 @@ export interface FamilyCancerHistoryRecord {
   multiple_relatives_affected?: string | null;
   male_breast_cancer?: string | null;
   known_familial_mutation?: string | null;
+  bilateral_breast_cancer?: string | null;
+  multiple_primary_cancers?: string | null;
+  ancestry_ethnicity?: string | null;
+  prior_breast_biopsy_atypia?: string | null;
+  relation_degree?: string | null;
   notes?: string | null;
   review_status?: string | null;
   source?: string | null;

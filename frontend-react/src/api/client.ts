@@ -360,6 +360,11 @@ export const addMyFamilyHistory = (payload: {
   multiple_relatives_affected?: string | null;
   male_breast_cancer?: string | null;
   known_familial_mutation?: string | null;
+  bilateral_breast_cancer?: string | null;
+  multiple_primary_cancers?: string | null;
+  ancestry_ethnicity?: string | null;
+  prior_breast_biopsy_atypia?: string | null;
+  relation_degree?: string | null;
   notes?: string | null;
 }) => post<{ message: string; record: unknown; boundary_note: string }>("/me/family-history", payload);
 

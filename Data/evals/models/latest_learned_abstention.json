@@ -1,0 +1,52 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_csv": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T11:59:14.260211+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T11:59:14.260211+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T11:59:14.260211+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "learned_abstention_head_v1",
+  "generated_at": "2026-05-17T11:59:14.759471+00:00",
+  "status": "strong",
+  "claim_boundary": "Synthetic abstention-head experiment. It estimates when the synthetic classifier is likely correct under modality dropout; it is not clinical validation and does not replace deterministic safety rules.",
+  "rows": {
+    "train": 1080,
+    "meta_train": 2880,
+    "test_meta": 2880
+  },
+  "abstention_head": {
+    "target": "base_model_was_correct_under_modality_dropout",
+    "auroc": 0.8163,
+    "brier": 0.1783,
+    "threshold_probability_correct": 0.65
+  },
+  "comparison": {
+    "learned": {
+      "coverage_rate": 0.4642,
+      "abstention_rate": 0.5358,
+      "covered_accuracy": 0.9731
+    },
+    "rule_based": {
+      "coverage_rate": 0.624,
+      "abstention_rate": 0.376,
+      "covered_accuracy": 0.8453
+    }
+  },
+  "recommendation": "Use this as candidate evidence for a learned abstention layer only after external validation; keep deterministic minimum-evidence rules as the safety backstop.",
+  "production_policy": "Rule-first abstention remains production policy. The learned head is a candidate review signal unless it improves safety under external validation."
+}

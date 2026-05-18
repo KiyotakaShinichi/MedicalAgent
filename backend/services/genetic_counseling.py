@@ -216,6 +216,16 @@ def _readiness_flags(family, genetic_tests, biomarkers, tumor_markers):
     flags = []
     if any(row.get("cancer_type") in {"ovarian", "pancreatic", "male breast", "prostate"} for row in family):
         flags.append("family_history_pattern_for_genetics_review")
+    if any((row.get("cancer_type") == "breast" and (row.get("age_at_diagnosis") or 999) < 50) for row in family):
+        flags.append("early_onset_breast_cancer_in_family")
+    if any(str(row.get("bilateral_breast_cancer")).lower() == "yes" for row in family):
+        flags.append("bilateral_breast_cancer_reported")
+    if any(str(row.get("multiple_primary_cancers")).lower() == "yes" for row in family):
+        flags.append("multiple_primary_cancers_reported")
+    if any(str(row.get("prior_breast_biopsy_atypia")).lower() == "yes" for row in family):
+        flags.append("prior_atypia_history_reported")
+    if any((row.get("ancestry_ethnicity") or "").strip() for row in family):
+        flags.append("ancestry_ethnicity_context_available_for_review")
     if any(str(row.get("known_familial_mutation")).lower() == "yes" for row in family):
         flags.append("known_familial_mutation_reported")
     if any((row.get("classification") or "").lower() in {"pathogenic", "likely pathogenic", "vus"} for row in genetic_tests):
@@ -258,7 +268,12 @@ def _review_rows(db, patient_id):
 
 
 def _family_to_dict(row):
-    return _row_dict(row, ["id", "relationship", "family_side", "cancer_type", "age_at_diagnosis", "relative_status", "multiple_relatives_affected", "male_breast_cancer", "known_familial_mutation", "notes", "review_status", "source", "created_at"])
+    return _row_dict(row, [
+        "id", "relationship", "family_side", "cancer_type", "age_at_diagnosis", "relative_status",
+        "multiple_relatives_affected", "male_breast_cancer", "known_familial_mutation",
+        "bilateral_breast_cancer", "multiple_primary_cancers", "ancestry_ethnicity",
+        "prior_breast_biopsy_atypia", "relation_degree", "notes", "review_status", "source", "created_at",
+    ])
 
 
 def _genetic_test_to_dict(row):

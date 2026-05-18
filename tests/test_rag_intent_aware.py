@@ -23,6 +23,7 @@ from backend.services.rag_claim_validator import (
 from backend.services.rag_evidence_grading import grade_evidence
 from backend.services.rag_intent_aware_eval import (
     EVAL_CASES,
+    load_canonical_cases,
     load_intent_aware_eval,
     run_intent_aware_eval,
 )
@@ -196,6 +197,13 @@ class TierFilter(unittest.TestCase):
 
 
 class ClaimValidator(unittest.TestCase):
+    def setUp(self) -> None:
+        # `_load_nli_pipeline` is lru-cached at module scope.  Without
+        # this reset, a prior test's patch leaves a stale cached value
+        # that breaks every subsequent NLI-mode test in the file.
+        from backend.services.rag_claim_validator import _load_nli_pipeline
+        _load_nli_pipeline.cache_clear()
+
     def test_non_claim_sentence_is_skipped(self) -> None:
         result = validate_claims(
             "Please discuss anything concerning with your care team.",
@@ -248,6 +256,50 @@ class ClaimValidator(unittest.TestCase):
         result = validate_claims("", retrieved_chunks=[])
         self.assertEqual(result.claim_count, 0)
         self.assertEqual(result.citation_status, "missing")
+
+    def test_nli_entailment_can_upgrade_paraphrased_support(self) -> None:
+        def fake_scores(_nli, *, premise, hypothesis):
+            return {"entailment": 0.91, "contradiction": 0.02, "neutral": 0.07}
+
+        with patch("backend.services.rag_claim_validator._load_nli_pipeline", return_value=object()), \
+             patch("backend.services.rag_claim_validator._nli_scores", side_effect=fake_scores):
+            result = validate_claims(
+                "White blood cell counts can fall during chemotherapy.",
+                retrieved_chunks=[{"id": "c1", "text": "Chemotherapy may lower WBC and other blood counts."}],
+                method="nli",
+            )
+
+        self.assertTrue(result.nli_available)
+        self.assertEqual(result.verdicts[0].status, "supported")
+        self.assertEqual(result.verdicts[0].validation_method, "nli_entailment")
+        self.assertGreater(result.verdicts[0].entailment_score, 0.9)
+
+    def test_nli_contradiction_blocks_semantic_inversion(self) -> None:
+        def fake_scores(_nli, *, premise, hypothesis):
+            return {"entailment": 0.04, "contradiction": 0.88, "neutral": 0.08}
+
+        with patch("backend.services.rag_claim_validator._load_nli_pipeline", return_value=object()), \
+             patch("backend.services.rag_claim_validator._nli_scores", side_effect=fake_scores):
+            result = validate_claims(
+                "St. John's wort is recommended during tamoxifen.",
+                retrieved_chunks=[{"id": "c1", "text": "St. John's wort may interact with tamoxifen and should be reviewed before use."}],
+                method="nli",
+            )
+
+        self.assertEqual(result.verdicts[0].status, "unsupported")
+        self.assertEqual(result.verdicts[0].reason, "nli_contradiction_detected")
+        self.assertGreater(result.verdicts[0].contradiction_score, 0.8)
+
+    def test_nli_unavailable_falls_back_to_heuristic(self) -> None:
+        with patch("backend.services.rag_claim_validator._load_nli_pipeline", return_value=None):
+            result = validate_claims(
+                "WBC helps track infection risk.",
+                retrieved_chunks=[{"id": "c1", "text": "WBC can help monitor infection risk."}],
+                method="nli",
+            )
+
+        self.assertFalse(result.nli_available)
+        self.assertIn("nli_unavailable", result.verdicts[0].validation_method)
 
 
 # ─── 4. Evidence grading ─────────────────────────────────────────────────────
@@ -450,6 +502,52 @@ class IntentAwareEval(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             payload = load_intent_aware_eval(path=str(Path(tmp) / "absent.json"))
             self.assertEqual(payload["status"], "missing")
+
+
+class CanonicalCaseLoader(unittest.TestCase):
+    """Projecting the canonical 28-case eval file into the intent-aware
+    shape must drop non-RAG intents cleanly and stamp expected_mode for
+    every kept case."""
+
+    def test_loads_canonical_cases_from_project_path(self) -> None:
+        cases = load_canonical_cases()
+        if not cases:
+            self.skipTest("Canonical RAG eval cases file not present.")
+        # At least the 5 intent → mode entries should be represented.
+        modes = {c["expected_mode"] for c in cases}
+        self.assertGreaterEqual(len(modes), 3)
+        for case in cases:
+            self.assertIn("case_id", case)
+            self.assertIn("query", case)
+            self.assertIn("expected_intent", case)
+            self.assertIn("expected_mode", case)
+            self.assertIsInstance(case["expects_refusal"], bool)
+
+    def test_missing_file_returns_empty_tuple(self) -> None:
+        cases = load_canonical_cases(path="/nonexistent/path.json")
+        self.assertEqual(cases, tuple())
+
+    def test_malformed_file_returns_empty_tuple(self) -> None:
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.json"
+            path.write_text("not json at all")
+            self.assertEqual(load_canonical_cases(path=str(path)), tuple())
+
+    def test_non_rag_intents_are_dropped(self) -> None:
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "cases.json"
+            path.write_text(json.dumps({
+                "cases": [
+                    {"id": "c1", "input": "hi", "expected_intent": "conversation"},
+                    {"id": "c2", "input": "What is WBC?", "expected_intent": "education"},
+                    {"id": "c3", "input": "remember last msg", "expected_intent": "patient_memory"},
+                ],
+            }))
+            cases = load_canonical_cases(path=str(path))
+            # Only the education case maps to a RAG mode.
+            self.assertEqual(len(cases), 1)
+            self.assertEqual(cases[0]["case_id"], "c2")
+            self.assertEqual(cases[0]["expected_mode"], "education_rag")
 
 
 # ─── 7. Tier ablation harness ────────────────────────────────────────────────

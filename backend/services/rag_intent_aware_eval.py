@@ -42,6 +42,66 @@ DEFAULT_OUTPUT_PATH = "Data/evals/rag/latest_rag_intent_aware_eval.json"
 # mode it should route through, and an `expects_refusal` flag for
 # cases where the correct outcome is abstention rather than a generated
 # answer.
+# Maps the canonical-eval `expected_intent` to the RAG mode that intent
+# should route through.  Kept here so the case loader can stamp the
+# expected_mode field without forcing callers to thread the mapping.
+_INTENT_TO_EXPECTED_MODE: dict[str, str] = {
+    "education":                     "education_rag",
+    "patient_timeline_monitoring":   "record_explanation_rag",
+    "portal_help":                   "portal_help_rag",
+    "safety_boundary":               "urgent_safety_rag",
+    "treatment_decision_boundary":   "urgent_safety_rag",
+    "security_boundary":             "urgent_safety_rag",
+}
+
+
+def load_canonical_cases(
+    path: str = "evals/rag_eval_cases.json",
+) -> tuple[dict[str, Any], ...]:
+    """Load the project's canonical RAG eval cases + project them into the
+    intent-aware-eval shape.
+
+    The canonical file carries richer metadata (expected_sources,
+    expected_context_keywords, should_escalate, etc.) — for the tier
+    ablation we only need ``case_id``, ``query``, ``expected_intent``,
+    ``expected_mode``, ``expects_refusal``.  Anything we can't derive from
+    the canonical metadata is skipped.  Returns the empty tuple when the
+    file is absent so callers can fall back to ``EVAL_CASES``.
+    """
+    from pathlib import Path
+    file_path = Path(path)
+    if not file_path.exists():
+        return tuple()
+    try:
+        doc = json.loads(file_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return tuple()
+
+    cases = doc.get("cases") or []
+    projected: list[dict[str, Any]] = []
+    for case in cases:
+        expected_intent = case.get("expected_intent")
+        if not expected_intent:
+            continue
+        expected_mode = _INTENT_TO_EXPECTED_MODE.get(expected_intent)
+        if expected_mode is None:
+            # Intent has no RAG mode — eval can't score it on the tier
+            # ablation axis.  Skip cleanly.
+            continue
+        projected.append({
+            "case_id": case.get("id") or f"case_{len(projected)}",
+            "query": case.get("input", ""),
+            "expected_intent": expected_intent,
+            "expected_mode": expected_mode,
+            "expects_refusal": bool(
+                case.get("should_refuse")
+                or case.get("should_escalate")
+                or expected_intent in {"safety_boundary", "treatment_decision_boundary"}
+            ),
+        })
+    return tuple(projected)
+
+
 EVAL_CASES: tuple[dict[str, Any], ...] = (
     {"case_id": "edu_wbc_basics",         "query": "What does WBC mean?",                                  "expected_intent": "education",                  "expected_mode": "education_rag",          "expects_refusal": False},
     {"case_id": "edu_chemo_side_effects", "query": "What are common side effects of doxorubicin?",         "expected_intent": "education",                  "expected_mode": "education_rag",          "expects_refusal": False},
@@ -276,6 +336,7 @@ def load_intent_aware_eval(path: str = DEFAULT_OUTPUT_PATH) -> dict[str, Any]:
 __all__ = [
     "EVAL_CASES",
     "CaseResult",
+    "load_canonical_cases",
     "load_intent_aware_eval",
     "run_intent_aware_eval",
 ]

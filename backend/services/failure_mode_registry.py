@@ -60,6 +60,17 @@ ENGINEERING_RISKS: tuple[dict[str, Any], ...] = (
         "severity": "high",
     },
     {
+        "name": "toxicity_classifier_tautological_features",
+        "category": "data_pipeline",
+        "example": "Toxicity classifier reports AUC ≈ 1.0 on synthetic; feature audit shows 8 features (intervention_count, nadir_anc, nadir_wbc, dose_delayed, pre_wbc, pre_anc, recovery_wbc, cycle) have label-separation gap ≥ 0.85.",
+        "risk": "Headline AUC reflects synthetic-generator structure, not model skill. Quoting the AUC as 'how good the model is' without context is misleading.",
+        "detection": "toxicity_feature_audit benchmark + strict no-proxy baseline (strip every near-label feature). When strict baseline AUC stays >0.90, the synthetic generator wires the label to too many features to remove cleanly.",
+        "mitigation": "Audit artifact pinned to benchmark_registry; documented in model card; recommendations downstream are monitor_only.",
+        "benchmark_coverage": ["toxicity_feature_audit"],
+        "remaining_gap": "Synthetic generator design: toxicity labels are deterministic functions of CBC + intervention rows. Real-world toxicity prediction requires real-world labels — out of scope for this PoC.",
+        "severity": "high",
+    },
+    {
         "name": "modality_overconfidence_when_imaging_present",
         "category": "model_behavior",
         "example": "Patient with full imaging gets a 90%+ probability that does not reflect uncertainty from the single-modality nature of the signal.",

@@ -1,0 +1,150 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_csv": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T11:06:37.604349+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T11:06:37.604349+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T11:06:37.604349+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "hybrid_subgroup_metrics_v1",
+  "generated_at": "2026-05-17T11:06:37.827004+00:00",
+  "status": "strong",
+  "claim_boundary": "Synthetic subgroup metric table for engineering fairness/calibration inspection. Subgroups are simulator-defined and do not establish real-world equity or clinical validity.",
+  "overall": {
+    "n": 900,
+    "classification_coverage": 1.0,
+    "classification_accuracy": 0.9211,
+    "classification_brier": 0.0581,
+    "regression_coverage": 1.0,
+    "regression_mae": 0.0237,
+    "toxicity_coverage": 1.0,
+    "toxicity_accuracy": 0.9989,
+    "toxicity_brier": 0.0005
+  },
+  "by_molecular_subtype": [
+    {
+      "group": "HER2+",
+      "n": 180,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 0.9333,
+      "classification_brier": 0.0515,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.0225,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 1.0,
+      "toxicity_brier": 0.0
+    },
+    {
+      "group": "HR+/HER2+",
+      "n": 180,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 0.9111,
+      "classification_brier": 0.0634,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.0306,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 1.0,
+      "toxicity_brier": 0.0
+    },
+    {
+      "group": "HR+/HER2-",
+      "n": 360,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 0.9083,
+      "classification_brier": 0.0624,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.0212,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 0.9972,
+      "toxicity_brier": 0.0013
+    },
+    {
+      "group": "triple-negative",
+      "n": 180,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 0.9444,
+      "classification_brier": 0.051,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.0231,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 1.0,
+      "toxicity_brier": 0.0
+    }
+  ],
+  "by_stage": [
+    {
+      "group": "IIA",
+      "n": 198,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 0.899,
+      "classification_brier": 0.0662,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.0194,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 0.9949,
+      "toxicity_brier": 0.002
+    },
+    {
+      "group": "IIB",
+      "n": 270,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 0.9519,
+      "classification_brier": 0.0451,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.0193,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 1.0,
+      "toxicity_brier": 0.0002
+    },
+    {
+      "group": "IIIA",
+      "n": 192,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 0.8802,
+      "classification_brier": 0.0846,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.0266,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 1.0,
+      "toxicity_brier": 0.0
+    },
+    {
+      "group": "IIIB",
+      "n": 186,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 0.9194,
+      "classification_brier": 0.0576,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.034,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 1.0,
+      "toxicity_brier": 0.0
+    },
+    {
+      "group": "IV",
+      "n": 54,
+      "classification_coverage": 1.0,
+      "classification_accuracy": 1.0,
+      "classification_brier": 0.0017,
+      "regression_coverage": 1.0,
+      "regression_mae": 0.016,
+      "toxicity_coverage": 1.0,
+      "toxicity_accuracy": 1.0,
+      "toxicity_brier": 0.0
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "schema_version": "rag_intent_aware_eval_v1",
+  "generated_at": "2026-05-18T02:30:21.109145+00:00",
+  "status": "needs_attention",
+  "summary": {
+    "case_count": 3,
+    "passed": 0,
+    "pass_rate": 0.0,
+    "claim_support_rate": 0.3333,
+    "citation_precision": 0.0,
+    "source_tier_correctness": 0.6667,
+    "refusal_correctness": 0.3333,
+    "unsafe_answer_rate": 0.0,
+    "taglish_safety_parity_rate": null,
+    "latency_p50_ms": 2319.93
+  },
+  "grade_distribution": {
+    "insufficient": 2,
+    "moderate": 1
+  },
+  "intent_distribution": {
+    "education": 2,
+    "portal_help": 1
+  },
+  "cases": [
+    {
+      "case_id": "rag_pcr_definition",
+      "query": "What is pCR in this monitoring project?",
+      "expected_intent": "education",
+      "expected_mode": "education_rag",
+      "observed_intent": "education",
+      "observed_mode": "education_rag",
+      "claim_support_rate": 0.0,
+      "citation_status": "unsupported",
+      "citation_count": 0,
+      "cited_sources": [],
+      "tier_correctness": true,
+      "refusal_correctness": false,
+      "unsafe_blocked": false,
+      "grade": "insufficient",
+      "latency_ms": 2319.93,
+      "passed": false
+    },
+    {
+      "case_id": "rag_cbc_trends",
+      "query": "What do CBC trends show during chemotherapy?",
+      "expected_intent": "education",
+      "expected_mode": "education_rag",
+      "observed_intent": "education",
+      "observed_mode": "education_rag",
+      "claim_support_rate": 0.0,
+      "citation_status": "unsupported",
+      "citation_count": 0,
+      "cited_sources": [],
+      "tier_correctness": true,
+      "refusal_correctness": false,
+      "unsafe_blocked": false,
+      "grade": "insufficient",
+      "latency_ms": 2203.47,
+      "passed": false
+    },
+    {
+      "case_id": "rag_portal_uploads",
+      "query": "Where do I upload my CBC and MRI report?",
+      "expected_intent": "portal_help",
+      "expected_mode": "portal_help_rag",
+      "observed_intent": "portal_help",
+      "observed_mode": "portal_help_rag",
+      "claim_support_rate": 1.0,
+      "citation_status": "complete",
+      "citation_count": 1,
+      "cited_sources": [
+        "portal-help"
+      ],
+      "tier_correctness": false,
+      "refusal_correctness": true,
+      "unsafe_blocked": false,
+      "grade": "moderate",
+      "latency_ms": 2322.71,
+      "passed": false
+    }
+  ],
+  "claim_boundary": "Engineering benchmark over a curated case set. Improvements describe how the RAG layer behaves on these cases \u2014 not clinical correctness on real patient queries."
+}

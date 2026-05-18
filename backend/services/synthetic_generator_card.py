@@ -89,10 +89,22 @@ UNSUPPORTED_CLAIMS: tuple[str, ...] = (
 
 REALISM_CHECKS = (
     "synthetic_realism_candidate alignment score (separate artifact)",
+    "synthetic_realism_hardening missingness/delay/interruptions profile (separate artifact)",
     "noise_eval AUROC drop under feature corruption (separate artifact)",
     "temporal_eval generalization gap (separate artifact)",
     "drift_report subgroup performance (separate artifact)",
 )
+
+REALISM_HARDENING_FEATURES = {
+    "realistic_missingness_patterns_by_modality": "Optional lab/imaging/symptom fields may be missing; model consumers must use evidence sufficiency.",
+    "delayed_imaging_reports": "Missing cycle-level imaging signals are treated as delayed/unavailable imaging proxies.",
+    "noisy_tumor_marker_trends": "Tumor-marker behavior is context-only and should not drive standalone response/progression claims.",
+    "treatment_interruptions_and_dose_delays": "Dose delays/reductions and treatment interruptions are represented as workflow events.",
+    "incomplete_family_history": "Hereditary-risk readiness workflows assume unknown ages/relatives/mutation status can occur.",
+    "incomplete_biomarker_records": "Biomarker/pathology fields can be missing, unknown, low-positive, equivocal, or uploaded later.",
+    "contradictory_symptom_reports": "Patient-reported symptom patterns may conflict with labs or model signals and should increase review priority.",
+    "irregular_followup_intervals": "Follow-up timing can vary after delays and interruptions.",
+}
 
 
 # ─── Public API ──────────────────────────────────────────────────────────────
@@ -140,6 +152,7 @@ def build_synthetic_generator_card(
         "feature_distribution_summary": distribution,
         "causal_assumptions": list(CAUSAL_ASSUMPTIONS),
         "known_shortcuts": list(KNOWN_SHORTCUTS),
+        "realism_hardening_features": REALISM_HARDENING_FEATURES,
         "unsupported_claims": list(UNSUPPORTED_CLAIMS),
         "realism_checks_referenced": list(REALISM_CHECKS),
         "claim_boundary": (

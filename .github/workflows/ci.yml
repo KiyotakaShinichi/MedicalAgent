@@ -79,6 +79,24 @@ jobs:
       - name: MLE readiness checks
         run: python scripts/run_mle_checks.py --output-path Data/test_tmp/mle_readiness.json
 
+      - name: Synthetic-only hardening artifacts
+        run: |
+          python scripts/run_taglish_safety_parity.py
+          python scripts/run_rag_intent_aware_eval.py
+          python scripts/run_rag_tier_ablation.py
+          python scripts/run_learned_abstention_experiment.py
+          python scripts/run_learned_abstention_eval.py
+          python scripts/run_soft_toxicity_target_benchmark.py
+          python scripts/run_hybrid_subgroup_metrics.py
+          python scripts/run_synthetic_realism_hardening.py
+          python scripts/run_self_supervised_timeline_pretraining.py
+          python scripts/run_counterfactual_stability_eval.py
+          python scripts/run_per_head_calibration.py
+          python scripts/run_shortcut_audit.py
+          python scripts/run_minimum_evidence_standards.py
+          python scripts/run_medical_claim_boundary_eval.py
+          python scripts/build_medical_advisor_review_packet.py
+
       - name: API smoke checks
         run: |
           python -m uvicorn backend.api.main:app --host 127.0.0.1 --port 8017 &

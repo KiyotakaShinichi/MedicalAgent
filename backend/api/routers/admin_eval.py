@@ -971,6 +971,27 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             })
         return {"count": len(traces), "traces": traces}
 
+    @router.get("/admin/toxicity-feature-audit")
+    def get_admin_toxicity_feature_audit_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Return the latest toxicity feature-importance audit + no-proxy
+        baseline.  Documents the synthetic generator's structural label
+        leakage so the headline toxicity AUC isn't quoted in isolation."""
+        from backend.services.toxicity_feature_audit import load_toxicity_feature_audit
+        return load_toxicity_feature_audit()
+
+    @router.post("/admin/toxicity-feature-audit")
+    def run_admin_toxicity_feature_audit_endpoint(
+        context=Depends(get_admin_access_context),
+    ):
+        """Rerun the toxicity audit + write a fresh artifact."""
+        from backend.services.toxicity_feature_audit import run_toxicity_feature_audit
+        return {
+            "message": "Toxicity feature audit completed.",
+            "result": run_toxicity_feature_audit(),
+        }
+
     @router.get("/admin/synthetic-generator-card")
     def get_admin_synthetic_generator_card_endpoint(
         context=Depends(get_admin_access_context),

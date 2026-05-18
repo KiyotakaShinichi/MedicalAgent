@@ -1,0 +1,204 @@
+{
+  "reproducibility": {
+    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "source_csv": "920991:1778238158:44a845011924"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-17T11:57:32.607219+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-17T11:57:32.607219+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-18T11:57:32.607219+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "synthetic_realism_hardening_v1",
+  "generated_at": "2026-05-17T11:57:33.040618+00:00",
+  "status": "needs_attention",
+  "config": {
+    "modality_missingness": {
+      "expected_rate_range": [
+        0.01,
+        0.25
+      ],
+      "columns": [
+        "pre_anc",
+        "pre_platelets",
+        "nadir_anc",
+        "nadir_platelets",
+        "recovery_platelets",
+        "mri_tumor_size_cm",
+        "mri_percent_change_from_baseline",
+        "max_symptom_severity"
+      ],
+      "rationale": "Synthetic patient timelines should include partial evidence, not perfect rows."
+    },
+    "delayed_imaging_reports": {
+      "proxy_columns": [
+        "mri_tumor_size_cm",
+        "mri_percent_change_from_baseline"
+      ],
+      "expected_rate_range": [
+        0.01,
+        0.3
+      ],
+      "rationale": "Imaging can be absent/delayed relative to cycle-level labs and symptoms."
+    },
+    "noisy_tumor_marker_trends": {
+      "configured": true,
+      "expected_rate_range": [
+        0.05,
+        0.35
+      ],
+      "rationale": "Tumor markers are context-only signals and should not be deterministic response labels."
+    },
+    "treatment_interruptions": {
+      "columns": [
+        "dose_delayed",
+        "dose_reduced"
+      ],
+      "expected_rate_range": [
+        0.02,
+        0.45
+      ],
+      "rationale": "Dose delays/reductions appear as workflow interruptions, not direct treatment advice."
+    },
+    "incomplete_family_history": {
+      "configured": true,
+      "expected_rate_range": [
+        0.1,
+        0.6
+      ],
+      "rationale": "Hereditary-risk readiness should tolerate unknown relatives/ages/mutation status."
+    },
+    "incomplete_biomarker_records": {
+      "configured": true,
+      "expected_rate_range": [
+        0.05,
+        0.4
+      ],
+      "rationale": "Pathology and biomarker fields can be missing or equivocal."
+    },
+    "contradictory_symptom_reports": {
+      "proxy_columns": [
+        "max_symptom_severity",
+        "symptom_count",
+        "urgent_intervention_needed"
+      ],
+      "expected_rate_range": [
+        0.01,
+        0.2
+      ],
+      "rationale": "Patient-reported symptoms can conflict with lab/model signals and should increase uncertainty."
+    },
+    "irregular_followup_intervals": {
+      "columns": [
+        "treatment_date",
+        "cycle"
+      ],
+      "expected_rate_range": [
+        0.02,
+        0.5
+      ],
+      "rationale": "Follow-up intervals vary after delays and interruptions."
+    }
+  },
+  "checks": {
+    "modality_missingness": {
+      "observed_rate": 0.0619,
+      "expected_rate_range": [
+        0.01,
+        0.25
+      ],
+      "passed": true,
+      "method": "mean_missingness_across_8_optional_columns"
+    },
+    "delayed_imaging_reports": {
+      "observed_rate": 0.1275,
+      "expected_rate_range": [
+        0.01,
+        0.3
+      ],
+      "passed": true,
+      "method": "missing_imaging_signal_as_delay_proxy"
+    },
+    "noisy_tumor_marker_trends": {
+      "observed_rate": 0.18,
+      "expected_rate_range": [
+        0.05,
+        0.35
+      ],
+      "passed": true,
+      "method": "simulated_context_signal"
+    },
+    "treatment_interruptions": {
+      "observed_rate": 0.5967,
+      "expected_rate_range": [
+        0.02,
+        0.45
+      ],
+      "passed": false,
+      "method": "dose_delayed_or_dose_reduced"
+    },
+    "incomplete_family_history": {
+      "observed_rate": 0.32,
+      "expected_rate_range": [
+        0.1,
+        0.6
+      ],
+      "passed": true,
+      "method": "structured_readiness_unknowns"
+    },
+    "incomplete_biomarker_records": {
+      "observed_rate": 0.21,
+      "expected_rate_range": [
+        0.05,
+        0.4
+      ],
+      "passed": true,
+      "method": "typed_or_uploaded_fields_optional"
+    },
+    "contradictory_symptom_reports": {
+      "observed_rate": 0.3744,
+      "expected_rate_range": [
+        0.01,
+        0.2
+      ],
+      "passed": false,
+      "method": "symptom_lab_urgent_disagreement_proxy"
+    },
+    "irregular_followup_intervals": {
+      "observed_rate": 0.0,
+      "expected_rate_range": [
+        0.02,
+        0.5
+      ],
+      "passed": false,
+      "method": "cycle_interval_outside_18_to_28_days"
+    }
+  },
+  "summary": {
+    "checks_passed": 5,
+    "checks_total": 8,
+    "rows": 3600,
+    "patients": 600
+  },
+  "generator_card_additions": {
+    "realistic_missingness_patterns_by_modality": true,
+    "delayed_imaging_reports": true,
+    "noisy_tumor_marker_trends": "configured_as_context_signal",
+    "treatment_interruptions_and_dose_delays": true,
+    "incomplete_family_history_and_biomarkers": "configured_for_readiness_workflows",
+    "contradictory_symptoms": "proxied_by_symptom_lab_disagreement",
+    "irregular_followup_intervals": true
+  },
+  "claim_boundary": "Synthetic realism hardening only. These rates are engineering checks for missingness/stress behavior, not evidence of clinical realism."
+}
