@@ -21,7 +21,11 @@ from __future__ import annotations
 import re
 from typing import Any, Iterable, Mapping
 
-from backend.services.local_llm import route_intent_with_local_llm
+# Note: ``route_intent_with_local_llm`` is resolved at call time via the
+# ``backend.services.agent_rag`` module attribute (see ``_llm_router``
+# below).  The indirection preserves the back-compat surface: tests
+# monkey-patch ``agent_rag.route_intent_with_local_llm`` to disable the
+# LLM router, and that patch must remain authoritative for this module.
 
 
 # ─── Keyword tables ──────────────────────────────────────────────────────────
@@ -213,7 +217,11 @@ def route_intent(
     else:
         deterministic = "general_support"
 
-    llm = route_intent_with_local_llm(query, deterministic_intent=deterministic, safety=safety)
+    # Resolve route_intent_with_local_llm at call time via agent_rag so the
+    # test monkey-patch on agent_rag.route_intent_with_local_llm remains
+    # authoritative for this module.
+    from backend.services import agent_rag  # local import — avoids cycle at module load
+    llm = agent_rag.route_intent_with_local_llm(query, deterministic_intent=deterministic, safety=safety)
     candidate = llm.get("intent")
     confident = (
         llm.get("available")

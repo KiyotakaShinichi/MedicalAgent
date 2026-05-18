@@ -1,43 +1,169 @@
-import hashlib
-import importlib.util
-import json
-import os
-import re
+"""Patient-agent orchestrator (the residue after the 14-slice carve-out).
+
+This module is now just the entry point + post-generation orchestrator.
+Every other concern lives in a dedicated module:
+
+  safety scope            -> agent_safety
+  input / output gates    -> agent_input_gate / agent_output_gate
+  intent routing          -> agent_intent_router
+  query rewriting         -> agent_query_rewriting
+  retrieval + rerank      -> agent_retrieval
+  answer composition      -> agent_answer_composition
+  post-gen + RAG layer    -> agent_post_gen
+  cache                   -> agent_cache
+  trace envelope          -> agent_trace
+  eval scoring            -> agent_eval_scoring
+  RAG eval log writer     -> agent_eval_log
+  KB seed corpus          -> agent_knowledge_snippets
+  KB merge cache          -> agent_kb_corpus
+
+The block below re-imports every public symbol (and every underscore
+alias the in-module orchestrator used inline before the split) so
+external callers can keep ``from backend.services.agent_rag import X``
+working unchanged.  External call sites: chat, eval scripts, tests,
+admin scripts — six places at last count.
+"""
+from __future__ import annotations
+
+from datetime import datetime, timezone
 from time import perf_counter
-from datetime import datetime, timezone, timedelta
 
-from backend.models import AgentResponseCache, RAGEvaluationLog
-from backend.services.kb_ingestion import load_ingested_chunks
-from backend.services.local_llm import configured_llm_providers, decide_cache_with_local_llm, route_intent_with_local_llm
-from backend.services.rag_vector_index import corpus_fingerprint, search_hybrid_index
-from backend.services.pii_redaction import redact_text
-from backend.services.request_context import get_request_id
-from backend.services.security_guardrails import detect_multilingual_medical_danger, detect_prompt_injection_or_exfiltration, normalize_security_text
+# ─── Consolidated re-export shim ─────────────────────────────────────────────
+#
+# All symbols below were previously defined inline in this file.  Each
+# extracted module preserves the public name + (where applicable) an
+# underscore alias.  Keeping the re-exports in one block (instead of 14
+# scattered ``from ... import`` blocks) makes the residual orchestrator
+# code readable top-to-bottom.
 
-
-# MAX_CONTEXT_CHARS + _CROSS_ENCODER_CACHE moved to
-# backend.services.agent_retrieval and are re-imported lower in this
-# module so existing references still resolve.
-# AGENT_CACHE_* + SEMANTIC_CACHE_MIN_SIMILARITY moved to
-# backend.services.agent_cache and are re-imported lower in this module
-# alongside the rest of the cache layer.
-
-# _KB_CORPUS_CACHE moved to backend.services.agent_kb_corpus alongside
-# the loader functions that own it.
-
-
-# KNOWLEDGE_SNIPPETS moved to backend.services.agent_knowledge_snippets as
-# part of the agent_rag.py module split (~290 lines of pure data).
+from backend.services.agent_answer_composition import (  # noqa: F401
+    REFUSAL_INTENTS,
+    _contains_diagnostic_or_treatment_claim,
+    _safety_reply,
+    _uses_direct_support_lane,
+    generate_answer,
+    validate_answer_and_citations,
+)
+from backend.services.agent_cache import (  # noqa: F401
+    AGENT_CACHE_SCHEMA_VERSION,
+    AGENT_CACHE_TTL_DAYS,
+    SEMANTIC_CACHE_MIN_SIMILARITY,
+    _cache_policy_snapshot,
+    _cache_rejection_reason,
+    _cache_response_payload,
+    _cache_row_freshness,
+    _cache_row_policy,
+    _coerce_utc,
+    _datetime_to_iso,
+    _json_loads,
+    _mark_cache_hit,
+    _query_hash,
+    exact_cache_check,
+    is_cacheable,
+    semantic_cache_check,
+    store_cache,
+)
+from backend.services.agent_eval_log import _store_rag_evaluation_log  # noqa: F401
+from backend.services.agent_eval_scoring import (  # noqa: F401
+    _content_tokens,
+    _cost_latency_note,
+    _estimate_tokens,
+    _maybe_run_llm_judge,
+    _score_status,
+    answer_grounding_score,
+    estimate_token_and_cost,
+    evaluate_rag_response,
+    hallucination_score,
+    proxy_retrieval_precision_at_k,
+)
+from backend.services.agent_input_gate import (  # noqa: F401
+    _security_block_reply,
+    input_guardrail_check,
+)
+from backend.services.agent_intent_router import (  # noqa: F401
+    _is_conversation_opening,
+    _is_identity_or_capability_question,
+    _is_social_checkin,
+    route_intent,
+)
+from backend.services.agent_kb_corpus import (  # noqa: F401
+    _invalidate_kb_cache,
+    _knowledge_snippets,
+    get_rag_corpus,
+    knowledge_base_fingerprint,
+)
 from backend.services.agent_knowledge_snippets import KNOWLEDGE_SNIPPETS  # noqa: F401
+from backend.services.agent_output_gate import output_guardrail_check  # noqa: F401
+from backend.services.agent_post_gen import (  # noqa: F401
+    _apply_intent_aware_rag_layer,
+    _apply_post_gen_validator,
+)
+from backend.services.agent_query_rewriting import (  # noqa: F401
+    _normalize_query,
+    _semantic_key,
+    _tokenize,
+    rewrite_and_decompose,
+)
+from backend.services.agent_retrieval import (  # noqa: F401
+    CURATED_SOURCES as _CURATED_SOURCES,
+    MAX_CONTEXT_CHARS,
+    _cross_encoder_enabled,
+    _cross_encoder_scores,
+    _domain_boost,
+    _get_cross_encoder,
+    _intent_boost,
+    _reranker_backend,
+    _section_boost,
+    contextual_compression,
+    expand_parent_child_windows,
+    hybrid_retrieval,
+    rerank_context,
+)
+from backend.services.agent_safety import safety_scope_check  # noqa: F401
+from backend.services.agent_trace import _trace  # noqa: F401
+
+# ``route_intent_with_local_llm`` is consulted by ``agent_intent_router.route_intent``
+# via an attribute lookup on THIS module (``agent_rag``).  The indirection
+# preserves the long-standing test contract: monkey-patching
+# ``agent_rag.route_intent_with_local_llm`` must be authoritative for the
+# intent router, even after the function lives in ``local_llm``.
+from backend.services.local_llm import route_intent_with_local_llm  # noqa: F401
 
 
-def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_response, actions=None, urgent_flags=None, preselected_intent=None):
+# ─── Orchestrator entry point ────────────────────────────────────────────────
+
+
+def run_patient_agent_pipeline(
+    db,
+    patient_id,
+    query,
+    patient_context,
+    fallback_response,
+    actions=None,
+    urgent_flags=None,
+    preselected_intent=None,
+):
+    """Main agent entry point.  Five terminal branches:
+
+      1. Input-guardrail block (security / privacy)
+      2. Cache hit (exact or semantic)
+      3. Direct-support lane (conversation / memory / timeline /
+         emotional / general)
+      4. RAG-generated answer (retrieval -> rerank -> compress ->
+         generate -> validate -> optional cache write)
+
+    Every branch ends in ``_finalize_result`` which runs the post-gen
+    validator, the intent-aware RAG layer, the eval scoring envelope,
+    and persists the RAGEvaluationLog row.
+    """
     started = perf_counter()
     actions = actions or []
     urgent_flags = urgent_flags or []
     safety = safety_scope_check(query, urgent_flags)
     input_guardrails = input_guardrail_check(query, safety)
     t_safety = perf_counter()
+
+    # Branch 1: input guardrail blocks the request entirely.
     if input_guardrails["status"] == "failed":
         safety = {
             **safety,
@@ -55,7 +181,10 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             "safety": safety,
             "retrieval_context": [],
             "generated_at": datetime.now(timezone.utc).isoformat(),
-            "safety_note": "Security boundary: the assistant cannot reveal private records, system instructions, database contents, secrets, or raw internal knowledge base data.",
+            "safety_note": (
+                "Security boundary: the assistant cannot reveal private records, system instructions, "
+                "database contents, secrets, or raw internal knowledge base data."
+            ),
             "validation": {
                 "status": "passed",
                 "issues": [],
@@ -80,6 +209,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             input_guardrails=input_guardrails,
             started=started,
         )
+
     intent = _validated_preselected_intent(preselected_intent, safety) or route_intent(query, actions, safety)
     rewritten = rewrite_and_decompose(query, intent)
     t_routing = perf_counter()
@@ -87,6 +217,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
     knowledge_fingerprint = knowledge_base_fingerprint()
     cache_policy = _cache_policy_snapshot(knowledge_fingerprint)
 
+    # Branch 2: cache hit (exact or semantic).
     cache_hit = None
     if cacheable:
         cache_hit = exact_cache_check(
@@ -97,7 +228,9 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             knowledge_fingerprint=knowledge_fingerprint,
         )
         if cache_hit is None:
-            cache_hit = semantic_cache_check(db, rewritten["semantic_key"], intent, knowledge_fingerprint=knowledge_fingerprint)
+            cache_hit = semantic_cache_check(
+                db, rewritten["semantic_key"], intent, knowledge_fingerprint=knowledge_fingerprint,
+            )
     if cache_hit:
         result = {
             **cache_hit["response"],
@@ -124,6 +257,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             started=started,
         )
 
+    # Branch 3: direct-support lane — return fallback_response verbatim.
     if _uses_direct_support_lane(intent, safety):
         generated = generate_answer(
             query=query,
@@ -158,6 +292,7 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
             started=started,
         )
 
+    # Branch 4: full RAG path — retrieval -> rerank -> compress -> generate -> validate -> cache.
     retrieved = hybrid_retrieval(rewritten, intent)
     expanded = expand_parent_child_windows(retrieved)
     t_retrieval = perf_counter()
@@ -195,11 +330,11 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
         }
 
     stage_ms = {
-        "safety_gate_ms": round((t_safety - started) * 1000, 2),
-        "intent_routing_ms": round((t_routing - t_safety) * 1000, 2),
-        "retrieval_ms": round((t_retrieval - t_routing) * 1000, 2),
-        "rerank_ms": round((t_rerank - t_retrieval) * 1000, 2),
-        "generation_ms": round((t_generation - t_rerank) * 1000, 2),
+        "safety_gate_ms":     round((t_safety - started) * 1000, 2),
+        "intent_routing_ms":  round((t_routing - t_safety) * 1000, 2),
+        "retrieval_ms":       round((t_retrieval - t_routing) * 1000, 2),
+        "rerank_ms":          round((t_rerank - t_retrieval) * 1000, 2),
+        "generation_ms":      round((t_generation - t_rerank) * 1000, 2),
     }
     result = {
         **validated,
@@ -223,29 +358,9 @@ def run_patient_agent_pipeline(db, patient_id, query, patient_context, fallback_
     )
 
 
-# input_guardrail_check moved to backend.services.agent_input_gate as
-# part of the agent_rag.py module split.  Re-exported below.
-from backend.services.agent_input_gate import input_guardrail_check  # noqa: F401, E402
-
-
-# safety_scope_check moved to backend.services.agent_safety as part of the
-# agent_rag.py module split.  Re-exported here so existing imports
-# (chat, eval scripts, tests) keep working unchanged.
-from backend.services.agent_safety import safety_scope_check  # noqa: F401, E402
-
-
-# route_intent + the three conversation detectors moved to
-# backend.services.agent_intent_router.  Re-exported so existing imports
-# keep working.
-from backend.services.agent_intent_router import (  # noqa: F401, E402
-    _is_conversation_opening,
-    _is_identity_or_capability_question,
-    _is_social_checkin,
-    route_intent,
-)
-
-
 def _validated_preselected_intent(intent, safety):
+    """Validate a caller-provided intent and downgrade to a safety
+    boundary intent when the safety scope demands it."""
     allowed = {
         "safety_boundary",
         "treatment_decision_boundary",
@@ -267,87 +382,25 @@ def _validated_preselected_intent(intent, safety):
     return intent
 
 
-# _uses_direct_support_lane moved to backend.services.agent_answer_composition
-# as part of the agent_rag.py module split.  Re-imported below alongside
-# the rest of the answer-composition module.
-
-
-# rewrite_and_decompose moved to backend.services.agent_query_rewriting as
-# part of the agent_rag.py module split.  Re-exported so existing imports
-# keep working.
-from backend.services.agent_query_rewriting import rewrite_and_decompose  # noqa: F401, E402
-
-
-# exact_cache_check + semantic_cache_check moved to
-# backend.services.agent_cache as part of the agent_rag.py module split.
-# Re-imported below alongside the rest of the cache layer.
-
-
-# hybrid_retrieval + expand_parent_child_windows moved to
-# backend.services.agent_retrieval as part of the agent_rag.py module
-# split.  Re-imported below alongside the rest of the retrieval module.
-
-
-# KB corpus loader (knowledge_snippets / invalidate_kb_cache /
-# get_rag_corpus / knowledge_base_fingerprint) moved to
-# backend.services.agent_kb_corpus.  Re-exported below so existing
-# import sites + the lazy imports inside agent_retrieval / agent_cache
-# keep working.
-from backend.services.agent_kb_corpus import (  # noqa: F401, E402
-    _invalidate_kb_cache,
-    _knowledge_snippets,
-    get_rag_corpus,
-    knowledge_base_fingerprint,
-)
-
-
-# rerank_context, contextual_compression, _CURATED_SOURCES,
-# _cross_encoder_* helpers moved to backend.services.agent_retrieval as
-# part of the agent_rag.py module split.  Re-imported below alongside
-# the rest of the retrieval module.
-from backend.services.agent_retrieval import (  # noqa: F401, E402
-    CURATED_SOURCES as _CURATED_SOURCES,
-    MAX_CONTEXT_CHARS,
-    _cross_encoder_enabled,
-    _cross_encoder_scores,
-    _get_cross_encoder,
-    _reranker_backend,
-    contextual_compression,
-    expand_parent_child_windows,
-    hybrid_retrieval,
-    rerank_context,
-)
-
-
-# generate_answer, validate_answer_and_citations, REFUSAL_INTENTS, and
-# their helpers moved to backend.services.agent_answer_composition.
-# Re-imported so existing imports + the few in-module references keep
-# working.
-from backend.services.agent_answer_composition import (  # noqa: F401, E402
-    REFUSAL_INTENTS,
-    _uses_direct_support_lane,
-    generate_answer,
-    validate_answer_and_citations,
-)
-
-
-# _apply_post_gen_validator + _apply_intent_aware_rag_layer moved to
-# backend.services.agent_post_gen as part of the agent_rag.py module
-# split.  Re-imported so _finalize_result keeps calling them by name.
-from backend.services.agent_post_gen import (  # noqa: F401, E402
-    _apply_intent_aware_rag_layer,
-    _apply_post_gen_validator,
-)
-
-
-def _finalize_result(db, patient_id, query, rewritten, result, retrieved, reranked, compressed, input_guardrails, started):
+def _finalize_result(
+    db,
+    patient_id,
+    query,
+    rewritten,
+    result,
+    retrieved,
+    reranked,
+    compressed,
+    input_guardrails,
+    started,
+):
     """Orchestrate the post-generation pipeline:
 
       1. Compute latency.
       2. Run legacy output-guardrail heuristics.
       3. Run the post-gen safety validator (may rewrite the reply).
-      4. Run the intent-aware RAG layer (mode → tier filter → claim
-         validation → evidence grade → optional insufficient-evidence
+      4. Run the intent-aware RAG layer (mode -> tier filter -> claim
+         validation -> evidence grade -> optional insufficient-evidence
          substitution).
       5. Build the RAG evaluation telemetry block.
       6. Persist the RAGEvaluationLog row.
@@ -372,7 +425,7 @@ def _finalize_result(db, patient_id, query, rewritten, result, retrieved, rerank
         latency_ms=latency_ms,
     )
     result["guardrails"] = {
-        "input": input_guardrails,
+        "input":  input_guardrails,
         "output": output_guardrails,
     }
     result["rag_evaluation"] = rag_evaluation
@@ -386,111 +439,3 @@ def _finalize_result(db, patient_id, query, rewritten, result, retrieved, rerank
         compressed=compressed,
     )
     return result
-
-
-# output_guardrail_check moved to backend.services.agent_output_gate
-# (sibling of agent_input_gate).  Re-exported here for back-compat.
-from backend.services.agent_output_gate import output_guardrail_check  # noqa: F401, E402
-
-
-# evaluate_rag_response + the per-metric scorers moved to
-# backend.services.agent_eval_scoring as part of the agent_rag.py module
-# split.  Re-imported below.
-
-
-# _store_rag_evaluation_log moved to backend.services.agent_eval_log
-# (re-exported below).
-from backend.services.agent_eval_log import _store_rag_evaluation_log  # noqa: F401, E402
-
-
-# _contains_diagnostic_or_treatment_claim moved to
-# backend.services.agent_answer_composition (re-imported above).
-
-# _content_tokens / _estimate_tokens / _score_status / _cost_latency_note
-# moved to backend.services.agent_eval_scoring.  Re-imported below.
-from backend.services.agent_eval_scoring import (  # noqa: F401, E402
-    _content_tokens,
-    _cost_latency_note,
-    _estimate_tokens,
-    _maybe_run_llm_judge,
-    _score_status,
-    answer_grounding_score,
-    estimate_token_and_cost,
-    evaluate_rag_response,
-    hallucination_score,
-    proxy_retrieval_precision_at_k,
-)
-
-
-# is_cacheable + store_cache + cache policy/freshness helpers moved to
-# backend.services.agent_cache (re-imported below alongside the lookups).
-
-
-# _safety_reply moved to backend.services.agent_answer_composition
-# (re-imported via _safety_reply alias below for back-compat).
-from backend.services.agent_answer_composition import _safety_reply  # noqa: F401, E402
-
-
-# _security_block_reply moved to backend.services.agent_input_gate.
-from backend.services.agent_input_gate import _security_block_reply  # noqa: F401, E402
-
-
-# _with_related_guidance / _educational_reply / _educational_query_bridge /
-# _clean_context_text / _should_include_supporting_context moved to
-# backend.services.agent_answer_composition.  agent_rag doesn't reference
-# them directly anymore — the answer-composition module owns the full
-# educational-reply pipeline.
-
-
-# _intent_boost / _domain_boost / _section_boost moved to
-# backend.services.agent_retrieval (re-imported via the agent_retrieval
-# import block earlier in this module).
-from backend.services.agent_retrieval import (  # noqa: F401, E402
-    _domain_boost,
-    _intent_boost,
-    _section_boost,
-)
-
-
-# _mark_cache_hit + _cache_rejection_reason moved to
-# backend.services.agent_cache (re-imported below).
-
-
-# _trace moved to backend.services.agent_trace as part of the
-# agent_rag.py module split.  Re-exported so existing imports keep
-# working.
-from backend.services.agent_trace import _trace  # noqa: F401, E402
-
-
-# _semantic_key, _normalize_query, _tokenize moved to
-# backend.services.agent_query_rewriting.  Re-imported below so the ~15
-# internal call sites in this module keep resolving via the same names.
-from backend.services.agent_query_rewriting import (  # noqa: E402
-    _normalize_query,
-    _semantic_key,
-    _tokenize,
-)
-
-
-# Cache layer + cache-adjacent utilities now live in
-# backend.services.agent_cache.  Re-import the full surface so existing
-# in-module references AND external callers via agent_rag keep working.
-from backend.services.agent_cache import (  # noqa: F401, E402
-    AGENT_CACHE_SCHEMA_VERSION,
-    AGENT_CACHE_TTL_DAYS,
-    SEMANTIC_CACHE_MIN_SIMILARITY,
-    _cache_policy_snapshot,
-    _cache_rejection_reason,
-    _cache_response_payload,
-    _cache_row_freshness,
-    _cache_row_policy,
-    _coerce_utc,
-    _datetime_to_iso,
-    _json_loads,
-    _mark_cache_hit,
-    _query_hash,
-    exact_cache_check,
-    is_cacheable,
-    semantic_cache_check,
-    store_cache,
-)
