@@ -551,55 +551,15 @@ def input_guardrail_check(query, safety):
 from backend.services.agent_safety import safety_scope_check  # noqa: F401, E402
 
 
-def route_intent(query, actions=None, safety=None):
-    lower = query.lower()
-    actions = actions or []
-    safety = safety or {}
-    if safety.get("scope") == "treatment_decision_request":
-        deterministic = "treatment_decision_boundary"
-    elif safety.get("scope") in {"urgent_or_safety_related", "diagnosis_or_outcome_claim"}:
-        deterministic = "safety_boundary"
-    elif actions:
-        deterministic = "data_entry_confirmation"
-    elif _is_conversation_opening(lower):
-        deterministic = "conversation"
-    elif _is_identity_or_capability_question(lower):
-        deterministic = "conversation"
-    elif _is_social_checkin(lower):
-        deterministic = "conversation"
-    elif any(term in lower for term in ["remember", "what did i tell", "what did i say", "last message", "previous message", "chat history"]):
-        deterministic = "patient_memory"
-    elif any(term in lower for term in ["anxious", "worried", "sad", "scared", "depressed", "exhausted", "can't keep", "cannot keep", "overwhelmed"]):
-        deterministic = "emotional_support"
-    elif any(term in lower for term in ["upload", "site", "portal", "dashboard", "where can i", "how do i add", "enter my", "where do i enter", "how do i enter", "where do i put", "put my results", "where should i"]):
-        deterministic = "portal_help"
-    elif any(term in lower for term in ["last 14", "timeline", "cycle", "toxicity", "score", "my treatment plan", "my treatment response", "my treatment results", "working", "progress"]):
-        deterministic = "patient_timeline_monitoring"
-    elif any(term in lower for term in ["pcr", "response", "mri", "ct", "ultrasound", "imaging", "ascites", "cbc", "wbc", "anc", "hemoglobin", "platelets", "chemo", "chemotherapy", "treatment", "side effect", "breast cancer", "triple-negative", "stage iv", "her2", "er/pr", "er ", "pr ", "ki-67", "ki67", "brca", "brca1", "brca2", "palb2", "tp53", "pten", "chek2", "atm", "genetic counseling", "genetic test", "germline", "somatic", "vus", "variant of uncertain", "multigene panel", "ca 15-3", "ca 27.29", "cea", "tumor marker", "biomarker", "neutropenia", "neuropathy", "paclitaxel", "doxorubicin", "cyclophosphamide", "carboplatin", "docetaxel", "trastuzumab", "tamoxifen", "infection risk", "supplement", "supplements", "antioxidant", "turmeric", "herbal", "herb", "vitamin", "st. john", "st john", "acupuncture", "acupressure", "nutrition", "exercise", "yoga", "meditation"]):
-        deterministic = "education"
-    else:
-        deterministic = "general_support"
-
-    llm = route_intent_with_local_llm(query, deterministic_intent=deterministic, safety=safety)
-    allowed = {
-        "security_boundary",
-        "safety_boundary",
-        "treatment_decision_boundary",
-        "data_entry_confirmation",
-        "portal_help",
-        "patient_timeline_monitoring",
-        "education",
-        "emotional_support",
-        "general_support",
-        "conversation",
-        "patient_memory",
-    }
-    candidate = llm.get("intent")
-    if llm.get("available") and candidate in allowed and float(llm.get("confidence") or 0) >= 0.72:
-        if deterministic in {"safety_boundary", "treatment_decision_boundary", "data_entry_confirmation", "conversation", "patient_memory", "patient_timeline_monitoring", "emotional_support", "portal_help"}:
-            return deterministic
-        return candidate
-    return deterministic
+# route_intent + the three conversation detectors moved to
+# backend.services.agent_intent_router.  Re-exported so existing imports
+# keep working.
+from backend.services.agent_intent_router import (  # noqa: F401, E402
+    _is_conversation_opening,
+    _is_identity_or_capability_question,
+    _is_social_checkin,
+    route_intent,
+)
 
 
 def _validated_preselected_intent(intent, safety):
@@ -1716,57 +1676,9 @@ def _intent_boost(intent, snippet):
     return 0.25 if (tags & desired or topic in desired) else 0
 
 
-def _is_conversation_opening(lower):
-    cleaned = re.sub(r"[^a-z0-9\s]", " ", lower).strip()
-    cleaned = re.sub(r"\s+", " ", cleaned)
-    greetings = {
-        "hi",
-        "hello",
-        "hey",
-        "good morning",
-        "good afternoon",
-        "good evening",
-        "kumusta",
-        "kamusta",
-        "salamat",
-        "thanks",
-        "thank you",
-    }
-    return cleaned in greetings or cleaned.startswith(("hi ", "hello ", "hey "))
-
-
-def _is_identity_or_capability_question(lower):
-    cleaned = re.sub(r"[^a-z0-9\s]", " ", lower).strip()
-    cleaned = re.sub(r"\s+", " ", cleaned)
-    patterns = [
-        "who are you",
-        "what are you",
-        "what can you do",
-        "what do you do",
-        "how can you help",
-        "help me",
-        "can you help",
-        "are you a doctor",
-        "are you ai",
-        "are you an ai",
-    ]
-    return any(pattern in cleaned for pattern in patterns)
-
-
-def _is_social_checkin(lower):
-    cleaned = re.sub(r"[^a-z0-9\s]", " ", lower).strip()
-    cleaned = re.sub(r"\s+", " ", cleaned)
-    patterns = [
-        "how are you",
-        "how are u",
-        "how you doing",
-        "how are you doing",
-        "are you ok",
-        "what s up",
-        "whats up",
-    ]
-    return any(pattern in cleaned for pattern in patterns)
-
+# _is_conversation_opening / _is_identity_or_capability_question /
+# _is_social_checkin moved to backend.services.agent_intent_router and
+# re-imported at the top of this module.
 
 def _domain_boost(query_tokens, snippet):
     tags = set(snippet.get("tags") or [])
