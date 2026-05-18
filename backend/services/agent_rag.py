@@ -18,13 +18,13 @@ from backend.services.security_guardrails import detect_multilingual_medical_dan
 # MAX_CONTEXT_CHARS + _CROSS_ENCODER_CACHE moved to
 # backend.services.agent_retrieval and are re-imported lower in this
 # module so existing references still resolve.
-AGENT_CACHE_TTL_DAYS = 30
+# AGENT_CACHE_* + SEMANTIC_CACHE_MIN_SIMILARITY moved to
+# backend.services.agent_cache and are re-imported lower in this module
+# alongside the rest of the cache layer.
 
 # Module-level cache for the merged KB corpus.  Avoids repeated disk reads on
 # every pipeline call.  Call _invalidate_kb_cache() after ingesting new chunks.
 _KB_CORPUS_CACHE: list | None = None
-AGENT_CACHE_SCHEMA_VERSION = "agent_response_cache_v4"
-SEMANTIC_CACHE_MIN_SIMILARITY = 0.86
 
 
 KNOWLEDGE_SNIPPETS = [
@@ -596,72 +596,9 @@ def _validated_preselected_intent(intent, safety):
 from backend.services.agent_query_rewriting import rewrite_and_decompose  # noqa: F401, E402
 
 
-def exact_cache_check(db, normalized_query, intent=None, safety_level=None, knowledge_fingerprint=None, now=None):
-    knowledge_fingerprint = knowledge_fingerprint or knowledge_base_fingerprint()
-    query_hash = _query_hash(normalized_query)
-    row = db.query(AgentResponseCache).filter(AgentResponseCache.query_hash == query_hash).first()
-    if not row:
-        return None
-    if intent is not None and row.intent != intent:
-        return None
-    if safety_level is not None and row.safety_level != safety_level:
-        return None
-    freshness = _cache_row_freshness(row, knowledge_fingerprint, now=now)
-    if freshness["status"] != "fresh":
-        return None
-    response = _json_loads(row.response_json)
-    if response is None:
-        return None
-    _mark_cache_hit(db, row, now=now)
-    return {
-        "status": "exact_cache_hit",
-        "cache_id": row.id,
-        "response": response,
-        "expires_at": _datetime_to_iso(row.expires_at),
-        "knowledge_fingerprint": row.knowledge_fingerprint,
-        "policy": _cache_row_policy(row),
-    }
-
-
-def semantic_cache_check(db, semantic_key, intent, min_similarity=SEMANTIC_CACHE_MIN_SIMILARITY, knowledge_fingerprint=None, now=None):
-    knowledge_fingerprint = knowledge_fingerprint or knowledge_base_fingerprint()
-    query_tokens = set(semantic_key.split())
-    if not query_tokens:
-        return None
-    rows = (
-        db.query(AgentResponseCache)
-        .filter(AgentResponseCache.intent == intent)
-        .filter(AgentResponseCache.safety_level == "low_risk")
-        .filter(AgentResponseCache.knowledge_fingerprint == knowledge_fingerprint)
-        .all()
-    )
-    best = None
-    for row in rows:
-        freshness = _cache_row_freshness(row, knowledge_fingerprint, now=now)
-        if freshness["status"] != "fresh":
-            continue
-        row_tokens = set((row.semantic_key or "").split())
-        if not row_tokens:
-            continue
-        score = len(query_tokens & row_tokens) / len(query_tokens | row_tokens)
-        if score >= min_similarity and (best is None or score > best[0]):
-            best = (score, row)
-    if best is None:
-        return None
-    row = best[1]
-    response = _json_loads(row.response_json)
-    if response is None:
-        return None
-    _mark_cache_hit(db, row, now=now)
-    response["semantic_cache_similarity"] = round(best[0], 3)
-    return {
-        "status": "semantic_cache_hit",
-        "cache_id": row.id,
-        "response": response,
-        "expires_at": _datetime_to_iso(row.expires_at),
-        "knowledge_fingerprint": row.knowledge_fingerprint,
-        "policy": _cache_row_policy(row),
-    }
+# exact_cache_check + semantic_cache_check moved to
+# backend.services.agent_cache as part of the agent_rag.py module split.
+# Re-imported below alongside the rest of the cache layer.
 
 
 # hybrid_retrieval + expand_parent_child_windows moved to
@@ -1061,107 +998,8 @@ def _cost_latency_note(cache_status, latency_ms, total_tokens):
     return "Generated path is within current PoC latency/token budget."
 
 
-def is_cacheable(query, intent, safety, actions=None, urgent_flags=None):
-    actions = actions or []
-    urgent_flags = urgent_flags or []
-    lower = query.lower()
-    patient_specific_terms = [" my ", " me ", " i ", "latest", "my score", "my labs", "my mri", "my treatment"]
-    if actions or urgent_flags or not safety.get("cache_allowed"):
-        return False
-    if intent not in {"education", "portal_help", "general_support"}:
-        return False
-    padded = f" {lower} "
-    if any(term in padded for term in patient_specific_terms):
-        return False
-    llm = decide_cache_with_local_llm(query, deterministic_cacheable=True, intent=intent, safety=safety)
-    if llm.get("available") and float(llm.get("confidence") or 0) >= 0.72:
-        return bool(llm.get("cacheable"))
-    return True
-
-
-def store_cache(db, rewritten, intent, safety, response, knowledge_fingerprint=None, now=None):
-    now = now or datetime.now(timezone.utc)
-    knowledge_fingerprint = knowledge_fingerprint or knowledge_base_fingerprint()
-    query_hash = _query_hash(rewritten["normalized_query"])
-    row = db.query(AgentResponseCache).filter(AgentResponseCache.query_hash == query_hash).first()
-    if row is None:
-        row = AgentResponseCache(query_hash=query_hash)
-        db.add(row)
-    else:
-        row.hit_count = 0
-        row.last_hit_at = None
-
-    row.semantic_key = rewritten["semantic_key"]
-    row.intent = intent
-    row.safety_level = safety["level"]
-    row.normalized_query = rewritten["normalized_query"]
-    row.response_json = json.dumps(_cache_response_payload(response), default=str)
-    row.source_ids_json = json.dumps([item["id"] for item in response.get("citations") or []])
-    row.knowledge_fingerprint = knowledge_fingerprint
-    row.cache_schema_version = AGENT_CACHE_SCHEMA_VERSION
-    row.cache_policy_json = json.dumps(_cache_policy_snapshot(knowledge_fingerprint), default=str)
-    row.expires_at = now + timedelta(days=AGENT_CACHE_TTL_DAYS)
-    row.updated_at = now
-    db.commit()
-    db.refresh(row)
-    return row
-
-
-def _cache_response_payload(response):
-    return {
-        "reply": response.get("reply"),
-        "citations": response.get("citations") or [],
-        "intent": response.get("intent"),
-        "safety": response.get("safety"),
-        "retrieval_context": response.get("retrieval_context") or [],
-        "generated_at": response.get("generated_at"),
-        "safety_note": response.get("safety_note"),
-        "validation": response.get("validation"),
-    }
-
-
-def _cache_policy_snapshot(knowledge_fingerprint):
-    return {
-        "schema_version": AGENT_CACHE_SCHEMA_VERSION,
-        "ttl_days": AGENT_CACHE_TTL_DAYS,
-        "semantic_min_similarity": SEMANTIC_CACHE_MIN_SIMILARITY,
-        "knowledge_fingerprint": knowledge_fingerprint,
-        "reuse_scope": "low_risk_non_patient_specific_agent_answers",
-        "llm_cache_adjudication": configured_llm_providers(),
-        "invalidates_on": ["ttl_expiry", "knowledge_base_fingerprint_change", "safety_policy_rejection"],
-    }
-
-
-def _cache_row_freshness(row, knowledge_fingerprint, now=None):
-    now = now or datetime.now(timezone.utc)
-    reasons = []
-    expires_at = _coerce_utc(row.expires_at)
-    if row.cache_schema_version != AGENT_CACHE_SCHEMA_VERSION:
-        reasons.append("cache_schema_version_changed")
-    if not row.knowledge_fingerprint:
-        reasons.append("missing_knowledge_fingerprint")
-    elif row.knowledge_fingerprint != knowledge_fingerprint:
-        reasons.append("knowledge_base_fingerprint_changed")
-    if expires_at is None:
-        reasons.append("missing_expiry")
-    elif expires_at <= now:
-        reasons.append("expired")
-    return {
-        "status": "fresh" if not reasons else "stale",
-        "reasons": reasons,
-    }
-
-
-def _cache_row_policy(row):
-    policy = _json_loads(row.cache_policy_json) or {}
-    if not policy:
-        policy = _cache_policy_snapshot(row.knowledge_fingerprint)
-    return {
-        **policy,
-        "expires_at": _datetime_to_iso(row.expires_at),
-        "last_hit_at": _datetime_to_iso(row.last_hit_at),
-        "hit_count": int(row.hit_count or 0),
-    }
+# is_cacheable + store_cache + cache policy/freshness helpers moved to
+# backend.services.agent_cache (re-imported below alongside the lookups).
 
 
 # _safety_reply moved to backend.services.agent_answer_composition
@@ -1198,25 +1036,8 @@ from backend.services.agent_retrieval import (  # noqa: F401, E402
 )
 
 
-def _mark_cache_hit(db, row, now=None):
-    now = now or datetime.now(timezone.utc)
-    row.hit_count = int(row.hit_count or 0) + 1
-    row.last_hit_at = now
-    row.updated_at = now
-    db.commit()
-    db.refresh(row)
-
-
-def _cache_rejection_reason(query, intent, safety, actions, urgent_flags):
-    if actions:
-        return "patient_specific_data_entry"
-    if urgent_flags:
-        return "urgent_query"
-    if not safety.get("cache_allowed"):
-        return safety.get("scope")
-    if intent not in {"education", "portal_help", "general_support"}:
-        return f"intent_not_cacheable:{intent}"
-    return "patient_specific_or_uncertain"
+# _mark_cache_hit + _cache_rejection_reason moved to
+# backend.services.agent_cache (re-imported below).
 
 
 # _trace moved to backend.services.agent_trace as part of the
@@ -1235,27 +1056,25 @@ from backend.services.agent_query_rewriting import (  # noqa: E402
 )
 
 
-def _query_hash(normalized_query):
-    return hashlib.sha256(normalized_query.encode("utf-8")).hexdigest()
-
-
-def _coerce_utc(value):
-    if value is None:
-        return None
-    if value.tzinfo is None:
-        return value.replace(tzinfo=timezone.utc)
-    return value.astimezone(timezone.utc)
-
-
-def _datetime_to_iso(value):
-    value = _coerce_utc(value)
-    return value.isoformat() if value else None
-
-
-def _json_loads(value):
-    if not value:
-        return None
-    try:
-        return json.loads(value)
-    except json.JSONDecodeError:
-        return None
+# Cache layer + cache-adjacent utilities now live in
+# backend.services.agent_cache.  Re-import the full surface so existing
+# in-module references AND external callers via agent_rag keep working.
+from backend.services.agent_cache import (  # noqa: F401, E402
+    AGENT_CACHE_SCHEMA_VERSION,
+    AGENT_CACHE_TTL_DAYS,
+    SEMANTIC_CACHE_MIN_SIMILARITY,
+    _cache_policy_snapshot,
+    _cache_rejection_reason,
+    _cache_response_payload,
+    _cache_row_freshness,
+    _cache_row_policy,
+    _coerce_utc,
+    _datetime_to_iso,
+    _json_loads,
+    _mark_cache_hit,
+    _query_hash,
+    exact_cache_check,
+    is_cacheable,
+    semantic_cache_check,
+    store_cache,
+)
