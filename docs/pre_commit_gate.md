@@ -24,6 +24,17 @@ Or write the hook directly into `.git/hooks/pre-commit`:
 python scripts/install_pre_commit.py
 ```
 
+Or use the Python `pre-commit` framework:
+
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```
+
+The framework hook is defined in `.pre-commit-config.yaml` and calls
+`scripts/precommit_integration_gate.py`.
+
 ## Run on demand
 
 ```bash

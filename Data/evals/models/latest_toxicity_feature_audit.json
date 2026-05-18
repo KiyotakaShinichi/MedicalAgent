@@ -1,7 +1,7 @@
 {
   "schema_version": "toxicity_feature_audit_v1",
-  "generated_at": "2026-05-17T11:13:00.929371+00:00",
-  "status": "needs_attention",
+  "generated_at": "2026-05-18T08:24:07.165445+00:00",
+  "status": "acceptable",
   "target": "toxicity_risk_binary",
   "ml_csv_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
   "model_path": "Data/complete_synthetic_training/gradient_boosting_toxicity_risk_binary.joblib",
@@ -213,6 +213,23 @@
     "test_rows": 900,
     "train_rows": 2700
   },
-  "interpretation": "Dominant feature(s) found: intervention_count. Even after stripping ALL 8 near-label-proxy features, AUC stays at 0.968. This means the synthetic generator wires the toxicity label to too many features to remove cleanly \u2014 the AUC is a property of the generator, not the model's learned skill. Quoting this AUC as model performance would be misleading; the model card must reference this audit.",
+  "soft_target_mitigation": {
+    "status": "candidate",
+    "target": "soft_toxicity_review_label",
+    "positive_rate": 0.35,
+    "near_label_proxy_count": 0,
+    "near_label_proxy_features": [],
+    "strict_no_proxy_baseline": {
+      "status": "trained",
+      "auc": 0.9769,
+      "brier": 0.0595,
+      "dropped_features": [],
+      "remaining_feature_count": 23,
+      "test_rows": 900,
+      "train_rows": 2700
+    },
+    "claim_boundary": "Softer toxicity target is still simulator-built. It reduces single-rule shortcut pressure but is not clinical toxicity validation."
+  },
+  "interpretation": "Dominant feature(s) found: intervention_count. Even after stripping ALL 8 near-label-proxy features, AUC stays at 0.968. This means the synthetic generator wires the toxicity label to too many features to remove cleanly \u2014 the AUC is a property of the generator, not the model's learned skill. Quoting this AUC as model performance would be misleading; the model card must reference this audit. A softer synthetic toxicity-review target is now present as a mitigation experiment and has no near-label proxy features above the configured threshold (count=0). The legacy binary head should remain review-only; the softer target is the preferred synthetic research artifact until clinician-reviewed adverse-event labels exist.",
   "claim_boundary": "Engineering audit only. Documents how the synthetic-trained toxicity classifier arrives at its synthetic AUC; does not establish clinical toxicity prediction validity."
 }

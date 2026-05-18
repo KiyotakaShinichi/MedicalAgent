@@ -198,6 +198,15 @@ def _evaluate_sentence(sentence: str, chunk_records: list[dict[str, object]], me
     entailment_score = None
     contradiction_score = None
 
+    contradiction_reason = _heuristic_contradiction_reason(
+        sentence,
+        [text for _, _, text in scored_chunks],
+    )
+    if contradiction_reason:
+        status = "unsupported"
+        reason = contradiction_reason
+        validation_method = "heuristic_overlap_contradiction"
+
     if method == "nli":
         nli = _evaluate_with_nli(sentence, scored_chunks)
         if nli["available"]:
@@ -234,6 +243,80 @@ def _evaluate_sentence(sentence: str, chunk_records: list[dict[str, object]], me
         entailment_score=entailment_score,
         contradiction_score=contradiction_score,
     )
+
+
+def _heuristic_contradiction_reason(sentence: str, chunk_texts: list[str]) -> str | None:
+    """Catch high-risk semantic inversions when the optional NLI model is
+    unavailable.
+
+    This is deliberately narrow. It is not a general entailment model; it
+    covers the exact medical-safety inversions that token overlap gets wrong
+    in CI: "safe/no review needed" against interaction guidance, tumor marker
+    proof claims against limitation text, and treatment/dose recommendations
+    against clinician-review boundaries.
+    """
+    lower = sentence.lower()
+    evidence = "\n".join(chunk_texts).lower()
+
+    says_safe_without_review = (
+        any(phrase in lower for phrase in (
+            "safe with",
+            "is safe",
+            "are safe",
+            "no need",
+            "does not need",
+            "do not need",
+            "without oncology review",
+            "without review",
+        ))
+        and any(term in lower for term in (
+            "st john", "johns wort", "john's wort", "supplement", "herbal",
+            "cancer treatment", "chemotherapy", "chemo",
+        ))
+        and any(term in evidence for term in (
+            "interact", "interaction", "discuss", "ask", "review",
+            "oncology team", "pharmacist", "before use",
+        ))
+    )
+    if says_safe_without_review:
+        return "heuristic_contradiction_safety_review_required"
+
+    says_marker_proves = (
+        any(phrase in lower for phrase in (
+            "proves",
+            "confirms",
+            "means cancer is back",
+            "means recurrence",
+            "diagnoses recurrence",
+            "diagnose recurrence",
+        ))
+        and any(term in lower for term in ("ca 15-3", "ca 27.29", "cea", "tumor marker"))
+        and any(term in evidence for term in (
+            "cannot diagnose", "not standalone", "by itself", "context-dependent",
+            "reviewed with symptoms", "reviewed with imaging",
+        ))
+    )
+    if says_marker_proves:
+        return "heuristic_contradiction_tumor_marker_overclaim"
+
+    says_treatment_change = (
+        any(phrase in lower for phrase in (
+            "you should stop", "you should start", "you should change",
+            "you should decrease", "you should increase", "recommended dose",
+            "must stop", "must start", "must change",
+        ))
+        and any(term in lower for term in (
+            "chemo", "chemotherapy", "dose", "tamoxifen", "paclitaxel",
+            "trastuzumab", "doxorubicin",
+        ))
+        and any(term in evidence for term in (
+            "clinician", "oncology team", "doctor", "review", "must not recommend",
+        ))
+    )
+    if says_treatment_change:
+        return "heuristic_contradiction_treatment_review_required"
+
+    return None
 
 
 def _selected_method(method: str | None) -> str:

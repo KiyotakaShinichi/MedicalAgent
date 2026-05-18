@@ -96,7 +96,8 @@
       "max_age_days": 60,
       "accepted_status": ["strong", "acceptable"],
       "metric_thresholds": [
-        {"path": ["governance_issues"], "op": "==", "value": []}
+        {"path": ["governance_issues"], "op": "==", "value": []},
+        {"path": ["source_count"], "op": ">=", "value": 40}
       ]
     },
     {

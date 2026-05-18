@@ -31,8 +31,10 @@ def main() -> int:
         expected = case.get("expected_status")
         passed = observed.get("status") == expected
         if nli_required and not nli_available:
-            passed = True
-            note = "nli_required_but_unavailable; heuristic fallback recorded, not hard-failed"
+            note = (
+                "nli_required_but_unavailable; local heuristic must still "
+                "catch this labeled contradiction"
+            )
         else:
             note = None
         row = {

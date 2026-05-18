@@ -16,4 +16,4 @@ if __name__ == "__main__":
         "toxicity_auc": payload["toxicity_audit"]["full_auc"],
         "dominant_shortcut_features": payload["dominant_shortcut_features"],
     }, indent=2))
-    sys.exit(0 if payload["status"] in {"strong", "needs_attention"} else 1)
+    sys.exit(0 if payload["status"] in {"strong", "acceptable", "needs_attention"} else 1)

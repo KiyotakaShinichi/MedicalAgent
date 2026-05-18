@@ -19,7 +19,9 @@ Data/feature_store/
 Data/rag_index/
 Data/rag_knowledge_base_chunks.json
 Data/agent_eval/
-KnowledgeBase/raw/
+KnowledgeBase/raw/*
+!KnowledgeBase/raw/curated_medical_kb/
+!KnowledgeBase/raw/curated_medical_kb/**
 KnowledgeBase/processed/
 medical_agent.db
 *.sqlite

@@ -1,0 +1,367 @@
+{
+  "schema_version": "curated_medical_kb_manifest_v1",
+  "generated_at": "2026-05-15T00:00:00+00:00",
+  "download_policy": "Curated summaries from official/credible sources. No paywalled guideline full text. No supplement seller or anecdotal sources.",
+  "items": [
+    {
+      "file_name": "diagnosis_treatment_and_supplement_boundaries.md",
+      "title": "Diagnosis, Treatment, and Supplement Safety Boundaries",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/cam/patient/dietary-interactions-pdq",
+      "topic": "clinical_safety_boundaries",
+      "modality": ["clinical", "symptoms", "supplements"],
+      "stage": "all",
+      "confidence": "curated_official_sources",
+      "trust_level": "clinical_safety_policy"
+    },
+    {
+      "file_name": "breast_cancer_basics_and_monitoring.md",
+      "title": "Breast Cancer Basics and Monitoring Terms",
+      "landing_url": "https://www.cancer.gov/types/breast/hp/breast-treatment-pdq",
+      "topic": "breast_cancer_basics",
+      "modality": ["clinical"],
+      "stage": "all",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "structured_core_breast_cancer_education.md",
+      "title": "Structured Core Breast Cancer Education Reference",
+      "landing_url": "https://www.cancer.gov/types/breast/patient/breast-treatment-pdq",
+      "topic": "breast_cancer_basics",
+      "modality": ["clinical"],
+      "stage": "all",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "breast_cancer_treatment_drug_reference.md",
+      "title": "Breast Cancer Treatment and Supportive Medication Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/drugs",
+      "topic": "treatment_drug_education",
+      "modality": ["treatment", "medications"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "side_effects_and_red_flags.md",
+      "title": "Side Effects and Red Flags During Breast Cancer Treatment",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/side-effects",
+      "topic": "treatment_safety",
+      "modality": ["symptoms", "CBC", "clinical"],
+      "stage": "treatment_toxicity_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "symptom_red_flags_and_review_hints.md",
+      "title": "Symptom Red Flags and Review Hints During Treatment",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/side-effects",
+      "topic": "treatment_side_effects_red_flags",
+      "modality": ["symptoms", "CBC", "clinical"],
+      "stage": "treatment_toxicity_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "cbc_labs_and_trend_monitoring.md",
+      "title": "CBC Labs and Trend Monitoring",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/low-blood-counts",
+      "topic": "cbc_toxicity_monitoring",
+      "modality": ["CBC", "clinical"],
+      "stage": "treatment_toxicity_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "cbc_anc_labs_reference.md",
+      "title": "CBC, ANC, Hemoglobin, and Platelet Monitoring Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/low-blood-counts",
+      "topic": "cbc_lab_monitoring",
+      "modality": ["CBC", "clinical"],
+      "stage": "treatment_toxicity_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "imaging_report_monitoring.md",
+      "title": "Imaging Report Monitoring: MRI, CT, Ultrasound, and Response Language",
+      "landing_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "topic": "imaging_response_monitoring",
+      "modality": ["MRI", "CT", "ultrasound", "imaging"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "mri_ct_ultrasound_terms_reference.md",
+      "title": "MRI, CT, Ultrasound, and Imaging Response Terms Reference",
+      "landing_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "topic": "imaging_report_monitoring",
+      "modality": ["MRI", "CT", "ultrasound", "imaging"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "integrative_supportive_care.md",
+      "title": "Integrative and Supportive Care During Breast Cancer Treatment",
+      "landing_url": "https://pubmed.ncbi.nlm.nih.gov/29889605/",
+      "topic": "integrative_supportive_care",
+      "modality": ["clinical", "symptoms"],
+      "stage": "supportive_care",
+      "confidence": "curated_guideline_summary",
+      "trust_level": "clinical_guideline_summary"
+    },
+    {
+      "file_name": "supportive_survivorship_care_reference.md",
+      "title": "Supportive Care and Survivorship Education Reference",
+      "landing_url": "https://www.cancer.org/cancer/survivorship.html",
+      "topic": "integrative_supportive_survivorship",
+      "modality": ["clinical", "symptoms"],
+      "stage": "supportive_care",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "supplements_interactions_reference.md",
+      "title": "Supplements, Vitamins, Herbs, and Natural Remedy Interaction Safety",
+      "landing_url": "https://www.mskcc.org/cancer-care/patient-education/herbal-remedies-and-treatment",
+      "topic": "supplement_interaction_safety",
+      "modality": ["supplements", "medications", "clinical"],
+      "stage": "supportive_care",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "supplement_safety_by_product_reference.md",
+      "title": "Supplement and Natural Product Safety by Product Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/cam/patient/dietary-interactions-pdq",
+      "topic": "supplement_interaction_safety",
+      "modality": ["supplements", "medications", "clinical"],
+      "stage": "supportive_care",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "onctrack_portal_help_and_data_entry.md",
+      "title": "OncoTrack Portal Help and Data Entry",
+      "landing_url": "README.md",
+      "topic": "portal_help",
+      "modality": ["portal", "clinical"],
+      "stage": "all",
+      "confidence": "project_documentation",
+      "trust_level": "local_source"
+    },
+    {
+      "file_name": "patient_portal_workflows_reference.md",
+      "title": "Patient Portal Workflow Reference",
+      "landing_url": "README.md",
+      "topic": "portal_help",
+      "modality": ["portal", "clinical"],
+      "stage": "all",
+      "confidence": "project_documentation",
+      "trust_level": "local_source"
+    },
+    {
+      "file_name": "genetic_counseling_readiness.md",
+      "title": "Genetic Counseling Readiness and Family History Intake",
+      "landing_url": "https://www.cdc.gov/genomics-and-health/counseling-testing/genetic-counseling.html",
+      "topic": "genetic_counseling_readiness",
+      "modality": ["family_history", "genetics", "clinical"],
+      "stage": "all",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "hereditary_breast_ovarian_cancer_and_brca.md",
+      "title": "Hereditary Breast/Ovarian Cancer and BRCA Education",
+      "landing_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/brca-fact-sheet",
+      "topic": "hereditary_breast_ovarian_cancer",
+      "modality": ["genetics", "clinical"],
+      "stage": "genetic_counseling",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "germline_somatic_vus_multigene_panels.md",
+      "title": "Germline Testing, Somatic Testing, VUS, and Multigene Panels",
+      "landing_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/genetic-testing-fact-sheet",
+      "topic": "genetic_testing_terms",
+      "modality": ["genetics", "tumor_sequencing", "clinical"],
+      "stage": "genetic_counseling",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "biomarkers_and_tumor_markers.md",
+      "title": "Breast Cancer Biomarkers and Tumor Marker Safety",
+      "landing_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
+      "topic": "biomarkers_and_tumor_markers",
+      "modality": ["pathology", "biomarkers", "tumor_markers", "labs"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "genetics_biomarker_marker_safety_terms.md",
+      "title": "Genetics, Biomarker, and Tumor Marker Safety Terms Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/genetic-testing-fact-sheet",
+      "topic": "genetics_biomarkers_tumor_markers",
+      "modality": ["genetics", "pathology", "biomarkers", "tumor_markers", "labs"],
+      "stage": "genetic_counseling",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "ct_ascites_report_monitoring.md",
+      "title": "CT Ascites Report Wording in Oncology Monitoring",
+      "landing_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "topic": "ct_report_monitoring",
+      "modality": ["CT", "imaging", "ascites", "clinical"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_project_safety_summary",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "minimum_evidence_medical_claim_boundaries.md",
+      "title": "Minimum Evidence and Medical Claim Boundaries",
+      "landing_url": "README.md",
+      "topic": "medical_claim_boundaries",
+      "modality": ["clinical", "safety", "agent"],
+      "stage": "all",
+      "confidence": "project_safety_policy",
+      "trust_level": "clinical_safety_policy"
+    },
+    {
+      "file_name": "anthracycline_cyclophosphamide_taxane_reference.md",
+      "title": "Anthracycline, Cyclophosphamide, and Taxane Treatment Reference",
+      "landing_url": "https://www.cancer.gov/types/breast/treatment/chemotherapy",
+      "topic": "treatment_drug_education",
+      "modality": ["treatment", "medications", "symptoms"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "platinum_capecitabine_gemcitabine_reference.md",
+      "title": "Carboplatin, Capecitabine, and Gemcitabine Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/drugs",
+      "topic": "treatment_drug_education",
+      "modality": ["treatment", "medications", "symptoms"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "her2_targeted_therapy_reference.md",
+      "title": "HER2-Targeted Therapy Reference",
+      "landing_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
+      "topic": "targeted_therapy_education",
+      "modality": ["treatment", "biomarkers", "medications"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "endocrine_cdk46_immunotherapy_reference.md",
+      "title": "Endocrine Therapy, CDK4/6 Inhibitors, and Immunotherapy Reference",
+      "landing_url": "https://www.cancer.gov/types/breast/patient/breast-treatment-pdq",
+      "topic": "systemic_treatment_education",
+      "modality": ["treatment", "medications", "biomarkers"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "supportive_medications_reference.md",
+      "title": "Supportive Medication Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/side-effects",
+      "topic": "supportive_medication_education",
+      "modality": ["medications", "symptoms", "clinical"],
+      "stage": "supportive_care",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "gi_mouth_neuropathy_fatigue_reference.md",
+      "title": "GI Symptoms, Mouth Sores, Neuropathy, and Fatigue Reference",
+      "landing_url": "https://www.cancer.org/cancer/managing-cancer/treatment-types/chemotherapy/chemotherapy-side-effects.html",
+      "topic": "treatment_side_effects",
+      "modality": ["symptoms", "clinical"],
+      "stage": "treatment_toxicity_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "hematology_bleeding_infection_reference.md",
+      "title": "Hematology, Bleeding, and Infection Review Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/low-blood-counts",
+      "topic": "treatment_safety",
+      "modality": ["CBC", "symptoms", "clinical"],
+      "stage": "treatment_toxicity_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "pathology_biomarker_report_terms.md",
+      "title": "Pathology and Biomarker Report Terms",
+      "landing_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
+      "topic": "pathology_biomarker_education",
+      "modality": ["pathology", "biomarkers", "clinical"],
+      "stage": "diagnosis_and_monitoring",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "lymphedema_fertility_psychosocial_reference.md",
+      "title": "Lymphedema, Fertility, and Psychosocial Support Reference",
+      "landing_url": "https://www.cancer.org/cancer/managing-cancer/side-effects/swelling/lymphedema/what-is-lymphedema.html",
+      "topic": "supportive_survivorship_care",
+      "modality": ["symptoms", "supportive_care", "clinical"],
+      "stage": "supportive_care",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "pregnancy_breastfeeding_pediatric_boundary.md",
+      "title": "Pregnancy, Breastfeeding, Pediatric, and Fertility Boundary",
+      "landing_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/fertility-women",
+      "topic": "pregnancy_pediatric_fertility_boundary",
+      "modality": ["clinical", "safety", "supportive_care"],
+      "stage": "all",
+      "confidence": "project_safety_policy",
+      "trust_level": "clinical_safety_policy"
+    },
+    {
+      "file_name": "family_history_readiness_depth.md",
+      "title": "Family History Readiness Depth Reference",
+      "landing_url": "https://www.cdc.gov/breast-ovarian-cancer-hereditary/risk-factors/index.html",
+      "topic": "genetic_counseling_readiness",
+      "modality": ["family_history", "genetics", "clinical"],
+      "stage": "genetic_counseling",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "gene_specific_readiness_reference.md",
+      "title": "Gene-Specific Readiness Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/brca-fact-sheet",
+      "topic": "hereditary_breast_cancer_genes",
+      "modality": ["genetics", "clinical"],
+      "stage": "genetic_counseling",
+      "confidence": "curated_official_sources",
+      "trust_level": "patient_education"
+    },
+    {
+      "file_name": "tumor_marker_trend_limitations_reference.md",
+      "title": "Tumor Marker Trend Limitations Reference",
+      "landing_url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-fact-sheet",
+      "topic": "tumor_marker_limitations",
+      "modality": ["tumor_markers", "labs", "clinical"],
+      "stage": "treatment_monitoring",
+      "confidence": "curated_guideline_summary",
+      "trust_level": "clinical_guideline_summary"
+    }
+  ]
+}

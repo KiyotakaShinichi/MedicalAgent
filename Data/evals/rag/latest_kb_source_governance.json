@@ -1,25 +1,25 @@
 {
   "schema_version": "kb_source_governance_v1",
-  "generated_at": "2026-05-18T02:11:27.793683+00:00",
+  "generated_at": "2026-05-18T03:13:04.680972+00:00",
   "status": "strong",
   "kb_chunks_path": "Data/rag_knowledge_base_chunks.json",
-  "source_count": 31,
-  "chunk_count": 225,
+  "source_count": 44,
+  "chunk_count": 242,
   "tier_distribution": {
-    "T1": 2,
+    "T1": 4,
     "T2": 9,
-    "T3": 18,
+    "T3": 29,
     "T4": 2
   },
   "allowed_use_distribution": {
-    "patient_safety": 1,
-    "education": 29,
-    "clinician_only": 2,
+    "patient_safety": 3,
+    "education": 42,
+    "clinician_only": 4,
     "monitoring_context": 10,
     "portal_help": 2
   },
   "staleness_distribution": {
-    "current": 31
+    "current": 44
   },
   "tier_map": {
     "clinical_safety_policy": {
@@ -101,7 +101,7 @@
         "education",
         "clinician_only"
       ],
-      "ingested_at": "2026-05-18T02:05:55.461607+00:00",
+      "ingested_at": "2026-05-18T03:11:52.352237+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -112,6 +112,33 @@
         "clinical",
         "supplements",
         "symptoms"
+      ]
+    },
+    {
+      "source_id": "28cfcee61ce1e4a4",
+      "title": "Minimum Evidence and Medical Claim Boundaries",
+      "source_url": "README.md",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\00_safety_boundaries\\minimum_evidence_medical_claim_boundaries.md",
+      "trust_level": "clinical_safety_policy",
+      "tier": "T1",
+      "tier_rank": 1,
+      "tier_description": "Internal clinical-safety policy (refusal rules, escalation rules).",
+      "allowed_use": [
+        "patient_safety",
+        "education",
+        "clinician_only"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.395837+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 2,
+      "topics": [
+        "medical_claim_boundaries"
+      ],
+      "modalities": [
+        "agent",
+        "clinical",
+        "safety"
       ]
     },
     {
@@ -128,7 +155,7 @@
         "clinician_only",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:55.997550+00:00",
+      "ingested_at": "2026-05-18T03:11:52.658130+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -138,6 +165,33 @@
       "modalities": [
         "clinical",
         "symptoms"
+      ]
+    },
+    {
+      "source_id": "401289a2a636f30a",
+      "title": "Pregnancy, Breastfeeding, Pediatric, and Fertility Boundary",
+      "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/fertility-women",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\06_integrative_supportive_care\\pregnancy_breastfeeding_pediatric_boundary.md",
+      "trust_level": "clinical_safety_policy",
+      "tier": "T1",
+      "tier_rank": 1,
+      "tier_description": "Internal clinical-safety policy (refusal rules, escalation rules).",
+      "allowed_use": [
+        "patient_safety",
+        "education",
+        "clinician_only"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.701300+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "pregnancy_pediatric_fertility_boundary"
+      ],
+      "modalities": [
+        "clinical",
+        "safety",
+        "supportive_care"
       ]
     },
     {
@@ -153,7 +207,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:56.567375+00:00",
+      "ingested_at": "2026-05-18T03:11:52.806574+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 26,
@@ -178,7 +232,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:57.109451+00:00",
+      "ingested_at": "2026-05-18T03:11:52.911842+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 23,
@@ -203,7 +257,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:57.207939+00:00",
+      "ingested_at": "2026-05-18T03:11:52.943863+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 23,
@@ -228,7 +282,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:56.737097+00:00",
+      "ingested_at": "2026-05-18T03:11:52.828700+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 19,
@@ -253,7 +307,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:56.995897+00:00",
+      "ingested_at": "2026-05-18T03:11:52.866650+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 19,
@@ -278,7 +332,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:57.148584+00:00",
+      "ingested_at": "2026-05-18T03:11:52.927151+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 17,
@@ -303,7 +357,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:57.043547+00:00",
+      "ingested_at": "2026-05-18T03:11:52.880643+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 16,
@@ -329,7 +383,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:57.073156+00:00",
+      "ingested_at": "2026-05-18T03:11:52.893127+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 15,
@@ -354,7 +408,7 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T02:05:57.262682+00:00",
+      "ingested_at": "2026-05-18T03:11:52.950327+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -379,7 +433,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.938527+00:00",
+      "ingested_at": "2026-05-18T03:11:52.634860+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 28,
@@ -406,7 +460,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.604722+00:00",
+      "ingested_at": "2026-05-18T03:11:52.444376+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 3,
@@ -430,7 +484,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:56.140690+00:00",
+      "ingested_at": "2026-05-18T03:11:52.707988+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 3,
@@ -441,6 +495,34 @@
         "clinical",
         "medications",
         "supplements"
+      ]
+    },
+    {
+      "source_id": "5598e2371d2713c4",
+      "title": "Breast Cancer Biomarkers and Tumor Marker Safety",
+      "source_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\biomarkers_and_tumor_markers.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.714430+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 3,
+      "topics": [
+        "biomarkers_and_tumor_markers",
+        "tumor_marker_limitations"
+      ],
+      "modalities": [
+        "biomarkers",
+        "clinical",
+        "labs",
+        "pathology",
+        "tumor_markers"
       ]
     },
     {
@@ -455,7 +537,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.467066+00:00",
+      "ingested_at": "2026-05-18T03:11:52.400183+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -464,6 +546,56 @@
       ],
       "modalities": [
         "clinical"
+      ]
+    },
+    {
+      "source_id": "a34c987d0620a854",
+      "title": "Anthracycline, Cyclophosphamide, and Taxane Treatment Reference",
+      "source_url": "https://www.cancer.gov/types/breast/treatment/chemotherapy",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\02_treatments\\anthracycline_cyclophosphamide_taxane_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.440547+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 2,
+      "topics": [
+        "treatment_drug_education"
+      ],
+      "modalities": [
+        "medications",
+        "symptoms",
+        "treatment"
+      ]
+    },
+    {
+      "source_id": "fbbde2102f3166e7",
+      "title": "Endocrine Therapy, CDK4/6 Inhibitors, and Immunotherapy Reference",
+      "source_url": "https://www.cancer.gov/types/breast/patient/breast-treatment-pdq",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\02_treatments\\endocrine_cdk46_immunotherapy_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.480656+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 2,
+      "topics": [
+        "systemic_treatment_education"
+      ],
+      "modalities": [
+        "biomarkers",
+        "medications",
+        "treatment"
       ]
     },
     {
@@ -478,7 +610,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.640542+00:00",
+      "ingested_at": "2026-05-18T03:11:52.622086+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -503,7 +635,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.744673+00:00",
+      "ingested_at": "2026-05-18T03:11:52.628107+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -527,7 +659,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.865657+00:00",
+      "ingested_at": "2026-05-18T03:11:52.632751+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -553,7 +685,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:56.132120+00:00",
+      "ingested_at": "2026-05-18T03:11:52.705706+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -564,32 +696,6 @@
         "clinical",
         "medications",
         "supplements"
-      ]
-    },
-    {
-      "source_id": "5598e2371d2713c4",
-      "title": "Breast Cancer Biomarkers and Tumor Marker Safety",
-      "source_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
-      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\biomarkers_and_tumor_markers.md",
-      "trust_level": "patient_education",
-      "tier": "T3",
-      "tier_rank": 3,
-      "tier_description": "Patient-education content from a recognised oncology organisation.",
-      "allowed_use": [
-        "education"
-      ],
-      "ingested_at": "2026-05-18T02:05:56.242226+00:00",
-      "staleness_status": "current",
-      "staleness_days": 0,
-      "chunk_count": 2,
-      "topics": [
-        "biomarkers_and_tumor_markers"
-      ],
-      "modalities": [
-        "biomarkers",
-        "labs",
-        "pathology",
-        "tumor_markers"
       ]
     },
     {
@@ -604,7 +710,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:56.296071+00:00",
+      "ingested_at": "2026-05-18T03:11:52.762189+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -629,7 +735,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:56.361018+00:00",
+      "ingested_at": "2026-05-18T03:11:52.764471+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -656,7 +762,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:56.414889+00:00",
+      "ingested_at": "2026-05-18T03:11:52.766655+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -681,7 +787,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:56.474607+00:00",
+      "ingested_at": "2026-05-18T03:11:52.769019+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -705,7 +811,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.528731+00:00",
+      "ingested_at": "2026-05-18T03:11:52.404410+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -714,6 +820,130 @@
       ],
       "modalities": [
         "clinical"
+      ]
+    },
+    {
+      "source_id": "d585ebd25c605f1b",
+      "title": "HER2-Targeted Therapy Reference",
+      "source_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\02_treatments\\her2_targeted_therapy_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.521950+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "targeted_therapy_education"
+      ],
+      "modalities": [
+        "biomarkers",
+        "medications",
+        "treatment"
+      ]
+    },
+    {
+      "source_id": "a8f363cc9206a9ff",
+      "title": "Carboplatin, Capecitabine, and Gemcitabine Reference",
+      "source_url": "https://www.cancer.gov/about-cancer/treatment/drugs",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\02_treatments\\platinum_capecitabine_gemcitabine_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.545711+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "treatment_drug_education"
+      ],
+      "modalities": [
+        "medications",
+        "symptoms",
+        "treatment"
+      ]
+    },
+    {
+      "source_id": "b0cb4d4e4bed10a7",
+      "title": "Supportive Medication Reference",
+      "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\02_treatments\\supportive_medications_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.570136+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "supportive_medication_education"
+      ],
+      "modalities": [
+        "clinical",
+        "medications",
+        "symptoms"
+      ]
+    },
+    {
+      "source_id": "24de6c8ad0379f43",
+      "title": "GI Symptoms, Mouth Sores, Neuropathy, and Fatigue Reference",
+      "source_url": "https://www.cancer.org/cancer/managing-cancer/treatment-types/chemotherapy/chemotherapy-side-effects.html",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\03_side_effects\\gi_mouth_neuropathy_fatigue_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.595107+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "treatment_side_effects"
+      ],
+      "modalities": [
+        "clinical",
+        "symptoms"
+      ]
+    },
+    {
+      "source_id": "9a6347c207d53299",
+      "title": "Hematology, Bleeding, and Infection Review Reference",
+      "source_url": "https://www.cancer.gov/about-cancer/treatment/side-effects/low-blood-counts",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\03_side_effects\\hematology_bleeding_infection_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.619837+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "treatment_safety"
+      ],
+      "modalities": [
+        "CBC",
+        "clinical",
+        "symptoms"
       ]
     },
     {
@@ -728,7 +958,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.673713+00:00",
+      "ingested_at": "2026-05-18T03:11:52.624128+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -753,7 +983,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.708684+00:00",
+      "ingested_at": "2026-05-18T03:11:52.625729+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -777,7 +1007,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:55.813011+00:00",
+      "ingested_at": "2026-05-18T03:11:52.630369+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -792,6 +1022,56 @@
       ]
     },
     {
+      "source_id": "892b23b4ab3dd9cd",
+      "title": "Pathology and Biomarker Report Terms",
+      "source_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\05_imaging\\pathology_biomarker_report_terms.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.656397+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "pathology_biomarker_education"
+      ],
+      "modalities": [
+        "biomarkers",
+        "clinical",
+        "pathology"
+      ]
+    },
+    {
+      "source_id": "2475b0c866dc591d",
+      "title": "Lymphedema, Fertility, and Psychosocial Support Reference",
+      "source_url": "https://www.cancer.org/cancer/managing-cancer/side-effects/swelling/lymphedema/what-is-lymphedema.html",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\06_integrative_supportive_care\\lymphedema_fertility_psychosocial_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.681307+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "supportive_survivorship_care"
+      ],
+      "modalities": [
+        "clinical",
+        "supportive_care",
+        "symptoms"
+      ]
+    },
+    {
       "source_id": "7dd4faa09221551a",
       "title": "Supportive Care and Survivorship Education Reference",
       "source_url": "https://www.cancer.org/cancer/survivorship.html",
@@ -803,7 +1083,7 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T02:05:56.052247+00:00",
+      "ingested_at": "2026-05-18T03:11:52.703269+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -813,6 +1093,55 @@
       "modalities": [
         "clinical",
         "symptoms"
+      ]
+    },
+    {
+      "source_id": "664fb49bb1343408",
+      "title": "Family History Readiness Depth Reference",
+      "source_url": "https://www.cdc.gov/breast-ovarian-cancer-hereditary/risk-factors/index.html",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\family_history_readiness_depth.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.736963+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "genetic_counseling_readiness"
+      ],
+      "modalities": [
+        "clinical",
+        "family_history",
+        "genetics"
+      ]
+    },
+    {
+      "source_id": "67199f1396d24d3e",
+      "title": "Gene-Specific Readiness Reference",
+      "source_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/brca-fact-sheet",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\gene_specific_readiness_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-05-18T03:11:52.759685+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "hereditary_breast_cancer_genes"
+      ],
+      "modalities": [
+        "clinical",
+        "genetics"
       ]
     },
     {
@@ -827,7 +1156,7 @@
       "allowed_use": [
         "portal_help"
       ],
-      "ingested_at": "2026-05-18T02:05:56.181729+00:00",
+      "ingested_at": "2026-05-18T03:11:52.710426+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -851,7 +1180,7 @@
       "allowed_use": [
         "portal_help"
       ],
-      "ingested_at": "2026-05-18T02:05:56.237357+00:00",
+      "ingested_at": "2026-05-18T03:11:52.712163+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,

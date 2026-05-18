@@ -301,6 +301,22 @@ class ClaimValidator(unittest.TestCase):
         self.assertFalse(result.nli_available)
         self.assertIn("nli_unavailable", result.verdicts[0].validation_method)
 
+    def test_heuristic_contradiction_blocks_known_medical_inversion(self) -> None:
+        result = validate_claims(
+            "St. Johns wort is safe with cancer treatment and does not need oncology review.",
+            retrieved_chunks=[{
+                "id": "supplement_safety",
+                "text": (
+                    "St. Johns wort can interact with many medicines. Patients should "
+                    "discuss supplements with the oncology team or pharmacist before use "
+                    "during cancer treatment."
+                ),
+            }],
+        )
+
+        self.assertEqual(result.verdicts[0].status, "unsupported")
+        self.assertEqual(result.verdicts[0].reason, "heuristic_contradiction_safety_review_required")
+
 
 # ─── 4. Evidence grading ─────────────────────────────────────────────────────
 

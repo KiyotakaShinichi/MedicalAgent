@@ -4,7 +4,7 @@ Aggregates the existing audit artifacts under ``Data/evals/{models,rag,
 safety,medical}/`` and fails if any required artifact is missing, stale,
 or below its accepted status.
 
-Thresholds live in ``scripts/release_gate_config.json`` so the policy is
+Thresholds live in ``config/release_gate_thresholds.yaml`` so the policy is
 visible and version-controlled in one place.
 
 Exit codes
@@ -15,7 +15,7 @@ Exit codes
 Usage
 ~~~~~
     python scripts/run_release_gate.py
-    python scripts/run_release_gate.py --config scripts/release_gate_config.json
+    python scripts/run_release_gate.py --config config/release_gate_thresholds.yaml
     python scripts/run_release_gate.py --json   # machine-readable summary
 
 The gate is wired into ``make ship`` as the final step.
@@ -30,7 +30,27 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CONFIG = ROOT / "scripts" / "release_gate_config.json"
+DEFAULT_CONFIG = ROOT / "config" / "release_gate_thresholds.yaml"
+LEGACY_CONFIG = ROOT / "scripts" / "release_gate_config.json"
+
+
+def _load_config(config_path: Path) -> dict[str, Any]:
+    path = config_path if config_path.is_absolute() else ROOT / config_path
+    if not path.exists() and path == DEFAULT_CONFIG and LEGACY_CONFIG.exists():
+        path = LEGACY_CONFIG
+    text = path.read_text(encoding="utf-8")
+    if path.suffix.lower() in {".yaml", ".yml"}:
+        try:
+            import yaml
+        except ImportError as exc:  # pragma: no cover - dependency is in requirements.txt
+            raise RuntimeError("PyYAML is required for YAML release-gate configs.") from exc
+        payload = yaml.safe_load(text)
+    else:
+        payload = json.loads(text)
+    if not isinstance(payload, dict):
+        raise ValueError(f"Release-gate config must be an object: {path}")
+    payload["_resolved_config_path"] = path
+    return payload
 
 
 def _parse_timestamp(value: Any) -> datetime | None:
@@ -146,7 +166,12 @@ def _compare(actual: Any, op: str | None, expected: Any) -> bool:
 
 
 def run_release_gate(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
-    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config = _load_config(config_path)
+    resolved_config = config.get("_resolved_config_path")
+    if isinstance(resolved_config, Path):
+        config_label = str(resolved_config.relative_to(ROOT))
+    else:
+        config_label = str(config_path)
     artifacts = config.get("artifacts") or []
     rows = [_check_artifact(entry) for entry in artifacts]
 
@@ -156,7 +181,7 @@ def run_release_gate(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
         "schema_version": "release_gate_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": overall_status,
-        "config_path": str(config_path.relative_to(ROOT)),
+        "config_path": config_label,
         "artifact_count": len(rows),
         "failure_count": len(failures),
         "artifacts": rows,

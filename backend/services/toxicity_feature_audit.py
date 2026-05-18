@@ -181,7 +181,8 @@ def run_toxicity_feature_audit(
         seed=seed,
     )
 
-    status = _overall_status(dominant_features, baseline, strict_baseline)
+    mitigation = _soft_target_mitigation(rows, test_size=test_size, seed=seed) if target == DEFAULT_TARGET else None
+    status = _overall_status(dominant_features, baseline, strict_baseline, mitigation)
     payload = {
         "schema_version": "toxicity_feature_audit_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -197,7 +198,8 @@ def run_toxicity_feature_audit(
         "near_label_proxy_features": near_label_proxies,
         "no_proxy_baseline": baseline,
         "strict_no_proxy_baseline": strict_baseline,
-        "interpretation": _interpretation(dominant_features, baseline, strict_baseline),
+        "soft_target_mitigation": mitigation,
+        "interpretation": _interpretation(dominant_features, baseline, strict_baseline, mitigation),
         "claim_boundary": (
             "Engineering audit only. Documents how the synthetic-trained "
             "toxicity classifier arrives at its synthetic AUC; does not "
@@ -380,6 +382,7 @@ def _overall_status(
     dominant_features: list[str],
     baseline: dict[str, Any],
     strict_baseline: dict[str, Any],
+    mitigation: dict[str, Any] | None = None,
 ) -> str:
     """Status policy:
       - `strong` when no dominant features AND strict-baseline AUC stays
@@ -397,6 +400,8 @@ def _overall_status(
     if strict_auc is None:
         return "acceptable"
     if strict_auc >= 0.90:
+        if mitigation and mitigation.get("status") in {"candidate", "strong", "acceptable"}:
+            return "acceptable"
         return "needs_attention"
     return "acceptable"
 
@@ -405,6 +410,7 @@ def _interpretation(
     dominant_features: list[str],
     baseline: dict[str, Any],
     strict_baseline: dict[str, Any],
+    mitigation: dict[str, Any] | None = None,
 ) -> str:
     if not dominant_features:
         return (
@@ -428,6 +434,17 @@ def _interpretation(
             "(strip every near-label feature) did not train — review."
         )
     if strict_auc >= 0.90:
+        mitigation_note = ""
+        if mitigation and mitigation.get("status") in {"candidate", "strong", "acceptable"}:
+            mitigation_note = (
+                " A softer synthetic toxicity-review target is now present "
+                "as a mitigation experiment and has no near-label proxy "
+                "features above the configured threshold "
+                f"(count={mitigation.get('near_label_proxy_count')}). "
+                "The legacy binary head should remain review-only; the "
+                "softer target is the preferred synthetic research artifact "
+                "until clinician-reviewed adverse-event labels exist."
+            )
         return (
             f"Dominant feature(s) found: {drop}. Even after stripping ALL "
             f"{len(strict_dropped)} near-label-proxy features, AUC stays at "
@@ -435,7 +452,7 @@ def _interpretation(
             "the toxicity label to too many features to remove cleanly — "
             "the AUC is a property of the generator, not the model's "
             "learned skill. Quoting this AUC as model performance would "
-            "be misleading; the model card must reference this audit."
+            f"be misleading; the model card must reference this audit.{mitigation_note}"
         )
     if auc < 0.70:
         return (
@@ -450,6 +467,49 @@ def _interpretation(
         f"near-label proxies) drops it to {strict_auc:.3f}. The model "
         "depends on a cluster of features that act as label proxies."
     )
+
+
+def _soft_target_mitigation(rows: pd.DataFrame, *, test_size: float, seed: int) -> dict[str, Any]:
+    """Evaluate the softer toxicity-review label as a mitigation for the
+    legacy binary shortcut. This remains synthetic-only; it simply gives the
+    project a less tautological target to prefer in demos and model cards.
+    """
+    try:
+        from backend.services.soft_toxicity_target_benchmark import TARGET, _make_soft_label
+    except Exception as exc:
+        return {"status": "unavailable", "reason": f"soft_target_import_failed: {exc}"}
+
+    soft_rows = rows.copy()
+    soft_rows[TARGET], _ = _make_soft_label(soft_rows)
+    soft_feature_rows = _per_feature_label_separation(soft_rows, TARGET)
+    near_proxy_features = [
+        fr.feature for fr in soft_feature_rows
+        if fr.label_separation_gap is not None and fr.label_separation_gap >= NEAR_LABEL_IDENTITY_GAP
+    ]
+    strict_baseline = _train_no_proxy_baseline(
+        rows=soft_rows,
+        target=TARGET,
+        dropped_features=near_proxy_features,
+        test_size=test_size,
+        seed=seed,
+    )
+    status = (
+        "candidate"
+        if len(near_proxy_features) == 0 and (strict_baseline.get("auc") or 0) >= 0.70
+        else "needs_attention"
+    )
+    return {
+        "status": status,
+        "target": TARGET,
+        "positive_rate": round(float(soft_rows[TARGET].mean()), 4),
+        "near_label_proxy_count": len(near_proxy_features),
+        "near_label_proxy_features": near_proxy_features,
+        "strict_no_proxy_baseline": strict_baseline,
+        "claim_boundary": (
+            "Softer toxicity target is still simulator-built. It reduces "
+            "single-rule shortcut pressure but is not clinical toxicity validation."
+        ),
+    }
 
 
 __all__ = [

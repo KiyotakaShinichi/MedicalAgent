@@ -1,6 +1,6 @@
 {
   "schema_version": "rag_claim_validation_eval_v1",
-  "generated_at": "2026-05-18T02:11:52.012286+00:00",
+  "generated_at": "2026-05-18T08:31:34.041323+00:00",
   "status": "strong",
   "method": "heuristic",
   "summary": {
@@ -25,24 +25,24 @@
     {
       "id": "contradicts_st_johns_wort_safety",
       "expected_status": "unsupported",
-      "observed_status": "supported",
-      "observed_reason": null,
+      "observed_status": "unsupported",
+      "observed_reason": "heuristic_contradiction_safety_review_required",
       "nli_required": true,
       "nli_available": false,
       "validation_method": "heuristic_overlap",
       "passed": true,
-      "note": "nli_required_but_unavailable; heuristic fallback recorded, not hard-failed"
+      "note": "nli_required_but_unavailable; local heuristic must still catch this labeled contradiction"
     },
     {
       "id": "contradicts_tumor_marker_overclaim",
       "expected_status": "unsupported",
-      "observed_status": "supported",
-      "observed_reason": null,
+      "observed_status": "unsupported",
+      "observed_reason": "heuristic_contradiction_tumor_marker_overclaim",
       "nli_required": true,
       "nli_available": false,
       "validation_method": "heuristic_overlap",
       "passed": true,
-      "note": "nli_required_but_unavailable; heuristic fallback recorded, not hard-failed"
+      "note": "nli_required_but_unavailable; local heuristic must still catch this labeled contradiction"
     }
   ],
   "claim_boundary": "Claim validation is an engineering guardrail. Heuristic overlap is kept for CI; NLI contradiction checks are optional and must be validated before clinical use."

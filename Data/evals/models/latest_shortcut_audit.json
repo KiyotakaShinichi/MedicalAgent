@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_commit": "11294c4d3886ec5570a1100b4d0ac1b3d5670c7c",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -9,20 +9,20 @@
       "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
       "source_csv": "920991:1778238158:44a845011924"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-17T11:59:45.782845+00:00"
+    "generated_at": "2026-05-18T08:32:48.014970+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-17T11:59:45.782845+00:00",
+    "generated_at": "2026-05-18T08:32:48.014970+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-18T11:59:45.782845+00:00",
+    "expires_at": "2026-05-19T08:32:48.014970+00:00",
     "status": "fresh"
   },
   "schema_version": "shortcut_audit_v1",
-  "generated_at": "2026-05-17T11:59:46.225502+00:00",
-  "status": "needs_attention",
+  "generated_at": "2026-05-18T08:32:48.713694+00:00",
+  "status": "acceptable",
   "toxicity_audit": {
     "full_auc": 0.9997,
     "no_nadir_cbc_auc": 0.9941,
@@ -109,6 +109,17 @@
       "importance_mean": 24.5036
     }
   ],
-  "recommendation": "Treat very high synthetic metrics as generator-fit evidence. Prefer softer labels, feature-removal ablations, and external-readiness checks before promotion.",
+  "mitigations": {
+    "toxicity_soft_target": {
+      "status": "not_needed",
+      "near_label_proxy_count": null,
+      "production_policy": "Legacy toxicity AUC is not promoted as learned clinical skill. Use review-only wording; prefer the softer synthetic target for experiments."
+    },
+    "response_regression_direct_imaging": {
+      "status": "bounded",
+      "production_policy": "MRI percent change is a direct response-monitoring signal, not hidden intelligence. The regression head must be described as imaging-supported and monitor-only; evidence-aware inference should abstain or lower confidence when imaging is absent."
+    }
+  },
+  "recommendation": "Treat very high synthetic metrics as generator-fit evidence. The legacy toxicity label should be described as shortcut-prone; prefer the softer toxicity-review target for synthetic experiments. Response regression is allowed to use direct imaging change only as a monitor-only imaging-supported signal, with abstention when imaging evidence is absent.",
   "claim_boundary": "Shortcut audit is synthetic-only. It finds generator shortcuts, not clinical truth."
 }

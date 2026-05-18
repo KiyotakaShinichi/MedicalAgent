@@ -12,7 +12,7 @@ engineering evidence only; they do not establish clinical validity.
 | Frontend unit behavior is currently stable | `cd frontend-react && npm run test` |
 | Frontend smoke flows work in a browser | `cd frontend-react && npm run test:e2e -- tests/e2e/smoke.spec.ts` |
 | Frontend lint/build are clean | `cd frontend-react && npm run lint && npm run build` |
-| Release artifacts are fresh and above configured thresholds | `python scripts/run_release_gate.py` |
+| Release artifacts are fresh and above configured thresholds | `python scripts/run_release_gate.py` using `config/release_gate_thresholds.yaml` |
 | Full local ship gate works cross-platform | `python scripts/ship.py` |
 
 ## Governance Artifacts
@@ -27,7 +27,8 @@ engineering evidence only; they do not establish clinical validity.
 | Shortcut audit | `Data/evals/models/latest_shortcut_audit.json` |
 | RAG safety/quality | `Data/evals/rag/latest_rag_benchmark.json` |
 | RAG intent-aware behavior | `Data/evals/rag/latest_rag_intent_aware_eval.json` |
-| RAG source governance | `Data/evals/rag/latest_kb_source_governance.json` |
+| RAG source governance | `Data/evals/rag/latest_kb_source_governance.json`; release gate requires no governance issues and at least 40 governed sources |
+| RAG claim validation | `Data/evals/rag/latest_rag_claim_validation_eval.json`; NLI is optional, heuristic fallback remains CI-safe |
 | Medical claim boundary | `Data/evals/safety/latest_medical_claim_boundary_eval.json` |
 | Failure-mode registry | `Data/evals/safety/latest_failure_mode_registry.json` |
 | Medical advisor review packet | `Data/evals/medical/latest_medical_advisor_review_packet.json` |
@@ -61,3 +62,10 @@ OncoTrack demonstrates controllable engineering discipline before clinical
 validation: leakage prevention, abstention, traceability, source-governed RAG,
 medical claim boundaries, release gates, and clinician-review workflows. It is
 not a clinical product and is not approved for real patient care.
+
+See also:
+
+- `docs/full_potential_under_constraints.md`
+- `docs/limitations.md`
+- `docs/what_this_does_not_prove.md`
+- `docs/release_gate.md`

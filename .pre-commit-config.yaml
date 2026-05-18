@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+      - id: oncotrack-breast-monitoring-gate
+        name: OncoTrack breast-monitoring integration gate
+        entry: python scripts/precommit_integration_gate.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]

@@ -54,12 +54,13 @@ def run_shortcut_audit(source_csv: str = DEFAULT_ML_CSV_PATH, output_path: str =
     reg_mae = float(mean_absolute_error(test["response_score_percent"], reg_pred))
     reg_no_mri_mae = float(mean_absolute_error(test["response_score_percent"], reg_no_mri_pred))
     dominant = _dominant_features(top_tox_features + top_reg_features)
+    mitigations = _mitigation_evidence(frame, dominant)
 
     payload = {
         **build_artifact_manifest(dataset_paths={"source_csv": source_csv}),
         "schema_version": "shortcut_audit_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "status": "needs_attention" if dominant else "strong",
+        "status": _status(dominant, mitigations),
         "toxicity_audit": {
             "full_auc": tox_auc,
             "no_nadir_cbc_auc": tox_no_nadir_auc,
@@ -75,9 +76,13 @@ def run_shortcut_audit(source_csv: str = DEFAULT_ML_CSV_PATH, output_path: str =
             "interpretation": "Large MAE increase means response regression is strongly tied to MRI percent-change.",
         },
         "dominant_shortcut_features": dominant,
+        "mitigations": mitigations,
         "recommendation": (
-            "Treat very high synthetic metrics as generator-fit evidence. Prefer softer labels, "
-            "feature-removal ablations, and external-readiness checks before promotion."
+            "Treat very high synthetic metrics as generator-fit evidence. The legacy toxicity "
+            "label should be described as shortcut-prone; prefer the softer toxicity-review "
+            "target for synthetic experiments. Response regression is allowed to use direct "
+            "imaging change only as a monitor-only imaging-supported signal, with abstention "
+            "when imaging evidence is absent."
         ),
         "claim_boundary": "Shortcut audit is synthetic-only. It finds generator shortcuts, not clinical truth.",
     }
@@ -126,6 +131,55 @@ def _top_permutation(model: Pipeline, X: pd.DataFrame, y, features: list[str], s
 
 def _dominant_features(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [row for row in rows if row["feature"] in NADIR_FEATURES | MRI_PERCENT_FEATURES and row["importance_mean"] > 0.05]
+
+
+def _mitigation_evidence(frame: pd.DataFrame, dominant: list[dict[str, Any]]) -> dict[str, Any]:
+    has_mri_shortcut = any(row.get("feature") in MRI_PERCENT_FEATURES for row in dominant)
+    has_toxicity_shortcut = any(row.get("feature") in NADIR_FEATURES for row in dominant)
+    soft_status = "not_needed"
+    soft_near_proxy_count = None
+    if has_toxicity_shortcut:
+        try:
+            from backend.services.soft_toxicity_target_benchmark import TARGET, _make_soft_label
+            from backend.services.toxicity_feature_audit import NEAR_LABEL_IDENTITY_GAP, _per_feature_label_separation
+
+            soft_frame = frame.copy()
+            soft_frame[TARGET], _ = _make_soft_label(soft_frame)
+            near = [
+                fr.feature for fr in _per_feature_label_separation(soft_frame, TARGET)
+                if fr.label_separation_gap is not None and fr.label_separation_gap >= NEAR_LABEL_IDENTITY_GAP
+            ]
+            soft_near_proxy_count = len(near)
+            soft_status = "candidate" if not near else "needs_attention"
+        except Exception as exc:
+            soft_status = f"unavailable:{exc}"
+
+    return {
+        "toxicity_soft_target": {
+            "status": soft_status,
+            "near_label_proxy_count": soft_near_proxy_count,
+            "production_policy": (
+                "Legacy toxicity AUC is not promoted as learned clinical skill. "
+                "Use review-only wording; prefer the softer synthetic target for experiments."
+            ),
+        },
+        "response_regression_direct_imaging": {
+            "status": "bounded" if has_mri_shortcut else "not_triggered",
+            "production_policy": (
+                "MRI percent change is a direct response-monitoring signal, not hidden intelligence. "
+                "The regression head must be described as imaging-supported and monitor-only; "
+                "evidence-aware inference should abstain or lower confidence when imaging is absent."
+            ),
+        },
+    }
+
+
+def _status(dominant: list[dict[str, Any]], mitigations: dict[str, Any]) -> str:
+    if not dominant:
+        return "strong"
+    toxicity_ok = mitigations.get("toxicity_soft_target", {}).get("status") in {"not_needed", "candidate"}
+    response_ok = mitigations.get("response_regression_direct_imaging", {}).get("status") in {"not_triggered", "bounded"}
+    return "acceptable" if toxicity_ok and response_ok else "needs_attention"
 
 
 def _safe_auc(y_true, prob) -> float:

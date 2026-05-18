@@ -23,6 +23,50 @@ from backend.services.kb_source_governance import (
 from backend.services.rag_intent_modes import RagModeConfig
 
 
+LEGACY_BUILTIN_SOURCE_GOVERNANCE: dict[str, dict[str, Any]] = {
+    "infection-safety": {
+        "tier": "T2",
+        "allowed_use": ["education", "patient_safety", "monitoring_context"],
+    },
+    "treatment-side-effects": {
+        "tier": "T2",
+        "allowed_use": ["education", "patient_safety", "monitoring_context"],
+    },
+    "breast-treatment-basics": {
+        "tier": "T2",
+        "allowed_use": ["education", "monitoring_context"],
+    },
+    "response-modeling": {
+        "tier": "T4",
+        "allowed_use": ["education", "monitoring_context", "portal_help"],
+    },
+    "supportive-care-safety": {
+        "tier": "T2",
+        "allowed_use": ["education", "patient_safety"],
+    },
+    "supplement-safety": {
+        "tier": "T2",
+        "allowed_use": ["education", "patient_safety"],
+    },
+    "cbc-monitoring": {
+        "tier": "T2",
+        "allowed_use": ["education", "monitoring_context", "patient_safety"],
+    },
+    "integrative-supportive-care": {
+        "tier": "T2",
+        "allowed_use": ["education", "patient_safety"],
+    },
+    "imaging-monitoring": {
+        "tier": "T3",
+        "allowed_use": ["education", "monitoring_context"],
+    },
+    "portal-help": {
+        "tier": "T4",
+        "allowed_use": ["portal_help"],
+    },
+}
+
+
 @dataclass
 class ChunkFilterDecision:
     """Per-chunk verdict produced by the filter."""
@@ -123,6 +167,15 @@ def _virtual_builtin_governance_row(chunk: Mapping[str, Any]) -> dict[str, Any] 
     source_name = str(chunk.get("source_name") or "").lower()
     source_url = str(chunk.get("source_url") or "").lower()
     parent_id = str(chunk.get("parent_id") or "").lower()
+
+    legacy = LEGACY_BUILTIN_SOURCE_GOVERNANCE.get(parent_id) or LEGACY_BUILTIN_SOURCE_GOVERNANCE.get(chunk_id)
+    if legacy:
+        return {
+            "source_id": parent_id or chunk_id,
+            "tier": legacy["tier"],
+            "allowed_use": legacy["allowed_use"],
+            "staleness_status": "current",
+        }
 
     if parent_id == "portal-help" or "portal" in source_name or chunk_id.startswith("portal-"):
         return {
@@ -288,12 +341,16 @@ def known_tier_for_source(source_identifier: str, *, governance_path: str = "") 
     row = index.get(source_identifier)
     if row:
         return row.get("tier") or "T5"
+    legacy = LEGACY_BUILTIN_SOURCE_GOVERNANCE.get(source_identifier)
+    if legacy:
+        return legacy["tier"]
     return "T5"
 
 
 __all__ = [
     "ChunkFilterDecision",
     "FilterResult",
+    "LEGACY_BUILTIN_SOURCE_GOVERNANCE",
     "filter_chunks_by_mode",
     "known_tier_for_source",
 ]
