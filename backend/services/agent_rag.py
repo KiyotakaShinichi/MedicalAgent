@@ -398,49 +398,9 @@ from backend.services.agent_output_gate import output_guardrail_check  # noqa: F
 # split.  Re-imported below.
 
 
-def _store_rag_evaluation_log(db, patient_id, query, result, rag_evaluation, retrieved, compressed):
-    hallucination = rag_evaluation["hallucination"]
-    grounding = rag_evaluation["answer_grounding"]
-    retrieval_precision = rag_evaluation["retrieval_precision_at_3"]
-    cost_latency = rag_evaluation["cost_latency"]
-    guardrails = rag_evaluation["guardrail_summary"]
-    row = RAGEvaluationLog(
-        patient_id=patient_id,
-        request_id=get_request_id(),
-        query_hash=_query_hash(_normalize_query(query)),
-        query_preview=redact_text(str(query or ""))[:120],
-        intent=result.get("intent") or "unknown",
-        safety_level=(result.get("safety") or {}).get("level") or "unknown",
-        cache_status=(result.get("cache") or {}).get("status"),
-        terminal_step=(result.get("pipeline_trace") or {}).get("terminal_step"),
-        retrieval_precision_at_3=retrieval_precision.get("value"),
-        grounding_score=grounding.get("score"),
-        hallucination_score=hallucination.get("score"),
-        hallucination_risk=hallucination.get("risk"),
-        input_guardrail_status=guardrails.get("input_status"),
-        output_guardrail_status=guardrails.get("output_status"),
-        latency_ms=cost_latency.get("latency_ms"),
-        estimated_input_tokens=cost_latency.get("estimated_input_tokens"),
-        estimated_output_tokens=cost_latency.get("estimated_output_tokens"),
-        estimated_total_tokens=cost_latency.get("estimated_total_tokens"),
-        estimated_llm_cost_usd=cost_latency.get("estimated_llm_cost_usd"),
-        retrieved_source_ids_json=json.dumps([item.get("id") for item in retrieved if item.get("id")]),
-        cited_source_ids_json=json.dumps([item.get("id") for item in result.get("citations") or []]),
-        guardrail_issues_json=json.dumps({
-            "input": guardrails.get("input_issues") or [],
-            "output": guardrails.get("output_issues") or [],
-        }),
-        rag_mode=result.get("rag_mode"),
-        rewritten_query=result.get("rewritten_query"),
-        evidence_grade_json=json.dumps(result.get("evidence_grade")) if result.get("evidence_grade") is not None else None,
-        claim_validation_json=json.dumps(result.get("claim_validation")) if result.get("claim_validation") is not None else None,
-        tier_filter_json=json.dumps(result.get("tier_filter")) if result.get("tier_filter") is not None else None,
-        post_gen_validator_json=json.dumps(result.get("post_gen_validator")) if result.get("post_gen_validator") is not None else None,
-    )
-    db.add(row)
-    db.commit()
-    db.refresh(row)
-    return row
+# _store_rag_evaluation_log moved to backend.services.agent_eval_log
+# (re-exported below).
+from backend.services.agent_eval_log import _store_rag_evaluation_log  # noqa: F401, E402
 
 
 # _contains_diagnostic_or_treatment_claim moved to
