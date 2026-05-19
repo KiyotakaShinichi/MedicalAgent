@@ -193,6 +193,20 @@ def judge_rag_answer_with_local_llm(case, answer, citations=None, retrieved_cont
 
 
 def _adjudicate_json(system, prompt):
+    # Latency escape hatch: set ONCOTRACK_FAST_MODE=1 to disable every
+    # LLM adjudication on the hot chat path.  A 120B-class local model
+    # can take 30+ seconds per call; production load should skip these
+    # entirely and rely on the deterministic safety stack
+    # (security_guardrails patterns, route_intent deterministic
+    # branches, post_generation_validator).  Offline RAG / safety eval
+    # scripts can leave the env var unset to keep adjudication on.
+    import os
+    if os.environ.get("ONCOTRACK_FAST_MODE", "").strip().lower() in {"1", "true", "yes"}:
+        return {
+            "available": False,
+            "reason": "llm_adjudicator_disabled_by_fast_mode",
+        }
+
     failures = []
     for provider in configured_llm_providers():
         if provider["provider"] == "groq":

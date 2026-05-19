@@ -29,7 +29,10 @@ from pathlib import Path
 
 import joblib
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
+
+# sklearn.feature_extraction.text is ~2.5s to import (drags in
+# scipy/sklearn/preprocessing). Deferred to inside the build path so
+# warm chat calls that hit only the cached index don't pay the cost.
 
 # -- Optional dense-retrieval dependencies -------------------------------------
 _FORCE_SPARSE = os.getenv("RAG_FORCE_SPARSE", "").strip().lower() in {"1", "true", "yes"}
@@ -98,7 +101,10 @@ def build_rag_vector_index(corpus, index_path=DEFAULT_RAG_INDEX_PATH, knowledge_
 
     fingerprint = knowledge_fingerprint or corpus_fingerprint(documents)
 
-    # TF-IDF - always built (used as dense-unavailable fallback and backward-compat)
+    # TF-IDF - always built (used as dense-unavailable fallback and backward-compat).
+    # Deferred import keeps the ~2.5s sklearn.feature_extraction.text load
+    # off the hot chat path; the index build is the only call site.
+    from sklearn.feature_extraction.text import TfidfVectorizer
     vectorizer = TfidfVectorizer(
         lowercase=True,
         ngram_range=(1, 2),
