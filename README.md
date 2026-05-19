@@ -50,6 +50,10 @@ python scripts/run_modality_dropout_regression_training.py
 python scripts/run_regression_robustness_comparison.py
 python scripts/run_taglish_safety_parity.py
 python scripts/run_rag_intent_aware_eval.py
+python scripts/run_common_feature_transfer_stress.py
+python scripts/run_public_distribution_realism_candidate.py
+python scripts/run_realism_candidate_ab_gate.py
+python scripts/run_dataset_expansion_deep_search.py
 pytest tests/test_leakage_audit.py tests/test_evidence_abstention.py \
        tests/test_prediction_trace.py tests/test_modality_robustness.py \
        tests/test_live_evidence_prediction.py tests/test_provenance_artifacts.py \
@@ -130,6 +134,11 @@ Implementation: [backend/services/genetic_counseling.py](backend/services/geneti
 - BreastDCEDL baseline response classifier using MRI-derived tabular features.
 - Biomarker/tumor-marker retraining readiness is tracked as a separate feature-ablation benchmark. It compares monitoring-only features, the current default subtype-aware feature set, and an enhanced candidate with structured ER/PR/HER2/Ki-67, synthetic germline-risk flag, and CA 15-3/CA 27.29/CEA tumor-marker trend features.
 - The biomarker feature benchmark reports feature lineage, missingness, leakage caveats, classification deltas, response-regression deltas, and a promotion recommendation. Current status is `monitor_only`: enhanced synthetic features are roughly comparable to the current default and should not be promoted without temporal and external/public-data validation.
+- cBioPortal TCGA-BRCA/METABRIC clinical rows are exported into the canonical oncology schema for distribution and interoperability checks. These rows add public demographic, receptor/subtype, treatment-context, survival/recurrence, and mutation-count context, but they are not longitudinal OncoTrack monitoring rows.
+- Common-feature transfer stress testing trains/evaluates only on shared fields (`age`, tumor-size proxy, HR/HER2/triple-negative indicators) across synthetic rows and BreastDCEDL/cBioPortal bridges. It reports distribution shift and cross-source brittleness while keeping `promotion_allowed = false`.
+- A public-distribution realism candidate dataset is generated separately under `Data/external_bridge/realism_candidate/`. It shifts selected synthetic age and tumor-size proxy distributions toward public cohort summaries for A/B stress testing only; it is not a replacement generator and not clinical validation.
+- The current-vs-realism-candidate A/B gate compares the current synthetic rows with the public-distribution candidate across leakage, classification, regression, shortcut, calibration-style, and counterfactual-stability checks. Current decision remains `keep_current_default`; the candidate is `ab_test_only`.
+- Dataset expansion deep search now tracks the strongest next public/restricted sources for treatment histories, genomics, imaging response, biomarker context, and lab realism, with GENIE BPC BRCA and Duke Breast MRI as the highest-priority next bridges.
 - Model artifacts, registry metadata, promotion/rollback, and local MLOps tracking.
 - Versioned evaluation reports and MLE readiness gates.
 
@@ -139,7 +148,7 @@ Implementation: [backend/services/complete_synthetic_training.py](backend/servic
 - Complete synthetic breast cancer journeys for labs, symptoms, treatments, interventions, imaging summaries, and outcomes.
 - Used for workflow practice, safety testing, and MLE readiness evidence, not clinical validation.
 
-Details: [docs/synthetic_data.md](docs/synthetic_data.md) and [DATA_CARD.md](DATA_CARD.md).
+Details: [docs/synthetic_data.md](docs/synthetic_data.md), [DATA_CARD.md](DATA_CARD.md), and [docs/data_dictionary.md](docs/data_dictionary.md).
 
 ## Evaluation suite
 - RAG regression, safety regression, ML metrics, and workflow feedback tracking.
@@ -230,6 +239,8 @@ rebuild it, run `python scripts/reset_local_db.py`. See
 - Expand multimodal signals with validated imaging workflows.
 - Harden production security controls and PHI handling for real deployment.
 - Add clinician-reviewed gold cases for summary quality evaluation.
+- A/B test the current synthetic generator against the public-distribution realism candidate using the full leakage, shortcut, calibration, counterfactual, and release-gate stack before considering any generator change.
+- Build the GENIE BPC BRCA and Duke Breast MRI mappers next; these are the most useful student-accessible bridges for treatment-history/genomics and imaging/treatment-context expansion.
 - Replace rule-based abstention with a learned evidence-sufficiency head; current rules are explicit defaults a clinical advisor can review and override.
 - Wire `predict_and_trace` into the clinician review surface so traces correlate with reviewer decisions in `ClinicalSummaryReview`.
 - Bring the clinician dashboard up to the patient-portal's SectionCard + structured-form standard.

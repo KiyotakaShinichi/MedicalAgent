@@ -96,6 +96,15 @@ This guide explains the terms used in this project in plain language. The safest
 | System card | Document for the whole AI system. | Safety boundaries, risks, mitigations. |
 | Error taxonomy | Named failure categories. | Makes mistakes reviewable instead of vague. |
 | Claim boundary | What we are allowed to say. | Engineering PoC, not clinical validation. |
+| Canonical schema | Shared field contract across datasets. | Maps synthetic, BreastDCEDL, and cBioPortal rows into comparable names without pretending their labels are identical. |
+| Common-feature transfer stress | Train/score using only fields shared across sources. | Exposes distribution shift and brittle transfer behavior; not clinical validation. |
+| Label mismatch | Two datasets use labels with different meanings. | Synthetic treatment success, pCR, and recurrence/survival labels must not be treated as the same target. |
+| Distribution alignment | Comparing field distributions across cohorts. | Checks whether synthetic age, tumor-size proxy, subtype, and treatment-context distributions look unlike public cohorts. |
+| Public-distribution realism candidate | Separate synthetic candidate tuned toward public summaries. | Used for A/B stress testing generator realism only, not as a validated replacement dataset. |
+| Realism candidate A/B gate | Controlled comparison of current synthetic rows vs a realism-tuned candidate. | Keeps the current generator as default unless the candidate clears leakage, shortcut, calibration, regression, and stability checks. |
+| Dataset expansion manifest | Governed catalog of possible external datasets. | Ranks sources by what they can responsibly improve: treatment history, imaging response, molecular context, lab realism, or tumor-marker education. |
+| PSI / population stability index | Distribution-shift score between two samples. | Higher PSI-style values warn that a feature transfers poorly across cohorts. |
+| Promotion allowed | Whether a model/artifact can move into stronger use. | Public-data bridge artifacts keep `promotion_allowed = false` until exact-label temporal/external validation exists. |
 
 ## Medical Terms
 

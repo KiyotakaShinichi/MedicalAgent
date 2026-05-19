@@ -1,0 +1,83 @@
+{
+  "schema_version": "strict_common_feature_ab_eval_v1",
+  "generated_at": "2026-05-18T17:03:29.546997+00:00",
+  "status": "strong",
+  "feature_set": [
+    "age",
+    "baseline_tumor_size_mm",
+    "hr_positive",
+    "her2_positive",
+    "triple_negative"
+  ],
+  "datasets": {
+    "synthetic_patient_level": {
+      "rows": 600,
+      "label": "treatment_success_binary",
+      "metrics": {
+        "status": "computed",
+        "rows": 600,
+        "test_rows": 180,
+        "positive_rate": 0.5533,
+        "roc_auc": 0.8688,
+        "brier": 0.1462,
+        "accuracy": 0.7722
+      }
+    },
+    "breastdcedl_spy1": {
+      "rows": 159,
+      "label": "pCR",
+      "metrics": {
+        "status": "computed",
+        "rows": 159,
+        "test_rows": 48,
+        "positive_rate": 0.2767,
+        "roc_auc": 0.5978,
+        "brier": 0.258,
+        "accuracy": 0.5
+      }
+    }
+  },
+  "distribution_comparison": {
+    "age": {
+      "synthetic_mean": 52.64,
+      "external_mean": 48.3011,
+      "absolute_mean_delta": 4.3389,
+      "synthetic_missing_rate": 0.0,
+      "external_missing_rate": 0.0
+    },
+    "baseline_tumor_size_mm": {
+      "synthetic_mean": 25.6848,
+      "external_mean": 67.7785,
+      "absolute_mean_delta": 42.0937,
+      "synthetic_missing_rate": 0.0667,
+      "external_missing_rate": 0.0063
+    },
+    "hr_positive": {
+      "synthetic_mean": 0.6,
+      "external_mean": 0.4151,
+      "absolute_mean_delta": 0.1849,
+      "synthetic_missing_rate": 0.0,
+      "external_missing_rate": 0.0
+    },
+    "her2_positive": {
+      "synthetic_mean": 0.4,
+      "external_mean": 0.3145,
+      "absolute_mean_delta": 0.0855,
+      "synthetic_missing_rate": 0.0,
+      "external_missing_rate": 0.0
+    },
+    "triple_negative": {
+      "synthetic_mean": 0.2,
+      "external_mean": 0.2516,
+      "absolute_mean_delta": 0.0516,
+      "synthetic_missing_rate": 0.0,
+      "external_missing_rate": 0.0
+    }
+  },
+  "ab_decision": {
+    "decision": "hold_monitor_only",
+    "reason": "The strict common fields are useful for A/B sanity checks, but synthetic treatment success and external pCR are not identical endpoints.",
+    "promotion_allowed": false
+  },
+  "claim_boundary": "Strict common-feature A/B is an engineering comparability check. It uses only fields shared by the synthetic timeline and BreastDCEDL/I-SPY pCR snapshot, but the labels are not the same clinical task. It must not be described as clinical validation or treatment superiority."
+}

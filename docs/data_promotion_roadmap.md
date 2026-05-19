@@ -9,6 +9,18 @@ Current policy: **monitor-only**.
 
 - Synthetic temporal patient journeys support controlled engineering tests.
 - BreastDCEDL/I-SPY is mapped as an external MRI/pCR sanity-check benchmark.
+- cBioPortal TCGA-BRCA/METABRIC clinical rows are exported into the canonical
+  schema for public receptor/subtype, mutation-count, survival/recurrence, and
+  treatment-context distribution checks.
+- A common-feature transfer stress test now uses only shared fields across
+  synthetic, BreastDCEDL, and cBioPortal bridges to expose domain shift without
+  pretending labels match.
+- A public-distribution realism candidate dataset is generated separately for
+  A/B stress testing; it is not a replacement for the current generator.
+- The current-vs-realism-candidate A/B gate keeps the current generator as the
+  default and limits the candidate to A/B experiments.
+- Dataset expansion deep search ranks GENIE BPC BRCA and Duke Breast MRI as the
+  highest-priority next bridges under current student-accessible constraints.
 - Synthetic treatment-sequence features now organize chemotherapy, HER2-targeted
   context, endocrine context, planned surgery/radiation context, and supportive
   care context.
@@ -37,20 +49,28 @@ Any future promotion would require:
 
 ## Next Big Student-Feasible Steps
 
-1. Map a second public external cohort into the canonical schema, preferably
-   TCGA-BRCA or METABRIC for biomarker/genomic distribution checks.
-2. Run strict feature-subset A/B tests using only fields shared between
-   synthetic data and public external benchmarks.
-3. Improve the toxicity target into a softer review-priority simulator label
+1. Build a GENIE BPC BRCA readiness/mapper artifact for systemic treatment
+   histories and clinico-genomic context.
+2. Map Duke Breast Cancer MRI clinical-and-other-features into the canonical
+   schema as the next imaging/treatment-context bridge.
+3. Keep running full A/B release gates comparing the current generator against
+   public-distribution realism candidates.
+4. Expand common-feature transfer stress to include additional public cohorts
+   only when their field semantics match the canonical data dictionary.
+5. Improve the toxicity target into a softer review-priority simulator label
    that is less directly reconstructed from nadir CBC.
-4. Expand the external failure-case gallery by subtype and confidence bucket.
-5. Prepare a data-access packet for restricted future cohorts such as GENIE BPC
+6. Expand the external failure-case gallery by subtype and confidence bucket.
+7. Prepare a data-access packet for restricted future cohorts such as GENIE BPC
    or SEER-Medicare.
 
 ## Command
 
 ```bash
 python scripts/run_data_promotion_roadmap.py
+python scripts/run_common_feature_transfer_stress.py
+python scripts/run_public_distribution_realism_candidate.py
+python scripts/run_realism_candidate_ab_gate.py
+python scripts/run_dataset_expansion_deep_search.py
 ```
 
 Artifact:

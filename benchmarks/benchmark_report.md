@@ -1,6 +1,6 @@
 # MedicalAgent Benchmark Registry
 
-Generated at: 2026-05-18T16:54:44.412748+00:00
+Generated at: 2026-05-19T02:39:01.589254+00:00
 
 Overall status: **needs_attention**
 Critical status: **stale**
@@ -26,7 +26,7 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | Hybrid prediction subgroup metrics | supporting | stale | stale | status=strong; n=900; classification_coverage=1.000; regression_coverage=1.000; toxicity_coverage=1.000 | `Data/evals/models/latest_hybrid_subgroup_metrics.json` |
 | Synthetic realism hardening patterns | supporting | needs_attention | fresh | status=needs_attention; checks_passed=5; checks_total=8; rows=3600 | `Data/evals/models/latest_synthetic_realism_hardening.json` |
 | Self-supervised synthetic timeline pretraining | supporting | stale | stale | status=strong; masked_lab_mae=0.251; masked_symptom_f1=0.866; masked_imaging_signal_accuracy=0.862; leakage_check_status=passed | `Data/evals/models/latest_self_supervised_timeline.json` |
-| Counterfactual stability | critical | strong | fresh | status=strong; scenario_count=6; unacceptable_flip_count=0; max_probability_delta=0.163 | `Data/evals/models/latest_counterfactual_stability.json` |
+| Counterfactual stability | critical | stale | stale | status=strong; scenario_count=6; unacceptable_flip_count=0; max_probability_delta=0.163 | `Data/evals/models/latest_counterfactual_stability.json` |
 | Learned abstention head | supporting | stale | stale | status=strong; auroc=0.816; learned_coverage=0.464; rule_based_coverage=0.624 | `Data/evals/models/latest_learned_abstention.json` |
 | Per-head hybrid calibration | critical | stale | stale | status=strong; classification_brier=0.072; classification_ece=0.032; toxicity_brier=0.002; toxicity_ece=0.002 | `Data/evals/models/latest_per_head_calibration.json` |
 | Hybrid shortcut audit | critical | acceptable | fresh | status=acceptable; toxicity_auc=1.000; toxicity_auc_drop_without_nadir=0.006; regression_mae_increase_without_mri=9.659 | `Data/evals/models/latest_shortcut_audit.json` |
@@ -43,6 +43,18 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | External benchmark failure-case gallery | supporting | strong | fresh | status=strong; case_count=61; false_positive_count=46; false_negative_count=15 | `Data/evals/models/latest_external_failure_case_gallery.json` |
 | Synthetic treatment-sequence feature eval | supporting | strong | fresh | status=strong; patient_count=600; pattern_count=13; chemotherapy_count=600; targeted_anti_her2_count=240 | `Data/evals/models/latest_treatment_sequence_feature_eval.json` |
 | Data-to-promotion roadmap | supporting | strong | fresh | status=strong; model_head_count=6; current_global_policy=monitor_only; may_influence_treatment=False | `Data/evals/models/latest_data_promotion_roadmap.json` |
+| TCGA/METABRIC canonical mapping | supporting | strong | fresh | status=strong; mapped_dataset_count=2 | `Data/evals/models/latest_tcga_metabric_canonical_mapping.json` |
+| Strict common-feature external A/B eval | supporting | strong | fresh | status=strong; synthetic_auc=0.869; external_auc=0.598; promotion_allowed=False | `Data/evals/models/latest_strict_common_feature_ab_eval.json` |
+| Toxicity review-priority target v2 | supporting | candidate | fresh | status=candidate; auroc=0.962; legacy_rule_accuracy_against_v2=0.669; legacy_rule_does_not_define_v2=True | `Data/evals/models/latest_toxicity_review_target_v2.json` |
+| External failure cases by subtype/confidence | supporting | strong | fresh | status=strong; failure_count=61; high_confidence_failure_count=24 | `Data/evals/models/latest_external_failure_case_analysis.json` |
+| Restricted dataset access packet | supporting | ready_for_future_access_request | fresh | status=ready_for_future_access_request | `Data/evals/models/latest_restricted_data_access_packet.json` |
+| cBioPortal TCGA/METABRIC clinical export | supporting | strong | fresh | status=strong; row_count=3593; validation_status=passed; full_temporal_validation=False | `Data/evals/models/latest_cbioportal_clinical_export.json` |
+| External distribution alignment | supporting | strong | fresh | status=strong; synthetic_rows=600; cbioportal_rows=3593 | `Data/evals/models/latest_external_distribution_alignment.json` |
+| Student-constraint elevation plan | supporting | strong | fresh | status=strong | `Data/evals/models/latest_student_constraint_elevation_plan.json` |
+| Common-feature transfer stress | supporting | strong | fresh | status=strong; synthetic_auc=0.869; breastdcedl_auc=0.598; promotion_allowed=False | `Data/evals/models/latest_common_feature_transfer_stress.json` |
+| Public-distribution synthetic realism candidate | supporting | candidate | fresh | status=candidate; rows=3600; patients=600; production_replacement_allowed=False | `Data/evals/models/latest_public_distribution_realism_candidate.json` |
+| Current vs public-distribution realism candidate A/B gate | supporting | candidate | fresh | status=candidate; decision=keep_current_default; candidate_use=ab_test_only; production_replacement_allowed=False; classification_auroc_delta=0.000; regression_mae_delta=-0.001 | `Data/evals/models/latest_realism_candidate_ab_gate.json` |
+| Dataset expansion deep-search catalog | supporting | strong | fresh | status=strong; dataset_count=10 | `Data/evals/models/latest_dataset_expansion_deep_search.json` |
 | TCGA/METABRIC cBioPortal schema mapping | supporting | stale | stale | status=ready; mapped_dataset_count=2; mapping_hash=2a75497980aec90f | `Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json` |
 | Offline A/B safety-control suite | supporting | strong | fresh | status=strong; test_count=3; overall_decision=REJECT; expectations_passed=3; expectations_failed=0 | `Data/evals/ab_tests/latest_ab_test_report.json` |
 | MLE readiness gate | critical | stale | stale | hard_gate_status=passed; release_recommendation=candidate_only_fix_calibration_or_slice_gaps_before_strong_claims; safety_regression=passed; monitoring=acceptable | `Data/mle_monitoring/latest_mle_readiness.json` |
@@ -68,7 +80,7 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | RAG source-tier retrieval ablation (T1 / T1+T2 / T1+T2+T3 / all) | supporting | acceptable | fresh | status=acceptable | `Data/evals/rag/latest_rag_tier_ablation.json` |
 | Taglish ↔ English safety-route parity | critical | stale | stale | status=strong; pass_rate=1.000; intent_parity_rate=1.000; safety_scope_parity_rate=1.000; case_count=6 | `Data/evals/safety/latest_taglish_safety_parity.json` |
 | Model benchmark | critical | stale | stale | synthetic_champion_auroc=0.995; synthetic_champion_auprc=0.996; synthetic_champion_brier=0.047; external_breastdcedl_auroc=0.637 | `Data/evals/models/latest_model_benchmark.json` |
-| Current vs realism-calibrated candidate | critical | stale | stale | decision=promote_candidate_after_review; auc_delta=-0.001; realism_delta=0.433; candidate_alignment=0.861; current_alignment=0.428 | `Data/mle_monitoring/current_vs_realism_candidate.json` |
+| Current vs realism-calibrated candidate | critical | candidate | fresh | status=candidate; decision=keep_current_default; candidate_use=ab_test_only; production_replacement_allowed=False; classification_auroc_delta=0.000; regression_mae_delta=-0.001 | `Data/mle_monitoring/current_vs_realism_candidate.json` |
 | Synthetic realism candidate | critical | stale | stale | alignment_score={'score': 0.844, 'status': 'passed', 'interpretation': '0.90+ is strong, 0.75+ is passed, 0.60+ is acceptable. This is an engineering realism score, not clinical validity.'}; training_patients=240; threshold_coverage_status=acceptable | `Data/mle_monitoring/synthetic_realism_candidate_report.json` |
 | Noise robustness | supporting | mild_degradation | fresh | max_auroc_drop=0.064; test_patients=60; test_rows=360 | `Data/mle_monitoring/noise_eval_report.json` |
 | Temporal generalization | supporting | stable | fresh | temporal_auroc=0.978; random_baseline_auroc=0.975 | `Data/mle_monitoring/temporal_eval_report.json` |
@@ -93,6 +105,7 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: hybrid_subgroup_metrics (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: synthetic_realism_hardening (needs_attention) - Benchmark needs review before using it as supporting evidence.
 - medium: self_supervised_timeline (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: counterfactual_stability (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: learned_abstention (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: per_head_calibration (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: medical_advisor_review_packet (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -117,7 +130,6 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: failure_mode_registry (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: taglish_safety_parity (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: model_benchmark (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
-- medium: current_vs_realism_candidate (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: synthetic_realism_candidate (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: clinician_summary (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: clinical_safety_review_checklist (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -127,6 +139,5 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: ultrasound_baseline (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 
 ## Next Actions
-- Promote the realism-calibrated synthetic candidate after reviewing threshold coverage and model-card language.
 - Keep LLM-judge optional, or configure a provider and rerun it as a heuristic grounding review.
 - Rerun MLE readiness after benchmark refresh; it should consume the latest realism, noise, temporal, and safety artifacts.

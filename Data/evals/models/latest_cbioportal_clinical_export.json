@@ -1,0 +1,198 @@
+{
+  "schema_version": "cbioportal_clinical_export_v1",
+  "generated_at": "2026-05-19T01:44:17.169006+00:00",
+  "status": "strong",
+  "studies": {
+    "brca_metabric": {
+      "label": "METABRIC Breast Cancer",
+      "source_dataset": "metabric_cbioportal",
+      "status": "mapped",
+      "fetch_status": "downloaded",
+      "fetch_error": null,
+      "row_count": 2509,
+      "canonical_csv": "Data\\external_bridge\\cbioportal\\canonical_metabric_cbioportal.csv",
+      "validation": {
+        "status": "passed",
+        "row_count": 2509,
+        "issue_count": 0,
+        "issues": []
+      },
+      "coverage": {
+        "subtype_counts": {
+          "LumA": 700,
+          "unknown": 529,
+          "LumB": 475,
+          "Her2": 224,
+          "claudin-low": 218,
+          "Basal": 209,
+          "Normal": 148,
+          "NC": 6
+        },
+        "stage_counts": {
+          "2": 979,
+          "unknown": 721,
+          "1": 630,
+          "3": 144,
+          "0": 24,
+          "4": 11
+        },
+        "treatment_modality_counts": {
+          "surgery": 1955,
+          "endocrine": 1216,
+          "radiation": 1173,
+          "chemotherapy": 412
+        },
+        "known_field_counts": {
+          "er_status": 2469,
+          "pr_status": 1980,
+          "her2_status": 1980,
+          "stage": 1788,
+          "molecular_subtype": 1980
+        },
+        "roles_supported": {
+          "external_distribution_alignment": true,
+          "biomarker_schema_mapping": true,
+          "full_oncotrack_temporal_validation": false,
+          "treatment_response_training": false,
+          "tumor_marker_response_training": false
+        }
+      },
+      "source_urls": [
+        "https://www.cbioportal.org/study/summary?id=brca_metabric",
+        "https://www.cbioportal.org/api/studies/brca_metabric?projection=SUMMARY"
+      ]
+    },
+    "brca_tcga_pan_can_atlas_2018": {
+      "label": "TCGA-BRCA PanCancer Atlas",
+      "source_dataset": "tcga_brca_pan_can_atlas_2018",
+      "status": "mapped",
+      "fetch_status": "downloaded",
+      "fetch_error": null,
+      "row_count": 1084,
+      "canonical_csv": "Data\\external_bridge\\cbioportal\\canonical_tcga_brca_pan_can_atlas_2018.csv",
+      "validation": {
+        "status": "passed",
+        "row_count": 1084,
+        "issue_count": 0,
+        "issues": []
+      },
+      "coverage": {
+        "subtype_counts": {
+          "BRCA_LumA": 499,
+          "BRCA_LumB": 197,
+          "BRCA_Basal": 171,
+          "BRCA_Her2": 78,
+          "Breast Invasive Ductal Carcinoma": 51,
+          "Breast Invasive Lobular Carcinoma": 39,
+          "BRCA_Normal": 36,
+          "Breast Invasive Carcinoma (NOS)": 7,
+          "Breast Invasive Mixed Mucinous Carcinoma": 4,
+          "Metaplastic Breast Cancer": 2
+        },
+        "stage_counts": {
+          "STAGE IIA": 355,
+          "STAGE IIB": 255,
+          "STAGE IIIA": 155,
+          "STAGE I": 89,
+          "STAGE IA": 86,
+          "STAGE IIIC": 64,
+          "STAGE IIIB": 28,
+          "STAGE IV": 19,
+          "STAGE X": 14,
+          "STAGE IB": 6,
+          "STAGE II": 6,
+          "unknown": 5
+        },
+        "treatment_modality_counts": {
+          "radiation": 549,
+          "neoadjuvant_context": 6
+        },
+        "known_field_counts": {
+          "stage": 1079,
+          "molecular_subtype": 1084
+        },
+        "roles_supported": {
+          "external_distribution_alignment": true,
+          "biomarker_schema_mapping": true,
+          "full_oncotrack_temporal_validation": false,
+          "treatment_response_training": false,
+          "tumor_marker_response_training": false
+        }
+      },
+      "source_urls": [
+        "https://www.cbioportal.org/study/summary?id=brca_tcga_pan_can_atlas_2018",
+        "https://www.cbioportal.org/api/studies/brca_tcga_pan_can_atlas_2018?projection=SUMMARY"
+      ]
+    }
+  },
+  "combined": {
+    "row_count": 3593,
+    "canonical_csv": "Data/external_bridge/cbioportal/canonical_cbioportal_breast_rows.csv",
+    "validation": {
+      "status": "passed",
+      "row_count": 3593,
+      "issue_count": 0,
+      "issues": []
+    },
+    "coverage": {
+      "subtype_counts": {
+        "LumA": 700,
+        "unknown": 529,
+        "BRCA_LumA": 499,
+        "LumB": 475,
+        "Her2": 224,
+        "claudin-low": 218,
+        "Basal": 209,
+        "BRCA_LumB": 197,
+        "BRCA_Basal": 171,
+        "Normal": 148,
+        "BRCA_Her2": 78,
+        "Breast Invasive Ductal Carcinoma": 51
+      },
+      "stage_counts": {
+        "2": 979,
+        "unknown": 726,
+        "1": 630,
+        "STAGE IIA": 355,
+        "STAGE IIB": 255,
+        "STAGE IIIA": 155,
+        "3": 144,
+        "STAGE I": 89,
+        "STAGE IA": 86,
+        "STAGE IIIC": 64,
+        "STAGE IIIB": 28,
+        "0": 24
+      },
+      "treatment_modality_counts": {
+        "surgery": 1955,
+        "radiation": 1722,
+        "endocrine": 1216,
+        "chemotherapy": 412,
+        "neoadjuvant_context": 6
+      },
+      "known_field_counts": {
+        "er_status": 2469,
+        "pr_status": 1980,
+        "her2_status": 1980,
+        "stage": 2867,
+        "molecular_subtype": 3064
+      },
+      "roles_supported": {
+        "external_distribution_alignment": true,
+        "biomarker_schema_mapping": true,
+        "full_oncotrack_temporal_validation": false,
+        "treatment_response_training": false,
+        "tumor_marker_response_training": false
+      }
+    }
+  },
+  "not_supported_for_model_promotion": [
+    "serial CBC timeline",
+    "patient-reported symptom timeline",
+    "treatment-cycle medication sequence",
+    "imaging response timeline",
+    "tumor-marker response trajectory",
+    "OncoTrack response-score label"
+  ],
+  "claim_boundary": "cBioPortal clinical export maps public TCGA/METABRIC clinical attributes into the OncoTrack canonical schema for distribution and interoperability checks only. These rows are not OncoTrack longitudinal monitoring rows and do not validate treatment response, toxicity, recurrence, prognosis, or treatment decisions."
+}

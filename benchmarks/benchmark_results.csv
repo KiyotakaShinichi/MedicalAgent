@@ -64,10 +64,10 @@ self_supervised_timeline,Self-supervised synthetic timeline pretraining,supporti
 self_supervised_timeline,Self-supervised synthetic timeline pretraining,supporting,stale,strong,stale,Data/evals/models/latest_self_supervised_timeline.json,masked_symptom_f1,0.8658
 self_supervised_timeline,Self-supervised synthetic timeline pretraining,supporting,stale,strong,stale,Data/evals/models/latest_self_supervised_timeline.json,masked_imaging_signal_accuracy,0.8618
 self_supervised_timeline,Self-supervised synthetic timeline pretraining,supporting,stale,strong,stale,Data/evals/models/latest_self_supervised_timeline.json,leakage_check_status,passed
-counterfactual_stability,Counterfactual stability,critical,strong,strong,fresh,Data/evals/models/latest_counterfactual_stability.json,status,strong
-counterfactual_stability,Counterfactual stability,critical,strong,strong,fresh,Data/evals/models/latest_counterfactual_stability.json,scenario_count,6
-counterfactual_stability,Counterfactual stability,critical,strong,strong,fresh,Data/evals/models/latest_counterfactual_stability.json,unacceptable_flip_count,0
-counterfactual_stability,Counterfactual stability,critical,strong,strong,fresh,Data/evals/models/latest_counterfactual_stability.json,max_probability_delta,0.1631
+counterfactual_stability,Counterfactual stability,critical,stale,strong,stale,Data/evals/models/latest_counterfactual_stability.json,status,strong
+counterfactual_stability,Counterfactual stability,critical,stale,strong,stale,Data/evals/models/latest_counterfactual_stability.json,scenario_count,6
+counterfactual_stability,Counterfactual stability,critical,stale,strong,stale,Data/evals/models/latest_counterfactual_stability.json,unacceptable_flip_count,0
+counterfactual_stability,Counterfactual stability,critical,stale,strong,stale,Data/evals/models/latest_counterfactual_stability.json,max_probability_delta,0.1631
 learned_abstention,Learned abstention head,supporting,stale,strong,stale,Data/evals/models/latest_learned_abstention.json,status,strong
 learned_abstention,Learned abstention head,supporting,stale,strong,stale,Data/evals/models/latest_learned_abstention.json,auroc,0.8163
 learned_abstention,Learned abstention head,supporting,stale,strong,stale,Data/evals/models/latest_learned_abstention.json,learned_coverage,0.4642
@@ -132,6 +132,44 @@ data_promotion_roadmap,Data-to-promotion roadmap,supporting,strong,strong,fresh,
 data_promotion_roadmap,Data-to-promotion roadmap,supporting,strong,strong,fresh,Data/evals/models/latest_data_promotion_roadmap.json,model_head_count,6
 data_promotion_roadmap,Data-to-promotion roadmap,supporting,strong,strong,fresh,Data/evals/models/latest_data_promotion_roadmap.json,current_global_policy,monitor_only
 data_promotion_roadmap,Data-to-promotion roadmap,supporting,strong,strong,fresh,Data/evals/models/latest_data_promotion_roadmap.json,may_influence_treatment,False
+tcga_metabric_canonical_mapping,TCGA/METABRIC canonical mapping,supporting,strong,strong,fresh,Data/evals/models/latest_tcga_metabric_canonical_mapping.json,status,strong
+tcga_metabric_canonical_mapping,TCGA/METABRIC canonical mapping,supporting,strong,strong,fresh,Data/evals/models/latest_tcga_metabric_canonical_mapping.json,mapped_dataset_count,2
+strict_common_feature_ab_eval,Strict common-feature external A/B eval,supporting,strong,strong,fresh,Data/evals/models/latest_strict_common_feature_ab_eval.json,status,strong
+strict_common_feature_ab_eval,Strict common-feature external A/B eval,supporting,strong,strong,fresh,Data/evals/models/latest_strict_common_feature_ab_eval.json,synthetic_auc,0.8688
+strict_common_feature_ab_eval,Strict common-feature external A/B eval,supporting,strong,strong,fresh,Data/evals/models/latest_strict_common_feature_ab_eval.json,external_auc,0.5978
+strict_common_feature_ab_eval,Strict common-feature external A/B eval,supporting,strong,strong,fresh,Data/evals/models/latest_strict_common_feature_ab_eval.json,promotion_allowed,False
+toxicity_review_target_v2,Toxicity review-priority target v2,supporting,candidate,candidate,fresh,Data/evals/models/latest_toxicity_review_target_v2.json,status,candidate
+toxicity_review_target_v2,Toxicity review-priority target v2,supporting,candidate,candidate,fresh,Data/evals/models/latest_toxicity_review_target_v2.json,auroc,0.9622
+toxicity_review_target_v2,Toxicity review-priority target v2,supporting,candidate,candidate,fresh,Data/evals/models/latest_toxicity_review_target_v2.json,legacy_rule_accuracy_against_v2,0.6689
+toxicity_review_target_v2,Toxicity review-priority target v2,supporting,candidate,candidate,fresh,Data/evals/models/latest_toxicity_review_target_v2.json,legacy_rule_does_not_define_v2,True
+external_failure_case_analysis,External failure cases by subtype/confidence,supporting,strong,strong,fresh,Data/evals/models/latest_external_failure_case_analysis.json,status,strong
+external_failure_case_analysis,External failure cases by subtype/confidence,supporting,strong,strong,fresh,Data/evals/models/latest_external_failure_case_analysis.json,failure_count,61
+external_failure_case_analysis,External failure cases by subtype/confidence,supporting,strong,strong,fresh,Data/evals/models/latest_external_failure_case_analysis.json,high_confidence_failure_count,24
+restricted_data_access_packet,Restricted dataset access packet,supporting,ready_for_future_access_request,ready_for_future_access_request,fresh,Data/evals/models/latest_restricted_data_access_packet.json,status,ready_for_future_access_request
+cbioportal_clinical_export,cBioPortal TCGA/METABRIC clinical export,supporting,strong,strong,fresh,Data/evals/models/latest_cbioportal_clinical_export.json,status,strong
+cbioportal_clinical_export,cBioPortal TCGA/METABRIC clinical export,supporting,strong,strong,fresh,Data/evals/models/latest_cbioportal_clinical_export.json,row_count,3593
+cbioportal_clinical_export,cBioPortal TCGA/METABRIC clinical export,supporting,strong,strong,fresh,Data/evals/models/latest_cbioportal_clinical_export.json,validation_status,passed
+cbioportal_clinical_export,cBioPortal TCGA/METABRIC clinical export,supporting,strong,strong,fresh,Data/evals/models/latest_cbioportal_clinical_export.json,full_temporal_validation,False
+external_distribution_alignment,External distribution alignment,supporting,strong,strong,fresh,Data/evals/models/latest_external_distribution_alignment.json,status,strong
+external_distribution_alignment,External distribution alignment,supporting,strong,strong,fresh,Data/evals/models/latest_external_distribution_alignment.json,synthetic_rows,600
+external_distribution_alignment,External distribution alignment,supporting,strong,strong,fresh,Data/evals/models/latest_external_distribution_alignment.json,cbioportal_rows,3593
+student_constraint_elevation_plan,Student-constraint elevation plan,supporting,strong,strong,fresh,Data/evals/models/latest_student_constraint_elevation_plan.json,status,strong
+common_feature_transfer_stress,Common-feature transfer stress,supporting,strong,strong,fresh,Data/evals/models/latest_common_feature_transfer_stress.json,status,strong
+common_feature_transfer_stress,Common-feature transfer stress,supporting,strong,strong,fresh,Data/evals/models/latest_common_feature_transfer_stress.json,synthetic_auc,0.8688
+common_feature_transfer_stress,Common-feature transfer stress,supporting,strong,strong,fresh,Data/evals/models/latest_common_feature_transfer_stress.json,breastdcedl_auc,0.5978
+common_feature_transfer_stress,Common-feature transfer stress,supporting,strong,strong,fresh,Data/evals/models/latest_common_feature_transfer_stress.json,promotion_allowed,False
+public_distribution_realism_candidate,Public-distribution synthetic realism candidate,supporting,candidate,candidate,fresh,Data/evals/models/latest_public_distribution_realism_candidate.json,status,candidate
+public_distribution_realism_candidate,Public-distribution synthetic realism candidate,supporting,candidate,candidate,fresh,Data/evals/models/latest_public_distribution_realism_candidate.json,rows,3600
+public_distribution_realism_candidate,Public-distribution synthetic realism candidate,supporting,candidate,candidate,fresh,Data/evals/models/latest_public_distribution_realism_candidate.json,patients,600
+public_distribution_realism_candidate,Public-distribution synthetic realism candidate,supporting,candidate,candidate,fresh,Data/evals/models/latest_public_distribution_realism_candidate.json,production_replacement_allowed,False
+realism_candidate_ab_gate,Current vs public-distribution realism candidate A/B gate,supporting,candidate,candidate,fresh,Data/evals/models/latest_realism_candidate_ab_gate.json,status,candidate
+realism_candidate_ab_gate,Current vs public-distribution realism candidate A/B gate,supporting,candidate,candidate,fresh,Data/evals/models/latest_realism_candidate_ab_gate.json,decision,keep_current_default
+realism_candidate_ab_gate,Current vs public-distribution realism candidate A/B gate,supporting,candidate,candidate,fresh,Data/evals/models/latest_realism_candidate_ab_gate.json,candidate_use,ab_test_only
+realism_candidate_ab_gate,Current vs public-distribution realism candidate A/B gate,supporting,candidate,candidate,fresh,Data/evals/models/latest_realism_candidate_ab_gate.json,production_replacement_allowed,False
+realism_candidate_ab_gate,Current vs public-distribution realism candidate A/B gate,supporting,candidate,candidate,fresh,Data/evals/models/latest_realism_candidate_ab_gate.json,classification_auroc_delta,0.0
+realism_candidate_ab_gate,Current vs public-distribution realism candidate A/B gate,supporting,candidate,candidate,fresh,Data/evals/models/latest_realism_candidate_ab_gate.json,regression_mae_delta,-0.0007
+dataset_expansion_deep_search,Dataset expansion deep-search catalog,supporting,strong,strong,fresh,Data/evals/models/latest_dataset_expansion_deep_search.json,status,strong
+dataset_expansion_deep_search,Dataset expansion deep-search catalog,supporting,strong,strong,fresh,Data/evals/models/latest_dataset_expansion_deep_search.json,dataset_count,10
 cbioportal_biomarker_schema_mapping,TCGA/METABRIC cBioPortal schema mapping,supporting,stale,ready,stale,Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json,status,ready
 cbioportal_biomarker_schema_mapping,TCGA/METABRIC cBioPortal schema mapping,supporting,stale,ready,stale,Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json,mapped_dataset_count,2
 cbioportal_biomarker_schema_mapping,TCGA/METABRIC cBioPortal schema mapping,supporting,stale,ready,stale,Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json,mapping_hash,2a75497980aec90f
@@ -253,11 +291,12 @@ model_benchmark,Model benchmark,critical,stale,available,stale,Data/evals/models
 model_benchmark,Model benchmark,critical,stale,available,stale,Data/evals/models/latest_model_benchmark.json,synthetic_champion_auprc,0.996
 model_benchmark,Model benchmark,critical,stale,available,stale,Data/evals/models/latest_model_benchmark.json,synthetic_champion_brier,0.047
 model_benchmark,Model benchmark,critical,stale,available,stale,Data/evals/models/latest_model_benchmark.json,external_breastdcedl_auroc,0.637
-current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,stale,available,stale,Data/mle_monitoring/current_vs_realism_candidate.json,decision,promote_candidate_after_review
-current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,stale,available,stale,Data/mle_monitoring/current_vs_realism_candidate.json,auc_delta,-0.001
-current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,stale,available,stale,Data/mle_monitoring/current_vs_realism_candidate.json,realism_delta,0.433
-current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,stale,available,stale,Data/mle_monitoring/current_vs_realism_candidate.json,candidate_alignment,0.861
-current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,stale,available,stale,Data/mle_monitoring/current_vs_realism_candidate.json,current_alignment,0.428
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,candidate,candidate,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,status,candidate
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,candidate,candidate,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,decision,keep_current_default
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,candidate,candidate,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,candidate_use,ab_test_only
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,candidate,candidate,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,production_replacement_allowed,False
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,candidate,candidate,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,classification_auroc_delta,0.0
+current_vs_realism_candidate,Current vs realism-calibrated candidate,critical,candidate,candidate,fresh,Data/mle_monitoring/current_vs_realism_candidate.json,regression_mae_delta,-0.0007
 synthetic_realism_candidate,Synthetic realism candidate,critical,stale,acceptable,stale,Data/mle_monitoring/synthetic_realism_candidate_report.json,alignment_score,"{'score': 0.844, 'status': 'passed', 'interpretation': '0.90+ is strong, 0.75+ is passed, 0.60+ is acceptable. This is an engineering realism score, not clinical validity.'}"
 synthetic_realism_candidate,Synthetic realism candidate,critical,stale,acceptable,stale,Data/mle_monitoring/synthetic_realism_candidate_report.json,training_patients,240
 synthetic_realism_candidate,Synthetic realism candidate,critical,stale,acceptable,stale,Data/mle_monitoring/synthetic_realism_candidate_report.json,threshold_coverage_status,acceptable

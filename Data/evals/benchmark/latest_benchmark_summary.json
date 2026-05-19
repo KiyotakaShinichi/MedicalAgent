@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "f3a3857e9e3f2c4f596e49276a70715268d77dcb",
+    "git_commit": "f757e3e6890903804cd993e820a8b9a99fbad70a",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -15,16 +15,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-18T16:54:43.734965+00:00"
+    "generated_at": "2026-05-19T02:38:59.983685+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-18T16:54:43.734965+00:00",
+    "generated_at": "2026-05-19T02:38:59.983685+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-19T16:54:43.734965+00:00",
+    "expires_at": "2026-05-20T02:38:59.983685+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-05-18T16:54:44.412748+00:00",
+  "generated_at": "2026-05-19T02:39:01.589254+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -332,9 +332,9 @@
       "id": "counterfactual_stability",
       "title": "Counterfactual stability",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-05-18T01:58:59.726349+00:00",
       "source_path": "Data/evals/models/latest_counterfactual_stability.json",
       "metrics": {
@@ -552,7 +552,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-05-18T16:54:25.098969+00:00",
+      "generated_at": "2026-05-19T02:12:08.755463+00:00",
       "source_path": "Data/external_bridge/canonical_oncology_schema.json",
       "metrics": {
         "status": "strong",
@@ -635,6 +635,212 @@
       "claim_boundary": "This roadmap is an engineering promotion plan under student-accessible constraints. It does not establish clinical validity, clinician sign-off, treatment efficacy, genetic-risk interpretation, or real patient prediction utility."
     },
     {
+      "id": "tcga_metabric_canonical_mapping",
+      "title": "TCGA/METABRIC canonical mapping",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T17:03:24.022141+00:00",
+      "source_path": "Data/evals/models/latest_tcga_metabric_canonical_mapping.json",
+      "metrics": {
+        "status": "strong",
+        "mapped_dataset_count": 2
+      },
+      "limitations": [],
+      "claim_boundary": "TCGA/METABRIC canonical mapping is external schema and distribution readiness only. It is not validation of OncoTrack's temporal monitoring model and must not be used to claim treatment-response, recurrence, survival, or genetic-risk prediction."
+    },
+    {
+      "id": "strict_common_feature_ab_eval",
+      "title": "Strict common-feature external A/B eval",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T17:03:29.546997+00:00",
+      "source_path": "Data/evals/models/latest_strict_common_feature_ab_eval.json",
+      "metrics": {
+        "status": "strong",
+        "synthetic_auc": 0.8688,
+        "external_auc": 0.5978,
+        "promotion_allowed": false
+      },
+      "limitations": [],
+      "claim_boundary": "Strict common-feature A/B is an engineering comparability check. It uses only fields shared by the synthetic timeline and BreastDCEDL/I-SPY pCR snapshot, but the labels are not the same clinical task. It must not be described as clinical validation or treatment superiority."
+    },
+    {
+      "id": "toxicity_review_target_v2",
+      "title": "Toxicity review-priority target v2",
+      "tier": "supporting",
+      "status": "candidate",
+      "source_status": "candidate",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T17:03:40.666917+00:00",
+      "source_path": "Data/evals/models/latest_toxicity_review_target_v2.json",
+      "metrics": {
+        "status": "candidate",
+        "auroc": 0.9622,
+        "legacy_rule_accuracy_against_v2": 0.6689,
+        "legacy_rule_does_not_define_v2": true
+      },
+      "limitations": [],
+      "claim_boundary": "Toxicity target v2 is a simulator-built clinician-review priority experiment. It is not a CTCAE grade, not a toxicity diagnosis, and not evidence that OncoTrack detects real clinical adverse events."
+    },
+    {
+      "id": "external_failure_case_analysis",
+      "title": "External failure cases by subtype/confidence",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T17:03:23.952422+00:00",
+      "source_path": "Data/evals/models/latest_external_failure_case_analysis.json",
+      "metrics": {
+        "status": "strong",
+        "failure_count": 61,
+        "high_confidence_failure_count": 24
+      },
+      "limitations": [],
+      "claim_boundary": "External failure-case analysis is for engineering review of public benchmark behavior. It is not patient-level clinical adjudication and does not establish clinical safety or utility."
+    },
+    {
+      "id": "restricted_data_access_packet",
+      "title": "Restricted dataset access packet",
+      "tier": "supporting",
+      "status": "ready_for_future_access_request",
+      "source_status": "ready_for_future_access_request",
+      "freshness": "fresh",
+      "generated_at": "2026-05-18T17:03:48.731587+00:00",
+      "source_path": "Data/evals/models/latest_restricted_data_access_packet.json",
+      "metrics": {
+        "status": "ready_for_future_access_request"
+      },
+      "limitations": [],
+      "claim_boundary": "This packet prepares future data-access requests. It does not mean access has been granted, data have been received, or clinical validation has been performed."
+    },
+    {
+      "id": "cbioportal_clinical_export",
+      "title": "cBioPortal TCGA/METABRIC clinical export",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-19T01:44:17.169006+00:00",
+      "source_path": "Data/evals/models/latest_cbioportal_clinical_export.json",
+      "metrics": {
+        "status": "strong",
+        "row_count": 3593,
+        "validation_status": "passed",
+        "full_temporal_validation": false
+      },
+      "limitations": [],
+      "claim_boundary": "cBioPortal clinical export maps public TCGA/METABRIC clinical attributes into the OncoTrack canonical schema for distribution and interoperability checks only. These rows are not OncoTrack longitudinal monitoring rows and do not validate treatment response, toxicity, recurrence, prognosis, or treatment decisions."
+    },
+    {
+      "id": "external_distribution_alignment",
+      "title": "External distribution alignment",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-19T01:44:22.810885+00:00",
+      "source_path": "Data/evals/models/latest_external_distribution_alignment.json",
+      "metrics": {
+        "status": "strong",
+        "synthetic_rows": 600,
+        "cbioportal_rows": 3593
+      },
+      "limitations": [],
+      "claim_boundary": "External distribution alignment compares broad field distributions across synthetic rows and public cohorts. It is a realism/debugging artifact only, not validation of clinical prediction or treatment utility."
+    },
+    {
+      "id": "student_constraint_elevation_plan",
+      "title": "Student-constraint elevation plan",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-19T02:00:18.326316+00:00",
+      "source_path": "Data/evals/models/latest_student_constraint_elevation_plan.json",
+      "metrics": {
+        "status": "strong"
+      },
+      "limitations": [],
+      "claim_boundary": "This plan lists controllable engineering upgrades under student-accessible constraints. It is not clinical validation and does not replace clinician review or real-world outcome evidence."
+    },
+    {
+      "id": "common_feature_transfer_stress",
+      "title": "Common-feature transfer stress",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-19T01:54:59.376586+00:00",
+      "source_path": "Data/evals/models/latest_common_feature_transfer_stress.json",
+      "metrics": {
+        "status": "strong",
+        "synthetic_auc": 0.8688,
+        "breastdcedl_auc": 0.5978,
+        "promotion_allowed": false
+      },
+      "limitations": [],
+      "claim_boundary": "Common-feature transfer stress is an engineering domain-shift check over fields shared by synthetic OncoTrack rows and public breast-cancer cohorts. Synthetic treatment-success, BreastDCEDL pCR, and cBioPortal survival/recurrence labels are not the same endpoint. This artifact must not be described as clinical validation, treatment efficacy evidence, or real patient prediction performance."
+    },
+    {
+      "id": "public_distribution_realism_candidate",
+      "title": "Public-distribution synthetic realism candidate",
+      "tier": "supporting",
+      "status": "candidate",
+      "source_status": "candidate",
+      "freshness": "fresh",
+      "generated_at": "2026-05-19T01:54:53.981618+00:00",
+      "source_path": "Data/evals/models/latest_public_distribution_realism_candidate.json",
+      "metrics": {
+        "status": "candidate",
+        "rows": 3600,
+        "patients": 600,
+        "production_replacement_allowed": false
+      },
+      "limitations": [],
+      "claim_boundary": "The public-distribution realism candidate is a simulator-calibration artifact. It adjusts selected synthetic feature distributions toward public cohort summaries to stress data realism, but it is still synthetic, does not carry clinician labels, and must not be used as clinical validation or patient-facing prediction evidence."
+    },
+    {
+      "id": "realism_candidate_ab_gate",
+      "title": "Current vs public-distribution realism candidate A/B gate",
+      "tier": "supporting",
+      "status": "candidate",
+      "source_status": "candidate",
+      "freshness": "fresh",
+      "generated_at": "2026-05-19T02:35:45.008098+00:00",
+      "source_path": "Data/evals/models/latest_realism_candidate_ab_gate.json",
+      "metrics": {
+        "status": "candidate",
+        "decision": "keep_current_default",
+        "candidate_use": "ab_test_only",
+        "production_replacement_allowed": false,
+        "classification_auroc_delta": 0.0,
+        "regression_mae_delta": -0.0007
+      },
+      "limitations": [],
+      "claim_boundary": "Current-vs-realism-candidate A/B is a synthetic engineering gate. It compares the current synthetic rows with a public-distribution-tuned candidate under controlled tests, but neither dataset contains real clinician-reviewed OncoTrack labels. Passing this gate is not clinical validation and does not allow patient-facing prediction or treatment claims."
+    },
+    {
+      "id": "dataset_expansion_deep_search",
+      "title": "Dataset expansion deep-search catalog",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-19T02:35:08.844963+00:00",
+      "source_path": "Data/evals/models/latest_dataset_expansion_deep_search.json",
+      "metrics": {
+        "status": "strong",
+        "dataset_count": 10
+      },
+      "limitations": [],
+      "claim_boundary": "Dataset expansion deep search is a planning and governance artifact. It identifies public or controlled-access sources that can improve OncoTrack's realism, schema coverage, or external-readiness checks. It does not mean the data has been downloaded, licensed, mapped, clinically validated, or approved for patient-facing prediction."
+    },
+    {
       "id": "cbioportal_biomarker_schema_mapping",
       "title": "TCGA/METABRIC cBioPortal schema mapping",
       "tier": "supporting",
@@ -658,7 +864,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-05-18T15:26:54.507320+00:00",
+      "generated_at": "2026-05-19T01:37:01.329736+00:00",
       "source_path": "Data/evals/ab_tests/latest_ab_test_report.json",
       "metrics": {
         "status": "strong",
@@ -1124,20 +1330,21 @@
       "id": "current_vs_realism_candidate",
       "title": "Current vs realism-calibrated candidate",
       "tier": "critical",
-      "status": "stale",
-      "source_status": "available",
-      "freshness": "stale",
-      "generated_at": "2026-05-15T01:35:05.907455+00:00",
+      "status": "candidate",
+      "source_status": "candidate",
+      "freshness": "fresh",
+      "generated_at": "2026-05-19T02:35:45.008098+00:00",
       "source_path": "Data/mle_monitoring/current_vs_realism_candidate.json",
       "metrics": {
-        "decision": "promote_candidate_after_review",
-        "auc_delta": -0.001,
-        "realism_delta": 0.433,
-        "candidate_alignment": 0.861,
-        "current_alignment": 0.428
+        "status": "candidate",
+        "decision": "keep_current_default",
+        "candidate_use": "ab_test_only",
+        "production_replacement_allowed": false,
+        "classification_auroc_delta": 0.0,
+        "regression_mae_delta": -0.0007
       },
       "limitations": [],
-      "claim_boundary": "This compares synthetic engineering candidates only. It does not establish clinical validity."
+      "claim_boundary": "Current-vs-realism-candidate A/B is a synthetic engineering gate. It compares the current synthetic rows with a public-distribution-tuned candidate under controlled tests, but neither dataset contains real clinician-reviewed OncoTrack labels. Passing this gate is not clinical validation and does not allow patient-facing prediction or treatment claims."
     },
     {
       "id": "synthetic_realism_candidate",
@@ -1170,7 +1377,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-05-18T16:49:34.224603+00:00",
+      "generated_at": "2026-05-19T02:35:01.302703+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -1187,7 +1394,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-05-18T16:49:33.684749+00:00",
+      "generated_at": "2026-05-19T02:35:00.657034+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -1204,7 +1411,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-05-18T16:49:34.307413+00:00",
+      "generated_at": "2026-05-19T02:35:01.341055+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -1491,6 +1698,12 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
+      "benchmark_id": "counterfactual_stability",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
       "benchmark_id": "learned_abstention",
       "severity": "medium",
       "status": "stale",
@@ -1635,12 +1848,6 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "current_vs_realism_candidate",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "synthetic_realism_candidate",
       "severity": "medium",
       "status": "stale",
@@ -1684,7 +1891,6 @@
     }
   ],
   "next_actions": [
-    "Promote the realism-calibrated synthetic candidate after reviewing threshold coverage and model-card language.",
     "Keep LLM-judge optional, or configure a provider and rerun it as a heuristic grounding review.",
     "Rerun MLE readiness after benchmark refresh; it should consume the latest realism, noise, temporal, and safety artifacts."
   ],

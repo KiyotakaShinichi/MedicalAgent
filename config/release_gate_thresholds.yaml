@@ -200,6 +200,86 @@ artifacts:
       - {path: [promotion_policy, current_global_policy], op: "==", value: monitor_only}
       - {path: [promotion_policy, may_influence_treatment], op: "==", value: false}
 
+  - path: Data/evals/models/latest_tcga_metabric_canonical_mapping.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [mapped_dataset_count], op: ">=", value: 1}
+
+  - path: Data/evals/models/latest_strict_common_feature_ab_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [ab_decision, promotion_allowed], op: "==", value: false}
+
+  - path: Data/evals/models/latest_toxicity_review_target_v2.json
+    required: false
+    max_age_days: 90
+    accepted_status: [candidate, strong, acceptable]
+    metric_thresholds:
+      - {path: [shortcut_comparison, legacy_rule_does_not_define_v2], op: "==", value: true}
+
+  - path: Data/evals/models/latest_external_failure_case_analysis.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+
+  - path: Data/evals/models/latest_restricted_data_access_packet.json
+    required: false
+    max_age_days: 180
+    accepted_status: [ready_for_future_access_request]
+
+  - path: Data/evals/models/latest_cbioportal_clinical_export.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [combined, validation, status], op: "==", value: passed}
+      - {path: [combined, coverage, roles_supported, full_oncotrack_temporal_validation], op: "==", value: false}
+
+  - path: Data/evals/models/latest_external_distribution_alignment.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [cohort_sizes, cbioportal_tcga_metabric], op: ">", value: 0}
+
+  - path: Data/evals/models/latest_common_feature_transfer_stress.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [promotion_decision, promotion_allowed], op: "==", value: false}
+
+  - path: Data/evals/models/latest_public_distribution_realism_candidate.json
+    required: false
+    max_age_days: 90
+    accepted_status: [candidate, strong, acceptable]
+    metric_thresholds:
+      - {path: [realism_candidate_decision, production_replacement_allowed], op: "==", value: false}
+
+  - path: Data/evals/models/latest_realism_candidate_ab_gate.json
+    required: false
+    max_age_days: 90
+    accepted_status: [candidate, strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [recommendation, production_replacement_allowed], op: "==", value: false}
+      - {path: [recommendation, decision], op: "==", value: keep_current_default}
+
+  - path: Data/evals/models/latest_dataset_expansion_deep_search.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [dataset_count], op: ">=", value: 8}
+
+  - path: Data/evals/models/latest_student_constraint_elevation_plan.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+
   - path: Data/evals/ab_tests/latest_ab_test_report.json
     required: false
     max_age_days: 60

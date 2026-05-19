@@ -409,6 +409,140 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "tcga_metabric_canonical_mapping",
+        "title": "TCGA/METABRIC canonical mapping",
+        "path": "Data/evals/models/latest_tcga_metabric_canonical_mapping.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "mapped_dataset_count": ["mapped_dataset_count"],
+        },
+    },
+    {
+        "id": "strict_common_feature_ab_eval",
+        "title": "Strict common-feature external A/B eval",
+        "path": "Data/evals/models/latest_strict_common_feature_ab_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "synthetic_auc": ["datasets", "synthetic_patient_level", "metrics", "roc_auc"],
+            "external_auc": ["datasets", "breastdcedl_spy1", "metrics", "roc_auc"],
+            "promotion_allowed": ["ab_decision", "promotion_allowed"],
+        },
+    },
+    {
+        "id": "toxicity_review_target_v2",
+        "title": "Toxicity review-priority target v2",
+        "path": "Data/evals/models/latest_toxicity_review_target_v2.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "auroc": ["model", "auroc"],
+            "legacy_rule_accuracy_against_v2": ["shortcut_comparison", "legacy_rule_accuracy_against_v2"],
+            "legacy_rule_does_not_define_v2": ["shortcut_comparison", "legacy_rule_does_not_define_v2"],
+        },
+    },
+    {
+        "id": "external_failure_case_analysis",
+        "title": "External failure cases by subtype/confidence",
+        "path": "Data/evals/models/latest_external_failure_case_analysis.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "failure_count": ["summary", "failure_count"],
+            "high_confidence_failure_count": ["summary", "high_confidence_failure_count"],
+        },
+    },
+    {
+        "id": "restricted_data_access_packet",
+        "title": "Restricted dataset access packet",
+        "path": "Data/evals/models/latest_restricted_data_access_packet.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+        },
+    },
+    {
+        "id": "cbioportal_clinical_export",
+        "title": "cBioPortal TCGA/METABRIC clinical export",
+        "path": "Data/evals/models/latest_cbioportal_clinical_export.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "row_count": ["combined", "row_count"],
+            "validation_status": ["combined", "validation", "status"],
+            "full_temporal_validation": ["combined", "coverage", "roles_supported", "full_oncotrack_temporal_validation"],
+        },
+    },
+    {
+        "id": "external_distribution_alignment",
+        "title": "External distribution alignment",
+        "path": "Data/evals/models/latest_external_distribution_alignment.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "synthetic_rows": ["cohort_sizes", "synthetic"],
+            "cbioportal_rows": ["cohort_sizes", "cbioportal_tcga_metabric"],
+        },
+    },
+    {
+        "id": "student_constraint_elevation_plan",
+        "title": "Student-constraint elevation plan",
+        "path": "Data/evals/models/latest_student_constraint_elevation_plan.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+        },
+    },
+    {
+        "id": "common_feature_transfer_stress",
+        "title": "Common-feature transfer stress",
+        "path": "Data/evals/models/latest_common_feature_transfer_stress.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "synthetic_auc": ["within_dataset_models", "synthetic_treatment_success", "roc_auc"],
+            "breastdcedl_auc": ["within_dataset_models", "breastdcedl_pcr", "roc_auc"],
+            "promotion_allowed": ["promotion_decision", "promotion_allowed"],
+        },
+    },
+    {
+        "id": "public_distribution_realism_candidate",
+        "title": "Public-distribution synthetic realism candidate",
+        "path": "Data/evals/models/latest_public_distribution_realism_candidate.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "rows": ["rows"],
+            "patients": ["patients"],
+            "production_replacement_allowed": ["realism_candidate_decision", "production_replacement_allowed"],
+        },
+    },
+    {
+        "id": "realism_candidate_ab_gate",
+        "title": "Current vs public-distribution realism candidate A/B gate",
+        "path": "Data/evals/models/latest_realism_candidate_ab_gate.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "decision": ["recommendation", "decision"],
+            "candidate_use": ["recommendation", "candidate_use"],
+            "production_replacement_allowed": ["recommendation", "production_replacement_allowed"],
+            "classification_auroc_delta": ["deltas", "classification_auroc_delta"],
+            "regression_mae_delta": ["deltas", "regression_mae_delta"],
+        },
+    },
+    {
+        "id": "dataset_expansion_deep_search",
+        "title": "Dataset expansion deep-search catalog",
+        "path": "Data/evals/models/latest_dataset_expansion_deep_search.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "dataset_count": ["dataset_count"],
+        },
+    },
+    {
         "id": "cbioportal_biomarker_schema_mapping",
         "title": "TCGA/METABRIC cBioPortal schema mapping",
         "path": "Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json",
@@ -735,11 +869,12 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         "path": "Data/mle_monitoring/current_vs_realism_candidate.json",
         "tier": "critical",
         "metrics": {
+            "status": ["status"],
             "decision": ["recommendation", "decision"],
-            "auc_delta": ["recommendation", "auc_delta"],
-            "realism_delta": ["recommendation", "realism_delta"],
-            "candidate_alignment": ["candidate", "realism_alignment_score"],
-            "current_alignment": ["current", "realism_alignment_score"],
+            "candidate_use": ["recommendation", "candidate_use"],
+            "production_replacement_allowed": ["recommendation", "production_replacement_allowed"],
+            "classification_auroc_delta": ["recommendation", "classification_auroc_delta"],
+            "regression_mae_delta": ["recommendation", "regression_mae_delta"],
         },
     },
     {
@@ -1039,7 +1174,7 @@ def _next_actions(rows: list[dict[str, Any]], issues: list[dict[str, Any]]) -> l
     candidate = by_id.get("current_vs_realism_candidate", {})
     if _dig(candidate, ["metrics", "decision"]) == "promote_candidate_after_review":
         actions.append(
-            "Promote the realism-calibrated synthetic candidate after reviewing threshold coverage and model-card language."
+            "Review the realism-calibrated synthetic candidate carefully; promotion language should stay blocked without external temporal validation."
         )
     if by_id.get("public_imaging_manifest", {}).get("metrics", {}).get("available_dataset_count") == 0:
         actions.append(

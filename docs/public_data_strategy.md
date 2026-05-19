@@ -35,6 +35,7 @@ lineage, leakage, noise, and external-direction checks.
 | MIMIC-IV | Lab distribution and missingness realism | Not breast-cancer treatment specific |
 | SEER | Demographic, stage, subtype, and outcome priors | Registry data, no labs/images/symptoms |
 | TCGA-BRCA / METABRIC | Clinical/genomic subtype and survival priors | Not longitudinal monitoring |
+| cBioPortal TCGA-BRCA / METABRIC export | Public-row receptor, subtype, mutation-count, treatment-context, survival/recurrence distribution checks | Not OncoTrack treatment-response or toxicity validation |
 
 The generated manifest is stored at:
 
@@ -45,6 +46,35 @@ Regenerate it with:
 ```bash
 python scripts/build_public_data_manifest.py
 ```
+
+The current controllable public-data bridge also includes:
+
+```bash
+python scripts/run_cbioportal_clinical_export.py
+python scripts/run_external_distribution_alignment.py
+python scripts/run_common_feature_transfer_stress.py
+python scripts/run_public_distribution_realism_candidate.py
+python scripts/run_realism_candidate_ab_gate.py
+python scripts/run_dataset_expansion_deep_search.py
+```
+
+These artifacts intentionally keep promotion blocked. They test schema
+interoperability, distribution gaps, and generator-realism candidates; they do
+not prove real patient prediction.
+
+## Highest-Leverage Dataset Expansion
+
+The current deep-search catalog ranks two sources first:
+
+1. **AACR GENIE BPC Breast Cancer v1.0-public** - best next source for systemic
+   treatment histories plus clinico-genomic context.
+2. **Duke Breast Cancer MRI** - best next source for imaging, receptor/pathology,
+   treatment, recurrence, and follow-up context in one public bridge.
+
+Next tier sources are BreastDCEDL/I-SPY2 for MRI/pCR response work,
+TCGA-BRCA/cBioPortal and CPTAC for molecular context, SEER for population and
+biomarker coding distributions, MIMIC-IV for lab/unit robustness, and EDRN for
+tumor-marker limitation context.
 
 Public imaging readiness artifacts are stored at:
 

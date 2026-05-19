@@ -1,0 +1,211 @@
+{
+  "schema_version": "common_feature_transfer_stress_v1",
+  "generated_at": "2026-05-19T01:54:59.376586+00:00",
+  "status": "strong",
+  "feature_set": [
+    "age",
+    "baseline_tumor_size_mm",
+    "hr_positive",
+    "her2_positive",
+    "triple_negative"
+  ],
+  "cohort_sizes": {
+    "synthetic_patient_level": 600,
+    "breastdcedl_spy1": 159,
+    "cbioportal_tcga_metabric": 3593
+  },
+  "within_dataset_models": {
+    "synthetic_treatment_success": {
+      "status": "computed",
+      "rows": 600,
+      "test_rows": 180,
+      "positive_rate": 0.5533,
+      "roc_auc": 0.8688,
+      "brier": 0.1462,
+      "accuracy": 0.7722
+    },
+    "breastdcedl_pcr": {
+      "status": "computed",
+      "rows": 159,
+      "test_rows": 48,
+      "positive_rate": 0.2767,
+      "roc_auc": 0.5978,
+      "brier": 0.258,
+      "accuracy": 0.5
+    }
+  },
+  "transfer_stress": {
+    "synthetic_model_on_breastdcedl": {
+      "status": "computed",
+      "rows": 159,
+      "probability_distribution": {
+        "mean": 0.0657,
+        "p10": 0.0,
+        "p50": 0.0035,
+        "p90": 0.2764,
+        "min": 0.0,
+        "max": 0.6561
+      },
+      "label_context": "BreastDCEDL pCR label; not equivalent to OncoTrack treatment_success_binary.",
+      "clinical_interpretation_allowed": false,
+      "mismatched_endpoint_metrics": {
+        "roc_auc_against_non_equivalent_label": 0.5676,
+        "brier_against_non_equivalent_label": 0.2643,
+        "warning": "Computed only to expose transfer stress; not a valid clinical validation metric."
+      }
+    },
+    "synthetic_model_on_cbioportal": {
+      "status": "computed",
+      "rows": 3593,
+      "probability_distribution": {
+        "mean": 0.6234,
+        "p10": 0.5403,
+        "p50": 0.6314,
+        "p90": 0.6968,
+        "min": 0.4172,
+        "max": 0.7838
+      },
+      "label_context": "cBioPortal rows are scored for probability-distribution stress only.",
+      "clinical_interpretation_allowed": false
+    },
+    "breastdcedl_pcr_model_on_synthetic": {
+      "status": "computed",
+      "rows": 600,
+      "probability_distribution": {
+        "mean": 0.4914,
+        "p10": 0.2432,
+        "p50": 0.4821,
+        "p90": 0.7879,
+        "min": 0.15,
+        "max": 0.8267
+      },
+      "label_context": "Synthetic treatment_success_binary is not equivalent to pCR.",
+      "clinical_interpretation_allowed": false,
+      "mismatched_endpoint_metrics": {
+        "roc_auc_against_non_equivalent_label": 0.5938,
+        "brier_against_non_equivalent_label": 0.277,
+        "warning": "Computed only to expose transfer stress; not a valid clinical validation metric."
+      }
+    }
+  },
+  "domain_shift": {
+    "synthetic_vs_breastdcedl": {
+      "age": {
+        "source_available": 600,
+        "target_available": 159,
+        "source_mean": 52.64,
+        "target_mean": 48.3011,
+        "absolute_mean_delta": 4.3389,
+        "psi": 1.4919,
+        "source_missing_rate": 0.0,
+        "target_missing_rate": 0.0
+      },
+      "baseline_tumor_size_mm": {
+        "source_available": 560,
+        "target_available": 158,
+        "source_mean": 25.6848,
+        "target_mean": 67.7785,
+        "absolute_mean_delta": 42.0937,
+        "psi": 5.8921,
+        "source_missing_rate": 0.0667,
+        "target_missing_rate": 0.0063
+      },
+      "hr_positive": {
+        "source_available": 600,
+        "target_available": 159,
+        "source_mean": 0.6,
+        "target_mean": 0.4151,
+        "absolute_mean_delta": 0.1849,
+        "psi": 0.1384,
+        "source_missing_rate": 0.0,
+        "target_missing_rate": 0.0
+      },
+      "her2_positive": {
+        "source_available": 600,
+        "target_available": 159,
+        "source_mean": 0.4,
+        "target_mean": 0.3145,
+        "absolute_mean_delta": 0.0855,
+        "psi": 0.032,
+        "source_missing_rate": 0.0,
+        "target_missing_rate": 0.0
+      },
+      "triple_negative": {
+        "source_available": 600,
+        "target_available": 159,
+        "source_mean": 0.2,
+        "target_mean": 0.2516,
+        "absolute_mean_delta": 0.0516,
+        "psi": 0.0153,
+        "source_missing_rate": 0.0,
+        "target_missing_rate": 0.0
+      }
+    },
+    "synthetic_vs_cbioportal": {
+      "age": {
+        "source_available": 600,
+        "target_available": 3582,
+        "source_mean": 52.64,
+        "target_mean": 59.8152,
+        "absolute_mean_delta": 7.1752,
+        "psi": 0.2363,
+        "source_missing_rate": 0.0,
+        "target_missing_rate": 0.0031
+      },
+      "baseline_tumor_size_mm": {
+        "source_available": 560,
+        "target_available": 0,
+        "source_mean": 25.6848,
+        "target_mean": null,
+        "absolute_mean_delta": null,
+        "psi": null,
+        "source_missing_rate": 0.0667,
+        "target_missing_rate": 1.0
+      },
+      "hr_positive": {
+        "source_available": 600,
+        "target_available": 3593,
+        "source_mean": 0.6,
+        "target_mean": 0.722,
+        "absolute_mean_delta": 0.122,
+        "psi": 0.0669,
+        "source_missing_rate": 0.0,
+        "target_missing_rate": 0.0
+      },
+      "her2_positive": {
+        "source_available": 600,
+        "target_available": 3593,
+        "source_mean": 0.4,
+        "target_mean": 0.1172,
+        "absolute_mean_delta": 0.2828,
+        "psi": 0.4565,
+        "source_missing_rate": 0.0,
+        "target_missing_rate": 0.0
+      },
+      "triple_negative": {
+        "source_available": 600,
+        "target_available": 3593,
+        "source_mean": 0.2,
+        "target_mean": 0.1431,
+        "absolute_mean_delta": 0.0569,
+        "psi": 0.023,
+        "source_missing_rate": 0.0,
+        "target_missing_rate": 0.0
+      }
+    }
+  },
+  "warnings": [
+    "Synthetic treatment success and public pCR/survival-style endpoints are not interchangeable.",
+    "Transfer probabilities are domain-stress probes only and must not be patient-facing.",
+    "synthetic_vs_breastdcedl:age has large PSI-style distribution shift (1.4919).",
+    "synthetic_vs_breastdcedl:baseline_tumor_size_mm has large PSI-style distribution shift (5.8921).",
+    "synthetic_vs_cbioportal:baseline_tumor_size_mm is mostly missing in the target cohort.",
+    "synthetic_vs_cbioportal:her2_positive has large PSI-style distribution shift (0.4565)."
+  ],
+  "promotion_decision": {
+    "recommendation": "hold_monitor_only",
+    "promotion_allowed": false,
+    "reason": "The shared feature set can expose distribution mismatch and brittle transfer behavior, but the source and target endpoints are not clinically interchangeable."
+  },
+  "claim_boundary": "Common-feature transfer stress is an engineering domain-shift check over fields shared by synthetic OncoTrack rows and public breast-cancer cohorts. Synthetic treatment-success, BreastDCEDL pCR, and cBioPortal survival/recurrence labels are not the same endpoint. This artifact must not be described as clinical validation, treatment efficacy evidence, or real patient prediction performance."
+}

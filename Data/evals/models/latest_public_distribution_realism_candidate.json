@@ -1,0 +1,59 @@
+{
+  "schema_version": "public_distribution_realism_candidate_v1",
+  "generated_at": "2026-05-19T01:54:53.981618+00:00",
+  "status": "candidate",
+  "candidate_csv": "Data/external_bridge/realism_candidate/temporal_ml_rows_public_realism_candidate.csv",
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "alignment_source": "Data/evals/models/latest_external_distribution_alignment.json",
+  "rows": 3600,
+  "patients": 600,
+  "adjustments": [
+    {
+      "field": "age",
+      "method": "mean_std_shift_scale",
+      "target_source": "cbioportal_tcga_metabric",
+      "target_mean": 59.8152,
+      "target_std": 13.6539
+    },
+    {
+      "field": "mri_tumor_size_cm",
+      "method": "bounded_scale_to_public_tumor_size_proxy",
+      "target_source": "breastdcedl",
+      "target_mean_mm": 67.7785,
+      "raw_factor": 2.0403,
+      "bounded_factor": 2.0403,
+      "semantic_warning": "Synthetic mri_tumor_size_cm is a monitoring-cycle proxy while BreastDCEDL's baseline_longest_diameter_mm is a baseline MRI feature; this candidate is for stress testing only."
+    }
+  ],
+  "before_after_gaps": {
+    "age": {
+      "target_mean": 59.8152,
+      "before_mean": 52.64,
+      "after_mean": 59.815,
+      "before_absolute_gap": 7.1752,
+      "after_absolute_gap": 0.0001,
+      "gap_improved": true
+    },
+    "baseline_tumor_size_mm_proxy": {
+      "target_mean": 67.7785,
+      "before_mean": 33.2202,
+      "after_mean": 67.6317,
+      "before_absolute_gap": 34.5583,
+      "after_absolute_gap": 0.1468,
+      "gap_improved": true
+    }
+  },
+  "realism_candidate_decision": {
+    "recommendation": "evaluate_separately_do_not_promote",
+    "use_for_training": "candidate_ab_test_only",
+    "production_replacement_allowed": false,
+    "reason": "The candidate improves selected public-distribution gaps but may distort simulator relationships. It must be compared against the current generator with leakage, calibration, shortcut, and stability gates."
+  },
+  "unsupported_claims": [
+    "clinical validation",
+    "real patient treatment-response prediction",
+    "proof that public distributions make the model clinically accurate",
+    "treatment recommendation or regimen superiority"
+  ],
+  "claim_boundary": "The public-distribution realism candidate is a simulator-calibration artifact. It adjusts selected synthetic feature distributions toward public cohort summaries to stress data realism, but it is still synthetic, does not carry clinician labels, and must not be used as clinical validation or patient-facing prediction evidence."
+}

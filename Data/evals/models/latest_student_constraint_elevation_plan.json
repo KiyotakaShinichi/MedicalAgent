@@ -1,0 +1,56 @@
+{
+  "schema_version": "student_constraint_elevation_plan_v1",
+  "generated_at": "2026-05-19T02:00:18.326316+00:00",
+  "status": "strong",
+  "highest_leverage_next_steps": [
+    {
+      "rank": 1,
+      "step": "External distribution alignment from exported cBioPortal rows",
+      "why_it_elevates": "Moves beyond dataset-name mapping into actual public-row distribution checks.",
+      "student_feasible": true,
+      "proof_artifact": "Data/evals/models/latest_external_distribution_alignment.json"
+    },
+    {
+      "rank": 2,
+      "step": "Common-feature model transfer stress test",
+      "why_it_elevates": "Train on one source and evaluate feature behavior on another without pretending labels match.",
+      "student_feasible": true,
+      "proof_artifact": "Data/evals/models/latest_common_feature_transfer_stress.json"
+    },
+    {
+      "rank": 3,
+      "step": "Synthetic realism candidate generator tuned against public distributions",
+      "why_it_elevates": "Creates a separate candidate dataset with documented improvements and regressions.",
+      "student_feasible": true,
+      "proof_artifact": "Data/evals/models/latest_public_distribution_realism_candidate.json"
+    },
+    {
+      "rank": 4,
+      "step": "Human-review simulation packet with blinded rubric",
+      "why_it_elevates": "Prepares for eventual nurse/clinician review while letting non-clinicians audit clarity and safety boundaries now.",
+      "student_feasible": true,
+      "proof_artifact": "future docs/reviewer_packet_blinded/"
+    },
+    {
+      "rank": 5,
+      "step": "Model behavior cards per head",
+      "why_it_elevates": "Separates classification, regression, toxicity, genetics, and tumor-marker behavior so reviewers do not confuse scope.",
+      "student_feasible": true,
+      "proof_artifact": "future docs/model_behavior_cards/"
+    },
+    {
+      "rank": 6,
+      "step": "RAG answer provenance snapshots",
+      "why_it_elevates": "Exports trace replay into compact reviewer-facing before/after examples.",
+      "student_feasible": true,
+      "proof_artifact": "future Data/evals/rag/latest_trace_replay_gallery.json"
+    }
+  ],
+  "do_not_do_yet": [
+    "Do not claim real-world response prediction.",
+    "Do not promote toxicity target v2 beyond review-priority experiment.",
+    "Do not use TCGA/METABRIC survival labels as if they were pCR or OncoTrack response-score labels.",
+    "Do not train patient-facing treatment recommendations."
+  ],
+  "claim_boundary": "This plan lists controllable engineering upgrades under student-accessible constraints. It is not clinical validation and does not replace clinician review or real-world outcome evidence."
+}

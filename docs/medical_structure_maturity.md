@@ -45,6 +45,10 @@ A **structure-only** scaffold. It defines:
 - which categories of question must route to a specialist, and
 - which questions trigger urgent escalation.
 
+The reviewer-facing field dictionary is also summarized in
+`docs/data_dictionary.md`, including the strict common public-bridge fields used
+for transfer stress tests.
+
 ## What this layer is NOT
 
 - Not clinical validation.

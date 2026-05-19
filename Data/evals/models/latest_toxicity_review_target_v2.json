@@ -1,0 +1,65 @@
+{
+  "schema_version": "toxicity_review_target_v2_v1",
+  "generated_at": "2026-05-18T17:03:40.666917+00:00",
+  "status": "candidate",
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "target": "toxicity_review_priority_v2",
+  "label_design": {
+    "positive_rate": 0.3,
+    "risk_score_threshold_quantile": 0.7,
+    "factors": [
+      "symptom severity and count",
+      "intervention and dose-change context",
+      "pre-cycle vulnerability",
+      "nadir CBC contribution capped below legacy-rule dominance",
+      "recovery failure",
+      "cycle-to-cycle persistence",
+      "small stochastic noise to avoid exact rule reconstruction"
+    ]
+  },
+  "model": {
+    "features": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced",
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "auroc": 0.9622,
+    "brier": 0.0726,
+    "accuracy": 0.89
+  },
+  "shortcut_comparison": {
+    "legacy_rule_accuracy_against_v2": 0.6689,
+    "legacy_rule_auroc_against_v2": 0.8702,
+    "legacy_rule_does_not_define_v2": true
+  },
+  "recommendation": {
+    "current_use": "candidate_review_priority_experiment",
+    "production_policy": "toxicity signal remains review-hint-only",
+    "not_supported": [
+      "clinical toxicity prediction",
+      "CTCAE grade assignment",
+      "patient-facing treatment action"
+    ]
+  },
+  "claim_boundary": "Toxicity target v2 is a simulator-built clinician-review priority experiment. It is not a CTCAE grade, not a toxicity diagnosis, and not evidence that OncoTrack detects real clinical adverse events."
+}

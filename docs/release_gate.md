@@ -23,6 +23,10 @@ status.
 - Modality robustness
 - Response conformal calibration
 - Hybrid subgroup metrics when present
+- cBioPortal clinical export and external distribution alignment when present
+- Common-feature transfer stress and public-distribution realism candidate artifacts when present
+- Current-vs-realism-candidate A/B gate when present
+- Dataset expansion deep-search catalog when present
 - Medical advisor readiness packet
 
 ## Accepted `needs_attention`
@@ -36,6 +40,24 @@ surface known weaknesses, not hide them:
 
 Those statuses must remain visible in the release output and reviewer docs.
 They are not clinical validation.
+
+## Optional Public-Data Bridge Checks
+
+The public-data bridge artifacts are optional because they depend on local
+public-row exports, but when present the gate checks that:
+
+- cBioPortal rows validate against the canonical schema and do not claim full
+  OncoTrack temporal validation.
+- common-feature transfer stress keeps `promotion_allowed = false`.
+- the public-distribution realism candidate keeps
+  `production_replacement_allowed = false`.
+- the current-vs-realism-candidate A/B gate keeps the current generator as the
+  default unless future exact-label validation justifies otherwise.
+- the dataset expansion catalog contains enough governed sources to support the
+  next bridge-selection decision.
+
+These checks are intentionally conservative. They prove interoperability and
+review discipline, not clinical performance.
 
 ## Run
 

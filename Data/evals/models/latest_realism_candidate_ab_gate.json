@@ -1,0 +1,316 @@
+{
+  "reproducibility": {
+    "git_commit": "f757e3e6890903804cd993e820a8b9a99fbad70a",
+    "git_dirty": true,
+    "python_version": "3.14.3",
+    "platform": "Windows-AMD64",
+    "dataset_fingerprints": {
+      "synthetic_training_rows": "920991:1778238158:44a845011924",
+      "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
+      "current_csv": "920991:1778238158:44a845011924",
+      "candidate_csv": "976061:1779155693:ea4346ad8297",
+      "candidate_artifact": "2636:1779155693:8f717677f5a5"
+    },
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
+    "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
+    "seed": null,
+    "generated_at": "2026-05-19T02:35:44.827934+00:00"
+  },
+  "artifact_freshness": {
+    "generated_at": "2026-05-19T02:35:44.827934+00:00",
+    "ttl_seconds": 86400,
+    "expires_at": "2026-05-20T02:35:44.827934+00:00",
+    "status": "fresh"
+  },
+  "schema_version": "realism_candidate_ab_gate_v1",
+  "generated_at": "2026-05-19T02:35:45.008098+00:00",
+  "status": "candidate",
+  "current": {
+    "name": "current",
+    "rows": 3600,
+    "patients": 600,
+    "train_patients": 450,
+    "test_patients": 150,
+    "feature_set": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced",
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "leakage": {
+      "status": "passed",
+      "feature_count": 23,
+      "blocked_feature_overlap": [],
+      "patient_id_overlap": 0
+    },
+    "classification": {
+      "patient_level_auroc": 0.9991,
+      "patient_level_brier": 0.0483,
+      "patient_level_accuracy": 0.9733,
+      "patient_level_ece": 0.136,
+      "test_patients": 150
+    },
+    "regression": {
+      "patient_final_mae": 1.775,
+      "patient_final_rmse": 4.3563,
+      "residual_q80": 1.5521,
+      "test_patients": 150
+    },
+    "shortcut_audit": {
+      "full_auroc": 0.9688,
+      "feature_removal": {
+        "without_mri_response_proxy": {
+          "auroc": 0.7829,
+          "auroc_delta_vs_full": -0.1859
+        },
+        "without_all_mri": {
+          "auroc": 0.6436,
+          "auroc_delta_vs_full": -0.3252
+        },
+        "without_nadir_cbc": {
+          "auroc": 0.9685,
+          "auroc_delta_vs_full": -0.0003
+        }
+      },
+      "single_feature_auc": {
+        "mri_percent_change_from_baseline": 0.8103,
+        "mri_tumor_size_cm": 0.7185,
+        "nadir_anc": 0.495,
+        "nadir_wbc": 0.502,
+        "max_symptom_severity": 0.5133
+      },
+      "warning": "High single-feature or low feature-removal drop can indicate simulator shortcuts, not clinical intelligence."
+    },
+    "counterfactual_stability": {
+      "status": "strong",
+      "scenario_count": 4,
+      "unacceptable_flip_count": 0,
+      "scenarios": [
+        {
+          "scenario": "age_plus_one",
+          "mean_probability_delta": 0.0024,
+          "max_probability_delta": 0.1112,
+          "flip_rate": 0.0
+        },
+        {
+          "scenario": "pre_wbc_slight_increase",
+          "mean_probability_delta": 0.0003,
+          "max_probability_delta": 0.0386,
+          "flip_rate": 0.0
+        },
+        {
+          "scenario": "nadir_wbc_slight_increase",
+          "mean_probability_delta": 0.0001,
+          "max_probability_delta": 0.0154,
+          "flip_rate": 0.0
+        },
+        {
+          "scenario": "symptom_severity_plus_one",
+          "mean_probability_delta": 0.0015,
+          "max_probability_delta": 0.0584,
+          "flip_rate": 0.0
+        }
+      ]
+    }
+  },
+  "candidate": {
+    "name": "public_distribution_candidate",
+    "rows": 3600,
+    "patients": 600,
+    "train_patients": 450,
+    "test_patients": 150,
+    "feature_set": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced",
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "leakage": {
+      "status": "passed",
+      "feature_count": 23,
+      "blocked_feature_overlap": [],
+      "patient_id_overlap": 0
+    },
+    "classification": {
+      "patient_level_auroc": 0.9991,
+      "patient_level_brier": 0.0483,
+      "patient_level_accuracy": 0.9733,
+      "patient_level_ece": 0.136,
+      "test_patients": 150
+    },
+    "regression": {
+      "patient_final_mae": 1.7743,
+      "patient_final_rmse": 4.353,
+      "residual_q80": 1.5521,
+      "test_patients": 150
+    },
+    "shortcut_audit": {
+      "full_auroc": 0.9688,
+      "feature_removal": {
+        "without_mri_response_proxy": {
+          "auroc": 0.7829,
+          "auroc_delta_vs_full": -0.1859
+        },
+        "without_all_mri": {
+          "auroc": 0.6436,
+          "auroc_delta_vs_full": -0.3252
+        },
+        "without_nadir_cbc": {
+          "auroc": 0.9685,
+          "auroc_delta_vs_full": -0.0003
+        }
+      },
+      "single_feature_auc": {
+        "mri_percent_change_from_baseline": 0.8103,
+        "mri_tumor_size_cm": 0.7185,
+        "nadir_anc": 0.495,
+        "nadir_wbc": 0.502,
+        "max_symptom_severity": 0.5133
+      },
+      "warning": "High single-feature or low feature-removal drop can indicate simulator shortcuts, not clinical intelligence."
+    },
+    "counterfactual_stability": {
+      "status": "strong",
+      "scenario_count": 4,
+      "unacceptable_flip_count": 0,
+      "scenarios": [
+        {
+          "scenario": "age_plus_one",
+          "mean_probability_delta": 0.0024,
+          "max_probability_delta": 0.1112,
+          "flip_rate": 0.0
+        },
+        {
+          "scenario": "pre_wbc_slight_increase",
+          "mean_probability_delta": 0.0003,
+          "max_probability_delta": 0.0386,
+          "flip_rate": 0.0
+        },
+        {
+          "scenario": "nadir_wbc_slight_increase",
+          "mean_probability_delta": 0.0001,
+          "max_probability_delta": 0.0154,
+          "flip_rate": 0.0
+        },
+        {
+          "scenario": "symptom_severity_plus_one",
+          "mean_probability_delta": 0.0015,
+          "max_probability_delta": 0.0584,
+          "flip_rate": 0.0
+        }
+      ]
+    }
+  },
+  "deltas": {
+    "classification_auroc_delta": 0.0,
+    "classification_brier_delta": 0.0,
+    "classification_ece_delta": 0.0,
+    "regression_mae_delta": -0.0007,
+    "regression_rmse_delta": -0.0033,
+    "counterfactual_unacceptable_flip_delta": 0.0
+  },
+  "candidate_realism_summary": {
+    "status": "candidate",
+    "before_after_gaps": {
+      "age": {
+        "target_mean": 59.8152,
+        "before_mean": 52.64,
+        "after_mean": 59.815,
+        "before_absolute_gap": 7.1752,
+        "after_absolute_gap": 0.0001,
+        "gap_improved": true
+      },
+      "baseline_tumor_size_mm_proxy": {
+        "target_mean": 67.7785,
+        "before_mean": 33.2202,
+        "after_mean": 67.6317,
+        "before_absolute_gap": 34.5583,
+        "after_absolute_gap": 0.1468,
+        "gap_improved": true
+      }
+    },
+    "production_replacement_allowed": false
+  },
+  "critical_checks": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "current_leakage_passed",
+        "passed": true
+      },
+      {
+        "name": "candidate_leakage_passed",
+        "passed": true
+      },
+      {
+        "name": "candidate_not_production_replacement",
+        "passed": true
+      },
+      {
+        "name": "classification_no_large_auc_regression",
+        "passed": true
+      },
+      {
+        "name": "regression_no_large_mae_regression",
+        "passed": true
+      },
+      {
+        "name": "candidate_counterfactual_stability",
+        "passed": true
+      }
+    ],
+    "policy": "Even if this gate passes, the candidate remains A/B-only until exact-label external temporal validation and clinician review are available."
+  },
+  "recommendation": {
+    "decision": "keep_current_default",
+    "candidate_use": "ab_test_only",
+    "may_train_experimental_models": true,
+    "production_replacement_allowed": false,
+    "reason": "The candidate is useful for stress-testing public-distribution realism, but it changes synthetic feature distributions without new clinician-reviewed labels. Keep current as the default and use the candidate only for controlled A/B experiments."
+  },
+  "what_would_unlock_reconsideration": [
+    "Exact-label external temporal validation",
+    "Clinician review of generator assumptions and thresholds",
+    "No degradation on leakage, shortcut, calibration, counterfactual, and subgroup gates",
+    "Evidence that candidate shifts improve realism without distorting response/toxicity label semantics"
+  ],
+  "claim_boundary": "Current-vs-realism-candidate A/B is a synthetic engineering gate. It compares the current synthetic rows with a public-distribution-tuned candidate under controlled tests, but neither dataset contains real clinician-reviewed OncoTrack labels. Passing this gate is not clinical validation and does not allow patient-facing prediction or treatment claims."
+}

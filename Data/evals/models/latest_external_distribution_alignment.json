@@ -1,0 +1,270 @@
+{
+  "schema_version": "external_distribution_alignment_v1",
+  "generated_at": "2026-05-19T01:44:22.810885+00:00",
+  "status": "strong",
+  "cohort_sizes": {
+    "synthetic": 600,
+    "breastdcedl": 159,
+    "cbioportal_tcga_metabric": 3593
+  },
+  "numeric_alignment": {
+    "age": {
+      "synthetic": {
+        "available": 600,
+        "missing_rate": 0.0,
+        "mean": 52.64,
+        "median": 52.0,
+        "p10": 35.0,
+        "p90": 70.1
+      },
+      "breastdcedl": {
+        "available": 159,
+        "missing_rate": 0.0,
+        "mean": 48.3011,
+        "median": 48.57,
+        "p10": 36.726,
+        "p90": 60.11
+      },
+      "cbioportal_tcga_metabric": {
+        "available": 3582,
+        "missing_rate": 0.0031,
+        "mean": 59.8152,
+        "median": 60.33,
+        "p10": 42.005,
+        "p90": 77.0
+      }
+    },
+    "baseline_tumor_size_mm": {
+      "synthetic": {
+        "available": 560,
+        "missing_rate": 0.0667,
+        "mean": 25.6848,
+        "median": 19.95,
+        "p10": 5.1,
+        "p90": 54.78
+      },
+      "breastdcedl": {
+        "available": 158,
+        "missing_rate": 0.0063,
+        "mean": 67.7785,
+        "median": 65.0,
+        "p10": 32.4,
+        "p90": 100.3
+      },
+      "cbioportal_tcga_metabric": {
+        "available": 0,
+        "missing_rate": 1.0,
+        "mean": null,
+        "median": null,
+        "p10": null,
+        "p90": null
+      }
+    }
+  },
+  "categorical_alignment": {
+    "molecular_subtype": {
+      "synthetic": {
+        "available": 600,
+        "distribution": {
+          "HR+/HER2-": 0.4,
+          "HER2+": 0.2,
+          "triple-negative": 0.2,
+          "HR+/HER2+": 0.2
+        }
+      },
+      "breastdcedl": {
+        "available": 159,
+        "distribution": {
+          "HRposHER2neg": 0.4151,
+          "HER2pos": 0.3145,
+          "TripleNeg": 0.2516,
+          "unknown": 0.0189
+        }
+      },
+      "cbioportal_tcga_metabric": {
+        "available": 3593,
+        "distribution": {
+          "LumA": 0.1948,
+          "unknown": 0.1472,
+          "BRCA_LumA": 0.1389,
+          "LumB": 0.1322,
+          "Her2": 0.0623,
+          "claudin-low": 0.0607,
+          "Basal": 0.0582,
+          "BRCA_LumB": 0.0548,
+          "BRCA_Basal": 0.0476,
+          "Normal": 0.0412,
+          "BRCA_Her2": 0.0217,
+          "Breast Invasive Ductal Carcinoma": 0.0142
+        }
+      }
+    },
+    "stage": {
+      "synthetic": {
+        "available": 600,
+        "distribution": {
+          "IIB": 0.2917,
+          "IIIA": 0.2583,
+          "IIA": 0.235,
+          "IIIB": 0.1517,
+          "IV": 0.0633
+        }
+      },
+      "breastdcedl": {
+        "available": 159,
+        "distribution": {
+          "unknown": 1.0
+        }
+      },
+      "cbioportal_tcga_metabric": {
+        "available": 3593,
+        "distribution": {
+          "2": 0.2725,
+          "unknown": 0.2021,
+          "1": 0.1753,
+          "STAGE IIA": 0.0988,
+          "STAGE IIB": 0.071,
+          "STAGE IIIA": 0.0431,
+          "3": 0.0401,
+          "STAGE I": 0.0248,
+          "STAGE IA": 0.0239,
+          "STAGE IIIC": 0.0178,
+          "STAGE IIIB": 0.0078,
+          "0": 0.0067
+        }
+      }
+    },
+    "er_status": {
+      "synthetic": {
+        "available": 600,
+        "distribution": {
+          "positive": 0.6,
+          "unknown": 0.2,
+          "negative": 0.2
+        }
+      },
+      "breastdcedl": {
+        "available": 159,
+        "distribution": {
+          "positive": 0.4151,
+          "unknown": 0.3333,
+          "negative": 0.2516
+        }
+      },
+      "cbioportal_tcga_metabric": {
+        "available": 3593,
+        "distribution": {
+          "positive": 0.5129,
+          "unknown": 0.3128,
+          "negative": 0.1742
+        }
+      }
+    },
+    "pr_status": {
+      "synthetic": {
+        "available": 600,
+        "distribution": {
+          "unknown": 0.8,
+          "negative": 0.2
+        }
+      },
+      "breastdcedl": {
+        "available": 159,
+        "distribution": {
+          "unknown": 0.7484,
+          "negative": 0.2516
+        }
+      },
+      "cbioportal_tcga_metabric": {
+        "available": 3593,
+        "distribution": {
+          "unknown": 0.4489,
+          "positive": 0.2895,
+          "negative": 0.2616
+        }
+      }
+    },
+    "her2_status": {
+      "synthetic": {
+        "available": 600,
+        "distribution": {
+          "negative": 0.6,
+          "positive": 0.4
+        }
+      },
+      "breastdcedl": {
+        "available": 159,
+        "distribution": {
+          "negative": 0.6667,
+          "positive": 0.3145,
+          "unknown": 0.0189
+        }
+      },
+      "cbioportal_tcga_metabric": {
+        "available": 3593,
+        "distribution": {
+          "negative": 0.4823,
+          "unknown": 0.4489,
+          "positive": 0.0687
+        }
+      }
+    }
+  },
+  "treatment_context_alignment": {
+    "synthetic": {
+      "rates": {
+        "chemotherapy": 1.0,
+        "targeted_anti_her2": 0.4,
+        "endocrine": 0.2
+      },
+      "note": "Treatment context is source-specific and not comparable as treatment efficacy."
+    },
+    "breastdcedl": {
+      "rates": {
+        "chemotherapy_context": 1.0,
+        "MRI": 1.0
+      },
+      "note": "Treatment context is source-specific and not comparable as treatment efficacy."
+    },
+    "cbioportal_tcga_metabric": {
+      "rates": {
+        "surgery": 0.5441,
+        "radiation": 0.4793,
+        "endocrine": 0.3384,
+        "chemotherapy": 0.1147,
+        "neoadjuvant_context": 0.0017
+      },
+      "note": "Treatment context is source-specific and not comparable as treatment efficacy."
+    }
+  },
+  "largest_gaps": [
+    {
+      "cohort": "breastdcedl",
+      "field": "baseline_tumor_size_mm",
+      "synthetic_mean": 25.6848,
+      "external_mean": 67.7785,
+      "absolute_mean_delta": 42.0937
+    },
+    {
+      "cohort": "cbioportal_tcga_metabric",
+      "field": "age",
+      "synthetic_mean": 52.64,
+      "external_mean": 59.8152,
+      "absolute_mean_delta": 7.1752
+    },
+    {
+      "cohort": "breastdcedl",
+      "field": "age",
+      "synthetic_mean": 52.64,
+      "external_mean": 48.3011,
+      "absolute_mean_delta": 4.3389
+    }
+  ],
+  "recommended_actions": [
+    "Do not tune the model to match public cohorts blindly; first check target compatibility.",
+    "Use tumor-size and subtype gaps to tune simulator realism only as a separate candidate dataset.",
+    "Keep cBioPortal survival/progression labels separate from OncoTrack response-score labels.",
+    "Use cBioPortal rows for distribution and schema checks, not patient-facing predictions."
+  ],
+  "claim_boundary": "External distribution alignment compares broad field distributions across synthetic rows and public cohorts. It is a realism/debugging artifact only, not validation of clinical prediction or treatment utility."
+}

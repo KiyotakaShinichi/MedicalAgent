@@ -1,0 +1,154 @@
+{
+  "schema_version": "tcga_metabric_canonical_mapping_v1",
+  "generated_at": "2026-05-18T17:03:24.022141+00:00",
+  "status": "strong",
+  "canonical_schema_path": "Data/external_bridge/canonical_oncology_schema.json",
+  "source_mapping_path": "Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json",
+  "datasets": {
+    "tcga_brca_pan_can_atlas_2018": {
+      "status": "schema_available",
+      "source_status": "partial",
+      "study_id": "brca_tcga_pan_can_atlas_2018",
+      "label": "TCGA-BRCA PanCancer Atlas",
+      "role": "external genomic/subtype distribution check",
+      "canonical_field_map": {
+        "source_dataset": "tcga_brca_pan_can_atlas_2018",
+        "patient_id": "case/sample identifier after export",
+        "age": "age field may require clinical export inspection",
+        "sex": "demographic field may require clinical export inspection",
+        "stage": {
+          "id": "AJCC_PATHOLOGIC_TUMOR_STAGE",
+          "display_name": "Neoplasm Disease Stage American Joint Committee on Cancer Code",
+          "description": "The extent of a cancer, especially whether the disease has spread from the original site to other parts of the body based on AJCC staging criteria.",
+          "datatype": "STRING"
+        },
+        "molecular_subtype": {
+          "id": "SUBTYPE",
+          "display_name": "Subtype",
+          "description": "Subtype",
+          "datatype": "STRING"
+        },
+        "er_status": null,
+        "pr_status": null,
+        "her2_status": null,
+        "genetic_variant_classification": {
+          "id": "ANEUPLOIDY_SCORE",
+          "display_name": "Aneuploidy Score",
+          "description": "Aneuploidy Score",
+          "datatype": "NUMBER"
+        },
+        "outcome_label_name": {
+          "id": "DFS_MONTHS",
+          "display_name": "Disease Free (Months)",
+          "description": "Disease free (months) since initial treatment.",
+          "datatype": "NUMBER"
+        }
+      },
+      "available_canonical_fields": [
+        "stage",
+        "molecular_subtype",
+        "genetic_variant_classification",
+        "outcome_label_name"
+      ],
+      "missing_core_fields": [
+        "er_status",
+        "pr_status",
+        "her2_status"
+      ],
+      "target_mismatch": "Survival/progression fields, when present, are not equivalent to OncoTrack's synthetic response classification, response-score regression, or toxicity-review labels.",
+      "next_action": "Use mapped fields from brca_tcga_pan_can_atlas_2018 as schema checks only; inspect missing receptor/subtype columns manually."
+    },
+    "metabric": {
+      "status": "schema_available",
+      "source_status": "mapped",
+      "study_id": "brca_metabric",
+      "label": "METABRIC Breast Cancer",
+      "role": "external biomarker/subtype/outcome schema check",
+      "canonical_field_map": {
+        "source_dataset": "brca_metabric",
+        "patient_id": "case/sample identifier after export",
+        "age": "age field may require clinical export inspection",
+        "sex": "demographic field may require clinical export inspection",
+        "stage": {
+          "id": "TUMOR_STAGE",
+          "display_name": "Tumor Stage",
+          "description": "Tumor stage.",
+          "datatype": "STRING"
+        },
+        "molecular_subtype": {
+          "id": "CLAUDIN_SUBTYPE",
+          "display_name": "Pam50 + Claudin-low subtype",
+          "description": "Pam50 + Claudin-low subtype",
+          "datatype": "STRING"
+        },
+        "er_status": {
+          "id": "ER_IHC",
+          "display_name": "ER status measured by IHC",
+          "description": "ER status measured by IHC",
+          "datatype": "STRING"
+        },
+        "pr_status": {
+          "id": "PR_STATUS",
+          "display_name": "PR Status",
+          "description": "PR Status",
+          "datatype": "STRING"
+        },
+        "her2_status": {
+          "id": "HER2_SNP6",
+          "display_name": "HER2 status measured by SNP6",
+          "description": "HER2 status measured by SNP6",
+          "datatype": "STRING"
+        },
+        "genetic_variant_classification": {
+          "id": "MUTATION_COUNT",
+          "display_name": "Mutation Count",
+          "description": "Mutation Count",
+          "datatype": "NUMBER"
+        },
+        "outcome_label_name": {
+          "id": "OS_MONTHS",
+          "display_name": "Overall Survival (Months)",
+          "description": "Overall survival in months since initial diagonosis.",
+          "datatype": "NUMBER"
+        }
+      },
+      "available_canonical_fields": [
+        "stage",
+        "molecular_subtype",
+        "er_status",
+        "pr_status",
+        "her2_status",
+        "genetic_variant_classification",
+        "outcome_label_name"
+      ],
+      "missing_core_fields": [],
+      "target_mismatch": "Survival/progression fields, when present, are not equivalent to OncoTrack's synthetic response classification, response-score regression, or toxicity-review labels.",
+      "next_action": "Export clinical data for brca_metabric, map receptor/subtype/outcome fields, then run an external distribution check."
+    }
+  },
+  "mapped_dataset_count": 2,
+  "strict_common_feature_set": [
+    "age",
+    "sex",
+    "stage",
+    "molecular_subtype",
+    "er_status",
+    "pr_status",
+    "her2_status"
+  ],
+  "not_supported_for_oncotrack_training": [
+    "serial CBC trends",
+    "patient-reported symptom timeline",
+    "medication-by-cycle records",
+    "MRI/CT/ultrasound monitoring sequence",
+    "tumor-marker treatment-response trajectory",
+    "OncoTrack response-score label"
+  ],
+  "recommended_use": [
+    "canonical schema sanity check",
+    "biomarker/subtype distribution alignment",
+    "future common-feature A/B testing after export",
+    "never direct patient-facing treatment-response prediction"
+  ],
+  "claim_boundary": "TCGA/METABRIC canonical mapping is external schema and distribution readiness only. It is not validation of OncoTrack's temporal monitoring model and must not be used to claim treatment-response, recurrence, survival, or genetic-risk prediction."
+}
