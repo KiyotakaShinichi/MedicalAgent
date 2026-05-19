@@ -109,6 +109,15 @@ def handle_patient_chat(db, patient_id, message):
 
     urgent_flags = _detect_urgent_flags(normalized)
     routing_safety = safety_scope_check(normalized, urgent_flags)
+    # Compound-intent envelope: detects messages that mix a casual
+    # opener ("hi") with a tool request ("can you log my symptoms?")
+    # so the chat layer can still surface the tool ask instead of
+    # collapsing to a bare greeting reply.
+    try:
+        from backend.services.compound_intent_router import detect_compound_intents
+        compound_intent = detect_compound_intents(message)
+    except Exception:  # noqa: BLE001 — never break chat on the router
+        compound_intent = None
     extracted = _extract_candidate_inputs(normalized)
     resumed_symptom = _resume_pending_symptom_if_possible(db, patient_id, normalized, extracted)
     if resumed_symptom:
@@ -280,6 +289,32 @@ def handle_patient_chat(db, patient_id, message):
         ))
         actions.append({"type": "saved_medication", **medication})
 
+    # Compound-intent: user asked to log something ("hi, can you log
+    # my symptoms?") but no extractor produced concrete data.  Surface
+    # a follow-up action so the user gets asked for the missing detail
+    # instead of receiving a bare casual reply.
+    has_concrete_save = any(
+        a.get("type", "").startswith("saved_")
+        or a.get("type", "").startswith("partial_")
+        for a in actions
+    )
+    if (
+        compound_intent is not None
+        and compound_intent.has_tool_request
+        and not has_concrete_save
+        and not urgent_flags
+    ):
+        actions.append({
+            "type": "partial_tool_request_detected",
+            "tool_targets": compound_intent.tool_request_targets,
+            "casual_opener": compound_intent.has_casual_opener,
+            "suggested_acknowledgment": compound_intent.suggested_acknowledgment,
+            "message": _tool_request_followup_message(
+                compound_intent.tool_request_targets,
+                compound_intent.has_casual_opener,
+            ),
+        })
+
     # Lab/imaging extractors may have added urgent_flags after the initial
     # safety scope check.  Recompute so the bypass path and the RAG pipeline
     # both see the elevated safety level (e.g. very_low_wbc → high_risk).
@@ -393,10 +428,46 @@ def handle_patient_chat(db, patient_id, message):
             "guardrails": agent_result.get("guardrails"),
             "rag_evaluation": agent_result.get("rag_evaluation"),
             "pipeline_trace": agent_result.get("pipeline_trace"),
+            "compound_intent": (compound_intent.to_dict() if compound_intent is not None else None),
         },
         "assistant_message_id": assistant_record.id,
         "safety_note": "This assistant logs and summarizes information only. It does not diagnose or give treatment instructions.",
     }
+
+
+def _tool_request_followup_message(tool_targets, casual_opener):
+    """Build the user-facing follow-up prompt for a tool request that
+    arrived without concrete data.  ``tool_targets`` is the list of
+    save_* tool names the compound router inferred.  ``casual_opener``
+    controls whether to lead with a brief greeting."""
+    target_to_prompt = {
+        "save_symptom": (
+            "I can log a symptom — please send the symptom name AND a "
+            "severity from 0–10 (e.g. \"nausea severity 6/10 today\")."
+        ),
+        "save_complete_cbc": (
+            "I can save a CBC row — please send WBC, hemoglobin, and "
+            "platelets together (e.g. \"WBC 2.1, hemoglobin 10.4, "
+            "platelets 145\")."
+        ),
+        "save_imaging_report": (
+            "I can save an imaging report — please paste the report "
+            "date plus the findings or impression text."
+        ),
+        "save_medication": (
+            "I can log a medication — please send the medication name "
+            "and (if known) the dose and frequency."
+        ),
+    }
+    prompts: list[str] = []
+    for target in tool_targets or ["save_symptom"]:
+        prompt = target_to_prompt.get(target)
+        if prompt and prompt not in prompts:
+            prompts.append(prompt)
+    body = " ".join(prompts) if prompts else target_to_prompt["save_symptom"]
+    if casual_opener:
+        return f"Hi! Sure, I can help with that. {body}"
+    return body
 
 
 def _has_tool_action(actions):

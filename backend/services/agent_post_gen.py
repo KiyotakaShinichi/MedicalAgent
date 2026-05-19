@@ -48,41 +48,169 @@ def apply_post_gen_validator(
     treatment / prognosis / dosage / genetic / tumor-marker overclaim
     that slipped through generation.  Keeping it as a named function
     makes the failure surface explicit in the call site.
+
+    Optional 120B answer-tier escalation
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    When the deterministic validator returns ``allowed`` but the reply
+    contains "borderline" wording the rule set might miss, and the
+    operator has opted into LLM escalation via
+    ``ONCOTRACK_POSTGEN_ANSWER_ESCALATION=1``, we ask the 120B answer
+    tier for a second opinion.  Same block behavior applies if it
+    votes blocked.  FAST_MODE skips this escalation (it goes through
+    the same ``_adjudicate_json`` short-circuit as every other LLM
+    call).
     """
     from backend.services.post_generation_validator import validate_reply
 
     pgv_decision = validate_reply(result.get("reply") or "")
     if pgv_decision.decision == "blocked":
-        original_reply = result.get("reply")
-        result["reply"] = pgv_decision.suggested_response
-        # A blocked output cannot legitimately cite anything; strip
-        # citations so a downstream reader doesn't see "here is the
-        # source for our refusal."
-        result["citations"] = []
-        result["post_gen_validator"] = {
-            "decision": "blocked",
-            "triggered_rules": pgv_decision.triggered_rules,
-            "matched_excerpts": pgv_decision.matched_excerpts,
-            "medical_claim_boundary": pgv_decision.claim_boundary,
-            "original_reply_preview": (original_reply or "")[:240],
-        }
-        # Surface the block in the output-guardrail block too so existing
-        # consumers (RAG eval, trace log) see it without a new field.
-        if isinstance(output_guardrails, dict):
-            output_guardrails = dict(output_guardrails)
-            output_guardrails["status"] = "blocked_by_post_gen_validator"
-            existing_issues = list(output_guardrails.get("issues") or [])
-            existing_issues.extend(
-                f"post_gen::{rule}" for rule in pgv_decision.triggered_rules
-            )
-            output_guardrails["issues"] = existing_issues
-    else:
-        result["post_gen_validator"] = {
-            "decision": "allowed",
-            "triggered_rules": [],
-            "medical_claim_boundary": pgv_decision.claim_boundary,
-        }
+        _apply_block(result, output_guardrails, pgv_decision)
+        # _apply_block can't mutate ``output_guardrails`` directly when
+        # it needs to replace it; it returns the maybe-new dict via
+        # result["_replaced_output_guardrails"] for the caller to use.
+        output_guardrails = result.pop("_replaced_output_guardrails", output_guardrails)
+        return output_guardrails, pgv_decision
+
+    # Deterministic validator said "allowed".  Optional LLM second
+    # opinion for borderline wording — gated by env var so the default
+    # behavior is unchanged.
+    escalated = _maybe_escalate_to_answer_tier(result)
+    result["post_gen_validator"] = {
+        "decision":               "allowed",
+        "triggered_rules":        [],
+        "medical_claim_boundary": pgv_decision.claim_boundary,
+        "answer_tier_escalation": escalated,
+    }
+    if escalated and escalated.get("decision") == "blocked":
+        # Build a synthetic pgv-like decision from the LLM verdict and
+        # apply the same block path.
+        from backend.services.post_generation_validator import validate_reply as _vr
+        synthetic = type(pgv_decision)(  # reuse the dataclass shape
+            decision="blocked",
+            triggered_rules=tuple(escalated.get("triggered_rules") or ["llm_answer_tier_block"]),
+            matched_excerpts=tuple(escalated.get("matched_excerpts") or []),
+            suggested_response=escalated.get("suggested_response")
+                or "I cannot safely answer that as stated. Please contact your oncology care team for medical review.",
+            claim_boundary=pgv_decision.claim_boundary,
+        ) if hasattr(pgv_decision, "__class__") else pgv_decision
+        _apply_block(result, output_guardrails, synthetic)
+        output_guardrails = result.pop("_replaced_output_guardrails", output_guardrails)
+        return output_guardrails, synthetic
+
     return output_guardrails, pgv_decision
+
+
+def _apply_block(result, output_guardrails, pgv_decision) -> None:
+    """Apply the standard 'block' transformation to ``result`` in place
+    and stash the (possibly replaced) ``output_guardrails`` dict under
+    ``result["_replaced_output_guardrails"]`` for the caller to lift."""
+    original_reply = result.get("reply")
+    result["reply"] = pgv_decision.suggested_response
+    result["citations"] = []
+    result["post_gen_validator"] = {
+        "decision":                "blocked",
+        "triggered_rules":         list(pgv_decision.triggered_rules),
+        "matched_excerpts":        list(pgv_decision.matched_excerpts),
+        "medical_claim_boundary":  pgv_decision.claim_boundary,
+        "original_reply_preview":  (original_reply or "")[:240],
+    }
+    if isinstance(output_guardrails, dict):
+        replaced = dict(output_guardrails)
+        replaced["status"] = "blocked_by_post_gen_validator"
+        existing_issues = list(replaced.get("issues") or [])
+        existing_issues.extend(
+            f"post_gen::{rule}" for rule in pgv_decision.triggered_rules
+        )
+        replaced["issues"] = existing_issues
+        result["_replaced_output_guardrails"] = replaced
+    else:
+        result["_replaced_output_guardrails"] = output_guardrails
+
+
+# Borderline patterns: treatment-decision-adjacent / diagnosis-adjacent
+# wording that the deterministic validator's strict pattern set might
+# not catch.  Presence of one of these in an otherwise-allowed reply
+# triggers the optional 120B second opinion.
+_BORDERLINE_PATTERNS: tuple[str, ...] = (
+    "in your case",
+    "i think you",
+    "i believe you",
+    "this likely means",
+    "this likely indicates",
+    "this means that you",
+    "you probably have",
+    "you probably need",
+    "would be safe",
+    "should be safe",
+    "it is fine to",
+    "you can probably",
+    "you can definitely",
+    "no need to worry",
+    "definitely not cancer",
+    "definitely cancer",
+)
+
+
+def _maybe_escalate_to_answer_tier(result: dict[str, Any]) -> dict[str, Any] | None:
+    """Optional second-opinion on a deterministic ``allowed`` verdict.
+
+    Skipped unless ``ONCOTRACK_POSTGEN_ANSWER_ESCALATION=1`` AND the
+    reply contains at least one borderline pattern.  Calls the 120B
+    answer tier via ``_adjudicate_json(tier="answer")`` which itself
+    honours ``ONCOTRACK_FAST_MODE`` and the per-tier model config.
+    Returns the verdict dict, or None when the escalation didn't fire.
+    """
+    import os
+    if os.environ.get("ONCOTRACK_POSTGEN_ANSWER_ESCALATION", "").strip().lower() not in {"1", "true", "yes"}:
+        return None
+
+    reply = (result.get("reply") or "").lower()
+    matched = [p for p in _BORDERLINE_PATTERNS if p in reply]
+    if not matched:
+        return None
+
+    try:
+        from backend.services.local_llm import _adjudicate_json
+        import json as _json
+        verdict = _adjudicate_json(
+            system=(
+                "You are a strict post-generation safety reviewer for a non-diagnostic oncology "
+                "support assistant. Return only JSON. Block any reply that diagnoses, predicts "
+                "prognosis, recommends treatment, gives dosing, confirms genetic risk, concludes "
+                "from tumor markers, or implies false reassurance. Allow safe education, "
+                "record organization, and clinician-routing wording."
+            ),
+            prompt=_json.dumps({
+                "task": "post_gen_borderline_review",
+                "reply": result.get("reply"),
+                "borderline_patterns_matched": matched,
+                "return_json_schema": {
+                    "decision":            "allowed | blocked",
+                    "triggered_rules":     ["short strings"],
+                    "matched_excerpts":    ["short strings"],
+                    "suggested_response":  "short safe refusal if blocked",
+                    "confidence":          "0.0-1.0",
+                    "reason":              "short string",
+                },
+            }, ensure_ascii=False),
+            tier="answer",
+        )
+    except Exception as exc:  # noqa: BLE001 — never crash chat on the second opinion
+        return {"available": False, "reason": f"escalation_failed:{exc!s}"}
+
+    if not verdict.get("available"):
+        return verdict
+
+    return {
+        "available":         True,
+        "decision":          "blocked" if verdict.get("decision") == "blocked" else "allowed",
+        "triggered_rules":   verdict.get("triggered_rules") or [],
+        "matched_excerpts":  verdict.get("matched_excerpts") or matched,
+        "suggested_response": verdict.get("suggested_response"),
+        "confidence":        float(verdict.get("confidence") or 0),
+        "borderline_patterns_matched": matched,
+        "model":             verdict.get("model"),
+    }
 
 
 # ─── Layer 2: intent-aware RAG envelope ──────────────────────────────────────
