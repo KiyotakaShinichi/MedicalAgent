@@ -110,6 +110,38 @@ _TYPO_AND_SLANG_SUBSTITUTIONS: tuple[tuple[str, str], ...] = (
     ("kabag", "abdominal discomfort"),
     ("pawis na pawis", "sweating"),
     ("nilalamig", "chills"),
+    # Filipino / Taglish medication phrasing — rewrite so the
+    # English-pattern medication extractor in support_chat_agent picks
+    # them up.
+    ("umiinom ako ng", "i am taking"),
+    ("umiinom ako", "i am taking"),
+    ("ininum ko", "i took"),
+    ("iniinom ko", "i am taking"),
+    ("ginagamit ko", "i am taking"),
+    ("gumagamit ng", "taking"),
+    ("gamot ko ay", "medication is"),
+    ("gamot ko:", "medication is"),
+    ("gamot ko", "medication"),
+    # Filipino imaging-report phrasing — rewrite to surface the
+    # imaging-term triggers the extractor already looks for.
+    ("ulat ng mri", "mri report"),
+    ("ulat ng ct", "ct report"),
+    ("ulat ng ultrasound", "ultrasound report"),
+    ("ulat ng mammogram", "mammogram report"),
+    ("mri ko", "mri report"),
+    ("ct scan ko", "ct report"),
+    ("ultrasound ko", "ultrasound report"),
+    ("imaging ko", "imaging report"),
+    ("nakapag mri ako", "i had an mri"),
+    ("nakapag ct ako", "i had a ct"),
+    # Filipino lab-result phrasing — pre-normalize to expose
+    # English keywords for _extract_complete_labs.
+    ("resulta ng cbc", "cbc result"),
+    ("cbc ko ay", "cbc result is"),
+    ("cbc result ko", "cbc result"),
+    ("lab result ko", "lab result"),
+    ("globulos blancos", "wbc"),
+    ("conteo de plaquetas", "platelets"),
     # Spanish common forms (light coverage)
     ("fiebre", "fever"),
     ("nauseas", "nausea"),
@@ -122,6 +154,12 @@ _TYPO_AND_SLANG_SUBSTITUTIONS: tuple[tuple[str, str], ...] = (
     ("sangrado", "bleeding"),
     ("cansancio", "fatigue"),
     ("debilidad", "weakness"),
+    # Spanish medication phrasing — rewrite to English shape.
+    ("estoy tomando", "i am taking"),
+    ("estoy ingiriendo", "i am taking"),
+    ("tome ", "i took "),
+    ("tomo ", "taking "),
+    ("medicamento es", "medication is"),
 )
 
 

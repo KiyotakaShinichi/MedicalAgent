@@ -422,16 +422,40 @@ def _should_bypass_rag_for_tool_actions(actions, routing_intent):
 
 
 def _extract_candidate_inputs(message):
-    labs = _extract_complete_labs(message)
-    imaging_report = _extract_imaging_report(message)
+    # Multilingual preprocessing: rewrite Taglish / Spanish / typo'd
+    # wording into the English shape that the existing extractors
+    # already understand.  The original `message` is preserved for
+    # symptom extraction (which has its own multilingual table) and
+    # for downstream display; the normalized `lab_message` is used
+    # only for lab + imaging + medication extraction so we don't
+    # mangle anything else.
+    try:
+        from backend.services.multilingual_tool_router import (
+            normalize_lab_value_string,
+            normalize_user_text,
+        )
+        normalized = normalize_user_text(message)
+        lab_message = normalize_lab_value_string(normalized) if normalized else message
+    except Exception:  # noqa: BLE001 — never break chat on the router
+        lab_message = message
+
+    labs = _extract_complete_labs(lab_message) or _extract_complete_labs(message)
+    imaging_report = _extract_imaging_report(lab_message) or _extract_imaging_report(message)
     symptom = _extract_symptom(message)
     return {
         "symptom": symptom,
         "labs": labs,
-        "partial_labs": bool(not labs and _looks_like_partial_labs(message) and not _is_general_lab_question(message)),
+        "partial_labs": bool(
+            not labs
+            and (_looks_like_partial_labs(lab_message) or _looks_like_partial_labs(message))
+            and not _is_general_lab_question(message)
+        ),
         "imaging_report": imaging_report,
-        "partial_imaging": bool(not imaging_report and _looks_like_partial_imaging(message)),
-        "medication": _extract_medication(message),
+        "partial_imaging": bool(
+            not imaging_report
+            and (_looks_like_partial_imaging(lab_message) or _looks_like_partial_imaging(message))
+        ),
+        "medication": _extract_medication(lab_message) or _extract_medication(message),
     }
 
 

@@ -172,6 +172,70 @@ class ToolIntentHints(unittest.TestCase):
         self.assertIn("save_medication", hints)
 
 
+class MultilingualLabImagingMedication(unittest.TestCase):
+    """The multilingual normalizer must also let the lab / imaging /
+    medication extractors in support_chat_agent recognize Taglish and
+    Spanish phrasing without needing native multilingual extractors."""
+
+    def setUp(self) -> None:
+        from backend.services.support_chat_agent import _extract_candidate_inputs
+        self._extract = _extract_candidate_inputs
+
+    def test_taglish_medication_logging(self) -> None:
+        out = self._extract("umiinom ako ng tamoxifen 20mg araw-araw")
+        self.assertIsNotNone(out["medication"])
+        self.assertIn("tamoxifen", out["medication"]["medication"].lower())
+
+    def test_taglish_cbc_with_decimal_comma(self) -> None:
+        out = self._extract("CBC ko ngayong araw: WBC 2,1 hgb 10.4 plts 145")
+        self.assertIsNotNone(out["labs"])
+        self.assertEqual(out["labs"]["wbc"], 2.1)
+        self.assertEqual(out["labs"]["hemoglobin"], 10.4)
+        self.assertEqual(out["labs"]["platelets"], 145)
+
+    def test_taglish_imaging_trigger(self) -> None:
+        out = self._extract(
+            "may MRI ko kanina, MRI report says decrease sa tumor size by 30%"
+        )
+        # The extractor produces a full imaging_report dict when the
+        # message has report-like wording; we accept either the dict or
+        # a partial_imaging flag here since the user's phrasing is
+        # already enough to surface an imaging entry.
+        self.assertTrue(out["imaging_report"] or out["partial_imaging"])
+
+    def test_mixed_language_symptom_plus_medication(self) -> None:
+        out = self._extract("i have fevr severity 7, also taking paracetamol")
+        self.assertEqual(out["symptom"]["symptom"], "fever")
+        self.assertEqual(out["symptom"]["severity"], 7)
+        self.assertIsNotNone(out["medication"])
+        self.assertIn("paracetamol", out["medication"]["medication"].lower())
+
+    def test_spanish_medication_logging(self) -> None:
+        out = self._extract("estoy tomando tamoxifen 20mg cada dia")
+        self.assertIsNotNone(out["medication"])
+        self.assertIn("tamoxifen", out["medication"]["medication"].lower())
+
+
+class FastModeShortCircuitsAdjudication(unittest.TestCase):
+    """ONCOTRACK_FAST_MODE=1 must make every _adjudicate_json call
+    return ``available=False`` without touching the network."""
+
+    def test_fast_mode_disables_adjudication(self) -> None:
+        import os
+        from backend.services.local_llm import _adjudicate_json
+        original = os.environ.get("ONCOTRACK_FAST_MODE")
+        try:
+            os.environ["ONCOTRACK_FAST_MODE"] = "1"
+            result = _adjudicate_json(system="x", prompt="y")
+            self.assertFalse(result["available"])
+            self.assertIn("fast_mode", result["reason"])
+        finally:
+            if original is None:
+                os.environ.pop("ONCOTRACK_FAST_MODE", None)
+            else:
+                os.environ["ONCOTRACK_FAST_MODE"] = original
+
+
 class VocabularyTablesAreInspectable(unittest.TestCase):
     def test_every_symptom_has_at_least_one_english_term(self) -> None:
         for symptom, terms in MULTILINGUAL_SYMPTOM_TERMS.items():

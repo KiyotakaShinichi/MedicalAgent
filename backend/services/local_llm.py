@@ -193,13 +193,24 @@ def judge_rag_answer_with_local_llm(case, answer, citations=None, retrieved_cont
 
 
 def _adjudicate_json(system, prompt):
-    # Latency escape hatch: set ONCOTRACK_FAST_MODE=1 to disable every
-    # LLM adjudication on the hot chat path.  A 120B-class local model
-    # can take 30+ seconds per call; production load should skip these
-    # entirely and rely on the deterministic safety stack
-    # (security_guardrails patterns, route_intent deterministic
-    # branches, post_generation_validator).  Offline RAG / safety eval
-    # scripts can leave the env var unset to keep adjudication on.
+    # Emergency-degradation escape hatch.  In normal operation OncoTrack
+    # adjudicates intent / tool / cache / security against Groq cloud
+    # (70B llama-3.3-versatile router model by default) and against the
+    # 120B gpt-oss-120b for answer-class work — both are typically
+    # sub-second.  Set ``ONCOTRACK_FAST_MODE=1`` ONLY when:
+    #
+    #   - the cloud provider is rate-limited / down,
+    #   - a local Ollama fallback is misconfigured and timing out, or
+    #   - you are running a deterministic-only test pass.
+    #
+    # The deterministic safety stack (security_guardrails patterns,
+    # agent_safety scope check, route_intent deterministic branches,
+    # post_generation_validator, medical_claim_boundary checker,
+    # output_guardrail_check) covers the safety contract on its own;
+    # the LLM provided an optional second opinion.  Disabling
+    # adjudication here therefore degrades helpfulness on the open-ended
+    # branches (general_support / education) but does not weaken the
+    # safety floor.
     import os
     if os.environ.get("ONCOTRACK_FAST_MODE", "").strip().lower() in {"1", "true", "yes"}:
         return {
