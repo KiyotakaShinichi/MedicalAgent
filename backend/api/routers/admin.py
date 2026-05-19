@@ -214,6 +214,57 @@ def get_admin_llm_adjudication(
     return describe_llm_adjudication()
 
 
+# ─── Fast-mode runtime toggle ────────────────────────────────────────────────
+
+
+class FastModeToggleRequest(BaseModel):
+    """Body for the FAST_MODE toggle endpoint.
+
+    ``enabled``:
+      - True   -> force fast mode ON  (skip LLM adjudication)
+      - False  -> force fast mode OFF (re-enable LLM adjudication)
+      - None / omitted -> CLEAR the runtime override, fall back to the
+        ``ONCOTRACK_FAST_MODE`` env var.
+    """
+    enabled: bool | None = None
+
+
+@router.get("/fast-mode")
+def get_admin_fast_mode(
+    context=Depends(get_admin_access_context),
+):
+    """Current FAST_MODE state.
+
+    Returns the resolved boolean, plus the env-var source and any
+    runtime override, so an operator can see WHY fast mode is in
+    whatever state it's in.
+    """
+    from backend.services.local_llm import fast_mode_status
+
+    return fast_mode_status()
+
+
+@router.post("/fast-mode")
+def post_admin_fast_mode(
+    payload: FastModeToggleRequest,
+    context=Depends(get_admin_access_context),
+):
+    """Flip the FAST_MODE runtime override.
+
+    This is the emergency-degradation switch.  Use ONLY when the Groq
+    cloud provider is degraded / rate-limiting / down, or when a local
+    Ollama fallback is misconfigured and timing out.  The deterministic
+    safety stack still enforces every refusal / boundary / claim
+    contract when FAST_MODE is on; what you lose is the LLM "second
+    opinion" on open-ended branches (general_support / education /
+    security adjudication).
+    """
+    from backend.services.local_llm import fast_mode_status, set_fast_mode_override
+
+    set_fast_mode_override(payload.enabled)
+    return fast_mode_status()
+
+
 # ─── Async task queue ─────────────────────────────────────────────────────────
 
 @router.post("/tasks")

@@ -79,7 +79,15 @@ def assess_security_with_local_llm(text, deterministic_context=None):
             "reason": "short string",
         },
     }
-    return _adjudicate_json(system=system, prompt=json.dumps(prompt, ensure_ascii=False))
+    # Security adjudication is the one classification call where the
+    # deeper 120B answer-class model earns its keep: adversarial inputs
+    # ("ignore previous instructions", "show another patient's record",
+    # multilingual prompt injection) deserve the more thorough model.
+    return _adjudicate_json(
+        system=system,
+        prompt=json.dumps(prompt, ensure_ascii=False),
+        tier="answer",
+    )
 
 
 def route_intent_with_local_llm(text, deterministic_intent=None, safety=None):
@@ -192,27 +200,40 @@ def judge_rag_answer_with_local_llm(case, answer, citations=None, retrieved_cont
     return _adjudicate_json(system=system, prompt=json.dumps(prompt, ensure_ascii=False))
 
 
-def _adjudicate_json(system, prompt):
-    # Emergency-degradation escape hatch.  In normal operation OncoTrack
-    # adjudicates intent / tool / cache / security against Groq cloud
-    # (70B llama-3.3-versatile router model by default) and against the
-    # 120B gpt-oss-120b for answer-class work — both are typically
-    # sub-second.  Set ``ONCOTRACK_FAST_MODE=1`` ONLY when:
-    #
-    #   - the cloud provider is rate-limited / down,
-    #   - a local Ollama fallback is misconfigured and timing out, or
-    #   - you are running a deterministic-only test pass.
-    #
-    # The deterministic safety stack (security_guardrails patterns,
-    # agent_safety scope check, route_intent deterministic branches,
-    # post_generation_validator, medical_claim_boundary checker,
-    # output_guardrail_check) covers the safety contract on its own;
-    # the LLM provided an optional second opinion.  Disabling
-    # adjudication here therefore degrades helpfulness on the open-ended
-    # branches (general_support / education) but does not weaken the
-    # safety floor.
-    import os
-    if os.environ.get("ONCOTRACK_FAST_MODE", "").strip().lower() in {"1", "true", "yes"}:
+def _adjudicate_json(system, prompt, tier="router"):
+    """Adjudicate a JSON-shaped classification against a configured LLM.
+
+    ``tier`` selects which Groq model to use:
+
+      - ``"router"`` (default) — cheap fast classification model
+        (``GROQ_ROUTER_MODEL``, defaults to ``llama-3.3-70b-versatile``).
+        Used for intent routing, tool selection, cache adjudication,
+        RAG eval routing — anywhere a sub-second yes/no decision is
+        what we need.
+      - ``"answer"`` — deeper reasoning model (``GROQ_ANSWER_MODEL``,
+        defaults to ``openai/gpt-oss-120b``).  Used for security
+        adjudication on adversarial / multilingual inputs and for
+        anywhere a richer reasoning trace matters more than latency.
+
+    Emergency-degradation escape hatch.  In normal operation OncoTrack
+    adjudicates intent / tool / cache / security against Groq cloud —
+    both tiers are typically sub-second.  Set
+    ``ONCOTRACK_FAST_MODE=1`` ONLY when:
+
+      - the cloud provider is rate-limited / down,
+      - a local Ollama fallback is misconfigured and timing out, or
+      - you are running a deterministic-only test pass.
+
+    The deterministic safety stack (security_guardrails patterns,
+    agent_safety scope check, route_intent deterministic branches,
+    post_generation_validator, medical_claim_boundary checker,
+    output_guardrail_check) covers the safety contract on its own;
+    the LLM provided an optional second opinion.  Disabling
+    adjudication here therefore degrades helpfulness on the open-ended
+    branches (general_support / education) but does not weaken the
+    safety floor.
+    """
+    if fast_mode_enabled():
         return {
             "available": False,
             "reason": "llm_adjudicator_disabled_by_fast_mode",
@@ -221,7 +242,7 @@ def _adjudicate_json(system, prompt):
     failures = []
     for provider in configured_llm_providers():
         if provider["provider"] == "groq":
-            result = _groq_json(system=system, prompt=prompt)
+            result = _groq_json(system=system, prompt=prompt, tier=tier)
         elif provider["provider"] == "ollama":
             result = _ollama_json(system=system, prompt=prompt)
         else:
@@ -241,10 +262,59 @@ def _adjudicate_json(system, prompt):
     }
 
 
-def _groq_json(system, prompt):
+# ─── ONCOTRACK_FAST_MODE runtime override ────────────────────────────────────
+
+
+# Process-local fast-mode override.  Set via :func:`set_fast_mode_override`
+# (used by the admin panel) and consulted by :func:`fast_mode_enabled`
+# in addition to the ``ONCOTRACK_FAST_MODE`` environment variable.  We
+# keep a separate runtime flag (instead of just mutating os.environ)
+# so the override is observable, queryable, and reversible — useful for
+# an operator flipping it during a Groq incident.
+_FAST_MODE_RUNTIME_OVERRIDE: bool | None = None
+
+
+def fast_mode_enabled() -> bool:
+    """Return True when LLM adjudication should be skipped on the hot
+    chat path.  Reads (in order): the runtime override flag set by
+    :func:`set_fast_mode_override`, then the ``ONCOTRACK_FAST_MODE``
+    env var.  The runtime override wins when set."""
+    import os
+    if _FAST_MODE_RUNTIME_OVERRIDE is not None:
+        return _FAST_MODE_RUNTIME_OVERRIDE
+    return os.environ.get("ONCOTRACK_FAST_MODE", "").strip().lower() in {"1", "true", "yes"}
+
+
+def set_fast_mode_override(enabled: bool | None) -> None:
+    """Flip the runtime fast-mode override.  Pass ``True`` / ``False``
+    to force, or ``None`` to clear the override and fall back to the
+    env var.  Used by the admin panel toggle."""
+    global _FAST_MODE_RUNTIME_OVERRIDE
+    _FAST_MODE_RUNTIME_OVERRIDE = None if enabled is None else bool(enabled)
+
+
+def fast_mode_status() -> dict:
+    """Snapshot of the current fast-mode state for the admin panel."""
+    import os
+    env_value = os.environ.get("ONCOTRACK_FAST_MODE", "").strip().lower()
+    return {
+        "enabled":            fast_mode_enabled(),
+        "env_var_value":      env_value or None,
+        "env_var_active":     env_value in {"1", "true", "yes"},
+        "runtime_override":   _FAST_MODE_RUNTIME_OVERRIDE,
+        "source":             "runtime_override" if _FAST_MODE_RUNTIME_OVERRIDE is not None else "env_var",
+    }
+
+
+def _groq_json(system, prompt, tier="router"):
     config = get_groq_config()
     api_key = config.get("api_key")
-    model = config.get("model")
+    # Tier picks which configured model to use; "router" is the cheap
+    # fast classification model, "answer" is the deeper reasoning model.
+    if tier == "answer":
+        model = config.get("answer_model") or config.get("model")
+    else:
+        model = config.get("router_model") or config.get("model")
     if not api_key:
         return {"available": False, "reason": "GROQ_API_KEY is not configured."}
 
