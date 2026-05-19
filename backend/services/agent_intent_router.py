@@ -217,6 +217,18 @@ def route_intent(
     else:
         deterministic = "general_support"
 
+    # Latency optimization: skip the LLM router entirely when the
+    # deterministic branch is in LLM_OVERRIDE_BLOCKED.  We would not
+    # accept the LLM's vote on those branches anyway, so a 3-second
+    # Ollama timeout on every greeting / data-entry / safety message
+    # is pure waste.  Tests that monkey-patch
+    # agent_rag.route_intent_with_local_llm still work because the
+    # path that DOES consult the LLM (open-ended intents like
+    # general_support / education) goes through the attribute lookup
+    # on agent_rag below.
+    if deterministic in LLM_OVERRIDE_BLOCKED:
+        return deterministic
+
     # Resolve route_intent_with_local_llm at call time via agent_rag so the
     # test monkey-patch on agent_rag.route_intent_with_local_llm remains
     # authoritative for this module.
@@ -228,7 +240,7 @@ def route_intent(
         and candidate in LLM_ALLOWED_INTENTS
         and float(llm.get("confidence") or 0) >= LLM_CONFIDENCE_FLOOR
     )
-    if confident and deterministic not in LLM_OVERRIDE_BLOCKED:
+    if confident:
         return candidate
     return deterministic
 

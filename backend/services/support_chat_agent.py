@@ -530,12 +530,22 @@ def _select_tool_plan(message, extracted, deterministic_plan, safety):
     deterministic_tools = [tool for tool in deterministic_plan.get("selected_tools", []) if tool != "none"]
     llm = {"available": False}
     if not deterministic_tools:
-        llm = select_support_tools_with_local_llm(
-            message,
-            deterministic_tools=deterministic_plan["selected_tools"],
-            deterministic_intent=deterministic_plan["intent"],
-            safety=safety,
-        )
+        # Latency optimization: only consult the LLM tool router when the
+        # multilingual hint function spots tool-shaped wording.  A bare
+        # greeting / identity / education / safety question has no hints,
+        # so skipping the (up to 3s) Ollama HTTP call there saves real time.
+        try:
+            from backend.services.multilingual_tool_router import tool_intent_hints_from_text
+            hints = tool_intent_hints_from_text(message)
+        except Exception:  # noqa: BLE001 — never break the chat on the hint helper
+            hints = []
+        if hints:
+            llm = select_support_tools_with_local_llm(
+                message,
+                deterministic_tools=deterministic_plan["selected_tools"],
+                deterministic_intent=deterministic_plan["intent"],
+                safety=safety,
+            )
     selected = deterministic_plan["selected_tools"]
     source = deterministic_plan["source"]
     confidence = deterministic_plan["confidence"]
@@ -656,6 +666,27 @@ def _rough_chat_intent(message, safety):
 
 
 def _extract_symptom(message):
+    # First try the multilingual / typo-tolerant extractor (handles
+    # Taglish, Spanish, common typos, and qualitative severity hints).
+    # If it returns None we fall back to the legacy English-only path.
+    try:
+        from backend.services.multilingual_tool_router import extract_symptom_multilingual
+        multi = extract_symptom_multilingual(message)
+    except Exception:  # noqa: BLE001 — never break chat on router error
+        multi = None
+    if multi is not None:
+        # Shape-compatible with the legacy return value: the extra
+        # keys (matched_terms, language_hint, severity_source) ride
+        # through downstream consumers untouched.
+        return {
+            "symptom": multi["symptom"],
+            "severity": multi.get("severity"),
+            "severity_provided": multi.get("severity_provided", False),
+            "severity_source": multi.get("severity_source"),
+            "matched_terms": multi.get("matched_terms"),
+            "language_hint": multi.get("language_hint"),
+        }
+
     lower = message.lower()
     symptom_name = None
     for canonical, terms in SYMPTOM_KEYWORDS.items():
