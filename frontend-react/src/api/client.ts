@@ -548,6 +548,24 @@ export const getSystemHealth = () =>
 export const runSystemHealth = () =>
   post<{ message: string; result: SystemHealth }>("/admin/system-health");
 
+// FAST_MODE runtime toggle — emergency degradation switch when the
+// Groq cloud provider is rate-limited / down.  enabled=true forces
+// fast mode ON, false forces it OFF, null clears the runtime override
+// and falls back to the ONCOTRACK_FAST_MODE env var.
+export interface FastModeStatus {
+  enabled: boolean;
+  env_var_value: string | null;
+  env_var_active: boolean;
+  runtime_override: boolean | null;
+  source: "env_var" | "runtime_override";
+}
+
+export const getAdminFastMode = () =>
+  get<FastModeStatus>("/admin/fast-mode");
+
+export const setAdminFastMode = (enabled: boolean | null) =>
+  post<FastModeStatus>("/admin/fast-mode", { enabled });
+
 export const getPublicImagingManifest = () =>
   get<PublicImagingManifest>("/admin/public-imaging-manifest");
 

@@ -1,11 +1,17 @@
-import { RefreshCw } from "lucide-react";
+import { useState } from "react";
+import { RefreshCw, Zap } from "lucide-react";
 import { Badge } from "../../../components/ui/Badge";
 import { statusVariant } from "../../../components/ui/badgeUtils";
 import { Button } from "../../../components/ui/Button";
 import { Card, CardHeader, SectionTitle } from "../../../components/ui/Card";
 import { ErrorPane, LoadingPane } from "../../../components/ui/Spinner";
 import { useApi } from "../../../hooks/useApi";
-import { getSystemHealth, runSystemHealth } from "../../../api/client";
+import {
+  getSystemHealth,
+  runSystemHealth,
+  getAdminFastMode,
+  setAdminFastMode,
+} from "../../../api/client";
 
 
 export function SystemHealthSection() {
@@ -37,6 +43,8 @@ export function SystemHealthSection() {
         </div>
         <p className="text-xs mt-3" style={{ color: "var(--text-dim)" }}>{data.claim_boundary}</p>
       </Card>
+
+      <FastModePanel />
 
       <Card>
         <CardHeader><SectionTitle>Issues & Next Actions</SectionTitle></CardHeader>
@@ -103,5 +111,86 @@ function HealthTile({ label, value }: { label: string; value: string }) {
       <div className="text-xs mb-1" style={{ color: "var(--text-faint)" }}>{label}</div>
       <Badge variant={statusVariant(value)}>{value.replace(/_/g, " ")}</Badge>
     </div>
+  );
+}
+
+
+function FastModePanel() {
+  const { data, status, error, refetch } = useApi(getAdminFastMode, []);
+  const [busy, setBusy] = useState(false);
+
+  async function apply(next: boolean | null) {
+    setBusy(true);
+    try {
+      await setAdminFastMode(next);
+      await refetch();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (status === "loading") return <LoadingPane label="Reading FAST_MODE state..." />;
+  if (status === "error") return <ErrorPane message={error ?? "Could not load FAST_MODE state"} onRetry={() => void refetch()} />;
+  if (!data) return null;
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <Zap size={14} />
+          <SectionTitle>LLM FAST_MODE (emergency degradation)</SectionTitle>
+          <Badge variant={data.enabled ? "amber" : "green"}>
+            {data.enabled ? "ON" : "OFF"}
+          </Badge>
+          <span className="text-[10px] uppercase" style={{ color: "var(--text-faint)" }}>
+            source: {data.source.replace(/_/g, " ")}
+          </span>
+        </div>
+      </CardHeader>
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        When ON, every LLM adjudication on the hot chat path short-circuits to
+        "unavailable". The deterministic safety stack (security patterns, route
+        boundaries, post-gen validator, claim boundary checker) still enforces
+        every refusal contract — what you lose is the LLM second opinion on
+        open-ended branches. Use this <strong>only</strong> when the Groq cloud
+        provider is degraded / rate-limiting, or for deterministic-only test
+        passes.
+      </p>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          variant="primary"
+          size="sm"
+          disabled={busy || data.enabled}
+          onClick={() => void apply(true)}
+        >
+          Force ON
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          disabled={busy || (!data.enabled && data.runtime_override === false)}
+          onClick={() => void apply(false)}
+        >
+          Force OFF
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={busy || data.runtime_override === null}
+          onClick={() => void apply(null)}
+        >
+          Clear override (fall back to env var)
+        </Button>
+      </div>
+      <div className="mt-3 text-[11px]" style={{ color: "var(--text-faint)" }}>
+        <strong>env_var_value:</strong> {data.env_var_value ?? "(unset)"} ·{" "}
+        <strong>runtime_override:</strong>{" "}
+        {data.runtime_override === null
+          ? "cleared"
+          : data.runtime_override
+          ? "true"
+          : "false"}
+      </div>
+    </Card>
   );
 }
