@@ -1,6 +1,6 @@
 {
   "schema_version": "clinical_performance_dossier_status_v1",
-  "generated_at": "2026-05-20T04:49:28.964312+00:00",
+  "generated_at": "2026-05-20T16:52:30.240581+00:00",
   "status": "template_only_no_clinical_claims",
   "sections": [
     "intended use",

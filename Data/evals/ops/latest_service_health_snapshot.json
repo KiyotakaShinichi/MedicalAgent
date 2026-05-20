@@ -1,6 +1,6 @@
 {
   "schema_version": "service_health_snapshot_v1",
-  "generated_at": "2026-05-20T04:49:29.784910+00:00",
+  "generated_at": "2026-05-20T16:52:30.266891+00:00",
   "status": "strong",
   "metrics": {
     "rag_latency_ms": null,
@@ -10,7 +10,7 @@
     "abstention_rate": null,
     "unsafe_block_rate": null,
     "release_gate_status": "needs_attention",
-    "stale_artifact_count": 79,
+    "stale_artifact_count": 75,
     "failed_benchmark_count": 0
   },
   "stale_artifacts": [
@@ -32,8 +32,6 @@
     "counterfactual_stability",
     "learned_abstention",
     "per_head_calibration",
-    "shortcut_audit",
-    "medical_advisor_review_packet",
     "minimum_evidence_standards",
     "medical_claim_boundary_eval",
     "public_biomarker_dataset_manifest",
@@ -63,7 +61,9 @@
     "mle_readiness",
     "mle_readiness_realism_candidate",
     "leakage_audit",
-    "evidence_abstention_eval"
+    "evidence_abstention_eval",
+    "modality_robustness_comparison",
+    "modality_robust_training"
   ],
   "failed_artifacts": [],
   "claim_boundary": "PoC operational health snapshot only; no production SLO/SLA or compliance claim."

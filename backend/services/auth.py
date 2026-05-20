@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+import os
 import secrets
 
 from backend.models import AccessSession, Patient, UserAccount
@@ -26,6 +27,7 @@ class AccessContext:
 
 
 def create_demo_session(db, role: str, patient_id: str | None = None):
+    _ensure_demo_auth_allowed()
     normalized_role = role.lower().strip()
     if normalized_role not in VALID_ROLES:
         raise ValueError("role must be patient, clinician, or admin")
@@ -57,6 +59,7 @@ def create_demo_session(db, role: str, patient_id: str | None = None):
 
 
 def create_demo_session_from_credentials(db, username: str, password: str):
+    _ensure_demo_auth_allowed()
     normalized_username = (username or "").strip().lower()
     normalized_password = (password or "").strip()
     if not normalized_username or not normalized_password:
@@ -74,6 +77,13 @@ def create_demo_session_from_credentials(db, username: str, password: str):
         return create_demo_session(db, role="patient", patient_id=patient.id)
 
     raise ValueError("Invalid demo credentials")
+
+
+def _ensure_demo_auth_allowed() -> None:
+    environment = os.getenv("ENVIRONMENT", "development").strip().lower()
+    allow_demo_auth = os.getenv("ALLOW_DEMO_AUTH", "").strip().lower() in {"1", "true", "yes", "on"}
+    if environment in {"production", "prod", "staging"} and not allow_demo_auth:
+        raise ValueError("Demo authentication is disabled outside development unless ALLOW_DEMO_AUTH=true")
 
 
 def get_context_from_authorization(db, authorization_header: str | None):

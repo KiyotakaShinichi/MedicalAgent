@@ -1,6 +1,6 @@
 {
   "schema_version": "real_data_readiness_checklist_v1",
-  "generated_at": "2026-05-20T04:49:28.350584+00:00",
+  "generated_at": "2026-05-20T16:52:30.233180+00:00",
   "status": "not_ready",
   "completed_count": 0,
   "required_count": 11,

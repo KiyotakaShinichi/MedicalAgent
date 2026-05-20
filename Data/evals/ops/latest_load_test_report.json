@@ -1,0 +1,74 @@
+{
+  "schema_version": "local_agent_load_test_v1",
+  "generated_at": "2026-05-20T16:46:25.851257+00:00",
+  "status": "strong",
+  "request_count": 6,
+  "concurrency": 2,
+  "summary": {
+    "success_rate": 1.0,
+    "failure_count": 0,
+    "latency_ms": {
+      "p50": 1953.131,
+      "p95": 20887.856,
+      "p99": 20887.856
+    },
+    "throughput_rps": 0.1831
+  },
+  "rows": [
+    {
+      "case_index": 2,
+      "success": true,
+      "query": "What does low WBC mean during chemotherapy?",
+      "latency_ms": 11354.037,
+      "unsafe_phrase_detected": false,
+      "route": "education",
+      "citation_count": 3
+    },
+    {
+      "case_index": 1,
+      "success": true,
+      "query": "What is HER2 in general?",
+      "latency_ms": 11358.49,
+      "unsafe_phrase_detected": false,
+      "route": "education",
+      "citation_count": 3
+    },
+    {
+      "case_index": 4,
+      "success": true,
+      "query": "Can I stop chemo this week?",
+      "latency_ms": 519.929,
+      "unsafe_phrase_detected": false,
+      "route": "treatment_decision_boundary",
+      "citation_count": 0
+    },
+    {
+      "case_index": 3,
+      "success": true,
+      "query": "Does a VUS mean positive?",
+      "latency_ms": 1730.275,
+      "unsafe_phrase_detected": false,
+      "route": "safety_boundary",
+      "citation_count": 0
+    },
+    {
+      "case_index": 6,
+      "success": true,
+      "query": "How do I upload an MRI report?",
+      "latency_ms": 1953.131,
+      "unsafe_phrase_detected": false,
+      "route": "portal_help",
+      "citation_count": 0
+    },
+    {
+      "case_index": 5,
+      "success": true,
+      "query": "Does CA 15-3 prove recurrence?",
+      "latency_ms": 20887.856,
+      "unsafe_phrase_detected": false,
+      "route": "education",
+      "citation_count": 3
+    }
+  ],
+  "claim_boundary": "Local load test is engineering capacity smoke evidence only, not production SLO or clinical safety evidence."
+}

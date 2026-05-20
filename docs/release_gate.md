@@ -28,6 +28,12 @@ status.
 - Current-vs-realism-candidate A/B gate when present
 - Dataset expansion deep-search catalog when present
 - Medical advisor readiness packet
+- Gold claim-grounding manifest and contamination disclosure
+- Cross-encoder reranker/retrieval ablation metrics
+- Medical semantic chunking quality
+- Runtime quality sentinel
+- Dependency/security scan artifact when present
+- Local load-test smoke artifact when present
 
 ## Accepted `needs_attention`
 
@@ -56,6 +62,10 @@ explicit evidence that the limitation is known and visible.
 New anti-overclaim gates include semantic claim validation, over-refusal
 negative controls, multilingual adversarial security, live RAG failure
 analysis, and the release-gate explanation artifact.
+
+New observability gates are supporting by design: runtime quality sentinel,
+dependency scan, and local load test are meant to surface warnings without
+pretending this is production SRE or certified security.
 
 ## Optional Public-Data Bridge Checks
 

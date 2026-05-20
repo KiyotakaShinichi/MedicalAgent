@@ -1,0 +1,28 @@
+{
+  "schema_version": "dependency_security_scan_v1",
+  "generated_at": "2026-05-20T16:35:56.678240+00:00",
+  "status": "acceptable",
+  "summary": {
+    "tool_count": 2,
+    "unavailable_tool_count": 1,
+    "high_or_critical_count": 0
+  },
+  "checks": [
+    {
+      "label": "python_dependencies",
+      "tool": "pip-audit",
+      "status": "tool_unavailable",
+      "high_or_critical_count": 0,
+      "note": "Tool not installed locally; CI can enable this without changing project behavior."
+    },
+    {
+      "label": "frontend_dependencies",
+      "tool": "npm.cmd",
+      "status": "acceptable",
+      "exit_code": 0,
+      "high_or_critical_count": 0,
+      "stderr_tail": ""
+    }
+  ],
+  "claim_boundary": "Dependency scanning is best-effort engineering hygiene, not a security certification."
+}

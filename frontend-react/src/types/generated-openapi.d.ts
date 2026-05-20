@@ -854,6 +854,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/intent-classifier-probe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Admin Intent Classifier Probe
+         * @description Live-probe the compound-intent router on an arbitrary message.
+         *
+         *     Returns:
+         *       - ``deterministic`` : envelope produced by the rule-based path
+         *         (table + regex), tells you what the heuristic alone would do.
+         *       - ``merged``        : envelope after merging with the LLM verdict
+         *         (or identical to ``deterministic`` when LLM is unavailable).
+         *       - ``llm``           : raw LLM verdict (language, confidence,
+         *         provider, model) — or ``{"available": False, ...}``.
+         *
+         *     This endpoint does NOT touch the chat database; it's a stateless
+         *     probe.  Useful for debugging multilingual routing without sending
+         *     a real chat.
+         */
+        post: operations["post_admin_intent_classifier_probe_admin_intent_classifier_probe_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/fast-mode": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Admin Fast Mode
+         * @description Current FAST_MODE state.
+         *
+         *     Returns the resolved boolean, plus the env-var source and any
+         *     runtime override, so an operator can see WHY fast mode is in
+         *     whatever state it's in.
+         */
+        get: operations["get_admin_fast_mode_admin_fast_mode_get"];
+        put?: never;
+        /**
+         * Post Admin Fast Mode
+         * @description Flip the FAST_MODE runtime override.
+         *
+         *     This is the emergency-degradation switch.  Use ONLY when the Groq
+         *     cloud provider is degraded / rate-limiting / down, or when a local
+         *     Ollama fallback is misconfigured and timing out.  The deterministic
+         *     safety stack still enforces every refusal / boundary / claim
+         *     contract when FAST_MODE is on; what you lose is the LLM "second
+         *     opinion" on open-ended branches (general_support / education /
+         *     security adjudication).
+         */
+        post: operations["post_admin_fast_mode_admin_fast_mode_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/tasks": {
         parameters: {
             query?: never;
@@ -3257,6 +3325,20 @@ export interface components {
             /** Notes */
             notes?: string | null;
         };
+        /**
+         * FastModeToggleRequest
+         * @description Body for the FAST_MODE toggle endpoint.
+         *
+         *     ``enabled``:
+         *       - True   -> force fast mode ON  (skip LLM adjudication)
+         *       - False  -> force fast mode OFF (re-enable LLM adjudication)
+         *       - None / omitted -> CLEAR the runtime override, fall back to the
+         *         ``ONCOTRACK_FAST_MODE`` env var.
+         */
+        FastModeToggleRequest: {
+            /** Enabled */
+            enabled?: boolean | null;
+        };
         /** GeneticReviewCreate */
         GeneticReviewCreate: {
             /** Decision */
@@ -3326,6 +3408,24 @@ export interface components {
             findings: string;
             /** Impression */
             impression: string;
+        };
+        /**
+         * IntentProbeRequest
+         * @description Body for the /admin/intent-classifier-probe endpoint.
+         *
+         *     ``message`` is the raw user input.  ``use_llm`` defaults to True so
+         *     the operator sees the merged deterministic + LLM verdict; setting
+         *     it to False gives the hermetic deterministic-only result (useful
+         *     for comparing the two).
+         */
+        IntentProbeRequest: {
+            /** Message */
+            message: string;
+            /**
+             * Use Llm
+             * @default true
+             */
+            use_llm: boolean;
         };
         /** LabCreate */
         LabCreate: {
@@ -5513,6 +5613,107 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    post_admin_intent_classifier_probe_admin_intent_classifier_probe_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntentProbeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_admin_fast_mode_admin_fast_mode_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    post_admin_fast_mode_admin_fast_mode_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FastModeToggleRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

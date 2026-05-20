@@ -41,7 +41,7 @@ test.describe("role-aware smoke flows", () => {
     await page.keyboard.press("Enter");
 
     await expect(page.getByText(/Symptom saved|logged|saved/i).first()).toBeVisible({ timeout: 45_000 });
-    await page.getByRole("button", { name: /Overview/i }).click();
+    await page.getByRole("link", { name: /Overview/i }).click();
     await expect(page.getByText(/nausea/i).first()).toBeVisible({ timeout: 30_000 });
   });
 

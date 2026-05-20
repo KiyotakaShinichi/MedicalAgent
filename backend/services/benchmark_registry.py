@@ -1264,6 +1264,20 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "runtime_quality_sentinel",
+        "title": "Runtime quality sentinel",
+        "path": "Data/evals/ops/latest_runtime_quality_sentinel.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "alert_count": ["summary", "alert_count"],
+            "unsafe_answer_rate": ["summary", "unsafe_answer_rate"],
+            "unsupported_claim_rate": ["summary", "unsupported_claim_rate"],
+            "latency_p95_ms": ["summary", "latency_p95_ms"],
+            "cache_hit_rate": ["summary", "cache_hit_rate"],
+        },
+    },
+    {
         "id": "rag_reranker_ablation",
         "title": "Cross-encoder reranker ablation",
         "path": "Data/evals/rag/latest_reranker_ablation.json",

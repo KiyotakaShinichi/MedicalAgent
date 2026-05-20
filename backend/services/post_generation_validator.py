@@ -137,6 +137,7 @@ TUMOR_MARKER_RULES = _Rule(
     description="Model is interpreting a standalone tumor marker as recurrence / progression.",
     patterns=_compile(
         r"\b(elevated|high|rising)\s+(CA\s*15-?3|CA\s*27\.?29|CEA)\s+(means|indicates|shows)\s+(cancer|recurrence|progression|metastasis)",
+        r"\b(CA\s*15-?3|CA\s*27\.?29|CEA)\s+(proves|confirms|means|shows|indicates)\s+(recurrence|progression|metastasis|cancer\s+(has\s+)?returned)\b",
         r"\byour\s+cancer\s+(has\s+)?(come back|returned|recurred|is back)\s+(because|based on|due to)\s+.*?(marker|CA\s*15|CA\s*27|CEA)",
     ),
 )

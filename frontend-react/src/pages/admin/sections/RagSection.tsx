@@ -32,6 +32,10 @@ export function RagSection({ analytics }: Props) {
     () => getNormalizedBenchmarkArtifact("cost_latency_report"),
     [],
   );
+  const { data: runtimeQuality, status: runtimeQualityStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("runtime_quality_sentinel"),
+    [],
+  );
   const { data: traceReplay, status: traceReplayStatus } = useApi(() => getRagTraceReplay(8), []);
   const [runningLiveRag, setRunningLiveRag] = useState(false);
   const rag = analytics?.rag_evaluation;
@@ -106,6 +110,18 @@ export function RagSection({ analytics }: Props) {
             ["Cache hit", ["metrics", "cache_hit_rate"], "percent"],
           ]}
           emptyLabel="No cost/latency report yet - run scripts/run_cost_latency_report.py"
+        />
+        <ArtifactSummaryCard
+          title="Runtime Quality Sentinel"
+          status={runtimeQualityStatus}
+          artifact={runtimeQuality}
+          metrics={[
+            ["Alerts", ["metrics", "alert_count"], "number"],
+            ["Unsafe answers", ["metrics", "unsafe_answer_rate"], "percent"],
+            ["Unsupported claims", ["metrics", "unsupported_claim_rate"], "percent"],
+            ["P95 latency", ["metrics", "latency_p95_ms"], "milliseconds"],
+          ]}
+          emptyLabel="No runtime quality snapshot yet - run scripts/run_runtime_quality_sentinel.py"
         />
         <ArtifactSummaryCard
           title="Live-Agent RAG Eval"

@@ -2990,6 +2990,168 @@
         }
       }
     },
+    "/admin/intent-classifier-probe": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Post Admin Intent Classifier Probe",
+        "description": "Live-probe the compound-intent router on an arbitrary message.\n\nReturns:\n  - ``deterministic`` : envelope produced by the rule-based path\n    (table + regex), tells you what the heuristic alone would do.\n  - ``merged``        : envelope after merging with the LLM verdict\n    (or identical to ``deterministic`` when LLM is unavailable).\n  - ``llm``           : raw LLM verdict (language, confidence,\n    provider, model) \u2014 or ``{\"available\": False, ...}``.\n\nThis endpoint does NOT touch the chat database; it's a stateless\nprobe.  Useful for debugging multilingual routing without sending\na real chat.",
+        "operationId": "post_admin_intent_classifier_probe_admin_intent_classifier_probe_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntentProbeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/fast-mode": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Get Admin Fast Mode",
+        "description": "Current FAST_MODE state.\n\nReturns the resolved boolean, plus the env-var source and any\nruntime override, so an operator can see WHY fast mode is in\nwhatever state it's in.",
+        "operationId": "get_admin_fast_mode_admin_fast_mode_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Post Admin Fast Mode",
+        "description": "Flip the FAST_MODE runtime override.\n\nThis is the emergency-degradation switch.  Use ONLY when the Groq\ncloud provider is degraded / rate-limiting / down, or when a local\nOllama fallback is misconfigured and timing out.  The deterministic\nsafety stack still enforces every refusal / boundary / claim\ncontract when FAST_MODE is on; what you lose is the LLM \"second\nopinion\" on open-ended branches (general_support / education /\nsecurity adjudication).",
+        "operationId": "post_admin_fast_mode_admin_fast_mode_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FastModeToggleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/tasks": {
       "post": {
         "tags": [
@@ -10430,6 +10592,24 @@
         ],
         "title": "FamilyHistoryCreate"
       },
+      "FastModeToggleRequest": {
+        "properties": {
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          }
+        },
+        "type": "object",
+        "title": "FastModeToggleRequest",
+        "description": "Body for the FAST_MODE toggle endpoint.\n\n``enabled``:\n  - True   -> force fast mode ON  (skip LLM adjudication)\n  - False  -> force fast mode OFF (re-enable LLM adjudication)\n  - None / omitted -> CLEAR the runtime override, fall back to the\n    ``ONCOTRACK_FAST_MODE`` env var."
+      },
       "GeneticReviewCreate": {
         "properties": {
           "decision": {
@@ -10640,6 +10820,25 @@
           "impression"
         ],
         "title": "ImagingReportCreate"
+      },
+      "IntentProbeRequest": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "use_llm": {
+            "type": "boolean",
+            "title": "Use Llm",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "IntentProbeRequest",
+        "description": "Body for the /admin/intent-classifier-probe endpoint.\n\n``message`` is the raw user input.  ``use_llm`` defaults to True so\nthe operator sees the merged deterministic + LLM verdict; setting\nit to False gives the hermetic deterministic-only result (useful\nfor comparing the two)."
       },
       "LabCreate": {
         "properties": {

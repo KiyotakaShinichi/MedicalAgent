@@ -18,6 +18,7 @@ Run:
 
 ```bash
 python scripts/run_reranker_ablation.py
+python scripts/run_retrieval_ablation_metrics.py
 ```
 
 Artifact:
@@ -26,4 +27,7 @@ Artifact:
 Data/evals/rag/latest_reranker_ablation.json
 ```
 
-The artifact reports retrieval hit proxies, source-tier correctness, unsupported-answer proxy, and reranker latency.
+The artifact compares dense-only, sparse-only, hybrid RRF, and hybrid RRF plus
+cross-encoder/fallback. It reports MRR, NDCG@10, Recall@5/10, source-hit rate,
+claim-support proxy, unsupported-answer proxy, p50/p95 retrieval latency, and
+reranker latency.

@@ -1,0 +1,15 @@
+{
+  "schema_version": "locked_gold_eval_manifest_v1",
+  "release_id": "rag-gold-20260520",
+  "baseline_version": "gold_claim_grounding_cases_v2_2026_05",
+  "generated_at": "2026-05-20T16:52:11.488289+00:00",
+  "locked": true,
+  "case_file": "Data/evals/rag/gold_claim_grounding_cases.jsonl",
+  "case_count": 12,
+  "authored_by": "engineering",
+  "authored_date": "2026-05-20",
+  "internal_vs_external_authored": "internal_engineering_authored",
+  "was_used_for_tuning": true,
+  "contamination_disclosure": "Cases are authored from known NLCare failure modes and safety boundaries. They are suitable for regression transparency, not external generalization claims.",
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

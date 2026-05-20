@@ -1,0 +1,30 @@
+{
+  "schema_version": "openapi_type_drift_check_v1",
+  "generated_at": "2026-05-20T17:14:18.317500+00:00",
+  "status": "strong",
+  "summary": {
+    "passed": true,
+    "command_count": 3
+  },
+  "rows": [
+    {
+      "command": "python scripts/export_openapi_schema.py",
+      "exit_code": 0,
+      "stdout_tail": "Wrote Data\\openapi.json\n",
+      "stderr_tail": ""
+    },
+    {
+      "command": "npx.cmd -y openapi-typescript ../Data/openapi.json -o C:\\Users\\L\\AppData\\Local\\Temp\\tmp4k4evlie\\generated-openapi.d.ts",
+      "exit_code": 0,
+      "stdout_tail": "\u00e2\u0153\u00a8 openapi-typescript 7.13.0\n\u00f0\u0178\u0161\u20ac ../Data/openapi.json \u00e2\u2020\u2019 C:\\Users\\L\\AppData\\Local\\Temp\\tmp4k4evlie\\generated-openapi.d.ts [1.4s]\n",
+      "stderr_tail": ""
+    },
+    {
+      "command": "compare generated OpenAPI frontend types",
+      "exit_code": 0,
+      "stdout_tail": "types match",
+      "stderr_tail": ""
+    }
+  ],
+  "claim_boundary": "OpenAPI type drift check is software contract evidence only."
+}

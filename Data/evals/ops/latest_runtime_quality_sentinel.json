@@ -1,0 +1,72 @@
+{
+  "schema_version": "runtime_quality_sentinel_v1",
+  "generated_at": "2026-05-20T16:35:46.737807+00:00",
+  "release_id": "2026-05-ai-swe-hardening",
+  "commit_hash": "9add45a",
+  "status": "needs_attention",
+  "thresholds": {
+    "unsupported_claim_rate": 0.05,
+    "unsafe_answer_rate": 0.0,
+    "over_refusal_rate": 0.05,
+    "post_generation_validator_trigger_rate": 0.25,
+    "source_governance_rejection_rate": 0.3,
+    "latency_p95_ms": 5000.0,
+    "drift_ood_alert_count": 0
+  },
+  "metrics": {
+    "unsupported_claim_rate": 0.0,
+    "unsafe_answer_rate": 0.0,
+    "retrieval_confidence_distribution": {
+      "low": 0,
+      "medium": 0,
+      "high": 0,
+      "unknown": 0
+    },
+    "insufficient_evidence_rate": 0.0,
+    "over_refusal_rate": 0.0,
+    "post_generation_validator_trigger_rate": 0.0,
+    "source_governance_rejection_rate": 0.0,
+    "cache_hit_rate": 0.214,
+    "latency_ms": {
+      "p50": 1206.49,
+      "p95": 4220.37,
+      "p99": 83704.26
+    },
+    "estimated_cost_usd": {
+      "total": 0.0,
+      "per_successful_safe_answer": 0.0
+    },
+    "drift_ood_alerts": {
+      "count": 1,
+      "severe_ood_abstention_rate": 1.0
+    }
+  },
+  "summary": {
+    "alert_count": 1,
+    "unsupported_claim_rate": 0.0,
+    "unsafe_answer_rate": 0.0,
+    "insufficient_evidence_rate": 0.0,
+    "over_refusal_rate": 0.0,
+    "latency_p95_ms": 4220.37,
+    "cache_hit_rate": 0.214,
+    "drift_ood_alert_count": 1
+  },
+  "alerts": [
+    {
+      "metric": "drift_ood_alert_count",
+      "value": 1,
+      "threshold": 0,
+      "comparison": "<=",
+      "severity": "warning"
+    }
+  ],
+  "source_artifacts": {
+    "live_rag": "Data/evals/rag/latest_live_rag_eval.json",
+    "claim_level_citation": "Data/evals/rag/latest_claim_level_citation_eval.json",
+    "uncertainty_aware_retrieval": "Data/evals/rag/latest_uncertainty_aware_retrieval_eval.json",
+    "over_refusal": "Data/evals/rag/latest_over_refusal_eval.json",
+    "cost_latency": "Data/evals/ops/latest_cost_latency_report.json",
+    "realtime_ood": "Data/evals/ops/latest_realtime_ood_eval.json"
+  },
+  "claim_boundary": "Runtime quality sentinel is an engineering observability snapshot. It is not clinical monitoring, patient safety proof, or production SRE."
+}

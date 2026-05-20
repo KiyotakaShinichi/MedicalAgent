@@ -1,199 +1,1587 @@
 {
-  "schema_version": "reranker_ablation_v1",
-  "generated_at": "2026-05-20T14:46:29.459323+00:00",
-  "status": "needs_attention",
+  "schema_version": "retrieval_reranker_ablation_v2",
+  "generated_at": "2026-05-20T16:43:56.292688+00:00",
+  "release_id": "2026-05-ai-swe-hardening",
+  "baseline_version": "gold_claim_grounding_cases_v2_2026_05",
   "cross_encoder_available": true,
-  "cross_encoder_enabled_for_eval": false,
+  "cross_encoder_enabled": false,
+  "strategies": {
+    "dense_only": {
+      "summary": {
+        "case_count": 12,
+        "mrr": 0.4306,
+        "ndcg_at_10": 0.4464,
+        "recall_at_5": 0.4167,
+        "recall_at_10": 0.5,
+        "source_hit_rate": 0.5,
+        "citation_support_rate": 0.5,
+        "claim_support_rate": 0.5,
+        "source_tier_correctness": 1.0,
+        "unsupported_answer_rate": 0.5,
+        "p50_retrieval_latency_ms": 1078.209,
+        "p95_retrieval_latency_ms": 47754.717,
+        "reranker_latency_ms": 0.0
+      },
+      "cases": [
+        {
+          "case_id": "gold_claim_01",
+          "category": "breast_cancer_education",
+          "expected_source_ids": [
+            "curated-her2-basics",
+            "nci-her2-breast"
+          ],
+          "retrieved_source_ids": [
+            "breast-treatment-basics",
+            "breast-treatment-basics",
+            "d585ebd25c605f1b",
+            "05fa744d857f4cfa8865",
+            "462d304fbed421ae6e14",
+            "5598e2371d2713c4",
+            "09114382c8c50d7b002b",
+            "24153a2dd9e6a5e56060",
+            "05838decbced2fe24cc9",
+            "2a9f2ed73f0b189c"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "latency_ms": 47754.717
+        },
+        {
+          "case_id": "gold_claim_02",
+          "category": "cbc_lab_explanation",
+          "expected_source_ids": [
+            "cbc-monitoring",
+            "curated-wbc-neutropenia"
+          ],
+          "retrieved_source_ids": [
+            "cdc",
+            "acs-chemo-side-effects",
+            "36b7a3ffdb9205a4",
+            "3ca1dfefbd3147b0",
+            "9a6347c207d53299",
+            "36b7a3ffdb9205a4",
+            "chemotherapy nadir and blood counts",
+            "513e4b58992b3ee6",
+            "213de4666238f627b435",
+            "54a3971c997663385451"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 1133.509
+        },
+        {
+          "case_id": "gold_claim_03",
+          "category": "urgent_symptom",
+          "expected_source_ids": [
+            "curated-fever-neutropenia",
+            "infection-safety"
+          ],
+          "retrieved_source_ids": [
+            "cdc",
+            "febrile neutropenia during chemotherapy",
+            "36b7a3ffdb9205a4",
+            "a34c987d0620a854",
+            "acs-chemo-side-effects",
+            "3b241defef60911d6909",
+            "5ff309c8a4b83b94",
+            "5c9ab1dbb54ddcadb654",
+            "9a6347c207d53299",
+            "3ca1dfefbd3147b0"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "latency_ms": 1110.787
+        },
+        {
+          "case_id": "gold_claim_04",
+          "category": "imaging_explanation",
+          "expected_source_ids": [
+            "curated-mri-response-terms",
+            "imaging-monitoring"
+          ],
+          "retrieved_source_ids": [
+            "5861132c0b546bc88d07",
+            "7cd1e3e1103a156a",
+            "6dd310bfda28b1bcb75b",
+            "1e906e9323594f16b42b",
+            "103d1a8f2ef573d41e42",
+            "700e08a0d847e6b4e50f",
+            "7cd1e3e1103a156a",
+            "7cd1e3e1103a156a",
+            "6ebf0612779917c73ccf",
+            "79b2a2b0f93615181b5b"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 1488.361
+        },
+        {
+          "case_id": "gold_claim_05",
+          "category": "genetics_vus",
+          "expected_source_ids": [
+            "curated-vus-boundary",
+            "genetic-counseling"
+          ],
+          "retrieved_source_ids": [
+            "4b081552999dc1de7d36",
+            "05838decbced2fe24cc9",
+            "breast-treatment-basics",
+            "24153a2dd9e6a5e56060",
+            "29f0f5dda9789b7e",
+            "curated-model-signal-boundary",
+            "36b7a3ffdb9205a4",
+            "pcr in the project",
+            "06f8773f9a1a727adf87",
+            "71dae26a71592daf3b34"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 1223.166
+        },
+        {
+          "case_id": "gold_claim_06",
+          "category": "tumor_marker_limitations",
+          "expected_source_ids": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved_source_ids": [
+            "5598e2371d2713c4",
+            "chemotherapy dose delays",
+            "3da555a7fcac5ef51c43",
+            "32883832328b402b",
+            "890d72c72f9459a3",
+            "890d72c72f9459a3",
+            "7cabc63f04b2c2457187",
+            "28cfcee61ce1e4a4",
+            "890d72c72f9459a3",
+            "4b081552999dc1de7d36"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 929.015
+        },
+        {
+          "case_id": "gold_claim_07",
+          "category": "supplement_boundary",
+          "expected_source_ids": [
+            "curated-st-johns-wort",
+            "supplement-safety"
+          ],
+          "retrieved_source_ids": [
+            "curated supplement interaction safety",
+            "209d7b1545209fa5d80c",
+            "4723e3aa8d78cfd2c076",
+            "5ff309c8a4b83b94",
+            "2c9cf580eb45af0e",
+            "6649c1bba1cd7799",
+            "nci / nccih / msk",
+            "241447f031283a4a2338",
+            "361fe81df6b3f0d6892e",
+            "13480f69fd89276014ca"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "latency_ms": 814.203
+        },
+        {
+          "case_id": "gold_claim_08",
+          "category": "treatment_change_refusal",
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "acs-chemo-side-effects",
+            "890d72c72f9459a3",
+            "890d72c72f9459a3",
+            "0952b0568ec69378b6cc",
+            "361fe81df6b3f0d6892e",
+            "5613d682700a80453f7e",
+            "4a6fee1c39db19c8",
+            "4a6fee1c39db19c8",
+            "chemotherapy dose delays",
+            "890d72c72f9459a3"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "latency_ms": 727.008
+        },
+        {
+          "case_id": "gold_claim_09",
+          "category": "prognosis_refusal",
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "aeb6eaf9a887cb3f6c4a",
+            "3ffd9c34628ed2402cc9",
+            "890d72c72f9459a3",
+            "2bd869f0756a6486a619",
+            "890d72c72f9459a3",
+            "890d72c72f9459a3",
+            "50f5018dab7a626938bd",
+            "3da555a7fcac5ef51c43",
+            "2a9f2ed73f0b189c",
+            "5c76847188aee40a481f"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 1045.632
+        },
+        {
+          "case_id": "gold_claim_10",
+          "category": "taglish_code_switch",
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "acs-chemo-side-effects",
+            "4a6fee1c39db19c8",
+            "513e4b58992b3ee6",
+            "0952b0568ec69378b6cc",
+            "04cec75f9ed57708fe76",
+            "73c71303225aea8ce582",
+            "513e4b58992b3ee6",
+            "1d8b472e73bcd9696d15",
+            "4723e3aa8d78cfd2c076",
+            "4a6fee1c39db19c8"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "latency_ms": 1019.65
+        },
+        {
+          "case_id": "gold_claim_11",
+          "category": "near_boundary",
+          "expected_source_ids": [
+            "imaging-monitoring",
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "5598e2371d2713c4",
+            "5250efd518f050c2a555",
+            "2a9f2ed73f0b189c",
+            "32883832328b402b",
+            "7eca369bbd4abb79008e",
+            "ct ascites report wording monitoring",
+            "29f0f5dda9789b7e",
+            "50f920e8eeb22ddfbf6a",
+            "breast-treatment-basics",
+            "06f8773f9a1a727adf87"
+          ],
+          "first_relevant_rank": 6,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1667,
+          "ndcg_at_10": 0.3562,
+          "latency_ms": 1221.237
+        },
+        {
+          "case_id": "gold_claim_12",
+          "category": "privacy_boundary",
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "portal-help",
+            "29f0f5dda9789b7e",
+            "479e2ce02e7d9e05",
+            "918edc260afd2d63",
+            "150bf2854b59cec640b1",
+            "36b7a3ffdb9205a4",
+            "5598e2371d2713c4",
+            "ct ascites report wording monitoring",
+            "29f0f5dda9789b7e",
+            "28cfcee61ce1e4a4"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 870.218
+        }
+      ]
+    },
+    "sparse_only": {
+      "summary": {
+        "case_count": 12,
+        "mrr": 0.1738,
+        "ndcg_at_10": 0.2478,
+        "recall_at_5": 0.25,
+        "recall_at_10": 0.5,
+        "source_hit_rate": 0.5,
+        "citation_support_rate": 0.5,
+        "claim_support_rate": 0.5,
+        "source_tier_correctness": 1.0,
+        "unsupported_answer_rate": 0.5,
+        "p50_retrieval_latency_ms": 840.968,
+        "p95_retrieval_latency_ms": 2045.864,
+        "reranker_latency_ms": 0.0
+      },
+      "cases": [
+        {
+          "case_id": "gold_claim_01",
+          "category": "breast_cancer_education",
+          "expected_source_ids": [
+            "curated-her2-basics",
+            "nci-her2-breast"
+          ],
+          "retrieved_source_ids": [
+            "breast-treatment-basics",
+            "3ce25293cb05a3c257fc",
+            "05fa744d857f4cfa8865",
+            "32883832328b402b",
+            "462d304fbed421ae6e14",
+            "7cd1e3e1103a156a",
+            "2a9f2ed73f0b189c",
+            "d585ebd25c605f1b",
+            "2a9f2ed73f0b189c",
+            "breast-treatment-basics"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "latency_ms": 1145.123
+        },
+        {
+          "case_id": "gold_claim_02",
+          "category": "cbc_lab_explanation",
+          "expected_source_ids": [
+            "cbc-monitoring",
+            "curated-wbc-neutropenia"
+          ],
+          "retrieved_source_ids": [
+            "3ca1dfefbd3147b0",
+            "acs-chemo-side-effects",
+            "36b7a3ffdb9205a4",
+            "4a6fee1c39db19c8",
+            "0185db088c803c80",
+            "9a6347c207d53299",
+            "1d8b472e73bcd9696d15",
+            "08ecfa99b5cc9b421651",
+            "05fa744d857f4cfa8865",
+            "36b7a3ffdb9205a4"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 1802.007
+        },
+        {
+          "case_id": "gold_claim_03",
+          "category": "urgent_symptom",
+          "expected_source_ids": [
+            "curated-fever-neutropenia",
+            "infection-safety"
+          ],
+          "retrieved_source_ids": [
+            "9a6347c207d53299",
+            "3ca1dfefbd3147b0",
+            "1d8b472e73bcd9696d15",
+            "febrile neutropenia during chemotherapy",
+            "36b7a3ffdb9205a4",
+            "0185db088c803c80",
+            "cdc",
+            "08ecfa99b5cc9b421651",
+            "24de6c8ad0379f43",
+            "4a6fee1c39db19c8"
+          ],
+          "first_relevant_rank": 7,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1429,
+          "ndcg_at_10": 0.3333,
+          "latency_ms": 2045.864
+        },
+        {
+          "case_id": "gold_claim_04",
+          "category": "imaging_explanation",
+          "expected_source_ids": [
+            "curated-mri-response-terms",
+            "imaging-monitoring"
+          ],
+          "retrieved_source_ids": [
+            "33ef73acba84d60bd7a1",
+            "7cd1e3e1103a156a",
+            "2524619e8115a75d",
+            "7cd1e3e1103a156a",
+            "2524619e8115a75d",
+            "0558f6350f9d85514ce9",
+            "50f920e8eeb22ddfbf6a",
+            "2a9f2ed73f0b189c",
+            "7cd1e3e1103a156a",
+            "64147d5e5083a6cb2b54"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 1261.346
+        },
+        {
+          "case_id": "gold_claim_05",
+          "category": "genetics_vus",
+          "expected_source_ids": [
+            "curated-vus-boundary",
+            "genetic-counseling"
+          ],
+          "retrieved_source_ids": [
+            "05838decbced2fe24cc9",
+            "4b081552999dc1de7d36",
+            "29f0f5dda9789b7e",
+            "24153a2dd9e6a5e56060",
+            "4787d2a42440789f",
+            "22d463a5a12d490af4c6",
+            "29f0f5dda9789b7e",
+            "06f8773f9a1a727adf87",
+            "2524619e8115a75d",
+            "16cecf5419e1fe71"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 611.302
+        },
+        {
+          "case_id": "gold_claim_06",
+          "category": "tumor_marker_limitations",
+          "expected_source_ids": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved_source_ids": [
+            "5598e2371d2713c4",
+            "4787d2a42440789f",
+            "5598e2371d2713c4",
+            "28cfcee61ce1e4a4",
+            "29f0f5dda9789b7e",
+            "2524619e8115a75d",
+            "16cecf5419e1fe71",
+            "aeb6eaf9a887cb3f6c4a",
+            "7cd1e3e1103a156a",
+            "808a9a54d5fbe451c619"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 725.373
+        },
+        {
+          "case_id": "gold_claim_07",
+          "category": "supplement_boundary",
+          "expected_source_ids": [
+            "curated-st-johns-wort",
+            "supplement-safety"
+          ],
+          "retrieved_source_ids": [
+            "6649c1bba1cd7799",
+            "curated supplement interaction safety",
+            "2c9cf580eb45af0e",
+            "1d8b472e73bcd9696d15",
+            "16cecf5419e1fe71",
+            "acs-chemo-side-effects",
+            "08ecfa99b5cc9b421651",
+            "4a6fee1c39db19c8",
+            "3ca1dfefbd3147b0",
+            "24de6c8ad0379f43"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.5,
+          "ndcg_at_10": 0.6309,
+          "latency_ms": 760.957
+        },
+        {
+          "case_id": "gold_claim_08",
+          "category": "treatment_change_refusal",
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "4a6fee1c39db19c8",
+            "1d8b472e73bcd9696d15",
+            "16cecf5419e1fe71",
+            "6649c1bba1cd7799",
+            "acs-chemo-side-effects",
+            "05fa744d857f4cfa8865",
+            "08ecfa99b5cc9b421651",
+            "213de4666238f627b435",
+            "a4ede83e9104d374035c",
+            "national cancer institute"
+          ],
+          "first_relevant_rank": 5,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.2,
+          "ndcg_at_10": 0.3869,
+          "latency_ms": 941.679
+        },
+        {
+          "case_id": "gold_claim_09",
+          "category": "prognosis_refusal",
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "918edc260afd2d63",
+            "3b0954f8190af02ffde8",
+            "4b081552999dc1de7d36",
+            "06f8773f9a1a727adf87",
+            "b6cee03f078d056a",
+            "22d463a5a12d490af4c6",
+            "5ff309c8a4b83b94",
+            "5ff309c8a4b83b94",
+            "3ffe531318d866b682b3",
+            "1d93db4c51a1769c7220"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 751.977
+        },
+        {
+          "case_id": "gold_claim_10",
+          "category": "taglish_code_switch",
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "3ca1dfefbd3147b0",
+            "4a6fee1c39db19c8",
+            "1d8b472e73bcd9696d15",
+            "4a6fee1c39db19c8",
+            "71dae26a71592daf3b34",
+            "6649c1bba1cd7799",
+            "acs-chemo-side-effects",
+            "05fa744d857f4cfa8865",
+            "08ecfa99b5cc9b421651",
+            "national cancer institute"
+          ],
+          "first_relevant_rank": 7,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1429,
+          "ndcg_at_10": 0.3333,
+          "latency_ms": 688.044
+        },
+        {
+          "case_id": "gold_claim_11",
+          "category": "near_boundary",
+          "expected_source_ids": [
+            "imaging-monitoring",
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "32883832328b402b",
+            "890d72c72f9459a3",
+            "7cd1e3e1103a156a",
+            "33ef73acba84d60bd7a1",
+            "5598e2371d2713c4",
+            "5598e2371d2713c4",
+            "08ecfa99b5cc9b421651",
+            "7cd1e3e1103a156a",
+            "3ca1dfefbd3147b0",
+            "ct ascites report wording monitoring"
+          ],
+          "first_relevant_rank": 10,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1,
+          "ndcg_at_10": 0.2891,
+          "latency_ms": 902.529
+        },
+        {
+          "case_id": "gold_claim_12",
+          "category": "privacy_boundary",
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "36b7a3ffdb9205a4",
+            "36b7a3ffdb9205a4",
+            "portal-help",
+            "4787d2a42440789f",
+            "4787d2a42440789f",
+            "5598e2371d2713c4",
+            "479e2ce02e7d9e05",
+            "7cd1e3e1103a156a",
+            "32883832328b402b",
+            "6649c1bba1cd7799"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 779.407
+        }
+      ]
+    },
+    "hybrid_rrf": {
+      "summary": {
+        "case_count": 12,
+        "mrr": 0.2361,
+        "ndcg_at_10": 0.3015,
+        "recall_at_5": 0.4167,
+        "recall_at_10": 0.5,
+        "source_hit_rate": 0.5,
+        "citation_support_rate": 0.5,
+        "claim_support_rate": 0.5,
+        "source_tier_correctness": 1.0,
+        "unsupported_answer_rate": 0.5,
+        "p50_retrieval_latency_ms": 656.94,
+        "p95_retrieval_latency_ms": 1328.343,
+        "reranker_latency_ms": 0.0
+      },
+      "cases": [
+        {
+          "case_id": "gold_claim_01",
+          "category": "breast_cancer_education",
+          "expected_source_ids": [
+            "curated-her2-basics",
+            "nci-her2-breast"
+          ],
+          "retrieved_source_ids": [
+            "05fa744d857f4cfa8865",
+            "462d304fbed421ae6e14",
+            "d585ebd25c605f1b",
+            "32883832328b402b",
+            "3ce25293cb05a3c257fc",
+            "breast-treatment-basics",
+            "2a9f2ed73f0b189c",
+            "9dbd1c506f6e0962",
+            "breast-treatment-basics",
+            "32883832328b402b"
+          ],
+          "first_relevant_rank": 6,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1667,
+          "ndcg_at_10": 0.3562,
+          "latency_ms": 855.276
+        },
+        {
+          "case_id": "gold_claim_02",
+          "category": "cbc_lab_explanation",
+          "expected_source_ids": [
+            "cbc-monitoring",
+            "curated-wbc-neutropenia"
+          ],
+          "retrieved_source_ids": [
+            "3ca1dfefbd3147b0",
+            "acs-chemo-side-effects",
+            "36b7a3ffdb9205a4",
+            "9a6347c207d53299",
+            "cdc",
+            "chemotherapy nadir and blood counts",
+            "36b7a3ffdb9205a4",
+            "0185db088c803c80",
+            "513e4b58992b3ee6",
+            "513e4b58992b3ee6"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 687.053
+        },
+        {
+          "case_id": "gold_claim_03",
+          "category": "urgent_symptom",
+          "expected_source_ids": [
+            "curated-fever-neutropenia",
+            "infection-safety"
+          ],
+          "retrieved_source_ids": [
+            "febrile neutropenia during chemotherapy",
+            "cdc",
+            "3ca1dfefbd3147b0",
+            "9a6347c207d53299",
+            "1d8b472e73bcd9696d15",
+            "36b7a3ffdb9205a4",
+            "acs-chemo-side-effects",
+            "a34c987d0620a854",
+            "0185db088c803c80",
+            "24de6c8ad0379f43"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.5,
+          "ndcg_at_10": 0.6309,
+          "latency_ms": 626.826
+        },
+        {
+          "case_id": "gold_claim_04",
+          "category": "imaging_explanation",
+          "expected_source_ids": [
+            "curated-mri-response-terms",
+            "imaging-monitoring"
+          ],
+          "retrieved_source_ids": [
+            "7cd1e3e1103a156a",
+            "7cd1e3e1103a156a",
+            "7cd1e3e1103a156a",
+            "5861132c0b546bc88d07",
+            "79b2a2b0f93615181b5b",
+            "50f920e8eeb22ddfbf6a",
+            "64147d5e5083a6cb2b54",
+            "7cd1e3e1103a156a",
+            "1d7c0c4bd2ce4bdf9078",
+            "2a9f2ed73f0b189c"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 1328.343
+        },
+        {
+          "case_id": "gold_claim_05",
+          "category": "genetics_vus",
+          "expected_source_ids": [
+            "curated-vus-boundary",
+            "genetic-counseling"
+          ],
+          "retrieved_source_ids": [
+            "05838decbced2fe24cc9",
+            "4b081552999dc1de7d36",
+            "29f0f5dda9789b7e",
+            "24153a2dd9e6a5e56060",
+            "29f0f5dda9789b7e",
+            "06f8773f9a1a727adf87",
+            "2a9f2ed73f0b189c",
+            "4787d2a42440789f",
+            "71dae26a71592daf3b34",
+            "2524619e8115a75d"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 799.368
+        },
+        {
+          "case_id": "gold_claim_06",
+          "category": "tumor_marker_limitations",
+          "expected_source_ids": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved_source_ids": [
+            "5598e2371d2713c4",
+            "28cfcee61ce1e4a4",
+            "3da555a7fcac5ef51c43",
+            "32883832328b402b",
+            "5598e2371d2713c4",
+            "2a9f2ed73f0b189c",
+            "287d2107cfeeb34a",
+            "2a9f2ed73f0b189c",
+            "50f920e8eeb22ddfbf6a",
+            "ct ascites report wording monitoring"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 921.939
+        },
+        {
+          "case_id": "gold_claim_07",
+          "category": "supplement_boundary",
+          "expected_source_ids": [
+            "curated-st-johns-wort",
+            "supplement-safety"
+          ],
+          "retrieved_source_ids": [
+            "curated supplement interaction safety",
+            "6649c1bba1cd7799",
+            "2c9cf580eb45af0e",
+            "16cecf5419e1fe71",
+            "4723e3aa8d78cfd2c076",
+            "1d8b472e73bcd9696d15",
+            "acs-chemo-side-effects",
+            "209d7b1545209fa5d80c",
+            "4a6fee1c39db19c8",
+            "3ca1dfefbd3147b0"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "latency_ms": 835.08
+        },
+        {
+          "case_id": "gold_claim_08",
+          "category": "treatment_change_refusal",
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "4a6fee1c39db19c8",
+            "acs-chemo-side-effects",
+            "1d8b472e73bcd9696d15",
+            "4a6fee1c39db19c8",
+            "08ecfa99b5cc9b421651",
+            "national cancer institute",
+            "4723e3aa8d78cfd2c076",
+            "3ca1dfefbd3147b0",
+            "209d7b1545209fa5d80c",
+            "16cecf5419e1fe71"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.5,
+          "ndcg_at_10": 0.6309,
+          "latency_ms": 536.156
+        },
+        {
+          "case_id": "gold_claim_09",
+          "category": "prognosis_refusal",
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "22d463a5a12d490af4c6",
+            "06f8773f9a1a727adf87",
+            "b6cee03f078d056a",
+            "7dd4faa09221551a",
+            "5ff309c8a4b83b94",
+            "4b081552999dc1de7d36",
+            "3b0954f8190af02ffde8",
+            "b6cee03f078d056a",
+            "918edc260afd2d63",
+            "3ffe531318d866b682b3"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 411.551
+        },
+        {
+          "case_id": "gold_claim_10",
+          "category": "taglish_code_switch",
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "1d8b472e73bcd9696d15",
+            "4a6fee1c39db19c8",
+            "acs-chemo-side-effects",
+            "4a6fee1c39db19c8",
+            "24de6c8ad0379f43",
+            "08ecfa99b5cc9b421651",
+            "513e4b58992b3ee6",
+            "national cancer institute",
+            "4723e3aa8d78cfd2c076",
+            "04cec75f9ed57708fe76"
+          ],
+          "first_relevant_rank": 3,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.3333,
+          "ndcg_at_10": 0.5,
+          "latency_ms": 396.255
+        },
+        {
+          "case_id": "gold_claim_11",
+          "category": "near_boundary",
+          "expected_source_ids": [
+            "imaging-monitoring",
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "32883832328b402b",
+            "5598e2371d2713c4",
+            "ct ascites report wording monitoring",
+            "890d72c72f9459a3",
+            "33ef73acba84d60bd7a1",
+            "06f8773f9a1a727adf87",
+            "50f920e8eeb22ddfbf6a",
+            "7cd1e3e1103a156a",
+            "breast-treatment-basics",
+            "1af453da1346809e9c91"
+          ],
+          "first_relevant_rank": 3,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.3333,
+          "ndcg_at_10": 0.5,
+          "latency_ms": 457.923
+        },
+        {
+          "case_id": "gold_claim_12",
+          "category": "privacy_boundary",
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "portal-help",
+            "36b7a3ffdb9205a4",
+            "36b7a3ffdb9205a4",
+            "5598e2371d2713c4",
+            "479e2ce02e7d9e05",
+            "4787d2a42440789f",
+            "918edc260afd2d63",
+            "6649c1bba1cd7799",
+            "5598e2371d2713c4",
+            "287d2107cfeeb34a"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 484.593
+        }
+      ]
+    },
+    "hybrid_rrf_cross_encoder": {
+      "summary": {
+        "case_count": 12,
+        "mrr": 0.2361,
+        "ndcg_at_10": 0.3015,
+        "recall_at_5": 0.4167,
+        "recall_at_10": 0.5,
+        "source_hit_rate": 0.5,
+        "citation_support_rate": 0.5,
+        "claim_support_rate": 0.5,
+        "source_tier_correctness": 1.0,
+        "unsupported_answer_rate": 0.5,
+        "p50_retrieval_latency_ms": 500.754,
+        "p95_retrieval_latency_ms": 2583.4,
+        "reranker_latency_ms": 0.118
+      },
+      "cases": [
+        {
+          "case_id": "gold_claim_01",
+          "category": "breast_cancer_education",
+          "expected_source_ids": [
+            "curated-her2-basics",
+            "nci-her2-breast"
+          ],
+          "retrieved_source_ids": [
+            "05fa744d857f4cfa8865",
+            "462d304fbed421ae6e14",
+            "d585ebd25c605f1b",
+            "32883832328b402b",
+            "3ce25293cb05a3c257fc",
+            "breast-treatment-basics",
+            "2a9f2ed73f0b189c",
+            "9dbd1c506f6e0962",
+            "breast-treatment-basics",
+            "32883832328b402b"
+          ],
+          "first_relevant_rank": 6,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1667,
+          "ndcg_at_10": 0.3562,
+          "latency_ms": 500.743
+        },
+        {
+          "case_id": "gold_claim_02",
+          "category": "cbc_lab_explanation",
+          "expected_source_ids": [
+            "cbc-monitoring",
+            "curated-wbc-neutropenia"
+          ],
+          "retrieved_source_ids": [
+            "3ca1dfefbd3147b0",
+            "acs-chemo-side-effects",
+            "36b7a3ffdb9205a4",
+            "9a6347c207d53299",
+            "cdc",
+            "chemotherapy nadir and blood counts",
+            "36b7a3ffdb9205a4",
+            "0185db088c803c80",
+            "513e4b58992b3ee6",
+            "513e4b58992b3ee6"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 563.193
+        },
+        {
+          "case_id": "gold_claim_03",
+          "category": "urgent_symptom",
+          "expected_source_ids": [
+            "curated-fever-neutropenia",
+            "infection-safety"
+          ],
+          "retrieved_source_ids": [
+            "febrile neutropenia during chemotherapy",
+            "cdc",
+            "3ca1dfefbd3147b0",
+            "9a6347c207d53299",
+            "1d8b472e73bcd9696d15",
+            "36b7a3ffdb9205a4",
+            "acs-chemo-side-effects",
+            "a34c987d0620a854",
+            "0185db088c803c80",
+            "24de6c8ad0379f43"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.5,
+          "ndcg_at_10": 0.6309,
+          "latency_ms": 542.257
+        },
+        {
+          "case_id": "gold_claim_04",
+          "category": "imaging_explanation",
+          "expected_source_ids": [
+            "curated-mri-response-terms",
+            "imaging-monitoring"
+          ],
+          "retrieved_source_ids": [
+            "7cd1e3e1103a156a",
+            "7cd1e3e1103a156a",
+            "7cd1e3e1103a156a",
+            "5861132c0b546bc88d07",
+            "79b2a2b0f93615181b5b",
+            "50f920e8eeb22ddfbf6a",
+            "64147d5e5083a6cb2b54",
+            "7cd1e3e1103a156a",
+            "1d7c0c4bd2ce4bdf9078",
+            "2a9f2ed73f0b189c"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 513.732
+        },
+        {
+          "case_id": "gold_claim_05",
+          "category": "genetics_vus",
+          "expected_source_ids": [
+            "curated-vus-boundary",
+            "genetic-counseling"
+          ],
+          "retrieved_source_ids": [
+            "05838decbced2fe24cc9",
+            "4b081552999dc1de7d36",
+            "29f0f5dda9789b7e",
+            "24153a2dd9e6a5e56060",
+            "29f0f5dda9789b7e",
+            "06f8773f9a1a727adf87",
+            "2a9f2ed73f0b189c",
+            "4787d2a42440789f",
+            "71dae26a71592daf3b34",
+            "2524619e8115a75d"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 500.765
+        },
+        {
+          "case_id": "gold_claim_06",
+          "category": "tumor_marker_limitations",
+          "expected_source_ids": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved_source_ids": [
+            "5598e2371d2713c4",
+            "28cfcee61ce1e4a4",
+            "3da555a7fcac5ef51c43",
+            "32883832328b402b",
+            "5598e2371d2713c4",
+            "2a9f2ed73f0b189c",
+            "287d2107cfeeb34a",
+            "2a9f2ed73f0b189c",
+            "50f920e8eeb22ddfbf6a",
+            "ct ascites report wording monitoring"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 477.292
+        },
+        {
+          "case_id": "gold_claim_07",
+          "category": "supplement_boundary",
+          "expected_source_ids": [
+            "curated-st-johns-wort",
+            "supplement-safety"
+          ],
+          "retrieved_source_ids": [
+            "curated supplement interaction safety",
+            "6649c1bba1cd7799",
+            "2c9cf580eb45af0e",
+            "16cecf5419e1fe71",
+            "4723e3aa8d78cfd2c076",
+            "1d8b472e73bcd9696d15",
+            "acs-chemo-side-effects",
+            "209d7b1545209fa5d80c",
+            "4a6fee1c39db19c8",
+            "3ca1dfefbd3147b0"
+          ],
+          "first_relevant_rank": 1,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "latency_ms": 434.859
+        },
+        {
+          "case_id": "gold_claim_08",
+          "category": "treatment_change_refusal",
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "4a6fee1c39db19c8",
+            "acs-chemo-side-effects",
+            "1d8b472e73bcd9696d15",
+            "4a6fee1c39db19c8",
+            "08ecfa99b5cc9b421651",
+            "national cancer institute",
+            "4723e3aa8d78cfd2c076",
+            "3ca1dfefbd3147b0",
+            "209d7b1545209fa5d80c",
+            "16cecf5419e1fe71"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.5,
+          "ndcg_at_10": 0.6309,
+          "latency_ms": 454.178
+        },
+        {
+          "case_id": "gold_claim_09",
+          "category": "prognosis_refusal",
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "22d463a5a12d490af4c6",
+            "06f8773f9a1a727adf87",
+            "b6cee03f078d056a",
+            "7dd4faa09221551a",
+            "5ff309c8a4b83b94",
+            "4b081552999dc1de7d36",
+            "3b0954f8190af02ffde8",
+            "b6cee03f078d056a",
+            "918edc260afd2d63",
+            "3ffe531318d866b682b3"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 422.575
+        },
+        {
+          "case_id": "gold_claim_10",
+          "category": "taglish_code_switch",
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "1d8b472e73bcd9696d15",
+            "4a6fee1c39db19c8",
+            "acs-chemo-side-effects",
+            "4a6fee1c39db19c8",
+            "24de6c8ad0379f43",
+            "08ecfa99b5cc9b421651",
+            "513e4b58992b3ee6",
+            "national cancer institute",
+            "4723e3aa8d78cfd2c076",
+            "04cec75f9ed57708fe76"
+          ],
+          "first_relevant_rank": 3,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.3333,
+          "ndcg_at_10": 0.5,
+          "latency_ms": 437.371
+        },
+        {
+          "case_id": "gold_claim_11",
+          "category": "near_boundary",
+          "expected_source_ids": [
+            "imaging-monitoring",
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "32883832328b402b",
+            "5598e2371d2713c4",
+            "ct ascites report wording monitoring",
+            "890d72c72f9459a3",
+            "33ef73acba84d60bd7a1",
+            "06f8773f9a1a727adf87",
+            "50f920e8eeb22ddfbf6a",
+            "7cd1e3e1103a156a",
+            "breast-treatment-basics",
+            "1af453da1346809e9c91"
+          ],
+          "first_relevant_rank": 3,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.3333,
+          "ndcg_at_10": 0.5,
+          "latency_ms": 1880.877
+        },
+        {
+          "case_id": "gold_claim_12",
+          "category": "privacy_boundary",
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "portal-help",
+            "36b7a3ffdb9205a4",
+            "36b7a3ffdb9205a4",
+            "5598e2371d2713c4",
+            "479e2ce02e7d9e05",
+            "4787d2a42440789f",
+            "918edc260afd2d63",
+            "6649c1bba1cd7799",
+            "5598e2371d2713c4",
+            "287d2107cfeeb34a"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 2583.4
+        }
+      ]
+    }
+  },
+  "claim_boundary": "Retrieval metrics are engineering evidence for source finding. They do not prove medical correctness, clinical safety, or real-world answer quality.",
   "summary": {
-    "before_live_rag_pass_rate_proxy": 0.6,
-    "after_live_rag_pass_rate_proxy": 0.6,
-    "before_unsupported_answer_rate": 0.4,
-    "after_unsupported_answer_rate": 0.4,
+    "case_count": 12,
+    "before_live_rag_pass_rate_proxy": 0.5,
+    "after_live_rag_pass_rate_proxy": 0.5,
+    "before_unsupported_answer_rate": 0.5,
+    "after_unsupported_answer_rate": 0.5,
     "before_source_tier_correctness": 1.0,
     "after_source_tier_correctness": 1.0,
-    "p50_retrieval_latency_ms": 570.835,
-    "p95_retrieval_latency_ms": 729.861,
-    "reranker_latency_ms": 0.07
+    "after_mrr": 0.2361,
+    "after_ndcg_at_10": 0.3015,
+    "after_recall_at_10": 0.5,
+    "source_hit_rate": 0.5,
+    "citation_support_rate": 0.5,
+    "claim_support_rate": 0.5,
+    "unsupported_answer_rate": 0.5,
+    "p50_retrieval_latency_ms": 500.754,
+    "p95_retrieval_latency_ms": 2583.4,
+    "reranker_latency_ms": 0.118
   },
-  "baseline_disabled": {
-    "summary": {
-      "case_count": 5,
-      "retrieval_hit_rate": 0.6,
-      "source_hit_rate": 1.0,
-      "citation_support_rate": 0.6,
-      "claim_support_rate": 0.6,
-      "source_tier_correctness": 1.0,
-      "unsupported_answer_rate": 0.4,
-      "p50_retrieval_latency_ms": 422.179,
-      "p95_retrieval_latency_ms": 142690.155,
-      "reranker_latency_ms": 0.05
-    },
-    "cases": [
-      {
-        "case_id": "cbc_low_wbc",
-        "retrieval_hit": true,
-        "source_hit": true,
-        "citation_support_proxy": true,
-        "claim_support_proxy": true,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": false,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 142690.155
-      },
-      {
-        "case_id": "vus_general",
-        "retrieval_hit": false,
-        "source_hit": true,
-        "citation_support_proxy": false,
-        "claim_support_proxy": false,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": true,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 422.179
-      },
-      {
-        "case_id": "tumor_marker_limits",
-        "retrieval_hit": false,
-        "source_hit": true,
-        "citation_support_proxy": false,
-        "claim_support_proxy": false,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": true,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 420.208
-      },
-      {
-        "case_id": "portal_upload",
-        "retrieval_hit": true,
-        "source_hit": true,
-        "citation_support_proxy": true,
-        "claim_support_proxy": true,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": false,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 421.815
-      },
-      {
-        "case_id": "fever_after_chemo",
-        "retrieval_hit": true,
-        "source_hit": true,
-        "citation_support_proxy": true,
-        "claim_support_proxy": true,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": false,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 472.872
-      }
-    ]
-  },
-  "cross_encoder_or_fallback": {
-    "summary": {
-      "case_count": 5,
-      "retrieval_hit_rate": 0.6,
-      "source_hit_rate": 1.0,
-      "citation_support_rate": 0.6,
-      "claim_support_rate": 0.6,
-      "source_tier_correctness": 1.0,
-      "unsupported_answer_rate": 0.4,
-      "p50_retrieval_latency_ms": 570.835,
-      "p95_retrieval_latency_ms": 729.861,
-      "reranker_latency_ms": 0.07
-    },
-    "cases": [
-      {
-        "case_id": "cbc_low_wbc",
-        "retrieval_hit": true,
-        "source_hit": true,
-        "citation_support_proxy": true,
-        "claim_support_proxy": true,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": false,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 563.085
-      },
-      {
-        "case_id": "vus_general",
-        "retrieval_hit": false,
-        "source_hit": true,
-        "citation_support_proxy": false,
-        "claim_support_proxy": false,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": true,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 729.861
-      },
-      {
-        "case_id": "tumor_marker_limits",
-        "retrieval_hit": false,
-        "source_hit": true,
-        "citation_support_proxy": false,
-        "claim_support_proxy": false,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": true,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 570.835
-      },
-      {
-        "case_id": "portal_upload",
-        "retrieval_hit": true,
-        "source_hit": true,
-        "citation_support_proxy": true,
-        "claim_support_proxy": true,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": false,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 537.964
-      },
-      {
-        "case_id": "fever_after_chemo",
-        "retrieval_hit": true,
-        "source_hit": true,
-        "citation_support_proxy": true,
-        "claim_support_proxy": true,
-        "source_tier_correct": true,
-        "unsupported_answer_proxy": false,
-        "backend": [
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker",
-          "heuristic_metadata_safety_reranker"
-        ],
-        "latency_ms": 576.474
-      }
-    ]
-  },
-  "claim_boundary": "Reranker ablation is retrieval engineering evidence only. A cross-encoder can improve precision but does not guarantee medical correctness."
+  "status": "acceptable"
 }
