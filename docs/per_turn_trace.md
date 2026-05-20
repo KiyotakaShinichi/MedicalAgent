@@ -63,6 +63,8 @@ to keep the lock-in green.
 ## Files
 
 - Module: [`backend/services/agent_turn_trace.py`](../backend/services/agent_turn_trace.py)
+- Coverage report: [`Data/evals/ops/latest_trace_diagnostics_coverage.json`](../Data/evals/ops/latest_trace_diagnostics_coverage.json)
+- Runner: [`scripts/run_trace_diagnostics_coverage.py`](../scripts/run_trace_diagnostics_coverage.py)
 - Tests: [`tests/test_agent_turn_trace.py`](../tests/test_agent_turn_trace.py)
 
 ## Wiring

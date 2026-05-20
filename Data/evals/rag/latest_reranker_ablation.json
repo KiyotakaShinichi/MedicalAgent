@@ -1,0 +1,199 @@
+{
+  "schema_version": "reranker_ablation_v1",
+  "generated_at": "2026-05-20T14:46:29.459323+00:00",
+  "status": "needs_attention",
+  "cross_encoder_available": true,
+  "cross_encoder_enabled_for_eval": false,
+  "summary": {
+    "before_live_rag_pass_rate_proxy": 0.6,
+    "after_live_rag_pass_rate_proxy": 0.6,
+    "before_unsupported_answer_rate": 0.4,
+    "after_unsupported_answer_rate": 0.4,
+    "before_source_tier_correctness": 1.0,
+    "after_source_tier_correctness": 1.0,
+    "p50_retrieval_latency_ms": 570.835,
+    "p95_retrieval_latency_ms": 729.861,
+    "reranker_latency_ms": 0.07
+  },
+  "baseline_disabled": {
+    "summary": {
+      "case_count": 5,
+      "retrieval_hit_rate": 0.6,
+      "source_hit_rate": 1.0,
+      "citation_support_rate": 0.6,
+      "claim_support_rate": 0.6,
+      "source_tier_correctness": 1.0,
+      "unsupported_answer_rate": 0.4,
+      "p50_retrieval_latency_ms": 422.179,
+      "p95_retrieval_latency_ms": 142690.155,
+      "reranker_latency_ms": 0.05
+    },
+    "cases": [
+      {
+        "case_id": "cbc_low_wbc",
+        "retrieval_hit": true,
+        "source_hit": true,
+        "citation_support_proxy": true,
+        "claim_support_proxy": true,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": false,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 142690.155
+      },
+      {
+        "case_id": "vus_general",
+        "retrieval_hit": false,
+        "source_hit": true,
+        "citation_support_proxy": false,
+        "claim_support_proxy": false,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": true,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 422.179
+      },
+      {
+        "case_id": "tumor_marker_limits",
+        "retrieval_hit": false,
+        "source_hit": true,
+        "citation_support_proxy": false,
+        "claim_support_proxy": false,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": true,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 420.208
+      },
+      {
+        "case_id": "portal_upload",
+        "retrieval_hit": true,
+        "source_hit": true,
+        "citation_support_proxy": true,
+        "claim_support_proxy": true,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": false,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 421.815
+      },
+      {
+        "case_id": "fever_after_chemo",
+        "retrieval_hit": true,
+        "source_hit": true,
+        "citation_support_proxy": true,
+        "claim_support_proxy": true,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": false,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 472.872
+      }
+    ]
+  },
+  "cross_encoder_or_fallback": {
+    "summary": {
+      "case_count": 5,
+      "retrieval_hit_rate": 0.6,
+      "source_hit_rate": 1.0,
+      "citation_support_rate": 0.6,
+      "claim_support_rate": 0.6,
+      "source_tier_correctness": 1.0,
+      "unsupported_answer_rate": 0.4,
+      "p50_retrieval_latency_ms": 570.835,
+      "p95_retrieval_latency_ms": 729.861,
+      "reranker_latency_ms": 0.07
+    },
+    "cases": [
+      {
+        "case_id": "cbc_low_wbc",
+        "retrieval_hit": true,
+        "source_hit": true,
+        "citation_support_proxy": true,
+        "claim_support_proxy": true,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": false,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 563.085
+      },
+      {
+        "case_id": "vus_general",
+        "retrieval_hit": false,
+        "source_hit": true,
+        "citation_support_proxy": false,
+        "claim_support_proxy": false,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": true,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 729.861
+      },
+      {
+        "case_id": "tumor_marker_limits",
+        "retrieval_hit": false,
+        "source_hit": true,
+        "citation_support_proxy": false,
+        "claim_support_proxy": false,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": true,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 570.835
+      },
+      {
+        "case_id": "portal_upload",
+        "retrieval_hit": true,
+        "source_hit": true,
+        "citation_support_proxy": true,
+        "claim_support_proxy": true,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": false,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 537.964
+      },
+      {
+        "case_id": "fever_after_chemo",
+        "retrieval_hit": true,
+        "source_hit": true,
+        "citation_support_proxy": true,
+        "claim_support_proxy": true,
+        "source_tier_correct": true,
+        "unsupported_answer_proxy": false,
+        "backend": [
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker",
+          "heuristic_metadata_safety_reranker"
+        ],
+        "latency_ms": 576.474
+      }
+    ]
+  },
+  "claim_boundary": "Reranker ablation is retrieval engineering evidence only. A cross-encoder can improve precision but does not guarantee medical correctness."
+}

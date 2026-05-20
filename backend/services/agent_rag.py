@@ -540,6 +540,13 @@ def _finalize_result(
     result["rag_evaluation"] = rag_evaluation
     if compound_intent is not None:
         result["compound_intent"] = compound_intent
+    _attach_turn_trace(
+        result=result,
+        patient_id=patient_id,
+        input_guardrails=input_guardrails,
+        output_guardrails=output_guardrails,
+        latency_ms=latency_ms,
+    )
     _store_rag_evaluation_log(
         db=db,
         patient_id=patient_id,
@@ -550,3 +557,93 @@ def _finalize_result(
         compressed=compressed,
     )
     return result
+
+
+def _attach_turn_trace(result, patient_id, input_guardrails, output_guardrails, latency_ms):
+    """Attach discrete diagnostics without private chain-of-thought."""
+    try:
+        from backend.services.agent_turn_trace import build_turn_trace, validate_trace_payload
+        from backend.services.request_context import get_request_id
+
+        pipeline = result.get("pipeline_trace") or {}
+        safety = result.get("safety") or {}
+        trace = build_turn_trace(
+            correlation_id=get_request_id(),
+            model_used={
+                "answer": "deterministic_local_or_untracked",
+                "route": pipeline.get("terminal_step"),
+            },
+            safety_scope={
+                "level": safety.get("level") or input_guardrails.get("level"),
+                "scope": safety.get("scope") or input_guardrails.get("scope"),
+                "matched_terms": safety.get("matched_terms") or input_guardrails.get("matched_terms") or [],
+            },
+            intent={
+                "deterministic_intent": result.get("intent"),
+                "route_chosen": result.get("rag_mode") or pipeline.get("terminal_step"),
+                "route_alternatives_considered": [
+                    "deterministic_refusal",
+                    "data_entry_confirmation",
+                    "portal_help",
+                    "source_governed_rag",
+                    "insufficient_evidence",
+                ],
+                "why_route_was_chosen": _trace_route_reason(result),
+            },
+            retrieval_summary=result.get("retrieval_confidence") or {},
+            emotional_distress=result.get("emotional_distress") or {},
+            post_gen_validator=result.get("post_gen_validator") or {
+                "output_guardrail_status": output_guardrails.get("status"),
+                "output_issues": output_guardrails.get("issues") or [],
+            },
+            refusal={
+                "refused": _trace_refused(result),
+                "refusal_reason": _trace_refusal_reason(result),
+            },
+            cache=result.get("cache") or {},
+            compound_intent=(
+                result.get("compound_intent").to_dict()
+                if hasattr(result.get("compound_intent"), "to_dict")
+                else result.get("compound_intent") or {}
+            ),
+            latency_ms={
+                "total": latency_ms,
+                **((pipeline.get("stage_ms") or {}) if isinstance(pipeline, dict) else {}),
+            },
+            validator_latency_ms=((pipeline.get("stage_ms") or {}) if isinstance(pipeline, dict) else {}).get("post_generation_validation_ms"),
+            patient_id=patient_id,
+        ).to_dict()
+        ok, problems = validate_trace_payload(trace)
+        result["turn_trace"] = trace if ok else {"schema_version": "1.0", "validation_errors": problems}
+    except Exception as exc:  # noqa: BLE001 - diagnostics must never break chat
+        result["turn_trace"] = {"schema_version": "1.0", "diagnostics_error": str(exc)[:200]}
+
+
+def _trace_refused(result):
+    terminal = str((result.get("pipeline_trace") or {}).get("terminal_step") or "").lower()
+    post = result.get("post_gen_validator") or {}
+    evidence = result.get("evidence_grade") or {}
+    return "refusal" in terminal or post.get("decision") == "blocked" or evidence.get("grade") == "insufficient"
+
+
+def _trace_refusal_reason(result):
+    if (result.get("post_gen_validator") or {}).get("decision") == "blocked":
+        return "post_generation_validator_blocked"
+    evidence = result.get("evidence_grade") or {}
+    if evidence.get("grade") == "insufficient":
+        return "insufficient_evidence"
+    terminal = str((result.get("pipeline_trace") or {}).get("terminal_step") or "")
+    if "refusal" in terminal:
+        return terminal
+    return None
+
+
+def _trace_route_reason(result):
+    safety = result.get("safety") or {}
+    if safety.get("level") == "high_risk":
+        return "high_risk_safety_scope"
+    if result.get("retrieval_confidence"):
+        return (result.get("retrieval_confidence") or {}).get("answerability_status")
+    if result.get("cache"):
+        return (result.get("cache") or {}).get("status")
+    return (result.get("pipeline_trace") or {}).get("terminal_step")

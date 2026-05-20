@@ -24,14 +24,17 @@ from sqlalchemy.orm import Session
 from backend.services.hybrid_prediction import (
     DEFAULT_REGRESSION_MODEL_PATH,
     DEFAULT_TOXICITY_MODEL_PATH,
+    EvidenceAwareRegression,
     HybridPrediction,
     predict_hybrid,
     predict_response_score_with_abstention,
     predict_toxicity_with_abstention,
 )
+from backend.services.evidence_sufficiency import EvidenceAssessment
 from backend.services.predict_with_abstention import (
     DEFAULT_CALIBRATOR_PATH,
     DEFAULT_MODEL_PATH,
+    EvidenceAwarePrediction,
 )
 from backend.services.prediction_trace import (
     TraceContext,
@@ -39,6 +42,7 @@ from backend.services.prediction_trace import (
     predict_and_trace,
     record_prediction_trace,
 )
+from backend.services.realtime_ood_gate import assess_realtime_ood
 
 
 DEFAULT_TIMELINE_CSV = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
@@ -151,14 +155,24 @@ def build_hybrid_prediction(
         return None
     if not Path(classification_model_path).exists():
         return None
+    ood_gate = assess_realtime_ood(row)
+    ood_trigger = f"ood_gate:{ood_gate.severity}:{','.join(ood_gate.reasons[:3])}" if ood_gate.severity != "none" else None
 
-    bundle: HybridPrediction = predict_hybrid(
-        row,
-        classification_model_path=classification_model_path,
-        calibrator_path=calibrator_path,
-        regression_model_path=regression_model_path,
-        toxicity_model_path=toxicity_model_path,
-    )
+    if ood_gate.severity == "severe":
+        bundle = _severe_ood_hybrid_bundle(
+            ood_gate.to_dict(),
+            classification_model_path=classification_model_path,
+            regression_model_path=regression_model_path,
+            toxicity_model_path=toxicity_model_path,
+        )
+    else:
+        bundle = predict_hybrid(
+            row,
+            classification_model_path=classification_model_path,
+            calibrator_path=calibrator_path,
+            regression_model_path=regression_model_path,
+            toxicity_model_path=toxicity_model_path,
+        )
 
     # One trace row per head: same patient_id + timeline_snapshot_hash so a
     # reviewer can group the three traces produced by a single report build.
@@ -171,9 +185,10 @@ def build_hybrid_prediction(
         patient_id=patient_id,
         request_id=request_id,
         actor_role=actor_role,
-        validator_decision="allowed",
+        safety_triggers=[ood_trigger] if ood_trigger else [],
+        validator_decision="allowed" if ood_gate.severity != "severe" else "ood_gate_abstained",
         timeline_snapshot_hash=snapshot_hash,
-        notes="live patient-report inference (hybrid)",
+        notes=f"live patient-report inference (hybrid); ood_gate={ood_gate.severity}",
     )
 
     record_prediction_trace(db, bundle.classification, context=base_context)
@@ -182,8 +197,6 @@ def build_hybrid_prediction(
     # classification trace shape — the regression decision is what matters
     # for audit, and ``probability=None`` accurately reflects that this
     # head's primary output is a score, not a probability.
-    from backend.services.predict_with_abstention import EvidenceAwarePrediction
-
     regression_trace_view = EvidenceAwarePrediction(
         decision=bundle.response_score.decision,
         probability=None,
@@ -202,7 +215,63 @@ def build_hybrid_prediction(
     if record_trace:
         db.commit()
 
-    return bundle.to_dict()
+    payload = bundle.to_dict()
+    payload["ood_gate"] = ood_gate.to_dict()
+    return payload
+
+
+def _severe_ood_hybrid_bundle(
+    ood_gate: Mapping[str, Any],
+    *,
+    classification_model_path: str,
+    regression_model_path: str,
+    toxicity_model_path: str,
+) -> HybridPrediction:
+    reason = "severe_ood_or_data_quality_gate:" + ",".join(ood_gate.get("reasons") or ["unknown"])
+    evidence = EvidenceAssessment(
+        modalities_present=[],
+        modalities_missing=["data_quality_or_ood_review_required"],
+        sufficiency="insufficient",
+        abstain=True,
+        reason=reason,
+        confidence_modifier=0.0,
+    )
+    classification = EvidenceAwarePrediction(
+        decision="insufficient_evidence",
+        probability=None,
+        raw_probability=None,
+        calibrated=False,
+        confidence="low",
+        evidence=evidence,
+        model_version=Path(classification_model_path).stem,
+        question="response_classification",
+    )
+    toxicity = EvidenceAwarePrediction(
+        decision="insufficient_evidence",
+        probability=None,
+        raw_probability=None,
+        calibrated=False,
+        confidence="low",
+        evidence=evidence,
+        model_version=Path(toxicity_model_path).stem,
+        question="toxicity_signal",
+    )
+    regression = EvidenceAwareRegression(
+        decision="insufficient_evidence",
+        response_score=None,
+        raw_response_score=None,
+        uncertainty_band=None,
+        confidence="low",
+        evidence=evidence,
+        model_version=Path(regression_model_path).stem,
+        question="response_score_regression",
+        uncertainty_method="abstained_realtime_ood_gate",
+    )
+    return HybridPrediction(
+        classification=classification,
+        response_score=regression,
+        toxicity=toxicity,
+    )
 
 
 __all__ = [

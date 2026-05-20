@@ -55,10 +55,16 @@ def build_cost_latency_report(
                 "latency_ms",
                 "retrieval_latency_ms",
                 "reranker_latency_ms",
+                "cross_encoder_latency_ms",
                 "validator_latency_ms",
                 "cache_status",
                 "source_governance_ms",
                 "post_generation_validation_ms",
+                "semantic_chunk_rebuild_time_ms",
+                "fhir_mapper_latency_ms",
+                "ood_gate_latency_ms",
+                "total_rag_latency_before_after",
+                "total_prediction_latency_before_after",
             ],
             "legacy_gap": (
                 "Rows created before schema revision 0005 may not have stage_latency_json. "

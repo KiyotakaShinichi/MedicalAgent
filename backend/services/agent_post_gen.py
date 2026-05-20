@@ -247,6 +247,7 @@ def apply_intent_aware_rag_layer(
         from backend.services.rag_evidence_grading import grade_evidence
         from backend.services.rag_intent_modes import select_mode
         from backend.services.rag_tier_filter import filter_chunks_by_mode
+        from backend.services.retrieval_confidence import classify_retrieval_uncertainty
 
         actor_role = (
             result.get("actor_role")
@@ -274,19 +275,50 @@ def apply_intent_aware_rag_layer(
         result["tier_filter"] = filter_result.to_dict()
         result["claim_validation"] = claim_validation.to_dict()
         result["evidence_grade"] = grade.to_dict()
+        retrieval_confidence = classify_retrieval_uncertainty(
+            chunks=filter_result.kept_chunks,
+            claim_envelope=claim_validation.to_dict(),
+            safety=result.get("safety") or input_guardrails or {},
+            intent=result.get("intent") or mode.mode,
+        )
+        result["retrieval_confidence"] = retrieval_confidence.to_dict()
 
         # Substitute the mode's insufficient-evidence default when
-        # grading collapses AND the validator hadn't already blocked.
-        if (
-            grade.grade == "insufficient"
+        # grading collapses OR the answerability router says we must
+        # not answer confidently, AND the validator hadn't already
+        # blocked.  Accepted routing statuses for substitution:
+        #   - insufficient_evidence
+        #   - conflicting_evidence (would mislead if answered)
+        #   - clinician_review_required (patient-specific + thin support)
+        confidence_status = retrieval_confidence.answerability_status
+        confidence_triggers_substitution = confidence_status in {
+            "insufficient_evidence",
+            "conflicting_evidence",
+            "clinician_review_required",
+        }
+        should_substitute = (
+            (grade.grade == "insufficient" or confidence_triggers_substitution)
             and pgv_decision.decision != "blocked"
             and mode.insufficient_evidence_default
-        ):
+        )
+        if should_substitute:
             result["reply"] = mode.insufficient_evidence_default
             result["citations"] = []
             result["insufficient_evidence_substitution"] = {
-                "reason": grade.reasoning,
+                "reason": grade.reasoning if grade.grade == "insufficient" else retrieval_confidence.reason,
                 "mode": mode.mode,
+                "answerability_status": confidence_status,
+                "evidence_conflict_flag": bool(retrieval_confidence.evidence_conflict_flag),
+                "low_confidence_reason": (
+                    retrieval_confidence.reason
+                    if confidence_triggers_substitution
+                    else None
+                ),
+                "trigger": (
+                    "evidence_grade_insufficient"
+                    if grade.grade == "insufficient"
+                    else f"retrieval_confidence_{confidence_status}"
+                ),
             }
     except Exception as exc:  # noqa: BLE001 — the layer must never crash chat
         result["evidence_grade"] = {

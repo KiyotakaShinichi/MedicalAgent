@@ -113,6 +113,8 @@ def _citation_support_confidence(claim_envelope: Mapping[str, Any] | None) -> tu
     if not claim_envelope:
         return 0.0, counts
     for verdict in claim_envelope.get("verdicts") or []:
+        if verdict.get("is_claim") is False:
+            continue
         status = str(verdict.get("status") or "").lower()
         counts["total"] += 1
         if status == "supported":
@@ -133,6 +135,8 @@ def _has_evidence_conflict(claim_envelope: Mapping[str, Any] | None) -> bool:
         return False
     counts = {"supported": 0, "contradicted": 0}
     for verdict in claim_envelope.get("verdicts") or []:
+        if verdict.get("is_claim") is False:
+            continue
         status = str(verdict.get("status") or "").lower()
         if status in counts:
             counts[status] += 1
@@ -157,7 +161,7 @@ def classify_retrieval_uncertainty(
     3. ``clinician_review_required`` — patient-specific intent
        (e.g. record_explanation) AND citation support is low.
     4. ``insufficient_evidence`` — retrieval confidence < 0.3 OR
-       support confidence < 0.3 OR no high-trust chunks.
+       support confidence < 0.3 OR no governed T2/T3-or-better basis.
     5. ``answerable_with_limited_context`` — middling confidence on
        at least one axis.
     6. ``answerable_with_citations`` — all three confidence axes
@@ -180,7 +184,7 @@ def classify_retrieval_uncertainty(
     elif intent in {"record_explanation", "record_explanation_rag"} and support_conf < 0.5:
         status = "clinician_review_required"
         reason = "patient-specific record question with low citation support"
-    elif retrieval_conf < 0.3 or support_conf < 0.3 or high_trust == 0:
+    elif retrieval_conf < 0.3 or support_conf < 0.3 or (high_trust == 0 and tier_conf < 0.5):
         status = "insufficient_evidence"
         reason = (
             f"retrieval_conf={retrieval_conf:.2f} support={support_conf:.2f} "

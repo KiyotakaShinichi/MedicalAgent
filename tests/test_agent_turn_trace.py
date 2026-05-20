@@ -18,6 +18,7 @@ from backend.services.agent_turn_trace import (
     build_turn_trace,
     validate_trace_payload,
 )
+from backend.services.trace_diagnostics_coverage import build_trace_diagnostics_coverage
 
 
 class BuildTrace(unittest.TestCase):
@@ -100,6 +101,19 @@ class ValidatePayload(unittest.TestCase):
             intent={"deterministic_intent": "education"},
         ).to_dict())
         self.assertTrue(ok, problems)
+
+
+class CoverageArtifact(unittest.TestCase):
+    def test_trace_diagnostics_coverage_artifact_shape(self) -> None:
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmp:
+            report = build_trace_diagnostics_coverage(output_path=Path(tmp) / "coverage.json", db=None, limit=1)
+        self.assertEqual(report["schema_version"], "trace_diagnostics_coverage_v1")
+        self.assertIn(report["status"], {"strong", "needs_attention"})
+        self.assertFalse(report["summary"]["private_chain_of_thought_allowed"])
+        self.assertTrue(report["summary"]["sample_trace_schema_valid"])
 
 
 if __name__ == "__main__":

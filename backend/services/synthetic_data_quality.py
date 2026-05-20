@@ -23,6 +23,7 @@ import pandas as pd
 
 DEFAULT_ROWS_PATH = Path("Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv")
 DEFAULT_OUTPUT_PATH = Path("Data/evals/realism/latest_synthetic_data_quality.json")
+DEFAULT_MODELS_OUTPUT_PATH = Path("Data/evals/models/latest_synthetic_data_quality_report.json")
 
 # Hand-curated plausibility ranges for selected lab + imaging features.
 # These are not clinical-grade reference intervals; they are sanity
@@ -208,6 +209,7 @@ def write_quality_report(
 
 __all__ = [
     "DEFAULT_OUTPUT_PATH",
+    "DEFAULT_MODELS_OUTPUT_PATH",
     "DEFAULT_ROWS_PATH",
     "EXPECTED_CORRELATIONS",
     "LAB_RANGES",

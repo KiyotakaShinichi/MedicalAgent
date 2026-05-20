@@ -22,6 +22,11 @@ tumor-marker interpretation, or medication decisions.
 - tumor-marker trends diagnose recurrence
 - supplement flags determine whether a product is safe
 - the platform is HIPAA-ready or regulated-software-ready
+- cross-encoder reranking guarantees medical correctness
+- semantic chunking prevents every retrieval-context error
+- FHIR-aligned internal schemas are certified FHIR interoperability
+- the app can connect to a real EHR or hospital system
+- the OOD/data-quality gate proves real-world robustness or clinical safety
 - patient benefit, workload reduction, or real-world safety
 - public-data mappings validate the model
 - the unreviewed clinical advisor packet has been reviewed or approved

@@ -55,6 +55,11 @@ METRIC_SOURCES: tuple[MetricSource, ...] = (
         extractor="_extract_adversarial_safety",
     ),
     MetricSource(
+        name="adversarial_safety_holdout",
+        path=Path("Data/evals/safety/latest_adversarial_safety_holdout.json"),
+        extractor="_extract_adversarial_holdout",
+    ),
+    MetricSource(
         name="uncertainty_aware_retrieval",
         path=Path("Data/evals/rag/latest_uncertainty_aware_retrieval_eval.json"),
         extractor="_extract_uncertainty_retrieval",
@@ -74,6 +79,11 @@ METRIC_DIRECTIONS: dict[str, str] = {
     "adversarial_safety_regression.overall_attack_block_rate": "higher_is_better",
     "adversarial_safety_regression.urgent_symptom_rate": "higher_is_better",
     "adversarial_safety_regression.negative_control_rate": "higher_is_better",
+    "adversarial_safety_holdout.overall_attack_block_rate": "higher_is_better",
+    "adversarial_safety_holdout.privacy_pii_rate": "higher_is_better",
+    "adversarial_safety_holdout.prompt_injection_rate": "higher_is_better",
+    "adversarial_safety_holdout.genetic_risk_misinterpretation_rate": "higher_is_better",
+    "adversarial_safety_holdout.vus_misinterpretation_rate": "higher_is_better",
     "uncertainty_aware_retrieval.pass_rate": "higher_is_better",
     "emotional_distress.pass_rate": "higher_is_better",
     "emotional_distress.en_pass_rate": "higher_is_better",
@@ -127,6 +137,21 @@ class EvalDriftTracker:
             "diagnosis_confirmation_rate": (
                 by_cat.get("diagnosis_confirmation") or {}
             ).get("attack_block_rate"),
+        }
+
+    def _extract_adversarial_holdout(self, data: dict[str, Any]) -> dict[str, Any]:
+        by_cat = data.get("by_category") or {}
+        def _rate(name: str) -> float | None:
+            block = by_cat.get(name) or {}
+            v = block.get("attack_block_rate")
+            return float(v) if isinstance(v, (int, float)) else None
+        return {
+            "overall_attack_block_rate": data.get("overall_attack_block_rate"),
+            "total_n": data.get("total_n"),
+            "privacy_pii_rate": _rate("privacy_pii"),
+            "prompt_injection_rate": _rate("prompt_injection"),
+            "genetic_risk_misinterpretation_rate": _rate("genetic_risk_misinterpretation"),
+            "vus_misinterpretation_rate": _rate("vus_misinterpretation"),
         }
 
     def _extract_uncertainty_retrieval(self, data: dict[str, Any]) -> dict[str, Any]:

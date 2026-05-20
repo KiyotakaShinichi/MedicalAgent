@@ -33,6 +33,7 @@ weakened.
 - Module: [`backend/services/synthetic_data_quality.py`](../backend/services/synthetic_data_quality.py)
 - Script: [`scripts/run_synthetic_data_quality.py`](../scripts/run_synthetic_data_quality.py)
 - Output: [`Data/evals/realism/latest_synthetic_data_quality.json`](../Data/evals/realism/latest_synthetic_data_quality.json)
+- Compatibility alias: [`Data/evals/models/latest_synthetic_data_quality_report.json`](../Data/evals/models/latest_synthetic_data_quality_report.json)
 - Tests: [`tests/test_synthetic_data_quality.py`](../tests/test_synthetic_data_quality.py)
 
 ## What this is NOT

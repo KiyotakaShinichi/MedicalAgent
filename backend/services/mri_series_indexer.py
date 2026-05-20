@@ -2,13 +2,19 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-import pydicom
+try:  # pydicom is optional for non-DICOM test and demo paths.
+    import pydicom
+except ModuleNotFoundError:  # pragma: no cover - exercised by import-only environments
+    pydicom = None
 from sqlalchemy.orm import Session
 
 from backend.models import MRISeriesIndex, Patient
 
 
 def index_mri_series(db: Session, root_path: str, patient_id: str | None = None, max_files: int | None = None):
+    if pydicom is None:
+        raise RuntimeError("pydicom is required to index DICOM MRI series. Install project dependencies first.")
+
     root = Path(root_path)
     if not root.exists():
         raise FileNotFoundError(f"MRI root path not found: {root_path}")

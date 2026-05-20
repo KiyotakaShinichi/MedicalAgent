@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-import nibabel as nib
 import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
@@ -11,6 +10,11 @@ from sklearn.metrics import accuracy_score, balanced_accuracy_score, roc_auc_sco
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+try:  # NIfTI loading is optional for tabular schema imports and smoke tests.
+    import nibabel as nib
+except ModuleNotFoundError:  # pragma: no cover - exercised by import-only environments
+    nib = None
 from sklearn.compose import ColumnTransformer
 
 
@@ -219,6 +223,8 @@ def _extract_patient_features(row):
 
 
 def _load_volume(path):
+    if nib is None:
+        raise RuntimeError("nibabel is required to load BreastDCEDL NIfTI volumes. Install project dependencies first.")
     return np.asanyarray(nib.load(str(path)).dataobj).astype(np.float32)
 
 

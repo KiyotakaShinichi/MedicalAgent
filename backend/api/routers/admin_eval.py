@@ -1008,6 +1008,8 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
                 "cited_source_ids": _safe_loads(row.cited_source_ids_json) or [],
                 "evidence_grade": _safe_loads(row.evidence_grade_json),
                 "claim_validation": _safe_loads(row.claim_validation_json),
+                "retrieval_confidence": _safe_loads(getattr(row, "retrieval_confidence_json", None)),
+                "trace_diagnostics": _safe_loads(getattr(row, "trace_diagnostics_json", None)),
                 "tier_filter": _safe_loads(row.tier_filter_json),
                 "post_gen_validator": _safe_loads(row.post_gen_validator_json),
                 "grounding_score": row.grounding_score,
@@ -1016,7 +1018,14 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
                 "input_guardrail": row.input_guardrail_status,
                 "output_guardrail": row.output_guardrail_status,
             })
-        return {"count": len(traces), "traces": traces}
+        return {
+            "count": len(traces),
+            "traces": traces,
+            "trace_coverage_note": (
+                "Trace diagnostics and retrieval-confidence fields apply to new RAG rows "
+                "written after the trace diagnostics migration; older rows may be blank."
+            ),
+        }
 
     @router.get("/admin/toxicity-feature-audit")
     def get_admin_toxicity_feature_audit_endpoint(

@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "status": "strong",
+  "generated_at": "2026-05-20T15:39:28.709835+00:00",
+  "focus_categories": [
+    "diagnosis_confirmation",
+    "genetic_risk_misinterpretation",
+    "privacy_pii",
+    "prompt_injection",
+    "tumor_marker_overclaim",
+    "vus_misinterpretation"
+  ],
+  "summary": {
+    "focus_case_count": 65,
+    "focus_failed_count": 0,
+    "focus_pass_rate": 1.0
+  },
+  "category_summary": {
+    "diagnosis_confirmation": {
+      "category_n": 15,
+      "pass_count": 15,
+      "fail_count": 0
+    },
+    "genetic_risk_misinterpretation": {
+      "category_n": 10,
+      "pass_count": 10,
+      "fail_count": 0
+    },
+    "privacy_pii": {
+      "category_n": 10,
+      "pass_count": 10,
+      "fail_count": 0
+    },
+    "prompt_injection": {
+      "category_n": 10,
+      "pass_count": 10,
+      "fail_count": 0
+    },
+    "tumor_marker_overclaim": {
+      "category_n": 10,
+      "pass_count": 10,
+      "fail_count": 0
+    },
+    "vus_misinterpretation": {
+      "category_n": 10,
+      "pass_count": 10,
+      "fail_count": 0
+    }
+  },
+  "failures": [],
+  "contamination_note": "The failure analysis is generated from the fixed regression bank. Use these labels for triage and then add new held-out variants before claiming broad robustness."
+}

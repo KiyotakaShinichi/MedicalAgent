@@ -109,6 +109,15 @@ def handle_patient_chat(db, patient_id, message):
 
     urgent_flags = _detect_urgent_flags(normalized)
     routing_safety = safety_scope_check(normalized, urgent_flags)
+    try:
+        from backend.services.emotional_distress_detection import detect_emotional_distress
+        emotional_distress = detect_emotional_distress(normalized, safety=routing_safety)
+        if emotional_distress.response_mode == "crisis_support":
+            urgent_flags.append("emotional_crisis")
+            routing_safety = safety_scope_check(normalized, urgent_flags)
+            emotional_distress = detect_emotional_distress(normalized, safety=routing_safety)
+    except Exception:  # noqa: BLE001 - affective detection must never block chat
+        emotional_distress = None
     # Compound-intent envelope: detects messages that mix a casual
     # opener ("hi") with a tool request ("can you log my symptoms?")
     # so the chat layer can still surface the tool ask instead of
@@ -334,6 +343,7 @@ def handle_patient_chat(db, patient_id, message):
     routing_intent = tool_plan["intent"] if tool_plan.get("intent") in ALLOWED_SUPPORT_INTENTS else route_intent(normalized, actions=actions, safety=routing_safety)
     if _should_use_llm_direct_reply(routing_intent, routing_safety, actions, urgent_flags) and not _has_tool_action(actions):
         fallback_response = _generate_llm_response(normalized, actions, urgent_flags, patient_context, fallback_response)
+    fallback_response = _apply_emotional_distress_mode(fallback_response, emotional_distress)
     if _should_bypass_rag_for_tool_actions(actions, routing_intent):
         agent_result = {
             "reply": fallback_response,
@@ -376,6 +386,8 @@ def handle_patient_chat(db, patient_id, message):
             preselected_intent=routing_intent,
             compound_intent=compound_intent,
         )
+    agent_result["emotional_distress"] = emotional_distress.to_dict() if emotional_distress is not None else None
+    agent_result["reply"] = _apply_emotional_distress_mode(agent_result["reply"], emotional_distress)
     response = agent_result["reply"]
     assistant_record = ChatMessage(
         patient_id=patient_id,
@@ -394,6 +406,7 @@ def handle_patient_chat(db, patient_id, message):
                 "validation": agent_result.get("validation"),
                 "guardrails": agent_result.get("guardrails"),
                 "rag_evaluation": agent_result.get("rag_evaluation"),
+                "emotional_distress": agent_result.get("emotional_distress"),
             },
         }),
     )
@@ -438,10 +451,37 @@ def handle_patient_chat(db, patient_id, message):
             "rag_evaluation": agent_result.get("rag_evaluation"),
             "pipeline_trace": agent_result.get("pipeline_trace"),
             "compound_intent": _compound_intent_payload(compound_intent, llm_compound_verdict),
+            "emotional_distress": agent_result.get("emotional_distress"),
         },
         "assistant_message_id": assistant_record.id,
         "safety_note": "This assistant logs and summarizes information only. It does not diagnose or give treatment instructions.",
     }
+
+
+def _apply_emotional_distress_mode(reply, emotional_distress):
+    if emotional_distress is None or not getattr(emotional_distress, "detected", False):
+        return reply
+    mode = emotional_distress.response_mode
+    if mode == "crisis_support":
+        return (
+            "I'm really sorry you're carrying this much right now. I can't provide crisis care here, "
+            "but if you might hurt yourself or feel unsafe, please contact local emergency services or "
+            "a crisis hotline now, and reach out to someone near you. I can stay in the lane of helping "
+            "organize questions or records for your care team, but this needs immediate human support."
+        )
+    if mode in {"urgent_clinician_review", "clinician_review_with_warm_handoff"}:
+        prefix = (
+            "I'm sorry this feels so heavy. I can't diagnose or predict what is happening from here, "
+            "but this is worth bringing to your oncology team for review. "
+        )
+    else:
+        prefix = (
+            "I'm sorry you're carrying that fear. I can't diagnose or predict what is happening from here, "
+            "but I can help organize the information and questions for your care team. "
+        )
+    if str(reply).startswith(prefix[:24]):
+        return reply
+    return f"{prefix}{reply}"
 
 
 def _compound_intent_payload(envelope, llm_verdict):

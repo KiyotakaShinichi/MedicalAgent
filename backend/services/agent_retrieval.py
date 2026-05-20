@@ -28,6 +28,7 @@ import os
 from typing import Any, Mapping
 
 from backend.services.agent_query_rewriting import tokenize
+from backend.services.cross_encoder_reranker import rerank_with_cross_encoder
 from backend.services.rag_vector_index import search_hybrid_index
 
 
@@ -189,6 +190,7 @@ def hybrid_retrieval(rewritten: Mapping[str, Any], intent: str) -> list[dict[str
         corpus=snippets,
         intent=intent,
         knowledge_fingerprint=knowledge_base_fingerprint(),
+        candidate_limit=int(os.getenv("RAG_RRF_CANDIDATE_LIMIT", "40")),
     )
     if indexed_rows:
         rows = []
@@ -218,7 +220,7 @@ def hybrid_retrieval(rewritten: Mapping[str, Any], intent: str) -> list[dict[str
                     "agent_curated_boost": round(curated_boost, 4),
                 },
             })
-        return sorted(rows, key=lambda row: row["retrieval_score"], reverse=True)[:5]
+        return sorted(rows, key=lambda row: row["retrieval_score"], reverse=True)[:40]
 
     # Fallback path — no dense index available.
     rows = []
@@ -245,7 +247,7 @@ def hybrid_retrieval(rewritten: Mapping[str, Any], intent: str) -> list[dict[str
                 "retrieval_score": round(score, 4),
                 "matched_terms": sorted(query_tokens & text_tokens)[:10],
             })
-    return sorted(rows, key=lambda row: row["retrieval_score"], reverse=True)[:5]
+    return sorted(rows, key=lambda row: row["retrieval_score"], reverse=True)[:40]
 
 
 def expand_parent_child_windows(retrieved: list[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -280,9 +282,8 @@ def rerank_context(
     """Final reranker — lexical coverage + safety + source boosts +
     optional cross-encoder."""
     query_tokens = set(tokenize(rewritten["expanded_query"]))
-    cross_scores = _cross_encoder_scores(rewritten["expanded_query"], list(expanded))
     reranked = []
-    for idx, item in enumerate(expanded):
+    for item in expanded:
         tags = set(item["tags"])
         coverage = len(query_tokens & tags)
         safety_boost = 0.4 if safety.get("level") == "high_risk" and "urgent" in tags else 0
@@ -294,16 +295,25 @@ def rerank_context(
             + safety_boost
             + source_boost
         )
-        cross_score = cross_scores[idx] if cross_scores is not None and idx < len(cross_scores) else None
-        if cross_score is not None:
-            final_score = 0.55 * final_score + 0.45 * cross_score
         reranked.append({
             **item,
             "rerank_score":        round(final_score, 4),
-            "cross_encoder_score": round(float(cross_score), 4) if cross_score is not None else None,
-            "reranker_backend":    _reranker_backend(cross_score),
+            "reranker_backend":    "heuristic_metadata_safety_reranker",
         })
-    return sorted(reranked, key=lambda row: row["rerank_score"], reverse=True)[:5]
+    heuristic_rows = sorted(reranked, key=lambda row: row["rerank_score"], reverse=True)
+    top_rows, telemetry = rerank_with_cross_encoder(
+        rewritten["expanded_query"],
+        heuristic_rows,
+        top_k=5,
+        candidate_limit=int(os.getenv("RAG_CROSS_ENCODER_CANDIDATE_LIMIT", "40")),
+    )
+    return [
+        {
+            **row,
+            "rerank_telemetry": telemetry,
+        }
+        for row in top_rows
+    ]
 
 
 def contextual_compression(reranked: list[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -329,8 +339,13 @@ def contextual_compression(reranked: list[Mapping[str, Any]]) -> list[dict[str, 
             "score":               item.get("rerank_score", item.get("retrieval_score")),
             "reranker_backend":    item.get("reranker_backend"),
             "cross_encoder_score": item.get("cross_encoder_score"),
+            "cross_encoder_latency_ms": item.get("cross_encoder_latency_ms"),
             "retrieval_backend":   item.get("retrieval_backend"),
             "retrieval_trace":     item.get("retrieval_trace"),
+            "allowed_use":         item.get("allowed_use"),
+            "source_tier":         item.get("source_tier"),
+            "staleness":           item.get("staleness"),
+            "rerank_telemetry":    item.get("rerank_telemetry"),
         })
         total += len(text)
         if len(compressed) >= 3:

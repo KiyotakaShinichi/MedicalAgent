@@ -3,7 +3,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import pydicom
+try:  # pydicom is optional for pixel-free helpers such as normalize_pixels.
+    import pydicom
+except ModuleNotFoundError:  # pragma: no cover - exercised by import-only environments
+    pydicom = None
 from PIL import Image
 
 
@@ -61,6 +64,9 @@ def preprocess_mri_manifest_previews(
 
 
 def write_series_middle_slice_preview(series_folder: str, output_path: Path):
+    if pydicom is None:
+        raise RuntimeError("pydicom is required to render DICOM MRI previews. Install project dependencies first.")
+
     dicom_files = sorted(path for path in Path(series_folder).rglob("*") if path.is_file())
     if not dicom_files:
         raise ValueError(f"No files found in selected series folder: {series_folder}")

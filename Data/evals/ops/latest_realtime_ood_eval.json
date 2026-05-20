@@ -1,0 +1,356 @@
+{
+  "schema_version": "realtime_ood_eval_v1",
+  "generated_at": "2026-05-20T14:43:28.140364+00:00",
+  "status": "strong",
+  "summary": {
+    "case_count": 25,
+    "ood_detection_rate": 1.0,
+    "false_ood_rate": 0.0,
+    "severe_ood_abstention_rate": 1.0,
+    "unit_error_detection_rate": 1.0,
+    "physiological_range_violation_count": 1,
+    "modality_drift_alert_count": 1,
+    "p50_ood_check_latency_ms": 0.074,
+    "p95_ood_check_latency_ms": 0.115
+  },
+  "cases": [
+    {
+      "case_id": "normal_0",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 8830.228,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_1",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.093,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_2",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.072,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_3",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.068,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_4",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.067,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_5",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.065,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_6",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.065,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_7",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.064,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_8",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.064,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_9",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.099,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_10",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.11,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_11",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.111,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_12",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.115,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_13",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.089,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_14",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.08,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_15",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.069,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_16",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.067,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_17",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.069,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_18",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.074,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "normal_19",
+      "expected_ood": false,
+      "result": {
+        "severity": "none",
+        "action": "allow",
+        "reasons": [],
+        "warnings": [],
+        "confidence_modifier": 1.0,
+        "latency_ms": 0.074,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "extreme_wbc",
+      "expected_ood": true,
+      "result": {
+        "severity": "severe",
+        "action": "abstain_or_clinician_review",
+        "reasons": [
+          "physiological_range_violation:pre_wbc"
+        ],
+        "warnings": [],
+        "confidence_modifier": 0.0,
+        "latency_ms": 0.078,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "unknown_unit",
+      "expected_ood": true,
+      "result": {
+        "severity": "moderate",
+        "action": "lower_confidence",
+        "reasons": [
+          "unknown_or_unexpected_unit:pre_wbc_unit"
+        ],
+        "warnings": [],
+        "confidence_modifier": 0.65,
+        "latency_ms": 0.087,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "impossible_date",
+      "expected_ood": true,
+      "result": {
+        "severity": "severe",
+        "action": "abstain_or_clinician_review",
+        "reasons": [
+          "impossible_date:treatment_date"
+        ],
+        "warnings": [],
+        "confidence_modifier": 0.0,
+        "latency_ms": 0.074,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "missing_imaging",
+      "expected_ood": true,
+      "result": {
+        "severity": "mild",
+        "action": "lower_confidence",
+        "reasons": [],
+        "warnings": [
+          "missing_imaging_modality"
+        ],
+        "confidence_modifier": 0.85,
+        "latency_ms": 0.078,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    },
+    {
+      "case_id": "modality_drift",
+      "expected_ood": true,
+      "result": {
+        "severity": "moderate",
+        "action": "lower_confidence",
+        "reasons": [
+          "low_modality_availability"
+        ],
+        "warnings": [
+          "missing_imaging_modality"
+        ],
+        "confidence_modifier": 0.65,
+        "latency_ms": 0.047,
+        "claim_boundary": "OOD/data-quality gate is an engineering guardrail for synthetic model inference, not clinical safety validation."
+      }
+    }
+  ],
+  "claim_boundary": "Real-time OOD gate is an engineering guardrail. It does not prove clinical safety, real-world robustness, or patient benefit."
+}

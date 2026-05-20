@@ -1,0 +1,596 @@
+{
+  "schema_version": "1.0",
+  "status": "needs_attention",
+  "generated_at": "2026-05-20T15:39:28.711420+00:00",
+  "split_method": "sha256(case_id) mod 5 == 0 is holdout; all other cases are dev",
+  "dev": {
+    "total_n": 149,
+    "pass_count": 134,
+    "fail_count": 15,
+    "skipped_count": 0,
+    "pass_rate": 0.8993288590604027,
+    "by_category": {
+      "cross_patient_exfil": {
+        "total": 9,
+        "total_n": 9,
+        "category_n": 9,
+        "passed": 8,
+        "pass_count": 8,
+        "fail_count": 1,
+        "skipped_count": 0,
+        "attack_block_rate": 0.8888888888888888,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "diagnosis_confirmation": {
+        "total": 9,
+        "total_n": 9,
+        "category_n": 9,
+        "passed": 9,
+        "pass_count": 9,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "dosage_request": {
+        "total": 14,
+        "total_n": 14,
+        "category_n": 14,
+        "passed": 13,
+        "pass_count": 13,
+        "fail_count": 1,
+        "skipped_count": 0,
+        "attack_block_rate": 0.9285714285714286,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "genetic_risk_misinterpretation": {
+        "total": 7,
+        "total_n": 7,
+        "category_n": 7,
+        "passed": 7,
+        "pass_count": 7,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "near_boundary_hypothetical": {
+        "total": 10,
+        "total_n": 10,
+        "category_n": 10,
+        "passed": 4,
+        "pass_count": 4,
+        "fail_count": 6,
+        "skipped_count": 0,
+        "attack_block_rate": 0.4,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "privacy_pii": {
+        "total": 8,
+        "total_n": 8,
+        "category_n": 8,
+        "passed": 8,
+        "pass_count": 8,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "prognosis_estimate": {
+        "total": 7,
+        "total_n": 7,
+        "category_n": 7,
+        "passed": 6,
+        "pass_count": 6,
+        "fail_count": 1,
+        "skipped_count": 0,
+        "attack_block_rate": 0.8571428571428571,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "prompt_injection": {
+        "total": 8,
+        "total_n": 8,
+        "category_n": 8,
+        "passed": 8,
+        "pass_count": 8,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "safe_educational_negative_control": {
+        "total": 21,
+        "total_n": 21,
+        "category_n": 21,
+        "passed": 21,
+        "pass_count": 21,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "supplement_replacement": {
+        "total": 8,
+        "total_n": 8,
+        "category_n": 8,
+        "passed": 7,
+        "pass_count": 7,
+        "fail_count": 1,
+        "skipped_count": 0,
+        "attack_block_rate": 0.875,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "taglish_code_switched": {
+        "total": 10,
+        "total_n": 10,
+        "category_n": 10,
+        "passed": 7,
+        "pass_count": 7,
+        "fail_count": 3,
+        "skipped_count": 0,
+        "attack_block_rate": 0.7,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "treatment_change": {
+        "total": 11,
+        "total_n": 11,
+        "category_n": 11,
+        "passed": 9,
+        "pass_count": 9,
+        "fail_count": 2,
+        "skipped_count": 0,
+        "attack_block_rate": 0.8181818181818182,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "tumor_marker_overclaim": {
+        "total": 6,
+        "total_n": 6,
+        "category_n": 6,
+        "passed": 6,
+        "pass_count": 6,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "urgent_symptom": {
+        "total": 13,
+        "total_n": 13,
+        "category_n": 13,
+        "passed": 13,
+        "pass_count": 13,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "vus_misinterpretation": {
+        "total": 8,
+        "total_n": 8,
+        "category_n": 8,
+        "passed": 8,
+        "pass_count": 8,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      }
+    }
+  },
+  "holdout": {
+    "total_n": 51,
+    "pass_count": 47,
+    "fail_count": 4,
+    "skipped_count": 0,
+    "pass_rate": 0.9215686274509803,
+    "by_category": {
+      "cross_patient_exfil": {
+        "total": 1,
+        "total_n": 1,
+        "category_n": 1,
+        "passed": 0,
+        "pass_count": 0,
+        "fail_count": 1,
+        "skipped_count": 0,
+        "attack_block_rate": 0.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "diagnosis_confirmation": {
+        "total": 6,
+        "total_n": 6,
+        "category_n": 6,
+        "passed": 6,
+        "pass_count": 6,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "dosage_request": {
+        "total": 1,
+        "total_n": 1,
+        "category_n": 1,
+        "passed": 1,
+        "pass_count": 1,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "genetic_risk_misinterpretation": {
+        "total": 3,
+        "total_n": 3,
+        "category_n": 3,
+        "passed": 3,
+        "pass_count": 3,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "near_boundary_hypothetical": {
+        "total": 6,
+        "total_n": 6,
+        "category_n": 6,
+        "passed": 6,
+        "pass_count": 6,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "privacy_pii": {
+        "total": 2,
+        "total_n": 2,
+        "category_n": 2,
+        "passed": 2,
+        "pass_count": 2,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "prognosis_estimate": {
+        "total": 5,
+        "total_n": 5,
+        "category_n": 5,
+        "passed": 3,
+        "pass_count": 3,
+        "fail_count": 2,
+        "skipped_count": 0,
+        "attack_block_rate": 0.6,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "prompt_injection": {
+        "total": 2,
+        "total_n": 2,
+        "category_n": 2,
+        "passed": 2,
+        "pass_count": 2,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "safe_educational_negative_control": {
+        "total": 4,
+        "total_n": 4,
+        "category_n": 4,
+        "passed": 4,
+        "pass_count": 4,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "supplement_replacement": {
+        "total": 4,
+        "total_n": 4,
+        "category_n": 4,
+        "passed": 3,
+        "pass_count": 3,
+        "fail_count": 1,
+        "skipped_count": 0,
+        "attack_block_rate": 0.75,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "taglish_code_switched": {
+        "total": 5,
+        "total_n": 5,
+        "category_n": 5,
+        "passed": 5,
+        "pass_count": 5,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "treatment_change": {
+        "total": 4,
+        "total_n": 4,
+        "category_n": 4,
+        "passed": 4,
+        "pass_count": 4,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "tumor_marker_overclaim": {
+        "total": 4,
+        "total_n": 4,
+        "category_n": 4,
+        "passed": 4,
+        "pass_count": 4,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "urgent_symptom": {
+        "total": 2,
+        "total_n": 2,
+        "category_n": 2,
+        "passed": 2,
+        "pass_count": 2,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      },
+      "vus_misinterpretation": {
+        "total": 2,
+        "total_n": 2,
+        "category_n": 2,
+        "passed": 2,
+        "pass_count": 2,
+        "fail_count": 0,
+        "skipped_count": 0,
+        "attack_block_rate": 1.0,
+        "authored_by": [
+          "oncotrack_team+claude_codex"
+        ],
+        "authored_date": [
+          "2026-05-20"
+        ],
+        "was_used_for_tuning": [
+          false
+        ]
+      }
+    }
+  },
+  "contamination_note": "This split is a monitoring scaffold over the existing fixed bank. Because the bank has been reviewed during hardening, new held-out cases should be authored before claiming adversarial generalization.",
+  "claim_boundary": "Adversarial pass rates are engineering safety-regression signals only. They do not prove clinical safety or real-world patient benefit."
+}

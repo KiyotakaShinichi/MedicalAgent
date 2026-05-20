@@ -287,11 +287,15 @@ function RagTraceReplayCard({
       {status === "loading" ? <LoadingPane /> :
        status === "error" ? <ErrorPane message="Could not load RAG trace replay" /> :
        traces.length === 0 ? <EmptyPane label="No RAG trace rows recorded yet." /> : (
-        <div className="overflow-x-auto">
+        <div className="flex flex-col gap-3">
+          <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+            Trace diagnostics apply to new RAG rows written after the trace-fields migration; older rows may show blank answerability or confidence fields.
+          </p>
+          <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border)" }}>
-                {["When", "Intent", "Mode", "Claims", "Post-gen", "Sources"].map((h) => (
+                {["When", "Intent", "Mode", "Answerability", "Confidence", "Reason", "Distress", "Refusal", "Claims", "Post-gen", "Cache", "Request", "Sources"].map((h) => (
                   <th key={h} className="text-left py-2 pr-3 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
                 ))}
               </tr>
@@ -301,20 +305,33 @@ function RagTraceReplayCard({
                 const row = asRecord(trace);
                 const claim = asRecord(row?.claim_validation);
                 const postGen = asRecord(row?.post_gen_validator);
+                const retrieval = asRecord(row?.retrieval_confidence);
+                const diagnostics = asRecord(row?.trace_diagnostics);
+                const distress = asRecord(readPath(diagnostics, ["emotional_distress"]));
+                const refusal = asRecord(readPath(diagnostics, ["refusal"]));
                 const sources = Array.isArray(row?.retrieved_source_ids) ? row.retrieved_source_ids.length : 0;
+                const confidence = readPath(retrieval, ["retrieval_confidence"]);
                 return (
                   <tr key={String(row?.id ?? index)} style={{ borderBottom: "1px solid var(--border)" }}>
                     <td className="py-2 pr-3" style={{ color: "var(--text-dim)" }}>{readString(row, ["created_at"]) ?? "—"}</td>
                     <td className="py-2 pr-3">{readString(row, ["intent"]) ?? "—"}</td>
                     <td className="py-2 pr-3">{readString(row, ["rag_mode"]) ?? "—"}</td>
+                    <td className="py-2 pr-3">{String(readPath(retrieval, ["answerability_status"]) ?? "-")}</td>
+                    <td className="py-2 pr-3 tabular-nums">{typeof confidence === "number" ? `${(confidence * 100).toFixed(0)}%` : "-"}</td>
+                    <td className="py-2 pr-3 max-w-[220px] truncate" title={String(readPath(retrieval, ["reason"]) ?? "")}>{String(readPath(retrieval, ["reason"]) ?? "-")}</td>
+                    <td className="py-2 pr-3">{String(readPath(distress, ["response_mode"]) ?? "-")}</td>
+                    <td className="py-2 pr-3 max-w-[180px] truncate" title={String(readPath(refusal, ["refusal_reason"]) ?? "")}>{String(readPath(refusal, ["refusal_reason"]) ?? "-")}</td>
                     <td className="py-2 pr-3">{String(readPath(claim, ["citation_status"]) ?? "—")}</td>
                     <td className="py-2 pr-3">{String(readPath(postGen, ["decision"]) ?? "—")}</td>
+                    <td className="py-2 pr-3">{readString(row, ["cache_status"]) ?? "-"}</td>
+                    <td className="py-2 pr-3 max-w-[160px] truncate" title={String(readPath(diagnostics, ["correlation_id"]) ?? "")}>{String(readPath(diagnostics, ["correlation_id"]) ?? "-")}</td>
                     <td className="py-2 pr-3 tabular-nums">{sources}</td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+          </div>
         </div>
        )}
     </Card>

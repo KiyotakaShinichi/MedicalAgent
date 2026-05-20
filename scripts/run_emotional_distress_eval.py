@@ -97,18 +97,35 @@ def run() -> dict[str, Any]:
         if passed:
             by_lang[probe["lang"]]["passed"] += 1
 
+    n_passed = sum(1 for r in results if r["passed"])
     summary = {
         "schema_version": "1.0",
         "status": "informational",
+        "label": "internal_engineering_eval_curated_probe_set",
+        "claim_boundary": (
+            "These probes are a curated, hand-authored set used to verify the "
+            "emotional_distress_detection.py wording-level detector.  A pass_rate "
+            "of 1.0 means the deterministic vocabulary matches the labels — it "
+            "does NOT establish clinical mental-health screening validity and is "
+            "not a substitute for a validated instrument (PHQ-2/9, etc.)."
+        ),
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "response_mode_values": list(RESPONSE_MODE_VALUES),
         "n_probes": len(PROBES),
-        "n_passed": sum(1 for r in results if r["passed"]),
-        "pass_rate": sum(1 for r in results if r["passed"]) / len(PROBES),
+        "n_passed": n_passed,
+        "total_n": len(PROBES),
+        "pass_count": n_passed,
+        "fail_count": len(PROBES) - n_passed,
+        "skipped_count": 0,
+        "pass_rate": n_passed / len(PROBES) if PROBES else 0.0,
         "by_language": {
             lang: {
                 "total": d["total"],
+                "total_n": d["total"],
                 "passed": d["passed"],
+                "pass_count": d["passed"],
+                "fail_count": d["total"] - d["passed"],
+                "skipped_count": 0,
                 "pass_rate": d["passed"] / d["total"] if d["total"] else 0.0,
             }
             for lang, d in sorted(by_lang.items())

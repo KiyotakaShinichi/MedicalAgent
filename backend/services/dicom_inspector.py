@@ -2,11 +2,17 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
-import pydicom
+try:  # pydicom is optional unless a caller inspects real DICOM files.
+    import pydicom
+except ModuleNotFoundError:  # pragma: no cover - exercised by import-only environments
+    pydicom = None
 from PIL import Image
 
 
 def inspect_dicom_tree(root_path, patient_id=None, preview_dir="Data/dicom_previews", max_files=None):
+    if pydicom is None:
+        raise RuntimeError("pydicom is required to inspect DICOM trees. Install project dependencies first.")
+
     root = Path(root_path)
     if patient_id and (root / patient_id).is_dir():
         root = root / patient_id

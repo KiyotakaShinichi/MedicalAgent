@@ -20,6 +20,7 @@ What goes in here
 - emotional_distress (category, response_mode, matched_terms)
 - post_gen_validator (decision, blocked_claim_types, escalated)
 - refusal (refused, refusal_reason)
+- cache (hit/miss/store status and cacheability)
 - compound_intent (segments + language hint, if present)
 - latency_ms (stage breakdown the caller already has)
 
@@ -55,6 +56,7 @@ TURN_TRACE_TOP_LEVEL_KEYS: frozenset[str] = frozenset({
     "emotional_distress",
     "post_gen_validator",
     "refusal",
+    "cache",
     "compound_intent",
     "latency_ms",
     "validator_latency_ms",
@@ -86,6 +88,7 @@ class TurnTrace:
     emotional_distress: dict[str, Any] = field(default_factory=dict)
     post_gen_validator: dict[str, Any] = field(default_factory=dict)
     refusal: dict[str, Any] = field(default_factory=dict)
+    cache: dict[str, Any] = field(default_factory=dict)
     compound_intent: dict[str, Any] = field(default_factory=dict)
     latency_ms: dict[str, Any] = field(default_factory=dict)
     validator_latency_ms: float | None = None
@@ -113,6 +116,8 @@ class TurnTrace:
             payload["post_gen_validator"] = dict(self.post_gen_validator)
         if self.refusal:
             payload["refusal"] = dict(self.refusal)
+        if self.cache:
+            payload["cache"] = dict(self.cache)
         if self.compound_intent:
             payload["compound_intent"] = dict(self.compound_intent)
         if self.latency_ms:
@@ -155,6 +160,7 @@ def build_turn_trace(
     emotional_distress: Mapping[str, Any] | None = None,
     post_gen_validator: Mapping[str, Any] | None = None,
     refusal: Mapping[str, Any] | None = None,
+    cache: Mapping[str, Any] | None = None,
     compound_intent: Mapping[str, Any] | None = None,
     latency_ms: Mapping[str, Any] | None = None,
     validator_latency_ms: float | None = None,
@@ -176,6 +182,7 @@ def build_turn_trace(
         emotional_distress=_scrub_cot(emotional_distress or {}),
         post_gen_validator=_scrub_cot(post_gen_validator or {}),
         refusal=_scrub_cot(refusal or {}),
+        cache=_scrub_cot(cache or {}),
         compound_intent=_scrub_cot(compound_intent or {}),
         latency_ms=_scrub_cot(latency_ms or {}),
         validator_latency_ms=validator_latency_ms,

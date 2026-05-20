@@ -1,0 +1,434 @@
+{
+  "schema_version": "trace_diagnostics_coverage_v1",
+  "generated_at": "2026-05-20T11:51:23.637314+00:00",
+  "status": "needs_attention",
+  "summary": {
+    "rows_checked": 100,
+    "rows_with_trace_diagnostics": 1,
+    "rows_with_retrieval_confidence": 0,
+    "sample_trace_schema_valid": true,
+    "private_chain_of_thought_allowed": false
+  },
+  "required_top_level_keys": [
+    "cache",
+    "compound_intent",
+    "correlation_id",
+    "emotional_distress",
+    "generated_at",
+    "intent",
+    "latency_ms",
+    "model_used",
+    "patient_id",
+    "post_gen_validator",
+    "refusal",
+    "release_id",
+    "retrieval_summary",
+    "safety_scope",
+    "schema_version",
+    "validator_latency_ms"
+  ],
+  "sample_trace_validation_errors": [],
+  "row_coverage": [
+    {
+      "id": 628,
+      "created_at": "2026-05-20 11:15:04",
+      "has_trace_diagnostics": true,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": true,
+      "answerability_status": null
+    },
+    {
+      "id": 627,
+      "created_at": "2026-05-20 10:49:08",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 626,
+      "created_at": "2026-05-20 10:38:09",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 625,
+      "created_at": "2026-05-20 10:26:20",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 624,
+      "created_at": "2026-05-20 10:06:29",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 623,
+      "created_at": "2026-05-20 10:01:01",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 622,
+      "created_at": "2026-05-20 06:11:03",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 621,
+      "created_at": "2026-05-20 06:07:44",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 620,
+      "created_at": "2026-05-20 05:34:23",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 619,
+      "created_at": "2026-05-20 04:58:25",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 618,
+      "created_at": "2026-05-20 04:33:55",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 617,
+      "created_at": "2026-05-20 03:50:03",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 616,
+      "created_at": "2026-05-20 03:47:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 615,
+      "created_at": "2026-05-19 03:03:17",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 614,
+      "created_at": "2026-05-19 02:44:32",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 613,
+      "created_at": "2026-05-19 02:21:52",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 612,
+      "created_at": "2026-05-19 02:06:42",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 611,
+      "created_at": "2026-05-19 01:45:58",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 610,
+      "created_at": "2026-05-18 11:26:13",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 609,
+      "created_at": "2026-05-18 11:19:40",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 608,
+      "created_at": "2026-05-18 11:13:51",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 607,
+      "created_at": "2026-05-18 11:10:04",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 606,
+      "created_at": "2026-05-18 09:18:01",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 605,
+      "created_at": "2026-05-18 08:51:29",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 604,
+      "created_at": "2026-05-18 04:58:26",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 603,
+      "created_at": "2026-05-18 04:32:16",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 602,
+      "created_at": "2026-05-18 03:21:41",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 601,
+      "created_at": "2026-05-18 02:24:43",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 600,
+      "created_at": "2026-05-18 02:17:09",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 599,
+      "created_at": "2026-05-17 17:09:48",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 598,
+      "created_at": "2026-05-17 16:47:15",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 597,
+      "created_at": "2026-05-17 16:44:38",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 596,
+      "created_at": "2026-05-17 16:43:40",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 595,
+      "created_at": "2026-05-17 16:33:13",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 594,
+      "created_at": "2026-05-17 16:15:15",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 593,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 592,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 591,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 590,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 589,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 588,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 587,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 586,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 585,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 584,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 583,
+      "created_at": "2026-05-17 11:18:37",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 582,
+      "created_at": "2026-05-17 11:18:36",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 581,
+      "created_at": "2026-05-17 11:18:36",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 580,
+      "created_at": "2026-05-17 11:18:36",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    },
+    {
+      "id": 579,
+      "created_at": "2026-05-17 11:18:36",
+      "has_trace_diagnostics": false,
+      "has_retrieval_confidence": false,
+      "trace_schema_valid": null,
+      "answerability_status": null
+    }
+  ],
+  "claim_boundary": "Trace diagnostics store discrete routing and validation decisions only. They do not store private chain-of-thought and do not establish clinical validation. Coverage applies to RAG rows written after the trace diagnostics migration; older historical rows may legitimately have empty trace fields."
+}

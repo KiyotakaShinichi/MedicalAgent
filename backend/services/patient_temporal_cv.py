@@ -300,9 +300,21 @@ def build_cv_comparison(
     if patient_agg["roc_auc_mean"] is not None and naive_agg["roc_auc_mean"] is not None:
         delta_auc = float(naive_agg["roc_auc_mean"] - patient_agg["roc_auc_mean"])
 
+    n_folds_actual = len(patient_report.folds)
     return {
         "schema_version": "1.0",
         "status": "informational",
+        "label": "internal_engineering_eval_synthetic_only",
+        "claim_boundary": (
+            "Patient-level temporal CV vs. naive row-level KFold on synthetic "
+            "patient journeys.  AUC numbers here describe a synthetic distribution "
+            "with internally consistent labels — they do NOT establish clinical "
+            "validity, calibration, or generalization to real patient cohorts."
+        ),
+        "total_n": n_folds_actual,
+        "pass_count": n_folds_actual,
+        "fail_count": 0,
+        "skipped_count": 0,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source_csv": ml_csv_path,
         "target": target,

@@ -37,7 +37,10 @@ LEGACY_BUILTIN_SOURCE_GOVERNANCE: dict[str, dict[str, Any]] = {
         "allowed_use": ["education", "monitoring_context"],
     },
     "response-modeling": {
-        "tier": "T4",
+        # Internal model-card snippets define project-specific terms such as
+        # "pCR in this PoC" and the monitoring-only boundary.  They are safe
+        # education/context sources for the agent, not portal-help-only docs.
+        "tier": "T3",
         "allowed_use": ["education", "monitoring_context", "portal_help"],
     },
     "supportive-care-safety": {
@@ -316,6 +319,11 @@ def filter_chunks_by_mode(
             ))
             continue
 
+        chunk_dict["source_id"] = row.get("source_id")
+        chunk_dict["source_tier"] = tier
+        chunk_dict["tier"] = tier
+        chunk_dict["allowed_use"] = sorted(row_uses)
+        chunk_dict["staleness_status"] = staleness
         kept.append(chunk_dict)
         decisions.append(ChunkFilterDecision(
             chunk_id=chunk_id,

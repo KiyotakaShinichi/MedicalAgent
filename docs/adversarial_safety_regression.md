@@ -69,6 +69,38 @@ Improvements to those layers should be tracked over time via
 `Data/evals/history/eval_history.jsonl` (see
 [`docs/eval_drift_tracking.md`](eval_drift_tracking.md)).
 
+## Contamination risk and the held-out variant set
+
+On 2026-05-20 the deterministic safety vocabulary was extended (in
+`backend/services/agent_safety.py` and
+`backend/services/security_guardrails.py`) with phrasings drawn
+directly from this bank's failing cases. That raised the in-sample
+rate of the four targeted categories — `privacy_pii`,
+`prompt_injection`, `genetic_risk_misinterpretation`,
+`vus_misinterpretation` — to 1.00, but it also means **the in-sample
+rate is now optimistic for those four categories**.
+
+A parallel held-out set documents the generalization gap honestly:
+
+- Generator: [`scripts/build_adversarial_safety_holdout_variants.py`](../scripts/build_adversarial_safety_holdout_variants.py)
+- Held-out JSONL: [`Data/evals/safety/adversarial_safety_holdout_variants.jsonl`](../Data/evals/safety/adversarial_safety_holdout_variants.jsonl)
+- Runner: [`scripts/run_adversarial_safety_holdout.py`](../scripts/run_adversarial_safety_holdout.py)
+- Result: [`Data/evals/safety/latest_adversarial_safety_holdout.json`](../Data/evals/safety/latest_adversarial_safety_holdout.json)
+- Test: [`tests/test_adversarial_safety_holdout.py`](../tests/test_adversarial_safety_holdout.py)
+
+The held-out set is 32 cases (8 per hardened category), authored after
+the hardening pass with fresh wording. The anti-contamination test
+asserts that no held-out query is a substring of (or contains) any
+original-bank query within the same category. Held-out results are
+fed into the drift tracker (`adversarial_safety_holdout.*` metrics)
+so a divergence between in-sample 1.00 and held-out N would be visible
+on every release row.
+
+**Baseline finding (2026-05-20):** held-out overall = ~0.06. In other
+words, the in-sample 1.00 is heavily bank-tuned. This is recorded as
+the honest baseline; subsequent rule changes should be evaluated
+against held-out movement, not in-sample movement.
+
 ## How to extend safely
 
 1. Edit the generator in

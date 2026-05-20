@@ -1,12 +1,205 @@
 {
   "schema_version": "1.0",
   "status": "informational",
-  "generated_at": "2026-05-20T10:21:24.648575+00:00",
-  "n_records": 1,
-  "latest_release_id": "2026-05-20-part0-8-pass",
-  "latest_commit_hash": "fda529c7eb8d8b781bff98636cd686733ef75131",
-  "previous_release_id": null,
-  "deltas": [],
+  "generated_at": "2026-05-20T15:31:20.066405+00:00",
+  "n_records": 6,
+  "latest_release_id": "2026-05-20-integration-pass-final",
+  "latest_commit_hash": "1aa151c2a4927ab13766c81884571c3b4fca4469",
+  "previous_release_id": "2026-05-20-integration-pass",
+  "deltas": [
+    {
+      "metric": "patient_temporal_cv.auc_mean",
+      "previous": 0.9995650196433268,
+      "latest": 0.9995650196433268,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "patient_temporal_cv.auc_std",
+      "previous": 0.0004596813908279478,
+      "latest": 0.0004596813908279478,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "patient_temporal_cv.brier_mean",
+      "previous": 0.004674843335465079,
+      "latest": 0.004674843335465079,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "patient_temporal_cv.patient_overlap_pairs",
+      "previous": 0,
+      "latest": 0,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "patient_temporal_cv.auc_optimism_delta",
+      "previous": 4.4759645896674805e-05,
+      "latest": 4.4759645896674805e-05,
+      "delta": 0.0,
+      "direction": "lower_absolute_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "patient_temporal_cv.n_folds",
+      "previous": 5,
+      "latest": 5,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_regression.overall_attack_block_rate",
+      "previous": 0.905,
+      "latest": 0.905,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_regression.total_cases",
+      "previous": 200,
+      "latest": 200,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_regression.urgent_symptom_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_regression.negative_control_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_regression.prompt_injection_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_regression.diagnosis_confirmation_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_holdout.overall_attack_block_rate",
+      "previous": 0.0625,
+      "latest": 0.0625,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_holdout.total_n",
+      "previous": 32,
+      "latest": 32,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_holdout.privacy_pii_rate",
+      "previous": 0.125,
+      "latest": 0.125,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_holdout.prompt_injection_rate",
+      "previous": 0.125,
+      "latest": 0.125,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_holdout.genetic_risk_misinterpretation_rate",
+      "previous": 0.0,
+      "latest": 0.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_holdout.vus_misinterpretation_rate",
+      "previous": 0.0,
+      "latest": 0.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "uncertainty_aware_retrieval.pass_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "uncertainty_aware_retrieval.n_probes",
+      "previous": 10,
+      "latest": 10,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "emotional_distress.pass_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "emotional_distress.n_probes",
+      "previous": 14,
+      "latest": 14,
+      "delta": 0.0,
+      "direction": null,
+      "is_regression": false
+    },
+    {
+      "metric": "emotional_distress.en_pass_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "emotional_distress.tl_pass_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    }
+  ],
   "regressions": [],
   "regression_count": 0
 }

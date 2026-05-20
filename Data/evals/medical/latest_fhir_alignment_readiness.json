@@ -1,0 +1,156 @@
+{
+  "schema_version": "fhir_alignment_readiness_v1",
+  "generated_at": "2026-05-20T14:43:15.872209+00:00",
+  "status": "strong",
+  "mapping_coverage": 1.0,
+  "unmapped_field_count": 3,
+  "required_field_missing_rate": 0.0,
+  "unit_normalization_success_rate": 1.0,
+  "schema_validation_error_count": 0,
+  "resource_count": 7,
+  "observation_count": 4,
+  "mapper_latency_ms": 1.232,
+  "resources": [
+    {
+      "resource_type": "ObservationLike",
+      "id": "obs-pre-wbc",
+      "status": "available",
+      "category": "laboratory",
+      "coding": {
+        "system": "http://loinc.org",
+        "code": "6690-2",
+        "display": "Leukocytes [#/volume] in Blood"
+      },
+      "value": 5.4,
+      "unit": "10^9/L",
+      "reference_range": {
+        "low": null,
+        "high": null,
+        "unit": "10^9/L",
+        "text": "population default or unknown"
+      },
+      "effective_datetime": "2026-01-15",
+      "source": "synthetic_timeline",
+      "unmapped_fields": []
+    },
+    {
+      "resource_type": "ObservationLike",
+      "id": "obs-pre-anc",
+      "status": "available",
+      "category": "laboratory",
+      "coding": {
+        "system": "http://loinc.org",
+        "code": "751-8",
+        "display": "Neutrophils [#/volume] in Blood"
+      },
+      "value": 2.8,
+      "unit": "10^9/L",
+      "reference_range": {
+        "low": null,
+        "high": null,
+        "unit": "10^9/L",
+        "text": "population default or unknown"
+      },
+      "effective_datetime": "2026-01-15",
+      "source": "synthetic_timeline",
+      "unmapped_fields": []
+    },
+    {
+      "resource_type": "ObservationLike",
+      "id": "obs-pre-hemoglobin",
+      "status": "available",
+      "category": "laboratory",
+      "coding": {
+        "system": "http://loinc.org",
+        "code": "718-7",
+        "display": "Hemoglobin [Mass/volume] in Blood"
+      },
+      "value": 12.2,
+      "unit": "g/dL",
+      "reference_range": {
+        "low": null,
+        "high": null,
+        "unit": "g/dL",
+        "text": "population default or unknown"
+      },
+      "effective_datetime": "2026-01-15",
+      "source": "synthetic_timeline",
+      "unmapped_fields": []
+    },
+    {
+      "resource_type": "ObservationLike",
+      "id": "obs-pre-platelets",
+      "status": "available",
+      "category": "laboratory",
+      "coding": {
+        "system": "http://loinc.org",
+        "code": "777-3",
+        "display": "Platelets [#/volume] in Blood"
+      },
+      "value": 220.0,
+      "unit": "10^9/L",
+      "reference_range": {
+        "low": null,
+        "high": null,
+        "unit": "10^9/L",
+        "text": "population default or unknown"
+      },
+      "effective_datetime": "2026-01-15",
+      "source": "synthetic_timeline",
+      "unmapped_fields": []
+    },
+    {
+      "resource_type": "MedicationStatementLike",
+      "id": "medication-statement",
+      "status": "recorded",
+      "medication_text": "synthetic regimen",
+      "coding": {
+        "system": null,
+        "code": null,
+        "display": null
+      },
+      "dose_text": null,
+      "effective_datetime": "2026-01-15",
+      "source": "synthetic_or_user_entered",
+      "unmapped_fields": [
+        "medication_name",
+        "dose",
+        "start_date"
+      ]
+    },
+    {
+      "resource_type": "DiagnosticReportLike",
+      "id": "diagnostic-report-imaging",
+      "status": "available",
+      "report_type": "imaging",
+      "modality": "MRI",
+      "coding": {
+        "system": null,
+        "code": null,
+        "display": "MRI imaging report"
+      },
+      "effective_datetime": "2026-01-15",
+      "findings_text": "Synthetic imaging finding text.",
+      "impression_text": "Synthetic impression text.",
+      "source": "synthetic_or_uploaded_summary",
+      "unmapped_fields": []
+    },
+    {
+      "resource_type": "FamilyMemberHistoryLike",
+      "id": "family-member-history",
+      "status": "recorded",
+      "relationship": "mother",
+      "condition_text": "breast cancer",
+      "age_at_diagnosis": 52,
+      "side": null,
+      "coding": {
+        "system": null,
+        "code": null,
+        "display": "breast cancer"
+      },
+      "source": "user_entered",
+      "unmapped_fields": []
+    }
+  ],
+  "claim_boundary": "FHIR-aligned canonical schema readiness only; not certified FHIR integration, not connected to a real EHR, and not clinical validation."
+}

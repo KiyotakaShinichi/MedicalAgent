@@ -514,6 +514,8 @@ class RAGEvaluationLog(Base):
     compound_intent_json = Column(Text, nullable=True)
     stage_latency_json = Column(Text, nullable=True)
     model_used = Column(String, nullable=True, index=True)
+    retrieval_confidence_json = Column(Text, nullable=True)
+    trace_diagnostics_json = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

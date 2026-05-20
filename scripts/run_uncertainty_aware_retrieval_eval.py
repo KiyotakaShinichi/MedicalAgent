@@ -149,9 +149,20 @@ def run() -> dict[str, Any]:
     summary = {
         "schema_version": "1.0",
         "status": "informational",
+        "label": "internal_engineering_eval_curated_probe_set",
+        "claim_boundary": (
+            "These probes are a curated, hand-authored set used to verify the "
+            "routing logic of retrieval_confidence.py.  A pass_rate of 1.0 "
+            "means the routing decisions match the labels — it does NOT "
+            "establish clinical validity or real-world retrieval quality."
+        ),
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "n_probes": len(probes),
         "n_passed": correct,
+        "total_n": len(probes),
+        "pass_count": correct,
+        "fail_count": len(probes) - correct,
+        "skipped_count": 0,
         "pass_rate": correct / len(probes),
         "answerability_status_values": list(ANSWERABILITY_STATUS_VALUES),
         "probes": results,

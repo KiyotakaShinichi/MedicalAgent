@@ -1,6 +1,6 @@
 # MedicalAgent Benchmark Registry
 
-Generated at: 2026-05-20T09:40:10.408060+00:00
+Generated at: 2026-05-20T14:47:21.165533+00:00
 
 Overall status: **needs_attention**
 Critical status: **stale**
@@ -13,6 +13,9 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 |---|---:|---:|---:|---|---|
 | Safety red-team | critical | stale | stale | pass_rate=1.000; failed_cases=[]; total_cases=9 | `Data/evals/safety/latest_safety_benchmark.json` |
 | Adversarial prompt/jailbreak | critical | stale | stale | attack_block_rate=1.000; failed_cases=[] | `Data/evals/safety/latest_adversarial_eval.json` |
+| Fixed-bank adversarial safety regression | supporting | needs_attention | fresh | status=needs_attention; total_cases=200; overall_attack_block_rate=0.910; hard_gate_passed=True; safe_answer_rate=0.960 | `Data/evals/safety/latest_adversarial_safety_regression.json` |
+| Adversarial failure analysis | supporting | strong | fresh | status=strong; focus_case_count=65; focus_failed_count=0; focus_pass_rate=1.000 | `Data/evals/safety/latest_adversarial_failure_analysis.json` |
+| Adversarial dev/holdout monitor | supporting | needs_attention | fresh | status=needs_attention; dev_pass_rate=0.906; holdout_pass_rate=0.922; holdout_n=51 | `Data/evals/safety/latest_adversarial_safety_regression_holdout.json` |
 | Multilingual refusal routing | critical | stale | stale | pass_rate=1.000; passed=6; case_count=6 | `Data/evals/safety/latest_multilingual_refusal_eval.json` |
 | RAG regression | critical | stale | stale | pass_rate=1.000; citation_coverage_rate=1.000; expected_source_hit_rate=1.000; unsafe_answer_rate=0.000; average_grounding_score=1.000 | `Data/evals/rag/latest_rag_benchmark.json` |
 | Hand-labeled RAG gold set | critical | stale | stale | pass_rate=1.000; expected_source_hit_rate=1.000; case_count=45; unsafe_answer_rate=0.000 | `Data/evals/rag/latest_rag_gold_eval.json` |
@@ -85,7 +88,7 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | KB source governance (tier + allowed_use + staleness) | supporting | stale | stale | status=strong; source_count=44; chunk_count=242; governance_issue_count=[] | `Data/evals/rag/latest_kb_source_governance.json` |
 | Toxicity classifier feature-importance audit + no-proxy baseline | critical | stale | stale | status=acceptable; dominant_features=['intervention_count']; near_label_proxy_features=['intervention_count', 'nadir_anc', 'nadir_wbc', 'dose_delayed', 'pre_wbc', 'pre_anc', 'recovery_wbc', 'cycle']; no_proxy_baseline_auc=1.000; strict_no_proxy_baseline_auc=0.968 | `Data/evals/models/latest_toxicity_feature_audit.json` |
 | Intent-aware RAG benchmark | critical | stale | stale | status=strong; pass_rate=1.000; claim_support_rate=1.000; citation_precision=1.000; source_tier_correctness=1.000; refusal_correctness=1.000; unsafe_answer_rate=0.000; latency_p50_ms=0.000 | `Data/evals/rag/latest_rag_intent_aware_eval.json` |
-| Live-agent RAG benchmark | critical | strong | fresh | status=strong; pass_rate=1.000; claim_support_rate=0.726; citation_precision=1.000; source_tier_correctness=1.000; refusal_correctness=1.000; escalation_correctness=1.000; unsafe_answer_rate=0.000; taglish_safety_parity_rate=1.000; latency_p50_ms=1453.490 | `Data/evals/rag/latest_live_rag_eval.json` |
+| Live-agent RAG benchmark | critical | strong | fresh | status=strong; pass_rate=1.000; claim_support_rate=0.726; citation_precision=1.000; source_tier_correctness=1.000; refusal_correctness=1.000; escalation_correctness=1.000; unsafe_answer_rate=0.000; taglish_safety_parity_rate=1.000; latency_p50_ms=2735.870 | `Data/evals/rag/latest_live_rag_eval.json` |
 | Claim-level citation validation | critical | stale | stale | status=strong; case_count=3; hard_failures=0; nli_required_cases=2; nli_available_cases=0 | `Data/evals/rag/latest_claim_level_citation_eval.json` |
 | Gold claim-grounding eval set | supporting | strong | fresh | status=strong; case_count=12; contradiction_trap_total=36 | `Data/evals/rag/latest_gold_claim_grounding_eval.json` |
 | Semantic citation verification | supporting | strong | fresh | status=strong; case_count=7; hard_failures=0; contradicted_cases=2 | `Data/evals/rag/latest_semantic_citation_verification.json` |
@@ -110,8 +113,13 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | System health | supporting | stale | stale | status=needs_attention; issue_count=[{'area': 'artifact', 'severity': 'info', 'message': 'rag_eval is stale.'}, {'area': 'artifact', 'severity': 'info', 'message': 'safety_red_team is stale.'}] | `Data/evals/system/latest_system_health.json` |
 | Structured event taxonomy | supporting | strong | fresh | status=strong | `Data/evals/ops/latest_event_taxonomy_manifest.json` |
 | PoC service health snapshot | supporting | strong | fresh | status=strong; stale_artifact_count=79; failed_benchmark_count=0 | `Data/evals/ops/latest_service_health_snapshot.json` |
-| Cost and latency observability | supporting | strong | fresh | status=strong; request_count=21; latency_p50_ms=1453.490; latency_p95_ms=6361.220; estimated_total_cost_usd=0.000; cache_hit_rate=0.000 | `Data/evals/ops/latest_cost_latency_report.json` |
-| Local SLM readiness | supporting | strong | fresh | status=strong; low_risk_tasks=[{'task': 'claim_extraction', 'allowed': True, 'scope': 'Extract candidate claims for validator review; cannot approve claims.'}, {'task': 'intent_classification', 'allowed': True, 'scope': 'Low-risk routing hint only; deterministic safety gates still run first.'}, {'task': 'portal_help', 'allowed': True, 'scope': 'Allowed for navigation/help copy when no patient-specific medical advice is involved.'}, {'task': 'query_rewriting', 'allowed': True, 'scope': 'Rewrite/retrieve helper only; source-governed RAG still controls answer context.'}, {'task': 'refusal_style_drafting', 'allowed': True, 'scope': 'May draft tone for an already-decided refusal; validators keep final authority.'}, {'task': 'summary_formatting', 'allowed': True, 'scope': 'Formatting only; cannot introduce medical content.'}]; blocked_solo_tasks=[{'task': 'diagnosis', 'allowed': False, 'reason': 'Patient-specific medical decision or high-risk clinical interpretation.'}, {'task': 'dosage_guidance', 'allowed': False, 'reason': 'Patient-specific medical decision or high-risk clinical interpretation.'}, {'task': 'genetic_risk_interpretation', 'allowed': False, 'reason': 'Patient-specific medical decision or high-risk clinical interpretation.'}, {'task': 'medication_safety', 'allowed': False, 'reason': 'Patient-specific medical decision or high-risk clinical interpretation.'}, {'task': 'prognosis', 'allowed': False, 'reason': 'Patient-specific medical decision or high-risk clinical interpretation.'}, {'task': 'supplement_safety', 'allowed': False, 'reason': 'Patient-specific medical decision or high-risk clinical interpretation.'}, {'task': 'treatment_advice', 'allowed': False, 'reason': 'Patient-specific medical decision or high-risk clinical interpretation.'}, {'task': 'tumor_marker_interpretation', 'allowed': False, 'reason': 'Patient-specific medical decision or high-risk clinical interpretation.'}]; production_default=disabled_or_optional_helper_only | `Data/evals/ops/latest_local_slm_readiness.json` |
+| Per-turn trace diagnostics coverage | supporting | needs_attention | fresh | status=needs_attention; rows_checked=100; rows_with_trace_diagnostics=1; rows_with_retrieval_confidence=0; sample_trace_schema_valid=True | `Data/evals/ops/latest_trace_diagnostics_coverage.json` |
+| Cost and latency observability | supporting | strong | fresh | status=strong; request_count=500; latency_p50_ms=1206.490; latency_p95_ms=4220.370; estimated_total_cost_usd=0.000; cache_hit_rate=0.214 | `Data/evals/ops/latest_cost_latency_report.json` |
+| Cross-encoder reranker ablation | supporting | needs_attention | fresh | status=needs_attention; after_pass_rate_proxy=0.600; after_source_tier_correctness=1.000; after_unsupported_answer_rate=0.400; reranker_latency_ms=0.070 | `Data/evals/rag/latest_reranker_ablation.json` |
+| Medical semantic chunking quality | supporting | strong | fresh | status=strong; heading_metadata_coverage=1.000; critical_context_split_rate=0.000; chunk_source_traceability=1.000 | `Data/evals/rag/latest_chunking_quality_eval.json` |
+| FHIR-aligned schema readiness | supporting | strong | fresh | status=strong; mapping_coverage=1.000; unmapped_field_count=3; unit_normalization_success_rate=1.000 | `Data/evals/medical/latest_fhir_alignment_readiness.json` |
+| Real-time OOD/data-quality gate | supporting | strong | fresh | status=strong; ood_detection_rate=1.000; false_ood_rate=0.000; severe_ood_abstention_rate=1.000 | `Data/evals/ops/latest_realtime_ood_eval.json` |
+| Local SLM readiness | supporting | strong | fresh | status=strong; low_risk_task_count=6; blocked_solo_task_count=8; production_default=disabled_or_optional_helper_only | `Data/evals/ops/latest_local_slm_readiness.json` |
 | Release-gate explanation | supporting | strong | fresh | status=strong | `Data/evals/governance/latest_release_gate_explanation.json` |
 | Public imaging readiness | supporting | stale | stale | available_dataset_count=1; recommended_next_task=Run ultrasound baseline: python scripts/run_ultrasound_baseline.py --dataset-root Datasets/BUSI | `Data/public_imaging/public_imaging_manifest.json` |
 | Ultrasound baseline | optional | stale | stale | no extracted metrics | `Data/public_imaging/ultrasound_baseline/metrics.json` |
@@ -120,6 +128,8 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 ## Issues
 - medium: safety_red_team (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: adversarial (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: adversarial_safety_regression (needs_attention) - Benchmark needs review before using it as supporting evidence.
+- medium: adversarial_holdout_monitor (needs_attention) - Benchmark needs review before using it as supporting evidence.
 - medium: multilingual_refusal (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: rag_regression (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: rag_gold (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -190,6 +200,8 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: clinical_safety_review_checklist (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: medical_safety_contract (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: system_health (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: trace_diagnostics_coverage (needs_attention) - Benchmark needs review before using it as supporting evidence.
+- medium: rag_reranker_ablation (needs_attention) - Benchmark needs review before using it as supporting evidence.
 - medium: public_imaging_manifest (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: ultrasound_baseline (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 

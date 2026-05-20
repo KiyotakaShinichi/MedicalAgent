@@ -103,13 +103,34 @@ class RunnerEndToEnd(unittest.TestCase):
         for key in [
             "schema_version", "generated_at", "fast_mode",
             "total_cases", "total_passed", "overall_attack_block_rate",
-            "by_category", "by_language", "by_attack_layer", "failures",
+            "by_category", "by_language", "by_attack_layer", "failures", "hard_gate",
         ]:
             self.assertIn(key, summary, key)
         # Categories present in the bank must appear in by_category.
         bank = _load_bank()
         seen_cats = {c["category"] for c in bank}
         self.assertEqual(set(summary["by_category"].keys()), seen_cats)
+        for row in summary["by_category"].values():
+            for key in ("total_n", "category_n", "pass_count", "fail_count", "skipped_count", "authored_by", "authored_date", "was_used_for_tuning"):
+                self.assertIn(key, row)
+
+    def test_runner_writes_failure_analysis_and_holdout_artifacts(self) -> None:
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            summary = self.runner.run_regression(
+                BANK_PATH,
+                tmp_path / "latest.json",
+                tmp_path / "failure_analysis.json",
+                tmp_path / "holdout.json",
+            )
+            failure = json.loads((tmp_path / "failure_analysis.json").read_text(encoding="utf-8"))
+            holdout = json.loads((tmp_path / "holdout.json").read_text(encoding="utf-8"))
+        self.assertEqual(summary["total_cases"], EXPECTED_TOTAL)
+        self.assertGreaterEqual(failure["summary"]["focus_case_count"], 60)
+        self.assertGreater(holdout["dev"]["total_n"], holdout["holdout"]["total_n"])
+        self.assertGreaterEqual(holdout["holdout"]["total_n"], 20)
 
     def test_security_layer_blocks_at_least_some_cases(self) -> None:
         out_path = Path("Data/evals/safety/latest_adversarial_safety_regression.json")

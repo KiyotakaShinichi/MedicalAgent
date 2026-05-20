@@ -83,6 +83,8 @@ def store_rag_evaluation_log(
         tier_filter_json=        json.dumps(result.get("tier_filter"))         if result.get("tier_filter")         is not None else None,
         post_gen_validator_json= json.dumps(result.get("post_gen_validator"))  if result.get("post_gen_validator")  is not None else None,
         compound_intent_json=    json.dumps(_compound_intent_log_payload(result.get("compound_intent"))) if result.get("compound_intent") is not None else None,
+        retrieval_confidence_json=json.dumps(result.get("retrieval_confidence")) if result.get("retrieval_confidence") is not None else None,
+        trace_diagnostics_json=  json.dumps(result.get("turn_trace")) if result.get("turn_trace") is not None else None,
     )
     db.add(row)
     db.commit()

@@ -33,6 +33,12 @@ MedicalAgent is a safety-first clinical decision-support proof of concept for br
 - The output documents mapped fields, missing longitudinal modalities, expected abstentions, and failure cases.
 - These stress tests do not validate the hybrid model clinically and cannot promote model outputs without exact-label temporal validation and clinician-reviewed endpoints.
 
+## Retrieval precision and schema readiness
+- Optional cross-encoder reranking can run after dense/sparse RRF when `RAG_ENABLE_CROSS_ENCODER=true`; unavailable models fall back safely without bypassing source governance or citation validation.
+- Structure-aware semantic chunking preserves Markdown headings, parent-child section links, and critical medical context such as lab/date, imaging finding/impression, medication timing, and family-history relation text.
+- FHIR-aligned canonical objects prepare CBC/lab, medication, imaging, family-history, and condition records for future schema mapping. This is not certified FHIR interoperability and is not connected to a real EHR.
+- A real-time OOD/data-quality gate checks impossible labs, unknown units, impossible dates, missing modalities, and suspicious structured input patterns before synthetic ML heads. It can lower confidence or abstain, but it is an engineering guardrail only.
+
 ## What this system is
 - A timeline-first monitoring and clinician review assistant for already-diagnosed breast cancer cases.
 - A proof-of-concept platform that produces monitoring signals, safety flags, and summaries for clinician review.
@@ -316,6 +322,8 @@ blocker tier. Synthetic-only; no clinical validity is established.
 - [docs/eval_drift_tracking.md](docs/eval_drift_tracking.md) — JSONL time-series of headline metrics with regression detection per `release_id` + `commit_hash`.
 - [docs/per_turn_trace.md](docs/per_turn_trace.md) — per-turn decision trace envelope (decisions only — chain-of-thought is rejected by `_scrub_cot` + `validate_trace_payload`).
 - [docs/synthetic_data_quality.md](docs/synthetic_data_quality.md) — synthetic generator quality proxy with an enforced disclaimer that it is NOT a clinical realism measure.
+
+Runtime trace diagnostics are exported by `python scripts/run_trace_diagnostics_coverage.py` to `Data/evals/ops/latest_trace_diagnostics_coverage.json`. The artifact checks trace schema coverage and explicitly rejects private chain-of-thought storage.
 
 ## For Recruiters and Interviewers
 
