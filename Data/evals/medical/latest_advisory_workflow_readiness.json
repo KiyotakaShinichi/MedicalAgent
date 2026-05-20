@@ -1,0 +1,7 @@
+{
+  "schema_version": "advisory_workflow_readiness_v1",
+  "generated_at": "2026-05-20T04:44:29.786990+00:00",
+  "status": "ready_for_future_review",
+  "review_log_template": "Data/evals/medical/review_log_template.csv",
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

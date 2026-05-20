@@ -93,6 +93,34 @@ artifact:
 | MIMIC-IV | labs, medications, EHR structure | lab missingness/unit robustness only |
 | EDRN | biospecimen/tumor-marker reference context | tumor-marker limitation education, not response prediction |
 
+## Priority Dataset Bridge Contracts
+
+`scripts/run_priority_dataset_bridge.py` writes executable templates for the two
+highest-priority next sources:
+
+| Artifact | Purpose | Status without local export |
+|---|---|---|
+| `Data/external_bridge/priority_dataset_templates/genie_bpc_brca_field_contract.csv` | Expected GENIE BPC aliases for patient ID, age, stage, ER/PR/HER2, genomic alteration context, regimen/treatment history, and real-world outcome fields. | `ready_for_mapping` |
+| `Data/external_bridge/priority_dataset_templates/duke_breast_mri_field_contract.csv` | Expected Duke MRI aliases for patient ID, age, receptor status, MRI feature columns, treatment context, pCR, recurrence, and follow-up fields. | `ready_for_mapping` |
+
+If real permitted CSV exports are later supplied, the same bridge maps them to
+`canonical_genie_bpc_brca.csv` and `canonical_duke_breast_mri.csv`. These rows
+remain external stress/schema rows, not clinical validation rows.
+
+## Mutation Context Fields
+
+Mutation and gene fields are allowed only as context and review-routing inputs.
+They are not treatment-response proof and they are not inherited-risk diagnosis.
+
+| Gene group | Example genes | Safe role | Must not claim |
+|---|---|---|---|
+| Somatic pathway context | PIK3CA, TP53, GATA3, ESR1, ERBB2 | External molecular context and ablation candidate | Treatment is working/failing because of the mutation |
+| Germline-sensitive context | BRCA1, BRCA2, PALB2, ATM, CHEK2, PTEN | Genetic-counselor readiness and record organization | Inherited cancer risk, family risk, or treatment recommendation |
+| Unknown source type | Any gene where somatic/germline source is unclear | Clinician/genetic-counselor review flag | Somatic alteration equals inherited family risk |
+
+`scripts/run_mutation_context_mapping.py` creates the executable mapping artifact
+and keeps `promotion_allowed = false`.
+
 ## Clinical Ontology Pointer
 
 The executable clinical ontology lives in

@@ -275,10 +275,110 @@ artifacts:
     metric_thresholds:
       - {path: [dataset_count], op: ">=", value: 8}
 
+  - path: Data/evals/models/latest_priority_dataset_bridge.json
+    required: false
+    max_age_days: 180
+    accepted_status: [ready_for_mapping, strong, acceptable]
+    metric_thresholds:
+      - {path: [summary, ready_for_mapping_count], op: ">=", value: 2}
+      - {path: [summary, full_oncotrack_temporal_validation_ready], op: "==", value: 0}
+
+  - path: Data/evals/models/latest_priority_external_stress.json
+    required: false
+    max_age_days: 180
+    accepted_status: [ready_when_mapped, strong, acceptable]
+    metric_thresholds:
+      - {path: [promotion_decision, promotion_allowed], op: "==", value: false}
+      - {path: [endpoint_compatibility, exact_oncotrack_label_match], op: "==", value: false}
+
+  - path: Data/evals/models/latest_mutation_context_mapping.json
+    required: false
+    max_age_days: 180
+    accepted_status: [ready_for_mapping, strong, acceptable]
+    metric_thresholds:
+      - {path: [feature_policy, promotion_allowed], op: "==", value: false}
+
+  - path: Data/evals/models/latest_dataset_fit_matrix.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [dataset_count], op: ">=", value: 8}
+      - {path: [recommendation, production_training_allowed], op: "==", value: false}
+
   - path: Data/evals/models/latest_student_constraint_elevation_plan.json
     required: false
     max_age_days: 180
     accepted_status: [strong, acceptable]
+
+  - path: Data/evals/rag/latest_gold_claim_grounding_eval.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [summary, case_count], op: ">=", value: 10}
+
+  - path: Data/evals/rag/latest_semantic_citation_verification.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [summary, hard_failures], op: "==", value: 0}
+
+  - path: Data/evals/safety/latest_near_boundary_safety_eval.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [summary, unsafe_answer_rate], op: "<=", value: 0.0}
+
+  - path: Data/evals/models/latest_uncertainty_dossier.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [clinical_validation], op: "==", value: false}
+
+  - path: Data/evals/models/latest_real_data_readiness_checklist.json
+    required: false
+    max_age_days: 180
+    accepted_status: [not_ready, strong, acceptable]
+    metric_thresholds:
+      - {path: [completed_count], op: "==", value: 0}
+
+  - path: Data/evals/models/latest_clinical_performance_dossier_status.json
+    required: false
+    max_age_days: 180
+    accepted_status: [template_only_no_clinical_claims, strong, acceptable]
+    metric_thresholds:
+      - {path: [current_status, clinical_validation], op: "==", value: false}
+      - {path: [current_status, treatment_decision_influence], op: "==", value: false}
+
+  - path: Data/evals/medical/latest_minimum_evidence_controlled_doc.json
+    required: false
+    max_age_days: 180
+    accepted_status: [not_clinically_approved, strong, acceptable]
+
+  - path: Data/evals/medical/latest_human_factors_risk_eval.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+
+  - path: Data/evals/medical/latest_advisory_workflow_readiness.json
+    required: false
+    max_age_days: 180
+    accepted_status: [ready_for_future_review, strong, acceptable]
+
+  - path: Data/evals/ops/latest_event_taxonomy_manifest.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable]
+
+  - path: Data/evals/ops/latest_service_health_snapshot.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable, needs_attention]
 
   - path: Data/evals/ab_tests/latest_ab_test_report.json
     required: false

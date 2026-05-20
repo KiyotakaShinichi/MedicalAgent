@@ -54,6 +54,14 @@ python scripts/run_common_feature_transfer_stress.py
 python scripts/run_public_distribution_realism_candidate.py
 python scripts/run_realism_candidate_ab_gate.py
 python scripts/run_dataset_expansion_deep_search.py
+python scripts/run_priority_dataset_bridge.py
+python scripts/run_priority_external_stress.py
+python scripts/run_mutation_context_mapping.py
+python scripts/run_dataset_fit_matrix.py
+python scripts/run_governance_readiness_artifacts.py
+python scripts/run_semantic_citation_verification.py
+python scripts/run_near_boundary_safety_eval.py
+python scripts/run_uncertainty_dossier.py
 pytest tests/test_leakage_audit.py tests/test_evidence_abstention.py \
        tests/test_prediction_trace.py tests/test_modality_robustness.py \
        tests/test_live_evidence_prediction.py tests/test_provenance_artifacts.py \
@@ -139,6 +147,11 @@ Implementation: [backend/services/genetic_counseling.py](backend/services/geneti
 - A public-distribution realism candidate dataset is generated separately under `Data/external_bridge/realism_candidate/`. It shifts selected synthetic age and tumor-size proxy distributions toward public cohort summaries for A/B stress testing only; it is not a replacement generator and not clinical validation.
 - The current-vs-realism-candidate A/B gate compares the current synthetic rows with the public-distribution candidate across leakage, classification, regression, shortcut, calibration-style, and counterfactual-stability checks. Current decision remains `keep_current_default`; the candidate is `ab_test_only`.
 - Dataset expansion deep search now tracks the strongest next public/restricted sources for treatment histories, genomics, imaging response, biomarker context, and lab realism, with GENIE BPC BRCA and Duke Breast MRI as the highest-priority next bridges.
+- The priority dataset bridge now creates explicit field contracts and templates for GENIE BPC BRCA and Duke Breast MRI, and can map permitted local CSV exports into the canonical oncology schema. With no local export provided, it reports `ready_for_mapping` rather than pretending real data has been integrated.
+- Priority external stress checks endpoint compatibility and common-feature coverage for mapped GENIE/Duke rows, while keeping `promotion_allowed = false` unless exact-label temporal validation exists.
+- Mutation-context mapping supports genes such as PIK3CA, TP53, GATA3, ESR1, ERBB2, BRCA1, BRCA2, PALB2, ATM, CHEK2, and PTEN as context-only features with genetic-counselor/clinician review routing. It explicitly blocks inherited-risk diagnosis, VUS-as-positive language, and treatment-response claims from mutations.
+- Dataset fit matrix scores candidate public/restricted sources by treatment, temporal, imaging, biomarker, genomic, tumor-marker, lab, and student-access fit. It currently ranks I-SPY2, GENIE BPC BRCA, Duke Breast MRI, BreastDCEDL, and QIN-BREAST as the highest-leverage next data directions, while keeping production training blocked.
+- Governance-readiness artifacts now include an offline gold claim-grounding set, semantic citation verification cases, near-boundary medical safety cases, an uncertainty dossier, a real-data readiness checklist, a clinical performance dossier template, structured event taxonomy, PoC ops health snapshot, controlled minimum-evidence docs, human-factors/overtrust notes, and a future clinical advisory workflow. These are reviewer-readiness artifacts, not clinician sign-off.
 - Model artifacts, registry metadata, promotion/rollback, and local MLOps tracking.
 - Versioned evaluation reports and MLE readiness gates.
 

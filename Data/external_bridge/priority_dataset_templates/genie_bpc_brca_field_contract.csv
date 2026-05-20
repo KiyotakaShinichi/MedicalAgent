@@ -1,0 +1,8 @@
+canonical_field,role,acceptable_source_aliases,required_for_mapping,notes
+patient_id,identifier,PATIENT_ID; patient_id; record_id; GENIE_PATIENT_ID,True,Namespace before storing locally; never expose as real patient identity.
+age,demographics,AGE_AT_SEQ_REPORT; AGE_AT_DIAGNOSIS; age; age_at_diagnosis,False,Age may be binned or shifted depending on release terms.
+stage,clinical context,STAGE_AT_DIAGNOSIS; AJCC_STAGE; stage; stage_at_dx,False,Use source-reported stage only; do not infer.
+er_status/pr_status/her2_status,biomarker context,ER_STATUS; PR_STATUS; HER2_STATUS; ER; PR; HER2,False,Organize receptor context; never select therapy from it.
+genetic_variant_classification,genomic context,HUGO_SYMBOL; GENE; ALTERATION; VARIANT_CLASSIFICATION; MUTATION_STATUS,False,Somatic/genomic context only unless a source explicitly reports germline status.
+treatment_modalities/treatment_combination_pattern,treatment-history context,REGIMEN; DRUG_NAME; SYSTEMIC_THERAPY; CANCER_DIRECTED_REGIMEN; TREATMENT_TYPE,False,Map to controlled modality buckets; do not recommend regimens.
+outcome_label_name/outcome_label_value,external outcome context,BEST_RESPONSE; PFS_STATUS; OS_STATUS; RW_RESPONSE; response,False,Outcome semantics are not equivalent to OncoTrack synthetic labels.

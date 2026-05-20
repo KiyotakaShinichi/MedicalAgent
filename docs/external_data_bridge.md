@@ -17,6 +17,10 @@ python scripts/run_common_feature_transfer_stress.py
 python scripts/run_public_distribution_realism_candidate.py
 python scripts/run_realism_candidate_ab_gate.py
 python scripts/run_dataset_expansion_deep_search.py
+python scripts/run_priority_dataset_bridge.py
+python scripts/run_priority_external_stress.py
+python scripts/run_mutation_context_mapping.py
+python scripts/run_dataset_fit_matrix.py
 ```
 
 Artifacts:
@@ -33,6 +37,12 @@ Artifacts:
 - `Data/evals/models/latest_public_distribution_realism_candidate.json`
 - `Data/evals/models/latest_realism_candidate_ab_gate.json`
 - `Data/evals/models/latest_dataset_expansion_deep_search.json`
+- `Data/evals/models/latest_priority_dataset_bridge.json`
+- `Data/evals/models/latest_priority_external_stress.json`
+- `Data/evals/models/latest_mutation_context_mapping.json`
+- `Data/evals/models/latest_dataset_fit_matrix.json`
+- `Data/external_bridge/priority_dataset_templates/genie_bpc_brca_field_contract.csv`
+- `Data/external_bridge/priority_dataset_templates/duke_breast_mri_field_contract.csv`
 - `Data/evals/models/latest_external_failure_case_gallery.json`
 - `Data/evals/models/latest_treatment_sequence_feature_eval.json`
 
@@ -97,6 +107,36 @@ next data sources. The current highest-priority bridges are:
 
 The catalog also tracks BreastDCEDL, I-SPY2, QIN-BREAST, TCGA-BRCA, CPTAC,
 SEER, MIMIC-IV, and EDRN as source-specific realism or context aids.
+
+## Priority Dataset Bridge
+
+`scripts/run_priority_dataset_bridge.py` turns the top two dataset targets into
+executable mapping contracts:
+
+- **GENIE BPC BRCA**: treatment-history and clinico-genomic field contract for
+  systemic regimens, receptor context, genomic alterations, and real-world
+  outcome semantics.
+- **Duke Breast MRI**: imaging/treatment-context field contract for MRI-derived
+  features, receptor/pathology context, pCR/recurrence/follow-up endpoints, and
+  treatment-context fields.
+
+If no local CSV export is supplied, the artifact intentionally reports
+`ready_for_mapping`. That is a good status: it means the project has templates,
+expected aliases, claim boundaries, and release-gate coverage without pretending
+that restricted or large external data has already been integrated.
+
+`scripts/run_priority_external_stress.py` is the next control layer. It checks
+mapped priority rows for common-feature coverage and endpoint compatibility, but
+keeps `promotion_allowed = false` unless exact-label temporal validation exists.
+
+`scripts/run_mutation_context_mapping.py` adds mutation-context readiness for
+genes such as PIK3CA, TP53, GATA3, ESR1, ERBB2, BRCA1, BRCA2, PALB2, ATM, CHEK2,
+and PTEN. These are context and review-routing signals only, not genetic-risk or
+treatment-response predictions.
+
+`scripts/run_dataset_fit_matrix.py` scores candidate sources by treatment,
+temporal, imaging, biomarker, genomic, tumor-marker, lab, and student-access fit
+so the data roadmap remains evidence-driven instead of hype-driven.
 
 ## Treatment Sequence Artifact
 

@@ -1,0 +1,29 @@
+{
+  "schema_version": "clinical_performance_dossier_status_v1",
+  "generated_at": "2026-05-20T04:49:28.964312+00:00",
+  "status": "template_only_no_clinical_claims",
+  "sections": [
+    "intended use",
+    "not intended use",
+    "target population",
+    "data sources",
+    "label definitions",
+    "model heads",
+    "calibration",
+    "thresholds",
+    "subgroup performance",
+    "missingness performance",
+    "failure cases",
+    "human review workflow",
+    "residual risks",
+    "evidence gaps",
+    "promotion decision"
+  ],
+  "current_status": {
+    "synthetic_only": true,
+    "clinician_reviewed_labels": false,
+    "clinical_validation": false,
+    "treatment_decision_influence": false
+  },
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

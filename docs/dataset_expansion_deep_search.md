@@ -6,18 +6,18 @@ Dataset expansion deep search is a planning and governance artifact. It identifi
 
 - **AACR GENIE BPC Breast Cancer v1.0-public** - treatment-history + genomic context external-readiness
   - Source: https://www.aacr.org/professionals/research/aacr-project-genie/bpc/early-onset-brca/
-  - Next action: Build a GENIE BPC BRCA mapper/readiness artifact; do not train patient-facing treatment recommendations.
+  - Next action: Run `python scripts/run_priority_dataset_bridge.py --genie-csv <permitted_export.csv>` after access/export; do not train patient-facing treatment recommendations.
 
 - **Duke Breast Cancer MRI / TCIA** - MRI + pathology + treatment/outcome/radiogenomic external bridge
   - Source: https://sites.duke.edu/mazurowski/resources/breast-cancer-mri-dataset/
-  - Next action: Map clinical-and-other-features into canonical schema; use as imaging/treatment-context external stress, not clinical validation.
+  - Next action: Run `python scripts/run_priority_dataset_bridge.py --duke-csv <metadata.csv>` after download/export; use as imaging/treatment-context external stress, not clinical validation.
 
 ## Full Candidate Catalog
 
 | Dataset | Best use | Fit | Access | Next action |
 |---|---|---|---|---|
-| [AACR GENIE BPC Breast Cancer v1.0-public](https://www.aacr.org/professionals/research/aacr-project-genie/bpc/early-onset-brca/) | treatment-history + genomic context external-readiness | highest_priority | public with AACR/GENIE data-use terms | Build a GENIE BPC BRCA mapper/readiness artifact; do not train patient-facing treatment recommendations. |
-| [Duke Breast Cancer MRI / TCIA](https://sites.duke.edu/mazurowski/resources/breast-cancer-mri-dataset/) | MRI + pathology + treatment/outcome/radiogenomic external bridge | highest_priority | public TCIA collection, license-sensitive | Map clinical-and-other-features into canonical schema; use as imaging/treatment-context external stress, not clinical validation. |
+| [AACR GENIE BPC Breast Cancer v1.0-public](https://www.aacr.org/professionals/research/aacr-project-genie/bpc/early-onset-brca/) | treatment-history + genomic context external-readiness | highest_priority | public with AACR/GENIE data-use terms | Priority bridge template exists; run with `--genie-csv` after permitted export. |
+| [Duke Breast Cancer MRI / TCIA](https://sites.duke.edu/mazurowski/resources/breast-cancer-mri-dataset/) | MRI + pathology + treatment/outcome/radiogenomic external bridge | highest_priority | public TCIA collection, license-sensitive | Priority bridge template exists; run with `--duke-csv` after metadata export. |
 | [BreastDCEDL](https://zenodo.org/records/18114231) | deep-learning-ready MRI pCR benchmark | already_integrated_expand | public Zenodo, CC BY-NC 4.0 derivative license | Expand from current tabular bridge to a small image-feature smoke benchmark if local storage allows. |
 | [I-SPY2 / TCIA](https://www.cancerimagingarchive.net/collection/ispy2/) | serial MRI response/pCR temporal imaging benchmark | high_priority | public TCIA, large download | Keep as future temporal imaging benchmark; integrate only metadata first. |
 | [QIN-BREAST / TCIA](https://www.cancerimagingarchive.net/collection/qin-breast/) | longitudinal PET/CT + quantitative MRI workflow exploration | medium_high_priority | public TCIA | Map as imaging-workflow readiness; do not treat as response-label validation until labels are audited. |
@@ -29,9 +29,11 @@ Dataset expansion deep search is a planning and governance artifact. It identifi
 
 ## What To Build Next
 
-1. Build a GENIE BPC BRCA readiness/mapper artifact for treatment histories plus genomic context.
-2. Map Duke Breast MRI clinical-and-other-features into the canonical schema as the next public treatment/imaging bridge.
-3. Add TCGA-BRCA mutation-context mapping for common breast cancer genes without using mutations as direct treatment-response claims.
+1. Download/export permitted GENIE BPC BRCA fields and run the priority bridge mapper.
+2. Download/export Duke Breast MRI clinical-and-other-features metadata and run the priority bridge mapper.
+3. Run priority external stress after any mapped export.
+4. Use mutation-context mapping for common breast cancer genes without using mutations as direct treatment-response claims.
+5. Use the dataset fit matrix to decide whether I-SPY2, TCGA-BRCA, or MIMIC-IV is the best next bridge for the specific question.
 
 ## Must Not Claim
 

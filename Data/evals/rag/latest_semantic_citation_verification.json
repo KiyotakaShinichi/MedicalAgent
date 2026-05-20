@@ -1,0 +1,81 @@
+{
+  "schema_version": "semantic_citation_verification_v1",
+  "generated_at": "2026-05-20T04:49:25.795810+00:00",
+  "status": "strong",
+  "summary": {
+    "case_count": 5,
+    "hard_failures": 0,
+    "supported_cases": 1,
+    "unsupported_cases": 1,
+    "contradicted_cases": 2,
+    "disallowed_source_cases": 1
+  },
+  "cases": [
+    {
+      "claim": "Low white blood cell counts during chemotherapy can increase infection risk and should be reviewed with the care team.",
+      "verdict": "supported",
+      "support_score": 0.8571,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "contradiction_rule": null,
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, negation/contradiction heuristics, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "supported_cbc",
+      "expected": "supported",
+      "passed": true
+    },
+    {
+      "claim": "This pattern gives a 92 percent chance of cure.",
+      "verdict": "unsupported",
+      "support_score": 0.0,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "contradiction_rule": null,
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, negation/contradiction heuristics, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "unsupported_survival_number",
+      "expected": "unsupported",
+      "passed": true
+    },
+    {
+      "claim": "St. John's wort is safe with chemotherapy and no review is needed.",
+      "verdict": "contradicted",
+      "support_score": 0.1786,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "contradiction_rule": "supplement_false_safety",
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, negation/contradiction heuristics, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "contradicted_st_johns_wort",
+      "expected": "contradicted",
+      "passed": true
+    },
+    {
+      "claim": "CA 15-3 proves recurrence.",
+      "verdict": "contradicted",
+      "support_score": 0.4167,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "contradiction_rule": "tumor_marker_overclaim",
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, negation/contradiction heuristics, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "contradicted_tumor_marker",
+      "expected": "contradicted",
+      "passed": true
+    },
+    {
+      "claim": "CBC trends can be monitored during treatment.",
+      "verdict": "disallowed_source",
+      "support_score": 0.2,
+      "allowed_source": false,
+      "source_tier": "T2",
+      "allowed_use": "clinician_only",
+      "contradiction_rule": null,
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, negation/contradiction heuristics, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "disallowed_clinician_source",
+      "expected": "disallowed_source",
+      "passed": true
+    }
+  ],
+  "claim_boundary": "Engineering citation support check only; not clinical validation or medical fact adjudication."
+}

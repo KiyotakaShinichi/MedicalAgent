@@ -1,0 +1,14 @@
+{
+  "schema_version": "human_factors_risk_eval_v1",
+  "generated_at": "2026-05-20T04:44:29.786980+00:00",
+  "status": "strong",
+  "required_labels": [
+    "not a diagnosis",
+    "verify with care team",
+    "insufficient evidence",
+    "review hint only",
+    "context only",
+    "not treatment advice"
+  ],
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

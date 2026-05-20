@@ -21,6 +21,18 @@ Current policy: **monitor-only**.
   default and limits the candidate to A/B experiments.
 - Dataset expansion deep search ranks GENIE BPC BRCA and Duke Breast MRI as the
   highest-priority next bridges under current student-accessible constraints.
+- The priority dataset bridge now converts those two targets into concrete field
+  contracts and CSV templates. It can map permitted GENIE/Duke exports later,
+  but currently reports `ready_for_mapping` because the real exports are not
+  bundled.
+- Priority external stress keeps mapped public rows in a schema/endpoint stress
+  lane and explicitly blocks promotion without exact-label temporal validation.
+- Mutation-context mapping supports common breast cancer genes as context-only
+  fields and review-routing signals, not treatment-response or inherited-risk
+  predictors.
+- Dataset fit matrix ranks the next sources by fit for treatment, temporal
+  imaging, biomarker/genomic context, tumor-marker context, labs, and
+  student-access feasibility.
 - Synthetic treatment-sequence features now organize chemotherapy, HER2-targeted
   context, endocrine context, planned surgery/radiation context, and supportive
   care context.
@@ -49,18 +61,20 @@ Any future promotion would require:
 
 ## Next Big Student-Feasible Steps
 
-1. Build a GENIE BPC BRCA readiness/mapper artifact for systemic treatment
-   histories and clinico-genomic context.
-2. Map Duke Breast Cancer MRI clinical-and-other-features into the canonical
-   schema as the next imaging/treatment-context bridge.
+1. Obtain or manually export permitted GENIE BPC BRCA fields and run
+   `python scripts/run_priority_dataset_bridge.py --genie-csv <file>`.
+2. Obtain Duke Breast MRI clinical-and-other-features metadata and run
+   `python scripts/run_priority_dataset_bridge.py --duke-csv <file>`.
 3. Keep running full A/B release gates comparing the current generator against
    public-distribution realism candidates.
-4. Expand common-feature transfer stress to include additional public cohorts
+4. Run priority external stress after each new mapped export and keep promotion
+   blocked unless endpoint semantics match the exact OncoTrack question.
+5. Expand common-feature transfer stress to include additional public cohorts
    only when their field semantics match the canonical data dictionary.
-5. Improve the toxicity target into a softer review-priority simulator label
+6. Improve the toxicity target into a softer review-priority simulator label
    that is less directly reconstructed from nadir CBC.
-6. Expand the external failure-case gallery by subtype and confidence bucket.
-7. Prepare a data-access packet for restricted future cohorts such as GENIE BPC
+7. Expand the external failure-case gallery by subtype and confidence bucket.
+8. Prepare a data-access packet for restricted future cohorts such as GENIE BPC
    or SEER-Medicare.
 
 ## Command
@@ -71,6 +85,10 @@ python scripts/run_common_feature_transfer_stress.py
 python scripts/run_public_distribution_realism_candidate.py
 python scripts/run_realism_candidate_ab_gate.py
 python scripts/run_dataset_expansion_deep_search.py
+python scripts/run_priority_dataset_bridge.py
+python scripts/run_priority_external_stress.py
+python scripts/run_mutation_context_mapping.py
+python scripts/run_dataset_fit_matrix.py
 ```
 
 Artifact:

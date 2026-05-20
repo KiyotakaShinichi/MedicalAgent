@@ -1,0 +1,81 @@
+{
+  "schema_version": "mutation_context_mapping_v1",
+  "generated_at": "2026-05-20T03:40:26.114768+00:00",
+  "status": "ready_for_mapping",
+  "supported_genes": [
+    {
+      "gene": "PIK3CA",
+      "category": "somatic_pathway_context",
+      "patient_facing_role": "record organization only"
+    },
+    {
+      "gene": "TP53",
+      "category": "somatic_pathway_context",
+      "patient_facing_role": "record organization only"
+    },
+    {
+      "gene": "GATA3",
+      "category": "somatic_pathway_context",
+      "patient_facing_role": "record organization only"
+    },
+    {
+      "gene": "ESR1",
+      "category": "somatic_endocrine_context",
+      "patient_facing_role": "record organization only"
+    },
+    {
+      "gene": "ERBB2",
+      "category": "somatic_her2_context",
+      "patient_facing_role": "record organization only"
+    },
+    {
+      "gene": "BRCA1",
+      "category": "germline_sensitive_context",
+      "patient_facing_role": "genetic-counselor review readiness only"
+    },
+    {
+      "gene": "BRCA2",
+      "category": "germline_sensitive_context",
+      "patient_facing_role": "genetic-counselor review readiness only"
+    },
+    {
+      "gene": "PALB2",
+      "category": "germline_sensitive_context",
+      "patient_facing_role": "genetic-counselor review readiness only"
+    },
+    {
+      "gene": "ATM",
+      "category": "germline_sensitive_context",
+      "patient_facing_role": "genetic-counselor review readiness only"
+    },
+    {
+      "gene": "CHEK2",
+      "category": "germline_sensitive_context",
+      "patient_facing_role": "genetic-counselor review readiness only"
+    },
+    {
+      "gene": "PTEN",
+      "category": "germline_sensitive_context",
+      "patient_facing_role": "genetic-counselor review readiness only"
+    }
+  ],
+  "mapped_row_count": 0,
+  "gene_counts": {},
+  "category_counts": {},
+  "mapped_examples": [],
+  "feature_policy": {
+    "may_use_as_predictor": "context_only_after_ablation",
+    "default_model_weight": "none_without_external_validation",
+    "requires_missingness_mask": true,
+    "requires_source_type": "somatic_vs_germline_when_available",
+    "promotion_allowed": false
+  },
+  "blocked_claims": [
+    "BRCA or other mutation means the patient will develop cancer",
+    "VUS means positive",
+    "mutation status alone means treatment is working or failing",
+    "mutation status alone recommends PARP, HER2, endocrine, or chemotherapy changes",
+    "somatic tumor alteration equals inherited family risk"
+  ],
+  "claim_boundary": "Mutation-context mapping organizes reported genes/alterations as external feature context and genetic-counseling readiness signals. It does not diagnose inherited cancer risk, interpret variants as medical advice, recommend treatment, or predict treatment response from mutations."
+}

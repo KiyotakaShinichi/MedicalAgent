@@ -1,0 +1,54 @@
+{
+  "schema_version": "real_data_readiness_checklist_v1",
+  "generated_at": "2026-05-20T04:49:28.350584+00:00",
+  "status": "not_ready",
+  "completed_count": 0,
+  "required_count": 11,
+  "items": [
+    {
+      "item": "clinician-reviewed labels",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "ethics/IRB or equivalent governance for real patient data",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "privacy/PHI handling plan",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "external temporal validation",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "subgroup calibration",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "real missingness analysis",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "failure-case review",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "clinician advisor review",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "model card update",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "risk register update",
+      "status": "missing_future_requirement"
+    },
+    {
+      "item": "deployment safety review",
+      "status": "missing_future_requirement"
+    }
+  ],
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

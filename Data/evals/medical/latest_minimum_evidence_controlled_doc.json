@@ -1,0 +1,8 @@
+{
+  "schema_version": "minimum_evidence_controlled_doc_v1",
+  "generated_at": "2026-05-20T04:44:29.786947+00:00",
+  "status": "not_clinically_approved",
+  "owner": "engineering",
+  "future_reviewer_signoff": null,
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

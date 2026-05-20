@@ -1,0 +1,229 @@
+{
+  "schema_version": "dataset_fit_matrix_v1",
+  "generated_at": "2026-05-20T03:40:26.120917+00:00",
+  "status": "strong",
+  "dataset_count": 10,
+  "top_5": [
+    "ispy2_tcia",
+    "genie_bpc_brca",
+    "duke_breast_mri",
+    "breastdcedl",
+    "qin_breast"
+  ],
+  "datasets": [
+    {
+      "id": "ispy2_tcia",
+      "name": "I-SPY2 / TCIA",
+      "source_url": "https://www.cancerimagingarchive.net/collection/ispy2/",
+      "access": "public TCIA, large download",
+      "scores": {
+        "treatment": 3,
+        "temporal": 5,
+        "imaging": 5,
+        "biomarker": 3,
+        "genomic": 1,
+        "tumor_marker": 0,
+        "cbc_labs": 0,
+        "student_access": 3
+      },
+      "best_next_use": "serial MRI pCR response benchmark after metadata mapping",
+      "fit_score": 22.6,
+      "safe_role": "serial MRI pCR response benchmark after metadata mapping",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "genie_bpc_brca",
+      "name": "AACR GENIE BPC Breast Cancer",
+      "source_url": "https://www.aacr.org/professionals/research/aacr-project-genie/bpc/early-onset-brca/",
+      "access": "public subset plus Synapse terms",
+      "scores": {
+        "treatment": 5,
+        "temporal": 3,
+        "imaging": 0,
+        "biomarker": 4,
+        "genomic": 5,
+        "tumor_marker": 0,
+        "cbc_labs": 0,
+        "student_access": 3
+      },
+      "best_next_use": "systemic treatment history plus clinico-genomic context bridge",
+      "fit_score": 22.0,
+      "safe_role": "systemic treatment history plus clinico-genomic context bridge",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "duke_breast_mri",
+      "name": "Duke Breast Cancer MRI / TCIA",
+      "source_url": "https://www.cancerimagingarchive.net/collection/duke-breast-cancer-mri/",
+      "access": "public TCIA, large download",
+      "scores": {
+        "treatment": 3,
+        "temporal": 1,
+        "imaging": 5,
+        "biomarker": 4,
+        "genomic": 2,
+        "tumor_marker": 0,
+        "cbc_labs": 0,
+        "student_access": 4
+      },
+      "best_next_use": "MRI/pathology/treatment-context external stress",
+      "fit_score": 20.6,
+      "safe_role": "MRI/pathology/treatment-context external stress",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "breastdcedl",
+      "name": "BreastDCEDL",
+      "source_url": "https://zenodo.org/records/18114231",
+      "access": "public Zenodo license terms",
+      "scores": {
+        "treatment": 2,
+        "temporal": 2,
+        "imaging": 5,
+        "biomarker": 3,
+        "genomic": 0,
+        "tumor_marker": 0,
+        "cbc_labs": 0,
+        "student_access": 5
+      },
+      "best_next_use": "already integrated pCR/MRI bridge; extend only if storage allows",
+      "fit_score": 18.2,
+      "safe_role": "already integrated pCR/MRI bridge; extend only if storage allows",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "qin_breast",
+      "name": "QIN-BREAST / TCIA",
+      "source_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "access": "public TCIA",
+      "scores": {
+        "treatment": 2,
+        "temporal": 4,
+        "imaging": 5,
+        "biomarker": 1,
+        "genomic": 0,
+        "tumor_marker": 0,
+        "cbc_labs": 0,
+        "student_access": 3
+      },
+      "best_next_use": "quantitative imaging workflow exploration",
+      "fit_score": 17.0,
+      "safe_role": "quantitative imaging workflow exploration",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "tcga_brca",
+      "name": "TCGA-BRCA / GDC",
+      "source_url": "https://gdc.cancer.gov/about-data/publications/brca_2012",
+      "access": "public and controlled tiers",
+      "scores": {
+        "treatment": 1,
+        "temporal": 0,
+        "imaging": 0,
+        "biomarker": 4,
+        "genomic": 5,
+        "tumor_marker": 0,
+        "cbc_labs": 0,
+        "student_access": 4
+      },
+      "best_next_use": "mutation/subtype context mapping, not response validation",
+      "fit_score": 13.6,
+      "safe_role": "mutation/subtype context mapping, not response validation",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "mimic_iv",
+      "name": "MIMIC-IV",
+      "source_url": "https://physionet.org/content/mimiciv/2.2/",
+      "access": "credentialed PhysioNet",
+      "scores": {
+        "treatment": 1,
+        "temporal": 4,
+        "imaging": 0,
+        "biomarker": 0,
+        "genomic": 0,
+        "tumor_marker": 0,
+        "cbc_labs": 5,
+        "student_access": 3
+      },
+      "best_next_use": "lab missingness, unit, and EHR workflow realism only",
+      "fit_score": 13.1,
+      "safe_role": "lab missingness, unit, and EHR workflow realism only",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "metabric",
+      "name": "METABRIC",
+      "source_url": "https://www.cbioportal.org/study/summary?id=brca_metabric",
+      "access": "public via cBioPortal",
+      "scores": {
+        "treatment": 1,
+        "temporal": 0,
+        "imaging": 0,
+        "biomarker": 4,
+        "genomic": 4,
+        "tumor_marker": 0,
+        "cbc_labs": 0,
+        "student_access": 4
+      },
+      "best_next_use": "subtype/outcome distribution context",
+      "fit_score": 12.6,
+      "safe_role": "subtype/outcome distribution context",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "seer_research",
+      "name": "SEER Research Plus",
+      "source_url": "https://seer.cancer.gov/",
+      "access": "research data agreement",
+      "scores": {
+        "treatment": 2,
+        "temporal": 0,
+        "imaging": 0,
+        "biomarker": 3,
+        "genomic": 0,
+        "tumor_marker": 0,
+        "cbc_labs": 0,
+        "student_access": 2
+      },
+      "best_next_use": "population distribution and coding discipline",
+      "fit_score": 7.4,
+      "safe_role": "population distribution and coding discipline",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    },
+    {
+      "id": "edrn_breast_reference",
+      "name": "NCI EDRN Breast Cancer Reference Set",
+      "source_url": "https://edrn.nci.nih.gov/documents/34/breast_refset_summary.pdf",
+      "access": "reference/biospecimen context",
+      "scores": {
+        "treatment": 0,
+        "temporal": 0,
+        "imaging": 0,
+        "biomarker": 2,
+        "genomic": 0,
+        "tumor_marker": 3,
+        "cbc_labs": 0,
+        "student_access": 2
+      },
+      "best_next_use": "tumor-marker limitation context only",
+      "fit_score": 4.8,
+      "safe_role": "tumor-marker limitation context only",
+      "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated."
+    }
+  ],
+  "recommendation": {
+    "next_two_to_map": [
+      "genie_bpc_brca",
+      "duke_breast_mri"
+    ],
+    "next_after_that": [
+      "ispy2_tcia",
+      "tcga_brca",
+      "mimic_iv"
+    ],
+    "production_training_allowed": false,
+    "reason": "Best sources improve schema and stress testing, but none provide full OncoTrack clinician-reviewed temporal labels."
+  },
+  "claim_boundary": "Dataset fit scores are planning heuristics for engineering roadmap priority. They do not mean data has been accessed, licensed, mapped, clinically validated, or approved for patient-facing prediction."
+}

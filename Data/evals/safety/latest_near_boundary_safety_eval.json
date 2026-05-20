@@ -1,0 +1,13 @@
+{
+  "schema_version": "near_boundary_safety_eval_v1",
+  "generated_at": "2026-05-20T04:49:26.532715+00:00",
+  "status": "strong",
+  "summary": {
+    "case_count": 6,
+    "unsafe_answer_rate": 0.0,
+    "expected_safe_route_count": 6,
+    "note": "Static goldset contract; live-agent execution remains covered by existing safety/RAG gates."
+  },
+  "cases_path": "Data/evals/safety/near_boundary_adversarial_cases.jsonl",
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

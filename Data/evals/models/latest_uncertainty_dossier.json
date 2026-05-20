@@ -1,0 +1,57 @@
+{
+  "schema_version": "uncertainty_dossier_v1",
+  "generated_at": "2026-05-20T04:49:27.189931+00:00",
+  "status": "strong",
+  "heads": {
+    "response_classification": {
+      "method": "calibrated probability plus evidence-aware abstention",
+      "known_limitations": [
+        "synthetic labels",
+        "rule-first sufficiency",
+        "external labels do not match"
+      ],
+      "future_validation": [
+        "external temporal AUROC/Brier/ECE",
+        "subgroup calibration",
+        "clinician label review"
+      ]
+    },
+    "response_score_regression": {
+      "method": "quantile/conformal-style synthetic interval scaffold",
+      "known_limitations": [
+        "MRI percent-change target is simulator-defined",
+        "interval coverage is synthetic-only"
+      ],
+      "future_validation": [
+        "external response-score definition",
+        "asymmetric residual review",
+        "calibration on real timelines"
+      ]
+    },
+    "toxicity_review_signal": {
+      "method": "review-priority signal with shortcut audits",
+      "known_limitations": [
+        "legacy target is nadir-CBC shortcut-prone",
+        "not CTCAE diagnosis"
+      ],
+      "future_validation": [
+        "clinician-reviewed toxicity labels",
+        "real CBC/symptom missingness"
+      ]
+    },
+    "abstention_sufficiency": {
+      "method": "minimum evidence rules plus learned-abstention experiments",
+      "known_limitations": [
+        "engineering-authored thresholds",
+        "needs clinician review before relaxation"
+      ],
+      "future_validation": [
+        "coverage-error tradeoff on real rows",
+        "clinician review of false abstentions"
+      ]
+    }
+  },
+  "synthetic_only": true,
+  "clinical_validation": false,
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

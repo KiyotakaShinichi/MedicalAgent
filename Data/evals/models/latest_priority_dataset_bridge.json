@@ -1,0 +1,290 @@
+{
+  "schema_version": "priority_dataset_bridge_v1",
+  "generated_at": "2026-05-19T02:54:43.236760+00:00",
+  "status": "ready_for_mapping",
+  "canonical_schema_path": "Data/external_bridge/canonical_oncology_schema.json",
+  "template_paths": {
+    "genie_bpc_brca": "Data\\external_bridge\\priority_dataset_templates\\genie_bpc_brca_field_contract.csv",
+    "duke_breast_mri": "Data\\external_bridge\\priority_dataset_templates\\duke_breast_mri_field_contract.csv"
+  },
+  "datasets": {
+    "genie_bpc_brca": {
+      "status": "ready_for_mapping",
+      "dataset_id": "genie_bpc_brca",
+      "name": "AACR GENIE BPC Breast Cancer v1.0-public",
+      "source_url": "https://www.aacr.org/professionals/research/aacr-project-genie/bpc/early-onset-brca/",
+      "access_status": "public/access-controlled workflow; local CSV not bundled",
+      "row_count": 0,
+      "validation": {
+        "status": "not_run_no_local_rows",
+        "row_count": 0,
+        "issue_count": 0,
+        "issues": []
+      },
+      "canonical_csv_path": null,
+      "field_contract": [
+        {
+          "canonical_field": "patient_id",
+          "role": "identifier",
+          "aliases": [
+            "PATIENT_ID",
+            "patient_id",
+            "record_id",
+            "GENIE_PATIENT_ID"
+          ],
+          "required_for_mapping": true,
+          "notes": "Namespace before storing locally; never expose as real patient identity."
+        },
+        {
+          "canonical_field": "age",
+          "role": "demographics",
+          "aliases": [
+            "AGE_AT_SEQ_REPORT",
+            "AGE_AT_DIAGNOSIS",
+            "age",
+            "age_at_diagnosis"
+          ],
+          "required_for_mapping": false,
+          "notes": "Age may be binned or shifted depending on release terms."
+        },
+        {
+          "canonical_field": "stage",
+          "role": "clinical context",
+          "aliases": [
+            "STAGE_AT_DIAGNOSIS",
+            "AJCC_STAGE",
+            "stage",
+            "stage_at_dx"
+          ],
+          "required_for_mapping": false,
+          "notes": "Use source-reported stage only; do not infer."
+        },
+        {
+          "canonical_field": "er_status/pr_status/her2_status",
+          "role": "biomarker context",
+          "aliases": [
+            "ER_STATUS",
+            "PR_STATUS",
+            "HER2_STATUS",
+            "ER",
+            "PR",
+            "HER2"
+          ],
+          "required_for_mapping": false,
+          "notes": "Organize receptor context; never select therapy from it."
+        },
+        {
+          "canonical_field": "genetic_variant_classification",
+          "role": "genomic context",
+          "aliases": [
+            "HUGO_SYMBOL",
+            "GENE",
+            "ALTERATION",
+            "VARIANT_CLASSIFICATION",
+            "MUTATION_STATUS"
+          ],
+          "required_for_mapping": false,
+          "notes": "Somatic/genomic context only unless a source explicitly reports germline status."
+        },
+        {
+          "canonical_field": "treatment_modalities/treatment_combination_pattern",
+          "role": "treatment-history context",
+          "aliases": [
+            "REGIMEN",
+            "DRUG_NAME",
+            "SYSTEMIC_THERAPY",
+            "CANCER_DIRECTED_REGIMEN",
+            "TREATMENT_TYPE"
+          ],
+          "required_for_mapping": false,
+          "notes": "Map to controlled modality buckets; do not recommend regimens."
+        },
+        {
+          "canonical_field": "outcome_label_name/outcome_label_value",
+          "role": "external outcome context",
+          "aliases": [
+            "BEST_RESPONSE",
+            "PFS_STATUS",
+            "OS_STATUS",
+            "RW_RESPONSE",
+            "response"
+          ],
+          "required_for_mapping": false,
+          "notes": "Outcome semantics are not equivalent to OncoTrack synthetic labels."
+        }
+      ],
+      "coverage": {
+        "row_count": 0,
+        "modality_counts": {},
+        "field_counts": {},
+        "outcome_label_count": 0,
+        "roles_supported": {
+          "response_benchmark": false,
+          "treatment_sequence_benchmark": false,
+          "genetic_context_mapping": false,
+          "full_oncotrack_temporal_validation": false
+        }
+      },
+      "supported_roles": {
+        "treatment_history_bridge": true,
+        "genomic_context_bridge": true,
+        "mri_image_bridge": false,
+        "cbc_symptom_timeline": false
+      },
+      "not_supported": [
+        "OncoTrack-style serial CBC timeline",
+        "patient-reported symptom timeline",
+        "patient-facing treatment choice",
+        "clinical validation of treatment response"
+      ],
+      "claim_boundary": "Priority dataset bridge artifacts map external dataset fields into the OncoTrack canonical schema for interoperability, stress testing, and future access readiness only. They do not establish clinical validation, treatment superiority, survival prediction, genetic-risk interpretation, or patient-facing treatment recommendations."
+    },
+    "duke_breast_mri": {
+      "status": "ready_for_mapping",
+      "dataset_id": "duke_breast_mri",
+      "name": "Duke Breast Cancer MRI / TCIA",
+      "source_url": "https://sites.duke.edu/mazurowski/resources/breast-cancer-mri-dataset/",
+      "access_status": "public TCIA collection; large image/metadata download required",
+      "row_count": 0,
+      "validation": {
+        "status": "not_run_no_local_rows",
+        "row_count": 0,
+        "issue_count": 0,
+        "issues": []
+      },
+      "canonical_csv_path": null,
+      "field_contract": [
+        {
+          "canonical_field": "patient_id",
+          "role": "identifier",
+          "aliases": [
+            "Patient ID",
+            "patient_id",
+            "TCIA Patient ID",
+            "Case ID",
+            "ID"
+          ],
+          "required_for_mapping": true,
+          "notes": "Namespace before storing locally."
+        },
+        {
+          "canonical_field": "age",
+          "role": "demographics",
+          "aliases": [
+            "Age",
+            "age",
+            "Age at MRI",
+            "age_at_mri"
+          ],
+          "required_for_mapping": false,
+          "notes": "Baseline/index age when available."
+        },
+        {
+          "canonical_field": "er_status/pr_status/her2_status/molecular_subtype",
+          "role": "pathology and receptor context",
+          "aliases": [
+            "ER",
+            "PR",
+            "HER2",
+            "Mol Subtype",
+            "Molecular subtype",
+            "Subtype"
+          ],
+          "required_for_mapping": false,
+          "notes": "Organize pathology context only."
+        },
+        {
+          "canonical_field": "imaging_features",
+          "role": "MRI feature bridge",
+          "aliases": [
+            "Tumor Size",
+            "DCE",
+            "washout",
+            "SER",
+            "BPE",
+            "enhancement",
+            "lesion"
+          ],
+          "required_for_mapping": false,
+          "notes": "Use numeric/image-derived features as external stress inputs, not diagnosis."
+        },
+        {
+          "canonical_field": "treatment_modalities/treatment_combination_pattern",
+          "role": "treatment context",
+          "aliases": [
+            "NAC",
+            "Neoadjuvant Chemotherapy",
+            "Chemotherapy",
+            "Radiation Therapy",
+            "Endocrine Therapy"
+          ],
+          "required_for_mapping": false,
+          "notes": "Treatment context can support A/B stress tests, not treatment decisions."
+        },
+        {
+          "canonical_field": "outcome_label_name/outcome_label_value",
+          "role": "response/follow-up context",
+          "aliases": [
+            "pCR",
+            "Pathologic complete response",
+            "Pathologic Response",
+            "Recurrence",
+            "Follow-up"
+          ],
+          "required_for_mapping": false,
+          "notes": "pCR/recurrence/follow-up labels are external endpoints, not OncoTrack clinical validation."
+        }
+      ],
+      "coverage": {
+        "row_count": 0,
+        "modality_counts": {},
+        "field_counts": {},
+        "outcome_label_count": 0,
+        "roles_supported": {
+          "response_benchmark": false,
+          "treatment_sequence_benchmark": false,
+          "genetic_context_mapping": false,
+          "full_oncotrack_temporal_validation": false
+        }
+      },
+      "supported_roles": {
+        "treatment_history_bridge": true,
+        "genomic_context_bridge": false,
+        "mri_image_bridge": true,
+        "cbc_symptom_timeline": false
+      },
+      "not_supported": [
+        "OncoTrack-style serial CBC timeline",
+        "patient-reported symptom timeline",
+        "patient-facing treatment choice",
+        "clinical validation of treatment response"
+      ],
+      "claim_boundary": "Priority dataset bridge artifacts map external dataset fields into the OncoTrack canonical schema for interoperability, stress testing, and future access readiness only. They do not establish clinical validation, treatment superiority, survival prediction, genetic-risk interpretation, or patient-facing treatment recommendations."
+    }
+  },
+  "summary": {
+    "dataset_count": 2,
+    "mapped_dataset_count": 0,
+    "ready_for_mapping_count": 2,
+    "template_count": 2,
+    "full_oncotrack_temporal_validation_ready": 0,
+    "highest_priority_next": [
+      "genie_bpc_brca",
+      "duke_breast_mri"
+    ]
+  },
+  "next_actions": [
+    "Download/export permitted GENIE BPC BRCA tables, then run this bridge with --genie-csv.",
+    "Download Duke Breast MRI clinical-and-other-features metadata, then run this bridge with --duke-csv.",
+    "Use mapped rows for external stress tests and schema coverage only; keep production models monitor-only.",
+    "Do not mix outcome labels across datasets unless endpoint semantics are explicitly documented."
+  ],
+  "blocked_claims": [
+    "real-world clinical validation",
+    "treatment recommendation or treatment superiority",
+    "genetic-risk diagnosis or inherited-risk prediction",
+    "tumor-marker recurrence conclusion",
+    "survival or prognosis estimate"
+  ],
+  "claim_boundary": "Priority dataset bridge artifacts map external dataset fields into the OncoTrack canonical schema for interoperability, stress testing, and future access readiness only. They do not establish clinical validation, treatment superiority, survival prediction, genetic-risk interpretation, or patient-facing treatment recommendations."
+}

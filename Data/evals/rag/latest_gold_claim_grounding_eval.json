@@ -1,0 +1,14 @@
+{
+  "schema_version": "gold_claim_grounding_eval_v1",
+  "generated_at": "2026-05-20T04:50:47.576437+00:00",
+  "status": "strong",
+  "summary": {
+    "case_count": 12,
+    "category_count": 12,
+    "unsupported_claim_total": 36,
+    "contradiction_trap_total": 36,
+    "refusal_or_escalation_cases": 9
+  },
+  "jsonl_path": "C:\\Users\\L\\AppData\\Local\\Temp\\pytest-of-L\\pytest-65\\test_rag_goldset_has_minimum_c0\\gold.jsonl",
+  "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
+}

@@ -1,0 +1,7 @@
+canonical_field,role,acceptable_source_aliases,required_for_mapping,notes
+patient_id,identifier,Patient ID; patient_id; TCIA Patient ID; Case ID; ID,True,Namespace before storing locally.
+age,demographics,Age; age; Age at MRI; age_at_mri,False,Baseline/index age when available.
+er_status/pr_status/her2_status/molecular_subtype,pathology and receptor context,ER; PR; HER2; Mol Subtype; Molecular subtype; Subtype,False,Organize pathology context only.
+imaging_features,MRI feature bridge,Tumor Size; DCE; washout; SER; BPE; enhancement; lesion,False,"Use numeric/image-derived features as external stress inputs, not diagnosis."
+treatment_modalities/treatment_combination_pattern,treatment context,NAC; Neoadjuvant Chemotherapy; Chemotherapy; Radiation Therapy; Endocrine Therapy,False,"Treatment context can support A/B stress tests, not treatment decisions."
+outcome_label_name/outcome_label_value,response/follow-up context,pCR; Pathologic complete response; Pathologic Response; Recurrence; Follow-up,False,"pCR/recurrence/follow-up labels are external endpoints, not OncoTrack clinical validation."

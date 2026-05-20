@@ -242,6 +242,39 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "uncertainty_dossier",
+        "title": "Uncertainty dossier",
+        "path": "Data/evals/models/latest_uncertainty_dossier.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "synthetic_only": ["synthetic_only"],
+            "clinical_validation": ["clinical_validation"],
+        },
+    },
+    {
+        "id": "real_data_readiness_checklist",
+        "title": "Real-data readiness checklist",
+        "path": "Data/evals/models/latest_real_data_readiness_checklist.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "completed_count": ["completed_count"],
+            "required_count": ["required_count"],
+        },
+    },
+    {
+        "id": "clinical_performance_dossier_status",
+        "title": "Clinical performance dossier template status",
+        "path": "Data/evals/models/latest_clinical_performance_dossier_status.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "clinical_validation": ["current_status", "clinical_validation"],
+            "treatment_decision_influence": ["current_status", "treatment_decision_influence"],
+        },
+    },
+    {
         "id": "shortcut_audit",
         "title": "Hybrid shortcut audit",
         "path": "Data/evals/models/latest_shortcut_audit.json",
@@ -261,6 +294,34 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         "metrics": {
             "status": ["status"],
             "interaction_rule_count": ["interaction_rule_count"],
+        },
+    },
+    {
+        "id": "minimum_evidence_controlled_doc",
+        "title": "Minimum evidence controlled doc",
+        "path": "Data/evals/medical/latest_minimum_evidence_controlled_doc.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "owner": ["owner"],
+        },
+    },
+    {
+        "id": "human_factors_risk_eval",
+        "title": "Human-factors overtrust risk eval",
+        "path": "Data/evals/medical/latest_human_factors_risk_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+        },
+    },
+    {
+        "id": "advisory_workflow_readiness",
+        "title": "Clinical advisory workflow readiness",
+        "path": "Data/evals/medical/latest_advisory_workflow_readiness.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
         },
     },
     {
@@ -543,6 +604,52 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "priority_dataset_bridge",
+        "title": "GENIE BPC + Duke MRI priority dataset bridge",
+        "path": "Data/evals/models/latest_priority_dataset_bridge.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "mapped_dataset_count": ["summary", "mapped_dataset_count"],
+            "ready_for_mapping_count": ["summary", "ready_for_mapping_count"],
+            "full_oncotrack_temporal_validation_ready": ["summary", "full_oncotrack_temporal_validation_ready"],
+        },
+    },
+    {
+        "id": "priority_external_stress",
+        "title": "Priority external schema/endpoint stress",
+        "path": "Data/evals/models/latest_priority_external_stress.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "mapped_dataset_count": ["mapped_dataset_count"],
+            "promotion_allowed": ["promotion_decision", "promotion_allowed"],
+            "exact_oncotrack_label_match": ["endpoint_compatibility", "exact_oncotrack_label_match"],
+        },
+    },
+    {
+        "id": "mutation_context_mapping",
+        "title": "Mutation-context mapping readiness",
+        "path": "Data/evals/models/latest_mutation_context_mapping.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "mapped_row_count": ["mapped_row_count"],
+            "promotion_allowed": ["feature_policy", "promotion_allowed"],
+        },
+    },
+    {
+        "id": "dataset_fit_matrix",
+        "title": "Dataset fit matrix",
+        "path": "Data/evals/models/latest_dataset_fit_matrix.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "dataset_count": ["dataset_count"],
+            "production_training_allowed": ["recommendation", "production_training_allowed"],
+        },
+    },
+    {
         "id": "cbioportal_biomarker_schema_mapping",
         "title": "TCGA/METABRIC cBioPortal schema mapping",
         "path": "Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json",
@@ -817,6 +924,29 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "gold_claim_grounding_eval",
+        "title": "Gold claim-grounding eval set",
+        "path": "Data/evals/rag/latest_gold_claim_grounding_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "case_count": ["summary", "case_count"],
+            "contradiction_trap_total": ["summary", "contradiction_trap_total"],
+        },
+    },
+    {
+        "id": "semantic_citation_verification",
+        "title": "Semantic citation verification",
+        "path": "Data/evals/rag/latest_semantic_citation_verification.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "case_count": ["summary", "case_count"],
+            "hard_failures": ["summary", "hard_failures"],
+            "contradicted_cases": ["summary", "contradicted_cases"],
+        },
+    },
+    {
         "id": "nli_claim_validation_eval",
         "title": "Optional NLI/entailment claim validation",
         "path": "Data/evals/rag/latest_nli_claim_validation_eval.json",
@@ -849,6 +979,17 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "intent_parity_rate": ["intent_parity_rate"],
             "safety_scope_parity_rate": ["safety_scope_parity_rate"],
             "case_count": ["case_count"],
+        },
+    },
+    {
+        "id": "near_boundary_safety_eval",
+        "title": "Near-boundary medical safety eval",
+        "path": "Data/evals/safety/latest_near_boundary_safety_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "case_count": ["summary", "case_count"],
+            "unsafe_answer_rate": ["summary", "unsafe_answer_rate"],
         },
     },
     {
@@ -974,6 +1115,26 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         "metrics": {
             "status": ["status"],
             "issue_count": ["issues"],
+        },
+    },
+    {
+        "id": "event_taxonomy_manifest",
+        "title": "Structured event taxonomy",
+        "path": "Data/evals/ops/latest_event_taxonomy_manifest.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+        },
+    },
+    {
+        "id": "service_health_snapshot",
+        "title": "PoC service health snapshot",
+        "path": "Data/evals/ops/latest_service_health_snapshot.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "stale_artifact_count": ["metrics", "stale_artifact_count"],
+            "failed_benchmark_count": ["metrics", "failed_benchmark_count"],
         },
     },
     {

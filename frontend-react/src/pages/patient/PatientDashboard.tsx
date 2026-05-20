@@ -147,8 +147,67 @@ export default function PatientDashboard() {
       title="Patient portal"
       subtitle={report?.patient_name ?? patientId ?? ""}
     >
-      {status === "loading" && <SkeletonDashboard label="Loading your records..." />}
+      {status === "loading" && tab !== "chat" && <SkeletonDashboard label="Loading your records..." />}
       {status === "error"   && <ErrorPane message={error ?? "Failed to load"} onRetry={refetchReport} />}
+      {tab === "chat" && status === "loading" && (
+        <div className="dashboard-page">
+          <div className="dashboard-content chat-workspace">
+            <ToolTray onSelect={handleToolSelect} />
+            <div className="chat-card-shell">
+              <ChatPanel
+                key={chatKey}
+                messages={chatMessages}
+                onSend={async (text) => {
+                  const res = await sendMyChat(text);
+                  return {
+                    reply: res.reply,
+                    saved_actions: res.saved_actions,
+                    citations: res.citations,
+                  };
+                }}
+                onSendStream={async (text, handlers) => {
+                  const res = await sendMyChatStream(text, handlers);
+                  return {
+                    reply: res.reply,
+                    saved_actions: res.saved_actions,
+                    citations: res.citations,
+                  };
+                }}
+                onSavedActions={(actions: SavedAction[]) => {
+                  const touchesReport = actions.some((a) =>
+                    [
+                      "saved_symptom",
+                      "saved_labs",
+                      "saved_medication",
+                      "saved_imaging_report",
+                      "save_symptom",
+                      "save_lab",
+                      "save_medication",
+                      "save_mri",
+                      "save_imaging_report",
+                    ].includes(a.type),
+                  );
+                  if (touchesReport) refetchReport();
+                  refetchChat();
+
+                  for (const action of actions) {
+                    const { label, tone } = describeSavedAction(action);
+                    toast.push({
+                      tone,
+                      title: tone === "warning" ? label : `${label}.`,
+                      description:
+                        tone === "warning"
+                          ? "Flagged for clinician review."
+                          : "Patient record refreshed.",
+                    });
+                  }
+                }}
+              />
+              <ToolTraceDrawer messages={chatMessages} />
+            </div>
+          </div>
+        </div>
+      )}
       {status === "success" && report && (
         <div className="dashboard-page">
           <PatientBanner report={report} />

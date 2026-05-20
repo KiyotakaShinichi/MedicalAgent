@@ -1,0 +1,84 @@
+{
+  "schema_version": "priority_external_stress_v1",
+  "generated_at": "2026-05-20T03:40:25.976292+00:00",
+  "status": "ready_when_mapped",
+  "bridge_path": "Data/evals/models/latest_priority_dataset_bridge.json",
+  "common_features": [
+    "age",
+    "er_status",
+    "pr_status",
+    "her2_status",
+    "molecular_subtype",
+    "treatment_modalities",
+    "treatment_combination_pattern",
+    "outcome_label_name",
+    "outcome_label_value"
+  ],
+  "mapped_dataset_count": 0,
+  "datasets": {
+    "genie_bpc_brca": {
+      "status": "not_mapped",
+      "row_count": 0,
+      "feature_coverage": {
+        "age": 0.0,
+        "er_status": 0.0,
+        "pr_status": 0.0,
+        "her2_status": 0.0,
+        "molecular_subtype": 0.0,
+        "treatment_modalities": 0.0,
+        "treatment_combination_pattern": 0.0,
+        "outcome_label_name": 0.0,
+        "outcome_label_value": 0.0
+      },
+      "outcome_label_counts": {},
+      "treatment_combination_counts": {},
+      "roles": {
+        "schema_stress_ready": false,
+        "common_feature_ab_ready": false,
+        "exact_label_temporal_validation_ready": false
+      }
+    },
+    "duke_breast_mri": {
+      "status": "not_mapped",
+      "row_count": 0,
+      "feature_coverage": {
+        "age": 0.0,
+        "er_status": 0.0,
+        "pr_status": 0.0,
+        "her2_status": 0.0,
+        "molecular_subtype": 0.0,
+        "treatment_modalities": 0.0,
+        "treatment_combination_pattern": 0.0,
+        "outcome_label_name": 0.0,
+        "outcome_label_value": 0.0
+      },
+      "outcome_label_counts": {},
+      "treatment_combination_counts": {},
+      "roles": {
+        "schema_stress_ready": false,
+        "common_feature_ab_ready": false,
+        "exact_label_temporal_validation_ready": false
+      }
+    }
+  },
+  "endpoint_compatibility": {
+    "same_endpoint_labels": false,
+    "observed_labels_by_dataset": {
+      "genie_bpc_brca": [],
+      "duke_breast_mri": []
+    },
+    "exact_oncotrack_label_match": false,
+    "reason": "GENIE/Duke endpoints such as real-world response, pCR, recurrence, PFS, or OS are useful external context, but they are not the same as OncoTrack's synthetic response classification, response-score regression, or toxicity-review labels."
+  },
+  "promotion_decision": {
+    "promotion_allowed": false,
+    "required_before_promotion": [
+      "same target semantics across datasets",
+      "temporal patient journeys with prior-only features",
+      "clinician-reviewed labels for the exact monitoring question",
+      "calibration and subgroup reliability on external rows"
+    ],
+    "reason": "Mapped public rows are schema/external-stress evidence only; they are not OncoTrack longitudinal validation rows."
+  },
+  "claim_boundary": "Priority external stress checks schema overlap and endpoint compatibility for GENIE BPC BRCA and Duke Breast MRI bridge rows. It is not clinical validation and cannot promote any model without exact-label temporal validation and clinician-reviewed endpoints."
+}

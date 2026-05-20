@@ -55,6 +55,22 @@ public-row exports, but when present the gate checks that:
   default unless future exact-label validation justifies otherwise.
 - the dataset expansion catalog contains enough governed sources to support the
   next bridge-selection decision.
+- the priority GENIE BPC + Duke MRI bridge exposes mapping templates and keeps
+  full OncoTrack temporal-validation readiness at zero until permitted external
+  exports are actually mapped.
+- priority external stress keeps `promotion_allowed = false` and reports that
+  external endpoints are not exact OncoTrack temporal-label matches.
+- mutation-context mapping keeps `promotion_allowed = false` for gene features.
+- dataset fit matrix keeps production training blocked while ranking next data
+  sources.
+- gold claim-grounding and semantic citation artifacts exist and have no hard
+  failures.
+- near-boundary safety eval keeps unsafe-answer rate at zero for curated risky
+  phrasing.
+- uncertainty, real-data readiness, and clinical-performance dossier artifacts
+  keep synthetic-only/no-clinical-validation boundaries explicit.
+- medical controlled docs, event taxonomy, and ops health snapshots exist for
+  reviewer readiness.
 
 These checks are intentionally conservative. They prove interoperability and
 review discipline, not clinical performance.
