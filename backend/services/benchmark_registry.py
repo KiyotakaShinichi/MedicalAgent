@@ -629,6 +629,19 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "external_stress_test_readiness",
+        "title": "External stress-test readiness",
+        "path": "Data/evals/models/latest_external_stress_test_readiness.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "dataset_count": ["summary", "dataset_count"],
+            "datasets_with_local_rows": ["summary", "datasets_with_local_rows"],
+            "expected_abstained_rows": ["summary", "expected_abstained_rows"],
+            "promotion_allowed": ["summary", "promotion_allowed"],
+        },
+    },
+    {
         "id": "mutation_context_mapping",
         "title": "Mutation-context mapping readiness",
         "path": "Data/evals/models/latest_mutation_context_mapping.json",
@@ -1184,6 +1197,32 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "status": ["status"],
             "stale_artifact_count": ["metrics", "stale_artifact_count"],
             "failed_benchmark_count": ["metrics", "failed_benchmark_count"],
+        },
+    },
+    {
+        "id": "cost_latency_report",
+        "title": "Cost and latency observability",
+        "path": "Data/evals/ops/latest_cost_latency_report.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "request_count": ["summary", "request_count"],
+            "latency_p50_ms": ["summary", "overall_latency_ms", "p50"],
+            "latency_p95_ms": ["summary", "overall_latency_ms", "p95"],
+            "estimated_total_cost_usd": ["summary", "estimated_total_cost_usd"],
+            "cache_hit_rate": ["summary", "cache_hit_rate"],
+        },
+    },
+    {
+        "id": "local_slm_readiness",
+        "title": "Local SLM readiness",
+        "path": "Data/evals/ops/latest_local_slm_readiness.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "low_risk_task_count": ["summary", "enabled_low_risk_task_count"],
+            "blocked_solo_task_count": ["summary", "blocked_solo_task_count"],
+            "production_default": ["route_policy", "production_default"],
         },
     },
     {

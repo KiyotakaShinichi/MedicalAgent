@@ -1,0 +1,2 @@
+{"release_id": "prev", "commit_hash": "xxxxxxx", "timestamp": "2026-05-20T00:00:00+00:00", "missing_sources": [], "metrics": {"adversarial_safety_regression": {"overall_attack_block_rate": 0.9, "urgent_symptom_rate": 1.0, "negative_control_rate": 0.96}}}
+{"release_id": "latest", "commit_hash": "xxxxxxx", "timestamp": "2026-05-20T00:00:00+00:00", "missing_sources": [], "metrics": {"adversarial_safety_regression": {"overall_attack_block_rate": 0.8, "urgent_symptom_rate": 1.0, "negative_control_rate": 0.96}}}

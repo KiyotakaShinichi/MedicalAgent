@@ -13,6 +13,26 @@ MedicalAgent is a safety-first clinical decision-support proof of concept for br
 - Public-data mappings are stress tests and schema bridges, not validation.
 - The unreviewed clinical advisor packet is prepared for future review only; it is not reviewed or approved.
 
+## Scale / cost optimization
+- Cost and latency telemetry is tracked as engineering observability, not clinical evidence.
+- `python scripts/run_cost_latency_report.py` exports `Data/evals/ops/latest_cost_latency_report.json` with route, token, cost, cache, and latency summaries.
+- The report compares full API-style answering, validated cached answers, local-SLM-assisted routing/rewrite, and deterministic-only refusal paths.
+- Current default local/deterministic runs may show `$0` provider cost; route comparison uses explicit token-price assumptions for capacity planning, not audited billing.
+- Admin RAG dashboard now includes a Cost / Latency Observability card so reviewers can see p50/p95-style behavior and cache economics.
+
+## Local SLM readiness
+- Local SLM use is optional helper scaffolding only.
+- Allowed low-risk tasks: intent classification, query rewriting, claim extraction, summary formatting, portal help, and refusal-style drafting.
+- Local SLM output must remain behind deterministic safety gates, source governance, claim-level citation validation, medical-claim boundary checks, post-generation validation, and release gates.
+- Local SLM must not be the final authority for diagnosis, treatment advice, prognosis, genetic-risk interpretation, tumor-marker interpretation, dosage, medication safety, or supplement safety.
+- `python scripts/run_local_slm_readiness.py` exports `Data/evals/ops/latest_local_slm_readiness.json`.
+
+## External stress-test readiness
+- External/public data bridges are used for schema stress tests and missing-field analysis only.
+- `python scripts/run_external_stress_readiness.py` checks TCGA-BRCA, METABRIC, BreastDCEDL/I-SPY common-feature rows, and Duke MRI/TCIA candidate mappings where artifacts exist.
+- The output documents mapped fields, missing longitudinal modalities, expected abstentions, and failure cases.
+- These stress tests do not validate the hybrid model clinically and cannot promote model outputs without exact-label temporal validation and clinician-reviewed endpoints.
+
 ## What this system is
 - A timeline-first monitoring and clinician review assistant for already-diagnosed breast cancer cases.
 - A proof-of-concept platform that produces monitoring signals, safety flags, and summaries for clinician review.
@@ -281,6 +301,21 @@ rebuild it, run `python scripts/reset_local_db.py`. See
 - [docs/monitoring.md](docs/monitoring.md)
 - [docs/regulatory_positioning.md](docs/regulatory_positioning.md)
 - [docs/ci_cd.md](docs/ci_cd.md)
+
+## Detection and measurement layers (informational, synthetic-only)
+
+A second-pass hardening set focused on **detection and measurement**, not
+new clinical claims. Every artifact in this section is labeled
+`status: informational` in the release gate so it does not dilute the
+blocker tier. Synthetic-only; no clinical validity is established.
+
+- [docs/patient_temporal_cv.md](docs/patient_temporal_cv.md) — patient-level temporal CV vs. naive row-level KFold, side by side, with patient_overlap_pairs lock-in.
+- [docs/adversarial_safety_regression.md](docs/adversarial_safety_regression.md) — 200-case stable-ID adversarial safety bank across 15 categories (diagnosis, treatment-change, dosage, prognosis, genetic-risk, VUS, tumor-marker, supplement, urgent, prompt injection, cross-patient exfil, privacy/PII, Taglish, near-boundary hypothetical, safe negative controls).
+- [docs/uncertainty_aware_retrieval.md](docs/uncertainty_aware_retrieval.md) — 6-status answerability routing: `answerable_with_citations`, `answerable_with_limited_context`, `insufficient_evidence`, `conflicting_evidence`, `clinician_review_required`, `refuse_due_to_safety`.
+- [docs/emotional_distress_detection.md](docs/emotional_distress_detection.md) — affective-signal detector across English + Taglish, mapping to 5 response modes.
+- [docs/eval_drift_tracking.md](docs/eval_drift_tracking.md) — JSONL time-series of headline metrics with regression detection per `release_id` + `commit_hash`.
+- [docs/per_turn_trace.md](docs/per_turn_trace.md) — per-turn decision trace envelope (decisions only — chain-of-thought is rejected by `_scrub_cot` + `validate_trace_payload`).
+- [docs/synthetic_data_quality.md](docs/synthetic_data_quality.md) — synthetic generator quality proxy with an enforced disclaimer that it is NOT a clinical realism measure.
 
 ## For Recruiters and Interviewers
 

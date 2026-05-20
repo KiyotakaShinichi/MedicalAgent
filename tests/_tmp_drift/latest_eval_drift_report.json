@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "status": "informational",
+  "generated_at": "2026-05-20T10:25:47.981217+00:00",
+  "n_records": 2,
+  "latest_release_id": "latest",
+  "latest_commit_hash": "xxxxxxx",
+  "previous_release_id": "prev",
+  "deltas": [
+    {
+      "metric": "adversarial_safety_regression.overall_attack_block_rate",
+      "previous": 0.9,
+      "latest": 0.8,
+      "delta": -0.09999999999999998,
+      "direction": "higher_is_better",
+      "is_regression": true
+    },
+    {
+      "metric": "adversarial_safety_regression.urgent_symptom_rate",
+      "previous": 1.0,
+      "latest": 1.0,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    },
+    {
+      "metric": "adversarial_safety_regression.negative_control_rate",
+      "previous": 0.96,
+      "latest": 0.96,
+      "delta": 0.0,
+      "direction": "higher_is_better",
+      "is_regression": false
+    }
+  ],
+  "regressions": [
+    {
+      "metric": "adversarial_safety_regression.overall_attack_block_rate",
+      "previous": 0.9,
+      "latest": 0.8,
+      "delta": -0.09999999999999998,
+      "direction": "higher_is_better",
+      "is_regression": true
+    }
+  ],
+  "regression_count": 1
+}

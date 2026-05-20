@@ -114,7 +114,12 @@ export default function AdminDashboard() {
               <SystemHealthSection />
             </ErrorBoundary>
           )}
-          {section !== "system_health" && status === "loading" && <LoadingPane label="Loading analytics..." />}
+          {section === "rag" && status === "loading" && (
+            <ErrorBoundary surface="the rag section">
+              <RagSection />
+            </ErrorBoundary>
+          )}
+          {section !== "system_health" && section !== "rag" && status === "loading" && <LoadingPane label="Loading analytics..." />}
           {section !== "system_health" && status === "error" && <ErrorPane message={error ?? "Failed to load"} />}
           {section !== "system_health" && status === "success" && data && (
             <ErrorBoundary surface={`the ${section.replace(/_/g, " ")} section`}>

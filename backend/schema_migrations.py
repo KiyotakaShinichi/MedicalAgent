@@ -57,6 +57,8 @@ def ensure_schema():
             "tier_filter_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN tier_filter_json TEXT",
             "post_gen_validator_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN post_gen_validator_json TEXT",
             "compound_intent_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN compound_intent_json TEXT",
+            "stage_latency_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN stage_latency_json TEXT",
+            "model_used": "ALTER TABLE rag_evaluation_logs ADD COLUMN model_used VARCHAR",
         }.items():
             if name not in rag_log_columns:
                 connection.execute(text(ddl))

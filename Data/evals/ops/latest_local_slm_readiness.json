@@ -1,0 +1,127 @@
+{
+  "schema_version": "local_slm_readiness_v1",
+  "generated_at": "2026-05-20T10:31:04.985055+00:00",
+  "status": "strong",
+  "summary": {
+    "enabled_low_risk_task_count": 6,
+    "blocked_solo_task_count": 8,
+    "production_default": "disabled_or_optional_helper_only"
+  },
+  "providers_detected": [
+    {
+      "provider": "groq",
+      "model": "llama-3.3-70b-versatile",
+      "role": "primary_cloud_adjudicator"
+    }
+  ],
+  "enabled_low_risk_tasks": [
+    {
+      "task": "claim_extraction",
+      "allowed": true,
+      "scope": "Extract candidate claims for validator review; cannot approve claims."
+    },
+    {
+      "task": "intent_classification",
+      "allowed": true,
+      "scope": "Low-risk routing hint only; deterministic safety gates still run first."
+    },
+    {
+      "task": "portal_help",
+      "allowed": true,
+      "scope": "Allowed for navigation/help copy when no patient-specific medical advice is involved."
+    },
+    {
+      "task": "query_rewriting",
+      "allowed": true,
+      "scope": "Rewrite/retrieve helper only; source-governed RAG still controls answer context."
+    },
+    {
+      "task": "refusal_style_drafting",
+      "allowed": true,
+      "scope": "May draft tone for an already-decided refusal; validators keep final authority."
+    },
+    {
+      "task": "summary_formatting",
+      "allowed": true,
+      "scope": "Formatting only; cannot introduce medical content."
+    }
+  ],
+  "blocked_solo_tasks": [
+    {
+      "task": "diagnosis",
+      "allowed": false,
+      "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+    },
+    {
+      "task": "dosage_guidance",
+      "allowed": false,
+      "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+    },
+    {
+      "task": "genetic_risk_interpretation",
+      "allowed": false,
+      "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+    },
+    {
+      "task": "medication_safety",
+      "allowed": false,
+      "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+    },
+    {
+      "task": "prognosis",
+      "allowed": false,
+      "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+    },
+    {
+      "task": "supplement_safety",
+      "allowed": false,
+      "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+    },
+    {
+      "task": "treatment_advice",
+      "allowed": false,
+      "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+    },
+    {
+      "task": "tumor_marker_interpretation",
+      "allowed": false,
+      "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+    }
+  ],
+  "required_gates_after_local_slm": [
+    "deterministic_pre_generation_safety_gate",
+    "source_governance_for_any_rag_context",
+    "medical_claim_boundary_checker",
+    "claim_level_citation_validation_for_patient_education",
+    "post_generation_safety_validator",
+    "release_gate_artifact_checks"
+  ],
+  "route_policy": {
+    "local_slm_may_reduce_cost_for": [
+      "claim_extraction",
+      "intent_classification",
+      "portal_help",
+      "query_rewriting",
+      "refusal_style_drafting",
+      "summary_formatting"
+    ],
+    "local_slm_must_not_be_final_authority_for": [
+      "diagnosis",
+      "dosage_guidance",
+      "genetic_risk_interpretation",
+      "medication_safety",
+      "prognosis",
+      "supplement_safety",
+      "treatment_advice",
+      "tumor_marker_interpretation"
+    ],
+    "production_default": "disabled_or_optional_helper_only"
+  },
+  "release_gate_expectations": [
+    "unsafe_answer_rate must remain 0",
+    "source_tier_correctness must remain 1.0 for patient-facing RAG",
+    "claim validators must pass even when local SLM is used upstream",
+    "blocked claim categories must still be refused deterministically"
+  ],
+  "claim_boundary": "Local SLM readiness is an engineering routing/cost scaffold. It is not clinical validation and does not authorize local models to answer medical decision questions without the existing guardrails."
+}

@@ -512,6 +512,8 @@ class RAGEvaluationLog(Base):
     tier_filter_json = Column(Text, nullable=True)
     post_gen_validator_json = Column(Text, nullable=True)
     compound_intent_json = Column(Text, nullable=True)
+    stage_latency_json = Column(Text, nullable=True)
+    model_used = Column(String, nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

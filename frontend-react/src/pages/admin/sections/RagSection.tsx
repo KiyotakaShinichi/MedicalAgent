@@ -15,7 +15,7 @@ import { LoadingPane, EmptyPane, ErrorPane } from "../../../components/ui/Spinne
 import type { AdminAnalytics, RagAblationResult, AblationStrategyMetrics } from "../../../types/api";
 import { RefreshCw } from "lucide-react";
 
-interface Props { analytics: AdminAnalytics }
+interface Props { analytics?: AdminAnalytics }
 
 export function RagSection({ analytics }: Props) {
   const { data: registry, status } = useApi(getRagSourceRegistry, []);
@@ -28,9 +28,13 @@ export function RagSection({ analytics }: Props) {
     () => getNormalizedBenchmarkArtifact("claim_level_citation_eval"),
     [],
   );
+  const { data: costLatency, status: costLatencyStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("cost_latency_report"),
+    [],
+  );
   const { data: traceReplay, status: traceReplayStatus } = useApi(() => getRagTraceReplay(8), []);
   const [runningLiveRag, setRunningLiveRag] = useState(false);
-  const rag = analytics.rag_evaluation;
+  const rag = analytics?.rag_evaluation;
 
   async function refreshLiveRag() {
     setRunningLiveRag(true);
@@ -45,33 +49,33 @@ export function RagSection({ analytics }: Props) {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <MetricCard label="Evaluations" value={rag.evaluations} />
+        <MetricCard label="Evaluations" value={rag?.evaluations ?? null} />
         <MetricCard
           label="Grounding"
-          value={rag.grounding_score != null ? `${(rag.grounding_score * 100).toFixed(1)}%` : null}
-          status={rag.grounding_score != null && rag.grounding_score >= 0.8 ? "green" : "amber"}
+          value={rag?.grounding_score != null ? `${(rag.grounding_score * 100).toFixed(1)}%` : null}
+          status={rag?.grounding_score != null && rag.grounding_score >= 0.8 ? "green" : "amber"}
         />
         <MetricCard
           label="Hallucination"
-          value={rag.hallucination_score != null ? `${(rag.hallucination_score * 100).toFixed(1)}%` : null}
-          status={rag.hallucination_score != null && rag.hallucination_score <= 0.05 ? "green" : "amber"}
+          value={rag?.hallucination_score != null ? `${(rag.hallucination_score * 100).toFixed(1)}%` : null}
+          status={rag?.hallucination_score != null && rag.hallucination_score <= 0.05 ? "green" : "amber"}
         />
         <MetricCard
           label="Precision@3"
-          value={rag.precision_at_3 != null ? `${(rag.precision_at_3 * 100).toFixed(1)}%` : null}
+          value={rag?.precision_at_3 != null ? `${(rag.precision_at_3 * 100).toFixed(1)}%` : null}
         />
       </div>
 
       <Card>
         <CardHeader><SectionTitle>Cost & Latency</SectionTitle></CardHeader>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <MetricCard label="Est. cost" value={rag.estimated_cost_usd != null ? `$${rag.estimated_cost_usd.toFixed(4)}` : null} />
-          <MetricCard label="Input tokens" value={rag.input_tokens} />
-          <MetricCard label="Output tokens" value={rag.output_tokens} />
+          <MetricCard label="Est. cost" value={rag?.estimated_cost_usd != null ? `$${rag.estimated_cost_usd.toFixed(4)}` : null} />
+          <MetricCard label="Input tokens" value={rag?.input_tokens ?? null} />
+          <MetricCard label="Output tokens" value={rag?.output_tokens ?? null} />
           <MetricCard
             label="P95 latency"
-            value={rag.p95_latency_ms != null ? `${rag.p95_latency_ms.toFixed(0)}ms` : null}
-            status={rag.p95_latency_ms != null && rag.p95_latency_ms < 3000 ? "green" : "amber"}
+            value={rag?.p95_latency_ms != null ? `${rag.p95_latency_ms.toFixed(0)}ms` : null}
+            status={rag?.p95_latency_ms != null && rag.p95_latency_ms < 3000 ? "green" : "amber"}
           />
         </div>
       </Card>
@@ -91,6 +95,18 @@ export function RagSection({ analytics }: Props) {
       </Card>
 
       <div className="grid lg:grid-cols-2 gap-4">
+        <ArtifactSummaryCard
+          title="Cost / Latency Observability"
+          status={costLatencyStatus}
+          artifact={costLatency}
+          metrics={[
+            ["Requests", ["metrics", "request_count"], "number"],
+            ["P95 latency", ["metrics", "latency_p95_ms"], "milliseconds"],
+            ["Est. cost", ["metrics", "estimated_total_cost_usd"], "currency"],
+            ["Cache hit", ["metrics", "cache_hit_rate"], "percent"],
+          ]}
+          emptyLabel="No cost/latency report yet - run scripts/run_cost_latency_report.py"
+        />
         <ArtifactSummaryCard
           title="Live-Agent RAG Eval"
           status={liveRagStatus}
@@ -173,7 +189,7 @@ export function RagSection({ analytics }: Props) {
   );
 }
 
-type MetricFormat = "number" | "percent";
+type MetricFormat = "number" | "percent" | "currency" | "milliseconds";
 
 function ArtifactSummaryCard({
   title,
@@ -248,6 +264,8 @@ function readString(record: Record<string, unknown> | null, path: string[]): str
 function formatMetric(value: unknown, format: MetricFormat): string | null {
   if (typeof value !== "number") return null;
   if (format === "percent") return `${(value * 100).toFixed(1)}%`;
+  if (format === "currency") return `$${value.toFixed(6)}`;
+  if (format === "milliseconds") return `${value.toFixed(0)}ms`;
   return Number.isInteger(value) ? String(value) : value.toFixed(3);
 }
 

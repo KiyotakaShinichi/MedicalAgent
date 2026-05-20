@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "status": "informational",
+  "generated_at": "2026-05-20T10:21:24.648575+00:00",
+  "n_records": 1,
+  "latest_release_id": "2026-05-20-part0-8-pass",
+  "latest_commit_hash": "fda529c7eb8d8b781bff98636cd686733ef75131",
+  "previous_release_id": null,
+  "deltas": [],
+  "regressions": [],
+  "regression_count": 0
+}

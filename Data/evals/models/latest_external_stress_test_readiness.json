@@ -1,0 +1,230 @@
+{
+  "schema_version": "external_stress_test_readiness_v1",
+  "generated_at": "2026-05-20T09:39:59.139806+00:00",
+  "status": "strong",
+  "datasets": [
+    {
+      "dataset_id": "tcga_brca",
+      "label": "TCGA-BRCA",
+      "expected_role": "genomic/subtype distribution stress only",
+      "source_artifact": "Data/evals/models/latest_tcga_metabric_canonical_mapping.json",
+      "source_status": "schema_available",
+      "row_count": 0,
+      "mapped_fields": [
+        "age",
+        "genetic_variant_classification",
+        "molecular_subtype",
+        "outcome_label_name",
+        "patient_id",
+        "sex",
+        "source_dataset",
+        "stage"
+      ],
+      "missing_fields": [
+        "cbc_trend",
+        "er_status",
+        "her2_status",
+        "imaging_timeline",
+        "pr_status",
+        "symptom_trajectory",
+        "treatment_cycle",
+        "treatment_modalities"
+      ],
+      "prediction_stress": {
+        "mode": "abstention_readiness_check",
+        "expected_abstained_rows": 0,
+        "expected_scored_rows": 0,
+        "reason": "missing_oncotrack_longitudinal_modalities: cbc_trend, er_status, her2_status, imaging_timeline, pr_status, symptom_trajectory"
+      },
+      "failure_cases": [
+        {
+          "type": "no_local_rows",
+          "severity": "medium",
+          "note": "Schema is mapped or planned, but no local rows are available for a pipeline stress run."
+        },
+        {
+          "type": "missing_imaging_timeline",
+          "severity": "medium",
+          "note": "Response heads should abstain or remain context-only when imaging timeline is absent."
+        },
+        {
+          "type": "missing_patient_monitoring_timeline",
+          "severity": "high",
+          "note": "External rows cannot exercise the full NLCare temporal monitoring pipeline."
+        }
+      ],
+      "promotion_allowed": false,
+      "claim_boundary": "This dataset entry is an external stress-test candidate only, not clinical validation."
+    },
+    {
+      "dataset_id": "metabric",
+      "label": "METABRIC",
+      "expected_role": "biomarker/subtype/outcome schema stress only",
+      "source_artifact": "Data/evals/models/latest_tcga_metabric_canonical_mapping.json",
+      "source_status": "schema_available",
+      "row_count": 0,
+      "mapped_fields": [
+        "age",
+        "er_status",
+        "genetic_variant_classification",
+        "her2_status",
+        "molecular_subtype",
+        "outcome_label_name",
+        "patient_id",
+        "pr_status",
+        "sex",
+        "source_dataset",
+        "stage"
+      ],
+      "missing_fields": [
+        "cbc_trend",
+        "imaging_timeline",
+        "symptom_trajectory",
+        "treatment_cycle",
+        "treatment_modalities"
+      ],
+      "prediction_stress": {
+        "mode": "abstention_readiness_check",
+        "expected_abstained_rows": 0,
+        "expected_scored_rows": 0,
+        "reason": "missing_oncotrack_longitudinal_modalities: cbc_trend, imaging_timeline, symptom_trajectory, treatment_cycle, treatment_modalities"
+      },
+      "failure_cases": [
+        {
+          "type": "no_local_rows",
+          "severity": "medium",
+          "note": "Schema is mapped or planned, but no local rows are available for a pipeline stress run."
+        },
+        {
+          "type": "missing_imaging_timeline",
+          "severity": "medium",
+          "note": "Response heads should abstain or remain context-only when imaging timeline is absent."
+        },
+        {
+          "type": "missing_patient_monitoring_timeline",
+          "severity": "high",
+          "note": "External rows cannot exercise the full NLCare temporal monitoring pipeline."
+        }
+      ],
+      "promotion_allowed": false,
+      "claim_boundary": "This dataset entry is an external stress-test candidate only, not clinical validation."
+    },
+    {
+      "dataset_id": "breastdcedl_spy1",
+      "label": "BreastDCEDL / I-SPY common-feature rows",
+      "expected_role": "imaging/pCR common-feature stress only",
+      "source_artifact": "Data/evals/models/latest_external_data_bridge_eval.json",
+      "source_status": "strong",
+      "row_count": 159,
+      "mapped_fields": [
+        "age",
+        "er_status",
+        "her2_status",
+        "imaging_timeline",
+        "molecular_subtype",
+        "outcome_label_value",
+        "pr_status"
+      ],
+      "missing_fields": [
+        "cbc_trend",
+        "symptom_trajectory",
+        "treatment_cycle",
+        "treatment_modalities"
+      ],
+      "prediction_stress": {
+        "mode": "abstention_readiness_check",
+        "expected_abstained_rows": 159,
+        "expected_scored_rows": 0,
+        "reason": "missing_oncotrack_longitudinal_modalities: cbc_trend, symptom_trajectory, treatment_cycle, treatment_modalities"
+      },
+      "failure_cases": [
+        {
+          "type": "missing_patient_monitoring_timeline",
+          "severity": "high",
+          "note": "External rows cannot exercise the full NLCare temporal monitoring pipeline."
+        },
+        {
+          "type": "target_semantics_mismatch",
+          "severity": "high",
+          "note": "External endpoints are useful stress labels but are not identical to NLCare synthetic monitoring heads."
+        }
+      ],
+      "promotion_allowed": false,
+      "claim_boundary": "This dataset entry is an external stress-test candidate only, not clinical validation."
+    },
+    {
+      "dataset_id": "duke_tcia_mri",
+      "label": "Duke MRI / TCIA schema candidate",
+      "expected_role": "future image/schema stress only",
+      "source_artifact": "Data/evals/models/latest_priority_dataset_bridge.json",
+      "source_status": "ready_for_mapping",
+      "row_count": 0,
+      "mapped_fields": [
+        "imaging_timeline",
+        "treatment_modalities"
+      ],
+      "missing_fields": [
+        "age",
+        "cbc_trend",
+        "er_status",
+        "her2_status",
+        "molecular_subtype",
+        "pr_status",
+        "symptom_trajectory",
+        "treatment_cycle"
+      ],
+      "prediction_stress": {
+        "mode": "abstention_readiness_check",
+        "expected_abstained_rows": 0,
+        "expected_scored_rows": 0,
+        "reason": "missing_oncotrack_longitudinal_modalities: age, cbc_trend, er_status, her2_status, molecular_subtype, pr_status"
+      },
+      "failure_cases": [
+        {
+          "type": "no_local_rows",
+          "severity": "medium",
+          "note": "Schema is mapped or planned, but no local rows are available for a pipeline stress run."
+        },
+        {
+          "type": "missing_patient_monitoring_timeline",
+          "severity": "high",
+          "note": "External rows cannot exercise the full NLCare temporal monitoring pipeline."
+        }
+      ],
+      "promotion_allowed": false,
+      "claim_boundary": "This dataset entry is an external stress-test candidate only, not clinical validation."
+    }
+  ],
+  "summary": {
+    "dataset_count": 4,
+    "datasets_with_local_rows": 1,
+    "total_external_like_rows_seen": 159,
+    "expected_abstained_rows": 159,
+    "clinical_validation": false,
+    "promotion_allowed": false
+  },
+  "pipeline_use": {
+    "allowed": [
+      "schema mapping stress",
+      "missing-field analysis",
+      "abstention behavior audit",
+      "external distribution sanity checks",
+      "future data-access planning"
+    ],
+    "blocked": [
+      "clinical validation claim",
+      "patient-level treatment-response claim",
+      "treatment recommendation",
+      "genetic-risk interpretation",
+      "tumor-marker interpretation",
+      "model promotion without exact-label temporal validation"
+    ]
+  },
+  "why_not_clinical_validation": [
+    "External rows do not contain the full NLCare longitudinal CBC/symptom/medication/imaging timeline.",
+    "Outcome labels such as pCR, survival, recurrence, or real-world response are not identical to the synthetic monitoring heads.",
+    "Rows are not clinician-reviewed for the exact NLCare question and are not linked to patient-facing workflow safety outcomes.",
+    "No IRB/ethics workflow, real patient deployment, or clinical sign-off exists in this project state."
+  ],
+  "claim_boundary": "External stress-test readiness maps public/external-like schemas into the NLCare feature contract for engineering stress tests only. It is not clinical validation, external validation, or evidence of patient-level utility."
+}

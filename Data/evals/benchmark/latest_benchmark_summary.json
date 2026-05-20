@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "2c20b6c26ac86744f8a6c3a3cd5e358f6b642f04",
+    "git_commit": "fda529c7eb8d8b781bff98636cd686733ef75131",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -15,16 +15,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-20T06:03:14.714971+00:00"
+    "generated_at": "2026-05-20T09:40:09.666179+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-20T06:03:14.714971+00:00",
+    "generated_at": "2026-05-20T09:40:09.666179+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-21T06:03:14.714971+00:00",
+    "expires_at": "2026-05-21T09:40:09.666179+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-05-20T06:03:14.982293+00:00",
+  "generated_at": "2026-05-20T09:40:10.408060+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -975,6 +975,25 @@
       "claim_boundary": "Priority external stress checks schema overlap and endpoint compatibility for GENIE BPC BRCA and Duke Breast MRI bridge rows. It is not clinical validation and cannot promote any model without exact-label temporal validation and clinician-reviewed endpoints."
     },
     {
+      "id": "external_stress_test_readiness",
+      "title": "External stress-test readiness",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-20T09:39:59.139806+00:00",
+      "source_path": "Data/evals/models/latest_external_stress_test_readiness.json",
+      "metrics": {
+        "status": "strong",
+        "dataset_count": 4,
+        "datasets_with_local_rows": 1,
+        "expected_abstained_rows": 159,
+        "promotion_allowed": false
+      },
+      "limitations": [],
+      "claim_boundary": "External stress-test readiness maps public/external-like schemas into the NLCare feature contract for engineering stress tests only. It is not clinical validation, external validation, or evidence of patient-level utility."
+    },
+    {
       "id": "mutation_context_mapping",
       "title": "Mutation-context mapping readiness",
       "tier": "supporting",
@@ -1669,7 +1688,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-05-20T05:35:42.804346+00:00",
+      "generated_at": "2026-05-20T09:21:04.101690+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -1686,7 +1705,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-05-20T05:35:41.746668+00:00",
+      "generated_at": "2026-05-20T09:21:03.847895+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -1703,7 +1722,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-05-20T05:35:42.889935+00:00",
+      "generated_at": "2026-05-20T09:21:04.131180+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -1908,6 +1927,116 @@
       },
       "limitations": [],
       "claim_boundary": "PoC operational health snapshot only; no production SLO/SLA or compliance claim."
+    },
+    {
+      "id": "cost_latency_report",
+      "title": "Cost and latency observability",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-20T09:39:42.793997+00:00",
+      "source_path": "Data/evals/ops/latest_cost_latency_report.json",
+      "metrics": {
+        "status": "strong",
+        "request_count": 21,
+        "latency_p50_ms": 1453.49,
+        "latency_p95_ms": 6361.22,
+        "estimated_total_cost_usd": 0.0,
+        "cache_hit_rate": 0.0
+      },
+      "limitations": [],
+      "claim_boundary": "Cost and latency observability is engineering telemetry only. It does not establish clinical safety, clinical validation, or real-world patient benefit."
+    },
+    {
+      "id": "local_slm_readiness",
+      "title": "Local SLM readiness",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-05-20T09:39:38.355287+00:00",
+      "source_path": "Data/evals/ops/latest_local_slm_readiness.json",
+      "metrics": {
+        "status": "strong",
+        "low_risk_tasks": [
+          {
+            "task": "claim_extraction",
+            "allowed": true,
+            "scope": "Extract candidate claims for validator review; cannot approve claims."
+          },
+          {
+            "task": "intent_classification",
+            "allowed": true,
+            "scope": "Low-risk routing hint only; deterministic safety gates still run first."
+          },
+          {
+            "task": "portal_help",
+            "allowed": true,
+            "scope": "Allowed for navigation/help copy when no patient-specific medical advice is involved."
+          },
+          {
+            "task": "query_rewriting",
+            "allowed": true,
+            "scope": "Rewrite/retrieve helper only; source-governed RAG still controls answer context."
+          },
+          {
+            "task": "refusal_style_drafting",
+            "allowed": true,
+            "scope": "May draft tone for an already-decided refusal; validators keep final authority."
+          },
+          {
+            "task": "summary_formatting",
+            "allowed": true,
+            "scope": "Formatting only; cannot introduce medical content."
+          }
+        ],
+        "blocked_solo_tasks": [
+          {
+            "task": "diagnosis",
+            "allowed": false,
+            "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+          },
+          {
+            "task": "dosage_guidance",
+            "allowed": false,
+            "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+          },
+          {
+            "task": "genetic_risk_interpretation",
+            "allowed": false,
+            "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+          },
+          {
+            "task": "medication_safety",
+            "allowed": false,
+            "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+          },
+          {
+            "task": "prognosis",
+            "allowed": false,
+            "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+          },
+          {
+            "task": "supplement_safety",
+            "allowed": false,
+            "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+          },
+          {
+            "task": "treatment_advice",
+            "allowed": false,
+            "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+          },
+          {
+            "task": "tumor_marker_interpretation",
+            "allowed": false,
+            "reason": "Patient-specific medical decision or high-risk clinical interpretation."
+          }
+        ],
+        "production_default": "disabled_or_optional_helper_only"
+      },
+      "limitations": [],
+      "claim_boundary": "Local SLM readiness is an engineering routing/cost scaffold. It is not clinical validation and does not authorize local models to answer medical decision questions without the existing guardrails."
     },
     {
       "id": "release_gate_explanation",

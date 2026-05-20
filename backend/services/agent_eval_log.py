@@ -68,6 +68,8 @@ def store_rag_evaluation_log(
         estimated_output_tokens=cost_latency.get("estimated_output_tokens"),
         estimated_total_tokens=cost_latency.get("estimated_total_tokens"),
         estimated_llm_cost_usd=cost_latency.get("estimated_llm_cost_usd"),
+        stage_latency_json=json.dumps(cost_latency.get("stage_ms") or {}),
+        model_used=_model_used(result),
         retrieved_source_ids_json=json.dumps([item.get("id") for item in retrieved if item.get("id")]),
         cited_source_ids_json=json.dumps([item.get("id") for item in result.get("citations") or []]),
         guardrail_issues_json=json.dumps({
@@ -105,6 +107,26 @@ def _compound_intent_log_payload(value):
     if isinstance(value, dict):
         return value
     return {"raw": str(value)[:240]}
+
+
+def _model_used(result: Mapping[str, Any]) -> str:
+    """Best-effort model/provider label for cost reporting.
+
+    Default local runs are deterministic/template-driven, so there may be no
+    provider metadata. Keep that explicit instead of pretending an API model
+    was called.
+    """
+    llm = result.get("llm") or result.get("llm_metadata") or {}
+    if isinstance(llm, Mapping):
+        provider = llm.get("provider")
+        model = llm.get("model")
+        if provider and model:
+            return f"{provider}/{model}"
+        if provider:
+            return str(provider)
+    if (result.get("pipeline_trace") or {}).get("terminal_step") in {"safety_refusal", "security_refusal"}:
+        return "deterministic_refusal"
+    return "deterministic_local_or_untracked"
 
 
 # Back-compat alias — agent_rag._finalize_result calls the underscore name.

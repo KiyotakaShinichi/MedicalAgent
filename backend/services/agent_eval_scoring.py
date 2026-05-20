@@ -301,6 +301,7 @@ def evaluate_rag_response(
             **token_cost,
             "latency_ms":   latency_ms,
             "cache_status": (result.get("cache") or {}).get("status"),
+            "stage_ms": ((result.get("pipeline_trace") or {}).get("stage_ms") or {}),
             "tradeoff_note": cost_latency_note(
                 (result.get("cache") or {}).get("status"),
                 latency_ms,
