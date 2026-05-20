@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RefreshCw, Zap } from "lucide-react";
+import { RefreshCw, Zap, Compass } from "lucide-react";
 import { Badge } from "../../../components/ui/Badge";
 import { statusVariant } from "../../../components/ui/badgeUtils";
 import { Button } from "../../../components/ui/Button";
@@ -11,6 +11,8 @@ import {
   runSystemHealth,
   getAdminFastMode,
   setAdminFastMode,
+  probeAdminIntent,
+  type IntentProbeResponse,
 } from "../../../api/client";
 
 
@@ -45,6 +47,8 @@ export function SystemHealthSection() {
       </Card>
 
       <FastModePanel />
+
+      <IntentProbePanel />
 
       <Card>
         <CardHeader><SectionTitle>Issues & Next Actions</SectionTitle></CardHeader>
@@ -192,5 +196,158 @@ function FastModePanel() {
           : "false"}
       </div>
     </Card>
+  );
+}
+
+
+function IntentProbePanel() {
+  const [message, setMessage] = useState("");
+  const [useLlm, setUseLlm] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<IntentProbeResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function probe() {
+    if (!message.trim()) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const resp = await probeAdminIntent(message, useLlm);
+      setResult(resp);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <Compass size={14} />
+          <SectionTitle>Compound-intent live probe</SectionTitle>
+        </div>
+      </CardHeader>
+      <p className="text-xs mb-3" style={{ color: "var(--text-dim)" }}>
+        Paste any message (any language) to see how the router would classify
+        it. Stateless: does not touch the chat database. Useful for sanity-
+        checking multilingual / mixed-language coverage before deploying a
+        prompt or vocabulary change.
+      </p>
+      <div className="flex flex-col gap-2">
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder='e.g. "hi, can you log my symptoms?" or "kamusta, gusto kong i-log ang lagnat ko"'
+          rows={2}
+          className="w-full text-sm px-2 py-1.5 rounded-md border"
+          style={{
+            background: "var(--surface)",
+            borderColor: "var(--border)",
+            color: "var(--text)",
+            fontFamily: "var(--font-sans)",
+          }}
+        />
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="primary" size="sm" disabled={busy || !message.trim()} onClick={() => void probe()}>
+            {busy ? "Probing…" : "Probe"}
+          </Button>
+          <label className="text-xs flex items-center gap-1.5" style={{ color: "var(--text-dim)" }}>
+            <input
+              type="checkbox"
+              checked={useLlm}
+              onChange={(e) => setUseLlm(e.target.checked)}
+              disabled={busy}
+            />
+            Use LLM augmenter (70B router tier)
+          </label>
+        </div>
+      </div>
+
+      {error && (
+        <p className="mt-3 text-xs" style={{ color: "var(--rose)" }}>
+          {error}
+        </p>
+      )}
+
+      {result && (
+        <div className="mt-3 flex flex-col gap-3 text-xs">
+          {/* Merged envelope (what the chat layer would actually use). */}
+          <ProbeEnvelopeBlock title="Merged (what chat would use)" envelope={result.merged} />
+          {/* Deterministic envelope (heuristic-only) for comparison. */}
+          <ProbeEnvelopeBlock title="Deterministic (heuristic-only)" envelope={result.deterministic} />
+          {/* Raw LLM verdict block. */}
+          <div className="p-2 rounded-md" style={{ background: "var(--surface2)", border: "1px solid var(--border)" }}>
+            <div className="flex items-center gap-2 mb-1">
+              <span style={{ color: "var(--text-faint)" }}>LLM verdict</span>
+              <Badge variant={result.llm.available ? "purple" : "muted"}>
+                {result.llm.available ? "available" : "unavailable"}
+              </Badge>
+              {result.llm.language && <Badge variant="cyan">lang: {result.llm.language}</Badge>}
+              {result.llm.llm_confidence != null && (
+                <Badge variant="muted">conf: {(result.llm.llm_confidence * 100).toFixed(0)}%</Badge>
+              )}
+            </div>
+            {result.llm.provider && (
+              <div style={{ color: "var(--text-faint)" }}>
+                {result.llm.provider}
+                {result.llm.model ? ` / ${result.llm.model}` : ""}
+              </div>
+            )}
+            {result.llm.reason && (
+              <div style={{ color: "var(--text-faint)" }}>reason: {result.llm.reason}</div>
+            )}
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+
+function ProbeEnvelopeBlock({
+  title,
+  envelope,
+}: {
+  title: string;
+  envelope: IntentProbeResponse["merged"];
+}) {
+  return (
+    <div className="p-2 rounded-md" style={{ background: "var(--surface2)", border: "1px solid var(--border)" }}>
+      <div className="flex flex-wrap items-center gap-2 mb-1.5">
+        <span style={{ color: "var(--text-faint)" }}>{title}</span>
+        <Badge variant={envelope.is_compound ? "cyan" : "muted"}>
+          {envelope.is_compound ? "compound" : "single"}
+        </Badge>
+        <Badge variant="muted">{envelope.primary_intent.replace(/_/g, " ")}</Badge>
+        {envelope.has_tool_request && (
+          <Badge variant="cyan">tool: {envelope.tool_request_targets.join(", ") || "n/a"}</Badge>
+        )}
+      </div>
+      <div className="flex flex-col gap-0.5">
+        {envelope.segments.length === 0 ? (
+          <span style={{ color: "var(--text-faint)" }}>No segments.</span>
+        ) : (
+          envelope.segments.map((seg, idx) => (
+            <div key={idx} className="flex items-baseline gap-2" style={{ color: "var(--text-dim)" }}>
+              <span className="font-mono" style={{ color: "var(--text-faint)" }}>{seg.kind}</span>
+              <span style={{ color: "var(--text)" }}>{seg.span || "(no span)"}</span>
+              {seg.tool_targets?.length > 0 && (
+                <span className="text-[10px]" style={{ color: "var(--cyan)" }}>
+                  {seg.tool_targets.join(", ")}
+                </span>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+      {envelope.suggested_acknowledgment && (
+        <div className="mt-1.5 text-[11px]" style={{ color: "var(--text-faint)" }}>
+          <span style={{ color: "var(--text-dim)" }}>Suggested ack: </span>
+          {envelope.suggested_acknowledgment}
+        </div>
+      )}
+    </div>
   );
 }

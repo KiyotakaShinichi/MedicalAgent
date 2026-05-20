@@ -214,6 +214,74 @@ def get_admin_llm_adjudication(
     return describe_llm_adjudication()
 
 
+# ─── Compound-intent live probe ──────────────────────────────────────────────
+
+
+class IntentProbeRequest(BaseModel):
+    """Body for the /admin/intent-classifier-probe endpoint.
+
+    ``message`` is the raw user input.  ``use_llm`` defaults to True so
+    the operator sees the merged deterministic + LLM verdict; setting
+    it to False gives the hermetic deterministic-only result (useful
+    for comparing the two).
+    """
+    message: str
+    use_llm: bool = True
+
+
+@router.post("/intent-classifier-probe")
+def post_admin_intent_classifier_probe(
+    payload: IntentProbeRequest,
+    context=Depends(get_admin_access_context),
+):
+    """Live-probe the compound-intent router on an arbitrary message.
+
+    Returns:
+      - ``deterministic`` : envelope produced by the rule-based path
+        (table + regex), tells you what the heuristic alone would do.
+      - ``merged``        : envelope after merging with the LLM verdict
+        (or identical to ``deterministic`` when LLM is unavailable).
+      - ``llm``           : raw LLM verdict (language, confidence,
+        provider, model) — or ``{"available": False, ...}``.
+
+    This endpoint does NOT touch the chat database; it's a stateless
+    probe.  Useful for debugging multilingual routing without sending
+    a real chat.
+    """
+    from backend.services.compound_intent_router import (
+        detect_compound_intents,
+        detect_compound_intents_with_llm,
+    )
+
+    message = (payload.message or "").strip()
+    if not message:
+        return {
+            "status": "empty",
+            "deterministic": detect_compound_intents("").to_dict(),
+            "merged": detect_compound_intents("").to_dict(),
+            "llm": {"available": False, "reason": "empty_message"},
+        }
+
+    deterministic = detect_compound_intents(message)
+    if payload.use_llm:
+        merged, raw = detect_compound_intents_with_llm(message)
+        llm_payload = (
+            raw if raw is not None
+            else {"available": False, "reason": "llm_unavailable_or_disabled"}
+        )
+    else:
+        merged = deterministic
+        llm_payload = {"available": False, "reason": "use_llm_false"}
+
+    return {
+        "status": "ok",
+        "message": message,
+        "deterministic": deterministic.to_dict(),
+        "merged": merged.to_dict(),
+        "llm": llm_payload,
+    }
+
+
 # ─── Fast-mode runtime toggle ────────────────────────────────────────────────
 
 

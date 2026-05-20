@@ -566,6 +566,30 @@ export const getAdminFastMode = () =>
 export const setAdminFastMode = (enabled: boolean | null) =>
   post<FastModeStatus>("/admin/fast-mode", { enabled });
 
+// Compound-intent live probe — paste a message, see how the router
+// would classify it (deterministic + LLM-merged envelope + raw LLM
+// verdict).  Stateless: does NOT touch the chat DB.
+export interface IntentProbeResponse {
+  status: "ok" | "empty";
+  message?: string;
+  deterministic: import("../types/api").CompoundIntentTrace;
+  merged: import("../types/api").CompoundIntentTrace;
+  llm: {
+    available: boolean;
+    language?: string;
+    llm_confidence?: number;
+    provider?: string;
+    model?: string;
+    reason?: string;
+  };
+}
+
+export const probeAdminIntent = (message: string, useLlm: boolean = true) =>
+  post<IntentProbeResponse>("/admin/intent-classifier-probe", {
+    message,
+    use_llm: useLlm,
+  });
+
 export const getPublicImagingManifest = () =>
   get<PublicImagingManifest>("/admin/public-imaging-manifest");
 
