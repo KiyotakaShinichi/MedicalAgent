@@ -142,6 +142,7 @@ def run_patient_agent_pipeline(
     actions=None,
     urgent_flags=None,
     preselected_intent=None,
+    compound_intent=None,
 ):
     """Main agent entry point — a dispatcher.
 
@@ -170,6 +171,7 @@ def run_patient_agent_pipeline(
             safety=safety,
             input_guardrails=input_guardrails,
             started=started,
+            compound_intent=compound_intent,
         )
 
     intent = _validated_preselected_intent(preselected_intent, safety) or route_intent(query, actions, safety)
@@ -192,6 +194,7 @@ def run_patient_agent_pipeline(
             cache_policy=cache_policy,
             input_guardrails=input_guardrails,
             started=started,
+            compound_intent=compound_intent,
         )
 
     if _uses_direct_support_lane(intent, safety):
@@ -208,6 +211,7 @@ def run_patient_agent_pipeline(
             cache_policy=cache_policy,
             input_guardrails=input_guardrails,
             started=started,
+            compound_intent=compound_intent,
         )
 
     return _run_rag_generation_branch(
@@ -228,6 +232,7 @@ def run_patient_agent_pipeline(
         started=started,
         t_safety=t_safety,
         t_routing=t_routing,
+        compound_intent=compound_intent,
     )
 
 
@@ -236,6 +241,7 @@ def run_patient_agent_pipeline(
 
 def _run_input_guardrail_block_branch(
     *, db, patient_id, query, safety, input_guardrails, started,
+    compound_intent=None,
 ):
     """Branch 1: input guardrail rejected the request entirely.  Returns
     the deterministic security refusal — no retrieval, no generation."""
@@ -282,6 +288,7 @@ def _run_input_guardrail_block_branch(
         compressed=[],
         input_guardrails=input_guardrails,
         started=started,
+        compound_intent=compound_intent,
     )
 
 
@@ -307,6 +314,7 @@ def _lookup_cache(db, cacheable, rewritten, intent, safety, knowledge_fingerprin
 def _run_cache_hit_branch(
     *, db, patient_id, query, rewritten, intent, safety,
     cache_hit, cache_policy, input_guardrails, started,
+    compound_intent=None,
 ):
     """Branch 2: exact or semantic cache hit.  Reuses the stored
     response envelope and re-runs only the post-gen pipeline."""
@@ -333,6 +341,7 @@ def _run_cache_hit_branch(
         compressed=result.get("retrieval_context") or [],
         input_guardrails=input_guardrails,
         started=started,
+        compound_intent=compound_intent,
     )
 
 
@@ -340,6 +349,7 @@ def _run_direct_support_branch(
     *, db, patient_id, query, rewritten, intent, safety,
     fallback_response, actions, patient_context,
     cache_policy, input_guardrails, started,
+    compound_intent=None,
 ):
     """Branch 3: direct-support lane — return ``fallback_response``
     verbatim (conversation / memory / timeline / emotional / general).
@@ -375,6 +385,7 @@ def _run_direct_support_branch(
         compressed=[],
         input_guardrails=input_guardrails,
         started=started,
+        compound_intent=compound_intent,
     )
 
 
@@ -383,6 +394,7 @@ def _run_rag_generation_branch(
     fallback_response, actions, urgent_flags, patient_context,
     cacheable, knowledge_fingerprint, cache_policy,
     input_guardrails, started, t_safety, t_routing,
+    compound_intent=None,
 ):
     """Branch 4: full RAG path — retrieve, rerank, compress, generate,
     validate.  Stores the response in the cache when validation passes
@@ -450,6 +462,7 @@ def _run_rag_generation_branch(
         compressed=compressed,
         input_guardrails=input_guardrails,
         started=started,
+        compound_intent=compound_intent,
     )
 
 
@@ -488,6 +501,7 @@ def _finalize_result(
     compressed,
     input_guardrails,
     started,
+    compound_intent=None,
 ):
     """Orchestrate the post-generation pipeline:
 
@@ -524,6 +538,8 @@ def _finalize_result(
         "output": output_guardrails,
     }
     result["rag_evaluation"] = rag_evaluation
+    if compound_intent is not None:
+        result["compound_intent"] = compound_intent
     _store_rag_evaluation_log(
         db=db,
         patient_id=patient_id,

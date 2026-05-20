@@ -80,11 +80,31 @@ def store_rag_evaluation_log(
         claim_validation_json=   json.dumps(result.get("claim_validation"))    if result.get("claim_validation")    is not None else None,
         tier_filter_json=        json.dumps(result.get("tier_filter"))         if result.get("tier_filter")         is not None else None,
         post_gen_validator_json= json.dumps(result.get("post_gen_validator"))  if result.get("post_gen_validator")  is not None else None,
+        compound_intent_json=    json.dumps(_compound_intent_log_payload(result.get("compound_intent"))) if result.get("compound_intent") is not None else None,
     )
     db.add(row)
     db.commit()
     db.refresh(row)
     return row
+
+
+def _compound_intent_log_payload(value):
+    """Normalize whatever the chat layer stuffed into ``result["compound_intent"]``.
+
+    The chat layer passes a ``CompoundIntent`` dataclass (which has a
+    ``.to_dict()`` method) when called from support_chat_agent, or a
+    plain dict when callers passed one in directly.  We tolerate both
+    + None.  Falls back to ``str(value)`` only if everything else fails."""
+    if value is None:
+        return None
+    if hasattr(value, "to_dict"):
+        try:
+            return value.to_dict()
+        except Exception:  # noqa: BLE001
+            pass
+    if isinstance(value, dict):
+        return value
+    return {"raw": str(value)[:240]}
 
 
 # Back-compat alias — agent_rag._finalize_result calls the underscore name.

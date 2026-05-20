@@ -500,6 +500,33 @@ export interface ConfusionMatrix {
 }
 
 // ─── Agent Trace Observatory ──────────────────────────────────────────────────
+export interface CompoundIntentSegment {
+  intent: string;
+  kind: string;
+  span: string;
+  tool_targets: string[];
+}
+
+export interface CompoundIntentTrace {
+  segments: CompoundIntentSegment[];
+  primary_intent: string;
+  is_compound: boolean;
+  has_casual_opener: boolean;
+  has_tool_request: boolean;
+  has_education_request: boolean;
+  has_capability_request: boolean;
+  tool_request_targets: string[];
+  suggested_acknowledgment: string | null;
+  llm?: {
+    available: boolean;
+    language?: string;
+    llm_confidence?: number;
+    provider?: string;
+    model?: string;
+    reason?: string;
+  };
+}
+
 export interface AgentTraceLog {
   id: number;
   patient_id: string | null;
@@ -517,6 +544,7 @@ export interface AgentTraceLog {
   estimated_total_tokens: number | null;
   retrieved_source_ids: string[];
   cited_source_ids: string[];
+  compound_intent: CompoundIntentTrace | null;
   created_at: string;
 }
 

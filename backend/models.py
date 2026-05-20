@@ -511,6 +511,7 @@ class RAGEvaluationLog(Base):
     claim_validation_json = Column(Text, nullable=True)
     tier_filter_json = Column(Text, nullable=True)
     post_gen_validator_json = Column(Text, nullable=True)
+    compound_intent_json = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

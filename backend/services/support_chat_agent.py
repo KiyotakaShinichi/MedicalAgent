@@ -112,12 +112,20 @@ def handle_patient_chat(db, patient_id, message):
     # Compound-intent envelope: detects messages that mix a casual
     # opener ("hi") with a tool request ("can you log my symptoms?")
     # so the chat layer can still surface the tool ask instead of
-    # collapsing to a bare greeting reply.
+    # collapsing to a bare greeting reply.  When the LLM adjudicator
+    # is reachable, the 70B router model adds a multilingual second
+    # opinion that catches languages our hard-coded tables don't.
+    compound_intent = None
+    llm_compound_verdict: dict | None = None
     try:
-        from backend.services.compound_intent_router import detect_compound_intents
-        compound_intent = detect_compound_intents(message)
+        from backend.services.compound_intent_router import detect_compound_intents_with_llm
+        compound_intent, llm_compound_verdict = detect_compound_intents_with_llm(message)
     except Exception:  # noqa: BLE001 — never break chat on the router
-        compound_intent = None
+        try:
+            from backend.services.compound_intent_router import detect_compound_intents
+            compound_intent = detect_compound_intents(message)
+        except Exception:  # noqa: BLE001
+            compound_intent = None
     extracted = _extract_candidate_inputs(normalized)
     resumed_symptom = _resume_pending_symptom_if_possible(db, patient_id, normalized, extracted)
     if resumed_symptom:
@@ -366,6 +374,7 @@ def handle_patient_chat(db, patient_id, message):
             actions=actions,
             urgent_flags=urgent_flags,
             preselected_intent=routing_intent,
+            compound_intent=compound_intent,
         )
     response = agent_result["reply"]
     assistant_record = ChatMessage(
@@ -428,11 +437,32 @@ def handle_patient_chat(db, patient_id, message):
             "guardrails": agent_result.get("guardrails"),
             "rag_evaluation": agent_result.get("rag_evaluation"),
             "pipeline_trace": agent_result.get("pipeline_trace"),
-            "compound_intent": (compound_intent.to_dict() if compound_intent is not None else None),
+            "compound_intent": _compound_intent_payload(compound_intent, llm_compound_verdict),
         },
         "assistant_message_id": assistant_record.id,
         "safety_note": "This assistant logs and summarizes information only. It does not diagnose or give treatment instructions.",
     }
+
+
+def _compound_intent_payload(envelope, llm_verdict):
+    """Build the agent_pipeline.compound_intent JSON.  Returns None when
+    no envelope exists; otherwise the envelope plus a small ``llm``
+    sub-block describing whether (and which) LLM contributed and the
+    detected language, so the admin trace replay can render it."""
+    if envelope is None:
+        return None
+    payload = envelope.to_dict()
+    if llm_verdict is not None:
+        payload["llm"] = {
+            "available":       True,
+            "language":        llm_verdict.get("language"),
+            "llm_confidence":  llm_verdict.get("llm_confidence"),
+            "provider":        llm_verdict.get("provider"),
+            "model":           llm_verdict.get("model"),
+        }
+    else:
+        payload["llm"] = {"available": False, "reason": "llm_unavailable_or_disabled"}
+    return payload
 
 
 def _tool_request_followup_message(tool_targets, casual_opener):

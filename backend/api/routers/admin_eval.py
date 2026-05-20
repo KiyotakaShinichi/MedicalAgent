@@ -57,6 +57,15 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
             except Exception:
                 return []
 
+        def _loads_or_none(value):
+            """Like _loads but returns None when the value is absent —
+            used for new structured JSON columns where empty list would
+            misrepresent missing data."""
+            try:
+                return _json.loads(value) if value else None
+            except Exception:
+                return None
+
         traces = [
             {
                 "id": row.id,
@@ -76,6 +85,7 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
                 "estimated_total_tokens": row.estimated_total_tokens,
                 "retrieved_source_ids": _loads(row.retrieved_source_ids_json),
                 "cited_source_ids": _loads(row.cited_source_ids_json),
+                "compound_intent": _loads_or_none(getattr(row, "compound_intent_json", None)),
                 "created_at": str(row.created_at),
             }
             for row in rows

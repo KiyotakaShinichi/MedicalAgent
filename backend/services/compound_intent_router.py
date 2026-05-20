@@ -510,8 +510,323 @@ def _suggested_acknowledgment(casual: bool, tool: bool, education: bool) -> str 
     return None
 
 
+# ─── LLM-backed multilingual classifier ──────────────────────────────────────
+
+
+# Cache the LLM verdict per normalized message so repeated identical
+# turns don't hit Groq twice in a row.  Capped via _CACHE_MAX_ENTRIES
+# (FIFO eviction by simple dict iteration order — adequate for chat
+# session-scale traffic; not a high-traffic concurrent cache).
+_LLM_VERDICT_CACHE: dict[str, dict[str, Any]] = {}
+_CACHE_MAX_ENTRIES: int = 256
+
+
+# System prompt: deliberately enumerates the allowed kinds + tool
+# targets + the primary_intent precedence rules so the LLM returns
+# a verdict our merge step can consume directly.  Asks for the
+# detected language so the operator's trace replay shows which
+# language the model thought the user was speaking.
+_LLM_COMPOUND_SYSTEM_PROMPT = (
+    "You are a strict multilingual intent classifier for a non-diagnostic "
+    "breast-cancer monitoring patient-support assistant.  The user may "
+    "write in ANY language (English, Filipino/Taglish, Spanish, Bahasa, "
+    "Vietnamese, Chinese, Arabic, Russian, French, Portuguese, German, "
+    "Japanese, Korean, Hindi, Thai, Bengali, Urdu, etc., including "
+    "mixed-language and code-switched messages).  Identify EVERY intent "
+    "present in the message and return STRICT JSON only.\n"
+    "\n"
+    "Allowed segment.kind values:\n"
+    "  - casual_opener      : greeting, identity question, capability question, social check-in, "
+    "thanks\n"
+    "  - tool_request       : user wants to log/save/track/record patient data (symptom, CBC/lab, "
+    "imaging report, medication)\n"
+    "  - education_request  : user asks the meaning of a medical term, what something means, "
+    "explanation request\n"
+    "  - safety_boundary    : treatment-decision request (start/stop/change/delay/dose), "
+    "diagnosis confirmation request, prognosis request, urgent symptom (chest pain, heavy "
+    "bleeding, fever-after-chemo, self-harm)\n"
+    "  - emotional_support  : anxiety, fear, sadness, overwhelm expressed by patient\n"
+    "  - memory_request     : user references prior conversation / what they said earlier\n"
+    "  - portal_help        : user asks how to use the portal / upload / dashboard\n"
+    "  - timeline_request   : user asks about cycle progress / treatment history / monitoring "
+    "score\n"
+    "  - general_support    : none of the above\n"
+    "\n"
+    "Allowed tool_targets values (only on tool_request segments): "
+    "save_symptom, save_complete_cbc, save_imaging_report, save_medication.\n"
+    "\n"
+    "primary_intent precedence (highest wins):\n"
+    "  1. safety_boundary -> safety_boundary\n"
+    "  2. tool_request    -> data_entry_intention\n"
+    "  3. education_request -> education\n"
+    "  4. emotional_support / memory_request / portal_help / timeline_request -> match\n"
+    "  5. casual_opener   -> conversation\n"
+    "  6. otherwise       -> general_support\n"
+    "\n"
+    "DO NOT diagnose, interpret, or recommend anything.  Just CLASSIFY "
+    "what the user is asking for.\n"
+    "\n"
+    "Return JSON: {"
+    "\"language\": str (ISO-639-1 or 'mixed' or 'unknown'), "
+    "\"segments\": [{\"kind\": str, \"span\": str, \"tool_targets\": [str]}], "
+    "\"primary_intent\": str, "
+    "\"casual_opener_acknowledgment\": str|null, "
+    "\"confidence\": float 0..1"
+    "}"
+)
+
+
+# Outer set of valid kinds, kept here so the merge step refuses to
+# accept an unknown kind the LLM hallucinates.
+_LLM_ALLOWED_KINDS: frozenset[str] = frozenset({
+    "casual_opener",
+    "tool_request",
+    "education_request",
+    "safety_boundary",
+    "emotional_support",
+    "memory_request",
+    "portal_help",
+    "timeline_request",
+    "general_support",
+})
+
+
+_LLM_ALLOWED_TOOL_TARGETS: frozenset[str] = frozenset({
+    "save_symptom",
+    "save_complete_cbc",
+    "save_imaging_report",
+    "save_medication",
+})
+
+
+_LLM_ALLOWED_PRIMARY_INTENTS: frozenset[str] = frozenset({
+    "data_entry_intention",
+    "education",
+    "safety_boundary",
+    "conversation",
+    "emotional_support",
+    "patient_memory",
+    "portal_help",
+    "patient_timeline_monitoring",
+    "general_support",
+})
+
+
+_KIND_TO_DEFAULT_INTENT: dict[str, str] = {
+    "casual_opener":     "conversation",
+    "tool_request":      "data_entry_intention",
+    "education_request": "education",
+    "safety_boundary":   "safety_boundary",
+    "emotional_support": "emotional_support",
+    "memory_request":    "patient_memory",
+    "portal_help":       "portal_help",
+    "timeline_request":  "patient_timeline_monitoring",
+    "general_support":   "general_support",
+}
+
+
+def _cache_get(key: str) -> dict[str, Any] | None:
+    return _LLM_VERDICT_CACHE.get(key)
+
+
+def _cache_put(key: str, verdict: dict[str, Any]) -> None:
+    if len(_LLM_VERDICT_CACHE) >= _CACHE_MAX_ENTRIES:
+        # Evict the oldest entry.  Dicts preserve insertion order.
+        try:
+            oldest = next(iter(_LLM_VERDICT_CACHE))
+            _LLM_VERDICT_CACHE.pop(oldest, None)
+        except StopIteration:
+            pass
+    _LLM_VERDICT_CACHE[key] = verdict
+
+
+def _invalidate_llm_cache() -> None:
+    """Test helper — wipe the per-normalized-message cache."""
+    _LLM_VERDICT_CACHE.clear()
+
+
+def classify_compound_intent_with_llm(message: str) -> dict[str, Any] | None:
+    """Multilingual LLM second opinion on the message's compound intent.
+
+    Returns ``None`` when:
+      - the message is empty, or
+      - the configured LLM adjudicator is unavailable (FAST_MODE on,
+        no provider configured, or provider call failed).
+
+    Returns a dict shaped like ``CompoundIntent.to_dict()`` augmented
+    with ``language`` and ``llm_confidence`` when the LLM responded.
+    """
+    if not message or not message.strip():
+        return None
+
+    cache_key = normalize_user_text(message) or message.strip().lower()
+    cached = _cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    try:
+        from backend.services.local_llm import _adjudicate_json
+        import json as _json
+
+        verdict = _adjudicate_json(
+            system=_LLM_COMPOUND_SYSTEM_PROMPT,
+            prompt=_json.dumps({"message": message}, ensure_ascii=False),
+            tier="router",
+        )
+    except Exception as exc:  # noqa: BLE001 — never crash chat on the classifier
+        return None
+
+    if not verdict.get("available"):
+        return None
+
+    normalized = _normalize_llm_verdict(verdict)
+    if normalized is not None:
+        _cache_put(cache_key, normalized)
+    return normalized
+
+
+def _normalize_llm_verdict(verdict: dict[str, Any]) -> dict[str, Any] | None:
+    """Clamp the LLM's free-form output to our schema.  Drops unknown
+    kinds / tool targets / primary intents instead of trusting them
+    blindly.  Returns None when nothing usable survives."""
+    raw_segments = verdict.get("segments") or []
+    segments: list[dict[str, Any]] = []
+    for raw in raw_segments:
+        if not isinstance(raw, dict):
+            continue
+        kind = str(raw.get("kind") or "").strip()
+        if kind not in _LLM_ALLOWED_KINDS:
+            continue
+        tool_targets_raw = raw.get("tool_targets") or []
+        tool_targets = [
+            str(t) for t in tool_targets_raw
+            if isinstance(t, str) and t in _LLM_ALLOWED_TOOL_TARGETS
+        ]
+        span = str(raw.get("span") or "").strip()[:240]
+        segments.append({
+            "kind":         kind,
+            "intent":       _KIND_TO_DEFAULT_INTENT.get(kind, "general_support"),
+            "span":         span,
+            "tool_targets": tool_targets,
+        })
+
+    if not segments:
+        return None
+
+    raw_primary = str(verdict.get("primary_intent") or "").strip()
+    primary_intent = raw_primary if raw_primary in _LLM_ALLOWED_PRIMARY_INTENTS else "general_support"
+
+    raw_language = str(verdict.get("language") or "").strip().lower()[:16] or "unknown"
+
+    raw_confidence = verdict.get("confidence")
+    try:
+        confidence = float(raw_confidence) if raw_confidence is not None else 0.0
+    except (TypeError, ValueError):
+        confidence = 0.0
+    confidence = max(0.0, min(1.0, confidence))
+
+    ack = verdict.get("casual_opener_acknowledgment")
+    if isinstance(ack, str):
+        ack = ack.strip()[:240]
+        if not ack:
+            ack = None
+    else:
+        ack = None
+
+    return {
+        "language":                     raw_language,
+        "llm_confidence":               round(confidence, 3),
+        "segments":                     segments,
+        "primary_intent":               primary_intent,
+        "casual_opener_acknowledgment": ack,
+        "model":                        verdict.get("model"),
+        "provider":                     verdict.get("provider"),
+    }
+
+
+def merge_compound_intent_with_llm(deterministic: CompoundIntent, llm_verdict: dict[str, Any]) -> CompoundIntent:
+    """Merge a deterministic envelope with the LLM verdict.
+
+    Safety floor: the deterministic safety / blocked branches always
+    win.  Helpfulness floor: any tool_request OR education_request the
+    LLM detected that the deterministic pass missed is added so the
+    chat layer can act on it.
+
+    The LLM verdict NEVER demotes a deterministic tool_request to a
+    casual_opener — that would create a regression on the existing
+    multilingual table.
+    """
+    if not llm_verdict:
+        return deterministic
+
+    # If the deterministic pass already detected a safety boundary
+    # (treatment_decision / urgent / diagnostic) we trust it and
+    # don't let the LLM change the primary_intent.
+    deterministic_kinds = {s.kind for s in deterministic.segments}
+    deterministic_safety = "safety_boundary" in deterministic_kinds
+
+    # Build the union of segments.  We dedupe by (kind, normalized span).
+    seen_keys: set[tuple[str, str]] = set()
+    merged_segments: list[IntentSegment] = []
+    for seg in deterministic.segments:
+        key = (seg.kind, seg.span.lower().strip())
+        seen_keys.add(key)
+        merged_segments.append(seg)
+
+    for raw in llm_verdict.get("segments") or []:
+        key = (raw["kind"], raw["span"].lower().strip())
+        if key in seen_keys:
+            continue
+        seen_keys.add(key)
+        merged_segments.append(IntentSegment(
+            intent=raw["intent"],
+            kind=raw["kind"],
+            span=raw["span"],
+            tool_targets=list(raw.get("tool_targets") or []),
+        ))
+
+    # Recompute the envelope so primary_intent etc. reflect the
+    # merged segment set.
+    rebuilt = _build_envelope(merged_segments, original_message=" ".join(s.span for s in merged_segments))
+
+    # Safety-deterministic-wins guard.  If the deterministic pass said
+    # safety_boundary, force the primary intent to safety_boundary.
+    if deterministic_safety:
+        rebuilt.primary_intent = "safety_boundary"
+
+    # Prefer the deterministic acknowledgment when present (already
+    # tuned for our voice).  Fall back to the LLM's suggestion.
+    if deterministic.suggested_acknowledgment:
+        rebuilt.suggested_acknowledgment = deterministic.suggested_acknowledgment
+    elif llm_verdict.get("casual_opener_acknowledgment"):
+        rebuilt.suggested_acknowledgment = llm_verdict["casual_opener_acknowledgment"]
+
+    return rebuilt
+
+
+def detect_compound_intents_with_llm(
+    message: str,
+    *,
+    use_llm: bool = True,
+) -> tuple[CompoundIntent, dict[str, Any] | None]:
+    """Return (merged_envelope, raw_llm_verdict_or_none).
+
+    The merged envelope is the deterministic envelope augmented with
+    LLM segments when ``use_llm=True`` and the adjudicator is
+    available.  Tests opt out with ``use_llm=False`` for hermetic runs.
+    """
+    deterministic = detect_compound_intents(message)
+    llm_verdict = classify_compound_intent_with_llm(message) if use_llm else None
+    if llm_verdict is None:
+        return deterministic, None
+    return merge_compound_intent_with_llm(deterministic, llm_verdict), llm_verdict
+
+
 __all__ = [
     "IntentSegment",
     "CompoundIntent",
     "detect_compound_intents",
+    "classify_compound_intent_with_llm",
+    "merge_compound_intent_with_llm",
+    "detect_compound_intents_with_llm",
 ]

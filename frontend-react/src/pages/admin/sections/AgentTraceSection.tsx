@@ -94,6 +94,56 @@ function TraceRow({ trace, index }: { trace: TraceEntry; index: number }) {
               {trace.cited_source_ids.join(", ")}
             </div>
           )}
+          {trace.compound_intent && (
+            <CompoundIntentBlock compoundIntent={trace.compound_intent} />
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+function CompoundIntentBlock({ compoundIntent }: { compoundIntent: NonNullable<TraceEntry["compound_intent"]> }) {
+  const segments = compoundIntent.segments ?? [];
+  const llm = compoundIntent.llm;
+  return (
+    <div className="col-span-2 mt-1 p-2 rounded-md text-xs" style={{ background: "var(--surface2)", border: "1px solid var(--border)" }}>
+      <div className="flex items-center gap-2 mb-1.5">
+        <span style={{ color: "var(--text-faint)" }}>Compound intent</span>
+        <Badge variant={compoundIntent.is_compound ? "cyan" : "muted"}>
+          {compoundIntent.is_compound ? "compound" : "single"}
+        </Badge>
+        <Badge variant="muted">{compoundIntent.primary_intent.replace(/_/g, " ")}</Badge>
+        {compoundIntent.has_tool_request && (
+          <Badge variant="cyan">tool: {(compoundIntent.tool_request_targets ?? []).join(", ") || "n/a"}</Badge>
+        )}
+        {llm?.available && (
+          <Badge variant="purple">
+            llm:{llm.language ?? "?"}{llm.llm_confidence != null ? ` · conf ${(llm.llm_confidence * 100).toFixed(0)}%` : ""}
+          </Badge>
+        )}
+        {llm && !llm.available && <Badge variant="muted">llm: off</Badge>}
+      </div>
+      <div className="flex flex-col gap-0.5">
+        {segments.length === 0 ? (
+          <span style={{ color: "var(--text-faint)" }}>No segments recorded.</span>
+        ) : (
+          segments.map((seg, idx) => (
+            <div key={idx} className="flex items-baseline gap-2" style={{ color: "var(--text-dim)" }}>
+              <span className="font-mono" style={{ color: "var(--text-faint)" }}>{seg.kind}</span>
+              <span style={{ color: "var(--text)" }}>{seg.span || "(no span)"}</span>
+              {seg.tool_targets?.length > 0 && (
+                <span className="text-[10px]" style={{ color: "var(--cyan)" }}>{seg.tool_targets.join(", ")}</span>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+      {compoundIntent.suggested_acknowledgment && (
+        <div className="mt-1.5 text-[11px]" style={{ color: "var(--text-faint)" }}>
+          <span style={{ color: "var(--text-dim)" }}>Suggested ack: </span>
+          {compoundIntent.suggested_acknowledgment}
         </div>
       )}
     </div>
