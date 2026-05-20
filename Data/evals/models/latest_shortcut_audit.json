@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "f3a3857e9e3f2c4f596e49276a70715268d77dcb",
+    "git_commit": "2c20b6c26ac86744f8a6c3a3cd5e358f6b642f04",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -12,21 +12,23 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779084928:5a1a6aede54d",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-18T15:29:08.463633+00:00"
+    "generated_at": "2026-05-20T05:48:38.631891+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-18T15:29:08.463633+00:00",
+    "generated_at": "2026-05-20T05:48:38.631891+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-19T15:29:08.463633+00:00",
+    "expires_at": "2026-05-21T05:48:38.631891+00:00",
     "status": "fresh"
   },
   "schema_version": "shortcut_audit_v1",
-  "generated_at": "2026-05-18T15:29:08.607545+00:00",
+  "generated_at": "2026-05-20T05:48:38.978845+00:00",
   "status": "acceptable",
   "toxicity_audit": {
     "full_auc": 0.9997,
     "no_nadir_cbc_auc": 0.9941,
     "auc_drop_without_nadir": 0.0056,
+    "near_label_proxy_risk": "present",
+    "review_hint_only": true,
     "top_permutation_features": [
       {
         "feature": "nadir_anc",
@@ -61,7 +63,7 @@
         "importance_mean": 0.0
       }
     ],
-    "interpretation": "Large drop means toxicity label is strongly tied to nadir CBC generator logic."
+    "interpretation": "Legacy toxicity AUC is not a headline performance metric. This audit treats it as shortcut-risk evidence for a review-only hint."
   },
   "regression_audit": {
     "full_mae": 0.9964,
@@ -121,5 +123,15 @@
     }
   },
   "recommendation": "Treat very high synthetic metrics as generator-fit evidence. The legacy toxicity label should be described as shortcut-prone; prefer the softer toxicity-review target for synthetic experiments. Response regression is allowed to use direct imaging change only as a monitor-only imaging-supported signal, with abstention when imaging evidence is absent.",
-  "claim_boundary": "Shortcut audit is synthetic-only. It finds generator shortcuts, not clinical truth."
+  "claim_boundary": "Shortcut audit is synthetic-only. It finds generator shortcuts, not clinical truth.",
+  "display_policy": {
+    "hide_toxicity_auc_as_headline": true,
+    "visible_labels": [
+      "shortcut_audit_status",
+      "review_hint_only",
+      "near_label_proxy_risk",
+      "not_a_clinical_toxicity_predictor"
+    ],
+    "do_not_claim": "Do not quote legacy toxicity AUC as learned clinical toxicity prediction."
+  }
 }

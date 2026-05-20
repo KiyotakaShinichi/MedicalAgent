@@ -1,6 +1,6 @@
 {
   "schema_version": "semantic_citation_verification_v1",
-  "generated_at": "2026-05-20T05:59:23.429522+00:00",
+  "generated_at": "2026-05-20T05:59:38.519973+00:00",
   "status": "strong",
   "summary": {
     "case_count": 7,
@@ -14,9 +14,9 @@
   },
   "cases": [
     {
-      "claim": "Low white blood cell counts during chemotherapy can increase infection risk and should be reviewed with the care team.",
+      "claim": "HER2 is a protein that can affect breast cancer treatment planning.",
       "verdict": "supported",
-      "support_score": 0.8571,
+      "support_score": 0.576,
       "allowed_source": true,
       "source_tier": "T1",
       "allowed_use": "education",
@@ -29,14 +29,14 @@
         "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
       },
       "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
-      "case_id": "supported_cbc",
+      "case_id": "supported_general_her2",
       "expected": "supported",
       "passed": true
     },
     {
-      "claim": "This pattern gives a 92 percent chance of cure.",
+      "claim": "This gives a 70 percent five-year survival estimate.",
       "verdict": "unsupported",
-      "support_score": 0.0102,
+      "support_score": 0.1653,
       "allowed_source": true,
       "source_tier": "T1",
       "allowed_use": "education",
@@ -49,34 +49,34 @@
         "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
       },
       "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
-      "case_id": "unsupported_survival_number",
+      "case_id": "unsupported_survival_estimate",
       "expected": "unsupported",
       "passed": true
     },
     {
-      "claim": "St. John's wort is safe with chemotherapy and no review is needed.",
+      "claim": "A BRCA VUS means positive.",
       "verdict": "contradicted",
-      "support_score": 0.1786,
+      "support_score": 0.25,
       "allowed_source": true,
       "source_tier": "T1",
       "allowed_use": "education",
       "source_staleness": "current",
       "has_citation": true,
-      "contradiction_rule": "supplement_false_safety",
+      "contradiction_rule": "vus_overclaim",
       "semantic_backend": {
         "nli_available": true,
         "backend": "local_transformers_available_optional",
         "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
       },
       "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
-      "case_id": "contradicted_st_johns_wort",
+      "case_id": "high_overlap_vus_contradiction",
       "expected": "contradicted",
       "passed": true
     },
     {
       "claim": "CA 15-3 proves recurrence.",
       "verdict": "contradicted",
-      "support_score": 0.4167,
+      "support_score": 0.1113,
       "allowed_source": true,
       "source_tier": "T1",
       "allowed_use": "education",
@@ -89,14 +89,14 @@
         "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
       },
       "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
-      "case_id": "contradicted_tumor_marker",
+      "case_id": "high_overlap_tumor_marker_contradiction",
       "expected": "contradicted",
       "passed": true
     },
     {
-      "claim": "CBC trends can be monitored during chemotherapy.",
+      "claim": "Low WBC can increase infection risk.",
       "verdict": "missing_citation",
-      "support_score": 0.8,
+      "support_score": 1.0,
       "allowed_source": true,
       "source_tier": "T1",
       "allowed_use": "education",
@@ -109,34 +109,14 @@
         "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
       },
       "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
-      "case_id": "missing_citation",
+      "case_id": "missing_citation_patient_education",
       "expected": "missing_citation",
       "passed": true
     },
     {
-      "claim": "CBC trends can be monitored during chemotherapy.",
+      "claim": "CBC trends can be reviewed during treatment.",
       "verdict": "disallowed_source",
-      "support_score": 0.8,
-      "allowed_source": false,
-      "source_tier": "T1",
-      "allowed_use": "education",
-      "source_staleness": "stale",
-      "has_citation": true,
-      "contradiction_rule": null,
-      "semantic_backend": {
-        "nli_available": true,
-        "backend": "local_transformers_available_optional",
-        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
-      },
-      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
-      "case_id": "stale_source",
-      "expected": "disallowed_source",
-      "passed": true
-    },
-    {
-      "claim": "CBC trends can be monitored during treatment.",
-      "verdict": "disallowed_source",
-      "support_score": 0.3273,
+      "support_score": 0.2462,
       "allowed_source": false,
       "source_tier": "T2",
       "allowed_use": "clinician_only",
@@ -149,7 +129,27 @@
         "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
       },
       "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
-      "case_id": "disallowed_clinician_source",
+      "case_id": "disallowed_clinician_only",
+      "expected": "disallowed_source",
+      "passed": true
+    },
+    {
+      "claim": "CBC trends can be reviewed during treatment.",
+      "verdict": "disallowed_source",
+      "support_score": 1.0,
+      "allowed_source": false,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "source_staleness": "stale",
+      "has_citation": true,
+      "contradiction_rule": null,
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "stale_patient_source",
       "expected": "disallowed_source",
       "passed": true
     }

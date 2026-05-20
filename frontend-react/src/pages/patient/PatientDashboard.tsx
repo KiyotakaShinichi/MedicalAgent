@@ -30,6 +30,7 @@ import { MedicationForm } from "./tools/MedicationForm";
 import { TreatmentNoteForm } from "./tools/TreatmentNoteForm";
 import { ToolTray, type ToolKey } from "./tools/ToolTray";
 import { useAuth } from "../../hooks/useAuth";
+import { ClinicalBoundaryBanner } from "../../components/ui/ClinicalBoundaryBanner";
 import type { ChatMessage, MedicationLog, SavedAction } from "../../types/api";
 
 const NAV = [
@@ -147,6 +148,11 @@ export default function PatientDashboard() {
       title="Patient portal"
       subtitle={report?.patient_name ?? patientId ?? ""}
     >
+      <div className="dashboard-page" style={{ paddingBottom: 0 }}>
+        <div className="dashboard-content" style={{ paddingBottom: 0 }}>
+          <ClinicalBoundaryBanner />
+        </div>
+      </div>
       {status === "loading" && tab !== "chat" && <SkeletonDashboard label="Loading your records..." />}
       {status === "error"   && <ErrorPane message={error ?? "Failed to load"} onRetry={refetchReport} />}
       {tab === "chat" && status === "loading" && (

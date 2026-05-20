@@ -23,6 +23,7 @@ import { ReviewPanel } from "./ReviewPanel";
 import { GeneticReadinessCard } from "./GeneticReadinessCard";
 import { PredictionTracesPanel } from "./PredictionTracesPanel";
 import { ChatPanel } from "../../components/ui/ChatPanel";
+import { ClinicalBoundaryBanner } from "../../components/ui/ClinicalBoundaryBanner";
 import type { PatientReport, ClinicianPredictionTracesResponse } from "../../types/api";
 
 const NAV = [
@@ -99,6 +100,7 @@ export default function ClinicianDashboard() {
         </aside>
 
         <section className="clinician-review-panel">
+          <ClinicalBoundaryBanner />
           {!activePatientId && <EmptyPane label="Select a patient from the queue to begin review" />}
 
           {activePatientId && reportStatus === "loading" && <LoadingPane label="Loading patient..." />}

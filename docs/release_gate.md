@@ -41,6 +41,22 @@ surface known weaknesses, not hide them:
 Those statuses must remain visible in the release output and reviewer docs.
 They are not clinical validation.
 
+## Hard Blockers vs Supporting Needs-Attention
+
+Hard blockers include unsafe answers, patient-facing clinical overclaims,
+leakage failures, stale or missing critical artifacts, claim-boundary
+regressions, and failing breast-monitoring integration tests.
+
+Supporting artifacts may honestly remain `needs_attention` when their role is
+to document an unresolved limitation, such as strict source-tier RAG coverage
+tradeoffs, synthetic generator limitations, shortcut-risk documentation, or the
+unreviewed clinical advisor packet. Those are not hidden passes; they are
+explicit evidence that the limitation is known and visible.
+
+New anti-overclaim gates include semantic claim validation, over-refusal
+negative controls, multilingual adversarial security, live RAG failure
+analysis, and the release-gate explanation artifact.
+
 ## Optional Public-Data Bridge Checks
 
 The public-data bridge artifacts are optional because they depend on local

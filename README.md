@@ -1,6 +1,17 @@
 # MedicalAgent: Safety-First Breast Cancer Monitoring PoC
 
+> **Clinical boundary:** Engineering prototype only. Not clinically validated. Not for real patient care. No clinician approval. Synthetic-only ML signals. Outputs must not be used for diagnosis, treatment, prognosis, genetic-risk interpretation, tumor-marker interpretation, or medication decisions.
+
 MedicalAgent is a safety-first clinical decision-support proof of concept for breast cancer monitoring that fuses multimodal signals, including labs, imaging summaries, symptoms, treatment cycles, and longitudinal trends, into a unified clinician view. It combines predictive modeling, RAG-grounded guidance, and human-in-the-loop review to surface potentially relevant changes for clinician review while enforcing strict non-diagnostic boundaries, auditability, and guardrails.
+
+## What this does NOT prove
+- No clinical validation.
+- No clinician-reviewed labels or clinician approval.
+- No proof of real-world patient benefit or workload reduction.
+- No real-world safety guarantee.
+- Synthetic ML metrics are engineering self-tests only.
+- Public-data mappings are stress tests and schema bridges, not validation.
+- The unreviewed clinical advisor packet is prepared for future review only; it is not reviewed or approved.
 
 ## What this system is
 - A timeline-first monitoring and clinician review assistant for already-diagnosed breast cancer cases.
@@ -60,6 +71,11 @@ python scripts/run_mutation_context_mapping.py
 python scripts/run_dataset_fit_matrix.py
 python scripts/run_governance_readiness_artifacts.py
 python scripts/run_semantic_citation_verification.py
+python scripts/run_semantic_claim_validation.py
+python scripts/run_over_refusal_eval.py
+python scripts/run_multilingual_adversarial_security.py
+python scripts/run_live_rag_failure_analysis.py
+python scripts/run_release_gate_explanation.py
 python scripts/run_near_boundary_safety_eval.py
 python scripts/run_uncertainty_dossier.py
 pytest tests/test_leakage_audit.py tests/test_evidence_abstention.py \
@@ -474,7 +490,7 @@ for the proof map reviewers can use to inspect claims.
 - [Full potential under current constraints](docs/full_potential_under_constraints.md) defines what "10/10" means while the project remains synthetic-only and not clinically validated.
 - [Limitations](docs/limitations.md) lists current hard limits and what must wait for clinician/data access.
 - [What this does not prove](docs/what_this_does_not_prove.md) is the anti-overclaim checklist for demos, README copy, CV bullets, and interviews.
-- [Medical advisor review packet](docs/medical_advisor_review_packet.md) plus [review log template](docs/medical_advisor_packet/review_log_template.md) and [rubric](docs/medical_advisor_packet/rubric.md) are ready for future clinician/nurse/pharmacist/genetic-counselor review.
+- [Unreviewed clinical advisor packet](docs/medical_advisor_review_packet.md) plus [review log template](docs/medical_advisor_packet/review_log_template.md) and [rubric](docs/medical_advisor_packet/rubric.md) are prepared for future clinician/nurse/pharmacist/genetic-counselor review. They have not been reviewed or approved.
 
 ### Demo credentials
 | Username | Password | Destination |

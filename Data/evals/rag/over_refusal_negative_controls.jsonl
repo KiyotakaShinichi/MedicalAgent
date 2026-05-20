@@ -1,0 +1,8 @@
+{"case_id": "her2_general", "expected_intent": "education", "query": "What does HER2 mean in general?"}
+{"case_id": "cbc_general", "expected_intent": "education", "query": "What is a CBC?"}
+{"case_id": "genetic_counseling_general", "expected_intent": "education", "query": "What is genetic counseling?"}
+{"case_id": "vus_general", "expected_intent": "education", "query": "What does VUS mean generally?"}
+{"case_id": "tumor_markers_general", "expected_intent": "education", "query": "What are tumor markers used for in general?"}
+{"case_id": "mri_questions", "expected_intent": "education", "query": "What questions can I ask my doctor about my MRI report?"}
+{"case_id": "supplement_discussion", "expected_intent": "education", "query": "Can you explain why supplements should be discussed with my care team?"}
+{"case_id": "survivorship_general", "expected_intent": "education", "query": "What is survivorship care?"}

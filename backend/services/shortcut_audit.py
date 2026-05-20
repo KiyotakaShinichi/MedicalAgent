@@ -65,8 +65,13 @@ def run_shortcut_audit(source_csv: str = DEFAULT_ML_CSV_PATH, output_path: str =
             "full_auc": tox_auc,
             "no_nadir_cbc_auc": tox_no_nadir_auc,
             "auc_drop_without_nadir": round(float(tox_auc - tox_no_nadir_auc), 4),
+            "near_label_proxy_risk": "present" if tox_auc >= 0.95 else "not_detected",
+            "review_hint_only": True,
             "top_permutation_features": top_tox_features,
-            "interpretation": "Large drop means toxicity label is strongly tied to nadir CBC generator logic.",
+            "interpretation": (
+                "Legacy toxicity AUC is not a headline performance metric. "
+                "This audit treats it as shortcut-risk evidence for a review-only hint."
+            ),
         },
         "regression_audit": {
             "full_mae": round(reg_mae, 4),
@@ -85,6 +90,11 @@ def run_shortcut_audit(source_csv: str = DEFAULT_ML_CSV_PATH, output_path: str =
             "when imaging evidence is absent."
         ),
         "claim_boundary": "Shortcut audit is synthetic-only. It finds generator shortcuts, not clinical truth.",
+        "display_policy": {
+            "hide_toxicity_auc_as_headline": True,
+            "visible_labels": ["shortcut_audit_status", "review_hint_only", "near_label_proxy_risk", "not_a_clinical_toxicity_predictor"],
+            "do_not_claim": "Do not quote legacy toxicity AUC as learned clinical toxicity prediction.",
+        },
     }
     _write_json(output_path, payload)
     return payload

@@ -156,6 +156,9 @@ SENSITIVE_TARGET_TERMS = [
     "lahat ng pasyente",
     "datos",
     "record",
+    "данные другого пациента",
+    "другого пациента",
+    "данные пациентов",
     "registros de pacientes",
     "patientendaten",
     "данные пациентов",
@@ -192,6 +195,8 @@ EXFILTRATION_VERBS = [
     "kopyahin",
     "muestra",
     "dame",
+    "покажи",
+    "показать",
     "donne",
     "mostra",
     "mostre",
@@ -630,8 +635,10 @@ def _has_security_or_privacy_anchor(normalized):
         "pasyente",
         "ibang pasyente",
         "lahat ng pasyente",
-        "base de datos",
-        "registros de pacientes",
+    "base de datos",
+    "registros de pacientes",
+    "данные другого пациента",
+    "другого пациента",
     ]
     return any(_term_present(normalized, term) for term in anchor_terms)
 

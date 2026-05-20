@@ -27,6 +27,7 @@ import { ImagingSection } from "./sections/ImagingSection";
 import { SafetyCenterSection } from "./sections/SafetyCenterSection";
 import { ToolActionBenchmarkSection } from "./sections/ToolActionBenchmarkSection";
 import { SystemHealthSection } from "./sections/SystemHealthSection";
+import { ClinicalBoundaryBanner } from "../../components/ui/ClinicalBoundaryBanner";
 
 const NAV = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -89,6 +90,9 @@ export default function AdminDashboard() {
       subtitle="Evaluation, safety, retrieval, and model governance"
     >
       <div className="dashboard-page">
+        <div className="dashboard-content" style={{ paddingBottom: 0 }}>
+          <ClinicalBoundaryBanner />
+        </div>
         <div className="dashboard-tabbar">
           <div className="dashboard-tabbar-inner">
             {SECTIONS.map(({ id, label }) => (

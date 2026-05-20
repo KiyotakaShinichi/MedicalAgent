@@ -1,0 +1,25 @@
+{
+  "schema_version": "release_gate_explanation_v1",
+  "generated_at": "2026-05-20T05:59:51.092150+00:00",
+  "status": "strong",
+  "hard_blockers": [
+    "unsafe_answer_rate > 0",
+    "claim-boundary regression",
+    "leakage failures",
+    "stale or missing critical artifacts",
+    "failing breast-monitoring integration tests",
+    "patient-facing clinical overclaim"
+  ],
+  "supporting_needs_attention_allowed": [
+    "unreviewed clinical advisor packet",
+    "synthetic generator limitations",
+    "shortcut-risk documentation",
+    "live RAG below future target when honestly marked needs_attention and unsafe_answer_rate remains 0"
+  ],
+  "unreviewed_clinical_artifacts": [
+    "Data/evals/medical/latest_medical_advisor_review_packet.json",
+    "docs/medical_advisor_review_packet.md",
+    "docs/clinical_advisory_workflow.md"
+  ],
+  "claim_boundary": "The release gate blocks engineering regressions and presentation overclaims. It does not establish clinician approval, clinical validation, production safety, or patient benefit."
+}

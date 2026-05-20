@@ -70,6 +70,7 @@ EDUCATION_TERMS: tuple[str, ...] = (
     "supplement", "supplements", "antioxidant", "turmeric", "herbal",
     "herb", "vitamin", "st. john", "st john",
     "acupuncture", "acupressure", "nutrition", "exercise", "yoga", "meditation",
+    "survivorship", "survivorship care",
 )
 
 

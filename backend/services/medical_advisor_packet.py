@@ -25,9 +25,11 @@ def build_medical_advisor_review_packet(
     packet = {
         "schema_version": "medical_advisor_review_packet_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "status": "ready_for_clinical_advisor_review",
+        "display_name": "Unreviewed clinical advisor packet",
+        "status": "prepared_for_future_clinician_review_unreviewed",
         "claim_boundary": (
-            "This packet is for expert review of an engineering prototype. It is not clinical sign-off, "
+            "This unreviewed packet is prepared for future expert review of an engineering prototype. "
+            "It has not been reviewed or approved by a clinician and is not clinical sign-off, "
             "clinical validation, or authorization for patient care use."
         ),
         "review_requested_for": [
@@ -83,9 +85,11 @@ def build_medical_advisor_review_packet(
 
 def _markdown(packet: dict[str, Any]) -> str:
     lines = [
-        "# Medical Advisor Review Packet",
+        "# Unreviewed Clinical Advisor Packet",
         "",
         f"Generated: {packet['generated_at']}",
+        "",
+        "Status: prepared for future clinician review; not reviewed or approved.",
         "",
         "## Claim Boundary",
         packet["claim_boundary"],

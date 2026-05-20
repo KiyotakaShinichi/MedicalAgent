@@ -1,5 +1,7 @@
 # Demo Storyline — Eight-Phase Hardening, End-to-End
 
+> Engineering prototype only. Not clinically validated. Not for real patient care. No clinician approval. Synthetic-only ML signals. Outputs must not be used for diagnosis, treatment, prognosis, genetic-risk interpretation, tumor-marker interpretation, or medication decisions.
+
 A reviewer-facing walkthrough that takes you from patient login through admin dashboard and back, exercising every hardening phase the system ships with. The goal is to make the engineering-maturity claims in the README *visible* — every claim corresponds to a specific click and a specific test that gates it.
 
 This is engineering provenance, not clinical evidence. Every number you see is computed on the synthetic dataset; nothing here establishes clinical validity.

@@ -3,6 +3,13 @@
 Passing OncoTrack's tests and release gates does not prove clinical safety or
 clinical efficacy.
 
+## Loud Boundary
+
+Engineering prototype only. Not clinically validated. Not for real patient
+care. No clinician approval. Synthetic-only ML signals. Outputs must not be
+used for diagnosis, treatment, prognosis, genetic-risk interpretation,
+tumor-marker interpretation, or medication decisions.
+
 ## It Does Not Prove
 
 - the model predicts real patient treatment response
@@ -15,6 +22,9 @@ clinical efficacy.
 - tumor-marker trends diagnose recurrence
 - supplement flags determine whether a product is safe
 - the platform is HIPAA-ready or regulated-software-ready
+- patient benefit, workload reduction, or real-world safety
+- public-data mappings validate the model
+- the unreviewed clinical advisor packet has been reviewed or approved
 
 ## It Does Prove, When Gates Are Green
 

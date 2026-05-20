@@ -1,8 +1,9 @@
 {
   "schema_version": "medical_advisor_review_packet_v1",
-  "generated_at": "2026-05-17T11:11:06.783264+00:00",
-  "status": "ready_for_clinical_advisor_review",
-  "claim_boundary": "This packet is for expert review of an engineering prototype. It is not clinical sign-off, clinical validation, or authorization for patient care use.",
+  "generated_at": "2026-05-20T05:47:17.081291+00:00",
+  "display_name": "Unreviewed clinical advisor packet",
+  "status": "prepared_for_future_clinician_review_unreviewed",
+  "claim_boundary": "This unreviewed packet is prepared for future expert review of an engineering prototype. It has not been reviewed or approved by a clinician and is not clinical sign-off, clinical validation, or authorization for patient care use.",
   "review_requested_for": [
     "urgent symptom/red-flag vocabulary",
     "patient-reported severity to CTCAE-style review hints",
@@ -14,6 +15,103 @@
   "clinical_ontology": {
     "version": "clinical_ontology_v1_2026_05",
     "record_types": {
+      "lab": {
+        "wbc": {
+          "name": "wbc",
+          "allowed_values": [],
+          "required": false,
+          "description": "",
+          "patient_label": "White blood cells",
+          "clinician_label": "WBC",
+          "units": [
+            "10^9/L",
+            "K/uL"
+          ],
+          "reference_range": "population default varies by lab",
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "Interpret with ANC, symptoms, treatment timing, and local lab range.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "anc": {
+          "name": "anc",
+          "allowed_values": [],
+          "required": false,
+          "description": "",
+          "patient_label": "Absolute neutrophil count",
+          "clinician_label": "ANC",
+          "units": [
+            "10^9/L",
+            "K/uL"
+          ],
+          "reference_range": "population default varies by lab",
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "Low ANC with fever is a review/escalation pattern.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "hemoglobin": {
+          "name": "hemoglobin",
+          "allowed_values": [],
+          "required": false,
+          "description": "",
+          "patient_label": "Hemoglobin",
+          "clinician_label": "Hgb",
+          "units": [
+            "g/dL"
+          ],
+          "reference_range": "sex/age/lab dependent",
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "Population default range is not personalized.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "platelets": {
+          "name": "platelets",
+          "allowed_values": [],
+          "required": false,
+          "description": "",
+          "patient_label": "Platelets",
+          "clinician_label": "PLT",
+          "units": [
+            "10^9/L",
+            "K/uL"
+          ],
+          "reference_range": "lab dependent",
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "Low platelets plus bleeding symptoms requires clinician review.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
       "symptom": {
         "symptom": {
           "name": "symptom",
@@ -30,10 +128,28 @@
             "pain",
             "shortness_of_breath",
             "chest_pain",
+            "cognitive_changes",
+            "brain_fog",
+            "lymphedema",
+            "hot_flashes",
             "other"
           ],
           "required": true,
           "description": "Patient-reported symptom category.",
+          "patient_label": "Symptom",
+          "clinician_label": "symptom",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "Patient severity is an organizing signal, not a clinician-assigned toxicity grade.",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "severity": {
@@ -41,6 +157,20 @@
           "allowed_values": [],
           "required": true,
           "description": "0-10 patient-reported severity.",
+          "patient_label": "Severity",
+          "clinician_label": "severity",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         }
       },
@@ -51,12 +181,29 @@
             "mri",
             "ct",
             "ultrasound",
+            "mammogram",
             "pet_ct",
+            "dexa",
             "xray",
             "other"
           ],
           "required": true,
           "description": "Imaging/report modality. Images do not diagnose genetics.",
+          "patient_label": "Modality",
+          "clinician_label": "modality",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_response_confirmation",
+            "genetic_diagnosis"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "report_type": {
@@ -70,6 +217,20 @@
           ],
           "required": false,
           "description": "Clinical timing category for report organization.",
+          "patient_label": "Report Type",
+          "clinician_label": "report_type",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         }
       },
@@ -84,6 +245,20 @@
           ],
           "required": false,
           "description": "",
+          "patient_label": "Er Status",
+          "clinician_label": "er_status",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "pr_status": {
@@ -96,6 +271,20 @@
           ],
           "required": false,
           "description": "",
+          "patient_label": "Pr Status",
+          "clinician_label": "pr_status",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "her2_status": {
@@ -108,6 +297,20 @@
           ],
           "required": false,
           "description": "",
+          "patient_label": "Her2 Status",
+          "clinician_label": "her2_status",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "ihc_score": {
@@ -121,6 +324,20 @@
           ],
           "required": false,
           "description": "",
+          "patient_label": "Ihc Score",
+          "clinician_label": "ihc_score",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "fish_status": {
@@ -132,6 +349,20 @@
           ],
           "required": false,
           "description": "",
+          "patient_label": "Fish Status",
+          "clinician_label": "fish_status",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "ki67_percent": {
@@ -139,6 +370,20 @@
           "allowed_values": [],
           "required": false,
           "description": "Numeric percent if shown on pathology report.",
+          "patient_label": "Ki67 Percent",
+          "clinician_label": "ki67_percent",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         }
       },
@@ -155,6 +400,20 @@
           ],
           "required": true,
           "description": "",
+          "patient_label": "Test Type",
+          "clinician_label": "test_type",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "sample_type": {
@@ -167,6 +426,20 @@
           ],
           "required": false,
           "description": "",
+          "patient_label": "Sample Type",
+          "clinician_label": "sample_type",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "gene": {
@@ -183,6 +456,20 @@
           ],
           "required": false,
           "description": "",
+          "patient_label": "Gene",
+          "clinician_label": "gene",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "classification": {
@@ -197,6 +484,20 @@
           ],
           "required": false,
           "description": "Variant classification copied from a report; not interpreted by OncoTrack.",
+          "patient_label": "Classification",
+          "clinician_label": "classification",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         }
       },
@@ -211,6 +512,20 @@
           ],
           "required": true,
           "description": "",
+          "patient_label": "Marker",
+          "clinician_label": "marker",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "value": {
@@ -218,6 +533,20 @@
           "allowed_values": [],
           "required": true,
           "description": "Numeric value as shown on the lab report.",
+          "patient_label": "Value",
+          "clinician_label": "value",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         },
         "unit": {
@@ -225,6 +554,108 @@
           "allowed_values": [],
           "required": false,
           "description": "Unit copied from the lab report.",
+          "patient_label": "Unit",
+          "clinician_label": "unit",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "supplement": {
+        "name": {
+          "name": "name",
+          "allowed_values": [
+            "st_johns_wort",
+            "turmeric_curcumin",
+            "green_tea_extract",
+            "ginger",
+            "garlic",
+            "ginkgo",
+            "cbd_cannabis",
+            "high_dose_vitamin_c",
+            "antioxidant",
+            "probiotic",
+            "other"
+          ],
+          "required": true,
+          "description": "Supplement/vitamin/herbal product reported by patient.",
+          "patient_label": "Name",
+          "clinician_label": "name",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "interaction_safety_flag",
+            "clinician_review",
+            "education"
+          ],
+          "blocked_claims": [
+            "safe_with_chemo",
+            "replace_treatment",
+            "cancer_treatment_claim"
+          ],
+          "review_notes": "Ask oncology team/pharmacist before use during active treatment.",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        }
+      },
+      "medication": {
+        "category": {
+          "name": "category",
+          "allowed_values": [
+            "chemotherapy",
+            "targeted_therapy",
+            "endocrine_therapy",
+            "immunotherapy",
+            "supportive_care",
+            "other"
+          ],
+          "required": false,
+          "description": "",
+          "patient_label": "Category",
+          "clinician_label": "category",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
+          "claim_boundary": "Record organization only; not clinical interpretation."
+        },
+        "name": {
+          "name": "name",
+          "allowed_values": [],
+          "required": false,
+          "description": "Medication name as entered or selected.",
+          "patient_label": "Name",
+          "clinician_label": "name",
+          "units": [],
+          "reference_range": null,
+          "source_type": "structured_patient_or_report_field",
+          "allowed_use": [
+            "record_organization",
+            "clinician_review"
+          ],
+          "blocked_claims": [
+            "diagnosis",
+            "treatment_recommendation"
+          ],
+          "review_notes": "",
           "claim_boundary": "Record organization only; not clinical interpretation."
         }
       }
@@ -350,6 +781,21 @@
         "code": "tumor_marker_overclaim",
         "decision": "blocked",
         "description": "Uses tumor marker value alone to claim recurrence/progression."
+      },
+      {
+        "code": "false_reassurance",
+        "decision": "blocked",
+        "description": "Tells a patient a symptom/supplement/result is safe/fine or not worth worry without clinician review."
+      },
+      {
+        "code": "pregnancy_pediatric_boundary",
+        "decision": "caution",
+        "description": "Pregnancy, breastfeeding, fertility, or minor/pediatric context requires clinician-specific review."
+      },
+      {
+        "code": "survivorship_support",
+        "decision": "caution",
+        "description": "Survivorship, recurrence anxiety, palliative/supportive-care questions should stay educational and route to care team when patient-specific."
       }
     ]
   },

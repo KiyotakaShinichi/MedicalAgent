@@ -281,14 +281,15 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         "tier": "critical",
         "metrics": {
             "status": ["status"],
-            "toxicity_auc": ["toxicity_audit", "full_auc"],
-            "toxicity_auc_drop_without_nadir": ["toxicity_audit", "auc_drop_without_nadir"],
+            "shortcut_audit_status": ["status"],
+            "near_label_proxy_risk": ["toxicity_audit", "near_label_proxy_risk"],
+            "review_hint_only": ["toxicity_audit", "review_hint_only"],
             "regression_mae_increase_without_mri": ["regression_audit", "mae_increase_without_mri_percent_change"],
         },
     },
     {
         "id": "medical_advisor_review_packet",
-        "title": "Medical advisor review packet",
+        "title": "Unreviewed clinical advisor packet",
         "path": "Data/evals/medical/latest_medical_advisor_review_packet.json",
         "tier": "supporting",
         "metrics": {
@@ -960,6 +961,54 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "semantic_claim_validation",
+        "title": "Semantic claim validation",
+        "path": "Data/evals/rag/latest_semantic_claim_validation.json",
+        "tier": "critical",
+        "metrics": {
+            "status": ["status"],
+            "case_count": ["summary", "case_count"],
+            "hard_failures": ["summary", "hard_failures"],
+            "contradicted_cases": ["summary", "contradicted_cases"],
+            "missing_citation_cases": ["summary", "missing_citation_cases"],
+        },
+    },
+    {
+        "id": "live_rag_failure_analysis",
+        "title": "Live RAG failure analysis",
+        "path": "Data/evals/rag/latest_live_rag_failure_analysis.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "failure_count": ["summary", "failure_count"],
+            "live_pass_rate": ["summary", "pass_rates", "live_agent"],
+        },
+    },
+    {
+        "id": "over_refusal_eval",
+        "title": "Over-refusal negative controls",
+        "path": "Data/evals/rag/latest_over_refusal_eval.json",
+        "tier": "critical",
+        "metrics": {
+            "status": ["status"],
+            "safe_answer_rate": ["summary", "safe_answer_rate"],
+            "inappropriate_refusal_rate": ["summary", "inappropriate_refusal_rate"],
+            "unsafe_answer_rate": ["summary", "unsafe_answer_rate"],
+        },
+    },
+    {
+        "id": "multilingual_adversarial_security",
+        "title": "Multilingual adversarial security",
+        "path": "Data/evals/safety/latest_multilingual_adversarial_security.json",
+        "tier": "critical",
+        "metrics": {
+            "status": ["status"],
+            "case_count": ["summary", "case_count"],
+            "pass_rate": ["summary", "pass_rate"],
+            "unsafe_leakage_rate": ["summary", "unsafe_leakage_rate"],
+        },
+    },
+    {
         "id": "rag_tier_ablation",
         "title": "RAG source-tier retrieval ablation (T1 / T1+T2 / T1+T2+T3 / all)",
         "path": "Data/evals/rag/latest_rag_tier_ablation.json",
@@ -1135,6 +1184,15 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "status": ["status"],
             "stale_artifact_count": ["metrics", "stale_artifact_count"],
             "failed_benchmark_count": ["metrics", "failed_benchmark_count"],
+        },
+    },
+    {
+        "id": "release_gate_explanation",
+        "title": "Release-gate explanation",
+        "path": "Data/evals/governance/latest_release_gate_explanation.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
         },
     },
     {

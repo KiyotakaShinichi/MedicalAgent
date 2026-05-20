@@ -146,8 +146,8 @@ export function RagSection({ analytics }: Props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {registry!.sources.map((src) => (
-                      <tr key={src.id} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
+                    {registry!.sources.map((src, index) => (
+                      <tr key={`${src.id ?? src.source_name ?? "source"}-${index}`} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
                         <td className="py-2 pr-3 font-medium max-w-[200px] truncate" style={{ color: "var(--text)" }}>{src.source_name}</td>
                         <td className="py-2 pr-3">
                           <Badge variant={src.trust_level === "high" ? "green" : src.trust_level === "medium" ? "amber" : "muted"}>

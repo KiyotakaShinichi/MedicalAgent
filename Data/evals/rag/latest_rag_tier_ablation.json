@@ -1,7 +1,7 @@
 {
   "schema_version": "rag_tier_ablation_v1",
-  "generated_at": "2026-05-18T08:31:22.019552+00:00",
-  "status": "acceptable",
+  "generated_at": "2026-05-20T05:58:43.687654+00:00",
+  "status": "strong",
   "tier_configs_evaluated": [
     "t1_only",
     "t1_t2",
@@ -14,17 +14,17 @@
       "allowed_tiers": [
         "T1"
       ],
-      "pass_rate": 0.381,
-      "claim_support_rate": 0.1765,
+      "pass_rate": 0.4762,
+      "claim_support_rate": 0.1176,
       "citation_precision": 1.0,
       "source_tier_correctness": 1.0,
-      "refusal_correctness": 0.4286,
+      "refusal_correctness": 0.4762,
       "unsafe_answer_rate": 0.0,
-      "latency_p50_ms": 4641.07,
+      "latency_p50_ms": 1507.9,
       "grade_distribution": {
-        "insufficient": 12,
+        "insufficient": 11,
         "moderate": 1,
-        "high": 4
+        "high": 5
       }
     },
     {
@@ -33,18 +33,17 @@
         "T1",
         "T2"
       ],
-      "pass_rate": 0.6667,
-      "claim_support_rate": 0.6471,
+      "pass_rate": 0.8571,
+      "claim_support_rate": 0.5882,
       "citation_precision": 1.0,
       "source_tier_correctness": 1.0,
-      "refusal_correctness": 0.6667,
+      "refusal_correctness": 0.8571,
       "unsafe_answer_rate": 0.0,
-      "latency_p50_ms": 2979.53,
+      "latency_p50_ms": 1217.22,
       "grade_distribution": {
-        "insufficient": 4,
-        "moderate": 10,
-        "low": 1,
-        "high": 2
+        "insufficient": 3,
+        "moderate": 9,
+        "high": 5
       }
     },
     {
@@ -54,17 +53,16 @@
         "T2",
         "T3"
       ],
-      "pass_rate": 0.8095,
-      "claim_support_rate": 0.8431,
+      "pass_rate": 1.0,
+      "claim_support_rate": 0.7255,
       "citation_precision": 1.0,
       "source_tier_correctness": 1.0,
-      "refusal_correctness": 0.8095,
+      "refusal_correctness": 1.0,
       "unsafe_answer_rate": 0.0,
-      "latency_p50_ms": 2929.16,
+      "latency_p50_ms": 1222.15,
       "grade_distribution": {
-        "moderate": 14,
-        "low": 1,
-        "high": 2
+        "moderate": 12,
+        "high": 5
       }
     },
     {
@@ -75,17 +73,16 @@
         "T3",
         "T4"
       ],
-      "pass_rate": 0.8095,
-      "claim_support_rate": 0.8431,
+      "pass_rate": 1.0,
+      "claim_support_rate": 0.7255,
       "citation_precision": 1.0,
       "source_tier_correctness": 1.0,
-      "refusal_correctness": 0.8095,
+      "refusal_correctness": 1.0,
       "unsafe_answer_rate": 0.0,
-      "latency_p50_ms": 3436.93,
+      "latency_p50_ms": 1164.88,
       "grade_distribution": {
-        "moderate": 14,
-        "low": 1,
-        "high": 2
+        "moderate": 12,
+        "high": 5
       }
     }
   ],

@@ -1,9 +1,11 @@
-# Medical Advisor Review Packet
+# Unreviewed Clinical Advisor Packet
 
-Generated: 2026-05-17T11:11:06.783264+00:00
+Generated: 2026-05-20T05:47:17.081291+00:00
+
+Status: prepared for future clinician review; not reviewed or approved.
 
 ## Claim Boundary
-This packet is for expert review of an engineering prototype. It is not clinical sign-off, clinical validation, or authorization for patient care use.
+This unreviewed packet is prepared for future expert review of an engineering prototype. It has not been reviewed or approved by a clinician and is not clinical sign-off, clinical validation, or authorization for patient care use.
 
 ## Review Scope
 - urgent symptom/red-flag vocabulary

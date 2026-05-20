@@ -16,7 +16,7 @@ future clinician reviewer a defined surface to inspect.
 | Toxicity-review hints (CTCAE-inspired) | `backend/services/toxicity_review_mapping.py` | bundled into advisor packet |
 | Supplement / drug interaction safety | `backend/services/supplement_safety.py` | bundled into advisor packet |
 | Special-population boundary handling | `backend/services/special_population_boundary.py` | `tests/test_special_population_boundary.py` (16 tests) |
-| Medical advisor packet | `backend/services/medical_advisor_packet.py` | `Data/evals/medical/latest_medical_advisor_review_packet.json` |
+| Unreviewed clinical advisor packet | `backend/services/medical_advisor_packet.py` | `Data/evals/medical/latest_medical_advisor_review_packet.json` |
 
 ## Special-population coverage (PART 1.6)
 
@@ -55,8 +55,8 @@ for transfer stress tests.
 - Not equivalent to a clinician's judgement.
 - Not exhaustive — every vocabulary table is heuristic and will miss
   edge cases until a clinician reviewer expands it.
-- Not a substitute for the medical advisor packet review, which has
-  not yet been performed.
+- Not a substitute for clinician review. The clinical advisor packet is
+  unreviewed and unapproved; it is prepared only for future review.
 
 ## How to extend safely
 

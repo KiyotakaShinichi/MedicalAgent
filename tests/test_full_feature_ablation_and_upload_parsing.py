@@ -191,7 +191,8 @@ def test_medical_advisor_packet_lists_review_scope(tmp_path):
     )
 
     assert packet["schema_version"] == "medical_advisor_review_packet_v1"
-    assert packet["status"] == "ready_for_clinical_advisor_review"
+    assert packet["status"] == "prepared_for_future_clinician_review_unreviewed"
+    assert "not been reviewed or approved" in packet["claim_boundary"]
     assert "genetics/VUS/tumor-marker refusal" in " ".join(packet["review_requested_for"])
 
 
