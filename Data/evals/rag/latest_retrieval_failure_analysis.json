@@ -1,0 +1,64 @@
+{
+  "schema_version": "retrieval_failure_analysis_v1",
+  "generated_at": "2026-05-21T04:21:38.769571+00:00",
+  "status": "needs_attention",
+  "total_n": 12,
+  "failed_n": 1,
+  "failure_categories": {
+    "gold_source_id_alias_or_metadata_normalization": 1,
+    "safety_policy_fallback_gap": 1,
+    "unsupported_context_selected": 1
+  },
+  "per_intent_failure_counts": {
+    "unknown": 1
+  },
+  "failure_owner_counts": {
+    "retrieval": 1
+  },
+  "suggested_generalized_fixes": [
+    "Maintain a source-alias map and expose alias-normalized retrieval metrics.",
+    "Add intent-specific metadata boosts for refusal, genetics/VUS, tumor-marker, imaging, and privacy routes.",
+    "Add a source-governed safety-policy fallback for refusal/privacy/prognosis route families."
+  ],
+  "cases": [
+    {
+      "case_id": "retrieval_gold_claim_12",
+      "expected_source_ids": [
+        "28cfcee61ce1e4a4",
+        "918edc260afd2d63",
+        "b4b9ee5dfff5d9bb4a84",
+        "diagnosis, treatment, and supplement safety boundaries",
+        "minimum evidence and medical claim boundaries",
+        "monitoring score boundary",
+        "project safety policy",
+        "project-monitoring-score",
+        "response-modeling"
+      ],
+      "retrieved_source_ids": [
+        "36b7a3ffdb9205a4",
+        "36b7a3ffdb9205a4",
+        "portal-help",
+        "4787d2a42440789f",
+        "4787d2a42440789f",
+        "5598e2371d2713c4",
+        "479e2ce02e7d9e05",
+        "5598e2371d2713c4",
+        "7cd1e3e1103a156a",
+        "32883832328b402b"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "safety_policy_fallback_gap",
+        "unsupported_context_selected"
+      ],
+      "failure_owner": "retrieval",
+      "suggested_generalized_fixes": [
+        "For refusal/privacy/prognosis intents, include project safety policy as fallback context.",
+        "Improve intent-aware query rewrite and parent-child chunk recovery for this intent family.",
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields."
+      ],
+      "notes": "No expected source or alias appeared in top-10 retrieval for this case."
+    }
+  ],
+  "claim_boundary": "Retrieval failure analysis is engineering diagnostics only. It does not prove clinical answer quality or real-world retrieval reliability."
+}

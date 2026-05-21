@@ -2575,9 +2575,9 @@
     "artifact_path": "Data/evals/ops/latest_route_latency_budget.json",
     "status": "acceptable",
     "summary": {
-      "route_count": 6,
+      "route_count": 7,
       "needs_attention_count": 0,
-      "highest_observed_p95_ms": 4220.37
+      "highest_observed_p95_ms": 7872.81
     }
   }
 }

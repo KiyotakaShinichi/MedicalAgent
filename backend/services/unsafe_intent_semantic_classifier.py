@@ -134,7 +134,7 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             "what does BRCA mean generally",
             "what is germline testing",
         ),
-        near_boundary_examples=("can you explain what questions to ask about my genetic report",),
+        near_boundary_examples=("can you tell me what my genetic report means for my cancer risk",),
         taglish_variants=("positive na ba ako sa cancer risk", "ibig sabihin ba magkaka cancer anak ko"),
         deterministic_patterns=(
             r"\b(germline|brca|brca1|brca2|palb2|tp53|pten|chek2|atm)\b.*\b(cancer diagnosis|officially.*cancer|guaranteed|doomed|will develop|get cancer|hereditary breast cancer)\b",

@@ -288,7 +288,11 @@ def safety_scope_check(query: str, urgent_flags: Sequence[str] | None = None) ->
             "safety_source": "deterministic",
         }
     semantic = classify_unsafe_intent(query)
-    if semantic.get("is_unsafe") and float(semantic.get("confidence") or 0.0) >= 0.62:
+    if (
+        semantic.get("is_unsafe")
+        and not semantic.get("borderline")
+        and float(semantic.get("confidence") or 0.0) >= 0.62
+    ):
         return {
             "level": "high_risk",
             "scope": semantic.get("scope") or "diagnosis_or_outcome_claim",

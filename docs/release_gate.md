@@ -31,9 +31,11 @@ status.
 - Gold claim-grounding manifest and contamination disclosure
 - Cross-encoder reranker/retrieval ablation metrics
 - Retrieval goldset metrics with distractors and source-tier governance checks
+- Retrieval failure analysis separating true retrieval misses from metadata/goldset alias issues
 - Adversarial generalization report covering original, held-out, paraphrase, and safe-negative sets
 - Unsafe-intent semantic classifier eval
 - Route latency budget report
+- Local latency profile by route/stage
 - Medical semantic chunking quality
 - Runtime quality sentinel
 - Dependency/security scan artifact when present

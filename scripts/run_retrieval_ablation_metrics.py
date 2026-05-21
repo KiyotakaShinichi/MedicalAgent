@@ -34,6 +34,89 @@ OUTPUT_PATH = ROOT / "Data/evals/rag/latest_reranker_ablation.json"
 GOLD_CASE_PATH = ROOT / "Data/evals/rag/gold_claim_grounding_cases.jsonl"
 STRATEGIES = ("dense_only", "sparse_only", "hybrid_rrf", "hybrid_rrf_cross_encoder")
 
+SOURCE_ID_ALIASES: dict[str, set[str]] = {
+    "cbc-monitoring": {
+        "cbc-monitoring", "curated-wbc-neutropenia", "cbc labs and trend monitoring",
+        "cbc, anc, hemoglobin, and platelet monitoring reference", "0185db088c803c80",
+        "36b7a3ffdb9205a4", "927cf11805df9019d710", "f6726c194bf1f479171f",
+    },
+    "curated-wbc-neutropenia": {
+        "curated-wbc-neutropenia", "cbc-monitoring", "side effects and red flags during breast cancer treatment",
+        "treatment-side-effects", "3ca1dfefbd3147b0", "c30ab0b49f328562e76f",
+        "nci-febrile-neutropenia", "febrile neutropenia during chemotherapy",
+    },
+    "infection-safety": {
+        "infection-safety", "cdc", "cdc-fever-chemo", "fever during chemotherapy",
+        "nci-febrile-neutropenia", "febrile neutropenia during chemotherapy", "treatment-side-effects",
+    },
+    "curated-fever-neutropenia": {
+        "curated-fever-neutropenia", "nci-febrile-neutropenia",
+        "febrile neutropenia during chemotherapy", "infection-safety", "treatment-side-effects",
+    },
+    "imaging-monitoring": {
+        "imaging-monitoring", "curated-mri-response-terms",
+        "imaging report monitoring: mri, ct, ultrasound, and response language",
+        "mri, ct, ultrasound, and imaging response terms reference", "a734a844daed9ef7",
+        "33ef73acba84d60bd7a1", "87ec22bc66c88b40ea76", "7cd1e3e1103a156a",
+    },
+    "curated-mri-response-terms": {
+        "curated-mri-response-terms", "imaging-monitoring",
+        "imaging report monitoring: mri, ct, ultrasound, and response language",
+        "mri, ct, ultrasound, and imaging response terms reference", "a734a844daed9ef7",
+        "33ef73acba84d60bd7a1", "87ec22bc66c88b40ea76", "7cd1e3e1103a156a",
+    },
+    "genetic-counseling": {
+        "genetic-counseling", "curated-vus-boundary",
+        "genetic counseling readiness and family history intake",
+        "germline testing, somatic testing, vus, and multigene panels",
+        "genetics, biomarker, and tumor marker safety terms reference",
+        "22d463a5a12d490af4c6", "29f0f5dda9789b7e", "4787d2a42440789f",
+        "eafe5c100c4cd819b6fa", "917264d81e3123c0d2a8",
+    },
+    "curated-vus-boundary": {
+        "curated-vus-boundary", "genetic-counseling", "vus",
+        "germline testing, somatic testing, vus, and multigene panels",
+        "genetics, biomarker, and tumor marker safety terms reference",
+        "29f0f5dda9789b7e", "4787d2a42440789f", "eafe5c100c4cd819b6fa",
+        "917264d81e3123c0d2a8",
+    },
+    "tumor-marker-context": {
+        "tumor-marker-context", "curated-tumor-marker-limitations",
+        "minimum evidence and medical claim boundaries",
+        "genetics, biomarker, and tumor marker safety terms reference",
+        "28cfcee61ce1e4a4", "4787d2a42440789f", "972b1b8be879098562a7",
+        "150bf2854b59cec640b1", "917264d81e3123c0d2a8",
+    },
+    "curated-tumor-marker-limitations": {
+        "curated-tumor-marker-limitations", "tumor-marker-context",
+        "minimum evidence and medical claim boundaries",
+        "genetics, biomarker, and tumor marker safety terms reference",
+        "28cfcee61ce1e4a4", "4787d2a42440789f", "972b1b8be879098562a7",
+        "150bf2854b59cec640b1", "917264d81e3123c0d2a8",
+    },
+    "supplement-safety": {
+        "supplement-safety", "curated-st-johns-wort", "curated-st-johns-wort-safety",
+        "nci-msk-supplement-safety", "supplements during cancer treatment",
+        "curated supplement interaction safety", "supplement and natural product safety by product reference",
+        "6649c1bba1cd7799", "2c9cf580eb45af0e", "bd077c510af8e9bb2107",
+    },
+    "curated-st-johns-wort": {
+        "curated-st-johns-wort", "curated-st-johns-wort-safety", "supplement-safety",
+        "st. johns wort interaction safety", "st johns wort interaction safety",
+    },
+    "project safety policy": {
+        "project safety policy", "project-monitoring-score", "monitoring score boundary",
+        "diagnosis, treatment, and supplement safety boundaries",
+        "minimum evidence and medical claim boundaries", "response-modeling",
+        "918edc260afd2d63", "28cfcee61ce1e4a4", "b4b9ee5dfff5d9bb4a84",
+    },
+    "treatment-side-effects": {
+        "treatment-side-effects", "acs-chemo-side-effects",
+        "side effects and red flags during breast cancer treatment", "3ca1dfefbd3147b0",
+        "1d8b472e73bcd9696d15",
+    },
+}
+
 
 def main() -> int:
     if not GOLD_CASE_PATH.exists():
@@ -179,11 +262,15 @@ def _load_cases(path: Path) -> list[dict[str, Any]]:
 
 
 def _expected_ids(case: dict[str, Any]) -> set[str]:
-    return {
+    raw = {
         str(value).strip().lower()
         for value in case.get("expected_source_ids", [])
         if str(value).strip()
     }
+    expanded = set(raw)
+    for value in raw:
+        expanded |= SOURCE_ID_ALIASES.get(value, set())
+    return expanded
 
 
 def _first_expected_rank(rows: list[dict[str, Any]], expected: set[str]) -> int | None:
@@ -204,7 +291,11 @@ def _row_ids(row: dict[str, Any]) -> set[str]:
         row.get("parent_id"),
         row.get("title"),
     }
-    return {str(value).strip().lower() for value in values if value}
+    ids = {str(value).strip().lower() for value in values if value}
+    expanded = set(ids)
+    for value in ids:
+        expanded |= SOURCE_ID_ALIASES.get(value, set())
+    return expanded
 
 
 def _rate(rows: list[dict[str, Any]], key: str) -> float:

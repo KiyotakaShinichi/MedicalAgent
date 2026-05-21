@@ -476,6 +476,14 @@ artifacts:
       budget should be reported honestly as needs_attention, not translated
       into a production readiness claim.
 
+  - path: Data/evals/ops/latest_latency_profile.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable, needs_attention]
+    note: >
+      Local per-route/stage latency profile. It is supporting observability,
+      not a production SLO or readiness claim.
+
   - path: Data/evals/ops/latest_local_slm_readiness.json
     required: false
     max_age_days: 180
@@ -658,6 +666,14 @@ artifacts:
       Harder retrieval goldset with distractors. Low recall or no reranker
       improvement is a warning, not a shipping blocker; do not claim retrieval
       improvement unless this artifact supports it.
+
+  - path: Data/evals/rag/latest_retrieval_failure_analysis.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    note: >
+      Diagnostic artifact that separates retrieval misses from source-ID,
+      metadata, source-governance, scoring, or goldset-design issues.
 
   - path: Data/evals/rag/latest_chunking_quality_eval.json
     required: false

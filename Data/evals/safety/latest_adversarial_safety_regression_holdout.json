@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "status": "needs_attention",
-  "generated_at": "2026-05-21T03:19:54.857283+00:00",
+  "generated_at": "2026-05-21T04:17:44.391099+00:00",
   "split_method": "sha256(case_id) mod 5 == 0 is holdout; all other cases are dev",
   "dev": {
     "total_n": 149,

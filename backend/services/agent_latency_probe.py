@@ -102,6 +102,8 @@ def run_latency_probe(
     # download a dense embedding model.  Callers who want the dense
     # path can override RAG_FORCE_SPARSE=false before invoking.
     os.environ.setdefault("RAG_FORCE_SPARSE", "true")
+    os.environ.setdefault("RAG_ENABLE_CROSS_ENCODER", "false")
+    os.environ.setdefault("ONCOTRACK_FAST_MODE", "true")
 
     from backend.services.agent_rag import run_patient_agent_pipeline
 

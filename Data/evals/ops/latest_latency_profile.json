@@ -1,12 +1,7 @@
 {
-  "schema_version": "route_latency_budget_v1",
-  "generated_at": "2026-05-21T04:13:42.052088+00:00",
+  "schema_version": "latency_profile_v1",
+  "generated_at": "2026-05-21T04:13:26.530004+00:00",
   "status": "acceptable",
-  "summary": {
-    "route_count": 7,
-    "needs_attention_count": 0,
-    "highest_observed_p95_ms": 7872.81
-  },
   "routes": [
     {
       "route": "deterministic_safety_refusal",
@@ -19,9 +14,7 @@
       "current_p99_ms": 529.71,
       "latency_status": "ideal",
       "bottleneck_stage": "retrieval_ms",
-      "production_ready": false,
-      "observed_p95_ms": 529.71,
-      "status": "ideal"
+      "production_ready": false
     },
     {
       "route": "cached_educational_answer",
@@ -34,9 +27,7 @@
       "current_p99_ms": 55.18,
       "latency_status": "ideal",
       "bottleneck_stage": "total_or_external_wait",
-      "production_ready": false,
-      "observed_p95_ms": 55.18,
-      "status": "ideal"
+      "production_ready": false
     },
     {
       "route": "normal_rag",
@@ -49,9 +40,7 @@
       "current_p99_ms": 7872.81,
       "latency_status": "acceptable",
       "bottleneck_stage": "retrieval_ms",
-      "production_ready": false,
-      "observed_p95_ms": 7872.81,
-      "status": "acceptable"
+      "production_ready": false
     },
     {
       "route": "rag_plus_reranker",
@@ -64,9 +53,7 @@
       "current_p99_ms": null,
       "latency_status": "not_sampled",
       "bottleneck_stage": null,
-      "production_ready": false,
-      "observed_p95_ms": null,
-      "status": "not_sampled"
+      "production_ready": false
     },
     {
       "route": "low_confidence_safe_default",
@@ -79,9 +66,7 @@
       "current_p99_ms": 576.53,
       "latency_status": "ideal",
       "bottleneck_stage": "retrieval_ms",
-      "production_ready": false,
-      "observed_p95_ms": 576.53,
-      "status": "ideal"
+      "production_ready": false
     },
     {
       "route": "hybrid_prediction",
@@ -94,9 +79,7 @@
       "current_p99_ms": null,
       "latency_status": "not_sampled",
       "bottleneck_stage": null,
-      "production_ready": false,
-      "observed_p95_ms": null,
-      "status": "not_sampled"
+      "production_ready": false
     },
     {
       "route": "emotional_distress_support",
@@ -109,10 +92,53 @@
       "current_p99_ms": null,
       "latency_status": "not_sampled",
       "bottleneck_stage": null,
-      "production_ready": false,
-      "observed_p95_ms": null,
-      "status": "not_sampled"
+      "production_ready": false
     }
   ],
-  "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs."
+  "stage_summary": {
+    "safety_gate_ms": {
+      "samples": 5,
+      "median_ms": 21.44,
+      "p95_ms": 46.93,
+      "max_ms": 52.18
+    },
+    "intent_routing_ms": {
+      "samples": 5,
+      "median_ms": 0.06,
+      "p95_ms": 0.32,
+      "max_ms": 0.36
+    },
+    "retrieval_ms": {
+      "samples": 5,
+      "median_ms": 529.54,
+      "p95_ms": 6342.22,
+      "max_ms": 7786.83
+    },
+    "rerank_ms": {
+      "samples": 5,
+      "median_ms": 0.93,
+      "p95_ms": 1.14,
+      "max_ms": 1.19
+    },
+    "generation_ms": {
+      "samples": 5,
+      "median_ms": 0.29,
+      "p95_ms": 0.87,
+      "max_ms": 0.95
+    },
+    "total_ms": {
+      "samples": 10,
+      "median_ms": 518.34,
+      "p95_ms": 5659.86,
+      "max_ms": 7872.81
+    }
+  },
+  "optimization_policy": {
+    "skip_reranker_when_retrieval_confidence_high": true,
+    "skip_generation_on_deterministic_refusal": true,
+    "skip_generation_on_insufficient_evidence_safe_default": true,
+    "cache_low_risk_educational_retrieval_only": true,
+    "local_load_smoke_forces_sparse_backend": true
+  },
+  "claim_boundary": "Latency profile is local engineering observability only. It is not a production SLO, hospital-readiness claim, or real-world performance guarantee."
 }

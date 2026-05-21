@@ -282,6 +282,9 @@ function ArtifactSummaryCard({
           {claimBoundary && (
             <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>{claimBoundary}</p>
           )}
+          <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+            Internal engineering eval. Clinical validation: false.
+          </p>
         </div>
        )}
     </Card>

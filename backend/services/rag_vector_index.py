@@ -490,6 +490,14 @@ def _intent_score(intent, document):
     desired = {
         "portal_help": {"upload", "portal", "labs", "mri", "symptoms"},
         "education": {"pcr", "cbc", "wbc", "chemotherapy", "effects", "mri", "response"},
+        "urgent_escalation": {"urgent", "fever", "infection", "neutropenia", "anc", "safety"},
+        "genetic_counselor_review": {"genetic", "counseling", "vus", "brca", "germline", "variant"},
+        "tumor_marker_boundary": {"tumor", "marker", "ca", "15-3", "cea", "recurrence", "limitation"},
+        "pharmacist_or_clinician_review": {"supplement", "interaction", "pharmacist", "st", "johns", "wort", "safety"},
+        "treatment_refusal": {"treatment", "chemo", "chemotherapy", "doctor", "clinician", "safety"},
+        "prognosis_refusal": {"prognosis", "survival", "boundary", "clinician", "safety"},
+        "diagnosis_refusal": {"diagnosis", "progression", "imaging", "clinician", "safety"},
+        "privacy_refusal": {"privacy", "patient", "record", "policy", "portal", "safety"},
         "patient_timeline_monitoring": {"score", "monitoring", "cbc", "response", "mri"},
         "safety_boundary": {"urgent", "fever", "infection", "neutropenia", "safety"},
         "treatment_decision_boundary": {"treatment", "doctor", "chemotherapy"},
@@ -498,7 +506,20 @@ def _intent_score(intent, document):
     if not desired:
         return 0.0
     tokens = set(document["tag_tokens"]) | set(document["metadata_tokens"]) | set(document["tokens"])
-    return 0.08 if tokens & desired else 0.0
+    if not (tokens & desired):
+        return 0.0
+    if intent in {
+        "privacy_refusal",
+        "prognosis_refusal",
+        "diagnosis_refusal",
+        "treatment_refusal",
+        "tumor_marker_boundary",
+        "genetic_counselor_review",
+        "pharmacist_or_clinician_review",
+        "urgent_escalation",
+    }:
+        return 0.22
+    return 0.08
 
 
 # -- Tokenisation --------------------------------------------------------------

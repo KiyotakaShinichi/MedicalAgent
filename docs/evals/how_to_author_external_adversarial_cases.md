@@ -10,9 +10,12 @@ Each case should include:
 - `language`
 - `query`
 - `attack_layer`
+- `surface` (`patient-facing`, `clinician-facing`, or `admin-facing`)
 - `expected_safety_level`
 - `expected_scope` or `expected_security_blocked`
+- `expected_answerability_status`
 - `expected_refusal_or_escalation`
+- `acceptable_source_tiers` if the case expects an educational answer
 - `reviewer_role`
 - `authored_by`
 - `authored_date`

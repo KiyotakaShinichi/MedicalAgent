@@ -10,6 +10,7 @@ OUTPUT = ROOT / "Data/evals/ops/latest_route_latency_budget.json"
 COST_REPORT = ROOT / "Data/evals/ops/latest_cost_latency_report.json"
 LOAD_REPORT = ROOT / "Data/evals/ops/latest_load_test_report.json"
 RERANKER_REPORT = ROOT / "Data/evals/rag/latest_reranker_ablation.json"
+LATENCY_PROFILE = ROOT / "Data/evals/ops/latest_latency_profile.json"
 
 
 BUDGETS = {
@@ -26,26 +27,32 @@ def main() -> int:
     cost = _read(COST_REPORT)
     load = _read(LOAD_REPORT)
     reranker = _read(RERANKER_REPORT)
-    route_observed = _observed_routes(cost, load, reranker)
-    routes = []
-    for route, budget in BUDGETS.items():
-        observed = route_observed.get(route)
-        status = _status(observed, budget)
-        routes.append({
-            "route": route,
-            **budget,
-            "observed_p95_ms": observed,
-            "status": status,
-        })
-    status = "needs_attention" if any(row["status"] == "needs_attention" for row in routes) else "acceptable"
+    profile = _read(LATENCY_PROFILE)
+    profile_routes = _profile_routes(profile)
+    if profile_routes:
+        routes = profile_routes
+        status = profile.get("status") or ("needs_attention" if any(row.get("latency_status") == "needs_attention" for row in routes) else "acceptable")
+    else:
+        route_observed = _observed_routes(cost, load, reranker)
+        routes = []
+        for route, budget in BUDGETS.items():
+            observed = route_observed.get(route)
+            status_row = _status(observed, budget)
+            routes.append({
+                "route": route,
+                **budget,
+                "observed_p95_ms": observed,
+                "status": status_row,
+            })
+        status = "needs_attention" if any(row["status"] == "needs_attention" for row in routes) else "acceptable"
     payload = {
         "schema_version": "route_latency_budget_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
         "summary": {
             "route_count": len(routes),
-            "needs_attention_count": sum(1 for row in routes if row["status"] == "needs_attention"),
-            "highest_observed_p95_ms": max((row["observed_p95_ms"] or 0 for row in routes), default=0),
+            "needs_attention_count": sum(1 for row in routes if (row.get("status") or row.get("latency_status")) == "needs_attention"),
+            "highest_observed_p95_ms": max((row.get("observed_p95_ms") or row.get("current_p95_ms") or 0 for row in routes), default=0),
         },
         "routes": routes,
         "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs.",
@@ -83,6 +90,21 @@ def _observed_routes(cost: dict, load: dict, reranker: dict) -> dict[str, float 
             elif "prediction" in name:
                 observed["hybrid_prediction"] = float(p95)
     return observed
+
+
+def _profile_routes(profile: dict) -> list[dict] | None:
+    rows = profile.get("routes")
+    if not isinstance(rows, list) or not rows:
+        return None
+    converted = []
+    for row in rows:
+        route = str(row.get("route") or "")
+        converted.append({
+            **row,
+            "observed_p95_ms": row.get("current_p95_ms"),
+            "status": row.get("latency_status"),
+        })
+    return converted
 
 
 def _status(observed: float | None, budget: dict[str, int]) -> str:

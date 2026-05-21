@@ -1316,6 +1316,15 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "latency_profile",
+        "title": "Latency profile",
+        "path": "Data/evals/ops/latest_latency_profile.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+        },
+    },
+    {
         "id": "rag_reranker_ablation",
         "title": "Cross-encoder reranker ablation",
         "path": "Data/evals/rag/latest_reranker_ablation.json",
@@ -1340,6 +1349,17 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "mrr": ["summary", "mrr"],
             "unsupported_context_rate": ["summary", "unsupported_context_rate"],
             "improvement_proven": ["summary", "improvement_proven"],
+        },
+    },
+    {
+        "id": "retrieval_failure_analysis",
+        "title": "Retrieval failure analysis",
+        "path": "Data/evals/rag/latest_retrieval_failure_analysis.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "total_n": ["total_n"],
+            "failed_n": ["failed_n"],
         },
     },
     {

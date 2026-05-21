@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import statistics
 import sys
 import time
@@ -12,6 +13,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+# Local load smoke should measure application routing, not cold downloads of
+# optional dense/reranker models. Production-like dense retrieval can be tested
+# separately by explicitly overriding these env vars.
+os.environ.setdefault("RAG_FORCE_SPARSE", "true")
+os.environ.setdefault("RAG_ENABLE_CROSS_ENCODER", "false")
+os.environ.setdefault("ONCOTRACK_FAST_MODE", "true")
 
 from backend.services.agent_latency_probe import _new_db_session  # noqa: E402
 from backend.services.agent_rag import run_patient_agent_pipeline  # noqa: E402
@@ -48,7 +56,7 @@ def main() -> int:
     payload = {
         "schema_version": "local_agent_load_test_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "status": "strong" if not failures else "needs_attention",
+        "status": _status(failures, latencies),
         "request_count": len(rows),
         "concurrency": args.concurrency,
         "summary": {
@@ -111,6 +119,17 @@ def _percentile(values: list[float], percentile: int) -> float | None:
     values = sorted(values)
     index = round((percentile / 100) * (len(values) - 1))
     return round(values[max(0, min(index, len(values) - 1))], 3)
+
+
+def _status(failures: list[dict], latencies: list[float]) -> str:
+    if failures:
+        return "needs_attention"
+    p95 = _percentile(latencies, 95) or 0.0
+    if p95 > 30_000:
+        return "needs_attention"
+    if p95 > 10_000:
+        return "acceptable"
+    return "strong"
 
 
 if __name__ == "__main__":

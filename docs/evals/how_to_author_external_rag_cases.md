@@ -8,11 +8,13 @@ For each case, include:
 - `case_id`
 - `user_query`
 - `expected_intent`
+- `expected_answerability_status`
 - `expected_refusal_or_escalation`
 - `acceptable_source_tiers`
 - `expected_allowed_use`
 - `gold_source_ids` if known
 - `contradiction_traps`
+- `surface` (`patient-facing`, `clinician-facing`, or `admin-facing`)
 - `reviewer_role`
 - `authored_by`
 - `authored_date`

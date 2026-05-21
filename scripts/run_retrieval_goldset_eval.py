@@ -35,6 +35,7 @@ def main() -> int:
     governed = _governed_view(strategies["hybrid_rrf_cross_encoder"])
     strategies["hybrid_rrf_cross_encoder_source_governed"] = governed
     best = strategies["hybrid_rrf_cross_encoder_source_governed"]["summary"]
+    baseline = strategies["hybrid_rrf"]["summary"]
     payload = {
         "schema_version": "retrieval_goldset_eval_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -49,8 +50,10 @@ def main() -> int:
         ),
         "strategies": strategies,
         "summary": {
+            "baseline_recall_at_10": baseline["recall_at_10"],
             "recall_at_5": best["recall_at_5"],
             "recall_at_10": best["recall_at_10"],
+            "recall_at_10_delta": round(best["recall_at_10"] - baseline["recall_at_10"], 4),
             "mrr": best["mrr"],
             "ndcg_at_5": best.get("ndcg_at_5", best["ndcg_at_10"]),
             "ndcg_at_10": best["ndcg_at_10"],
@@ -62,6 +65,10 @@ def main() -> int:
             "reranker_latency_ms": best["reranker_latency_ms"],
             "total_retrieval_latency_p95": best["p95_retrieval_latency_ms"],
             "improvement_proven": _improvement_proven(strategies),
+            "improvement_note": (
+                "Improvement may reflect metadata/source-ID normalization as well as retrieval scoring; "
+                "do not present as cross-encoder lift unless reranker metrics beat hybrid RRF."
+            ),
         },
         "claim_boundary": (
             "Retrieval goldset metrics are engineering evidence only. Do not claim "
