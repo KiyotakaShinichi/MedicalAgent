@@ -1,0 +1,61 @@
+{
+  "schema_version": "route_latency_budget_v1",
+  "generated_at": "2026-05-21T03:19:52.506930+00:00",
+  "status": "acceptable",
+  "summary": {
+    "route_count": 6,
+    "needs_attention_count": 0,
+    "highest_observed_p95_ms": 4220.37
+  },
+  "routes": [
+    {
+      "route": "deterministic_safety_refusal",
+      "ideal_p95_ms": 750,
+      "acceptable_p95_ms": 1500,
+      "needs_attention_p95_ms": 3000,
+      "observed_p95_ms": null,
+      "status": "not_measured"
+    },
+    {
+      "route": "cached_educational_answer",
+      "ideal_p95_ms": 500,
+      "acceptable_p95_ms": 1200,
+      "needs_attention_p95_ms": 2500,
+      "observed_p95_ms": null,
+      "status": "not_measured"
+    },
+    {
+      "route": "dense_sparse_rag",
+      "ideal_p95_ms": 2500,
+      "acceptable_p95_ms": 6000,
+      "needs_attention_p95_ms": 12000,
+      "observed_p95_ms": 4220.37,
+      "status": "acceptable"
+    },
+    {
+      "route": "rag_plus_reranker",
+      "ideal_p95_ms": 4000,
+      "acceptable_p95_ms": 9000,
+      "needs_attention_p95_ms": 15000,
+      "observed_p95_ms": 1017.64,
+      "status": "acceptable"
+    },
+    {
+      "route": "low_confidence_safe_default",
+      "ideal_p95_ms": 1000,
+      "acceptable_p95_ms": 2500,
+      "needs_attention_p95_ms": 5000,
+      "observed_p95_ms": null,
+      "status": "not_measured"
+    },
+    {
+      "route": "hybrid_prediction",
+      "ideal_p95_ms": 500,
+      "acceptable_p95_ms": 1500,
+      "needs_attention_p95_ms": 3000,
+      "observed_p95_ms": null,
+      "status": "not_measured"
+    }
+  ],
+  "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs."
+}

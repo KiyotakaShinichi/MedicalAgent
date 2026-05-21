@@ -1,10 +1,12 @@
 {
-  "schema_version": "retrieval_reranker_ablation_v2",
-  "generated_at": "2026-05-20T22:02:25.321426+00:00",
-  "release_id": "2026-05-ai-swe-hardening",
-  "baseline_version": "gold_claim_grounding_cases_v2_2026_05",
-  "cross_encoder_available": true,
-  "cross_encoder_enabled": false,
+  "schema_version": "retrieval_goldset_eval_v1",
+  "generated_at": "2026-05-21T03:20:26.024460+00:00",
+  "status": "acceptable",
+  "total_n": 12,
+  "authored_by": "engineering",
+  "authored_date": "2026-05-21",
+  "was_used_for_tuning": false,
+  "contamination_note": "Goldset is internally authored from source-governance expectations. Use it for retrieval evidence quality, not external validation.",
   "strategies": {
     "dense_only": {
       "summary": {
@@ -18,14 +20,14 @@
         "claim_support_rate": 0.4167,
         "source_tier_correctness": 1.0,
         "unsupported_answer_rate": 0.5833,
-        "p50_retrieval_latency_ms": 1343.841,
-        "p95_retrieval_latency_ms": 13754.575,
+        "p50_retrieval_latency_ms": 448.159,
+        "p95_retrieval_latency_ms": 10758.907,
         "reranker_latency_ms": 0.0
       },
       "cases": [
         {
-          "case_id": "gold_claim_01",
-          "category": "breast_cancer_education",
+          "case_id": "retrieval_gold_claim_01",
+          "category": null,
           "expected_source_ids": [
             "curated-her2-basics",
             "nci-her2-breast"
@@ -52,11 +54,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 13754.575
+          "latency_ms": 10758.907
         },
         {
-          "case_id": "gold_claim_02",
-          "category": "cbc_lab_explanation",
+          "case_id": "retrieval_gold_claim_02",
+          "category": null,
           "expected_source_ids": [
             "cbc-monitoring",
             "curated-wbc-neutropenia"
@@ -83,11 +85,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1035.853
+          "latency_ms": 369.731
         },
         {
-          "case_id": "gold_claim_03",
-          "category": "urgent_symptom",
+          "case_id": "retrieval_gold_claim_03",
+          "category": null,
           "expected_source_ids": [
             "curated-fever-neutropenia",
             "infection-safety"
@@ -114,11 +116,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 1206.275
+          "latency_ms": 341.129
         },
         {
-          "case_id": "gold_claim_04",
-          "category": "imaging_explanation",
+          "case_id": "retrieval_gold_claim_04",
+          "category": null,
           "expected_source_ids": [
             "curated-mri-response-terms",
             "imaging-monitoring"
@@ -145,11 +147,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1141.999
+          "latency_ms": 319.49
         },
         {
-          "case_id": "gold_claim_05",
-          "category": "genetics_vus",
+          "case_id": "retrieval_gold_claim_05",
+          "category": null,
           "expected_source_ids": [
             "curated-vus-boundary",
             "genetic-counseling"
@@ -176,11 +178,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1147.858
+          "latency_ms": 331.878
         },
         {
-          "case_id": "gold_claim_06",
-          "category": "tumor_marker_limitations",
+          "case_id": "retrieval_gold_claim_06",
+          "category": null,
           "expected_source_ids": [
             "curated-tumor-marker-limitations",
             "tumor-marker-context"
@@ -207,11 +209,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1392.515
+          "latency_ms": 396.509
         },
         {
-          "case_id": "gold_claim_07",
-          "category": "supplement_boundary",
+          "case_id": "retrieval_gold_claim_07",
+          "category": null,
           "expected_source_ids": [
             "curated-st-johns-wort",
             "supplement-safety"
@@ -238,11 +240,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 1447.167
+          "latency_ms": 551.628
         },
         {
-          "case_id": "gold_claim_08",
-          "category": "treatment_change_refusal",
+          "case_id": "retrieval_gold_claim_08",
+          "category": null,
           "expected_source_ids": [
             "project safety policy",
             "treatment-side-effects"
@@ -269,11 +271,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 1769.375
+          "latency_ms": 739.08
         },
         {
-          "case_id": "gold_claim_09",
-          "category": "prognosis_refusal",
+          "case_id": "retrieval_gold_claim_09",
+          "category": null,
           "expected_source_ids": [
             "project safety policy"
           ],
@@ -299,11 +301,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1682.331
+          "latency_ms": 982.537
         },
         {
-          "case_id": "gold_claim_10",
-          "category": "taglish_code_switch",
+          "case_id": "retrieval_gold_claim_10",
+          "category": null,
           "expected_source_ids": [
             "project safety policy",
             "treatment-side-effects"
@@ -330,11 +332,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 1825.208
+          "latency_ms": 847.549
         },
         {
-          "case_id": "gold_claim_11",
-          "category": "near_boundary",
+          "case_id": "retrieval_gold_claim_11",
+          "category": null,
           "expected_source_ids": [
             "imaging-monitoring",
             "project safety policy"
@@ -361,11 +363,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1253.645
+          "latency_ms": 499.809
         },
         {
-          "case_id": "gold_claim_12",
-          "category": "privacy_boundary",
+          "case_id": "retrieval_gold_claim_12",
+          "category": null,
           "expected_source_ids": [
             "project safety policy"
           ],
@@ -391,7 +393,7 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1295.166
+          "latency_ms": 373.748
         }
       ]
     },
@@ -407,14 +409,14 @@
         "claim_support_rate": 0.5,
         "source_tier_correctness": 1.0,
         "unsupported_answer_rate": 0.5,
-        "p50_retrieval_latency_ms": 1120.704,
-        "p95_retrieval_latency_ms": 1554.711,
+        "p50_retrieval_latency_ms": 336.348,
+        "p95_retrieval_latency_ms": 421.27,
         "reranker_latency_ms": 0.0
       },
       "cases": [
         {
-          "case_id": "gold_claim_01",
-          "category": "breast_cancer_education",
+          "case_id": "retrieval_gold_claim_01",
+          "category": null,
           "expected_source_ids": [
             "curated-her2-basics",
             "nci-her2-breast"
@@ -441,11 +443,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 1362.127
+          "latency_ms": 350.289
         },
         {
-          "case_id": "gold_claim_02",
-          "category": "cbc_lab_explanation",
+          "case_id": "retrieval_gold_claim_02",
+          "category": null,
           "expected_source_ids": [
             "cbc-monitoring",
             "curated-wbc-neutropenia"
@@ -472,11 +474,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1368.589
+          "latency_ms": 342.141
         },
         {
-          "case_id": "gold_claim_03",
-          "category": "urgent_symptom",
+          "case_id": "retrieval_gold_claim_03",
+          "category": null,
           "expected_source_ids": [
             "curated-fever-neutropenia",
             "infection-safety"
@@ -503,11 +505,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1429,
           "ndcg_at_10": 0.3333,
-          "latency_ms": 1431.649
+          "latency_ms": 331.21
         },
         {
-          "case_id": "gold_claim_04",
-          "category": "imaging_explanation",
+          "case_id": "retrieval_gold_claim_04",
+          "category": null,
           "expected_source_ids": [
             "curated-mri-response-terms",
             "imaging-monitoring"
@@ -534,11 +536,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1093.97
+          "latency_ms": 360.824
         },
         {
-          "case_id": "gold_claim_05",
-          "category": "genetics_vus",
+          "case_id": "retrieval_gold_claim_05",
+          "category": null,
           "expected_source_ids": [
             "curated-vus-boundary",
             "genetic-counseling"
@@ -565,11 +567,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1554.711
+          "latency_ms": 317.013
         },
         {
-          "case_id": "gold_claim_06",
-          "category": "tumor_marker_limitations",
+          "case_id": "retrieval_gold_claim_06",
+          "category": null,
           "expected_source_ids": [
             "curated-tumor-marker-limitations",
             "tumor-marker-context"
@@ -596,11 +598,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1147.437
+          "latency_ms": 318.659
         },
         {
-          "case_id": "gold_claim_07",
-          "category": "supplement_boundary",
+          "case_id": "retrieval_gold_claim_07",
+          "category": null,
           "expected_source_ids": [
             "curated-st-johns-wort",
             "supplement-safety"
@@ -627,11 +629,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 1186.837
+          "latency_ms": 316.01
         },
         {
-          "case_id": "gold_claim_08",
-          "category": "treatment_change_refusal",
+          "case_id": "retrieval_gold_claim_08",
+          "category": null,
           "expected_source_ids": [
             "project safety policy",
             "treatment-side-effects"
@@ -658,11 +660,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.2,
           "ndcg_at_10": 0.3869,
-          "latency_ms": 945.141
+          "latency_ms": 300.277
         },
         {
-          "case_id": "gold_claim_09",
-          "category": "prognosis_refusal",
+          "case_id": "retrieval_gold_claim_09",
+          "category": null,
           "expected_source_ids": [
             "project safety policy"
           ],
@@ -688,11 +690,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 878.238
+          "latency_ms": 315.845
         },
         {
-          "case_id": "gold_claim_10",
-          "category": "taglish_code_switch",
+          "case_id": "retrieval_gold_claim_10",
+          "category": null,
           "expected_source_ids": [
             "project safety policy",
             "treatment-side-effects"
@@ -719,11 +721,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1429,
           "ndcg_at_10": 0.3333,
-          "latency_ms": 957.034
+          "latency_ms": 421.27
         },
         {
-          "case_id": "gold_claim_11",
-          "category": "near_boundary",
+          "case_id": "retrieval_gold_claim_11",
+          "category": null,
           "expected_source_ids": [
             "imaging-monitoring",
             "project safety policy"
@@ -750,11 +752,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1,
           "ndcg_at_10": 0.2891,
-          "latency_ms": 863.923
+          "latency_ms": 351.225
         },
         {
-          "case_id": "gold_claim_12",
-          "category": "privacy_boundary",
+          "case_id": "retrieval_gold_claim_12",
+          "category": null,
           "expected_source_ids": [
             "project safety policy"
           ],
@@ -780,7 +782,7 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 797.639
+          "latency_ms": 341.486
         }
       ]
     },
@@ -796,14 +798,14 @@
         "claim_support_rate": 0.4167,
         "source_tier_correctness": 1.0,
         "unsupported_answer_rate": 0.5833,
-        "p50_retrieval_latency_ms": 805.906,
-        "p95_retrieval_latency_ms": 921.59,
+        "p50_retrieval_latency_ms": 312.798,
+        "p95_retrieval_latency_ms": 376.508,
         "reranker_latency_ms": 0.0
       },
       "cases": [
         {
-          "case_id": "gold_claim_01",
-          "category": "breast_cancer_education",
+          "case_id": "retrieval_gold_claim_01",
+          "category": null,
           "expected_source_ids": [
             "curated-her2-basics",
             "nci-her2-breast"
@@ -830,11 +832,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 769.327
+          "latency_ms": 323.139
         },
         {
-          "case_id": "gold_claim_02",
-          "category": "cbc_lab_explanation",
+          "case_id": "retrieval_gold_claim_02",
+          "category": null,
           "expected_source_ids": [
             "cbc-monitoring",
             "curated-wbc-neutropenia"
@@ -861,11 +863,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 830.515
+          "latency_ms": 354.888
         },
         {
-          "case_id": "gold_claim_03",
-          "category": "urgent_symptom",
+          "case_id": "retrieval_gold_claim_03",
+          "category": null,
           "expected_source_ids": [
             "curated-fever-neutropenia",
             "infection-safety"
@@ -892,11 +894,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1111,
           "ndcg_at_10": 0.301,
-          "latency_ms": 745.814
+          "latency_ms": 376.508
         },
         {
-          "case_id": "gold_claim_04",
-          "category": "imaging_explanation",
+          "case_id": "retrieval_gold_claim_04",
+          "category": null,
           "expected_source_ids": [
             "curated-mri-response-terms",
             "imaging-monitoring"
@@ -923,11 +925,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 869.662
+          "latency_ms": 296.788
         },
         {
-          "case_id": "gold_claim_05",
-          "category": "genetics_vus",
+          "case_id": "retrieval_gold_claim_05",
+          "category": null,
           "expected_source_ids": [
             "curated-vus-boundary",
             "genetic-counseling"
@@ -954,11 +956,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 829.03
+          "latency_ms": 289.412
         },
         {
-          "case_id": "gold_claim_06",
-          "category": "tumor_marker_limitations",
+          "case_id": "retrieval_gold_claim_06",
+          "category": null,
           "expected_source_ids": [
             "curated-tumor-marker-limitations",
             "tumor-marker-context"
@@ -985,11 +987,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 773.813
+          "latency_ms": 332.129
         },
         {
-          "case_id": "gold_claim_07",
-          "category": "supplement_boundary",
+          "case_id": "retrieval_gold_claim_07",
+          "category": null,
           "expected_source_ids": [
             "curated-st-johns-wort",
             "supplement-safety"
@@ -1016,11 +1018,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.25,
           "ndcg_at_10": 0.4307,
-          "latency_ms": 861.396
+          "latency_ms": 322.318
         },
         {
-          "case_id": "gold_claim_08",
-          "category": "treatment_change_refusal",
+          "case_id": "retrieval_gold_claim_08",
+          "category": null,
           "expected_source_ids": [
             "project safety policy",
             "treatment-side-effects"
@@ -1047,11 +1049,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1429,
           "ndcg_at_10": 0.3333,
-          "latency_ms": 755.561
+          "latency_ms": 308.259
         },
         {
-          "case_id": "gold_claim_09",
-          "category": "prognosis_refusal",
+          "case_id": "retrieval_gold_claim_09",
+          "category": null,
           "expected_source_ids": [
             "project safety policy"
           ],
@@ -1077,11 +1079,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 742.784
+          "latency_ms": 293.106
         },
         {
-          "case_id": "gold_claim_10",
-          "category": "taglish_code_switch",
+          "case_id": "retrieval_gold_claim_10",
+          "category": null,
           "expected_source_ids": [
             "project safety policy",
             "treatment-side-effects"
@@ -1108,11 +1110,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1429,
           "ndcg_at_10": 0.3333,
-          "latency_ms": 921.59
+          "latency_ms": 317.337
         },
         {
-          "case_id": "gold_claim_11",
-          "category": "near_boundary",
+          "case_id": "retrieval_gold_claim_11",
+          "category": null,
           "expected_source_ids": [
             "imaging-monitoring",
             "project safety policy"
@@ -1139,11 +1141,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 782.782
+          "latency_ms": 298.193
         },
         {
-          "case_id": "gold_claim_12",
-          "category": "privacy_boundary",
+          "case_id": "retrieval_gold_claim_12",
+          "category": null,
           "expected_source_ids": [
             "project safety policy"
           ],
@@ -1169,7 +1171,7 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 855.285
+          "latency_ms": 303.337
         }
       ]
     },
@@ -1185,14 +1187,14 @@
         "claim_support_rate": 0.4167,
         "source_tier_correctness": 1.0,
         "unsupported_answer_rate": 0.5833,
-        "p50_retrieval_latency_ms": 925.613,
-        "p95_retrieval_latency_ms": 1017.64,
-        "reranker_latency_ms": 0.16
+        "p50_retrieval_latency_ms": 375.518,
+        "p95_retrieval_latency_ms": 461.356,
+        "reranker_latency_ms": 0.084
       },
       "cases": [
         {
-          "case_id": "gold_claim_01",
-          "category": "breast_cancer_education",
+          "case_id": "retrieval_gold_claim_01",
+          "category": null,
           "expected_source_ids": [
             "curated-her2-basics",
             "nci-her2-breast"
@@ -1219,11 +1221,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 953.318
+          "latency_ms": 347.738
         },
         {
-          "case_id": "gold_claim_02",
-          "category": "cbc_lab_explanation",
+          "case_id": "retrieval_gold_claim_02",
+          "category": null,
           "expected_source_ids": [
             "cbc-monitoring",
             "curated-wbc-neutropenia"
@@ -1250,11 +1252,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 929.771
+          "latency_ms": 346.492
         },
         {
-          "case_id": "gold_claim_03",
-          "category": "urgent_symptom",
+          "case_id": "retrieval_gold_claim_03",
+          "category": null,
           "expected_source_ids": [
             "curated-fever-neutropenia",
             "infection-safety"
@@ -1281,11 +1283,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1111,
           "ndcg_at_10": 0.301,
-          "latency_ms": 833.683
+          "latency_ms": 312.473
         },
         {
-          "case_id": "gold_claim_04",
-          "category": "imaging_explanation",
+          "case_id": "retrieval_gold_claim_04",
+          "category": null,
           "expected_source_ids": [
             "curated-mri-response-terms",
             "imaging-monitoring"
@@ -1312,11 +1314,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 987.152
+          "latency_ms": 312.87
         },
         {
-          "case_id": "gold_claim_05",
-          "category": "genetics_vus",
+          "case_id": "retrieval_gold_claim_05",
+          "category": null,
           "expected_source_ids": [
             "curated-vus-boundary",
             "genetic-counseling"
@@ -1343,11 +1345,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 793.233
+          "latency_ms": 340.963
         },
         {
-          "case_id": "gold_claim_06",
-          "category": "tumor_marker_limitations",
+          "case_id": "retrieval_gold_claim_06",
+          "category": null,
           "expected_source_ids": [
             "curated-tumor-marker-limitations",
             "tumor-marker-context"
@@ -1374,11 +1376,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 1017.64
+          "latency_ms": 435.384
         },
         {
-          "case_id": "gold_claim_07",
-          "category": "supplement_boundary",
+          "case_id": "retrieval_gold_claim_07",
+          "category": null,
           "expected_source_ids": [
             "curated-st-johns-wort",
             "supplement-safety"
@@ -1405,11 +1407,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.25,
           "ndcg_at_10": 0.4307,
-          "latency_ms": 947.503
+          "latency_ms": 410.569
         },
         {
-          "case_id": "gold_claim_08",
-          "category": "treatment_change_refusal",
+          "case_id": "retrieval_gold_claim_08",
+          "category": null,
           "expected_source_ids": [
             "project safety policy",
             "treatment-side-effects"
@@ -1436,11 +1438,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1429,
           "ndcg_at_10": 0.3333,
-          "latency_ms": 866.06
+          "latency_ms": 398.124
         },
         {
-          "case_id": "gold_claim_09",
-          "category": "prognosis_refusal",
+          "case_id": "retrieval_gold_claim_09",
+          "category": null,
           "expected_source_ids": [
             "project safety policy"
           ],
@@ -1466,11 +1468,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 848.066
+          "latency_ms": 415.073
         },
         {
-          "case_id": "gold_claim_10",
-          "category": "taglish_code_switch",
+          "case_id": "retrieval_gold_claim_10",
+          "category": null,
           "expected_source_ids": [
             "project safety policy",
             "treatment-side-effects"
@@ -1497,11 +1499,11 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1429,
           "ndcg_at_10": 0.3333,
-          "latency_ms": 921.455
+          "latency_ms": 406.047
         },
         {
-          "case_id": "gold_claim_11",
-          "category": "near_boundary",
+          "case_id": "retrieval_gold_claim_11",
+          "category": null,
           "expected_source_ids": [
             "imaging-monitoring",
             "project safety policy"
@@ -1528,11 +1530,11 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 938.72
+          "latency_ms": 352.912
         },
         {
-          "case_id": "gold_claim_12",
-          "category": "privacy_boundary",
+          "case_id": "retrieval_gold_claim_12",
+          "category": null,
           "expected_source_ids": [
             "project safety policy"
           ],
@@ -1558,30 +1560,414 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 844.384
+          "latency_ms": 461.356
+        }
+      ]
+    },
+    "hybrid_rrf_cross_encoder_source_governed": {
+      "summary": {
+        "case_count": 12,
+        "mrr": 0.0956,
+        "ndcg_at_10": 0.1691,
+        "recall_at_5": 0.1667,
+        "recall_at_10": 0.4167,
+        "source_hit_rate": 0.4167,
+        "citation_support_rate": 0.4167,
+        "claim_support_rate": 0.4167,
+        "source_tier_correctness": 1.0,
+        "unsupported_answer_rate": 0.5833,
+        "p50_retrieval_latency_ms": 375.518,
+        "p95_retrieval_latency_ms": 461.356,
+        "reranker_latency_ms": 0.084
+      },
+      "cases": [
+        {
+          "case_id": "retrieval_gold_claim_01",
+          "category": null,
+          "expected_source_ids": [
+            "curated-her2-basics",
+            "nci-her2-breast"
+          ],
+          "retrieved_source_ids": [
+            "3ce25293cb05a3c257fc",
+            "breast-treatment-basics",
+            "05fa744d857f4cfa8865",
+            "32883832328b402b",
+            "462d304fbed421ae6e14",
+            "7cd1e3e1103a156a",
+            "2a9f2ed73f0b189c",
+            "d585ebd25c605f1b",
+            "2a9f2ed73f0b189c",
+            "5598e2371d2713c4"
+          ],
+          "first_relevant_rank": 2,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.5,
+          "ndcg_at_10": 0.6309,
+          "latency_ms": 347.738
+        },
+        {
+          "case_id": "retrieval_gold_claim_02",
+          "category": null,
+          "expected_source_ids": [
+            "cbc-monitoring",
+            "curated-wbc-neutropenia"
+          ],
+          "retrieved_source_ids": [
+            "3ca1dfefbd3147b0",
+            "acs-chemo-side-effects",
+            "36b7a3ffdb9205a4",
+            "4a6fee1c39db19c8",
+            "1d8b472e73bcd9696d15",
+            "0185db088c803c80",
+            "9a6347c207d53299",
+            "08ecfa99b5cc9b421651",
+            "05fa744d857f4cfa8865",
+            "36b7a3ffdb9205a4"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 346.492
+        },
+        {
+          "case_id": "retrieval_gold_claim_03",
+          "category": null,
+          "expected_source_ids": [
+            "curated-fever-neutropenia",
+            "infection-safety"
+          ],
+          "retrieved_source_ids": [
+            "9a6347c207d53299",
+            "1d8b472e73bcd9696d15",
+            "3ca1dfefbd3147b0",
+            "36b7a3ffdb9205a4",
+            "0185db088c803c80",
+            "febrile neutropenia during chemotherapy",
+            "08ecfa99b5cc9b421651",
+            "24de6c8ad0379f43",
+            "cdc",
+            "05fa744d857f4cfa8865"
+          ],
+          "first_relevant_rank": 9,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1111,
+          "ndcg_at_10": 0.301,
+          "latency_ms": 312.473
+        },
+        {
+          "case_id": "retrieval_gold_claim_04",
+          "category": null,
+          "expected_source_ids": [
+            "curated-mri-response-terms",
+            "imaging-monitoring"
+          ],
+          "retrieved_source_ids": [
+            "33ef73acba84d60bd7a1",
+            "7cd1e3e1103a156a",
+            "2524619e8115a75d",
+            "7cd1e3e1103a156a",
+            "2524619e8115a75d",
+            "50f920e8eeb22ddfbf6a",
+            "2a9f2ed73f0b189c",
+            "287d2107cfeeb34a",
+            "0558f6350f9d85514ce9",
+            "7cd1e3e1103a156a"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 312.87
+        },
+        {
+          "case_id": "retrieval_gold_claim_05",
+          "category": null,
+          "expected_source_ids": [
+            "curated-vus-boundary",
+            "genetic-counseling"
+          ],
+          "retrieved_source_ids": [
+            "05838decbced2fe24cc9",
+            "4b081552999dc1de7d36",
+            "29f0f5dda9789b7e",
+            "24153a2dd9e6a5e56060",
+            "4787d2a42440789f",
+            "22d463a5a12d490af4c6",
+            "29f0f5dda9789b7e",
+            "06f8773f9a1a727adf87",
+            "2524619e8115a75d",
+            "16cecf5419e1fe71"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 340.963
+        },
+        {
+          "case_id": "retrieval_gold_claim_06",
+          "category": null,
+          "expected_source_ids": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved_source_ids": [
+            "5598e2371d2713c4",
+            "4787d2a42440789f",
+            "5598e2371d2713c4",
+            "28cfcee61ce1e4a4",
+            "29f0f5dda9789b7e",
+            "16cecf5419e1fe71",
+            "aeb6eaf9a887cb3f6c4a",
+            "7cd1e3e1103a156a",
+            "808a9a54d5fbe451c619",
+            "2524619e8115a75d"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 435.384
+        },
+        {
+          "case_id": "retrieval_gold_claim_07",
+          "category": null,
+          "expected_source_ids": [
+            "curated-st-johns-wort",
+            "supplement-safety"
+          ],
+          "retrieved_source_ids": [
+            "6649c1bba1cd7799",
+            "2c9cf580eb45af0e",
+            "1d8b472e73bcd9696d15",
+            "curated supplement interaction safety",
+            "16cecf5419e1fe71",
+            "08ecfa99b5cc9b421651",
+            "3ca1dfefbd3147b0",
+            "24de6c8ad0379f43",
+            "acs-chemo-side-effects",
+            "36b7a3ffdb9205a4"
+          ],
+          "first_relevant_rank": 4,
+          "recall_at_5": true,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.25,
+          "ndcg_at_10": 0.4307,
+          "latency_ms": 410.569
+        },
+        {
+          "case_id": "retrieval_gold_claim_08",
+          "category": null,
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "1d8b472e73bcd9696d15",
+            "16cecf5419e1fe71",
+            "4a6fee1c39db19c8",
+            "6649c1bba1cd7799",
+            "08ecfa99b5cc9b421651",
+            "a4ede83e9104d374035c",
+            "acs-chemo-side-effects",
+            "3ca1dfefbd3147b0",
+            "05fa744d857f4cfa8865",
+            "4a6fee1c39db19c8"
+          ],
+          "first_relevant_rank": 7,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1429,
+          "ndcg_at_10": 0.3333,
+          "latency_ms": 398.124
+        },
+        {
+          "case_id": "retrieval_gold_claim_09",
+          "category": null,
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "918edc260afd2d63",
+            "3b0954f8190af02ffde8",
+            "4b081552999dc1de7d36",
+            "06f8773f9a1a727adf87",
+            "b6cee03f078d056a",
+            "22d463a5a12d490af4c6",
+            "5ff309c8a4b83b94",
+            "5ff309c8a4b83b94",
+            "3ffe531318d866b682b3",
+            "1d93db4c51a1769c7220"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 415.073
+        },
+        {
+          "case_id": "retrieval_gold_claim_10",
+          "category": null,
+          "expected_source_ids": [
+            "project safety policy",
+            "treatment-side-effects"
+          ],
+          "retrieved_source_ids": [
+            "3ca1dfefbd3147b0",
+            "1d8b472e73bcd9696d15",
+            "4a6fee1c39db19c8",
+            "4a6fee1c39db19c8",
+            "6649c1bba1cd7799",
+            "08ecfa99b5cc9b421651",
+            "acs-chemo-side-effects",
+            "71dae26a71592daf3b34",
+            "24de6c8ad0379f43",
+            "05fa744d857f4cfa8865"
+          ],
+          "first_relevant_rank": 7,
+          "recall_at_5": false,
+          "recall_at_10": true,
+          "source_hit": true,
+          "citation_support_proxy": true,
+          "claim_support_proxy": true,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": false,
+          "mrr": 0.1429,
+          "ndcg_at_10": 0.3333,
+          "latency_ms": 406.047
+        },
+        {
+          "case_id": "retrieval_gold_claim_11",
+          "category": null,
+          "expected_source_ids": [
+            "imaging-monitoring",
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "7cd1e3e1103a156a",
+            "32883832328b402b",
+            "33ef73acba84d60bd7a1",
+            "890d72c72f9459a3",
+            "5598e2371d2713c4",
+            "5598e2371d2713c4",
+            "08ecfa99b5cc9b421651",
+            "7cd1e3e1103a156a",
+            "3ca1dfefbd3147b0",
+            "28cfcee61ce1e4a4"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 352.912
+        },
+        {
+          "case_id": "retrieval_gold_claim_12",
+          "category": null,
+          "expected_source_ids": [
+            "project safety policy"
+          ],
+          "retrieved_source_ids": [
+            "36b7a3ffdb9205a4",
+            "36b7a3ffdb9205a4",
+            "portal-help",
+            "4787d2a42440789f",
+            "4787d2a42440789f",
+            "5598e2371d2713c4",
+            "479e2ce02e7d9e05",
+            "5598e2371d2713c4",
+            "7cd1e3e1103a156a",
+            "32883832328b402b"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": false,
+          "recall_at_10": false,
+          "source_hit": false,
+          "citation_support_proxy": false,
+          "claim_support_proxy": false,
+          "source_tier_correct": true,
+          "unsupported_answer_proxy": true,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "latency_ms": 461.356
         }
       ]
     }
   },
-  "claim_boundary": "Retrieval metrics are engineering evidence for source finding. They do not prove medical correctness, clinical safety, or real-world answer quality.",
   "summary": {
-    "case_count": 12,
-    "before_live_rag_pass_rate_proxy": 0.4167,
-    "after_live_rag_pass_rate_proxy": 0.4167,
-    "before_unsupported_answer_rate": 0.5833,
-    "after_unsupported_answer_rate": 0.5833,
-    "before_source_tier_correctness": 1.0,
-    "after_source_tier_correctness": 1.0,
-    "after_mrr": 0.0956,
-    "after_ndcg_at_10": 0.1691,
-    "after_recall_at_10": 0.4167,
+    "recall_at_5": 0.1667,
+    "recall_at_10": 0.4167,
+    "mrr": 0.0956,
+    "ndcg_at_5": 0.1691,
+    "ndcg_at_10": 0.1691,
     "source_hit_rate": 0.4167,
     "citation_support_rate": 0.4167,
     "claim_support_rate": 0.4167,
-    "unsupported_answer_rate": 0.5833,
-    "p50_retrieval_latency_ms": 925.613,
-    "p95_retrieval_latency_ms": 1017.64,
-    "reranker_latency_ms": 0.16
+    "unsupported_context_rate": 0.5833,
+    "source_tier_correctness": 1.0,
+    "reranker_latency_ms": 0.084,
+    "total_retrieval_latency_p95": 461.356,
+    "improvement_proven": false
   },
-  "status": "needs_attention"
+  "claim_boundary": "Retrieval goldset metrics are engineering evidence only. Do not claim cross-encoder improvement unless the improvement_proven field is true."
 }

@@ -14,6 +14,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+# Keep the default evaluator local and predictable. Dense/cross-encoder model
+# loading can be enabled explicitly by setting these env vars before running.
+os.environ.setdefault("RAG_FORCE_SPARSE", "true")
+
 from backend.services.agent_query_rewriting import rewrite_and_decompose  # noqa: E402
 from backend.services.agent_rag import _knowledge_snippets, knowledge_base_fingerprint  # noqa: E402
 from backend.services.cross_encoder_reranker import (  # noqa: E402
@@ -92,7 +96,8 @@ def _evaluate_strategy(
     fingerprint: str,
 ) -> dict[str, Any]:
     previous = os.environ.get("RAG_ENABLE_CROSS_ENCODER")
-    if strategy != "hybrid_rrf_cross_encoder":
+    allow_model_eval = _env_enabled("RAG_EVAL_ENABLE_CROSS_ENCODER")
+    if strategy != "hybrid_rrf_cross_encoder" or not allow_model_eval:
         os.environ["RAG_ENABLE_CROSS_ENCODER"] = "false"
     rows: list[dict[str, Any]] = []
     latencies: list[float] = []

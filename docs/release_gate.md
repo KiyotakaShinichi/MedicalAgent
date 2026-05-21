@@ -30,6 +30,10 @@ status.
 - Medical advisor readiness packet
 - Gold claim-grounding manifest and contamination disclosure
 - Cross-encoder reranker/retrieval ablation metrics
+- Retrieval goldset metrics with distractors and source-tier governance checks
+- Adversarial generalization report covering original, held-out, paraphrase, and safe-negative sets
+- Unsafe-intent semantic classifier eval
+- Route latency budget report
 - Medical semantic chunking quality
 - Runtime quality sentinel
 - Dependency/security scan artifact when present
@@ -43,6 +47,9 @@ surface known weaknesses, not hide them:
 - RAG tier ablation
 - shortcut audit
 - toxicity feature audit
+- held-out adversarial generalization while the gap remains visible
+- reranker/retrieval goldset results when improvement is not proven
+- route latency budget warnings from local-only tests
 
 Those statuses must remain visible in the release output and reviewer docs.
 They are not clinical validation.
@@ -66,6 +73,12 @@ analysis, and the release-gate explanation artifact.
 New observability gates are supporting by design: runtime quality sentinel,
 dependency scan, and local load test are meant to surface warnings without
 pretending this is production SRE or certified security.
+
+The gate deliberately separates hard blockers from warning artifacts. Unsafe
+leakage, clinical overclaims, leakage failures, stale critical artifacts, and
+RBAC failures block shipping. Weak held-out adversarial scores, no proven
+reranker lift, or high local p95 latency are warnings that must be shown to
+reviewers; they are not converted into fake pass/fail perfection.
 
 ## Optional Public-Data Bridge Checks
 

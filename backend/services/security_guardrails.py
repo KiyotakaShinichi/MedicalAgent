@@ -4,6 +4,7 @@ import re
 import unicodedata
 
 from backend.services.local_llm import assess_security_with_local_llm
+from backend.services.unsafe_intent_semantic_classifier import classify_unsafe_intent
 
 
 LEET_TRANSLATION = str.maketrans({
@@ -403,6 +404,25 @@ def detect_prompt_injection_or_exfiltration(text):
         issues.append("privacy_boundary_request")
         signals.append({"category": "privacy_boundary_request", "match": "patient_id_lookup"})
 
+    semantic = classify_unsafe_intent(text)
+    if (
+        semantic.get("family") in {"privacy_pii", "prompt_injection", "cross_patient_exfiltration"}
+        and float(semantic.get("confidence") or 0.0) >= 0.62
+        and not _is_obvious_low_risk_support_or_education(normalized)
+    ):
+        issue = (
+            "privacy_boundary_request"
+            if semantic["family"] in {"privacy_pii", "cross_patient_exfiltration"}
+            else "prompt_injection_or_jailbreak"
+        )
+        issues.append(issue)
+        signals.append({
+            "category": "semantic_unsafe_intent_classifier",
+            "match": semantic["family"],
+            "confidence": semantic.get("confidence"),
+            "over_refusal_risk_flag": semantic.get("over_refusal_risk_flag"),
+        })
+
     medical = detect_multilingual_medical_danger(text)
     if medical["detected"]:
         issues.append("urgent_medical_or_self_harm")
@@ -463,6 +483,7 @@ def detect_prompt_injection_or_exfiltration(text):
         "signals": signals[:10],
         "confidence": _confidence(issues, signals),
         "llm_assessment": llm_assessment,
+        "semantic_unsafe_intent": semantic,
         "medical_danger": medical,
         "normalized_text": normalized[:500],
         "message": (

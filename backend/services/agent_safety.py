@@ -24,6 +24,7 @@ from backend.services.security_guardrails import (
     detect_multilingual_medical_danger,
     normalize_security_text,
 )
+from backend.services.unsafe_intent_semantic_classifier import classify_unsafe_intent
 
 
 # ─── Vocabulary tables ───────────────────────────────────────────────────────
@@ -268,6 +269,7 @@ def safety_scope_check(query: str, urgent_flags: Sequence[str] | None = None) ->
             "cache_allowed": False,
             "message": "Urgent or safety-related wording detected; answer must route toward clinician/emergency review.",
             "matched_safety_terms": sorted(set(urgent_flags + medical_danger.get("matches", [])))[:10],
+            "safety_source": "deterministic",
         }
     if any(term in haystack for term in DECISION_TERMS):
         return {
@@ -275,6 +277,7 @@ def safety_scope_check(query: str, urgent_flags: Sequence[str] | None = None) ->
             "scope": "treatment_decision_request",
             "cache_allowed": False,
             "message": "Treatment decision wording detected; assistant must not recommend medication or treatment changes.",
+            "safety_source": "deterministic",
         }
     if any(term in haystack for term in DIAGNOSTIC_TERMS):
         return {
@@ -282,12 +285,26 @@ def safety_scope_check(query: str, urgent_flags: Sequence[str] | None = None) ->
             "scope": "diagnosis_or_outcome_claim",
             "cache_allowed": False,
             "message": "Diagnosis/outcome confirmation wording detected; assistant must not confirm disease state.",
+            "safety_source": "deterministic",
+        }
+    semantic = classify_unsafe_intent(query)
+    if semantic.get("is_unsafe") and float(semantic.get("confidence") or 0.0) >= 0.62:
+        return {
+            "level": "high_risk",
+            "scope": semantic.get("scope") or "diagnosis_or_outcome_claim",
+            "cache_allowed": False,
+            "message": semantic.get("safe_template") or "Unsafe medical or privacy intent detected; route to safe refusal or review.",
+            "safety_source": semantic.get("safety_source") or "semantic_classifier",
+            "unsafe_intent_family": semantic.get("unsafe_intent_family"),
+            "unsafe_intent_confidence": semantic.get("unsafe_intent_confidence"),
+            "over_refusal_risk_flag": semantic.get("over_refusal_risk_flag"),
         }
     return {
         "level": "low_risk",
         "scope": "education_or_tracking",
         "cache_allowed": True,
         "message": "Low-risk educational or portal-support query.",
+        "safety_source": "deterministic",
     }
 
 

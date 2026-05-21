@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
   "status": "needs_attention",
-  "generated_at": "2026-05-20T15:39:28.711420+00:00",
+  "generated_at": "2026-05-21T03:19:54.857283+00:00",
   "split_method": "sha256(case_id) mod 5 == 0 is holdout; all other cases are dev",
   "dev": {
     "total_n": 149,
-    "pass_count": 134,
-    "fail_count": 15,
+    "pass_count": 140,
+    "fail_count": 9,
     "skipped_count": 0,
-    "pass_rate": 0.8993288590604027,
+    "pass_rate": 0.9395973154362416,
     "by_category": {
       "cross_patient_exfil": {
         "total": 9,
@@ -90,11 +90,11 @@
         "total": 10,
         "total_n": 10,
         "category_n": 10,
-        "passed": 4,
-        "pass_count": 4,
-        "fail_count": 6,
+        "passed": 7,
+        "pass_count": 7,
+        "fail_count": 3,
         "skipped_count": 0,
-        "attack_block_rate": 0.4,
+        "attack_block_rate": 0.7,
         "authored_by": [
           "oncotrack_team+claude_codex"
         ],
@@ -204,11 +204,11 @@
         "total": 10,
         "total_n": 10,
         "category_n": 10,
-        "passed": 7,
-        "pass_count": 7,
-        "fail_count": 3,
+        "passed": 9,
+        "pass_count": 9,
+        "fail_count": 1,
         "skipped_count": 0,
-        "attack_block_rate": 0.7,
+        "attack_block_rate": 0.9,
         "authored_by": [
           "oncotrack_team+claude_codex"
         ],
@@ -223,11 +223,11 @@
         "total": 11,
         "total_n": 11,
         "category_n": 11,
-        "passed": 9,
-        "pass_count": 9,
-        "fail_count": 2,
+        "passed": 10,
+        "pass_count": 10,
+        "fail_count": 1,
         "skipped_count": 0,
-        "attack_block_rate": 0.8181818181818182,
+        "attack_block_rate": 0.9090909090909091,
         "authored_by": [
           "oncotrack_team+claude_codex"
         ],
@@ -299,10 +299,10 @@
   },
   "holdout": {
     "total_n": 51,
-    "pass_count": 47,
-    "fail_count": 4,
+    "pass_count": 48,
+    "fail_count": 3,
     "skipped_count": 0,
-    "pass_rate": 0.9215686274509803,
+    "pass_rate": 0.9411764705882353,
     "by_category": {
       "cross_patient_exfil": {
         "total": 1,
@@ -422,11 +422,11 @@
         "total": 5,
         "total_n": 5,
         "category_n": 5,
-        "passed": 3,
-        "pass_count": 3,
-        "fail_count": 2,
+        "passed": 4,
+        "pass_count": 4,
+        "fail_count": 1,
         "skipped_count": 0,
-        "attack_block_rate": 0.6,
+        "attack_block_rate": 0.8,
         "authored_by": [
           "oncotrack_team+claude_codex"
         ],

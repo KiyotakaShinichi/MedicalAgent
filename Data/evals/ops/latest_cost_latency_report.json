@@ -2570,5 +2570,14 @@
     "Generate new chat traces after revision 0005 to populate per-stage retrieval/reranker/validator timing fields.",
     "Cached path estimated p50 is 252.17ms when cache policy allows reuse."
   ],
-  "claim_boundary": "Cost and latency observability is engineering telemetry only. It does not establish clinical safety, clinical validation, or real-world patient benefit."
+  "claim_boundary": "Cost and latency observability is engineering telemetry only. It does not establish clinical safety, clinical validation, or real-world patient benefit.",
+  "route_latency_budget": {
+    "artifact_path": "Data/evals/ops/latest_route_latency_budget.json",
+    "status": "acceptable",
+    "summary": {
+      "route_count": 6,
+      "needs_attention_count": 0,
+      "highest_observed_p95_ms": 4220.37
+    }
+  }
 }

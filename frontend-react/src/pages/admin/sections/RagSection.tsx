@@ -36,6 +36,14 @@ export function RagSection({ analytics }: Props) {
     () => getNormalizedBenchmarkArtifact("runtime_quality_sentinel"),
     [],
   );
+  const { data: retrievalGoldset, status: retrievalGoldsetStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("retrieval_goldset_eval"),
+    [],
+  );
+  const { data: routeLatencyBudget, status: routeLatencyBudgetStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("route_latency_budget"),
+    [],
+  );
   const { data: traceReplay, status: traceReplayStatus } = useApi(() => getRagTraceReplay(8), []);
   const [runningLiveRag, setRunningLiveRag] = useState(false);
   const rag = analytics?.rag_evaluation;
@@ -124,6 +132,29 @@ export function RagSection({ analytics }: Props) {
           emptyLabel="No runtime quality snapshot yet - run scripts/run_runtime_quality_sentinel.py"
         />
         <ArtifactSummaryCard
+          title="Retrieval Goldset"
+          status={retrievalGoldsetStatus}
+          artifact={retrievalGoldset}
+          metrics={[
+            ["Recall@10", ["metrics", "recall_at_10"], "percent"],
+            ["MRR", ["metrics", "mrr"], "number"],
+            ["Unsupported context", ["metrics", "unsupported_context_rate"], "percent"],
+            ["Improvement proven", ["metrics", "improvement_proven"], "boolean"],
+          ]}
+          emptyLabel="No retrieval goldset eval yet - run scripts/run_retrieval_goldset_eval.py"
+        />
+        <ArtifactSummaryCard
+          title="Route Latency Budget"
+          status={routeLatencyBudgetStatus}
+          artifact={routeLatencyBudget}
+          metrics={[
+            ["Routes", ["metrics", "route_count"], "number"],
+            ["Needs attention", ["metrics", "needs_attention_count"], "number"],
+            ["Highest P95", ["metrics", "highest_observed_p95_ms"], "milliseconds"],
+          ]}
+          emptyLabel="No route latency budget yet - run scripts/run_route_latency_budget.py"
+        />
+        <ArtifactSummaryCard
           title="Live-Agent RAG Eval"
           status={liveRagStatus}
           artifact={liveRag}
@@ -205,7 +236,7 @@ export function RagSection({ analytics }: Props) {
   );
 }
 
-type MetricFormat = "number" | "percent" | "currency" | "milliseconds";
+type MetricFormat = "number" | "percent" | "currency" | "milliseconds" | "boolean";
 
 function ArtifactSummaryCard({
   title,
@@ -278,6 +309,10 @@ function readString(record: Record<string, unknown> | null, path: string[]): str
 }
 
 function formatMetric(value: unknown, format: MetricFormat): string | null {
+  if (format === "boolean") {
+    if (typeof value !== "boolean") return null;
+    return value ? "yes" : "no";
+  }
   if (typeof value !== "number") return null;
   if (format === "percent") return `${(value * 100).toFixed(1)}%`;
   if (format === "currency") return `$${value.toFixed(6)}`;

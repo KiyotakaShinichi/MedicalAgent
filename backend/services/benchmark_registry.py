@@ -77,6 +77,32 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "adversarial_generalization_eval",
+        "title": "Adversarial generalization eval",
+        "path": "Data/evals/safety/latest_adversarial_generalization_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "original_bank_pass_rate": ["metrics", "original_bank_pass_rate"],
+            "heldout_pass_rate": ["metrics", "heldout_pass_rate"],
+            "paraphrase_pass_rate": ["metrics", "paraphrase_pass_rate"],
+            "safe_negative_control_pass_rate": ["metrics", "safe_negative_control_pass_rate"],
+            "category_gap_between_dev_and_holdout": ["metrics", "category_gap_between_dev_and_holdout"],
+        },
+    },
+    {
+        "id": "unsafe_intent_classifier_eval",
+        "title": "Unsafe-intent semantic classifier eval",
+        "path": "Data/evals/safety/latest_unsafe_intent_classifier_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "total_n": ["total_n"],
+            "pass_rate": ["pass_rate"],
+            "fail_count": ["fail_count"],
+        },
+    },
+    {
         "id": "multilingual_refusal",
         "title": "Multilingual refusal routing",
         "path": "Data/evals/safety/latest_multilingual_refusal_eval.json",
@@ -1278,6 +1304,18 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "route_latency_budget",
+        "title": "Route latency budget",
+        "path": "Data/evals/ops/latest_route_latency_budget.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "route_count": ["summary", "route_count"],
+            "needs_attention_count": ["summary", "needs_attention_count"],
+            "highest_observed_p95_ms": ["summary", "highest_observed_p95_ms"],
+        },
+    },
+    {
         "id": "rag_reranker_ablation",
         "title": "Cross-encoder reranker ablation",
         "path": "Data/evals/rag/latest_reranker_ablation.json",
@@ -1288,6 +1326,20 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "after_source_tier_correctness": ["summary", "after_source_tier_correctness"],
             "after_unsupported_answer_rate": ["summary", "after_unsupported_answer_rate"],
             "reranker_latency_ms": ["summary", "reranker_latency_ms"],
+        },
+    },
+    {
+        "id": "retrieval_goldset_eval",
+        "title": "Retrieval goldset eval",
+        "path": "Data/evals/rag/latest_retrieval_goldset_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "recall_at_5": ["summary", "recall_at_5"],
+            "recall_at_10": ["summary", "recall_at_10"],
+            "mrr": ["summary", "mrr"],
+            "unsupported_context_rate": ["summary", "unsupported_context_rate"],
+            "improvement_proven": ["summary", "improvement_proven"],
         },
     },
     {
