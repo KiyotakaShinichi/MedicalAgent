@@ -1,0 +1,2 @@
+reviewer_role,date,artifact_or_case_id,review_area,comment,severity,required_fix,fix_status,linked_artifact_or_commit,residual_issue,clinical_validation
+,,,,,,,,,,false

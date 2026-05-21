@@ -33,9 +33,12 @@ status.
 - Retrieval goldset metrics with distractors and source-tier governance checks
 - Retrieval failure analysis separating true retrieval misses from metadata/goldset alias issues
 - Adversarial generalization report covering original, held-out, paraphrase, and safe-negative sets
+- Held-out adversarial v1 failure analysis
+- Frozen internal adversarial holdout v2 generalization eval
 - Unsafe-intent semantic classifier eval
 - Route latency budget report
 - Local latency profile by route/stage
+- Phase-2 latency profile with cold-start warm-up separated from steady route timing
 - Medical semantic chunking quality
 - Runtime quality sentinel
 - Dependency/security scan artifact when present
@@ -50,6 +53,7 @@ surface known weaknesses, not hide them:
 - shortcut audit
 - toxicity feature audit
 - held-out adversarial generalization while the gap remains visible
+- frozen holdout v2 weakness while it remains explicitly reported
 - reranker/retrieval goldset results when improvement is not proven
 - route latency budget warnings from local-only tests
 
@@ -81,6 +85,10 @@ leakage, clinical overclaims, leakage failures, stale critical artifacts, and
 RBAC failures block shipping. Weak held-out adversarial scores, no proven
 reranker lift, or high local p95 latency are warnings that must be shown to
 reviewers; they are not converted into fake pass/fail perfection.
+
+Heldout v2 is warning/supporting evidence. It may remain `needs_attention`
+because its job is to reveal generalization gaps. Do not tune against v2 and
+then call it held-out; create v3 or use external-author cases first.
 
 ## Optional Public-Data Bridge Checks
 

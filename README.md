@@ -36,6 +36,7 @@ MedicalAgent is a safety-first clinical decision-support proof of concept for br
 ## Retrieval precision and schema readiness
 - Optional cross-encoder reranking can run after dense/sparse RRF when `RAG_ENABLE_CROSS_ENCODER=true`; unavailable models fall back safely without bypassing source governance or citation validation.
 - `python scripts/run_retrieval_ablation_metrics.py` compares dense-only, sparse-only, hybrid RRF, and hybrid RRF plus cross-encoder/fallback using MRR, NDCG@k, Recall@k, source-hit rate, claim-support proxy, unsupported-answer proxy, and p50/p95 retrieval latency.
+- Current reranker position: scaffolded and optional, not proven as a retrieval improvement unless `Data/evals/rag/latest_reranker_ablation.json` and the retrieval goldset show lift without higher unsupported context or latency risk.
 - Structure-aware semantic chunking preserves Markdown headings, parent-child section links, and critical medical context such as lab/date, imaging finding/impression, medication timing, and family-history relation text.
 - FHIR-aligned canonical objects prepare CBC/lab, medication, imaging, family-history, and condition records for future schema mapping. This is not certified FHIR interoperability and is not connected to a real EHR.
 - A real-time OOD/data-quality gate checks impossible labs, unknown units, impossible dates, missing modalities, and suspicious structured input patterns before synthetic ML heads. It can lower confidence or abstain, but it is an engineering guardrail only.
@@ -44,8 +45,9 @@ MedicalAgent is a safety-first clinical decision-support proof of concept for br
 - Gold RAG eval cases now include n-size, pass/fail/skipped counts, authorship, tuning exposure, internal/external flag, contamination disclosure, baseline version, release ID, and case-level pass/fail criteria.
 - Generalized unsafe-intent routing combines deterministic high-confidence patterns with prototype-based semantic matching for privacy/PII, prompt injection, cross-patient exfiltration, genetic/VUS overclaims, diagnosis confirmation, tumor-marker conclusions, treatment changes, dosage requests, prognosis estimates, and supplement replacement claims.
 - Adversarial generalization is reported as separate original-bank, held-out, paraphrase, and safe-negative-control scores so internal tuning cannot be mistaken for broad safety proof.
+- Held-out adversarial v1 and frozen internal holdout v2 are shown separately. V1 can improve through generalized hardening; v2 is a warning baseline and must not be tuned against without creating a newer holdout or external-author cases.
 - Retrieval evidence quality is measured with a harder goldset containing expected source IDs, allowed tiers, near-duplicate distractors, stale-source distractors, and clinician-only distractors for patient-facing questions.
-- Route latency budgets are tracked as local engineering budgets; high p95 values are `needs_attention`, not production-readiness evidence.
+- Route latency budgets are tracked as local engineering budgets; phase-2 latency profiling separates cold-start warm-up from steady local route latency. High p95 values are `needs_attention`, and passing local budgets is not production-readiness evidence.
 - `python scripts/run_runtime_quality_sentinel.py` aggregates unsupported-claim, unsafe-answer, insufficient-evidence, over-refusal, source-governance, cache, latency, cost, and OOD warning signals into `Data/evals/ops/latest_runtime_quality_sentinel.json`.
 - `.github/workflows/ship.yml` runs `python scripts/ship.py` on PRs and checks generated OpenAPI frontend types for drift.
 - Demo authentication is intended for development only and is disabled when `ENVIRONMENT=production` unless `ALLOW_DEMO_AUTH=true`.
@@ -54,7 +56,11 @@ MedicalAgent is a safety-first clinical decision-support proof of concept for br
 - External-author RAG and adversarial templates are prepared, but external-author evaluation has not yet been completed.
 - Authors should not read prompts, code internals, safety-rule lists, or existing gold cases before writing cases.
 - Templates live at `Data/evals/rag/external_author_case_template.jsonl` and `Data/evals/safety/external_author_adversarial_template.jsonl`.
+- Concrete review packets are prepared under `docs/review_packets/` for external-author eval, nurse/clinician safety wording review, genetic-counselor/VUS review, and senior MLE eval review.
+- These packets are explicitly unreviewed; no external review, clinician review, or genetic-counselor review has been completed yet.
 - This prepares reviewer credibility work; it is not clinician approval or clinical validation.
+
+Profile-ready summary: NLCare includes safety-governed RAG, adversarial generalization tracking, retrieval goldset evaluation, route-latency profiling, trace diagnostics, and synthetic-only MLE governance, while explicitly remaining unreviewed and not clinically validated.
 
 ## What this system is
 - A timeline-first monitoring and clinician review assistant for already-diagnosed breast cancer cases.

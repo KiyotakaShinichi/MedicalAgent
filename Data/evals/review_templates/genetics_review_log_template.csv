@@ -1,0 +1,2 @@
+reviewer_role,date,case_id,genetics_topic,output_reviewed,comment,severity,required_fix,fix_status,linked_artifact_or_commit,residual_issue,clinical_validation
+,,,,,,,,,,,false

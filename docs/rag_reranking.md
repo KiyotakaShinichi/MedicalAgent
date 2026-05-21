@@ -38,6 +38,10 @@ context or violating source-tier correctness. If the artifact says
 `improvement_proven: false`, the dashboard must say the scaffold exists but
 retrieval improvement has not been proven.
 
+Current decision: the cross-encoder path remains optional/experimental. Do not
+describe it as a proven retrieval-quality improvement in README, CV, or demo
+copy unless the metrics show real lift with acceptable latency.
+
 The local load smoke forces sparse retrieval and disables optional cross-encoder
 loading by default so latency measurements do not include surprise model
 downloads. Enable model-backed reranking explicitly when evaluating retrieval

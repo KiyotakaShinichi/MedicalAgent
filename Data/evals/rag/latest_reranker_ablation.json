@@ -1,6 +1,6 @@
 {
   "schema_version": "retrieval_reranker_ablation_v2",
-  "generated_at": "2026-05-21T04:20:51.382005+00:00",
+  "generated_at": "2026-05-21T08:18:08.399526+00:00",
   "release_id": "2026-05-ai-swe-hardening",
   "baseline_version": "gold_claim_grounding_cases_v2_2026_05",
   "cross_encoder_available": true,
@@ -18,8 +18,8 @@
         "claim_support_rate": 0.9167,
         "source_tier_correctness": 1.0,
         "unsupported_answer_rate": 0.0833,
-        "p50_retrieval_latency_ms": 802.529,
-        "p95_retrieval_latency_ms": 8246.816,
+        "p50_retrieval_latency_ms": 928.128,
+        "p95_retrieval_latency_ms": 9479.473,
         "reranker_latency_ms": 0.0
       },
       "cases": [
@@ -52,7 +52,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 8246.816
+          "latency_ms": 9479.473
         },
         {
           "case_id": "gold_claim_02",
@@ -95,7 +95,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 750.788
+          "latency_ms": 955.143
         },
         {
           "case_id": "gold_claim_03",
@@ -132,7 +132,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 861.146
+          "latency_ms": 863.847
         },
         {
           "case_id": "gold_claim_04",
@@ -169,7 +169,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 873.991
+          "latency_ms": 799.569
         },
         {
           "case_id": "gold_claim_05",
@@ -209,7 +209,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.3333,
           "ndcg_at_10": 0.5,
-          "latency_ms": 674.545
+          "latency_ms": 763.16
         },
         {
           "case_id": "gold_claim_06",
@@ -247,7 +247,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 660.357
+          "latency_ms": 1255.4
         },
         {
           "case_id": "gold_claim_07",
@@ -288,7 +288,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 723.631
+          "latency_ms": 1448.684
         },
         {
           "case_id": "gold_claim_08",
@@ -331,7 +331,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 682.873
+          "latency_ms": 743.897
         },
         {
           "case_id": "gold_claim_09",
@@ -369,7 +369,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.3333,
           "ndcg_at_10": 0.5,
-          "latency_ms": 699.228
+          "latency_ms": 1037.375
         },
         {
           "case_id": "gold_claim_10",
@@ -412,7 +412,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 864.704
+          "latency_ms": 1057.78
         },
         {
           "case_id": "gold_claim_11",
@@ -458,7 +458,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.3333,
           "ndcg_at_10": 0.5,
-          "latency_ms": 854.27
+          "latency_ms": 901.113
         },
         {
           "case_id": "gold_claim_12",
@@ -496,7 +496,7 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 904.818
+          "latency_ms": 771.929
         }
       ]
     },
@@ -512,8 +512,8 @@
         "claim_support_rate": 0.9167,
         "source_tier_correctness": 1.0,
         "unsupported_answer_rate": 0.0833,
-        "p50_retrieval_latency_ms": 544.665,
-        "p95_retrieval_latency_ms": 729.294,
+        "p50_retrieval_latency_ms": 707.243,
+        "p95_retrieval_latency_ms": 923.64,
         "reranker_latency_ms": 0.0
       },
       "cases": [
@@ -546,7 +546,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 729.294
+          "latency_ms": 739.188
         },
         {
           "case_id": "gold_claim_02",
@@ -589,7 +589,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 538.828
+          "latency_ms": 923.64
         },
         {
           "case_id": "gold_claim_03",
@@ -626,7 +626,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.25,
           "ndcg_at_10": 0.4307,
-          "latency_ms": 660.145
+          "latency_ms": 808.82
         },
         {
           "case_id": "gold_claim_04",
@@ -663,7 +663,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 643.024
+          "latency_ms": 718.849
         },
         {
           "case_id": "gold_claim_05",
@@ -703,7 +703,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.3333,
           "ndcg_at_10": 0.5,
-          "latency_ms": 633.308
+          "latency_ms": 712.019
         },
         {
           "case_id": "gold_claim_06",
@@ -741,7 +741,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 526.6
+          "latency_ms": 691.741
         },
         {
           "case_id": "gold_claim_07",
@@ -782,7 +782,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 458.246
+          "latency_ms": 657.413
         },
         {
           "case_id": "gold_claim_08",
@@ -825,7 +825,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 649.983
+          "latency_ms": 696.057
         },
         {
           "case_id": "gold_claim_09",
@@ -863,7 +863,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 550.503
+          "latency_ms": 692.985
         },
         {
           "case_id": "gold_claim_10",
@@ -906,7 +906,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 459.112
+          "latency_ms": 702.467
         },
         {
           "case_id": "gold_claim_11",
@@ -952,7 +952,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.3333,
           "ndcg_at_10": 0.5,
-          "latency_ms": 506.498
+          "latency_ms": 621.532
         },
         {
           "case_id": "gold_claim_12",
@@ -990,7 +990,7 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 472.415
+          "latency_ms": 795.775
         }
       ]
     },
@@ -1006,8 +1006,8 @@
         "claim_support_rate": 0.9167,
         "source_tier_correctness": 1.0,
         "unsupported_answer_rate": 0.0833,
-        "p50_retrieval_latency_ms": 440.42,
-        "p95_retrieval_latency_ms": 583.624,
+        "p50_retrieval_latency_ms": 688.219,
+        "p95_retrieval_latency_ms": 962.87,
         "reranker_latency_ms": 0.0
       },
       "cases": [
@@ -1040,7 +1040,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 583.624
+          "latency_ms": 962.87
         },
         {
           "case_id": "gold_claim_02",
@@ -1083,7 +1083,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 406.589
+          "latency_ms": 713.243
         },
         {
           "case_id": "gold_claim_03",
@@ -1120,7 +1120,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1667,
           "ndcg_at_10": 0.3562,
-          "latency_ms": 416.112
+          "latency_ms": 605.462
         },
         {
           "case_id": "gold_claim_04",
@@ -1157,7 +1157,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 419.847
+          "latency_ms": 616.812
         },
         {
           "case_id": "gold_claim_05",
@@ -1197,7 +1197,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.3333,
           "ndcg_at_10": 0.5,
-          "latency_ms": 426.959
+          "latency_ms": 652.647
         },
         {
           "case_id": "gold_claim_06",
@@ -1235,7 +1235,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 515.062
+          "latency_ms": 565.742
         },
         {
           "case_id": "gold_claim_07",
@@ -1276,7 +1276,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 470.411
+          "latency_ms": 663.195
         },
         {
           "case_id": "gold_claim_08",
@@ -1319,7 +1319,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 458.222
+          "latency_ms": 760.443
         },
         {
           "case_id": "gold_claim_09",
@@ -1357,7 +1357,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 415.867
+          "latency_ms": 719.389
         },
         {
           "case_id": "gold_claim_10",
@@ -1400,7 +1400,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 433.196
+          "latency_ms": 728.3
         },
         {
           "case_id": "gold_claim_11",
@@ -1446,7 +1446,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 484.827
+          "latency_ms": 633.572
         },
         {
           "case_id": "gold_claim_12",
@@ -1484,7 +1484,7 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 447.645
+          "latency_ms": 840.936
         }
       ]
     },
@@ -1500,9 +1500,9 @@
         "claim_support_rate": 0.9167,
         "source_tier_correctness": 1.0,
         "unsupported_answer_rate": 0.0833,
-        "p50_retrieval_latency_ms": 451.788,
-        "p95_retrieval_latency_ms": 762.877,
-        "reranker_latency_ms": 0.087
+        "p50_retrieval_latency_ms": 672.942,
+        "p95_retrieval_latency_ms": 805.259,
+        "reranker_latency_ms": 0.108
       },
       "cases": [
         {
@@ -1534,7 +1534,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 431.64
+          "latency_ms": 805.259
         },
         {
           "case_id": "gold_claim_02",
@@ -1577,7 +1577,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 434.411
+          "latency_ms": 688.123
         },
         {
           "case_id": "gold_claim_03",
@@ -1614,7 +1614,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.1667,
           "ndcg_at_10": 0.3562,
-          "latency_ms": 446.608
+          "latency_ms": 669.841
         },
         {
           "case_id": "gold_claim_04",
@@ -1651,7 +1651,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 561.564
+          "latency_ms": 680.506
         },
         {
           "case_id": "gold_claim_05",
@@ -1691,7 +1691,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.3333,
           "ndcg_at_10": 0.5,
-          "latency_ms": 588.812
+          "latency_ms": 629.371
         },
         {
           "case_id": "gold_claim_06",
@@ -1729,7 +1729,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 0.5,
           "ndcg_at_10": 0.6309,
-          "latency_ms": 456.967
+          "latency_ms": 664.06
         },
         {
           "case_id": "gold_claim_07",
@@ -1770,7 +1770,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 415.637
+          "latency_ms": 676.043
         },
         {
           "case_id": "gold_claim_08",
@@ -1813,7 +1813,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 441.751
+          "latency_ms": 735.589
         },
         {
           "case_id": "gold_claim_09",
@@ -1851,7 +1851,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 462.948
+          "latency_ms": 628.585
         },
         {
           "case_id": "gold_claim_10",
@@ -1894,7 +1894,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 434.333
+          "latency_ms": 703.586
         },
         {
           "case_id": "gold_claim_11",
@@ -1940,7 +1940,7 @@
           "unsupported_answer_proxy": false,
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
-          "latency_ms": 539.065
+          "latency_ms": 599.056
         },
         {
           "case_id": "gold_claim_12",
@@ -1978,7 +1978,7 @@
           "unsupported_answer_proxy": true,
           "mrr": 0.0,
           "ndcg_at_10": 0.0,
-          "latency_ms": 762.877
+          "latency_ms": 657.343
         }
       ]
     }
@@ -1999,9 +1999,9 @@
     "citation_support_rate": 0.9167,
     "claim_support_rate": 0.9167,
     "unsupported_answer_rate": 0.0833,
-    "p50_retrieval_latency_ms": 451.788,
-    "p95_retrieval_latency_ms": 762.877,
-    "reranker_latency_ms": 0.087
+    "p50_retrieval_latency_ms": 672.942,
+    "p95_retrieval_latency_ms": 805.259,
+    "reranker_latency_ms": 0.108
   },
   "status": "acceptable"
 }

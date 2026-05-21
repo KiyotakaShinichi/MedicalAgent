@@ -43,6 +43,9 @@ def main() -> int:
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     args = parser.parse_args()
 
+    warmup_started = time.perf_counter()
+    warmup = _one_request(0, "What is a CBC?")
+    warmup_ms = round((time.perf_counter() - warmup_started) * 1000, 3)
     started = time.perf_counter()
     tasks = [QUESTIONS[i % len(QUESTIONS)] for i in range(max(1, args.requests))]
     rows = []
@@ -68,6 +71,15 @@ def main() -> int:
                 "p99": _percentile(latencies, 99),
             },
             "throughput_rps": round(len(rows) / max(time.perf_counter() - started, 0.001), 4),
+        },
+        "warmup": {
+            "enabled": True,
+            "latency_ms": warmup_ms,
+            "success": warmup.get("success"),
+            "rationale": (
+                "Warm-up separates local index/model initialization from timed steady-load requests. "
+                "This is still a local smoke test, not a production SLO."
+            ),
         },
         "rows": rows,
         "claim_boundary": "Local load test is engineering capacity smoke evidence only, not production SLO or clinical safety evidence.",

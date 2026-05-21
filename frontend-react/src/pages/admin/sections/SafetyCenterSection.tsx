@@ -125,6 +125,7 @@ export function SafetyCenterSection() {
   const feedback = data.clinician_feedback;
   const gallery = data.failure_case_gallery;
   const benchmark = data.benchmark_ladder;
+  const adversarialV2 = data.adversarial_generalization_v2;
 
   return (
     <div className="flex flex-col gap-4">
@@ -220,6 +221,16 @@ export function SafetyCenterSection() {
           </div>
         </CardHeader>
         <BenchmarkLadderBlock artifact={benchmark} />
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <SectionTitle>Adversarial Generalization</SectionTitle>
+          <Badge variant={statusBadge(readString(adversarialV2, "status"))}>
+            {readString(adversarialV2, "status") ?? "n/a"}
+          </Badge>
+        </CardHeader>
+        <AdversarialGeneralizationV2Block artifact={adversarialV2} />
       </Card>
 
       <Card>
@@ -412,6 +423,52 @@ export function SafetyCenterSection() {
       </Card>
     </div>
   );
+}
+
+function AdversarialGeneralizationV2Block({ artifact }: { artifact?: Record<string, unknown> }) {
+  if (!artifact || artifact.status === "not_generated") {
+    return <EmptyPane label="No adversarial generalization v2 artifact yet - run scripts/run_adversarial_generalization_v2_eval.py." />;
+  }
+  const metrics = readRecord(artifact, "metrics");
+  const heldoutV2 = readRecord(artifact, "heldout_v2");
+  const failures = Array.isArray(heldoutV2?.failures) ? heldoutV2.failures : [];
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard label="Original bank" value={fmtRate(readNumber(metrics, "original_bank_pass_rate"))} status="muted" />
+        <MetricCard label="Heldout v1" value={fmtRate(readNumber(metrics, "heldout_v1_pass_rate"))} status={readNumber(metrics, "heldout_v1_pass_rate") != null && readNumber(metrics, "heldout_v1_pass_rate")! >= 0.9 ? "green" : "amber"} />
+        <MetricCard label="Heldout v2" value={fmtRate(readNumber(metrics, "heldout_v2_pass_rate"))} status={readNumber(metrics, "heldout_v2_pass_rate") != null && readNumber(metrics, "heldout_v2_pass_rate")! >= 0.8 ? "green" : "amber"} />
+        <MetricCard label="Unsafe leakage" value={fmtRate(readNumber(metrics, "unsafe_leakage_rate"))} status={readNumber(metrics, "unsafe_leakage_rate") === 0 ? "green" : "amber"} />
+        <MetricCard label="Paraphrase" value={fmtRate(readNumber(metrics, "paraphrase_pass_rate"))} status="muted" />
+        <MetricCard label="Safe negatives" value={fmtRate(readNumber(metrics, "safe_negative_control_pass_rate"))} status={readNumber(metrics, "safe_negative_control_pass_rate") === 1 ? "green" : "amber"} />
+        <MetricCard label="Heldout v2 N" value={String(readNumber(heldoutV2, "total_n") ?? "—")} status="muted" />
+        <MetricCard label="Not solved" value="yes" status="amber" />
+      </div>
+      <p className="text-xs" style={{ color: "var(--text-dim)" }}>
+        Internal eval. External author completed: false. Clinical validation: false. Heldout v2 is frozen and must not be tuned against without creating a newer holdout.
+      </p>
+      {failures.length > 0 && (
+        <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+          Remaining weak cases: {failures.length}. Review the artifact for category-level gaps before claiming robustness.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function readRecord(record: Record<string, unknown> | undefined, key: string): Record<string, unknown> | undefined {
+  const value = record?.[key];
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
+}
+
+function readString(record: Record<string, unknown> | undefined, key: string): string | undefined {
+  const value = record?.[key];
+  return typeof value === "string" ? value : undefined;
+}
+
+function readNumber(record: Record<string, unknown> | undefined, key: string): number | undefined {
+  const value = record?.[key];
+  return typeof value === "number" ? value : undefined;
 }
 
 function SafetyRedTeamBlock({ artifact }: { artifact: SafetyRedTeamArtifact }) {

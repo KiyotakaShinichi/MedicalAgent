@@ -14,6 +14,7 @@ from backend.services.agent_latency_probe import run_latency_probe  # noqa: E402
 
 
 OUTPUT_PATH = ROOT / "Data/evals/ops/latest_latency_profile.json"
+PHASE2_OUTPUT_PATH = ROOT / "Data/evals/ops/latest_latency_profile_phase2.json"
 
 
 ROUTE_BUDGETS = {
@@ -37,12 +38,20 @@ def main() -> int:
         "status": _status(routes),
         "routes": routes,
         "stage_summary": probe.get("summary") or {},
+        "warmup": probe.get("warmup") or {},
         "optimization_policy": {
             "skip_reranker_when_retrieval_confidence_high": True,
             "skip_generation_on_deterministic_refusal": True,
             "skip_generation_on_insufficient_evidence_safe_default": True,
             "cache_low_risk_educational_retrieval_only": True,
             "local_load_smoke_forces_sparse_backend": True,
+            "report_cold_start_warmup_separately": True,
+        },
+        "phase2_notes": {
+            "normal_rag_previous_p95_ms": 7872.81,
+            "load_smoke_previous_p95_ms": 7546.078,
+            "reranker_default": "disabled_until_improvement_proven",
+            "production_ready": False,
         },
         "claim_boundary": (
             "Latency profile is local engineering observability only. It is not a production SLO, "
@@ -51,6 +60,8 @@ def main() -> int:
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    PHASE2_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    PHASE2_OUTPUT_PATH.write_text(json.dumps({**payload, "schema_version": "latency_profile_phase2_v1"}, indent=2), encoding="utf-8")
     print(json.dumps({"status": payload["status"], "routes": routes}, indent=2))
     return 0
 
@@ -84,9 +95,13 @@ def _route_rows(per_query: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _route_name(row: dict[str, Any]) -> str:
     terminal = str(row.get("terminal_step") or "").lower()
     query = str(row.get("query") or "").lower()
+    if "input_guardrail_block" in terminal:
+        return "deterministic_safety_refusal"
     if "cache" in terminal:
         return "cached_educational_answer"
-    if any(term in query for term in ("stop chemo", "do i have cancer", "ignore previous", "another patient")):
+    if any(term in query for term in ("stop chemo", "do i have cancer", "another patient", "may lagnat", "turmeric")):
+        return "low_confidence_safe_default"
+    if any(term in query for term in ("ignore previous", "bypass", "show another patient")):
         return "deterministic_safety_refusal"
     if any(term in query for term in ("scared", "natatakot", "panic")):
         return "emotional_distress_support"

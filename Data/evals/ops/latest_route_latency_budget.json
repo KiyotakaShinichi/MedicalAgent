@@ -1,11 +1,11 @@
 {
   "schema_version": "route_latency_budget_v1",
-  "generated_at": "2026-05-21T04:13:42.052088+00:00",
+  "generated_at": "2026-05-21T08:17:58.296699+00:00",
   "status": "acceptable",
   "summary": {
     "route_count": 7,
     "needs_attention_count": 0,
-    "highest_observed_p95_ms": 7872.81
+    "highest_observed_p95_ms": 1454.87
   },
   "routes": [
     {
@@ -13,14 +13,14 @@
       "ideal_p95_ms": 600,
       "acceptable_p95_ms": 1500,
       "needs_attention_p95_ms": 3000,
-      "sample_count": 3,
-      "current_p50_ms": 506.96,
-      "current_p95_ms": 529.71,
-      "current_p99_ms": 529.71,
+      "sample_count": 1,
+      "current_p50_ms": 50.03,
+      "current_p95_ms": 50.03,
+      "current_p99_ms": 50.03,
       "latency_status": "ideal",
-      "bottleneck_stage": "retrieval_ms",
+      "bottleneck_stage": "total_or_external_wait",
       "production_ready": false,
-      "observed_p95_ms": 529.71,
+      "observed_p95_ms": 50.03,
       "status": "ideal"
     },
     {
@@ -29,13 +29,13 @@
       "acceptable_p95_ms": 2000,
       "needs_attention_p95_ms": 4000,
       "sample_count": 1,
-      "current_p50_ms": 55.18,
-      "current_p95_ms": 55.18,
-      "current_p99_ms": 55.18,
+      "current_p50_ms": 91.12,
+      "current_p95_ms": 91.12,
+      "current_p99_ms": 91.12,
       "latency_status": "ideal",
       "bottleneck_stage": "total_or_external_wait",
       "production_ready": false,
-      "observed_p95_ms": 55.18,
+      "observed_p95_ms": 91.12,
       "status": "ideal"
     },
     {
@@ -43,15 +43,15 @@
       "ideal_p95_ms": 2500,
       "acceptable_p95_ms": 8000,
       "needs_attention_p95_ms": 15000,
-      "sample_count": 5,
-      "current_p50_ms": 587.96,
-      "current_p95_ms": 7872.81,
-      "current_p99_ms": 7872.81,
-      "latency_status": "acceptable",
+      "sample_count": 4,
+      "current_p50_ms": 184.68,
+      "current_p95_ms": 908.37,
+      "current_p99_ms": 908.37,
+      "latency_status": "ideal",
       "bottleneck_stage": "retrieval_ms",
       "production_ready": false,
-      "observed_p95_ms": 7872.81,
-      "status": "acceptable"
+      "observed_p95_ms": 908.37,
+      "status": "ideal"
     },
     {
       "route": "rag_plus_reranker",
@@ -73,15 +73,15 @@
       "ideal_p95_ms": 1200,
       "acceptable_p95_ms": 3000,
       "needs_attention_p95_ms": 6000,
-      "sample_count": 1,
-      "current_p50_ms": 576.53,
-      "current_p95_ms": 576.53,
-      "current_p99_ms": 576.53,
-      "latency_status": "ideal",
+      "sample_count": 4,
+      "current_p50_ms": 1191.58,
+      "current_p95_ms": 1454.87,
+      "current_p99_ms": 1454.87,
+      "latency_status": "acceptable",
       "bottleneck_stage": "retrieval_ms",
       "production_ready": false,
-      "observed_p95_ms": 576.53,
-      "status": "ideal"
+      "observed_p95_ms": 1454.87,
+      "status": "acceptable"
     },
     {
       "route": "hybrid_prediction",

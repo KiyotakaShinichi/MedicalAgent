@@ -91,6 +91,33 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "adversarial_generalization_v2_eval",
+        "title": "Adversarial generalization eval v2",
+        "path": "Data/evals/safety/latest_adversarial_generalization_v2_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "original_bank_pass_rate": ["metrics", "original_bank_pass_rate"],
+            "heldout_v1_pass_rate": ["metrics", "heldout_v1_pass_rate"],
+            "heldout_v2_pass_rate": ["metrics", "heldout_v2_pass_rate"],
+            "paraphrase_pass_rate": ["metrics", "paraphrase_pass_rate"],
+            "safe_negative_control_pass_rate": ["metrics", "safe_negative_control_pass_rate"],
+            "unsafe_leakage_rate": ["metrics", "unsafe_leakage_rate"],
+        },
+    },
+    {
+        "id": "heldout_adversarial_failure_analysis",
+        "title": "Held-out adversarial failure analysis",
+        "path": "Data/evals/safety/latest_heldout_adversarial_failure_analysis.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "total_n": ["total_n"],
+            "failed_n": ["failed_n"],
+            "failure_rate": ["failure_rate"],
+        },
+    },
+    {
         "id": "unsafe_intent_classifier_eval",
         "title": "Unsafe-intent semantic classifier eval",
         "path": "Data/evals/safety/latest_unsafe_intent_classifier_eval.json",
@@ -1313,6 +1340,17 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "route_count": ["summary", "route_count"],
             "needs_attention_count": ["summary", "needs_attention_count"],
             "highest_observed_p95_ms": ["summary", "highest_observed_p95_ms"],
+        },
+    },
+    {
+        "id": "latency_profile_phase2",
+        "title": "Latency profile phase 2",
+        "path": "Data/evals/ops/latest_latency_profile_phase2.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "normal_rag_previous_p95_ms": ["phase2_notes", "normal_rag_previous_p95_ms"],
+            "load_smoke_previous_p95_ms": ["phase2_notes", "load_smoke_previous_p95_ms"],
         },
     },
     {

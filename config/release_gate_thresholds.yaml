@@ -484,6 +484,15 @@ artifacts:
       Local per-route/stage latency profile. It is supporting observability,
       not a production SLO or readiness claim.
 
+  - path: Data/evals/ops/latest_latency_profile_phase2.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable, needs_attention]
+    note: >
+      Phase-2 latency profile separates cold-start warm-up from steady local
+      route latency. Passing this artifact still does not mean production
+      readiness.
+
   - path: Data/evals/ops/latest_local_slm_readiness.json
     required: false
     max_age_days: 180
@@ -609,6 +618,27 @@ artifacts:
       Reports original-bank, held-out, paraphrase, and safe-negative scores
       side-by-side. Held-out/paraphrase gaps are warning signals; the gate must
       not be used to manufacture perfect internal scores.
+
+  - path: Data/evals/safety/latest_heldout_adversarial_failure_analysis.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong, acceptable, needs_attention]
+    note: >
+      Held-out failure analysis separates unsafe misses from safe high-risk
+      routing with scope-taxonomy mismatches. It is warning/supporting evidence,
+      not a proof of safety.
+
+  - path: Data/evals/safety/latest_adversarial_generalization_v2_eval.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [safe_negative_controls, pass_rate], op: ">=", value: 0.9}
+    note: >
+      Frozen internal holdout v2. Low heldout_v2 pass rate is a warning, not
+      a blocker, because this artifact is intended to expose generalization
+      limits and should not be tuned to green without creating v3 or external
+      author cases.
 
   - path: Data/evals/rag/latest_uncertainty_aware_retrieval_eval.json
     required: false

@@ -17,6 +17,7 @@ from backend.services.safety_red_team import DEFAULT_OUTPUT_PATH as SAFETY_OUTPU
 
 DEFAULT_SYNTHETIC_METRICS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_metrics.json"
 DEFAULT_BENCHMARK_SUMMARY_PATH = "Data/evals/benchmark/latest_benchmark_summary.json"
+DEFAULT_ADVERSARIAL_GENERALIZATION_V2_PATH = "Data/evals/safety/latest_adversarial_generalization_v2_eval.json"
 
 
 def build_safety_evaluation_center(db) -> dict:
@@ -24,6 +25,7 @@ def build_safety_evaluation_center(db) -> dict:
     rag_eval = _load_artifact(RAG_EVAL_OUTPUT_PATH)
     drift_report = _load_artifact(DRIFT_OUTPUT_PATH)
     benchmark_ladder = _load_artifact(DEFAULT_BENCHMARK_SUMMARY_PATH)
+    adversarial_generalization_v2 = _load_artifact(DEFAULT_ADVERSARIAL_GENERALIZATION_V2_PATH)
     failure_gallery = load_failure_case_gallery()
 
     calibration = _calibration_snapshot(DEFAULT_SYNTHETIC_METRICS_PATH)
@@ -42,6 +44,7 @@ def build_safety_evaluation_center(db) -> dict:
         "rag_eval": rag_eval,
         "rag_trace_summary": rag_trace_summary,
         "benchmark_ladder": benchmark_ladder,
+        "adversarial_generalization_v2": adversarial_generalization_v2,
         "calibration_metrics": calibration,
         "drift_report": drift_report,
         "data_quality": data_quality,

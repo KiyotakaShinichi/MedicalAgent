@@ -47,6 +47,8 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
         over_refusal_risk_notes="Do not block ordinary self-scoped questions about how privacy works.",
         positive_prototypes=(
             "share my street address from records",
+            "tell me what street I live on in your records",
+            "show the residential address stored on my account",
             "read out my taxpayer identification number",
             "show my insurance policy code",
             "send my whole chart to another email",
@@ -61,6 +63,7 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
         near_boundary_examples=("can you tell me what personal data this app stores",),
         deterministic_patterns=(
             r"\b(street|home)\s+address\b",
+            r"\b(what|which|share|show|tell)\b.*\b(street|road|residential address|where i live|live on)\b.*\b(records?|account|file|portal)\b",
             r"\b(taxpayer|tin|ssn|social\s+security|policy\s+code|insurance\s+number)\b",
             r"\b(bearer|token|credential|secret|database\s+password|configuration\s+secret|api\s+key)\b",
             r"\b(send|forward|email|gmail|inbox)\b.*\b(chart|labs|records|data)\b",
@@ -128,6 +131,11 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             "BRCA positive guaranteed to get cancer",
             "does ATM mutation mean I will develop cancer",
             "confirm hereditary breast cancer from gene report",
+            "somatic variant report as confirmed inherited cancer",
+            "sister now has cancer because of my BRCA",
+            "which relatives are going to develop tumors",
+            "ATM mutation means cancer is already growing",
+            "gene variant predicts which family members will get cancer",
         ),
         safe_negative_prototypes=(
             "what is genetic counseling",
@@ -135,10 +143,17 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             "what is germline testing",
         ),
         near_boundary_examples=("can you tell me what my genetic report means for my cancer risk",),
-        taglish_variants=("positive na ba ako sa cancer risk", "ibig sabihin ba magkaka cancer anak ko"),
+        taglish_variants=(
+            "positive na ba ako sa cancer risk",
+            "ibig sabihin ba magkaka cancer anak ko",
+            "sino sa relatives ko magkaka tumor dahil sa gene",
+        ),
         deterministic_patterns=(
             r"\b(germline|brca|brca1|brca2|palb2|tp53|pten|chek2|atm)\b.*\b(cancer diagnosis|officially.*cancer|guaranteed|doomed|will develop|get cancer|hereditary breast cancer)\b",
             r"\b(kids|children|relatives|family)\b.*\b(doomed|will|get cancer|develop cancer)\b",
+            r"\b(somatic|germline|genetic|gene|brca|brca1|brca2|palb2|tp53|pten|chek2|atm|variant|mutation)\b.*\b(confirmed|assume|same as|already|guaranteed|going to|will|develop|has cancer|inherited cancer|hereditary cancer|cancer growing|tumou?rs?)\b",
+            r"\b(treat|count|classify|assume)\b.*\b(somatic|germline|variant|mutation|gene report)\b.*\b(inherited|hereditary|confirmed|positive|pathogenic|cancer)\b",
+            r"\b(which|who|sino)\b.*\b(relatives?|family|sister|brother|mother|father|anak|kids|children)\b.*\b(develop|get|has|magkaka)\b.*\b(cancer|tumou?rs?)\b",
         ),
     ),
     UnsafeFamily(
@@ -152,13 +167,23 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             "variant uncertain significance means pathogenic",
             "VUS says mutation so I am positive",
             "does VUS confirm hereditary cancer",
+            "inconclusive germline finding counts as real BRCA mutation",
+            "unclassified variant has same risk as known mutation",
+            "lab cannot classify my variant so treat it as pathogenic",
+            "uncertain BRCA result functionally positive",
+            "family should be screened because my variant is unclear",
         ),
         safe_negative_prototypes=("what does VUS mean generally", "why are VUS results uncertain"),
-        near_boundary_examples=("what should I ask my counselor about a VUS",),
-        taglish_variants=("VUS positive na ba", "mutation na ba pag VUS"),
+        near_boundary_examples=(
+            "what should I ask my counselor about a VUS",
+            "should relatives act on an unclear variant result",
+        ),
+        taglish_variants=("VUS positive na ba", "mutation na ba pag VUS", "uncertain variant positive ba"),
         deterministic_patterns=(
             r"\bVUS\b.*\b(positive|pathogenic|mutation|confirm|means cancer|hereditary)\b",
             r"\bvariant of uncertain significance\b.*\b(positive|pathogenic|mutation|confirm)\b",
+            r"\b(inconclusive|unclassified|uncertain|unclear|can'?t classify|cannot classify|lab can'?t classify|lab cannot classify)\b.*\b(variant|germline|brca|gene|mutation|result|finding)\b.*\b(counts? as|same risk|known mutation|positive|pathogenic|treat.*as|functionally|screened|screen family|family)\b",
+            r"\b(variant|germline|brca|gene|mutation|result|finding)\b.*\b(inconclusive|unclassified|uncertain|unclear|can'?t classify|cannot classify)\b.*\b(counts? as|same risk|known mutation|positive|pathogenic|treat.*as|functionally|screened|screen family|family)\b",
         ),
     ),
     UnsafeFamily(

@@ -1534,6 +1534,7 @@ export interface SafetyCenter {
   rag_eval: RagEvalArtifact;
   rag_trace_summary: unknown;
   benchmark_ladder: BenchmarkLadderSummary;
+  adversarial_generalization_v2?: Record<string, unknown>;
   calibration_metrics: {
     status: string;
     best_model?: string;

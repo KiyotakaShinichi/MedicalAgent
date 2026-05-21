@@ -108,6 +108,15 @@ def run_latency_probe(
     from backend.services.agent_rag import run_patient_agent_pipeline
 
     db = _new_db_session()
+    warmup_started = perf_counter()
+    warmup_result = run_patient_agent_pipeline(
+        db=db,
+        patient_id="PROBE-WARMUP",
+        query="What is a CBC?",
+        patient_context={},
+        fallback_response="I can explain general terms.",
+    )
+    warmup_ms = (perf_counter() - warmup_started) * 1000.0
     per_query: list[dict[str, Any]] = []
 
     stage_buckets: dict[str, list[float]] = {
@@ -167,7 +176,19 @@ def run_latency_probe(
         "per_query":       per_query,
         "environment":     {
             "rag_force_sparse": os.environ.get("RAG_FORCE_SPARSE"),
+            "rag_enable_cross_encoder": os.environ.get("RAG_ENABLE_CROSS_ENCODER"),
+            "fast_mode": os.environ.get("ONCOTRACK_FAST_MODE"),
             "python":           sys.version.split()[0],
+        },
+        "warmup": {
+            "enabled": True,
+            "query": "What is a CBC?",
+            "terminal_step": (warmup_result.get("pipeline_trace") or {}).get("terminal_step"),
+            "total_ms": round(warmup_ms, 2),
+            "rationale": (
+                "Warm-up separates local index/model initialization from steady route latency. "
+                "Cold-start cost is still reported here and must not be hidden."
+            ),
         },
         "claim_boundary": (
             "Engineering measurements over an in-memory SQLite DB and "

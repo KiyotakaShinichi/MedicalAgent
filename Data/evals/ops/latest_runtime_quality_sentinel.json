@@ -1,8 +1,8 @@
 {
   "schema_version": "runtime_quality_sentinel_v1",
-  "generated_at": "2026-05-21T04:20:18.608382+00:00",
+  "generated_at": "2026-05-21T08:19:12.565037+00:00",
   "release_id": "2026-05-ai-swe-hardening",
-  "commit_hash": "fdd8908",
+  "commit_hash": "56ecb6b",
   "status": "needs_attention",
   "thresholds": {
     "unsupported_claim_rate": 0.05,

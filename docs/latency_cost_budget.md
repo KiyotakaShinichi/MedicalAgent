@@ -24,6 +24,7 @@ Artifacts:
 
 ```text
 Data/evals/ops/latest_latency_profile.json
+Data/evals/ops/latest_latency_profile_phase2.json
 Data/evals/ops/latest_route_latency_budget.json
 Data/evals/ops/latest_cost_latency_report.json
 ```
@@ -39,3 +40,8 @@ must be profiled in a separate explicit retrieval experiment.
 
 Every route row includes `production_ready: false`; passing a local budget only
 means the prototype did not regress under the current dev environment.
+
+Phase 2 also reports cold-start warm-up separately from steady local route
+timing. That makes regression tracking cleaner, but it is still not a
+production SLO. If warm-up is high, record it honestly instead of folding it
+into a fake steady-state claim.
