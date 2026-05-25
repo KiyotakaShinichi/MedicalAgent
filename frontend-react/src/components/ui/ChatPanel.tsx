@@ -65,6 +65,11 @@ interface ChatPanelProps {
   loading?: boolean;
   disabled?: boolean;
   placeholder?: string;
+  /** Optional element rendered on the LEFT of the composer (next to the textarea).
+   *  Used by the patient surface to inject the "+" attachment popover so the
+   *  composer reads as: [+] [textarea] [send].  Keeping it as a slot lets the
+   *  clinician chat reuse this component without the patient-only tools. */
+  composerLeading?: React.ReactNode;
 }
 
 const QUICK_PROMPTS: { icon: typeof Activity; label: string; prompt: string }[] = [
@@ -215,7 +220,7 @@ function ChatBubble({ message, isLatestAssistant, registerNode }: MessageProps) 
  */
 const AUTO_SCROLL_FUDGE_PX = 80;
 
-function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSavedActions, disabled, placeholder }: ChatPanelProps) {
+function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSavedActions, disabled, placeholder, composerLeading }: ChatPanelProps) {
   // ── Normalise the parent prop once per change.
   const normalisedParentMessages = useMemo(
     () => normaliseMessages(initialMessages),
@@ -360,7 +365,7 @@ function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSav
             }
           : m,
       ));
-      if (savedActions.length && onSavedActions) {
+      if (onSavedActions) {
         // Defer to next tick so we finish committing the bubble before the
         // parent fires refetches that may swap props underneath us.
         window.setTimeout(() => onSavedActions(savedActions), 0);
@@ -503,6 +508,9 @@ function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSav
       <div className="chat-composer">
         <div className="chat-composer-inner">
           <div className="chat-composer-box">
+            {composerLeading && (
+              <div className="chat-composer-leading">{composerLeading}</div>
+            )}
             <textarea
               ref={textareaRef}
               value={input}

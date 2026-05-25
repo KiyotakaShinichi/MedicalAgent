@@ -7,9 +7,9 @@ import { getMyReport, sendMyChat, sendMyChatStream, getMyChatHistory, uploadFile
 import { ErrorPane } from "../../components/ui/Spinner";
 import { SkeletonDashboard } from "../../components/ui/Skeleton";
 import { PatientBanner } from "./PatientBanner";
+import { PatientKpiStrip } from "./PatientKpiStrip";
 import { KeySignalsCard } from "./KeySignalsCard";
 import { ReviewWithCareTeamCard } from "./ReviewWithCareTeamCard";
-import { NextReviewItemsCard } from "./NextReviewItemsCard";
 import { RecentAiExplanationsCard } from "./RecentAiExplanationsCard";
 import { LabsPanel } from "./LabsPanel";
 import { TimelinePanel } from "./TimelinePanel";
@@ -28,7 +28,7 @@ import { CBCForm } from "./tools/CBCForm";
 import { ImagingForm } from "./tools/ImagingForm";
 import { MedicationForm } from "./tools/MedicationForm";
 import { TreatmentNoteForm } from "./tools/TreatmentNoteForm";
-import { ToolTray, type ToolKey } from "./tools/ToolTray";
+import { ComposerToolButton, type ToolKey } from "./tools/ComposerToolButton";
 import { useAuth } from "../../hooks/useAuth";
 import { ClinicalBoundaryBanner } from "../../components/ui/ClinicalBoundaryBanner";
 import type { ChatMessage, MedicationLog, SavedAction } from "../../types/api";
@@ -148,21 +148,19 @@ export default function PatientDashboard() {
       title="Patient portal"
       subtitle={report?.patient_name ?? patientId ?? ""}
     >
-      <div className="dashboard-page" style={{ paddingBottom: 0 }}>
-        <div className="dashboard-content" style={{ paddingBottom: 0 }}>
-          <ClinicalBoundaryBanner />
-        </div>
+      <div className="dashboard-content patient-boundary-strip">
+        <ClinicalBoundaryBanner />
       </div>
       {status === "loading" && tab !== "chat" && <SkeletonDashboard label="Loading your records..." />}
       {status === "error"   && <ErrorPane message={error ?? "Failed to load"} onRetry={refetchReport} />}
       {tab === "chat" && status === "loading" && (
         <div className="dashboard-page">
           <div className="dashboard-content chat-workspace">
-            <ToolTray onSelect={handleToolSelect} />
             <div className="chat-card-shell">
               <ChatPanel
                 key={chatKey}
                 messages={chatMessages}
+                composerLeading={<ComposerToolButton onSelect={handleToolSelect} />}
                 onSend={async (text) => {
                   const res = await sendMyChat(text);
                   return {
@@ -216,7 +214,7 @@ export default function PatientDashboard() {
       )}
       {status === "success" && report && (
         <div className="dashboard-page">
-          <PatientBanner report={report} />
+          <PatientBanner report={report} compact={tab === "chat"} />
 
           <div className="dashboard-tabbar">
             <div className="dashboard-tabbar-inner">
@@ -234,49 +232,70 @@ export default function PatientDashboard() {
 
           {tab === "overview" && (
             <div className="dashboard-content dashboard-grid">
-              {/* Row 1 — at-a-glance: key signals · review with team · recent symptoms */}
-              <div className="col-5" data-section="summary">
-                <KeySignalsCard summary={report.ai_summary ?? null} />
+              {/* Row 1 — KPI strip across the top: at-a-glance numbers that the
+                  rest of the dashboard then breaks down.  Mirrors a standard
+                  analytics-dashboard top-row pattern so the most important
+                  signals are above the fold without scrolling. */}
+              <div className="dashboard-grid-full" data-section="kpi">
+                <PatientKpiStrip report={report} />
               </div>
-              <div className="col-4" data-section="review">
-                <ReviewWithCareTeamCard summary={report.ai_summary ?? null} />
-              </div>
-              <div className="col-3" data-section="symptoms">
-                <SymptomsTable symptoms={report.symptoms ?? []} compact lastFetchedAt={reportFetchedAt} />
-              </div>
-              {/* Row 2 — CBC + treatment timeline side-by-side */}
+
+              {/* Row 2 — Hybrid monitoring signal (detail) sits beside the
+                  Lab trend chart so the at-a-glance KPI summary AND the
+                  detailed signal slots are both in the first viewport. */}
               <div className="col-7" data-section="labs">
                 <LabsPanel report={report} lastFetchedAt={reportFetchedAt} />
               </div>
-              <div className="col-5" data-section="timeline">
-                <TimelinePanel events={report.timeline ?? []} lastFetchedAt={reportFetchedAt} />
-              </div>
-              {/* Row 3 — model signal · evidence-aware prediction · next review items */}
-              <div className="col-5" data-section="signals">
-                <ModelSignalPanel report={report} />
-              </div>
-              <div className="col-4" data-section="evidence">
+              <div className="col-5" data-section="evidence">
                 {report.hybrid_prediction
                   ? <HybridPredictionCard hybrid={report.hybrid_prediction} />
                   : <EvidenceAwarePredictionCard prediction={report.evidence_aware_prediction} />
                 }
               </div>
-              <div className="col-3" data-section="next-review">
-                <NextReviewItemsCard report={report} />
+
+              {/* Row 3 — Today's summary · Review queue (merged with Next review)
+                  · Model signal.  Review queue is now ONE strong card so the
+                  WBC/platelet warning doesn't show twice on the dashboard. */}
+              <div className="col-4" data-section="summary">
+                <KeySignalsCard
+                  summary={report.ai_summary ?? null}
+                  report={report}
+                  lastFetchedAt={reportFetchedAt}
+                />
+              </div>
+              <div className="col-4" data-section="review">
+                <ReviewWithCareTeamCard summary={report.ai_summary ?? null} report={report} />
+              </div>
+              <div className="col-4" data-section="signals">
+                <ModelSignalPanel report={report} />
               </div>
 
-              {/* Row 4 — chat recap full-width below the modelling row */}
-              <div className="dashboard-grid-full" data-section="ai-explanations">
+              {/* Row 4 — Symptoms · Timeline · Recent AI explanations.  All
+                  three are compact peer cards; none of them is allowed to
+                  stretch into a tall scroll monolith on its own. */}
+              <div className="col-4" data-section="symptoms">
+                <SymptomsTable symptoms={report.symptoms ?? []} compact lastFetchedAt={reportFetchedAt} />
+              </div>
+              <div className="col-4" data-section="timeline">
+                <TimelinePanel events={report.timeline ?? []} lastFetchedAt={reportFetchedAt} />
+              </div>
+              <div className="col-4" data-section="ai-explanations">
                 <RecentAiExplanationsCard messages={chatMessages} />
               </div>
-              {/* Row 4 — genetics full-width */}
+
+              {/* Row 5 — Family & Genetics readiness summary.  The detailed
+                  forms (family history, genetic test, biomarker, tumor
+                  marker) live behind the GeneticCounselingPanel's own
+                  collapsible body so the overview never opens as a giant
+                  inline form page. */}
               <div className="dashboard-grid-full" data-section="genetics">
                 <GeneticCounselingPanel
                   readiness={report.genetic_counseling_readiness ?? null}
                   onSaved={refetchReport}
+                  defaultCollapsed
                 />
               </div>
-              {/* Row 5 — medication log full-width */}
+              {/* Row 6 — medication log full-width (compact table). */}
               <div className="dashboard-grid-full" data-section="medications">
                 <MedLogPanel meds={report.medication_logs ?? []} />
               </div>
@@ -312,13 +331,15 @@ export default function PatientDashboard() {
 
           {tab === "chat" && (
             <div className="dashboard-content chat-workspace">
-              {/* Persistent tool tray — 8 chips: 5 form openers, 2 file
-                  uploads, and an education shortcut. */}
-              <ToolTray onSelect={handleToolSelect} />
+              {/* "+" attachment trigger now lives INSIDE the chat composer
+                  (passed via composerLeading below).  Layout:
+                    [ + ] [ textarea ] [ send ]
+                  No more top-right tool toolbar. */}
               <div className="chat-card-shell">
                 <ChatPanel
                   key={chatKey}
                   messages={chatMessages}
+                  composerLeading={<ComposerToolButton onSelect={handleToolSelect} />}
                   onSend={async (text) => {
                     const res = await sendMyChat(text);
                     return {

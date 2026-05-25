@@ -14,6 +14,9 @@ error, so the dashboard's existing pre-computed prediction stays intact.
 from __future__ import annotations
 
 import json
+import math
+import re
+from datetime import timedelta
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping
@@ -21,6 +24,14 @@ from typing import Any, Mapping
 import pandas as pd
 from sqlalchemy.orm import Session
 
+from backend.models import (
+    BreastCancerProfile,
+    ClinicalIntervention,
+    ImagingReport,
+    LabResult,
+    SymptomReport,
+    Treatment,
+)
 from backend.services.hybrid_prediction import (
     DEFAULT_REGRESSION_MODEL_PATH,
     DEFAULT_TOXICITY_MODEL_PATH,
@@ -77,6 +88,209 @@ def _latest_cycle_row(timeline: pd.DataFrame, patient_id: str) -> dict[str, Any]
     return matches.iloc[-1].to_dict()
 
 
+def _live_patient_row_from_db(db: Session, patient_id: str) -> dict[str, Any] | None:
+    """Build a best-effort inference row from the live demo patient record.
+
+    The trained models consume the synthetic timeline feature schema.  Demo
+    patients such as ``P001`` live in SQL tables instead of the CSV, so they
+    need a narrow adapter before the evidence-aware heads can do their normal
+    abstention/confidence logic.  This adapter does not create clinical facts:
+    unknown fields stay missing, and the output remains a synthetic-only
+    monitoring signal.
+    """
+    profile = (
+        db.query(BreastCancerProfile)
+        .filter(BreastCancerProfile.patient_id == patient_id)
+        .first()
+    )
+    labs = (
+        db.query(LabResult)
+        .filter(LabResult.patient_id == patient_id)
+        .order_by(LabResult.date.asc(), LabResult.id.asc())
+        .all()
+    )
+    treatments = (
+        db.query(Treatment)
+        .filter(Treatment.patient_id == patient_id)
+        .order_by(Treatment.date.asc(), Treatment.cycle.asc(), Treatment.id.asc())
+        .all()
+    )
+    symptoms = (
+        db.query(SymptomReport)
+        .filter(SymptomReport.patient_id == patient_id)
+        .order_by(SymptomReport.date.asc(), SymptomReport.id.asc())
+        .all()
+    )
+    imaging_reports = (
+        db.query(ImagingReport)
+        .filter(ImagingReport.patient_id == patient_id)
+        .order_by(ImagingReport.date.asc(), ImagingReport.id.asc())
+        .all()
+    )
+    interventions = (
+        db.query(ClinicalIntervention)
+        .filter(ClinicalIntervention.patient_id == patient_id)
+        .order_by(ClinicalIntervention.date.asc(), ClinicalIntervention.id.asc())
+        .all()
+    )
+
+    if not any((profile, labs, treatments, symptoms, imaging_reports, interventions)):
+        return None
+
+    latest_treatment = treatments[-1] if treatments else None
+    treatment_date = latest_treatment.date if latest_treatment else (labs[-1].date if labs else None)
+    cycle = latest_treatment.cycle if latest_treatment else max(len(treatments), 1)
+
+    pre_lab = _latest_lab_on_or_before(labs, treatment_date) or (labs[0] if labs else None)
+    recovery_lab = labs[-1] if labs else None
+    nadir_labs = _nadir_window_labs(labs, treatment_date) if treatment_date else labs
+
+    baseline_size = _first_report_size(imaging_reports)
+    latest_size = _last_report_size(imaging_reports)
+    percent_change = None
+    if baseline_size is not None and latest_size is not None and baseline_size > 0:
+        percent_change = round(((latest_size - baseline_size) / baseline_size) * 100.0, 2)
+
+    recent_symptoms = (
+        [row for row in symptoms if treatment_date and row.date >= treatment_date]
+        or symptoms
+    )
+    intervention_count = len(interventions)
+
+    return {
+        "patient_id": patient_id,
+        "cycle": cycle,
+        "treatment_date": treatment_date.isoformat() if treatment_date else None,
+        "age": None,
+        "stage": _normalise_stage(profile.cancer_stage if profile else None),
+        "molecular_subtype": _normalise_subtype(profile.molecular_subtype if profile else None),
+        "regimen": _normalise_regimen([t.drug for t in treatments]),
+        "pre_wbc": _lab_value(pre_lab, "wbc"),
+        "pre_anc": None,
+        "pre_hemoglobin": _lab_value(pre_lab, "hemoglobin"),
+        "pre_platelets": _lab_value(pre_lab, "platelets"),
+        "nadir_wbc": _min_lab_value(nadir_labs, "wbc"),
+        "nadir_anc": None,
+        "nadir_hemoglobin": _min_lab_value(nadir_labs, "hemoglobin"),
+        "nadir_platelets": _min_lab_value(nadir_labs, "platelets"),
+        "recovery_wbc": _lab_value(recovery_lab, "wbc"),
+        "recovery_hemoglobin": _lab_value(recovery_lab, "hemoglobin"),
+        "recovery_platelets": _lab_value(recovery_lab, "platelets"),
+        "mri_tumor_size_cm": latest_size,
+        "mri_percent_change_from_baseline": percent_change,
+        "max_symptom_severity": max((s.severity for s in recent_symptoms), default=None),
+        "symptom_count": len(recent_symptoms),
+        "intervention_count": intervention_count,
+        "dose_delayed": int(any(_contains_any(i.intervention_type, ("delay", "held", "hold", "defer")) for i in interventions)),
+        "dose_reduced": int(any(_contains_any(i.intervention_type, ("reduc", "lower")) for i in interventions)),
+        "live_record_adapter": True,
+    }
+
+
+def _latest_lab_on_or_before(labs: list[LabResult], target_date: Any | None) -> LabResult | None:
+    if not labs or target_date is None:
+        return None
+    eligible = [row for row in labs if row.date <= target_date]
+    return eligible[-1] if eligible else None
+
+
+def _nadir_window_labs(labs: list[LabResult], treatment_date: Any | None) -> list[LabResult]:
+    if not labs or treatment_date is None:
+        return []
+    window_end = treatment_date + timedelta(days=21)
+    window = [row for row in labs if treatment_date <= row.date <= window_end]
+    return window or [row for row in labs if row.date >= treatment_date] or labs
+
+
+def _lab_value(row: LabResult | None, field: str) -> float | None:
+    if row is None:
+        return None
+    value = getattr(row, field, None)
+    return float(value) if value is not None and math.isfinite(float(value)) else None
+
+
+def _min_lab_value(rows: list[LabResult], field: str) -> float | None:
+    values = [_lab_value(row, field) for row in rows]
+    values = [v for v in values if v is not None]
+    return min(values) if values else None
+
+
+def _first_report_size(reports: list[ImagingReport]) -> float | None:
+    for report in reports:
+        size = _largest_cm(report)
+        if size is not None:
+            return size
+    return None
+
+
+def _last_report_size(reports: list[ImagingReport]) -> float | None:
+    for report in reversed(reports):
+        size = _largest_cm(report)
+        if size is not None:
+            return size
+    return None
+
+
+def _largest_cm(report: ImagingReport) -> float | None:
+    text = f"{report.findings or ''} {report.impression or ''}"
+    values = []
+    for match in re.finditer(r"(\d+(?:\.\d+)?)\s*cm\b", text, flags=re.IGNORECASE):
+        try:
+            values.append(float(match.group(1)))
+        except ValueError:
+            continue
+    return max(values) if values else None
+
+
+def _normalise_stage(value: str | None) -> str | None:
+    if not value:
+        return None
+    upper = value.upper().replace("STAGE", "").strip()
+    if upper in {"II", "2"}:
+        return "IIA"
+    if upper in {"III", "3"}:
+        return "IIIA"
+    if upper in {"IV", "4"}:
+        return "IV"
+    return upper
+
+
+def _normalise_subtype(value: str | None) -> str | None:
+    if not value:
+        return None
+    text = value.lower().replace(" ", "")
+    if "triple" in text:
+        return "triple-negative"
+    hr_pos = "hr-positive" in text or "hr+" in text or ("er-positive" in text and "pr-positive" in text)
+    her2_pos = "her2-positive" in text or "her2+" in text
+    her2_neg = "her2-negative" in text or "her2-" in text
+    if hr_pos and her2_pos:
+        return "HR+/HER2+"
+    if hr_pos and her2_neg:
+        return "HR+/HER2-"
+    if her2_pos:
+        return "HER2+"
+    return value
+
+
+def _normalise_regimen(drugs: list[str]) -> str | None:
+    joined = " ".join(drugs).lower()
+    if "tchp" in joined:
+        return "TCHP"
+    if "carboplatin" in joined and "paclitaxel" in joined:
+        return "paclitaxel + carboplatin then AC"
+    if "paclitaxel" in joined and ("doxorubicin" in joined or "cyclophosphamide" in joined or "ac" in joined):
+        return "dose-dense AC then paclitaxel"
+    if "paclitaxel" in joined:
+        return "dose-dense AC then paclitaxel"
+    return drugs[-1] if drugs else None
+
+
+def _contains_any(value: str | None, needles: tuple[str, ...]) -> bool:
+    text = (value or "").lower()
+    return any(needle in text for needle in needles)
+
+
 def build_evidence_aware_prediction(
     patient_id: str,
     db: Session,
@@ -98,9 +312,9 @@ def build_evidence_aware_prediction(
     the toxicity signal.
     """
     timeline = _load_timeline_index(timeline_csv)
-    if timeline is None:
-        return None
-    row = _latest_cycle_row(timeline, patient_id)
+    row = _latest_cycle_row(timeline, patient_id) if timeline is not None else None
+    if row is None:
+        row = _live_patient_row_from_db(db, patient_id)
     if row is None:
         return None
     if not Path(model_path).exists():
@@ -148,9 +362,9 @@ def build_hybrid_prediction(
     ``build_evidence_aware_prediction``.
     """
     timeline = _load_timeline_index(timeline_csv)
-    if timeline is None:
-        return None
-    row = _latest_cycle_row(timeline, patient_id)
+    row = _latest_cycle_row(timeline, patient_id) if timeline is not None else None
+    if row is None:
+        row = _live_patient_row_from_db(db, patient_id)
     if row is None:
         return None
     if not Path(classification_model_path).exists():
@@ -217,6 +431,10 @@ def build_hybrid_prediction(
 
     payload = bundle.to_dict()
     payload["ood_gate"] = ood_gate.to_dict()
+    payload["inference_source"] = (
+        "live_patient_record_adapter"
+        if row.get("live_record_adapter") else "synthetic_timeline_row"
+    )
     return payload
 
 

@@ -485,6 +485,9 @@ def build_patient_report_response(patient_id: str, db: Session):
         report["hybrid_prediction"] = None
         report["evidence_aware_prediction"] = None
     report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
+    report["monitoring_score"] = (
+        report["multimodal_assessment"] or {}
+    ).get("treatment_monitoring_score")
     report["patient_timeline_summary"] = build_patient_timeline_risk_summary(report)
     report["timeline_intelligence"] = build_timeline_intelligence(report)
     report["data_availability"] = build_data_availability(report)

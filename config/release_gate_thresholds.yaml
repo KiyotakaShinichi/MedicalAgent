@@ -733,3 +733,23 @@ artifacts:
     note: >
       Inference-time OOD/data-quality gate is a warning/supporting guardrail
       while thresholds mature. Severe OOD must abstain in the eval.
+
+  - path: Data/evals/governance/latest_statistical_eval_summary.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, strong]
+    note: >
+      Adds n-size and confidence-interval wrappers around internal engineering
+      eval metrics. This improves reporting discipline but is not clinical
+      validation.
+
+  - path: Data/evals/agentic_tool_use/latest_agentic_workflow_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable]
+    metric_thresholds:
+      - {path: [unsafe_tool_leakage_count], op: "==", value: 0}
+    note: >
+      Bounded agentic workflow planning is an engineering scaffold. It may
+      choose safe workflow/tool routes, but it must not execute diagnosis,
+      treatment, dosage, prognosis, genetics, or tumor-marker authority.

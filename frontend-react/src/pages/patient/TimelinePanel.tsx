@@ -27,6 +27,9 @@ interface Props {
   lastFetchedAt?: number | null;
 }
 
+/** Latest-N events shown by default; the rest is gated behind "View all". */
+const DEFAULT_VISIBLE_EVENTS = 5;
+
 type Tone = "rose" | "blue" | "amber" | "purple" | "green" | "neutral";
 
 const toneStyle: Record<Tone, { bg: string; fg: string }> = {
@@ -276,11 +279,18 @@ function TimelineDetailModal({ event, onClose }: { event: TimelineEvent; onClose
 
 export function TimelinePanel({ events, lastFetchedAt }: Props) {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
+  const [expanded, setExpanded] = useState(false);
   const sorted = [...(events ?? [])].sort((a, b) => b.date.localeCompare(a.date));
+  // Limit to the most recent N events by default so the timeline does NOT
+  // create a 4000px-tall card on a long patient record.  "View all"
+  // expands in place; the section-card collapsible chevron still hides
+  // the whole panel when the patient wants the dashboard quiet.
+  const visible = expanded ? sorted : sorted.slice(0, DEFAULT_VISIBLE_EVENTS);
+  const hiddenCount = Math.max(0, sorted.length - visible.length);
 
   // Group by YYYY-MM-DD bucket so the timeline reads like a clinical record.
   const groups: { key: string; heading: { primary: string; secondary?: string }; items: TimelineEvent[] }[] = [];
-  for (const ev of sorted) {
+  for (const ev of visible) {
     const key = (ev.date ?? "").slice(0, 10);
     const last = groups[groups.length - 1];
     if (last && last.key === key) {
@@ -294,6 +304,8 @@ export function TimelinePanel({ events, lastFetchedAt }: Props) {
     <SectionCard
       title="Treatment timeline"
       icon={CalendarDays}
+      collapsible
+      collapseId="patient-treatment-timeline"
       meta={
         <span className="flex items-center gap-2">
           {sorted.length > 0 && <span>{sorted.length} events · {groups.length} days</span>}
@@ -305,20 +317,34 @@ export function TimelinePanel({ events, lastFetchedAt }: Props) {
       {sorted.length === 0 ? (
         <EmptyState label="No timeline events yet — symptoms, labs, and imaging will appear here." />
       ) : (
-        <div className="timeline-root">
-          {groups.map((group) => (
-            <TimelineDateGroup
-              key={group.key}
-              primary={group.heading.primary}
-              secondary={group.heading.secondary}
-              count={group.items.length}
+        <>
+          <div className={`timeline-root${expanded ? " timeline-root--expanded" : ""}`}>
+            {groups.map((group) => (
+              <TimelineDateGroup
+                key={group.key}
+                primary={group.heading.primary}
+                secondary={group.heading.secondary}
+                count={group.items.length}
+              >
+                {group.items.map((ev, i) => (
+                  <TimelineEventCard key={i} event={ev} onSelect={setSelectedEvent} />
+                ))}
+              </TimelineDateGroup>
+            ))}
+          </div>
+          {(hiddenCount > 0 || expanded) && (
+            <button
+              type="button"
+              className="timeline-view-all"
+              onClick={() => setExpanded((v) => !v)}
+              aria-expanded={expanded}
             >
-              {group.items.map((ev, i) => (
-                <TimelineEventCard key={i} event={ev} onSelect={setSelectedEvent} />
-              ))}
-            </TimelineDateGroup>
-          ))}
-        </div>
+              {expanded
+                ? `Show latest ${DEFAULT_VISIBLE_EVENTS} only`
+                : `View all ${sorted.length} events`}
+            </button>
+          )}
+        </>
       )}
       {selectedEvent && (
         <TimelineDetailModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />

@@ -15,9 +15,12 @@ import type { GeneticCounselingReadiness } from "../../types/api";
 interface GeneticCounselingPanelProps {
   readiness?: GeneticCounselingReadiness | null;
   onSaved?: () => void;
+  /** Default-collapse the body so the dashboard isn't a long form page.
+   *  The readiness summary is still visible in the section header. */
+  defaultCollapsed?: boolean;
 }
 
-export function GeneticCounselingPanel({ readiness, onSaved }: GeneticCounselingPanelProps) {
+export function GeneticCounselingPanel({ readiness, onSaved, defaultCollapsed = false }: GeneticCounselingPanelProps) {
   const [saving, setSaving] = useState<string | null>(null);
   const [family, setFamily] = useState({
     relationship: "mother",
@@ -127,6 +130,9 @@ export function GeneticCounselingPanel({ readiness, onSaved }: GeneticCounseling
       title="Family and genetic counseling"
       icon={Dna}
       meta={readiness?.readiness_status?.replaceAll("_", " ") ?? "organize records"}
+      collapsible
+      collapseId="patient-genetic-counseling"
+      defaultOpen={!defaultCollapsed}
       footer="This organizes family history, genetic-test, biomarker, and tumor-marker records for review. It is not genetic counseling, diagnosis, or treatment advice."
     >
       <div className="genetics-panel">

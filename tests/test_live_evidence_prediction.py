@@ -11,6 +11,7 @@ The contract this guards:
 from __future__ import annotations
 
 import unittest
+from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -20,9 +21,18 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from backend.database import Base
-from backend.models import Patient, PredictionTrace
+from backend.models import (
+    BreastCancerProfile,
+    ImagingReport,
+    LabResult,
+    Patient,
+    PredictionTrace,
+    SymptomReport,
+    Treatment,
+)
 from backend.services.live_evidence_prediction import (
     _load_timeline_index,
+    build_hybrid_prediction,
     build_evidence_aware_prediction,
 )
 
@@ -117,6 +127,70 @@ class CohortMembershipContract(unittest.TestCase):
             "P-X", db, timeline_csv="/nonexistent/path.csv",
         )
         self.assertIsNone(envelope)
+
+    def test_demo_patient_record_can_use_live_adapter_when_not_in_csv(self) -> None:
+        if not REQUIRED_ARTIFACT.exists():
+            self.skipTest("Trained model artifact not present.")
+        db = _fresh_db()
+        db.add(Patient(id="P-DEMO", name="Demo Patient"))
+        db.add(BreastCancerProfile(
+            patient_id="P-DEMO",
+            cancer_stage="Stage II",
+            molecular_subtype="HR-positive / HER2-negative",
+        ))
+        db.add(Treatment(
+            patient_id="P-DEMO",
+            date=date(2026, 1, 5),
+            cycle=1,
+            drug="Dose-dense AC (doxorubicin/cyclophosphamide)",
+        ))
+        db.add(Treatment(
+            patient_id="P-DEMO",
+            date=date(2026, 3, 16),
+            cycle=6,
+            drug="Paclitaxel",
+        ))
+        db.add_all([
+            LabResult(patient_id="P-DEMO", date=date(2026, 1, 4), wbc=6.5, hemoglobin=13.0, platelets=248, source="test"),
+            LabResult(patient_id="P-DEMO", date=date(2026, 3, 25), wbc=3.4, hemoglobin=10.9, platelets=178, source="test"),
+            LabResult(patient_id="P-DEMO", date=date(2026, 3, 29), wbc=4.7, hemoglobin=11.1, platelets=214, source="test"),
+        ])
+        db.add(SymptomReport(patient_id="P-DEMO", date=date(2026, 3, 24), symptom="fatigue", severity=5))
+        db.add_all([
+            ImagingReport(
+                patient_id="P-DEMO",
+                date=date(2026, 1, 3),
+                modality="Breast MRI",
+                report_type="Baseline",
+                body_site="Breast",
+                findings="Right breast mass measures 4.2 cm.",
+                impression="Baseline MRI.",
+            ),
+            ImagingReport(
+                patient_id="P-DEMO",
+                date=date(2026, 3, 30),
+                modality="Breast MRI",
+                report_type="Follow-up",
+                body_site="Breast",
+                findings="Residual enhancement measures 1.8 cm.",
+                impression="Interval decrease; clinician interpretation required.",
+            ),
+        ])
+        db.commit()
+        with TemporaryDirectory() as tmp:
+            csv = _write_tiny_timeline(Path(tmp), ["P-OTHER"])
+            bundle = build_hybrid_prediction(
+                "P-DEMO",
+                db,
+                timeline_csv=str(csv),
+                actor_role="patient",
+                record_trace=False,
+            )
+        self.assertIsNotNone(bundle)
+        self.assertEqual(bundle["inference_source"], "live_patient_record_adapter")
+        self.assertEqual(bundle["classification"]["evidence"]["abstain"], False)
+        self.assertIn("response_score", bundle)
+        self.assertIn("toxicity", bundle)
 
 
 # ─── Trace persistence ───────────────────────────────────────────────────────

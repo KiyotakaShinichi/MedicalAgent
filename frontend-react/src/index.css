@@ -752,6 +752,10 @@ a { color: inherit; text-decoration: none; }
   padding: var(--content-gutter);
 }
 
+.patient-boundary-strip {
+  padding-bottom: 0;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -860,6 +864,26 @@ a { color: inherit; text-decoration: none; }
   padding-bottom: 12px;
   margin-bottom: 14px;
   border-bottom: 1px solid var(--border);
+}
+
+.app-card-header--clickable {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 6px;
+  margin-left: -4px;
+  margin-right: -4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  transition: background-color 120ms ease;
+}
+
+.app-card-header--clickable:hover {
+  background-color: var(--surface2);
+}
+
+.app-card-header--clickable:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
 }
 
 .app-section-title {
@@ -1035,15 +1059,780 @@ a { color: inherit; text-decoration: none; }
   max-width: var(--content-max-width);
   margin: var(--content-gutter) auto 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.45fr);
-  gap: 20px;
-  padding: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.35fr);
+  gap: 18px;
+  padding: 22px 24px;
   border: 1px solid var(--border);
   border-radius: 14px;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
+}
+
+/* ─── Today's summary (KeySignals) ───────────────────────────────────── */
+
+.today-summary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.today-summary-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.today-summary-sentence {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0;
+}
+
+.today-summary-sentence--empty { color: var(--text-faint); }
+
+/* ─── Review queue (merged Review + Next clinician review) ───────────── */
+
+.review-empty {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+.review-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.review-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+}
+
+.review-view-all {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.review-view-all:hover { background: var(--surface2); }
+.review-view-all:focus-visible {
+  outline: 2px solid var(--rose, #ec4899);
+  outline-offset: 2px;
+}
+
+/* ─── Symptom log summary row + view all ─────────────────────────────── */
+
+.symptom-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  margin: 0 0 10px;
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: 10px;
+  background: var(--surface2);
+}
+
+.symptom-summary--good    { border-left-color: #059669; }
+.symptom-summary--watch   { border-left-color: #d97706; }
+.symptom-summary--concern { border-left-color: #dc2626; }
+
+.symptom-summary-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.symptom-summary-eyebrow {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.symptom-summary-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.symptom-summary-meta {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+.symptom-summary-bar {
+  flex: 0 0 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.symptom-summary-bar-label {
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  text-align: right;
+}
+
+.symptom-view-all {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.symptom-view-all:hover { background: var(--surface2); }
+.symptom-view-all:focus-visible {
+  outline: 2px solid var(--rose, #ec4899);
+  outline-offset: 2px;
+}
+
+/* ─── Review with care team list ─────────────────────────────────────── */
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.review-list-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.review-list-row:hover {
+  background: var(--surface2);
+  border-color: var(--border);
+}
+
+.review-list-index {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--rose-pale, #fdf2f8);
+  color: var(--rose-deep, #be185d);
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.review-list-text {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text);
+  min-width: 0;
+}
+
+/* ─── Composer "+" attachment trigger (lives inside .chat-composer-box) */
+
+.chat-composer-leading {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  /* The textarea has 6px top padding; the trigger sits on the same
+     baseline as the first line of typed text. */
+  padding-top: 4px;
+}
+
+.composer-tool-root {
+  position: relative;
+  display: inline-block;
+}
+
+.composer-tool-trigger {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.composer-tool-trigger:hover {
+  background: var(--surface2);
+  color: var(--text-strong);
+  border-color: var(--border-strong, var(--border));
+}
+
+.composer-tool-trigger:focus-visible {
+  outline: 2px solid var(--rose, #ec4899);
+  outline-offset: 2px;
+}
+
+.composer-tool-trigger[aria-expanded="true"] {
+  background: var(--surface2);
+  color: var(--text-strong);
+  border-color: var(--rose-soft, var(--rose, #ec4899));
+}
+
+.composer-tool-popover {
+  /* Drop-up: the composer is at the bottom of the workspace, so the
+     popover floats ABOVE the trigger.  bottom: calc(100% + 8px) anchors
+     the popover's bottom edge 8px above the trigger's top edge. */
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 60;
+  width: min(320px, calc(100vw - 32px));
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14);
+  display: flex;
+  flex-direction: column;
+}
+
+.composer-tool-group { display: flex; flex-direction: column; gap: 2px; }
+
+.composer-tool-group-label {
+  padding: 6px 10px 2px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.composer-tool-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.composer-tool-divider {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--border);
+}
+
+.composer-tool-item {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  font: inherit;
+}
+
+.composer-tool-item:hover,
+.composer-tool-item:focus {
+  background: var(--surface2);
+  outline: none;
+}
+
+.composer-tool-item:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--rose-strong, #db2777);
+}
+
+.composer-tool-item-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.composer-tool-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.composer-tool-item-label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  line-height: 1.2;
+}
+
+.composer-tool-item-desc {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  line-height: 1.3;
+}
+
+/* ─── Slim clinical-boundary strip ───────────────────────────────────── */
+
+.clinical-strip {
+  width: calc(100% - calc(var(--content-gutter) * 2));
+  max-width: var(--content-max-width);
+  margin: var(--content-gutter) auto 0;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.clinical-strip--compact { margin-top: 8px; }
+
+.clinical-strip-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: #991b1b;
+  text-align: left;
+  font: inherit;
+}
+
+.clinical-strip-head:hover { background: rgba(220, 38, 38, 0.04); }
+
+.clinical-strip-head:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: -2px;
+}
+
+.clinical-strip-icon { color: #dc2626; flex-shrink: 0; }
+
+.clinical-strip-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b91c1c;
+  flex-shrink: 0;
+}
+
+.clinical-strip-text {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #7f1d1d;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clinical-strip-chevron {
+  color: #b91c1c;
+  flex-shrink: 0;
+  transition: transform 140ms ease;
+}
+
+.clinical-strip-detail {
+  padding: 0 14px 10px 38px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #7f1d1d;
+}
+
+@media (max-width: 640px) {
+  .clinical-strip-text { white-space: normal; }
+}
+
+/* ─── Add health update — dropdown menu ──────────────────────────────── */
+
+.patient-tool-bar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.add-health-update { position: relative; }
+
+.add-health-update-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--rose, #ec4899);
+  background: var(--rose, #ec4899);
+  color: var(--rose-fg, #fff);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+
+.add-health-update-trigger:hover { filter: brightness(0.96); }
+.add-health-update-trigger:active { transform: translateY(1px); }
+.add-health-update-trigger:focus-visible {
+  outline: 2px solid var(--rose-strong, #db2777);
+  outline-offset: 2px;
+}
+
+.add-health-update-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  min-width: 280px;
+  max-width: 320px;
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.add-health-update-item {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  font: inherit;
+}
+
+.add-health-update-item:hover,
+.add-health-update-item:focus { background: var(--surface2); outline: none; }
+.add-health-update-item:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--rose-strong, #db2777);
+}
+
+.add-health-update-item-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-health-update-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.add-health-update-item-label {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  line-height: 1.2;
+}
+
+.add-health-update-item-desc {
+  font-size: 0.74rem;
+  color: var(--text-faint);
+  line-height: 1.3;
+}
+
+@media (max-width: 520px) {
+  .patient-tool-bar { justify-content: stretch; }
+  .add-health-update-trigger { width: 100%; justify-content: center; }
+  .add-health-update-menu { left: 0; right: 0; min-width: 0; }
+}
+
+/* ─── Timeline View all button + max-height feel ─────────────────────── */
+
+.timeline-view-all {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.timeline-view-all:hover { background: var(--surface2); }
+.timeline-view-all:focus-visible {
+  outline: 2px solid var(--rose, #ec4899);
+  outline-offset: 2px;
+}
+.timeline-root--expanded {
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* ─── KPI strip extras (sub-rows + footer chip) ──────────────────────── */
+
+.patient-kpi-subs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  list-style: none;
+}
+.patient-kpi-subs li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.76rem;
+}
+.patient-kpi-sub-label { color: var(--text-faint); }
+.patient-kpi-sub-value {
+  color: var(--text-strong);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.patient-kpi-footer {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 8px;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+/* ─── Hybrid monitoring slot cards ───────────────────────────────────── */
+/*
+ * Used by HybridPredictionCard for the three per-signal slots.  Clean white
+ * card with a tone-colored left accent + chip — keeps the same visual
+ * register as the KPI strip and lab values cards.
+ */
+
+.signal-slot {
+  position: relative;
+  padding: 14px 14px 14px 18px;
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.signal-slot + .signal-slot {
+  margin-top: 10px;
+}
+
+.signal-slot-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.signal-slot-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.signal-slot-chip {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.signal-slot-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.signal-slot-metric {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.signal-slot-bar {
+  margin-top: 10px;
+}
+
+.signal-slot-band {
+  margin-left: 8px;
+  color: var(--text-faint);
+}
+
+/* ─── Patient KPI strip (top-row at-a-glance tiles) ──────────────────── */
+
+.patient-kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.patient-kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.patient-kpi-card:hover {
+  border-color: var(--border-strong, var(--border));
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.patient-kpi-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.patient-kpi-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.patient-kpi-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--text-dim);
+}
+
+.patient-kpi-value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.patient-kpi-value strong {
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.patient-kpi-unit {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  letter-spacing: 0.01em;
+}
+
+.patient-kpi-caption {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--text-dim);
+}
+
+@media (max-width: 900px) {
+  .patient-kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  .patient-kpi-strip { grid-template-columns: minmax(0, 1fr); }
 }
 
 .patient-hero::before {
@@ -1098,6 +1887,14 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: -0.015em;
 }
 
+.patient-hero-copy {
+  margin-top: 6px;
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  max-width: 540px;
+}
+
 .patient-meta-row {
   display: flex;
   flex-wrap: wrap;
@@ -1105,9 +1902,18 @@ a { color: inherit; text-decoration: none; }
   margin-top: 12px;
 }
 
+.patient-hero-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .patient-hero-side {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   gap: 10px;
 }
 
@@ -1137,22 +1943,67 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.1;
 }
 
+.patient-hero--compact {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.26fr);
+  gap: 14px;
+  padding: 14px 18px;
+}
+
+.patient-hero--compact .patient-hero-main {
+  gap: 12px;
+}
+
+.patient-hero--compact .patient-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+}
+
+.patient-hero--compact h2 {
+  font-size: 1.2rem;
+}
+
+.patient-hero--compact .patient-hero-copy {
+  margin-top: 3px;
+  font-size: 0.82rem;
+}
+
+.patient-hero--compact .patient-meta-row {
+  margin-top: 8px;
+}
+
+.patient-hero--compact .patient-score-card {
+  display: none;
+}
+
+.patient-hero--compact .patient-context-card {
+  min-height: 42px;
+  padding: 9px 11px;
+}
+
 /* ─── Chat workspace ─────────────────────────────────────────────────── */
 
 .chat-workspace {
   display: flex;
-  height: calc(100dvh - 180px);
-  min-height: 540px;
-  padding: 0;
+  flex-direction: column;
+  gap: 12px;
+  height: auto;
+  min-height: 0;
+  padding: var(--content-gutter);
 }
 
 .chat-card-shell {
-  flex: 1;
+  flex: 1 1 auto;
+  height: clamp(430px, calc(100dvh - 430px), 680px);
+  max-height: clamp(430px, calc(100dvh - 430px), 680px);
+  min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
@@ -2181,7 +3032,7 @@ td, th {
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 0 0 12px;
+  margin: 0;
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: 12px;

@@ -26,3 +26,5 @@ KnowledgeBase/processed/
 medical_agent.db
 *.sqlite
 *.sqlite3
+*_dev_server.log
+*_dev_server.err.log

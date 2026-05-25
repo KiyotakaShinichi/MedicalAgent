@@ -34,7 +34,11 @@ export function HybridPredictionCard({ hybrid }: Props) {
       footer={
         <span className="inline-flex items-start gap-1.5">
           <Info size={11} aria-hidden="true" style={{ marginTop: 2, flexShrink: 0 }} />
-          <span>{hybrid.claim_boundary}</span>
+          <span>
+            <strong>Synthetic-only engineering signal, not a clinical prediction.</strong>
+            {" "}
+            {hybrid.claim_boundary}
+          </span>
         </span>
       }
     >
@@ -91,21 +95,20 @@ function ClassificationSlot({
   const abstained = prediction.evidence?.abstain ?? false;
   const HeaderIcon = abstained ? ShieldAlert : Icon;
   return (
-    <div className="rounded-md border p-3" style={{ background: tone.bg, borderColor: tone.border }}>
-      <div className="flex items-center gap-2 mb-1.5">
+    <div className="signal-slot" style={{ borderLeftColor: tone.fg }}>
+      <div className="signal-slot-head">
         <HeaderIcon size={13} style={{ color: tone.fg }} aria-hidden="true" />
-        <span className="text-[0.72rem] uppercase font-semibold tracking-wide" style={{ color: tone.fg, opacity: 0.9 }}>
-          {title}
-        </span>
-        <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: tone.fg, opacity: 0.7 }}>
+        <span className="signal-slot-eyebrow">{title}</span>
+        <span
+          className="signal-slot-chip"
+          style={{ background: tone.bg, color: tone.fg, borderColor: tone.border }}
+        >
           {abstained ? "abstained" : `confidence: ${prediction.confidence}`}
         </span>
       </div>
-      <p className="text-sm font-bold" style={{ color: tone.fg, lineHeight: 1.25 }}>
-        {label}
-      </p>
+      <p className="signal-slot-label">{label}</p>
       {prediction.probability != null && (
-        <p className="text-[0.78rem] mt-1 tabular-nums" style={{ color: tone.fg, opacity: 0.85 }}>
+        <p className="signal-slot-metric tabular-nums">
           Probability: <strong>{(prediction.probability * 100).toFixed(1)}%</strong>
         </p>
       )}
@@ -128,26 +131,25 @@ function RegressionSlot({
   const abstained = prediction.evidence?.abstain ?? false;
   const HeaderIcon = abstained ? ShieldAlert : Icon;
   return (
-    <div className="rounded-md border p-3" style={{ background: tone.bg, borderColor: tone.border }}>
-      <div className="flex items-center gap-2 mb-1.5">
+    <div className="signal-slot" style={{ borderLeftColor: tone.fg }}>
+      <div className="signal-slot-head">
         <HeaderIcon size={13} style={{ color: tone.fg }} aria-hidden="true" />
-        <span className="text-[0.72rem] uppercase font-semibold tracking-wide" style={{ color: tone.fg, opacity: 0.9 }}>
-          {title}
-        </span>
-        <span style={{ marginLeft: "auto", fontSize: "0.7rem", color: tone.fg, opacity: 0.7 }}>
+        <span className="signal-slot-eyebrow">{title}</span>
+        <span
+          className="signal-slot-chip"
+          style={{ background: tone.bg, color: tone.fg, borderColor: tone.border }}
+        >
           {abstained ? "abstained" : `confidence: ${prediction.confidence}`}
         </span>
       </div>
-      <p className="text-sm font-bold" style={{ color: tone.fg, lineHeight: 1.25 }}>
-        {label}
-      </p>
+      <p className="signal-slot-label">{label}</p>
       {prediction.response_score != null && (
-        <div className="mt-1.5">
+        <div className="signal-slot-bar">
           <ScoreBar score={prediction.response_score} band={prediction.uncertainty_band} tone={tone.fg} />
-          <p className="text-[0.74rem] mt-1 tabular-nums" style={{ color: tone.fg, opacity: 0.85 }}>
+          <p className="signal-slot-metric tabular-nums">
             Score: <strong>{prediction.response_score.toFixed(2)}</strong>
             {prediction.uncertainty_band && (
-              <span style={{ marginLeft: 8, opacity: 0.7 }}>
+              <span className="signal-slot-band">
                 ±{((prediction.uncertainty_band[1] - prediction.uncertainty_band[0]) / 2).toFixed(2)} band
               </span>
             )}

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Activity } from "lucide-react";
 import { SectionCard } from "../../components/ui/SectionCard";
 import { RelativeTime } from "../../components/ui/RelativeTime";
@@ -54,13 +55,24 @@ function SeverityBar({ value, compact }: { value: number; compact?: boolean }) {
 
 export function SymptomsTable({ symptoms, compact = false, lastFetchedAt }: Props) {
   const sorted = [...(symptoms ?? [])].sort((a, b) => b.date.localeCompare(a.date));
-  const visibleLimit = compact ? 5 : 8;
-  const visible = sorted.slice(0, visibleLimit);
+  const [expanded, setExpanded] = useState(false);
+  const initialLimit = 5;
+  const visible = expanded ? sorted : sorted.slice(0, initialLimit);
+  const hiddenCount = Math.max(0, sorted.length - visible.length);
+
+  // Dashboard-style summary row: latest symptom name + total + max severity.
+  const latest = sorted[0] ?? null;
+  const maxSeverity = sorted.length > 0 ? Math.max(...sorted.map((s) => s.severity ?? 0)) : 0;
+  const summaryTone =
+    maxSeverity >= 7 ? "concern" :
+    maxSeverity >= 4 ? "watch" : "good";
 
   return (
     <SectionCard
       title="Symptom log"
       icon={Activity}
+      collapsible
+      collapseId="patient-symptom-log"
       meta={
         <span className="flex items-center gap-2">
           {sorted.length > 0 && <span>{sorted.length} total</span>}
@@ -72,23 +84,49 @@ export function SymptomsTable({ symptoms, compact = false, lastFetchedAt }: Prop
       {sorted.length === 0 ? (
         <EmptyState label="No symptoms recorded — add new ones from the support chat." />
       ) : (
-        <ul className={compact ? "symptom-list symptom-list--compact" : "symptom-list"}>
-          {visible.map((s, i) => (
-            <li key={i} className={compact ? "symptom-row symptom-row--compact" : "symptom-row"}>
-              <span className="symptom-date">{s.date?.slice(5, 10)}</span>
-              <div className="symptom-info">
-                <p className="symptom-name">{s.symptom}</p>
-                {!compact && s.notes && <p className="symptom-notes">{s.notes}</p>}
+        <>
+          {latest && (
+            <div className={`symptom-summary symptom-summary--${summaryTone}`}>
+              <div className="symptom-summary-main">
+                <span className="symptom-summary-eyebrow">Latest</span>
+                <p className="symptom-summary-name">{latest.symptom}</p>
+                <span className="symptom-summary-meta">
+                  {latest.date?.slice(0, 10)} · {sorted.length} total record{sorted.length === 1 ? "" : "s"}
+                </span>
               </div>
-              <div className="symptom-severity">
-                <SeverityBar value={s.severity} compact={compact} />
+              <div className="symptom-summary-bar">
+                <SeverityBar value={maxSeverity} compact />
+                <span className="symptom-summary-bar-label">peak severity</span>
               </div>
-            </li>
-          ))}
-          {sorted.length > visibleLimit && (
-            <p className="symptom-more">+ {sorted.length - visibleLimit} more in record</p>
+            </div>
           )}
-        </ul>
+          <ul className={compact ? "symptom-list symptom-list--compact" : "symptom-list"}>
+            {visible.map((s, i) => (
+              <li key={i} className={compact ? "symptom-row symptom-row--compact" : "symptom-row"}>
+                <span className="symptom-date">{s.date?.slice(5, 10)}</span>
+                <div className="symptom-info">
+                  <p className="symptom-name">{s.symptom}</p>
+                  {!compact && s.notes && <p className="symptom-notes">{s.notes}</p>}
+                </div>
+                <div className="symptom-severity">
+                  <SeverityBar value={s.severity} compact={compact} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          {(hiddenCount > 0 || expanded) && (
+            <button
+              type="button"
+              className="symptom-view-all"
+              onClick={() => setExpanded((v) => !v)}
+              aria-expanded={expanded}
+            >
+              {expanded
+                ? `Show latest ${initialLimit} only`
+                : `View all ${sorted.length} records`}
+            </button>
+          )}
+        </>
       )}
     </SectionCard>
   );
