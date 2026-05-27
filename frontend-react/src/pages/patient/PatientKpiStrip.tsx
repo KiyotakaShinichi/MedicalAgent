@@ -47,15 +47,6 @@ function toneColor(tone: Tone): string {
   }
 }
 
-function toneChipStyle(tone: Tone): { bg: string; fg: string; border: string } {
-  switch (tone) {
-    case "good":    return { bg: "#ecfdf5", fg: "#047857", border: "#a7f3d0" };
-    case "watch":   return { bg: "#fffbeb", fg: "#92400e", border: "#fde68a" };
-    case "concern": return { bg: "#fef2f2", fg: "#b91c1c", border: "#fecaca" };
-    default:        return { bg: "var(--surface2)", fg: "var(--text-faint)", border: "var(--border)" };
-  }
-}
-
 function monitoringScoreTile(report: PatientReport): Tile {
   const score = report.monitoring_score;
   const tone: Tone =
@@ -73,7 +64,7 @@ function monitoringScoreTile(report: PatientReport): Tile {
     unit: score != null ? "/ 100" : undefined,
     caption,
     tone,
-    footer: "Synthetic engineering signal, not a clinical prediction.",
+    footer: "Synthetic engineering signal · Not a clinical prediction · For clinician review.",
   };
 }
 
@@ -149,7 +140,7 @@ function hybridSignalTile(report: PatientReport): Tile {
     caption: h.tone === "neutral" ? "Awaiting more data" : "Tracked for clinician review",
     tone: h.tone,
     subs,
-    footer: "Synthetic-only engineering signal, not a clinical prediction.",
+    footer: "Synthetic engineering signal · Not a clinical prediction · For clinician review.",
   };
 }
 
@@ -236,7 +227,6 @@ export function PatientKpiStrip({ report }: Props) {
       {tiles.map((t) => {
         const Icon = t.icon;
         const color = toneColor(t.tone);
-        const chip = toneChipStyle(t.tone);
         return (
           <div className="patient-kpi-card" role="listitem" key={t.label}>
             <div className="patient-kpi-card-head">
@@ -267,15 +257,9 @@ export function PatientKpiStrip({ report }: Props) {
               </ul>
             )}
             {t.footer && (
-              <span
-                className="patient-kpi-footer"
-                style={{
-                  background: chip.bg,
-                  color: chip.fg,
-                  borderColor: chip.border,
-                }}
-              >
-                {t.footer}
+              <span className="patient-kpi-footer">
+                <span className="patient-kpi-footer-dot" aria-hidden="true" />
+                <span>{t.footer}</span>
               </span>
             )}
           </div>

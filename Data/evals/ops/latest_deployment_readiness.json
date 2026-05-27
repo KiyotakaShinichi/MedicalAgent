@@ -1,0 +1,96 @@
+{
+  "schema_version": "deployment_readiness_v1_2026_05",
+  "generated_at": "2026-05-27T05:02:35.090892+00:00",
+  "status": "needs_attention",
+  "headline_metric": "0 blockers, 1 warnings",
+  "total_n": 10,
+  "pass_count": 9,
+  "fail_count": 1,
+  "skipped_count": 0,
+  "checks": [
+    {
+      "name": "environment_declared",
+      "passed": true,
+      "severity": "warning",
+      "evidence": "ENVIRONMENT/APP_ENV resolved to 'development'.",
+      "remediation": "Set ENVIRONMENT explicitly for non-local deployments."
+    },
+    {
+      "name": "demo_auth_disabled_outside_development",
+      "passed": true,
+      "severity": "blocker",
+      "evidence": "Demo credentials must not be enabled in staging/production.",
+      "remediation": "Use real authentication or keep ENVIRONMENT=development for demos."
+    },
+    {
+      "name": "database_url_configured",
+      "passed": true,
+      "severity": "blocker",
+      "evidence": "DATABASE_URL is required outside local development.",
+      "remediation": "Set DATABASE_URL to Postgres for deployment-shaped runs."
+    },
+    {
+      "name": "cors_origin_explicit_for_non_dev",
+      "passed": true,
+      "severity": "warning",
+      "evidence": "ONCOTRACK_CORS_ORIGINS should list exact frontend origins outside local demos.",
+      "remediation": "Set ONCOTRACK_CORS_ORIGINS=https://your-frontend.example."
+    },
+    {
+      "name": "no_placeholder_llm_key_for_remote_mode",
+      "passed": false,
+      "severity": "warning",
+      "evidence": "GROQ_API_KEY appears unset or placeholder; deterministic/local paths may still work.",
+      "remediation": "Set a real key for live API RAG demos, or document deterministic-only mode."
+    },
+    {
+      "name": "dockerfile_present",
+      "passed": true,
+      "severity": "blocker",
+      "evidence": "Backend Dockerfile exists.",
+      "remediation": "Restore Dockerfile before container deployment."
+    },
+    {
+      "name": "frontend_production_dockerfile_present",
+      "passed": true,
+      "severity": "warning",
+      "evidence": "Production-style frontend Dockerfile exists.",
+      "remediation": "Add frontend-react/Dockerfile for static Vite serving."
+    },
+    {
+      "name": "prod_compose_present",
+      "passed": true,
+      "severity": "warning",
+      "evidence": "Production-shaped Compose file exists.",
+      "remediation": "Add docker-compose.prod.yml for non-dev container smoke testing."
+    },
+    {
+      "name": "release_gate_artifact_present",
+      "passed": true,
+      "severity": "blocker",
+      "evidence": "Release-gate explanation artifact exists.",
+      "remediation": "Run python scripts/run_release_gate.py."
+    },
+    {
+      "name": "production_boundary_artifact_present",
+      "passed": true,
+      "severity": "blocker",
+      "evidence": "Production boundary artifact exists and blocks healthcare-production claims.",
+      "remediation": "Run python scripts/run_production_readiness_boundary.py."
+    }
+  ],
+  "deployment_shaped": true,
+  "healthcare_production_ready": false,
+  "clinical_validation": false,
+  "phi_compliance_review_completed": false,
+  "external_review_completed": false,
+  "allowed_claim": "Deployment-shaped engineering prototype with preflight checks, health/readiness probes, Docker assets, and explicit boundaries.",
+  "blocked_claims": [
+    "production healthcare deployment",
+    "PHI-ready deployment",
+    "clinically validated system",
+    "safe for real patient care",
+    "hospital/EHR integration-ready"
+  ],
+  "claim_boundary": "Deployment readiness here covers software packaging and environment hygiene only. It does not establish clinical validation, PHI compliance, hospital readiness, or real-world safety."
+}

@@ -1,0 +1,522 @@
+{
+  "schema_version": "calibration_uncertainty_report_v1_2026_05",
+  "generated_at": "2026-05-25T11:14:30.574154+00:00",
+  "status": "acceptable",
+  "total_n": 120,
+  "pass_count": 120,
+  "fail_count": 0,
+  "skipped_count": 0,
+  "models": {
+    "logistic_regression": {
+      "total_n": 120,
+      "ece": 0.121274,
+      "bins": [
+        {
+          "bin": "0.0-0.2",
+          "count": 33,
+          "mean_probability": 0.068662,
+          "empirical_rate": 0.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 0,
+            "total_n": 33,
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.10427
+          },
+          "small_n_flag": false
+        },
+        {
+          "bin": "0.2-0.4",
+          "count": 15,
+          "mean_probability": 0.310273,
+          "empirical_rate": 0.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 0,
+            "total_n": 15,
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.203883
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.4-0.6",
+          "count": 9,
+          "mean_probability": 0.541712,
+          "empirical_rate": 0.555556,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 5,
+            "total_n": 9,
+            "estimate": 0.555556,
+            "ci_low": 0.266651,
+            "ci_high": 0.811221
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.6-0.8",
+          "count": 18,
+          "mean_probability": 0.704677,
+          "empirical_rate": 0.888889,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 16,
+            "total_n": 18,
+            "estimate": 0.888889,
+            "ci_low": 0.672002,
+            "ci_high": 0.96898
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.8-1.0",
+          "count": 45,
+          "mean_probability": 0.906834,
+          "empirical_rate": 1.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 45,
+            "total_n": 45,
+            "estimate": 1.0,
+            "ci_low": 0.921348,
+            "ci_high": 1.0
+          },
+          "small_n_flag": false
+        }
+      ]
+    },
+    "random_forest": {
+      "total_n": 120,
+      "ece": 0.217377,
+      "bins": [
+        {
+          "bin": "0.0-0.2",
+          "count": 11,
+          "mean_probability": 0.1619,
+          "empirical_rate": 0.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 0,
+            "total_n": 11,
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.258833
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.2-0.4",
+          "count": 24,
+          "mean_probability": 0.275328,
+          "empirical_rate": 0.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 0,
+            "total_n": 24,
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.137976
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.4-0.6",
+          "count": 24,
+          "mean_probability": 0.505908,
+          "empirical_rate": 0.375,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 9,
+            "total_n": 24,
+            "estimate": 0.375,
+            "ci_low": 0.211594,
+            "ci_high": 0.5729
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.6-0.8",
+          "count": 56,
+          "mean_probability": 0.685428,
+          "empirical_rate": 0.928571,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 52,
+            "total_n": 56,
+            "estimate": 0.928571,
+            "ci_low": 0.830246,
+            "ci_high": 0.971874
+          },
+          "small_n_flag": false
+        },
+        {
+          "bin": "0.8-1.0",
+          "count": 5,
+          "mean_probability": 0.812281,
+          "empirical_rate": 1.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 5,
+            "total_n": 5,
+            "estimate": 1.0,
+            "ci_low": 0.565518,
+            "ci_high": 1.0
+          },
+          "small_n_flag": true
+        }
+      ]
+    },
+    "gradient_boosting": {
+      "total_n": 120,
+      "ece": 0.126315,
+      "bins": [
+        {
+          "bin": "0.0-0.2",
+          "count": 32,
+          "mean_probability": 0.055678,
+          "empirical_rate": 0.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 0,
+            "total_n": 32,
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.107179
+          },
+          "small_n_flag": false
+        },
+        {
+          "bin": "0.2-0.4",
+          "count": 15,
+          "mean_probability": 0.297665,
+          "empirical_rate": 0.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 0,
+            "total_n": 15,
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.203883
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.4-0.6",
+          "count": 6,
+          "mean_probability": 0.505932,
+          "empirical_rate": 0.166667,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 1,
+            "total_n": 6,
+            "estimate": 0.166667,
+            "ci_low": 0.030053,
+            "ci_high": 0.563503
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.6-0.8",
+          "count": 15,
+          "mean_probability": 0.697453,
+          "empirical_rate": 0.933333,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 14,
+            "total_n": 15,
+            "estimate": 0.933333,
+            "ci_low": 0.701835,
+            "ci_high": 0.988133
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.8-1.0",
+          "count": 52,
+          "mean_probability": 0.91659,
+          "empirical_rate": 0.980769,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 51,
+            "total_n": 52,
+            "estimate": 0.980769,
+            "ci_low": 0.898795,
+            "ci_high": 0.996597
+          },
+          "small_n_flag": false
+        }
+      ]
+    },
+    "gradient_boosting_calibrated": {
+      "total_n": 120,
+      "ece": 0.029863,
+      "bins": [
+        {
+          "bin": "0.0-0.2",
+          "count": 54,
+          "mean_probability": 0.0,
+          "empirical_rate": 0.018519,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 1,
+            "total_n": 54,
+            "estimate": 0.018519,
+            "ci_low": 0.003276,
+            "ci_high": 0.097714
+          },
+          "small_n_flag": false
+        },
+        {
+          "bin": "0.2-0.4",
+          "count": 2,
+          "mean_probability": 0.324761,
+          "empirical_rate": 1.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 2,
+            "total_n": 2,
+            "estimate": 1.0,
+            "ci_low": 0.34238,
+            "ci_high": 1.0
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.4-0.6",
+          "count": 0,
+          "mean_probability": null,
+          "empirical_rate": null,
+          "empirical_rate_ci": null
+        },
+        {
+          "bin": "0.6-0.8",
+          "count": 1,
+          "mean_probability": 0.624013,
+          "empirical_rate": 1.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 1,
+            "total_n": 1,
+            "estimate": 1.0,
+            "ci_low": 0.206549,
+            "ci_high": 1.0
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.8-1.0",
+          "count": 63,
+          "mean_probability": 0.970522,
+          "empirical_rate": 0.984127,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 62,
+            "total_n": 63,
+            "estimate": 0.984127,
+            "ci_low": 0.915415,
+            "ci_high": 0.997193
+          },
+          "small_n_flag": false
+        }
+      ]
+    },
+    "mlp": {
+      "total_n": 120,
+      "ece": 0.04195,
+      "bins": [
+        {
+          "bin": "0.0-0.2",
+          "count": 36,
+          "mean_probability": 0.041678,
+          "empirical_rate": 0.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 0,
+            "total_n": 36,
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.096419
+          },
+          "small_n_flag": false
+        },
+        {
+          "bin": "0.2-0.4",
+          "count": 10,
+          "mean_probability": 0.298862,
+          "empirical_rate": 0.1,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 1,
+            "total_n": 10,
+            "estimate": 0.1,
+            "ci_low": 0.017876,
+            "ci_high": 0.40415
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.4-0.6",
+          "count": 8,
+          "mean_probability": 0.516548,
+          "empirical_rate": 0.625,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 5,
+            "total_n": 8,
+            "estimate": 0.625,
+            "ci_low": 0.305742,
+            "ci_high": 0.863156
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.6-0.8",
+          "count": 9,
+          "mean_probability": 0.665084,
+          "empirical_rate": 0.666667,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 6,
+            "total_n": 9,
+            "estimate": 0.666667,
+            "ci_low": 0.354202,
+            "ci_high": 0.879416
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.8-1.0",
+          "count": 57,
+          "mean_probability": 0.959002,
+          "empirical_rate": 0.947368,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 54,
+            "total_n": 57,
+            "estimate": 0.947368,
+            "ci_low": 0.856304,
+            "ci_high": 0.98194
+          },
+          "small_n_flag": false
+        }
+      ]
+    },
+    "temporal_gru": {
+      "total_n": 120,
+      "ece": 0.170885,
+      "bins": [
+        {
+          "bin": "0.0-0.2",
+          "count": 20,
+          "mean_probability": 0.132355,
+          "empirical_rate": 0.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 0,
+            "total_n": 20,
+            "estimate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.161125
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.2-0.4",
+          "count": 19,
+          "mean_probability": 0.293848,
+          "empirical_rate": 0.157895,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 3,
+            "total_n": 19,
+            "estimate": 0.157895,
+            "ci_low": 0.055205,
+            "ci_high": 0.375655
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.4-0.6",
+          "count": 26,
+          "mean_probability": 0.510625,
+          "empirical_rate": 0.384615,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 10,
+            "total_n": 26,
+            "estimate": 0.384615,
+            "ci_low": 0.224286,
+            "ci_high": 0.574651
+          },
+          "small_n_flag": true
+        },
+        {
+          "bin": "0.6-0.8",
+          "count": 39,
+          "mean_probability": 0.707933,
+          "empirical_rate": 0.948718,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 37,
+            "total_n": 39,
+            "estimate": 0.948718,
+            "ci_low": 0.831144,
+            "ci_high": 0.985822
+          },
+          "small_n_flag": false
+        },
+        {
+          "bin": "0.8-1.0",
+          "count": 16,
+          "mean_probability": 0.836931,
+          "empirical_rate": 1.0,
+          "empirical_rate_ci": {
+            "method": "wilson_score",
+            "confidence": 0.95,
+            "successes": 16,
+            "total_n": 16,
+            "estimate": 1.0,
+            "ci_low": 0.806392,
+            "ci_high": 1.0
+          },
+          "small_n_flag": true
+        }
+      ]
+    }
+  },
+  "max_ece": 0.217377,
+  "synthetic_only": true,
+  "clinical_validation": false,
+  "claim_boundary": "Row-level prediction exports and paired tests are synthetic-only MLE evidence. They do not establish clinical validation, patient benefit, or treatment utility."
+}

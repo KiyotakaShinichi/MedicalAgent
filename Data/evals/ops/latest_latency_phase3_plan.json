@@ -1,0 +1,144 @@
+{
+  "schema_version": "latency_phase3_plan_v1_2026_05",
+  "generated_at": "2026-05-25T11:53:01.180815+00:00",
+  "status": "acceptable",
+  "headline_metric": "worst measured p95 1454.87 ms on low_confidence_safe_default",
+  "total_n": 7,
+  "pass_count": 7,
+  "fail_count": 0,
+  "skipped_count": 0,
+  "routes": [
+    {
+      "route": "deterministic_safety_refusal",
+      "sample_count": 1,
+      "current_p50_ms": 50.03,
+      "current_p95_ms": 50.03,
+      "current_p99_ms": 50.03,
+      "acceptable_p95_ms": 1500,
+      "needs_attention_p95_ms": 3000,
+      "bottleneck_stage": "total_or_external_wait",
+      "phase3_status": "acceptable",
+      "production_ready": false
+    },
+    {
+      "route": "cached_educational_answer",
+      "sample_count": 1,
+      "current_p50_ms": 91.12,
+      "current_p95_ms": 91.12,
+      "current_p99_ms": 91.12,
+      "acceptable_p95_ms": 2000,
+      "needs_attention_p95_ms": 4000,
+      "bottleneck_stage": "total_or_external_wait",
+      "phase3_status": "acceptable",
+      "production_ready": false
+    },
+    {
+      "route": "normal_rag",
+      "sample_count": 4,
+      "current_p50_ms": 184.68,
+      "current_p95_ms": 908.37,
+      "current_p99_ms": 908.37,
+      "acceptable_p95_ms": 8000,
+      "needs_attention_p95_ms": 15000,
+      "bottleneck_stage": "retrieval_ms",
+      "phase3_status": "acceptable",
+      "production_ready": false
+    },
+    {
+      "route": "rag_plus_reranker",
+      "sample_count": 0,
+      "current_p50_ms": null,
+      "current_p95_ms": null,
+      "current_p99_ms": null,
+      "acceptable_p95_ms": 12000,
+      "needs_attention_p95_ms": 20000,
+      "bottleneck_stage": null,
+      "phase3_status": "not_sampled",
+      "production_ready": false
+    },
+    {
+      "route": "low_confidence_safe_default",
+      "sample_count": 4,
+      "current_p50_ms": 1191.58,
+      "current_p95_ms": 1454.87,
+      "current_p99_ms": 1454.87,
+      "acceptable_p95_ms": 3000,
+      "needs_attention_p95_ms": 6000,
+      "bottleneck_stage": "retrieval_ms",
+      "phase3_status": "acceptable",
+      "production_ready": false
+    },
+    {
+      "route": "hybrid_prediction",
+      "sample_count": 0,
+      "current_p50_ms": null,
+      "current_p95_ms": null,
+      "current_p99_ms": null,
+      "acceptable_p95_ms": 1500,
+      "needs_attention_p95_ms": 3000,
+      "bottleneck_stage": null,
+      "phase3_status": "not_sampled",
+      "production_ready": false
+    },
+    {
+      "route": "emotional_distress_support",
+      "sample_count": 0,
+      "current_p50_ms": null,
+      "current_p95_ms": null,
+      "current_p99_ms": null,
+      "acceptable_p95_ms": 5000,
+      "needs_attention_p95_ms": 10000,
+      "bottleneck_stage": null,
+      "phase3_status": "not_sampled",
+      "production_ready": false
+    }
+  ],
+  "bottleneck_summary": {
+    "retrieval_ms": 2,
+    "total_or_external_wait": 2,
+    "unknown": 3
+  },
+  "safe_optimizations_enabled_or_preserved": [
+    "skip generation on deterministic refusal",
+    "keep cross-encoder reranker disabled unless retrieval improvement is proven",
+    "separate warm-up/cold-start timing from steady route timing",
+    "cache only low-risk educational answers tied to KB fingerprint",
+    "short-circuit safe-default routes before generation when evidence is insufficient"
+  ],
+  "next_optimization_backlog": [
+    {
+      "item": "parallelize dense/sparse retrieval when dense backend is enabled",
+      "risk": "low",
+      "proof": "before/after retrieval p95 without source-tier regression"
+    },
+    {
+      "item": "persist reusable low-risk retrieval contexts with KB fingerprint",
+      "risk": "medium",
+      "proof": "cached educational p95 plus citation-preservation test"
+    },
+    {
+      "item": "batch semantic claim checks when multiple claims cite the same snippet",
+      "risk": "low",
+      "proof": "validator latency p95 reduction with same hard-failure count"
+    }
+  ],
+  "cost_summary": {
+    "request_count": 500,
+    "overall_latency_ms": {
+      "p50": 1189.78,
+      "p95": 4078.61,
+      "p99": 77191.97
+    },
+    "estimated_total_cost_usd": 0.0,
+    "cache_hit_rate": 0.2,
+    "unsafe_leakage_rate": 0.0,
+    "source_tier_correctness": 1.0,
+    "claim_validation_pass_rate": 1.0,
+    "stage_latency_captured_count": 0,
+    "lowest_estimated_cost_route": "deterministic_only_refusal_path",
+    "cost_basis": "Current default local/deterministic route logs $0 provider cost. Route comparison uses explicit token-price assumptions for capacity planning, not audited billing."
+  },
+  "production_ready": false,
+  "clinical_validation": false,
+  "claim_boundary": "Phase-3 latency planning is local engineering observability. It is not a production SLO, hospital-readiness claim, or real-world performance proof."
+}

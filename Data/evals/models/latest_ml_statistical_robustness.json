@@ -1,0 +1,168 @@
+{
+  "schema_version": "ml_statistical_robustness_v1_2026_05",
+  "generated_at": "2026-05-25T11:53:02.522599+00:00",
+  "status": "acceptable",
+  "total_n": 120,
+  "pass_count": 120,
+  "fail_count": 0,
+  "skipped_count": 0,
+  "classification_champion": "gradient_boosting_calibrated",
+  "regression_champion": "random_forest_regressor",
+  "classification_bootstrap": {
+    "method": "patient_row_bootstrap_with_replacement",
+    "iterations": 500,
+    "total_n": 120,
+    "observed": {
+      "accuracy": 0.966667,
+      "brier": 0.025354,
+      "ece": 0.029863
+    },
+    "intervals": {
+      "accuracy": {
+        "ci_low": 0.925,
+        "ci_high": 1.0
+      },
+      "brier": {
+        "ci_low": 0.004397,
+        "ci_high": 0.053744
+      },
+      "ece": {
+        "ci_low": 0.009524,
+        "ci_high": 0.06128
+      }
+    }
+  },
+  "regression_bootstrap": {
+    "method": "patient_row_bootstrap_with_replacement",
+    "iterations": 500,
+    "total_n": 120,
+    "observed": {
+      "mae": 1.479933,
+      "rmse": 6.478562,
+      "r2": 0.971359
+    },
+    "intervals": {
+      "mae": {
+        "ci_low": 0.513625,
+        "ci_high": 2.834133
+      },
+      "rmse": {
+        "ci_low": 1.861501,
+        "ci_high": 10.402578
+      },
+      "r2": {
+        "ci_low": 0.92333,
+        "ci_high": 0.997111
+      }
+    }
+  },
+  "subgroup_confidence_intervals": {
+    "HER2+": {
+      "total_n": 23,
+      "accuracy": 0.956522,
+      "accuracy_ci": {
+        "method": "wilson_score",
+        "confidence": 0.95,
+        "successes": 22,
+        "total_n": 23,
+        "estimate": 0.956522,
+        "ci_low": 0.790088,
+        "ci_high": 0.992283
+      },
+      "small_n_flag": true
+    },
+    "HR+/HER2+": {
+      "total_n": 22,
+      "accuracy": 1.0,
+      "accuracy_ci": {
+        "method": "wilson_score",
+        "confidence": 0.95,
+        "successes": 22,
+        "total_n": 22,
+        "estimate": 1.0,
+        "ci_low": 0.851345,
+        "ci_high": 1.0
+      },
+      "small_n_flag": true
+    },
+    "HR+/HER2-": {
+      "total_n": 47,
+      "accuracy": 0.957447,
+      "accuracy_ci": {
+        "method": "wilson_score",
+        "confidence": 0.95,
+        "successes": 45,
+        "total_n": 47,
+        "estimate": 0.957447,
+        "ci_low": 0.857515,
+        "ci_high": 0.988252
+      },
+      "small_n_flag": false
+    },
+    "triple-negative": {
+      "total_n": 28,
+      "accuracy": 0.964286,
+      "accuracy_ci": {
+        "method": "wilson_score",
+        "confidence": 0.95,
+        "successes": 27,
+        "total_n": 28,
+        "estimate": 0.964286,
+        "ci_low": 0.822878,
+        "ci_high": 0.993667
+      },
+      "small_n_flag": true
+    }
+  },
+  "label_noise_sensitivity": {
+    "baseline": {
+      "accuracy": 0.966667,
+      "brier": 0.025354,
+      "ece": 0.029863
+    },
+    "rows": [
+      {
+        "label_noise_rate": 0.05,
+        "accuracy": 0.925,
+        "brier": 0.06702,
+        "accuracy_delta_vs_baseline": -0.041667,
+        "brier_delta_vs_baseline": 0.041666
+      },
+      {
+        "label_noise_rate": 0.1,
+        "accuracy": 0.866667,
+        "brier": 0.120592,
+        "accuracy_delta_vs_baseline": -0.1,
+        "brier_delta_vs_baseline": 0.095238
+      },
+      {
+        "label_noise_rate": 0.2,
+        "accuracy": 0.758333,
+        "brier": 0.226544,
+        "accuracy_delta_vs_baseline": -0.208334,
+        "brier_delta_vs_baseline": 0.20119
+      }
+    ],
+    "interpretation_boundary": "Synthetic label-noise perturbation only; not a real annotation-noise study."
+  },
+  "stability_flags": [
+    {
+      "name": "small_subgroup_n",
+      "severity": "low",
+      "groups": [
+        "HER2+",
+        "HR+/HER2+",
+        "triple-negative"
+      ]
+    },
+    {
+      "name": "label_noise_sensitivity_large",
+      "severity": "medium",
+      "value": -0.208334
+    }
+  ],
+  "clinical_validation": false,
+  "synthetic_only": true,
+  "claim_boundary": "ML statistical robustness is computed on synthetic rows only. It does not establish real-patient calibration, clinical validation, treatment utility, or patient benefit.",
+  "contamination_note": "Uses internal synthetic row-level prediction export; not external validation."
+}

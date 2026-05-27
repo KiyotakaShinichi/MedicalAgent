@@ -1,0 +1,622 @@
+{
+  "schema_version": "ml_statistical_evidence_v1_2026_05",
+  "generated_at": "2026-05-25T08:10:16.817173+00:00",
+  "status": "acceptable",
+  "missing_artifacts": [],
+  "warning_count": 0,
+  "sections": {
+    "per_head_calibration": {
+      "status": "acceptable",
+      "method": "reliability_bin_wilson_intervals",
+      "heads": {
+        "response_classification": {
+          "headline_metrics": {
+            "auroc": 0.9677,
+            "brier": 0.0722,
+            "ece": 0.0316,
+            "uncertainty_story": "Isotonic-calibrated probability with Brier/ECE/reliability bins."
+          },
+          "reliability_bins_with_ci": [
+            {
+              "bin": "0.0-0.2",
+              "count": 305,
+              "mean_probability": 0.0314,
+              "empirical_rate": 0.0492,
+              "empirical_rate_ci": {
+                "ci_low": 0.030027,
+                "ci_high": 0.079548,
+                "method": "wilson_score",
+                "total_n": 305
+              },
+              "bin_absolute_gap": 0.0178,
+              "small_n_flag": false
+            },
+            {
+              "bin": "0.2-0.4",
+              "count": 62,
+              "mean_probability": 0.3099,
+              "empirical_rate": 0.3065,
+              "empirical_rate_ci": {
+                "ci_low": 0.205816,
+                "ci_high": 0.429672,
+                "method": "wilson_score",
+                "total_n": 62
+              },
+              "bin_absolute_gap": 0.0034,
+              "small_n_flag": false
+            },
+            {
+              "bin": "0.4-0.6",
+              "count": 75,
+              "mean_probability": 0.4968,
+              "empirical_rate": 0.52,
+              "empirical_rate_ci": {
+                "ci_low": 0.408742,
+                "ci_high": 0.629309,
+                "method": "wilson_score",
+                "total_n": 75
+              },
+              "bin_absolute_gap": 0.0232,
+              "small_n_flag": false
+            },
+            {
+              "bin": "0.6-0.8",
+              "count": 66,
+              "mean_probability": 0.6979,
+              "empirical_rate": 0.7424,
+              "empirical_rate_ci": {
+                "ci_low": 0.625669,
+                "ci_high": 0.832512,
+                "method": "wilson_score",
+                "total_n": 66
+              },
+              "bin_absolute_gap": 0.0445,
+              "small_n_flag": false
+            },
+            {
+              "bin": "0.8-1.0",
+              "count": 392,
+              "mean_probability": 0.9622,
+              "empirical_rate": 0.9745,
+              "empirical_rate_ci": {
+                "ci_low": 0.953685,
+                "ci_high": 0.986085,
+                "method": "wilson_score",
+                "total_n": 392
+              },
+              "bin_absolute_gap": 0.0123,
+              "small_n_flag": false
+            }
+          ],
+          "small_bin_count": 0
+        },
+        "toxicity": {
+          "headline_metrics": {
+            "auroc": 0.9984,
+            "brier": 0.0019,
+            "ece": 0.0021,
+            "uncertainty_story": "Isotonic-calibrated probability with Brier/ECE/reliability bins."
+          },
+          "reliability_bins_with_ci": [
+            {
+              "bin": "0.0-0.2",
+              "count": 309,
+              "mean_probability": 0.0011,
+              "empirical_rate": 0.0,
+              "empirical_rate_ci": {
+                "ci_low": 0.0,
+                "ci_high": 0.012279,
+                "method": "wilson_score",
+                "total_n": 309
+              },
+              "bin_absolute_gap": 0.0011,
+              "small_n_flag": false
+            },
+            {
+              "bin": "0.2-0.4",
+              "count": 1,
+              "mean_probability": 0.2667,
+              "empirical_rate": 0.0,
+              "empirical_rate_ci": {
+                "ci_low": 0.0,
+                "ci_high": 0.793451,
+                "method": "wilson_score",
+                "total_n": 1
+              },
+              "bin_absolute_gap": 0.2667,
+              "small_n_flag": true
+            },
+            {
+              "bin": "0.4-0.6",
+              "count": 0,
+              "mean_probability": null,
+              "empirical_rate": null,
+              "empirical_rate_ci": {
+                "ci_low": null,
+                "ci_high": null,
+                "method": "wilson_score",
+                "total_n": 0
+              },
+              "bin_absolute_gap": null,
+              "small_n_flag": true
+            },
+            {
+              "bin": "0.6-0.8",
+              "count": 1,
+              "mean_probability": 0.7855,
+              "empirical_rate": 0.0,
+              "empirical_rate_ci": {
+                "ci_low": 0.0,
+                "ci_high": 0.793451,
+                "method": "wilson_score",
+                "total_n": 1
+              },
+              "bin_absolute_gap": 0.7855,
+              "small_n_flag": true
+            },
+            {
+              "bin": "0.8-1.0",
+              "count": 589,
+              "mean_probability": 0.9991,
+              "empirical_rate": 0.9983,
+              "empirical_rate_ci": {
+                "ci_low": 0.990446,
+                "ci_high": 0.9997,
+                "method": "wilson_score",
+                "total_n": 589
+              },
+              "bin_absolute_gap": 0.0008,
+              "small_n_flag": false
+            }
+          ],
+          "small_bin_count": 3
+        },
+        "response_regression": {
+          "headline_metrics": {
+            "mae": 1.4983,
+            "interval_method": "absolute_residual_q80_synthetic_proxy",
+            "q80_absolute_error": 1.2861,
+            "empirical_coverage_q80": 0.8,
+            "uncertainty_story": "Prediction interval proxy from held-out synthetic residuals."
+          },
+          "reliability_bins_with_ci": [],
+          "small_bin_count": 0
+        },
+        "abstention": {
+          "headline_metrics": {
+            "coverage_vs_error_tradeoff": [
+              {
+                "confidence_threshold": 0.55,
+                "coverage": 0.9611,
+                "covered_accuracy": 0.9156
+              },
+              {
+                "confidence_threshold": 0.65,
+                "coverage": 0.88,
+                "covered_accuracy": 0.9394
+              },
+              {
+                "confidence_threshold": 0.75,
+                "coverage": 0.8033,
+                "covered_accuracy": 0.9613
+              },
+              {
+                "confidence_threshold": 0.85,
+                "coverage": 0.72,
+                "covered_accuracy": 0.9738
+              }
+            ],
+            "uncertainty_story": "Higher confidence threshold lowers coverage and should raise covered accuracy."
+          },
+          "reliability_bins_with_ci": [],
+          "small_bin_count": 0
+        }
+      },
+      "claim_boundary": "Confidence intervals and deltas here describe internal engineering benchmarks only. They do not establish clinical validation, real-world safety, patient benefit, or production healthcare readiness."
+    },
+    "modality_robustness_comparison": {
+      "status": "acceptable",
+      "method": "scenario_level_sign_test_plus_approx_two_proportion_ci",
+      "wins": 8,
+      "losses": 0,
+      "ties": 0,
+      "scenario_sign_test_p_value": 0.007812,
+      "raw_prediction_availability": false,
+      "rows": [
+        {
+          "scenario": "full_data",
+          "rows_evaluated": 3600,
+          "champion_accuracy": 0.9239,
+          "robust_accuracy": 0.9261,
+          "accuracy_delta_robust_minus_champion": 0.0022,
+          "approx_two_proportion_delta_ci": {
+            "method": "two_proportion_normal_approximation",
+            "confidence": 0.95,
+            "baseline": {
+              "successes": 3326,
+              "total_n": 3600,
+              "estimate": 0.923889
+            },
+            "candidate": {
+              "successes": 3334,
+              "total_n": 3600,
+              "estimate": 0.926111
+            },
+            "delta": 0.002222,
+            "ci_low": -0.009946,
+            "ci_high": 0.01439
+          },
+          "raw_paired_predictions_available": false,
+          "paired_test_limitation": "McNemar/paired bootstrap requires row-level paired predictions; current artifact is summary-level."
+        },
+        {
+          "scenario": "no_imaging",
+          "rows_evaluated": 3600,
+          "champion_accuracy": 0.5439,
+          "robust_accuracy": 0.6272,
+          "accuracy_delta_robust_minus_champion": 0.0833,
+          "approx_two_proportion_delta_ci": {
+            "method": "two_proportion_normal_approximation",
+            "confidence": 0.95,
+            "baseline": {
+              "successes": 1958,
+              "total_n": 3600,
+              "estimate": 0.543889
+            },
+            "candidate": {
+              "successes": 2258,
+              "total_n": 3600,
+              "estimate": 0.627222
+            },
+            "delta": 0.083333,
+            "ci_low": 0.060657,
+            "ci_high": 0.10601
+          },
+          "raw_paired_predictions_available": false,
+          "paired_test_limitation": "McNemar/paired bootstrap requires row-level paired predictions; current artifact is summary-level."
+        },
+        {
+          "scenario": "no_nadir_cbc",
+          "rows_evaluated": 3600,
+          "champion_accuracy": 0.9208,
+          "robust_accuracy": 0.9247,
+          "accuracy_delta_robust_minus_champion": 0.0039,
+          "approx_two_proportion_delta_ci": {
+            "method": "two_proportion_normal_approximation",
+            "confidence": 0.95,
+            "baseline": {
+              "successes": 3315,
+              "total_n": 3600,
+              "estimate": 0.920833
+            },
+            "candidate": {
+              "successes": 3329,
+              "total_n": 3600,
+              "estimate": 0.924722
+            },
+            "delta": 0.003889,
+            "ci_low": -0.008443,
+            "ci_high": 0.016221
+          },
+          "raw_paired_predictions_available": false,
+          "paired_test_limitation": "McNemar/paired bootstrap requires row-level paired predictions; current artifact is summary-level."
+        },
+        {
+          "scenario": "no_recovery_cbc",
+          "rows_evaluated": 3600,
+          "champion_accuracy": 0.9208,
+          "robust_accuracy": 0.9228,
+          "accuracy_delta_robust_minus_champion": 0.002,
+          "approx_two_proportion_delta_ci": {
+            "method": "two_proportion_normal_approximation",
+            "confidence": 0.95,
+            "baseline": {
+              "successes": 3315,
+              "total_n": 3600,
+              "estimate": 0.920833
+            },
+            "candidate": {
+              "successes": 3322,
+              "total_n": 3600,
+              "estimate": 0.922778
+            },
+            "delta": 0.001944,
+            "ci_low": -0.010458,
+            "ci_high": 0.014347
+          },
+          "raw_paired_predictions_available": false,
+          "paired_test_limitation": "McNemar/paired bootstrap requires row-level paired predictions; current artifact is summary-level."
+        },
+        {
+          "scenario": "imaging_only",
+          "rows_evaluated": 3600,
+          "champion_accuracy": 0.9044,
+          "robust_accuracy": 0.9119,
+          "accuracy_delta_robust_minus_champion": 0.0075,
+          "approx_two_proportion_delta_ci": {
+            "method": "two_proportion_normal_approximation",
+            "confidence": 0.95,
+            "baseline": {
+              "successes": 3256,
+              "total_n": 3600,
+              "estimate": 0.904444
+            },
+            "candidate": {
+              "successes": 3283,
+              "total_n": 3600,
+              "estimate": 0.911944
+            },
+            "delta": 0.0075,
+            "ci_low": -0.005838,
+            "ci_high": 0.020838
+          },
+          "raw_paired_predictions_available": false,
+          "paired_test_limitation": "McNemar/paired bootstrap requires row-level paired predictions; current artifact is summary-level."
+        },
+        {
+          "scenario": "cbc_pre_only",
+          "rows_evaluated": 3600,
+          "champion_accuracy": 0.5503,
+          "robust_accuracy": 0.6192,
+          "accuracy_delta_robust_minus_champion": 0.0689,
+          "approx_two_proportion_delta_ci": {
+            "method": "two_proportion_normal_approximation",
+            "confidence": 0.95,
+            "baseline": {
+              "successes": 1981,
+              "total_n": 3600,
+              "estimate": 0.550278
+            },
+            "candidate": {
+              "successes": 2229,
+              "total_n": 3600,
+              "estimate": 0.619167
+            },
+            "delta": 0.068889,
+            "ci_low": 0.04618,
+            "ci_high": 0.091598
+          },
+          "raw_paired_predictions_available": false,
+          "paired_test_limitation": "McNemar/paired bootstrap requires row-level paired predictions; current artifact is summary-level."
+        },
+        {
+          "scenario": "demographics_only",
+          "rows_evaluated": 3600,
+          "champion_accuracy": 0.565,
+          "robust_accuracy": 0.6147,
+          "accuracy_delta_robust_minus_champion": 0.0497,
+          "approx_two_proportion_delta_ci": {
+            "method": "two_proportion_normal_approximation",
+            "confidence": 0.95,
+            "baseline": {
+              "successes": 2034,
+              "total_n": 3600,
+              "estimate": 0.565
+            },
+            "candidate": {
+              "successes": 2213,
+              "total_n": 3600,
+              "estimate": 0.614722
+            },
+            "delta": 0.049722,
+            "ci_low": 0.027029,
+            "ci_high": 0.072415
+          },
+          "raw_paired_predictions_available": false,
+          "paired_test_limitation": "McNemar/paired bootstrap requires row-level paired predictions; current artifact is summary-level."
+        },
+        {
+          "scenario": "symptoms_only",
+          "rows_evaluated": 3600,
+          "champion_accuracy": 0.5631,
+          "robust_accuracy": 0.615,
+          "accuracy_delta_robust_minus_champion": 0.0519,
+          "approx_two_proportion_delta_ci": {
+            "method": "two_proportion_normal_approximation",
+            "confidence": 0.95,
+            "baseline": {
+              "successes": 2027,
+              "total_n": 3600,
+              "estimate": 0.563056
+            },
+            "candidate": {
+              "successes": 2214,
+              "total_n": 3600,
+              "estimate": 0.615
+            },
+            "delta": 0.051944,
+            "ci_low": 0.029247,
+            "ci_high": 0.074642
+          },
+          "raw_paired_predictions_available": false,
+          "paired_test_limitation": "McNemar/paired bootstrap requires row-level paired predictions; current artifact is summary-level."
+        }
+      ],
+      "claim_boundary": "This is a synthetic-only statistical evidence dossier. Intervals and comparison tests describe internal simulator-built artifacts and do not establish clinical validity, real patient calibration, treatment utility, or real-world safety."
+    },
+    "deep_learning_candidate_comparison": {
+      "status": "acceptable",
+      "candidate_count": 16,
+      "best_classifier_by_auroc": {
+        "feature_set": "with_genetic_context",
+        "model": "tiny_transformer",
+        "classification_auroc": 0.983276389138644,
+        "classification_brier": 0.05228399857878685,
+        "classification_accuracy": 0.92,
+        "regression_mae_percent": 17.17433738708496,
+        "regression_r2": 0.7267626523971558
+      },
+      "best_regressor_by_mae": {
+        "feature_set": "with_genetic_and_treatment_context",
+        "model": "sequence_mlp",
+        "classification_auroc": 0.9697896061859378,
+        "classification_brier": 0.07283142954111099,
+        "classification_accuracy": 0.8933333333333333,
+        "regression_mae_percent": 12.784607887268066,
+        "regression_r2": 0.8203576803207397
+      },
+      "comparison_limitation": "This ranks summary metrics. Paired bootstrap over per-patient predictions is still needed before making stronger model-comparison claims.",
+      "promotion_boundary": "No DL candidate may be promoted beyond synthetic monitor-only evidence.",
+      "claim_boundary": "This is a synthetic-only statistical evidence dossier. Intervals and comparison tests describe internal simulator-built artifacts and do not establish clinical validity, real patient calibration, treatment utility, or real-world safety."
+    },
+    "subgroup_statistical_screen": {
+      "status": "acceptable",
+      "group_count": 9,
+      "small_n_group_count": 1,
+      "max_abs_classification_accuracy_gap_vs_overall": 0.0789,
+      "groups": [
+        {
+          "axis": "molecular_subtype",
+          "group": "HER2+",
+          "n": 180,
+          "classification_accuracy": 0.9333,
+          "classification_accuracy_ci": {
+            "ci_low": 0.887101,
+            "ci_high": 0.961456,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": 0.0122,
+          "small_n_flag": false
+        },
+        {
+          "axis": "molecular_subtype",
+          "group": "HR+/HER2+",
+          "n": 180,
+          "classification_accuracy": 0.9111,
+          "classification_accuracy_ci": {
+            "ci_low": 0.860496,
+            "ci_high": 0.944545,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": -0.01,
+          "small_n_flag": false
+        },
+        {
+          "axis": "molecular_subtype",
+          "group": "HR+/HER2-",
+          "n": 360,
+          "classification_accuracy": 0.9083,
+          "classification_accuracy_ci": {
+            "ci_low": 0.874061,
+            "ci_high": 0.933984,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": -0.0128,
+          "small_n_flag": false
+        },
+        {
+          "axis": "molecular_subtype",
+          "group": "triple-negative",
+          "n": 180,
+          "classification_accuracy": 0.9444,
+          "classification_accuracy_ci": {
+            "ci_low": 0.900768,
+            "ci_high": 0.969547,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": 0.0233,
+          "small_n_flag": false
+        },
+        {
+          "axis": "stage",
+          "group": "IIA",
+          "n": 198,
+          "classification_accuracy": 0.899,
+          "classification_accuracy_ci": {
+            "ci_low": 0.849136,
+            "ci_high": 0.933656,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": -0.0221,
+          "small_n_flag": false
+        },
+        {
+          "axis": "stage",
+          "group": "IIB",
+          "n": 270,
+          "classification_accuracy": 0.9519,
+          "classification_accuracy_ci": {
+            "ci_low": 0.919377,
+            "ci_high": 0.971649,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": 0.0308,
+          "small_n_flag": false
+        },
+        {
+          "axis": "stage",
+          "group": "IIIA",
+          "n": 192,
+          "classification_accuracy": 0.8802,
+          "classification_accuracy_ci": {
+            "ci_low": 0.826665,
+            "ci_high": 0.918836,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": -0.0409,
+          "small_n_flag": false
+        },
+        {
+          "axis": "stage",
+          "group": "IIIB",
+          "n": 186,
+          "classification_accuracy": 0.9194,
+          "classification_accuracy_ci": {
+            "ci_low": 0.871217,
+            "ci_high": 0.950521,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": -0.0017,
+          "small_n_flag": false
+        },
+        {
+          "axis": "stage",
+          "group": "IV",
+          "n": 54,
+          "classification_accuracy": 1.0,
+          "classification_accuracy_ci": {
+            "ci_low": 0.933586,
+            "ci_high": 1.0,
+            "method": "wilson_score"
+          },
+          "gap_vs_overall": 0.0789,
+          "small_n_flag": true
+        }
+      ],
+      "claim_boundary": "Synthetic subgroup metric table for engineering fairness/calibration inspection. Subgroups are simulator-defined and do not establish real-world equity or clinical validity."
+    },
+    "patient_temporal_cv": {
+      "status": "acceptable",
+      "roc_auc_interval": {
+        "method": "normal_approximation_mean",
+        "confidence": 0.95,
+        "total_n": 4,
+        "estimate": 0.999565,
+        "ci_low": 0.999115,
+        "ci_high": 1.000015,
+        "std": 0.00046
+      },
+      "brier_interval": {
+        "method": "normal_approximation_mean",
+        "confidence": 0.95,
+        "total_n": 4,
+        "estimate": 0.004675,
+        "ci_low": -0.000256,
+        "ci_high": 0.009605,
+        "std": 0.005031
+      },
+      "patient_overlap_pairs": 0,
+      "temporal_violations": 4,
+      "limitation": "Fold-level interval only; raw patient-level prediction bootstrap is a future upgrade.",
+      "claim_boundary": "Patient-level temporal CV vs. naive row-level KFold on synthetic patient journeys.  AUC numbers here describe a synthetic distribution with internally consistent labels \u2014 they do NOT establish clinical validity, calibration, or generalization to real patient cohorts."
+    }
+  },
+  "recommended_next_raw_prediction_exports": [
+    "per-row classification labels/probabilities for champion and robust heads",
+    "per-row regression predictions/residuals by model variant",
+    "per-row toxicity labels/probabilities for legacy and soft target heads",
+    "subgroup membership per prediction row",
+    "abstention decision per row and model head"
+  ],
+  "claim_boundary": "This is a synthetic-only statistical evidence dossier. Intervals and comparison tests describe internal simulator-built artifacts and do not establish clinical validity, real patient calibration, treatment utility, or real-world safety."
+}

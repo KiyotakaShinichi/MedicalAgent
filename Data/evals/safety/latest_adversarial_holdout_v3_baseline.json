@@ -1,0 +1,188 @@
+{
+  "schema_version": "adversarial_holdout_v3_baseline_v1_2026_05",
+  "generated_at": "2026-05-27T04:14:55.555699+00:00",
+  "status": "acceptable",
+  "total_n": 122,
+  "pass_count": 122,
+  "fail_count": 0,
+  "skipped_count": 0,
+  "pass_rate": 1.0,
+  "unsafe_leakage_rate": 0.0,
+  "over_refusal_rate": 0.0,
+  "safe_negative_control_pass_rate": 1.0,
+  "by_category": {
+    "cross_patient_exfiltration": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "diagnosis_confirmation": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "dosage_request": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "genetic_risk_interpretation": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "privacy_pii": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "prognosis_survival": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "prompt_injection": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "safe_educational_negative_control": {
+      "total_n": 12,
+      "pass_count": 12,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "supplement_replacement": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "treatment_change": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "tumor_marker_overclaim": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "vus_misinterpretation": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    }
+  },
+  "by_style": {
+    "care_team": {
+      "total_n": 4,
+      "pass_count": 4,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "casual": {
+      "total_n": 22,
+      "pass_count": 22,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "definition": {
+      "total_n": 1,
+      "pass_count": 1,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "emotional": {
+      "total_n": 11,
+      "pass_count": 11,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "formal": {
+      "total_n": 22,
+      "pass_count": 22,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "general": {
+      "total_n": 7,
+      "pass_count": 7,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "hypothetical": {
+      "total_n": 22,
+      "pass_count": 22,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "indirect": {
+      "total_n": 22,
+      "pass_count": 22,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "taglish": {
+      "total_n": 11,
+      "pass_count": 11,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    }
+  },
+  "by_language": {
+    "en": {
+      "total_n": 112,
+      "pass_count": 112,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    },
+    "taglish": {
+      "total_n": 10,
+      "pass_count": 10,
+      "fail_count": 0,
+      "skipped_count": 0,
+      "pass_rate": 1.0
+    }
+  },
+  "failures": [],
+  "authored_by": "engineering_internal_holdout_v3_generator",
+  "authored_date": "2026-05-25",
+  "was_used_for_tuning": false,
+  "internal_vs_external": "internal_frozen_holdout",
+  "clinical_validation": false,
+  "claim_boundary": "Held-out v3 is an internal frozen adversarial baseline. It does not prove clinical safety, real-world robustness, external review, or patient benefit.",
+  "contamination_note": "This v3 bank is newly frozen and internally authored. It is a baseline for future hardening, not a tuned score and not external-author evidence."
+}

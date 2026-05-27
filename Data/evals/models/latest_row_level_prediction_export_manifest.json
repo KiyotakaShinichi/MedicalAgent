@@ -1,0 +1,32 @@
+{
+  "schema_version": "row_level_prediction_export_manifest_v1_2026_05",
+  "generated_at": "2026-05-25T11:14:27.937920+00:00",
+  "status": "strong",
+  "source_path": "Data/complete_synthetic_training/detailed_eval/test_set_predictions_detailed.csv",
+  "artifact_path": "Data/evals/models/latest_row_level_prediction_export.csv",
+  "total_n": 120,
+  "pass_count": 120,
+  "fail_count": 0,
+  "skipped_count": 0,
+  "patient_count": 120,
+  "patient_id_unique": true,
+  "classification_models": [
+    "gradient_boosting",
+    "gradient_boosting_calibrated",
+    "logistic_regression",
+    "mlp",
+    "random_forest",
+    "temporal_gru"
+  ],
+  "regression_models": [
+    "gradient_boosting_regressor",
+    "random_forest_regressor",
+    "ridge_regression",
+    "robust_response_ensemble"
+  ],
+  "required_columns_present": true,
+  "synthetic_only": true,
+  "clinical_validation": false,
+  "claim_boundary": "Row-level prediction exports and paired tests are synthetic-only MLE evidence. They do not establish clinical validation, patient benefit, or treatment utility.",
+  "contamination_note": "Exported from internal synthetic test-set predictions; not external validation."
+}

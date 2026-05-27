@@ -64,9 +64,15 @@ app.add_middleware(
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("x-request-id") or str(uuid4())
     token = set_request_id(request_id)
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    finally:
+        reset_request_id(token)
     response.headers["x-request-id"] = request_id
-    reset_request_id(token)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
     return response
 
 
@@ -116,6 +122,33 @@ def healthcheck(db: Session = Depends(get_db)):
         "status": "ok",
         "service": "ai_breast_cancer_monitoring",
         "database": "ok",
+    }
+
+
+@app.get("/ready")
+def readinesscheck(db: Session = Depends(get_db)):
+    """Runtime readiness probe for engineering deployments.
+
+    This checks database reachability and reports deployment posture. It does
+    not imply healthcare production readiness or clinical validation.
+    """
+    from sqlalchemy import text
+
+    db.execute(text("SELECT 1"))
+    environment = (os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or "development").strip().lower()
+    demo_auth_allowed = os.getenv("ALLOW_DEMO_AUTH", "").strip().lower() in {"1", "true", "yes", "on"}
+    return {
+        "status": "ready",
+        "service": "ai_breast_cancer_monitoring",
+        "database": "ok",
+        "environment": environment,
+        "demo_auth_allowed": demo_auth_allowed,
+        "clinical_validation": False,
+        "healthcare_production_ready": False,
+        "claim_boundary": (
+            "Readiness means the engineering service can answer probes. It is "
+            "not clinical validation, real-patient approval, or PHI compliance."
+        ),
     }
 
 

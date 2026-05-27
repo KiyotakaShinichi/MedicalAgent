@@ -1,0 +1,170 @@
+{
+  "schema_version": "1.0",
+  "status": "informational",
+  "label": "internal_engineering_eval_threshold_sensitivity",
+  "claim_boundary": "Threshold sensitivity is an engineering signal only. Confirms whether the current defaults sit on a plateau (small changes do not flip outcomes) or on a cliff. It does not validate the absolute values or establish any clinical property.",
+  "generated_at": "2026-05-27T05:03:26.682068+00:00",
+  "n_probes": 12,
+  "constants": {
+    "SUPPORTED_THRESHOLD": {
+      "default": 0.3,
+      "swept_values": [
+        0.2,
+        0.25,
+        0.3,
+        0.35,
+        0.4
+      ],
+      "sweep": [
+        {
+          "value": 0.2,
+          "distribution": {
+            "supported": 8,
+            "weakly_supported": 1,
+            "unsupported": 3
+          },
+          "agreement_with_default": 0.9167,
+          "flips_from_default": 1
+        },
+        {
+          "value": 0.25,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 2,
+            "unsupported": 3
+          },
+          "agreement_with_default": 1.0,
+          "flips_from_default": 0
+        },
+        {
+          "value": 0.3,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 2,
+            "unsupported": 3
+          },
+          "agreement_with_default": 1.0,
+          "flips_from_default": 0
+        },
+        {
+          "value": 0.35,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 2,
+            "unsupported": 3
+          },
+          "agreement_with_default": 1.0,
+          "flips_from_default": 0
+        },
+        {
+          "value": 0.4,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 2,
+            "unsupported": 3
+          },
+          "agreement_with_default": 1.0,
+          "flips_from_default": 0
+        }
+      ],
+      "verdict": "soft_slope"
+    },
+    "WEAKLY_SUPPORTED_THRESHOLD": {
+      "default": 0.12,
+      "swept_values": [
+        0.06,
+        0.1,
+        0.12,
+        0.16,
+        0.2
+      ],
+      "sweep": [
+        {
+          "value": 0.06,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 2,
+            "unsupported": 3
+          },
+          "agreement_with_default": 1.0,
+          "flips_from_default": 0
+        },
+        {
+          "value": 0.1,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 2,
+            "unsupported": 3
+          },
+          "agreement_with_default": 1.0,
+          "flips_from_default": 0
+        },
+        {
+          "value": 0.12,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 2,
+            "unsupported": 3
+          },
+          "agreement_with_default": 1.0,
+          "flips_from_default": 0
+        },
+        {
+          "value": 0.16,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 1,
+            "unsupported": 4
+          },
+          "agreement_with_default": 0.9167,
+          "flips_from_default": 1
+        },
+        {
+          "value": 0.2,
+          "distribution": {
+            "supported": 7,
+            "weakly_supported": 1,
+            "unsupported": 4
+          },
+          "agreement_with_default": 0.9167,
+          "flips_from_default": 1
+        }
+      ],
+      "verdict": "soft_slope"
+    },
+    "LLM_CONFIDENCE_FLOOR": {
+      "default": 0.72,
+      "swept_values": [
+        0.6,
+        0.66,
+        0.72,
+        0.78,
+        0.84
+      ],
+      "sweep": [
+        {
+          "value": 0.6,
+          "accept_fraction": 0.65
+        },
+        {
+          "value": 0.66,
+          "accept_fraction": 0.6
+        },
+        {
+          "value": 0.72,
+          "accept_fraction": 0.5
+        },
+        {
+          "value": 0.78,
+          "accept_fraction": 0.35
+        },
+        {
+          "value": 0.84,
+          "accept_fraction": 0.3
+        }
+      ],
+      "verdict": "informational \u2014 accept_fraction monotone in floor by construction; report shape over fixed synthetic confidence distribution"
+    }
+  },
+  "guidance": "If any verdict is 'cliff', the default value sits on a steep boundary and small changes substantially alter outcomes \u2014 consider tightening the probe set and re-running before changing the default."
+}

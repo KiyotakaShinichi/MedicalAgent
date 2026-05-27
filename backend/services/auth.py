@@ -80,7 +80,8 @@ def create_demo_session_from_credentials(db, username: str, password: str):
 
 
 def _ensure_demo_auth_allowed() -> None:
-    environment = os.getenv("ENVIRONMENT", "development").strip().lower()
+    environment = os.getenv("ENVIRONMENT") or os.getenv("APP_ENV") or "development"
+    environment = environment.strip().lower()
     allow_demo_auth = os.getenv("ALLOW_DEMO_AUTH", "").strip().lower() in {"1", "true", "yes", "on"}
     if environment in {"production", "prod", "staging"} and not allow_demo_auth:
         raise ValueError("Demo authentication is disabled outside development unless ALLOW_DEMO_AUTH=true")

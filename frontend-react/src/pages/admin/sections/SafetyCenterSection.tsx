@@ -6,6 +6,7 @@ import { Card, CardHeader, SectionTitle } from "../../../components/ui/Card";
 import { MetricCard } from "../../../components/ui/MetricCard";
 import { LoadingPane, EmptyPane, ErrorPane } from "../../../components/ui/Spinner";
 import { FreshnessChip } from "../../../components/ui/FreshnessChip";
+import { EvalIntegrityFooter, type EvalIntegrityStatus } from "../../../components/ui/EvalIntegrityFooter";
 import {
   getSafetyCenter,
   getLlmJudgeEval,
@@ -444,16 +445,39 @@ function AdversarialGeneralizationV2Block({ artifact }: { artifact?: Record<stri
         <MetricCard label="Heldout v2 N" value={String(readNumber(heldoutV2, "total_n") ?? "—")} status="muted" />
         <MetricCard label="Not solved" value="yes" status="amber" />
       </div>
-      <p className="text-xs" style={{ color: "var(--text-dim)" }}>
-        Internal eval. External author completed: false. Clinical validation: false. Heldout v2 is frozen and must not be tuned against without creating a newer holdout.
-      </p>
       {failures.length > 0 && (
         <p className="text-xs" style={{ color: "var(--text-faint)" }}>
           Remaining weak cases: {failures.length}. Review the artifact for category-level gaps before claiming robustness.
         </p>
       )}
+      <EvalIntegrityFooter
+        totalN={readNumber(heldoutV2, "total_n") ?? null}
+        passCount={readNumber(heldoutV2, "pass_count") ?? null}
+        failCount={readNumber(heldoutV2, "fail_count") ?? failures.length}
+        skippedCount={readNumber(heldoutV2, "skipped_count") ?? 0}
+        authorship="internal"
+        clinicalValidation={false}
+        wasUsedForTuning={false}
+        status={coerceIntegrityStatus(readString(artifact, "status"))}
+        artifactPath={readString(artifact, "artifact_path") ?? "Data/evals/safety/latest_adversarial_generalization_v2.json"}
+        caveat="Internal heldout v2 — frozen synthetic adversarial bank. Engineering signal only; clinical generalization is not implied."
+      />
     </div>
   );
+}
+
+function coerceIntegrityStatus(value: string | undefined): EvalIntegrityStatus {
+  switch (value) {
+    case "passed":
+    case "acceptable":
+    case "needs_attention":
+    case "failed":
+    case "skipped":
+    case "missing":
+      return value;
+    default:
+      return "unknown";
+  }
 }
 
 function readRecord(record: Record<string, unknown> | undefined, key: string): Record<string, unknown> | undefined {
@@ -539,6 +563,18 @@ function SafetyRedTeamBlock({ artifact }: { artifact: SafetyRedTeamArtifact }) {
           ))}
         </div>
       )}
+      <EvalIntegrityFooter
+        totalN={summary.total_cases ?? cases.length}
+        passCount={(summary.total_cases ?? cases.length) - (summary.failed_cases?.length ?? failed.length)}
+        failCount={summary.failed_cases?.length ?? failed.length}
+        skippedCount={0}
+        authorship="internal"
+        clinicalValidation={false}
+        wasUsedForTuning={false}
+        status={coerceIntegrityStatus(summary.status)}
+        artifactPath="Data/evals/safety/latest_safety_red_team.json"
+        caveat="Internal red-team bank — refusal benchmark only. Coverage of the long tail of unsafe prompts is not implied."
+      />
     </div>
   );
 }

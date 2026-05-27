@@ -43,6 +43,8 @@ status.
 - Runtime quality sentinel
 - Dependency/security scan artifact when present
 - Local load-test smoke artifact when present
+- Bounded agentic workflow/tool-use artifacts when present
+- ML statistical evidence dossier when present
 
 ## Accepted `needs_attention`
 
@@ -56,6 +58,8 @@ surface known weaknesses, not hide them:
 - frozen holdout v2 weakness while it remains explicitly reported
 - reranker/retrieval goldset results when improvement is not proven
 - route latency budget warnings from local-only tests
+- agentic workflow/tool-use eval gaps while external-author cases are still missing
+- ML statistical evidence limitations while row-level paired prediction exports are incomplete
 
 Those statuses must remain visible in the release output and reviewer docs.
 They are not clinical validation.
@@ -79,6 +83,76 @@ analysis, and the release-gate explanation artifact.
 New observability gates are supporting by design: runtime quality sentinel,
 dependency scan, and local load test are meant to surface warnings without
 pretending this is production SRE or certified security.
+
+New agentic workflow gates are supporting by design. They check that the
+planner-executor-verifier scaffold does not execute write tools without
+confirmation and never calls forbidden medical-authority tools, but they do not
+prove clinical safety or broad adversarial generalization.
+
+The ML statistical evidence dossier adds confidence intervals and comparison
+framing around synthetic artifacts. It improves reporting discipline, but it
+cannot replace row-level paired prediction exports, external labels, or
+clinician-reviewed validation.
+
+The metamorphic safety eval is a supporting robustness layer. It mutates
+unsafe and safe educational prompts to check that route decisions are stable
+under wording changes. It is still internally derived and must not be treated
+as external-author evidence.
+
+The RAG metamorphic eval and claim-source alignment ledger extend that idea to
+the evidence pipeline: route/evidence-policy stability is checked across
+wording mutations, and gold supported/blocked claims are emitted as reviewable
+rows with source IDs, source tiers, and blocked-claim actions.
+
+The row-level prediction evidence export is the statistical handoff point for
+synthetic ML. It creates a test-row CSV plus paired model-comparison and
+calibration-uncertainty artifacts so model comparisons are no longer trapped in
+summary-only reports.
+
+The eval credibility audit is an honesty layer for the gate itself. It reports
+missing n-size, provenance, contamination disclosure, claim-boundary, and
+clinical-validation-false metadata, and flags perfect internal scores that
+should be read cautiously.
+
+The eval contamination registry separates internal regression/tuning evidence,
+frozen holdout warnings, templates, and future external-author evidence. It is
+there to prevent benchmark contamination from being hidden.
+
+The external-review readiness artifact checks that independent case-authoring
+and expert-review packets are present, unreviewed, and explicit about no
+clinical validation. It intentionally reports `external_author_eval_completed:
+false` until real reviewers author cases or logs.
+
+Heldout v3 is a newly frozen internal adversarial baseline. It is allowed to
+ship as supporting/warning evidence because its job is to create pressure for
+future generalization work, not to be tuned into a perfect score.
+
+After v3 hardening, heldout v4 becomes the next untuned internal baseline. The
+hardening report must show v3 before/after separately from v4 so reviewers can
+see which set was used for improvement and which set remains fresh.
+
+The ML statistical robustness artifact adds bootstrap intervals, subgroup
+Wilson intervals, and label-noise sensitivity over synthetic row-level
+predictions. It makes uncertainty more visible, but does not establish
+real-patient calibration.
+
+The phase-3 latency plan keeps route p95, bottlenecks, and optimization backlog
+visible while preserving `production_ready: false`. The external dataset bridge
+v2 ranks future stress-test datasets but keeps validation claims blocked.
+
+Agentic shadow mode compares planner/orchestrator routes and blocks forbidden
+tool or unsafe-write leakage. It is a regression check, not autonomous clinical
+agent evidence.
+
+The production-readiness boundary artifact is intentionally conservative. It
+allows "production-shaped engineering prototype" but blocks healthcare
+production-ready claims until external review, real validation, IRB/ethics, PHI
+compliance, and operational governance exist.
+
+The deployment-readiness preflight is also supporting evidence, not a production
+certificate. It checks environment posture, demo-auth risk, CORS posture,
+Docker assets, readiness probes, and release-gate availability. It must keep
+`healthcare_production_ready: false` and `clinical_validation: false`.
 
 The gate deliberately separates hard blockers from warning artifacts. Unsafe
 leakage, clinical overclaims, leakage failures, stale critical artifacts, and

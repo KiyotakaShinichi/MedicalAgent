@@ -217,6 +217,17 @@ class TestHealthEndpoint(unittest.TestCase):
         resp = client.get("/health")
         self.assertEqual(resp.status_code, 200)
         self.assertIn("status", resp.json())
+        self.assertEqual(resp.headers.get("x-content-type-options"), "nosniff")
+        self.assertEqual(resp.headers.get("x-frame-options"), "DENY")
+
+    def test_ready_unauthenticated_with_boundary(self):
+        resp = client.get("/ready")
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data["status"], "ready")
+        self.assertFalse(data["clinical_validation"])
+        self.assertFalse(data["healthcare_production_ready"])
+        self.assertIn("claim_boundary", data)
 
 
 if __name__ == "__main__":

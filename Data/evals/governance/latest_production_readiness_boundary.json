@@ -1,0 +1,85 @@
+{
+  "schema_version": "production_readiness_boundary_v1_2026_05",
+  "generated_at": "2026-05-27T05:00:30.134137+00:00",
+  "status": "production_shaped_not_healthcare_production_ready",
+  "headline_metric": "7 healthcare-production blockers remain",
+  "total_n": 8,
+  "pass_count": 2,
+  "fail_count": 7,
+  "skipped_count": 0,
+  "engineering_checks": [
+    {
+      "name": "release_gate",
+      "engineering_status": "passing",
+      "blocks_healthcare_production": false,
+      "evidence": "Data/evals/governance/latest_release_gate_explanation.json"
+    },
+    {
+      "name": "external_author_eval",
+      "engineering_status": "ready",
+      "blocks_healthcare_production": true,
+      "evidence": "External-author eval prepared but not completed."
+    },
+    {
+      "name": "clinician_review",
+      "engineering_status": "not_completed",
+      "blocks_healthcare_production": true,
+      "evidence": "No clinician/nurse review log exists."
+    },
+    {
+      "name": "genetic_counselor_review",
+      "engineering_status": "not_completed",
+      "blocks_healthcare_production": true,
+      "evidence": "No genetic-counselor VUS/genetics review completed."
+    },
+    {
+      "name": "real_data_readiness",
+      "engineering_status": "not_ready",
+      "blocks_healthcare_production": true,
+      "evidence": "No real patient cohort or clinician-reviewed labels."
+    },
+    {
+      "name": "ethics_irb",
+      "engineering_status": "not_completed",
+      "blocks_healthcare_production": true,
+      "evidence": "No IRB/ethics approval."
+    },
+    {
+      "name": "phi_compliance",
+      "engineering_status": "not_completed",
+      "blocks_healthcare_production": true,
+      "evidence": "No formal HIPAA/PHI/compliance review."
+    },
+    {
+      "name": "production_sre",
+      "engineering_status": "partial",
+      "blocks_healthcare_production": true,
+      "evidence": "Local ops/latency/release artifacts exist; no production SLO or hosted clinical monitoring."
+    }
+  ],
+  "healthcare_production_ready": false,
+  "software_production_ready": false,
+  "clinical_validation": false,
+  "external_review_completed": false,
+  "allowed_claim": "Production-shaped engineering prototype with release gates, eval artifacts, traceability, and explicit clinical boundaries.",
+  "blocked_claims": [
+    "production healthcare system",
+    "clinically validated AI",
+    "safe for real patient care",
+    "clinician-approved",
+    "FHIR/EHR interoperable product",
+    "HIPAA/PHI compliant deployment",
+    "treatment recommendation system"
+  ],
+  "required_before_healthcare_production": [
+    "external-author adversarial/RAG eval completed",
+    "clinician/nurse safety wording review",
+    "genetic counselor review for VUS/genetics behavior",
+    "senior MLE review of evaluation design",
+    "real or public external cohort validation with exact-label mapping",
+    "IRB/ethics governance for any real patient data",
+    "formal PHI/privacy/security/compliance review",
+    "deployment runbook with monitoring, rollback, incident response, and access controls"
+  ],
+  "claim_boundary": "Production-shaped readiness is an engineering discipline artifact. NLCare is not healthcare-production-ready, not clinically validated, not approved for real patient care, and not compliant for PHI workflows."
+}

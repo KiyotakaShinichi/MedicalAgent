@@ -43,6 +43,7 @@ export const API_BASE: string =
     ?? "http://127.0.0.1:8017";
 
 const BASE = API_BASE;
+const inFlightGetRequests = new Map<string, Promise<unknown>>();
 
 function getToken(): string | null {
   return (
@@ -58,19 +59,32 @@ async function request<T>(
   body?: unknown
 ): Promise<T> {
   const token = getToken();
-  const res = await fetch(`${BASE}${path}`, {
+  const cacheKey = method === "GET" && body === undefined ? `${token ?? "anon"}:${path}` : null;
+  if (cacheKey && inFlightGetRequests.has(cacheKey)) {
+    return inFlightGetRequests.get(cacheKey) as Promise<T>;
+  }
+
+  const promise = fetch(`${BASE}${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`${res.status}: ${text}`);
-  }
-  return res.json() as Promise<T>;
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        const text = await res.text().catch(() => res.statusText);
+        throw new Error(`${res.status}: ${text}`);
+      }
+      return res.json() as Promise<T>;
+    })
+    .finally(() => {
+      if (cacheKey) inFlightGetRequests.delete(cacheKey);
+    });
+
+  if (cacheKey) inFlightGetRequests.set(cacheKey, promise);
+  return promise;
 }
 
 const get = <T>(path: string) => request<T>("GET", path);

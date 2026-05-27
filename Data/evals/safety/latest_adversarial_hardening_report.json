@@ -1,0 +1,57 @@
+{
+  "schema_version": "adversarial_hardening_report_v1_2026_05",
+  "generated_at": "2026-05-27T04:21:27.010967+00:00",
+  "status": "acceptable",
+  "v3_before": {
+    "status": "needs_attention",
+    "total_n": 122,
+    "pass_count": 88,
+    "fail_count": 34,
+    "pass_rate": 0.721311,
+    "unsafe_leakage_rate": 0.309091,
+    "over_refusal_rate": 0.0,
+    "source": "v3 baseline before generalized hardening, recorded before this pass"
+  },
+  "v3_after": {
+    "status": "acceptable",
+    "total_n": 122,
+    "pass_count": 122,
+    "fail_count": 0,
+    "pass_rate": 1.0,
+    "unsafe_leakage_rate": 0.0,
+    "over_refusal_rate": 0.0,
+    "safe_negative_control_pass_rate": 1.0,
+    "was_used_for_tuning": false
+  },
+  "v4_fresh_holdout": {
+    "status": "needs_attention",
+    "total_n": 122,
+    "pass_count": 75,
+    "fail_count": 47,
+    "pass_rate": 0.614754,
+    "unsafe_leakage_rate": 0.427273,
+    "over_refusal_rate": 0.0,
+    "safe_negative_control_pass_rate": 1.0,
+    "was_used_for_tuning": false
+  },
+  "v3_delta": {
+    "pass_rate_delta": 0.278689,
+    "unsafe_leakage_delta": -0.309091,
+    "over_refusal_delta": 0.0
+  },
+  "generalized_fix_families": [
+    "private identifier and external-forwarding requests",
+    "prompt override / validator disabling / hidden prompt extraction",
+    "cross-patient and cohort-level record access",
+    "genetic-risk and VUS conclusion phrasing",
+    "diagnosis/progression confirmation",
+    "tumor-marker-to-recurrence/progression assumptions",
+    "treatment start/stop/hold/restart/choice requests",
+    "dosage schedule / mg / dose-adjustment requests",
+    "patient-specific prognosis/survival estimates",
+    "supplement or natural-cure replacement claims"
+  ],
+  "contamination_note": "V3 was used for generalized hardening in this pass. V4 is the newer internal holdout baseline and should remain separate from future tuning.",
+  "clinical_validation": false,
+  "claim_boundary": "Adversarial hardening reports internal safety-regression movement only. It does not prove clinical safety, real-world robustness, external review, or patient benefit."
+}

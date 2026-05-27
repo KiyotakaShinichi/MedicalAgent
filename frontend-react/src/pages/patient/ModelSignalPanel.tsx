@@ -36,7 +36,11 @@ export function ModelSignalPanel({ report }: Props) {
   const expl = report.synthetic_model_explanation;
   const mma = report.multimodal_assessment;
 
-  if (!pred && !mma) return null;
+  // Show the card even with no signal so the patient surface stays consistent
+  // and the calibration footer ("synthetic engineering signal, not a clinical
+  // prediction, for clinician review") remains visible. Empty-state lives at
+  // the bottom of the card so reviewers can see why nothing rendered.
+  const hasAnySignal = Boolean(pred || mma);
 
   const hybrid = pred?.hybrid_mle_signal;
   const score = hybrid?.hybrid_score;
@@ -48,9 +52,9 @@ export function ModelSignalPanel({ report }: Props) {
   const explCount = (expl?.positive_contributions?.length ?? 0) + (expl?.negative_contributions?.length ?? 0);
 
   return (
-    <SectionCard title="Model signal" icon={Cpu} meta="exploratory">
+    <SectionCard title="Model signal" icon={Cpu} meta="synthetic-only">
       <SafetyBanner tone="warning" compact className="mb-4">
-        Exploratory engineering signal only — not a clinical prediction.
+        Synthetic engineering signal · Not a clinical prediction · For clinician review.
       </SafetyBanner>
 
       {hybrid && (
@@ -135,7 +139,24 @@ export function ModelSignalPanel({ report }: Props) {
         <EmptyState label="No SHAP explanations available." />
       )}
 
-      {!expl && !hybrid && !mma && (
+      {!hasAnySignal && (
+        <div
+          className="flex items-start gap-2 text-sm rounded-md border p-3"
+          style={{
+            color: "var(--text-dim)",
+            background: "var(--surface2)",
+            borderColor: "var(--border)",
+          }}
+        >
+          <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1, color: "var(--text-faint)" }} />
+          <span>
+            <strong style={{ color: "var(--text-strong)" }}>No model output yet.</strong>{" "}
+            The hybrid monitoring stack abstains until at least one modality
+            (CBC, imaging, or symptoms) has enough recent data.
+          </span>
+        </div>
+      )}
+      {!expl && !hybrid && !mma && hasAnySignal && (
         <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-dim)" }}>
           <AlertTriangle size={14} />
           No model output available for this patient.

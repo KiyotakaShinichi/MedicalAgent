@@ -1,0 +1,148 @@
+{
+  "schema_version": "external_review_readiness_v1_2026_05",
+  "generated_at": "2026-05-25T11:55:56.475753+00:00",
+  "status": "ready_for_external_authoring",
+  "headline_metric": "8/8 required packet files present",
+  "total_n": 8,
+  "pass_count": 8,
+  "fail_count": 0,
+  "skipped_count": 0,
+  "files": [
+    {
+      "name": "external_author_rag_instructions",
+      "path": "docs/evals/how_to_author_external_rag_cases.md",
+      "exists": true,
+      "nonempty": true,
+      "mentions_unreviewed": false,
+      "mentions_no_clinical_validation": true
+    },
+    {
+      "name": "external_author_adversarial_instructions",
+      "path": "docs/evals/how_to_author_external_adversarial_cases.md",
+      "exists": true,
+      "nonempty": true,
+      "mentions_unreviewed": false,
+      "mentions_no_clinical_validation": false
+    },
+    {
+      "name": "external_author_eval_packet",
+      "path": "docs/review_packets/external_author_eval_packet.md",
+      "exists": true,
+      "nonempty": true,
+      "mentions_unreviewed": true,
+      "mentions_no_clinical_validation": true
+    },
+    {
+      "name": "rag_case_template",
+      "path": "Data/evals/review_templates/external_author_rag_cases_template.jsonl",
+      "exists": true,
+      "nonempty": true,
+      "mentions_unreviewed": false,
+      "mentions_no_clinical_validation": false
+    },
+    {
+      "name": "adversarial_case_template",
+      "path": "Data/evals/review_templates/external_author_adversarial_cases_template.jsonl",
+      "exists": true,
+      "nonempty": true,
+      "mentions_unreviewed": false,
+      "mentions_no_clinical_validation": false
+    },
+    {
+      "name": "clinical_safety_review_log",
+      "path": "Data/evals/review_templates/clinical_safety_review_log_template.csv",
+      "exists": true,
+      "nonempty": true,
+      "mentions_unreviewed": false,
+      "mentions_no_clinical_validation": false
+    },
+    {
+      "name": "genetics_review_log",
+      "path": "Data/evals/review_templates/genetics_review_log_template.csv",
+      "exists": true,
+      "nonempty": true,
+      "mentions_unreviewed": false,
+      "mentions_no_clinical_validation": false
+    },
+    {
+      "name": "mle_review_log",
+      "path": "Data/evals/review_templates/mle_review_log_template.csv",
+      "exists": true,
+      "nonempty": true,
+      "mentions_unreviewed": false,
+      "mentions_no_clinical_validation": false
+    }
+  ],
+  "template_field_checks": [
+    {
+      "name": "rag_case_template",
+      "path": "Data/evals/review_templates/external_author_rag_cases_template.jsonl",
+      "exists": true,
+      "observed_fields": [
+        "acceptable_source_tiers",
+        "authored_by",
+        "authored_date",
+        "case_id",
+        "clinical_validation",
+        "contamination_note",
+        "expected_allowed_use",
+        "expected_answerability_status",
+        "expected_intent",
+        "expected_refusal_or_escalation",
+        "expected_source_ids",
+        "fail_criteria",
+        "pass_criteria",
+        "reviewer_role",
+        "surface",
+        "user_query",
+        "was_used_for_tuning"
+      ],
+      "missing_required_fields": []
+    },
+    {
+      "name": "adversarial_case_template",
+      "path": "Data/evals/review_templates/external_author_adversarial_cases_template.jsonl",
+      "exists": true,
+      "observed_fields": [
+        "acceptable_source_tiers",
+        "authored_by",
+        "authored_date",
+        "case_id",
+        "category",
+        "clinical_validation",
+        "contamination_note",
+        "expected_answerability_status",
+        "expected_refusal_or_escalation",
+        "expected_route",
+        "language",
+        "reviewer_role",
+        "safe_negative",
+        "style",
+        "surface",
+        "user_query",
+        "was_used_for_tuning"
+      ],
+      "missing_required_fields": []
+    }
+  ],
+  "completed_external_review_count": 0,
+  "external_author_eval_completed": false,
+  "clinician_review_completed": false,
+  "genetic_counselor_review_completed": false,
+  "senior_mle_review_completed": false,
+  "recommended_reviewer_roles": [
+    "oncology nurse or clinician reviewer for safety wording",
+    "genetic counselor or genetics-trained reviewer for VUS/genetics cases",
+    "senior MLE or AI engineer for eval design and leakage skepticism",
+    "patient advocate or nontechnical reviewer for overtrust/usability language"
+  ],
+  "next_steps": [
+    "Recruit reviewers and ask them to author cases before reading prompts or internals.",
+    "Run authored cases once as a baseline before any tuning.",
+    "Record reviewer role, date, comments, severity, linked artifact, and fix status.",
+    "Report external-authored results separately from internal regression scores."
+  ],
+  "clinical_validation": false,
+  "claim_boundary": "External review readiness means packets/templates are prepared. It does not mean external review, clinician review, clinical validation, or approval has occurred.",
+  "contamination_note": "This artifact is a readiness checklist only. External-author templates are intentionally blank/examples until independent reviewers author cases."
+}

@@ -33,6 +33,9 @@ READ_TOOLS = {
     "assemble_citations",
     "validate_claims",
     "summarize_patient_timeline",
+    "request_symptom_details",
+    "request_cbc_details",
+    "request_imaging_details",
 }
 WRITE_TOOLS = {
     "save_symptom",
@@ -80,7 +83,7 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
     safety = safety_scope_check(text)
     unsafe = classify_unsafe_intent(text)
     distress = detect_emotional_distress(text, safety=safety)
-    extracted = _detect_structured_intent(text)
+    extracted = _detect_structured_intent(text, patient_context=patient_context)
 
     route = "conversation"
     review_route = "none"
@@ -89,12 +92,27 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
     final_action = "answer_normally"
     rationale = "No specialized workflow was required."
 
-    if _security_block_is_authoritative(security, unsafe, text):
+    if _security_block_is_authoritative(security, unsafe, text) or _looks_cross_patient_record_request(text):
         route = "security_refusal"
         review_route = "security_boundary"
         final_action = "safe_refusal"
         rationale = "Security or privacy boundary triggered before any tool use."
-    elif safety.get("level") == "high_risk" or unsafe.get("is_unsafe"):
+    elif _looks_tumor_marker_conclusion_request(text):
+        route = "tumor_marker_boundary_refusal"
+        review_route = "clinician_review_required"
+        final_action = "safe_refusal"
+        rationale = "Tumor-marker conclusion request detected; route to clinician review."
+    elif safety.get("scope") == "urgent_or_safety_related":
+        route = "urgent_clinician_review"
+        review_route = "urgent_or_crisis_review"
+        final_action = "urgent_escalation"
+        rationale = "Urgent symptom or safety language detected before any record write."
+    elif _contains_false_reassurance_instruction(text):
+        route = "medical_boundary_refusal"
+        review_route = "clinician_review_required"
+        final_action = "safe_refusal"
+        rationale = "False reassurance instruction detected; do not save or repeat unsafe reassurance."
+    elif (safety.get("level") == "high_risk" or _unsafe_block_is_authoritative(unsafe, safety)) and not _safe_structured_record_context(text, extracted, unsafe):
         route, review_route, final_action, rationale = _route_high_risk(safety, unsafe)
         if distress.response_mode in {"crisis_support", "urgent_clinician_review"}:
             route = distress.response_mode
@@ -107,6 +125,11 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
         final_action = "empathetic_support"
         required_tools.extend(["detect_emotional_distress"])
         rationale = "Distress language detected; acknowledge emotion before safe education or tracking."
+    elif _looks_like_education_request(text):
+        route = "source_backed_education"
+        final_action = "answer_with_citations_after_validation"
+        required_tools.extend(["retrieve_sources", "assemble_citations", "validate_claims"])
+        rationale = "Low-risk educational question should use source-governed RAG and claim validation."
     elif extracted["kind"] in {"symptom", "cbc", "imaging", "medication", "treatment_note"}:
         route = f"record_{extracted['kind']}"
         final_action = "ask_confirmation_before_write"
@@ -114,11 +137,12 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
         review_route = "clinician_review_if_concerning"
         required_tools.extend([extracted["tool"], "confirm_before_save"])
         rationale = "Structured patient data detected; planner requires confirmation before writing."
-    elif _looks_like_education_request(text):
-        route = "source_backed_education"
-        final_action = "answer_with_citations_after_validation"
-        required_tools.extend(["retrieve_sources", "assemble_citations", "validate_claims"])
-        rationale = "Low-risk educational question should use source-governed RAG and claim validation."
+    elif extracted["kind"] in {"symptom_details", "cbc_details", "imaging_details"}:
+        route = f"request_{extracted['kind']}"
+        final_action = "ask_for_missing_information"
+        review_route = "none"
+        required_tools.extend([extracted["tool"]])
+        rationale = "Partial structured data detected; planner asks for missing details instead of writing."
     elif _looks_like_clinician_summary_request(text):
         route = "clinician_summary"
         final_action = "prepare_review_summary"
@@ -276,27 +300,58 @@ def _route_high_risk(safety: dict[str, Any], unsafe: dict[str, Any]) -> tuple[st
     scope = safety.get("scope")
     if family in {"prompt_injection", "privacy_pii", "cross_patient_exfiltration"}:
         return ("security_refusal", "security_boundary", "safe_refusal", "Unsafe security/privacy intent detected.")
+    if scope == "urgent_or_safety_related":
+        return ("urgent_clinician_review", "urgent_or_crisis_review", "urgent_escalation", "Urgent symptom or safety language detected.")
     if family in {"genetic_risk_interpretation", "vus_misinterpretation"}:
         return ("genetics_boundary_refusal", "genetic_counselor_review", "safe_refusal", "Genetics/VUS request requires genetics-trained review.")
     if family == "diagnosis_confirmation":
         return ("diagnosis_boundary_refusal", "clinician_review_required", "safe_refusal", "Diagnosis confirmation is blocked and routed to clinician review.")
     if family == "tumor_marker_conclusion":
         return ("tumor_marker_boundary_refusal", "clinician_review_required", "safe_refusal", "Tumor-marker conclusion blocked; route to clinician review.")
-    if family in {"treatment_change", "dosage_request", "supplement_replacement"} or scope == "treatment_decision":
+    if family in {"treatment_change", "dosage_request", "supplement_replacement"} or scope in {"treatment_decision", "treatment_decision_request"}:
         return ("treatment_boundary_refusal", "clinician_review_required", "safe_refusal", "Treatment or supplement replacement decision blocked.")
     if family == "prognosis_survival" or scope == "diagnosis_or_outcome_claim":
         return ("prognosis_boundary_refusal", "clinician_review_required", "safe_refusal", "Diagnosis/prognosis/outcome claim blocked.")
     return ("medical_boundary_refusal", "clinician_review_required", "safe_refusal", "High-risk medical boundary triggered.")
 
 
-def _detect_structured_intent(text: str) -> dict[str, str | None]:
+def _detect_structured_intent(
+    text: str,
+    *,
+    patient_context: dict[str, Any] | None = None,
+) -> dict[str, str | None]:
     normalized = text.lower()
-    if re.search(r"\b(severity|/10|out of 10)\b", normalized) and re.search(r"\b(nausea|fatigue|pain|fever|mouth sores|neuropathy|vomit|bleeding)\b", normalized):
+    pending_confirmation = (patient_context or {}).get("pending_confirmation") or {}
+    if pending_confirmation and re.search(r"\b(yes|confirm|save it|go ahead|oo|sige|confirmed)\b", normalized):
+        tool = str(pending_confirmation.get("tool") or "")
+        if tool == "save_symptom":
+            return {"kind": "symptom", "tool": "save_symptom"}
+        if tool == "save_cbc":
+            return {"kind": "cbc", "tool": "save_cbc"}
+        if tool == "save_imaging":
+            return {"kind": "imaging", "tool": "save_imaging"}
+        if tool == "save_medication":
+            return {"kind": "medication", "tool": "save_medication"}
+        if tool == "save_treatment_note":
+            return {"kind": "treatment_note", "tool": "save_treatment_note"}
+    pending_symptom = (patient_context or {}).get("pending_symptom")
+    if pending_symptom and re.search(r"\b(\d{1,2})(\s*/\s*10| out of 10)?\b", normalized):
         return {"kind": "symptom", "tool": "save_symptom"}
+    if re.search(r"\b(severity|/10|out of 10)\b", normalized) and re.search(r"\b(nausea|nauseous|fatigue|pain|fever|mouth sores|neuropathy|vomit|vomiting|bleeding)\b", normalized):
+        return {"kind": "symptom", "tool": "save_symptom"}
+    if re.search(r"\b(nausea|nauseous|fatigue|pain|fever|mouth sores|neuropathy|vomit|vomiting|bleeding|tired|weak|numbness|tingling)\b", normalized):
+        return {"kind": "symptom_details", "tool": "request_symptom_details"}
     if re.search(r"\b(wbc|hgb|hemoglobin|platelets?|plt)\b", normalized) and re.search(r"\d", normalized):
-        return {"kind": "cbc", "tool": "save_cbc"}
+        has_wbc = re.search(r"\bwbc\b", normalized)
+        has_hgb = re.search(r"\b(hgb|hemoglobin)\b", normalized)
+        has_platelets = re.search(r"\b(platelets?|plt)\b", normalized)
+        if has_wbc and has_hgb and has_platelets:
+            return {"kind": "cbc", "tool": "save_cbc"}
+        return {"kind": "cbc_details", "tool": "request_cbc_details"}
     if re.search(r"\b(mri|ct|ultrasound|mammogram|impression|findings)\b", normalized) and re.search(r"\b(save|log|upload|captured|impression says|report says|findings show|note:)\b", normalized):
         return {"kind": "imaging", "tool": "save_imaging"}
+    if re.search(r"\b(mri|ct|ultrasound|mammogram|imaging report)\b", normalized) and re.search(r"\b(upload|save|log|add)\b", normalized):
+        return {"kind": "imaging_details", "tool": "request_imaging_details"}
     if re.search(r"\b(took|taking|medication|medicine|ondansetron|pegfilgrastim|tamoxifen|trastuzumab)\b", normalized):
         return {"kind": "medication", "tool": "save_medication"}
     if re.search(r"\b(treatment note|cycle delayed|dose delay|dose reduced|infusion|chemo cycle)\b", normalized):
@@ -310,6 +365,42 @@ def _looks_like_education_request(text: str) -> bool:
 
 def _looks_like_clinician_summary_request(text: str) -> bool:
     return bool(re.search(r"\b(summarize|summary|care team|doctor|oncology team|review)\b", text.lower()))
+
+
+def _contains_false_reassurance_instruction(text: str) -> bool:
+    normalized = text.lower()
+    return bool(re.search(r"\b(no need to (call|contact)|no need to worry|say .*?(fine|safe|okay)|tell me .*?(fine|safe|okay))\b", normalized))
+
+
+def _looks_cross_patient_record_request(text: str) -> bool:
+    normalized = text.lower()
+    return bool(re.search(r"\b(sister|brother|mother|father|friend|another patient|other patient|ibang pasyente).{0,40}\b(lab|labs|mri|record|chart|result)\b", normalized))
+
+
+def _looks_tumor_marker_conclusion_request(text: str) -> bool:
+    normalized = text.lower()
+    return bool(
+        re.search(r"\b(ca\s*15-?3|ca\s*27\.?29|cea|tumou?r marker)\b", normalized)
+        and re.search(r"\b(prove|confirms?|means|assume|recurrence|progression|metastasis|bumalik)\b", normalized)
+    )
+
+
+def _safe_structured_record_context(
+    text: str,
+    extracted: dict[str, str | None],
+    unsafe: dict[str, Any],
+) -> bool:
+    normalized = text.lower()
+    if unsafe.get("is_unsafe") and not (
+        unsafe.get("family") == "treatment_change"
+        and "treatment-related change" in normalized
+    ):
+        return False
+    if extracted.get("kind") != "imaging":
+        return False
+    if re.search(r"\b(should|can i|stop|skip|delay|dose|recommend|switch|start|increase|decrease)\b", normalized):
+        return False
+    return bool(re.search(r"\b(save|log|upload|note:|report says|impression says|findings show)\b", normalized))
 
 
 def _security_block_is_authoritative(
@@ -339,6 +430,14 @@ def _security_block_is_authoritative(
     if re.search(r"\b(street address|home address|ssn|social security|insurance number|taxpayer)\b", normalized):
         return True
     return False
+
+
+def _unsafe_block_is_authoritative(unsafe: dict[str, Any], safety: dict[str, Any]) -> bool:
+    if not unsafe.get("is_unsafe"):
+        return False
+    if unsafe.get("route") == "safe_clarification" and unsafe.get("over_refusal_risk_flag") and safety.get("level") != "high_risk":
+        return False
+    return True
 
 
 def _alternatives_for(text: str) -> list[str]:
@@ -382,6 +481,9 @@ def _purpose_for_tool(tool: str) -> str:
         "assemble_citations": "Attach allowed citations.",
         "validate_claims": "Check generated claims against retrieved evidence.",
         "summarize_patient_timeline": "Prepare a non-diagnostic review summary.",
+        "request_symptom_details": "Ask for symptom severity/date before saving.",
+        "request_cbc_details": "Ask for missing CBC values before saving.",
+        "request_imaging_details": "Ask for imaging report text/date before saving.",
         "confirm_before_save": "Ask the patient to confirm before a record write.",
         "save_symptom": "Persist a patient-reported symptom after confirmation.",
         "save_cbc": "Persist patient-provided CBC values after confirmation.",

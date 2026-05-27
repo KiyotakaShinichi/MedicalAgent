@@ -35,7 +35,7 @@ export function HybridPredictionCard({ hybrid }: Props) {
         <span className="inline-flex items-start gap-1.5">
           <Info size={11} aria-hidden="true" style={{ marginTop: 2, flexShrink: 0 }} />
           <span>
-            <strong>Synthetic-only engineering signal, not a clinical prediction.</strong>
+            <strong>Synthetic engineering signal · Not a clinical prediction · For clinician review.</strong>
             {" "}
             {hybrid.claim_boundary}
           </span>

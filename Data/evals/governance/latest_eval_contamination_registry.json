@@ -1,0 +1,1017 @@
+{
+  "schema_version": "eval_contamination_registry_v1_2026_05",
+  "generated_at": "2026-05-25T11:58:36.673592+00:00",
+  "status": "acceptable",
+  "total_n": 63,
+  "pass_count": 63,
+  "fail_count": 0,
+  "skipped_count": 0,
+  "registry_entry_count": 63,
+  "used_for_tuning_entry_count": 4,
+  "external_authored_entry_count": 0,
+  "frozen_or_holdout_entry_count": 8,
+  "rows": [
+    {
+      "artifact_path": "Data/evals/rag/external_author_case_template.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 1,
+      "authored_by_values": [
+        "<name_or_role>"
+      ],
+      "authored_date_values": [
+        "YYYY-MM-DD"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": true,
+      "recommended_use": "holdout_warning",
+      "credibility_note": "Internal holdout/template evidence; do not tune against this exact set without creating a replacement."
+    },
+    {
+      "artifact_path": "Data/evals/rag/gold_claim_grounding_cases.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 12,
+      "authored_by_values": [
+        "engineering"
+      ],
+      "authored_date_values": [
+        "2026-05-20"
+      ],
+      "any_used_for_tuning": true,
+      "used_for_tuning_count": 12,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal tuning/regression evidence; report separately from holdout or external-author results."
+    },
+    {
+      "artifact_path": "Data/evals/rag/over_refusal_negative_controls.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 8,
+      "authored_by_values": [
+        "unknown"
+      ],
+      "authored_date_values": [
+        "unknown"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/retrieval_goldset.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 12,
+      "authored_by_values": [
+        "engineering"
+      ],
+      "authored_date_values": [
+        "2026-05-21"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_chunking_quality_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_claim_level_citation_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 3,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_claim_source_alignment_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 111,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_gold_claim_grounding_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 12,
+      "authored_by_values": [
+        "engineering"
+      ],
+      "authored_date_values": [
+        "2026-05-20"
+      ],
+      "any_used_for_tuning": true,
+      "used_for_tuning_count": 14,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal tuning/regression evidence; report separately from holdout or external-author results."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_kb_source_governance.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_live_rag_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 21,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_live_rag_failure_analysis.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_nli_claim_validation_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 3,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_over_refusal_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 8,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_rag_benchmark.json",
+      "artifact_type": "result_artifact",
+      "case_count": 8,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_rag_claim_validation_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 3,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_rag_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 22,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_rag_gold_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 45,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_rag_intent_aware_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 8,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_rag_metamorphic_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 72,
+      "authored_by_values": [
+        "engineering_internal_metamorphic_generator"
+      ],
+      "authored_date_values": [
+        "2026-05-25"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_rag_tier_ablation.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_reranker_ablation.json",
+      "artifact_type": "result_artifact",
+      "case_count": 12,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_retrieval_failure_analysis.json",
+      "artifact_type": "result_artifact",
+      "case_count": 12,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_retrieval_goldset_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 12,
+      "authored_by_values": [
+        "engineering"
+      ],
+      "authored_date_values": [
+        "2026-05-21"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_semantic_citation_verification.json",
+      "artifact_type": "result_artifact",
+      "case_count": 7,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_semantic_claim_validation.json",
+      "artifact_type": "result_artifact",
+      "case_count": 7,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/rag/latest_uncertainty_aware_retrieval_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 10,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/adversarial_holdout_v2.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 110,
+      "authored_by_values": [
+        "internal_engineering_codex_generated_holdout_v2"
+      ],
+      "authored_date_values": [
+        "2026-05-21"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": true,
+      "recommended_use": "holdout_warning",
+      "credibility_note": "Internal holdout/template evidence; do not tune against this exact set without creating a replacement."
+    },
+    {
+      "artifact_path": "Data/evals/safety/adversarial_holdout_v3.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 122,
+      "authored_by_values": [
+        "engineering_internal_holdout_v3_generator"
+      ],
+      "authored_date_values": [
+        "2026-05-25"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": true,
+      "recommended_use": "holdout_warning",
+      "credibility_note": "Internal holdout/template evidence; do not tune against this exact set without creating a replacement."
+    },
+    {
+      "artifact_path": "Data/evals/safety/adversarial_paraphrase_robustness.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 110,
+      "authored_by_values": [
+        "engineering"
+      ],
+      "authored_date_values": [
+        "2026-05-21"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/adversarial_safety_holdout_variants.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 32,
+      "authored_by_values": [
+        "oncotrack_team+claude_codex"
+      ],
+      "authored_date_values": [
+        "2026-05-20"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": true,
+      "recommended_use": "holdout_warning",
+      "credibility_note": "Internal holdout/template evidence; do not tune against this exact set without creating a replacement."
+    },
+    {
+      "artifact_path": "Data/evals/safety/adversarial_safety_regression_bank.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 200,
+      "authored_by_values": [
+        "oncotrack_team+claude_codex"
+      ],
+      "authored_date_values": [
+        "2026-05-20"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/external_author_adversarial_template.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 1,
+      "authored_by_values": [
+        "<name_or_role>"
+      ],
+      "authored_date_values": [
+        "YYYY-MM-DD"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": true,
+      "recommended_use": "holdout_warning",
+      "credibility_note": "Internal holdout/template evidence; do not tune against this exact set without creating a replacement."
+    },
+    {
+      "artifact_path": "Data/evals/safety/near_boundary_adversarial_cases.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 6,
+      "authored_by_values": [
+        "unknown"
+      ],
+      "authored_date_values": [
+        "unknown"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/taglish_safety_goldset.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 9,
+      "authored_by_values": [
+        "unknown"
+      ],
+      "authored_date_values": [
+        "unknown"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_adversarial_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 15,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_adversarial_failure_analysis.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_adversarial_generalization_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [
+        "['oncotrack_team+claude_codex']",
+        "engineering",
+        "internal_engineering",
+        "internal_engineering_holdout"
+      ],
+      "authored_date_values": [
+        "2026-05-20",
+        "2026-05-21",
+        "['2026-05-20']",
+        "mixed"
+      ],
+      "any_used_for_tuning": true,
+      "used_for_tuning_count": 1,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal tuning/regression evidence; report separately from holdout or external-author results."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_adversarial_generalization_v2_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [
+        "['internal_engineering_codex_generated_holdout_v2']",
+        "['oncotrack_team+claude_codex']",
+        "engineering",
+        "internal_engineering",
+        "internal_engineering_codex_generated_holdout_v2",
+        "internal_engineering_holdout"
+      ],
+      "authored_date_values": [
+        "2026-05-20",
+        "2026-05-21",
+        "['2026-05-20']",
+        "['2026-05-21']",
+        "mixed"
+      ],
+      "any_used_for_tuning": true,
+      "used_for_tuning_count": 1,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal tuning/regression evidence; report separately from holdout or external-author results."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_adversarial_holdout_v3_baseline.json",
+      "artifact_type": "result_artifact",
+      "case_count": 122,
+      "authored_by_values": [
+        "engineering_internal_holdout_v3_generator"
+      ],
+      "authored_date_values": [
+        "2026-05-25"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": true,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal holdout/template evidence; do not tune against this exact set without creating a replacement."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_adversarial_safety_holdout.json",
+      "artifact_type": "result_artifact",
+      "case_count": 32,
+      "authored_by_values": [
+        "oncotrack_team+claude_codex"
+      ],
+      "authored_date_values": [
+        "2026-05-20"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": true,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal holdout/template evidence; do not tune against this exact set without creating a replacement."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_adversarial_safety_regression.json",
+      "artifact_type": "result_artifact",
+      "case_count": 200,
+      "authored_by_values": [
+        "['oncotrack_team+claude_codex']",
+        "oncotrack_team+claude_codex"
+      ],
+      "authored_date_values": [
+        "2026-05-20",
+        "['2026-05-20']"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_adversarial_safety_regression_holdout.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [
+        "['oncotrack_team+claude_codex']"
+      ],
+      "authored_date_values": [
+        "['2026-05-20']"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": true,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal holdout/template evidence; do not tune against this exact set without creating a replacement."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_emotional_distress_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 14,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_failure_mode_registry.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_heldout_adversarial_failure_analysis.json",
+      "artifact_type": "result_artifact",
+      "case_count": 32,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_medical_claim_boundary_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 8,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_medical_safety_contract.json",
+      "artifact_type": "result_artifact",
+      "case_count": 0,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_metamorphic_safety_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 352,
+      "authored_by_values": [
+        "engineering_internal_metamorphic_generator"
+      ],
+      "authored_date_values": [
+        "2026-05-25"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_multilingual_adversarial_security.json",
+      "artifact_type": "result_artifact",
+      "case_count": 30,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_multilingual_refusal_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 6,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_near_boundary_safety_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 6,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_safety_benchmark.json",
+      "artifact_type": "result_artifact",
+      "case_count": 9,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_safety_red_team.json",
+      "artifact_type": "result_artifact",
+      "case_count": 13,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_taglish_safety_parity.json",
+      "artifact_type": "result_artifact",
+      "case_count": 6,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/safety/latest_unsafe_intent_classifier_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 54,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/agentic_tool_use/adversarial_tool_use_cases.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 40,
+      "authored_by_values": [
+        "engineering_internal"
+      ],
+      "authored_date_values": [
+        "2026-05-25"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/agentic_tool_use/agentic_tool_use_cases.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 137,
+      "authored_by_values": [
+        "engineering_internal"
+      ],
+      "authored_date_values": [
+        "2026-05-25"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/agentic_tool_use/agentic_workflow_cases.jsonl",
+      "artifact_type": "case_bank",
+      "case_count": 32,
+      "authored_by_values": [
+        "engineering_internal"
+      ],
+      "authored_date_values": [
+        "2026-05-25"
+      ],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "internal_regression",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/agentic_tool_use/latest_adversarial_tool_use_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 40,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/agentic_tool_use/latest_agentic_shadow_mode_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 10,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 0.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/agentic_tool_use/latest_agentic_tool_use_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 137,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/agentic_tool_use/latest_agentic_workflow_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 32,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    },
+    {
+      "artifact_path": "Data/evals/agentic_tool_use/latest_multiturn_agent_eval.json",
+      "artifact_type": "result_artifact",
+      "case_count": 10,
+      "authored_by_values": [],
+      "authored_date_values": [],
+      "any_used_for_tuning": false,
+      "used_for_tuning_count": 0,
+      "external_authored_case_count": 0,
+      "contamination_disclosure_rate": 1.0,
+      "frozen_or_holdout": false,
+      "recommended_use": "supporting_artifact",
+      "credibility_note": "Internal regression/supporting evidence."
+    }
+  ],
+  "clinical_validation": false,
+  "claim_boundary": "This registry documents internal eval provenance and contamination risk. It does not make internal cases external or clinically valid.",
+  "next_step": "Add truly external-authored cases and record reviewer role/date before treating any eval as independent evidence."
+}

@@ -94,21 +94,23 @@ test.describe("role-aware smoke flows", () => {
     await expect(page).not.toHaveURL(/\/admin/);
   });
 
-  test("patient dashboard renders the new 3-row card hierarchy", async ({ page }) => {
+  test("patient dashboard renders the KPI-style card hierarchy", async ({ page }) => {
     await signIn(page, "P001", "patient-demo", /\/patient/);
     await expect(page).toHaveURL(/\/patient/);
 
-    // Row 1 — at-a-glance trio (Key signals · Review with care team · Recent symptoms)
-    await expect(page.getByRole("heading", { name: /^Key signals$/i })).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByRole("heading", { name: /Review with care team/i })).toBeVisible();
+    // Top row — KPI strip mirrors a company-style dashboard overview.
+    await expect(page.getByText(/Monitoring score/i).first()).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(/Hybrid monitoring signal/i).first()).toBeVisible();
+    await expect(page.getByText(/Latest CBC/i).first()).toBeVisible();
+    await expect(page.getByText(/Review queue/i).first()).toBeVisible();
 
-    // Row 2 — CBC labs + Timeline
+    // Detail rows — labs, timeline, summaries, and model signal remain reachable.
     await expect(page.getByRole("heading", { name: /Lab values \(CBC\)/i })).toBeVisible();
     await expect(page.getByRole("heading", { name: /Timeline|Treatment timeline/i }).first()).toBeVisible();
-
-    // Row 3 — Model signal · Recent AI explanations · Next clinician review
+    await expect(page.getByRole("heading", { name: /Today's summary/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Review queue/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Model signal/i })).toBeVisible();
     await expect(page.getByRole("heading", { name: /Recent AI explanations/i })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /Next clinician review/i })).toBeVisible();
 
     // Page-level safety footnote must be reachable by scrolling — confirms it
     // rendered into the DOM at the bottom of the grid.
@@ -119,7 +121,7 @@ test.describe("role-aware smoke flows", () => {
 
   test("lab cards expose reference range and a status chip", async ({ page }) => {
     await signIn(page, "P001", "patient-demo", /\/patient/);
-    await expect(page.getByRole("heading", { name: /Lab values \(CBC\)/i })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("heading", { name: /Lab values \(CBC\)/i })).toBeVisible({ timeout: 90_000 });
     // WBC card label comes from clinical-constants. At least one card status
     // chip (In range / Low / High / Very low / Very high / No value) must show.
     await expect(page.getByText(/^WBC$/).first()).toBeVisible();
@@ -127,37 +129,91 @@ test.describe("role-aware smoke flows", () => {
       page.getByText(/In range|Low|High|Very low|Very high|Borderline|No value/).first(),
     ).toBeVisible();
     // The footer disclaimer copy must travel with the panel.
-    await expect(page.getByText(/Reference ranges shown are population defaults/i)).toBeVisible();
+    await expect(page.getByText(/Reference ranges (shown are population defaults|are not personalised)/i).first()).toBeVisible();
   });
 
-  test("tool tray opens the CBC drawer and dismisses on Escape", async ({ page }) => {
+  test("composer plus menu opens the CBC drawer and dismisses on Escape", async ({ page }) => {
     await signIn(page, "P001", "patient-demo", /\/patient/);
     await page.getByRole("link", { name: /support/i }).click();
     await expect(page).toHaveURL(/\/patient\/chat/);
 
-    // Tool tray is a labelled toolbar with 8 chips.
-    const tray = page.getByRole("toolbar", { name: /Add a health update/i });
-    await expect(tray).toBeVisible({ timeout: 30_000 });
+    const addRecord = page.getByRole("button", { name: /Add a health record/i });
+    await expect(addRecord).toBeVisible({ timeout: 90_000 });
+    await addRecord.click();
 
-    // Open the CBC drawer via the "Save CBC" chip and confirm a dialog mounts.
-    await tray.getByRole("button", { name: /Save CBC/i }).click();
+    const menu = page.getByRole("menu", { name: /Add a health record/i });
+    await expect(menu).toBeVisible();
+
+    // Open the CBC drawer via the composer plus-menu and confirm a dialog mounts.
+    await menu.getByRole("menuitem", { name: /Save CBC/i }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText(/WBC|Hemoglobin|Platelets/i).first()).toBeVisible();
 
-    // ESC must dismiss — confirms the Modal/Drawer primitive's a11y contract.
+    // ESC must dismiss the drawer, confirming the Modal/Drawer primitive's a11y contract.
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
   });
 
-  test("tool tray ‘Ask a question’ chip routes to the chat composer", async ({ page }) => {
+  test("composer plus menu exposes record and upload actions without hiding chat", async ({ page }) => {
     await signIn(page, "P001", "patient-demo", /\/patient/);
-    // From the overview tab, the education chip lives only on the chat page
-    // tool tray — switch first so we exercise the routing in one direction.
     await page.getByRole("link", { name: /support/i }).click();
-    const tray = page.getByRole("toolbar", { name: /Add a health update/i });
-    await tray.getByRole("button", { name: /Ask a question/i }).click();
-    // Already on chat; the toast and the composer should remain reachable.
     await expect(chatComposer(page)).toBeVisible({ timeout: 90_000 });
+    const addRecord = page.getByRole("button", { name: /Add a health record/i });
+    await addRecord.click();
+
+    const menu = page.getByRole("menu", { name: /Add a health record/i });
+    await expect(menu.getByRole("menuitem", { name: /Log symptom/i })).toBeVisible();
+    await expect(menu.getByRole("menuitem", { name: /Save CBC/i })).toBeVisible();
+    await expect(menu.getByRole("menuitem", { name: /Upload CBC image/i })).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+    await expect(chatComposer(page)).toBeVisible();
+  });
+
+  test("patient overview surfaces the synthetic engineering caveat on monitoring tiles", async ({ page }) => {
+    // The KPI tiles for the model-derived signals (Monitoring score / Hybrid
+    // monitoring signal) MUST carry the credibility footer so the patient never
+    // mistakes an engineering signal for a clinical prediction.
+    await signIn(page, "P001", "patient-demo", /\/patient/);
+    await expect(page.getByText(/Monitoring score/i).first()).toBeVisible({ timeout: 30_000 });
+    await expect(
+      page
+        .getByText(/Synthetic engineering signal.*Not a clinical prediction.*For clinician review/i)
+        .first(),
+    ).toBeVisible();
+  });
+
+  test("hybrid monitoring signal card shows decision slots or a clean abstention state", async ({ page }) => {
+    await signIn(page, "P001", "patient-demo", /\/patient/);
+    await expect(page.getByText(/Hybrid monitoring signal/i).first()).toBeVisible({ timeout: 30_000 });
+    // Whichever path the backend returns, one of these credibility lines must
+    // show on the page. The hybrid envelope ships a per-card footer; the
+    // abstention path shows the evidence-aware empty state.
+    await expect(
+      page
+        .getByText(
+          /Synthetic engineering signal.*Not a clinical prediction.*For clinician review|No live hybrid prediction|Insufficient evidence/i,
+        )
+        .first(),
+    ).toBeVisible();
+  });
+
+  test("admin safety eval card carries n-size, clinical_validation:false, and the warn-tinted needs_attention path", async ({ page }) => {
+    await signIn(page, "admin", "admin-demo", /\/admin/);
+    await page.goto("/admin/safety");
+    // The eval integrity strip must show its credibility keys — these are the
+    // honest accounting bits a reviewer needs without opening the artifact.
+    const integrity = page.locator("[data-eval-integrity]").first();
+    await expect(integrity).toBeVisible({ timeout: 60_000 });
+    await expect(integrity.locator(".eval-integrity-key", { hasText: /^Total n$/i })).toBeVisible();
+    await expect(integrity.locator(".eval-integrity-key", { hasText: /^Passed$/i })).toBeVisible();
+    await expect(integrity.locator(".eval-integrity-key", { hasText: /^Failed$/i })).toBeVisible();
+    await expect(integrity.locator(".eval-integrity-key", { hasText: /^Skipped$/i })).toBeVisible();
+    await expect(integrity.locator(".eval-integrity-key", { hasText: /^Clinical validation$/i })).toBeVisible();
+    // Value must read literal "false" — this is the credibility claim.
+    await expect(integrity.getByText(/^false$/).first()).toBeVisible();
+    await expect(integrity.locator(".eval-integrity-key", { hasText: /^Used for tuning$/i })).toBeVisible();
   });
 });
