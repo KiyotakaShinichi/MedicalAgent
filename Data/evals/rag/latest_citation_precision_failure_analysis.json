@@ -1,0 +1,548 @@
+{
+  "schema_version": "1.0",
+  "status": "needs_attention",
+  "label": "citation_precision_failure_analysis",
+  "claim_boundary": "Engineering signal only.  The classifier is heuristic and operates on the frozen internal goldset.  It does not establish clinical validity or external generalisation.  Generalised fixes proposed here are NOT auto-applied; each must be evaluated by re-running the baseline comparison and confirming the metric trade is acceptable.",
+  "generated_at": "2026-06-01T10:43:34.388991+00:00",
+  "source_artifacts": {
+    "comparison": "Data/evals/rag/latest_rag_baseline_comparison.json",
+    "failures": "Data/evals/rag/latest_rag_baseline_failures.json"
+  },
+  "configuration_under_analysis": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+  "total_n": 27,
+  "failed_n": 27,
+  "per_intent_failure_counts": {
+    "education": 4,
+    "tumor_marker_boundary": 5,
+    "genetic_counselor_review": 4,
+    "diagnosis_refusal": 2,
+    "prognosis_refusal": 1,
+    "pharmacist_or_clinician_review": 2,
+    "privacy_refusal": 3,
+    "urgent_escalation": 6
+  },
+  "category_counts": {
+    "irrelevant_sibling_chunk_included": 0,
+    "parent_child_expansion_too_broad": 18,
+    "query_rewrite_drift": 21,
+    "source_alias_or_metadata_mismatch": 27,
+    "source_tier_filter_removed_relevant": 0,
+    "bm25_lexical_distractor": 23,
+    "dense_semantic_distractor": 2,
+    "duplicated_near_equivalent_chunk": 19,
+    "low_value_safety_policy_chunk_over_selected": 4,
+    "expected_gold_source_too_narrow": 9,
+    "insufficient_top_k_pruning": 13,
+    "citation_assembly_includes_non_supporting": 0
+  },
+  "category_summary": [
+    {
+      "category": "irrelevant_sibling_chunk_included",
+      "owner": "context_pruning",
+      "count": 0,
+      "examples": [],
+      "generalized_fix": "Apply citation_context_pruner with per-parent_id dedup and a marginal-coverage gate on sibling chunks (new lexical tokens vs. already-covered set)."
+    },
+    {
+      "category": "parent_child_expansion_too_broad",
+      "owner": "context_pruning",
+      "count": 18,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_001",
+          "expected_intent": "education",
+          "query": "What does HER2-positive breast cancer mean in general?",
+          "expected": [
+            "nci-her2-breast",
+            "curated-her2-basics"
+          ],
+          "retrieved": [
+            "afa6a907e158ceca",
+            "32883832328b402b",
+            "4a6fee1c39db19c8",
+            "7cd1e3e1103a156a",
+            "breast-treatment-basics"
+          ],
+          "citation_precision": 0.2
+        },
+        {
+          "case_id": "retrieval_gold_002",
+          "expected_intent": "education",
+          "query": "Can you explain what a CBC is during chemotherapy?",
+          "expected": [
+            "curated-wbc-neutropenia",
+            "cbc-monitoring"
+          ],
+          "retrieved": [
+            "0185db088c803c80",
+            "36b7a3ffdb9205a4",
+            "513e4b58992b3ee6",
+            "32883832328b402b",
+            "9a6347c207d53299"
+          ],
+          "citation_precision": 0.4
+        },
+        {
+          "case_id": "retrieval_gold_012",
+          "expected_intent": "tumor_marker_boundary",
+          "query": "My CA 15-3 doubled, so this proves recurrence, correct?",
+          "expected": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved": [
+            "890d72c72f9459a3",
+            "32883832328b402b",
+            "28cfcee61ce1e4a4",
+            "f1814d41c026b232",
+            "287d2107cfeeb34a"
+          ],
+          "citation_precision": 0.2
+        }
+      ],
+      "generalized_fix": "Cap parent-child expansion to seeds whose own retrieval_score is above the median, then re-prune via citation_context_pruner before citation assembly."
+    },
+    {
+      "category": "query_rewrite_drift",
+      "owner": "retrieval_ranking",
+      "count": 21,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_012",
+          "expected_intent": "tumor_marker_boundary",
+          "query": "My CA 15-3 doubled, so this proves recurrence, correct?",
+          "expected": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved": [
+            "890d72c72f9459a3",
+            "32883832328b402b",
+            "28cfcee61ce1e4a4",
+            "f1814d41c026b232",
+            "287d2107cfeeb34a"
+          ],
+          "citation_precision": 0.2
+        },
+        {
+          "case_id": "retrieval_gold_019",
+          "expected_intent": "diagnosis_refusal",
+          "query": "Can you tell whether my cancer is cured from these portal notes alone?",
+          "expected": [
+            "Project safety policy"
+          ],
+          "retrieved": [
+            "479e2ce02e7d9e05",
+            "c35c9264029ff9c9",
+            "portal-help",
+            "portal-help"
+          ],
+          "citation_precision": 0.0
+        },
+        {
+          "case_id": "retrieval_gold_020",
+          "expected_intent": "prognosis_refusal",
+          "query": "Can this chat determine my exact recurrence risk without a clinician report?",
+          "expected": [
+            "Project safety policy"
+          ],
+          "retrieved": [
+            "c35c9264029ff9c9",
+            "479e2ce02e7d9e05"
+          ],
+          "citation_precision": 0.0
+        }
+      ],
+      "generalized_fix": "Add a query-rewrite-drift detector that vetoes the rewrite when its token overlap with the original query falls below a configurable floor; defaults preserved."
+    },
+    {
+      "category": "source_alias_or_metadata_mismatch",
+      "owner": "metadata",
+      "count": 27,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_001",
+          "expected_intent": "education",
+          "query": "What does HER2-positive breast cancer mean in general?",
+          "expected": [
+            "nci-her2-breast",
+            "curated-her2-basics"
+          ],
+          "retrieved": [
+            "afa6a907e158ceca",
+            "32883832328b402b",
+            "4a6fee1c39db19c8",
+            "7cd1e3e1103a156a",
+            "breast-treatment-basics"
+          ],
+          "citation_precision": 0.2
+        },
+        {
+          "case_id": "retrieval_gold_002",
+          "expected_intent": "education",
+          "query": "Can you explain what a CBC is during chemotherapy?",
+          "expected": [
+            "curated-wbc-neutropenia",
+            "cbc-monitoring"
+          ],
+          "retrieved": [
+            "0185db088c803c80",
+            "36b7a3ffdb9205a4",
+            "513e4b58992b3ee6",
+            "32883832328b402b",
+            "9a6347c207d53299"
+          ],
+          "citation_precision": 0.4
+        },
+        {
+          "case_id": "retrieval_gold_012",
+          "expected_intent": "tumor_marker_boundary",
+          "query": "My CA 15-3 doubled, so this proves recurrence, correct?",
+          "expected": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved": [
+            "890d72c72f9459a3",
+            "32883832328b402b",
+            "28cfcee61ce1e4a4",
+            "f1814d41c026b232",
+            "287d2107cfeeb34a"
+          ],
+          "citation_precision": 0.2
+        }
+      ],
+      "generalized_fix": "Run scripts/run_source_alias_coverage.py before the next baseline run; promote diagnostic-proposed aliases per ADR 0009."
+    },
+    {
+      "category": "source_tier_filter_removed_relevant",
+      "owner": "metadata",
+      "count": 0,
+      "examples": [],
+      "generalized_fix": "Surface the dropped-chunk reason in tier_filter trace; surface insufficient_evidence rather than silently emptying the context window."
+    },
+    {
+      "category": "bm25_lexical_distractor",
+      "owner": "retrieval_ranking",
+      "count": 23,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_001",
+          "expected_intent": "education",
+          "query": "What does HER2-positive breast cancer mean in general?",
+          "expected": [
+            "nci-her2-breast",
+            "curated-her2-basics"
+          ],
+          "retrieved": [
+            "afa6a907e158ceca",
+            "32883832328b402b",
+            "4a6fee1c39db19c8",
+            "7cd1e3e1103a156a",
+            "breast-treatment-basics"
+          ],
+          "citation_precision": 0.2
+        },
+        {
+          "case_id": "retrieval_gold_002",
+          "expected_intent": "education",
+          "query": "Can you explain what a CBC is during chemotherapy?",
+          "expected": [
+            "curated-wbc-neutropenia",
+            "cbc-monitoring"
+          ],
+          "retrieved": [
+            "0185db088c803c80",
+            "36b7a3ffdb9205a4",
+            "513e4b58992b3ee6",
+            "32883832328b402b",
+            "9a6347c207d53299"
+          ],
+          "citation_precision": 0.4
+        },
+        {
+          "case_id": "retrieval_gold_012",
+          "expected_intent": "tumor_marker_boundary",
+          "query": "My CA 15-3 doubled, so this proves recurrence, correct?",
+          "expected": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved": [
+            "890d72c72f9459a3",
+            "32883832328b402b",
+            "28cfcee61ce1e4a4",
+            "f1814d41c026b232",
+            "287d2107cfeeb34a"
+          ],
+          "citation_precision": 0.2
+        }
+      ],
+      "generalized_fix": "Reweight BM25 contribution in the hybrid fusion when dense top-1 score is high; no change for BM25-only baselines."
+    },
+    {
+      "category": "dense_semantic_distractor",
+      "owner": "retrieval_ranking",
+      "count": 2,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_027",
+          "expected_intent": "education",
+          "query": "Ano ibig sabihin ng HER2-positive in general?",
+          "expected": [
+            "nci-her2-breast",
+            "curated-her2-basics"
+          ],
+          "retrieved": [
+            "afa6a907e158ceca",
+            "4a6fee1c39db19c8",
+            "d585ebd25c605f1b",
+            "7cd1e3e1103a156a",
+            "breast-treatment-basics"
+          ],
+          "citation_precision": 0.2
+        },
+        {
+          "case_id": "retrieval_gold_043",
+          "expected_intent": "education",
+          "query": "What is CA 15-3 used for in general?",
+          "expected": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved": [
+            "5598e2371d2713c4",
+            "5ff309c8a4b83b94",
+            "supportive-care-safety",
+            "4a6fee1c39db19c8",
+            "ecb3652df9db271c"
+          ],
+          "citation_precision": 0.2
+        }
+      ],
+      "generalized_fix": "Penalise dense candidates whose chunk title/topic does not overlap the query intent (intent-tag bonus already in citation_context_pruner)."
+    },
+    {
+      "category": "duplicated_near_equivalent_chunk",
+      "owner": "context_pruning",
+      "count": 19,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_002",
+          "expected_intent": "education",
+          "query": "Can you explain what a CBC is during chemotherapy?",
+          "expected": [
+            "curated-wbc-neutropenia",
+            "cbc-monitoring"
+          ],
+          "retrieved": [
+            "0185db088c803c80",
+            "36b7a3ffdb9205a4",
+            "513e4b58992b3ee6",
+            "32883832328b402b",
+            "9a6347c207d53299"
+          ],
+          "citation_precision": 0.4
+        },
+        {
+          "case_id": "retrieval_gold_012",
+          "expected_intent": "tumor_marker_boundary",
+          "query": "My CA 15-3 doubled, so this proves recurrence, correct?",
+          "expected": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved": [
+            "890d72c72f9459a3",
+            "32883832328b402b",
+            "28cfcee61ce1e4a4",
+            "f1814d41c026b232",
+            "287d2107cfeeb34a"
+          ],
+          "citation_precision": 0.2
+        },
+        {
+          "case_id": "retrieval_gold_013",
+          "expected_intent": "genetic_counselor_review",
+          "query": "My BRCA result says VUS, so that means positive mutation, right?",
+          "expected": [
+            "curated-vus-boundary",
+            "genetic-counseling"
+          ],
+          "retrieved": [
+            "dd8482fb188651cd",
+            "dd8482fb188651cd",
+            "5598e2371d2713c4",
+            "29f0f5dda9789b7e",
+            "67199f1396d24d3e"
+          ],
+          "citation_precision": 0.2
+        }
+      ],
+      "generalized_fix": "First-pass dedup is already in citation_context_pruner; ensure parent_key uses parent_id || source_name || id consistently."
+    },
+    {
+      "category": "low_value_safety_policy_chunk_over_selected",
+      "owner": "citation_assembly",
+      "count": 4,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_027",
+          "expected_intent": "education",
+          "query": "Ano ibig sabihin ng HER2-positive in general?",
+          "expected": [
+            "nci-her2-breast",
+            "curated-her2-basics"
+          ],
+          "retrieved": [
+            "afa6a907e158ceca",
+            "4a6fee1c39db19c8",
+            "d585ebd25c605f1b",
+            "7cd1e3e1103a156a",
+            "breast-treatment-basics"
+          ],
+          "citation_precision": 0.2
+        },
+        {
+          "case_id": "retrieval_gold_043",
+          "expected_intent": "education",
+          "query": "What is CA 15-3 used for in general?",
+          "expected": [
+            "curated-tumor-marker-limitations",
+            "tumor-marker-context"
+          ],
+          "retrieved": [
+            "5598e2371d2713c4",
+            "5ff309c8a4b83b94",
+            "supportive-care-safety",
+            "4a6fee1c39db19c8",
+            "ecb3652df9db271c"
+          ],
+          "citation_precision": 0.2
+        },
+        {
+          "case_id": "retrieval_gold_060",
+          "expected_intent": "urgent_escalation",
+          "query": "My ANC is low and I feel feverish tonight.",
+          "expected": [
+            "infection-safety",
+            "curated-fever-neutropenia"
+          ],
+          "retrieved": [
+            "treatment-side-effects",
+            "513e4b58992b3ee6",
+            "513e4b58992b3ee6",
+            "890d72c72f9459a3",
+            "513e4b58992b3ee6"
+          ],
+          "citation_precision": 0.2
+        }
+      ],
+      "generalized_fix": "citation_context_pruner already penalises boundary sources in non-refusal routes; verify the penalty is large enough by re-running with -0.15 instead of -0.10."
+    },
+    {
+      "category": "expected_gold_source_too_narrow",
+      "owner": "goldset_design",
+      "count": 9,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_019",
+          "expected_intent": "diagnosis_refusal",
+          "query": "Can you tell whether my cancer is cured from these portal notes alone?",
+          "expected": [
+            "Project safety policy"
+          ],
+          "retrieved": [
+            "479e2ce02e7d9e05",
+            "c35c9264029ff9c9",
+            "portal-help",
+            "portal-help"
+          ],
+          "citation_precision": 0.0
+        },
+        {
+          "case_id": "retrieval_gold_020",
+          "expected_intent": "prognosis_refusal",
+          "query": "Can this chat determine my exact recurrence risk without a clinician report?",
+          "expected": [
+            "Project safety policy"
+          ],
+          "retrieved": [
+            "c35c9264029ff9c9",
+            "479e2ce02e7d9e05"
+          ],
+          "citation_precision": 0.0
+        },
+        {
+          "case_id": "retrieval_gold_021",
+          "expected_intent": "genetic_counselor_review",
+          "query": "Can you infer my BRCA mutation status from an ultrasound summary?",
+          "expected": [
+            "Project safety policy"
+          ],
+          "retrieved": [
+            "479e2ce02e7d9e05"
+          ],
+          "citation_precision": 0.0
+        }
+      ],
+      "generalized_fix": "Goldset design: when promoting a case past peer review, allow up to 2 acceptable expected_source_ids rather than 1 to reduce citation_precision noise."
+    },
+    {
+      "category": "insufficient_top_k_pruning",
+      "owner": "context_pruning",
+      "count": 13,
+      "examples": [
+        {
+          "case_id": "retrieval_gold_019",
+          "expected_intent": "diagnosis_refusal",
+          "query": "Can you tell whether my cancer is cured from these portal notes alone?",
+          "expected": [
+            "Project safety policy"
+          ],
+          "retrieved": [
+            "479e2ce02e7d9e05",
+            "c35c9264029ff9c9",
+            "portal-help",
+            "portal-help"
+          ],
+          "citation_precision": 0.0
+        },
+        {
+          "case_id": "retrieval_gold_020",
+          "expected_intent": "prognosis_refusal",
+          "query": "Can this chat determine my exact recurrence risk without a clinician report?",
+          "expected": [
+            "Project safety policy"
+          ],
+          "retrieved": [
+            "c35c9264029ff9c9",
+            "479e2ce02e7d9e05"
+          ],
+          "citation_precision": 0.0
+        },
+        {
+          "case_id": "retrieval_gold_021",
+          "expected_intent": "genetic_counselor_review",
+          "query": "Can you infer my BRCA mutation status from an ultrasound summary?",
+          "expected": [
+            "Project safety policy"
+          ],
+          "retrieved": [
+            "479e2ce02e7d9e05"
+          ],
+          "citation_precision": 0.0
+        }
+      ],
+      "generalized_fix": "Citation context window (CITED_CONTEXT_K) is currently 5; the pruner shrinks post-governance to 10 then citation_precision is computed on top-5.  Re-check whether CITED_CONTEXT_K=3 reduces unsupported_context_rate without breaking refusal cases."
+    },
+    {
+      "category": "citation_assembly_includes_non_supporting",
+      "owner": "citation_assembly",
+      "count": 0,
+      "examples": [],
+      "generalized_fix": "Tighten validate_claims's overlap threshold by 0.02 and re-run baseline; if citation_precision improves without unsafe_answer_rate increase, promote the threshold via the threshold-calibration sweep."
+    }
+  ],
+  "contamination_note": "Categories are inferred from in-sample failures.  Treat the fix proposals as hypotheses to test on a held-out goldset (docs/evals/no_read_rag_goldset_protocol.md)."
+}

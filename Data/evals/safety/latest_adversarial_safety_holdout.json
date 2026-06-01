@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "status": "informational",
   "label": "held_out_adversarial_variants_post_hardening",
-  "generated_at": "2026-05-27T05:24:36.261448+00:00",
+  "generated_at": "2026-06-01T05:56:26.317273+00:00",
   "total_n": 32,
   "pass_count": 31,
   "fail_count": 1,

@@ -1390,6 +1390,23 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "rag_baseline_comparison",
+        "title": "RAG baseline comparison",
+        "path": "Data/evals/rag/latest_rag_baseline_comparison.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "case_count": ["summary", "case_count"],
+            "bm25_recall_at_10": ["summary", "bm25_recall_at_10"],
+            "full_stack_recall_at_10": ["summary", "full_stack_recall_at_10"],
+            "best_recall_at_10": ["summary", "best_recall_at_10"],
+            "complex_stack_improvement_over_bm25": ["summary", "complex_stack_improvement_over_bm25"],
+            "unsupported_context_rate": ["summary", "unsupported_context_rate"],
+            "source_tier_correctness": ["summary", "source_tier_correctness"],
+            "improvement_proven_vs_bm25": ["summary", "improvement_proven_vs_bm25"],
+        },
+    },
+    {
         "id": "retrieval_failure_analysis",
         "title": "Retrieval failure analysis",
         "path": "Data/evals/rag/latest_retrieval_failure_analysis.json",

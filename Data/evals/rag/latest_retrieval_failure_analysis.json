@@ -1,28 +1,174 @@
 {
   "schema_version": "retrieval_failure_analysis_v1",
-  "generated_at": "2026-05-21T08:19:17.510219+00:00",
+  "generated_at": "2026-05-27T07:38:07.690022+00:00",
   "status": "needs_attention",
-  "total_n": 12,
-  "failed_n": 1,
+  "total_n": 74,
+  "failed_n": 10,
   "failure_categories": {
-    "gold_source_id_alias_or_metadata_normalization": 1,
-    "safety_policy_fallback_gap": 1,
-    "unsupported_context_selected": 1
+    "gold_source_id_alias_or_metadata_normalization": 10,
+    "relevant_source_retrieved_but_not_matched_by_raw_gold_id": 3,
+    "unsupported_context_selected": 7
   },
   "per_intent_failure_counts": {
-    "unknown": 1
+    "no_evidence": 4,
+    "taglish": 1,
+    "urgent_symptom": 5
   },
   "failure_owner_counts": {
-    "retrieval": 1
+    "goldset_design": 3,
+    "retrieval": 7
   },
   "suggested_generalized_fixes": [
     "Maintain a source-alias map and expose alias-normalized retrieval metrics.",
-    "Add intent-specific metadata boosts for refusal, genetics/VUS, tumor-marker, imaging, and privacy routes.",
-    "Add a source-governed safety-policy fallback for refusal/privacy/prognosis route families."
+    "Add intent-specific metadata boosts for refusal, genetics/VUS, tumor-marker, imaging, and privacy routes."
   ],
   "cases": [
     {
-      "case_id": "retrieval_gold_claim_12",
+      "case_id": "retrieval_gold_019",
+      "expected_source_ids": [
+        "28cfcee61ce1e4a4",
+        "918edc260afd2d63",
+        "b4b9ee5dfff5d9bb4a84",
+        "diagnosis, treatment, and supplement safety boundaries",
+        "minimum evidence and medical claim boundaries",
+        "monitoring score boundary",
+        "project safety policy",
+        "project-monitoring-score",
+        "response-modeling"
+      ],
+      "retrieved_source_ids": [
+        "16cecf5419e1fe71",
+        "479e2ce02e7d9e05",
+        "ac1a8d556dbc198be8ca",
+        "2d58adb5b84d7a71235d",
+        "16cecf5419e1fe71",
+        "patient portal help",
+        "32883832328b402b",
+        "06f8773f9a1a727adf87",
+        "4809a2a992ed3d05071d",
+        "73c71303225aea8ce582"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "unsupported_context_selected"
+      ],
+      "failure_owner": "retrieval",
+      "suggested_generalized_fixes": [
+        "Improve intent-aware query rewrite and parent-child chunk recovery for this intent family.",
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields."
+      ],
+      "notes": "No expected source or alias appeared in top-10 retrieval for this case."
+    },
+    {
+      "case_id": "retrieval_gold_020",
+      "expected_source_ids": [
+        "28cfcee61ce1e4a4",
+        "918edc260afd2d63",
+        "b4b9ee5dfff5d9bb4a84",
+        "diagnosis, treatment, and supplement safety boundaries",
+        "minimum evidence and medical claim boundaries",
+        "monitoring score boundary",
+        "project safety policy",
+        "project-monitoring-score",
+        "response-modeling"
+      ],
+      "retrieved_source_ids": [
+        "5250efd518f050c2a555",
+        "33ef73acba84d60bd7a1",
+        "5598e2371d2713c4",
+        "287d2107cfeeb34a",
+        "7cd1e3e1103a156a",
+        "ac1a8d556dbc198be8ca",
+        "462d304fbed421ae6e14",
+        "24153a2dd9e6a5e56060",
+        "32883832328b402b",
+        "479e2ce02e7d9e05"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "unsupported_context_selected"
+      ],
+      "failure_owner": "retrieval",
+      "suggested_generalized_fixes": [
+        "Improve intent-aware query rewrite and parent-child chunk recovery for this intent family.",
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields."
+      ],
+      "notes": "No expected source or alias appeared in top-10 retrieval for this case."
+    },
+    {
+      "case_id": "retrieval_gold_021",
+      "expected_source_ids": [
+        "28cfcee61ce1e4a4",
+        "918edc260afd2d63",
+        "b4b9ee5dfff5d9bb4a84",
+        "diagnosis, treatment, and supplement safety boundaries",
+        "minimum evidence and medical claim boundaries",
+        "monitoring score boundary",
+        "project safety policy",
+        "project-monitoring-score",
+        "response-modeling"
+      ],
+      "retrieved_source_ids": [
+        "05838decbced2fe24cc9",
+        "4b081552999dc1de7d36",
+        "1d93db4c51a1769c7220",
+        "24153a2dd9e6a5e56060",
+        "d585ebd25c605f1b",
+        "06f8773f9a1a727adf87",
+        "4787d2a42440789f",
+        "479e2ce02e7d9e05",
+        "5598e2371d2713c4",
+        "5250efd518f050c2a555"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "unsupported_context_selected"
+      ],
+      "failure_owner": "retrieval",
+      "suggested_generalized_fixes": [
+        "Improve intent-aware query rewrite and parent-child chunk recovery for this intent family.",
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields."
+      ],
+      "notes": "No expected source or alias appeared in top-10 retrieval for this case."
+    },
+    {
+      "case_id": "retrieval_gold_022",
+      "expected_source_ids": [
+        "28cfcee61ce1e4a4",
+        "918edc260afd2d63",
+        "b4b9ee5dfff5d9bb4a84",
+        "diagnosis, treatment, and supplement safety boundaries",
+        "minimum evidence and medical claim boundaries",
+        "monitoring score boundary",
+        "project safety policy",
+        "project-monitoring-score",
+        "response-modeling"
+      ],
+      "retrieved_source_ids": [
+        "4a6fee1c39db19c8",
+        "08ecfa99b5cc9b421651",
+        "1d8b472e73bcd9696d15",
+        "24de6c8ad0379f43",
+        "1d8b472e73bcd9696d15",
+        "4a6fee1c39db19c8",
+        "a34c987d0620a854",
+        "05fa744d857f4cfa8865",
+        "1d8b472e73bcd9696d15",
+        "3ca1dfefbd3147b0"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "unsupported_context_selected"
+      ],
+      "failure_owner": "retrieval",
+      "suggested_generalized_fixes": [
+        "Improve intent-aware query rewrite and parent-child chunk recovery for this intent family.",
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields."
+      ],
+      "notes": "No expected source or alias appeared in top-10 retrieval for this case."
+    },
+    {
+      "case_id": "retrieval_gold_034",
       "expected_source_ids": [
         "28cfcee61ce1e4a4",
         "918edc260afd2d63",
@@ -36,24 +182,197 @@
       ],
       "retrieved_source_ids": [
         "36b7a3ffdb9205a4",
+        "patient portal help",
         "36b7a3ffdb9205a4",
-        "portal-help",
         "4787d2a42440789f",
         "4787d2a42440789f",
         "5598e2371d2713c4",
-        "479e2ce02e7d9e05",
+        "6649c1bba1cd7799",
+        "287d2107cfeeb34a",
         "5598e2371d2713c4",
-        "7cd1e3e1103a156a",
-        "32883832328b402b"
+        "462d304fbed421ae6e14"
       ],
       "failure_categories": [
         "gold_source_id_alias_or_metadata_normalization",
-        "safety_policy_fallback_gap",
         "unsupported_context_selected"
       ],
       "failure_owner": "retrieval",
       "suggested_generalized_fixes": [
-        "For refusal/privacy/prognosis intents, include project safety policy as fallback context.",
+        "Improve intent-aware query rewrite and parent-child chunk recovery for this intent family.",
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields."
+      ],
+      "notes": "No expected source or alias appeared in top-10 retrieval for this case."
+    },
+    {
+      "case_id": "retrieval_gold_061",
+      "expected_source_ids": [
+        "cdc",
+        "cdc-fever-chemo",
+        "curated-fever-neutropenia",
+        "febrile neutropenia during chemotherapy",
+        "fever during chemotherapy",
+        "infection-safety",
+        "nci-febrile-neutropenia",
+        "treatment-side-effects"
+      ],
+      "retrieved_source_ids": [
+        "08ecfa99b5cc9b421651",
+        "9a6347c207d53299",
+        "a34c987d0620a854",
+        "7eca369bbd4abb79008e",
+        "24de6c8ad0379f43",
+        "d585ebd25c605f1b",
+        "1d8b472e73bcd9696d15",
+        "36b7a3ffdb9205a4",
+        "05fa744d857f4cfa8865",
+        "3ca1dfefbd3147b0"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "relevant_source_retrieved_but_not_matched_by_raw_gold_id"
+      ],
+      "failure_owner": "goldset_design",
+      "suggested_generalized_fixes": [
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields.",
+        "Report raw-id and alias-normalized metrics separately."
+      ],
+      "notes": "The current KB appears to retrieve an equivalent source, but the gold ID uses an older alias."
+    },
+    {
+      "case_id": "retrieval_gold_062",
+      "expected_source_ids": [
+        "cdc",
+        "cdc-fever-chemo",
+        "curated-fever-neutropenia",
+        "febrile neutropenia during chemotherapy",
+        "fever during chemotherapy",
+        "infection-safety",
+        "nci-febrile-neutropenia",
+        "treatment-side-effects"
+      ],
+      "retrieved_source_ids": [
+        "3ca1dfefbd3147b0",
+        "9a6347c207d53299",
+        "36b7a3ffdb9205a4",
+        "0185db088c803c80",
+        "0185db088c803c80",
+        "1d8b472e73bcd9696d15",
+        "2c9cf580eb45af0e",
+        "acupuncture and acupressure supportive care boundary",
+        "9dbd1c506f6e0962",
+        "24de6c8ad0379f43"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "relevant_source_retrieved_but_not_matched_by_raw_gold_id"
+      ],
+      "failure_owner": "goldset_design",
+      "suggested_generalized_fixes": [
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields.",
+        "Report raw-id and alias-normalized metrics separately."
+      ],
+      "notes": "The current KB appears to retrieve an equivalent source, but the gold ID uses an older alias."
+    },
+    {
+      "case_id": "retrieval_gold_063",
+      "expected_source_ids": [
+        "cdc",
+        "cdc-fever-chemo",
+        "curated-fever-neutropenia",
+        "febrile neutropenia during chemotherapy",
+        "fever during chemotherapy",
+        "infection-safety",
+        "nci-febrile-neutropenia",
+        "treatment-side-effects"
+      ],
+      "retrieved_source_ids": [
+        "24de6c8ad0379f43",
+        "3ca1dfefbd3147b0",
+        "a34c987d0620a854",
+        "a4ede83e9104d374035c",
+        "1d8b472e73bcd9696d15",
+        "4a6fee1c39db19c8",
+        "9dbd1c506f6e0962",
+        "2475b0c866dc591d",
+        "d585ebd25c605f1b",
+        "7eca369bbd4abb79008e"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "relevant_source_retrieved_but_not_matched_by_raw_gold_id"
+      ],
+      "failure_owner": "goldset_design",
+      "suggested_generalized_fixes": [
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields.",
+        "Report raw-id and alias-normalized metrics separately."
+      ],
+      "notes": "The current KB appears to retrieve an equivalent source, but the gold ID uses an older alias."
+    },
+    {
+      "case_id": "retrieval_gold_064",
+      "expected_source_ids": [
+        "cdc",
+        "cdc-fever-chemo",
+        "curated-fever-neutropenia",
+        "febrile neutropenia during chemotherapy",
+        "fever during chemotherapy",
+        "infection-safety",
+        "nci-febrile-neutropenia",
+        "treatment-side-effects"
+      ],
+      "retrieved_source_ids": [
+        "5ff309c8a4b83b94",
+        "3b241defef60911d6909",
+        "ade1a5e2deaa049d956f",
+        "513e4b58992b3ee6",
+        "5ff309c8a4b83b94",
+        "1d4775eac3011f293d33",
+        "5ff309c8a4b83b94",
+        "513e4b58992b3ee6",
+        "5ff309c8a4b83b94",
+        "595b23d4517b4a2f71a0"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "unsupported_context_selected"
+      ],
+      "failure_owner": "retrieval",
+      "suggested_generalized_fixes": [
+        "Improve intent-aware query rewrite and parent-child chunk recovery for this intent family.",
+        "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields."
+      ],
+      "notes": "No expected source or alias appeared in top-10 retrieval for this case."
+    },
+    {
+      "case_id": "retrieval_gold_065",
+      "expected_source_ids": [
+        "cdc",
+        "cdc-fever-chemo",
+        "curated-fever-neutropenia",
+        "febrile neutropenia during chemotherapy",
+        "fever during chemotherapy",
+        "infection-safety",
+        "nci-febrile-neutropenia",
+        "treatment-side-effects"
+      ],
+      "retrieved_source_ids": [
+        "08ecfa99b5cc9b421651",
+        "ac1a8d556dbc198be8ca",
+        "24de6c8ad0379f43",
+        "700e08a0d847e6b4e50f",
+        "5c9ab1dbb54ddcadb654",
+        "b6cee03f078d056a",
+        "40c61de1b3bc2988a775",
+        "64147d5e5083a6cb2b54",
+        "3ffd9c34628ed2402cc9",
+        "b6cee03f078d056a"
+      ],
+      "failure_categories": [
+        "gold_source_id_alias_or_metadata_normalization",
+        "unsupported_context_selected"
+      ],
+      "failure_owner": "retrieval",
+      "suggested_generalized_fixes": [
         "Improve intent-aware query rewrite and parent-child chunk recovery for this intent family.",
         "Normalize gold source aliases against current chunk id/title/parent_id/source_name fields."
       ],

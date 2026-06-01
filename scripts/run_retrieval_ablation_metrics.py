@@ -35,6 +35,14 @@ GOLD_CASE_PATH = ROOT / "Data/evals/rag/gold_claim_grounding_cases.jsonl"
 STRATEGIES = ("dense_only", "sparse_only", "hybrid_rrf", "hybrid_rrf_cross_encoder")
 
 SOURCE_ID_ALIASES: dict[str, set[str]] = {
+    "nci-her2-breast": {
+        "nci-her2-breast", "her2 in breast cancer", "breast-treatment-basics",
+        "national cancer institute",
+    },
+    "curated-her2-basics": {
+        "curated-her2-basics", "nci-her2-breast", "her2 in breast cancer",
+        "breast-treatment-basics",
+    },
     "cbc-monitoring": {
         "cbc-monitoring", "curated-wbc-neutropenia", "cbc labs and trend monitoring",
         "cbc, anc, hemoglobin, and platelet monitoring reference", "0185db088c803c80",
@@ -114,6 +122,11 @@ SOURCE_ID_ALIASES: dict[str, set[str]] = {
         "treatment-side-effects", "acs-chemo-side-effects",
         "side effects and red flags during breast cancer treatment", "3ca1dfefbd3147b0",
         "1d8b472e73bcd9696d15",
+    },
+    "portal-help": {
+        "portal-help", "portal-help-upload", "portal-help-symptom-entry",
+        "portal-help-lab-results", "portal-help-mri-upload", "patient portal help",
+        "using the patient portal tools",
     },
 }
 

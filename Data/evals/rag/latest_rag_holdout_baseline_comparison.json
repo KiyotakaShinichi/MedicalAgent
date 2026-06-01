@@ -1,0 +1,13 @@
+{
+  "schema_version": "rag_holdout_baseline_comparison_v1",
+  "status": "ready_for_external_authoring",
+  "completed": false,
+  "external_author_eval_completed": false,
+  "clinical_validation": false,
+  "reason": "holdout file not found; complete the no-read protocol first",
+  "required_path": "Data/evals/rag/retrieval_goldset_holdout_v2.jsonl",
+  "protocol_doc": "docs/evals/no_read_rag_goldset_protocol.md",
+  "template_path": "Data/evals/rag/retrieval_goldset_holdout_v2_template.jsonl",
+  "claim_boundary": "Held-out RAG comparison is engineering infrastructure only. Even a completed run does NOT establish clinical validity, real-world safety, or production healthcare readiness. The readiness state reports preparation, not validation.",
+  "generated_at": "2026-06-01T09:31:25.525481+00:00"
+}

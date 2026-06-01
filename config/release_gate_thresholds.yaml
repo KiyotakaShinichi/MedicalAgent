@@ -671,6 +671,61 @@ artifacts:
       'cliff', tighten the probe set and re-run before changing the
       default.  Engineering signal only.
 
+  # Citation-precision failure analysis — informational read-only
+  # categorisation of full-stack low_citation_precision failures.
+  - path: Data/evals/rag/latest_citation_precision_failure_analysis.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    note: >
+      Categorises full-stack low_citation_precision failures into 12
+      owner-tagged buckets and proposes generalised fixes.  Engineering
+      signal only; fixes are NOT auto-applied — each must be evaluated
+      by re-running the baseline comparison and confirming the metric
+      trade.
+
+  # Held-out RAG comparison readiness artifact — informational only.
+  # Reports completed: false until a reviewer authors cases under the
+  # no-read protocol (docs/evals/no_read_rag_goldset_protocol.md).
+  # The artifact must NEVER count as clinical validation regardless of
+  # state.  Allowed statuses include both readiness and post-completion
+  # values; the runner refuses to fabricate completion (see the runner
+  # docstring and tests/test_rag_holdout_baseline_comparison.py).
+  - path: Data/evals/rag/latest_rag_holdout_baseline_comparison.json
+    required: false
+    max_age_days: 365
+    accepted_status:
+      - ready_for_external_authoring
+      - acceptable
+      - needs_attention
+      - strong
+      - informational
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Held-out RAG comparison.  ``completed: false`` is the default
+      and is acceptable.  Even when completed, the artifact does NOT
+      establish clinical validation, clinician sign-off, or production
+      healthcare readiness — only that an external author wrote cases
+      under the no-read protocol and the runner consumed them.
+
+  # Source-alias coverage diagnostic — informational read-only artifact.
+  # Lock-in: ``n_alias_keys_uncovered == 0`` enforces ADR 0009's
+  # invariant that every goldset expected_source_id is present as a
+  # top-level entry in LOGICAL_SOURCE_ALIASES.  Proposed-additions
+  # count is reported but not gated; promotion is reviewer-gated per
+  # ADR 0009.
+  - path: Data/evals/rag/latest_source_alias_coverage.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [n_alias_keys_uncovered], op: "==", value: 0}
+    note: >
+      Source-alias coverage diagnostic.  See docs/adr/0009-source-alias-normalization.md.
+      Engineering signal only; does NOT establish retrieval quality
+      improvement.
+
   - path: Data/evals/safety/latest_emotional_distress_eval.json
     required: false
     max_age_days: 60
@@ -720,6 +775,20 @@ artifacts:
       Harder retrieval goldset with distractors. Low recall or no reranker
       improvement is a warning, not a shipping blocker; do not claim retrieval
       improvement unless this artifact supports it.
+
+  - path: Data/evals/rag/latest_rag_baseline_comparison.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [summary, source_tier_correctness], op: ">=", value: 1.0}
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: false}
+    note: >
+      Baseline comparison is supporting engineering evidence only. It compares
+      BM25, dense, hybrid, rewrite, parent-child, and source-governed variants
+      on the same frozen internal goldset. Do not tune on this artifact or
+      claim clinical validation.
 
   - path: Data/evals/rag/latest_retrieval_failure_analysis.json
     required: false

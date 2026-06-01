@@ -1,0 +1,197 @@
+{
+  "schema_version": "1.0",
+  "status": "informational",
+  "label": "source_alias_coverage_diagnostic",
+  "claim_boundary": "Coverage diagnostic only.  Proposed additions are discovered by content matching against KB titles and source names; they are NOT auto-applied. Promotion into LOGICAL_SOURCE_ALIASES requires reviewer judgement and ADR-style documentation (see docs/adr/0009-source-alias-normalization.md). Engineering signal only; not a clinical claim.",
+  "generated_at": "2026-06-01T05:29:34.663200+00:00",
+  "n_goldset_cases": 74,
+  "n_kb_chunks": 242,
+  "n_alias_keys_demanded_by_goldset": 17,
+  "n_alias_keys_uncovered": 0,
+  "uncovered_alias_keys": [],
+  "n_proposed_additions_total": 0,
+  "per_alias": [
+    {
+      "alias_key": "curated-vus-boundary",
+      "goldset_demand_count": 13,
+      "alias_set_size": 9,
+      "kb_parent_ids_in_alias_set": [
+        "29f0f5dda9789b7e",
+        "4787d2a42440789f"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "genetic-counseling",
+      "goldset_demand_count": 13,
+      "alias_set_size": 12,
+      "kb_parent_ids_in_alias_set": [
+        "29f0f5dda9789b7e",
+        "4787d2a42440789f",
+        "664fb49bb1343408",
+        "ef3bcc511aad3c2c"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "curated-tumor-marker-limitations",
+      "goldset_demand_count": 13,
+      "alias_set_size": 10,
+      "kb_parent_ids_in_alias_set": [
+        "28cfcee61ce1e4a4",
+        "4787d2a42440789f",
+        "5598e2371d2713c4"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "tumor-marker-context",
+      "goldset_demand_count": 13,
+      "alias_set_size": 10,
+      "kb_parent_ids_in_alias_set": [
+        "28cfcee61ce1e4a4",
+        "4787d2a42440789f",
+        "5598e2371d2713c4"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "project safety policy",
+      "goldset_demand_count": 13,
+      "alias_set_size": 9,
+      "kb_parent_ids_in_alias_set": [
+        "28cfcee61ce1e4a4",
+        "918edc260afd2d63"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "supplement-safety",
+      "goldset_demand_count": 12,
+      "alias_set_size": 11,
+      "kb_parent_ids_in_alias_set": [
+        "2c9cf580eb45af0e",
+        "6649c1bba1cd7799",
+        "918edc260afd2d63"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "curated-st-johns-wort",
+      "goldset_demand_count": 12,
+      "alias_set_size": 5,
+      "kb_parent_ids_in_alias_set": [],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "infection-safety",
+      "goldset_demand_count": 10,
+      "alias_set_size": 8,
+      "kb_parent_ids_in_alias_set": [
+        "9a6347c207d53299"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "curated-fever-neutropenia",
+      "goldset_demand_count": 10,
+      "alias_set_size": 5,
+      "kb_parent_ids_in_alias_set": [],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "curated-wbc-neutropenia",
+      "goldset_demand_count": 4,
+      "alias_set_size": 8,
+      "kb_parent_ids_in_alias_set": [
+        "3ca1dfefbd3147b0"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "cbc-monitoring",
+      "goldset_demand_count": 4,
+      "alias_set_size": 8,
+      "kb_parent_ids_in_alias_set": [
+        "0185db088c803c80",
+        "36b7a3ffdb9205a4"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "portal-help",
+      "goldset_demand_count": 4,
+      "alias_set_size": 9,
+      "kb_parent_ids_in_alias_set": [
+        "479e2ce02e7d9e05",
+        "c35c9264029ff9c9"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "imaging-monitoring",
+      "goldset_demand_count": 3,
+      "alias_set_size": 8,
+      "kb_parent_ids_in_alias_set": [
+        "7cd1e3e1103a156a",
+        "a734a844daed9ef7"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "curated-mri-response-terms",
+      "goldset_demand_count": 3,
+      "alias_set_size": 10,
+      "kb_parent_ids_in_alias_set": [
+        "2524619e8115a75d",
+        "2a9f2ed73f0b189c",
+        "7cd1e3e1103a156a",
+        "a734a844daed9ef7"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "treatment-side-effects",
+      "goldset_demand_count": 3,
+      "alias_set_size": 7,
+      "kb_parent_ids_in_alias_set": [
+        "24de6c8ad0379f43",
+        "3ca1dfefbd3147b0",
+        "d50090fd5d38a39d"
+      ],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "nci-her2-breast",
+      "goldset_demand_count": 2,
+      "alias_set_size": 4,
+      "kb_parent_ids_in_alias_set": [],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    },
+    {
+      "alias_key": "curated-her2-basics",
+      "goldset_demand_count": 2,
+      "alias_set_size": 4,
+      "kb_parent_ids_in_alias_set": [],
+      "proposed_additions_by_content_match": [],
+      "match_method": "intersect alias-key tokens with KB chunk title/source_name/topic, min_token_overlap=2"
+    }
+  ],
+  "contamination_note": "This diagnostic reads the frozen goldset. The diagnostic itself does NOT change retrieval ranking or eval scoring. If proposed aliases are promoted into LOGICAL_SOURCE_ALIASES, the next baseline comparison must explicitly report raw vs alias-normalized recall side by side and the promotion must be tied to the diagnostic run it was derived from."
+}

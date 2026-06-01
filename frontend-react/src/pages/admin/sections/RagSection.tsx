@@ -40,6 +40,10 @@ export function RagSection({ analytics }: Props) {
     () => getNormalizedBenchmarkArtifact("retrieval_goldset_eval"),
     [],
   );
+  const { data: ragBaselineComparison, status: ragBaselineComparisonStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("rag_baseline_comparison"),
+    [],
+  );
   const { data: routeLatencyBudget, status: routeLatencyBudgetStatus } = useApi(
     () => getNormalizedBenchmarkArtifact("route_latency_budget"),
     [],
@@ -143,6 +147,7 @@ export function RagSection({ analytics }: Props) {
           ]}
           emptyLabel="No retrieval goldset eval yet - run scripts/run_retrieval_goldset_eval.py"
         />
+        <RagBaselineComparisonCard status={ragBaselineComparisonStatus} artifact={ragBaselineComparison} />
         <ArtifactSummaryCard
           title="Route Latency Budget"
           status={routeLatencyBudgetStatus}
@@ -291,6 +296,92 @@ function ArtifactSummaryCard({
   );
 }
 
+function RagBaselineComparisonCard({
+  status,
+  artifact,
+}: {
+  status: "idle" | "loading" | "success" | "error";
+  artifact: unknown;
+}) {
+  const record = asRecord(artifact);
+  const rows = Array.isArray(record?.rows) ? record.rows.map(asRecord).filter(Boolean) as Record<string, unknown>[] : [];
+  const artifactStatus = readString(record, ["status"]);
+  const improvement = readPath(record, ["metrics", "improvement_proven_vs_bm25"]);
+  const failures = rows
+    .flatMap((row) => Array.isArray(row.failure_examples) ? row.failure_examples : [])
+    .map(asRecord)
+    .filter(Boolean)
+    .slice(0, 4) as Record<string, unknown>[];
+
+  return (
+    <Card>
+      <CardHeader>
+        <SectionTitle>RAG Baseline Comparison</SectionTitle>
+        <div className="flex items-center gap-2">
+          <Badge variant={improvement === true ? "green" : "amber"}>
+            {improvement === true ? "improvement proven" : "not proven"}
+          </Badge>
+          {artifactStatus && (
+            <Badge variant={artifactStatus === "strong" || artifactStatus === "acceptable" ? "green" : "amber"}>
+              {artifactStatus}
+            </Badge>
+          )}
+        </div>
+      </CardHeader>
+      {status === "loading" ? <LoadingPane /> :
+       status === "error" ? <ErrorPane message="Could not load RAG baseline comparison" /> :
+       rows.length === 0 ? <EmptyPane label="No RAG baseline comparison yet - run scripts/run_rag_baseline_comparison.py" /> : (
+        <div className="flex flex-col gap-3">
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                  {["Config", "Recall@10", "MRR", "Citation", "Unsupported", "Tier", "P95", "Failures"].map((h) => (
+                    <th key={h} className="text-left py-2 pr-3 font-medium" style={{ color: "var(--text-faint)" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row) => (
+                  <tr key={String(row.configuration ?? row.label)} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td className="py-2 pr-3 font-medium max-w-[190px] truncate" title={String(row.label ?? "")}>{String(row.label ?? row.configuration ?? "-")}</td>
+                    <td className="py-2 pr-3 tabular-nums">{formatMaybePercent(row.recall_at_10)}</td>
+                    <td className="py-2 pr-3 tabular-nums">{formatMaybeNumber(row.mrr)}</td>
+                    <td className="py-2 pr-3 tabular-nums">{formatMaybePercent(row.citation_precision)}</td>
+                    <td className="py-2 pr-3 tabular-nums">{formatMaybePercent(row.unsupported_context_rate)}</td>
+                    <td className="py-2 pr-3 tabular-nums">{formatMaybePercent(row.source_tier_correctness)}</td>
+                    <td className="py-2 pr-3 tabular-nums">{formatMaybeMs(row.latency_p95_ms)}</td>
+                    <td className="py-2 pr-3 tabular-nums">{String(row.failure_count ?? "-")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {failures.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-semibold" style={{ color: "var(--text-dim)" }}>Failure examples</p>
+              {failures.map((failure, index) => (
+                <div key={`${String(failure.case_id ?? index)}-${index}`} className="rounded-md border p-2" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium" style={{ color: "var(--text)" }}>{String(failure.case_id ?? "case")}</span>
+                    <span className="text-xs" style={{ color: "var(--text-faint)" }}>{Array.isArray(failure.failure_reasons) ? failure.failure_reasons.join(", ") : "-"}</span>
+                  </div>
+                  <p className="text-xs mt-1 line-clamp-2" style={{ color: "var(--text-dim)" }}>{String(failure.query ?? "")}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <p className="text-xs italic" style={{ color: "var(--text-faint)" }}>
+            Internal frozen-goldset engineering comparison only. Clinical validation: false.
+          </p>
+        </div>
+       )}
+    </Card>
+  );
+}
+
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown>
@@ -309,6 +400,18 @@ function readPath(record: Record<string, unknown> | null, path: string[]): unkno
 function readString(record: Record<string, unknown> | null, path: string[]): string | null {
   const value = readPath(record, path);
   return typeof value === "string" ? value : null;
+}
+
+function formatMaybePercent(value: unknown): string {
+  return typeof value === "number" ? `${(value * 100).toFixed(1)}%` : "-";
+}
+
+function formatMaybeNumber(value: unknown): string {
+  return typeof value === "number" ? value.toFixed(3) : "-";
+}
+
+function formatMaybeMs(value: unknown): string {
+  return typeof value === "number" ? `${value.toFixed(0)}ms` : "-";
 }
 
 function formatMetric(value: unknown, format: MetricFormat): string | null {

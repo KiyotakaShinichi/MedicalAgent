@@ -23,9 +23,12 @@ OUTPUT_PATH = ROOT / "Data/evals/rag/latest_retrieval_goldset_eval.json"
 
 
 def main() -> int:
-    if not SOURCE_GOLD_PATH.exists():
-        write_rag_gold_claim_grounding_cases()
-    cases = _build_retrieval_goldset()
+    if GOLDSET_PATH.exists():
+        cases = _load_retrieval_goldset(GOLDSET_PATH)
+    else:
+        if not SOURCE_GOLD_PATH.exists():
+            write_rag_gold_claim_grounding_cases()
+        cases = _build_retrieval_goldset()
     corpus = _knowledge_snippets()
     fingerprint = knowledge_base_fingerprint()
     strategies = {
@@ -41,12 +44,13 @@ def main() -> int:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": "acceptable" if best["source_tier_correctness"] >= 1.0 else "needs_attention",
         "total_n": len(cases),
-        "authored_by": "engineering",
-        "authored_date": "2026-05-21",
-        "was_used_for_tuning": False,
+        "authored_by": _goldset_authors(cases),
+        "authored_date": _goldset_authored_date(cases),
+        "was_used_for_tuning": any(bool(case.get("was_used_for_tuning")) for case in cases),
+        "internal_vs_external_authored": _authorship_scope(cases),
         "contamination_note": (
-            "Goldset is internally authored from source-governance expectations. "
-            "Use it for retrieval evidence quality, not external validation."
+            "Goldset is frozen/internal unless a case explicitly marks external authorship. "
+            "Use it for retrieval evidence quality, not clinical or external validation."
         ),
         "strategies": strategies,
         "summary": {
@@ -113,6 +117,36 @@ def _build_retrieval_goldset() -> list[dict]:
         for row in rows:
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
     return rows
+
+
+def _load_retrieval_goldset(path: Path) -> list[dict]:
+    rows = [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    if not rows:
+        raise ValueError(f"Retrieval goldset is empty: {path}")
+    return rows
+
+
+def _goldset_authored_date(cases: list[dict]) -> str | None:
+    dates = sorted({str(case.get("authored_date")) for case in cases if case.get("authored_date")})
+    return dates[-1] if dates else None
+
+
+def _goldset_authors(cases: list[dict]) -> str:
+    authors = sorted({str(case.get("authored_by")) for case in cases if case.get("authored_by")})
+    return ",".join(authors) if authors else "unknown"
+
+
+def _authorship_scope(cases: list[dict]) -> str:
+    scopes = {str(case.get("internal_vs_external_authored") or "internal") for case in cases}
+    if scopes == {"internal"}:
+        return "internal"
+    if scopes == {"external"}:
+        return "external"
+    return "mixed"
 
 
 def _governed_view(strategy_result: dict) -> dict:

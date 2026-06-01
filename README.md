@@ -365,6 +365,26 @@ blocker tier. Synthetic-only; no clinical validity is established.
 - [docs/per_turn_trace.md](docs/per_turn_trace.md) — per-turn decision trace envelope (decisions only — chain-of-thought is rejected by `_scrub_cot` + `validate_trace_payload`).
 - [docs/synthetic_data_quality.md](docs/synthetic_data_quality.md) — synthetic generator quality proxy with an enforced disclaimer that it is NOT a clinical realism measure.
 
+## Held-out / external-author RAG evaluation (PREPARED, NOT COMPLETED)
+
+The internal frozen retrieval goldset (74 cases) has shaped retrieval
+configuration choices, alias maps, and threshold defaults. Its result
+is **in-sample** and `improvement_proven_vs_bm25` is `false` (the full
+source-governed stack does not exceed BM25 on raw recall on this
+goldset; it earns its keep on safety/governance).
+
+A **held-out v2** goldset is **prepared** for external-author
+evaluation under a no-read protocol but is **not completed**:
+
+- Protocol: [docs/evals/no_read_rag_goldset_protocol.md](docs/evals/no_read_rag_goldset_protocol.md)
+- Template: `Data/evals/rag/retrieval_goldset_holdout_v2_template.jsonl`
+- Runner: `python scripts/run_rag_holdout_baseline_comparison.py`
+- Artifact: `Data/evals/rag/latest_rag_holdout_baseline_comparison.json` reports `completed: false` and `status: ready_for_external_authoring` until a reviewer engages.
+
+The held-out evaluation does **not** establish clinical validation,
+clinician sign-off, or production healthcare readiness, regardless of
+its score.
+
 Runtime trace diagnostics are exported by `python scripts/run_trace_diagnostics_coverage.py` to `Data/evals/ops/latest_trace_diagnostics_coverage.json`. The artifact checks trace schema coverage and explicitly rejects private chain-of-thought storage.
 
 ## For Recruiters and Interviewers
