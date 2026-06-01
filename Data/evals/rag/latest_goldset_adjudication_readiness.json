@@ -1,0 +1,18 @@
+{
+  "schema_version": "rag_goldset_adjudication_readiness_v1",
+  "status": "ready_for_adjudication",
+  "completed": false,
+  "clinical_validation": false,
+  "label": "rag_goldset_adjudication_readiness",
+  "claim_boundary": "Adjudication readiness \u2014 engineering workflow only.  Reports whether the packet exists, whether it has been touched, and whether the goldset was mutated.  No retrieval, governance, or goldset content change is implied.  Not clinical validation.",
+  "generated_at": "2026-06-01T11:52:07.836963+00:00",
+  "packet_path": "Data/evals/rag/source_filter_drop_adjudication_packet.json",
+  "packet_exists": true,
+  "packet_goldset_unmodified": true,
+  "n_drop_cases": 9,
+  "n_draft_decisions": 9,
+  "n_filled_decisions": 0,
+  "n_validation_issues": 0,
+  "validation_issues": [],
+  "next_human_step": "An external reviewer (peer engineer or clinician) opens the packet, picks one of the allowed_decisions per item, files reviewer_role + reviewer_notes where required by the validator, and commits the filled packet under the no-read protocol.  No auto-apply."
+}

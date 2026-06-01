@@ -68,6 +68,29 @@ Data/evals/rag/latest_retrieval_failure_analysis.json
 The failure artifact classifies issues as retrieval, metadata/source-ID
 normalization, source governance, scoring, or goldset design before tuning.
 
+## Stage-wise retrieval oracle diagnostic
+
+[`backend/services/rag_stage_oracle_diagnostic.py`](../backend/services/rag_stage_oracle_diagnostic.py)
+re-runs every retrieval stage in isolation and reports which stage
+loses the gold source. It does **not** change retrieval ranking or
+live-agent behaviour.
+
+Current attribution on the 74-case internal goldset:
+
+- corpus coverage = 1.0 — gold sources are all in the KB.
+- BM25 / dense / hybrid candidate recall@50 = 0.9865.
+- **source-tier filter retention = 0.8378** — the filter drops 16% of cases by design (clinician-only / stale / out-of-allowed-use chunks the patient-facing audience can't cite).
+- citation-window retention = 0.8378 (window does not lose anything past the filter).
+- oracle upper bound = 0.8378 vs actual full stack = 0.7838 → **oracle gap = 0.054**.
+
+Top failure stage: **source_filter_drop (9 of 14 failures)**. The
+bottleneck is source governance working as designed, not retrieval
+quality. The remaining 5 failures split across rrf_ranking (2),
+dense-only (1), sparse-only (1), and citation_window_drop (1).
+
+See [`docs/evals/rag_baseline_comparison.md`](evals/rag_baseline_comparison.md)
+for the full table.
+
 ## Citation-context pruner (eval-path experiment, NOT promoted)
 
 A pruning layer

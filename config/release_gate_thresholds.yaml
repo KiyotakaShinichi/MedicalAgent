@@ -671,6 +671,114 @@ artifacts:
       'cliff', tighten the probe set and re-run before changing the
       default.  Engineering signal only.
 
+  # Negative results gallery — explicit catalogue of non-promoted
+  # findings already documented elsewhere.  Engineering credibility
+  # scaffolding; not clinical validation.
+  - path: Data/evals/governance/latest_negative_results_gallery.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Negative-results gallery.  Lists honest negative / non-promoted
+      findings.  Listing here does NOT make any system component
+      clinically valid.
+
+  # Portfolio claim safety check — CV / LinkedIn / README wording
+  # guardrails with banned-phrase and allowed-phrase lists.
+  - path: Data/evals/governance/latest_portfolio_claim_safety_check.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable, informational]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Portfolio wording guardrails.  Sets the strongest claim a
+      contributor may make in CV/README/LinkedIn copy under the
+      project's hard constraints.  Not clinical validation.
+
+  # Eval contamination harmonisation — maps each eval artifact to one
+  # of seven contamination categories with allowed claim strength.
+  - path: Data/evals/governance/latest_eval_contamination_harmonization.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable, informational]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Eval contamination harmonisation map.  Does not change any
+      artifact content; bounds the strongest reading each artifact
+      deserves.  Not clinical validation.
+
+  # Noisier synthetic v2 readiness scaffold.  Scaffold-only; no data
+  # generated, no model retrained, no live-agent change.  Status is
+  # test-locked to scaffold_only / planned_not_trained.
+  - path: Data/evals/models/latest_noisier_synthetic_v2_readiness.json
+    required: false
+    max_age_days: 180
+    accepted_status: [strong, acceptable, informational]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Noisier synthetic v2 readiness scaffold.  Status must remain
+      scaffold_only or planned_not_trained.  Not clinical
+      validation; not a model promotion.
+
+  # 10/10-under-constraints roadmap — engineering self-rating snapshot.
+  # Informational only.  Test-locked: clinical_validation must be false
+  # and the real_clinical_readiness dimension is capped at 2.0/10 by
+  # tests/test_ten_out_of_ten_roadmap.py.  Cannot become a blocker.
+  - path: Data/evals/governance/latest_10_out_of_10_constraint_roadmap.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      10/10-under-constraints engineering self-rating.  Not a clinical
+      validation artifact.  See docs/ten_out_of_ten_under_constraints.md
+      for the framing and the anti-overclaim invariants enforced by
+      the test suite.
+
+  # Goldset adjudication readiness — informational only.  Reports
+  # whether the source_filter_drop adjudication packet exists, whether
+  # the goldset has been mutated since the packet was built, and how
+  # many items have draft vs filled reviewer decisions.  Promotion of
+  # any adjudicated change is a separate reviewer-attested PR, never
+  # auto-applied.
+  - path: Data/evals/rag/latest_goldset_adjudication_readiness.json
+    required: false
+    max_age_days: 365
+    accepted_status:
+      - ready_for_adjudication
+      - acceptable
+      - needs_attention
+      - informational
+      - strong
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Source-filter-drop adjudication readiness.  Engineering workflow
+      only; not clinical validation.  See
+      docs/evals/rag_goldset_adjudication.md for the reviewer workflow
+      and the validator rules that gate any filled packet.
+
+  # Stage-wise RAG retrieval oracle diagnostic — informational read-only
+  # attribution of where source grounding is lost across retrieval
+  # stages.  Locks in clinical_validation == false; does not gate any
+  # metric because the artifact's value is *attribution*, not score.
+  - path: Data/evals/rag/latest_rag_stage_oracle_diagnostic.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Stage-wise retrieval oracle diagnostic.  Reports which retrieval
+      stage loses the gold source.  Does NOT improve retrieval by
+      itself.  Engineering signal only; not clinical validation.
+
   # Citation-precision failure analysis — informational read-only
   # categorisation of full-stack low_citation_precision failures.
   - path: Data/evals/rag/latest_citation_precision_failure_analysis.json

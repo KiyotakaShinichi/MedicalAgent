@@ -170,6 +170,68 @@ remaining 66% sit in retrieval ranking, metadata, and goldset
 design — none of which the pruner is allowed to touch under this
 brief's constraints.
 
+## Stage-wise retrieval oracle diagnostic
+
+After the citation-context pruner's negative result, the next
+correct move is *attribution*, not another fix. The stage-wise
+diagnostic (`backend/services/rag_stage_oracle_diagnostic.py`)
+re-runs every retrieval stage in isolation against the frozen
+goldset and records whether an expected source survives that stage.
+
+It is **read-only**: it does not change retrieval ranking, source
+governance, the goldset, or any live-agent behaviour. It does **not**
+improve retrieval by itself — it tells us *where* grounding is being
+lost.
+
+- Module: [`backend/services/rag_stage_oracle_diagnostic.py`](../../backend/services/rag_stage_oracle_diagnostic.py)
+- Script: [`scripts/run_rag_stage_oracle_diagnostic.py`](../../scripts/run_rag_stage_oracle_diagnostic.py)
+- Artifact: [`Data/evals/rag/latest_rag_stage_oracle_diagnostic.json`](../../Data/evals/rag/latest_rag_stage_oracle_diagnostic.json)
+- Tests: [`tests/test_rag_stage_oracle_diagnostic.py`](../../tests/test_rag_stage_oracle_diagnostic.py)
+
+### Current stage-wise attribution (74 cases)
+
+| Stage | Retention | Note |
+|---|---:|---|
+| corpus_coverage_rate | 1.0000 | Every expected source exists in the KB. |
+| bm25_candidate_recall@50 | 0.9865 | BM25 puts an expected source in top-50 for 73/74 cases. |
+| dense_candidate_recall@50 | 0.9865 | Dense candidate pool matches BM25. |
+| hybrid_candidate_recall@50 | 0.9865 | Hybrid RRF pool matches both. |
+| source_filter_retention_rate | **0.8378** | Tier/allowed_use filter drops the expected source for 12 / 74 (16%). |
+| citation_window_retention_rate | 0.8378 | The top-10 citation window does NOT lose anything past the source filter. |
+| oracle_recall@10_upper_bound | 0.8378 | What an ideal reranker could achieve on the post-filter window. |
+| actual_full_stack_recall@10 | 0.7838 | What the current ranker achieves. |
+| **oracle_gap** | **0.0540** | Gap attributable to ranking, not governance. |
+
+### Failure-stage attribution (74 cases)
+
+| Final stage | Count | Owner |
+|---|---:|---|
+| no_failure | 60 | — |
+| **source_filter_drop** | **9** | source governance (working as designed) |
+| rrf_ranking_failure | 2 | ranking |
+| dense_failure | 1 | dense retriever |
+| sparse_failure | 1 | BM25 |
+| citation_window_drop | 1 | window selection |
+
+**Interpretation**:
+
+- **The bottleneck is source-tier filtering, not retrieval.** Candidate
+  recall is 98.65% across all three retrievers; the gold is *there*.
+  Source governance drops it from 98.65% to 83.78%. That drop is
+  **intentional** — the filter exists to keep clinician-only / stale
+  / out-of-allowed-use chunks out of patient-facing citations.
+- **The ranking gap is small.** Only 5.4pp separates the oracle upper
+  bound (0.8378) from the actual full stack (0.7838). 5 of those
+  5.4pp are RRF-rank / dense-only / sparse-only / citation-window
+  problems.
+- **Query rewrite drift, parent-child noise, and alias mismatch do
+  not appear** as failure stages in the current run.
+- The 9 source_filter_drop cases are *not* a bug to fix by weakening
+  the filter. They are evidence that the goldset's
+  `expected_source_ids` include sources the patient-facing filter is
+  correctly designed to exclude. This is a goldset-design conversation,
+  not a retrieval one.
+
 ## Honest interpretation of current numbers
 
 - The full source-governed stack currently has Recall@10 ≈ 0.78 on

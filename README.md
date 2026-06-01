@@ -365,6 +365,24 @@ blocker tier. Synthetic-only; no clinical validity is established.
 - [docs/per_turn_trace.md](docs/per_turn_trace.md) — per-turn decision trace envelope (decisions only — chain-of-thought is rejected by `_scrub_cot` + `validate_trace_payload`).
 - [docs/synthetic_data_quality.md](docs/synthetic_data_quality.md) — synthetic generator quality proxy with an enforced disclaimer that it is NOT a clinical realism measure.
 
+## 10/10 under constraints — honest self-rating
+
+A single document and machine-readable artifact summarise where the
+project stands across 17 dimensions under its hard constraints
+(synthetic-only, no clinician, no IRB, no real patient data).
+
+- Doc: [docs/ten_out_of_ten_under_constraints.md](docs/ten_out_of_ten_under_constraints.md)
+- Artifact: `Data/evals/governance/latest_10_out_of_10_constraint_roadmap.json`
+- Tests (anti-overclaim lock-ins): `tests/test_ten_out_of_ten_roadmap.py`
+
+**"10/10 under constraints" is NOT clinical validation, is NOT
+production healthcare ready, is NOT hospital deployable, and is NOT
+proven patient benefit.** The dimension `real_clinical_readiness` is
+test-capped at 2.0/10 and cannot move without real patient data,
+real clinician sign-off, and IRB approval. The current weighted
+average across engineering sides (excluding `real_clinical_readiness`)
+is **7.22/10**; the expected post-A-tier estimate is **8.0/10**.
+
 ## Held-out / external-author RAG evaluation (PREPARED, NOT COMPLETED)
 
 The internal frozen retrieval goldset (74 cases) has shaped retrieval

@@ -1,0 +1,173 @@
+{
+  "schema_version": "eval_contamination_harmonization_v1",
+  "status": "informational",
+  "label": "eval_contamination_harmonization",
+  "clinical_validation": false,
+  "claim_boundary": "Harmonisation map of eval-artifact contamination categories.  Does not change any artifact's content or any release-gate decision.  Engineering credibility scaffolding only.  Not clinical validation.",
+  "generated_at": "2026-06-01T16:18:59.711561+00:00",
+  "categories": [
+    "internal_used_for_tuning",
+    "internal_frozen_not_used_for_tuning",
+    "external_no_read_prepared_incomplete",
+    "external_completed",
+    "synthetic_generated",
+    "live_agent_internal",
+    "informational_only"
+  ],
+  "category_counts": {
+    "internal_used_for_tuning": 3,
+    "internal_frozen_not_used_for_tuning": 1,
+    "external_no_read_prepared_incomplete": 2,
+    "external_completed": 0,
+    "synthetic_generated": 2,
+    "live_agent_internal": 1,
+    "informational_only": 4
+  },
+  "n_artifacts_mapped": 13,
+  "artifacts": [
+    {
+      "path": "Data/evals/rag/retrieval_goldset.jsonl",
+      "authorship": "engineering_internal",
+      "was_used_for_tuning": true,
+      "frozen_status": "frozen_2026_05",
+      "contamination_risk": "high",
+      "allowed_claim_strength": "in-sample engineering signal only",
+      "release_gate_tier": "informational_blocker_for_freshness",
+      "harmonisation_category": "internal_used_for_tuning",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_baseline_comparison.json",
+      "authorship": "engineering_internal",
+      "was_used_for_tuning": false,
+      "frozen_status": "regenerated_per_release",
+      "contamination_risk": "high",
+      "allowed_claim_strength": "in-sample comparison; improvement_proven_vs_bm25=false",
+      "release_gate_tier": "blocker",
+      "harmonisation_category": "internal_used_for_tuning",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/rag/retrieval_goldset_holdout_v2_template.jsonl",
+      "authorship": "engineering_internal_template",
+      "was_used_for_tuning": false,
+      "frozen_status": "template_only",
+      "contamination_risk": "n_a_template",
+      "allowed_claim_strength": "template; not an eval set",
+      "release_gate_tier": "informational",
+      "harmonisation_category": "external_no_read_prepared_incomplete",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_holdout_baseline_comparison.json",
+      "authorship": "pending_external",
+      "was_used_for_tuning": false,
+      "frozen_status": "not_yet_authored",
+      "contamination_risk": "low_when_completed",
+      "allowed_claim_strength": "external generalisation (only after completed=true)",
+      "release_gate_tier": "informational",
+      "harmonisation_category": "external_no_read_prepared_incomplete",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/safety/adversarial_safety_regression_bank.jsonl",
+      "authorship": "engineering_internal",
+      "was_used_for_tuning": true,
+      "frozen_status": "stable_ids",
+      "contamination_risk": "high_post_2026_05_20_hardening",
+      "allowed_claim_strength": "bank-tuned in-sample only",
+      "release_gate_tier": "warn_on_regression",
+      "harmonisation_category": "internal_used_for_tuning",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/safety/adversarial_safety_holdout_variants.jsonl",
+      "authorship": "engineering_internal_post_hardening",
+      "was_used_for_tuning": false,
+      "frozen_status": "post_hardening_holdout_v1",
+      "contamination_risk": "low",
+      "allowed_claim_strength": "honest generalisation signal (held-out v1)",
+      "release_gate_tier": "informational",
+      "harmonisation_category": "internal_frozen_not_used_for_tuning",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_stage_oracle_diagnostic.json",
+      "authorship": "engineering_internal_diagnostic",
+      "was_used_for_tuning": false,
+      "frozen_status": "regenerated_per_release",
+      "contamination_risk": "n_a_diagnostic",
+      "allowed_claim_strength": "stage-wise attribution; not a score claim",
+      "release_gate_tier": "informational",
+      "harmonisation_category": "informational_only",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/rag/latest_citation_precision_failure_analysis.json",
+      "authorship": "engineering_internal_diagnostic",
+      "was_used_for_tuning": false,
+      "frozen_status": "regenerated_per_release",
+      "contamination_risk": "n_a_diagnostic",
+      "allowed_claim_strength": "categorisation; not a score claim",
+      "release_gate_tier": "informational",
+      "harmonisation_category": "informational_only",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+      "authorship": "synthetic_generator",
+      "was_used_for_tuning": true,
+      "frozen_status": "frozen_per_release",
+      "contamination_risk": "structural_label_leakage_documented",
+      "allowed_claim_strength": "synthetic distribution only; not clinical",
+      "release_gate_tier": "audit_footnote_required",
+      "harmonisation_category": "synthetic_generated",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/realism/latest_synthetic_data_quality.json",
+      "authorship": "engineering_internal",
+      "was_used_for_tuning": false,
+      "frozen_status": "regenerated_per_release",
+      "contamination_risk": "n_a_quality_proxy",
+      "allowed_claim_strength": "internal generator quality proxy; NOT realism",
+      "release_gate_tier": "informational",
+      "harmonisation_category": "synthetic_generated",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/rag/latest_live_rag_eval.json",
+      "authorship": "live_agent_internal",
+      "was_used_for_tuning": false,
+      "frozen_status": "captured_per_release",
+      "contamination_risk": "live_internal_only",
+      "allowed_claim_strength": "live-agent internal behaviour signal",
+      "release_gate_tier": "blocker",
+      "harmonisation_category": "live_agent_internal",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/governance/latest_10_out_of_10_constraint_roadmap.json",
+      "authorship": "engineering_internal_self_rating",
+      "was_used_for_tuning": false,
+      "frozen_status": "regenerated_per_release",
+      "contamination_risk": "n_a_self_rating",
+      "allowed_claim_strength": "engineering self-rating only",
+      "release_gate_tier": "informational",
+      "harmonisation_category": "informational_only",
+      "clinical_validation": false
+    },
+    {
+      "path": "Data/evals/rag/source_filter_drop_adjudication_packet.json",
+      "authorship": "engineering_internal_draft",
+      "was_used_for_tuning": false,
+      "frozen_status": "draft_packet",
+      "contamination_risk": "n_a_draft",
+      "allowed_claim_strength": "reviewer workflow only",
+      "release_gate_tier": "informational",
+      "harmonisation_category": "informational_only",
+      "clinical_validation": false
+    }
+  ],
+  "guidance": "An artifact's 'allowed_claim_strength' is the strongest reading a reviewer should give it.  Pushing any artifact past its category (e.g. citing an 'internal_used_for_tuning' number as 'external generalisation') is overclaiming, regardless of how green the metric looks."
+}
