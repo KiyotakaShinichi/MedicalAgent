@@ -1,0 +1,13 @@
+{
+  "schema_version": "n8n_signed_dispatch_eval_v1",
+  "generated_at": "2026-07-13T08:39:08.089076+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "phi_allowed": false,
+  "network_request_sent": false,
+  "signature_valid": true,
+  "tampered_body_rejected": true,
+  "nested_blocked_field_caught": true,
+  "claim_boundary": "This eval verifies an engineering webhook-signing and redaction contract only. It is not a security certification, clinical validation, or permission to send patient data."
+}

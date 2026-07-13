@@ -1,0 +1,289 @@
+{
+  "schema_version": "noisier_synthetic_v2_stress_v1",
+  "status": "informational",
+  "label": "noisier_synthetic_v2_stress",
+  "clinical_validation": false,
+  "claim_boundary": "Scaffold-only synthetic v2 stress runner.  Engineering signal only.  Does NOT retrain any model, change live inference defaults, or claim realism.  Promotion decision is always ``reject_or_hold``.  Not clinical validation.",
+  "generated_at": "2026-06-01T17:55:59.845046+00:00",
+  "wall_time_ms": 382.33,
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "n_rows_clean": 3600,
+  "clean_metrics": {
+    "n_rows": 3600,
+    "n_patients": 600,
+    "proxy_accuracy": 0.6528,
+    "proxy_brier": 0.3456,
+    "proxy_auroc": 0.234,
+    "proxy_regression_mae": 15.2607,
+    "proxy_abstention_rate": 0.0625,
+    "proxy_shortcut_correlation": 0.177
+  },
+  "per_noise_type": [
+    {
+      "noise_type": "missingness_noise",
+      "clean_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "noisy_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.4039,
+        "proxy_shortcut_correlation": 0.1833
+      },
+      "leakage_status": "no_leakage_tripwire_fired",
+      "deltas": {
+        "calibration_delta": 0.0,
+        "brier_delta": 0.0,
+        "AUROC_delta": 0.0,
+        "regression_MAE_delta": 0.0,
+        "abstention_rate_delta": 0.3414,
+        "shortcut_risk_delta": 0.0063
+      },
+      "promotion_decision": "reject_or_hold"
+    },
+    {
+      "noise_type": "label_noise",
+      "clean_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "noisy_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6214,
+        "proxy_brier": 0.3767,
+        "proxy_auroc": 0.182,
+        "proxy_regression_mae": 15.6081,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.1733
+      },
+      "leakage_status": "no_leakage_tripwire_fired",
+      "deltas": {
+        "calibration_delta": 0.0311,
+        "brier_delta": 0.0311,
+        "AUROC_delta": -0.052,
+        "regression_MAE_delta": 0.3474,
+        "abstention_rate_delta": 0.0,
+        "shortcut_risk_delta": -0.0037
+      },
+      "promotion_decision": "reject_or_hold"
+    },
+    {
+      "noise_type": "measurement_noise",
+      "clean_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "noisy_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.169
+      },
+      "leakage_status": "no_leakage_tripwire_fired",
+      "deltas": {
+        "calibration_delta": 0.0,
+        "brier_delta": 0.0,
+        "AUROC_delta": 0.0,
+        "regression_MAE_delta": 0.0,
+        "abstention_rate_delta": 0.0,
+        "shortcut_risk_delta": -0.008
+      },
+      "promotion_decision": "reject_or_hold"
+    },
+    {
+      "noise_type": "date_jitter",
+      "clean_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "noisy_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "leakage_status": "no_leakage_tripwire_fired",
+      "deltas": {
+        "calibration_delta": 0.0,
+        "brier_delta": 0.0,
+        "AUROC_delta": 0.0,
+        "regression_MAE_delta": 0.0,
+        "abstention_rate_delta": 0.0,
+        "shortcut_risk_delta": 0.0
+      },
+      "promotion_decision": "reject_or_hold"
+    },
+    {
+      "noise_type": "symptom_reporting_noise",
+      "clean_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "noisy_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.1464
+      },
+      "leakage_status": "no_leakage_tripwire_fired",
+      "deltas": {
+        "calibration_delta": 0.0,
+        "brier_delta": 0.0,
+        "AUROC_delta": 0.0,
+        "regression_MAE_delta": 0.0,
+        "abstention_rate_delta": 0.0,
+        "shortcut_risk_delta": -0.0306
+      },
+      "promotion_decision": "reject_or_hold"
+    },
+    {
+      "noise_type": "imaging_report_ambiguity",
+      "clean_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "noisy_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "leakage_status": "no_leakage_tripwire_fired",
+      "deltas": {
+        "calibration_delta": 0.0,
+        "brier_delta": 0.0,
+        "AUROC_delta": 0.0,
+        "regression_MAE_delta": 0.0,
+        "abstention_rate_delta": 0.0,
+        "shortcut_risk_delta": 0.0
+      },
+      "promotion_decision": "reject_or_hold"
+    },
+    {
+      "noise_type": "treatment_delay_randomness",
+      "clean_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "noisy_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "leakage_status": "no_leakage_tripwire_fired",
+      "deltas": {
+        "calibration_delta": 0.0,
+        "brier_delta": 0.0,
+        "AUROC_delta": 0.0,
+        "regression_MAE_delta": 0.0,
+        "abstention_rate_delta": 0.0,
+        "shortcut_risk_delta": 0.0
+      },
+      "promotion_decision": "reject_or_hold"
+    },
+    {
+      "noise_type": "subgroup_distribution_shift",
+      "clean_metrics": {
+        "n_rows": 3600,
+        "n_patients": 600,
+        "proxy_accuracy": 0.6528,
+        "proxy_brier": 0.3456,
+        "proxy_auroc": 0.234,
+        "proxy_regression_mae": 15.2607,
+        "proxy_abstention_rate": 0.0625,
+        "proxy_shortcut_correlation": 0.177
+      },
+      "noisy_metrics": {
+        "n_rows": 3176,
+        "n_patients": 593,
+        "proxy_accuracy": 0.6511,
+        "proxy_brier": 0.3471,
+        "proxy_auroc": 0.236,
+        "proxy_regression_mae": 15.2527,
+        "proxy_abstention_rate": 0.063,
+        "proxy_shortcut_correlation": 0.1795
+      },
+      "leakage_status": "no_leakage_tripwire_fired",
+      "deltas": {
+        "calibration_delta": 0.0015,
+        "brier_delta": 0.0015,
+        "AUROC_delta": 0.002,
+        "regression_MAE_delta": -0.008,
+        "abstention_rate_delta": 0.0005,
+        "shortcut_risk_delta": 0.0025
+      },
+      "promotion_decision": "reject_or_hold"
+    }
+  ],
+  "global_promotion_decision": "reject_or_hold",
+  "contamination_note": "Noise functions are deterministic with a fixed seed for reproducibility.  These metrics describe the synthetic distribution under engineered perturbation; they do NOT establish robustness to real-world distribution shift."
+}

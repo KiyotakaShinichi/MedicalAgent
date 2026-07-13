@@ -671,6 +671,157 @@ artifacts:
       'cliff', tighten the probe set and re-run before changing the
       default.  Engineering signal only.
 
+  # Iterative RAG sufficiency eval (eval-only scaffold).
+  - path: Data/evals/rag/latest_iterative_rag_sufficiency_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Iterative evidence-sufficiency RAG eval.  Bounded eval-only loop;
+      does not change live agent.  Not clinical validation.
+
+  # Conflict-aware RAG adjudication eval (eval-only).
+  - path: Data/evals/rag/latest_conflict_aware_rag_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Conflict-aware RAG adjudication eval.  In-sample only; does NOT
+      force consensus.  Not clinical validation.
+
+  # Longitudinal context cards (provenance-stamped, eval-only).
+  - path: Data/evals/ops/latest_longitudinal_context_card_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Longitudinal context cards.  Deterministic, provenance-stamped,
+      synthetic-only.  Not clinical validation.
+
+  # Uncertainty-to-response policy eval.
+  - path: Data/evals/rag/latest_uncertainty_response_policy_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [metrics, unsafe_route_rate], op: "<=", value: 0.0}
+    note: >
+      Uncertainty-to-response policy mapping eval.  Test-locks the
+      status→route table.  Not clinical validation.
+
+  # External red-team readiness (anti-fabrication).
+  - path: Data/evals/governance/latest_external_red_team_readiness.json
+    required: false
+    max_age_days: 180
+    accepted_status:
+      - ready_to_request_review
+      - in_progress
+      - needs_attention
+      - informational
+      - acceptable
+      - strong
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      External red-team readiness.  completed_external_cases is derived
+      from real, attested case files only.  Not clinical validation;
+      not clinician sign-off.
+
+  # Synthetic timeline drift stress (review_only_boundary locked).
+  - path: Data/evals/models/latest_synthetic_timeline_drift_stress.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [review_only_boundary], op: "==", value: true}
+    note: >
+      Synthetic timeline drift stress.  Review-only boundary is
+      permanent.  Not clinical deterioration detection; not clinical
+      validation.
+
+  # Multiturn adversarial agent safety eval — 10-case fixed bank,
+  # replayed through deterministic safety primitives (FAST_MODE).
+  # Informational only.
+  - path: Data/evals/agentic_tool_use/latest_multiturn_adversarial_agent_eval.json
+    required: false
+    max_age_days: 60
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Multiturn adversarial agent safety eval (engineering-internal).
+      Does not invoke the live LLM.  Not clinical validation.
+
+  # Noisier synthetic v2 stress benchmark — scaffold-only stress runner.
+  # global_promotion_decision is permanently reject_or_hold.
+  - path: Data/evals/models/latest_noisier_synthetic_v2_stress.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [global_promotion_decision], op: "==", value: "reject_or_hold"}
+    note: >
+      Noisier synthetic v2 stress benchmark.  Scaffold-only; no model
+      retrained.  Not clinical validation; not realism.
+
+  # Claim-source alignment hardening ledger.
+  - path: Data/evals/rag/latest_claim_source_alignment_hardening.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Claim-source alignment hardening (heuristic by default; NLI
+      opt-in).  Not clinical-grade entailment; not clinical validation.
+
+  # Deployment-boundary check — status_label is permanently
+  # production_shaped_not_healthcare_production_ready.
+  - path: Data/evals/ops/latest_deployment_boundary_check.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [status_label], op: "==", value: "production_shaped_not_healthcare_production_ready"}
+      - {path: [no_hipaa_compliance_claim], op: "==", value: true}
+      - {path: [no_clinical_deployment_claim], op: "==", value: true}
+    note: >
+      Deployment-boundary check.  status_label permanently locked.  No
+      HIPAA / clinical-deployment claim is implied by a passing run.
+
+  # External-review execution readiness — reports whether reviewer
+  # outreach + intake + execution infrastructure is in place AND
+  # counts real attestation files committed to
+  # Data/evals/external_review/.  Cannot fabricate completed reviews:
+  # the readiness builder only counts attestation files (excluding the
+  # template) with a ticked boundary-acknowledgement checkbox.
+  - path: Data/evals/governance/latest_external_review_execution_readiness.json
+    required: false
+    max_age_days: 180
+    accepted_status:
+      - ready_to_request_review
+      - in_progress
+      - needs_attention
+      - informational
+      - acceptable
+      - strong
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      External-review execution readiness.  ``completed_reviews`` is
+      derived from real attestation files only.  Not clinical
+      validation; not clinician sign-off; not IRB clearance.
+
   # Negative results gallery — explicit catalogue of non-promoted
   # findings already documented elsewhere.  Engineering credibility
   # scaffolding; not clinical validation.
@@ -1139,6 +1290,56 @@ artifacts:
       Dataset bridge v2 ranks public/restricted datasets for future stress tests
       and schema mapping. It is not external validation.
 
+  - path: Data/evals/models/latest_external_dataset_integration_matrix.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [production_training_allowed], op: "==", value: false}
+    note: >
+      Dataset integration matrix ranks public/restricted datasets for schema
+      mapping, stress testing, synthetic-noise priors, and future access
+      planning. It is not clinical validation and does not authorize model
+      promotion or patient-facing prediction.
+
+  - path: Data/evals/models/latest_breastdcedl_metadata_stress.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [production_training_allowed], op: "==", value: false}
+      - {path: [metadata_only], op: "==", value: true}
+      - {path: [image_pixel_training], op: "==", value: false}
+      - {path: [integration_decision, model_promotion_allowed], op: "==", value: false}
+    note: >
+      BreastDCEDL metadata-only pCR stress benchmark. It is external endpoint
+      pressure for engineering only; pCR is target-mismatched to NLCare
+      synthetic monitoring heads and does not authorize clinical or live-model
+      promotion claims.
+
+  - path: Data/evals/rag/latest_pinecone_shadow_retrieval_comparison.json
+    required: false
+    max_age_days: 90
+    accepted_status:
+      - ready_for_shadow_mode_not_configured
+      - configured_dry_run_only
+      - configured_ready_for_manual_shadow_run
+      - acceptable
+      - strong
+      - needs_attention
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [live_patient_route_enabled], op: "==", value: false}
+      - {path: [phi_allowed], op: "==", value: false}
+      - {path: [promotion_gate, pinecone_can_replace_local_retrieval], op: "==", value: false}
+    note: >
+      Pinecone shadow retrieval comparison scaffold. It is disabled by default,
+      preserves local retrieval fallback, and must not store PHI or claim
+      retrieval improvement until a real frozen-eval shadow run exists.
+
   - path: Data/evals/agentic_tool_use/latest_agentic_shadow_mode_eval.json
     required: false
     max_age_days: 90
@@ -1197,3 +1398,130 @@ artifacts:
       Deployment preflight for environment hygiene, Docker assets, demo-auth
       posture, CORS posture, and release-gate availability. It is software
       packaging evidence only, not PHI/compliance or clinical readiness.
+
+  - path: Data/evals/ops/latest_industry_integration_readiness.json
+    required: false
+    max_age_days: 90
+    accepted_status: [ready_for_optional_scaffold, acceptable, strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [hipaa_compliance_claim], op: "==", value: false}
+      - {path: [live_patient_route_enabled], op: "==", value: false}
+      - {path: [phi_allowed], op: "==", value: false}
+    note: >
+      n8n and Pinecone integration readiness. This is an optional
+      deployment-shaped scaffold for internal workflow automation and managed
+      vector-search shadow mode only. It must not send PHI, bypass safety
+      validators, or imply healthcare production readiness.
+
+  - path: Data/evals/ops/latest_n8n_workflow_templates.json
+    required: false
+    max_age_days: 90
+    accepted_status: [ready_for_optional_import, acceptable, strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [phi_allowed], op: "==", value: false}
+      - {path: [live_patient_route_enabled], op: "==", value: false}
+      - {path: [template_count], op: ">=", value: 9}
+    note: >
+      n8n internal automation workflow templates for release-gate alerts,
+      stale-artifact tickets, reviewer-intake reminders, and internal eval
+      refresh triggers. Templates are inactive and must not carry PHI or
+      clinical authority.
+
+  - path: Data/evals/ops/latest_trace_envelope_v2_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [validation_pass_rate], op: ">=", value: 1.0}
+      - {path: [forbidden_field_catch_rate], op: ">=", value: 1.0}
+      - {path: [raw_patient_identifier_stored], op: "==", value: false}
+      - {path: [private_chain_of_thought_stored], op: "==", value: false}
+    note: >
+      Trace envelope v2 redaction/validation artifact. It adds engineering
+      observability only and must not store raw patient identifiers, PHI, or
+      private chain-of-thought.
+
+  - path: Data/evals/ops/latest_background_eval_worker_dry_run.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [phi_allowed], op: "==", value: false}
+      - {path: [live_patient_route_enabled], op: "==", value: false}
+      - {path: [commands_executed], op: "==", value: false}
+      - {path: [rejected_job_count], op: ">=", value: 1}
+    note: >
+      Background eval worker dry-run for redacted admin-only automation jobs.
+      It cannot execute clinical actions and does not run commands in this
+      artifact path.
+
+  - path: Data/evals/ops/latest_n8n_signed_dispatch_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [phi_allowed], op: "==", value: false}
+      - {path: [network_request_sent], op: "==", value: false}
+      - {path: [signature_valid], op: "==", value: true}
+      - {path: [tampered_body_rejected], op: "==", value: true}
+      - {path: [nested_blocked_field_caught], op: "==", value: true}
+    note: >
+      Offline HMAC signing and nested-payload redaction contract for n8n
+      engineering events. This is not a security certification and does not
+      authorize PHI or clinical automation.
+
+  - path: Data/evals/ops/latest_automation_schedule_plan.json
+    required: false
+    max_age_days: 90
+    accepted_status: [ready_for_scheduler_or_n8n, acceptable, strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [phi_allowed], op: "==", value: false}
+      - {path: [scheduler_installed], op: "==", value: false}
+    note: >
+      Versioned schedule contract for internal eval, security, integration,
+      reviewer, and health workflows. Installation remains an explicit
+      operator choice.
+
+  - path: Data/evals/ops/latest_automation_control_plane.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [phi_allowed], op: "==", value: false}
+      - {path: [live_patient_route_enabled], op: "==", value: false}
+      - {path: [commands_executed], op: "==", value: false}
+      - {path: [webhooks_sent], op: "==", value: false}
+      - {path: [rejected_event_count], op: "==", value: 0}
+    note: >
+      Preview artifact that converts existing ops/governance artifacts into
+      redacted engineering event candidates. It does not execute commands or
+      send webhooks while the artifact is built.
+
+  - path: Data/evals/governance/latest_platform_control_plane_architecture.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [live_patient_authority_added], op: "==", value: false}
+    note: >
+      Next-step platform control-plane architecture for state-machine routing,
+      RAG governance, policy-as-code, synthetic feature-store contracts, eval
+      ops, trace envelopes, and background eval workers. It is an architecture
+      contract only and does not add clinical authority or production
+      healthcare readiness.

@@ -1,0 +1,454 @@
+{
+  "schema_version": "longitudinal_context_card_eval_v1",
+  "status": "informational",
+  "label": "longitudinal_context_card_eval",
+  "clinical_validation": false,
+  "claim_boundary": "Longitudinal context cards.  Deterministic, provenance-stamped, patient-facing reference cards built from existing synthetic CSV rows.  No open-ended memory, no chain-of-thought, no clinical claim.  Eval-only.  Not clinical validation.",
+  "generated_at": "2026-06-02T04:27:18.773948+00:00",
+  "wall_time_ms": 3694.68,
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "n_patients_sampled": 50,
+  "n_cards": 350,
+  "card_types": [
+    "latest_cbc_trend",
+    "symptom_trend",
+    "imaging_summary_trend",
+    "medication_treatment_context",
+    "missing_evidence",
+    "review_flags",
+    "last_safety_escalation"
+  ],
+  "metrics": {
+    "provenance_coverage": 1.0,
+    "timestamp_coverage": 1.0,
+    "missing_evidence_disclosure_rate": 0.0,
+    "unsafe_inference_rate": 0.0,
+    "card_disclaimer_present_rate": 1.0
+  },
+  "card_type_counts": {
+    "latest_cbc_trend": 50,
+    "symptom_trend": 50,
+    "imaging_summary_trend": 50,
+    "medication_treatment_context": 50,
+    "missing_evidence": 50,
+    "review_flags": 50,
+    "last_safety_escalation": 50
+  },
+  "sample_cards": [
+    {
+      "card_type": "latest_cbc_trend",
+      "patient_id": "COMPV5-BRCA-0001",
+      "summary": "WBC nadir last 3: 0.6, 0.6, 0.6 | Hgb nadir last 3: 9.2, 8.9, 9.6 | Plt nadir last 3: 25.0, 25.0, 24.0",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          3,
+          4,
+          5
+        ]
+      },
+      "timestamps": [
+        "2025-04-02",
+        "2025-04-30",
+        "2025-05-28"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "symptom_trend",
+      "patient_id": "COMPV5-BRCA-0001",
+      "summary": "Max severity last 3: 6, 8, 6 | Symptom count last 3: 1, 3, 2",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          3,
+          4,
+          5
+        ]
+      },
+      "timestamps": [
+        "2025-04-02",
+        "2025-04-30",
+        "2025-05-28"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "imaging_summary_trend",
+      "patient_id": "COMPV5-BRCA-0001",
+      "summary": "MRI tumor size last 3: 2.38 cm, 1.70 cm, 0.58 cm | MRI % change last 3: -59.0%, -70.7%, -90.0%",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          3,
+          4,
+          5
+        ]
+      },
+      "timestamps": [
+        "2025-04-02",
+        "2025-04-30",
+        "2025-05-28"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "medication_treatment_context",
+      "patient_id": "COMPV5-BRCA-0001",
+      "summary": "regimen: dose-dense AC then paclitaxel | cycle: 6 | dose_delayed: 1 | dose_reduced: 1",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          5
+        ]
+      },
+      "timestamps": [
+        "2025-05-28"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "missing_evidence",
+      "patient_id": "COMPV5-BRCA-0001",
+      "summary": "All required fields present",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          5
+        ]
+      },
+      "timestamps": [
+        "2025-05-28"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "review_flags",
+      "patient_id": "COMPV5-BRCA-0001",
+      "summary": "3 review flag(s): urgent_intervention_needed, support_intervention_needed, toxicity_risk_flag",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          5
+        ]
+      },
+      "timestamps": [
+        "2025-05-28"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "last_safety_escalation",
+      "patient_id": "COMPV5-BRCA-0001",
+      "summary": "Last urgent escalation cycle 6",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          5
+        ]
+      },
+      "timestamps": [
+        "2025-05-28"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "latest_cbc_trend",
+      "patient_id": "COMPV5-BRCA-0002",
+      "summary": "WBC nadir last 3: 2.5, 1.9, 0.6 | Hgb nadir last 3: 9.4, 8.3, 6.9 | Plt nadir last 3: 93.0, 71.0, 91.0",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          9,
+          10,
+          11
+        ]
+      },
+      "timestamps": [
+        "2025-03-14",
+        "2025-04-04",
+        "2025-05-02"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "symptom_trend",
+      "patient_id": "COMPV5-BRCA-0002",
+      "summary": "Max severity last 3: 5, 4, 8 | Symptom count last 3: 1, 2, 2",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          9,
+          10,
+          11
+        ]
+      },
+      "timestamps": [
+        "2025-03-14",
+        "2025-04-04",
+        "2025-05-02"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "imaging_summary_trend",
+      "patient_id": "COMPV5-BRCA-0002",
+      "summary": "MRI tumor size last 3: 3.58 cm, 2.92 cm | MRI % change last 3: -39.2%, -46.6%, -56.4%",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          9,
+          10,
+          11
+        ]
+      },
+      "timestamps": [
+        "2025-03-14",
+        "2025-04-04",
+        "2025-05-02"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "medication_treatment_context",
+      "patient_id": "COMPV5-BRCA-0002",
+      "summary": "regimen: TCHP | cycle: 6 | dose_delayed: 1 | dose_reduced: 1",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          11
+        ]
+      },
+      "timestamps": [
+        "2025-05-02"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "missing_evidence",
+      "patient_id": "COMPV5-BRCA-0002",
+      "summary": "All required fields present",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          11
+        ]
+      },
+      "timestamps": [
+        "2025-05-02"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "review_flags",
+      "patient_id": "COMPV5-BRCA-0002",
+      "summary": "4 review flag(s): urgent_intervention_needed, support_intervention_needed, toxicity_risk_flag, severe_symptom_score",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          11
+        ]
+      },
+      "timestamps": [
+        "2025-05-02"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "last_safety_escalation",
+      "patient_id": "COMPV5-BRCA-0002",
+      "summary": "Last urgent escalation cycle 6",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          11
+        ]
+      },
+      "timestamps": [
+        "2025-05-02"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "latest_cbc_trend",
+      "patient_id": "COMPV5-BRCA-0003",
+      "summary": "WBC nadir last 3: 4.5, 2.9, 2.0 | Hgb nadir last 3: 11.4, 10.9, 11.3 | Plt nadir last 3: 55.0, 77.0, 112.0",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          15,
+          16,
+          17
+        ]
+      },
+      "timestamps": [
+        "2025-03-23",
+        "2025-04-13",
+        "2025-05-04"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "symptom_trend",
+      "patient_id": "COMPV5-BRCA-0003",
+      "summary": "Max severity last 3: 5, 3, 6 | Symptom count last 3: 3, 2, 1",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          15,
+          16,
+          17
+        ]
+      },
+      "timestamps": [
+        "2025-03-23",
+        "2025-04-13",
+        "2025-05-04"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "imaging_summary_trend",
+      "patient_id": "COMPV5-BRCA-0003",
+      "summary": "MRI tumor size last 3: 2.60 cm, 2.53 cm, 2.24 cm | MRI % change last 3: -29.7%, -31.6%, -39.5%",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          15,
+          16,
+          17
+        ]
+      },
+      "timestamps": [
+        "2025-03-23",
+        "2025-04-13",
+        "2025-05-04"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "medication_treatment_context",
+      "patient_id": "COMPV5-BRCA-0003",
+      "summary": "regimen: paclitaxel + carboplatin then AC | cycle: 6 | dose_delayed: 0 | dose_reduced: 0",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          17
+        ]
+      },
+      "timestamps": [
+        "2025-05-04"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "missing_evidence",
+      "patient_id": "COMPV5-BRCA-0003",
+      "summary": "All required fields present",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          17
+        ]
+      },
+      "timestamps": [
+        "2025-05-04"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "review_flags",
+      "patient_id": "COMPV5-BRCA-0003",
+      "summary": "0 review flag(s): none",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          17
+        ]
+      },
+      "timestamps": [
+        "2025-05-04"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    },
+    {
+      "card_type": "last_safety_escalation",
+      "patient_id": "COMPV5-BRCA-0003",
+      "summary": "Last urgent escalation cycle 3",
+      "provenance": {
+        "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+        "row_indices": [
+          14
+        ]
+      },
+      "timestamps": [
+        "2025-03-02"
+      ],
+      "missing_evidence": [],
+      "card_disclaimer": "Synthetic engineering signal \u00b7 Not a clinical prediction \u00b7 For clinician review",
+      "clinical_validation": false,
+      "extras": {}
+    }
+  ],
+  "contamination_note": "Cards are built from the synthetic-only patient timeline.  Do not treat any card as a clinical signal."
+}

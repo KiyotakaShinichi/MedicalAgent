@@ -1,0 +1,86 @@
+{
+  "name": "NLCare Dependency Security Alert",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "nlcare/dependency-security",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const event = $json.body || $json;\nconst body = event.payload || event;\nconst headers = $json.headers || {};\nconst signaturePresent = Boolean(headers['x-nlcare-signature'] || headers['X-NLCare-Signature']);\nconst required = [\"run_id\", \"severity\", \"package\", \"advisory_id\", \"remediation_owner\"];\nconst missing = required.filter((key) => body[key] === undefined || body[key] === null || body[key] === '');\nconst blocked = [\"patient_name\", \"patient_id\", \"raw_patient_message\", \"full_chat_transcript\", \"medical_record_number\", \"date_of_birth\", \"address\", \"phone\", \"email\", \"raw_prompt\", \"raw_response\", \"raw_trace\", \"private_chain_of_thought\", \"genetic_variant_details_for_patient_advice\"];\nconst blockedPresent = blocked.filter((key) => body[key] !== undefined);\nconst boundaryOk = event.phi_allowed === false && event.clinical_validation === false;\nreturn [{ json: { ok: signaturePresent && boundaryOk && missing.length === 0 && blockedPresent.length === 0, signaturePresent, boundaryOk, missing, blockedPresent, body } }];"
+      },
+      "id": "validate-payload",
+      "name": "Validate Redacted Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: $json.ok, action: \"Create an internal engineering ticket for dependency/security findings.\", missing: $json.missing, blockedPresent: $json.blockedPresent } }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Return Workflow Status",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Redacted Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Redacted Payload": {
+      "main": [
+        [
+          {
+            "node": "Return Workflow Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "template": true,
+    "clinical_validation": false,
+    "phi_allowed": false,
+    "signature_header_presence_required": true,
+    "receiver_hmac_verification_requires_operator_configuration": true,
+    "claim_boundary": "n8n workflow templates are internal automation scaffolds only. They may notify maintainers, create admin tickets, remind reviewers, or trigger internal eval refreshes. They must not send PHI, issue medical advice, override safety validators, or automate diagnosis, treatment, medication, prognosis, genetics, tumor-marker, or clinical-escalation decisions."
+  }
+}

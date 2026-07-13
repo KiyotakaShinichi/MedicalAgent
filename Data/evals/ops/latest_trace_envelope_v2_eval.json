@@ -1,0 +1,124 @@
+{
+  "schema_version": "trace_envelope_v2_eval",
+  "generated_at": "2026-07-13T05:03:23.107331+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "sample_count": 2,
+  "validation_pass_rate": 1.0,
+  "forbidden_field_catch_rate": 1.0,
+  "raw_patient_identifier_stored": false,
+  "private_chain_of_thought_stored": false,
+  "samples": [
+    {
+      "schema_version": "2.0",
+      "generated_at": "2026-07-13T05:03:23.101203+00:00",
+      "request_id": "trace-v2-sample-1",
+      "correlation_id": "trace-v2-sample-1",
+      "patient_id_hash": "62460060348ba72062ead134",
+      "route": "patient_chat",
+      "intent": "education",
+      "safety_decision": {
+        "level": "low",
+        "scope": "education",
+        "matched_terms_count": 0
+      },
+      "policy_decision": {
+        "route": "generated",
+        "refused": false,
+        "answerability_status": "answerable_with_citations",
+        "evidence_grade": null
+      },
+      "retrieval_backend": "local_source_governed_rag",
+      "source_ids": [
+        "curated-cbc-monitoring"
+      ],
+      "claim_validation": {
+        "status": null,
+        "claim_support_rate": 1.0,
+        "citation_precision": 1.0,
+        "unsupported_context_rate": null
+      },
+      "post_generation_decision": {
+        "decision": "not_recorded",
+        "blocked_claim_types_count": 0,
+        "output_guardrail_status": null
+      },
+      "cache_status": {
+        "status": "miss",
+        "cacheable": true,
+        "reason": null
+      },
+      "latency_ms": {
+        "total": 120.0,
+        "retrieval_ms": 12.0
+      },
+      "estimated_cost": {
+        "available": false,
+        "reason": "not_tracked"
+      },
+      "final_policy_status": "allowed_nonclinical_response",
+      "redaction_guard": {
+        "raw_patient_identifier_stored": false,
+        "private_chain_of_thought_stored": false,
+        "verbatim_patient_message_stored": false
+      },
+      "clinical_validation": false,
+      "claim_boundary": "Trace envelope v2 stores redacted decision metadata for engineering observability only. It is not clinical validation, not a medical record, not clinician review, and not a chain-of-thought log."
+    },
+    {
+      "schema_version": "2.0",
+      "generated_at": "2026-07-13T05:03:23.106328+00:00",
+      "request_id": "trace-v2-sample-2",
+      "correlation_id": "trace-v2-sample-2",
+      "patient_id_hash": "62460060348ba72062ead134",
+      "route": "patient_chat",
+      "intent": "safety_boundary",
+      "safety_decision": {
+        "level": "high_risk",
+        "scope": "treatment_decision_request",
+        "matched_terms_count": 1
+      },
+      "policy_decision": {
+        "route": "input_guardrail_block",
+        "refused": true,
+        "answerability_status": null,
+        "evidence_grade": "refuse_due_to_safety"
+      },
+      "retrieval_backend": "none",
+      "source_ids": [],
+      "claim_validation": {
+        "status": null,
+        "claim_support_rate": null,
+        "citation_precision": null,
+        "unsupported_context_rate": null
+      },
+      "post_generation_decision": {
+        "decision": "blocked",
+        "blocked_claim_types_count": 1,
+        "output_guardrail_status": null
+      },
+      "cache_status": {
+        "status": "not_cacheable",
+        "cacheable": false,
+        "reason": "safety"
+      },
+      "latency_ms": {
+        "total": 35.0
+      },
+      "estimated_cost": {
+        "available": false,
+        "reason": "not_tracked"
+      },
+      "final_policy_status": "refused_or_blocked",
+      "redaction_guard": {
+        "raw_patient_identifier_stored": false,
+        "private_chain_of_thought_stored": false,
+        "verbatim_patient_message_stored": false
+      },
+      "clinical_validation": false,
+      "claim_boundary": "Trace envelope v2 stores redacted decision metadata for engineering observability only. It is not clinical validation, not a medical record, not clinician review, and not a chain-of-thought log."
+    }
+  ],
+  "claim_boundary": "Trace envelope v2 stores redacted decision metadata for engineering observability only. It is not clinical validation, not a medical record, not clinician review, and not a chain-of-thought log."
+}

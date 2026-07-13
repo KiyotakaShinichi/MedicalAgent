@@ -1,0 +1,42 @@
+{
+  "schema_version": "external_review_execution_readiness_v1",
+  "status": "ready_to_request_review",
+  "label": "external_review_execution_readiness",
+  "clinical_validation": false,
+  "claim_boundary": "Reviewer execution readiness \u2014 engineering scaffolding only.  Counts attestation files actually committed in Data/evals/external_review/.  Does NOT fabricate, infer, or imply completed reviews under any circumstance.  Not clinical validation, not clinician sign-off, not IRB clearance, not approval.",
+  "generated_at": "2026-06-01T17:33:21.375512+00:00",
+  "completed_reviews": 0,
+  "pending_review_types": [
+    "held_out_rag_authoring",
+    "source_filter_drop_adjudication",
+    "adversarial_case_authoring",
+    "clinician_safety_review",
+    "genetic_counselor_vus_review",
+    "senior_mle_review"
+  ],
+  "prepared_templates": [
+    "docs/review_packets/reviewer_outreach_message_templates.md",
+    "docs/review_packets/review_execution_checklist.md",
+    "Data/evals/external_review/reviewer_intake_template.md",
+    "Data/evals/external_review/reviewer_attestation_template.md",
+    "Data/evals/external_review/reviewer_feedback_template.csv"
+  ],
+  "missing_templates": [],
+  "prepared_packets": [
+    "docs/review_packets/external_author_eval_packet.md",
+    "docs/review_packets/senior_mle_eval_review_packet.md",
+    "docs/review_packets/nurse_or_clinician_safety_review_packet.md",
+    "docs/review_packets/genetic_counselor_vus_review_packet.md",
+    "docs/review_packets/agentic_workflow_review_packet.md"
+  ],
+  "missing_packets": [],
+  "reviewer_roles_needed": [
+    "external_peer_engineer",
+    "genetic_counselor",
+    "oncology_nurse_or_resident",
+    "patient_advocate_or_usability",
+    "senior_mle_or_ai_engineer"
+  ],
+  "next_best_reviewer": "oncology_nurse_or_resident",
+  "anti_fabrication_invariant": "completed_reviews is computed only from real *_attestation.md files (excluding the template) with a ticked boundary acknowledgement checkbox.  An empty or template-shaped file MUST NOT increment this count."
+}

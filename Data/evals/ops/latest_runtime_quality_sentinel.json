@@ -1,8 +1,8 @@
 {
   "schema_version": "runtime_quality_sentinel_v1",
-  "generated_at": "2026-05-21T08:19:12.565037+00:00",
+  "generated_at": "2026-07-13T05:05:18.649146+00:00",
   "release_id": "2026-05-ai-swe-hardening",
-  "commit_hash": "56ecb6b",
+  "commit_hash": "90b4c58",
   "status": "needs_attention",
   "thresholds": {
     "unsupported_claim_rate": 0.05,
@@ -26,11 +26,11 @@
     "over_refusal_rate": 0.0,
     "post_generation_validator_trigger_rate": 0.0,
     "source_governance_rejection_rate": 0.0,
-    "cache_hit_rate": 0.214,
+    "cache_hit_rate": 0.2,
     "latency_ms": {
-      "p50": 1206.49,
-      "p95": 4220.37,
-      "p99": 83704.26
+      "p50": 1189.78,
+      "p95": 4078.61,
+      "p99": 77191.97
     },
     "estimated_cost_usd": {
       "total": 0.0,
@@ -47,8 +47,8 @@
     "unsafe_answer_rate": 0.0,
     "insufficient_evidence_rate": 0.0,
     "over_refusal_rate": 0.0,
-    "latency_p95_ms": 4220.37,
-    "cache_hit_rate": 0.214,
+    "latency_p95_ms": 4078.61,
+    "cache_hit_rate": 0.2,
     "drift_ood_alert_count": 1
   },
   "alerts": [

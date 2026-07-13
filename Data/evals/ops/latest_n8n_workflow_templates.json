@@ -1,0 +1,99 @@
+{
+  "schema_version": "n8n_workflow_templates_v1",
+  "generated_at": "2026-07-13T08:39:07.377142+00:00",
+  "status": "ready_for_optional_import",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "phi_allowed": false,
+  "live_patient_route_enabled": false,
+  "template_count": 9,
+  "templates": [
+    {
+      "id": "release_gate_alert",
+      "title": "Release Gate Alert",
+      "allowed_use": "Notify maintainers when release gate passes or fails.",
+      "not_allowed_use": "Do not expose patient data or clinical conclusions.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\release_gate_alert.json"
+    },
+    {
+      "id": "stale_artifact_ticket",
+      "title": "Stale Artifact Ticket",
+      "allowed_use": "Create an admin task when critical eval artifacts are stale.",
+      "not_allowed_use": "Do not downgrade safety thresholds or auto-refresh patient-facing outputs.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\stale_artifact_ticket.json"
+    },
+    {
+      "id": "reviewer_intake_reminder",
+      "title": "Reviewer Intake Reminder",
+      "allowed_use": "Send reminder/checklist for external reviewer packets.",
+      "not_allowed_use": "Do not imply clinician approval or clinical validation.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\reviewer_intake_reminder.json"
+    },
+    {
+      "id": "eval_refresh_trigger",
+      "title": "Eval Refresh Trigger",
+      "allowed_use": "Trigger internal eval refresh jobs for synthetic/non-live artifacts.",
+      "not_allowed_use": "Do not trigger clinical actions or use raw patient chat payloads.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\eval_refresh_trigger.json"
+    },
+    {
+      "id": "trace_quality_digest",
+      "title": "Trace Quality Digest",
+      "allowed_use": "Notify maintainers when trace coverage or trace-envelope validation needs attention.",
+      "not_allowed_use": "Do not send raw prompts, raw responses, private chain-of-thought, or PHI.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\trace_quality_digest.json"
+    },
+    {
+      "id": "pinecone_shadow_report",
+      "title": "Pinecone Shadow Report",
+      "allowed_use": "Send managed-vector shadow retrieval metrics for engineering review.",
+      "not_allowed_use": "Do not promote Pinecone to live retrieval or store patient chat content.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\pinecone_shadow_report.json"
+    },
+    {
+      "id": "external_red_team_intake",
+      "title": "External Red-Team Intake",
+      "allowed_use": "Send no-read red-team packet links and attestation checklist to a reviewer.",
+      "not_allowed_use": "Do not imply clinical validation, clinician approval, or completed external review.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\external_red_team_intake.json"
+    },
+    {
+      "id": "dependency_security_alert",
+      "title": "Dependency Security Alert",
+      "allowed_use": "Create an internal ticket for dependency/security-scan findings.",
+      "not_allowed_use": "Do not label dependency scan pass/fail as HIPAA, SOC 2, or healthcare compliance.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\dependency_security_alert.json"
+    },
+    {
+      "id": "deployment_health_alert",
+      "title": "Deployment Health Alert",
+      "allowed_use": "Notify maintainers about demo service health and stale engineering artifacts.",
+      "not_allowed_use": "Do not present engineering health as clinical safety or send patient data.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\deployment_health_alert.json"
+    }
+  ],
+  "import_instructions": [
+    "Import templates manually into n8n; do not commit credentials.",
+    "Replace placeholder webhook URLs and notification channels in n8n UI.",
+    "Use test webhook URLs first.",
+    "Use signed payloads from NLCare when connecting FastAPI to n8n.",
+    "Keep workflows admin-only until compliance/security review exists."
+  ],
+  "blocked_payload_fields": [
+    "patient_name",
+    "patient_id",
+    "raw_patient_message",
+    "full_chat_transcript",
+    "medical_record_number",
+    "date_of_birth",
+    "address",
+    "phone",
+    "email",
+    "raw_prompt",
+    "raw_response",
+    "raw_trace",
+    "private_chain_of_thought",
+    "genetic_variant_details_for_patient_advice"
+  ],
+  "claim_boundary": "n8n workflow templates are internal automation scaffolds only. They may notify maintainers, create admin tickets, remind reviewers, or trigger internal eval refreshes. They must not send PHI, issue medical advice, override safety validators, or automate diagnosis, treatment, medication, prognosis, genetics, tumor-marker, or clinical-escalation decisions."
+}

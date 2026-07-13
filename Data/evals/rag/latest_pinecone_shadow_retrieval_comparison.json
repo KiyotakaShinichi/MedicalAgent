@@ -1,0 +1,128 @@
+{
+  "schema_version": "pinecone_shadow_retrieval_comparison_v1",
+  "generated_at": "2026-07-06T07:39:13.005475+00:00",
+  "status": "ready_for_shadow_mode_not_configured",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "live_patient_route_enabled": false,
+  "phi_allowed": false,
+  "pinecone_config": {
+    "enabled": false,
+    "configured": false,
+    "api_key_present": false,
+    "index_host_present": false,
+    "namespace": "nlcare_kb_demo_t1_t3",
+    "required_env": [
+      "PINECONE_ENABLED=false by default",
+      "PINECONE_API_KEY",
+      "PINECONE_INDEX_HOST",
+      "PINECONE_NAMESPACE_KB=nlcare_kb_demo_t1_t3"
+    ],
+    "disabled_reason": "PINECONE_ENABLED is not true"
+  },
+  "comparison_completed": false,
+  "network_execution_allowed": false,
+  "local_reference_metrics": {
+    "baseline_artifact": "Data/evals/rag/latest_rag_baseline_comparison.json",
+    "baseline_status": "acceptable",
+    "total_n": 74,
+    "clinical_validation": false,
+    "bm25_only": {
+      "recall_at_5": 0.7162,
+      "recall_at_10": 0.8041,
+      "mrr": 0.7086,
+      "ndcg_at_10": 0.6557,
+      "citation_precision": 0.4135,
+      "claim_support_rate": 0.9054,
+      "unsupported_context_rate": 0.0946,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 0.4595,
+      "latency_p50_ms": 44.512,
+      "latency_p95_ms": 74.411
+    },
+    "source_governed_full_stack": {
+      "recall_at_5": 0.7027,
+      "recall_at_10": 0.7838,
+      "mrr": 0.6892,
+      "ndcg_at_10": 0.6453,
+      "citation_precision": 0.5243,
+      "claim_support_rate": 0.8378,
+      "unsupported_context_rate": 0.1622,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 1.0,
+      "latency_p50_ms": 268.953,
+      "latency_p95_ms": 307.365
+    },
+    "current_honest_reading": "Use Pinecone only as a shadow comparison. Existing local evidence shows governance value, but raw recall superiority over BM25 is not proven."
+  },
+  "pinecone_metrics": null,
+  "delta_vs_local": null,
+  "namespace_contract": {
+    "nlcare_kb_demo_t1_t3": "synthetic/demo patient-facing KB chunks only",
+    "nlcare_eval_synthetic": "frozen eval chunks and synthetic fixtures only",
+    "nlcare_clinician_only_shadow": "disabled by default; never cited to patient-facing routes",
+    "patient_data": "disallowed until compliance/security review"
+  },
+  "metadata_filter_contract": [
+    "source_tier",
+    "allowed_use",
+    "patient_facing",
+    "staleness_status",
+    "kb_fingerprint",
+    "clinical_validation=false",
+    "doc_type"
+  ],
+  "upsert_record_schema": {
+    "id": "chunk_id or source_id:section",
+    "values": "embedding vector from the approved embedding model",
+    "metadata": {
+      "source_id": "stable source identifier",
+      "chunk_id": "stable chunk identifier",
+      "source_tier": "T1/T2/T3/T4/T5",
+      "allowed_use": "patient_education / clinician_only / safety_policy / etc.",
+      "patient_facing": "boolean",
+      "staleness_status": "current / stale / unknown",
+      "kb_fingerprint": "knowledge-base fingerprint used for invalidation",
+      "clinical_validation": false
+    }
+  },
+  "shadow_eval_plan": {
+    "goldset": "Data/evals/rag/retrieval_goldset.jsonl",
+    "metrics": [
+      "Recall@5",
+      "Recall@10",
+      "MRR",
+      "NDCG@10",
+      "citation_precision",
+      "claim_support_rate",
+      "unsupported_context_rate",
+      "source_tier_correctness",
+      "refusal_correctness",
+      "latency_p50_ms",
+      "latency_p95_ms",
+      "estimated_cost_per_1k_queries"
+    ],
+    "comparison_rule": "dual-run local FAISS/BM25/full-stack and Pinecone under the same frozen cases."
+  },
+  "promotion_gate": {
+    "pinecone_can_replace_local_retrieval": false,
+    "minimum_before_promotion": [
+      "no PHI or patient-specific memory in Pinecone",
+      "source_tier_correctness remains 1.0",
+      "unsafe_answer_rate remains 0.0 in live-agent eval",
+      "citation_precision does not regress versus local full stack",
+      "unsupported_context_rate does not increase versus local full stack",
+      "latency/cost tradeoff is explicitly reported",
+      "local FAISS/BM25 fallback remains available"
+    ]
+  },
+  "blocked_claims": [
+    "clinical validation",
+    "retrieval improvement proven",
+    "production healthcare readiness",
+    "HIPAA compliance",
+    "real patient safety",
+    "patient-facing clinical confidence"
+  ],
+  "claim_boundary": "Pinecone shadow retrieval is an optional managed-vector-search comparison scaffold. It is disabled by default, must not store PHI or raw patient chat, and does not replace source-tier filtering, allowed-use filtering, citation validation, safety refusal, or local FAISS/BM25 fallback. This artifact is not clinical validation, not healthcare production readiness, and not proof of retrieval improvement until a real shadow run is completed on frozen evals."
+}

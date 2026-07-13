@@ -13,6 +13,7 @@ Data/breastdcedl_previews/
 Data/uploads/
 Data/test_tmp/
 Data/server_logs/
+Data/runtime/
 Data/mle_monitoring/
 Data/mlruns_local/
 Data/feature_store/

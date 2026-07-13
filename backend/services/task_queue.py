@@ -122,6 +122,17 @@ def task_to_dict(row):
 
 
 def _dispatch_task(db, task_type, payload):
+    if task_type.startswith("safe_automation:"):
+        from backend.services.background_eval_worker import execute_job
+
+        job = (payload or {}).get("job")
+        if not isinstance(job, dict):
+            raise ValueError("Safe automation task is missing its validated job envelope")
+        expected_type = task_type.split(":", 1)[1]
+        if job.get("job_type") != expected_type:
+            raise ValueError("Safe automation task type does not match its validated envelope")
+        return execute_job(job)
+
     if task_type == "build_rag_index":
         from backend.services.agent_rag import get_rag_corpus, knowledge_base_fingerprint
         from backend.services.rag_vector_index import DEFAULT_RAG_INDEX_PATH, build_rag_vector_index

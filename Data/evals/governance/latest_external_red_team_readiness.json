@@ -1,0 +1,18 @@
+{
+  "schema_version": "external_red_team_readiness_v1",
+  "status": "ready_to_request_review",
+  "label": "external_red_team_readiness",
+  "clinical_validation": false,
+  "claim_boundary": "External red-team readiness.  Counts ONLY real external-author adversarial cases committed to Data/evals/external_review/adversarial_cases_<role>_<date>.jsonl. Does NOT fabricate completed reviews.  Not clinical validation; not clinician sign-off.",
+  "generated_at": "2026-06-02T04:37:17.935191+00:00",
+  "template_present": true,
+  "quickstart_present": true,
+  "template_path": "Data/evals/external_review/adversarial_case_submission_template.jsonl",
+  "quickstart_path": "docs/review_packets/external_adversarial_red_team_quickstart.md",
+  "completed_external_cases": 0,
+  "completed_reviews": 0,
+  "n_attestation_files_found": 0,
+  "attestation_files": [],
+  "case_files": [],
+  "anti_fabrication_invariant": "completed_external_cases is derived from row-level checks on real JSONL files.  An empty or template-shaped file MUST NOT increment this count.  Filling in the submission template with placeholder rows is treated as a release-gate failure."
+}

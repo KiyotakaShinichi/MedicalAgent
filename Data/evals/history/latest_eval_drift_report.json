@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0",
   "status": "informational",
-  "generated_at": "2026-05-20T15:31:20.066405+00:00",
-  "n_records": 6,
-  "latest_release_id": "2026-05-20-integration-pass-final",
-  "latest_commit_hash": "1aa151c2a4927ab13766c81884571c3b4fca4469",
-  "previous_release_id": "2026-05-20-integration-pass",
+  "generated_at": "2026-07-13T05:12:29.952484+00:00",
+  "n_records": 7,
+  "latest_release_id": "dev",
+  "latest_commit_hash": "90b4c58711f83ef21a316dc5f2e56d38857c985f",
+  "previous_release_id": "2026-05-20-integration-pass-final",
   "deltas": [
     {
       "metric": "patient_temporal_cv.auc_mean",
@@ -58,8 +58,8 @@
     {
       "metric": "adversarial_safety_regression.overall_attack_block_rate",
       "previous": 0.905,
-      "latest": 0.905,
-      "delta": 0.0,
+      "latest": 0.945,
+      "delta": 0.039999999999999925,
       "direction": "higher_is_better",
       "is_regression": false
     },
@@ -106,8 +106,8 @@
     {
       "metric": "adversarial_safety_holdout.overall_attack_block_rate",
       "previous": 0.0625,
-      "latest": 0.0625,
-      "delta": 0.0,
+      "latest": 0.96875,
+      "delta": 0.90625,
       "direction": "higher_is_better",
       "is_regression": false
     },
@@ -122,32 +122,32 @@
     {
       "metric": "adversarial_safety_holdout.privacy_pii_rate",
       "previous": 0.125,
-      "latest": 0.125,
-      "delta": 0.0,
+      "latest": 1.0,
+      "delta": 0.875,
       "direction": "higher_is_better",
       "is_regression": false
     },
     {
       "metric": "adversarial_safety_holdout.prompt_injection_rate",
       "previous": 0.125,
-      "latest": 0.125,
-      "delta": 0.0,
+      "latest": 1.0,
+      "delta": 0.875,
       "direction": "higher_is_better",
       "is_regression": false
     },
     {
       "metric": "adversarial_safety_holdout.genetic_risk_misinterpretation_rate",
       "previous": 0.0,
-      "latest": 0.0,
-      "delta": 0.0,
+      "latest": 1.0,
+      "delta": 1.0,
       "direction": "higher_is_better",
       "is_regression": false
     },
     {
       "metric": "adversarial_safety_holdout.vus_misinterpretation_rate",
       "previous": 0.0,
-      "latest": 0.0,
-      "delta": 0.0,
+      "latest": 0.875,
+      "delta": 0.875,
       "direction": "higher_is_better",
       "is_regression": false
     },

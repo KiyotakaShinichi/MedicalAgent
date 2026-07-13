@@ -1,0 +1,494 @@
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from backend.services.oncology_canonical_schema import ROOT_DIR
+
+
+DEFAULT_OUTPUT_PATH = "Data/evals/models/latest_external_dataset_integration_matrix.json"
+DEFAULT_DOC_PATH = "docs/external_dataset_integration_strategy.md"
+
+CLAIM_BOUNDARY = (
+    "External dataset integration is an engineering roadmap artifact. It ranks public and restricted datasets "
+    "for schema mapping, stress testing, synthetic-noise design, and future access planning. It does not mean "
+    "the datasets have been downloaded, licensed, harmonized, used for clinical validation, or approved for patient-facing "
+    "prediction, diagnosis, treatment, prognosis, genetic-risk interpretation, tumor-marker interpretation, or "
+    "medication decisions."
+)
+
+BLOCKED_GLOBAL_CLAIMS = [
+    "clinical validation",
+    "real-world patient safety",
+    "patient benefit",
+    "production healthcare readiness",
+    "diagnostic authority",
+    "treatment recommendation",
+    "prognosis or survival prediction",
+    "genetic-risk interpretation",
+    "tumor-marker interpretation",
+    "medication or supplement safety advice",
+]
+
+
+DATASETS: list[dict[str, Any]] = [
+    {
+        "dataset_id": "breastdcedl",
+        "name": "BreastDCEDL",
+        "source_url": "https://zenodo.org/records/17274053",
+        "access_type": "public_zenodo_license_terms",
+        "sample_size_if_known": "2070 curated pretreatment DCE-MRI cases from I-SPY1, I-SPY2, and Duke",
+        "primary_modalities": ["DCE-MRI", "tumor segmentation", "harmonized clinical metadata"],
+        "labels_available": ["pCR", "HR status", "HER2 status", "age", "race"],
+        "treatment_fields": ["neoadjuvant response context through source cohorts"],
+        "biomarker_fields": ["HR", "HER2"],
+        "genetics_fields": [],
+        "imaging_fields": ["pretreatment 3D DCE-MRI", "tumor segmentation"],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "strong for imaging-response / pCR stress testing; weak for CBC/symptom timeline monitoring",
+        "target_mismatch": "pCR is not the same target as NLCare synthetic response-pattern or toxicity-review heads.",
+        "recommended_use": "Use as the first external imaging-response stress benchmark and feature-schema bridge.",
+        "not_allowed_use": "Do not use pCR performance to claim NLCare predicts clinical treatment response or patient outcomes.",
+        "integration_priority": 1,
+        "integration_category": "response_pcr_stress_testing",
+        "next_integration_step": "Create a metadata-only BreastDCEDL integration smoke test before any image-heavy benchmark.",
+    },
+    {
+        "dataset_id": "ispy2_tcia",
+        "name": "I-SPY2 / TCIA",
+        "source_url": "https://www.cancerimagingarchive.net/collection/ispy2/",
+        "access_type": "public_tcia_large_download",
+        "sample_size_if_known": "TCIA collection with serial MRI; BreastDCEDL-ISPY2 curated subset lists 982 cases",
+        "primary_modalities": ["serial DCE-MRI", "neoadjuvant therapy context", "clinical response metadata"],
+        "labels_available": ["pCR", "HR/HER2 subtype context", "serial imaging timepoints"],
+        "treatment_fields": ["neoadjuvant chemotherapy / trial-arm context where available"],
+        "biomarker_fields": ["HR", "HER2", "MammaPrint risk in curated subset"],
+        "genetics_fields": [],
+        "imaging_fields": ["MRI timepoints during neoadjuvant chemotherapy"],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "best public direction for temporal imaging-response stress testing",
+        "target_mismatch": "Trial pCR and MRI-response endpoints do not equal NLCare monitor-only synthetic heads.",
+        "recommended_use": "Map serial imaging timepoints into the canonical timeline as response-context stress data.",
+        "not_allowed_use": "Do not infer treatment efficacy, regimen choice, or patient-specific response from NLCare outputs.",
+        "integration_priority": 2,
+        "integration_category": "temporal_imaging_response",
+        "next_integration_step": "Implement metadata extraction plan and keep large image download optional.",
+    },
+    {
+        "dataset_id": "duke_breast_mri_tcia",
+        "name": "Duke Breast Cancer MRI / TCIA",
+        "source_url": "https://www.cancerimagingarchive.net/collection/duke-breast-cancer-mri/",
+        "access_type": "public_tcia_large_download",
+        "sample_size_if_known": "922 biopsy-confirmed invasive breast cancer patients in the TCIA collection",
+        "primary_modalities": ["MRI", "clinical/pathology table", "treatment and follow-up fields"],
+        "labels_available": ["pathology", "receptor status", "treatment/follow-up fields where provided"],
+        "treatment_fields": ["therapy fields", "surgery/follow-up context where available"],
+        "biomarker_fields": ["ER", "PR", "HER2", "Oncotype-related context where available"],
+        "genetics_fields": ["limited genomic/radiogenomic context in associated tables"],
+        "imaging_fields": ["breast MRI", "radiologist lesion annotations / imaging features"],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "strong schema bridge for imaging, pathology, receptor status, treatment, and follow-up context",
+        "target_mismatch": "Preoperative imaging cohort, not a patient-portal CBC/symptom monitoring timeline.",
+        "recommended_use": "Use as the next public schema bridge after BreastDCEDL for imaging plus treatment-context mapping.",
+        "not_allowed_use": "Do not treat Duke MRI mapping as evidence of clinical response prediction or workflow benefit.",
+        "integration_priority": 3,
+        "integration_category": "imaging_pathology_schema_bridge",
+        "next_integration_step": "Map clinical-and-other-features into canonical oncology schema with target mismatch flags.",
+    },
+    {
+        "dataset_id": "mama_mia",
+        "name": "MAMA-MIA",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11923173/",
+        "access_type": "public_synapse_cc_by_nc_dependent_on_primary_collections",
+        "sample_size_if_known": "1506 multi-center breast DCE-MRI cases",
+        "primary_modalities": ["DCE-MRI", "expert tumor segmentations", "multi-center benchmark data"],
+        "labels_available": ["segmentation masks", "imaging benchmark metadata"],
+        "treatment_fields": ["limited treatment-response benchmark context"],
+        "biomarker_fields": [],
+        "genetics_fields": [],
+        "imaging_fields": ["DCE-MRI", "expert segmentations"],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "strong for segmentation/domain-shift stress; indirect for NLCare timeline ML",
+        "target_mismatch": "Segmentation benchmark is not a clinical monitoring or toxicity-response dataset.",
+        "recommended_use": "Use to test imaging domain shift, segmentation-derived feature robustness, and fairness stress planning.",
+        "not_allowed_use": "Do not present segmentation performance as NLCare clinical monitoring validation.",
+        "integration_priority": 4,
+        "integration_category": "imaging_domain_shift_stress",
+        "next_integration_step": "Add a metadata-only MAMA-MIA readiness row before image-processing experiments.",
+    },
+    {
+        "dataset_id": "ispy1_tcia",
+        "name": "I-SPY1 / ACRIN 6657",
+        "source_url": "https://wiki.cancerimagingarchive.net/display/Public/ISPY1",
+        "access_type": "public_tcia_collection",
+        "sample_size_if_known": "BreastDCEDL integrates 172 I-SPY1 cases; associated radiomics work reports recurrence context",
+        "primary_modalities": ["DCE-MRI", "neoadjuvant response context", "recurrence/follow-up research metadata"],
+        "labels_available": ["pCR", "recurrence/follow-up context in associated research artifacts", "HR/HER2 context"],
+        "treatment_fields": ["neoadjuvant treatment context"],
+        "biomarker_fields": ["HR", "HER2"],
+        "genetics_fields": [],
+        "imaging_fields": ["DCE-MRI", "radiomics/annotation artifacts"],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "useful smaller temporal imaging-response source and recurrence-context stress input",
+        "target_mismatch": "Small cohort and imaging-response labels do not match NLCare synthetic monitoring labels.",
+        "recommended_use": "Use after BreastDCEDL/I-SPY2 as a smaller imaging-response consistency check.",
+        "not_allowed_use": "Do not use recurrence/follow-up fields for prognosis claims.",
+        "integration_priority": 5,
+        "integration_category": "temporal_imaging_response",
+        "next_integration_step": "Keep as secondary check once BreastDCEDL metadata smoke test is stable.",
+    },
+    {
+        "dataset_id": "aacr_genie_bpc_brca",
+        "name": "AACR GENIE BPC Breast Cancer",
+        "source_url": "https://www.aacr.org/professionals/research/aacr-project-genie/bpc/",
+        "access_type": "public_subset_and_synapse_terms",
+        "sample_size_if_known": "GENIE BPC Phase 1 linked treatment/pathology/outcomes for nearly 8000 patients across multiple cancers including breast",
+        "primary_modalities": ["clinico-genomic data", "prior cancer treatments", "tumor pathology", "clinical outcomes"],
+        "labels_available": ["real-world endpoints / outcomes depending on release and access"],
+        "treatment_fields": ["systemic anti-neoplastic treatment history", "regimens", "lines of therapy where available"],
+        "biomarker_fields": ["tumor pathology", "receptor/subtype context where available"],
+        "genetics_fields": ["tumor genomic alterations"],
+        "imaging_fields": [],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "best future bridge for treatment-history + genomic context stress testing",
+        "target_mismatch": "Not a CBC/symptom patient-portal timeline and not immediately accessible as a full NLCare training set.",
+        "recommended_use": "Prepare a restricted/public access packet and field-contract mapper for treatment-context governance.",
+        "not_allowed_use": "Do not train or claim patient-facing treatment recommendations.",
+        "integration_priority": 6,
+        "integration_category": "treatment_genomic_outcome_bridge",
+        "next_integration_step": "Turn existing access packet into a concrete field contract and access checklist.",
+    },
+    {
+        "dataset_id": "tcga_brca_gdc",
+        "name": "TCGA-BRCA / NCI GDC",
+        "source_url": "https://gdc.cancer.gov/about-data/publications/brca_2012",
+        "access_type": "mixed_open_and_controlled_gdc",
+        "sample_size_if_known": "TCGA breast cancer cohort; molecular characterization across multiple platforms",
+        "primary_modalities": ["copy number", "methylation", "exome sequencing", "mRNA", "miRNA", "RPPA", "clinical"],
+        "labels_available": ["molecular subtype", "clinical outcome fields with target mismatch"],
+        "treatment_fields": ["coarse clinical treatment/outcome fields only"],
+        "biomarker_fields": ["PAM50 / receptor-related molecular context", "RPPA"],
+        "genetics_fields": ["somatic mutation", "copy number", "methylation"],
+        "imaging_fields": [],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "strong for molecular schema mapping and subtype-distribution stress",
+        "target_mismatch": "Survival/progression fields are target-mismatched for NLCare temporal response and toxicity heads.",
+        "recommended_use": "Use for canonical molecular-schema mapping, mutation-context coverage, and target-mismatch education.",
+        "not_allowed_use": "Do not train survival/prognosis models and present them as NLCare monitoring performance.",
+        "integration_priority": 7,
+        "integration_category": "biomarker_genomic_context",
+        "next_integration_step": "Extend existing cBioPortal/GDC mapping with target-mismatch annotations per model head.",
+    },
+    {
+        "dataset_id": "metabric_cbioportal",
+        "name": "METABRIC",
+        "source_url": "https://www.cbioportal.org/study/summary?id=brca_metabric",
+        "access_type": "public_cbioportal_terms",
+        "sample_size_if_known": "commonly cited as roughly 2500 breast cancer samples; exact fields depend on portal export",
+        "primary_modalities": ["clinical", "copy-number", "expression", "subtype/outcome context"],
+        "labels_available": ["subtype", "outcome/survival context"],
+        "treatment_fields": ["coarse treatment/outcome context"],
+        "biomarker_fields": ["subtype", "expression-derived context"],
+        "genetics_fields": ["copy-number / genomic context"],
+        "imaging_fields": [],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "useful as independent molecular/subtype distribution stress",
+        "target_mismatch": "Survival/outcome data do not validate NLCare monitor-only temporal heads.",
+        "recommended_use": "Use as second molecular external cohort for schema consistency and subtype stress.",
+        "not_allowed_use": "Do not call METABRIC survival modeling clinical validation of NLCare.",
+        "integration_priority": 8,
+        "integration_category": "biomarker_genomic_context",
+        "next_integration_step": "Compare canonical schema field availability against TCGA-BRCA mapping.",
+    },
+    {
+        "dataset_id": "cptac_breast",
+        "name": "CPTAC Breast Cancer",
+        "source_url": "https://gdc.cancer.gov/about-data/publications/CPTAC-3_2020_1",
+        "access_type": "gdc_pdc_public_and_controlled_files",
+        "sample_size_if_known": "proteogenomic cohort; file-level availability depends on GDC/PDC access",
+        "primary_modalities": ["proteomics", "genomics", "clinical context"],
+        "labels_available": ["molecular/proteomic context", "clinical annotations"],
+        "treatment_fields": ["limited clinical treatment context"],
+        "biomarker_fields": ["proteomics", "protein abundance", "assay-rich molecular context"],
+        "genetics_fields": ["genomic alterations where available"],
+        "imaging_fields": [],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "advanced biomarker/proteomic context source",
+        "target_mismatch": "Not a longitudinal treatment-cycle monitoring or CBC/symptom dataset.",
+        "recommended_use": "Track as future biomarker/proteogenomics context after simpler bridges are stable.",
+        "not_allowed_use": "Do not add proteomic outputs as patient-facing predictor authority.",
+        "integration_priority": 9,
+        "integration_category": "biomarker_genomic_context",
+        "next_integration_step": "Keep as roadmap-only until TCGA/METABRIC field mapping is stable.",
+    },
+    {
+        "dataset_id": "seer_breast",
+        "name": "SEER Breast Cancer / Research Plus",
+        "source_url": "https://seer.cancer.gov/",
+        "access_type": "seer_research_data_agreement",
+        "sample_size_if_known": "large population registry; exact cohort depends on SEER*Stat extraction",
+        "primary_modalities": ["registry demographics", "stage", "subtype/SSDI fields", "initial treatment indicators", "survival"],
+        "labels_available": ["population survival", "stage", "registry treatment indicators"],
+        "treatment_fields": ["surgery", "radiation", "chemotherapy indicators with registry limitations"],
+        "biomarker_fields": ["ER", "PR", "HER2", "Ki-67 SSDI fields depending on year/extract"],
+        "genetics_fields": [],
+        "imaging_fields": [],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "population distribution and coding-discipline source",
+        "target_mismatch": "Registry-level fields are not patient timeline data and must not become prognosis claims.",
+        "recommended_use": "Use for subtype/stage/treatment-distribution sanity checks and schema coding discipline.",
+        "not_allowed_use": "Do not use survival endpoints for patient-facing prognosis or response prediction.",
+        "integration_priority": 10,
+        "integration_category": "population_distribution_context",
+        "next_integration_step": "Prepare field dictionary mapping only; keep as distribution check.",
+    },
+    {
+        "dataset_id": "seer_medicare",
+        "name": "SEER-Medicare",
+        "source_url": "https://healthcaredelivery.cancer.gov/seermedicare/",
+        "access_type": "restricted_application_required",
+        "sample_size_if_known": "large linked cancer registry and claims resource; extraction requires approval",
+        "primary_modalities": ["registry", "claims", "treatment utilization", "comorbidity context"],
+        "labels_available": ["claims-derived treatment patterns", "survival/utilization context"],
+        "treatment_fields": ["claims-based treatment sequences", "procedures", "medication claims where available"],
+        "biomarker_fields": ["registry biomarker fields depending on SEER era"],
+        "genetics_fields": [],
+        "imaging_fields": ["claims/procedure context only"],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "future restricted-data bridge for treatment-sequence realism",
+        "target_mismatch": "Claims are not direct clinical labels, lab trends, symptoms, or imaging-response measures.",
+        "recommended_use": "Keep in restricted-data access roadmap for treatment-combination realism.",
+        "not_allowed_use": "Do not imply access has been granted or that claims-derived patterns are treatment advice.",
+        "integration_priority": 11,
+        "integration_category": "restricted_treatment_sequence_context",
+        "next_integration_step": "Leave in access-packet stage until a supervised data-use route exists.",
+    },
+    {
+        "dataset_id": "mimic_iv",
+        "name": "MIMIC-IV",
+        "source_url": "https://mimic.mit.edu/docs/IV/",
+        "access_type": "credentialed_physionet_access",
+        "sample_size_if_known": "large deidentified EHR dataset with hospital/ICU encounters",
+        "primary_modalities": ["labs", "medications", "vitals", "procedures", "diagnoses", "notes module separately"],
+        "labels_available": ["hospital outcomes and encounter context depending on module"],
+        "treatment_fields": ["medication administrations", "prescriptions", "procedures"],
+        "biomarker_fields": [],
+        "genetics_fields": [],
+        "imaging_fields": ["orders/reports only if relevant modules are accessed"],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "useful for CBC/lab missingness, units, irregular timing, and EHR pipeline realism",
+        "target_mismatch": "General hospital/ICU data are not breast-cancer monitoring or response labels.",
+        "recommended_use": "Use only for synthetic-noise and missingness priors after credentialing.",
+        "not_allowed_use": "Do not use MIMIC-IV to train breast cancer response, prognosis, or treatment-selection models.",
+        "integration_priority": 12,
+        "integration_category": "synthetic_noise_realism_priors",
+        "next_integration_step": "Add a credentialing checklist and lab-unit/missingness extraction plan.",
+    },
+    {
+        "dataset_id": "clinvar",
+        "name": "ClinVar",
+        "source_url": "https://www.ncbi.nlm.nih.gov/clinvar/",
+        "access_type": "public_variant_database",
+        "sample_size_if_known": "large public archive of human variant submissions and clinical significance assertions",
+        "primary_modalities": ["variant assertions", "clinical significance", "submitter evidence metadata"],
+        "labels_available": ["pathogenic/likely pathogenic/VUS/likely benign/benign assertions", "conflicting interpretations"],
+        "treatment_fields": [],
+        "biomarker_fields": [],
+        "genetics_fields": ["BRCA1", "BRCA2", "PALB2", "TP53", "PTEN", "CHEK2", "ATM"],
+        "imaging_fields": [],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "strong for genetics/VUS boundary tests and variant-record schema",
+        "target_mismatch": "Variant databases do not provide patient-specific genetic counseling or treatment response labels.",
+        "recommended_use": "Use to generate safe VUS wording tests, conflict examples, and genetics-record schema checks.",
+        "not_allowed_use": "Do not interpret a user's variant, infer inherited risk, or provide genetic counseling.",
+        "integration_priority": 13,
+        "integration_category": "genetics_vus_safety_boundary",
+        "next_integration_step": "Build VUS safety-eval fixtures from public variant-status categories, not patient advice.",
+    },
+    {
+        "dataset_id": "brca_exchange",
+        "name": "BRCA Exchange",
+        "source_url": "https://brcaexchange.org/factsheet",
+        "access_type": "public_brca_variant_resource",
+        "sample_size_if_known": "public BRCA1/BRCA2 variant aggregation resource",
+        "primary_modalities": ["BRCA1/BRCA2 variant records", "classification aggregation"],
+        "labels_available": ["variant classification context", "source database links"],
+        "treatment_fields": [],
+        "biomarker_fields": [],
+        "genetics_fields": ["BRCA1", "BRCA2"],
+        "imaging_fields": [],
+        "tumor_marker_fields": [],
+        "target_match_to_nlcare": "useful for BRCA-specific schema and VUS boundary evaluation",
+        "target_mismatch": "BRCA variant aggregation is not patient-level inherited-risk interpretation.",
+        "recommended_use": "Use as a genetics-boundary and record-normalization reference.",
+        "not_allowed_use": "Do not convert BRCA Exchange classifications into patient-facing risk estimates.",
+        "integration_priority": 14,
+        "integration_category": "genetics_vus_safety_boundary",
+        "next_integration_step": "Add BRCA-specific schema normalization examples with genetic-counselor-review flags.",
+    },
+    {
+        "dataset_id": "nci_edrn_breast_reference_set",
+        "name": "NCI EDRN Breast Cancer Reference Set",
+        "source_url": "https://edrn.cancer.gov/data-and-resources/publications/25471344-2344-construction-and-analysis-of-the-nci-edrn-breast-cancer-reference-set-for-circulating-markers-of-disease/",
+        "access_type": "reference_set_and_publication_context",
+        "sample_size_if_known": "case/control reference set for circulating-marker research; specimen access is separate",
+        "primary_modalities": ["blood-based biomarker research context", "case/control biospecimen design"],
+        "labels_available": ["detection/reference-set context"],
+        "treatment_fields": [],
+        "biomarker_fields": ["circulating-marker assay context"],
+        "genetics_fields": [],
+        "imaging_fields": [],
+        "tumor_marker_fields": ["circulating markers as research context"],
+        "target_match_to_nlcare": "useful for tumor-marker limitation/context documentation",
+        "target_mismatch": "Detection-marker reference context is not treatment-response monitoring.",
+        "recommended_use": "Keep as tumor-marker limitation and source-governance context only.",
+        "not_allowed_use": "Do not train response predictors or make recurrence/tumor-marker conclusions from this resource.",
+        "integration_priority": 15,
+        "integration_category": "tumor_marker_limitation_context",
+        "next_integration_step": "Use only in patient-safe tumor-marker boundary examples and citation policy docs.",
+    },
+]
+
+
+def build_external_dataset_integration_matrix(
+    *,
+    output_path: str | Path = DEFAULT_OUTPUT_PATH,
+    doc_path: str | Path = DEFAULT_DOC_PATH,
+) -> dict[str, Any]:
+    rows = [dict(row, clinical_validation=False) for row in DATASETS]
+    rows.sort(key=lambda row: row["integration_priority"])
+    category_map: dict[str, list[str]] = {}
+    for row in rows:
+        category_map.setdefault(row["integration_category"], []).append(row["dataset_id"])
+
+    payload = {
+        "schema_version": "external_dataset_integration_matrix_v1",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "status": "strong",
+        "clinical_validation": False,
+        "production_training_allowed": False,
+        "dataset_count": len(rows),
+        "integration_categories": category_map,
+        "highest_roi_next_integrations": [
+            {
+                "rank": 1,
+                "dataset_id": "breastdcedl",
+                "action": "metadata-only pCR/imaging-response stress benchmark",
+                "why": "Best immediate public bridge for external response-context stress without pretending it is the same label.",
+            },
+            {
+                "rank": 2,
+                "dataset_id": "duke_breast_mri_tcia",
+                "action": "canonical imaging/pathology/treatment-context schema mapping",
+                "why": "Broad public imaging cohort with receptor/pathology/treatment/follow-up context for schema discipline.",
+            },
+            {
+                "rank": 3,
+                "dataset_id": "aacr_genie_bpc_brca",
+                "action": "field-contract and access-packet hardening",
+                "why": "Closest future bridge for treatment-history plus genomic/outcome context, but access and target mismatch remain blockers.",
+            },
+            {
+                "rank": 4,
+                "dataset_id": "mimic_iv",
+                "action": "lab-unit/missingness prior plan",
+                "why": "Useful to make synthetic CBC/lab noise less clean, while staying explicit that it is not breast-response data.",
+            },
+            {
+                "rank": 5,
+                "dataset_id": "clinvar",
+                "action": "VUS/genetics safety-boundary fixture generation",
+                "why": "Improves unsafe-genetics eval coverage without giving patient-specific variant interpretation.",
+            },
+        ],
+        "recommended_sequence": [
+            "Integrate metadata-only BreastDCEDL/I-SPY pCR stress tests.",
+            "Map Duke MRI clinical/pathology/treatment context into canonical schema.",
+            "Use MIMIC-IV only for missingness/unit/noise priors after credentialed access.",
+            "Use ClinVar/BRCA Exchange only for genetics/VUS boundary and schema tests.",
+            "Keep GENIE BPC and SEER-Medicare as future restricted-access field contracts until access exists.",
+        ],
+        "datasets": rows,
+        "blocked_global_claims": BLOCKED_GLOBAL_CLAIMS,
+        "claim_boundary": CLAIM_BOUNDARY,
+    }
+    _write_json(_resolve(output_path), payload)
+    _write_doc(_resolve(doc_path), payload)
+    return payload
+
+
+def _write_doc(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# External Dataset Integration Strategy",
+        "",
+        payload["claim_boundary"],
+        "",
+        "## Highest-ROI Integrations",
+        "",
+    ]
+    for item in payload["highest_roi_next_integrations"]:
+        lines.extend(
+            [
+                f"{item['rank']}. **{item['dataset_id']}** - {item['action']}",
+                f"   - Why: {item['why']}",
+                "",
+            ]
+        )
+
+    lines.extend(
+        [
+            "## Recommended Sequence",
+            "",
+            *[f"{idx}. {step}" for idx, step in enumerate(payload["recommended_sequence"], start=1)],
+            "",
+            "## Dataset Matrix",
+            "",
+            "| Priority | Dataset | Category | Recommended use | Not allowed use |",
+            "|---:|---|---|---|---|",
+        ]
+    )
+    for row in payload["datasets"]:
+        lines.append(
+            f"| {row['integration_priority']} | [{row['name']}]({row['source_url']}) | "
+            f"{row['integration_category']} | {row['recommended_use']} | {row['not_allowed_use']} |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Blocked Claims",
+            "",
+            *[f"- {claim}" for claim in payload["blocked_global_claims"]],
+            "",
+            "## Notes",
+            "",
+            "- This matrix can strengthen ML credibility by making external stress tests and schema mapping concrete.",
+            "- It does not authorize model promotion, patient-facing predictions, or clinical claims.",
+            "- Every dataset row has `clinical_validation: false` in the machine-readable artifact.",
+            "",
+        ]
+    )
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def _write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def _resolve(path: str | Path) -> Path:
+    candidate = Path(path)
+    return candidate if candidate.is_absolute() else ROOT_DIR / candidate
+
+
+__all__ = [
+    "BLOCKED_GLOBAL_CLAIMS",
+    "CLAIM_BOUNDARY",
+    "DATASETS",
+    "DEFAULT_DOC_PATH",
+    "DEFAULT_OUTPUT_PATH",
+    "build_external_dataset_integration_matrix",
+]

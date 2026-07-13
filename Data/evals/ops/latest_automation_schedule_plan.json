@@ -1,0 +1,66 @@
+{
+  "schema_version": "automation_schedule_plan_v1",
+  "generated_at": "2026-07-13T08:39:30.774199+00:00",
+  "status": "ready_for_scheduler_or_n8n",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "phi_allowed": false,
+  "scheduler_installed": false,
+  "schedules": [
+    {
+      "id": "nightly_core_eval_refresh",
+      "cadence": "daily",
+      "interval_hours": 24,
+      "jobs": [
+        "refresh_trace_envelope_v2_eval",
+        "refresh_runtime_quality_sentinel",
+        "refresh_eval_history",
+        "refresh_release_gate_explanation",
+        "run_release_gate"
+      ]
+    },
+    {
+      "id": "weekly_integration_shadow_refresh",
+      "cadence": "weekly",
+      "interval_hours": 168,
+      "jobs": [
+        "refresh_pinecone_shadow_retrieval",
+        "refresh_n8n_templates",
+        "refresh_external_dataset_matrix",
+        "refresh_platform_control_plane"
+      ]
+    },
+    {
+      "id": "weekly_security_health_refresh",
+      "cadence": "weekly",
+      "interval_hours": 168,
+      "jobs": [
+        "refresh_dependency_security_scan",
+        "refresh_ops_health_snapshot"
+      ]
+    },
+    {
+      "id": "biweekly_reviewer_reminder",
+      "cadence": "every_14_days",
+      "interval_hours": 336,
+      "jobs": [
+        "prepare_reviewer_packet_reminder"
+      ]
+    }
+  ],
+  "event_driven_jobs": [
+    "publish_release_gate_alert",
+    "create_stale_artifact_ticket",
+    "publish_trace_quality_digest",
+    "publish_pinecone_shadow_report",
+    "publish_dependency_security_alert",
+    "publish_deployment_health_alert",
+    "publish_external_red_team_intake"
+  ],
+  "deployment_options": [
+    "n8n Schedule Trigger calls the admin automation API with a bearer token stored in n8n credentials.",
+    "A CI schedule runs scripts/run_automation_control_plane.py and approved refresh scripts.",
+    "A host cron or Windows Task Scheduler invokes the preview/worker scripts outside the API process."
+  ],
+  "claim_boundary": "The automation control plane schedules and summarizes redacted engineering work only. It must not send PHI, message patients, issue medical guidance, trigger unreviewed clinical escalation, or weaken safety gates. It is not clinical validation, compliance certification, or healthcare production readiness."
+}

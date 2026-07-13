@@ -1,0 +1,92 @@
+{
+  "schema_version": "breastdcedl_metadata_stress_v1",
+  "generated_at": "2026-07-06T07:10:49.472524+00:00",
+  "clinical_validation": false,
+  "production_training_allowed": false,
+  "source_dataset": "BreastDCEDL / I-SPY public imaging-response metadata",
+  "source_path": "Data\\external_bridge\\canonical_breastdcedl_spy1.csv",
+  "feature_set": [
+    "age",
+    "baseline_longest_diameter_mm",
+    "hr_positive",
+    "her2_positive",
+    "triple_negative"
+  ],
+  "metadata_only": true,
+  "image_pixel_training": false,
+  "target": {
+    "external_label": "pathologic complete response (pCR)",
+    "nlcare_label_equivalent": false,
+    "target_mismatch": "pCR is an external imaging-response endpoint, not NLCare's synthetic response-pattern, response-score, toxicity-review, or patient-monitoring target."
+  },
+  "cohort_summary": {
+    "rows": 159,
+    "pcr_positive": 44,
+    "pcr_negative": 115,
+    "pcr_positive_rate": 0.2767,
+    "age_mean": 48.3011,
+    "baseline_size_mean_mm": 67.7785,
+    "hr_positive_rate": 0.4151,
+    "her2_positive_rate": 0.3145,
+    "triple_negative_rate": 0.2516
+  },
+  "missingness": {
+    "age": 0.0,
+    "baseline_longest_diameter_mm": 0.0063,
+    "hr_positive": 0.0,
+    "her2_positive": 0.0,
+    "triple_negative": 0.0
+  },
+  "blocked_claims": [
+    "clinical validation",
+    "real patient response prediction",
+    "treatment recommendation",
+    "prognosis or survival prediction",
+    "diagnosis",
+    "tumor-marker interpretation",
+    "genetic-risk interpretation",
+    "model promotion to patient-facing route"
+  ],
+  "claim_boundary": "BreastDCEDL metadata-only stress is an external benchmark probe over public imaging-response metadata. The pCR endpoint is not the same as NLCare synthetic response, toxicity, or monitoring heads. This artifact is not clinical validation, does not update live models, and must not be used for diagnosis, prognosis, treatment recommendation, medication decisions, genetic-risk interpretation, tumor-marker interpretation, or patient-facing prediction.",
+  "status": "strong",
+  "stress_result": {
+    "status": "computed",
+    "rows": 159,
+    "positive_pcr": 44,
+    "negative_pcr": 115,
+    "positive_rate": 0.2767,
+    "cv_folds": 5,
+    "roc_auc": 0.6419,
+    "balanced_accuracy": 0.6576,
+    "accuracy": 0.6164,
+    "brier": 0.2321,
+    "probability_summary": {
+      "mean": 0.4629,
+      "p10": 0.1906,
+      "p50": 0.5146,
+      "p90": 0.7095,
+      "min": 0.1174,
+      "max": 0.8392
+    },
+    "bootstrap_ci95": {
+      "n_bootstrap": 300,
+      "roc_auc": {
+        "low": 0.5465,
+        "high": 0.7351
+      },
+      "brier": {
+        "low": 0.2023,
+        "high": 0.2612
+      },
+      "note": "Intervals are over external pCR probe predictions only; not clinical validation."
+    },
+    "clinical_interpretation_allowed": false
+  },
+  "predictions_path": "Data\\evals\\models\\latest_breastdcedl_metadata_stress_predictions.csv",
+  "integration_decision": {
+    "recommendation": "use_as_external_metadata_stress_only",
+    "model_promotion_allowed": false,
+    "live_model_update_allowed": false,
+    "reason": "The benchmark provides external endpoint-shift pressure on metadata features, but pCR does not validate NLCare's synthetic monitoring heads."
+  }
+}

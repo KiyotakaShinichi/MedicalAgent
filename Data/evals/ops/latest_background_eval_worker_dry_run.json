@@ -1,0 +1,151 @@
+{
+  "schema_version": "background_eval_worker_dry_run_v1",
+  "generated_at": "2026-07-13T08:39:07.653893+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "phi_allowed": false,
+  "live_patient_route_enabled": false,
+  "commands_executed": false,
+  "accepted_job_count": 3,
+  "rejected_job_count": 1,
+  "allowed_job_types": [
+    "create_stale_artifact_ticket",
+    "prepare_reviewer_packet_reminder",
+    "publish_dependency_security_alert",
+    "publish_deployment_health_alert",
+    "publish_external_red_team_intake",
+    "publish_pinecone_shadow_report",
+    "publish_release_gate_alert",
+    "publish_trace_quality_digest",
+    "refresh_dependency_security_scan",
+    "refresh_eval_history",
+    "refresh_external_dataset_matrix",
+    "refresh_n8n_templates",
+    "refresh_ops_health_snapshot",
+    "refresh_pinecone_shadow_retrieval",
+    "refresh_platform_control_plane",
+    "refresh_release_gate_explanation",
+    "refresh_runtime_quality_sentinel",
+    "refresh_trace_envelope_v2_eval",
+    "run_release_gate"
+  ],
+  "blocked_job_types": [
+    "clinical_escalation_without_human_review",
+    "diagnosis",
+    "dosage_change",
+    "genetic_risk_interpretation",
+    "message_patient_directly",
+    "prognosis",
+    "send_phi_to_external_service",
+    "treatment_recommendation",
+    "tumor_marker_interpretation"
+  ],
+  "blocked_payload_fields": [
+    "address",
+    "date_of_birth",
+    "email",
+    "full_chat_transcript",
+    "genetic_variant_details_for_patient_advice",
+    "medical_record_number",
+    "patient_id",
+    "patient_name",
+    "phone",
+    "private_chain_of_thought",
+    "raw_patient_message",
+    "raw_prompt",
+    "raw_response"
+  ],
+  "sample_jobs": [
+    {
+      "job_id": "d953f0e3-c2ac-45f7-9227-be6b674f40a6",
+      "job_type": "run_release_gate",
+      "requested_by": "admin",
+      "accepted": true,
+      "rejected_reason": null,
+      "dry_run": true,
+      "mode": "local_command",
+      "command": [
+        "python",
+        "scripts/run_release_gate.py"
+      ],
+      "payload_redacted": true,
+      "sanitized_payload": {
+        "run_id": "dry-run-001",
+        "requested_by": "admin",
+        "reason": "manual check"
+      },
+      "blocked_payload_fields": [],
+      "created_at": "2026-07-13T08:39:07.653057+00:00",
+      "clinical_validation": false
+    },
+    {
+      "job_id": "523b6d4d-bf0b-4b24-93ab-d5bf260299ef",
+      "job_type": "refresh_trace_envelope_v2_eval",
+      "requested_by": "admin",
+      "accepted": true,
+      "rejected_reason": null,
+      "dry_run": true,
+      "mode": "local_command",
+      "command": [
+        "python",
+        "scripts/run_trace_envelope_v2_eval.py"
+      ],
+      "payload_redacted": true,
+      "sanitized_payload": {
+        "run_id": "dry-run-002",
+        "requested_by": "admin",
+        "reason": "trace contract refresh"
+      },
+      "blocked_payload_fields": [],
+      "created_at": "2026-07-13T08:39:07.653299+00:00",
+      "clinical_validation": false
+    },
+    {
+      "job_id": "277edf4b-2551-4751-b339-917959585208",
+      "job_type": "create_stale_artifact_ticket",
+      "requested_by": "system",
+      "accepted": true,
+      "rejected_reason": null,
+      "dry_run": true,
+      "mode": "webhook_payload_only",
+      "command": null,
+      "payload_redacted": true,
+      "sanitized_payload": {
+        "run_id": "dry-run-003",
+        "artifact_path": "Data/evals/safety/latest_adversarial_eval.json",
+        "age_days": 39,
+        "severity": "warning",
+        "owner": "engineering"
+      },
+      "blocked_payload_fields": [],
+      "created_at": "2026-07-13T08:39:07.653728+00:00",
+      "clinical_validation": false
+    },
+    {
+      "job_id": "838d1c82-d8c3-41c4-944d-1d7044046d50",
+      "job_type": "diagnosis",
+      "requested_by": "malicious_test",
+      "accepted": false,
+      "rejected_reason": "blocked_clinical_or_phi_action",
+      "dry_run": true,
+      "mode": null,
+      "command": null,
+      "payload_redacted": true,
+      "sanitized_payload": {},
+      "blocked_payload_fields": [
+        "patient_id",
+        "raw_patient_message"
+      ],
+      "created_at": "2026-07-13T08:39:07.653845+00:00",
+      "clinical_validation": false
+    }
+  ],
+  "automation_upgrade_path": [
+    "Use the admin-only /admin/automation API to enqueue redacted jobs.",
+    "Keep local execution behind NLCARE_AUTOMATION_EXECUTION_ENABLED and bounded subprocess timeouts.",
+    "Use HMAC-signed n8n webhooks for internal notifications only.",
+    "Store job outputs as governance artifacts, never as patient-facing medical advice."
+  ],
+  "claim_boundary": "Background eval worker is an admin-only automation scaffold for redacted engineering jobs. It is not clinical validation, not healthcare production readiness, and cannot execute diagnosis, treatment, medication, prognosis, genetics, tumor-marker, or clinical-escalation actions."
+}

@@ -1,0 +1,115 @@
+{
+  "schema_version": "synthetic_timeline_drift_stress_v1",
+  "status": "informational",
+  "label": "synthetic_timeline_drift_stress",
+  "clinical_validation": false,
+  "review_only_boundary": true,
+  "claim_boundary": "Synthetic-only timeline drift stress scaffold.  Splits the synthetic CSV into baseline / recent windows and exercises a two-sample KS proxy plus a missingness-delta tripwire.  This is NOT clinical deterioration detection, NOT real-world drift monitoring, and NOT clinical validation.",
+  "generated_at": "2026-06-02T04:37:20.913657+00:00",
+  "wall_time_ms": 303.01,
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "n_baseline_rows": 1800,
+  "n_recent_rows": 1800,
+  "metrics": {
+    "distribution_shift_detection_rate": 1.0,
+    "false_shift_rate_on_baseline_synthetic": 0.6667,
+    "missingness_shift_detection": true,
+    "lab_trend_shift_detection": true,
+    "symptom_trend_shift_detection": true
+  },
+  "baseline_vs_recent_unmodified": {
+    "lab": {
+      "per_column_pvalue": {
+        "nadir_wbc": 0.0,
+        "nadir_anc": 0.0,
+        "nadir_hemoglobin": 0.0,
+        "nadir_platelets": 0.0
+      },
+      "detected_at_alpha_0_05": true
+    },
+    "symptom": {
+      "per_column_pvalue": {
+        "max_symptom_severity": 0.0,
+        "symptom_count": 0.0
+      },
+      "detected_at_alpha_0_05": true
+    },
+    "missingness": {
+      "per_column": {
+        "nadir_wbc": {
+          "baseline_missingness": 0.0,
+          "recent_missingness": 0.0,
+          "delta": 0.0,
+          "flagged": false
+        },
+        "nadir_anc": {
+          "baseline_missingness": 0.0606,
+          "recent_missingness": 0.0606,
+          "delta": 0.0,
+          "flagged": false
+        },
+        "nadir_hemoglobin": {
+          "baseline_missingness": 0.0,
+          "recent_missingness": 0.0,
+          "delta": 0.0,
+          "flagged": false
+        },
+        "nadir_platelets": {
+          "baseline_missingness": 0.0633,
+          "recent_missingness": 0.0556,
+          "delta": -0.0078,
+          "flagged": false
+        }
+      },
+      "detected": false
+    }
+  },
+  "engineered_shifts": {
+    "lab_drop": {
+      "per_column_pvalue": {
+        "nadir_wbc": 0.0,
+        "nadir_anc": 0.0,
+        "nadir_hemoglobin": 0.0,
+        "nadir_platelets": 0.0
+      },
+      "detected_at_alpha_0_05": true
+    },
+    "symptom_burst": {
+      "per_column_pvalue": {
+        "max_symptom_severity": 0.0,
+        "symptom_count": 0.0
+      },
+      "detected_at_alpha_0_05": true
+    },
+    "missingness_spike": {
+      "per_column": {
+        "nadir_wbc": {
+          "baseline_missingness": 0.0,
+          "recent_missingness": 0.3089,
+          "delta": 0.3089,
+          "flagged": true
+        },
+        "nadir_anc": {
+          "baseline_missingness": 0.0606,
+          "recent_missingness": 0.3522,
+          "delta": 0.2917,
+          "flagged": true
+        },
+        "nadir_hemoglobin": {
+          "baseline_missingness": 0.0,
+          "recent_missingness": 0.2961,
+          "delta": 0.2961,
+          "flagged": true
+        },
+        "nadir_platelets": {
+          "baseline_missingness": 0.0633,
+          "recent_missingness": 0.3383,
+          "delta": 0.275,
+          "flagged": true
+        }
+      },
+      "detected": true
+    }
+  },
+  "contamination_note": "Engineered shifts and seeds are fixed.  Promoting any metric here to a live monitor would require real-cohort distribution evidence under IRB."
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": "deployment_boundary_check_v1",
+  "status": "strong",
+  "status_label": "production_shaped_not_healthcare_production_ready",
+  "label": "deployment_boundary_check",
+  "clinical_validation": false,
+  "no_hipaa_compliance_claim": true,
+  "no_clinical_deployment_claim": true,
+  "claim_boundary": "Deployment boundary status is permanently fixed at ``production_shaped_not_healthcare_production_ready``.  Engineering polish only; no HIPAA compliance claim, no clinical deployment claim, no production healthcare readiness, no clinical validation.",
+  "generated_at": "2026-06-01T18:00:47.754949+00:00",
+  "wall_time_ms": 2.19,
+  "n_checks": 8,
+  "n_passed": 8,
+  "n_failed": 0,
+  "checks": [
+    {
+      "name": "env_example_present",
+      "description": ".env.example exists at the repo root",
+      "ok": true,
+      "evidence_path": ".env.example"
+    },
+    {
+      "name": "docker_compose_present",
+      "description": "docker-compose.yml present for local startup",
+      "ok": true,
+      "evidence_path": "docker-compose.yml"
+    },
+    {
+      "name": "deployment_readiness_doc_present",
+      "description": "docs/deployment_readiness.md exists",
+      "ok": true,
+      "evidence_path": "docs/deployment_readiness.md"
+    },
+    {
+      "name": "deployment_boundary_doc_present",
+      "description": "docs/deployment_boundary.md exists (explicit production-shaped-not-healthcare framing)",
+      "ok": true,
+      "evidence_path": "docs/deployment_boundary.md"
+    },
+    {
+      "name": "health_check_doc_present",
+      "description": "A health-check route or endpoint is documented somewhere",
+      "ok": true,
+      "evidence_path": "docs/monitoring.md"
+    },
+    {
+      "name": "local_smoke_command_present",
+      "description": "A local-smoke / ship script is wired into the repo",
+      "ok": true,
+      "evidence_path": "scripts/ship.py"
+    },
+    {
+      "name": "security_controls_doc_present",
+      "description": "docs/security_controls.md exists",
+      "ok": true,
+      "evidence_path": "docs/security_controls.md"
+    },
+    {
+      "name": "demo_credentials_gated_off_in_production",
+      "description": "Demo credentials must be off when ENVIRONMENT=production unless explicitly flagged",
+      "ok": true,
+      "environment": "development",
+      "allow_demo_auth": "false",
+      "reason": null
+    }
+  ],
+  "failed_checks": [],
+  "what_this_does_not_certify": [
+    "HIPAA compliance",
+    "SOC 2 / HITRUST",
+    "FDA / CE / regulatory clearance",
+    "clinical safety",
+    "real-world patient privacy",
+    "production healthcare deployment"
+  ]
+}

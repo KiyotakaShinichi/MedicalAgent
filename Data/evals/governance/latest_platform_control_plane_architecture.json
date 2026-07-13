@@ -1,0 +1,732 @@
+{
+  "schema_version": "platform_control_plane_architecture_v1",
+  "generated_at": "2026-07-10T05:00:53.929573+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "live_patient_authority_added": false,
+  "sections": {
+    "agent_state_machine": {
+      "status": "contract_ready_not_live_refactor",
+      "states": [
+        "input_received",
+        "safety_precheck",
+        "intent_classified",
+        "clarification_or_tool_planning",
+        "retrieval_planning",
+        "evidence_retrieved",
+        "evidence_sufficiency_checked",
+        "generation_or_refusal_selected",
+        "post_generation_validated",
+        "final_response_ready",
+        "trace_persisted"
+      ],
+      "terminal_state": "trace_persisted",
+      "transitions": [
+        {
+          "from": "input_received",
+          "to": "safety_precheck",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "safety_precheck",
+          "to": "intent_classified",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "safety_precheck",
+          "to": "generation_or_refusal_selected",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "intent_classified",
+          "to": "clarification_or_tool_planning",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "intent_classified",
+          "to": "retrieval_planning",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "clarification_or_tool_planning",
+          "to": "final_response_ready",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "retrieval_planning",
+          "to": "evidence_retrieved",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "evidence_retrieved",
+          "to": "evidence_sufficiency_checked",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "evidence_sufficiency_checked",
+          "to": "retrieval_planning",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "evidence_sufficiency_checked",
+          "to": "generation_or_refusal_selected",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "generation_or_refusal_selected",
+          "to": "post_generation_validated",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "post_generation_validated",
+          "to": "final_response_ready",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        },
+        {
+          "from": "final_response_ready",
+          "to": "trace_persisted",
+          "required_trace_fields": [
+            "reason",
+            "safety_level",
+            "policy_decision",
+            "latency_ms",
+            "blocked_alternatives"
+          ]
+        }
+      ],
+      "forbidden_transitions": [
+        "evidence_retrieved -> final_response_ready without evidence_sufficiency_checked",
+        "generation_or_refusal_selected -> final_response_ready without post_generation_validated",
+        "tool_write -> final_response_ready without confirmation"
+      ],
+      "live_agent_change": false
+    },
+    "rag_control_plane": {
+      "status": "scaffolded_with_existing_eval_artifacts",
+      "controller_steps": [
+        "intent_specific_rag_mode_selection",
+        "retrieval_backend_selection",
+        "query_rewrite_or_decomposition",
+        "local_faiss_bm25_or_pinecone_shadow_retrieval",
+        "parent_child_context_expansion",
+        "source_tier_allowed_use_filter",
+        "evidence_sufficiency_grading",
+        "conflict_detection",
+        "citation_window_selection",
+        "claim_source_alignment",
+        "post_generation_validation"
+      ],
+      "backends": {
+        "local_faiss_bm25": "primary",
+        "pinecone": "shadow_only_disabled_by_default"
+      },
+      "promotion_rule": "No retrieval backend may replace the local path unless source_tier_correctness remains 1.0, unsafe_answer_rate remains 0.0, citation precision does not regress, unsupported context does not increase, and latency/cost are reported.",
+      "clinical_validation": false
+    },
+    "medical_policy_registry": {
+      "status": "policy_as_code_contract",
+      "policies": [
+        {
+          "policy_id": "diagnosis_boundary",
+          "purpose": "blocks diagnosis and diagnosis confirmation",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "treatment_change_boundary",
+          "purpose": "blocks start/stop/switch/delay treatment instructions",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "dosage_boundary",
+          "purpose": "blocks medication dosing and dose adjustment",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "prognosis_boundary",
+          "purpose": "blocks survival or recurrence prediction",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "genetic_vus_boundary",
+          "purpose": "blocks genetic-risk interpretation and VUS-as-positive claims",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "tumor_marker_boundary",
+          "purpose": "blocks tumor-marker conclusions such as recurrence proof",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "supplement_pharmacist_boundary",
+          "purpose": "routes supplement safety/replacement questions to pharmacist or clinician review",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "urgent_symptom_escalation",
+          "purpose": "routes urgent symptoms to appropriate urgent-care language",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "emotional_distress_support",
+          "purpose": "allows empathic support without clinical authority",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "privacy_cross_patient_boundary",
+          "purpose": "blocks PII requests and cross-patient exfiltration",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        },
+        {
+          "policy_id": "prompt_injection_boundary",
+          "purpose": "blocks instruction override and tool-leak attempts",
+          "allowed_response_types": [
+            "education",
+            "record_organization",
+            "missing_data_explanation",
+            "review_routing",
+            "safe_refusal",
+            "urgent_escalation",
+            "questions_for_care_team"
+          ],
+          "blocked_response_types": [
+            "diagnosis",
+            "treatment_recommendation",
+            "dosage_change",
+            "prognosis",
+            "genetic_risk_prediction",
+            "tumor_marker_conclusion",
+            "false_reassurance"
+          ],
+          "requires_test_cases": true
+        }
+      ],
+      "clinical_validation": false
+    },
+    "ml_feature_store_schema": {
+      "status": "versioned_schema_contract",
+      "feature_store_name": "synthetic_temporal_monitoring_feature_store",
+      "entities": [
+        "synthetic_patient",
+        "treatment_cycle",
+        "modality_snapshot",
+        "prediction_head"
+      ],
+      "feature_groups": {
+        "demographics_context": [
+          "age",
+          "synthetic_subtype",
+          "stage_context"
+        ],
+        "cbc_labs": [
+          "pre_wbc",
+          "nadir_wbc",
+          "hemoglobin",
+          "platelets",
+          "anc_proxy",
+          "missingness_flags"
+        ],
+        "symptoms": [
+          "symptom_count",
+          "max_symptom_severity",
+          "persistence_proxy"
+        ],
+        "imaging_context": [
+          "mri_percent_change",
+          "imaging_available",
+          "report_trend_context"
+        ],
+        "treatment_context": [
+          "cycle_index",
+          "dose_delay_context",
+          "modality_combination_context"
+        ],
+        "biomarker_context": [
+          "er_status",
+          "pr_status",
+          "her2_status",
+          "ki67_context"
+        ],
+        "governance": [
+          "lineage_hash",
+          "schema_version",
+          "generator_seed",
+          "split_id"
+        ]
+      },
+      "prediction_heads": [
+        {
+          "head": "response_classification",
+          "safe_use": "monitor_only"
+        },
+        {
+          "head": "response_score_regression",
+          "safe_use": "monitor_only"
+        },
+        {
+          "head": "toxicity_review_signal",
+          "safe_use": "review_hint_only"
+        },
+        {
+          "head": "genetic_biomarker_context",
+          "safe_use": "context_only"
+        },
+        {
+          "head": "tumor_marker_context",
+          "safe_use": "context_only"
+        }
+      ],
+      "promotion_block": "No head may influence treatment decisions under current synthetic-only evidence.",
+      "clinical_validation": false
+    },
+    "eval_ops_registry": {
+      "status": "registry_contract",
+      "artifact_tiers": {
+        "hard_blocker": [
+          "unsafe leakage on critical routes",
+          "medical claim-boundary regression",
+          "leakage audit failure",
+          "patient-facing clinical overclaim"
+        ],
+        "warning": [
+          "heldout adversarial below target",
+          "retrieval improvement not proven",
+          "normal RAG p95 above budget",
+          "unsupported_context_rate too high",
+          "trace coverage needs_attention"
+        ],
+        "supporting": [
+          "source-tier ablation",
+          "synthetic data quality proxy",
+          "external dataset readiness map",
+          "n8n/Pinecone optional scaffold"
+        ],
+        "informational": [
+          "unreviewed packets",
+          "future access packets",
+          "negative-results gallery",
+          "not-completed holdouts"
+        ]
+      },
+      "required_metadata": [
+        "artifact_path",
+        "owner",
+        "tier",
+        "status",
+        "last_run_at",
+        "max_age_days",
+        "contamination_status",
+        "clinical_validation",
+        "strongest_allowed_reading",
+        "known_limitations",
+        "next_action"
+      ],
+      "clinical_validation": false
+    },
+    "trace_envelope_v2": {
+      "status": "contract_ready",
+      "required_fields": [
+        "request_id",
+        "correlation_id",
+        "patient_id_hash",
+        "route",
+        "intent",
+        "safety_decision",
+        "policy_decision",
+        "retrieval_backend",
+        "source_ids",
+        "claim_validation",
+        "post_generation_decision",
+        "cache_status",
+        "latency_ms",
+        "estimated_cost",
+        "final_policy_status"
+      ],
+      "forbidden_fields": [
+        "private_chain_of_thought",
+        "raw_prompt_with_secrets",
+        "unredacted_phi",
+        "raw_patient_identifier"
+      ],
+      "storage_rule": "Store decision metadata and evidence references only.",
+      "clinical_validation": false
+    },
+    "background_eval_worker": {
+      "status": "worker_contract",
+      "allowed_job_types": [
+        "refresh_non_live_eval_artifact",
+        "run_release_gate",
+        "generate_negative_results_gallery",
+        "create_stale_artifact_ticket",
+        "prepare_reviewer_packet_reminder",
+        "run_pinecone_shadow_dry_run"
+      ],
+      "blocked_job_types": [
+        "diagnosis",
+        "treatment_recommendation",
+        "dosage_change",
+        "prognosis",
+        "clinical_escalation_without_human_review",
+        "send_phi_to_external_service"
+      ],
+      "queue_contract": {
+        "job_id": "uuid",
+        "job_type": "enum",
+        "requested_by": "admin/system",
+        "payload_redacted": true,
+        "timeout_seconds": 900,
+        "retry_policy": "max_2_with_backoff"
+      },
+      "clinical_validation": false
+    },
+    "integration_boundaries": {
+      "n8n": {
+        "status": "internal_automation_only",
+        "allowed": [
+          "release alerts",
+          "stale artifact tickets",
+          "reviewer reminders",
+          "eval refresh triggers"
+        ],
+        "blocked": [
+          "PHI workflows",
+          "patient-facing clinical advice",
+          "clinical action automation"
+        ]
+      },
+      "pinecone": {
+        "status": "shadow_retrieval_only",
+        "allowed": [
+          "synthetic/demo KB retrieval comparison",
+          "metadata-filter stress testing"
+        ],
+        "blocked": [
+          "raw patient chat storage",
+          "patient memory",
+          "clinical confidence score"
+        ]
+      },
+      "clinical_validation": false
+    },
+    "implementation_sequence": [
+      {
+        "rank": 1,
+        "task": "standardize trace envelope v2 across agent routes",
+        "risk": "medium"
+      },
+      {
+        "rank": 2,
+        "task": "implement agent state-machine event emitter around existing branches",
+        "risk": "medium"
+      },
+      {
+        "rank": 3,
+        "task": "generate policy-registry tests from medical boundary registry",
+        "risk": "low"
+      },
+      {
+        "rank": 4,
+        "task": "create eval ops registry endpoint for admin dashboard",
+        "risk": "low"
+      },
+      {
+        "rank": 5,
+        "task": "version synthetic feature-store schema and row lineage manifests",
+        "risk": "low"
+      },
+      {
+        "rank": 6,
+        "task": "add background eval worker with admin-only jobs",
+        "risk": "medium"
+      },
+      {
+        "rank": 7,
+        "task": "run Pinecone shadow comparison only when credentials are explicitly configured",
+        "risk": "medium"
+      },
+      {
+        "rank": 8,
+        "task": "wire n8n workflow import only for redacted admin events",
+        "risk": "medium"
+      }
+    ]
+  },
+  "acceptance_checks": [
+    "agent transitions have explicit reason, safety_level, latency_ms, and blocked_alternatives fields",
+    "medical policy registry blocks diagnosis/treatment/prognosis/genetics/tumor-marker authority",
+    "RAG controller preserves source-tier and allowed-use filters before generation",
+    "ML feature store keeps synthetic features versioned and non-promotional",
+    "eval registry separates blocker, warning, supporting, and informational artifacts",
+    "trace envelope stores decision metadata only and excludes private chain-of-thought",
+    "background worker runs eval/admin jobs only and cannot execute clinical actions",
+    "n8n and Pinecone remain optional, disabled by default, and PHI-blocked"
+  ],
+  "blocked_claims": [
+    "clinical validation",
+    "real-world safety guarantee",
+    "patient benefit",
+    "clinician approval",
+    "IRB approval",
+    "HIPAA compliance",
+    "FHIR interoperability",
+    "production healthcare readiness",
+    "diagnostic authority",
+    "treatment recommendation",
+    "prognosis or survival estimate",
+    "genetic-risk interpretation",
+    "tumor-marker interpretation"
+  ],
+  "claim_boundary": "Platform control-plane architecture is an engineering roadmap and contract artifact. It does not establish clinical validation, real patient safety, patient benefit, clinician approval, IRB approval, HIPAA compliance, FHIR interoperability, or production healthcare readiness. It must not be used to claim diagnosis, prognosis, treatment recommendation, medication advice, genetic-risk interpretation, tumor-marker interpretation, or clinical workflow reduction."
+}

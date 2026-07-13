@@ -4,7 +4,7 @@
   "label": "10_out_of_10_under_constraints_roadmap",
   "clinical_validation": false,
   "claim_boundary": "10/10 under current constraints is NOT clinical validation, is NOT production healthcare ready, is NOT hospital deployable, and is NOT proven patient benefit.  This artifact is engineering self-rating only.  No clinician sign-off, no IRB, no real patient data.  See `real_clinical_readiness` for the dimension that captures the floor created by these constraints.",
-  "generated_at": "2026-06-01T17:20:57.884017+00:00",
+  "generated_at": "2026-06-02T04:45:45.667380+00:00",
   "summary": {
     "average_score_excluding_real_clinical_readiness": 7.22,
     "real_clinical_readiness_score": 1.5,

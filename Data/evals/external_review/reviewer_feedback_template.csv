@@ -1,0 +1,2 @@
+reviewer_role,reviewer_background_summary,date,artifact_reviewed,case_or_section_id,comment,severity,required_fix,optional_suggestion,reviewer_decision,fix_status,linked_artifact_or_commit,not_clinical_approval_acknowledged
+"<role descriptor>","<one-line background>","YYYY-MM-DD","<repo-relative path>","<case_id or section ref>","<one comment per row>","<low|medium|high|blocker>","<true|false>","<true|false>","<keep|revise|move|split|ambiguous|not_applicable>","<pending|in_progress|wont_fix_with_rationale|fixed>","<commit_sha_or_artifact_path>","<true>"

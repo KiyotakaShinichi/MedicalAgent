@@ -564,6 +564,7 @@ def _attach_turn_trace(result, patient_id, input_guardrails, output_guardrails, 
     try:
         from backend.services.agent_turn_trace import build_turn_trace, validate_trace_payload
         from backend.services.request_context import get_request_id
+        from backend.services.trace_envelope_v2 import build_trace_envelope_v2, validate_trace_envelope_v2
 
         pipeline = result.get("pipeline_trace") or {}
         safety = result.get("safety") or {}
@@ -615,8 +616,33 @@ def _attach_turn_trace(result, patient_id, input_guardrails, output_guardrails, 
         ).to_dict()
         ok, problems = validate_trace_payload(trace)
         result["turn_trace"] = trace if ok else {"schema_version": "1.0", "validation_errors": problems}
+        trace_v2 = build_trace_envelope_v2(
+            result,
+            patient_id=patient_id,
+            route=str(result.get("rag_mode") or pipeline.get("terminal_step") or "patient_chat"),
+            latency_ms={
+                "total": latency_ms,
+                **((pipeline.get("stage_ms") or {}) if isinstance(pipeline, dict) else {}),
+            },
+            correlation_id=get_request_id(),
+        )
+        ok_v2, problems_v2 = validate_trace_envelope_v2(trace_v2)
+        result["turn_trace_v2"] = (
+            trace_v2
+            if ok_v2
+            else {
+                "schema_version": "2.0",
+                "validation_errors": problems_v2,
+                "clinical_validation": False,
+            }
+        )
     except Exception as exc:  # noqa: BLE001 - diagnostics must never break chat
         result["turn_trace"] = {"schema_version": "1.0", "diagnostics_error": str(exc)[:200]}
+        result["turn_trace_v2"] = {
+            "schema_version": "2.0",
+            "diagnostics_error": str(exc)[:200],
+            "clinical_validation": False,
+        }
 
 
 def _trace_refused(result):

@@ -1,6 +1,6 @@
 {
   "schema_version": "unsafe_intent_classifier_eval_v1",
-  "generated_at": "2026-05-27T04:21:53.550361+00:00",
+  "generated_at": "2026-07-13T05:04:49.575845+00:00",
   "status": "strong",
   "total_n": 54,
   "pass_count": 54,
