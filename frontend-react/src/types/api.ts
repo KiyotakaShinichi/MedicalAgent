@@ -352,6 +352,20 @@ export interface PatientReport {
   evidence_aware_prediction?: EvidenceAwarePrediction | null;
   hybrid_prediction?: HybridPrediction | null;
   data_availability?: DataAvailability | null;
+  report_enrichment?: {
+    status: "deferred" | "complete" | string;
+    profile: string;
+    generated_ms: number;
+    message: string;
+    requested_at?: string | null;
+    started_at?: string | null;
+    completed_at?: string | null;
+    retry_after_ms?: number | null;
+    error_code?: string | null;
+    clinical_validation: false;
+    healthcare_production_ready?: false;
+    claim_boundary?: string;
+  };
 }
 
 // ─── Chat ─────────────────────────────────────────────────────────────────────
@@ -404,6 +418,42 @@ export interface ReviewQueueItem {
   priority_score: number;
   urgent_flags: string[];
   latest_decision: string | null;
+}
+
+export interface HighRiskConversationAlert {
+  id: number;
+  patient_id: string;
+  source_chat_message_id: number;
+  assistant_chat_message_id: number | null;
+  category: string;
+  severity: "urgent_review" | "critical_review" | string;
+  trigger_summary: string;
+  status: "queued" | "notified" | "acknowledged" | string;
+  notification_channel: string;
+  notification_status: "disabled" | "accepted_by_workflow" | "accepted_by_channel" | "delivered_to_channel" | "retry_scheduled" | "dead_lettered" | string;
+  notification_event_id: string | null;
+  notification_attempt_count: number;
+  notification_max_attempts: number;
+  last_notification_attempt_at: string | null;
+  next_notification_retry_at: string | null;
+  delivery_receipt_status: string;
+  delivery_receipt_id: string | null;
+  delivery_receipt_at: string | null;
+  dead_lettered_at: string | null;
+  dead_letter_reason: string | null;
+  acknowledged_by_role: string | null;
+  acknowledgement_note: string | null;
+  created_at: string | null;
+  notified_at: string | null;
+  acknowledged_at: string | null;
+  delivery_claim_boundary: string;
+}
+
+export interface HighRiskConversationAlertsResponse {
+  alerts: HighRiskConversationAlert[];
+  count: number;
+  clinical_validation: false;
+  safety_note: string;
 }
 
 export interface SummaryReview {

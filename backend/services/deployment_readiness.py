@@ -67,7 +67,8 @@ def build_deployment_readiness(
 def _checks(env: dict[str, str]) -> list[dict[str, Any]]:
     environment = (env.get("ENVIRONMENT") or env.get("APP_ENV") or "development").strip().lower()
     allow_demo = _truthy(env.get("ALLOW_DEMO_AUTH", ""))
-    cors = [origin.strip() for origin in env.get("ONCOTRACK_CORS_ORIGINS", "").split(",") if origin.strip()]
+    cors_value = env.get("NLCARE_CORS_ORIGINS") or env.get("ONCOTRACK_CORS_ORIGINS", "")
+    cors = [origin.strip() for origin in cors_value.split(",") if origin.strip()]
     database_url = env.get("DATABASE_URL", "")
     groq_key = env.get("GROQ_API_KEY", "")
 
@@ -97,8 +98,8 @@ def _checks(env: dict[str, str]) -> list[dict[str, Any]]:
             "cors_origin_explicit_for_non_dev",
             bool(cors) or environment in {"development", "docker", "test"},
             "warning",
-            "ONCOTRACK_CORS_ORIGINS should list exact frontend origins outside local demos.",
-            "Set ONCOTRACK_CORS_ORIGINS=https://your-frontend.example.",
+            "NLCARE_CORS_ORIGINS should list exact frontend origins outside local demos.",
+            "Set NLCARE_CORS_ORIGINS=https://your-frontend.example.",
         ),
         _check(
             "no_placeholder_llm_key_for_remote_mode",

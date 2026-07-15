@@ -1,0 +1,9 @@
+INFO:     127.0.0.1:51561 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51575 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51596 - "POST /auth/demo-credential-login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51596 - "GET /me/patient-report/core HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51596 - "GET /me/patient-report/enrichment HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37344 - "OPTIONS /me/patient-report/core HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44961 - "OPTIONS /me/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44961 - "GET /me/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:30542 - "GET /health HTTP/1.1" 200 OK

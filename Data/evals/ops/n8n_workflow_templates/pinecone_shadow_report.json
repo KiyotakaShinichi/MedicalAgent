@@ -20,7 +20,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const event = $json.body || $json;\nconst body = event.payload || event;\nconst headers = $json.headers || {};\nconst signaturePresent = Boolean(headers['x-nlcare-signature'] || headers['X-NLCare-Signature']);\nconst required = [\"run_id\", \"status\", \"recall_at_10_delta\", \"citation_precision_delta\", \"source_tier_correctness\", \"promotion_allowed\"];\nconst missing = required.filter((key) => body[key] === undefined || body[key] === null || body[key] === '');\nconst blocked = [\"patient_name\", \"patient_id\", \"raw_patient_message\", \"full_chat_transcript\", \"medical_record_number\", \"date_of_birth\", \"address\", \"phone\", \"email\", \"raw_prompt\", \"raw_response\", \"raw_trace\", \"private_chain_of_thought\", \"genetic_variant_details_for_patient_advice\"];\nconst blockedPresent = blocked.filter((key) => body[key] !== undefined);\nconst boundaryOk = event.phi_allowed === false && event.clinical_validation === false;\nreturn [{ json: { ok: signaturePresent && boundaryOk && missing.length === 0 && blockedPresent.length === 0, signaturePresent, boundaryOk, missing, blockedPresent, body } }];"
+        "jsCode": "const event = $json.body || $json;\nconst body = event.payload || event;\nconst headers = $json.headers || {};\nconst signaturePresent = Boolean(headers['x-nlcare-signature'] || headers['X-NLCare-Signature']);\nconst timestampPresent = Boolean(headers['x-nlcare-timestamp'] || headers['X-NLCare-Timestamp']);\nconst required = [\"run_id\", \"status\", \"recall_at_10_delta\", \"citation_precision_delta\", \"source_tier_correctness\", \"promotion_allowed\"];\nconst missing = required.filter((key) => body[key] === undefined || body[key] === null || body[key] === '');\nconst blocked = [\"patient_name\", \"patient_id\", \"raw_patient_message\", \"full_chat_transcript\", \"medical_record_number\", \"date_of_birth\", \"address\", \"phone\", \"email\", \"raw_prompt\", \"raw_response\", \"raw_trace\", \"private_chain_of_thought\", \"genetic_variant_details_for_patient_advice\"];\nconst blockedPresent = blocked.filter((key) => body[key] !== undefined);\nconst boundaryOk = event.phi_allowed === false && event.clinical_validation === false;\nreturn [{ json: { ok: signaturePresent && timestampPresent && boundaryOk && missing.length === 0 && blockedPresent.length === 0, signaturePresent, timestampPresent, boundaryOk, missing, blockedPresent, body } }];"
       },
       "id": "validate-payload",
       "name": "Validate Redacted Payload",
@@ -80,7 +80,12 @@
     "clinical_validation": false,
     "phi_allowed": false,
     "signature_header_presence_required": true,
+    "timestamp_header_presence_required": true,
     "receiver_hmac_verification_requires_operator_configuration": true,
+    "receiver_replay_window_seconds": 300,
+    "test_recipient_only": false,
+    "delivery_receipt_callback_required": false,
+    "delivery_receipt_is_not_clinician_acknowledgement": true,
     "claim_boundary": "n8n workflow templates are internal automation scaffolds only. They may notify maintainers, create admin tickets, remind reviewers, or trigger internal eval refreshes. They must not send PHI, issue medical advice, override safety validators, or automate diagnosis, treatment, medication, prognosis, genetics, tumor-marker, or clinical-escalation decisions."
   }
 }

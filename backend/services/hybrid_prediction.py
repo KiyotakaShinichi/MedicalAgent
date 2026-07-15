@@ -214,7 +214,7 @@ def predict_response_score_with_abstention(
     quantile_p90_path: str | None = None,
 ) -> EvidenceAwareRegression:
     """Regression head.  Uses the same sufficiency rules as the classification
-    head — both require imaging OR longitudinal CBC — but emits a continuous
+    head: imaging is required and longitudinal CBC is confidence context, but emits a continuous
     score plus a prediction interval.
 
     Inference strategy

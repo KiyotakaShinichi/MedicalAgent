@@ -66,10 +66,12 @@ DEFAULT_PRESENCE_THRESHOLD: dict[str, int] = {
 
 # ─── Sufficiency rules per supported question ────────────────────────────────
 # Rules are deliberately strict: response classification is the highest-risk
-# question, so we require evidence that could actually support a response
-# claim (imaging OR a complete cycle of longitudinal CBC).  Toxicity and
-# urgent-intervention signals are downstream of cycle-level monitoring and
-# can be answered from CBC + symptoms alone.
+# model head, so patient-facing response-pattern and response-score outputs
+# require imaging evidence. A complete longitudinal CBC can improve confidence
+# when imaging is present, but CBC-only rows should route to lab/toxicity/review
+# signals instead of forcing a response-pattern estimate. Toxicity and
+# urgent-intervention signals are downstream of cycle-level monitoring and can
+# be answered from CBC + symptoms alone.
 
 SufficiencyDecision = str  # "sufficient" | "partial" | "insufficient"
 
@@ -172,7 +174,7 @@ def assess_response_classification(
     missing: list[str],
 ) -> EvidenceAssessment:
     """Response classification is the strongest claim the system makes — it
-    needs either imaging or a complete longitudinal CBC pattern."""
+    requires imaging; complete longitudinal CBC is confidence context."""
     has_imaging = "imaging" in present
     longitudinal_cbc = all(
         group in present for group in ("cbc_pre", "cbc_nadir", "cbc_recovery")
@@ -189,13 +191,13 @@ def assess_response_classification(
             confidence_modifier=0.0,
         )
 
-    if not has_imaging and not longitudinal_cbc:
+    if not has_imaging:
         return EvidenceAssessment(
             modalities_present=present,
             modalities_missing=missing,
             sufficiency="insufficient",
             abstain=True,
-            reason="no_response_signal_imaging_or_longitudinal_cbc_required",
+            reason="response_imaging_required_for_response_pattern",
             confidence_modifier=0.0,
         )
 
@@ -216,7 +218,7 @@ def assess_response_classification(
         modalities_missing=missing,
         sufficiency="partial",
         abstain=False,
-        reason="response_signal_from_single_modality_only",
+        reason="response_imaging_only_without_longitudinal_cbc",
         confidence_modifier=0.6,
     )
 

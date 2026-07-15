@@ -1,8 +1,10 @@
-# MedicalAgent: Safety-First Breast Cancer Monitoring PoC
+# NLCare: Safety-Governed Breast Cancer Monitoring Engineering Prototype
 
 > **Clinical boundary:** Engineering prototype only. Not clinically validated. Not for real patient care. No clinician approval. Synthetic-only ML signals. Outputs must not be used for diagnosis, treatment, prognosis, genetic-risk interpretation, tumor-marker interpretation, or medication decisions.
 
-MedicalAgent is a safety-first clinical decision-support proof of concept for breast cancer monitoring that fuses multimodal signals, including labs, imaging summaries, symptoms, treatment cycles, and longitudinal trends, into a unified clinician view. It combines predictive modeling, RAG-grounded guidance, and human-in-the-loop review to surface potentially relevant changes for clinician review while enforcing strict non-diagnostic boundaries, auditability, and guardrails.
+NLCare is a safety-first, non-diagnostic engineering prototype for organizing synthetic breast-cancer monitoring records into patient and clinician-review workflows. It combines source-governed RAG, bounded support-agent tools, synthetic temporal ML signals, explicit abstention and claim boundaries, traceability, and prepared review queues. No clinician review has been completed, and none of its outputs are clinical evidence.
+
+The patient portal uses records-first progressive loading and prepares synthetic model enrichment in a bounded process-local background job, so a slow or failed engineering bundle does not blank the underlying records. High-priority support-chat language can create an auditable local review item with idempotency, bounded retries, append-only delivery attempts, dead-letter state, signed redacted n8n events, and signed channel receipts. External delivery is disabled by default and is locked to a synthetic test recipient when enabled; workflow acceptance or channel delivery never proves that a clinician saw or acted on an alert. See [patient progressive loading and review alerts](docs/patient_progressive_loading_and_review_alerts.md).
 
 ## What this does NOT prove
 - No clinical validation.
@@ -56,6 +58,7 @@ MedicalAgent is a safety-first clinical decision-support proof of concept for br
 - ML statistical evidence reporting wraps synthetic artifacts with confidence intervals, scenario-level comparisons, subgroup small-n flags, and explicit paired-test limitations via `python scripts/run_ml_statistical_evidence.py`. This improves statistical reporting discipline, not clinical validity.
 - Row-level ML prediction evidence exports synthetic test-set rows and adds exact paired classification tests, paired bootstrap regression deltas, and calibration intervals via `python scripts/run_row_level_prediction_evidence.py`.
 - ML statistical robustness now adds bootstrap intervals for champion classification/regression metrics, subgroup Wilson intervals, and synthetic label-noise sensitivity via `python scripts/run_ml_statistical_robustness.py`.
+- ML logic/safety alignment now consolidates promotion policy, evidence sufficiency, calibration, temporal split hygiene, counterfactual stability, noise stress, shortcut-risk warnings, and statistical-boundary checks via `python scripts/run_ml_logic_safety_alignment.py`. It is designed to surface `needs_attention` findings honestly; it does not improve or validate clinical performance.
 - Eval credibility auditing scans release-gate artifacts for n-size, pass/fail counts, provenance, contamination disclosure, clinical-validation false labels, and perfect internal-score risk via `python scripts/run_eval_credibility_audit.py`. This makes internal-eval limitations louder; it does not replace external review.
 - Eval contamination registry separates tuning/regression banks, holdout/template cases, and external-author readiness via `python scripts/run_eval_contamination_registry.py`.
 - Held-out adversarial v3 is a newly frozen internal baseline with 100+ privacy, prompt-injection, cross-patient, genetics/VUS, diagnosis, tumor-marker, treatment, dosage, prognosis, supplement, and safe-negative cases. Run `python scripts/build_adversarial_holdout_v3.py` and `python scripts/run_adversarial_holdout_v3_eval.py`; do not tune on v3 without creating a newer holdout or external-author set.
@@ -88,7 +91,7 @@ Profile-ready summary: NLCare includes safety-governed RAG, adversarial generali
 - A local MLE/MLOps sandbox for training, evaluation, and model lifecycle practice using synthetic journeys.
 
 ## What this system is NOT
-MedicalAgent is not an AI doctor, diagnosis bot, or treatment recommendation system.
+NLCare is not an AI doctor, diagnosis bot, or treatment recommendation system.
 
 - This system does not diagnose breast cancer.
 - This system does not recommend treatment changes.

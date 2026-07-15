@@ -595,6 +595,34 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "toxicity_review_target_v3",
+        "title": "Toxicity review-priority target v3",
+        "path": "Data/evals/models/latest_toxicity_review_target_v3.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "auroc": ["model", "auroc"],
+            "legacy_rule_auroc_against_v3": ["shortcut_comparison", "legacy_rule_auroc_against_v3"],
+            "legacy_rule_does_not_define_v3": ["shortcut_comparison", "legacy_rule_does_not_define_v3"],
+            "promotion_decision": ["recommendation", "promotion_decision"],
+        },
+    },
+    {
+        "id": "ml_coverage_risk_diagnostics",
+        "title": "ML coverage/risk diagnostics",
+        "path": "Data/evals/models/latest_ml_coverage_risk_diagnostics.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "scenario_count": ["scenario_count"],
+            "minimum_required_abstention_rate": [
+                "required_abstention_scenarios",
+                "minimum_required_abstention_rate",
+            ],
+            "promotion_decision": ["promotion_decision"],
+        },
+    },
+    {
         "id": "external_failure_case_analysis",
         "title": "External failure cases by subtype/confidence",
         "path": "Data/evals/models/latest_external_failure_case_analysis.json",

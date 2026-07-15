@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 import pytest
 
 from backend.services.n8n_webhook_dispatcher import (
     build_signed_dispatch,
+    build_signed_receipt,
     dispatch_signed_webhook,
     find_blocked_fields,
+    validate_signed_dispatch_envelope,
+    validate_signed_receipt,
     verify_signed_dispatch,
 )
 
@@ -81,6 +86,65 @@ def test_nonlocal_plain_http_is_rejected():
             env={
                 "N8N_WEBHOOK_DISPATCH_ENABLED": "true",
                 "N8N_WEBHOOK_BASE_URL": "http://example.com/webhook",
+                "N8N_WEBHOOK_SIGNING_SECRET": "test-secret",
+            },
+            transport=lambda *_: {"status_code": 200},
+        )
+
+
+def test_envelope_validator_rejects_expiry_and_replay():
+    now = datetime(2026, 7, 15, tzinfo=timezone.utc)
+    signed = build_signed_dispatch(
+        workflow_id="release_gate_alert",
+        payload={"run_id": "r4"},
+        secret="test-secret",
+        timestamp=(now - timedelta(seconds=10)).isoformat(),
+        event_id="event-replay",
+    )
+    seen = set()
+    signature = signed["headers"]["X-NLCare-Signature"]
+    accepted = validate_signed_dispatch_envelope(
+        body=signed["body"], signature=signature, secret="test-secret", now=now, seen_event_ids=seen
+    )
+    replay = validate_signed_dispatch_envelope(
+        body=signed["body"], signature=signature, secret="test-secret", now=now, seen_event_ids=seen
+    )
+    expired = validate_signed_dispatch_envelope(
+        body=signed["body"], signature=signature, secret="test-secret", now=now + timedelta(minutes=10)
+    )
+    assert accepted["valid"] is True
+    assert replay == {"valid": False, "reason": "replay", "event_id": "event-replay"}
+    assert expired["reason"] == "expired"
+
+
+def test_signed_delivery_receipt_is_fresh_and_redacted():
+    now = datetime(2026, 7, 15, tzinfo=timezone.utc)
+    signed = build_signed_receipt(
+        event_id="event-1",
+        receipt_id="receipt-1",
+        delivery_status="delivered",
+        secret="test-secret",
+        timestamp=now.isoformat(),
+    )
+    result = validate_signed_receipt(
+        body=signed["body"],
+        signature=signed["headers"]["X-NLCare-Receipt-Signature"],
+        secret="test-secret",
+        now=now,
+    )
+    assert result["valid"] is True
+    assert result["receipt"]["phi_allowed"] is False
+    assert result["receipt"]["clinical_validation"] is False
+
+
+def test_high_risk_delivery_requires_synthetic_test_recipient_mode():
+    with pytest.raises(ValueError, match="synthetic test recipient"):
+        dispatch_signed_webhook(
+            workflow_id="high_risk_review_alert",
+            payload={"alert_id": 1},
+            env={
+                "N8N_WEBHOOK_DISPATCH_ENABLED": "true",
+                "N8N_WEBHOOK_BASE_URL": "http://127.0.0.1:5678/webhook/nlcare",
                 "N8N_WEBHOOK_SIGNING_SECRET": "test-secret",
             },
             transport=lambda *_: {"status_code": 200},

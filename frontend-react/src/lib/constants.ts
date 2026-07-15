@@ -1,5 +1,5 @@
 /**
- * Shared MedicalAgent enums — mirror of backend/services/review_constants.py.
+ * Shared NLCare enums — mirror of backend/services/review_constants.py.
  *
  * When changing values here, update the Python module too. The strings are
  * what the API actually sends and accepts, so divergence is a real bug.
@@ -89,7 +89,7 @@ export const SAFETY_DISCLAIMER_SHORT =
   "Not a diagnosis. For clinician review only.";
 
 export const SAFETY_DISCLAIMER_LONG =
-  "MedicalAgent organizes treatment-monitoring evidence for clinician review. " +
+  "NLCare organizes treatment-monitoring evidence for clinician review. " +
   "It does not diagnose cancer, recommend treatment, or replace clinician judgment. " +
   "Call your care team or local emergency services if symptoms feel urgent.";
 

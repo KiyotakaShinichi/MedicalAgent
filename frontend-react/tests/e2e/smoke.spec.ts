@@ -27,11 +27,13 @@ test.describe("role-aware smoke flows", () => {
     await page.getByRole("link", { name: /support/i }).click();
     await expect(page).toHaveURL(/\/patient\/chat/);
     await expect(chatComposer(page)).toBeVisible({ timeout: 90_000 });
+    const readyAssistantMessages = page.locator('[data-testid="assistant-message"][data-message-ready="true"]');
+    const assistantCountBeforeSend = await readyAssistantMessages.count();
     await chatComposer(page).fill("hi");
-    await page.keyboard.press("Enter");
-    const pipelineStatus = page.getByText(/Checking safety gate|Routing intent|Generating response/i);
-    await expect(pipelineStatus).toBeVisible();
-    await expect(pipelineStatus).toBeHidden({ timeout: 90_000 });
+    await page.getByRole("button", { name: /send message/i }).click();
+    await expect(page.getByTestId("user-message").last()).toContainText("hi");
+    await expect(readyAssistantMessages).toHaveCount(assistantCountBeforeSend + 1, { timeout: 90_000 });
+    await expect(chatComposer(page)).toBeEnabled({ timeout: 90_000 });
   });
 
   test("patient support chat saves a symptom and refreshes patient state", async ({ page }) => {

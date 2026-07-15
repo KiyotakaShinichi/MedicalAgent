@@ -49,6 +49,11 @@ n8n workflow templates are internal automation scaffolds only. They may notify m
   - Allowed: Notify maintainers about demo service health and stale engineering artifacts.
   - Not allowed: Do not present engineering health as clinical safety or send patient data.
 
+- **High-Priority Conversation Review Alert** (`high_risk_review_alert`)
+  - Path: `Data\evals\ops\n8n_workflow_templates\high_risk_review_alert.json`
+  - Allowed: Notify an approved internal reviewer channel that a redacted NLCare review item is waiting. Operators may attach an email, SMS, or Viber node after access-control review.
+  - Not allowed: Do not send patient identifiers, raw chat text, medical conclusions, or imply that delivery means a clinician saw or acted on the alert.
+
 ## Import Instructions
 
 - Import templates manually into n8n; do not commit credentials.

@@ -18,12 +18,16 @@ patient-self-service code in ``patient.py``.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from backend.api.deps import get_clinician_or_admin_context, get_db
 from backend.crud import get_all_patients, get_patient
+from backend.models import HighRiskConversationAlert
+from backend.services.high_risk_conversation_alerts import serialize_alert
 from backend.services.timeline_intelligence import answer_timeline_question
 
 
@@ -47,6 +51,10 @@ class ClinicianSummaryReviewRequest(BaseModel):
     reason_category: str | None = None
     model_version: str | None = None
     rag_version: str | None = None
+
+
+class AlertAcknowledgementRequest(BaseModel):
+    note: str | None = None
 
 
 # ─── Endpoints ───────────────────────────────────────────────────────────────
@@ -127,6 +135,76 @@ def list_summary_reviews_endpoint(
         "summary_reviews": list_clinical_summary_reviews(
             db, patient_id=patient_id, limit=limit
         )
+    }
+
+
+@router.get("/clinician/high-risk-conversation-alerts")
+def list_high_risk_conversation_alerts(
+    status: str | None = None,
+    limit: int = 50,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    query = db.query(HighRiskConversationAlert)
+    if status:
+        query = query.filter(HighRiskConversationAlert.status == status)
+    rows = (
+        query.order_by(
+            HighRiskConversationAlert.created_at.desc(),
+            HighRiskConversationAlert.id.desc(),
+        )
+        .limit(max(1, min(limit, 200)))
+        .all()
+    )
+    return {
+        "alerts": [serialize_alert(row) for row in rows],
+        "count": len(rows),
+        "clinical_validation": False,
+        "safety_note": (
+            "This is an engineering review queue, not a monitored emergency service. "
+            "Notification status does not prove that a clinician saw or acted on an item."
+        ),
+    }
+
+
+@router.get("/clinician/high-risk-conversation-alerts/{alert_id}")
+def get_high_risk_conversation_alert(
+    alert_id: int,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    alert = db.query(HighRiskConversationAlert).filter(HighRiskConversationAlert.id == alert_id).first()
+    if alert is None:
+        raise HTTPException(status_code=404, detail="Review alert not found")
+    return {
+        "alert": serialize_alert(alert),
+        "safety_note": (
+            "Review the linked patient-scoped chat in NLCare. Do not infer a diagnosis or treatment action "
+            "from the alert reason code alone."
+        ),
+    }
+
+
+@router.post("/clinician/high-risk-conversation-alerts/{alert_id}/acknowledge")
+def acknowledge_high_risk_conversation_alert(
+    alert_id: int,
+    payload: AlertAcknowledgementRequest,
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    alert = db.query(HighRiskConversationAlert).filter(HighRiskConversationAlert.id == alert_id).first()
+    if alert is None:
+        raise HTTPException(status_code=404, detail="Review alert not found")
+    alert.status = "acknowledged"
+    alert.acknowledged_by_role = context.role
+    alert.acknowledgement_note = (payload.note or "").strip()[:1000] or None
+    alert.acknowledged_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(alert)
+    return {
+        "message": "Review alert acknowledged in NLCare.",
+        "alert": serialize_alert(alert),
+        "safety_note": "Acknowledgement is workflow audit data, not a clinical decision or patient-contact claim.",
     }
 
 

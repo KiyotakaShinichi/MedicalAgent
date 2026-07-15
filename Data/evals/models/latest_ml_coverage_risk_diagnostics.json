@@ -1,0 +1,167 @@
+{
+  "schema_version": "ml_coverage_risk_diagnostics_v1",
+  "generated_at": "2026-07-15T08:32:17.834732+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "synthetic_only": true,
+  "healthcare_production_ready": false,
+  "promotion_decision": "hold_synthetic_only",
+  "inputs": {
+    "evidence_abstention_eval": "Data/evals/models/latest_evidence_abstention_eval.json",
+    "synthetic_prediction_statistical_audit": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json"
+  },
+  "scenario_count": 8,
+  "full_data": {
+    "coverage_rate": 0.9958,
+    "abstention_rate": 0.0042,
+    "covered_accuracy": 0.9255
+  },
+  "required_abstention_scenarios": {
+    "scenario_count": 4,
+    "all_required_scenarios_passed": true,
+    "minimum_required_abstention_rate": 1.0,
+    "scenarios": [
+      {
+        "scenario": "no_imaging",
+        "abstention_rate": 1.0,
+        "coverage_rate": 0.0,
+        "passed": true
+      },
+      {
+        "scenario": "cbc_pre_only",
+        "abstention_rate": 1.0,
+        "coverage_rate": 0.0,
+        "passed": true
+      },
+      {
+        "scenario": "demographics_only",
+        "abstention_rate": 1.0,
+        "coverage_rate": 0.0,
+        "passed": true
+      },
+      {
+        "scenario": "symptoms_only",
+        "abstention_rate": 1.0,
+        "coverage_rate": 0.0,
+        "passed": true
+      }
+    ]
+  },
+  "imaging_only_context": {
+    "coverage_rate": 0.9958,
+    "covered_accuracy": 0.906,
+    "interpretation": "Imaging-only coverage is allowed in this synthetic response-pattern head because imaging/report trend is a primary monitoring signal. It still does not authorize diagnosis, treatment decisions, or patient outcome probability claims."
+  },
+  "selective_risk": {
+    "point_count": 5,
+    "nonincreasing_coverage": true,
+    "covered_accuracy_lift_highest_margin": 0.0237,
+    "curve": [
+      {
+        "minimum_probability_margin": 0.0,
+        "coverage": 1.0,
+        "abstention_rate": 0.0,
+        "covered_accuracy": 0.9667,
+        "covered_n": 120
+      },
+      {
+        "minimum_probability_margin": 0.1,
+        "coverage": 1.0,
+        "abstention_rate": 0.0,
+        "covered_accuracy": 0.9667,
+        "covered_n": 120
+      },
+      {
+        "minimum_probability_margin": 0.2,
+        "coverage": 0.9833,
+        "abstention_rate": 0.0167,
+        "covered_accuracy": 0.9746,
+        "covered_n": 118
+      },
+      {
+        "minimum_probability_margin": 0.3,
+        "coverage": 0.975,
+        "abstention_rate": 0.025,
+        "covered_accuracy": 0.9829,
+        "covered_n": 117
+      },
+      {
+        "minimum_probability_margin": 0.4,
+        "coverage": 0.8667,
+        "abstention_rate": 0.1333,
+        "covered_accuracy": 0.9904,
+        "covered_n": 104
+      }
+    ],
+    "interpretation": "Higher probability-margin thresholds should reduce coverage and, inside this synthetic export only, can increase covered-row accuracy. This is abstention behavior evidence, not clinical performance."
+  },
+  "coverage_risk_findings": [
+    {
+      "finding": "low_evidence_abstention",
+      "status": "passed",
+      "evidence": {
+        "scenario_count": 4,
+        "all_required_scenarios_passed": true,
+        "minimum_required_abstention_rate": 1.0,
+        "scenarios": [
+          {
+            "scenario": "no_imaging",
+            "abstention_rate": 1.0,
+            "coverage_rate": 0.0,
+            "passed": true
+          },
+          {
+            "scenario": "cbc_pre_only",
+            "abstention_rate": 1.0,
+            "coverage_rate": 0.0,
+            "passed": true
+          },
+          {
+            "scenario": "demographics_only",
+            "abstention_rate": 1.0,
+            "coverage_rate": 0.0,
+            "passed": true
+          },
+          {
+            "scenario": "symptoms_only",
+            "abstention_rate": 1.0,
+            "coverage_rate": 0.0,
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "finding": "full_data_remains_covered",
+      "status": "passed",
+      "evidence": {
+        "coverage_rate": 0.9958,
+        "covered_accuracy": 0.9255
+      }
+    },
+    {
+      "finding": "imaging_only_is_contextually_limited",
+      "status": "informational",
+      "evidence": {
+        "coverage_rate": 0.9958,
+        "covered_accuracy": 0.906,
+        "note": "Synthetic monitoring signal only; not a patient outcome claim."
+      }
+    },
+    {
+      "finding": "selective_risk_curve_available",
+      "status": "passed",
+      "evidence": {
+        "point_count": 5,
+        "accuracy_lift": 0.0237
+      }
+    }
+  ],
+  "reviewer_next_steps": [
+    "Keep no-imaging and low-evidence cases abstained for response-pattern heads.",
+    "Show missing-modality reasons beside model outputs so users understand why a head abstains.",
+    "Keep selective-risk curves as synthetic engineering evidence only.",
+    "Do not promote any model head until external temporal validation and clinician-reviewed labels exist."
+  ],
+  "claim_boundary": "Synthetic ML coverage/risk diagnostic only. It checks abstention and selective-risk behavior inside simulator-built data. It is not clinical validation, not real-patient calibration, not treatment evidence, and not healthcare production readiness."
+}

@@ -1,0 +1,223 @@
+{
+  "schema_version": "ml_logic_safety_alignment_v1",
+  "generated_at": "2026-07-15T09:21:43.285368+00:00",
+  "status": "needs_attention",
+  "clinical_validation": false,
+  "synthetic_only": true,
+  "healthcare_production_ready": false,
+  "artifact_inputs": {
+    "data_promotion_roadmap": {
+      "path": "Data/evals/models/latest_data_promotion_roadmap.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "mle_promotion_gate": {
+      "path": "Data/evals/models/latest_mle_promotion_gate.json",
+      "exists": true,
+      "status": "HOLD"
+    },
+    "evidence_abstention_eval": {
+      "path": "Data/evals/models/latest_evidence_abstention_eval.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "per_head_calibration": {
+      "path": "Data/evals/models/latest_per_head_calibration.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "response_conformal_calibration": {
+      "path": "Data/evals/models/latest_response_conformal_calibration.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "patient_temporal_cv": {
+      "path": "Data/evals/models/latest_patient_temporal_cv.json",
+      "exists": true,
+      "status": "informational"
+    },
+    "counterfactual_stability": {
+      "path": "Data/evals/models/latest_counterfactual_stability.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "noisier_synthetic_v2_stress": {
+      "path": "Data/evals/models/latest_noisier_synthetic_v2_stress.json",
+      "exists": true,
+      "status": "informational"
+    },
+    "synthetic_prediction_statistical_audit": {
+      "path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
+      "exists": true,
+      "status": "acceptable"
+    },
+    "ml_coverage_risk_diagnostics": {
+      "path": "Data/evals/models/latest_ml_coverage_risk_diagnostics.json",
+      "exists": true,
+      "status": "strong"
+    },
+    "toxicity_review_target_v3": {
+      "path": "Data/evals/models/latest_toxicity_review_target_v3.json",
+      "exists": true,
+      "status": "candidate_needs_review"
+    }
+  },
+  "summary": {
+    "check_count": 10,
+    "passed_count": 9,
+    "needs_attention_count": 1,
+    "failed_count": 0,
+    "logic_alignment_score": 0.9,
+    "known_attention_items": [
+      "shortcut_risk_boundaries"
+    ]
+  },
+  "checks": [
+    {
+      "name": "nonclinical_promotion_policy",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "model_head_policies": [
+          "monitor_only",
+          "monitor_only",
+          "review_hint_only",
+          "context_and_review_routing_only",
+          "education_and_review_context_only",
+          "timeline_context_only"
+        ],
+        "may_influence_treatment": false,
+        "mle_promotion_gate_decision": "HOLD"
+      },
+      "recommendation": "Keep all synthetic heads monitor-only or review-only. Promotion should remain blocked until external temporal validation and clinician-reviewed labels exist."
+    },
+    {
+      "name": "evidence_sufficiency_alignment",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "low_evidence_abstention_rates": {
+          "demographics_only": 1.0,
+          "symptoms_only": 1.0,
+          "cbc_pre_only": 1.0
+        },
+        "full_data_covered_accuracy": 0.9255,
+        "no_imaging_covered_accuracy": null,
+        "no_imaging_abstention_rate": 1.0,
+        "no_imaging_drop_detected": false
+      },
+      "recommendation": "Tighten response-classification confidence when imaging evidence is absent. The safest next implementation is not a new model; it is an evidence policy that reports lower confidence or abstains when response-classification depends on missing imaging."
+    },
+    {
+      "name": "uncertainty_and_calibration",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "per_head_calibration_status": "strong",
+        "response_classification_ece": 0.0316,
+        "conformal_status": "strong",
+        "nominal_coverage": 0.8,
+        "adjusted_coverage": 0.8022222222222222
+      },
+      "recommendation": "Continue showing probabilities as synthetic model confidence, not patient outcome probability. Keep conformal bands visible as synthetic interval checks only."
+    },
+    {
+      "name": "patient_level_temporal_split_hygiene",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "patient_overlap_pairs": 0,
+        "temporal_violations": 0,
+        "row_temporal_censoring_applied": true,
+        "train_rows_censored_after_test_start": 744,
+        "roc_auc_mean": 0.9994121916986777,
+        "target": "toxicity_risk_binary"
+      },
+      "recommendation": "Preserve patient grouping and row-date censoring. Keep this as synthetic protocol hygiene, not as proof that the toxicity target generalises to real clinical timelines."
+    },
+    {
+      "name": "counterfactual_stability",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "status": "strong",
+        "unacceptable_flip_count": 0,
+        "max_probability_delta": 0.1631,
+        "max_response_score_delta": 5.4287
+      },
+      "recommendation": "Keep this as a brittleness check. Expand it with missing-imaging and symptom-reporting counterfactuals before using any model score prominently."
+    },
+    {
+      "name": "noise_stress_boundary",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "noise_type_count": 8,
+        "leakage_tripwire_noise_types": [],
+        "global_promotion_decision": "reject_or_hold"
+      },
+      "recommendation": "Use noisier v2 as a stress surface only. Do not retrain or promote from it unless the same tests stay green under a frozen, pre-registered protocol."
+    },
+    {
+      "name": "shortcut_risk_boundaries",
+      "status": "needs_attention",
+      "passed": false,
+      "evidence": {
+        "toxicity_auroc": 0.9984,
+        "toxicity_policy": "review_hint_only",
+        "high_toxicity_auc_shortcut_warning": true,
+        "bounded_to_review_hint_only": true
+      },
+      "recommendation": "Keep toxicity as review-hint-only and make the high synthetic AUC visibly suspicious. A softer review-priority target is the right direction; do not present toxicity AUC as a flex."
+    },
+    {
+      "name": "statistical_audit_boundary",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "total_n": 120,
+        "bootstrap_replicates": 1000,
+        "perturbation_seed_count": 30,
+        "promotion_decision": "hold_synthetic_only"
+      },
+      "recommendation": "Keep row-level exports and paired tests. Add patient-block bootstrap if the export later contains multiple rows per synthetic patient."
+    },
+    {
+      "name": "coverage_risk_diagnostics",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "status": "strong",
+        "scenario_count": 8,
+        "minimum_required_abstention_rate": 1.0,
+        "selective_risk_point_count": 5,
+        "promotion_decision": "hold_synthetic_only"
+      },
+      "recommendation": "Keep low-evidence scenarios abstained and show missing-modality reasons near patient-facing model cards. Treat selective-risk curves as synthetic engineering evidence only."
+    },
+    {
+      "name": "toxicity_target_v3_boundary",
+      "status": "passed",
+      "passed": true,
+      "evidence": {
+        "status": "candidate_needs_review",
+        "model_auroc": 0.9383,
+        "legacy_rule_auroc_against_v3": 0.8466,
+        "legacy_rule_accuracy_against_v3": 0.6478,
+        "legacy_rule_does_not_define_v3": true,
+        "residual_shortcut_warning": true,
+        "production_policy": "review_hint_only",
+        "promotion_decision": "hold_synthetic_only"
+      },
+      "recommendation": "Use v3 as a review-priority target-design candidate only. It reduces legacy-rule dominance but still carries simulator shortcut warnings, so toxicity remains review-hint-only."
+    }
+  ],
+  "highest_leverage_ml_next_steps": [
+    {
+      "rank": 3,
+      "from_check": "shortcut_risk_boundaries",
+      "action": "Keep toxicity as review-hint-only and make the high synthetic AUC visibly suspicious. A softer review-priority target is the right direction; do not present toxicity AUC as a flex."
+    }
+  ],
+  "claim_boundary": "Synthetic ML logic/safety alignment audit only. It checks whether existing synthetic model artifacts obey non-diagnostic, non-promotional, evidence-sufficiency, uncertainty, and shortcut-risk boundaries. It is not clinical validation, not real-patient calibration, not treatment evidence, and not production healthcare readiness."
+}

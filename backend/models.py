@@ -139,6 +139,61 @@ class ChatMessage(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class HighRiskConversationAlert(Base):
+    """Auditable review item created from a high-priority support-chat turn.
+
+    Raw chat text stays in ``chat_messages``. The alert stores only a reason
+    code and record references so optional notification adapters can emit a
+    redacted event without copying patient content outside NLCare.
+    """
+
+    __tablename__ = "high_risk_conversation_alerts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=False, index=True)
+    source_chat_message_id = Column(Integer, ForeignKey("chat_messages.id"), nullable=False, index=True)
+    assistant_chat_message_id = Column(Integer, ForeignKey("chat_messages.id"), nullable=True, index=True)
+    idempotency_key = Column(String, nullable=False, unique=True, index=True)
+    category = Column(String, nullable=False, index=True)
+    severity = Column(String, nullable=False, index=True)
+    trigger_summary = Column(Text, nullable=False)
+    status = Column(String, nullable=False, default="queued", index=True)
+    notification_channel = Column(String, nullable=True)
+    notification_status = Column(String, nullable=False, default="disabled", index=True)
+    notification_event_id = Column(String, nullable=True, index=True)
+    notification_error = Column(Text, nullable=True)
+    notification_attempt_count = Column(Integer, nullable=False, default=0)
+    notification_max_attempts = Column(Integer, nullable=False, default=3)
+    last_notification_attempt_at = Column(DateTime(timezone=True), nullable=True)
+    next_notification_retry_at = Column(DateTime(timezone=True), nullable=True, index=True)
+    delivery_receipt_status = Column(String, nullable=False, default="not_received", index=True)
+    delivery_receipt_id = Column(String, nullable=True, unique=True, index=True)
+    delivery_receipt_at = Column(DateTime(timezone=True), nullable=True)
+    dead_lettered_at = Column(DateTime(timezone=True), nullable=True)
+    dead_letter_reason = Column(Text, nullable=True)
+    acknowledged_by_role = Column(String, nullable=True)
+    acknowledgement_note = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    notified_at = Column(DateTime(timezone=True), nullable=True)
+    acknowledged_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class HighRiskAlertDeliveryAttempt(Base):
+    """Append-only engineering evidence for one redacted notification attempt."""
+
+    __tablename__ = "high_risk_alert_delivery_attempts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    alert_id = Column(Integer, ForeignKey("high_risk_conversation_alerts.id"), nullable=False, index=True)
+    attempt_number = Column(Integer, nullable=False)
+    event_id = Column(String, nullable=True, index=True)
+    status = Column(String, nullable=False, index=True)
+    error_code = Column(String, nullable=True)
+    response_status_code = Column(Integer, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+
+
 class CTReport(Base):
     __tablename__ = "ct_reports"
 

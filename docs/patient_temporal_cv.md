@@ -23,6 +23,9 @@ The script writes
 - **Walk-forward** across `n_folds` time blocks. Fold `k` uses the k-th
   block as test and all earlier blocks as train (so block 0 is never a
   test set; we get `n_folds - 1` folds total).
+- **Censor** train rows dated on or after the held-out fold's first test
+  date. This preserves strict row-level chronology in addition to
+  patient-level grouping.
 - Default model: `GradientBoostingClassifier` over the same feature
   union the production training script uses
   (`NUMERIC_FEATURES + CATEGORICAL_FEATURES`).
@@ -34,7 +37,9 @@ Each strategy reports:
 - per-fold rows: train/test patient and row counts, date ranges,
   ROC-AUC, Brier, positive-rate train and test;
 - aggregates: AUC mean and std, Brier mean and std,
-  `patient_overlap_pairs` (lock-in), `temporal_violations` (diagnostic);
+  `patient_overlap_pairs` (lock-in), `temporal_violations` (lock-in),
+  `train_rows_censored_after_test_start`, and
+  `row_temporal_censoring_applied`;
 
 The top-level `headline.auc_optimism_from_naive_cv` is
 `naive_AUC_mean - patient_temporal_AUC_mean`. A positive number means

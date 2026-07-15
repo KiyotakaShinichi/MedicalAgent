@@ -26,7 +26,7 @@ def main() -> int:
     TEST_DB.parent.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["DATABASE_URL"] = DATABASE_URL
-    env["ONCOTRACK_CORS_ORIGINS"] = FRONTEND_ORIGIN
+    env["NLCARE_CORS_ORIGINS"] = FRONTEND_ORIGIN
     env["ENVIRONMENT"] = "test"
 
     subprocess.run(
@@ -44,7 +44,7 @@ def main() -> int:
     os.environ.update(
         {
             "DATABASE_URL": DATABASE_URL,
-            "ONCOTRACK_CORS_ORIGINS": FRONTEND_ORIGIN,
+            "NLCARE_CORS_ORIGINS": FRONTEND_ORIGIN,
             "ENVIRONMENT": "test",
         }
     )

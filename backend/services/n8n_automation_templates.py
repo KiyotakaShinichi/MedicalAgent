@@ -209,6 +209,35 @@ def _templates() -> list[dict[str, Any]]:
                 ],
             ),
         },
+        {
+            "id": "high_risk_review_alert",
+            "title": "High-Priority Conversation Review Alert",
+            "allowed_use": (
+                "Notify an approved internal reviewer channel that a redacted NLCare review item is waiting. "
+                "Operators may attach an email, SMS, or Viber node after access-control review."
+            ),
+            "not_allowed_use": (
+                "Do not send patient identifiers, raw chat text, medical conclusions, or imply that delivery "
+                "means a clinician saw or acted on the alert."
+            ),
+            "workflow": _workflow(
+                name="NLCare High-Priority Conversation Review Alert",
+                trigger_path="nlcare/high-risk-review-alert",
+                action_summary=(
+                    "Send a redacted internal notification with a sign-in-required review-item link."
+                ),
+                required_fields=[
+                    "alert_id",
+                    "event_type",
+                    "priority",
+                    "review_path",
+                    "delivery_scope",
+                    "recipient_scope",
+                ],
+                test_recipient_only=True,
+                delivery_receipt_required=True,
+            ),
+        },
     ]
 
 
@@ -218,6 +247,8 @@ def _workflow(
     trigger_path: str,
     action_summary: str,
     required_fields: list[str],
+    test_recipient_only: bool = False,
+    delivery_receipt_required: bool = False,
 ) -> dict[str, Any]:
     # This intentionally uses generic nodes so the JSON stays importable-ish
     # without credentials. Teams should wire real notification/ticket nodes in n8n.
@@ -245,12 +276,13 @@ def _workflow(
                         "const body = event.payload || event;\n"
                         "const headers = $json.headers || {};\n"
                         "const signaturePresent = Boolean(headers['x-nlcare-signature'] || headers['X-NLCare-Signature']);\n"
+                        "const timestampPresent = Boolean(headers['x-nlcare-timestamp'] || headers['X-NLCare-Timestamp']);\n"
                         f"const required = {json.dumps(required_fields)};\n"
                         "const missing = required.filter((key) => body[key] === undefined || body[key] === null || body[key] === '');\n"
                         f"const blocked = {json.dumps(BLOCKED_PAYLOAD_FIELDS)};\n"
                         "const blockedPresent = blocked.filter((key) => body[key] !== undefined);\n"
                         "const boundaryOk = event.phi_allowed === false && event.clinical_validation === false;\n"
-                        "return [{ json: { ok: signaturePresent && boundaryOk && missing.length === 0 && blockedPresent.length === 0, signaturePresent, boundaryOk, missing, blockedPresent, body } }];"
+                        "return [{ json: { ok: signaturePresent && timestampPresent && boundaryOk && missing.length === 0 && blockedPresent.length === 0, signaturePresent, timestampPresent, boundaryOk, missing, blockedPresent, body } }];"
                     )
                 },
                 "id": "validate-payload",
@@ -287,7 +319,12 @@ def _workflow(
             "clinical_validation": False,
             "phi_allowed": False,
             "signature_header_presence_required": True,
+            "timestamp_header_presence_required": True,
             "receiver_hmac_verification_requires_operator_configuration": True,
+            "receiver_replay_window_seconds": 300,
+            "test_recipient_only": test_recipient_only,
+            "delivery_receipt_callback_required": delivery_receipt_required,
+            "delivery_receipt_is_not_clinician_acknowledgement": True,
             "claim_boundary": CLAIM_BOUNDARY,
         },
     }

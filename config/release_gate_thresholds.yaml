@@ -231,6 +231,22 @@ artifacts:
     metric_thresholds:
       - {path: [shortcut_comparison, legacy_rule_does_not_define_v2], op: "==", value: true}
 
+  - path: Data/evals/models/latest_toxicity_review_target_v3.json
+    required: false
+    max_age_days: 90
+    accepted_status: [candidate, candidate_needs_review, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [shortcut_comparison, legacy_rule_does_not_define_v3], op: "==", value: true}
+      - {path: [recommendation, production_policy], op: "==", value: review_hint_only}
+      - {path: [recommendation, promotion_decision], op: "==", value: hold_synthetic_only}
+    note: >
+      Toxicity target v3 is a simulator-built review-priority target-design
+      candidate. It reduces legacy-rule dominance but keeps residual shortcut
+      warnings visible. It is not clinical toxicity prediction or CTCAE grading.
+
   - path: Data/evals/models/latest_external_failure_case_analysis.json
     required: false
     max_age_days: 90
@@ -542,6 +558,8 @@ artifacts:
     accepted_status: [strong, acceptable, informational]
     metric_thresholds:
       - {path: [patient_level_temporal_cv, patient_overlap_pairs], op: "==", value: 0}
+      - {path: [patient_level_temporal_cv, temporal_violations], op: "==", value: 0}
+      - {path: [patient_level_temporal_cv, row_temporal_censoring_applied], op: "==", value: true}
     note: >
       Patient-level temporal CV report; informational.  The hard lock-in is
       patient_overlap_pairs == 0 — if that drifts the protocol is broken,
@@ -1617,3 +1635,78 @@ artifacts:
       Statistical audit over exported synthetic predictions. Intervals and
       paired tests are conditional on simulator-built data and cannot be read
       as clinical, external-validation, or real-population evidence.
+
+  - path: Data/evals/models/latest_ml_coverage_risk_diagnostics.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [promotion_decision], op: "==", value: hold_synthetic_only}
+      - {path: [scenario_count], op: ">=", value: 8}
+      - {path: [required_abstention_scenarios, all_required_scenarios_passed], op: "==", value: true}
+      - {path: [selective_risk, point_count], op: ">=", value: 5}
+    note: >
+      Synthetic coverage/risk diagnostic for evidence sufficiency and
+      selective-risk behavior. It proves abstention-policy wiring inside
+      simulator-built data only, not clinical performance.
+
+  - path: Data/evals/models/latest_ml_logic_safety_alignment.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [summary, check_count], op: ">=", value: 10}
+    note: >
+      Synthetic ML logic/safety alignment audit. It consolidates promotion
+      policy, evidence sufficiency, calibration, temporal split hygiene,
+      counterfactual stability, noise stress, shortcut warnings, and
+      statistical-boundary checks. It is expected to surface needs_attention
+      items and does not establish clinical validation or real-patient
+      robustness.
+
+  - path: Data/evals/safety/latest_high_risk_conversation_alert_eval.json
+    required: true
+    max_age_days: 30
+    accepted_status: [strong]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [external_delivery_enabled_during_eval], op: "==", value: false}
+      - {path: [case_count], op: ">=", value: 12}
+      - {path: [pass_rate], op: ">=", value: 1.0}
+      - {path: [patient_identifiers_in_payload], op: "==", value: false}
+      - {path: [unsafe_delivery_claims], op: "==", value: false}
+      - {path: [signed_envelope_phi_allowed], op: "==", value: false}
+      - {path: [replay_protection_passed], op: "==", value: true}
+      - {path: [signed_receipt_validation_passed], op: "==", value: true}
+      - {path: [synthetic_test_recipient_enforced], op: "==", value: true}
+      - {path: [retry_dead_letter_contract_tested], op: "==", value: true}
+      - {path: [delivery_receipt_distinct_from_clinician_acknowledgement], op: "==", value: true}
+    note: >
+      Internal regression for mortality/distress/urgent-language routing and
+      the redacted notification contract. It does not prove emergency-service
+      coverage, clinician receipt, clinical validation, or real-world safety.
+
+  - path: Data/evals/ops/latest_patient_enrichment_background_eval.json
+    required: true
+    max_age_days: 30
+    accepted_status: [strong]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [process_local_worker], op: "==", value: true}
+      - {path: [distributed_queue_proven], op: "==", value: false}
+      - {path: [checks, single_flight], op: "==", value: true}
+      - {path: [checks, stale_result_discarded], op: "==", value: true}
+      - {path: [checks, failure_redacted], op: "==", value: true}
+      - {path: [checks, request_path_nonblocking_contract], op: "==", value: true}
+    note: >
+      Process-local concurrency regression for deferred synthetic report
+      enrichment. It does not establish distributed-worker durability,
+      production latency, clinical validation, or healthcare readiness.

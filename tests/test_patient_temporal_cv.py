@@ -62,11 +62,17 @@ class StrategyReports(unittest.TestCase):
     def test_patient_level_temporal_cv_has_no_overlap(self) -> None:
         report = run_patient_temporal_cv(self.rows, n_folds=4)
         self.assertEqual(report.patient_overlap_pairs, 0)
+        self.assertEqual(report.temporal_violations, 0)
+        self.assertGreater(report.train_rows_censored_after_test_start, 0)
         # All folds should produce a finite AUC on this dataset.
         for fold in report.folds:
             self.assertIsNotNone(fold.roc_auc)
             self.assertGreater(fold.train_n_patients, 0)
             self.assertGreater(fold.test_n_patients, 0)
+            self.assertLess(
+                pd.to_datetime(fold.train_date_max),
+                pd.to_datetime(fold.test_date_min),
+            )
 
     def test_naive_row_level_kfold_demonstrates_overlap(self) -> None:
         report = run_naive_row_level_cv(self.rows, n_folds=4)
@@ -93,6 +99,8 @@ class ReportSchema(unittest.TestCase):
         ]:
             self.assertIn(key, report, key)
         self.assertEqual(report["patient_level_temporal_cv"]["patient_overlap_pairs"], 0)
+        self.assertEqual(report["patient_level_temporal_cv"]["temporal_violations"], 0)
+        self.assertTrue(report["patient_level_temporal_cv"]["row_temporal_censoring_applied"])
         self.assertIn("auc_optimism_from_naive_cv", report["headline"])
         # Round-trips as JSON.
         json.dumps(report)

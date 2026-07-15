@@ -43,6 +43,8 @@ def test_n8n_templates_are_inactive_and_marked_nonclinical(tmp_path):
         assert workflow["meta"]["clinical_validation"] is False
         assert workflow["meta"]["phi_allowed"] is False
         assert workflow["meta"]["signature_header_presence_required"] is True
+        assert workflow["meta"]["timestamp_header_presence_required"] is True
+        assert workflow["meta"]["receiver_replay_window_seconds"] == 300
         assert workflow["meta"]["receiver_hmac_verification_requires_operator_configuration"] is True
         assert any(node["type"] == "n8n-nodes-base.webhook" for node in workflow["nodes"])
         assert any(node["type"] == "n8n-nodes-base.respondToWebhook" for node in workflow["nodes"])
@@ -80,5 +82,11 @@ def test_n8n_templates_have_expected_workflow_ids(tmp_path):
         "external_red_team_intake",
         "dependency_security_alert",
         "deployment_health_alert",
+        "high_risk_review_alert",
     } <= ids
     assert any("reviewer" in item["title"].lower() for item in report["templates"])
+
+    high_risk = json.loads((tmp_path / "templates" / "high_risk_review_alert.json").read_text(encoding="utf-8"))
+    assert high_risk["meta"]["test_recipient_only"] is True
+    assert high_risk["meta"]["delivery_receipt_callback_required"] is True
+    assert high_risk["meta"]["delivery_receipt_is_not_clinician_acknowledgement"] is True

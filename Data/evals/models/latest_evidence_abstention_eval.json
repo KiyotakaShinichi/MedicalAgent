@@ -1,6 +1,6 @@
 {
   "schema_version": "evidence_abstention_eval_v1",
-  "generated_at": "2026-05-17T11:18:50.773114+00:00",
+  "generated_at": "2026-07-15T07:14:31.805188+00:00",
   "status": "strong",
   "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
   "model_path": "Data/complete_synthetic_training/gradient_boosting_treatment_success_binary.joblib",
@@ -9,12 +9,12 @@
   "rows_evaluated": 3600,
   "summary": {
     "overall_status": "strong",
-    "full_data_coverage_rate": 1.0,
-    "full_data_covered_accuracy": 0.9239,
+    "full_data_coverage_rate": 0.9958,
+    "full_data_covered_accuracy": 0.9255,
     "demographics_only_abstention_rate": 1.0,
     "abstention_rates_by_scenario": {
-      "full_data": 0.0,
-      "no_imaging": 0.0,
+      "full_data": 0.0042,
+      "no_imaging": 1.0,
       "no_nadir_cbc": 0.0042,
       "no_recovery_cbc": 0.0042,
       "imaging_only": 0.0042,
@@ -23,8 +23,8 @@
       "symptoms_only": 1.0
     },
     "coverage_rates_by_scenario": {
-      "full_data": 1.0,
-      "no_imaging": 1.0,
+      "full_data": 0.9958,
+      "no_imaging": 0.0,
       "no_nadir_cbc": 0.9958,
       "no_recovery_cbc": 0.9958,
       "imaging_only": 0.9958,
@@ -33,8 +33,8 @@
       "symptoms_only": 0.0
     },
     "covered_accuracy_by_scenario": {
-      "full_data": 0.9239,
-      "no_imaging": 0.5439,
+      "full_data": 0.9255,
+      "no_imaging": null,
       "no_nadir_cbc": 0.9225,
       "no_recovery_cbc": 0.9225,
       "imaging_only": 0.906,
@@ -49,16 +49,17 @@
       "scenario": "full_data",
       "stripped_modalities": [],
       "rows_evaluated": 3600,
-      "coverage_rate": 1.0,
-      "abstention_rate": 0.0,
-      "false_abstention_rate": null,
-      "covered_accuracy": 0.9239,
+      "coverage_rate": 0.9958,
+      "abstention_rate": 0.0042,
+      "false_abstention_rate": 0.0,
+      "covered_accuracy": 0.9255,
       "decision_counts": {
-        "favorable_pattern": 1884,
+        "favorable_pattern": 1877,
         "uncertain": 260,
-        "concerning_pattern": 1456
+        "concerning_pattern": 1448,
+        "insufficient_evidence": 15
       },
-      "covered_mean_probability": 0.5562,
+      "covered_mean_probability": 0.5563,
       "calibration_bins": [
         {
           "range": "0.00-0.20",
@@ -68,9 +69,9 @@
         },
         {
           "range": "0.20-0.40",
-          "count": 344,
-          "mean_predicted": 0.2909,
-          "observed_rate": 0.1715
+          "count": 336,
+          "mean_predicted": 0.2897,
+          "observed_rate": 0.1637
         },
         {
           "range": "0.40-0.60",
@@ -80,9 +81,9 @@
         },
         {
           "range": "0.60-0.80",
-          "count": 275,
-          "mean_predicted": 0.7033,
-          "observed_rate": 0.7891
+          "count": 268,
+          "mean_predicted": 0.703,
+          "observed_rate": 0.7948
         },
         {
           "range": "0.80-1.00",
@@ -98,48 +99,15 @@
         "imaging"
       ],
       "rows_evaluated": 3600,
-      "coverage_rate": 1.0,
-      "abstention_rate": 0.0,
-      "false_abstention_rate": null,
-      "covered_accuracy": 0.5439,
+      "coverage_rate": 0.0,
+      "abstention_rate": 1.0,
+      "false_abstention_rate": 0.9217,
+      "covered_accuracy": null,
       "decision_counts": {
-        "favorable_pattern": 1446,
-        "uncertain": 866,
-        "concerning_pattern": 1288
+        "insufficient_evidence": 3600
       },
-      "covered_mean_probability": 0.5148,
-      "calibration_bins": [
-        {
-          "range": "0.00-0.20",
-          "count": 0,
-          "mean_predicted": null,
-          "observed_rate": null
-        },
-        {
-          "range": "0.20-0.40",
-          "count": 1288,
-          "mean_predicted": 0.3111,
-          "observed_rate": 0.4651
-        },
-        {
-          "range": "0.40-0.60",
-          "count": 866,
-          "mean_predicted": 0.4888,
-          "observed_rate": 0.6028
-        },
-        {
-          "range": "0.60-0.80",
-          "count": 1446,
-          "mean_predicted": 0.712,
-          "observed_rate": 0.6024
-        },
-        {
-          "range": "0.80-1.00",
-          "count": 0,
-          "mean_predicted": null,
-          "observed_rate": null
-        }
-      ]
+      "covered_mean_probability": null,
+      "calibration_bins": []
     },
     {
       "scenario": "no_nadir_cbc",
@@ -149,7 +117,7 @@
       "rows_evaluated": 3600,
       "coverage_rate": 0.9958,
       "abstention_rate": 0.0042,
-      "false_abstention_rate": 0.5333,
+      "false_abstention_rate": 0.0,
       "covered_accuracy": 0.9225,
       "decision_counts": {
         "favorable_pattern": 1785,
@@ -199,7 +167,7 @@
       "rows_evaluated": 3600,
       "coverage_rate": 0.9958,
       "abstention_rate": 0.0042,
-      "false_abstention_rate": 0.5333,
+      "false_abstention_rate": 0.0,
       "covered_accuracy": 0.9225,
       "decision_counts": {
         "favorable_pattern": 1795,
@@ -253,7 +221,7 @@
       "rows_evaluated": 3600,
       "coverage_rate": 0.9958,
       "abstention_rate": 0.0042,
-      "false_abstention_rate": 0.5333,
+      "false_abstention_rate": 0.0,
       "covered_accuracy": 0.906,
       "decision_counts": {
         "favorable_pattern": 1846,
@@ -307,7 +275,7 @@
       "rows_evaluated": 3600,
       "coverage_rate": 0.0,
       "abstention_rate": 1.0,
-      "false_abstention_rate": 0.9239,
+      "false_abstention_rate": 0.9217,
       "covered_accuracy": null,
       "decision_counts": {
         "insufficient_evidence": 3600
@@ -328,7 +296,7 @@
       "rows_evaluated": 3600,
       "coverage_rate": 0.0,
       "abstention_rate": 1.0,
-      "false_abstention_rate": 0.9239,
+      "false_abstention_rate": 0.9217,
       "covered_accuracy": null,
       "decision_counts": {
         "insufficient_evidence": 3600
@@ -348,7 +316,7 @@
       "rows_evaluated": 3600,
       "coverage_rate": 0.0,
       "abstention_rate": 1.0,
-      "false_abstention_rate": 0.9239,
+      "false_abstention_rate": 0.9217,
       "covered_accuracy": null,
       "decision_counts": {
         "insufficient_evidence": 3600

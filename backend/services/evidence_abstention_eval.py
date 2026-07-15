@@ -96,6 +96,12 @@ def run_evidence_abstention_eval(
     if sample_size is not None and sample_size < len(rows):
         rows = rows.sample(n=sample_size, random_state=0).reset_index(drop=True)
 
+    full_reference_predictions = _reference_full_predictions(
+        rows=rows,
+        model_path=model_path,
+        calibrator_path=calibrator_path,
+    )
+
     scenario_reports: list[dict[str, Any]] = []
     for scenario, stripped in SCENARIOS.items():
         scenario_reports.append(
@@ -106,6 +112,7 @@ def run_evidence_abstention_eval(
                 label_column=label_column,
                 model_path=model_path,
                 calibrator_path=calibrator_path,
+                full_reference_predictions=full_reference_predictions,
             ),
         )
 
@@ -131,6 +138,7 @@ def _evaluate_scenario(
     label_column: str,
     model_path: str,
     calibrator_path: str | None,
+    full_reference_predictions: list[tuple[float | None, int | None]],
 ) -> dict[str, Any]:
     """Run one scenario.  Counts rows by decision, computes covered-row
     accuracy, and reports a tiny calibration histogram."""
@@ -144,7 +152,7 @@ def _evaluate_scenario(
     # running prediction on the *unmasked* row.  This lets us report false
     # abstention — cases where we refused to answer but the full-data model
     # was actually correct.
-    for _, masked_row, full_row in _iter_pairs(rows, masked):
+    for idx, masked_row, full_row in _iter_pairs(rows, masked):
         actual = int(full_row[label_column])
         prediction = predict_with_abstention(
             masked_row,
@@ -154,14 +162,11 @@ def _evaluate_scenario(
         decisions[prediction.decision] += 1
         if prediction.decision == "insufficient_evidence":
             abstained_total += 1
-            # Run the model on the unmasked row to see what it WOULD have said.
-            full_pred = predict_with_abstention(
-                full_row,
-                model_path=model_path,
-                calibrator_path=calibrator_path,
-            )
-            if full_pred.probability is not None:
-                predicted_class = 1 if full_pred.probability >= 0.5 else 0
+            # Use the cached full-data prediction to see what the model WOULD
+            # have said without recomputing the same pipeline for every
+            # abstained scenario.
+            _, predicted_class = full_reference_predictions[idx]
+            if predicted_class is not None:
                 if predicted_class == actual:
                     abstained_with_correct_underlying_decision += 1
         elif prediction.probability is not None:
@@ -192,6 +197,28 @@ def _evaluate_scenario(
         ) if covered_n > 0 else None,
         "calibration_bins": _calibration_bins(covered_predictions),
     }
+
+
+def _reference_full_predictions(
+    *,
+    rows: pd.DataFrame,
+    model_path: str,
+    calibrator_path: str | None,
+) -> list[tuple[float | None, int | None]]:
+    """Return cached full-data probabilities/classes for false-abstention math."""
+    references: list[tuple[float | None, int | None]] = []
+    for row in rows.to_dict("records"):
+        prediction = predict_with_abstention(
+            row,
+            model_path=model_path,
+            calibrator_path=calibrator_path,
+        )
+        if prediction.probability is None:
+            references.append((None, None))
+        else:
+            probability = float(prediction.probability)
+            references.append((probability, 1 if probability >= 0.5 else 0))
+    return references
 
 
 def _iter_pairs(rows: pd.DataFrame, masked: pd.DataFrame):

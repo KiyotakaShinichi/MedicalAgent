@@ -161,12 +161,16 @@ function humanModality(slug: string): string {
 
 function humanReason(reason: string): string {
   switch (reason) {
+    case "response_imaging_required_for_response_pattern":
+      return "Imaging evidence is required before this response-pattern signal is shown.";
+    case "response_imaging_only_without_longitudinal_cbc":
+      return "Imaging is present, but complete longitudinal CBC context is missing — confidence reduced.";
     case "no_response_signal_imaging_or_longitudinal_cbc_required":
-      return "Response classification needs imaging or a complete cycle of CBC values.";
+      return "Response classification needs imaging evidence; older traces used this legacy reason.";
     case "missing_minimum_context":
       return "Patient demographics weren't available.";
     case "response_signal_from_single_modality_only":
-      return "Only one of imaging or longitudinal CBC was present — confidence reduced.";
+      return "Only one response modality was present — confidence reduced.";
     case "toxicity_signal_from_single_modality_only":
       return "Only one of CBC or symptoms was present — confidence reduced.";
     case "no_acute_signal_symptoms_or_nadir_cbc_required":

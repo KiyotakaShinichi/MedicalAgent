@@ -54,7 +54,9 @@ def build_system_health_report(
         "environment": {
             "groq_configured": bool(os.environ.get("GROQ_API_KEY")),
             "rag_judge_enabled": str(os.environ.get("ONCOTRACK_RAG_JUDGE", "")).lower() in {"on", "true", "1"},
-            "cors_origins_configured": bool(os.environ.get("ONCOTRACK_CORS_ORIGINS")),
+            "cors_origins_configured": bool(
+                os.environ.get("NLCARE_CORS_ORIGINS") or os.environ.get("ONCOTRACK_CORS_ORIGINS")
+            ),
         },
         "dependencies": dependency_rows,
         "artifacts": artifact_rows,
@@ -188,4 +190,3 @@ def _database_kind(url: str) -> str:
     if url.startswith("postgres"):
         return "postgres"
     return "configured"
-

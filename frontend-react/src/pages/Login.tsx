@@ -86,7 +86,7 @@ export default function LoginPage() {
 
   return (
     <main className="login-page">
-      <section className="login-shell" aria-label="MedicalAgent sign in">
+      <section className="login-shell" aria-label="NLCare sign in">
         <div className="login-hero">
           <div>
             <div className="login-brand">
@@ -94,7 +94,7 @@ export default function LoginPage() {
                 <Ribbon size={24} aria-hidden="true" />
               </span>
               <div>
-                <p className="login-brand-kicker">MedicalAgent</p>
+                <p className="login-brand-kicker">Breast monitoring prototype</p>
                 <h1>NLCare</h1>
               </div>
             </div>

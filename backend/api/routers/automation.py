@@ -1,14 +1,21 @@
 from __future__ import annotations
 
 import os
+from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from backend.api.deps import get_admin_access_context, get_db
 from backend.database import SessionLocal
 from backend.services.background_eval_worker import ALLOWED_JOB_TYPES, BLOCKED_JOB_TYPES
+from backend.services.high_risk_conversation_alerts import (
+    process_due_alert_deliveries,
+    record_delivery_receipt,
+    serialize_alert,
+)
+from backend.services.n8n_webhook_dispatcher import validate_signed_receipt
 
 
 router = APIRouter(prefix="/admin/automation", tags=["admin-automation"])
@@ -19,6 +26,57 @@ class AutomationJobRequest(BaseModel):
     payload: dict[str, Any] = Field(default_factory=dict)
     dry_run: bool = True
     run_in_background: bool = False
+
+
+@router.post("/delivery-receipts")
+async def receive_delivery_receipt(
+    request: Request,
+    x_nlcare_receipt_signature: str = Header(default=""),
+    db=Depends(get_db),
+):
+    """Receive a redacted, signed channel receipt; this is not clinician acknowledgement."""
+    secret = str(os.getenv("N8N_WEBHOOK_SIGNING_SECRET") or "")
+    if not secret:
+        raise HTTPException(status_code=503, detail="Delivery receipt verification is not configured")
+    body = await request.body()
+    result = validate_signed_receipt(
+        body=body,
+        signature=x_nlcare_receipt_signature,
+        secret=secret,
+    )
+    if not result.get("valid"):
+        raise HTTPException(status_code=401, detail=f"Invalid delivery receipt: {result.get('reason')}")
+    receipt = result["receipt"]
+    try:
+        alert = record_delivery_receipt(
+            db,
+            event_id=receipt["event_id"],
+            receipt_id=receipt["receipt_id"],
+            delivery_status=receipt["delivery_status"],
+            occurred_at=datetime.fromisoformat(str(receipt["occurred_at"]).replace("Z", "+00:00")),
+        )
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    db.commit()
+    db.refresh(alert)
+    return {
+        "status": "receipt_recorded",
+        "alert": serialize_alert(alert),
+        "clinical_validation": False,
+        "claim_boundary": "A channel receipt is not proof of clinician review, contact, or clinical action.",
+    }
+
+
+@router.post("/alert-deliveries/process-due")
+def process_due_alert_delivery_retries(
+    context=Depends(get_admin_access_context),
+    db=Depends(get_db),
+):
+    result = process_due_alert_deliveries(db)
+    db.commit()
+    return result
 
 
 def _run_in_worker_session(task_id: int) -> None:

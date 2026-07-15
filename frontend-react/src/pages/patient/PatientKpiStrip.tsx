@@ -361,6 +361,15 @@ export function PatientKpiStrip({ report }: Props) {
           </div>
         </div>
       </div>
+      <details className="patient-score-boundary">
+        <summary>Why NLCare does not show a health score</summary>
+        <p>
+          The earlier 0-100 monitoring context index was removed from patient headlines. It combined
+          rule matches and synthetic model availability, so it could be mistaken for cancer status,
+          treatment response, or prognosis. The patient view now shows the underlying record items,
+          data coverage, and synthetic engineering output separately.
+        </p>
+      </details>
     </section>
   );
 }

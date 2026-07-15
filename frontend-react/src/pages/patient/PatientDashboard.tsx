@@ -1,9 +1,9 @@
 import { LayoutDashboard, FlaskConical, Activity, Clock, MessageSquare, Pill, Dna, ShieldCheck } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { useApi } from "../../hooks/useApi";
-import { getMyReport, sendMyChat, sendMyChatStream, getMyChatHistory, undoMyConfirmedRecordWrite, uploadFile } from "../../api/client";
+import { getMyReportCore, getMyReportEnrichment, sendMyChat, sendMyChatStream, getMyChatHistory, undoMyConfirmedRecordWrite, uploadFile } from "../../api/client";
 import { ErrorPane } from "../../components/ui/Spinner";
 import { SkeletonDashboard } from "../../components/ui/Skeleton";
 import { PatientBanner } from "./PatientBanner";
@@ -49,9 +49,64 @@ export default function PatientDashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
-  const { data: report, status, error, refetch: refetchReport, lastFetchedAt: reportFetchedAt } = useApi(getMyReport, [patientId]);
-  const { data: chatData, refetch: refetchChat } = useApi(getMyChatHistory, [patientId]);
   const tab: Tab = location.pathname.includes("/chat") ? "chat" : "overview";
+  const {
+    data: coreReport,
+    status,
+    error,
+    refetch: refetchCoreReport,
+    lastFetchedAt: coreFetchedAt,
+  } = useApi(getMyReportCore, [patientId]);
+  const [enrichment, setEnrichment] = useState<Partial<NonNullable<typeof coreReport>> | null>(null);
+  const [enrichmentStatus, setEnrichmentStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [enrichmentFetchedAt, setEnrichmentFetchedAt] = useState<number | null>(null);
+  const enrichmentRequestStarted = useRef(false);
+  const enrichmentPollTimer = useRef<number | null>(null);
+  const { data: chatData, refetch: refetchChat } = useApi(getMyChatHistory, [patientId]);
+  const report = useMemo(
+    () => coreReport ? { ...coreReport, ...(enrichment ?? {}) } : null,
+    [coreReport, enrichment],
+  );
+  const reportFetchedAt = enrichmentFetchedAt ?? coreFetchedAt;
+  const loadEnrichment = useCallback(() => {
+    if (enrichmentRequestStarted.current) return;
+    enrichmentRequestStarted.current = true;
+    queueMicrotask(() => setEnrichmentStatus("loading"));
+    const poll = async (attempt: number) => {
+      try {
+        const value = await getMyReportEnrichment();
+        const jobStatus = value.report_enrichment?.status;
+        if (jobStatus === "complete") {
+          setEnrichment(value);
+          setEnrichmentStatus("success");
+          setEnrichmentFetchedAt(Date.now());
+          return;
+        }
+        if (jobStatus === "failed" || attempt >= 60) {
+          setEnrichmentStatus("error");
+          return;
+        }
+        const retryAfter = Math.max(500, value.report_enrichment?.retry_after_ms ?? 750);
+        enrichmentPollTimer.current = window.setTimeout(() => { void poll(attempt + 1); }, retryAfter);
+      } catch {
+        setEnrichmentStatus("error");
+      }
+    };
+    void poll(0);
+  }, []);
+  const refetchReport = useCallback(() => {
+    if (enrichmentPollTimer.current !== null) window.clearTimeout(enrichmentPollTimer.current);
+    enrichmentPollTimer.current = null;
+    enrichmentRequestStarted.current = false;
+    setEnrichment(null);
+    setEnrichmentStatus("idle");
+    setEnrichmentFetchedAt(null);
+    refetchCoreReport();
+  }, [refetchCoreReport]);
+
+  useEffect(() => () => {
+    if (enrichmentPollTimer.current !== null) window.clearTimeout(enrichmentPollTimer.current);
+  }, []);
   const chatMessages = chatData?.messages ?? report?.chat_history ?? [];
   const chatKey = buildChatKey(patientId ?? "patient", chatMessages);
 
@@ -147,6 +202,12 @@ export default function PatientDashboard() {
   ];
 
   useEffect(() => {
+    if (tab === "overview" && status === "success" && enrichmentStatus === "idle") {
+      loadEnrichment();
+    }
+  }, [enrichmentStatus, loadEnrichment, status, tab]);
+
+  useEffect(() => {
     if (location.pathname !== "/patient") return;
     if (!location.hash) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -171,68 +232,8 @@ export default function PatientDashboard() {
       <div className="dashboard-content patient-boundary-strip">
         <ClinicalBoundaryBanner />
       </div>
-      {status === "loading" && tab !== "chat" && <SkeletonDashboard label="Loading your records..." />}
+      {status === "loading" && <SkeletonDashboard label="Loading your records..." />}
       {status === "error"   && <ErrorPane message={error ?? "Failed to load"} onRetry={refetchReport} />}
-      {tab === "chat" && status === "loading" && (
-        <div className="dashboard-page">
-          <div className="dashboard-content chat-workspace">
-            <div className="chat-card-shell">
-              <ChatPanel
-                key={chatKey}
-                messages={chatMessages}
-                composerLeading={<ComposerToolButton onSelect={handleToolSelect} />}
-                onSend={async (text) => {
-                  const res = await sendMyChat(text);
-                  return {
-                    reply: res.reply,
-                    saved_actions: res.saved_actions,
-                    citations: res.citations,
-                  };
-                }}
-                onSendStream={async (text, handlers) => {
-                  const res = await sendMyChatStream(text, handlers);
-                  return {
-                    reply: res.reply,
-                    saved_actions: res.saved_actions,
-                    citations: res.citations,
-                  };
-                }}
-                onSavedActions={(actions: SavedAction[]) => {
-                  const touchesReport = actions.some((a) =>
-                    [
-                      "saved_symptom",
-                      "saved_labs",
-                      "saved_medication",
-                      "saved_imaging_report",
-                      "save_symptom",
-                      "save_lab",
-                      "save_medication",
-                      "save_mri",
-                      "save_imaging_report",
-                    ].includes(a.type),
-                  );
-                  if (touchesReport) refetchReport();
-                  refetchChat();
-
-                  for (const action of actions) {
-                    const { label, tone } = describeSavedAction(action);
-                    toast.push({
-                      tone,
-                      title: tone === "warning" ? label : `${label}.`,
-                      description:
-                        tone === "warning"
-                          ? "Flagged for clinician review."
-                          : "Patient record refreshed.",
-                    });
-                  }
-                }}
-                onUndoAction={handleUndoAction}
-              />
-              <ToolTraceDrawer messages={chatMessages} />
-            </div>
-          </div>
-        </div>
-      )}
       {status === "success" && report && (
         <div className="dashboard-page">
           <PatientBanner report={report} compact={tab === "chat"} />
@@ -259,6 +260,16 @@ export default function PatientDashboard() {
                   signals are above the fold without scrolling. */}
               <div className="dashboard-grid-full" data-section="kpi">
                 <PatientKpiStrip report={report} />
+                {enrichmentStatus === "loading" && (
+                  <p className="patient-progressive-load" role="status">
+                    Patient records are ready. Loading synthetic engineering details separately...
+                  </p>
+                )}
+                {enrichmentStatus === "error" && (
+                  <p className="patient-progressive-load is-warning" role="status">
+                    Patient records are available, but synthetic engineering details could not be loaded.
+                  </p>
+                )}
               </div>
 
               {/* Row 2 — Hybrid monitoring signal (detail) sits beside the

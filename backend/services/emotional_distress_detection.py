@@ -52,6 +52,22 @@ DESPAIR_TERMS: tuple[str, ...] = (
     "pagod na pagod na ako", "wala na akong lakas",
 )
 
+MORTALITY_DISTRESS_TERMS: tuple[str, ...] = (
+    "i will not last", "i won't last", "i wont last", "not going to last",
+    "won't last much longer", "wont last much longer", "i will die soon",
+    "i might die soon", "i may die soon", "i won't make it", "i wont make it",
+    "i don't think i'll make it", "i dont think ill make it", "not going to make it",
+    "i do not think i will make it", "i don't think i will make it",
+    "i think i am dying", "i think i'm dying", "i feel like i am dying",
+    "i feel like i'm dying", "i might not make it through", "i may not survive",
+    # Taglish / Filipino mortality-fear phrasing. These do not by themselves
+    # assert self-harm intent, so they route to urgent human review rather
+    # than automatically labelling the patient suicidal.
+    "hindi na ako magtatagal", "parang hindi na ako magtatagal",
+    "baka hindi na ako umabot", "hindi na ako aabot", "baka mamatay na ako",
+    "parang mamamatay na ako", "feeling ko mamamatay na ako",
+)
+
 FEAR_TERMS: tuple[str, ...] = (
     "scared", "terrified", "afraid", "i'm so scared", "i am so scared",
     "frightened", "fear of", "petrified",
@@ -138,6 +154,19 @@ def detect_emotional_distress(
             notes="Crisis wording detected; route to crisis resources and clinician immediately.",
         )
 
+    mortality_distress = _hits(query, MORTALITY_DISTRESS_TERMS)
+    if mortality_distress:
+        return EmotionalDistressVerdict(
+            detected=True,
+            category="mortality_distress",
+            response_mode="urgent_clinician_review",
+            matched_terms=mortality_distress[:5],
+            notes=(
+                "Mortality or severe-deterioration wording detected; do not infer intent, "
+                "but route to immediate safety clarification and human review."
+            ),
+        )
+
     despair = _hits(query, DESPAIR_TERMS)
     if despair:
         mode = "urgent_clinician_review" if safety_level == "high_risk" else "clinician_review_with_warm_handoff"
@@ -193,6 +222,7 @@ def vocabulary_manifest() -> dict[str, Any]:
         "categories": {
             "crisis": list(CRISIS_TERMS),
             "despair": list(DESPAIR_TERMS),
+            "mortality_distress": list(MORTALITY_DISTRESS_TERMS),
             "fear": list(FEAR_TERMS),
             "anxiety": list(ANXIETY_TERMS),
             "denial": list(DENIAL_TERMS),
@@ -208,6 +238,7 @@ __all__ = [
     "DESPAIR_TERMS",
     "EmotionalDistressVerdict",
     "FEAR_TERMS",
+    "MORTALITY_DISTRESS_TERMS",
     "RESPONSE_MODE_VALUES",
     "detect_emotional_distress",
     "vocabulary_manifest",

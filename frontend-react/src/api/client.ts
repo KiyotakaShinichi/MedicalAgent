@@ -28,6 +28,8 @@ import type {
   CtLesionWorkflowReport,
   SimToPublicImagingReport,
   GeneticCounselingReadiness,
+  HighRiskConversationAlertsResponse,
+  HighRiskConversationAlert,
 } from "../types/api";
 
 /**
@@ -103,6 +105,11 @@ export const whoami = () =>
 
 // Patient
 export const getMyReport = () => get<PatientReport>("/me/patient-report");
+
+export const getMyReportCore = () => get<PatientReport>("/me/patient-report/core");
+
+export const getMyReportEnrichment = () =>
+  get<Partial<PatientReport>>("/me/patient-report/enrichment");
 
 export const getMyChatHistory = () =>
   get<{ patient_id: string; messages: import("../types/api").ChatMessage[] }>("/me/chat");
@@ -433,6 +440,15 @@ export const getPatientGeneticCounselingReadiness = (patientId: string) =>
 
 export const getReviewQueue = () =>
   get<{ queue: ReviewQueueItem[] }>("/clinician/review-queue?limit=25");
+
+export const getHighRiskConversationAlerts = () =>
+  get<HighRiskConversationAlertsResponse>("/clinician/high-risk-conversation-alerts?limit=25");
+
+export const acknowledgeHighRiskConversationAlert = (alertId: number, note?: string) =>
+  post<{ message: string; alert: HighRiskConversationAlert; safety_note: string }>(
+    `/clinician/high-risk-conversation-alerts/${alertId}/acknowledge`,
+    { note: note ?? "Acknowledged from the clinician review dashboard." },
+  );
 
 export const getSummaryReviews = (patientId: string) =>
   get<{ summary_reviews: SummaryReview[] }>(

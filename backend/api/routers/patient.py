@@ -8,6 +8,7 @@ POST /patients/{patient_id}/chat/stream.
 from __future__ import annotations
 
 import json
+import os
 import time
 from datetime import date
 
@@ -79,10 +80,17 @@ from backend.services.patient_timeline_summary import build_patient_timeline_ris
 from backend.services.support_chat_agent import handle_patient_chat
 from backend.services.timeline_intelligence import answer_timeline_question, build_timeline_intelligence
 from backend.services.data_availability import build_data_availability
+from backend.services.patient_report_enrichment_jobs import (
+    get_patient_enrichment_job,
+    invalidate_patient_enrichment,
+    schedule_patient_enrichment,
+)
 
 router = APIRouter(tags=["patient"])
-_REPORT_CACHE_TTL_SECONDS = 120
+_REPORT_CACHE_TTL_SECONDS = max(120, int(os.getenv("NLCARE_PATIENT_REPORT_CACHE_TTL_SECONDS", "900")))
+_REPORT_CORE_CACHE_TTL_SECONDS = max(30, int(os.getenv("NLCARE_PATIENT_CORE_CACHE_TTL_SECONDS", "120")))
 _REPORT_CACHE: dict[str, tuple[float, dict]] = {}
+_REPORT_CORE_CACHE: dict[str, tuple[float, dict]] = {}
 
 
 # ─── Request models ───────────────────────────────────────────────────────────
@@ -357,8 +365,9 @@ def _combined_imaging_reports(imaging_reports, ct_reports):
     return combined.sort_values("date")
 
 
-def build_patient_report_response(patient_id: str, db: Session):
-    cached = _get_cached_report(patient_id)
+def build_patient_report_response(patient_id: str, db: Session, *, include_enrichment: bool = True):
+    started_at = time.perf_counter()
+    cached = _get_cached_report(patient_id) if include_enrichment else _get_cached_core_report(patient_id)
     if cached is not None:
         return cached
 
@@ -458,6 +467,23 @@ def build_patient_report_response(patient_id: str, db: Session):
     report["uploads"] = patient_uploads
     report["clinical_interventions"] = clinical_interventions
     report["treatment_outcome"] = treatment_outcome
+
+    if not include_enrichment:
+        report["synthetic_model_prediction"] = None
+        report["synthetic_model_explanation"] = None
+        report["hybrid_prediction"] = None
+        report["evidence_aware_prediction"] = None
+        _attach_derived_report_sections(report, patient, db)
+        report["report_enrichment"] = {
+            "status": "deferred",
+            "profile": "records_first",
+            "generated_ms": round((time.perf_counter() - started_at) * 1000, 1),
+            "message": "Patient records are ready; synthetic engineering details load separately.",
+            "clinical_validation": False,
+        }
+        _set_cached_core_report(patient_id, report)
+        return report
+
     try:
         from backend.services.complete_synthetic_xai import (
             load_complete_synthetic_patient_prediction,
@@ -484,7 +510,23 @@ def build_patient_report_response(patient_id: str, db: Session):
     except Exception:
         report["hybrid_prediction"] = None
         report["evidence_aware_prediction"] = None
+    _attach_derived_report_sections(report, patient, db)
+    report["report_enrichment"] = {
+        "status": "complete",
+        "profile": "full_engineering_bundle",
+        "generated_ms": round((time.perf_counter() - started_at) * 1000, 1),
+        "message": "Records and synthetic engineering details are ready.",
+        "clinical_validation": False,
+    }
+
+    _set_cached_report(patient_id, report)
+    return report
+
+
+def _attach_derived_report_sections(report: dict, patient: Patient, db: Session) -> None:
     report["multimodal_assessment"] = build_multimodal_assessment(patient.id, report)
+    # Retained for clinician/admin backward compatibility. Patient headlines
+    # intentionally do not display this synthetic workflow index as a health score.
     report["monitoring_score"] = (
         report["multimodal_assessment"] or {}
     ).get("treatment_monitoring_score")
@@ -502,9 +544,6 @@ def build_patient_report_response(patient_id: str, db: Session):
     except Exception:
         report["latest_clinician_review"] = None
 
-    _set_cached_report(patient_id, report)
-    return report
-
 
 def _get_cached_report(patient_id: str) -> dict | None:
     item = _REPORT_CACHE.get(patient_id)
@@ -521,11 +560,63 @@ def _set_cached_report(patient_id: str, report: dict) -> None:
     _REPORT_CACHE[patient_id] = (time.monotonic(), report)
 
 
+def _get_cached_core_report(patient_id: str) -> dict | None:
+    item = _REPORT_CORE_CACHE.get(patient_id)
+    if not item:
+        return None
+    created_at, report = item
+    if time.monotonic() - created_at > _REPORT_CORE_CACHE_TTL_SECONDS:
+        _REPORT_CORE_CACHE.pop(patient_id, None)
+        return None
+    return report
+
+
+def _set_cached_core_report(patient_id: str, report: dict) -> None:
+    _REPORT_CORE_CACHE[patient_id] = (time.monotonic(), report)
+
+
 def _invalidate_report_cache(patient_id: str | None = None) -> None:
+    invalidate_patient_enrichment(patient_id)
     if patient_id is None:
         _REPORT_CACHE.clear()
+        _REPORT_CORE_CACHE.clear()
     else:
         _REPORT_CACHE.pop(patient_id, None)
+        _REPORT_CORE_CACHE.pop(patient_id, None)
+
+
+def _discard_stale_enrichment_result(patient_id: str, report: dict) -> None:
+    cached = _REPORT_CACHE.get(patient_id)
+    if cached is not None and cached[1] is report:
+        _REPORT_CACHE.pop(patient_id, None)
+
+
+def _schedule_report_enrichment(patient_id: str) -> dict:
+    return schedule_patient_enrichment(
+        patient_id,
+        build=lambda item, worker_db: build_patient_report_response(item, worker_db, include_enrichment=True),
+        discard_stale_result=_discard_stale_enrichment_result,
+    )
+
+
+def warm_patient_report_enrichment_cache() -> None:
+    """Schedule demo prewarming without delaying application startup."""
+    environment = (os.getenv("ENVIRONMENT") or os.getenv("APP_ENV") or "development").strip().lower()
+    enabled = os.getenv("NLCARE_PATIENT_ENRICHMENT_PREWARM_ENABLED")
+    if enabled is None:
+        enabled = "false" if environment in {"test", "testing"} else "true"
+    if str(enabled).strip().lower() not in {"1", "true", "yes", "on"}:
+        return
+    from backend.database import SessionLocal
+
+    db = SessionLocal()
+    try:
+        patient_ids = [patient.id for patient in get_all_patients(db)]
+    finally:
+        db.close()
+    for patient_id in patient_ids:
+        if _get_cached_report(patient_id) is None:
+            _schedule_report_enrichment(patient_id)
 
 
 # ─── Patient CRUD ─────────────────────────────────────────────────────────────
@@ -602,6 +693,57 @@ def get_my_patient_report(
     db: Session = Depends(get_db),
 ):
     return build_patient_report_response(context.patient_id, db)
+
+
+@router.get("/me/patient-report/core")
+def get_my_patient_report_core(
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Return patient records before deferred synthetic model enrichment."""
+    report = build_patient_report_response(context.patient_id, db, include_enrichment=False)
+    if _get_cached_report(context.patient_id) is None:
+        _schedule_report_enrichment(context.patient_id)
+    return report
+
+
+@router.get("/me/patient-report/enrichment")
+def get_my_patient_report_enrichment(
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Read deferred fields without running the synthetic model in this request."""
+    keys = (
+        "synthetic_model_prediction",
+        "synthetic_model_explanation",
+        "hybrid_prediction",
+        "evidence_aware_prediction",
+        "multimodal_assessment",
+        "monitoring_score",
+        "patient_timeline_summary",
+        "timeline_intelligence",
+        "data_availability",
+        "report_enrichment",
+    )
+    report = _get_cached_report(context.patient_id)
+    if report is not None:
+        return {key: report.get(key) for key in keys}
+
+    job = get_patient_enrichment_job(context.patient_id)
+    if job is None or job.get("status") not in {"queued", "running"}:
+        job = _schedule_report_enrichment(context.patient_id)
+    pending = {key: None for key in keys if key != "report_enrichment"}
+    pending["report_enrichment"] = {
+        **job,
+        "profile": "background_single_flight",
+        "generated_ms": job.get("generated_ms") or 0.0,
+        "message": (
+            "Synthetic engineering details are being prepared outside the request path."
+            if job.get("status") in {"queued", "running"}
+            else "Synthetic engineering details could not be prepared; patient records remain available."
+        ),
+    }
+    return pending
 
 
 @router.get("/me/genetic-counseling-readiness")

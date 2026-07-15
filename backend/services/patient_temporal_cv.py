@@ -102,6 +102,7 @@ class StrategyReport:
     folds: list[FoldMetrics] = field(default_factory=list)
     patient_overlap_pairs: int = 0
     temporal_violations: int = 0
+    train_rows_censored_after_test_start: int = 0
 
     def aggregate(self) -> dict[str, Any]:
         aucs = [f.roc_auc for f in self.folds if f.roc_auc is not None]
@@ -116,6 +117,8 @@ class StrategyReport:
             "brier_std": float(np.std(briers)) if briers else None,
             "patient_overlap_pairs": self.patient_overlap_pairs,
             "temporal_violations": self.temporal_violations,
+            "train_rows_censored_after_test_start": self.train_rows_censored_after_test_start,
+            "row_temporal_censoring_applied": self.train_rows_censored_after_test_start > 0,
             "folds": [f.as_dict() for f in self.folds],
         }
 
@@ -224,9 +227,10 @@ def run_patient_temporal_cv(
     report = StrategyReport(
         name="patient_level_temporal_cv",
         description=(
-            "Walk-forward CV grouped by patient_id, ordered by each "
-            "patient's earliest treatment_date.  No patient overlap "
-            "across folds; no test row dated before its training cohort."
+            "Walk-forward CV grouped by patient_id, ordered by each patient's "
+            "earliest treatment_date. No patient overlap across folds. Training "
+            "rows dated on/after the held-out fold start are censored so strict "
+            "row-level temporal ordering is preserved."
         ),
     )
     folds = patient_temporal_folds(rows, n_folds=n_folds)
@@ -236,11 +240,11 @@ def run_patient_temporal_cv(
         overlap = set(train_pids) & set(test_pids)
         report.patient_overlap_pairs += len(overlap)
         if not train_rows.empty and not test_rows.empty:
-            if train_rows["treatment_date"].max() > test_rows["treatment_date"].min():
-                # Note: walk-forward by *patient onset*, not by row date,
-                # so individual cycle dates can interleave once a
-                # later-cohort patient is in test.  We surface this as a
-                # diagnostic, not a hard violation.
+            test_start = test_rows["treatment_date"].min()
+            original_train_n = len(train_rows)
+            train_rows = train_rows[train_rows["treatment_date"] < test_start]
+            report.train_rows_censored_after_test_start += original_train_n - len(train_rows)
+            if train_rows.empty or train_rows["treatment_date"].max() >= test_start:
                 report.temporal_violations += 1
         report.folds.append(
             _make_fold_metrics(fold_idx, train_rows, test_rows, target, seed)

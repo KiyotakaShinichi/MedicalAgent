@@ -201,12 +201,17 @@ class InferenceWithQuantileArtifacts(unittest.TestCase):
         self.assertGreaterEqual(lo, 0.0)
         self.assertLessEqual(hi, 1.0)
 
-    def test_partial_evidence_widens_the_band(self) -> None:
+    def test_imaging_only_partial_evidence_widens_the_band(self) -> None:
         full_band = predict_response_score_with_abstention(self._full_row()).uncertainty_band
-        # Strip imaging → confidence_modifier shrinks toward 0.5 prior,
-        # widening the band when projected through the shrinkage.
+        # Keep imaging but strip longitudinal CBC -> confidence_modifier shrinks
+        # toward the 0.5 prior, widening the band when projected through the
+        # shrinkage. Rows without imaging now abstain for response scoring.
         partial = dict(self._full_row())
-        for k in ("mri_tumor_size_cm", "mri_percent_change_from_baseline"):
+        for k in (
+            "pre_wbc", "pre_anc", "pre_hemoglobin", "pre_platelets",
+            "nadir_wbc", "nadir_anc", "nadir_hemoglobin", "nadir_platelets",
+            "recovery_wbc", "recovery_hemoglobin", "recovery_platelets",
+        ):
             partial[k] = None
         partial_band = predict_response_score_with_abstention(partial).uncertainty_band
 

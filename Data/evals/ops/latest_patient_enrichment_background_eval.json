@@ -1,0 +1,17 @@
+{
+  "schema_version": "patient_enrichment_background_eval_v1",
+  "generated_at": "2026-07-15T09:21:31.300659+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "process_local_worker": true,
+  "distributed_queue_proven": false,
+  "checks": {
+    "single_flight": true,
+    "completion_recorded": true,
+    "stale_result_discarded": true,
+    "failure_redacted": true,
+    "request_path_nonblocking_contract": true
+  },
+  "claim_boundary": "This is a local engineering concurrency regression. It does not establish distributed-worker durability, production latency, clinical validation, or healthcare production readiness."
+}

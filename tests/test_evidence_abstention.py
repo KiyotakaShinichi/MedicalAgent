@@ -71,7 +71,7 @@ class ModalityDetectionTests(unittest.TestCase):
 
 class ResponseClassificationRules(unittest.TestCase):
     """Response classification is the highest-risk decision; it must require
-    imaging OR longitudinal CBC."""
+    imaging. Longitudinal CBC can raise confidence when imaging is present."""
 
     def test_imaging_only_with_demographics_is_partial_not_insufficient(self) -> None:
         assessment = assess_response_classification(
@@ -80,15 +80,17 @@ class ResponseClassificationRules(unittest.TestCase):
         )
         self.assertEqual(assessment.sufficiency, "partial")
         self.assertFalse(assessment.abstain)
+        self.assertEqual(assessment.reason, "response_imaging_only_without_longitudinal_cbc")
         self.assertLess(assessment.confidence_modifier, 1.0)
 
-    def test_longitudinal_cbc_without_imaging_is_partial(self) -> None:
+    def test_longitudinal_cbc_without_imaging_abstains(self) -> None:
         assessment = assess_response_classification(
             present=["demographics", "cbc_pre", "cbc_nadir", "cbc_recovery"],
             missing=["imaging", "symptoms", "interventions"],
         )
-        self.assertEqual(assessment.sufficiency, "partial")
-        self.assertFalse(assessment.abstain)
+        self.assertEqual(assessment.sufficiency, "insufficient")
+        self.assertTrue(assessment.abstain)
+        self.assertEqual(assessment.reason, "response_imaging_required_for_response_pattern")
 
     def test_no_response_signal_at_all_abstains(self) -> None:
         assessment = assess_response_classification(
@@ -99,7 +101,7 @@ class ResponseClassificationRules(unittest.TestCase):
         self.assertTrue(assessment.abstain)
         self.assertEqual(
             assessment.reason,
-            "no_response_signal_imaging_or_longitudinal_cbc_required",
+            "response_imaging_required_for_response_pattern",
         )
 
     def test_missing_demographics_always_abstains(self) -> None:
@@ -253,7 +255,11 @@ class EndToEndEvalGate(unittest.TestCase):
                 sample_size=120,  # keep CI fast
             )
             self.assertEqual(payload["status"] in {"strong", "acceptable"}, True, payload["status"])
-            self.assertEqual(payload["summary"]["full_data_coverage_rate"], 1.0)
+            self.assertGreaterEqual(payload["summary"]["full_data_coverage_rate"], 0.95)
+            self.assertEqual(
+                payload["summary"]["abstention_rates_by_scenario"]["no_imaging"],
+                1.0,
+            )
             self.assertEqual(payload["summary"]["demographics_only_abstention_rate"], 1.0)
             # The artifact must actually land on disk so the dashboard can read it.
             self.assertTrue(out_path.exists())

@@ -1,0 +1,127 @@
+{
+  "schema_version": "toxicity_review_target_v3_v1",
+  "generated_at": "2026-07-15T08:32:48.886698+00:00",
+  "status": "candidate_needs_review",
+  "clinical_validation": false,
+  "synthetic_only": true,
+  "healthcare_production_ready": false,
+  "source_csv": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+  "target": "toxicity_review_priority_v3",
+  "label_design": {
+    "positive_rate": 0.28,
+    "risk_score_threshold_quantile": 0.72,
+    "design_intent": "Reduce direct dependence on the legacy nadir-CBC rule by combining symptom severity, symptom persistence, intervention/dose context, pre-cycle vulnerability, limited nadir CBC contribution, recovery failure, and noise.",
+    "factors": [
+      "current symptom severity",
+      "symptom count",
+      "intervention and dose-change context",
+      "pre-cycle vulnerability",
+      "limited/capped nadir CBC contribution",
+      "recovery failure",
+      "multi-cycle symptom persistence",
+      "small stochastic noise to reduce exact rule reconstruction"
+    ]
+  },
+  "model": {
+    "features": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced",
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "auroc": 0.9383,
+    "brier": 0.0915,
+    "accuracy": 0.8656,
+    "interpretation": "Synthetic discrimination against a simulator-built target only. High scores can still reflect generator structure and must not be presented as clinical toxicity detection."
+  },
+  "shortcut_comparison": {
+    "legacy_rule_accuracy_against_v3": 0.6478,
+    "legacy_rule_auroc_against_v3": 0.8466,
+    "legacy_rule_does_not_define_v3": true,
+    "residual_shortcut_warning": true
+  },
+  "feature_group_sensitivity": {
+    "correlations_with_v3_score": [
+      {
+        "feature_group": "dose_delay",
+        "correlation_with_v3_score": 0.8685
+      },
+      {
+        "feature_group": "dose_reduce",
+        "correlation_with_v3_score": 0.8556
+      },
+      {
+        "feature_group": "intervention",
+        "correlation_with_v3_score": 0.8401
+      },
+      {
+        "feature_group": "nadir_anc_low",
+        "correlation_with_v3_score": 0.7995
+      },
+      {
+        "feature_group": "recovery_wbc_low",
+        "correlation_with_v3_score": 0.7993
+      },
+      {
+        "feature_group": "pre_anc_low",
+        "correlation_with_v3_score": 0.6433
+      },
+      {
+        "feature_group": "persistent_symptom",
+        "correlation_with_v3_score": 0.5861
+      },
+      {
+        "feature_group": "previous_symptom",
+        "correlation_with_v3_score": 0.5493
+      },
+      {
+        "feature_group": "symptom",
+        "correlation_with_v3_score": 0.5338
+      },
+      {
+        "feature_group": "nadir_platelets_low",
+        "correlation_with_v3_score": 0.4184
+      },
+      {
+        "feature_group": "recovery_platelets_low",
+        "correlation_with_v3_score": 0.3774
+      },
+      {
+        "feature_group": "symptom_count",
+        "correlation_with_v3_score": 0.2799
+      }
+    ],
+    "interpretation": "Correlation is a synthetic target-design diagnostic, not causal evidence. Large correlations are kept visible as shortcut-risk warnings."
+  },
+  "recommendation": {
+    "current_use": "candidate_review_priority_experiment",
+    "production_policy": "review_hint_only",
+    "promotion_decision": "hold_synthetic_only",
+    "not_supported": [
+      "clinical toxicity prediction",
+      "CTCAE grade assignment",
+      "patient-facing treatment action",
+      "real adverse-event detection"
+    ]
+  },
+  "claim_boundary": "Toxicity review target v3 is a simulator-built review-priority experiment. It is not CTCAE grading, not toxicity diagnosis, not patient-facing advice, not clinical validation, and not evidence of real adverse-event detection."
+}

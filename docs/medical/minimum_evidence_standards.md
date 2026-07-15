@@ -2,7 +2,7 @@
 
 Owner: engineering. Status: not clinically approved.
 
-Response pattern: requires treatment timeline plus imaging or longitudinal CBC; otherwise insufficient evidence.
+Response pattern: requires treatment timeline plus imaging; longitudinal CBC is confidence context, not a replacement for imaging.
 
 Toxicity signal: requires demographics plus CBC or symptoms; review hint only.
 

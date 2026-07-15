@@ -69,7 +69,15 @@ URGENT_TERMS = [
 IMMEDIATE_DANGER_PATTERNS = (
     r"\bi think i(?:'m| am|m) dying\b",
     r"\bi feel like i(?:'m| am|m) dying\b",
+    r"\bi (?:do not|don't|dont) think i(?:'ll| will|ll) make it\b",
+    r"\bi (?:will not|won't|wont) (?:last|make it)\b",
+    r"\bi(?:'m| am) not going to (?:last|make it)\b",
+    r"\bi (?:may|might) (?:die soon|not survive|not make it(?: through)?)\b",
     r"\bparang mamamatay na ako\b",
+    r"\b(?:parang )?hindi na ako magtatagal\b",
+    r"\bbaka hindi na ako (?:umabot|magtatagal)\b",
+    r"\bhindi na ako aabot\b",
+    r"\bbaka mamatay na ako\b",
 )
 
 SAFETY_LOCATION_FOLLOWUP_PATTERNS = (
@@ -214,6 +222,8 @@ def handle_patient_chat(db, patient_id, message):
     db.add(user_record)
     db.flush()
 
+    high_risk_alert = None
+    alert_action = None
     confirmation_actions = resolve_pending_record_write(db, patient_id, normalized)
     actions = list(confirmation_actions or [])
     selected_tools = set() if confirmation_actions is not None else set(tool_plan["selected_tools"])
@@ -394,6 +404,31 @@ def handle_patient_chat(db, patient_id, message):
     if urgent_flags:
         routing_safety = safety_scope_check(normalized, urgent_flags)
 
+    # Queue the review alert only after every extractor has had a chance to
+    # add safety flags. This covers explicit danger language as well as urgent
+    # CBC/imaging evidence discovered during structured input parsing.
+    try:
+        from backend.services.high_risk_conversation_alerts import queue_and_dispatch_alert
+
+        high_risk_alert, alert_action = queue_and_dispatch_alert(
+            db,
+            patient_id=patient_id,
+            source_chat_message_id=user_record.id,
+            immediate_danger=immediate_danger,
+            urgent_flags=sorted(set(urgent_flags)),
+            emotional_distress=emotional_distress,
+        )
+    except Exception:  # noqa: BLE001 - chat safety response must survive alert-outbox failure
+        alert_action = {
+            "type": "high_risk_review_alert_failed",
+            "message": (
+                "The review-alert queue could not confirm that it recorded this turn. "
+                "Do not wait for a portal reply if you feel unsafe or in immediate danger."
+            ),
+        } if (immediate_danger or urgent_flags) else None
+    if alert_action is not None:
+        actions.append(alert_action)
+
     patient_context = _recent_patient_context(db, patient_id)
     direct_safety_reply = None
     direct_scope_reply = None
@@ -492,6 +527,7 @@ def handle_patient_chat(db, patient_id, message):
     response = _enforce_record_provenance(agent_result["reply"], actions)
     response = _ensure_complete_response(response, fallback_response)
     response = _ensure_complete_safety_reply(response, routing_safety)
+    response = _append_alert_notice(response, actions)
     agent_result["reply"] = response
     assistant_record = ChatMessage(
         patient_id=patient_id,
@@ -515,6 +551,14 @@ def handle_patient_chat(db, patient_id, message):
         }),
     )
     db.add(assistant_record)
+    db.flush()
+    if high_risk_alert is not None:
+        try:
+            from backend.services.high_risk_conversation_alerts import attach_assistant_message
+
+            attach_assistant_message(db, high_risk_alert.id, assistant_record.id)
+        except Exception:  # noqa: BLE001 - alert linkage is secondary to preserving the chat turn
+            pass
     db.commit()
     db.refresh(assistant_record)
     remember_turn(patient_id, "assistant", response, actions=actions)
@@ -574,6 +618,8 @@ def _apply_emotional_distress_mode(reply, emotional_distress):
             "organize questions or records for your care team, but this needs immediate human support."
         )
     if mode in {"urgent_clinician_review", "clinician_review_with_warm_handoff"}:
+        if mode == "urgent_clinician_review":
+            return _immediate_danger_reply()
         prefix = (
             "I'm sorry this feels so heavy. I can't diagnose or predict what is happening from here, "
             "but this is worth bringing to your oncology team for review. "
@@ -586,6 +632,20 @@ def _apply_emotional_distress_mode(reply, emotional_distress):
     if str(reply).startswith(prefix[:24]):
         return reply
     return f"{prefix}{reply}"
+
+
+def _append_alert_notice(reply, actions):
+    notices = [
+        str(action.get("message") or "").strip()
+        for action in (actions or [])
+        if action.get("type") in {"high_risk_review_alert", "high_risk_review_alert_failed"}
+        and action.get("message")
+    ]
+    text = str(reply or "").strip()
+    for notice in notices:
+        if notice and notice not in text:
+            text = f"{text} {notice}".strip()
+    return text
 
 
 def _compound_intent_payload(envelope, llm_verdict):

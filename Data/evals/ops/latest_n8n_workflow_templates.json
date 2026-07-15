@@ -1,12 +1,12 @@
 {
   "schema_version": "n8n_workflow_templates_v1",
-  "generated_at": "2026-07-13T08:39:07.377142+00:00",
+  "generated_at": "2026-07-15T05:51:37.120139+00:00",
   "status": "ready_for_optional_import",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "phi_allowed": false,
   "live_patient_route_enabled": false,
-  "template_count": 9,
+  "template_count": 10,
   "templates": [
     {
       "id": "release_gate_alert",
@@ -70,6 +70,13 @@
       "allowed_use": "Notify maintainers about demo service health and stale engineering artifacts.",
       "not_allowed_use": "Do not present engineering health as clinical safety or send patient data.",
       "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\deployment_health_alert.json"
+    },
+    {
+      "id": "high_risk_review_alert",
+      "title": "High-Priority Conversation Review Alert",
+      "allowed_use": "Notify an approved internal reviewer channel that a redacted NLCare review item is waiting. Operators may attach an email, SMS, or Viber node after access-control review.",
+      "not_allowed_use": "Do not send patient identifiers, raw chat text, medical conclusions, or imply that delivery means a clinician saw or acted on the alert.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\high_risk_review_alert.json"
     }
   ],
   "import_instructions": [

@@ -19,6 +19,7 @@ from backend.services.emotional_distress_detection import (
     DENIAL_TERMS,
     DESPAIR_TERMS,
     FEAR_TERMS,
+    MORTALITY_DISTRESS_TERMS,
     RESPONSE_MODE_VALUES,
     detect_emotional_distress,
     vocabulary_manifest,
@@ -41,6 +42,7 @@ class VocabularyParity(unittest.TestCase):
             ("fear", FEAR_TERMS),
             ("anxiety", ANXIETY_TERMS),
             ("denial", DENIAL_TERMS),
+            ("mortality_distress", MORTALITY_DISTRESS_TERMS),
         ):
             self.assertTrue(_has_taglish(terms), name)
 
@@ -55,7 +57,9 @@ class VocabularyParity(unittest.TestCase):
 
     def test_manifest_shape(self) -> None:
         m = vocabulary_manifest()
-        self.assertEqual(set(m["categories"].keys()), {"crisis", "despair", "fear", "anxiety", "denial"})
+        self.assertEqual(set(m["categories"].keys()), {
+            "crisis", "despair", "fear", "anxiety", "denial", "mortality_distress",
+        })
 
 
 class Detection(unittest.TestCase):
@@ -86,6 +90,16 @@ class Detection(unittest.TestCase):
         v = detect_emotional_distress("I give up. There is no hope.")
         self.assertEqual(v.category, "despair")
         self.assertEqual(v.response_mode, "clinician_review_with_warm_handoff")
+
+    def test_mortality_distress_routes_to_urgent_review_without_inferring_self_harm(self) -> None:
+        for query in (
+            "I do not think I will make it.",
+            "I might not make it through this.",
+            "Parang hindi na ako magtatagal.",
+        ):
+            v = detect_emotional_distress(query)
+            self.assertEqual(v.category, "mortality_distress", query)
+            self.assertEqual(v.response_mode, "urgent_clinician_review", query)
 
     def test_fear_taglish(self) -> None:
         v = detect_emotional_distress("Natatakot ako bumalik yung cancer ko.")

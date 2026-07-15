@@ -5,7 +5,7 @@ import hmac
 import json
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Mapping
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
@@ -30,6 +30,7 @@ ALLOWED_WORKFLOW_IDS = frozenset(
         "external_red_team_intake",
         "dependency_security_alert",
         "deployment_health_alert",
+        "high_risk_review_alert",
     }
 )
 
@@ -87,6 +88,7 @@ def build_signed_dispatch(
         "headers": {
             "Content-Type": "application/json",
             "X-NLCare-Event-ID": envelope["event_id"],
+            "X-NLCare-Timestamp": envelope["created_at"],
             "X-NLCare-Signature-Algorithm": "hmac-sha256",
             "X-NLCare-Signature": signature,
         },
@@ -97,6 +99,43 @@ def verify_signed_dispatch(*, body: str | bytes, signature: str, secret: str) ->
     raw = body.encode("utf-8") if isinstance(body, str) else body
     expected = hmac.new(secret.encode("utf-8"), raw, hashlib.sha256).hexdigest()
     return hmac.compare_digest(expected, signature)
+
+
+def validate_signed_dispatch_envelope(
+    *,
+    body: str | bytes,
+    signature: str,
+    secret: str,
+    now: datetime | None = None,
+    max_age_seconds: int = 300,
+    seen_event_ids: set[str] | None = None,
+) -> dict[str, Any]:
+    """Validate HMAC, timestamp freshness, redaction, and optional replay state."""
+    if not verify_signed_dispatch(body=body, signature=signature, secret=secret):
+        return {"valid": False, "reason": "invalid_signature", "event_id": None}
+    try:
+        raw = body.decode("utf-8") if isinstance(body, bytes) else body
+        envelope = json.loads(raw)
+        event_id = str(envelope.get("event_id") or "")
+        created_at = _parse_timestamp(str(envelope.get("created_at") or ""))
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return {"valid": False, "reason": "invalid_envelope", "event_id": None}
+    current = now or datetime.now(timezone.utc)
+    if not event_id:
+        return {"valid": False, "reason": "missing_event_id", "event_id": None}
+    if created_at > current + timedelta(seconds=30):
+        return {"valid": False, "reason": "future_timestamp", "event_id": event_id}
+    if (current - created_at).total_seconds() > max(1, max_age_seconds):
+        return {"valid": False, "reason": "expired", "event_id": event_id}
+    if envelope.get("phi_allowed") is not False or envelope.get("payload_redacted") is not True:
+        return {"valid": False, "reason": "redaction_boundary_failed", "event_id": event_id}
+    if find_blocked_fields(envelope.get("payload") or {}):
+        return {"valid": False, "reason": "blocked_payload_field", "event_id": event_id}
+    if seen_event_ids is not None and event_id in seen_event_ids:
+        return {"valid": False, "reason": "replay", "event_id": event_id}
+    if seen_event_ids is not None:
+        seen_event_ids.add(event_id)
+    return {"valid": True, "reason": "accepted", "event_id": event_id, "envelope": envelope}
 
 
 def dispatch_signed_webhook(
@@ -127,6 +166,8 @@ def dispatch_signed_webhook(
         }
     if not base_url or not secret:
         raise ValueError("n8n dispatch requires N8N_WEBHOOK_BASE_URL and N8N_WEBHOOK_SIGNING_SECRET")
+    if workflow_id == "high_risk_review_alert" and not _truthy(values.get("NLCARE_ALERT_TEST_RECIPIENT_ONLY")):
+        raise ValueError("High-risk alert delivery is restricted to a synthetic test recipient in this prototype")
 
     _validate_webhook_url(base_url)
     signed = build_signed_dispatch(workflow_id=workflow_id, payload=payload, secret=secret)
@@ -143,6 +184,76 @@ def dispatch_signed_webhook(
         "clinical_validation": False,
         "claim_boundary": CLAIM_BOUNDARY,
     }
+
+
+def build_signed_receipt(
+    *,
+    event_id: str,
+    receipt_id: str,
+    delivery_status: str,
+    secret: str,
+    timestamp: str | None = None,
+) -> dict[str, Any]:
+    status = str(delivery_status or "").strip().lower()
+    if status not in {"accepted", "delivered", "failed"}:
+        raise ValueError(f"Unsupported delivery receipt status={status}")
+    if not secret:
+        raise ValueError("A non-empty signing secret is required")
+    receipt = {
+        "schema_version": "nlcare_n8n_receipt_v1",
+        "event_id": str(event_id),
+        "receipt_id": str(receipt_id),
+        "delivery_status": status,
+        "occurred_at": timestamp or datetime.now(timezone.utc).isoformat(),
+        "payload_redacted": True,
+        "phi_allowed": False,
+        "clinical_validation": False,
+    }
+    body = _canonical_json(receipt)
+    signature = hmac.new(secret.encode("utf-8"), body, hashlib.sha256).hexdigest()
+    return {
+        "receipt": receipt,
+        "body": body.decode("utf-8"),
+        "headers": {
+            "Content-Type": "application/json",
+            "X-NLCare-Receipt-Signature": signature,
+            "X-NLCare-Timestamp": receipt["occurred_at"],
+        },
+    }
+
+
+def validate_signed_receipt(
+    *,
+    body: str | bytes,
+    signature: str,
+    secret: str,
+    now: datetime | None = None,
+    max_age_seconds: int = 300,
+) -> dict[str, Any]:
+    raw = body.encode("utf-8") if isinstance(body, str) else body
+    expected = hmac.new(secret.encode("utf-8"), raw, hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(expected, signature):
+        return {"valid": False, "reason": "invalid_signature"}
+    try:
+        receipt = json.loads(raw.decode("utf-8"))
+        occurred_at = _parse_timestamp(str(receipt.get("occurred_at") or ""))
+    except (TypeError, ValueError, UnicodeDecodeError, json.JSONDecodeError):
+        return {"valid": False, "reason": "invalid_receipt"}
+    current = now or datetime.now(timezone.utc)
+    if occurred_at > current + timedelta(seconds=30):
+        return {"valid": False, "reason": "future_timestamp"}
+    if (current - occurred_at).total_seconds() > max(1, max_age_seconds):
+        return {"valid": False, "reason": "expired"}
+    required = ("event_id", "receipt_id", "delivery_status")
+    if any(not str(receipt.get(field) or "").strip() for field in required):
+        return {"valid": False, "reason": "missing_required_field"}
+    if receipt.get("delivery_status") not in {"accepted", "delivered", "failed"}:
+        return {"valid": False, "reason": "invalid_delivery_status"}
+    if receipt.get("phi_allowed") is not False or receipt.get("payload_redacted") is not True:
+        return {"valid": False, "reason": "redaction_boundary_failed"}
+    if find_blocked_fields(receipt):
+        return {"valid": False, "reason": "blocked_payload_field"}
+    return {"valid": True, "reason": "accepted", "receipt": receipt}
 
 
 def _urllib_transport(url: str, body: str, headers: Mapping[str, str], timeout: float) -> Mapping[str, Any]:
@@ -165,6 +276,13 @@ def _canonical_json(payload: Mapping[str, Any]) -> bytes:
     return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
 
 
+def _parse_timestamp(value: str) -> datetime:
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
 def _truthy(value: str | None) -> bool:
     return str(value or "").strip().lower() in {"1", "true", "yes", "on"}
 
@@ -173,7 +291,10 @@ __all__ = [
     "ALLOWED_WORKFLOW_IDS",
     "CLAIM_BOUNDARY",
     "build_signed_dispatch",
+    "build_signed_receipt",
     "dispatch_signed_webhook",
     "find_blocked_fields",
+    "validate_signed_receipt",
+    "validate_signed_dispatch_envelope",
     "verify_signed_dispatch",
 ]

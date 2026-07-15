@@ -47,6 +47,20 @@ def main() -> int:
             env={"RAG_FORCE_SPARSE": "true"},
         ),
         Step(
+            name="Backend progressive-loading and notification reliability tests",
+            command=[
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/test_patient_progressive_report.py",
+                "tests/test_patient_report_enrichment_jobs.py",
+                "tests/test_high_risk_conversation_alerts.py",
+                "tests/test_n8n_webhook_dispatcher.py",
+                "tests/test_n8n_automation_templates.py",
+                "-q",
+            ],
+        ),
+        Step(
             name="Frontend Vitest unit tests",
             command=_npm_cmd("run", "test"),
             cwd=FRONTEND,
@@ -69,6 +83,18 @@ def main() -> int:
         Step(
             name="Focused release summary",
             command=[sys.executable, "scripts/run_focused_release_summary.py"],
+        ),
+        Step(
+            name="Patient enrichment background eval",
+            command=[sys.executable, "scripts/run_patient_enrichment_background_eval.py"],
+        ),
+        Step(
+            name="High-risk conversation alert eval",
+            command=[sys.executable, "scripts/run_high_risk_conversation_alert_eval.py"],
+        ),
+        Step(
+            name="ML logic/safety alignment audit",
+            command=[sys.executable, "scripts/run_ml_logic_safety_alignment.py"],
         ),
         Step(
             name="Release artifact gate",

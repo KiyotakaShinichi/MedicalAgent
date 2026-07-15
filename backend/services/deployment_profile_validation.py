@@ -29,7 +29,8 @@ def build_report(environment: Mapping[str, str] | None = None) -> dict[str, obje
     strict = profile in {"staging", "production"}
     database_url = env.get("DATABASE_URL", "")
     redis_url = env.get("REDIS_URL", "")
-    cors = [part.strip() for part in env.get("ONCOTRACK_CORS_ORIGINS", "").split(",") if part.strip()]
+    cors_value = env.get("NLCARE_CORS_ORIGINS") or env.get("ONCOTRACK_CORS_ORIGINS", "")
+    cors = [part.strip() for part in cors_value.split(",") if part.strip()]
     parsed = urlparse(database_url.replace("postgresql+psycopg2", "postgresql")) if database_url else None
     password = parsed.password if parsed else None
 

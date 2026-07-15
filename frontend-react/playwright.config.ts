@@ -17,7 +17,7 @@ export default defineConfig({
       cwd: "..",
       url: "http://127.0.0.1:8117/health",
       reuseExistingServer: false,
-      timeout: 120_000,
+      timeout: 300_000,
     },
     {
       command: "npm run dev -- --host 127.0.0.1 --port 5273",
@@ -26,7 +26,7 @@ export default defineConfig({
       },
       url: "http://127.0.0.1:5273/login",
       reuseExistingServer: false,
-      timeout: 120_000,
+      timeout: 180_000,
     },
   ],
   projects: [

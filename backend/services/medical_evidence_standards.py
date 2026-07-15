@@ -14,14 +14,16 @@ MINIMUM_EVIDENCE_STANDARDS: dict[str, dict[str, Any]] = {
         "answer_policy": "RAG answer with citation; no patient-specific decision.",
     },
     "response_classification": {
-        "required_any": ("imaging", "complete_longitudinal_cbc"),
+        "required_any": ("imaging",),
         "required_all": ("demographics",),
-        "answer_policy": "May emit monitor-only pattern signal; abstain if missing response evidence.",
+        "optional": ("complete_longitudinal_cbc",),
+        "answer_policy": "May emit monitor-only pattern signal when imaging is present; longitudinal CBC is confidence context.",
     },
     "response_regression": {
-        "required_any": ("imaging", "complete_longitudinal_cbc"),
+        "required_any": ("imaging",),
         "required_all": ("demographics",),
-        "answer_policy": "May emit score only with uncertainty band and claim boundary.",
+        "optional": ("complete_longitudinal_cbc",),
+        "answer_policy": "May emit score only when imaging is present, with uncertainty band and claim boundary.",
     },
     "toxicity_classification": {
         "required_any": ("any_cbc", "symptoms"),

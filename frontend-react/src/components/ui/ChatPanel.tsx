@@ -225,6 +225,8 @@ function ChatBubble({ message, isLatestAssistant, registerNode, onQuickReply, on
   return (
     <div
       ref={isLatestAssistant ? registerNode : undefined}
+      data-testid={isUser ? "user-message" : "assistant-message"}
+      data-message-ready={isUser || Boolean(message.content) ? "true" : "false"}
       className={clsx("chat-message-row flex gap-3 items-start", isUser ? "flex-row-reverse" : "flex-row")}
     >
       <span

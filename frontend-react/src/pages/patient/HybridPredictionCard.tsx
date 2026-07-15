@@ -226,8 +226,12 @@ function EvidenceLine({ prediction }: { prediction: { evidence: EvidenceAwarePre
 
 function humanReason(reason: string): string {
   switch (reason) {
+    case "response_imaging_required_for_response_pattern":
+      return "Imaging evidence is required before this response signal is shown.";
+    case "response_imaging_only_without_longitudinal_cbc":
+      return "Imaging is present, but complete longitudinal CBC context is missing — confidence reduced.";
     case "no_response_signal_imaging_or_longitudinal_cbc_required":
-      return "Needs imaging or a complete cycle of CBC values.";
+      return "Needs imaging evidence; older traces used this legacy reason.";
     case "missing_minimum_context":
       return "Patient demographics weren't available.";
     case "response_signal_from_single_modality_only":

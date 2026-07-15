@@ -6,6 +6,7 @@ health-check / redirect routes. All business logic lives in routers/.
 """
 
 import os
+from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, Request
@@ -19,7 +20,7 @@ from backend.schema_migrations import ensure_schema
 
 from backend.api.deps import get_access_context, get_admin_access_context, get_db
 from backend.api.routers.auth import router as auth_router
-from backend.api.routers.patient import router as patient_router
+from backend.api.routers.patient import router as patient_router, warm_patient_report_enrichment_cache
 from backend.api.routers.clinician_review import router as clinician_review_router
 from backend.api.routers.admin import router as admin_router
 from backend.api.routers.model import router as model_router
@@ -30,7 +31,16 @@ from backend.services.request_context import reset_request_id, set_request_id
 
 # ─── App setup ────────────────────────────────────────────────────────────────
 
-app = FastAPI(title="AI Breast Cancer Monitoring System")
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    warm_patient_report_enrichment_cache()
+    yield
+
+
+app = FastAPI(
+    title="NLCare Breast Cancer Monitoring Engineering Prototype",
+    lifespan=lifespan,
+)
 ensure_schema()
 
 # CORS — explicit origin list.  FastAPI/Starlette warns that the combination
@@ -44,7 +54,7 @@ _DEFAULT_CORS_ORIGINS = [
     "http://localhost:8017",
     "http://127.0.0.1:8017",
 ]
-_cors_env = os.environ.get("ONCOTRACK_CORS_ORIGINS")
+_cors_env = os.environ.get("NLCARE_CORS_ORIGINS") or os.environ.get("ONCOTRACK_CORS_ORIGINS")
 _cors_origins = (
     [origin.strip() for origin in _cors_env.split(",") if origin.strip()]
     if _cors_env
@@ -56,7 +66,13 @@ app.add_middleware(
     allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "X-Request-ID",
+        "X-NLCare-Receipt-Signature",
+        "X-NLCare-Timestamp",
+    ],
     expose_headers=["X-Request-ID", "X-Analytics-Cache"],
 )
 
@@ -138,7 +154,9 @@ def readinesscheck(db: Session = Depends(get_db)):
 
     db.execute(text("SELECT 1"))
     environment = (os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or "development").strip().lower()
-    demo_auth_allowed = os.getenv("ALLOW_DEMO_AUTH", "").strip().lower() in {"1", "true", "yes", "on"}
+    from backend.services.auth import is_demo_auth_allowed
+
+    demo_auth_allowed = is_demo_auth_allowed()
     return {
         "status": "ready",
         "service": "ai_breast_cancer_monitoring",

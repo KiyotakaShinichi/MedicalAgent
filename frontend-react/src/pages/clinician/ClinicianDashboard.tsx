@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { LayoutDashboard, MessageSquare, Users, ShieldCheck, FileText, History } from "lucide-react";
+import { BellRing, LayoutDashboard, MessageSquare, Users, ShieldCheck, FileText, History } from "lucide-react";
 import { AppShell } from "../../components/layout/AppShell";
 import { useApi } from "../../hooks/useApi";
 import {
@@ -8,6 +8,8 @@ import {
   getSummaryReviews,
   sendClinicianChat,
   getClinicianPatientPredictionTraces,
+  getHighRiskConversationAlerts,
+  acknowledgeHighRiskConversationAlert,
 } from "../../api/client";
 import { EmptyPane, ErrorPane, LoadingPane } from "../../components/ui/Spinner";
 import { Badge } from "../../components/ui/Badge";
@@ -24,7 +26,11 @@ import { GeneticReadinessCard } from "./GeneticReadinessCard";
 import { PredictionTracesPanel } from "./PredictionTracesPanel";
 import { ChatPanel } from "../../components/ui/ChatPanel";
 import { ClinicalBoundaryBanner } from "../../components/ui/ClinicalBoundaryBanner";
-import type { PatientReport, ClinicianPredictionTracesResponse } from "../../types/api";
+import type {
+  PatientReport,
+  ClinicianPredictionTracesResponse,
+  HighRiskConversationAlert,
+} from "../../types/api";
 
 const NAV = [
   { to: "/clinician", label: "Review Queue", icon: Users },
@@ -37,6 +43,12 @@ export default function ClinicianDashboard() {
   const [reviewKey, setReviewKey] = useState(0);
 
   const { data: queueData, status: queueStatus, error: queueError } = useApi(getReviewQueue, []);
+  const {
+    data: alertData,
+    status: alertStatus,
+    error: alertError,
+    refetch: refetchAlerts,
+  } = useApi(getHighRiskConversationAlerts, []);
   const queue = queueData?.queue ?? [];
   const activePatientId = selectedId ?? queue[0]?.patient_id ?? null;
   const {
@@ -101,6 +113,16 @@ export default function ClinicianDashboard() {
 
         <section className="clinician-review-panel">
           <ClinicalBoundaryBanner />
+          <HighRiskConversationAlertsPanel
+            alerts={alertData?.alerts ?? []}
+            loading={alertStatus === "loading"}
+            error={alertStatus === "error" ? alertError : null}
+            onSelectPatient={setSelectedId}
+            onAcknowledge={async (alertId) => {
+              await acknowledgeHighRiskConversationAlert(alertId);
+              refetchAlerts();
+            }}
+          />
           {!activePatientId && <EmptyPane label="Select a patient from the queue to begin review" />}
 
           {activePatientId && reportStatus === "loading" && <LoadingPane label="Loading patient..." />}
@@ -216,6 +238,72 @@ export default function ClinicianDashboard() {
         </section>
       </div>
     </AppShell>
+  );
+}
+
+function HighRiskConversationAlertsPanel({
+  alerts,
+  loading,
+  error,
+  onSelectPatient,
+  onAcknowledge,
+}: {
+  alerts: HighRiskConversationAlert[];
+  loading: boolean;
+  error: string | null;
+  onSelectPatient: (patientId: string) => void;
+  onAcknowledge: (alertId: number) => Promise<void>;
+}) {
+  const openAlerts = alerts.filter((alert) => alert.status !== "acknowledged");
+  return (
+    <SectionCard
+      title="High-priority conversation review"
+      icon={BellRing}
+      meta={`${openAlerts.length} open`}
+    >
+      <p className="clinician-alert-boundary">
+        Engineering review queue only. It is not a monitored emergency service, and delivery status
+        does not prove that a clinician saw or acted on an item.
+      </p>
+      {loading && <LoadingPane label="Loading conversation alerts..." />}
+      {error && <ErrorPane message={error} />}
+      {!loading && !error && alerts.length === 0 && (
+        <EmptyPane label="No high-priority conversation alerts are recorded" />
+      )}
+      {!loading && !error && alerts.length > 0 && (
+        <div className="clinician-alert-list">
+          {alerts.slice(0, 6).map((alert) => (
+            <div className="clinician-alert-row" key={alert.id}>
+              <div className="clinician-alert-main">
+                <div className="clinician-alert-meta">
+                  <Badge variant={alert.severity === "critical_review" ? "red" : "amber"}>
+                    {alert.severity.replaceAll("_", " ")}
+                  </Badge>
+                  <span>{alert.patient_id}</span>
+                  <span>{alert.created_at?.slice(0, 16).replace("T", " ") ?? "time unavailable"}</span>
+                </div>
+                <strong>{alert.trigger_summary}</strong>
+                <span>
+                  Local: {alert.status} / Workflow: {alert.notification_status.replaceAll("_", " ")} /
+                  Receipt: {alert.delivery_receipt_status.replaceAll("_", " ")} /
+                  Attempts: {alert.notification_attempt_count}/{alert.notification_max_attempts}
+                </span>
+              </div>
+              <div className="clinician-alert-actions">
+                <button type="button" onClick={() => onSelectPatient(alert.patient_id)}>
+                  Open patient
+                </button>
+                {alert.status !== "acknowledged" && (
+                  <button type="button" onClick={() => void onAcknowledge(alert.id)}>
+                    Acknowledge
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </SectionCard>
   );
 }
 
