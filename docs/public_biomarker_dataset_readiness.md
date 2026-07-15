@@ -19,7 +19,7 @@ Data/evals/models/latest_public_biomarker_dataset_readiness.json
 - Which public sources are immediately useful for biomarker or imaging-response experiments.
 - Which sources are only schema-mapping or future-access candidates.
 - Whether any public tumor-marker source is suitable for treatment-response training.
-- Whether OncoTrack should retrain/promote a biomarker/tumor-marker model now.
+- Whether NLCare should retrain/promote a biomarker/tumor-marker model now.
 
 ## Current Direction
 

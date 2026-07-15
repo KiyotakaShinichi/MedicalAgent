@@ -1,6 +1,6 @@
 # Dataset Expansion Deep Search
 
-Dataset expansion deep search is a planning and governance artifact. It identifies public or controlled-access sources that can improve OncoTrack's realism, schema coverage, or external-readiness checks. It does not mean the data has been downloaded, licensed, mapped, clinically validated, or approved for patient-facing prediction.
+Dataset expansion deep search is a planning and governance artifact. It identifies public or controlled-access sources that can improve NLCare's realism, schema coverage, or external-readiness checks. It does not mean the data has been downloaded, licensed, mapped, clinically validated, or approved for patient-facing prediction.
 
 ## Highest Priority Sources
 

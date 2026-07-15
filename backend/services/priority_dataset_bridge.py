@@ -24,7 +24,7 @@ GENIE_SOURCE_URL = "https://www.aacr.org/professionals/research/aacr-project-gen
 DUKE_SOURCE_URL = "https://sites.duke.edu/mazurowski/resources/breast-cancer-mri-dataset/"
 
 CLAIM_BOUNDARY = (
-    "Priority dataset bridge artifacts map external dataset fields into the OncoTrack canonical schema "
+    "Priority dataset bridge artifacts map external dataset fields into the NLCare canonical schema "
     "for interoperability, stress testing, and future access readiness only. They do not establish "
     "clinical validation, treatment superiority, survival prediction, genetic-risk interpretation, or "
     "patient-facing treatment recommendations."
@@ -79,7 +79,7 @@ GENIE_FIELD_CONTRACT: list[dict[str, Any]] = [
         "role": "external outcome context",
         "aliases": ["BEST_RESPONSE", "PFS_STATUS", "OS_STATUS", "RW_RESPONSE", "response"],
         "required_for_mapping": False,
-        "notes": "Outcome semantics are not equivalent to OncoTrack synthetic labels.",
+        "notes": "Outcome semantics are not equivalent to NLCare synthetic labels.",
     },
 ]
 
@@ -125,7 +125,7 @@ DUKE_FIELD_CONTRACT: list[dict[str, Any]] = [
         "role": "response/follow-up context",
         "aliases": ["pCR", "Pathologic complete response", "Pathologic Response", "Recurrence", "Follow-up"],
         "required_for_mapping": False,
-        "notes": "pCR/recurrence/follow-up labels are external endpoints, not OncoTrack clinical validation.",
+        "notes": "pCR/recurrence/follow-up labels are external endpoints, not NLCare clinical validation.",
     },
 ]
 
@@ -247,7 +247,7 @@ def _dataset_report(
         "coverage": coverage,
         "supported_roles": supported_roles,
         "not_supported": [
-            "OncoTrack-style serial CBC timeline",
+            "NLCare-style serial CBC timeline",
             "patient-reported symptom timeline",
             "patient-facing treatment choice",
             "clinical validation of treatment response",

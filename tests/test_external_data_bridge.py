@@ -80,7 +80,7 @@ def test_external_data_bridge_maps_breastdcedl_into_canonical_rows(tmp_path):
     assert report["validation"]["status"] == "passed"
     assert report["coverage"]["roles_supported"]["external_pcr_imaging_response_benchmark"] is True
     assert report["coverage"]["roles_supported"]["full_oncotrack_timeline_training"] is False
-    assert "not a full OncoTrack longitudinal" in report["claim_boundary"]
+    assert "not a full NLCare longitudinal" in report["claim_boundary"]
 
     canonical_rows = list(csv.DictReader(canonical.open(encoding="utf-8")))
     assert canonical_rows[0]["patient_id"] == "BREASTDCEDL:ISPY1_TEST_01"

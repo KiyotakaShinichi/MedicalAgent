@@ -191,6 +191,7 @@ class CohortMembershipContract(unittest.TestCase):
         self.assertEqual(bundle["classification"]["evidence"]["abstain"], False)
         self.assertIn("response_score", bundle)
         self.assertIn("toxicity", bundle)
+        self.assertEqual(db.query(PredictionTrace).count(), 0)
 
 
 # ─── Trace persistence ───────────────────────────────────────────────────────

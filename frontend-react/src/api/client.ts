@@ -89,6 +89,7 @@ async function request<T>(
 
 const get = <T>(path: string) => request<T>("GET", path);
 const post = <T>(path: string, body?: unknown) => request<T>("POST", path, body);
+const del = <T>(path: string) => request<T>("DELETE", path);
 
 // Auth
 export const login = (username: string, password: string) =>
@@ -108,6 +109,9 @@ export const getMyChatHistory = () =>
 
 export const sendMyChat = (message: string) =>
   post<ChatResponse>("/me/chat", { message });
+
+export const undoMyConfirmedRecordWrite = (auditId: number) =>
+  del<{ message: string; action: import("../types/api").SavedAction }>(`/me/record-write-actions/${auditId}`);
 
 export async function sendMyChatStream(
   message: string,

@@ -1,6 +1,6 @@
 """Medical claim-boundary classifier.
 
-This is the pre-output policy classifier for OncoTrack replies. It labels the
+This is the pre-output policy classifier for NLCare replies. It labels the
 kind of medical claim a draft answer is making, then decides whether that
 claim type is allowed, must be hedged, or must be blocked.
 """

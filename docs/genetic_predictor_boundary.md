@@ -1,12 +1,12 @@
 # Genetic Mutation Predictor Boundary
 
-Genetic information can be included in OncoTrack only as structured record context and clinician/genetic-counselor review support.
+Genetic information can be included in NLCare only as structured record context and clinician/genetic-counselor review support.
 
 ## How Genetic Mutations Are Detected
 
 Inherited or germline variants are usually detected from a blood, saliva, or cheek-swab sample. Tumor or somatic variants are usually detected from tumor tissue obtained through biopsy/surgery, liquid biopsy, or molecular pathology testing. Ordinary MRI, CT, ultrasound, or mammogram images do not directly diagnose a BRCA1/BRCA2/PALB2/TP53/PTEN/CHEK2/ATM mutation.
 
-## How OncoTrack Should Use Them
+## How NLCare Should Use Them
 
 Allowed:
 

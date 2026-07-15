@@ -32,6 +32,27 @@ export interface Signal {
   message: string;
   response_probability?: number;
   pcr_probability?: number;
+  response_signal_score?: number | null;
+  urgent_count?: number | null;
+  watch_count?: number | null;
+  has_synthetic_labs?: boolean | null;
+  max_severity?: number | null;
+  symptom_count?: number | null;
+}
+
+export interface MonitoringScoreBreakdown {
+  base_signal: number;
+  urgent_review_flags: number;
+  urgent_flag_deduction: number;
+  watch_flags: number;
+  watch_flag_deduction: number;
+  peak_recorded_symptom_severity: number | null;
+  symptom_deduction: number;
+  synthetic_lab_provenance_deduction: number;
+  total_deduction: number;
+  final_score: number;
+  formula: string;
+  claim_boundary: string;
 }
 
 export interface MultimodalAssessment {
@@ -43,6 +64,23 @@ export interface MultimodalAssessment {
     clinical_monitoring?: Signal;
     symptoms?: Signal;
   };
+  score_breakdown?: MonitoringScoreBreakdown | null;
+  patient_next_steps?: string[];
+}
+
+export interface DataAvailabilityItem {
+  name: string;
+  status: "available" | "insufficient_data" | "missing" | "model_unavailable" | string;
+  detail: string;
+  next_step: string;
+}
+
+export interface DataAvailability {
+  status: string;
+  items: DataAvailabilityItem[];
+  clinician_style_summary: string;
+  patient_friendly_summary: string;
+  fallback_policy: string;
 }
 
 export interface HybridMleSignal {
@@ -313,6 +351,7 @@ export interface PatientReport {
   genetic_counseling_readiness?: GeneticCounselingReadiness | null;
   evidence_aware_prediction?: EvidenceAwarePrediction | null;
   hybrid_prediction?: HybridPrediction | null;
+  data_availability?: DataAvailability | null;
 }
 
 // ─── Chat ─────────────────────────────────────────────────────────────────────

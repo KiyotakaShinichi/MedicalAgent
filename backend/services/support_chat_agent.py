@@ -28,11 +28,16 @@ from backend.services.conversation_state import (
     set_pending_action,
     state_snapshot,
 )
+from backend.services.confirmed_record_write import (
+    queue_record_write,
+    resolve_pending_record_write,
+)
 
 
 SYMPTOM_KEYWORDS = {
     "fatigue": ["fatigue", "tired", "weak", "exhausted"],
     "nausea": ["nausea", "nauseous", "vomit", "vomiting"],
+    "abdominal discomfort": ["upset stomach", "stomach discomfort", "tummy discomfort", "masama ang tiyan", "kabag"],
     "pain": ["pain", "ache", "aching", "sore"],
     "bloody discharge": ["blood discharge", "bloody discharge", "bleeding discharge", "blood-stained discharge"],
     "bleeding": ["bleeding", "blood loss", "spotting"],
@@ -61,8 +66,23 @@ URGENT_TERMS = [
     "kill myself",
 ]
 
+IMMEDIATE_DANGER_PATTERNS = (
+    r"\bi think i(?:'m| am|m) dying\b",
+    r"\bi feel like i(?:'m| am|m) dying\b",
+    r"\bparang mamamatay na ako\b",
+)
+
+SAFETY_LOCATION_FOLLOWUP_PATTERNS = (
+    r"^go to where\??$",
+    r"^where\??$",
+    r"^where should i go\??$",
+    r"^which hospital\??$",
+    r"^saan(?: ako)? pupunta\??$",
+    r"^saan ako dapat pumunta\??$",
+)
+
 CHAT_SYSTEM_PROMPT = """\
-You are a patient support assistant for a breast cancer treatment monitoring portal.
+You are NLCare's patient support assistant for a breast cancer monitoring portal.
 
 Rules:
 - Do not diagnose, stage, confirm recurrence/metastasis, or decide treatment.
@@ -70,7 +90,9 @@ Rules:
 - Do not invent patient facts. Use recent_context only when directly helpful.
 - Explain what was logged, ask for missing tracking details when useful, and encourage oncology team review for concerning symptoms.
 - For greetings, identity questions, and "how are you" style messages, answer naturally and briefly as a warm portal assistant.
+- Stay within NLCare's scope: breast-cancer monitoring records, general oncology education, portal help, emotional support, and care-team question preparation. Politely decline unrelated history, politics, trivia, coding, calculations, or general-purpose requests.
 - If saved_actions contains a saved item, acknowledge the item clearly and do not add unrelated oncology education.
+- Never imply that the patient personally logged a pre-existing record. For recent_context, say "the portal record shows". Only say "you logged" when saved_actions confirms a save in the current turn.
 - If the message asks about prior chat, summarize only patient-scoped recent_context / chat messages.
 - If urgent wording is present, advise contacting the oncology team or emergency services now.
 - Keep the tone calm and practical. Maximum 120 words. Plain text only.
@@ -98,16 +120,57 @@ ALLOWED_SUPPORT_INTENTS = {
     "data_entry_confirmation",
     "safety_boundary",
     "treatment_decision_boundary",
+    "scope_boundary",
 }
+
+
+DOMAIN_SCOPE_TERMS = {
+    "breast", "cancer", "oncology", "oncologist", "chemo", "chemotherapy",
+    "radiation", "treatment", "cycle", "symptom", "nausea", "fatigue",
+    "fever", "pain", "neuropathy", "mouth sores", "lab", "labs", "cbc",
+    "wbc", "hemoglobin", "platelet", "platelets", "anc", "mri", "ct",
+    "ultrasound", "imaging", "scan", "pathology", "biomarker", "her2",
+    "er", "pr", "brca", "vus", "genetic", "tumor marker", "medication",
+    "medicine", "dose", "record", "timeline", "monitoring", "score",
+    "index", "review queue", "care team", "doctor", "clinician", "portal",
+    "nlcare", "upload", "report", "result", "my data", "my record",
+}
+
+GENERAL_SUPPORT_PATTERNS = (
+    r"^(?:hi|hello|hey|good morning|good afternoon|good evening)[!. ]*$",
+    r"^(?:thanks|thank you|salamat)[!. ]*$",
+    r"^(?:how are you|how(?:'s| is) it going)[?.! ]*$",
+    r"^(?:help|can you help me|what can you do|who are you)[?.! ]*$",
+    r"^(?:what does (?:this|that|it) mean|can you explain (?:this|that|it))[?.! ]*$",
+    r"^(?:what did i (?:tell|say)(?: to)? you(?: earlier| before)?|do you remember what i (?:told|said)|what do you remember about me)[?.! ]*$",
+    r"^(?:i(?:'m| am) (?:scared|worried|anxious|sad|stressed)|nahihirapan ako).*$",
+)
+
+OUT_OF_DOMAIN_PATTERNS = (
+    r"^who (?:is|was|are|were)\s+.+",
+    r"^(?:what|when|where) (?:is|was|are|were) (?:the )?(?:capital|president|war|battle|country|celebrity|actor|singer).+",
+    r"^(?:write|debug|explain) (?:some )?(?:code|python|javascript|sql).+",
+    r"^(?:tell me|give me) (?:a )?(?:joke|recipe|poem|story).+",
+    r"^(?:what is|calculate|solve)\s+[-+*/().\d\s=]+\??$",
+    r"^[-+*/().\d\s=]+$",
+)
 
 
 def handle_patient_chat(db, patient_id, message):
     normalized = message.strip()
     if not normalized:
         raise ValueError("Message cannot be empty")
+
+    safety_followup = _resolve_safety_location_followup(db, patient_id, normalized)
+    immediate_danger = _is_immediate_danger_statement(normalized)
     remember_turn(patient_id, "user", normalized)
 
     urgent_flags = _detect_urgent_flags(normalized)
+    if immediate_danger:
+        urgent_flags.append("immediate_danger_statement")
+    if safety_followup:
+        urgent_flags.append("safety_location_followup")
+    urgent_flags = sorted(set(urgent_flags))
     routing_safety = safety_scope_check(normalized, urgent_flags)
     try:
         from backend.services.emotional_distress_detection import detect_emotional_distress
@@ -149,9 +212,20 @@ def handle_patient_chat(db, patient_id, message):
         intent="patient_support",
     )
     db.add(user_record)
+    db.flush()
 
-    actions = []
-    selected_tools = set(tool_plan["selected_tools"])
+    confirmation_actions = resolve_pending_record_write(db, patient_id, normalized)
+    actions = list(confirmation_actions or [])
+    selected_tools = set() if confirmation_actions is not None else set(tool_plan["selected_tools"])
+    if confirmation_actions is not None:
+        tool_plan = {
+            **tool_plan,
+            "intent": "data_entry_confirmation",
+            "selected_tools": ["none"],
+            "source": "confirmed_write_state",
+            "confidence": 1.0,
+            "reason": "resolved an explicit confirm/cancel turn against patient-scoped pending state",
+        }
 
     symptom = extracted["symptom"]
     if "save_symptom" in selected_tools and symptom:
@@ -177,25 +251,19 @@ def handle_patient_chat(db, patient_id, message):
             severity = int(symptom["severity"])
             try:
                 validate_symptom_payload(symptom["symptom"], severity)
-                db.add(SymptomReport(
-                    patient_id=patient_id,
-                    date=_extract_date(normalized),
-                    symptom=symptom["symptom"],
-                    severity=severity,
-                    notes=f"Captured from support chat: {normalized}",
+                actions.append(queue_record_write(
+                    patient_id,
+                    "symptom",
+                    {
+                        "date": _extract_date(normalized),
+                        "symptom": symptom["symptom"],
+                        "severity": severity,
+                    },
+                    source_message=normalized,
+                    source_chat_message_id=user_record.id,
                 ))
-                db.flush()  # surface DB errors here, before we claim a save happened
-                actions.append({
-                    "type": "saved_symptom",
-                    "symptom": symptom["symptom"],
-                    "severity": severity,
-                    "resumed_from_memory": bool(symptom.get("resumed_from_memory")),
-                })
                 clear_pending_action(patient_id, "symptom_save")
             except Exception as exc:
-                # Validation or DB write failed.  Roll back the pending change
-                # and surface a truthful "I couldn't save it yet" action.
-                db.rollback()
                 actions.append({
                     "type": "symptom_save_failed",
                     "symptom": symptom["symptom"],
@@ -227,16 +295,13 @@ def handle_patient_chat(db, patient_id, message):
     if "save_complete_cbc" in selected_tools and labs:
         validate_cbc_values(labs["wbc"], labs["hemoglobin"], labs["platelets"])
         lab_alerts = _clinical_lab_alerts(labs)
-        db.add(LabResult(
-            patient_id=patient_id,
-            date=_extract_date(normalized),
-            wbc=labs["wbc"],
-            hemoglobin=labs["hemoglobin"],
-            platelets=labs["platelets"],
-            source="chat_agent",
-            source_note="Captured from patient support chat.",
+        actions.append(queue_record_write(
+            patient_id,
+            "cbc",
+            {"date": _extract_date(normalized), **labs},
+            source_message=normalized,
+            source_chat_message_id=user_record.id,
         ))
-        actions.append({"type": "saved_labs", **labs})
         if lab_alerts:
             actions.append({
                 "type": "clinical_rule_alert",
@@ -259,21 +324,13 @@ def handle_patient_chat(db, patient_id, message):
             imaging_report["impression"],
             body_site=imaging_report["body_site"],
         )
-        db.add(ImagingReport(
-            patient_id=patient_id,
-            date=imaging_report["date"],
-            modality=imaging_report["modality"],
-            report_type=imaging_report["report_type"],
-            body_site=imaging_report["body_site"],
-            findings=imaging_report["findings"],
-            impression=imaging_report["impression"],
+        actions.append(queue_record_write(
+            patient_id,
+            "imaging",
+            imaging_report,
+            source_message=normalized,
+            source_chat_message_id=user_record.id,
         ))
-        actions.append({
-            "type": "saved_imaging_report",
-            "modality": imaging_report["modality"],
-            "date": imaging_report["date"].isoformat(),
-            "report_type": imaging_report["report_type"],
-        })
         indicators = detect_possible_metastatic_indicators(
             f"{imaging_report['findings']} {imaging_report['impression']}"
         )
@@ -296,15 +353,13 @@ def handle_patient_chat(db, patient_id, message):
 
     medication = extracted["medication"]
     if "save_medication" in selected_tools and medication:
-        db.add(MedicationLog(
-            patient_id=patient_id,
-            date=_extract_date(normalized),
-            medication=medication["medication"],
-            dose=medication.get("dose"),
-            frequency=medication.get("frequency"),
-            notes=f"Captured from support chat: {normalized}",
+        actions.append(queue_record_write(
+            patient_id,
+            "medication",
+            {"date": _extract_date(normalized), **medication},
+            source_message=normalized,
+            source_chat_message_id=user_record.id,
         ))
-        actions.append({"type": "saved_medication", **medication})
 
     # Compound-intent: user asked to log something ("hi, can you log
     # my symptoms?") but no extractor produced concrete data.  Surface
@@ -313,6 +368,7 @@ def handle_patient_chat(db, patient_id, message):
     has_concrete_save = any(
         a.get("type", "").startswith("saved_")
         or a.get("type", "").startswith("partial_")
+        or a.get("type") == "pending_record_confirmation"
         for a in actions
     )
     if (
@@ -339,12 +395,45 @@ def handle_patient_chat(db, patient_id, message):
         routing_safety = safety_scope_check(normalized, urgent_flags)
 
     patient_context = _recent_patient_context(db, patient_id)
-    fallback_response = _build_response(normalized, actions, urgent_flags, patient_context)
-    routing_intent = tool_plan["intent"] if tool_plan.get("intent") in ALLOWED_SUPPORT_INTENTS else route_intent(normalized, actions=actions, safety=routing_safety)
+    direct_safety_reply = None
+    direct_scope_reply = None
+    if safety_followup:
+        direct_safety_reply = _safety_location_followup_reply()
+    elif immediate_danger:
+        direct_safety_reply = _immediate_danger_reply()
+    elif _is_out_of_domain_request(
+        normalized,
+        actions=actions,
+        safety=routing_safety,
+        emotional_distress=emotional_distress,
+    ):
+        direct_scope_reply = _out_of_domain_reply()
+
+    fallback_response = (
+        direct_safety_reply
+        or direct_scope_reply
+        or _build_response(normalized, actions, urgent_flags, patient_context)
+    )
+    routing_intent = (
+        "safety_boundary"
+        if direct_safety_reply
+        else "scope_boundary"
+        if direct_scope_reply
+        else tool_plan["intent"]
+        if tool_plan.get("intent") in ALLOWED_SUPPORT_INTENTS
+        else route_intent(normalized, actions=actions, safety=routing_safety)
+    )
     if _should_use_llm_direct_reply(routing_intent, routing_safety, actions, urgent_flags) and not _has_tool_action(actions):
         fallback_response = _generate_llm_response(normalized, actions, urgent_flags, patient_context, fallback_response)
     fallback_response = _apply_emotional_distress_mode(fallback_response, emotional_distress)
-    if _should_bypass_rag_for_tool_actions(actions, routing_intent):
+    if direct_safety_reply or direct_scope_reply or _should_bypass_rag_for_tool_actions(actions, routing_intent):
+        direct_reason = (
+            "deterministic safety clarification; no RAG generation"
+            if direct_safety_reply
+            else "out-of-domain request; no LLM or RAG generation"
+            if direct_scope_reply
+            else "deterministic tool confirmation; no RAG generation"
+        )
         agent_result = {
             "reply": fallback_response,
             "intent": routing_intent,
@@ -355,15 +444,27 @@ def handle_patient_chat(db, patient_id, message):
             "guardrails": {
                 "input_passed": routing_safety.get("level") != "blocked",
                 "output_passed": True,
-                "reason": "deterministic tool confirmation; no RAG generation",
+                "reason": direct_reason,
             },
             "rag_evaluation": None,
             "pipeline_trace": {
                 "steps": [
                     "safety_gate",
                     "intent_routing",
-                    "deterministic_tool_action",
-                    "confirmation_reply",
+                    (
+                        "deterministic_safety_reply"
+                        if direct_safety_reply
+                        else "scope_boundary_reply"
+                        if direct_scope_reply
+                        else "deterministic_tool_action"
+                    ),
+                    (
+                        "safety_clarification"
+                        if direct_safety_reply
+                        else "scope_redirect"
+                        if direct_scope_reply
+                        else "confirmation_reply"
+                    ),
                 ],
                 "terminal_step": "direct_support",
                 "safety_level": routing_safety.get("level"),
@@ -388,7 +489,10 @@ def handle_patient_chat(db, patient_id, message):
         )
     agent_result["emotional_distress"] = emotional_distress.to_dict() if emotional_distress is not None else None
     agent_result["reply"] = _apply_emotional_distress_mode(agent_result["reply"], emotional_distress)
-    response = agent_result["reply"]
+    response = _enforce_record_provenance(agent_result["reply"], actions)
+    response = _ensure_complete_response(response, fallback_response)
+    response = _ensure_complete_safety_reply(response, routing_safety)
+    agent_result["reply"] = response
     assistant_record = ChatMessage(
         patient_id=patient_id,
         role="assistant",
@@ -551,6 +655,9 @@ def _has_tool_action(actions):
             "partial_labs_detected",
             "partial_imaging_detected",
             "symptom_save_failed",
+            "pending_record_confirmation",
+            "record_write_cancelled",
+            "duplicate_record_prevented",
         }
         for action in actions
     )
@@ -1264,6 +1371,180 @@ def _extract_date(message):
     return date.today()
 
 
+def _is_immediate_danger_statement(message):
+    normalized = str(message or "").lower().replace("’", "'").strip()
+    return any(re.search(pattern, normalized) for pattern in IMMEDIATE_DANGER_PATTERNS)
+
+
+def _resolve_safety_location_followup(db, patient_id, message):
+    normalized = re.sub(r"\s+", " ", str(message or "").lower().strip())
+    if not any(re.fullmatch(pattern, normalized) for pattern in SAFETY_LOCATION_FOLLOWUP_PATTERNS):
+        return None
+
+    previous = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.patient_id == patient_id, ChatMessage.role == "assistant")
+        .order_by(ChatMessage.created_at.desc(), ChatMessage.id.desc())
+        .first()
+    )
+    if previous is None:
+        return None
+
+    previous_text = str(previous.message or "").lower()
+    safety_markers = (
+        "emergency services",
+        "emergency department",
+        "immediate help",
+        "feel unsafe",
+        "might hurt yourself",
+        "or go to",
+    )
+    if not any(marker in previous_text for marker in safety_markers):
+        return None
+    return {
+        "previous_assistant_message_id": previous.id,
+        "reason": "clarifies the location in the preceding safety escalation",
+    }
+
+
+def _immediate_danger_reply():
+    return (
+        "I'm sorry this feels so frightening. I cannot assess what is happening through this portal. "
+        "If you feel in immediate danger or unsafe, contact local emergency services or go to the "
+        "nearest emergency department now. If you are not in immediate danger, contact your oncology "
+        "care team now and tell them exactly what you are experiencing. If possible, ask someone you "
+        "trust to stay with you while you make that contact."
+    )
+
+
+def _safety_location_followup_reply():
+    return (
+        "I meant the nearest emergency department or local emergency services if you feel in immediate "
+        "danger or unsafe. If you are not in immediate danger, contact your oncology care team now and "
+        "tell them exactly what you are experiencing. If possible, ask someone you trust to stay with you "
+        "while you make that contact."
+    )
+
+
+def _enforce_record_provenance(reply, actions):
+    if any(str(action.get("type", "")).startswith("saved_") for action in actions or []):
+        return str(reply or "")
+
+    text = str(reply or "")
+    patient_authorship_patterns = (
+        r"\byou(?:['’]ve| have)?\s+logged\b",
+        r"\byou(?:['’]ve| have)?\s+recorded\b",
+        r"\byou(?:['’]ve| have)?\s+saved\b",
+        r"\byou(?:['’]ve| have)?\s+added\b",
+    )
+
+    def neutral_record_phrase(match):
+        prefix = "The" if match.group(0)[:1].isupper() else "the"
+        return f"{prefix} portal record currently shows"
+
+    for pattern in patient_authorship_patterns:
+        text = re.sub(pattern, neutral_record_phrase, text, flags=re.IGNORECASE)
+    return text
+
+
+def _is_out_of_domain_request(message, *, actions, safety, emotional_distress):
+    """Keep the patient assistant inside its declared product scope.
+
+    The check deliberately runs after structured extraction and safety routing,
+    so a terse lab entry, emotional message, or urgent statement can never be
+    rejected merely because it lacks an explicit oncology keyword.
+    """
+
+    if actions:
+        return False
+    safety = safety or {}
+    if safety.get("level") in {"high_risk", "blocked"}:
+        return False
+    if emotional_distress is not None and getattr(emotional_distress, "detected", False):
+        return False
+
+    raw_text = str(message or "").strip()
+    if re.fullmatch(
+        r"[-+]?\d+(?:\.\d+)?(?:\s*[-+*/]\s*[-+]?\d+(?:\.\d+)?)+\s*(?:=|\?)?",
+        raw_text,
+    ):
+        return True
+
+    normalized = normalize_security_text(message)
+    if not normalized:
+        return False
+    if any(re.search(pattern, normalized, flags=re.IGNORECASE) for pattern in GENERAL_SUPPORT_PATTERNS):
+        return False
+    if any(
+        (term in normalized if " " in term else re.search(rf"\b{re.escape(term)}\b", normalized))
+        for term in DOMAIN_SCOPE_TERMS
+    ):
+        return False
+    if any(re.search(pattern, normalized, flags=re.IGNORECASE) for pattern in OUT_OF_DOMAIN_PATTERNS):
+        return True
+
+    # Questions with enough semantic content but no portal/oncology anchor are
+    # treated as general-purpose requests. Very short follow-ups remain allowed
+    # so "why?" and "what does that mean?" can use conversation context.
+    words = re.findall(r"[a-z0-9']+", normalized)
+    question_like = bool(re.match(r"^(?:who|what|when|where|which|how|why|tell|explain|write|make|calculate|solve)\b", normalized))
+    return question_like and len(words) >= 3
+
+
+def _out_of_domain_reply():
+    return (
+        "I’m NLCare’s breast-cancer monitoring support assistant, so I can’t help with unrelated "
+        "history, politics, trivia, calculations, coding, or other general-purpose requests. I can "
+        "help you understand records already in this portal, organize symptoms, labs, medications, "
+        "and imaging notes, explain general breast-cancer terms with sources, or prepare questions "
+        "for your care team. I do not diagnose or recommend treatment."
+    )
+
+
+def _looks_truncated_reply(reply):
+    text = str(reply or "").strip()
+    if not text:
+        return True
+    if re.search(r"(?:\bif|\band|\bor|\bbut|\bbecause|\bto|\bthe|\ba|\ban|\bof|\bfor|\bwith|\byour|:)\s*$", text, flags=re.IGNORECASE):
+        return True
+    if len(text.split()) >= 45 and text[-1] not in ".?!)]\"'":
+        return True
+    return False
+
+
+def _ensure_complete_response(reply, fallback_reply):
+    text = str(reply or "").strip()
+    if not _looks_truncated_reply(text):
+        return text
+    fallback = str(fallback_reply or "").strip()
+    if fallback and not _looks_truncated_reply(fallback):
+        return fallback
+    # Last-resort cleanup for a malformed provider response. Keep only complete
+    # sentences and add a stable scope-safe close rather than showing a fragment.
+    matches = list(re.finditer(r"[.?!](?:[\"')\]]+)?(?=\s|$)", text))
+    complete = text[: matches[-1].end()].strip() if matches else ""
+    close = "I can help organize the relevant record details for your care team."
+    return f"{complete} {close}".strip()
+
+
+def _ensure_complete_safety_reply(reply, safety):
+    text = str(reply or "").strip()
+    if not text:
+        return _immediate_danger_reply()
+    safety = safety or {}
+    is_high_risk = safety.get("level") == "high_risk" or safety.get("scope") == "urgent_or_safety_related"
+    if not is_high_risk:
+        return text
+
+    if re.search(r"\b(?:or\s+)?go\s+to\s*$", text, flags=re.IGNORECASE):
+        return f"{text} the nearest emergency department now."
+    if re.search(r"\b(?:or\s+)?contact\s*$", text, flags=re.IGNORECASE):
+        return f"{text} local emergency services now."
+    if re.search(r"\bor\s*$", text, flags=re.IGNORECASE):
+        return f"{text} contact local emergency services now."
+    return text
+
+
 def _detect_urgent_flags(message):
     normalized = normalize_security_text(message)
     flags = [term for term in URGENT_TERMS if term in normalized]
@@ -1302,7 +1583,23 @@ def _build_response(message, actions, urgent_flags, patient_context):
     saved = [action for action in actions if action["type"].startswith("saved_")]
     failed = [action for action in actions if action["type"].endswith("_save_failed")]
     partial_actions = [action for action in actions if action["type"].startswith("partial_")]
-    if saved:
+    pending_confirmations = [action for action in actions if action["type"] == "pending_record_confirmation"]
+    cancellations = [action for action in actions if action["type"] == "record_write_cancelled"]
+    duplicates = [action for action in actions if action["type"] == "duplicate_record_prevented"]
+    if pending_confirmations:
+        previews = "; ".join(action.get("preview", "record") for action in pending_confirmations)
+        parts.append(
+            "I prepared this record preview: " + previews + ". Nothing has been saved yet. "
+            "Choose Confirm save to add it, or Cancel to leave your record unchanged."
+        )
+    elif cancellations:
+        parts.append("Cancelled. No patient record was changed.")
+    elif duplicates:
+        parts.append(
+            "I did not create a duplicate because the same active portal entry already exists. "
+            "You can review the existing entry in the relevant dashboard section."
+        )
+    elif saved:
         labels = []
         for action in saved:
             if action["type"] == "saved_symptom":
@@ -1316,7 +1613,7 @@ def _build_response(message, actions, urgent_flags, patient_context):
         parts.append("I saved this to your patient record: " + "; ".join(labels) + ".")
     if failed:
         parts.extend(action["message"] for action in failed if action.get("message"))
-    if not saved and not failed:
+    if not saved and not failed and not pending_confirmations and not cancellations and not duplicates:
         if partial_actions:
             parts.extend(action["message"] for action in partial_actions if action.get("message"))
         else:
@@ -1465,11 +1762,14 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
                 {"role": "user", "content": json.dumps(user_prompt, default=str)},
             ],
         )
-        reply = completion.choices[0].message.content.strip()
+        choice = completion.choices[0]
+        if getattr(choice, "finish_reason", None) not in {None, "stop"}:
+            return fallback_response
+        reply = choice.message.content.strip()
     except Exception:
         return fallback_response
 
-    if not reply:
+    if not reply or _looks_truncated_reply(reply):
         return fallback_response
     if urgent_flags and "emergency" not in reply.lower() and "oncology" not in reply.lower():
         return fallback_response

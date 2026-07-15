@@ -104,7 +104,7 @@ This guide explains the terms used in this project in plain language. The safest
 | Realism candidate A/B gate | Controlled comparison of current synthetic rows vs a realism-tuned candidate. | Keeps the current generator as default unless the candidate clears leakage, shortcut, calibration, regression, and stability checks. |
 | Dataset expansion manifest | Governed catalog of possible external datasets. | Ranks sources by what they can responsibly improve: treatment history, imaging response, molecular context, lab realism, or tumor-marker education. |
 | Priority dataset bridge | Field-contract mapper for GENIE BPC BRCA and Duke Breast MRI. | Converts future permitted CSV exports into canonical rows while keeping them external stress/readiness artifacts, not clinical validation. |
-| Priority external stress | Common-feature and endpoint check over mapped priority datasets. | Blocks promotion when GENIE/Duke endpoints do not match OncoTrack's exact temporal monitoring labels. |
+| Priority external stress | Common-feature and endpoint check over mapped priority datasets. | Blocks promotion when GENIE/Duke endpoints do not match NLCare's exact temporal monitoring labels. |
 | Mutation-context mapping | Gene/alteration mapping for external molecular context. | Uses mutations as record context/review routing only, not genetic-risk diagnosis or treatment-response prediction. |
 | Dataset fit matrix | Weighted data-roadmap ranking. | Helps decide which dataset to map next under student constraints. |
 | PSI / population stability index | Distribution-shift score between two samples. | Higher PSI-style values warn that a feature transfers poorly across cohorts. |

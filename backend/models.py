@@ -519,6 +519,32 @@ class RAGEvaluationLog(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class PatientRecordWriteAudit(Base):
+    """Audit envelope for patient records created through support chat.
+
+    This table records provenance and reversible write state. It does not
+    contain clinical conclusions; it only answers who confirmed which portal
+    write, from which message, and whether that write was later undone.
+    """
+
+    __tablename__ = "patient_record_write_audits"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, ForeignKey("patients.id"), nullable=False, index=True)
+    record_type = Column(String, nullable=False, index=True)
+    record_id = Column(Integer, nullable=True, index=True)
+    idempotency_key = Column(String, nullable=False, unique=True, index=True)
+    record_fingerprint = Column(String, nullable=False, index=True)
+    source_chat_message_id = Column(Integer, ForeignKey("chat_messages.id"), nullable=True)
+    source_message = Column(Text, nullable=False)
+    confirmation_message = Column(Text, nullable=False)
+    payload_json = Column(Text, nullable=False)
+    provenance_json = Column(Text, nullable=False)
+    status = Column(String, nullable=False, default="saved", index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    undone_at = Column(DateTime(timezone=True), nullable=True)
+
+
 class AgentResponseFeedback(Base):
     __tablename__ = "agent_response_feedback"
 

@@ -19,7 +19,7 @@ COPY frontend frontend
 COPY scripts scripts
 COPY config config
 COPY evals evals
-COPY alembic alembic
+COPY alembic.ini alembic.ini
 COPY README.md MODEL_CARD.md DATA_CARD.md ./
 
 RUN mkdir -p Data KnowledgeBase/raw KnowledgeBase/processed
@@ -29,4 +29,4 @@ EXPOSE 8017
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8017/health', timeout=3).read()"
 
-CMD ["uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8017"]
+CMD ["sh", "-c", "python scripts/validate_deployment_env.py --strict && alembic upgrade head && exec uvicorn backend.api.main:app --host 0.0.0.0 --port 8017"]

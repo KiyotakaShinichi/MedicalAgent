@@ -18,7 +18,7 @@ Multigene panels test multiple genes at once. They may be useful when family his
 
 ## VUS
 
-VUS means variant of uncertain significance. It is not the same as pathogenic or likely pathogenic. OncoTrack should explain that a VUS is uncertain and route the record for genetics review. OncoTrack must not treat a VUS as positive, negative, or actionable.
+VUS means variant of uncertain significance. It is not the same as pathogenic or likely pathogenic. NLCare should explain that a VUS is uncertain and route the record for genetics review. NLCare must not treat a VUS as positive, negative, or actionable.
 
 ## Safe assistant wording
 

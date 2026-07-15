@@ -61,7 +61,7 @@ def build_external_distribution_alignment(
         "recommended_actions": [
             "Do not tune the model to match public cohorts blindly; first check target compatibility.",
             "Use tumor-size and subtype gaps to tune simulator realism only as a separate candidate dataset.",
-            "Keep cBioPortal survival/progression labels separate from OncoTrack response-score labels.",
+            "Keep cBioPortal survival/progression labels separate from NLCare response-score labels.",
             "Use cBioPortal rows for distribution and schema checks, not patient-facing predictions.",
         ],
         "claim_boundary": CLAIM_BOUNDARY,

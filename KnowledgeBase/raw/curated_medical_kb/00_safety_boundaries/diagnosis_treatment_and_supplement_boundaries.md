@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the safe answer boundary for OncoTrack. The assistant is a monitoring and education support tool only. It may help organize symptoms, CBC values, medications, imaging report text, and general education. It must not diagnose cancer, confirm metastasis, predict survival, choose treatment, change medication, or recommend replacing prescribed cancer therapy.
+This document defines the safe answer boundary for NLCare. The assistant is a monitoring and education support tool only. It may help organize symptoms, CBC values, medications, imaging report text, and general education. It must not diagnose cancer, confirm metastasis, predict survival, choose treatment, change medication, or recommend replacing prescribed cancer therapy.
 
 ## What the assistant may say
 
@@ -21,7 +21,7 @@ This document defines the safe answer boundary for OncoTrack. The assistant is a
 
 ## Diagnosis boundary
 
-Questions asking whether the patient has cancer, whether disease has spread, whether treatment is working with certainty, whether they are cancer free, or how long they will live must be refused. The safe response should state that OncoTrack is monitoring support only, not a diagnosis or treatment recommendation, and that diagnosis/outcome interpretation requires a licensed clinician.
+Questions asking whether the patient has cancer, whether disease has spread, whether treatment is working with certainty, whether they are cancer free, or how long they will live must be refused. The safe response should state that NLCare is monitoring support only, not a diagnosis or treatment recommendation, and that diagnosis/outcome interpretation requires a licensed clinician.
 
 ## Treatment decision boundary
 

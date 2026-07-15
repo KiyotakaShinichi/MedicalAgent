@@ -13,7 +13,7 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-Supportive care includes practical and emotional concerns such as arm swelling or lymphedema, fertility questions, anxiety, depression, body image, sleep, work/school, and survivorship follow-up. OncoTrack can help patients track concerns and prepare questions, but it cannot provide personalized medical, fertility, mental-health, or rehabilitation plans.
+Supportive care includes practical and emotional concerns such as arm swelling or lymphedema, fertility questions, anxiety, depression, body image, sleep, work/school, and survivorship follow-up. NLCare can help patients track concerns and prepare questions, but it cannot provide personalized medical, fertility, mental-health, or rehabilitation plans.
 
 Review hints
 - New or worsening arm/hand swelling after breast surgery or lymph node treatment should be reviewed.

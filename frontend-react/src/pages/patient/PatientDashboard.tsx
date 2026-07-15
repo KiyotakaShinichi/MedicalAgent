@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { useApi } from "../../hooks/useApi";
-import { getMyReport, sendMyChat, sendMyChatStream, getMyChatHistory, uploadFile } from "../../api/client";
+import { getMyReport, sendMyChat, sendMyChatStream, getMyChatHistory, undoMyConfirmedRecordWrite, uploadFile } from "../../api/client";
 import { ErrorPane } from "../../components/ui/Spinner";
 import { SkeletonDashboard } from "../../components/ui/Skeleton";
 import { PatientBanner } from "./PatientBanner";
@@ -121,6 +121,26 @@ export default function PatientDashboard() {
     setActiveTool(key);
   }
 
+  async function handleUndoAction(auditId: number) {
+    try {
+      const result = await undoMyConfirmedRecordWrite(auditId);
+      refetchReport();
+      refetchChat();
+      toast.push({
+        tone: "info",
+        title: "Portal entry removed",
+        description: result.message,
+      });
+    } catch (err) {
+      toast.push({
+        tone: "warning",
+        title: "Undo failed",
+        description: err instanceof Error ? err.message : "The entry could not be removed.",
+      });
+      throw err;
+    }
+  }
+
   const tabs: { id: Tab; label: string }[] = [
     { id: "overview", label: "Overview" },
     { id: "chat",     label: "Support chat" },
@@ -206,6 +226,7 @@ export default function PatientDashboard() {
                     });
                   }
                 }}
+                onUndoAction={handleUndoAction}
               />
               <ToolTraceDrawer messages={chatMessages} />
             </div>
@@ -390,6 +411,7 @@ export default function PatientDashboard() {
                       });
                     }
                   }}
+                  onUndoAction={handleUndoAction}
                 />
                 <ToolTraceDrawer messages={chatMessages} />
               </div>

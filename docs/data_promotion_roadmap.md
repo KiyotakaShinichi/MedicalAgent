@@ -1,6 +1,6 @@
 # Data-To-Promotion Roadmap
 
-This roadmap explains what OncoTrack can responsibly do today and what evidence
+This roadmap explains what NLCare can responsibly do today and what evidence
 is still missing before any model signal could move beyond monitor-only use.
 
 Current policy: **monitor-only**.
@@ -43,7 +43,7 @@ Current policy: **monitor-only**.
 ## Why Nothing Is Promoted Yet
 
 The current public external bridge is useful but narrow. BreastDCEDL supports
-MRI/pCR response experiments; it does not include the full OncoTrack workflow:
+MRI/pCR response experiments; it does not include the full NLCare workflow:
 CBC trends, symptoms, medications by cycle, radiation/surgery/endocrine
 sequences, tumor-marker trajectories, genetic counseling records, and
 clinician-reviewed monitoring outcomes.
@@ -68,7 +68,7 @@ Any future promotion would require:
 3. Keep running full A/B release gates comparing the current generator against
    public-distribution realism candidates.
 4. Run priority external stress after each new mapped export and keep promotion
-   blocked unless endpoint semantics match the exact OncoTrack question.
+   blocked unless endpoint semantics match the exact NLCare question.
 5. Expand common-feature transfer stress to include additional public cohorts
    only when their field semantics match the canonical data dictionary.
 6. Improve the toxicity target into a softer review-priority simulator label

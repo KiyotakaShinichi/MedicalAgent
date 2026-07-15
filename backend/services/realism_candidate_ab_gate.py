@@ -44,7 +44,7 @@ LABEL_DENYLIST = {
 CLAIM_BOUNDARY = (
     "Current-vs-realism-candidate A/B is a synthetic engineering gate. It compares the current synthetic rows "
     "with a public-distribution-tuned candidate under controlled tests, but neither dataset contains real "
-    "clinician-reviewed OncoTrack labels. Passing this gate is not clinical validation and does not allow "
+    "clinician-reviewed NLCare labels. Passing this gate is not clinical validation and does not allow "
     "patient-facing prediction or treatment claims."
 )
 

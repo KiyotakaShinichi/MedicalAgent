@@ -28,7 +28,7 @@ export function HybridPredictionCard({ hybrid }: Props) {
 
   return (
     <SectionCard
-      title="Hybrid monitoring signal"
+      title="Synthetic monitoring model"
       icon={ShieldCheck}
       meta={<span style={{ color: "var(--text-faint)", fontSize: "0.74rem" }}>3 signals</span>}
       footer={
@@ -43,25 +43,33 @@ export function HybridPredictionCard({ hybrid }: Props) {
       }
     >
       <div className="flex flex-col gap-3">
-        <ClassificationSlot title="Response classification" icon={Activity} prediction={hybrid.classification} />
-        <RegressionSlot title="Response strength" icon={TrendingUp} prediction={hybrid.response_score} />
-        <ClassificationSlot title="Toxicity signal" icon={AlertTriangle} prediction={hybrid.toxicity} />
+        <details className="model-number-guide">
+          <summary><Info size={12} aria-hidden="true" /> How to read these outputs</summary>
+          <div>
+            <p><strong>Probability</strong> is confidence in a synthetic model class, not a personal chance of response.</p>
+            <p><strong>Score</strong> is a 0-1 simulator target estimate, not a diagnosis or validated clinical scale.</p>
+            <p><strong>Confidence</strong> reflects model uncertainty and available record types. Missing inputs can reduce it or cause abstention.</p>
+          </div>
+        </details>
+        <ClassificationSlot title="Response-pattern grouping" icon={Activity} prediction={hybrid.classification} />
+        <RegressionSlot title="Synthetic response-score output" icon={TrendingUp} prediction={hybrid.response_score} />
+        <ClassificationSlot title="Support-review grouping" icon={AlertTriangle} prediction={hybrid.toxicity} />
       </div>
     </SectionCard>
   );
 }
 
 const DECISION_LABEL: Record<string, string> = {
-  favorable_pattern:        "Favorable response pattern",
-  concerning_pattern:       "Concerning response pattern",
+  favorable_pattern:        "Grouped with favorable synthetic examples",
+  concerning_pattern:       "Grouped with review-priority synthetic examples",
   uncertain:                "Uncertain pattern",
   insufficient_evidence:    "Insufficient evidence",
   strong_response_signal:   "Strong response signal",
   moderate_response_signal: "Moderate response signal",
   weak_response_signal:     "Weak response signal",
-  high_toxicity_signal:     "High toxicity signal",
-  moderate_toxicity_signal: "Moderate toxicity signal",
-  low_toxicity_signal:      "Low toxicity signal",
+  high_toxicity_signal:     "Higher support-review pattern",
+  moderate_toxicity_signal: "Moderate support-review pattern",
+  low_toxicity_signal:      "Lower support-review pattern",
 };
 
 const DECISION_TONE: Record<string, { fg: string; bg: string; border: string }> = {
@@ -109,7 +117,7 @@ function ClassificationSlot({
       <p className="signal-slot-label">{label}</p>
       {prediction.probability != null && (
         <p className="signal-slot-metric tabular-nums">
-          Probability: <strong>{(prediction.probability * 100).toFixed(1)}%</strong>
+          Synthetic class probability: <strong>{(prediction.probability * 100).toFixed(1)}%</strong>
         </p>
       )}
       <EvidenceLine prediction={prediction} />
@@ -147,7 +155,7 @@ function RegressionSlot({
         <div className="signal-slot-bar">
           <ScoreBar score={prediction.response_score} band={prediction.uncertainty_band} tone={tone.fg} />
           <p className="signal-slot-metric tabular-nums">
-            Score: <strong>{prediction.response_score.toFixed(2)}</strong>
+            Synthetic score: <strong>{prediction.response_score.toFixed(2)}</strong>
             {prediction.uncertainty_band && (
               <span className="signal-slot-band">
                 ±{((prediction.uncertainty_band[1] - prediction.uncertainty_band[0]) / 2).toFixed(2)} band
@@ -205,8 +213,8 @@ function EvidenceLine({ prediction }: { prediction: { evidence: EvidenceAwarePre
   const total = present + ev.modalities_missing.length;
   return (
     <p className="text-[0.7rem] mt-2" style={{ color: "var(--text-faint)" }}>
-      Modalities used: {present}/{total} · sufficiency: <strong>{ev.sufficiency}</strong>
-      {" · "}<code style={{ fontSize: "0.66rem" }}>{prediction.model_version}</code>
+      Record types used: {present}/{total} | sufficiency: <strong>{ev.sufficiency}</strong>
+      {" | "}<code style={{ fontSize: "0.66rem" }}>{prediction.model_version}</code>
       {ev.abstain && ev.reason && (
         <span style={{ display: "block", marginTop: 2 }}>
           <strong>Reason:</strong> {humanReason(ev.reason)}

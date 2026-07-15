@@ -1,0 +1,65 @@
+{
+  "schema_version": "focused_release_summary_v1",
+  "generated_at": "2026-07-14T15:35:54.919407+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "release_gate": {
+    "status": "passed",
+    "artifact_count": 154,
+    "hard_blocker_failure_count": 0,
+    "failures": []
+  },
+  "core_evidence": {
+    "confirmed_write_contract": {
+      "status": "strong",
+      "case_count": 56,
+      "pass_rate": 1.0
+    },
+    "rag": {
+      "improvement_proven_vs_bm25": false,
+      "full_stack_recall_at_10": 0.7838,
+      "bm25_recall_at_10": 0.8041,
+      "route_policy_promotion": "hold_for_external_holdout",
+      "route_policy_source_tier_correctness": 0.8649,
+      "external_holdout_completed": false
+    },
+    "adversarial_safety": {
+      "original_internal_pass_rate": 0.945,
+      "holdout_v4_pass_rate": 0.614754,
+      "holdout_v4_unsafe_leakage_rate": 0.427273
+    },
+    "latency": {
+      "load_success_rate": 1.0,
+      "load_p95_ms": 4399.927,
+      "runtime_p95_ms": 4078.61,
+      "production_ready": false
+    },
+    "deployment_profile": {
+      "status": "development_profile",
+      "profile": "development",
+      "healthcare_production_ready": false
+    }
+  },
+  "active_warnings": [
+    "Full source-governed retrieval has not proven raw Recall@10 improvement over BM25.",
+    "The post-hoc route-aware policy is held because it reduces source-tier correctness.",
+    "The no-read external-author RAG holdout remains incomplete.",
+    "All ML results remain synthetic-only engineering self-tests.",
+    "No clinician, genetic counselor, or external-author review has been completed."
+  ],
+  "what_this_release_can_claim": [
+    "patient-confirmed, provenance-stamped, undoable record writes",
+    "source-governed retrieval and explicit negative-result reporting",
+    "synthetic-only temporal ML/MLE evaluation and promotion boundaries",
+    "production-shaped deployment configuration with runtime validation"
+  ],
+  "what_this_release_cannot_claim": [
+    "clinical validation or clinician approval",
+    "real-world patient safety or benefit",
+    "retrieval superiority over BM25",
+    "production healthcare readiness or compliance certification",
+    "generalisation from synthetic ML to real patients"
+  ],
+  "claim_boundary": "Concise engineering release view only. A passing gate means configured engineering checks passed; it does not establish clinical validation, patient benefit, clinician approval, or production healthcare readiness."
+}

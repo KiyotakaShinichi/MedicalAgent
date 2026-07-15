@@ -1,6 +1,6 @@
 # Full Potential Under Current Constraints
 
-OncoTrack can be excellent as a student-built, synthetic-only healthcare AI
+NLCare can be excellent as a student-built, synthetic-only healthcare AI
 engineering prototype without pretending to be clinically validated. This file
 defines what "10/10 under current constraints" means.
 
@@ -171,7 +171,7 @@ What must wait:
 
 ## Student-Achievable 10/10
 
-As a student-accessible prototype, OncoTrack can reach 10/10 by making every
+As a student-accessible prototype, NLCare can reach 10/10 by making every
 controllable claim reproducible:
 
 - every claim maps to an artifact

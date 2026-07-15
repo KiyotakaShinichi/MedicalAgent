@@ -1525,3 +1525,95 @@ artifacts:
       ops, trace envelopes, and background eval workers. It is an architecture
       contract only and does not add clinical authority or production
       healthcare readiness.
+
+  - path: Data/evals/agentic_tool_use/latest_large_scale_agent_prompt_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention, informational]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [external_author_eval_completed], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: true}
+      - {path: [prompt_bank_n], op: ">=", value: 5000}
+      - {path: [execution_scope, full_live_generation_n], op: "==", value: 0}
+      - {path: [execution_scope, database_writes_performed], op: "==", value: false}
+    note: >
+      Internally generated, tuning-used prompt stress test for deterministic
+      routing and a sampled bounded-agent scaffold. It is a regression bank,
+      not an external holdout, hosted-generation proof, clinical validation,
+      or real-world safety evidence.
+
+  - path: Data/evals/agentic_tool_use/latest_confirmed_write_contract_eval.json
+    required: true
+    max_age_days: 90
+    accepted_status: [strong]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [full_live_generation_n], op: "==", value: 0}
+      - {path: [case_count], op: ">=", value: 50}
+      - {path: [pass_rate], op: ">=", value: 1.0}
+    note: >
+      Internal persistence-contract evaluation for explicit confirmation,
+      cancellation, duplicate prevention, patient isolation, provenance, and
+      undo. It does not measure language understanding or clinical safety.
+
+  - path: Data/evals/rag/latest_route_aware_rag_policy_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [informational, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [policy_pre_registered_before_goldset_inspection], op: "==", value: false}
+      - {path: [live_patient_route_changed], op: "==", value: false}
+      - {path: [promotion_decision], op: "==", value: "hold_for_external_holdout"}
+    note: >
+      Post-hoc internal diagnostic combining BM25 on simple routes with the
+      source-governed stack on safety-sensitive routes. It is tuning-used and
+      cannot establish held-out improvement or clinical validity.
+
+  - path: Data/evals/ops/latest_deployment_profile_validation.json
+    required: false
+    max_age_days: 90
+    accepted_status: [development_profile, strong, blocked]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [secrets_included_in_artifact], op: "==", value: false}
+    note: >
+      Secret-safe runtime configuration check. A passing production-shaped
+      profile is deployment engineering evidence only, not HIPAA, security,
+      clinical-validation, or healthcare-production certification.
+
+  - path: Data/evals/governance/latest_focused_release_summary.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [core_evidence, rag, improvement_proven_vs_bm25], op: "==", value: false}
+      - {path: [core_evidence, rag, external_holdout_completed], op: "==", value: false}
+      - {path: [core_evidence, latency, production_ready], op: "==", value: false}
+    note: >
+      Small reviewer-facing release view. It preserves negative RAG, external
+      holdout, synthetic-only ML, latency, and clinical-boundary findings and
+      does not replace the full release gate.
+
+  - path: Data/evals/models/latest_synthetic_prediction_statistical_audit.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [patient_level_bootstrap, replicates], op: ">=", value: 1000}
+      - {path: [controlled_outcome_perturbations, seed_count], op: ">=", value: 30}
+      - {path: [promotion_decision], op: "==", value: "hold_synthetic_only"}
+    note: >
+      Statistical audit over exported synthetic predictions. Intervals and
+      paired tests are conditional on simulator-built data and cannot be read
+      as clinical, external-validation, or real-population evidence.

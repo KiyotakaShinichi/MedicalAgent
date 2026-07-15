@@ -1,4 +1,4 @@
-# Offline A/B testing for OncoTrack engineering variants
+# Offline A/B testing for NLCare engineering variants
 
 ## What this is
 A deterministic offline framework that compares two implementations

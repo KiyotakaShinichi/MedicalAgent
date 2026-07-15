@@ -18,7 +18,12 @@ def build_multimodal_assessment(
     )
     clinical_signal = _clinical_monitoring_signal(report)
     symptom_signal = _symptom_signal(report)
-    score = _treatment_monitoring_score(mri_signal, clinical_signal, symptom_signal)
+    score_breakdown = _treatment_monitoring_score_breakdown(
+        mri_signal,
+        clinical_signal,
+        symptom_signal,
+    )
+    score = score_breakdown["final_score"]
     overall = _overall_status(score, mri_signal, clinical_signal, symptom_signal)
 
     return {
@@ -26,12 +31,18 @@ def build_multimodal_assessment(
         "overall_message": overall["message"],
         "treatment_monitoring_score": score,
         "score_interpretation": _score_interpretation(score),
+        "score_breakdown": score_breakdown,
         "signals": {
             "mri_response": mri_signal,
             "clinical_monitoring": clinical_signal,
             "symptoms": symptom_signal,
         },
         "recommended_action": overall["recommended_action"],
+        "patient_next_steps": [
+            "Check that recent symptoms, CBC values, medications, and imaging dates are complete.",
+            "Open the review queue and prepare questions about the listed record items for your care team.",
+            "Use NLCare to add missing records or summarize what changed; do not change treatment based on this index.",
+        ],
         "safety_note": (
             "Exploratory monitoring support only. This does not diagnose cancer, choose treatment, "
             "or replace clinician review."
@@ -253,22 +264,46 @@ def _symptom_signal(report):
 
 
 def _treatment_monitoring_score(mri_signal, clinical_signal, symptom_signal):
+    return _treatment_monitoring_score_breakdown(
+        mri_signal,
+        clinical_signal,
+        symptom_signal,
+    )["final_score"]
+
+
+def _treatment_monitoring_score_breakdown(mri_signal, clinical_signal, symptom_signal):
     base = mri_signal.get("response_signal_score")
     if base is None:
         base = 50
 
-    penalty = 0
-    penalty += min(35, clinical_signal.get("urgent_count", 0) * 12)
-    penalty += min(20, clinical_signal.get("watch_count", 0) * 5)
+    urgent_count = int(clinical_signal.get("urgent_count", 0) or 0)
+    watch_count = int(clinical_signal.get("watch_count", 0) or 0)
+    urgent_deduction = min(35, urgent_count * 12)
+    watch_deduction = min(20, watch_count * 5)
 
     max_severity = symptom_signal.get("max_severity")
+    symptom_deduction = 0
     if max_severity is not None:
-        penalty += min(12, int(max_severity) * 1.2)
+        symptom_deduction = min(12, int(max_severity) * 1.2)
 
-    if clinical_signal.get("has_synthetic_labs"):
-        penalty += 3
+    synthetic_lab_deduction = 3 if clinical_signal.get("has_synthetic_labs") else 0
+    total_deduction = urgent_deduction + watch_deduction + symptom_deduction + synthetic_lab_deduction
+    final_score = max(0, min(100, round(float(base) - total_deduction)))
 
-    return max(0, min(100, round(base - penalty)))
+    return {
+        "base_signal": round(float(base), 1),
+        "urgent_review_flags": urgent_count,
+        "urgent_flag_deduction": round(float(urgent_deduction), 1),
+        "watch_flags": watch_count,
+        "watch_flag_deduction": round(float(watch_deduction), 1),
+        "peak_recorded_symptom_severity": max_severity,
+        "symptom_deduction": round(float(symptom_deduction), 1),
+        "synthetic_lab_provenance_deduction": synthetic_lab_deduction,
+        "total_deduction": round(float(total_deduction), 1),
+        "final_score": final_score,
+        "formula": "clamp(base signal - capped review-flag deductions - symptom deduction - synthetic-lab provenance deduction, 0, 100)",
+        "claim_boundary": "Record-based synthetic engineering index; not cancer status, treatment success, prognosis, or a treatment recommendation.",
+    }
 
 
 def _score_interpretation(score):

@@ -13,7 +13,7 @@ DEFAULT_DOC_PATH = "docs/dataset_expansion_deep_search.md"
 
 CLAIM_BOUNDARY = (
     "Dataset expansion deep search is a planning and governance artifact. It identifies public or controlled-access "
-    "sources that can improve OncoTrack's realism, schema coverage, or external-readiness checks. It does not mean "
+    "sources that can improve NLCare's realism, schema coverage, or external-readiness checks. It does not mean "
     "the data has been downloaded, licensed, mapped, clinically validated, or approved for patient-facing prediction."
 )
 
@@ -65,8 +65,8 @@ DATASET_CANDIDATES: list[dict[str, Any]] = [
         "best_use": "deep-learning-ready MRI pCR benchmark",
         "signals": ["3D DCE-MRI", "tumor segmentation", "pCR", "HR status", "HER2 status", "age/race metadata"],
         "oncoTrack_fit": "already_integrated_expand",
-        "why": "It is standardized, DL-ready, and already aligns with the response-imaging side of OncoTrack.",
-        "limitations": ["Pre-treatment imaging focus", "No CBC/symptom/tumor-marker timeline", "pCR is not OncoTrack synthetic treatment success"],
+        "why": "It is standardized, DL-ready, and already aligns with the response-imaging side of NLCare.",
+        "limitations": ["Pre-treatment imaging focus", "No CBC/symptom/tumor-marker timeline", "pCR is not NLCare synthetic treatment success"],
         "next_action": "Expand from current tabular bridge to a small image-feature smoke benchmark if local storage allows.",
     },
     {

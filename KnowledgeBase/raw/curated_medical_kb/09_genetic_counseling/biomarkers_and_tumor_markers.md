@@ -8,11 +8,11 @@ This document supports safe education about biomarker/pathology results and tumo
 
 Breast cancer cells are commonly tested for estrogen receptor, progesterone receptor, and HER2. Ki-67 may also be reported. These tests are typically performed on cancer cells from biopsy or surgery pathology, not by looking at ordinary CT, MRI, or ultrasound scans.
 
-ER, PR, HER2, and Ki-67 help clinicians understand tumor biology and plan care. OncoTrack may organize the status values if they are present in the report, but it must not infer a missing result or recommend treatment based on a biomarker.
+ER, PR, HER2, and Ki-67 help clinicians understand tumor biology and plan care. NLCare may organize the status values if they are present in the report, but it must not infer a missing result or recommend treatment based on a biomarker.
 
 ## IHC and FISH
 
-HER2 may be reported by immunohistochemistry, often written as IHC 0, 1+, 2+, or 3+. Some equivocal HER2 results may have additional FISH or ISH testing for gene amplification. OncoTrack can store the exact wording but must not convert or reinterpret it beyond the report text unless the user has already supplied the clinician's interpretation.
+HER2 may be reported by immunohistochemistry, often written as IHC 0, 1+, 2+, or 3+. Some equivocal HER2 results may have additional FISH or ISH testing for gene amplification. NLCare can store the exact wording but must not convert or reinterpret it beyond the report text unless the user has already supplied the clinician's interpretation.
 
 ## Tumor markers
 

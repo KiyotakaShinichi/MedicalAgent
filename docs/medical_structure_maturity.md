@@ -1,6 +1,6 @@
 # Medical structure maturity (synthetic-only)
 
-This page documents the **structural** medical layers OncoTrack ships
+This page documents the **structural** medical layers NLCare ships
 today. None of these layers establish clinical validation. They give a
 future clinician reviewer a defined surface to inspect.
 

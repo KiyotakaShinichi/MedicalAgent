@@ -1465,10 +1465,67 @@ class BreastMonitoringNLPTests(unittest.TestCase):
                 patient_id="CHAT-P010",
                 message="severity 7/10",
             )
-            saved = [action for action in second["saved_actions"] if action["type"] == "saved_symptom"]
+            pending = [action for action in second["saved_actions"] if action["type"] == "pending_record_confirmation"]
+            self.assertEqual(len(pending), 1)
+            self.assertEqual(db.query(SymptomReport).count(), 0)
+
+            third = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P010",
+                message="Confirm save",
+            )
+            saved = [action for action in third["saved_actions"] if action["type"] == "saved_symptom"]
             self.assertEqual(len(saved), 1)
             self.assertEqual(saved[0]["symptom"], "nausea")
-            self.assertTrue(saved[0].get("resumed_from_memory"))
+            self.assertTrue(saved[0].get("undo_available"))
+            self.assertEqual(db.query(SymptomReport).count(), 1)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_chat_upset_stomach_requires_severity_before_saving(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-P011", name="Stomach Symptom Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            first = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P011",
+                message="I have an upset stomach",
+            )
+            partial = [
+                action
+                for action in first["saved_actions"]
+                if action["type"] == "partial_symptom_detected"
+            ]
+            self.assertEqual(len(partial), 1)
+            self.assertEqual(partial[0]["symptom"], "abdominal discomfort")
+            self.assertIn("severity", first["reply"].lower())
+            self.assertEqual(db.query(SymptomReport).count(), 0)
+
+            second = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P011",
+                message="severity 4/10",
+            )
+            pending = [
+                action
+                for action in second["saved_actions"]
+                if action["type"] == "pending_record_confirmation"
+            ]
+            self.assertEqual(len(pending), 1)
+            self.assertEqual(db.query(SymptomReport).count(), 0)
+
+            third = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P011",
+                message="Confirm save",
+            )
+            saved = [action for action in third["saved_actions"] if action["type"] == "saved_symptom"]
+            self.assertEqual(len(saved), 1)
+            self.assertEqual(saved[0]["symptom"], "abdominal discomfort")
+            self.assertEqual(saved[0]["severity"], 4)
             self.assertEqual(db.query(SymptomReport).count(), 1)
         finally:
             db.close()
@@ -1494,6 +1551,78 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
+    def test_immediate_danger_statement_uses_complete_deterministic_safety_reply(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SAFETY-P001", name="Safety Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SAFETY-P001",
+                message="i think im dying",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "safety_boundary")
+            self.assertEqual(result["agent_pipeline"]["safety"]["level"], "high_risk")
+            self.assertEqual(result["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+            self.assertIn("nearest emergency department", result["reply"].lower())
+            self.assertFalse(result["reply"].lower().rstrip().endswith("or go to"))
+            self.assertEqual(db.query(SymptomReport).count(), 0)
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_safety_location_followup_keeps_previous_turn_context(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SAFETY-P002", name="Follow-up Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            first = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SAFETY-P002",
+                message="i think im dying",
+            )
+            self.assertIn("emergency", first["reply"].lower())
+
+            second = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SAFETY-P002",
+                message="go to where?",
+            )
+
+            self.assertEqual(second["agent_pipeline"]["intent"], "safety_boundary")
+            self.assertEqual(second["agent_pipeline"]["safety"]["level"], "high_risk")
+            self.assertEqual(second["agent_pipeline"]["pipeline_trace"]["terminal_step"], "direct_support")
+            self.assertIn("nearest emergency department", second["reply"].lower())
+            self.assertNotIn("which part of the portal", second["reply"].lower())
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_existing_record_wording_does_not_claim_patient_authorship(self):
+        original = "You've logged nausea severity 6/10 today and recent labs are in your record."
+        neutral = support_chat_agent._enforce_record_provenance(original, [])
+        self.assertIn("portal record currently shows", neutral.lower())
+        self.assertNotIn("you've logged", neutral.lower())
+
+        verified = support_chat_agent._enforce_record_provenance(
+            original,
+            [{"type": "saved_symptom", "symptom": "nausea", "severity": 6}],
+        )
+        self.assertEqual(verified, original)
+
+    def test_high_risk_dangling_location_clause_is_completed(self):
+        repaired = support_chat_agent._ensure_complete_safety_reply(
+            "Please call local emergency services or go to",
+            {"level": "high_risk", "scope": "urgent_or_safety_related"},
+        )
+        self.assertEqual(
+            repaired,
+            "Please call local emergency services or go to the nearest emergency department now.",
+        )
+
     def test_chat_short_mri_hint_requests_details_without_saving(self):
         db = _temp_db_session()
         try:
@@ -1514,16 +1643,24 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
-    def test_chat_saves_mri_report_text_as_imaging_report(self):
+    def test_chat_confirms_mri_report_text_before_saving(self):
         db = _temp_db_session()
         try:
             db.add(Patient(id="CHAT-P003", name="MRI Patient", diagnosis="Breast cancer demo"))
             db.commit()
 
-            result = handle_patient_chat(
+            preview = handle_patient_chat(
                 db=db,
                 patient_id="CHAT-P003",
                 message="MRI report on 2026-02-01 impression: right breast mass decreased to 2.1 cm.",
+            )
+            self.assertEqual(db.query(ImagingReport).count(), 0)
+            self.assertTrue(any(action["type"] == "pending_record_confirmation" for action in preview["saved_actions"]))
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P003",
+                message="Confirm save",
             )
 
             saved_imaging = [action for action in result["saved_actions"] if action["type"] == "saved_imaging_report"]
@@ -1540,19 +1677,27 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
-    def test_chat_saves_ct_report_and_flags_metastatic_indicators(self):
+    def test_chat_confirms_ct_report_before_saving_and_flagging(self):
         db = _temp_db_session()
         try:
             db.add(Patient(id="CHAT-P008", name="CT Patient", diagnosis="Breast cancer demo"))
             db.commit()
 
-            result = handle_patient_chat(
+            preview = handle_patient_chat(
                 db=db,
                 patient_id="CHAT-P008",
                 message=(
                     "CT abdomen/pelvis report on 2026-03-01 impression: "
                     "new ascites and peritoneal nodularity concerning for metastatic disease."
                 ),
+            )
+            self.assertEqual(db.query(ImagingReport).count(), 0)
+            self.assertTrue(any(action["type"] == "pending_record_confirmation" for action in preview["saved_actions"]))
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P008",
+                message="Confirm save",
             )
 
             saved_imaging = [action for action in result["saved_actions"] if action["type"] == "saved_imaging_report"]
@@ -1570,16 +1715,24 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
-    def test_chat_saves_abdominal_ultrasound_report(self):
+    def test_chat_confirms_abdominal_ultrasound_report_before_saving(self):
         db = _temp_db_session()
         try:
             db.add(Patient(id="CHAT-P009", name="Ultrasound Patient", diagnosis="Breast cancer demo"))
             db.commit()
 
-            result = handle_patient_chat(
+            preview = handle_patient_chat(
                 db=db,
                 patient_id="CHAT-P009",
                 message="Ultrasound abdomen report on 2026-03-04 impression: new hepatic lesion.",
+            )
+            self.assertEqual(db.query(ImagingReport).count(), 0)
+            self.assertTrue(any(action["type"] == "pending_record_confirmation" for action in preview["saved_actions"]))
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-P009",
+                message="Confirm save",
             )
 
             saved_imaging = [action for action in result["saved_actions"] if action["type"] == "saved_imaging_report"]
@@ -1698,6 +1851,73 @@ class BreastMonitoringNLPTests(unittest.TestCase):
         self.assertIn("data_contract", report["category_statuses"])
         self.assertTrue(any(check["name"] == "numeric_range_contract" for check in report["checks"]))
         self.assertIn("poc_demo_readiness", report)
+
+    def test_patient_chat_redirects_obvious_out_of_domain_history_question(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SCOPE-001", name="Scope Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SCOPE-001",
+                message="Who is Hitler?",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "scope_boundary")
+            self.assertIn("NLCare", result["reply"])
+            self.assertIn("breast-cancer monitoring", result["reply"])
+            self.assertNotIn("leader of Germany", result["reply"])
+            self.assertEqual(result["saved_actions"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_patient_chat_redirects_arithmetic_without_orphaned_numbering(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SCOPE-002", name="Math Scope Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SCOPE-002",
+                message="1+1",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "scope_boundary")
+            self.assertFalse(result["reply"].lstrip().startswith("1."))
+            self.assertIn("general-purpose requests", result["reply"])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_truncated_provider_reply_uses_complete_fallback(self):
+        truncated = "I hear how scared you feel. Please contact your care team. If"
+        fallback = "I hear how scared you feel. Please contact a trusted human support person now."
+
+        self.assertTrue(support_chat_agent._looks_truncated_reply(truncated))
+        self.assertEqual(
+            support_chat_agent._ensure_complete_response(truncated, fallback),
+            fallback,
+        )
+
+    def test_monitoring_score_breakdown_reconstructs_final_score(self):
+        from backend.services.multimodal_fusion import _treatment_monitoring_score_breakdown
+
+        result = _treatment_monitoring_score_breakdown(
+            {"response_signal_score": 76},
+            {"urgent_count": 2, "watch_count": 1, "has_synthetic_labs": True},
+            {"max_severity": 4},
+        )
+
+        self.assertEqual(result["urgent_flag_deduction"], 24.0)
+        self.assertEqual(result["watch_flag_deduction"], 5.0)
+        self.assertEqual(result["symptom_deduction"], 4.8)
+        self.assertEqual(result["synthetic_lab_provenance_deduction"], 3)
+        self.assertEqual(result["total_deduction"], 36.8)
+        self.assertEqual(result["final_score"], 39)
+        self.assertIn("not cancer status", result["claim_boundary"].lower())
 
     def test_poc_demo_readiness_allows_advisory_mle_gaps_without_hard_failures(self):
         checks = [

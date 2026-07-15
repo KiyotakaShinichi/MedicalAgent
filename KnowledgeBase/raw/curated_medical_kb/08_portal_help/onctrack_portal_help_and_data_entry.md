@@ -1,8 +1,8 @@
-# OncoTrack Portal Help and Data Entry
+# NLCare Portal Help and Data Entry
 
 ## Purpose
 
-This document helps the support agent answer questions about how to use OncoTrack without drifting into medical advice.
+This document helps the support agent answer questions about how to use NLCare without drifting into medical advice.
 
 ## What patients can log
 
@@ -30,12 +30,12 @@ The model signal is an exploratory engineering signal in this proof of concept. 
 
 ## What "PoC not for clinical use" means
 
-OncoTrack is a proof-of-concept monitoring support system. Demo data may be synthetic or public-data-derived. It is not certified for clinical deployment and should not be used for actual medical decisions.
+NLCare is a proof-of-concept monitoring support system. Demo data may be synthetic or public-data-derived. It is not certified for clinical deployment and should not be used for actual medical decisions.
 
 ## Sources
 
 - Project system card: docs/system_card.md
 - Project model card: MODEL_CARD.md
-- OncoTrack README: README.md
+- NLCare README: README.md
 
 Last reviewed: 2026-05-15

@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 CHECKS = {
     "frontend/login.html": [
-        "OncoTrack",
+        "NLCare",
         "Demo Access",
         "Sign in to your workspace",
         "demo-credential-login",
@@ -14,7 +14,7 @@ CHECKS = {
         "adminAccessToken",
     ],
     "frontend/admin.html": [
-        "OncoTrack",
+        "NLCare",
         "RAG Evaluation",
         "Cost & Latency",
         "Security Guardrails",
@@ -35,7 +35,7 @@ CHECKS = {
         "submitAgentFeedback",
     ],
     "frontend/index.html": [
-        "OncoTrack",
+        "NLCare",
         "Clinician",
         "Review Queue",
         "logoutClinician",

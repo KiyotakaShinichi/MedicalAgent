@@ -1,4 +1,4 @@
-"""Cross-platform OncoTrack ship gate.
+"""Cross-platform NLCare ship gate.
 
 Runs the same checks as ``make ship`` without requiring GNU Make. The script
 stops on the first failed command and returns that command's exit code.
@@ -65,6 +65,10 @@ def main() -> int:
             name="Frontend production build",
             command=_npm_cmd("run", "build"),
             cwd=FRONTEND,
+        ),
+        Step(
+            name="Focused release summary",
+            command=[sys.executable, "scripts/run_focused_release_summary.py"],
         ),
         Step(
             name="Release artifact gate",

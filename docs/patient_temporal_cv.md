@@ -1,6 +1,6 @@
 # Patient-level temporal cross-validation
 
-OncoTrack reports model metrics under a CV protocol that is defensible
+NLCare reports model metrics under a CV protocol that is defensible
 against two common forms of leakage:
 
 1. **Within-patient leakage** — the same patient's cycle-1 row training

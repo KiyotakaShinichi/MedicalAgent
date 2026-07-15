@@ -68,7 +68,7 @@ def build_priority_external_stress(
                 "clinician-reviewed labels for the exact monitoring question",
                 "calibration and subgroup reliability on external rows",
             ],
-            "reason": "Mapped public rows are schema/external-stress evidence only; they are not OncoTrack longitudinal validation rows.",
+            "reason": "Mapped public rows are schema/external-stress evidence only; they are not NLCare longitudinal validation rows.",
         },
         "claim_boundary": CLAIM_BOUNDARY,
     }
@@ -110,7 +110,7 @@ def _endpoint_compatibility(dataset_reports: dict[str, dict[str, Any]]) -> dict[
         "exact_oncotrack_label_match": False,
         "reason": (
             "GENIE/Duke endpoints such as real-world response, pCR, recurrence, PFS, or OS are useful "
-            "external context, but they are not the same as OncoTrack's synthetic response classification, "
+            "external context, but they are not the same as NLCare's synthetic response classification, "
             "response-score regression, or toxicity-review labels."
         ),
     }

@@ -1,0 +1,2 @@
+session_id,reviewer_role,date,synthetic_scenario_only,task_id,task_completed_without_help,teach_back_correct,accidental_write,confirmation_understood,undo_understood,overtrust_observed,issue_severity,comments,linked_artifact_or_commit,fix_status
+EXAMPLE-REMOVE,facilitator,YYYY-MM-DD,true,review_status_meaning,false,false,false,false,false,false,low,Replace this example row before a real session,,open

@@ -27,8 +27,8 @@ BREASTDCEDL_SOURCE_URLS = [
 ]
 
 CLAIM_BOUNDARY = (
-    "External bridge artifacts align public benchmark fields to the OncoTrack schema for engineering "
-    "readiness only. BreastDCEDL/I-SPY is an imaging/pCR benchmark and is not a full OncoTrack "
+    "External bridge artifacts align public benchmark fields to the NLCare schema for engineering "
+    "readiness only. BreastDCEDL/I-SPY is an imaging/pCR benchmark and is not a full NLCare "
     "longitudinal treatment, CBC, symptom, medication, tumor-marker, or clinical-validation dataset."
 )
 
@@ -81,7 +81,7 @@ def build_external_data_bridge(
             {
                 "dataset": "AACR GENIE BPC Breast Cancer",
                 "role": "future real-world treatment/genomic/outcome benchmark after access workflow",
-                "reason_not_current_training": "not locally mapped into OncoTrack longitudinal features yet",
+                "reason_not_current_training": "not locally mapped into NLCare longitudinal features yet",
             },
             {
                 "dataset": "SEER / SEER-Medicare",

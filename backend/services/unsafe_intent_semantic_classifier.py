@@ -12,11 +12,13 @@ from __future__ import annotations
 import json
 import math
 import re
-import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
+
+from backend.services.agent_text_normalization import normalize_agent_text
 
 
 DEFAULT_OUTPUT_PATH = Path("Data/evals/safety/latest_unsafe_intent_classifier_eval.json")
@@ -560,17 +562,7 @@ def _result(
 
 
 def _normalize(text: str) -> str:
-    value = unicodedata.normalize("NFKC", str(text or ""))
-    value = "".join(char for char in value if unicodedata.category(char) not in {"Cf", "Cc"})
-    value = _strip_diacritics(value).lower()
-    value = re.sub(r"[_\-./\\|*~`'\"()\[\]{}:;,+?<>]+", " ", value)
-    value = re.sub(r"\s+", " ", value).strip()
-    return value
-
-
-def _strip_diacritics(value: str) -> str:
-    normalized = unicodedata.normalize("NFD", value)
-    return "".join(char for char in normalized if unicodedata.category(char) != "Mn")
+    return normalize_agent_text(text)
 
 
 def _tokens(text: str) -> set[str]:
@@ -585,9 +577,7 @@ def _prototype_score(text: str, prototypes: tuple[str, ...]) -> float:
     if not text_tokens:
         return 0.0
     best = 0.0
-    for prototype in prototypes:
-        proto = _normalize(prototype)
-        proto_tokens = _tokens(proto)
+    for proto, proto_tokens in _normalized_prototypes(prototypes):
         if not proto_tokens:
             continue
         overlap = len(text_tokens & proto_tokens) / max(len(proto_tokens), 1)
@@ -596,6 +586,17 @@ def _prototype_score(text: str, prototypes: tuple[str, ...]) -> float:
         score = min(1.0, (0.72 * overlap) + (0.38 * jaccard) + substring)
         best = max(best, score)
     return best
+
+
+@lru_cache(maxsize=None)
+def _normalized_prototypes(prototypes: tuple[str, ...]) -> tuple[tuple[str, frozenset[str]], ...]:
+    """Cache immutable prototype features reused by every classifier call."""
+
+    return tuple(
+        (normalized, frozenset(_tokens(normalized)))
+        for prototype in prototypes
+        if (normalized := _normalize(prototype))
+    )
 
 
 def _pattern_match(text: str, patterns: tuple[str, ...]) -> str | None:

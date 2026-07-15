@@ -18,8 +18,8 @@ DEFAULT_OUTPUT_DIR = "Data/external_bridge/cbioportal"
 DEFAULT_COMBINED_CSV = "Data/external_bridge/cbioportal/canonical_cbioportal_breast_rows.csv"
 
 CLAIM_BOUNDARY = (
-    "cBioPortal clinical export maps public TCGA/METABRIC clinical attributes into the OncoTrack canonical schema "
-    "for distribution and interoperability checks only. These rows are not OncoTrack longitudinal monitoring rows "
+    "cBioPortal clinical export maps public TCGA/METABRIC clinical attributes into the NLCare canonical schema "
+    "for distribution and interoperability checks only. These rows are not NLCare longitudinal monitoring rows "
     "and do not validate treatment response, toxicity, recurrence, prognosis, or treatment decisions."
 )
 
@@ -165,7 +165,7 @@ def build_cbioportal_clinical_export(
             "treatment-cycle medication sequence",
             "imaging response timeline",
             "tumor-marker response trajectory",
-            "OncoTrack response-score label",
+            "NLCare response-score label",
         ],
         "claim_boundary": CLAIM_BOUNDARY,
     }

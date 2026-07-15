@@ -1137,6 +1137,28 @@ def chat_with_my_patient_agent(
     return result
 
 
+@router.delete("/me/record-write-actions/{audit_id}")
+def undo_my_confirmed_record_write(
+    audit_id: int,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Undo one patient-confirmed support-chat write.
+
+    The underlying portal row is removed while its provenance audit remains
+    marked as undone. This is an engineering traceability feature, not a
+    clinical record-retention claim.
+    """
+    from backend.services.confirmed_record_write import undo_record_write
+
+    try:
+        action = undo_record_write(db, context.patient_id, audit_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    _invalidate_report_cache(context.patient_id)
+    return {"message": action["message"], "action": action}
+
+
 # ─── Streaming chat (SSE) ─────────────────────────────────────────────────────
 
 def _sse_event(event: str, data: dict) -> str:

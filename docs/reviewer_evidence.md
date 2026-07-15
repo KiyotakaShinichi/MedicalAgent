@@ -1,6 +1,6 @@
 # Reviewer Evidence Map
 
-OncoTrack is a safety-first engineering prototype. This file maps each major
+NLCare is a safety-first engineering prototype. This file maps each major
 claim to the command or artifact a reviewer can inspect. These checks are
 engineering evidence only; they do not establish clinical validity.
 
@@ -58,7 +58,7 @@ Reviewer path:
 
 ## Honest Positioning
 
-OncoTrack demonstrates controllable engineering discipline before clinical
+NLCare demonstrates controllable engineering discipline before clinical
 validation: leakage prevention, abstention, traceability, source-governed RAG,
 medical claim boundaries, release gates, and clinician-review workflows. It is
 not a clinical product and is not approved for real patient care.

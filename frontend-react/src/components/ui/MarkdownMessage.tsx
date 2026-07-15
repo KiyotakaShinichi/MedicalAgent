@@ -155,7 +155,10 @@ function parseBlocks(source: string): Block[] {
         items.push(lines[i].trim().replace(/^\d+\.\s+/, ""));
         i++;
       }
-      blocks.push({ kind: "ol", items });
+      // A lone "1." is usually model formatting noise rather than a useful
+      // ordered list. Render it as a normal paragraph and remove the orphaned
+      // number; preserve numbering only when there are at least two items.
+      blocks.push(items.length === 1 ? { kind: "p", lines: items } : { kind: "ol", items });
       continue;
     }
 

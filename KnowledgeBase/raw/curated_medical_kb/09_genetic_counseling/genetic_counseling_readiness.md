@@ -2,13 +2,13 @@
 
 ## Purpose
 
-This document supports OncoTrack's Genetic Counseling Readiness module. It is educational and organizational only. It must not diagnose inherited cancer risk, interpret a genetic variant as medical advice, predict whether a person or relative will get cancer, or replace a genetic counselor.
+This document supports NLCare's Genetic Counseling Readiness module. It is educational and organizational only. It must not diagnose inherited cancer risk, interpret a genetic variant as medical advice, predict whether a person or relative will get cancer, or replace a genetic counselor.
 
 ## What genetic counseling is
 
 Genetic counseling helps a patient and family understand whether genetic testing may be useful, what a test can and cannot answer, and what questions should be reviewed with a genetics-trained clinician. It commonly uses personal cancer history, family cancer history, age at diagnosis, cancer types across relatives, ancestry when relevant, and prior known familial variants.
 
-OncoTrack may organize this information into a review-ready summary. OncoTrack must not decide that a patient "has BRCA," "will get cancer," or does not need counseling.
+NLCare may organize this information into a review-ready summary. NLCare must not decide that a patient "has BRCA," "will get cancer," or does not need counseling.
 
 ## What information is useful to collect
 

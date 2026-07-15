@@ -215,7 +215,7 @@ def _adjudicate_json(system, prompt, tier="router"):
         adjudication on adversarial / multilingual inputs and for
         anywhere a richer reasoning trace matters more than latency.
 
-    Emergency-degradation escape hatch.  In normal operation OncoTrack
+    Emergency-degradation escape hatch.  In normal operation NLCare
     adjudicates intent / tool / cache / security against Groq cloud —
     both tiers are typically sub-second.  Set
     ``ONCOTRACK_FAST_MODE=1`` ONLY when:

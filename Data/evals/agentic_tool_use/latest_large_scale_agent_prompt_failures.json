@@ -1,0 +1,10 @@
+{
+  "schema_version": "large_scale_agent_prompt_failures_v1_2026_07",
+  "generated_at": "2026-07-14T14:31:32.328144+00:00",
+  "status": "informational",
+  "total_failure_n": 0,
+  "failures": [],
+  "clinical_validation": false,
+  "was_used_for_tuning": true,
+  "claim_boundary": "This is an internally generated synthetic engineering stress test of the unsafe-intent classifier and bounded planner/executor/verifier scaffold. It is not clinical validation, external review, real-world safety evidence, or proof that the hosted generative agent is safe across thousands of turns."
+}

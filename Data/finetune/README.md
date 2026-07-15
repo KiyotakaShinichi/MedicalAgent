@@ -1,7 +1,7 @@
-# OncoTrack fine-tuning scaffold
+# NLCare fine-tuning scaffold
 
 This directory is the **behavior / style** fine-tuning scaffold for
-OncoTrack.  It does NOT contain:
+NLCare.  It does NOT contain:
 
 - real patient data
 - clinical knowledge tuning

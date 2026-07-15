@@ -1,4 +1,4 @@
-"""Special-population boundary handling for OncoTrack.
+"""Special-population boundary handling for NLCare.
 
 Detects queries that touch pregnancy, breastfeeding, pediatric / minor,
 fertility, survivorship, recurrence anxiety, palliative / supportive
@@ -119,7 +119,7 @@ SAFE_WORDING: dict[str, str] = {
         "lactation consultant before making changes."
     ),
     "pediatric": (
-        "OncoTrack is designed for adult breast-cancer monitoring contexts. "
+        "NLCare is designed for adult breast-cancer monitoring contexts. "
         "Pediatric / minor patient care involves different specialists, "
         "consent requirements, and guidelines. Please contact a pediatric "
         "oncology team for any pediatric-specific question."

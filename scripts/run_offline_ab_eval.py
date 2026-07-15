@@ -218,7 +218,7 @@ def _overall_decision(decisions: list[str]) -> str:
 
 
 def _print_human(report: dict[str, Any]) -> None:
-    print(f"OncoTrack offline A/B suite: {report['status'].upper()} ({report['overall_decision']})")
+    print(f"NLCare offline A/B suite: {report['status'].upper()} ({report['overall_decision']})")
     print(f"  config: {report['config_path']}")
     print(f"  tests:  {report['test_count']}")
     print(f"  expectations: {report['expectations']['passed']} passed / {report['expectations']['failed']} failed")
@@ -236,7 +236,7 @@ def _print_human(report: dict[str, Any]) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="OncoTrack offline A/B evaluation runner")
+    parser = argparse.ArgumentParser(description="NLCare offline A/B evaluation runner")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")

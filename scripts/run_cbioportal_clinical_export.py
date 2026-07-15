@@ -17,7 +17,7 @@ from backend.services.cbioportal_clinical_export import (  # noqa: E402
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Export public cBioPortal clinical rows to canonical OncoTrack schema.")
+    parser = argparse.ArgumentParser(description="Export public cBioPortal clinical rows to canonical NLCare schema.")
     parser.add_argument("--output", default=DEFAULT_OUTPUT_PATH)
     parser.add_argument("--offline", action="store_true", help="Skip live cBioPortal fetch.")
     args = parser.parse_args()

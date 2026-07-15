@@ -170,7 +170,7 @@ The public-data bridge artifacts are optional because they depend on local
 public-row exports, but when present the gate checks that:
 
 - cBioPortal rows validate against the canonical schema and do not claim full
-  OncoTrack temporal validation.
+  NLCare temporal validation.
 - common-feature transfer stress keeps `promotion_allowed = false`.
 - the public-distribution realism candidate keeps
   `production_replacement_allowed = false`.
@@ -179,10 +179,10 @@ public-row exports, but when present the gate checks that:
 - the dataset expansion catalog contains enough governed sources to support the
   next bridge-selection decision.
 - the priority GENIE BPC + Duke MRI bridge exposes mapping templates and keeps
-  full OncoTrack temporal-validation readiness at zero until permitted external
+  full NLCare temporal-validation readiness at zero until permitted external
   exports are actually mapped.
 - priority external stress keeps `promotion_allowed = false` and reports that
-  external endpoints are not exact OncoTrack temporal-label matches.
+  external endpoints are not exact NLCare temporal-label matches.
 - mutation-context mapping keeps `promotion_allowed = false` for gene features.
 - dataset fit matrix keeps production training blocked while ranking next data
   sources.

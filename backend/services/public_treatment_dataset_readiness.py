@@ -136,7 +136,7 @@ PUBLIC_TREATMENT_DATASETS: list[dict[str, Any]] = [
         "readiness": "future_high_value_treatment_outcomes_candidate",
         "limitations": [
             "Requires access/terms workflow before local training.",
-            "Not yet mapped into OncoTrack's longitudinal CBC/symptom/imaging timeline.",
+            "Not yet mapped into NLCare's longitudinal CBC/symptom/imaging timeline.",
         ],
     },
     {
@@ -193,7 +193,7 @@ PUBLIC_TREATMENT_DATASETS: list[dict[str, Any]] = [
         "combination_support": "excellent imaging-response benchmark but not full real-world combination timeline",
         "readiness": "mapped_external_response_candidate",
         "limitations": [
-            "Does not provide OncoTrack-style medication-by-cycle, radiation, surgery, endocrine, and supportive-care timeline.",
+            "Does not provide NLCare-style medication-by-cycle, radiation, surgery, endocrine, and supportive-care timeline.",
             "Use for pCR/imaging response, not treatment-choice recommendation.",
         ],
     },
@@ -285,7 +285,7 @@ def build_public_treatment_dataset_readiness(
         "claim_boundary": (
             "This artifact maps treatment-combination data sources and a controlled treatment vocabulary. "
             "It does not recommend any treatment, compare treatment efficacy for real patients, or validate "
-            "OncoTrack as a clinical treatment-response predictor."
+            "NLCare as a clinical treatment-response predictor."
         ),
     }
     if output_path:

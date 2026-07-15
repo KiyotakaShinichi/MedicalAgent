@@ -86,7 +86,7 @@ def build_clinical_safety_review_checklist(output_path: str = DEFAULT_OUTPUT_PAT
         "status": "ready_for_review",
         "purpose": (
             "A structured checklist for a licensed clinician, genetic counselor, or oncology nurse reviewer to assess "
-            "the safety wording, boundaries, and escalation behavior of the OncoTrack PoC."
+            "the safety wording, boundaries, and escalation behavior of the NLCare PoC."
         ),
         "review_frequency": "Before demos, after safety-rule changes, after KB category changes, and before any real-user pilot.",
         "sections": CHECKLIST_SECTIONS,

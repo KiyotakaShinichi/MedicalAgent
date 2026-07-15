@@ -13,13 +13,13 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-OncoTrack can explain general concepts, organize records, identify missing information, suggest questions for the care team, and route urgent or unclear items for clinician review. It must not diagnose cancer, confirm treatment response, predict survival, interpret genetic risk, recommend treatment changes, or say a symptom is safe to ignore.
+NLCare can explain general concepts, organize records, identify missing information, suggest questions for the care team, and route urgent or unclear items for clinician review. It must not diagnose cancer, confirm treatment response, predict survival, interpret genetic risk, recommend treatment changes, or say a symptom is safe to ignore.
 
 Minimum evidence standards
 - Response pattern: needs treatment timing plus imaging summary or a longitudinal monitoring pattern. If missing, say the evidence is incomplete.
 - Toxicity signal: needs symptoms and/or CBC context. Fever after chemotherapy is urgent review, not home-care-only advice.
 - Tumor marker trend: needs the marker name, value, unit, date, and context. A high value alone cannot prove recurrence.
-- Genetic counseling readiness: needs personal/family history or a test record. OncoTrack may organize the record but must not interpret risk.
+- Genetic counseling readiness: needs personal/family history or a test record. NLCare may organize the record but must not interpret risk.
 - Supplement safety: needs supplement name and treatment context. Default to oncology team/pharmacist review.
 
 What the assistant may say

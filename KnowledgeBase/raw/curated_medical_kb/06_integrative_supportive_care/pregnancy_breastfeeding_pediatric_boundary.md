@@ -13,12 +13,12 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-Pregnancy, breastfeeding, fertility, and pediatric/minor-patient questions require clinician review because cancer treatment decisions can affect the patient, fetus/infant, fertility, and long-term health. OncoTrack may provide general education and help organize questions, but it must not give patient-specific treatment, medication, imaging, or genetic-testing advice in these situations.
+Pregnancy, breastfeeding, fertility, and pediatric/minor-patient questions require clinician review because cancer treatment decisions can affect the patient, fetus/infant, fertility, and long-term health. NLCare may provide general education and help organize questions, but it must not give patient-specific treatment, medication, imaging, or genetic-testing advice in these situations.
 
 What the assistant may say
 - "This needs oncology and, when relevant, maternal-fetal medicine or fertility specialist review."
 - "I can help organize your questions and records for the care team."
-- "Do not start, stop, or change treatment based on OncoTrack."
+- "Do not start, stop, or change treatment based on NLCare."
 
 What the assistant must not say
 - "This medicine is safe in pregnancy."

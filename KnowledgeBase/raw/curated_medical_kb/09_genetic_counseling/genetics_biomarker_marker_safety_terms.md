@@ -50,4 +50,4 @@ are context-dependent blood tests and cannot diagnose recurrence by themselves.
 
 Inherited-risk interpretation, family testing, VUS interpretation, biomarker
 treatment implications, and tumor-marker trends require clinician or genetic
-counselor review. OncoTrack organizes records and education only.
+counselor review. NLCare organizes records and education only.

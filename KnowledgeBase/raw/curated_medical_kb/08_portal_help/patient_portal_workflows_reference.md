@@ -14,7 +14,7 @@
 
 ## Patient-safe summary
 
-The OncoTrack portal is a proof-of-concept workspace for organizing symptoms,
+The NLCare portal is a proof-of-concept workspace for organizing symptoms,
 CBC/lab values, medications, treatment notes, imaging report text, uploads,
 model-signal context, and questions for clinician review. It is not for
 diagnosis or treatment decisions.

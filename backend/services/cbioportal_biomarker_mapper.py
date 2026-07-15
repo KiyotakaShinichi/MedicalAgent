@@ -75,7 +75,7 @@ def build_cbioportal_biomarker_schema_mapping(
         ],
         "claim_boundary": (
             "This artifact maps public cBioPortal schema availability. It is not a clinical validation result and "
-            "does not imply that OncoTrack can predict outcomes from TCGA/METABRIC without task-specific modeling."
+            "does not imply that NLCare can predict outcomes from TCGA/METABRIC without task-specific modeling."
         ),
     }
     report["mapping_hash"] = _stable_hash(report)

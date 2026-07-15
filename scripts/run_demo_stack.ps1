@@ -6,7 +6,7 @@ param(
 $ErrorActionPreference = "Stop"
 $Root = Resolve-Path (Join-Path $PSScriptRoot "..")
 
-Write-Host "OncoTrack demo stack"
+Write-Host "NLCare demo stack"
 Write-Host "Backend:  http://127.0.0.1:$ApiPort"
 Write-Host "Frontend: http://127.0.0.1:$FrontendPort/login"
 Write-Host ""

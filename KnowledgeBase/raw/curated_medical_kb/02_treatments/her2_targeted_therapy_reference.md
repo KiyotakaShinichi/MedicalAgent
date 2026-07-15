@@ -13,7 +13,7 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-HER2-targeted therapies are used when a cancer is HER2-positive or otherwise meets the treatment criteria chosen by the oncology team. Examples include trastuzumab, pertuzumab, ado-trastuzumab emtansine (T-DM1), and trastuzumab deruxtecan (T-DXd). OncoTrack can explain terms and organize records, but it cannot interpret HER2 results or recommend treatment.
+HER2-targeted therapies are used when a cancer is HER2-positive or otherwise meets the treatment criteria chosen by the oncology team. Examples include trastuzumab, pertuzumab, ado-trastuzumab emtansine (T-DM1), and trastuzumab deruxtecan (T-DXd). NLCare can explain terms and organize records, but it cannot interpret HER2 results or recommend treatment.
 
 Monitoring context
 - HER2 status usually comes from pathology/biomarker testing, not ordinary MRI or CT imaging.

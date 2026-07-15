@@ -10,7 +10,7 @@ Breast cancer is commonly described by tumor features, stage, receptor status, p
 
 ## Stage I to IV
 
-Stage describes the extent of disease. Early-stage disease generally refers to cancer confined to the breast or nearby lymph nodes. Stage IV refers to metastatic disease, meaning cancer has spread to distant organs. OncoTrack must not assign or change a stage from patient-entered text. It may say that staging requires clinician interpretation of pathology and imaging.
+Stage describes the extent of disease. Early-stage disease generally refers to cancer confined to the breast or nearby lymph nodes. Stage IV refers to metastatic disease, meaning cancer has spread to distant organs. NLCare must not assign or change a stage from patient-entered text. It may say that staging requires clinician interpretation of pathology and imaging.
 
 ## ER, PR, HER2
 
@@ -22,7 +22,7 @@ Neoadjuvant treatment is given before surgery, often to shrink tumor burden or a
 
 ## pCR
 
-pCR means pathologic complete response. In research and clinical contexts, it generally refers to no residual invasive cancer found in the surgical specimen after neoadjuvant treatment. pCR is determined by pathology, not by symptoms or a chatbot. OncoTrack can describe pCR as an engineering label or research endpoint, not as a patient-facing diagnosis.
+pCR means pathologic complete response. In research and clinical contexts, it generally refers to no residual invasive cancer found in the surgical specimen after neoadjuvant treatment. pCR is determined by pathology, not by symptoms or a chatbot. NLCare can describe pCR as an engineering label or research endpoint, not as a patient-facing diagnosis.
 
 ## Recurrence and progression
 

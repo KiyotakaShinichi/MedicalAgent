@@ -13,7 +13,7 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-Supportive medicines may be prescribed to help manage treatment side effects. Examples include anti-nausea medicines such as ondansetron, steroid medicines such as dexamethasone in some regimens, and growth-factor medicines such as filgrastim or pegfilgrastim in selected cases. OncoTrack can record these medicines as written and organize symptoms, but it must not tell patients when or how to take them beyond their prescription label.
+Supportive medicines may be prescribed to help manage treatment side effects. Examples include anti-nausea medicines such as ondansetron, steroid medicines such as dexamethasone in some regimens, and growth-factor medicines such as filgrastim or pegfilgrastim in selected cases. NLCare can record these medicines as written and organize symptoms, but it must not tell patients when or how to take them beyond their prescription label.
 
 Monitoring context
 - Anti-nausea medicines should be used as prescribed; uncontrolled vomiting or dehydration needs review.

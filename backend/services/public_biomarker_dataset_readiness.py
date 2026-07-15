@@ -56,7 +56,7 @@ DATASET_CANDIDATES: list[dict[str, Any]] = [
             "non-longitudinal survival sanity check",
         ],
         "limitations": [
-            "Not an OncoTrack-style CBC/symptom/imaging-report timeline.",
+            "Not an NLCare-style CBC/symptom/imaging-report timeline.",
             "Not a public serum tumor-marker response cohort.",
         ],
     },
@@ -93,7 +93,7 @@ DATASET_CANDIDATES: list[dict[str, Any]] = [
         "biomarker_fields": ["ER", "PR", "HER2", "PAM50/subtype", "proteomics/phosphoproteomics"],
         "tumor_marker_fields": [],
         "omics_fields": ["proteomics", "phosphoproteomics", "genomics"],
-        "outcomes": ["clinical annotations; not OncoTrack treatment-cycle response"],
+        "outcomes": ["clinical annotations; not NLCare treatment-cycle response"],
         "readiness": "manual_download_external_proteomics_candidate",
         "allowed_use": [
             "future proteogenomic feature sanity check",
@@ -143,7 +143,7 @@ DATASET_CANDIDATES: list[dict[str, Any]] = [
         ],
         "limitations": [
             "Not a longitudinal treatment-response cohort.",
-            "Does not support standalone recurrence/progression prediction in OncoTrack.",
+            "Does not support standalone recurrence/progression prediction in NLCare.",
         ],
     },
     {
@@ -267,7 +267,7 @@ def _build_retraining_decision(
         "why_not_promote_now": [
             "Current biomarker feature benchmark remains monitor_only.",
             "Tumor-marker sources found are context-only, not longitudinal response-training cohorts.",
-            "No clinician-reviewed or real-world OncoTrack-style outcome labels are available.",
+            "No clinician-reviewed or real-world NLCare-style outcome labels are available.",
         ],
         "latest_synthetic_signals": {
             "enhanced_vs_current_default_auroc_delta": biomarker_delta,
@@ -337,7 +337,7 @@ def _enrich_with_public_apis(datasets: list[dict[str, Any]]) -> list[dict[str, A
 
 def _fetch_json(url: str, timeout_seconds: int = 12) -> tuple[dict[str, Any] | None, str | None]:
     try:
-        request = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "OncoTrack-readiness/1.0"})
+        request = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "NLCare-readiness/1.0"})
         with urllib.request.urlopen(request, timeout=timeout_seconds) as response:  # noqa: S310 - public APIs only
             return json.loads(response.read().decode("utf-8")), None
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:

@@ -13,12 +13,12 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-CA 15-3, CA 27.29, and CEA are blood tumor markers that may be used in some monitoring contexts, especially when a clinician is following trends. They are context-dependent and are not standalone proof that cancer is present, absent, progressing, or returning. OncoTrack should organize values, units, dates, and trend context, then route interpretation to clinicians.
+CA 15-3, CA 27.29, and CEA are blood tumor markers that may be used in some monitoring contexts, especially when a clinician is following trends. They are context-dependent and are not standalone proof that cancer is present, absent, progressing, or returning. NLCare should organize values, units, dates, and trend context, then route interpretation to clinicians.
 
 Monitoring context
 - A single elevated value can have multiple explanations.
 - A trend may be more meaningful than one isolated value, but interpretation still depends on imaging, symptoms, treatment context, and clinician judgment.
-- Tumor markers should not be used by OncoTrack to diagnose recurrence or treatment response.
+- Tumor markers should not be used by NLCare to diagnose recurrence or treatment response.
 
 What the assistant may say
 - "This value should be reviewed in context with your oncology team."

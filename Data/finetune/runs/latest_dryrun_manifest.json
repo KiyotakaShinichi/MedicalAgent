@@ -58,5 +58,5 @@
     "evaluate_on_held_out"
   ],
   "skipped_reason": "Default scaffold runs without GPU / transformers / peft.",
-  "claim_boundary": "Dry-run: no model was trained. The manifest reflects the plan that a future training run would execute. Any real adapter must still pass the OncoTrack safety stack."
+  "claim_boundary": "Dry-run: no model was trained. The manifest reflects the plan that a future training run would execute. Any real adapter must still pass the NLCare safety stack."
 }

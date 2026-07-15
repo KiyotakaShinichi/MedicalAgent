@@ -1,6 +1,6 @@
 # Limitations
 
-OncoTrack is an engineering prototype. Its strongest claims are about software,
+NLCare is an engineering prototype. Its strongest claims are about software,
 safety scaffolding, reproducibility, and synthetic-data MLE discipline.
 
 ## Current Hard Limits

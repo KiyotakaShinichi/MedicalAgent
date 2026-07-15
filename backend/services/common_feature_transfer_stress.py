@@ -28,7 +28,7 @@ COMMON_FEATURES = ["age", "baseline_tumor_size_mm", "hr_positive", "her2_positiv
 
 CLAIM_BOUNDARY = (
     "Common-feature transfer stress is an engineering domain-shift check over fields shared by synthetic "
-    "OncoTrack rows and public breast-cancer cohorts. Synthetic treatment-success, BreastDCEDL pCR, and "
+    "NLCare rows and public breast-cancer cohorts. Synthetic treatment-success, BreastDCEDL pCR, and "
     "cBioPortal survival/recurrence labels are not the same endpoint. This artifact must not be described as "
     "clinical validation, treatment efficacy evidence, or real patient prediction performance."
 )
@@ -55,7 +55,7 @@ def run_common_feature_transfer_stress(
             synthetic_fit["model"],
             breastdcedl,
             label_col="label",
-            label_context="BreastDCEDL pCR label; not equivalent to OncoTrack treatment_success_binary.",
+            label_context="BreastDCEDL pCR label; not equivalent to NLCare treatment_success_binary.",
         )
         transfer_results["synthetic_model_on_cbioportal"] = _score_transfer(
             synthetic_fit["model"],

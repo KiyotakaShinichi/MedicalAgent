@@ -210,7 +210,7 @@ def _print_human(report: dict[str, Any]) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="OncoTrack MLE promotion gate")
+    parser = argparse.ArgumentParser(description="NLCare MLE promotion gate")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")

@@ -1,0 +1,313 @@
+{
+  "schema_version": "route_aware_rag_policy_eval_v1",
+  "generated_at": "2026-07-14T12:38:42.280906+00:00",
+  "status": "informational",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "external_author_eval_completed": false,
+  "internal_vs_external_authored": "internal_post_hoc",
+  "was_used_for_tuning": true,
+  "policy_pre_registered_before_goldset_inspection": false,
+  "live_patient_route_changed": false,
+  "input_artifact": "Data/evals/rag/latest_rag_baseline_comparison.json",
+  "input_goldset_path": "Data/evals/rag/retrieval_goldset.jsonl",
+  "input_goldset_total_n": 74,
+  "policy": {
+    "education_and_portal_help": "bm25_only",
+    "safety_sensitive_and_medical_boundary": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+    "route_counts": {
+      "bm25_only": 19,
+      "hybrid_rrf_query_rewrite_parent_child_source_tier": 55
+    }
+  },
+  "route_aware_summary": {
+    "case_count": 74,
+    "recall_at_5": 0.7095,
+    "recall_at_10": 0.777,
+    "mrr": 0.6865,
+    "ndcg_at_10": 0.6412,
+    "citation_precision": 0.4649,
+    "refusal_correct": 1.0,
+    "source_tier_correct": 0.8649,
+    "claim_support_rate": 0.8378,
+    "unsupported_context_rate": 0.1622,
+    "latency_p50_ms": 261.82,
+    "latency_p95_ms": 293.24,
+    "failure_count": 43
+  },
+  "bm25_summary": {
+    "case_count": 74,
+    "recall_at_5": 0.7162,
+    "recall_at_10": 0.8041,
+    "mrr": 0.7086,
+    "ndcg_at_10": 0.6557,
+    "citation_precision": 0.4135,
+    "refusal_correct": 1.0,
+    "source_tier_correct": 0.4595,
+    "claim_support_rate": 0.9054,
+    "unsupported_context_rate": 0.0946,
+    "latency_p50_ms": 44.51,
+    "latency_p95_ms": 74.19,
+    "failure_count": 56
+  },
+  "full_source_governed_summary": {
+    "case_count": 74,
+    "recall_at_5": 0.7027,
+    "recall_at_10": 0.7838,
+    "mrr": 0.6892,
+    "ndcg_at_10": 0.6453,
+    "citation_precision": 0.5243,
+    "refusal_correct": 1.0,
+    "source_tier_correct": 1.0,
+    "claim_support_rate": 0.8378,
+    "unsupported_context_rate": 0.1622,
+    "latency_p50_ms": 268.95,
+    "latency_p95_ms": 302.4,
+    "failure_count": 35
+  },
+  "deltas": {
+    "recall_at_10_vs_bm25": -0.0271,
+    "recall_at_10_vs_full_governed": -0.0068,
+    "source_tier_correctness_vs_bm25": 0.4054,
+    "latency_p95_ms_vs_full_governed": -9.16
+  },
+  "failure_examples": [
+    {
+      "case_id": "retrieval_gold_001",
+      "intent": "education",
+      "selected_configuration": "bm25_only",
+      "failure_reasons": [
+        "low_citation_precision"
+      ],
+      "retrieved_source_ids": [
+        "462d304fbed421ae6e14",
+        "nci-her2-breast",
+        "06f8773f9a1a727adf87",
+        "3ce25293cb05a3c257fc",
+        "72cd5d65c939600fece7",
+        "82251a91de6ec817ba62",
+        "30473fc676df4779c61d",
+        "05fa744d857f4cfa8865",
+        "33ef73acba84d60bd7a1",
+        "daee9462550d929ed358"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_002",
+      "intent": "education",
+      "selected_configuration": "bm25_only",
+      "failure_reasons": [
+        "partial_source_recall",
+        "low_citation_precision",
+        "source_tier_mismatch"
+      ],
+      "retrieved_source_ids": [
+        "b4b9ee5dfff5d9bb4a84",
+        "1d8b472e73bcd9696d15",
+        "972b1b8be879098562a7",
+        "c0bdb48b932b0d3cf9a1",
+        "f6726c194bf1f479171f",
+        "462d304fbed421ae6e14",
+        "eb9b8c6558111e0544e2",
+        "24153a2dd9e6a5e56060",
+        "d2e339b08e9eb37b9a6d",
+        "917264d81e3123c0d2a8"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_003",
+      "intent": "education",
+      "selected_configuration": "bm25_only",
+      "failure_reasons": [
+        "low_citation_precision",
+        "source_tier_mismatch"
+      ],
+      "retrieved_source_ids": [
+        "927cf11805df9019d710",
+        "f6726c194bf1f479171f",
+        "d160a9e5dcf0ba11326e",
+        "1d8b472e73bcd9696d15",
+        "917264d81e3123c0d2a8",
+        "c30ab0b49f328562e76f",
+        "82251a91de6ec817ba62",
+        "69e02060e09613375c81",
+        "eb9b8c6558111e0544e2",
+        "d2e339b08e9eb37b9a6d"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_004",
+      "intent": "education",
+      "selected_configuration": "bm25_only",
+      "failure_reasons": [
+        "low_citation_precision",
+        "source_tier_mismatch"
+      ],
+      "retrieved_source_ids": [
+        "87ec22bc66c88b40ea76",
+        "33ef73acba84d60bd7a1",
+        "5439761ce35b3106bb44",
+        "5250efd518f050c2a555",
+        "05838decbced2fe24cc9",
+        "curated-ct-ascites-monitoring",
+        "d2e339b08e9eb37b9a6d",
+        "86940c651519d0347fdb",
+        "ac1a8d556dbc198be8ca",
+        "462d304fbed421ae6e14"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_008",
+      "intent": "education",
+      "selected_configuration": "bm25_only",
+      "failure_reasons": [
+        "partial_source_recall"
+      ],
+      "retrieved_source_ids": [
+        "870fe317bc0d38e46a88",
+        "b6241e11969f4cb71be8",
+        "22d463a5a12d490af4c6",
+        "5e0a0e34e12e15968989",
+        "5d903bf5153559787dc6",
+        "nci-msk-supplement-safety",
+        "c0bdb48b932b0d3cf9a1",
+        "bd077c510af8e9bb2107",
+        "curated-acupuncture-supportive-care",
+        "5439761ce35b3106bb44"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_009",
+      "intent": "portal_help",
+      "selected_configuration": "bm25_only",
+      "failure_reasons": [
+        "source_tier_mismatch"
+      ],
+      "retrieved_source_ids": [
+        "d2e339b08e9eb37b9a6d",
+        "portal-upload-guide",
+        "8ae319b61dfea19374ac",
+        "ac1a8d556dbc198be8ca",
+        "74a10d9f2f25974e4b4c",
+        "b2d977a95d3bfa00991b",
+        "5d903bf5153559787dc6",
+        "d948e38feb5098dde0e9",
+        "fabbef8f4a42ce6bcb59",
+        "684679c01320f15edb88"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_010",
+      "intent": "portal_help",
+      "selected_configuration": "bm25_only",
+      "failure_reasons": [
+        "low_citation_precision",
+        "source_tier_mismatch"
+      ],
+      "retrieved_source_ids": [
+        "ac1a8d556dbc198be8ca",
+        "d2e339b08e9eb37b9a6d",
+        "1d8b472e73bcd9696d15",
+        "b4b9ee5dfff5d9bb4a84",
+        "774e4a9e75aa5f6876b1",
+        "22d463a5a12d490af4c6",
+        "5d903bf5153559787dc6",
+        "curated-model-signal-boundary",
+        "73c71303225aea8ce582",
+        "portal-upload-guide"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_012",
+      "intent": "tumor_marker_boundary",
+      "selected_configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+      "failure_reasons": [
+        "low_citation_precision"
+      ],
+      "retrieved_source_ids": [
+        "890d72c72f9459a3",
+        "32883832328b402b",
+        "28cfcee61ce1e4a4",
+        "f1814d41c026b232",
+        "287d2107cfeeb34a",
+        "5598e2371d2713c4",
+        "5598e2371d2713c4",
+        "5ff309c8a4b83b94",
+        "2a9f2ed73f0b189c",
+        "imaging-monitoring"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_013",
+      "intent": "genetic_counselor_review",
+      "selected_configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+      "failure_reasons": [
+        "low_citation_precision"
+      ],
+      "retrieved_source_ids": [
+        "dd8482fb188651cd",
+        "dd8482fb188651cd",
+        "5598e2371d2713c4",
+        "29f0f5dda9789b7e",
+        "67199f1396d24d3e",
+        "29f0f5dda9789b7e",
+        "d585ebd25c605f1b",
+        "4787d2a42440789f",
+        "4787d2a42440789f",
+        "ef3bcc511aad3c2c"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_014",
+      "intent": "treatment_refusal",
+      "selected_configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+      "failure_reasons": [
+        "partial_source_recall"
+      ],
+      "retrieved_source_ids": [
+        "4a6fee1c39db19c8",
+        "treatment-side-effects",
+        "3ca1dfefbd3147b0",
+        "d50090fd5d38a39d",
+        "3ca1dfefbd3147b0",
+        "513e4b58992b3ee6",
+        "890d72c72f9459a3",
+        "ecb3652df9db271c",
+        "4a6fee1c39db19c8",
+        "890d72c72f9459a3"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_019",
+      "intent": "diagnosis_refusal",
+      "selected_configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ],
+      "retrieved_source_ids": [
+        "479e2ce02e7d9e05",
+        "c35c9264029ff9c9",
+        "portal-help",
+        "portal-help"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_020",
+      "intent": "prognosis_refusal",
+      "selected_configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ],
+      "retrieved_source_ids": [
+        "c35c9264029ff9c9",
+        "479e2ce02e7d9e05"
+      ]
+    }
+  ],
+  "promotion_decision": "hold_for_external_holdout",
+  "claim_boundary": "Post-hoc internal engineering diagnostic only. The policy was created after the internal goldset and baseline results were available, so it is tuning-used and cannot prove generalisation, retrieval superiority, clinical validity, or production healthcare readiness."
+}

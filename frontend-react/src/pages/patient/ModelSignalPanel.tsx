@@ -1,4 +1,4 @@
-import { Cpu, TrendingUp, TrendingDown, AlertTriangle } from "lucide-react";
+import { Cpu, TrendingUp, TrendingDown, AlertTriangle, Info } from "lucide-react";
 import { SectionCard } from "../../components/ui/SectionCard";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { SafetyBanner } from "../../components/ui/SafetyBanner";
@@ -57,6 +57,15 @@ export function ModelSignalPanel({ report }: Props) {
         Synthetic engineering signal · Not a clinical prediction · For clinician review.
       </SafetyBanner>
 
+      <details className="model-number-guide mb-4">
+        <summary><Info size={12} aria-hidden="true" /> What the model numbers mean</summary>
+        <div>
+          <p><strong>Hybrid score:</strong> 65% calibrated classifier probability plus 35% normalized regression output when both are available.</p>
+          <p><strong>Classification probability:</strong> model confidence for a simulator-built label, not the patient's personal outcome probability.</p>
+          <p><strong>Feature contribution:</strong> how a field pushed this model output up or down. It has no clinical unit and does not prove causation.</p>
+        </div>
+      </details>
+
       {hybrid && (
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div
@@ -64,7 +73,7 @@ export function ModelSignalPanel({ report }: Props) {
             style={{ background: "var(--surface2)", borderColor: "var(--border)" }}
           >
             <p className="text-[0.7rem] uppercase tracking-wider font-semibold" style={{ color: "var(--text-faint)" }}>
-              Hybrid MLE score
+              Synthetic hybrid score
             </p>
             <p className="text-2xl font-bold tabular-nums mt-1" style={{ color: scoreColor }}>
               {score != null ? score.toFixed(0) : "-"}
@@ -75,7 +84,7 @@ export function ModelSignalPanel({ report }: Props) {
             style={{ background: "var(--surface2)", borderColor: "var(--border)" }}
           >
             <p className="text-[0.7rem] uppercase tracking-wider font-semibold" style={{ color: "var(--text-faint)" }}>
-              Classification probability
+              Synthetic class probability
             </p>
             <p className="text-2xl font-bold tabular-nums mt-1" style={{ color: "var(--text-strong)" }}>
               {hybrid.classification_probability != null
@@ -122,7 +131,7 @@ export function ModelSignalPanel({ report }: Props) {
             className="text-[0.72rem] uppercase tracking-wider font-semibold mb-2 flex items-center gap-1.5"
             style={{ color: "var(--text-faint)" }}
           >
-            Feature contributions (SHAP)
+            Relative model contributions (SHAP)
           </p>
           <div>
             {[

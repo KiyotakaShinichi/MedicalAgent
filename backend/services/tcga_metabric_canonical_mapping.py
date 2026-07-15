@@ -17,7 +17,7 @@ DEFAULT_MAPPING_PATH = "Data/external_bridge/tcga_metabric_canonical_mapping.jso
 
 CLAIM_BOUNDARY = (
     "TCGA/METABRIC canonical mapping is external schema and distribution readiness only. "
-    "It is not validation of OncoTrack's temporal monitoring model and must not be used "
+    "It is not validation of NLCare's temporal monitoring model and must not be used "
     "to claim treatment-response, recurrence, survival, or genetic-risk prediction."
 )
 
@@ -69,7 +69,7 @@ def build_tcga_metabric_canonical_mapping(
             "medication-by-cycle records",
             "MRI/CT/ultrasound monitoring sequence",
             "tumor-marker treatment-response trajectory",
-            "OncoTrack response-score label",
+            "NLCare response-score label",
         ],
         "recommended_use": [
             "canonical schema sanity check",
@@ -127,7 +127,7 @@ def _dataset_mapping(cbio: dict[str, Any], *, source_key: str, canonical_dataset
         "available_canonical_fields": available,
         "missing_core_fields": missing_core,
         "target_mismatch": (
-            "Survival/progression fields, when present, are not equivalent to OncoTrack's synthetic "
+            "Survival/progression fields, when present, are not equivalent to NLCare's synthetic "
             "response classification, response-score regression, or toxicity-review labels."
         ),
         "next_action": source.get("next_action") or "Export permitted clinical attributes, then map values into canonical rows.",

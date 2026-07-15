@@ -1,4 +1,4 @@
-"""Emotional distress detection for OncoTrack queries.
+"""Emotional distress detection for NLCare queries.
 
 Classifies the *affective* signal in a patient query into one of:
 

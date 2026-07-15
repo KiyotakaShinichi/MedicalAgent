@@ -1,6 +1,6 @@
 # What This Does Not Prove
 
-Passing OncoTrack's tests and release gates does not prove clinical safety or
+Passing NLCare's tests and release gates does not prove clinical safety or
 clinical efficacy.
 
 ## Loud Boundary
@@ -43,7 +43,7 @@ tumor-marker interpretation, or medication decisions.
 
 ## Correct Portfolio Claim
 
-OncoTrack is a safety-first, synthetic-only healthcare AI engineering prototype
+NLCare is a safety-first, synthetic-only healthcare AI engineering prototype
 that demonstrates guardrailed RAG, evidence-aware temporal ML, traceability,
 source governance, release gates, and clinician-in-the-loop workflow design.
 

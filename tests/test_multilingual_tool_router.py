@@ -90,6 +90,12 @@ class ExtractSymptomMultilingualFilipino(unittest.TestCase):
         out = extract_symptom_multilingual("nasusuka ako simula kanina")
         self.assertEqual(out["symptom"], "nausea")
 
+    def test_upset_stomach_maps_to_abdominal_discomfort_without_inventing_severity(self) -> None:
+        out = extract_symptom_multilingual("I have an upset stomach")
+        self.assertIsNotNone(out)
+        self.assertEqual(out["symptom"], "abdominal discomfort")
+        self.assertFalse(out["severity_provided"])
+
     def test_taglish_shortness_of_breath(self) -> None:
         out = extract_symptom_multilingual("nahihirapan ako huminga")
         self.assertEqual(out["symptom"], "shortness of breath")

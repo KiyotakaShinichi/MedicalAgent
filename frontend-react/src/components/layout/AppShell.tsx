@@ -58,7 +58,7 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
           </span>
           {sidebarOpen && (
             <div className="app-sidebar-brand-text">
-              <strong>OncoTrack</strong>
+              <strong>NLCare</strong>
               <span>Breast monitoring</span>
             </div>
           )}

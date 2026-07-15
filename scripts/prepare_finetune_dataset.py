@@ -1,4 +1,4 @@
-"""Prepare an OncoTrack behavior-tuning dataset from the templates.
+"""Prepare an NLCare behavior-tuning dataset from the templates.
 
 Reads every JSONL file under ``data/finetune/templates/``, applies the
 medical claim boundary checker as a safety filter, and writes a unified
@@ -153,7 +153,7 @@ def prepare_dataset(
     card = {
         "schema_version":             "finetune_dataset_card_v1",
         "generated_at":               datetime.now(timezone.utc).isoformat(),
-        "dataset_purpose":            "Behavior / style tuning for OncoTrack patient-safe responses. NOT medical knowledge tuning.",
+        "dataset_purpose":            "Behavior / style tuning for NLCare patient-safe responses. NOT medical knowledge tuning.",
         "allowed_behavior_targets":   list(ALLOWED_BEHAVIOR_TARGETS),
         "blocked_claims":             list(BLOCKED_CLAIMS),
         "synthetic_or_source":        "all_synthetic",
@@ -199,7 +199,7 @@ def _count_by(items: list[dict[str, Any]], key: str) -> dict[str, int]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Prepare the OncoTrack behavior fine-tuning dataset.")
+    parser = argparse.ArgumentParser(description="Prepare the NLCare behavior fine-tuning dataset.")
     parser.add_argument("--templates-dir", type=Path, default=DEFAULT_TEMPLATES_DIR)
     parser.add_argument("--output-dir",    type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args(argv)

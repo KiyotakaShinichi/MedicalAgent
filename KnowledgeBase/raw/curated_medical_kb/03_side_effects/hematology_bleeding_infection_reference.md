@@ -19,7 +19,7 @@ Review hints
 - Fever during chemotherapy or while white blood cells/ANC may be low is urgent.
 - Uncontrolled bleeding, black stools, blood in urine, severe bruising, or severe headache with low platelet context needs review.
 - Wound redness, discharge, swelling, or warmth should be logged and reviewed.
-- OncoTrack should not set chemotherapy delay thresholds.
+- NLCare should not set chemotherapy delay thresholds.
 
 What the assistant may say
 - "Low counts should be interpreted by the oncology team in context."

@@ -7,7 +7,7 @@ project's synthetic longitudinal CBC + treatment-monitoring target, so this
 module is intentionally conservative:
 
 - It can download a public clinical snapshot from the NCI GDC API.
-- It writes an applicability report showing which OncoTrack features/labels
+- It writes an applicability report showing which NLCare features/labels
   are available, missing, or require mapping.
 - If a mapped CSV with actual_label and predicted_probability is supplied,
   it computes external AUROC/Brier/confusion metrics.
@@ -91,7 +91,7 @@ def build_tcga_brca_external_eval(
         status = "external_distribution_available_model_metrics_not_computed"
         message = (
             "TCGA-BRCA clinical rows were loaded, but the public snapshot does not include "
-            "OncoTrack's longitudinal CBC/treatment-response target. Use it for distribution "
+            "NLCare's longitudinal CBC/treatment-response target. Use it for distribution "
             "checks unless a mapped prediction CSV is provided."
         )
     else:

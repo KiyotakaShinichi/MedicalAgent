@@ -13,7 +13,7 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-Pathology reports may include cancer type, grade, receptor status, HER2 testing, Ki-67, lymph node information, and other findings. Imaging reports and pathology reports answer different questions. OncoTrack can help organize report text and explain terms generally, but it must not infer stage, treatment plan, or prognosis from incomplete report excerpts.
+Pathology reports may include cancer type, grade, receptor status, HER2 testing, Ki-67, lymph node information, and other findings. Imaging reports and pathology reports answer different questions. NLCare can help organize report text and explain terms generally, but it must not infer stage, treatment plan, or prognosis from incomplete report excerpts.
 
 Term boundaries
 - ER and PR describe hormone receptor testing.

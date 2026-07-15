@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document explains how imaging report text may be tracked in OncoTrack. The system does not read scans like a radiologist and does not diagnose treatment response or metastasis. It can store and summarize report wording for clinician review.
+This document explains how imaging report text may be tracked in NLCare. The system does not read scans like a radiologist and does not diagnose treatment response or metastasis. It can store and summarize report wording for clinician review.
 
 ## Breast MRI
 
@@ -10,11 +10,11 @@ Breast MRI reports may describe lesion size, enhancement patterns, response comp
 
 ## Ultrasound
 
-Breast ultrasound reports may describe a mass, cystic or solid features, location, size, margins, lymph nodes, and BI-RADS assessment when reported. Ultrasound text can contribute to the timeline, but it is not a standalone diagnosis in OncoTrack.
+Breast ultrasound reports may describe a mass, cystic or solid features, location, size, margins, lymph nodes, and BI-RADS assessment when reported. Ultrasound text can contribute to the timeline, but it is not a standalone diagnosis in NLCare.
 
 ## CT and PET/CT
 
-CT or PET/CT reports may mention lesions, nodules, lymph nodes, effusion, ascites, liver findings, bone lesions, or other sites. OncoTrack can flag words that may need clinician review. It must not confirm metastasis.
+CT or PET/CT reports may mention lesions, nodules, lymph nodes, effusion, ascites, liver findings, bone lesions, or other sites. NLCare can flag words that may need clinician review. It must not confirm metastasis.
 
 ## Response assessment wording
 

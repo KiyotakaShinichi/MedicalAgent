@@ -71,7 +71,7 @@ artifact the additions were derived from.
 | curated-mri-response-terms | `2a9f2ed73f0b189c` | Early treatment response prediction using DCE-MRI … |
 | treatment-side-effects | `24de6c8ad0379f43` | GI Symptoms, Mouth Sores, Neuropathy, and Fatigue |
 | treatment-side-effects | `d50090fd5d38a39d` | Symptom Red Flags and Review Hints During Treatment |
-| portal-help | `c35c9264029ff9c9` | OncoTrack Portal Help and Data Entry |
+| portal-help | `c35c9264029ff9c9` | NLCare Portal Help and Data Entry |
 | portal-help | `479e2ce02e7d9e05` | Patient Portal Workflow Reference |
 
 ## Measured before/after (in-sample, frozen goldset, 74 cases)

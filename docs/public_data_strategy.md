@@ -35,7 +35,7 @@ lineage, leakage, noise, and external-direction checks.
 | MIMIC-IV | Lab distribution and missingness realism | Not breast-cancer treatment specific |
 | SEER | Demographic, stage, subtype, and outcome priors | Registry data, no labs/images/symptoms |
 | TCGA-BRCA / METABRIC | Clinical/genomic subtype and survival priors | Not longitudinal monitoring |
-| cBioPortal TCGA-BRCA / METABRIC export | Public-row receptor, subtype, mutation-count, treatment-context, survival/recurrence distribution checks | Not OncoTrack treatment-response or toxicity validation |
+| cBioPortal TCGA-BRCA / METABRIC export | Public-row receptor, subtype, mutation-count, treatment-context, survival/recurrence distribution checks | Not NLCare treatment-response or toxicity validation |
 
 The generated manifest is stored at:
 

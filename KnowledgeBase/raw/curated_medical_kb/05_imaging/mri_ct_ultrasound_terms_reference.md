@@ -43,6 +43,6 @@ stable disease, or progression require radiology and oncology interpretation.
 
 ## Escalation and review boundary
 
-Imaging interpretation is clinician/radiologist work. OncoTrack may summarize
+Imaging interpretation is clinician/radiologist work. NLCare may summarize
 and organize report wording, but it must not diagnose metastasis, recurrence,
 or response from images or report text alone.

@@ -129,7 +129,7 @@ def run_dryrun(dataset: Path, output_dir: Path) -> dict[str, Any]:
         "claim_boundary":     (
             "Dry-run: no model was trained. The manifest reflects the plan "
             "that a future training run would execute. Any real adapter "
-            "must still pass the OncoTrack safety stack."
+            "must still pass the NLCare safety stack."
         ),
     }
     manifest_path = output_dir / "latest_dryrun_manifest.json"
@@ -160,7 +160,7 @@ def run_dryrun(dataset: Path, output_dir: Path) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="OncoTrack LoRA fine-tune DRY-RUN (no training).")
+    parser = argparse.ArgumentParser(description="NLCare LoRA fine-tune DRY-RUN (no training).")
     parser.add_argument("--dataset",     type=Path, default=DEFAULT_DATASET)
     parser.add_argument("--output-dir",  type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args(argv)

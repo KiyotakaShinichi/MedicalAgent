@@ -197,7 +197,7 @@ KNOWLEDGE_SNIPPETS: list[dict] = [
         "builtin": True,
         "text": (
             "Triple-negative breast cancer means the tumor is ER negative, PR negative, and HER2 negative by clinical testing. "
-            "It is a breast cancer subtype used by clinicians for treatment planning. OncoTrack can explain the term, but it cannot classify a patient from chat text."
+            "It is a breast cancer subtype used by clinicians for treatment planning. NLCare can explain the term, but it cannot classify a patient from chat text."
         ),
     },
     {
@@ -288,7 +288,7 @@ KNOWLEDGE_SNIPPETS: list[dict] = [
         "builtin": True,
         "text": (
             "CT reports may mention ascites, peritoneal nodularity, liver lesions, effusion, or other findings. "
-            "OncoTrack can track the exact report wording for clinician review alongside symptoms, labs, prior imaging, "
+            "NLCare can track the exact report wording for clinician review alongside symptoms, labs, prior imaging, "
             "and treatment history. It must not diagnose metastasis, recurrence, or treatment response from CT wording alone."
         ),
     },
@@ -296,12 +296,12 @@ KNOWLEDGE_SNIPPETS: list[dict] = [
         "id": "curated-model-signal-boundary",
         "parent_id": "portal-help",
         "title": "Model signal explanation",
-        "source_name": "OncoTrack project documentation",
+        "source_name": "NLCare project documentation",
         "source_url": "README.md",
         "tags": ["model signal", "monitoring score", "portal", "exploratory", "not diagnosis", "clinician review"],
         "builtin": True,
         "text": (
-            "The OncoTrack model signal is an exploratory engineering signal in this proof of concept. "
+            "The NLCare model signal is an exploratory engineering signal in this proof of concept. "
             "It is not a diagnosis, not a treatment recommendation, and not clinical validation. It helps organize clinician review."
         ),
     },

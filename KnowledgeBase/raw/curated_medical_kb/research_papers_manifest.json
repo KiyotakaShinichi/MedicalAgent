@@ -145,7 +145,7 @@
     },
     {
       "file_name": "onctrack_portal_help_and_data_entry.md",
-      "title": "OncoTrack Portal Help and Data Entry",
+      "title": "NLCare Portal Help and Data Entry",
       "landing_url": "README.md",
       "topic": "portal_help",
       "modality": ["portal", "clinical"],

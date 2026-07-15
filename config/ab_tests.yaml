@@ -1,6 +1,6 @@
 schema_version: ab_tests_v1
 notes:
-  - "Offline A/B test definitions for OncoTrack engineering variants."
+  - "Offline A/B test definitions for NLCare engineering variants."
   - "Each test compares a baseline variant against a candidate variant on a fixed case set."
   - "Decisions are PROMOTE / HOLD / REJECT. Safety regressions always REJECT."
   - "This is engineering evaluation, NOT clinical validation."

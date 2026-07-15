@@ -4,7 +4,7 @@ Generated at: 2026-05-19T02:54:43.236760+00:00
 
 Status: **ready_for_mapping**
 
-Priority dataset bridge artifacts map external dataset fields into the OncoTrack canonical schema for interoperability, stress testing, and future access readiness only. They do not establish clinical validation, treatment superiority, survival prediction, genetic-risk interpretation, or patient-facing treatment recommendations.
+Priority dataset bridge artifacts map external dataset fields into the NLCare canonical schema for interoperability, stress testing, and future access readiness only. They do not establish clinical validation, treatment superiority, survival prediction, genetic-risk interpretation, or patient-facing treatment recommendations.
 
 ## Datasets
 

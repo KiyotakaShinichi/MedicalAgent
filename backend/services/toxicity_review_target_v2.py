@@ -33,7 +33,7 @@ DENY = {
 
 CLAIM_BOUNDARY = (
     "Toxicity target v2 is a simulator-built clinician-review priority experiment. It is not a CTCAE grade, "
-    "not a toxicity diagnosis, and not evidence that OncoTrack detects real clinical adverse events."
+    "not a toxicity diagnosis, and not evidence that NLCare detects real clinical adverse events."
 )
 
 

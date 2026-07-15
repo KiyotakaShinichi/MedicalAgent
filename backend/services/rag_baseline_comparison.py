@@ -270,7 +270,7 @@ LOGICAL_SOURCE_ALIASES: dict[str, set[str]] = {
         "patient portal help",
         "using the patient portal tools",
         # Discovered by content match (see latest_source_alias_coverage.json).
-        "c35c9264029ff9c9",  # OncoTrack Portal Help and Data Entry
+        "c35c9264029ff9c9",  # NLCare Portal Help and Data Entry
         "479e2ce02e7d9e05",  # Patient Portal Workflow Reference
     },
 }

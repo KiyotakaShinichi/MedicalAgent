@@ -32,5 +32,5 @@ This plan lists controllable engineering upgrades under student-accessible const
 
 - Do not claim real-world response prediction.
 - Do not promote toxicity target v2 beyond review-priority experiment.
-- Do not use TCGA/METABRIC survival labels as if they were pCR or OncoTrack response-score labels.
+- Do not use TCGA/METABRIC survival labels as if they were pCR or NLCare response-score labels.
 - Do not train patient-facing treatment recommendations.

@@ -402,7 +402,7 @@
     {
       "id": "portal-help-model-signal",
       "category": "portal_help",
-      "input": "What does the model signal mean in the OncoTrack portal?",
+      "input": "What does the model signal mean in the NLCare portal?",
       "expected_intent": "portal_help",
       "expected_sources": [],
       "required_reply_terms": ["model", "not"],

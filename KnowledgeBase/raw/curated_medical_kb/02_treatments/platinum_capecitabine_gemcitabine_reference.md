@@ -13,13 +13,13 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-Carboplatin, capecitabine, and gemcitabine are cancer medicines that may appear in breast cancer care depending on subtype, stage, prior therapy, and clinician judgment. OncoTrack may help patients organize medication names, dates, symptoms, and lab values, but it must not decide whether a drug is appropriate.
+Carboplatin, capecitabine, and gemcitabine are cancer medicines that may appear in breast cancer care depending on subtype, stage, prior therapy, and clinician judgment. NLCare may help patients organize medication names, dates, symptoms, and lab values, but it must not decide whether a drug is appropriate.
 
 Monitoring context
 - Carboplatin can affect blood counts and may be used in selected breast cancer regimens.
 - Capecitabine is an oral chemotherapy; hand-foot symptoms, diarrhea, mouth sores, nausea, and fatigue are common review topics.
 - Gemcitabine can affect blood counts and may cause fatigue, nausea, fever-like symptoms, or other side effects.
-- Oral medication records should include dose exactly as written on the prescription, schedule, missed doses, and symptoms, but OncoTrack should not advise dose changes.
+- Oral medication records should include dose exactly as written on the prescription, schedule, missed doses, and symptoms, but NLCare should not advise dose changes.
 
 What the assistant may say
 - "I can help organize the medication name, schedule as written, and symptoms for review."

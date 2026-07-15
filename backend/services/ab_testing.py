@@ -1,4 +1,4 @@
-"""Offline A/B testing framework for OncoTrack engineering variants.
+"""Offline A/B testing framework for NLCare engineering variants.
 
 This module compares two implementations (baseline vs candidate) over
 the same synthetic / curated case set and returns a structured report

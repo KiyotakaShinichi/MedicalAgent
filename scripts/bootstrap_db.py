@@ -1,4 +1,4 @@
-"""Bootstrap (or reset) the local OncoTrack SQLite database.
+"""Bootstrap (or reset) the local NLCare SQLite database.
 
 The on-disk ``medical_agent.db`` is **not** tracked in git — see
 ``docs/local_db.md`` for the why and how.  This script creates a fresh
@@ -46,7 +46,7 @@ def _create_schema() -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Bootstrap or reset the OncoTrack local DB")
+    parser = argparse.ArgumentParser(description="Bootstrap or reset the NLCare local DB")
     parser.add_argument("--reset", action="store_true", help="Delete the DB file (sqlite only) before recreating.")
     args = parser.parse_args(argv)
 

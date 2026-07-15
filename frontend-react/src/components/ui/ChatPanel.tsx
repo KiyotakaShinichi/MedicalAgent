@@ -13,6 +13,8 @@ import {
   BookOpen,
   Pill,
   AlertTriangle,
+  X,
+  Undo2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { clsx } from "clsx";
@@ -62,6 +64,8 @@ interface ChatPanelProps {
   onSendStream?: (text: string, handlers: ChatStreamHandlers) => Promise<{ reply: string; saved_actions?: SavedAction[]; citations?: string[] }>;
   /** Called whenever a response includes one or more saved_actions (used by parent to refetch state). */
   onSavedActions?: (actions: SavedAction[]) => void;
+  /** Undo a provenance-stamped write created by this patient. */
+  onUndoAction?: (auditId: number) => Promise<void>;
   loading?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -79,7 +83,7 @@ const QUICK_PROMPTS: { icon: typeof Activity; label: string; prompt: string }[] 
   { icon: HelpCircle,   label: "Ask about the portal", prompt: "How does this portal work and what can I do here?" },
 ];
 
-type ChipTone = "success" | "warning";
+type ChipTone = "success" | "warning" | "info";
 
 interface ChipDescriptor {
   label: string;
@@ -110,6 +114,14 @@ function chipDescriptor(action: SavedAction): ChipDescriptor {
     }
     case "possible_metastatic_indicator":
       return { label: "Review flag added", Icon: AlertTriangle, tone: "warning" };
+    case "pending_record_confirmation":
+      return { label: "Waiting for your confirmation", Icon: ShieldCheck, tone: "info" };
+    case "record_write_cancelled":
+      return { label: "Save cancelled", Icon: X, tone: "info" };
+    case "duplicate_record_prevented":
+      return { label: "Duplicate prevented", Icon: ShieldCheck, tone: "warning" };
+    case "record_write_undone":
+      return { label: "Save undone", Icon: Undo2, tone: "info" };
     default:
       return { label: action.type, Icon: CheckCircle2, tone: "success" };
   }
@@ -118,6 +130,7 @@ function chipDescriptor(action: SavedAction): ChipDescriptor {
 const CHIP_STYLE: Record<ChipTone, { bg: string; fg: string; border: string }> = {
   success: { bg: "#ecfdf5", fg: "#047857", border: "#a7f3d0" },
   warning: { bg: "#fffbeb", fg: "#92400e", border: "#fde68a" },
+  info: { bg: "#f0f7ff", fg: "#24527a", border: "#bfd8ee" },
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -126,16 +139,73 @@ export function describeSavedAction(action: SavedAction): { label: string; tone:
   return { label, tone };
 }
 
-function ActionChip({ action }: { action: SavedAction }) {
+function ActionChip({
+  action,
+  canConfirm,
+  onQuickReply,
+  onUndoAction,
+}: {
+  action: SavedAction;
+  canConfirm?: boolean;
+  onQuickReply?: (message: string) => void;
+  onUndoAction?: (auditId: number) => Promise<void>;
+}) {
+  const [undoState, setUndoState] = useState<"idle" | "working" | "done">("idle");
   const { label, Icon, tone } = chipDescriptor(action);
   const style = CHIP_STYLE[tone];
+  if (action.type === "pending_record_confirmation") {
+    return (
+      <div className="chat-confirmation-card" role="group" aria-label="Confirm patient record preview">
+        <div className="chat-confirmation-title">
+          <ShieldCheck size={14} aria-hidden="true" />
+          Review before saving
+        </div>
+        <p>{String(action.preview ?? "Review the extracted record values.")}</p>
+        <span>Nothing is saved until you confirm.</span>
+        {canConfirm && onQuickReply && (
+          <div className="chat-confirmation-actions">
+            <button type="button" onClick={() => onQuickReply("Confirm save")}>
+              <CheckCircle2 size={13} /> Confirm save
+            </button>
+            <button type="button" className="secondary" onClick={() => onQuickReply("Cancel save")}>
+              <X size={13} /> Cancel
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+  const auditId = typeof action.audit_action_id === "number" ? action.audit_action_id : null;
+  const canUndo = Boolean(action.undo_available && auditId != null && onUndoAction && undoState !== "done");
   return (
-    <span
-      className="inline-flex items-center gap-1.5 text-[0.72rem] px-2 py-0.5 rounded-full border font-medium"
-      style={{ background: style.bg, borderColor: style.border, color: style.fg }}
-    >
-      <Icon size={11} />
-      {label}
+    <span className="chat-action-chip-wrap">
+      <span
+        className="inline-flex items-center gap-1.5 text-[0.72rem] px-2 py-0.5 rounded-full border font-medium"
+        style={{ background: style.bg, borderColor: style.border, color: style.fg }}
+      >
+        <Icon size={11} />
+        {label}
+      </span>
+      {canUndo && auditId != null && (
+        <button
+          type="button"
+          className="chat-action-undo"
+          disabled={undoState === "working"}
+          onClick={async () => {
+            if (!onUndoAction || undoState !== "idle") return;
+            setUndoState("working");
+            try {
+              await onUndoAction(auditId);
+              setUndoState("done");
+            } catch {
+              setUndoState("idle");
+            }
+          }}
+        >
+          <Undo2 size={11} /> {undoState === "working" ? "Undoing..." : "Undo"}
+        </button>
+      )}
+      {undoState === "done" && <span className="chat-action-undone">Entry removed</span>}
     </span>
   );
 }
@@ -144,16 +214,18 @@ interface MessageProps {
   message: NormalisedMessage;
   isLatestAssistant?: boolean;
   registerNode?: (node: HTMLDivElement | null) => void;
+  onQuickReply?: (message: string) => void;
+  onUndoAction?: (auditId: number) => Promise<void>;
 }
 
-function ChatBubble({ message, isLatestAssistant, registerNode }: MessageProps) {
+function ChatBubble({ message, isLatestAssistant, registerNode, onQuickReply, onUndoAction }: MessageProps) {
   const isUser = message.role === "user";
   const content = message.content || (isUser ? "" : "…");
 
   return (
     <div
       ref={isLatestAssistant ? registerNode : undefined}
-      className={clsx("flex gap-3 items-start", isUser ? "flex-row-reverse" : "flex-row")}
+      className={clsx("chat-message-row flex gap-3 items-start", isUser ? "flex-row-reverse" : "flex-row")}
     >
       <span
         className="flex-shrink-0 inline-flex items-center justify-center"
@@ -170,12 +242,12 @@ function ChatBubble({ message, isLatestAssistant, registerNode }: MessageProps) 
         {isUser ? <User size={14} /> : <Sparkles size={14} />}
       </span>
 
-      <div className={clsx("flex flex-col gap-1.5 min-w-0", isUser ? "items-end" : "items-start")} style={{ maxWidth: "78%" }}>
+      <div className={clsx("chat-message-body flex flex-col gap-1.5 min-w-0", isUser ? "items-end" : "items-start")}>
         <div className="text-[0.72rem] font-medium" style={{ color: "var(--text-faint)" }}>
-          {isUser ? "You" : "Support assistant"}
+          {isUser ? "You" : "NLCare assistant"}
         </div>
         <div
-          className="text-[0.92rem]"
+          className={clsx("chat-message-bubble text-[0.92rem]", isUser ? "is-user" : "is-assistant")}
           style={{
             padding: "10px 14px",
             borderRadius: isUser ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
@@ -196,7 +268,15 @@ function ChatBubble({ message, isLatestAssistant, registerNode }: MessageProps) 
         </div>
         {message.saved_actions.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-0.5">
-            {message.saved_actions.map((a, j) => <ActionChip key={j} action={a} />)}
+            {message.saved_actions.map((a, j) => (
+              <ActionChip
+                key={j}
+                action={a}
+                canConfirm={isLatestAssistant}
+                onQuickReply={onQuickReply}
+                onUndoAction={onUndoAction}
+              />
+            ))}
           </div>
         )}
         {message.citations.length > 0 && (
@@ -220,7 +300,7 @@ function ChatBubble({ message, isLatestAssistant, registerNode }: MessageProps) 
  */
 const AUTO_SCROLL_FUDGE_PX = 80;
 
-function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSavedActions, disabled, placeholder, composerLeading }: ChatPanelProps) {
+function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSavedActions, onUndoAction, disabled, placeholder, composerLeading }: ChatPanelProps) {
   // ── Normalise the parent prop once per change.
   const normalisedParentMessages = useMemo(
     () => normaliseMessages(initialMessages),
@@ -441,6 +521,8 @@ function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSav
               message={msg}
               isLatestAssistant={i === lastAssistantIndex}
               registerNode={(node) => { latestAssistantRef.current = node; }}
+              onQuickReply={(message) => { void send(message); }}
+              onUndoAction={onUndoAction}
             />
           ))}
 

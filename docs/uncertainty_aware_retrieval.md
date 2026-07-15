@@ -1,6 +1,6 @@
 # Uncertainty-aware retrieval routing
 
-OncoTrack classifies the assistant's confidence in its own retrieval +
+NLCare classifies the assistant's confidence in its own retrieval +
 citation evidence before producing an answer. This lets the answer
 composer pick between fully-cited answer, hedged answer, refusal,
 conflict surface, clinician deferral, or safety-driven refusal.

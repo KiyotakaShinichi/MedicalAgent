@@ -1,5 +1,5 @@
 {
-  "_comment": "OncoTrack release gate thresholds. One artifact per row. Used by scripts/run_release_gate.py.",
+  "_comment": "NLCare release gate thresholds. One artifact per row. Used by scripts/run_release_gate.py.",
   "_comment_status_levels": "Accepted artifact status values are explicit per artifact. Anything else fails.",
   "_comment_metric_thresholds": "metric_thresholds use JSON paths plus one of >=, >, <=, <, ==, !=.",
   "_comment_freshness": "max_age_days uses generated_at on the artifact (or schema field 'generated_at_iso' if present). Missing timestamp means the artifact is treated as fresh — flagged only by status.",

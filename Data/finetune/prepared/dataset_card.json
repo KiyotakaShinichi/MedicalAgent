@@ -1,7 +1,7 @@
 {
   "schema_version": "finetune_dataset_card_v1",
   "generated_at": "2026-05-18T11:55:36.082860+00:00",
-  "dataset_purpose": "Behavior / style tuning for OncoTrack patient-safe responses. NOT medical knowledge tuning.",
+  "dataset_purpose": "Behavior / style tuning for NLCare patient-safe responses. NOT medical knowledge tuning.",
   "allowed_behavior_targets": [
     "clinician_summary",
     "missing_data_disclosure",

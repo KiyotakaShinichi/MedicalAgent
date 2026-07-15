@@ -1,4 +1,4 @@
-# Local OncoTrack database
+# Local NLCare database
 
 ## Why it isn't in git
 `medical_agent.db` is a SQLite file. Tracking it in git would:

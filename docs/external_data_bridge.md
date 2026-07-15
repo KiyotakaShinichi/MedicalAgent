@@ -1,6 +1,6 @@
 # External Data Bridge
 
-OncoTrack now has a small external-data bridge for mapping public breast-cancer
+NLCare now has a small external-data bridge for mapping public breast-cancer
 benchmark rows into a canonical oncology schema. This is an engineering
 interoperability layer, not clinical validation.
 
@@ -54,17 +54,17 @@ and pCR label context.
 
 cBioPortal TCGA-BRCA/METABRIC rows are exported into the same canonical schema
 for public demographic, receptor/subtype, mutation-count, survival/recurrence,
-and treatment-context distribution checks. They are not longitudinal OncoTrack
+and treatment-context distribution checks. They are not longitudinal NLCare
 monitoring rows and should not be used as response-score or toxicity labels.
 
-It does **not** provide the full OncoTrack patient journey:
+It does **not** provide the full NLCare patient journey:
 
 - no CBC timeline
 - no symptom timeline
 - no medication-by-cycle history
 - no radiation/surgery/endocrine sequence details in the local bridge
 - no tumor-marker timeline
-- no clinician-reviewed OncoTrack outcome labels
+- no clinician-reviewed NLCare outcome labels
 
 ## Common-Feature Transfer Stress
 
@@ -161,7 +161,7 @@ behavior visible instead of hiding it behind a single average metric.
 
 ## What This Does Not Prove
 
-This bridge does not prove that OncoTrack predicts real treatment response. It
+This bridge does not prove that NLCare predicts real treatment response. It
 only proves that the codebase can:
 
 - define a canonical oncology schema

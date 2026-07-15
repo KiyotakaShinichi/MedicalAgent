@@ -29,7 +29,7 @@ Analysis plan:
 Analysis plan:
 
 - compare synthetic cohort distributions against registry priors
-- do not train OncoTrack response models from coarse treatment indicators alone
+- do not train NLCare response models from coarse treatment indicators alone
 
 ### SEER-Medicare
 

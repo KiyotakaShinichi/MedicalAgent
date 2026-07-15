@@ -1,6 +1,6 @@
-# OncoTrack fine-tuning boundaries
+# NLCare fine-tuning boundaries
 
-OncoTrack's fine-tuning scaffold trains behavior / style, not medical
+NLCare's fine-tuning scaffold trains behavior / style, not medical
 knowledge. This document is the hard-rule reference; if a future
 contributor proposes adding training examples that violate one of
 these rules, the dataset must reject them.

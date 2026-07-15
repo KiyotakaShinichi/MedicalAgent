@@ -1,6 +1,6 @@
 # Clinical Safety Review Checklist
 
-OncoTrack is an engineering proof of concept, not a diagnostic product, treatment recommender, genetic counselor, or regulated medical device. This checklist is intended for a licensed clinician, oncology nurse, genetic counselor, or medical safety reviewer to inspect the system before demos or pilots.
+NLCare is an engineering proof of concept, not a diagnostic product, treatment recommender, genetic counselor, or regulated medical device. This checklist is intended for a licensed clinician, oncology nurse, genetic counselor, or medical safety reviewer to inspect the system before demos or pilots.
 
 ## When To Review
 

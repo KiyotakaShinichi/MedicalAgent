@@ -1,4 +1,4 @@
-"""OncoTrack release gate.
+"""NLCare release gate.
 
 Aggregates the existing audit artifacts under ``Data/evals/{models,rag,
 safety,medical}/`` and fails if any required artifact is missing, stale,
@@ -189,7 +189,7 @@ def run_release_gate(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
 
 
 def _print_human(report: dict[str, Any]) -> None:
-    print(f"OncoTrack release gate: {report['status'].upper()}")
+    print(f"NLCare release gate: {report['status'].upper()}")
     print(f"  config: {report['config_path']}")
     print(f"  artifacts checked: {report['artifact_count']}")
     print(f"  failures: {report['failure_count']}")
@@ -204,7 +204,7 @@ def _print_human(report: dict[str, Any]) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="OncoTrack release gate")
+    parser = argparse.ArgumentParser(description="NLCare release gate")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--json", action="store_true", help="Print machine-readable JSON.")
     args = parser.parse_args(argv)

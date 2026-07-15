@@ -1,4 +1,4 @@
-"""Clinical ontology and data dictionary for OncoTrack.
+"""Clinical ontology and data dictionary for NLCare.
 
 This is not a clinical terminology server. It is a compact, versioned
 engineering dictionary that keeps patient forms, agent tools, validation,
@@ -103,7 +103,7 @@ CLINICAL_ONTOLOGY: dict[str, dict[str, FieldSpec]] = {
         "classification": FieldSpec(
             "classification",
             allowed_values=("pathogenic", "likely_pathogenic", "vus", "likely_benign", "benign", "unknown"),
-            description="Variant classification copied from a report; not interpreted by OncoTrack.",
+            description="Variant classification copied from a report; not interpreted by NLCare.",
         ),
     },
     "tumor_marker": {

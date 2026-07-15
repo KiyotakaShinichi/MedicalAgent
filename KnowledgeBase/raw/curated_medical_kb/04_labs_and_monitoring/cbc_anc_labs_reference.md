@@ -41,5 +41,5 @@ treatment. Trends and symptoms matter more than one value alone.
 ## Escalation and review boundary
 
 CBC interpretation depends on units, reference ranges, treatment cycle timing,
-symptoms, medications, and clinician thresholds. OncoTrack can organize and
+symptoms, medications, and clinician thresholds. NLCare can organize and
 flag patterns; the oncology team decides clinical meaning and action.

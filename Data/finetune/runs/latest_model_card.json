@@ -32,5 +32,5 @@
     "medical_claim_boundary.classify_medical_claim",
     "rag_claim_validator.validate_claims"
   ],
-  "claim_boundary": "Dry-run: no model was trained. The manifest reflects the plan that a future training run would execute. Any real adapter must still pass the OncoTrack safety stack."
+  "claim_boundary": "Dry-run: no model was trained. The manifest reflects the plan that a future training run would execute. Any real adapter must still pass the NLCare safety stack."
 }

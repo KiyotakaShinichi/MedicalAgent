@@ -1,0 +1,54 @@
+[2m8:14:36 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mReferenceError: monitoringScoreTile is not defined
+    at buildTiles (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:212:2)
+    at PatientKpiStrip (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:221:16)
+    at Object.react_stack_bottom_frame (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:12866:12)
+    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:4213:19)
+    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:5569:16)
+    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:6140:20)
+    at runWithFiberInDEV (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:851:66)
+    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8429:92)
+    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8325:37)
+    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8309:6)
+
+The above error occurred in the <PatientKpiStrip> component.
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+
+[2m8:14:36 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[ErrorBoundary] the patient portal ReferenceError: monitoringScoreTile is not defined
+    at buildTiles (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:212:2)
+    at PatientKpiStrip (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:221:16)
+    at Object.react_stack_bottom_frame (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:12866:12)
+    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:4213:19)
+    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:5569:16)
+    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:6140:20)
+    at runWithFiberInDEV (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:851:66)
+    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8429:92)
+    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8325:37)
+    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8309:6) {"componentStack":"\n    at PatientKpiStrip (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:219:35)\n    at div (<anonymous>)\n    at div (<anonymous>)\n    at div (<anonymous>)\n    at main (<anonymous>)\n    at div (<anonymous>)\n    at div (<anonymous>)\n    at AppShell (http://127.0.0.1:5173/src/components/layout/AppShell.tsx?t=1784017460323:9:28)\n    at PatientDashboard (http://127.0.0.1:5173/src/pages/patient/PatientDashboard.tsx?t=1784031015437:71:24)\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ui/ErrorBoundary.tsx:14:8)\n    at RouteGuard (http://127.0.0.1:5173/src/components/layout/RouteGuard.tsx:6:30)\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=f08f728c:4142:26)\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=f08f728c:4822:19)\n    at Suspense (<anonymous>)\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=f08f728c:4774:29)\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=f08f728c:7216:26)\n    at AuthProvider (http://127.0.0.1:5173/src/context/AuthContext.tsx:6:32)\n    at App (<anonymous>)\n    at ToastProvider (http://127.0.0.1:5173/src/components/ui/Toast.tsx:28:33)"}
+[2m8:14:36 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mReferenceError: monitoringScoreTile is not defined
+    at buildTiles (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:212:2)
+    at PatientKpiStrip (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:221:16)
+    at Object.react_stack_bottom_frame (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:12866:12)
+    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:4213:19)
+    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:5569:16)
+    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:6140:20)
+    at runWithFiberInDEV (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:851:66)
+    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8429:92)
+    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8325:37)
+    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8309:6)
+
+The above error occurred in the <PatientKpiStrip> component.
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+
+[2m8:14:36 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[ErrorBoundary] the patient portal ReferenceError: monitoringScoreTile is not defined
+    at buildTiles (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:212:2)
+    at PatientKpiStrip (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:221:16)
+    at Object.react_stack_bottom_frame (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:12866:12)
+    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:4213:19)
+    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:5569:16)
+    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:6140:20)
+    at runWithFiberInDEV (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:851:66)
+    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8429:92)
+    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8325:37)
+    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=0fb1dcf3:8309:6) {"componentStack":"\n    at PatientKpiStrip (http://127.0.0.1:5173/src/pages/patient/PatientKpiStrip.tsx?t=1784031275207:219:35)\n    at div (<anonymous>)\n    at div (<anonymous>)\n    at div (<anonymous>)\n    at main (<anonymous>)\n    at div (<anonymous>)\n    at div (<anonymous>)\n    at AppShell (http://127.0.0.1:5173/src/components/layout/AppShell.tsx?t=1784017460323:9:28)\n    at PatientDashboard (http://127.0.0.1:5173/src/pages/patient/PatientDashboard.tsx?t=1784031015437:71:24)\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ui/ErrorBoundary.tsx:14:8)\n    at RouteGuard (http://127.0.0.1:5173/src/components/layout/RouteGuard.tsx:6:30)\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=f08f728c:4142:26)\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=f08f728c:4822:19)\n    at Suspense (<anonymous>)\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=f08f728c:4774:29)\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=f08f728c:7216:26)\n    at AuthProvider (http://127.0.0.1:5173/src/context/AuthContext.tsx:6:32)\n    at App (<anonymous>)\n    at ToastProvider (http://127.0.0.1:5173/src/components/ui/Toast.tsx:28:33)"}

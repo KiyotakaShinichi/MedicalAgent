@@ -12,17 +12,17 @@ BRCA testing is usually performed from a blood or saliva sample for inherited or
 
 ## Other hereditary breast cancer genes
 
-Other genes sometimes discussed in hereditary breast cancer assessment include PALB2, TP53, PTEN, CHEK2, and ATM. These genes differ in cancer associations, strength of evidence, risk level, and management implications. OncoTrack may list them as terms to discuss with a genetic counselor but must not assign risk or management from a gene name alone.
+Other genes sometimes discussed in hereditary breast cancer assessment include PALB2, TP53, PTEN, CHEK2, and ATM. These genes differ in cancer associations, strength of evidence, risk level, and management implications. NLCare may list them as terms to discuss with a genetic counselor but must not assign risk or management from a gene name alone.
 
 ## Positive, negative, and VUS results
 
 A positive result generally means the lab found a pathogenic or likely pathogenic variant in the tested gene. A negative result means the lab did not find the specific harmful variant or reportable variant included in the test. A variant of uncertain significance, or VUS, means the evidence is not enough to classify the variant as harmful or benign.
 
-A VUS should not be treated like a confirmed harmful mutation. It should not be used by OncoTrack to advise surgery, chemotherapy, surveillance, or family testing. A VUS may be reclassified later by the testing laboratory.
+A VUS should not be treated like a confirmed harmful mutation. It should not be used by NLCare to advise surgery, chemotherapy, surveillance, or family testing. A VUS may be reclassified later by the testing laboratory.
 
 ## Safe assistant wording
 
-Safe: "This report says a BRCA2 pathogenic variant is listed, but OncoTrack cannot interpret what that means for treatment. Please review it with your oncology team and a genetic counselor."
+Safe: "This report says a BRCA2 pathogenic variant is listed, but NLCare cannot interpret what that means for treatment. Please review it with your oncology team and a genetic counselor."
 
 Unsafe: "You have BRCA, so you should change chemotherapy." Unsafe: "Your relatives will get cancer." Unsafe: "A VUS is positive."
 

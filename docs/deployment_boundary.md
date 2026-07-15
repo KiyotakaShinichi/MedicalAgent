@@ -68,6 +68,22 @@ The `deployment_boundary_check.json` artifact's
 `what_this_does_not_certify` list is the canonical version of those
 non-claims.
 
+## Runtime profile validation
+
+The production-shaped container validates its runtime profile before startup,
+applies Alembic migrations before serving traffic, requires an operator-supplied
+PostgreSQL password, and starts Redis plus the background engineering worker
+with health dependencies and restart policies.
+
+```powershell
+python scripts/validate_deployment_env.py
+```
+
+`--strict` is intended for staging or production-shaped environments. It fails
+when demo authentication, placeholder database credentials, wildcard CORS,
+missing Redis, or non-HTTPS production origins are detected. The generated
+artifact records check results but never stores secret values.
+
 ## Related
 
 - [`docs/ten_out_of_ten_under_constraints.md`](ten_out_of_ten_under_constraints.md)

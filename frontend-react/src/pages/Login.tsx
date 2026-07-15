@@ -95,7 +95,7 @@ export default function LoginPage() {
               </span>
               <div>
                 <p className="login-brand-kicker">MedicalAgent</p>
-                <h1>OncoTrack</h1>
+                <h1>NLCare</h1>
               </div>
             </div>
 

@@ -1,4 +1,4 @@
-"""Cross-platform pre-commit integration gate for OncoTrack."""
+"""Cross-platform pre-commit integration gate for NLCare."""
 from __future__ import annotations
 
 import os

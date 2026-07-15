@@ -47,7 +47,7 @@ PUBLIC_BIOMARKER_DATASETS: list[dict[str, Any]] = [
             "Published-cohort context for model-card discussion",
         ],
         "limitations": [
-            "Does not provide OncoTrack-style chat symptoms, CBC nadirs, or serial upload workflow.",
+            "Does not provide NLCare-style chat symptoms, CBC nadirs, or serial upload workflow.",
             "Feature names and availability vary by cBioPortal study version.",
         ],
         "license_or_terms": "Follow study/cBioPortal data-use terms.",
@@ -171,7 +171,7 @@ def build_public_biomarker_dataset_manifest(
             "Treat serum tumor-marker sources as cautionary/supportive evidence unless a longitudinal treatment-response cohort is available."
         ),
         "claim_boundary": (
-            "This manifest identifies public predictor sources. It does not mean OncoTrack has clinically validated "
+            "This manifest identifies public predictor sources. It does not mean NLCare has clinically validated "
             "biomarker or tumor-marker predictors."
         ),
     }

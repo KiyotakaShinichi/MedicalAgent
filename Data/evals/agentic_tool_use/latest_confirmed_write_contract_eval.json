@@ -1,0 +1,586 @@
+{
+  "schema_version": "confirmed_write_contract_eval_v1",
+  "generated_at": "2026-07-14T12:37:36.537798+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "external_author_eval_completed": false,
+  "internal_vs_external_authored": "internal_generated_contract_cases",
+  "was_used_for_tuning": true,
+  "full_live_generation_n": 0,
+  "case_count": 56,
+  "passed_n": 56,
+  "failed_n": 0,
+  "pass_rate": 1.0,
+  "rows": [
+    {
+      "case_id": "confirm_000",
+      "passed": true,
+      "checks": {
+        "no_write_before_confirmation": true,
+        "one_write_after_confirmation": true,
+        "audit_created": true,
+        "undo_available": true
+      },
+      "note": "yes"
+    },
+    {
+      "case_id": "confirm_001",
+      "passed": true,
+      "checks": {
+        "no_write_before_confirmation": true,
+        "one_write_after_confirmation": true,
+        "audit_created": true,
+        "undo_available": true
+      },
+      "note": "yes please"
+    },
+    {
+      "case_id": "confirm_002",
+      "passed": true,
+      "checks": {
+        "no_write_before_confirmation": true,
+        "one_write_after_confirmation": true,
+        "audit_created": true,
+        "undo_available": true
+      },
+      "note": "confirm"
+    },
+    {
+      "case_id": "confirm_003",
+      "passed": true,
+      "checks": {
+        "no_write_before_confirmation": true,
+        "one_write_after_confirmation": true,
+        "audit_created": true,
+        "undo_available": true
+      },
+      "note": "confirm save"
+    },
+    {
+      "case_id": "confirm_004",
+      "passed": true,
+      "checks": {
+        "no_write_before_confirmation": true,
+        "one_write_after_confirmation": true,
+        "audit_created": true,
+        "undo_available": true
+      },
+      "note": "save it"
+    },
+    {
+      "case_id": "confirm_005",
+      "passed": true,
+      "checks": {
+        "no_write_before_confirmation": true,
+        "one_write_after_confirmation": true,
+        "audit_created": true,
+        "undo_available": true
+      },
+      "note": "go ahead"
+    },
+    {
+      "case_id": "confirm_006",
+      "passed": true,
+      "checks": {
+        "no_write_before_confirmation": true,
+        "one_write_after_confirmation": true,
+        "audit_created": true,
+        "undo_available": true
+      },
+      "note": "oo"
+    },
+    {
+      "case_id": "confirm_007",
+      "passed": true,
+      "checks": {
+        "no_write_before_confirmation": true,
+        "one_write_after_confirmation": true,
+        "audit_created": true,
+        "undo_available": true
+      },
+      "note": "opo"
+    },
+    {
+      "case_id": "cancel_000",
+      "passed": true,
+      "checks": {
+        "no_record_created": true,
+        "no_audit_created": true,
+        "cancel_action_returned": true
+      },
+      "note": "no"
+    },
+    {
+      "case_id": "cancel_001",
+      "passed": true,
+      "checks": {
+        "no_record_created": true,
+        "no_audit_created": true,
+        "cancel_action_returned": true
+      },
+      "note": "cancel"
+    },
+    {
+      "case_id": "cancel_002",
+      "passed": true,
+      "checks": {
+        "no_record_created": true,
+        "no_audit_created": true,
+        "cancel_action_returned": true
+      },
+      "note": "cancel save"
+    },
+    {
+      "case_id": "cancel_003",
+      "passed": true,
+      "checks": {
+        "no_record_created": true,
+        "no_audit_created": true,
+        "cancel_action_returned": true
+      },
+      "note": "don't save"
+    },
+    {
+      "case_id": "cancel_004",
+      "passed": true,
+      "checks": {
+        "no_record_created": true,
+        "no_audit_created": true,
+        "cancel_action_returned": true
+      },
+      "note": "never mind"
+    },
+    {
+      "case_id": "cancel_005",
+      "passed": true,
+      "checks": {
+        "no_record_created": true,
+        "no_audit_created": true,
+        "cancel_action_returned": true
+      },
+      "note": "huwag"
+    },
+    {
+      "case_id": "duplicate_000",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_001",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_002",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_003",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_004",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_005",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_006",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_007",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_008",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_009",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_010",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_011",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_012",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_013",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_014",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_015",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_016",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_017",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_018",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "duplicate_019",
+      "passed": true,
+      "checks": {
+        "one_active_record": true,
+        "one_audit_envelope": true,
+        "duplicate_prevented": true
+      },
+      "note": "same payload twice"
+    },
+    {
+      "case_id": "undo_000",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_001",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_002",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_003",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_004",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_005",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_006",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_007",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_008",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_009",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_010",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_011",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_012",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_013",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_014",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_015",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_016",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_017",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_018",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "undo_019",
+      "passed": true,
+      "checks": {
+        "record_removed": true,
+        "audit_retained": true,
+        "undo_action_returned": true
+      },
+      "note": "confirmed then undone"
+    },
+    {
+      "case_id": "patient_isolation",
+      "passed": true,
+      "checks": {
+        "other_patient_cannot_confirm": true,
+        "no_cross_patient_write": true,
+        "owner_can_confirm": true
+      },
+      "note": "patient-scoped pending state"
+    },
+    {
+      "case_id": "ambiguous_confirmation",
+      "passed": true,
+      "checks": {
+        "ambiguous_reply_does_not_write": true,
+        "ambiguous_reply_does_not_create_audit": true
+      },
+      "note": "ambiguous reply"
+    }
+  ],
+  "failures": [],
+  "claim_boundary": "Internal persistence-contract evaluation only. It tests confirmation and audit invariants, not natural-language coverage, clinical correctness, real-world safety, or clinical validation."
+}

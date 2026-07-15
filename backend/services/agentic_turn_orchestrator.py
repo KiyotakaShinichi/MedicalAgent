@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from backend.services.agent_verifier import verify_agent_turn
+from backend.services.agent_text_normalization import normalize_agent_text
 from backend.services.bounded_agentic_workflow import WRITE_TOOLS, plan_patient_agent_workflow
 
 
@@ -154,6 +155,31 @@ def _state_update_from_turn(
 ) -> dict[str, Any]:
     route = str(plan.get("route") or "")
     update: dict[str, Any] = {}
+    boundary_routes = {
+        "security_refusal",
+        "medical_boundary_refusal",
+        "diagnosis_boundary_refusal",
+        "treatment_boundary_refusal",
+        "prognosis_boundary_refusal",
+        "genetics_boundary_refusal",
+        "tumor_marker_boundary_refusal",
+        "urgent_clinician_review",
+        "crisis_support",
+    }
+    reused_boundary = bool((plan.get("trace") or {}).get("boundary_context_reused"))
+    if route in boundary_routes and not reused_boundary:
+        update["active_safety_boundary"] = {
+            "route": route,
+            "review_route": plan.get("review_route"),
+            "turns_remaining": 3,
+            "created_by": "agentic_turn_orchestrator",
+        }
+    elif reused_boundary:
+        active = dict(state.get("active_safety_boundary") or {})
+        remaining = max(0, int(active.get("turns_remaining") or 1) - 1)
+        update["active_safety_boundary"] = {**active, "turns_remaining": remaining} if remaining else None
+    elif state.get("active_safety_boundary") and route != "conversation":
+        update["active_safety_boundary"] = None
     if route == "request_symptom_details":
         symptom = _extract_symptom_name(message)
         if symptom:
@@ -179,7 +205,7 @@ def _primary_tool(plan: dict[str, Any]) -> str | None:
 
 
 def _extract_symptom_name(message: str) -> str | None:
-    lowered = message.lower()
+    lowered = normalize_agent_text(message)
     for symptom in ["nausea", "nauseous", "fatigue", "pain", "fever", "mouth sores", "neuropathy", "vomiting", "bleeding"]:
         if symptom in lowered:
             return "nausea" if symptom == "nauseous" else symptom

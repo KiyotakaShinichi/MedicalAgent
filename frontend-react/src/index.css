@@ -1691,6 +1691,53 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
 }
 
+.patient-kpi-help,
+.model-number-guide {
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.patient-kpi-help summary,
+.model-number-guide summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 600;
+  list-style: none;
+}
+
+.patient-kpi-help summary::-webkit-details-marker,
+.model-number-guide summary::-webkit-details-marker {
+  display: none;
+}
+
+.patient-kpi-help summary:hover,
+.model-number-guide summary:hover {
+  color: var(--text-strong);
+}
+
+.patient-kpi-help-body,
+.model-number-guide > div {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.model-number-guide {
+  margin-top: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 10px;
+  background: var(--surface2);
+}
+
 /* ─── Hybrid monitoring slot cards ───────────────────────────────────── */
 /*
  * Used by HybridPredictionCard for the three per-signal slots.  Clean white
@@ -1767,12 +1814,19 @@ a { color: inherit; text-decoration: none; }
 
 .patient-kpi-strip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
   width: 100%;
 }
 
+.patient-kpi-section {
+  display: grid;
+  gap: 14px;
+}
+
 .patient-kpi-card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1782,12 +1836,30 @@ a { color: inherit; text-decoration: none; }
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   min-width: 0;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.patient-kpi-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: #94a3b8;
+}
+
+.patient-kpi-card[data-tone="good"]::before { background: #10b981; }
+.patient-kpi-card[data-tone="watch"]::before { background: #f59e0b; }
+.patient-kpi-card[data-tone="concern"]::before { background: #ef4444; }
+
+.patient-kpi-card.is-active {
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
 .patient-kpi-card:hover {
   border-color: var(--border-strong, var(--border));
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  transform: translateY(-1px);
 }
 
 .patient-kpi-card-head {
@@ -1827,7 +1899,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 1.85rem;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1844,12 +1916,179 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-dim);
 }
 
+.patient-kpi-progress {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.patient-kpi-progress > span {
+  display: block;
+  height: 100%;
+  min-width: 3px;
+  border-radius: inherit;
+}
+
+.patient-kpi-explain-button {
+  width: 100%;
+  margin-top: auto;
+  padding: 9px 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+}
+
+.patient-kpi-explain-button:hover,
+.patient-kpi-explain-button[aria-expanded="true"] {
+  color: var(--text-strong);
+}
+
+.patient-kpi-explainer {
+  padding: 18px 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.patient-kpi-explainer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.patient-kpi-explainer-kicker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-faint);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.patient-kpi-explainer-head h3 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 1rem;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.patient-kpi-boundary {
+  flex-shrink: 0;
+  padding: 5px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+.patient-kpi-explainer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 20px;
+  padding-top: 16px;
+}
+
+.patient-kpi-explainer-copy {
+  min-width: 0;
+}
+
+.patient-kpi-explainer-copy + .patient-kpi-explainer-copy {
+  padding-left: 20px;
+  border-left: 1px solid var(--border);
+}
+
+.patient-kpi-explainer-copy h4 {
+  margin: 0 0 7px;
+  color: var(--text-strong);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.patient-kpi-explainer-copy p,
+.patient-kpi-next-steps li {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.patient-kpi-breakdown {
+  display: grid;
+  gap: 5px;
+  margin: 12px 0 0;
+}
+
+.patient-kpi-breakdown > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.patient-kpi-breakdown dt,
+.patient-kpi-breakdown dd {
+  margin: 0;
+  font-size: 0.7rem;
+}
+
+.patient-kpi-breakdown dt { color: var(--text-dim); }
+.patient-kpi-breakdown dd {
+  color: var(--text-strong);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.patient-kpi-next-steps ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+}
+
 @media (max-width: 900px) {
   .patient-kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .patient-kpi-explainer-grid { grid-template-columns: 1fr 1fr; }
+  .patient-kpi-next-steps {
+    grid-column: 1 / -1;
+    padding: 14px 0 0 !important;
+    border-left: 0 !important;
+    border-top: 1px solid var(--border);
+  }
 }
 
 @media (max-width: 520px) {
   .patient-kpi-strip { grid-template-columns: minmax(0, 1fr); }
+  .patient-kpi-explainer { padding: 16px; }
+  .patient-kpi-explainer-head { flex-direction: column; }
+  .patient-kpi-explainer-grid { grid-template-columns: 1fr; }
+  .patient-kpi-explainer-copy + .patient-kpi-explainer-copy {
+    padding: 14px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+  .patient-kpi-next-steps { grid-column: auto; }
 }
 
 .patient-hero::before {
@@ -2043,16 +2282,125 @@ a { color: inherit; text-decoration: none; }
   overflow-y: auto;
   /* Bottom padding is intentionally generous so the last message clears the
      sticky composer and never gets covered. */
-  padding: 24px 16px 32px;
-  background: var(--bg);
+  padding: 28px 20px 40px;
+  background: #f8fafc;
 }
 
 .chat-stream {
-  max-width: 720px;
+  max-width: 800px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.chat-message-row {
+  width: 100%;
+}
+
+.chat-message-body {
+  max-width: min(82%, 680px);
+}
+
+.chat-message-bubble {
+  width: fit-content;
+  max-width: 100%;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.chat-message-bubble.is-assistant {
+  border-color: #dbe3ed !important;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05) !important;
+}
+
+.chat-confirmation-card {
+  width: min(100%, 460px);
+  padding: 12px;
+  border: 1px solid #bfd8ee;
+  border-radius: 8px;
+  background: #f7fbff;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(30, 64, 94, 0.06);
+}
+
+.chat-confirmation-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #24527a;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.chat-confirmation-card p {
+  margin: 7px 0 3px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.chat-confirmation-card > span {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+
+.chat-confirmation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chat-confirmation-actions button,
+.chat-action-undo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 30px;
+  border: 1px solid #24527a;
+  border-radius: 6px;
+  padding: 5px 9px;
+  background: #24527a;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.chat-confirmation-actions button.secondary,
+.chat-action-undo {
+  background: #fff;
+  color: #425466;
+  border-color: var(--border);
+}
+
+.chat-action-chip-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chat-action-undo {
+  min-height: 24px;
+  padding: 2px 7px;
+}
+
+.chat-action-undo:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.chat-action-undone {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.chat-message-bubble p,
+.chat-message-bubble li {
+  letter-spacing: 0;
 }
 
 .chat-empty {
@@ -2135,7 +2483,7 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
   border-top: 1px solid var(--border);
   background: var(--surface);
-  box-shadow: 0 -1px 4px rgba(17,24,39,0.04);
+  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.05);
 }
 
 .chat-composer-inner {
@@ -2150,9 +2498,14 @@ a { color: inherit; text-decoration: none; }
   gap: 10px;
   padding: 8px 8px 8px 14px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--surface);
   transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+@media (max-width: 640px) {
+  .chat-scroll { padding: 20px 12px 32px; }
+  .chat-message-body { max-width: 88%; }
 }
 
 .chat-composer-box:focus-within {

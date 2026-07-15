@@ -36,7 +36,7 @@ def _sqlite_path(database_url: str) -> Path:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Reset the local OncoTrack SQLite demo database.")
+    parser = argparse.ArgumentParser(description="Reset the local NLCare SQLite demo database.")
     parser.add_argument("--database-url", default=os.environ.get("DATABASE_URL", DEFAULT_SQLITE_URL))
     parser.add_argument("--no-seed", action="store_true", help="Create schema only; skip demo data seeding.")
     args = parser.parse_args(argv)

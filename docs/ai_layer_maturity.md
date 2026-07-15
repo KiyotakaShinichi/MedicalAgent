@@ -1,6 +1,6 @@
 # AI / RAG Layer Maturity
 
-OncoTrack's AI layer is designed as a safety-first orchestration system, not
+NLCare's AI layer is designed as a safety-first orchestration system, not
 an open-ended medical chatbot.
 
 ## Current Controllable Guarantees

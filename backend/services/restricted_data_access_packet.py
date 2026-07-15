@@ -56,7 +56,7 @@ DATASET_PACKETS: list[dict[str, Any]] = [
         ],
         "analysis_plan": [
             "compare synthetic cohort distributions against registry priors",
-            "do not train OncoTrack response models from coarse treatment indicators alone",
+            "do not train NLCare response models from coarse treatment indicators alone",
         ],
         "not_requested": ["patient identifiers", "clinical notes", "full treatment-regimen inference"],
     },

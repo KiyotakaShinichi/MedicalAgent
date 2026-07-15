@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-medical_agent}
       POSTGRES_USER: ${POSTGRES_USER:-medical_agent}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_for_nonlocal_demo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD before starting the production-shaped profile}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -12,18 +12,34 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   backend:
     build: .
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-staging}
       APP_ENV: ${APP_ENV:-staging}
       ALLOW_DEMO_AUTH: ${ALLOW_DEMO_AUTH:-false}
-      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-medical_agent}:${POSTGRES_PASSWORD:-change_me_for_nonlocal_demo}@postgres:5432/${POSTGRES_DB:-medical_agent}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-medical_agent}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD before starting the production-shaped profile}@postgres:5432/${POSTGRES_DB:-medical_agent}
       ONCOTRACK_CORS_ORIGINS: ${ONCOTRACK_CORS_ORIGINS:-http://127.0.0.1:8080}
+      REDIS_URL: redis://redis:6379/0
       GROQ_API_KEY: ${GROQ_API_KEY:-}
       GROQ_ANSWER_MODEL: ${GROQ_ANSWER_MODEL:-openai/gpt-oss-120b}
       GROQ_ROUTER_MODEL: ${GROQ_ROUTER_MODEL:-llama-3.3-70b-versatile}
@@ -39,6 +55,29 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+    init: true
+    restart: unless-stopped
+
+  worker:
+    build: .
+    depends_on:
+      backend:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-staging}
+      APP_ENV: ${APP_ENV:-staging}
+      ALLOW_DEMO_AUTH: "false"
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-medical_agent}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD before starting the production-shaped profile}@postgres:5432/${POSTGRES_DB:-medical_agent}
+      REDIS_URL: redis://redis:6379/0
+      ONCOTRACK_CORS_ORIGINS: ${ONCOTRACK_CORS_ORIGINS:-http://127.0.0.1:8080}
+    volumes:
+      - ./Data:/app/Data
+      - ./KnowledgeBase:/app/KnowledgeBase
+    command: ["python", "scripts/run_task_worker.py", "--poll-seconds", "5"]
+    init: true
+    restart: unless-stopped
 
   frontend:
     build:
@@ -50,6 +89,8 @@ services:
         condition: service_healthy
     ports:
       - "8080:80"
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+  redis_data:

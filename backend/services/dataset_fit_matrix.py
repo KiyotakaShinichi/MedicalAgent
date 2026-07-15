@@ -119,7 +119,7 @@ def build_dataset_fit_matrix(
             "next_two_to_map": ["genie_bpc_brca", "duke_breast_mri"],
             "next_after_that": ["ispy2_tcia", "tcga_brca", "mimic_iv"],
             "production_training_allowed": False,
-            "reason": "Best sources improve schema and stress testing, but none provide full OncoTrack clinician-reviewed temporal labels.",
+            "reason": "Best sources improve schema and stress testing, but none provide full NLCare clinician-reviewed temporal labels.",
         },
         "claim_boundary": CLAIM_BOUNDARY,
     }
@@ -144,7 +144,7 @@ def _scored_dataset(item: dict[str, Any]) -> dict[str, Any]:
         **item,
         "fit_score": round(fit_score, 2),
         "safe_role": item["best_next_use"],
-        "blocked_claim": "Do not use this dataset to claim OncoTrack is clinically validated.",
+        "blocked_claim": "Do not use this dataset to claim NLCare is clinically validated.",
     }
 
 

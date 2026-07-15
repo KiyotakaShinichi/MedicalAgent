@@ -225,6 +225,11 @@ MULTILINGUAL_SYMPTOM_TERMS: dict[str, tuple[str, ...]] = {
         # Spanish
         "nauseas",
     ),
+    "abdominal discomfort": (
+        "upset stomach", "stomach discomfort", "tummy discomfort", "abdominal discomfort",
+        # Filipino / Taglish
+        "masama ang tiyan", "kabag",
+    ),
     "vomiting": (
         "vomit", "vomiting", "throw up", "threw up", "throwing up",
         # Filipino

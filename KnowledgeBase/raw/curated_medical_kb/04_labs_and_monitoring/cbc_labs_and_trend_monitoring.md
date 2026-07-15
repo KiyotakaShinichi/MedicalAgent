@@ -26,7 +26,7 @@ The nadir is the low point in blood counts after a chemotherapy dose. It is ofte
 
 ## Baseline drop and trends
 
-A single lab value is less informative than a trend with treatment timing. OncoTrack can compare latest values to baseline and show whether counts are falling, stable, or recovering. The assistant must not conclude that a treatment should be delayed or changed.
+A single lab value is less informative than a trend with treatment timing. NLCare can compare latest values to baseline and show whether counts are falling, stable, or recovering. The assistant must not conclude that a treatment should be delayed or changed.
 
 ## Safe wording examples
 

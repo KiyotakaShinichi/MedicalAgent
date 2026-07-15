@@ -186,7 +186,7 @@ def genetics_intent_and_safe_reply(query: str) -> dict[str, Any]:
     else:
         reply = (
             "Genetic counseling can help people understand whether genetic testing may be useful and what results may "
-            "mean for them and their family. OncoTrack can organize family history and test records for clinician review."
+            "mean for them and their family. NLCare can organize family history and test records for clinician review."
         )
 
     return {

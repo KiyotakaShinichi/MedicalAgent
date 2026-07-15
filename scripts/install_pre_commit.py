@@ -1,4 +1,4 @@
-"""Install the OncoTrack pre-commit integration gate.
+"""Install the NLCare pre-commit integration gate.
 
 Drops a ``pre-commit`` hook into ``.git/hooks`` that runs the
 breast-monitoring integration suite. The hook refuses the commit on any
@@ -19,7 +19,7 @@ HOOK_PATH = HOOK_DIR / "pre-commit"
 TRACKED_HOOK = ROOT / ".githooks" / "pre-commit"
 
 HOOK_BODY = """#!/bin/sh
-# OncoTrack pre-commit integration gate.
+# NLCare pre-commit integration gate.
 # Auto-installed by scripts/install_pre_commit.py.
 # Skip with: SKIP_ONCOTRACK_GATE=1 git commit ...
 set -e

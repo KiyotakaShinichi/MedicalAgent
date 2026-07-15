@@ -1,4 +1,4 @@
-"""Evaluate the prepared behavior dataset against the OncoTrack safety
+"""Evaluate the prepared behavior dataset against the NLCare safety
 contract.
 
 The evaluator does NOT call a model — it scores the *assistant strings*
@@ -195,7 +195,7 @@ def evaluate_dataset(dataset: Path, output_path: Path) -> dict[str, Any]:
             "claim_boundary_compliance":    _rate(boundary_ok, total),
         }),
         "claim_boundary": (
-            "Evaluates the prepared behavior dataset against the OncoTrack "
+            "Evaluates the prepared behavior dataset against the NLCare "
             "safety contract. This is a dataset audit, not a model "
             "evaluation. A future fine-tuned adapter must be evaluated "
             "with the same metrics against its own generations."
@@ -224,7 +224,7 @@ def _overall_status(scores: dict[str, float]) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Evaluate the prepared behavior dataset against OncoTrack safety patterns.")
+    parser = argparse.ArgumentParser(description="Evaluate the prepared behavior dataset against NLCare safety patterns.")
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
     parser.add_argument("--output",  type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args(argv)

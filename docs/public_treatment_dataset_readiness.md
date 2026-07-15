@@ -1,6 +1,6 @@
 # Public Treatment-Combination Dataset Readiness
 
-This artifact maps public or accessible breast-cancer treatment data sources for OncoTrack. It is an engineering planning artifact, not a treatment recommendation system.
+This artifact maps public or accessible breast-cancer treatment data sources for NLCare. It is an engineering planning artifact, not a treatment recommendation system.
 
 Run:
 
@@ -51,4 +51,4 @@ These are timeline categories and ML feature-ablation candidates only. They must
 
 ## Boundary
 
-Treatment data can help OncoTrack organize timeline context and benchmark model robustness. It cannot make treatment decisions, compare real-world treatment efficacy, or tell a patient to start, stop, delay, or switch therapy.
+Treatment data can help NLCare organize timeline context and benchmark model robustness. It cannot make treatment decisions, compare real-world treatment efficacy, or tell a patient to start, stop, delay, or switch therapy.

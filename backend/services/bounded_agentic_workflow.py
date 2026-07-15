@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from backend.services.agent_safety import safety_scope_check
+from backend.services.agent_text_normalization import normalize_agent_text
 from backend.services.emotional_distress_detection import detect_emotional_distress
 from backend.services.security_guardrails import detect_prompt_injection_or_exfiltration
 from backend.services.unsafe_intent_semantic_classifier import classify_unsafe_intent
@@ -78,12 +79,15 @@ class WorkflowCase:
 def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any] | None = None) -> dict[str, Any]:
     """Return an auditable workflow plan for a single patient-support turn."""
 
-    text = (message or "").strip()
-    security = detect_prompt_injection_or_exfiltration(text)
+    raw_text = (message or "").strip()
+    text = normalize_agent_text(raw_text)
+    security = detect_prompt_injection_or_exfiltration(raw_text)
     safety = safety_scope_check(text)
     unsafe = classify_unsafe_intent(text)
     distress = detect_emotional_distress(text, safety=safety)
     extracted = _detect_structured_intent(text, patient_context=patient_context)
+    active_boundary = _active_boundary_followup(text, patient_context=patient_context)
+    boundary_context_reused = False
 
     route = "conversation"
     review_route = "none"
@@ -102,11 +106,17 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
         review_route = "clinician_review_required"
         final_action = "safe_refusal"
         rationale = "Tumor-marker conclusion request detected; route to clinician review."
-    elif safety.get("scope") == "urgent_or_safety_related":
+    elif safety.get("scope") == "urgent_or_safety_related" or _looks_immediate_danger(text):
         route = "urgent_clinician_review"
         review_route = "urgent_or_crisis_review"
         final_action = "urgent_escalation"
         rationale = "Urgent symptom or safety language detected before any record write."
+    elif active_boundary:
+        route = str(active_boundary["route"])
+        review_route = str(active_boundary.get("review_route") or "clinician_review_required")
+        final_action = "urgent_escalation" if route in {"urgent_clinician_review", "crisis_support"} else "safe_refusal"
+        rationale = "A vague follow-up retained the prior safety boundary instead of resetting to general conversation."
+        boundary_context_reused = True
     elif _contains_false_reassurance_instruction(text):
         route = "medical_boundary_refusal"
         review_route = "clinician_review_required"
@@ -177,6 +187,8 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
             "unsafe_intent_confidence": unsafe.get("confidence"),
             "emotional_distress_mode": distress.response_mode,
             "patient_context_available": bool(patient_context),
+            "boundary_context_reused": boundary_context_reused,
+            "active_boundary_route": active_boundary.get("route") if active_boundary else None,
         },
         "claim_boundary": CLAIM_BOUNDARY,
     }
@@ -320,7 +332,7 @@ def _detect_structured_intent(
     *,
     patient_context: dict[str, Any] | None = None,
 ) -> dict[str, str | None]:
-    normalized = text.lower()
+    normalized = normalize_agent_text(text)
     pending_confirmation = (patient_context or {}).get("pending_confirmation") or {}
     if pending_confirmation and re.search(r"\b(yes|confirm|save it|go ahead|oo|sige|confirmed)\b", normalized):
         tool = str(pending_confirmation.get("tool") or "")
@@ -348,7 +360,7 @@ def _detect_structured_intent(
         if has_wbc and has_hgb and has_platelets:
             return {"kind": "cbc", "tool": "save_cbc"}
         return {"kind": "cbc_details", "tool": "request_cbc_details"}
-    if re.search(r"\b(mri|ct|ultrasound|mammogram|impression|findings)\b", normalized) and re.search(r"\b(save|log|upload|captured|impression says|report says|findings show|note:)\b", normalized):
+    if re.search(r"\b(mri|ct|ultrasound|mammogram|impression|findings)\b", normalized) and re.search(r"\b(impression says|report says|findings show|note)\b", normalized):
         return {"kind": "imaging", "tool": "save_imaging"}
     if re.search(r"\b(mri|ct|ultrasound|mammogram|imaging report)\b", normalized) and re.search(r"\b(upload|save|log|add)\b", normalized):
         return {"kind": "imaging_details", "tool": "request_imaging_details"}
@@ -396,11 +408,58 @@ def _safe_structured_record_context(
         and "treatment-related change" in normalized
     ):
         return False
-    if extracted.get("kind") != "imaging":
-        return False
-    if re.search(r"\b(should|can i|stop|skip|delay|dose|recommend|switch|start|increase|decrease)\b", normalized):
-        return False
-    return bool(re.search(r"\b(save|log|upload|note:|report says|impression says|findings show)\b", normalized))
+    kind = extracted.get("kind")
+    if kind == "imaging":
+        if re.search(r"\b(should|can i|stop|skip|delay|dose|recommend|switch|start|increase|decrease)\b", normalized):
+            return False
+        return bool(re.search(r"\b(save|log|note|report says|impression says|findings show)\b", normalized))
+    if kind == "treatment_note":
+        if re.search(r"\b(should|can i|please)\s+(stop|skip|delay|change|switch|start|increase|decrease)\b", normalized):
+            return False
+        return bool(re.search(r"\b(treatment note|cycle (?:was )?delayed|dose (?:was )?(?:delayed|reduced)|infusion (?:was )?)\b", normalized))
+    return False
+
+
+def _looks_immediate_danger(text: str) -> bool:
+    normalized = normalize_agent_text(text)
+    return bool(
+        re.search(r"\bi (?:think|feel like) i am dying\b", normalized)
+        or re.search(r"\b(?:cannot breathe|chest pain|uncontrolled bleeding|heavy bleeding)\b", normalized)
+        or re.search(r"\bbleeding\b.{0,20}\b(?:heavily|now|will not stop)\b", normalized)
+    )
+
+
+def _active_boundary_followup(
+    text: str,
+    *,
+    patient_context: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    active = (patient_context or {}).get("active_safety_boundary")
+    if not isinstance(active, dict) or not active.get("route"):
+        return None
+    if int(active.get("turns_remaining") or 0) <= 0:
+        return None
+    normalized = normalize_agent_text(text)
+    # Conversational framing does not change the referent of a short follow-up.
+    # Remove common discourse markers before reusing the prior safety boundary.
+    normalized = re.sub(
+        r"^(?:(?:please|paki|pls)(?: help)?|following up|quick question|"
+        r"in (?:the )?portal|about that|so|then)\s+",
+        "",
+        normalized,
+    )
+    normalized = re.sub(r"\s+(?:please|pls)$", "", normalized)
+    vague_followup = bool(re.search(
+        r"^(?:please\s+)?(?:"
+        r"go to where|where (?:should|do) i go|what (?:should|do) i do|"
+        r"continue(?: with (?:that|that request|it|the request))?|go ahead|do it|"
+        r"just (?:answer(?: yes or no)?|tell me|the latest one)|answer (?:me )?(?:directly|yes or no)|"
+        r"yes or no|why|tell me|what about (?:it|that)|same question|latest one|"
+        r"saan(?: ako pupunta)?|ituloy mo|sige|diretso(?:hin)? mo"
+        r")[.!?]*$",
+        normalized,
+    ))
+    return active if vague_followup else None
 
 
 def _security_block_is_authoritative(

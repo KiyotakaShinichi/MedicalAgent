@@ -405,28 +405,27 @@ def build_hybrid_prediction(
         notes=f"live patient-report inference (hybrid); ood_gate={ood_gate.severity}",
     )
 
-    record_prediction_trace(db, bundle.classification, context=base_context)
-    record_prediction_trace(db, bundle.toxicity, context=base_context)
     # Persist a synthetic-trace row for the regression head by reusing the
     # classification trace shape — the regression decision is what matters
     # for audit, and ``probability=None`` accurately reflects that this
     # head's primary output is a score, not a probability.
-    regression_trace_view = EvidenceAwarePrediction(
-        decision=bundle.response_score.decision,
-        probability=None,
-        raw_probability=(
-            bundle.response_score.raw_response_score
-            if bundle.response_score.raw_response_score is not None else None
-        ),
-        calibrated=False,
-        confidence=bundle.response_score.confidence,
-        evidence=bundle.response_score.evidence,
-        model_version=bundle.response_score.model_version,
-        question=bundle.response_score.question,
-    )
-    record_prediction_trace(db, regression_trace_view, context=base_context)
-
     if record_trace:
+        record_prediction_trace(db, bundle.classification, context=base_context)
+        record_prediction_trace(db, bundle.toxicity, context=base_context)
+        regression_trace_view = EvidenceAwarePrediction(
+            decision=bundle.response_score.decision,
+            probability=None,
+            raw_probability=(
+                bundle.response_score.raw_response_score
+                if bundle.response_score.raw_response_score is not None else None
+            ),
+            calibrated=False,
+            confidence=bundle.response_score.confidence,
+            evidence=bundle.response_score.evidence,
+            model_version=bundle.response_score.model_version,
+            question=bundle.response_score.question,
+        )
+        record_prediction_trace(db, regression_trace_view, context=base_context)
         db.commit()
 
     payload = bundle.to_dict()

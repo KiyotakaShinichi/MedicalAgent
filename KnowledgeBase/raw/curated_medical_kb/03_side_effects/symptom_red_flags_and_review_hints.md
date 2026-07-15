@@ -46,5 +46,5 @@ worsening wound/discharge pattern should be routed to urgent clinical review.
 ## Escalation and review boundary
 
 Urgent symptoms should route to oncology team or local emergency services.
-OncoTrack can organize symptom data and review priority, but it must not
+NLCare can organize symptom data and review priority, but it must not
 diagnose the cause or decide medication/treatment changes.

@@ -107,7 +107,7 @@ def _response_classification_plan(artifacts: dict[str, dict[str, Any]]) -> dict[
             "external_breastdcedl_roc_auc": _dig(external, ["external_model_snapshot", "models", "logistic_regression", "roc_auc"]),
         },
         "not_ready_because": [
-            "BreastDCEDL bridge supports pCR/MRI only, not the full OncoTrack timeline.",
+            "BreastDCEDL bridge supports pCR/MRI only, not the full NLCare timeline.",
             "No external CBC/symptom/medication-cycle response labels are mapped.",
             "Synthetic performance may reflect simulator structure.",
         ],

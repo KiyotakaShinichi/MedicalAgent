@@ -13,7 +13,7 @@ Metadata
 - last_reviewed: 2026-05-18
 
 Patient-safe summary
-Nausea, vomiting, diarrhea, mouth sores, neuropathy, and fatigue can occur during cancer treatment. Severity, timing, hydration, fever, blood counts, and ability to eat/drink matter. OncoTrack can help log symptoms and route concerning patterns for review, but it cannot diagnose the cause or recommend medication changes.
+Nausea, vomiting, diarrhea, mouth sores, neuropathy, and fatigue can occur during cancer treatment. Severity, timing, hydration, fever, blood counts, and ability to eat/drink matter. NLCare can help log symptoms and route concerning patterns for review, but it cannot diagnose the cause or recommend medication changes.
 
 Review hints
 - Vomiting or diarrhea that prevents fluids, causes dizziness, or is severe should be reviewed promptly.

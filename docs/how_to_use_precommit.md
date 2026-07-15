@@ -1,6 +1,6 @@
 # How To Use The Pre-commit Gate
 
-OncoTrack has two supported local commit gates. Both run the same core
+NLCare has two supported local commit gates. Both run the same core
 integration check:
 
 ```bash

@@ -46,5 +46,5 @@ not from symptoms or chat text.
 ## Escalation and review boundary
 
 Personal stage, receptor status, prognosis, recurrence, response, and treatment
-planning must be reviewed by an oncology clinician. OncoTrack may organize the
+planning must be reviewed by an oncology clinician. NLCare may organize the
 record and suggest questions to ask; it must not make the determination.
