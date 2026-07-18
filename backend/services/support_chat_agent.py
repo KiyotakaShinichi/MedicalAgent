@@ -1849,6 +1849,8 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
         )
         if any(term in lower_reply for term in save_claim_terms):
             return fallback_response
+    if _is_identity_or_capability_question(message) and "support" not in reply.lower():
+        return fallback_response
     return reply
 
 

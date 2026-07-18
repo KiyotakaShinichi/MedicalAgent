@@ -1,6 +1,6 @@
 {
   "schema_version": "kb_source_governance_v1",
-  "generated_at": "2026-05-18T03:13:04.680972+00:00",
+  "generated_at": "2026-07-17T06:25:06.177113+00:00",
   "status": "strong",
   "kb_chunks_path": "Data/rag_knowledge_base_chunks.json",
   "source_count": 44,
@@ -103,7 +103,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.352237+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "clinical_safety_boundaries"
@@ -130,7 +130,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.395837+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "medical_claim_boundaries"
@@ -157,7 +157,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.658130+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "integrative_supportive_care"
@@ -183,7 +183,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.701300+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "pregnancy_pediatric_fertility_boundary"
@@ -209,7 +209,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.806574+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 26,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -234,7 +234,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.911842+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 23,
       "topics": [
         "mri_radiomics_response"
@@ -259,7 +259,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.943863+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 23,
       "topics": [
         "mri_response_prediction"
@@ -284,7 +284,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.828700+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 19,
       "topics": [
         "febrile_neutropenia_supportive_care"
@@ -309,7 +309,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.866650+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 19,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -334,7 +334,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.927151+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 17,
       "topics": [
         "febrile_neutropenia_supportive_care"
@@ -359,7 +359,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.880643+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 16,
       "topics": [
         "chemotherapy_toxicity_supportive_care"
@@ -385,7 +385,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.893127+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 15,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -410,7 +410,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.950327+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -435,7 +435,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.634860+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 28,
       "topics": [
         "imaging_report_monitoring",
@@ -462,7 +462,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.444376+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 3,
       "topics": [
         "treatment_drug_education"
@@ -486,7 +486,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.707988+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 3,
       "topics": [
         "supplement_interaction_safety"
@@ -511,7 +511,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.714430+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 3,
       "topics": [
         "biomarkers_and_tumor_markers",
@@ -539,7 +539,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.400183+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "breast_cancer_basics"
@@ -562,7 +562,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.440547+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "treatment_drug_education"
@@ -587,7 +587,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.480656+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "systemic_treatment_education"
@@ -612,7 +612,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.622086+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "treatment_safety"
@@ -637,7 +637,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.628107+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -661,7 +661,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.632751+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "imaging_response_monitoring"
@@ -687,7 +687,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.705706+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "supplement_interaction_safety"
@@ -712,7 +712,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.762189+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "genetic_counseling_readiness"
@@ -737,7 +737,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.764471+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "genetics_biomarkers_tumor_markers"
@@ -764,7 +764,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.766655+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "genetic_testing_terms"
@@ -789,7 +789,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.769019+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 2,
       "topics": [
         "hereditary_breast_ovarian_cancer"
@@ -813,7 +813,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.404410+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "breast_cancer_basics"
@@ -836,7 +836,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.521950+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "targeted_therapy_education"
@@ -861,7 +861,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.545711+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "treatment_drug_education"
@@ -886,7 +886,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.570136+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "supportive_medication_education"
@@ -911,7 +911,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.595107+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "treatment_side_effects"
@@ -935,7 +935,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.619837+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "treatment_safety"
@@ -960,7 +960,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.624128+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "treatment_side_effects_red_flags"
@@ -985,7 +985,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.625729+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "cbc_lab_monitoring"
@@ -1009,7 +1009,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.630369+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "ct_report_monitoring"
@@ -1035,7 +1035,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.656397+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "pathology_biomarker_education"
@@ -1060,7 +1060,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.681307+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "supportive_survivorship_care"
@@ -1085,7 +1085,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.703269+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "integrative_supportive_survivorship"
@@ -1109,7 +1109,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.736963+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "genetic_counseling_readiness"
@@ -1134,7 +1134,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.759685+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "hereditary_breast_cancer_genes"
@@ -1158,7 +1158,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.710426+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "portal_help"
@@ -1182,7 +1182,7 @@
       ],
       "ingested_at": "2026-05-18T03:11:52.712163+00:00",
       "staleness_status": "current",
-      "staleness_days": 0,
+      "staleness_days": 60,
       "chunk_count": 1,
       "topics": [
         "portal_help"

@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "6f4f604010dc77ea0ed3570a3035fe688125362a",
+    "git_commit": "158ed82d121598538ff0094297bc8c750bf80091",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -9,28 +9,28 @@
       "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
       "source_csv": "920991:1778238158:44a845011924"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2515843:1778859518:e0b9ae77107f",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347380:1784024203:edf5b00deaa8",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-17T11:06:37.604349+00:00"
+    "generated_at": "2026-07-17T06:32:28.724427+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-17T11:06:37.604349+00:00",
+    "generated_at": "2026-07-17T06:32:28.724427+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-18T11:06:37.604349+00:00",
+    "expires_at": "2026-07-18T06:32:28.724427+00:00",
     "status": "fresh"
   },
   "schema_version": "hybrid_subgroup_metrics_v1",
-  "generated_at": "2026-05-17T11:06:37.827004+00:00",
+  "generated_at": "2026-07-17T06:32:29.198479+00:00",
   "status": "strong",
   "claim_boundary": "Synthetic subgroup metric table for engineering fairness/calibration inspection. Subgroups are simulator-defined and do not establish real-world equity or clinical validity.",
   "overall": {
     "n": 900,
-    "classification_coverage": 1.0,
-    "classification_accuracy": 0.9211,
-    "classification_brier": 0.0581,
-    "regression_coverage": 1.0,
-    "regression_mae": 0.0237,
+    "classification_coverage": 0.9978,
+    "classification_accuracy": 0.9209,
+    "classification_brier": 0.058,
+    "regression_coverage": 0.9978,
+    "regression_mae": 0.0232,
     "toxicity_coverage": 1.0,
     "toxicity_accuracy": 0.9989,
     "toxicity_brier": 0.0005
@@ -63,10 +63,10 @@
     {
       "group": "HR+/HER2-",
       "n": 360,
-      "classification_coverage": 1.0,
-      "classification_accuracy": 0.9083,
-      "classification_brier": 0.0624,
-      "regression_coverage": 1.0,
+      "classification_coverage": 0.9972,
+      "classification_accuracy": 0.9081,
+      "classification_brier": 0.0623,
+      "regression_coverage": 0.9972,
       "regression_mae": 0.0212,
       "toxicity_coverage": 1.0,
       "toxicity_accuracy": 0.9972,
@@ -75,11 +75,11 @@
     {
       "group": "triple-negative",
       "n": 180,
-      "classification_coverage": 1.0,
-      "classification_accuracy": 0.9444,
-      "classification_brier": 0.051,
-      "regression_coverage": 1.0,
-      "regression_mae": 0.0231,
+      "classification_coverage": 0.9944,
+      "classification_accuracy": 0.9441,
+      "classification_brier": 0.0507,
+      "regression_coverage": 0.9944,
+      "regression_mae": 0.0206,
       "toxicity_coverage": 1.0,
       "toxicity_accuracy": 1.0,
       "toxicity_brier": 0.0
@@ -101,11 +101,11 @@
     {
       "group": "IIB",
       "n": 270,
-      "classification_coverage": 1.0,
-      "classification_accuracy": 0.9519,
-      "classification_brier": 0.0451,
-      "regression_coverage": 1.0,
-      "regression_mae": 0.0193,
+      "classification_coverage": 0.9963,
+      "classification_accuracy": 0.9517,
+      "classification_brier": 0.0448,
+      "regression_coverage": 0.9963,
+      "regression_mae": 0.0176,
       "toxicity_coverage": 1.0,
       "toxicity_accuracy": 1.0,
       "toxicity_brier": 0.0002
@@ -113,11 +113,11 @@
     {
       "group": "IIIA",
       "n": 192,
-      "classification_coverage": 1.0,
-      "classification_accuracy": 0.8802,
+      "classification_coverage": 0.9948,
+      "classification_accuracy": 0.8796,
       "classification_brier": 0.0846,
-      "regression_coverage": 1.0,
-      "regression_mae": 0.0266,
+      "regression_coverage": 0.9948,
+      "regression_mae": 0.0265,
       "toxicity_coverage": 1.0,
       "toxicity_accuracy": 1.0,
       "toxicity_brier": 0.0

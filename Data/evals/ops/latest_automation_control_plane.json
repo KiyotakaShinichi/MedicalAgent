@@ -1,6 +1,6 @@
 {
   "schema_version": "automation_control_plane_v1",
-  "generated_at": "2026-07-13T08:39:30.871493+00:00",
+  "generated_at": "2026-07-17T06:15:39.149990+00:00",
   "status": "strong",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -15,7 +15,7 @@
   "rejected_event_count": 0,
   "event_jobs": [
     {
-      "job_id": "ae03b33e-b40d-43e7-ac57-54ee282e6cb9",
+      "job_id": "b83f34c6-0392-4a3b-bbf1-f23d82a742ca",
       "job_type": "publish_release_gate_alert",
       "requested_by": "automation_control_plane",
       "accepted": true,
@@ -25,18 +25,18 @@
       "command": null,
       "payload_redacted": true,
       "sanitized_payload": {
-        "run_id": "20260713T083930Z",
+        "run_id": "20260717T061539Z",
         "status": "strong",
         "artifact_count": null,
         "failure_count": 0,
         "summary_url": "/artifacts/evals/governance/latest_release_gate_explanation.json"
       },
       "blocked_payload_fields": [],
-      "created_at": "2026-07-13T08:39:30.870572+00:00",
+      "created_at": "2026-07-17T06:15:39.149548+00:00",
       "clinical_validation": false
     },
     {
-      "job_id": "c3730000-336c-4fe1-a397-dd12a7bb65ac",
+      "job_id": "147a8cad-1397-42a4-951e-ce27b1aaca8d",
       "job_type": "publish_trace_quality_digest",
       "requested_by": "automation_control_plane",
       "accepted": true,
@@ -46,17 +46,17 @@
       "command": null,
       "payload_redacted": true,
       "sanitized_payload": {
-        "run_id": "20260713T083930Z",
+        "run_id": "20260717T061539Z",
         "trace_coverage_rate": 1.0,
         "missing_fields_count": 0,
         "dashboard_path": "/artifacts/evals/ops/latest_trace_envelope_v2_eval.json"
       },
       "blocked_payload_fields": [],
-      "created_at": "2026-07-13T08:39:30.870792+00:00",
+      "created_at": "2026-07-17T06:15:39.149668+00:00",
       "clinical_validation": false
     },
     {
-      "job_id": "380f6b4e-b5d6-4452-8310-d6d4e8ca37be",
+      "job_id": "c242e0f8-6e46-41e4-b138-09771ba107aa",
       "job_type": "publish_pinecone_shadow_report",
       "requested_by": "automation_control_plane",
       "accepted": true,
@@ -66,7 +66,7 @@
       "command": null,
       "payload_redacted": true,
       "sanitized_payload": {
-        "run_id": "20260713T083930Z",
+        "run_id": "20260717T061539Z",
         "status": "ready_for_shadow_mode_not_configured",
         "recall_at_10_delta": null,
         "citation_precision_delta": null,
@@ -74,11 +74,11 @@
         "promotion_allowed": false
       },
       "blocked_payload_fields": [],
-      "created_at": "2026-07-13T08:39:30.870954+00:00",
+      "created_at": "2026-07-17T06:15:39.149765+00:00",
       "clinical_validation": false
     },
     {
-      "job_id": "9ca17bbb-6d83-4a74-b39b-299391ae88d0",
+      "job_id": "439ee52a-c603-4245-a41a-4b449548ffc8",
       "job_type": "publish_dependency_security_alert",
       "requested_by": "automation_control_plane",
       "accepted": true,
@@ -88,18 +88,18 @@
       "command": null,
       "payload_redacted": true,
       "sanitized_payload": {
-        "run_id": "20260713T083930Z",
+        "run_id": "20260717T061539Z",
         "status": "acceptable",
         "finding_count": 0,
         "tools_available": 1,
         "artifact_path": "Data/evals/ops/latest_dependency_security_scan.json"
       },
       "blocked_payload_fields": [],
-      "created_at": "2026-07-13T08:39:30.871058+00:00",
+      "created_at": "2026-07-17T06:15:39.149825+00:00",
       "clinical_validation": false
     },
     {
-      "job_id": "a4a0551f-0d47-4c05-8502-0b3b41444e4a",
+      "job_id": "4dd609cd-d876-4f31-bab6-45d207f20a7c",
       "job_type": "publish_deployment_health_alert",
       "requested_by": "automation_control_plane",
       "accepted": true,
@@ -109,18 +109,18 @@
       "command": null,
       "payload_redacted": true,
       "sanitized_payload": {
-        "run_id": "20260713T083930Z",
+        "run_id": "20260717T061539Z",
         "status": "strong",
         "failed_benchmark_count": 0,
         "stale_artifact_count": 75,
         "artifact_path": "Data/evals/ops/latest_service_health_snapshot.json"
       },
       "blocked_payload_fields": [],
-      "created_at": "2026-07-13T08:39:30.871158+00:00",
+      "created_at": "2026-07-17T06:15:39.149882+00:00",
       "clinical_validation": false
     },
     {
-      "job_id": "3e0bba09-60cc-4df9-9303-c9aef379a54f",
+      "job_id": "3a5ae9b0-f3d3-4328-96e1-aa5243bb0f6f",
       "job_type": "prepare_reviewer_packet_reminder",
       "requested_by": "automation_control_plane",
       "accepted": true,
@@ -136,11 +136,11 @@
         "due_date": "reviewer_selected_date"
       },
       "blocked_payload_fields": [],
-      "created_at": "2026-07-13T08:39:30.871247+00:00",
+      "created_at": "2026-07-17T06:15:39.149930+00:00",
       "clinical_validation": false
     },
     {
-      "job_id": "e97ae540-3eb0-4312-8101-b5d516ab2c9f",
+      "job_id": "4748d52c-cdda-4e92-9b38-323eb2cd5c73",
       "job_type": "create_stale_artifact_ticket",
       "requested_by": "automation_control_plane",
       "accepted": true,
@@ -150,14 +150,14 @@
       "command": null,
       "payload_redacted": true,
       "sanitized_payload": {
-        "run_id": "20260713T083930Z",
+        "run_id": "20260717T061539Z",
         "artifact_path": "safety_red_team",
         "age_days": null,
         "severity": "warning",
         "owner": "engineering"
       },
       "blocked_payload_fields": [],
-      "created_at": "2026-07-13T08:39:30.871466+00:00",
+      "created_at": "2026-07-17T06:15:39.149979+00:00",
       "clinical_validation": false
     }
   ],

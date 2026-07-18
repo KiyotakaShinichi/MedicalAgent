@@ -3,8 +3,9 @@
         "patient": {
             "id": "P001",
             "name": "Patient P001",
-            "diagnosis": "Lung cancer - doctor-confirmed"
+            "diagnosis": "Breast cancer - doctor-confirmed"
         },
+        "breast_cancer_profile": null,
         "latest_labs": {
             "date": "2026-01-22 00:00:00",
             "wbc": 3.8,
@@ -27,21 +28,20 @@
                 "cycle": 1,
                 "drug": "Cisplatin",
                 "cycle_date": "2026-01-01 00:00:00",
-                "monitoring_window_days": 14,
-                "min_wbc_post_cycle": 2.1,
-                "min_hemoglobin_post_cycle": 11.8,
-                "min_platelets_post_cycle": 150.0,
+                "monitoring_window_days": 13,
+                "min_wbc_post_cycle": 4.2,
+                "min_hemoglobin_post_cycle": 12.5,
+                "min_platelets_post_cycle": 210.0,
                 "lab_dates_in_window": [
                     "2026-01-01 00:00:00",
-                    "2026-01-08 00:00:00",
-                    "2026-01-15 00:00:00"
+                    "2026-01-08 00:00:00"
                 ]
             },
             {
                 "cycle": 2,
                 "drug": "Cisplatin",
                 "cycle_date": "2026-01-15 00:00:00",
-                "monitoring_window_days": 14,
+                "monitoring_window_days": 13,
                 "min_wbc_post_cycle": 2.1,
                 "min_hemoglobin_post_cycle": 11.8,
                 "min_platelets_post_cycle": 150.0,
@@ -54,14 +54,22 @@
         "radiology": {
             "baseline_date": "2026-01-01 00:00:00",
             "latest_date": "2026-02-01 00:00:00",
+            "latest_report_date": "2026-02-01 00:00:00",
             "baseline_tumor_size_cm": 4.2,
             "latest_tumor_size_cm": 3.5,
             "change_cm": -0.7,
             "percent_change": -16.7,
             "size_status": "decreased",
             "response_language_status": "improved",
+            "latest_modality": "unknown",
+            "latest_report_modality": "unknown",
+            "latest_breast_side": "right",
+            "latest_breast_locations": [],
+            "latest_disease_extent_terms": [],
+            "latest_bi_rads": null,
             "lymph_node_summary": {
                 "mentioned": true,
+                "axillary_mentioned": false,
                 "improved": false,
                 "worsened": false
             },
@@ -69,7 +77,13 @@
             "reports": [
                 {
                     "date": "2026-01-01 00:00:00",
+                    "modality": "unknown",
                     "report_type": "Baseline CT",
+                    "body_site": null,
+                    "breast_side": "right",
+                    "breast_locations": [],
+                    "disease_extent_terms": [],
+                    "bi_rads": null,
                     "tumor_sizes_cm": [
                         4.2
                     ],
@@ -80,6 +94,7 @@
                     },
                     "lymph_nodes": {
                         "mentioned": true,
+                        "axillary_mentioned": false,
                         "improved": false,
                         "worsened": false
                     },
@@ -88,7 +103,13 @@
                 },
                 {
                     "date": "2026-02-01 00:00:00",
+                    "modality": "unknown",
                     "report_type": "Follow-up CT",
+                    "body_site": null,
+                    "breast_side": "right",
+                    "breast_locations": [],
+                    "disease_extent_terms": [],
+                    "bi_rads": null,
                     "tumor_sizes_cm": [
                         3.5
                     ],
@@ -108,6 +129,7 @@
                     },
                     "lymph_nodes": {
                         "mentioned": true,
+                        "axillary_mentioned": false,
                         "improved": false,
                         "worsened": false
                     },
@@ -116,7 +138,8 @@
                 }
             ],
             "latest_impression": "Interval decrease in tumor size compared with baseline.",
-            "safety_note": "Radiology NLP flags text patterns only. It does not diagnose metastasis or treatment response."
+            "latest_report_impression": "Interval decrease in tumor size compared with baseline.",
+            "safety_note": "Breast imaging NLP flags report text patterns only. It does not diagnose metastasis, recurrence, or treatment response."
         },
         "symptoms": [],
         "risk_flags": [
@@ -126,6 +149,7 @@
                 "severity": "urgent_review",
                 "message": "WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.",
                 "evidence": {
+                    "threshold_config_version": "v1.1.0",
                     "metric": "wbc",
                     "date": "2026-01-15 00:00:00",
                     "value": 2.1,
@@ -140,19 +164,22 @@
                 "severity": "urgent_review",
                 "message": "WBC dropped by 67.7% from baseline. This should be reviewed with the treatment timeline.",
                 "evidence": {
+                    "threshold_config_version": "v1.1.0",
                     "metric": "wbc",
                     "baseline_value": 6.5,
                     "lowest_value": 2.1,
                     "percent_drop": 67.7,
-                    "unit": "x10^3/uL"
+                    "unit": "x10^3/uL",
+                    "drop_threshold_pct": 50.0
                 }
             }
         ],
         "safety_positioning": {
-            "role": "clinical decision-support and longitudinal monitoring assistant",
+            "role": "breast cancer clinical decision-support and longitudinal monitoring assistant",
             "not_for": [
                 "diagnosis",
                 "cancer detection",
+                "confirming metastasis",
                 "replacing clinician judgment"
             ],
             "requires_clinician_review": true
@@ -196,6 +223,10 @@
             "platelets": 180
         }
     ],
+    "lab_sources": [
+        "unknown"
+    ],
+    "has_synthetic_labs": false,
     "trends": {
         "wbc": "decreasing",
         "hemoglobin": "decreasing",
@@ -208,6 +239,7 @@
             "severity": "urgent_review",
             "message": "WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.",
             "evidence": {
+                "threshold_config_version": "v1.1.0",
                 "metric": "wbc",
                 "date": "2026-01-15 00:00:00",
                 "value": 2.1,
@@ -222,11 +254,13 @@
             "severity": "urgent_review",
             "message": "WBC dropped by 67.7% from baseline. This should be reviewed with the treatment timeline.",
             "evidence": {
+                "threshold_config_version": "v1.1.0",
                 "metric": "wbc",
                 "baseline_value": 6.5,
                 "lowest_value": 2.1,
                 "percent_drop": 67.7,
-                "unit": "x10^3/uL"
+                "unit": "x10^3/uL",
+                "drop_threshold_pct": 50.0
             }
         }
     ],
@@ -235,21 +269,20 @@
             "cycle": 1,
             "drug": "Cisplatin",
             "cycle_date": "2026-01-01 00:00:00",
-            "monitoring_window_days": 14,
-            "min_wbc_post_cycle": 2.1,
-            "min_hemoglobin_post_cycle": 11.8,
-            "min_platelets_post_cycle": 150.0,
+            "monitoring_window_days": 13,
+            "min_wbc_post_cycle": 4.2,
+            "min_hemoglobin_post_cycle": 12.5,
+            "min_platelets_post_cycle": 210.0,
             "lab_dates_in_window": [
                 "2026-01-01 00:00:00",
-                "2026-01-08 00:00:00",
-                "2026-01-15 00:00:00"
+                "2026-01-08 00:00:00"
             ]
         },
         {
             "cycle": 2,
             "drug": "Cisplatin",
             "cycle_date": "2026-01-15 00:00:00",
-            "monitoring_window_days": 14,
+            "monitoring_window_days": 13,
             "min_wbc_post_cycle": 2.1,
             "min_hemoglobin_post_cycle": 11.8,
             "min_platelets_post_cycle": 150.0,
@@ -262,14 +295,22 @@
     "radiology_summary": {
         "baseline_date": "2026-01-01 00:00:00",
         "latest_date": "2026-02-01 00:00:00",
+        "latest_report_date": "2026-02-01 00:00:00",
         "baseline_tumor_size_cm": 4.2,
         "latest_tumor_size_cm": 3.5,
         "change_cm": -0.7,
         "percent_change": -16.7,
         "size_status": "decreased",
         "response_language_status": "improved",
+        "latest_modality": "unknown",
+        "latest_report_modality": "unknown",
+        "latest_breast_side": "right",
+        "latest_breast_locations": [],
+        "latest_disease_extent_terms": [],
+        "latest_bi_rads": null,
         "lymph_node_summary": {
             "mentioned": true,
+            "axillary_mentioned": false,
             "improved": false,
             "worsened": false
         },
@@ -277,7 +318,13 @@
         "reports": [
             {
                 "date": "2026-01-01 00:00:00",
+                "modality": "unknown",
                 "report_type": "Baseline CT",
+                "body_site": null,
+                "breast_side": "right",
+                "breast_locations": [],
+                "disease_extent_terms": [],
+                "bi_rads": null,
                 "tumor_sizes_cm": [
                     4.2
                 ],
@@ -288,6 +335,7 @@
                 },
                 "lymph_nodes": {
                     "mentioned": true,
+                    "axillary_mentioned": false,
                     "improved": false,
                     "worsened": false
                 },
@@ -296,7 +344,13 @@
             },
             {
                 "date": "2026-02-01 00:00:00",
+                "modality": "unknown",
                 "report_type": "Follow-up CT",
+                "body_site": null,
+                "breast_side": "right",
+                "breast_locations": [],
+                "disease_extent_terms": [],
+                "bi_rads": null,
                 "tumor_sizes_cm": [
                     3.5
                 ],
@@ -316,6 +370,7 @@
                 },
                 "lymph_nodes": {
                     "mentioned": true,
+                    "axillary_mentioned": false,
                     "improved": false,
                     "worsened": false
                 },
@@ -324,24 +379,333 @@
             }
         ],
         "latest_impression": "Interval decrease in tumor size compared with baseline.",
-        "safety_note": "Radiology NLP flags text patterns only. It does not diagnose metastasis or treatment response."
+        "latest_report_impression": "Interval decrease in tumor size compared with baseline.",
+        "safety_note": "Breast imaging NLP flags report text patterns only. It does not diagnose metastasis, recurrence, or treatment response."
+    },
+    "breast_imaging_summary": {
+        "baseline_date": "2026-01-01 00:00:00",
+        "latest_date": "2026-02-01 00:00:00",
+        "latest_report_date": "2026-02-01 00:00:00",
+        "baseline_tumor_size_cm": 4.2,
+        "latest_tumor_size_cm": 3.5,
+        "change_cm": -0.7,
+        "percent_change": -16.7,
+        "size_status": "decreased",
+        "response_language_status": "improved",
+        "latest_modality": "unknown",
+        "latest_report_modality": "unknown",
+        "latest_breast_side": "right",
+        "latest_breast_locations": [],
+        "latest_disease_extent_terms": [],
+        "latest_bi_rads": null,
+        "lymph_node_summary": {
+            "mentioned": true,
+            "axillary_mentioned": false,
+            "improved": false,
+            "worsened": false
+        },
+        "possible_metastatic_indicators": [],
+        "reports": [
+            {
+                "date": "2026-01-01 00:00:00",
+                "modality": "unknown",
+                "report_type": "Baseline CT",
+                "body_site": null,
+                "breast_side": "right",
+                "breast_locations": [],
+                "disease_extent_terms": [],
+                "bi_rads": null,
+                "tumor_sizes_cm": [
+                    4.2
+                ],
+                "largest_tumor_size_cm": 4.2,
+                "response_language": {
+                    "status": "unknown",
+                    "matched_phrases": []
+                },
+                "lymph_nodes": {
+                    "mentioned": true,
+                    "axillary_mentioned": false,
+                    "improved": false,
+                    "worsened": false
+                },
+                "possible_metastatic_indicators": [],
+                "impression": "Known lung malignancy. Baseline scan."
+            },
+            {
+                "date": "2026-02-01 00:00:00",
+                "modality": "unknown",
+                "report_type": "Follow-up CT",
+                "body_site": null,
+                "breast_side": "right",
+                "breast_locations": [],
+                "disease_extent_terms": [],
+                "bi_rads": null,
+                "tumor_sizes_cm": [
+                    3.5
+                ],
+                "largest_tumor_size_cm": 3.5,
+                "response_language": {
+                    "status": "improved",
+                    "matched_phrases": [
+                        {
+                            "status": "improved",
+                            "phrase": "decrease"
+                        },
+                        {
+                            "status": "improved",
+                            "phrase": "decreased"
+                        }
+                    ]
+                },
+                "lymph_nodes": {
+                    "mentioned": true,
+                    "axillary_mentioned": false,
+                    "improved": false,
+                    "worsened": false
+                },
+                "possible_metastatic_indicators": [],
+                "impression": "Interval decrease in tumor size compared with baseline."
+            }
+        ],
+        "latest_impression": "Interval decrease in tumor size compared with baseline.",
+        "latest_report_impression": "Interval decrease in tumor size compared with baseline.",
+        "safety_note": "Breast imaging NLP flags report text patterns only. It does not diagnose metastasis, recurrence, or treatment response."
     },
     "symptoms": [],
+    "timeline": [
+        {
+            "date": "2026-01-01 00:00:00",
+            "type": "lab",
+            "title": "CBC result",
+            "summary": "WBC 6.5, hemoglobin 13.2, platelets 250",
+            "detail": {
+                "kind": "lab",
+                "title": "CBC result",
+                "fields": {
+                    "WBC": 6.5,
+                    "Hemoglobin": 13.2,
+                    "Platelets": 250
+                },
+                "notes": "CBC values are shown for monitoring context only and require care-team interpretation."
+            },
+            "ai_generated": false,
+            "evidence_source": "lab_record"
+        },
+        {
+            "date": "2026-01-01 00:00:00",
+            "type": "treatment",
+            "title": "Treatment cycle 1",
+            "summary": "Cisplatin",
+            "detail": {
+                "kind": "treatment",
+                "title": "Treatment cycle 1",
+                "fields": {
+                    "Cycle": 1,
+                    "Drug/regimen": "Cisplatin"
+                },
+                "notes": "Treatment entries document timeline context; the system does not recommend dose or regimen changes."
+            },
+            "ai_generated": false,
+            "evidence_source": "treatment_record"
+        },
+        {
+            "date": "2026-01-01 00:00:00",
+            "type": "imaging",
+            "title": "Imaging - Baseline CT",
+            "summary": "Known lung malignancy. Baseline scan.",
+            "detail": {
+                "kind": "imaging",
+                "title": "Imaging - Baseline CT",
+                "fields": {
+                    "Modality": "Imaging",
+                    "Report type": "Baseline CT",
+                    "Body site": null
+                },
+                "findings": "Right upper lobe mass measuring 4.2 cm. Mediastinal lymph nodes noted.",
+                "impression": "Known lung malignancy. Baseline scan.",
+                "media": [],
+                "notes": "Imaging report text and preview files are for clinician review. NLCare does not diagnose response, recurrence, or metastasis from images or wording."
+            },
+            "ai_generated": false,
+            "evidence_source": "imaging_report"
+        },
+        {
+            "date": "2026-01-08 00:00:00",
+            "type": "lab",
+            "title": "CBC result",
+            "summary": "WBC 4.2, hemoglobin 12.5, platelets 210",
+            "detail": {
+                "kind": "lab",
+                "title": "CBC result",
+                "fields": {
+                    "WBC": 4.2,
+                    "Hemoglobin": 12.5,
+                    "Platelets": 210
+                },
+                "notes": "CBC values are shown for monitoring context only and require care-team interpretation."
+            },
+            "ai_generated": false,
+            "evidence_source": "lab_record"
+        },
+        {
+            "date": "2026-01-15 00:00:00",
+            "type": "lab",
+            "title": "CBC result",
+            "summary": "WBC 2.1, hemoglobin 11.8, platelets 150",
+            "detail": {
+                "kind": "lab",
+                "title": "CBC result",
+                "fields": {
+                    "WBC": 2.1,
+                    "Hemoglobin": 11.8,
+                    "Platelets": 150
+                },
+                "notes": "CBC values are shown for monitoring context only and require care-team interpretation."
+            },
+            "ai_generated": false,
+            "evidence_source": "lab_record"
+        },
+        {
+            "date": "2026-01-15 00:00:00",
+            "type": "treatment",
+            "title": "Treatment cycle 2",
+            "summary": "Cisplatin",
+            "detail": {
+                "kind": "treatment",
+                "title": "Treatment cycle 2",
+                "fields": {
+                    "Cycle": 2,
+                    "Drug/regimen": "Cisplatin"
+                },
+                "notes": "Treatment entries document timeline context; the system does not recommend dose or regimen changes."
+            },
+            "ai_generated": false,
+            "evidence_source": "treatment_record"
+        },
+        {
+            "date": "2026-01-15 00:00:00",
+            "type": "ai_risk_flag",
+            "title": "Risk flag: low_wbc",
+            "summary": "WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.",
+            "severity": "urgent_review",
+            "detail": {
+                "kind": "risk_flag",
+                "title": "Risk flag: low_wbc",
+                "fields": {
+                    "Severity": "urgent_review",
+                    "Category": "lab",
+                    "Source": "deterministic risk engine"
+                },
+                "message": "WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.",
+                "evidence": {
+                    "threshold_config_version": "v1.1.0",
+                    "metric": "wbc",
+                    "date": "2026-01-15 00:00:00",
+                    "value": 2.1,
+                    "unit": "x10^3/uL",
+                    "watch_threshold": 4.0,
+                    "urgent_review_threshold": 3.0
+                },
+                "notes": "Risk flags are deterministic monitoring signals for clinician review, not diagnoses."
+            },
+            "ai_generated": true,
+            "evidence_source": "risk_engine",
+            "model_version": "v1.1.0",
+            "uncertainty": null
+        },
+        {
+            "date": "2026-01-22 00:00:00",
+            "type": "lab",
+            "title": "CBC result",
+            "summary": "WBC 3.8, hemoglobin 12.0, platelets 180",
+            "detail": {
+                "kind": "lab",
+                "title": "CBC result",
+                "fields": {
+                    "WBC": 3.8,
+                    "Hemoglobin": 12.0,
+                    "Platelets": 180
+                },
+                "notes": "CBC values are shown for monitoring context only and require care-team interpretation."
+            },
+            "ai_generated": false,
+            "evidence_source": "lab_record"
+        },
+        {
+            "date": "2026-02-01 00:00:00",
+            "type": "imaging",
+            "title": "Imaging - Follow-up CT",
+            "summary": "Interval decrease in tumor size compared with baseline.",
+            "detail": {
+                "kind": "imaging",
+                "title": "Imaging - Follow-up CT",
+                "fields": {
+                    "Modality": "Imaging",
+                    "Report type": "Follow-up CT",
+                    "Body site": null
+                },
+                "findings": "Right upper lobe mass measuring 3.5 cm. Mediastinal lymph nodes slightly decreased.",
+                "impression": "Interval decrease in tumor size compared with baseline.",
+                "media": [],
+                "notes": "Imaging report text and preview files are for clinician review. NLCare does not diagnose response, recurrence, or metastasis from images or wording."
+            },
+            "ai_generated": false,
+            "evidence_source": "imaging_report"
+        }
+    ],
     "ai_summary": {
-        "clinical_summary": "Automated LLM summary unavailable: GROQ_API_KEY environment variable is not set",
-        "patient_explanation": "The system can still show trends and safety flags, but the AI text summary is unavailable right now.",
+        "clinical_summary": "Clinical Review Summary\n\n1. Patient context\n   - Diagnosis: Breast cancer - doctor-confirmed\n   - Profile: tumor profile (stage, ER/PR/HER2) is not available in the provided record.\n\n2. Treatment cycle and timeline\n   - Latest recorded cycle: 2\n   - Latest treatment date: 2026-01-15 00:00:00\n   - Recorded cycles to date: 2\n\n3. Key CBC trends\n   - WBC trend: baseline 6.5 \u2192 latest 3.8 (falling).\n   - Hemoglobin trend: baseline 13.2 \u2192 latest 12.0 (falling).\n   - Platelets trend: baseline 250 \u2192 latest 180 (falling).\n\n4. Symptoms reported\n   - No patient-reported symptoms are recorded; symptom toxicity cannot be inferred from this summary.\n\n5. Imaging notes\n   - Imaging trend: tumor size status decreased (-16.7% change where measurable) \u2014 extracted from report text and requires clinician interpretation.\n\n6. Medications and interventions\n   - Cisplatin on 2026-01-01 00:00:00\n   - Cisplatin on 2026-01-15 00:00:00\n\n7. Safety flags\n   - [urgent_review] WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.\n   - [urgent_review] WBC dropped by 67.7% from baseline. This should be reviewed with the treatment timeline.\n\n8. Missing or uncertain data\n   - patient-reported symptoms are missing.\n   - tumor profile (stage/ER/PR/HER2) is missing.\n   - Summary completeness is limited by the unavailable inputs listed above.\n\n9. Suggested clinician review focus\n   - review the safety flags above and confirm whether they reflect a real clinical concern\n   - verify recent CBC trend in relation to chemotherapy nadir timing\n   - read the radiology report text directly rather than relying on NLP-extracted size status\n\n10. Non-diagnostic disclaimer\n   - This summary is generated by an engineering decision-support system. It is not a diagnosis, does not confirm or rule out cancer, recurrence, or metastasis, and does not recommend specific treatment, dose, or scheduling. All conclusions require clinician review.",
+        "patient_explanation": "Your latest blood counts have been recorded in the system and trends are being tracked. No symptoms are logged. You can add new ones in the portal if needed. This system does not diagnose. Please follow up with your oncology care team for medical decisions.",
         "changes_since_baseline": [
-            "CT report NLP shows tumor size status: decreased (-16.7% change when measurable)."
+            "CT/MRI NLP reports tumor size status decreased with -16.7% change where measurable.",
+            "WBC: baseline 6.5 \u2192 latest 3.8 (falling).",
+            "Hemoglobin: baseline 13.2 \u2192 latest 12.0 (falling).",
+            "Platelets: baseline 250 \u2192 latest 180 (falling)."
         ],
         "review_reasons": [
             "WBC reached 2.1 x10^3/uL, suggesting possible treatment-related white blood cell suppression. Medical review is recommended.",
             "WBC dropped by 67.7% from baseline. This should be reviewed with the treatment timeline."
         ],
         "limitations": [
-            "This system does not diagnose.",
-            "Radiology findings are extracted from report text and require clinician interpretation.",
-            "Risk flags are decision-support signals, not medical orders."
-        ]
+            "This system does not diagnose, recommend treatment, or replace clinician judgment.",
+            "Imaging findings are extracted from report text by NLP pattern matching and require clinician interpretation.",
+            "Risk flags are decision-support signals only, not medical orders.",
+            "Summary completeness depends on data uploaded to the patient record; absence of data is not absence of clinical risk."
+        ],
+        "data_availability": {
+            "cbc_available": true,
+            "baseline_cbc_available": true,
+            "symptoms_available": false,
+            "imaging_available": true,
+            "medication_available": true,
+            "treatment_cycle_available": true,
+            "risk_flags_available": true,
+            "profile_available": false
+        },
+        "completeness_score": 1.0,
+        "checklist": {
+            "latest_cbc_values": true,
+            "trend_direction": true,
+            "urgent_symptoms": true,
+            "imaging_status": true,
+            "medication_or_treatment_cycle": true,
+            "risk_flags": true,
+            "missing_data_statement": true,
+            "uncertainty_statement": true,
+            "clinician_review_recommendation": true
+        },
+        "confidence_level": "Moderate",
+        "confidence_reason": "patient symptoms missing",
+        "safety_validator": {
+            "status": "passed",
+            "redactions": [],
+            "soft_flags": [],
+            "policy_version": "clinician_summary_safety_v1"
+        },
+        "summary_source": "template",
+        "model": null,
+        "llm_status": "disabled_for_fast_dashboard_loads"
     },
-    "safety_note": "Clinical decision-support only. Not for diagnosis, cancer detection, or replacing a licensed clinician."
+    "safety_note": "Breast cancer clinical decision-support only. Not for diagnosis, cancer detection, confirming metastasis, or replacing a licensed clinician."
 }

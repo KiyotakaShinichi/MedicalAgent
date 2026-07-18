@@ -1,6 +1,6 @@
 {
   "schema_version": "modality_robustness_comparison_v1",
-  "generated_at": "2026-05-16T16:11:13.494073+00:00",
+  "generated_at": "2026-07-17T06:48:00.315230+00:00",
   "status": "robust",
   "training_rows_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
   "output_path": "Data/evals/models/latest_modality_robustness_comparison.json",
@@ -27,22 +27,22 @@
       },
       "with_abstention": {
         "champion": {
-          "coverage_rate": 1.0,
-          "abstention_rate": 0.0,
-          "covered_accuracy": 0.9239,
-          "covered_mean_probability": 0.5562
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "covered_accuracy": 0.9255,
+          "covered_mean_probability": 0.5563
         },
         "robust": {
-          "coverage_rate": 1.0,
-          "abstention_rate": 0.0,
-          "covered_accuracy": 0.9261,
+          "coverage_rate": 0.9958,
+          "abstention_rate": 0.0042,
+          "covered_accuracy": 0.9269,
           "covered_mean_probability": 0.5524
         }
       },
       "deltas": {
         "force_score_accuracy_robust_minus_champion": 0.0022,
         "force_score_brier_robust_minus_champion": 0.0032,
-        "with_abstention_accuracy_robust_minus_champion": 0.0022
+        "with_abstention_accuracy_robust_minus_champion": 0.0014
       }
     },
     {
@@ -65,22 +65,22 @@
       },
       "with_abstention": {
         "champion": {
-          "coverage_rate": 1.0,
-          "abstention_rate": 0.0,
-          "covered_accuracy": 0.5439,
-          "covered_mean_probability": 0.5148
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "covered_accuracy": null,
+          "covered_mean_probability": null
         },
         "robust": {
-          "coverage_rate": 1.0,
-          "abstention_rate": 0.0,
-          "covered_accuracy": 0.6272,
-          "covered_mean_probability": 0.5381
+          "coverage_rate": 0.0,
+          "abstention_rate": 1.0,
+          "covered_accuracy": null,
+          "covered_mean_probability": null
         }
       },
       "deltas": {
         "force_score_accuracy_robust_minus_champion": 0.0833,
         "force_score_brier_robust_minus_champion": -0.0729,
-        "with_abstention_accuracy_robust_minus_champion": 0.0833
+        "with_abstention_accuracy_robust_minus_champion": 0.0
       }
     },
     {

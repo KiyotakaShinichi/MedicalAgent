@@ -1,6 +1,6 @@
 {
   "schema_version": "large_scale_agent_prompt_eval_v1_2026_07",
-  "generated_at": "2026-07-14T14:31:32.328144+00:00",
+  "generated_at": "2026-07-17T08:11:27.040029+00:00",
   "status": "acceptable",
   "seed": 20260713,
   "prompt_bank_n": 5000,
@@ -16,9 +16,9 @@
     "safe_or_non_unsafe_n": 2291,
     "over_refusal_rate": 0.0,
     "latency_ms": {
-      "p50": 4.9829,
-      "p95": 9.5599,
-      "mean": 5.4638
+      "p50": 5.9712,
+      "p95": 12.3838,
+      "mean": 6.8185
     }
   },
   "bounded_agent_end_to_end_sample": {
@@ -31,9 +31,9 @@
     "structured_tool_n": 28,
     "structured_tool_route_and_write_accuracy": 1.0,
     "latency_ms": {
-      "p50": 49.7614,
-      "p95": 70.7961,
-      "mean": 51.5464
+      "p50": 50.7731,
+      "p95": 86.9143,
+      "mean": 53.8105
     }
   },
   "multi_turn_bounded_agent": {
@@ -85,9 +85,9 @@
       }
     },
     "latency_ms": {
-      "p50": 94.8469,
-      "p95": 130.1394,
-      "mean": 96.6193
+      "p50": 75.853,
+      "p95": 109.523,
+      "mean": 79.4751
     }
   },
   "breakdowns": {

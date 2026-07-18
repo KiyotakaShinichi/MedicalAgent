@@ -1,0 +1,141 @@
+{
+  "schema_version": "patient_xai_readability_dossier_v1",
+  "generated_at": "2026-07-17T08:39:48.829533+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "patient_benefit_claim": false,
+  "diagnostic_authority_claim": false,
+  "treatment_recommendation_claim": false,
+  "claim_boundary": "Patient-facing XAI explains how NLCare produced synthetic engineering indicators. It does not explain clinical causality, diagnose, recommend treatment, estimate prognosis, interpret genetic risk, interpret tumor markers, prove patient benefit, or validate real-world safety.",
+  "surface_count": 5,
+  "surfaces": [
+    {
+      "id": "review_queue",
+      "display_label": "Items for review",
+      "must_explain": [
+        "what_count_means",
+        "how_count_is_calculated",
+        "why_not_urgency_or_diagnosis",
+        "safe_next_steps"
+      ],
+      "required_explanation_count": 4,
+      "status": "specified",
+      "clinical_validation": false
+    },
+    {
+      "id": "synthetic_model_pattern",
+      "display_label": "Synthetic model pattern",
+      "must_explain": [
+        "synthetic_class_probability",
+        "confidence_is_not_patient_outcome_probability",
+        "modalities_used_and_missing",
+        "abstention_or_low_confidence_reason"
+      ],
+      "required_explanation_count": 4,
+      "status": "specified",
+      "clinical_validation": false
+    },
+    {
+      "id": "latest_cbc",
+      "display_label": "Latest CBC",
+      "must_explain": [
+        "population_default_reference_bands",
+        "not_personalized_reference_ranges",
+        "not_diagnosis",
+        "care_team_discussion_boundary"
+      ],
+      "required_explanation_count": 4,
+      "status": "specified",
+      "clinical_validation": false
+    },
+    {
+      "id": "record_coverage",
+      "display_label": "Record coverage",
+      "must_explain": [
+        "available_vs_missing_record_areas",
+        "why_missingness_changes_confidence",
+        "not_health_status",
+        "what_user_can_update"
+      ],
+      "required_explanation_count": 4,
+      "status": "specified",
+      "clinical_validation": false
+    },
+    {
+      "id": "old_monitoring_score_boundary",
+      "display_label": "Removed 0-100 headline score",
+      "must_explain": [
+        "why_removed_from_patient_headline",
+        "why_not_cancer_status",
+        "why_not_treatment_response",
+        "why_not_prognosis"
+      ],
+      "required_explanation_count": 4,
+      "status": "specified",
+      "clinical_validation": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "patient_numbers_have_meaning_calculation_next_steps",
+      "passed": true,
+      "why": "The KPI strip requires meaning, calculation, and allowed next-step copy for patient-facing indicators."
+    },
+    {
+      "id": "synthetic_outputs_have_nonclinical_boundary",
+      "passed": true,
+      "why": "The dossier requires synthetic-only, not-personal-outcome-probability language for model pattern displays."
+    },
+    {
+      "id": "removed_score_boundary_documented",
+      "passed": true,
+      "why": "The old 0-100 monitoring index is documented as removed from patient headlines because it can be misread as a health score."
+    },
+    {
+      "id": "known_rag_weakness_visible",
+      "passed": true,
+      "why": "The dossier carries citation precision and unsupported-context weaknesses into patient-copy rules."
+    },
+    {
+      "id": "automation_not_emergency_coverage",
+      "passed": true,
+      "why": "Automation copy remains bounded to local review workflow and test-recipient dispatch."
+    }
+  ],
+  "failed_check_count": 0,
+  "weakness_visibility": {
+    "rag": {
+      "status": "informational",
+      "citation_precision": 0.4649,
+      "unsupported_context_rate": 0.1622,
+      "failure_count": 43,
+      "patient_copy_rule": "RAG evidence must be presented as source-backed education only. Weak citation precision or unsupported context should reduce confidence, not create a stronger answer.",
+      "needs_attention": true
+    },
+    "ml": {
+      "status": "needs_attention",
+      "logic_alignment_score": 0.9,
+      "known_attention_items": [
+        "shortcut_risk_boundaries"
+      ],
+      "patient_copy_rule": "Synthetic model explanations must say what data was used, what data was missing, why the output may abstain, and why it is not clinical evidence.",
+      "needs_attention": true
+    },
+    "automation": {
+      "status": "strong",
+      "external_delivery_enabled_by_default": false,
+      "real_emergency_coverage_claim": false,
+      "patient_copy_rule": "Automation copy must describe local review routing and test-recipient delivery only. It must not imply monitored emergency coverage or clinician acknowledgement.",
+      "needs_attention": false
+    }
+  },
+  "recommended_ui_copy_rules": [
+    "Every patient-visible number needs a meaning, calculation, safe next steps, and nonclinical boundary.",
+    "Use 'synthetic class probability' or 'model confidence', never 'chance of response' or 'survival'.",
+    "When data is missing, say which record types are missing instead of inventing confidence.",
+    "When automation triggers, say 'queued for review workflow' rather than 'doctor notified' unless a verified human acknowledgement exists.",
+    "Keep negative RAG and ML weaknesses visible in admin/reviewer surfaces."
+  ],
+  "contamination_note": "This is an internal UI/XAI governance artifact. It audits explanation completeness and wording boundaries; it is not usability testing with real patients and not clinical validation."
+}

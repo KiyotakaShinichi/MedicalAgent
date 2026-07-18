@@ -180,7 +180,6 @@ DIAGNOSTIC_TERMS: tuple[str, ...] = (
     "diagnose me",
     "tell me if i have cancer",
     "tell me whether i have cancer",
-    "tell me if this is cancer",
     "will i survive",
     "will i beat",
     "how long do i have",

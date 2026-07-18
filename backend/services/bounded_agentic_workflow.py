@@ -122,6 +122,19 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
         review_route = "clinician_review_required"
         final_action = "safe_refusal"
         rationale = "False reassurance instruction detected; do not save or repeat unsafe reassurance."
+    elif (
+        distress.response_mode == "empathetic_support_plus_education"
+        and _is_distressed_diagnosis_or_response_question(safety, unsafe)
+        and not _safe_structured_record_context(text, extracted, unsafe)
+    ):
+        route = distress.response_mode
+        review_route = "clinician_review_with_warm_handoff"
+        final_action = "empathetic_support"
+        required_tools.extend(["detect_emotional_distress"])
+        rationale = (
+            "Distress language plus a diagnosis/response question detected; "
+            "acknowledge fear and route to clinician review without answering the medical conclusion."
+        )
     elif (safety.get("level") == "high_risk" or _unsafe_block_is_authoritative(unsafe, safety)) and not _safe_structured_record_context(text, extracted, unsafe):
         route, review_route, final_action, rationale = _route_high_risk(safety, unsafe)
         if distress.response_mode in {"crisis_support", "urgent_clinician_review"}:
@@ -497,6 +510,19 @@ def _unsafe_block_is_authoritative(unsafe: dict[str, Any], safety: dict[str, Any
     if unsafe.get("route") == "safe_clarification" and unsafe.get("over_refusal_risk_flag") and safety.get("level") != "high_risk":
         return False
     return True
+
+
+def _is_distressed_diagnosis_or_response_question(safety: dict[str, Any], unsafe: dict[str, Any]) -> bool:
+    """Return true when fear should shape the boundary response."""
+
+    family = str(unsafe.get("family") or "")
+    scope = str(safety.get("scope") or "")
+    semantic_family = str(safety.get("semantic_family") or "")
+    return (
+        family in {"diagnosis_confirmation", "diagnosis_or_outcome_claim"}
+        or scope == "diagnosis_or_outcome_claim"
+        or semantic_family in {"diagnosis_confirmation", "diagnosis_or_outcome_claim"}
+    )
 
 
 def _alternatives_for(text: str) -> list[str]:

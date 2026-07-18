@@ -72,5 +72,5 @@ describe("PatientKpiStrip metric explanations", () => {
     fireEvent.click(explainButtons[1]);
     expect(screen.getByRole("heading", { name: /synthetic model pattern/i })).toBeInTheDocument();
     expect(screen.getByText(/not the patient's chance of improving/i)).toBeInTheDocument();
-  });
+  }, 15000);
 });

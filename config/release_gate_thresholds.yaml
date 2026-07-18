@@ -1529,6 +1529,45 @@ artifacts:
       redacted engineering event candidates. It does not execute commands or
       send webhooks while the artifact is built.
 
+  - path: Data/evals/ops/latest_automation_reliability_dossier.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [hipaa_compliance_claim], op: "==", value: false}
+      - {path: [phi_allowed], op: "==", value: false}
+      - {path: [live_patient_route_enabled], op: "==", value: false}
+      - {path: [external_delivery_enabled_by_default], op: "==", value: false}
+      - {path: [real_emergency_coverage_claim], op: "==", value: false}
+      - {path: [failed_required_count], op: "==", value: 0}
+      - {path: [check_count], op: ">=", value: 8}
+      - {path: [automation_center_requirement_count], op: ">=", value: 5}
+    note: >
+      Consolidated automation reliability dossier for redacted n8n, high-risk
+      review-alert outbox, delivery receipts, retries, dead-lettering, and
+      channel policy. It is engineering evidence only, not emergency coverage,
+      clinician receipt, compliance, or clinical validation.
+
+  - path: Data/evals/governance/latest_patient_xai_readability_dossier.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [patient_benefit_claim], op: "==", value: false}
+      - {path: [diagnostic_authority_claim], op: "==", value: false}
+      - {path: [treatment_recommendation_claim], op: "==", value: false}
+      - {path: [failed_check_count], op: "==", value: 0}
+      - {path: [surface_count], op: ">=", value: 5}
+    note: >
+      Supporting XAI/readability dossier for patient-facing numbers. It checks
+      that indicators include meaning, calculation, safe next steps,
+      missingness/abstention language, and nonclinical boundaries. It is not
+      usability testing, patient benefit evidence, or clinical validation.
+
   - path: Data/evals/governance/latest_platform_control_plane_architecture.json
     required: false
     max_age_days: 90
