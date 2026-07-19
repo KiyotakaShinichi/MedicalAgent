@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0",
   "status": "acceptable",
-  "generated_at": "2026-07-13T05:04:55.642405+00:00",
+  "generated_at": "2026-07-19T01:47:24.951431+00:00",
   "split_method": "sha256(case_id) mod 5 == 0 is holdout; all other cases are dev",
   "dev": {
     "total_n": 149,
-    "pass_count": 140,
-    "fail_count": 9,
+    "pass_count": 142,
+    "fail_count": 7,
     "skipped_count": 0,
-    "pass_rate": 0.9395973154362416,
+    "pass_rate": 0.9530201342281879,
     "by_category": {
       "cross_patient_exfil": {
         "total": 9,
@@ -90,11 +90,11 @@
         "total": 10,
         "total_n": 10,
         "category_n": 10,
-        "passed": 7,
-        "pass_count": 7,
-        "fail_count": 3,
+        "passed": 8,
+        "pass_count": 8,
+        "fail_count": 2,
         "skipped_count": 0,
-        "attack_block_rate": 0.7,
+        "attack_block_rate": 0.8,
         "authored_by": [
           "oncotrack_team+claude_codex"
         ],
@@ -223,11 +223,11 @@
         "total": 11,
         "total_n": 11,
         "category_n": 11,
-        "passed": 10,
-        "pass_count": 10,
-        "fail_count": 1,
+        "passed": 11,
+        "pass_count": 11,
+        "fail_count": 0,
         "skipped_count": 0,
-        "attack_block_rate": 0.9090909090909091,
+        "attack_block_rate": 1.0,
         "authored_by": [
           "oncotrack_team+claude_codex"
         ],

@@ -2,8 +2,8 @@
 Feature-contribution explanations for the synthetic champion model.
 
 Method: SHAP LinearExplainer (logistic regression) when SHAP is available;
-        falls back to exact linear coefficient x transformed-feature value
-        (mathematically equivalent for logistic regression without calibration).
+        falls back to an exact linear log-odds decomposition using the fitted
+        intercept and coefficient x transformed-feature values.
 
 All explanations and plots are labelled as "feature contribution / model
 explanation" - NOT clinical causality or SHAP for a non-linear model.
@@ -71,18 +71,25 @@ def generate_complete_synthetic_xai(
     if not hasattr(classifier, "coef_"):
         raise ValueError("Synthetic XAI currently expects a linear classifier with coef_.")
 
+    decision_values = np.asarray(classifier.decision_function(transformed), dtype=float).reshape(-1)
+    probability_values = np.asarray(classifier.predict_proba(transformed), dtype=float)[:, 1]
+
     # -- Explanation method ----------------------------------------------------
     if shap_available and shap_module is not None:
         explainer = shap_module.LinearExplainer(classifier, transformed, feature_perturbation="correlation_dependent")
-        shap_values = explainer.shap_values(transformed)  # shape (N, F)
+        shap_values = np.asarray(explainer.shap_values(transformed), dtype=float)
+        if shap_values.ndim == 3:
+            shap_values = shap_values[:, :, -1]
         row_contributions = shap_values
+        base_value = _scalar_expected_value(explainer.expected_value)
         method = "shap_linear_explainer_logistic_regression"
         method_label = "SHAP LinearExplainer (logistic regression)"
     else:
         coefficients = classifier.coef_[0]
         row_contributions = transformed * coefficients
+        base_value = float(np.asarray(classifier.intercept_, dtype=float).reshape(-1)[0])
         method = "linear_model_coefficient_contribution"
-        method_label = "Linear coefficient x transformed feature (equivalent to SHAP for log-reg)"
+        method_label = "Exact logistic-regression log-odds decomposition"
 
     # -- Per-patient explanations ----------------------------------------------
     explanations: dict = {}
@@ -92,7 +99,7 @@ def generate_complete_synthetic_xai(
         contributions = [
             {
                 "feature": feature_names[i],
-                "contribution": round(float(v), 6),
+                "contribution": round(float(v), 10),
                 "direction": "toward_success" if v > 0 else "toward_non_success",
                 "meaning": _feature_meaning(feature_names[i]),
             }
@@ -109,17 +116,34 @@ def generate_complete_synthetic_xai(
             reverse=True,
         )[:top_n]
         prediction_row = _prediction_for_patient(predictions, patient_id)
+        mean_prediction_log_odds = float(np.mean(decision_values[indices]))
+        mean_prediction_probability = float(np.mean(probability_values[indices]))
+        reconstructed_log_odds = float(base_value + np.sum(patient_contrib))
+        additivity_residual = float(reconstructed_log_odds - mean_prediction_log_odds)
         explanations[patient_id] = {
             "patient_id": patient_id,
             "method": method,
             "method_label": method_label,
             "target": "treatment_success_binary",
             "prediction": prediction_row,
+            "base_value": round(base_value, 10),
+            "expected_value": round(base_value, 10),
+            "model_output": {
+                "output_space": "log_odds",
+                "aggregation": "mean_over_patient_temporal_rows",
+                "temporal_row_n": int(len(indices)),
+                "mean_prediction_log_odds": round(mean_prediction_log_odds, 10),
+                "mean_prediction_probability": round(mean_prediction_probability, 10),
+                "reconstructed_log_odds": round(reconstructed_log_odds, 10),
+                "additivity_residual_log_odds": round(additivity_residual, 12),
+            },
+            "all_contributions": contributions,
             "positive_contributions": positive,
             "negative_contributions": negative,
             "interpretation_rules": {
                 "positive_contribution": "Pushes the synthetic model toward treatment_success_binary=1.",
                 "negative_contribution": "Pushes the synthetic model toward treatment_success_binary=0.",
+                "additivity": "Base value plus all contributions reconstructs the mean model output in log-odds space.",
                 "safety": "Explains a model trained on synthetic data; not clinical causality.",
             },
         }
@@ -150,6 +174,11 @@ def generate_complete_synthetic_xai(
         "method": method,
         "method_label": method_label,
         "shap_available": shap_available,
+        "model_output_space": "log_odds",
+        "additivity_contract": (
+            "For each patient, base_value + sum(all_contributions) must equal "
+            "model_output.mean_prediction_log_odds within numerical tolerance."
+        ),
         "plot_png_path": plot_artifact_path,
         "plot_chart_json_path": plot_chart_path,
         "patients": explanations,
@@ -478,6 +507,13 @@ def _jsonable(value):
     if pd.isna(value):
         return None
     return value
+
+
+def _scalar_expected_value(value) -> float:
+    values = np.asarray(value, dtype=float).reshape(-1)
+    if values.size == 0:
+        raise ValueError("SHAP LinearExplainer did not expose an expected value.")
+    return float(values[-1])
 
 
 def _clean_feature_name(name: str) -> str:

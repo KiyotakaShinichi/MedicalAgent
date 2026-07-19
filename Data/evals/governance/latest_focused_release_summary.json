@@ -1,17 +1,17 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-07-18T16:04:07.195164+00:00",
+  "generated_at": "2026-07-19T02:07:07.673187+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "release_gate": {
     "status": "passed",
-    "artifact_count": 171,
+    "artifact_count": 173,
     "hard_blocker_failure_count": 0,
     "required_artifact_count": 27,
-    "optional_artifact_count": 144,
-    "optional_artifact_ratio": 0.8421,
-    "optional_issue_count": 1,
+    "optional_artifact_count": 146,
+    "optional_artifact_ratio": 0.8439,
+    "optional_issue_count": 2,
     "failures": []
   },
   "core_evidence": {
@@ -29,18 +29,36 @@
       "external_holdout_completed": false
     },
     "adversarial_safety": {
-      "original_internal_pass_rate": 0.945,
+      "original_internal_pass_rate": 0.955,
       "holdout_v4_pass_rate": 0.614754,
       "holdout_v4_unsafe_leakage_rate": 0.427273,
-      "canonical_headline": {
-        "artifact": "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
-        "evaluation_role": "fresh_internal_frozen_holdout_not_used_for_tuning",
-        "pass_rate": 0.614754,
-        "unsafe_leakage_rate": 0.427273,
-        "not_solved": true,
-        "why": "The fresh frozen v4 holdout is the strongest current internal generalization signal. Tuning-used v3 movement is supporting evidence only."
-      },
+      "holdout_v5_pass_rate": 0.818182,
+      "holdout_v5_unsafe_leakage_rate": 0.2,
+      "holdout_v6_pass_rate": 0.518519,
+      "holdout_v6_unsafe_leakage_rate": 0.560606,
+      "holdout_v6_over_refusal_rate": 0.133333,
+      "canonical_headline": "Frozen internal v6 is the newest one-pass warning; it is not a tuning set.",
       "not_solved": true
+    },
+    "xai_mechanics": {
+      "status": "acceptable",
+      "patient_explanation_n": 600,
+      "additivity_verifiable": true,
+      "additivity_pass_rate": 1.0,
+      "causal_interpretation_allowed": false
+    },
+    "dependency_reproducibility": {
+      "status": "acceptable",
+      "transitive_lock_complete": true,
+      "environment_matches_transitive_lock": true,
+      "portable_across_platforms": false,
+      "vulnerability_scan_included": false
+    },
+    "automation_durability": {
+      "status": "acceptable",
+      "control_pass_rate": 1.0,
+      "live_delivery_test_completed": false,
+      "delivery_receipt_is_human_acknowledgement": false
     },
     "latency": {
       "load_success_rate": 1.0,
@@ -62,7 +80,9 @@
     "The no-read external-author RAG holdout remains incomplete.",
     "All ML results remain synthetic-only engineering self-tests.",
     "No clinician, genetic counselor, or external-author review has been completed.",
-    "Frozen adversarial v4 remains weak and is the canonical safety headline.",
+    "Frozen internal v6 scored 0.5185 with unsafe leakage 0.5606; it is the newest safety warning and must not be tuned against in this pass.",
+    "The exact transitive dependency lock covers CPython 3.14/Windows only and has no vulnerability scan.",
+    "Automation durability controls are code-tested, but live n8n/channel reliability is untested.",
     "Route percentile labels require at least 30 samples; smaller samples are insufficient, not ideal.",
     "Most gate entries are supporting or informational, so the focused core view is the reviewer headline."
   ],
@@ -70,7 +90,9 @@
     "patient-confirmed, provenance-stamped, undoable record writes",
     "source-governed retrieval and explicit negative-result reporting",
     "synthetic-only temporal ML/MLE evaluation and promotion boundaries",
-    "deployment-shaped engineering configuration with runtime validation"
+    "deployment-shaped engineering configuration with runtime validation",
+    "mechanically verifiable synthetic-model log-odds explanation additivity",
+    "database-leased redacted engineering automation with signed receipt persistence"
   ],
   "what_this_release_cannot_claim": [
     "clinical validation or clinician approval",

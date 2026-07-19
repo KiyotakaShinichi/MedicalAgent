@@ -10,12 +10,14 @@ The patient portal uses records-first progressive loading and prepares synthetic
 
 The reviewer headline is `Data/evals/governance/latest_focused_release_summary.json`, not the largest or greenest metric in the repository.
 
-- Release gate: passed, with 27 required artifacts and 139 supporting/informational artifacts. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
-- Frozen adversarial v4: pass rate `0.614754`, unsafe leakage `0.427273`; safety is explicitly **not solved**.
+- Release gate: passed, with 27 required artifacts and 146 supporting/informational artifacts. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
+- Frozen internally authored adversarial results remain weak: v4 pass rate `0.614754`, v5 `0.818182`, and the new one-pass v6 `0.518519` with unsafe leakage `0.560606`. V6 was frozen before the latest generalized hardening and was not tuned against; safety is explicitly **not solved**.
 - RAG: full source-governed Recall@10 `0.7838` versus BM25 `0.8041`. Raw retrieval improvement is not proven. The governed stack raises source-tier correctness from `0.4595` to `1.0` on the internal set, with about `4.13x` BM25 p95 retrieval latency.
 - ML: the calibrated classification champion does not prove paired accuracy superiority over logistic regression on the 120-row synthetic test export (`p=1.0`). Model complexity is retained as engineering comparison, not clinical evidence.
 - Latency: current route samples range from 0 to 4, below the 30-sample minimum for credible percentile labels. These routes are `not_sampled` or `insufficient_samples`, never production-ready.
-- Automation: the local outbox, retry/dead-letter workflow, signed redacted dispatch, channel receipts, and human acknowledgement are separate states. External delivery remains disabled by default and is not an emergency service.
+- XAI: all 600 synthetic patient explanations now export base values, complete contributions, and model outputs; log-odds additivity passes for every row with maximum residual `6e-10`. This verifies arithmetic, not causality or clinical validity.
+- Dependencies: the known-good CPython 3.14/Windows environment has an exact 100-distribution transitive lock. It is not portable to the Python 3.11/Linux CI environment and does not include a vulnerability scan.
+- Automation: redacted engineering jobs now have database leases, worker heartbeats, crash recovery, bounded retries/dead letters, signed dispatch, and persisted signed receipts. External delivery remains disabled and untested; channel delivery and human acknowledgement are separate states, and the system is not an emergency service.
 - Review: no clinician, nurse, genetic counselor, or external author has completed a review.
 
 See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple synthetic ML baselines](docs/evals/synthetic_simple_baseline_audit.md), and [dependency reproducibility](docs/dependency_reproducibility.md).
@@ -652,10 +654,11 @@ Role is inferred from credentials — no manual role selection after login.
 The latest pass adds controls and measurements without changing the project's
 clinical boundary:
 
-- Frozen internal adversarial holdout v5 was hashed before classifier changes
-  and evaluated once afterward. It scored `0.8182` with unsafe leakage `0.20`;
-  this is improved engineering evidence, but still internally authored and
-  below target.
+- Frozen internal adversarial holdout v6 was hashed before the latest
+  classifier changes and evaluated exactly once afterward. It scored `0.5185`
+  with unsafe leakage `0.5606` and over-refusal `0.1333`. This is a severe
+  negative generalization result, remains internally authored, and is locked
+  against tuning in this pass.
 - Unsafe-intent detection now combines deterministic patterns, prototype
   similarity, and generalized action/object concept rules. A separate
   development mutation set is marked `was_used_for_tuning: true` and is never
@@ -673,12 +676,19 @@ clinical boundary:
   complex classifiers/regressors across clean, MAR/MNAR missingness,
   measurement noise, label noise, and subgroup shift. The complex models win
   the five clean synthetic splits, but promotion remains `HOLD`.
-- The XAI fidelity audit reports `additivity_verifiable: false` because the
-  current export omits predictions/base values and flags one-hot/proxy display
-  risks rather than presenting SHAP output as causal explanation.
-- Engineering automation supports caller-supplied idempotency, bounded retries,
-  dead-letter state, and audited manual requeue. It remains redacted,
-  dry-run-first automation and cannot automate medical decisions.
+- The XAI export now includes base values, all feature contributions, mean model
+  log-odds/probabilities, and reconstruction residuals for all 600 synthetic
+  patients. Additivity passes mechanically, while one-hot/proxy display risks
+  remain visible and causal/clinical interpretation stays prohibited.
+- Engineering automation supports caller-supplied idempotency, conditional
+  database leases, heartbeat renewal, expired-lease recovery, bounded retries,
+  dead letters, audited manual requeue, signed n8n dispatch, and persisted
+  signed receipts. It remains redacted and dry-run-first, and cannot automate
+  medical decisions or infer clinician acknowledgement from channel delivery.
+- The local CPython 3.14/Windows environment now has a generated exact
+  transitive dependency lock and fingerprint audit. It does not cover the
+  Python 3.11/Linux CI environment or substitute for dependency vulnerability
+  scanning.
 - A compact release decision surface separates hard blockers from warnings so
   the full artifact registry cannot visually dilute weak generalization,
   retrieval, latency, XAI, or dependency evidence.

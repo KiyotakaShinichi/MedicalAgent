@@ -4,8 +4,8 @@
   "label": "negative_results_gallery",
   "clinical_validation": false,
   "claim_boundary": "This gallery catalogues honest negative / non-promoted findings already documented elsewhere in the repo.  This artifact is engineering credibility scaffolding, not clinical validation.  Listing a negative result here does not retroactively make any system component clinically valid.",
-  "generated_at": "2026-06-01T16:18:59.687492+00:00",
-  "n_items": 10,
+  "generated_at": "2026-07-19T01:45:30.002555+00:00",
+  "n_items": 11,
   "items": [
     {
       "title": "Full source-governed RAG stack does not beat BM25 on raw Recall@10",
@@ -77,6 +77,26 @@
         "clinical safety validation"
       ],
       "next_action": "Author external adversarial cases (15+) under attestation; revisit.",
+      "clinical_validation": false
+    },
+    {
+      "title": "Frozen internal adversarial v6 regressed sharply",
+      "evidence_artifact": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+      "metric_value": {
+        "total_n": 162,
+        "pass_rate": 0.518519,
+        "unsafe_leakage_rate": 0.560606,
+        "over_refusal_rate": 0.133333,
+        "was_used_for_tuning": false
+      },
+      "why_it_matters": "The newest one-pass internally authored holdout is materially worse than v5. Cross-patient, VUS, genetics, and diagnosis variants remain especially fragile, so green development-set results do not generalise reliably.",
+      "decision_taken": "V6 is locked as a warning and is not used for further tuning in this pass. The classifier is unchanged after the one-pass evaluation.",
+      "what_was_not_claimed": [
+        "adversarial safety is solved",
+        "generalized unsafe-intent detection is robust",
+        "clinical safety validation"
+      ],
+      "next_action": "Use a new development-only mutation bank for generalized research, then freeze a newer holdout before any future classifier change; prioritize external-author cases.",
       "clinical_validation": false
     },
     {

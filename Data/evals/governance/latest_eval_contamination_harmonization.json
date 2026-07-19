@@ -4,7 +4,7 @@
   "label": "eval_contamination_harmonization",
   "clinical_validation": false,
   "claim_boundary": "Harmonisation map of eval-artifact contamination categories.  Does not change any artifact's content or any release-gate decision.  Engineering credibility scaffolding only.  Not clinical validation.",
-  "generated_at": "2026-06-01T16:18:59.711561+00:00",
+  "generated_at": "2026-07-19T01:45:30.037636+00:00",
   "categories": [
     "internal_used_for_tuning",
     "internal_frozen_not_used_for_tuning",

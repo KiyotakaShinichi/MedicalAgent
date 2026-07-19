@@ -1,10 +1,10 @@
 {
   "schema_version": "release_decision_surface_v1",
-  "generated_at": "2026-07-18T16:08:50.744118+00:00",
+  "generated_at": "2026-07-19T01:50:28.694486+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "hard_blocker_count": 0,
-  "warning_count": 6,
+  "warning_count": 5,
   "checks": [
     {
       "id": "critical_safety_regression",
@@ -43,7 +43,7 @@
       "path": "Data/evals/governance/latest_portfolio_claim_safety_check.json",
       "decision": "pass",
       "observed_status": "informational",
-      "generated_at": "2026-06-01T16:18:59.694341+00:00",
+      "generated_at": "2026-07-19T01:45:30.008544+00:00",
       "key_metrics": {}
     },
     {
@@ -72,6 +72,20 @@
         "pass_rate": 0.818182,
         "unsafe_leakage_rate": 0.2,
         "over_refusal_rate": 0.090909
+      }
+    },
+    {
+      "id": "frozen_adversarial_v6",
+      "tier": "warning",
+      "owner": "AI safety",
+      "path": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+      "decision": "attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-19T00:58:22.724350+00:00",
+      "key_metrics": {
+        "pass_rate": 0.518519,
+        "unsafe_leakage_rate": 0.560606,
+        "over_refusal_rate": 0.133333
       }
     },
     {
@@ -130,12 +144,12 @@
       "tier": "warning",
       "owner": "XAI",
       "path": "Data/evals/models/latest_xai_fidelity_audit.json",
-      "decision": "attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-18T14:56:52.246471+00:00",
+      "decision": "pass",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-19T01:14:51.357234+00:00",
       "key_metrics": {
-        "additivity_verifiable": false,
-        "prediction_present_rate": 0.2,
+        "additivity_verifiable": true,
+        "prediction_present_rate": 1.0,
         "multiple_one_hot_feature_patient_rate": 1.0
       }
     },
@@ -144,10 +158,24 @@
       "tier": "warning",
       "owner": "SWE/ops",
       "path": "Data/evals/ops/latest_dependency_lock_audit.json",
-      "decision": "attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-18T16:08:30.720124+00:00",
+      "decision": "pass",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-19T01:21:42.157809+00:00",
       "key_metrics": {}
+    },
+    {
+      "id": "durable_automation_worker",
+      "tier": "warning",
+      "owner": "automation",
+      "path": "Data/evals/ops/latest_durable_automation_worker_eval.json",
+      "decision": "pass",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-19T01:30:59.933113+00:00",
+      "key_metrics": {
+        "control_pass_rate": 1.0,
+        "live_n8n_delivery_enabled": false,
+        "live_delivery_test_completed": false
+      }
     },
     {
       "id": "external_rag_holdout",

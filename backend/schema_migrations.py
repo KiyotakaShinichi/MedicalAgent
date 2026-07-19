@@ -17,6 +17,9 @@ def ensure_schema():
         cache_columns = {column["name"] for column in inspector.get_columns("agent_response_cache")}
     if "app_event_logs" in table_names:
         app_event_columns = {column["name"] for column in inspector.get_columns("app_event_logs")}
+    async_task_columns = set()
+    if "async_tasks" in table_names:
+        async_task_columns = {column["name"] for column in inspector.get_columns("async_tasks")}
 
     with engine.begin() as connection:
         if "source" not in lab_columns:
@@ -35,6 +38,31 @@ def ensure_schema():
             connection.execute(text("ALTER TABLE agent_response_cache ADD COLUMN expires_at DATETIME"))
         if "last_hit_at" not in cache_columns:
             connection.execute(text("ALTER TABLE agent_response_cache ADD COLUMN last_hit_at DATETIME"))
+        for name, ddl in {
+            "available_at": "ALTER TABLE async_tasks ADD COLUMN available_at DATETIME",
+            "lease_owner": "ALTER TABLE async_tasks ADD COLUMN lease_owner VARCHAR",
+            "lease_token": "ALTER TABLE async_tasks ADD COLUMN lease_token VARCHAR",
+            "lease_expires_at": "ALTER TABLE async_tasks ADD COLUMN lease_expires_at DATETIME",
+            "heartbeat_at": "ALTER TABLE async_tasks ADD COLUMN heartbeat_at DATETIME",
+            "recovery_count": "ALTER TABLE async_tasks ADD COLUMN recovery_count INTEGER DEFAULT 0 NOT NULL",
+            "delivery_event_id": "ALTER TABLE async_tasks ADD COLUMN delivery_event_id VARCHAR",
+            "delivery_receipt_id": "ALTER TABLE async_tasks ADD COLUMN delivery_receipt_id VARCHAR",
+            "delivery_receipt_status": "ALTER TABLE async_tasks ADD COLUMN delivery_receipt_status VARCHAR DEFAULT 'not_applicable' NOT NULL",
+            "delivery_receipt_at": "ALTER TABLE async_tasks ADD COLUMN delivery_receipt_at DATETIME",
+        }.items():
+            if async_task_columns and name not in async_task_columns:
+                connection.execute(text(ddl))
+        for ddl in (
+            "CREATE INDEX IF NOT EXISTS ix_async_tasks_available_at ON async_tasks (available_at)",
+            "CREATE INDEX IF NOT EXISTS ix_async_tasks_lease_owner ON async_tasks (lease_owner)",
+            "CREATE UNIQUE INDEX IF NOT EXISTS ix_async_tasks_lease_token ON async_tasks (lease_token)",
+            "CREATE INDEX IF NOT EXISTS ix_async_tasks_lease_expires_at ON async_tasks (lease_expires_at)",
+            "CREATE UNIQUE INDEX IF NOT EXISTS ix_async_tasks_delivery_event_id ON async_tasks (delivery_event_id)",
+            "CREATE UNIQUE INDEX IF NOT EXISTS ix_async_tasks_delivery_receipt_id ON async_tasks (delivery_receipt_id)",
+            "CREATE INDEX IF NOT EXISTS ix_async_tasks_delivery_receipt_status ON async_tasks (delivery_receipt_status)",
+        ):
+            if async_task_columns:
+                connection.execute(text(ddl))
 
     rag_log_columns = set()
     if "rag_evaluation_logs" in table_names:

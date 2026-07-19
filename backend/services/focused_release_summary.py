@@ -34,12 +34,16 @@ def build_report() -> dict[str, Any]:
     route_policy = _load("Data/evals/rag/latest_route_aware_rag_policy_eval.json")
     adversarial = _load("Data/evals/safety/latest_adversarial_safety_regression.json")
     holdout = _load("Data/evals/safety/latest_adversarial_holdout_v4_baseline.json")
+    holdout_v5 = _load("Data/evals/safety/latest_adversarial_holdout_v5_baseline.json")
+    holdout_v6 = _load("Data/evals/safety/latest_adversarial_holdout_v6_baseline.json")
     load = _load("Data/evals/ops/latest_load_test_report.json")
     runtime = _load("Data/evals/ops/latest_runtime_quality_sentinel.json")
     deployment = _load("Data/evals/ops/latest_deployment_profile_validation.json")
     holdout_rag = _load("Data/evals/rag/latest_rag_holdout_baseline_comparison.json")
     route_latency = _load("Data/evals/ops/latest_route_latency_budget.json")
-    hardening = _load("Data/evals/safety/latest_adversarial_hardening_report.json")
+    xai = _load("Data/evals/models/latest_xai_fidelity_audit.json")
+    dependencies = _load("Data/evals/ops/latest_dependency_lock_audit.json")
+    automation = _load("Data/evals/ops/latest_durable_automation_worker_eval.json")
 
     baseline_summary = rag.get("summary") or {}
     required_count = sum(1 for row in gate["artifacts"] if row["required"])
@@ -83,8 +87,33 @@ def build_report() -> dict[str, Any]:
                 "original_internal_pass_rate": original_pass_rate,
                 "holdout_v4_pass_rate": holdout.get("pass_rate"),
                 "holdout_v4_unsafe_leakage_rate": holdout.get("unsafe_leakage_rate"),
-                "canonical_headline": hardening.get("canonical_headline"),
+                "holdout_v5_pass_rate": holdout_v5.get("pass_rate"),
+                "holdout_v5_unsafe_leakage_rate": holdout_v5.get("unsafe_leakage_rate"),
+                "holdout_v6_pass_rate": holdout_v6.get("pass_rate"),
+                "holdout_v6_unsafe_leakage_rate": holdout_v6.get("unsafe_leakage_rate"),
+                "holdout_v6_over_refusal_rate": holdout_v6.get("over_refusal_rate"),
+                "canonical_headline": "Frozen internal v6 is the newest one-pass warning; it is not a tuning set.",
                 "not_solved": True,
+            },
+            "xai_mechanics": {
+                "status": xai.get("status"),
+                "patient_explanation_n": xai.get("patient_explanation_n"),
+                "additivity_verifiable": xai.get("additivity_verifiable"),
+                "additivity_pass_rate": xai.get("additivity_pass_rate"),
+                "causal_interpretation_allowed": xai.get("causal_interpretation_allowed", False),
+            },
+            "dependency_reproducibility": {
+                "status": dependencies.get("status"),
+                "transitive_lock_complete": dependencies.get("transitive_lock_complete"),
+                "environment_matches_transitive_lock": dependencies.get("environment_matches_transitive_lock"),
+                "portable_across_platforms": dependencies.get("portable_across_platforms", False),
+                "vulnerability_scan_included": dependencies.get("vulnerability_scan_included", False),
+            },
+            "automation_durability": {
+                "status": automation.get("status"),
+                "control_pass_rate": automation.get("control_pass_rate"),
+                "live_delivery_test_completed": automation.get("live_delivery_test_completed", False),
+                "delivery_receipt_is_human_acknowledgement": False,
             },
             "latency": {
                 "load_success_rate": _metric(load, "summary", "success_rate"),
@@ -106,7 +135,9 @@ def build_report() -> dict[str, Any]:
             "The no-read external-author RAG holdout remains incomplete.",
             "All ML results remain synthetic-only engineering self-tests.",
             "No clinician, genetic counselor, or external-author review has been completed.",
-            "Frozen adversarial v4 remains weak and is the canonical safety headline.",
+            "Frozen internal v6 scored 0.5185 with unsafe leakage 0.5606; it is the newest safety warning and must not be tuned against in this pass.",
+            "The exact transitive dependency lock covers CPython 3.14/Windows only and has no vulnerability scan.",
+            "Automation durability controls are code-tested, but live n8n/channel reliability is untested.",
             "Route percentile labels require at least 30 samples; smaller samples are insufficient, not ideal.",
             "Most gate entries are supporting or informational, so the focused core view is the reviewer headline.",
         ],
@@ -115,6 +146,8 @@ def build_report() -> dict[str, Any]:
             "source-governed retrieval and explicit negative-result reporting",
             "synthetic-only temporal ML/MLE evaluation and promotion boundaries",
             "deployment-shaped engineering configuration with runtime validation",
+            "mechanically verifiable synthetic-model log-odds explanation additivity",
+            "database-leased redacted engineering automation with signed receipt persistence",
         ],
         "what_this_release_cannot_claim": [
             "clinical validation or clinician approval",

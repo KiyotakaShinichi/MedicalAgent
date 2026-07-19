@@ -49,6 +49,7 @@ async def receive_delivery_receipt(
     if not result.get("valid"):
         raise HTTPException(status_code=401, detail=f"Invalid delivery receipt: {result.get('reason')}")
     receipt = result["receipt"]
+    target_type = "high_risk_alert"
     try:
         alert = record_delivery_receipt(
             db,
@@ -57,15 +58,34 @@ async def receive_delivery_receipt(
             delivery_status=receipt["delivery_status"],
             occurred_at=datetime.fromisoformat(str(receipt["occurred_at"]).replace("Z", "+00:00")),
         )
-    except LookupError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
+        serialized_target = serialize_alert(alert)
+    except LookupError:
+        from backend.services.automation_job_queue import automation_task_to_dict
+        from backend.services.automation_worker import record_automation_delivery_receipt
+
+        target_type = "automation_task"
+        try:
+            task = record_automation_delivery_receipt(
+                db,
+                event_id=receipt["event_id"],
+                receipt_id=receipt["receipt_id"],
+                delivery_status=receipt["delivery_status"],
+                occurred_at=datetime.fromisoformat(str(receipt["occurred_at"]).replace("Z", "+00:00")),
+            )
+        except LookupError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        serialized_target = automation_task_to_dict(task)
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     db.commit()
-    db.refresh(alert)
+    db.refresh(alert if target_type == "high_risk_alert" else task)
     return {
         "status": "receipt_recorded",
-        "alert": serialize_alert(alert),
+        "target_type": target_type,
+        "target": serialized_target,
+        "alert": serialized_target if target_type == "high_risk_alert" else None,
         "clinical_validation": False,
         "claim_boundary": "A channel receipt is not proof of clinician review, contact, or clinical action.",
     }
@@ -126,6 +146,13 @@ def get_automation_capabilities(context=Depends(get_admin_access_context)):
         "allowed_job_types": sorted(ALLOWED_JOB_TYPES),
         "blocked_job_types": sorted(BLOCKED_JOB_TYPES),
         "execution_enabled": execution_enabled,
+        "durable_worker_supported": True,
+        "worker_entrypoint": "python scripts/run_automation_worker.py",
+        "db_leases": True,
+        "lease_heartbeat": True,
+        "expired_lease_recovery": True,
+        "signed_delivery_receipts": True,
+        "delivery_receipt_is_human_acknowledgement": False,
         "default_mode": "dry_run",
         "phi_allowed": False,
         "clinical_validation": False,

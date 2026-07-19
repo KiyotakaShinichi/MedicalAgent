@@ -106,7 +106,21 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
         review_route = "clinician_review_required"
         final_action = "safe_refusal"
         rationale = "Tumor-marker conclusion request detected; route to clinician review."
-    elif safety.get("scope") == "urgent_or_safety_related" or _looks_immediate_danger(text):
+    elif _looks_immediate_danger(text):
+        route = "urgent_clinician_review"
+        review_route = "urgent_or_crisis_review"
+        final_action = "urgent_escalation"
+        rationale = "Urgent symptom or safety language detected before any record write."
+    elif (
+        _specific_boundary_precedes_distress(unsafe)
+        and _unsafe_block_is_authoritative(unsafe, safety)
+        and not _safe_structured_record_context(text, extracted, unsafe)
+    ):
+        route, review_route, final_action, rationale = _route_high_risk(safety, unsafe)
+        if distress.response_mode != "normal_education":
+            required_tools.extend(["detect_emotional_distress"])
+            rationale += " Distress is acknowledged without replacing the specific safety boundary."
+    elif safety.get("scope") == "urgent_or_safety_related":
         route = "urgent_clinician_review"
         review_route = "urgent_or_crisis_review"
         final_action = "urgent_escalation"
@@ -405,8 +419,8 @@ def _looks_cross_patient_record_request(text: str) -> bool:
 def _looks_tumor_marker_conclusion_request(text: str) -> bool:
     normalized = text.lower()
     return bool(
-        re.search(r"\b(ca\s*15-?3|ca\s*27\.?29|cea|tumou?r marker)\b", normalized)
-        and re.search(r"\b(prove|confirms?|means|assume|recurrence|progression|metastasis|bumalik)\b", normalized)
+        re.search(r"\b(ca\s*15-?3|ca\s*27\.?29|cea|tumou?r marker|rising marker|marker trend)\b", normalized)
+        and re.search(r"\b(prove|confirms?|means|assume|recurrence|progression|metastasis|treatment failure|therapy failed|bumalik)\b", normalized)
     )
 
 
@@ -416,11 +430,15 @@ def _safe_structured_record_context(
     unsafe: dict[str, Any],
 ) -> bool:
     normalized = text.lower()
-    if unsafe.get("is_unsafe") and not (
-        unsafe.get("family") == "treatment_change"
-        and "treatment-related change" in normalized
-    ):
-        return False
+    if unsafe.get("is_unsafe"):
+        historical_treatment_note = (
+            unsafe.get("family") == "treatment_change"
+            and extracted.get("kind") == "treatment_note"
+            and bool(re.search(r"\b(cycle|dose|infusion|treatment)\b.{0,30}\b(was|were|got|has been)?\s*(delayed|reduced|held|completed|given)\b", normalized))
+            and not bool(re.search(r"\b(should|can i|please|tell me to|recommend)\b", normalized))
+        )
+        if not historical_treatment_note and "treatment-related change" not in normalized:
+            return False
     kind = extracted.get("kind")
     if kind == "imaging":
         if re.search(r"\b(should|can i|stop|skip|delay|dose|recommend|switch|start|increase|decrease)\b", normalized):
@@ -510,6 +528,20 @@ def _unsafe_block_is_authoritative(unsafe: dict[str, Any], safety: dict[str, Any
     if unsafe.get("route") == "safe_clarification" and unsafe.get("over_refusal_risk_flag") and safety.get("level") != "high_risk":
         return False
     return True
+
+
+def _specific_boundary_precedes_distress(unsafe: dict[str, Any]) -> bool:
+    """Keep explicit decision boundaries specific while preserving warm diagnosis handling."""
+
+    return unsafe.get("family") in {
+        "genetic_risk_interpretation",
+        "vus_misinterpretation",
+        "tumor_marker_conclusion",
+        "treatment_change",
+        "dosage_request",
+        "prognosis_survival",
+        "supplement_replacement",
+    }
 
 
 def _is_distressed_diagnosis_or_response_question(safety: dict[str, Any], unsafe: dict[str, Any]) -> bool:

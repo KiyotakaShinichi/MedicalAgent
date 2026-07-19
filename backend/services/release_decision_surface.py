@@ -17,12 +17,14 @@ CHECKS: tuple[dict[str, Any], ...] = (
     {"id": "portfolio_claim_safety", "tier": "hard_blocker", "owner": "governance", "path": "Data/evals/governance/latest_portfolio_claim_safety_check.json", "status_path": ("status",), "accepted": {"informational", "strong", "acceptable", "passed"}},
     {"id": "frozen_adversarial_v4", "tier": "warning", "owner": "AI safety", "path": "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "frozen_adversarial_v5", "tier": "warning", "owner": "AI safety", "path": "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
+    {"id": "frozen_adversarial_v6", "tier": "warning", "owner": "AI safety", "path": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "rag_governance_tradeoff", "tier": "warning", "owner": "RAG", "path": "Data/evals/rag/latest_rag_governance_tradeoff.json", "status_path": ("status",), "accepted": {"acceptable"}},
     {"id": "route_latency", "tier": "warning", "owner": "SWE/ops", "path": "Data/evals/ops/latest_route_latency_budget.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "simple_baseline_superiority", "tier": "warning", "owner": "MLE", "path": "Data/evals/models/latest_synthetic_simple_baseline_audit.json", "status_path": ("status",), "accepted": {"acceptable"}},
     {"id": "synthetic_v2_stability", "tier": "warning", "owner": "MLE", "path": "Data/evals/models/latest_synthetic_v2_model_stability.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "xai_fidelity", "tier": "warning", "owner": "XAI", "path": "Data/evals/models/latest_xai_fidelity_audit.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "dependency_reproducibility", "tier": "warning", "owner": "SWE/ops", "path": "Data/evals/ops/latest_dependency_lock_audit.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
+    {"id": "durable_automation_worker", "tier": "warning", "owner": "automation", "path": "Data/evals/ops/latest_durable_automation_worker_eval.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "external_rag_holdout", "tier": "informational", "owner": "external review", "path": "Data/evals/rag/latest_rag_holdout_baseline_comparison.json", "status_path": ("status",), "accepted": set()},
     {"id": "goldset_adjudication", "tier": "informational", "owner": "external review", "path": "Data/evals/rag/latest_goldset_adjudication_readiness.json", "status_path": ("status",), "accepted": set()},
 )
@@ -85,10 +87,12 @@ def _key_metrics(check_id: str, artifact: dict[str, Any]) -> dict[str, Any]:
     candidates = {
         "frozen_adversarial_v4": ("pass_rate", "unsafe_leakage_rate", "over_refusal_rate"),
         "frozen_adversarial_v5": ("pass_rate", "unsafe_leakage_rate", "over_refusal_rate"),
+        "frozen_adversarial_v6": ("pass_rate", "unsafe_leakage_rate", "over_refusal_rate"),
         "rag_governance_tradeoff": ("improvement_proven_vs_bm25", "full_stack_recall_at_10", "bm25_recall_at_10"),
         "route_latency": ("production_ready", "insufficient_sample_count", "highest_observed_p95_ms"),
         "xai_fidelity": ("additivity_verifiable", "prediction_present_rate", "multiple_one_hot_feature_patient_rate"),
         "synthetic_v2_stability": ("synthetic_only", "clinical_validation"),
+        "durable_automation_worker": ("control_pass_rate", "live_n8n_delivery_enabled", "live_delivery_test_completed"),
     }.get(check_id, ())
     return {key: artifact.get(key, summary.get(key)) for key in candidates}
 

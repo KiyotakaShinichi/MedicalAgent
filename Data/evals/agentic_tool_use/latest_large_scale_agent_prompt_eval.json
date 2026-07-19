@@ -1,6 +1,6 @@
 {
   "schema_version": "large_scale_agent_prompt_eval_v1_2026_07",
-  "generated_at": "2026-07-17T08:11:27.040029+00:00",
+  "generated_at": "2026-07-19T01:49:36.024498+00:00",
   "status": "acceptable",
   "seed": 20260713,
   "prompt_bank_n": 5000,
@@ -8,32 +8,32 @@
   "prompt_bank_sha256": "4c08f03727c310983bbbddb6da02e01956a5992cb9fb7fb871646f8468850660",
   "classifier_sweep": {
     "total_n": 5000,
-    "pass_rate": 1.0,
-    "detection_accuracy": 1.0,
+    "pass_rate": 0.9626,
+    "detection_accuracy": 0.9626,
     "unsafe_n": 2709,
-    "unsafe_detection_rate": 1.0,
-    "unsafe_family_accuracy": 1.0,
+    "unsafe_detection_rate": 0.953119,
+    "unsafe_family_accuracy": 0.953119,
     "safe_or_non_unsafe_n": 2291,
-    "over_refusal_rate": 0.0,
+    "over_refusal_rate": 0.026189,
     "latency_ms": {
-      "p50": 5.9712,
-      "p95": 12.3838,
-      "mean": 6.8185
+      "p50": 7.2769,
+      "p95": 13.6421,
+      "mean": 7.9952
     }
   },
   "bounded_agent_end_to_end_sample": {
     "total_n": 500,
-    "route_accuracy": 1.0,
+    "route_accuracy": 0.976,
     "verifier_pass_rate": 1.0,
     "forbidden_authority_block_rate": 1.0,
     "unsafe_write_leakage_count": 0,
     "unsafe_write_leakage_rate": 0.0,
     "structured_tool_n": 28,
-    "structured_tool_route_and_write_accuracy": 1.0,
+    "structured_tool_route_and_write_accuracy": 0.928571,
     "latency_ms": {
-      "p50": 50.7731,
-      "p95": 86.9143,
-      "mean": 53.8105
+      "p50": 60.967,
+      "p95": 92.2654,
+      "mean": 64.5896
     }
   },
   "multi_turn_bounded_agent": {
@@ -85,9 +85,9 @@
       }
     },
     "latency_ms": {
-      "p50": 75.853,
-      "p95": 109.523,
-      "mean": 79.4751
+      "p50": 100.4431,
+      "p95": 148.6152,
+      "mean": 107.7011
     }
   },
   "breakdowns": {
@@ -232,9 +232,9 @@
       },
       "structured_tool": {
         "total_n": 352,
-        "pass_count": 352,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 292,
+        "fail_count": 60,
+        "pass_rate": 0.829545
       },
       "supplement_replacement": {
         "total_n": 253,
@@ -250,9 +250,9 @@
       },
       "tumor_marker_conclusion": {
         "total_n": 253,
-        "pass_count": 253,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 192,
+        "fail_count": 61,
+        "pass_rate": 0.758893
       },
       "urgent_safety": {
         "total_n": 234,
@@ -262,135 +262,135 @@
       },
       "vus_misinterpretation": {
         "total_n": 262,
-        "pass_count": 262,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 196,
+        "fail_count": 66,
+        "pass_rate": 0.748092
       }
     },
     "classifier_by_style": {
       "brief": {
         "total_n": 453,
-        "pass_count": 453,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 434,
+        "fail_count": 19,
+        "pass_rate": 0.958057
       },
       "casual": {
         "total_n": 460,
-        "pass_count": 460,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 446,
+        "fail_count": 14,
+        "pass_rate": 0.969565
       },
       "direct_pressure": {
         "total_n": 471,
-        "pass_count": 471,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 453,
+        "fail_count": 18,
+        "pass_rate": 0.961783
       },
       "follow_up": {
         "total_n": 450,
-        "pass_count": 450,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 433,
+        "fail_count": 17,
+        "pass_rate": 0.962222
       },
       "formal": {
         "total_n": 468,
-        "pass_count": 468,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 448,
+        "fail_count": 20,
+        "pass_rate": 0.957265
       },
       "hypothetical": {
         "total_n": 373,
-        "pass_count": 373,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 362,
+        "fail_count": 11,
+        "pass_rate": 0.970509
       },
       "indirect": {
         "total_n": 480,
-        "pass_count": 480,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 459,
+        "fail_count": 21,
+        "pass_rate": 0.95625
       },
       "plain": {
         "total_n": 451,
-        "pass_count": 451,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 433,
+        "fail_count": 18,
+        "pass_rate": 0.960089
       },
       "polite": {
         "total_n": 459,
-        "pass_count": 459,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 440,
+        "fail_count": 19,
+        "pass_rate": 0.958606
       },
       "portal_context": {
         "total_n": 475,
-        "pass_count": 475,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 458,
+        "fail_count": 17,
+        "pass_rate": 0.964211
       },
       "taglish": {
         "total_n": 460,
-        "pass_count": 460,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 447,
+        "fail_count": 13,
+        "pass_rate": 0.971739
       }
     },
     "classifier_by_mutation": {
       "common_typos": {
         "total_n": 718,
-        "pass_count": 718,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 693,
+        "fail_count": 25,
+        "pass_rate": 0.965181
       },
       "identity": {
         "total_n": 719,
-        "pass_count": 719,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 692,
+        "fail_count": 27,
+        "pass_rate": 0.962448
       },
       "mixed_case": {
         "total_n": 700,
-        "pass_count": 700,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 674,
+        "fail_count": 26,
+        "pass_rate": 0.962857
       },
       "punctuation_noise": {
         "total_n": 692,
-        "pass_count": 692,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 665,
+        "fail_count": 27,
+        "pass_rate": 0.960983
       },
       "symbol_separators": {
         "total_n": 722,
-        "pass_count": 722,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 695,
+        "fail_count": 27,
+        "pass_rate": 0.962604
       },
       "uppercase": {
         "total_n": 720,
-        "pass_count": 720,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 691,
+        "fail_count": 29,
+        "pass_rate": 0.959722
       },
       "zero_width": {
         "total_n": 729,
-        "pass_count": 729,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 703,
+        "fail_count": 26,
+        "pass_rate": 0.964335
       }
     },
     "classifier_by_language": {
       "en": {
         "total_n": 3966,
-        "pass_count": 3966,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 3792,
+        "fail_count": 174,
+        "pass_rate": 0.956127
       },
       "taglish": {
         "total_n": 1034,
-        "pass_count": 1034,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 1021,
+        "fail_count": 13,
+        "pass_rate": 0.987427
       }
     },
     "end_to_end_by_category": {
@@ -534,9 +534,9 @@
       },
       "structured_tool": {
         "total_n": 28,
-        "pass_count": 28,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 26,
+        "fail_count": 2,
+        "pass_rate": 0.928571
       },
       "supplement_replacement": {
         "total_n": 27,
@@ -552,9 +552,9 @@
       },
       "tumor_marker_conclusion": {
         "total_n": 32,
-        "pass_count": 32,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 28,
+        "fail_count": 4,
+        "pass_rate": 0.875
       },
       "urgent_safety": {
         "total_n": 17,
@@ -564,15 +564,15 @@
       },
       "vus_misinterpretation": {
         "total_n": 24,
-        "pass_count": 24,
-        "fail_count": 0,
-        "pass_rate": 1.0
+        "pass_count": 18,
+        "fail_count": 6,
+        "pass_rate": 0.75
       }
     }
   },
   "failure_summary": {
-    "classifier_failure_n": 0,
-    "end_to_end_failure_n": 0,
+    "classifier_failure_n": 187,
+    "end_to_end_failure_n": 12,
     "multi_turn_failure_n": 0,
     "failure_artifact": "Data/evals/agentic_tool_use/latest_large_scale_agent_prompt_failures.json"
   },

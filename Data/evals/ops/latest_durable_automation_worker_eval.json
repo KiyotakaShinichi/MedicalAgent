@@ -1,0 +1,29 @@
+{
+  "schema_version": "durable_automation_worker_eval_v1",
+  "generated_at": "2026-07-19T01:30:59.933113+00:00",
+  "status": "acceptable",
+  "controls": {
+    "database_backed_queue": true,
+    "conditional_lease_claim": true,
+    "lease_owner_and_token": true,
+    "periodic_heartbeat": true,
+    "expired_lease_recovery": true,
+    "bounded_retry_and_dead_letter": true,
+    "idempotency_key_hash": true,
+    "signed_hmac_dispatch": true,
+    "signed_receipt_validation": true,
+    "delivery_receipt_persisted": true,
+    "phi_payload_blocklist": true
+  },
+  "control_pass_rate": 1.0,
+  "worker_entrypoint": "python scripts/run_automation_worker.py",
+  "live_n8n_delivery_enabled": false,
+  "live_delivery_test_completed": false,
+  "delivery_receipt_is_human_acknowledgement": false,
+  "clinical_action_automated": false,
+  "patient_facing_message_automation_allowed": false,
+  "synthetic_test_recipient_only": true,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This artifact verifies code-level durability controls for redacted engineering jobs. It does not prove external channel reliability, clinician acknowledgement, emergency coverage, clinical review, patient benefit, or healthcare production readiness."
+}

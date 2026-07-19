@@ -456,7 +456,7 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         ("lesion", "mass", "scan", "finding", "pathology", "lab", "cancer", "malignant", "spread", "recurrence", "metastatic", "cancer-free"),
     ),
     "tumor_marker_conclusion": (
-        ("marker", "ca 15", "ca15", "ca 27", "ca27", "cea", "number climbed", "number rose", "level rose"),
+        ("marker", "marker trend", "rising marker", "ca 15", "ca15", "ca 27", "ca27", "cea", "number climbed", "number rose", "level rose"),
         ("confirm", "prove", "definite", "settle", "assume", "therapy failed", "treatment failed", "disease returned", "recurrence", "metastasis", "progression", "replace imaging"),
     ),
     "treatment_change": (
@@ -468,13 +468,13 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         ("dose", "dosage", "mg", "tablet", "tablets", "pill", "pills", "injection amount", "medicine amount", "medication amount"),
     ),
     "prognosis_survival": (
-        ("estimate", "rank", "calculate", "quantify", "tell me", "predict", "translate"),
-        ("remaining months", "life remains", "surviving", "survival", "die soon", "alive next year", "life expectancy", "cure percentage", "personal timeline", "prognosis", "outlook", "mabubuhay"),
+        ("estimate", "rank", "calculate", "quantify", "tell me", "predict", "translate", "roughly"),
+        ("remaining months", "remaining lifetime", "life remains", "surviving", "survival", "die soon", "alive next year", "life expectancy", "survival countdown", "cure percentage", "personal timeline", "prognosis", "outlook", "mabubuhay"),
     ),
     "supplement_replacement": (
-        ("natural", "herb", "herbal", "supplement", "vitamin", "cannabis", "turmeric", "cbd"),
-        ("replace", "avoid", "instead", "stop treatment", "natural-only", "na lang", "cure"),
-        ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "medicine", "medication", "gamot"),
+        ("natural", "herb", "herbs", "herbal", "supplement", "vitamin", "vitamins", "cannabis", "turmeric", "cbd"),
+        ("replace", "avoid", "instead", "stop treatment", "natural-only", "na lang", "cure", "only therapy", "only cancer therapy", "without pharmacist"),
+        ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "medicine", "medication", "cancer", "gamot"),
     ),
 }
 
@@ -493,6 +493,7 @@ def classify_unsafe_intent(text: str) -> dict[str, Any]:
         return _result("none", 0.0, "low_risk", "education_or_tracking", "none", False)
 
     best: dict[str, Any] | None = None
+    best_selection_score = -1.0
     for family in FAMILIES:
         neg_score = _prototype_score(normalized, family.safe_negative_prototypes)
         pattern_match = _pattern_match(normalized, family.deterministic_patterns)
@@ -526,8 +527,10 @@ def classify_unsafe_intent(text: str) -> dict[str, Any]:
             matched_pattern=pattern_match,
             matched_semantic_rule=compositional_rule,
         )
-        if best is None or candidate["confidence"] > best["confidence"]:
+        selection_score = candidate["confidence"] + _family_specificity_bonus(normalized, family.family)
+        if best is None or selection_score > best_selection_score:
             best = candidate
+            best_selection_score = selection_score
 
     if best and best["confidence"] >= 0.62 and not (best["over_refusal_risk_flag"] and best["confidence"] < 0.88):
         return best
@@ -708,6 +711,7 @@ def _contains_cue(text: str, cue: str) -> bool:
 def _looks_like_safe_education(text: str) -> bool:
     anchors = SAFE_EDUCATIONAL_ANCHORS + (
         "what questions should i ask",
+        "what should i ask",
         "how are",
         "how do",
         "as a general concept",
@@ -719,6 +723,27 @@ def _looks_like_safe_education(text: str) -> bool:
         "should i take", "should i stop", "should i change", "should i skip", "tell me whether",
     )
     return not any(cue in text for cue in personal_or_decision)
+
+
+def _family_specificity_bonus(text: str, family: str) -> float:
+    """Prefer domain-specific boundaries over broad diagnosis/treatment ties."""
+
+    if family == "vus_misinterpretation" and re.search(
+        r"\b(vus|variant of uncertain significance|uncertain variant|unclear variant|inconclusive genetic)\b",
+        text,
+    ):
+        return 0.04
+    if family == "tumor_marker_conclusion" and re.search(
+        r"\b(ca\s*15(?:-|\s)?3|ca\s*27(?:\.|\s)?29|cea|tumou?r marker|rising marker|marker trend)\b",
+        text,
+    ):
+        return 0.04
+    if family == "supplement_replacement" and re.search(
+        r"\b(herbs?|herbal|supplements?|vitamins?|cannabis|turmeric|cbd|natural)\b",
+        text,
+    ):
+        return 0.03
+    return 0.0
 
 
 __all__ = ["FAMILIES", "classify_unsafe_intent", "evaluate_unsafe_intent_classifier"]

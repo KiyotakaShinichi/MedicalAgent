@@ -1,72 +1,42 @@
 {
-  "schema_version": "dependency_lock_audit_v1_2026_07",
-  "generated_at": "2026-07-18T16:08:30.720124+00:00",
-  "status": "needs_attention",
+  "schema_version": "dependency_lock_audit_v2_2026_07",
+  "generated_at": "2026-07-19T01:21:42.157809+00:00",
+  "status": "acceptable",
   "direct_requirement_count": 27,
   "locked_direct_requirement_count": 27,
   "lock_complete": true,
   "missing_from_lock": [],
   "unexpected_in_lock": [],
-  "environment_matches_lock": false,
-  "installed_missing": [
-    "psycopg2-binary",
-    "redis"
-  ],
-  "installed_version_drift": [
-    {
-      "package": "pandas",
-      "locked": "3.0.1",
-      "installed": "3.0.2"
-    },
-    {
-      "package": "google-genai",
-      "locked": "1.73.1",
-      "installed": "2.0.0"
-    },
-    {
-      "package": "groq",
-      "locked": "0.37.1",
-      "installed": "1.2.0"
-    },
-    {
-      "package": "python-dotenv",
-      "locked": "1.2.1",
-      "installed": "1.2.2"
-    },
-    {
-      "package": "sqlalchemy",
-      "locked": "2.0.46",
-      "installed": "2.0.49"
-    },
-    {
-      "package": "alembic",
-      "locked": "1.18.5",
-      "installed": "1.18.4"
-    },
-    {
-      "package": "pypdf",
-      "locked": "6.14.2",
-      "installed": "6.10.2"
-    },
-    {
-      "package": "pillow",
-      "locked": "12.1.1",
-      "installed": "12.2.0"
-    },
-    {
-      "package": "numpy",
-      "locked": "2.4.2",
-      "installed": "2.4.4"
-    },
-    {
-      "package": "sentence-transformers",
-      "locked": "5.2.3",
-      "installed": "5.4.1"
-    }
-  ],
-  "transitive_lock_complete": false,
+  "environment_matches_lock": true,
+  "installed_missing": [],
+  "installed_version_drift": [],
+  "transitive_lock_path": "requirements-lock-py314-win.txt",
+  "transitive_lock_sha256": "e9b54f75883efbf3795145f08c6995ae69824675c574ef9f72ee9c487555eedb",
+  "transitive_locked_distribution_count": 100,
+  "installed_distribution_count": 100,
+  "direct_requirements_covered_by_transitive_lock": true,
+  "transitive_lock_complete": true,
+  "environment_matches_transitive_lock": true,
+  "transitive_missing_from_lock": [],
+  "transitive_missing_from_environment": [],
+  "transitive_version_drift": [],
+  "environment_fingerprint": {
+    "python_version": "3.14.3",
+    "python_implementation": "CPython",
+    "platform_system": "Windows",
+    "platform_machine": "AMD64",
+    "platform_python_tag": "cp314"
+  },
+  "locked_environment_fingerprint": {
+    "python_version": "3.14.3",
+    "python_implementation": "CPython",
+    "platform_system": "Windows",
+    "platform_machine": "AMD64",
+    "platform_python_tag": "cp314"
+  },
+  "portable_across_platforms": false,
   "vulnerability_scan_included": false,
   "clinical_validation": false,
   "healthcare_production_ready": false,
-  "claim_boundary": "Direct dependency pinning improves engineering reproducibility only. It is not a complete transitive lock, vulnerability assessment, compliance certification, or healthcare production proof."
+  "claim_boundary": "The exact transitive lock reproduces the declared Python/Windows environment only. It is not a cross-platform lock, vulnerability assessment, compliance certification, clinical validation, or healthcare production proof."
 }

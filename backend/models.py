@@ -511,6 +511,16 @@ class AsyncTask(Base):
     queued_at = Column(DateTime(timezone=True), server_default=func.now())
     started_at = Column(DateTime(timezone=True), nullable=True)
     finished_at = Column(DateTime(timezone=True), nullable=True)
+    available_at = Column(DateTime(timezone=True), nullable=True, index=True)
+    lease_owner = Column(String, nullable=True, index=True)
+    lease_token = Column(String, nullable=True, unique=True, index=True)
+    lease_expires_at = Column(DateTime(timezone=True), nullable=True, index=True)
+    heartbeat_at = Column(DateTime(timezone=True), nullable=True)
+    recovery_count = Column(Integer, nullable=False, default=0)
+    delivery_event_id = Column(String, nullable=True, unique=True, index=True)
+    delivery_receipt_id = Column(String, nullable=True, unique=True, index=True)
+    delivery_receipt_status = Column(String, nullable=False, default="not_applicable", index=True)
+    delivery_receipt_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class AgentResponseCache(Base):

@@ -651,6 +651,19 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "durable_automation_worker",
+        "title": "Durable automation worker controls",
+        "path": "Data/evals/ops/latest_durable_automation_worker_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "control_pass_rate": ["control_pass_rate"],
+            "live_n8n_delivery_enabled": ["live_n8n_delivery_enabled"],
+            "live_delivery_test_completed": ["live_delivery_test_completed"],
+            "clinical_validation": ["clinical_validation"],
+        },
+    },
+    {
         "id": "patient_xai_readability_dossier",
         "title": "Patient XAI readability dossier",
         "path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",

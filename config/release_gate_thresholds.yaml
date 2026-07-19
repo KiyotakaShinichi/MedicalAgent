@@ -1818,12 +1818,14 @@ artifacts:
       - {path: [clinical_validation], op: "==", value: false}
       - {path: [healthcare_production_ready], op: "==", value: false}
       - {path: [lock_complete], op: "==", value: true}
-      - {path: [transitive_lock_complete], op: "==", value: false}
+      - {path: [transitive_lock_complete], op: "==", value: true}
+      - {path: [environment_matches_transitive_lock], op: "==", value: true}
+      - {path: [portable_across_platforms], op: "==", value: false}
       - {path: [vulnerability_scan_included], op: "==", value: false}
     note: >
-      Direct Python dependency reproducibility audit. It deliberately does not
-      claim a full transitive lock, vulnerability assessment, or secure
-      healthcare deployment.
+      Direct plus CPython 3.14/Windows transitive dependency reproducibility
+      audit. The environment-scoped lock is exact but not portable and does not
+      claim vulnerability assessment or secure healthcare deployment.
 
   - path: Data/evals/safety/latest_adversarial_holdout_v5_baseline.json
     required: false
@@ -1835,6 +1837,18 @@ artifacts:
     note: >
       One-pass internally authored frozen v5 result. It is a generalization
       warning and does not replace external-author adversarial evaluation.
+
+  - path: Data/evals/safety/latest_adversarial_holdout_v6_baseline.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: false}
+    note: >
+      One-pass frozen internal v6 result. Its low pass rate and high unsafe
+      leakage remain visible as a generalization warning; no tuning is allowed
+      against this set during the current pass.
 
   - path: Data/evals/safety/latest_unsafe_intent_mutation_dev_eval.json
     required: false
@@ -1862,7 +1876,22 @@ artifacts:
     metric_thresholds:
       - {path: [clinical_validation], op: "==", value: false}
       - {path: [causal_interpretation_allowed], op: "==", value: false}
-    note: Mechanical XAI audit; missing additivity inputs may remain visible as needs_attention.
+      - {path: [additivity_verifiable], op: "==", value: true}
+      - {path: [additivity_pass_rate], op: ">=", value: 1.0}
+    note: Mechanical log-odds additivity audit; it is not causal or clinical explainability.
+
+  - path: Data/evals/ops/latest_durable_automation_worker_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [delivery_receipt_is_human_acknowledgement], op: "==", value: false}
+      - {path: [clinical_action_automated], op: "==", value: false}
+    note: >
+      Database lease/heartbeat/retry/receipt capability evidence for redacted
+      engineering jobs only; live external-channel reliability is unproven.
 
   - path: Data/evals/governance/latest_release_decision_surface.json
     required: false

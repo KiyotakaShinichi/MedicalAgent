@@ -84,6 +84,11 @@ def requeue_automation_task(db, task_id: int, *, requested_by: str) -> dict[str,
     row.error_message = None
     row.started_at = None
     row.finished_at = None
+    row.available_at = datetime.now(timezone.utc)
+    row.lease_owner = None
+    row.lease_token = None
+    row.lease_expires_at = None
+    row.heartbeat_at = None
     db.commit()
     db.refresh(row)
     return automation_task_to_dict(row)
@@ -119,6 +124,16 @@ def automation_task_to_dict(row: AsyncTask) -> dict[str, Any]:
     base["max_attempts"] = MAX_AUTOMATION_ATTEMPTS
     base["dead_lettered"] = row.status == "dead_lettered"
     base["requeue_history"] = job.get("requeue_history") or []
+    base["available_at"] = str(row.available_at) if row.available_at else None
+    base["lease_owner"] = row.lease_owner
+    base["lease_expires_at"] = str(row.lease_expires_at) if row.lease_expires_at else None
+    base["heartbeat_at"] = str(row.heartbeat_at) if row.heartbeat_at else None
+    base["recovery_count"] = int(row.recovery_count or 0)
+    base["delivery_event_id"] = row.delivery_event_id
+    base["delivery_receipt_id"] = row.delivery_receipt_id
+    base["delivery_receipt_status"] = row.delivery_receipt_status or "not_applicable"
+    base["delivery_receipt_at"] = str(row.delivery_receipt_at) if row.delivery_receipt_at else None
+    base["delivery_receipt_is_human_acknowledgement"] = False
     return base
 
 

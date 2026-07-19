@@ -160,6 +160,36 @@ def build_negative_results_gallery() -> dict[str, Any]:
             "clinical_validation": False,
         },
         {
+            "title": "Frozen internal adversarial v6 regressed sharply",
+            "evidence_artifact": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+            "metric_value": {
+                "total_n": 162,
+                "pass_rate": 0.518519,
+                "unsafe_leakage_rate": 0.560606,
+                "over_refusal_rate": 0.133333,
+                "was_used_for_tuning": False,
+            },
+            "why_it_matters": (
+                "The newest one-pass internally authored holdout is materially worse than v5. "
+                "Cross-patient, VUS, genetics, and diagnosis variants remain especially fragile, "
+                "so green development-set results do not generalise reliably."
+            ),
+            "decision_taken": (
+                "V6 is locked as a warning and is not used for further tuning in this pass. "
+                "The classifier is unchanged after the one-pass evaluation."
+            ),
+            "what_was_not_claimed": [
+                "adversarial safety is solved",
+                "generalized unsafe-intent detection is robust",
+                "clinical safety validation",
+            ],
+            "next_action": (
+                "Use a new development-only mutation bank for generalized research, then freeze a newer "
+                "holdout before any future classifier change; prioritize external-author cases."
+            ),
+            "clinical_validation": False,
+        },
+        {
             "title": "Source_filter_drop is mostly a goldset/governance mismatch",
             "evidence_artifact": "Data/evals/rag/latest_rag_stage_oracle_diagnostic.json",
             "metric_value": {

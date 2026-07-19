@@ -8,7 +8,13 @@ The core request schedules one process-local background enrichment job per patie
 
 On the July 15, 2026 local engineering profile for synthetic patient P001, the records-first response was approximately 0.38 seconds while the old cold synchronous engineering bundle was approximately 11.9 seconds. These are local development measurements, not production latency claims. The UI keeps records visible if enrichment fails.
 
-The worker is single-process demo infrastructure. It is not a durable distributed queue. A multi-worker deployment would require Redis plus Celery/RQ/Arq or an equivalent managed job service, durable retry ownership, and cross-worker cache coordination.
+Patient-report enrichment remains a single-process cache-warming pool. Separately,
+admin engineering automation now uses database leases, heartbeats, expiry
+recovery, bounded retries, and dead letters through
+`scripts/run_automation_worker.py`. This does not make either subsystem a
+managed distributed queue; a multi-host deployment still needs a reviewed
+queue/database topology, process supervision, cross-worker cache coordination,
+and operational load/failure testing.
 
 ## Why the 0-100 index is not patient-facing
 

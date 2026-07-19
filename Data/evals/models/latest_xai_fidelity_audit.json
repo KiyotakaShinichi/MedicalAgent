@@ -1,36 +1,41 @@
 {
-  "schema_version": "xai_fidelity_audit_v1",
-  "generated_at": "2026-07-18T14:56:52.246471+00:00",
-  "status": "needs_attention",
+  "schema_version": "xai_fidelity_audit_v2",
+  "generated_at": "2026-07-19T01:14:51.357234+00:00",
+  "status": "acceptable",
   "method": "shap_linear_explainer_logistic_regression",
   "shap_available": true,
   "patient_explanation_n": 600,
-  "contribution_n": 7194,
+  "contribution_n": 19800,
   "finite_contribution_rate": 1.0,
   "direction_sign_consistency_rate": 1.0,
   "duplicate_feature_patient_rate": 0.0,
   "multiple_one_hot_feature_patient_rate": 1.0,
-  "near_outcome_proxy_patient_rate": 0.99,
-  "prediction_present_rate": 0.2,
-  "base_value_present_rate": 0.0,
-  "additivity_verifiable": false,
+  "near_outcome_proxy_patient_rate": 1.0,
+  "prediction_present_rate": 1.0,
+  "base_value_present_rate": 1.0,
+  "additivity_verifiable": true,
+  "additivity_output_space": "log_odds",
+  "additivity_tolerance_log_odds": 1e-05,
+  "additivity_pass_rate": 1.0,
+  "max_absolute_additivity_residual_log_odds": 6e-10,
+  "mean_absolute_additivity_residual_log_odds": 1.57e-10,
   "rank_stability_evaluated": false,
   "causal_interpretation_allowed": false,
   "presentation_risks": [
     "Centered one-hot SHAP values can display several mutually exclusive categories and confuse users.",
     "Near-outcome proxy features can make explanations look more intelligent than the synthetic target construction warrants.",
-    "Without prediction and base/expected value exports, SHAP additivity cannot be independently checked."
+    "Additivity verifies arithmetic in model-output space; it does not establish clinical validity or causal meaning."
   ],
   "representative_risks": [
     {
       "patient_id": "COMPV5-BRCA-0001",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
-        "stage_IV",
-        "stage_IIIA",
+        "stage_IIA",
         "stage_IIB",
+        "stage_IIIA",
         "stage_IIIB",
-        "stage_IIA"
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -40,10 +45,11 @@
       "patient_id": "COMPV5-BRCA-0002",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
+        "stage_IIA",
         "stage_IIB",
-        "stage_IV",
         "stage_IIIA",
-        "stage_IIIB"
+        "stage_IIIB",
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -53,19 +59,25 @@
       "patient_id": "COMPV5-BRCA-0003",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
+        "stage_IIA",
         "stage_IIB",
-        "stage_IV",
-        "stage_IIA"
+        "stage_IIIA",
+        "stage_IIIB",
+        "stage_IV"
       ],
-      "near_outcome_proxy_features": []
+      "near_outcome_proxy_features": [
+        "mri_percent_change_from_baseline"
+      ]
     },
     {
       "patient_id": "COMPV5-BRCA-0004",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
+        "stage_IIA",
         "stage_IIB",
-        "stage_IV",
-        "stage_IIIB"
+        "stage_IIIA",
+        "stage_IIIB",
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -75,9 +87,11 @@
       "patient_id": "COMPV5-BRCA-0005",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
+        "stage_IIA",
         "stage_IIB",
-        "stage_IV",
-        "stage_IIIA"
+        "stage_IIIA",
+        "stage_IIIB",
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -87,11 +101,11 @@
       "patient_id": "COMPV5-BRCA-0006",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
-        "stage_IV",
+        "stage_IIA",
         "stage_IIB",
         "stage_IIIA",
-        "stage_IIA",
-        "stage_IIIB"
+        "stage_IIIB",
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -101,10 +115,11 @@
       "patient_id": "COMPV5-BRCA-0007",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
-        "stage_IV",
-        "stage_IIIA",
+        "stage_IIA",
         "stage_IIB",
-        "stage_IIIB"
+        "stage_IIIA",
+        "stage_IIIB",
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -114,11 +129,11 @@
       "patient_id": "COMPV5-BRCA-0008",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
-        "stage_IV",
-        "stage_IIIA",
+        "stage_IIA",
         "stage_IIB",
+        "stage_IIIA",
         "stage_IIIB",
-        "stage_IIA"
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -128,11 +143,11 @@
       "patient_id": "COMPV5-BRCA-0009",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
-        "stage_IV",
         "stage_IIA",
         "stage_IIB",
+        "stage_IIIA",
         "stage_IIIB",
-        "stage_IIIA"
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -142,9 +157,11 @@
       "patient_id": "COMPV5-BRCA-0010",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
+        "stage_IIA",
         "stage_IIB",
-        "stage_IV",
-        "stage_IIIA"
+        "stage_IIIA",
+        "stage_IIIB",
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -154,10 +171,11 @@
       "patient_id": "COMPV5-BRCA-0011",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
-        "stage_IIB",
-        "stage_IV",
         "stage_IIA",
-        "stage_IIIB"
+        "stage_IIB",
+        "stage_IIIA",
+        "stage_IIIB",
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -167,9 +185,11 @@
       "patient_id": "COMPV5-BRCA-0012",
       "duplicate_features": [],
       "multiple_mutually_exclusive_one_hot_features": [
+        "stage_IIA",
         "stage_IIB",
-        "stage_IV",
-        "stage_IIA"
+        "stage_IIIA",
+        "stage_IIIB",
+        "stage_IV"
       ],
       "near_outcome_proxy_features": [
         "mri_percent_change_from_baseline"
@@ -177,7 +197,6 @@
     }
   ],
   "required_next_actions": [
-    "export model prediction and SHAP base value per row",
     "collapse mutually exclusive one-hot groups for patient-facing display",
     "separate near-outcome proxy features from ordinary context features",
     "measure explanation rank stability across resamples before promotion"

@@ -1,13 +1,20 @@
 # Dependency reproducibility
 
-`requirements-lock.txt` pins the direct Python dependencies resolved for the
-July 2026 engineering environment. `python scripts/run_dependency_lock_audit.py`
-checks direct lock coverage and reports packages missing or drifting in the
-current interpreter.
+`requirements-lock.txt` pins direct Python dependencies. The generated
+`requirements-lock-py314-win.txt` captures every installed distribution for the
+known-good CPython 3.14 Windows engineering environment, together with its
+interpreter/platform fingerprint. Refresh and audit it from that environment:
 
-This snapshot is intentionally described as a direct-dependency lock. It does
-not fully pin the transitive dependency graph, perform vulnerability scanning,
-prove secure deployment, establish compliance, or make NLCare healthcare
-production ready. A deployment pipeline should additionally build from a
-reviewed container digest, produce an SBOM, scan transitive packages and the
-container, sign the image, and verify it in a separate environment.
+```powershell
+.\.venv\Scripts\python.exe scripts\run_dependency_lock_audit.py --refresh-transitive-lock
+```
+
+The audit reports direct-lock drift, transitive graph drift, missing or extra
+distributions, the lock SHA-256, and an environment-fingerprint mismatch.
+
+This transitive lock is intentionally platform-scoped. It does not reproduce
+the Python 3.11 Linux CI environment, perform vulnerability scanning, prove
+secure deployment, establish compliance, or make NLCare healthcare production
+ready. A deployment pipeline still needs a separately generated Linux lock,
+reviewed container digest, SBOM, transitive/container scans, image signing, and
+verification in an isolated environment.

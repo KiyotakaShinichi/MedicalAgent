@@ -7,78 +7,78 @@
   "data": [
     {
       "feature": "mri_percent_change_from_baseline",
-      "importance": 2.782347,
+      "importance": 2.782867,
       "meaning": "MRI tumor size change over treatment cycles."
     },
     {
       "feature": "mri_tumor_size_cm",
-      "importance": 1.411083,
+      "importance": 1.41462,
       "meaning": "Latest per-cycle synthetic MRI tumor size."
     },
     {
       "feature": "cycle",
-      "importance": 0.789669,
+      "importance": 0.776907,
       "meaning": "Synthetic model input feature."
     },
     {
       "feature": "stage_IV",
-      "importance": 0.743642,
+      "importance": 0.762289,
       "meaning": "Synthetic cancer stage category."
     },
     {
       "feature": "stage_IIB",
-      "importance": 0.378202,
+      "importance": 0.376953,
       "meaning": "Synthetic cancer stage category."
     },
     {
       "feature": "stage_IIIA",
-      "importance": 0.139577,
-      "meaning": "Synthetic cancer stage category."
-    },
-    {
-      "feature": "stage_IIA",
-      "importance": 0.123294,
+      "importance": 0.124902,
       "meaning": "Synthetic cancer stage category."
     },
     {
       "feature": "stage_IIIB",
-      "importance": 0.118361,
+      "importance": 0.115238,
+      "meaning": "Synthetic cancer stage category."
+    },
+    {
+      "feature": "stage_IIA",
+      "importance": 0.108505,
       "meaning": "Synthetic cancer stage category."
     },
     {
       "feature": "pre_wbc",
-      "importance": 0.092812,
+      "importance": 0.085267,
       "meaning": "Synthetic model input feature."
     },
     {
       "feature": "pre_anc",
-      "importance": 0.074718,
+      "importance": 0.079134,
       "meaning": "Synthetic model input feature."
     },
     {
       "feature": "nadir_hemoglobin",
-      "importance": 0.074228,
+      "importance": 0.071484,
       "meaning": "Lowest hemoglobin signal after treatment."
     },
     {
       "feature": "nadir_anc",
-      "importance": 0.068838,
+      "importance": 0.068871,
       "meaning": "Lowest neutrophil count signal after treatment."
     },
     {
       "feature": "dose_delayed",
-      "importance": 0.04573,
+      "importance": 0.047871,
       "meaning": "Whether a treatment cycle was delayed."
     },
     {
       "feature": "age",
-      "importance": 0.039682,
+      "importance": 0.0455,
       "meaning": "Synthetic model input feature."
     },
     {
-      "feature": "molecular_subtype_triple-negative",
-      "importance": 0.037834,
-      "meaning": "Synthetic molecular subtype category."
+      "feature": "recovery_hemoglobin",
+      "importance": 0.042469,
+      "meaning": "Synthetic model input feature."
     }
   ]
 }
