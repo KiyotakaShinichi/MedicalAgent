@@ -33,10 +33,13 @@ def get_patient_conversation_state(patient_id: str) -> PatientConversationState:
 
 def remember_turn(patient_id: str, role: str, message: str, *, actions: list[dict[str, Any]] | None = None) -> None:
     state = get_patient_conversation_state(patient_id)
+    role_name = str(role or "unknown").lower()
     state.messages.append({
-        "role": role,
+        "role": role_name,
         "message": str(message or "")[:2000],
         "timestamp": time.time(),
+        "trust": "untrusted_user_content" if role_name == "user" else "assistant_generated_context",
+        "authoritative_patient_record": False,
     })
     for action in actions or []:
         if str(action.get("type", "")).startswith("saved_"):
@@ -79,6 +82,12 @@ def state_snapshot(patient_id: str) -> dict[str, Any]:
         "pending_actions": {
             key: {k: v for k, v in value.items() if k != "created_at"}
             for key, value in state.pending_actions.items()
+        },
+        "memory_contract": {
+            "scope": "process_local_short_term_context",
+            "authoritative_patient_record": False,
+            "user_messages_are_untrusted": True,
+            "ttl_seconds": DEFAULT_TTL_SECONDS,
         },
     }
 

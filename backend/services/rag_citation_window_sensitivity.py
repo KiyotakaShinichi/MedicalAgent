@@ -41,11 +41,11 @@ def build_citation_window_sensitivity(
         if row["cited_context_k"] < 5
         and row["citation_precision"] >= baseline.get("citation_precision", 0)
     ]
-    best = max(candidates or rows, key=lambda row: (row["citation_precision"], row["claim_support_rate"], -row["cited_context_k"]))
+    best = max(candidates or rows, key=lambda row: (row["citation_precision"], row["cited_window_support_rate"], -row["cited_context_k"]))
     promoted = (
         bool(candidates)
         and best["citation_precision_delta_vs_k5"] > 0
-        and best["claim_support_delta_vs_k5"] >= -0.05
+        and best["cited_window_support_delta_vs_k5"] >= -0.05
     )
     report = {
         "schema_version": "citation_window_sensitivity_v1",
@@ -83,14 +83,14 @@ def _score_window(k: int, cases: list[dict[str, Any]]) -> dict[str, Any]:
         retrieved = [{"source_id": source_id} for source_id in case.get("retrieved_source_ids") or []]
         expected_refusal = bool(case.get("expected_refusal_or_insufficient_evidence"))
         precision = _citation_precision(retrieved[:k], expected_groups, expected_refusal)
-        support = precision > 0 or bool(case.get("claim_supported"))
+        support = precision > 0
         scored.append({
             "case_id": case.get("case_id"),
             "citation_precision": precision,
-            "claim_supported_proxy": support,
+            "cited_window_supported": support,
         })
     citation_precision = _mean(row["citation_precision"] for row in scored)
-    claim_support_rate = _mean(1.0 if row["claim_supported_proxy"] else 0.0 for row in scored)
+    cited_window_support_rate = _mean(1.0 if row["cited_window_supported"] else 0.0 for row in scored)
     baseline_precision = _mean(
         _citation_precision(
             [{"source_id": source_id} for source_id in case.get("retrieved_source_ids") or []][:5],
@@ -99,13 +99,20 @@ def _score_window(k: int, cases: list[dict[str, Any]]) -> dict[str, Any]:
         )
         for case in cases
     )
-    baseline_support = _mean(1.0 if case.get("claim_supported") else 0.0 for case in cases)
+    baseline_support = _mean(
+        1.0 if _citation_precision(
+            [{"source_id": source_id} for source_id in case.get("retrieved_source_ids") or []][:5],
+            _expected_source_groups(case),
+            bool(case.get("expected_refusal_or_insufficient_evidence")),
+        ) > 0 else 0.0
+        for case in cases
+    )
     return {
         "cited_context_k": k,
         "citation_precision": round(citation_precision, 4),
         "citation_precision_delta_vs_k5": round(citation_precision - baseline_precision, 4),
-        "claim_support_rate": round(claim_support_rate, 4),
-        "claim_support_delta_vs_k5": round(claim_support_rate - baseline_support, 4),
+        "cited_window_support_rate": round(cited_window_support_rate, 4),
+        "cited_window_support_delta_vs_k5": round(cited_window_support_rate - baseline_support, 4),
         "low_precision_case_count": sum(1 for row in scored if row["citation_precision"] < 0.5),
     }
 
@@ -161,13 +168,13 @@ def _write_doc(path: Path, report: dict[str, Any]) -> None:
         f"- Recommended cited-context K: `{report['recommended_cited_context_k']}`",
         f"- Promotion recommendation: `{report['promotion_recommendation']}`",
         "",
-        "| cited_context_k | citation_precision | delta_vs_k5 | claim_support_rate | low_precision_cases |",
+        "| cited_context_k | citation_precision | delta_vs_k5 | cited_window_support_rate | low_precision_cases |",
         "| --- | ---: | ---: | ---: | ---: |",
     ]
     for row in report["rows"]:
         lines.append(
             f"| {row['cited_context_k']} | {row['citation_precision']} | "
-            f"{row['citation_precision_delta_vs_k5']} | {row['claim_support_rate']} | "
+            f"{row['citation_precision_delta_vs_k5']} | {row['cited_window_support_rate']} | "
             f"{row['low_precision_case_count']} |"
         )
     lines.extend([

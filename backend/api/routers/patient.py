@@ -11,10 +11,11 @@ import json
 import os
 import time
 from datetime import date
+from pathlib import Path
 
 import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -47,6 +48,7 @@ from backend.models import (
     LabResult,
     MRIFileRegistry,
     Patient,
+    PatientUpload,
     SymptomReport,
     Treatment,
 )
@@ -460,11 +462,23 @@ def build_patient_report_response(patient_id: str, db: Session, *, include_enric
     report["patient_name"] = patient.name
     report["diagnosis"] = patient.diagnosis
     report["breast_cancer_profile"] = _profile_to_dict(breast_profile)
-    report["mri_registry"] = mri_registry
-    report["mri_series_index"] = mri_series_index
+    report["mri_registry"] = [
+        {key: value for key, value in entry.items() if key != "local_path"}
+        for entry in mri_registry
+    ]
+    report["mri_series_index"] = [
+        {key: value for key, value in entry.items() if key != "folder"}
+        for entry in mri_series_index
+    ]
     report["medication_logs"] = medication_logs
     report["chat_history"] = chat_history
-    report["uploads"] = patient_uploads
+    report["uploads"] = [
+        {
+            **{key: value for key, value in entry.items() if key != "local_path"},
+            "content_url": f"/me/uploads/{entry['id']}/content",
+        }
+        for entry in patient_uploads
+    ]
     report["clinical_interventions"] = clinical_interventions
     report["treatment_outcome"] = treatment_outcome
 
@@ -533,6 +547,14 @@ def _attach_derived_report_sections(report: dict, patient: Patient, db: Session)
     report["patient_timeline_summary"] = build_patient_timeline_risk_summary(report)
     report["timeline_intelligence"] = build_timeline_intelligence(report)
     report["data_availability"] = build_data_availability(report)
+    from backend.services.patient_xai_envelope import build_patient_xai_envelope
+
+    report["xai_explanation_envelope"] = build_patient_xai_envelope(
+        prediction=report.get("synthetic_model_prediction"),
+        explanation=report.get("synthetic_model_explanation"),
+        hybrid_prediction=report.get("hybrid_prediction"),
+        data_availability=report.get("data_availability"),
+    )
     try:
         from backend.services.genetic_counseling import build_genetic_counseling_readiness
         report["genetic_counseling_readiness"] = build_genetic_counseling_readiness(db, patient.id)
@@ -723,6 +745,7 @@ def get_my_patient_report_enrichment(
         "patient_timeline_summary",
         "timeline_intelligence",
         "data_availability",
+        "xai_explanation_envelope",
         "report_enrichment",
     )
     report = _get_cached_report(context.patient_id)
@@ -1502,7 +1525,47 @@ def get_my_uploads(
     context=Depends(get_patient_access_context),
     db: Session = Depends(get_db),
 ):
-    return {"patient_id": context.patient_id, "uploads": get_patient_uploads(db, context.patient_id, limit=50)}
+    from backend.services.patient_uploads import get_patient_uploads as get_safe_patient_uploads
+
+    return {
+        "patient_id": context.patient_id,
+        "uploads": get_safe_patient_uploads(db, context.patient_id, limit=50),
+    }
+
+
+@router.get("/me/uploads/{upload_id}/content")
+def get_my_upload_content(
+    upload_id: int,
+    context=Depends(get_patient_access_context),
+    db: Session = Depends(get_db),
+):
+    """Return one patient-owned upload without exposing the Data tree."""
+    from backend.config import UPLOAD_DIR
+
+    upload = (
+        db.query(PatientUpload)
+        .filter(
+            PatientUpload.id == upload_id,
+            PatientUpload.patient_id == context.patient_id,
+        )
+        .first()
+    )
+    if upload is None:
+        raise HTTPException(status_code=404, detail="Upload not found")
+
+    root = Path(UPLOAD_DIR).resolve()
+    path = Path(upload.local_path).resolve()
+    if root != path and root not in path.parents:
+        raise HTTPException(status_code=403, detail="Upload path is outside the protected upload directory")
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="Upload content not found")
+
+    return FileResponse(
+        path,
+        media_type=upload.content_type or "application/octet-stream",
+        filename=upload.original_filename,
+        headers={"Cache-Control": "private, no-store"},
+    )
 
 
 @router.post("/me/uploads")

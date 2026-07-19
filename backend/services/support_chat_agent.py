@@ -458,6 +458,15 @@ def handle_patient_chat(db, patient_id, message):
         if tool_plan.get("intent") in ALLOWED_SUPPORT_INTENTS
         else route_intent(normalized, actions=actions, safety=routing_safety)
     )
+    from backend.services.live_agentic_shadow import build_live_agentic_shadow
+
+    agentic_shadow = build_live_agentic_shadow(
+        normalized,
+        patient_context=state_snapshot(patient_id),
+        live_intent=routing_intent,
+        live_safety=routing_safety,
+        live_tools=list(tool_plan.get("selected_tools") or []),
+    )
     if _should_use_llm_direct_reply(routing_intent, routing_safety, actions, urgent_flags) and not _has_tool_action(actions):
         fallback_response = _generate_llm_response(normalized, actions, urgent_flags, patient_context, fallback_response)
     fallback_response = _apply_emotional_distress_mode(fallback_response, emotional_distress)
@@ -547,6 +556,7 @@ def handle_patient_chat(db, patient_id, message):
                 "guardrails": agent_result.get("guardrails"),
                 "rag_evaluation": agent_result.get("rag_evaluation"),
                 "emotional_distress": agent_result.get("emotional_distress"),
+                "agentic_shadow": agentic_shadow,
             },
         }),
     )
@@ -573,6 +583,7 @@ def handle_patient_chat(db, patient_id, message):
             "safety_level": (agent_result.get("safety") or {}).get("level"),
             "cache": agent_result.get("cache"),
             "tool_plan": tool_plan,
+            "agentic_shadow": agentic_shadow,
             "conversation_state": {
                 "pending_actions": state_snapshot(patient_id).get("pending_actions"),
             },
@@ -580,6 +591,7 @@ def handle_patient_chat(db, patient_id, message):
         output_payload={
             "citation_count": len(agent_result.get("citations") or []),
             "validation": agent_result.get("validation"),
+            "agentic_shadow_review_required": bool(agentic_shadow.get("review_required")),
         },
     )
 
@@ -600,6 +612,7 @@ def handle_patient_chat(db, patient_id, message):
             "pipeline_trace": agent_result.get("pipeline_trace"),
             "compound_intent": _compound_intent_payload(compound_intent, llm_compound_verdict),
             "emotional_distress": agent_result.get("emotional_distress"),
+            "agentic_shadow": agentic_shadow,
         },
         "assistant_message_id": assistant_record.id,
         "safety_note": "This assistant logs and summarizes information only. It does not diagnose or give treatment instructions.",

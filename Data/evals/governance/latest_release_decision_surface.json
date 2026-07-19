@@ -1,0 +1,184 @@
+{
+  "schema_version": "release_decision_surface_v1",
+  "generated_at": "2026-07-18T16:08:50.744118+00:00",
+  "status": "needs_attention",
+  "engineering_release_decision": "PROCEED_WITH_WARNINGS",
+  "hard_blocker_count": 0,
+  "warning_count": 6,
+  "checks": [
+    {
+      "id": "critical_safety_regression",
+      "tier": "hard_blocker",
+      "owner": "AI safety",
+      "path": "Data/evals/safety/latest_safety_benchmark.json",
+      "decision": "pass",
+      "observed_status": "passed",
+      "generated_at": "2026-07-06T06:47:17.440388+00:00",
+      "key_metrics": {}
+    },
+    {
+      "id": "medical_claim_boundary",
+      "tier": "hard_blocker",
+      "owner": "medical safety",
+      "path": "Data/evals/safety/latest_medical_claim_boundary_eval.json",
+      "decision": "pass",
+      "observed_status": "strong",
+      "generated_at": "2026-05-21T08:19:36.005226+00:00",
+      "key_metrics": {}
+    },
+    {
+      "id": "training_leakage",
+      "tier": "hard_blocker",
+      "owner": "MLE",
+      "path": "Data/evals/models/latest_leakage_audit.json",
+      "decision": "pass",
+      "observed_status": "passed",
+      "generated_at": "2026-07-17T06:27:38.556411+00:00",
+      "key_metrics": {}
+    },
+    {
+      "id": "portfolio_claim_safety",
+      "tier": "hard_blocker",
+      "owner": "governance",
+      "path": "Data/evals/governance/latest_portfolio_claim_safety_check.json",
+      "decision": "pass",
+      "observed_status": "informational",
+      "generated_at": "2026-06-01T16:18:59.694341+00:00",
+      "key_metrics": {}
+    },
+    {
+      "id": "frozen_adversarial_v4",
+      "tier": "warning",
+      "owner": "AI safety",
+      "path": "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
+      "decision": "attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-05-27T04:20:47.422342+00:00",
+      "key_metrics": {
+        "pass_rate": 0.614754,
+        "unsafe_leakage_rate": 0.427273,
+        "over_refusal_rate": 0.0
+      }
+    },
+    {
+      "id": "frozen_adversarial_v5",
+      "tier": "warning",
+      "owner": "AI safety",
+      "path": "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
+      "decision": "attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-18T14:33:27.587023+00:00",
+      "key_metrics": {
+        "pass_rate": 0.818182,
+        "unsafe_leakage_rate": 0.2,
+        "over_refusal_rate": 0.090909
+      }
+    },
+    {
+      "id": "rag_governance_tradeoff",
+      "tier": "warning",
+      "owner": "RAG",
+      "path": "Data/evals/rag/latest_rag_governance_tradeoff.json",
+      "decision": "attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-18T10:35:07.815958+00:00",
+      "key_metrics": {
+        "improvement_proven_vs_bm25": false,
+        "full_stack_recall_at_10": null,
+        "bm25_recall_at_10": null
+      }
+    },
+    {
+      "id": "route_latency",
+      "tier": "warning",
+      "owner": "SWE/ops",
+      "path": "Data/evals/ops/latest_route_latency_budget.json",
+      "decision": "attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-18T10:36:43.276916+00:00",
+      "key_metrics": {
+        "production_ready": false,
+        "insufficient_sample_count": 4,
+        "highest_observed_p95_ms": 1868.61
+      }
+    },
+    {
+      "id": "simple_baseline_superiority",
+      "tier": "warning",
+      "owner": "MLE",
+      "path": "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
+      "decision": "pass",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-18T10:35:05.265026+00:00",
+      "key_metrics": {}
+    },
+    {
+      "id": "synthetic_v2_stability",
+      "tier": "warning",
+      "owner": "MLE",
+      "path": "Data/evals/models/latest_synthetic_v2_model_stability.json",
+      "decision": "pass",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-18T15:02:12.832887+00:00",
+      "key_metrics": {
+        "synthetic_only": true,
+        "clinical_validation": false
+      }
+    },
+    {
+      "id": "xai_fidelity",
+      "tier": "warning",
+      "owner": "XAI",
+      "path": "Data/evals/models/latest_xai_fidelity_audit.json",
+      "decision": "attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-18T14:56:52.246471+00:00",
+      "key_metrics": {
+        "additivity_verifiable": false,
+        "prediction_present_rate": 0.2,
+        "multiple_one_hot_feature_patient_rate": 1.0
+      }
+    },
+    {
+      "id": "dependency_reproducibility",
+      "tier": "warning",
+      "owner": "SWE/ops",
+      "path": "Data/evals/ops/latest_dependency_lock_audit.json",
+      "decision": "attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-18T16:08:30.720124+00:00",
+      "key_metrics": {}
+    },
+    {
+      "id": "external_rag_holdout",
+      "tier": "informational",
+      "owner": "external review",
+      "path": "Data/evals/rag/latest_rag_holdout_baseline_comparison.json",
+      "decision": "informational",
+      "observed_status": "ready_for_external_authoring",
+      "generated_at": "2026-06-01T09:31:25.525481+00:00",
+      "key_metrics": {}
+    },
+    {
+      "id": "goldset_adjudication",
+      "tier": "informational",
+      "owner": "external review",
+      "path": "Data/evals/rag/latest_goldset_adjudication_readiness.json",
+      "decision": "informational",
+      "observed_status": "ready_for_adjudication",
+      "generated_at": "2026-06-01T11:52:07.836963+00:00",
+      "key_metrics": {}
+    }
+  ],
+  "headline_limitations": [
+    "No real patient data, IRB approval, clinician sign-off, or clinical validation.",
+    "Frozen adversarial generalization remains below target and is internally authored.",
+    "Raw retrieval superiority over BM25 is not proven on the internal goldset.",
+    "Synthetic ML metrics do not establish clinical performance or transfer.",
+    "Latency and dependency reproducibility do not establish production readiness."
+  ],
+  "detailed_registry_remains_authoritative": true,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This is a compact engineering decision aid, not clinical approval, validation, or production healthcare readiness."
+}

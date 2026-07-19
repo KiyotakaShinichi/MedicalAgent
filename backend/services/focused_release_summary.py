@@ -38,8 +38,13 @@ def build_report() -> dict[str, Any]:
     runtime = _load("Data/evals/ops/latest_runtime_quality_sentinel.json")
     deployment = _load("Data/evals/ops/latest_deployment_profile_validation.json")
     holdout_rag = _load("Data/evals/rag/latest_rag_holdout_baseline_comparison.json")
+    route_latency = _load("Data/evals/ops/latest_route_latency_budget.json")
+    hardening = _load("Data/evals/safety/latest_adversarial_hardening_report.json")
 
     baseline_summary = rag.get("summary") or {}
+    required_count = sum(1 for row in gate["artifacts"] if row["required"])
+    optional_count = len(gate["artifacts"]) - required_count
+    optional_issue_count = sum(1 for row in gate["artifacts"] if not row["required"] and row["issues"])
     original_pass_rate = (
         round(float(adversarial.get("pass_count", 0)) / float(adversarial.get("total_n", 1)), 4)
         if adversarial.get("total_n") else None
@@ -47,13 +52,17 @@ def build_report() -> dict[str, Any]:
     return {
         "schema_version": "focused_release_summary_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "status": "strong" if gate["status"] == "passed" else "needs_attention",
+        "status": "needs_attention",
         "clinical_validation": False,
         "healthcare_production_ready": False,
         "release_gate": {
             "status": gate["status"],
             "artifact_count": gate["artifact_count"],
             "hard_blocker_failure_count": gate["failure_count"],
+            "required_artifact_count": required_count,
+            "optional_artifact_count": optional_count,
+            "optional_artifact_ratio": round(optional_count / max(1, len(gate["artifacts"])), 4),
+            "optional_issue_count": optional_issue_count,
             "failures": [row for row in gate["artifacts"] if row["required"] and row["issues"]],
         },
         "core_evidence": {
@@ -74,11 +83,15 @@ def build_report() -> dict[str, Any]:
                 "original_internal_pass_rate": original_pass_rate,
                 "holdout_v4_pass_rate": holdout.get("pass_rate"),
                 "holdout_v4_unsafe_leakage_rate": holdout.get("unsafe_leakage_rate"),
+                "canonical_headline": hardening.get("canonical_headline"),
+                "not_solved": True,
             },
             "latency": {
                 "load_success_rate": _metric(load, "summary", "success_rate"),
                 "load_p95_ms": _metric(load, "summary", "latency_ms", "p95"),
                 "runtime_p95_ms": _metric(runtime, "summary", "latency_p95_ms"),
+                "route_percentile_minimum_samples": route_latency.get("minimum_samples_for_percentile_credibility", 30),
+                "routes_with_insufficient_samples": _metric(route_latency, "summary", "insufficient_sample_count"),
                 "production_ready": False,
             },
             "deployment_profile": {
@@ -93,12 +106,15 @@ def build_report() -> dict[str, Any]:
             "The no-read external-author RAG holdout remains incomplete.",
             "All ML results remain synthetic-only engineering self-tests.",
             "No clinician, genetic counselor, or external-author review has been completed.",
+            "Frozen adversarial v4 remains weak and is the canonical safety headline.",
+            "Route percentile labels require at least 30 samples; smaller samples are insufficient, not ideal.",
+            "Most gate entries are supporting or informational, so the focused core view is the reviewer headline.",
         ],
         "what_this_release_can_claim": [
             "patient-confirmed, provenance-stamped, undoable record writes",
             "source-governed retrieval and explicit negative-result reporting",
             "synthetic-only temporal ML/MLE evaluation and promotion boundaries",
-            "production-shaped deployment configuration with runtime validation",
+            "deployment-shaped engineering configuration with runtime validation",
         ],
         "what_this_release_cannot_claim": [
             "clinical validation or clinician approval",

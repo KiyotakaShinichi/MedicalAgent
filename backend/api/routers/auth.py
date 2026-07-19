@@ -72,3 +72,16 @@ def demo_patient_options(db: Session = Depends(get_db)):
 def whoami(context=Depends(get_access_context)):
     """Return the role and patient_id for the current bearer token."""
     return {"role": context.role, "patient_id": context.patient_id}
+
+
+@router.delete("/session")
+def logout(context=Depends(get_access_context), db: Session = Depends(get_db)):
+    """Revoke the current demo bearer token on the server."""
+    from backend.services.auth import revoke_session
+
+    revoked = revoke_session(db, context.token)
+    return {
+        "revoked": revoked,
+        "message": "Session revoked.",
+        "clinical_validation": False,
+    }

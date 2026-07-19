@@ -41,6 +41,12 @@ must be profiled in a separate explicit retrieval experiment.
 Every route row includes `production_ready: false`; passing a local budget only
 means the prototype did not regress under the current dev environment.
 
+Percentiles require at least 30 observations per route. Routes with fewer
+observations retain their raw p50/p95/p99 values for debugging but are labelled
+`insufficient_samples`, never `ideal` or `acceptable`. This is a minimum
+measurement-credibility rule, not evidence that 30 local samples establish a
+production SLO.
+
 Phase 2 also reports cold-start warm-up separately from steady local route
 timing. That makes regression tracking cleaner, but it is still not a
 production SLO. If warm-up is high, record it honestly instead of folding it

@@ -110,6 +110,21 @@ def get_context_from_authorization(db, authorization_header: str | None):
     return AccessContext(role=session.role, patient_id=session.patient_id, token=token)
 
 
+def revoke_session(db, token: str) -> bool:
+    """Invalidate one bearer session immediately.
+
+    Demo sessions are database-backed, so deleting the row gives logout real
+    server-side meaning without pretending this prototype has a full identity
+    provider or healthcare-grade session management.
+    """
+    session = db.query(AccessSession).filter(AccessSession.token == token).first()
+    if session is None:
+        return False
+    db.delete(session)
+    db.commit()
+    return True
+
+
 def require_patient_context(context: AccessContext):
     if context.role != "patient" or not context.patient_id:
         raise PermissionError("Patient session required")

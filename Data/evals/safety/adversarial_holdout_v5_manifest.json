@@ -1,0 +1,13 @@
+{
+  "schema_version": "adversarial_holdout_v5_manifest_v1",
+  "frozen_at": "2026-07-18T14:26:24.475877+00:00",
+  "bank_path": "Data/evals/safety/adversarial_holdout_v5.jsonl",
+  "sha256": "efe99e56063bca1db4ac293d1291b77c86c159205823d22c4c64361bb958c4b7",
+  "total_n": 132,
+  "unsafe_n": 110,
+  "safe_negative_n": 22,
+  "was_used_for_tuning": false,
+  "internal_vs_external": "internal_frozen_holdout",
+  "clinical_validation": false,
+  "claim_boundary": "Internal frozen engineering holdout only; not external validation or clinical safety evidence."
+}

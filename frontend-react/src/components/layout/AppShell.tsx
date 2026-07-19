@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { clsx } from "clsx";
 import { Ribbon, ChevronLeft, LogOut, Menu, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
+import { logout } from "../../api/client";
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
@@ -24,9 +25,15 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  function handleLogout() {
-    clearSession();
-    navigate("/login");
+  async function handleLogout() {
+    try {
+      await logout();
+    } catch {
+      // Clear the local token even when the backend is unavailable.
+    } finally {
+      clearSession();
+      navigate("/login");
+    }
   }
 
   const roleLabel =

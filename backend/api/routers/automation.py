@@ -13,6 +13,7 @@ from backend.services.background_eval_worker import ALLOWED_JOB_TYPES, BLOCKED_J
 from backend.services.high_risk_conversation_alerts import (
     process_due_alert_deliveries,
     record_delivery_receipt,
+    requeue_dead_letter_alert,
     serialize_alert,
 )
 from backend.services.n8n_webhook_dispatcher import validate_signed_receipt
@@ -26,6 +27,7 @@ class AutomationJobRequest(BaseModel):
     payload: dict[str, Any] = Field(default_factory=dict)
     dry_run: bool = True
     run_in_background: bool = False
+    idempotency_key: str | None = Field(default=None, min_length=8, max_length=200)
 
 
 @router.post("/delivery-receipts")
@@ -79,6 +81,28 @@ def process_due_alert_delivery_retries(
     return result
 
 
+@router.post("/high-risk-alerts/{alert_id}/requeue")
+def requeue_high_risk_alert(
+    alert_id: int,
+    context=Depends(get_admin_access_context),
+    db=Depends(get_db),
+):
+    try:
+        alert = requeue_dead_letter_alert(db, alert_id=alert_id, requested_by_role=context.role)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    db.commit()
+    db.refresh(alert)
+    return {
+        "status": "retry_scheduled",
+        "alert": serialize_alert(alert),
+        "clinical_validation": False,
+        "claim_boundary": "Manual requeue is delivery operations evidence, not proof of human review or clinical action.",
+    }
+
+
 def _run_in_worker_session(task_id: int) -> None:
     from backend.services.automation_job_queue import run_automation_task
 
@@ -129,6 +153,7 @@ def create_automation_job(
             requested_by=context.role,
             payload=payload.payload,
             dry_run=payload.dry_run,
+            idempotency_key=payload.idempotency_key,
         )
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -182,6 +207,26 @@ def run_automation_job(
         raise HTTPException(status_code=409, detail=f"Task cannot run from status={task['status']}")
     background_tasks.add_task(_run_in_worker_session, task_id)
     return {"message": "Automation job scheduled for background execution.", "task_id": task_id}
+
+
+@router.post("/jobs/{task_id}/requeue", status_code=202)
+def requeue_automation_job(
+    task_id: int,
+    context=Depends(get_admin_access_context),
+    db=Depends(get_db),
+):
+    from backend.services.automation_job_queue import requeue_automation_task
+
+    try:
+        task = requeue_automation_task(db, task_id, requested_by=context.role)
+    except ValueError as exc:
+        message = str(exc)
+        raise HTTPException(status_code=404 if "not found" in message.lower() else 409, detail=message) from exc
+    return {
+        "message": "Automation job returned to the queue; this is an engineering operation only.",
+        "task": task,
+        "clinical_validation": False,
+    }
 
 
 __all__ = ["router"]

@@ -1,0 +1,63 @@
+{
+  "schema_version": "rag_governance_tradeoff_v1_2026_07",
+  "generated_at": "2026-07-18T10:35:07.815958+00:00",
+  "status": "needs_attention",
+  "internal_goldset_n": 74,
+  "internal_goldset_only": true,
+  "bm25": {
+    "recall_at_5": 0.7162,
+    "recall_at_10": 0.8041,
+    "mrr": 0.7086,
+    "ndcg_at_10": 0.6557,
+    "citation_precision": 0.4135,
+    "claim_support_rate": 0.9054,
+    "unsupported_context_rate": 0.0946,
+    "refusal_correctness": 1.0,
+    "source_tier_correctness": 0.4595,
+    "latency_p50_ms": 44.512,
+    "latency_p95_ms": 74.411
+  },
+  "best_ungoverned_hybrid": {
+    "recall_at_5": 0.7635,
+    "recall_at_10": 0.8851,
+    "mrr": 0.7262,
+    "ndcg_at_10": 0.6868,
+    "citation_precision": 0.5054,
+    "claim_support_rate": 0.9595,
+    "unsupported_context_rate": 0.0405,
+    "refusal_correctness": 1.0,
+    "source_tier_correctness": 0.6216,
+    "latency_p50_ms": 268.331,
+    "latency_p95_ms": 306.788
+  },
+  "full_source_governed_stack": {
+    "recall_at_5": 0.7027,
+    "recall_at_10": 0.7838,
+    "mrr": 0.6892,
+    "ndcg_at_10": 0.6453,
+    "citation_precision": 0.5243,
+    "claim_support_rate": 0.8378,
+    "unsupported_context_rate": 0.1622,
+    "refusal_correctness": 1.0,
+    "source_tier_correctness": 1.0,
+    "latency_p50_ms": 268.953,
+    "latency_p95_ms": 307.365
+  },
+  "tradeoffs": {
+    "full_minus_bm25_recall_at_10": -0.0203,
+    "full_minus_bm25_source_tier_correctness": 0.5405,
+    "full_vs_bm25_latency_p95_ratio": 4.1306,
+    "raw_retrieval_improvement_proven": false,
+    "governance_improvement_observed_internally": true
+  },
+  "external_holdout": {
+    "completed": false,
+    "status": "ready_for_external_authoring",
+    "reason": "holdout file not found; complete the no-read protocol first"
+  },
+  "decision": "Retain the source-governed configuration for its allowed-use and source-tier controls, while reporting that raw retrieval superiority over BM25 is not proven. Do not promote the experimental citation pruner.",
+  "improvement_proven_vs_bm25": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This is internal engineering evidence on a frozen, internally authored goldset. It is not clinical validation, an external generalisation result, or proof of patient benefit."
+}

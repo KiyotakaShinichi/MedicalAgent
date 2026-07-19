@@ -31,11 +31,12 @@ def _npm_cmd(*args: str) -> list[str]:
 
 def _run(step: Step) -> None:
     env = os.environ.copy()
+    env.setdefault("PYTHONUNBUFFERED", "1")
     if step.env:
         env.update(step.env)
-    print(f"\n[ship] {step.name}")
-    print(f"[ship] cwd={step.cwd}")
-    print(f"[ship] cmd={' '.join(step.command)}")
+    print(f"\n[ship] {step.name}", flush=True)
+    print(f"[ship] cwd={step.cwd}", flush=True)
+    print(f"[ship] cmd={' '.join(step.command)}", flush=True)
     subprocess.run(step.command, cwd=step.cwd, env=env, check=True)
 
 
@@ -44,7 +45,10 @@ def main() -> int:
         Step(
             name="Backend breast-monitoring integration tests",
             command=[sys.executable, "-m", "pytest", "tests/test_breast_monitoring.py", "-q"],
-            env={"RAG_FORCE_SPARSE": "true"},
+            env={
+                "RAG_FORCE_SPARSE": "true",
+                "ONCOTRACK_FAST_MODE": "true",
+            },
         ),
         Step(
             name="Backend progressive-loading and notification reliability tests",
@@ -105,9 +109,9 @@ def main() -> int:
         try:
             _run(step)
         except subprocess.CalledProcessError as exc:
-            print(f"\n[ship] FAILED: {step.name} exited {exc.returncode}", file=sys.stderr)
+            print(f"\n[ship] FAILED: {step.name} exited {exc.returncode}", file=sys.stderr, flush=True)
             return int(exc.returncode or 1)
-    print("\n[ship] PASSED: all gates green")
+    print("\n[ship] PASSED: all gates green", flush=True)
     return 0
 
 

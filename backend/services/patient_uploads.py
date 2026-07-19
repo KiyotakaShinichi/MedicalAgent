@@ -86,7 +86,7 @@ def upload_to_dict(row):
         "upload_type": row.upload_type,
         "original_filename": row.original_filename,
         "content_type": row.content_type,
-        "local_path": row.local_path,
+        "content_url": f"/me/uploads/{row.id}/content",
         "notes": row.notes,
         "parsed_report": parsed_report,
         "journey_phase": infer_journey_phase({

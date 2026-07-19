@@ -1,0 +1,143 @@
+{
+  "schema_version": "automation_xai_industry_alignment_v1",
+  "generated_at": "2026-07-18T08:58:22.505942+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "automation_live_delivery_enabled": false,
+  "patient_benefit_claim": false,
+  "diagnostic_authority_claim": false,
+  "treatment_recommendation_claim": false,
+  "real_emergency_coverage_claim": false,
+  "claim_boundary": "This roadmap is engineering governance only. It is not clinical validation, not clinician sign-off, not emergency coverage, not proof of patient benefit, and not healthcare production readiness.",
+  "evidence_inputs": {
+    "automation_reliability_status": "strong",
+    "patient_xai_readability_status": "strong",
+    "citation_window_status": "acceptable",
+    "citation_window_promotion_recommendation": "do_not_promote_without_more_evidence"
+  },
+  "missing_evidence_inputs": [],
+  "automation_controls": [
+    {
+      "id": "outbox_first_source_of_truth",
+      "industry_reason": "External channels fail; the system needs a local auditable queue before dispatch.",
+      "minimum_requirement": "Every high-risk event creates a local alert row before any webhook/email/SMS/Viber attempt.",
+      "current_status": "implemented_as_engineering_preview"
+    },
+    {
+      "id": "redacted_signed_event_envelope",
+      "industry_reason": "Webhook payloads should not leak raw chat text or patient identifiers.",
+      "minimum_requirement": "Use redacted payloads, HMAC signatures, timestamp tolerance, and replay protection.",
+      "current_status": "implemented_as_engineering_preview"
+    },
+    {
+      "id": "idempotency_and_deduplication",
+      "industry_reason": "Retries must not create duplicate clinical-review tasks.",
+      "minimum_requirement": "Stable event_id/idempotency_key across retries and dedupe checks in the receiver.",
+      "current_status": "partially_documented_needs_ui_visibility"
+    },
+    {
+      "id": "retry_dead_letter_and_requeue",
+      "industry_reason": "Operators need to see failed notification attempts and recover safely.",
+      "minimum_requirement": "Bounded retries, dead-letter reason, manual requeue, and no loss of local alert.",
+      "current_status": "implemented_as_contract_needs_operator_ui"
+    },
+    {
+      "id": "delivery_receipt_not_human_acknowledgement",
+      "industry_reason": "Transport delivery is not the same as clinician review.",
+      "minimum_requirement": "Separate delivery receipt, opened/reviewed, and manual acknowledgement states.",
+      "current_status": "implemented_as_boundary_needs_dashboard_card"
+    },
+    {
+      "id": "test_recipient_only_external_channels",
+      "industry_reason": "Without clinical operations ownership, real alerting can create false assurance.",
+      "minimum_requirement": "Email/SMS/Viber/n8n are disabled by default and limited to synthetic test recipients.",
+      "current_status": "implemented"
+    }
+  ],
+  "xai_controls": [
+    {
+      "id": "explanation_contract_per_surface",
+      "industry_reason": "Each patient-visible number needs meaning, calculation, uncertainty, and safe next step copy.",
+      "minimum_requirement": "Expose a typed explanation envelope for every KPI/model/review-count surface.",
+      "current_status": "specified_needs_api_contract"
+    },
+    {
+      "id": "model_card_and_feature_dictionary",
+      "industry_reason": "Reviewers need to know model version, inputs, missingness handling, and synthetic-only limits.",
+      "minimum_requirement": "Attach model-card and feature-dictionary links to each synthetic ML output.",
+      "current_status": "documented_needs_frontend_drawer"
+    },
+    {
+      "id": "uncertainty_and_abstention_first",
+      "industry_reason": "Low evidence should reduce confidence or abstain, not produce more decisive language.",
+      "minimum_requirement": "Show modalities present/missing, abstention reason, confidence source, and known weakness.",
+      "current_status": "partially_implemented"
+    },
+    {
+      "id": "non_causal_feature_contributions",
+      "industry_reason": "Feature importance can be mistaken as clinical causality.",
+      "minimum_requirement": "Label contribution displays as non-causal synthetic engineering explanations.",
+      "current_status": "planned"
+    },
+    {
+      "id": "retrieval_grounding_visibility",
+      "industry_reason": "RAG answers need visible evidence limits, especially when citation precision is weak.",
+      "minimum_requirement": "Show answerability, citation support, source-tier policy, and unsupported-context warnings.",
+      "current_status": "partially_implemented"
+    },
+    {
+      "id": "negative_results_visible_to_reviewers",
+      "industry_reason": "Credibility improves when failed experiments are not hidden.",
+      "minimum_requirement": "Keep pruner regression, BM25 comparison, reranker non-proof, and held-out weaknesses visible.",
+      "current_status": "implemented_as_governance_artifacts"
+    }
+  ],
+  "automation_control_count": 6,
+  "xai_control_count": 6,
+  "ranked_backlog": [
+    {
+      "rank": 1,
+      "item": "Build an Automation Center admin card",
+      "why": "Shows outbox state, test-recipient delivery receipts, retry/dead-letter status, and manual acknowledgement separately.",
+      "side": "automation",
+      "live_clinical_claim_allowed": false
+    },
+    {
+      "rank": 2,
+      "item": "Add typed patient-XAI explanation envelopes",
+      "why": "Turns every patient-visible number into meaning + calculation + uncertainty + allowed next action.",
+      "side": "xai",
+      "live_clinical_claim_allowed": false
+    },
+    {
+      "rank": 3,
+      "item": "Add model-card and feature-dictionary drawers",
+      "why": "Makes synthetic ML outputs auditable without making them look clinically authoritative.",
+      "side": "xai",
+      "live_clinical_claim_allowed": false
+    },
+    {
+      "rank": 4,
+      "item": "Run generated-answer A/B before any citation-window change",
+      "why": "A smaller citation window may improve precision but could reduce answer support; live behavior should not change from retrieval-only metrics.",
+      "side": "rag_xai",
+      "live_clinical_claim_allowed": false
+    },
+    {
+      "rank": 5,
+      "item": "Create n8n inactive templates for escalation digest and dead-letter review",
+      "why": "Industry-aligned automation can be demonstrated without enabling real patient alerting.",
+      "side": "automation",
+      "live_clinical_claim_allowed": false
+    }
+  ],
+  "industry_alignment_summary": "NLCare is closest to industry practice when automation is treated as an auditable local review workflow and XAI is treated as a typed explanation contract with uncertainty and known weaknesses visible.",
+  "what_is_still_not_industry_ready": [
+    "No real clinical operations owner or on-call process.",
+    "No real PHI channel review or compliance sign-off.",
+    "No external clinician acknowledgement workflow.",
+    "No real patient data or clinical validation.",
+    "No live alerting beyond synthetic test-recipient scaffolding."
+  ]
+}

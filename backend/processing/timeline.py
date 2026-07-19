@@ -157,7 +157,7 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks, 
 def _matching_media(media_records, row):
     event_date = str(row.get("date", ""))[:10]
     modality = str(row.get("modality") or "").lower()
-    matches = []
+    matches_by_path = {}
     for record in media_records:
         record_date = str(record.get("scan_date") or record.get("created_at") or "")[:10]
         record_modality = str(record.get("modality") or record.get("upload_type") or "").lower()
@@ -166,16 +166,21 @@ def _matching_media(media_records, row):
         if modality and record_modality and not _modality_overlap(modality, record_modality):
             continue
         path = record.get("local_path") or record.get("folder")
-        matches.append({
+        upload_id = record.get("id") if record.get("original_filename") else None
+        candidate = {
             "label": record.get("series_description") or record.get("original_filename") or record.get("modality") or "Uploaded file",
             "modality": record.get("modality") or record.get("upload_type"),
-            "local_path": path,
-            "artifact_url": _artifact_url(path),
+            "upload_id": upload_id,
+            "artifact_url": f"/me/uploads/{upload_id}/content" if upload_id is not None else None,
             "content_type": record.get("content_type"),
             "previewable": _is_previewable(path, record.get("content_type")),
             "notes": record.get("notes"),
-        })
-    return matches[:6]
+        }
+        key = str(path or candidate["label"])
+        existing = matches_by_path.get(key)
+        if existing is None or (candidate["artifact_url"] and not existing.get("artifact_url")):
+            matches_by_path[key] = candidate
+    return list(matches_by_path.values())[:6]
 
 
 def _modality_overlap(left, right):
@@ -191,18 +196,6 @@ def _modality_overlap(left, right):
         if left_tokens & group and right_tokens & group:
             return True
     return bool(left_tokens & right_tokens)
-
-
-def _artifact_url(path):
-    if not path:
-        return None
-    text = str(path).replace("\\", "/")
-    marker = "/Data/"
-    if marker in text:
-        return "/artifacts/" + text.split(marker, 1)[1]
-    if text.startswith("Data/"):
-        return "/artifacts/" + text[len("Data/"):]
-    return None
 
 
 def _is_previewable(path, content_type):

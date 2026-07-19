@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from backend.database import Base
 from backend.models import Patient, PatientRecordWriteAudit, SymptomReport
 from backend.services.confirmed_record_write import queue_record_write, resolve_pending_record_write, undo_record_write
+from backend.services.conversation_state import get_pending_action
 
 
 def _db():
@@ -26,6 +27,8 @@ def test_record_requires_separate_confirmation_and_carries_provenance():
             source_chat_message_id=None,
         )
         assert action["type"] == "pending_record_confirmation"
+        assert action["confirmation_digest"]
+        assert action["expires_at_epoch"] > 0
         assert db.query(SymptomReport).count() == 0
 
         saved = resolve_pending_record_write(db, "CONFIRM-P001", "Confirm save")
@@ -35,6 +38,26 @@ def test_record_requires_separate_confirmation_and_carries_provenance():
         audit = db.query(PatientRecordWriteAudit).one()
         assert audit.status == "saved"
         assert "patient_confirmed_support_chat" in audit.provenance_json
+    finally:
+        db.close()
+
+
+def test_tampered_preview_is_rejected_without_a_write():
+    db = _db()
+    try:
+        queue_record_write(
+            "CONFIRM-P001",
+            "symptom",
+            {"date": "2026-07-14", "symptom": "nausea", "severity": 4},
+            source_message="nausea 4/10",
+            source_chat_message_id=44,
+        )
+        pending = get_pending_action("CONFIRM-P001", "confirmed_record_write")
+        pending["items"][0]["payload"]["severity"] = 9
+        result = resolve_pending_record_write(db, "CONFIRM-P001", "confirm")
+        assert result[0]["reason"] == "confirmation_payload_integrity_check_failed"
+        assert db.query(SymptomReport).count() == 0
+        assert db.query(PatientRecordWriteAudit).count() == 0
     finally:
         db.close()
 

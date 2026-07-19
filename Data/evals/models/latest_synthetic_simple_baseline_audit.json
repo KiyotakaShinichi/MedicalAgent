@@ -1,0 +1,66 @@
+{
+  "schema_version": "synthetic_simple_baseline_audit_v1_2026_07",
+  "generated_at": "2026-07-18T10:35:05.265026+00:00",
+  "status": "acceptable",
+  "total_n": 120,
+  "data_scope": "internal synthetic held-out rows",
+  "classification_prevalence": 0.55,
+  "classification": {
+    "constant_half": {
+      "accuracy": 0.55,
+      "brier_score": 0.25,
+      "auroc": 0.5
+    },
+    "posthoc_test_prevalence": {
+      "accuracy": 0.55,
+      "brier_score": 0.2475,
+      "auroc": 0.5
+    },
+    "posthoc_test_majority": {
+      "accuracy": 0.55,
+      "brier_score": 0.45,
+      "auroc": 0.5
+    },
+    "logistic_regression": {
+      "accuracy": 0.966667,
+      "brier_score": 0.055677,
+      "auroc": 0.991302
+    },
+    "gradient_boosting_calibrated_champion": {
+      "accuracy": 0.966667,
+      "brier_score": 0.025354,
+      "auroc": 0.989759
+    }
+  },
+  "regression": {
+    "zero_signal": {
+      "mae": 54.447167,
+      "rmse": 59.326265
+    },
+    "posthoc_test_mean": {
+      "mae": 29.77855,
+      "rmse": 38.280954
+    },
+    "ridge_regression": {
+      "mae": 3.375567,
+      "rmse": 9.942495
+    },
+    "random_forest_regressor_champion": {
+      "mae": 1.479933,
+      "rmse": 6.478562
+    }
+  },
+  "paired_champion_vs_logistic": {
+    "method": "exact_mcnemar_binomial_on_paired_correctness",
+    "accuracy_delta": 0.0,
+    "p_value": 1.0,
+    "superiority_proven": false
+  },
+  "complexity_decision": "retain_for_engineering_comparison_without_superiority_claim",
+  "posthoc_baseline_warning": "Prevalence, majority, and mean baselines use the evaluation labels and are descriptive lower-bound checks, not deployable fitted models.",
+  "promotion_allowed": false,
+  "synthetic_only": true,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This audit measures behavior on simulator-built rows. It does not establish clinical validity, patient benefit, treatment utility, or generalisation to real patients."
+}

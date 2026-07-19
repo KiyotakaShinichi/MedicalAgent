@@ -33,13 +33,33 @@ CLAIM_BOUNDARY = (
 def build_adversarial_hardening_report(output_path: str | Path = DEFAULT_OUTPUT_PATH) -> dict[str, Any]:
     v3_after = _read(V3_PATH)
     v4 = _read(V4_PATH)
+    v4_summary = _summary(v4)
+    weakest_categories = sorted(
+        (
+            {"category": category, "pass_rate": metrics.get("pass_rate"), "total_n": metrics.get("total_n")}
+            for category, metrics in (v4.get("by_category") or {}).items()
+        ),
+        key=lambda row: float(row.get("pass_rate") or 0.0),
+    )[:6]
     payload = {
         "schema_version": "adversarial_hardening_report_v1_2026_05",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "status": "acceptable" if v3_after.get("pass_rate", 0) >= V3_BEFORE["pass_rate"] else "needs_attention",
+        "status": "needs_attention",
+        "canonical_headline": {
+            "artifact": str(V4_PATH).replace("\\", "/"),
+            "evaluation_role": "fresh_internal_frozen_holdout_not_used_for_tuning",
+            "pass_rate": v4_summary.get("pass_rate"),
+            "unsafe_leakage_rate": v4_summary.get("unsafe_leakage_rate"),
+            "not_solved": True,
+            "why": (
+                "The fresh frozen v4 holdout is the strongest current internal generalization signal. "
+                "Tuning-used v3 movement is supporting evidence only."
+            ),
+        },
         "v3_before": V3_BEFORE,
         "v3_after": _summary(v3_after),
-        "v4_fresh_holdout": _summary(v4),
+        "v4_fresh_holdout": v4_summary,
+        "weakest_v4_categories": weakest_categories,
         "v3_delta": {
             "pass_rate_delta": round(float(v3_after.get("pass_rate", 0)) - V3_BEFORE["pass_rate"], 6),
             "unsafe_leakage_delta": round(float(v3_after.get("unsafe_leakage_rate", 0)) - V3_BEFORE["unsafe_leakage_rate"], 6),
@@ -61,6 +81,12 @@ def build_adversarial_hardening_report(output_path: str | Path = DEFAULT_OUTPUT_
             "V3 was used for generalized hardening in this pass. V4 is the newer "
             "internal holdout baseline and should remain separate from future tuning."
         ),
+        "reporting_policy": {
+            "dashboard_primary": "v4_fresh_holdout",
+            "v3_before_after_is_primary": False,
+            "perfect_or_near_perfect_tuning_used_scores_are_independent_evidence": False,
+            "external_author_eval_completed": False,
+        },
         "clinical_validation": False,
         "claim_boundary": CLAIM_BOUNDARY,
     }

@@ -106,6 +106,48 @@ export interface SyntheticModelExplanation {
   negative_contributions: FeatureContribution[];
 }
 
+export interface PatientXaiEnvelope {
+  schema_version: string;
+  status: "available_synthetic_signal" | "abstained" | "unavailable" | string;
+  output: {
+    label: string;
+    hybrid_score: number | null;
+    classification_probability: number | null;
+    decision: string | null;
+    meaning: string;
+    calculation: string;
+  };
+  evidence: {
+    inputs_used: string[];
+    inputs_missing: string[];
+    sufficiency: string | null;
+    abstained: boolean;
+    abstain_reason: string | null;
+  };
+  uncertainty: {
+    confidence: string | null;
+    confidence_modifier: number | null;
+    uncertainty_is_clinical_probability: false;
+    explanation: string;
+  };
+  top_model_factors: Array<{
+    feature: string | null;
+    relative_contribution: number | null;
+    direction: string;
+    meaning: string | null;
+    clinical_causality: false;
+  }>;
+  provenance: {
+    synthetic_only: true;
+    model_version: string | null;
+    explanation_method: string | null;
+    causal_interpretation_allowed: false;
+  };
+  safe_next_steps: string[];
+  clinical_validation: false;
+  claim_boundary: string;
+}
+
 export interface AiSummary {
   patient_explanation: string | string[];
   clinical_summary: string | string[];
@@ -122,7 +164,7 @@ export interface UncertaintyBlock {
 export interface TimelineMedia {
   label?: string | null;
   modality?: string | null;
-  local_path?: string | null;
+  upload_id?: number | null;
   artifact_url?: string | null;
   content_type?: string | null;
   previewable?: boolean | null;
@@ -338,6 +380,7 @@ export interface PatientReport {
   multimodal_assessment: MultimodalAssessment | null;
   synthetic_model_prediction: SyntheticModelPrediction | null;
   synthetic_model_explanation: SyntheticModelExplanation | null;
+  xai_explanation_envelope?: PatientXaiEnvelope | null;
   ai_summary: AiSummary | null;
   timeline: TimelineEvent[];
   treatment_effects: TreatmentEffect[];

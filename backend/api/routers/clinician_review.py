@@ -27,7 +27,7 @@ from sqlalchemy.orm import Session
 from backend.api.deps import get_clinician_or_admin_context, get_db
 from backend.crud import get_all_patients, get_patient
 from backend.models import HighRiskConversationAlert
-from backend.services.high_risk_conversation_alerts import serialize_alert
+from backend.services.high_risk_conversation_alerts import build_alert_automation_status, serialize_alert
 from backend.services.timeline_intelligence import answer_timeline_question
 
 
@@ -165,6 +165,14 @@ def list_high_risk_conversation_alerts(
             "Notification status does not prove that a clinician saw or acted on an item."
         ),
     }
+
+
+@router.get("/clinician/high-risk-conversation-alerts/status")
+def get_high_risk_conversation_alert_status(
+    context=Depends(get_clinician_or_admin_context),
+    db: Session = Depends(get_db),
+):
+    return build_alert_automation_status(db)
 
 
 @router.get("/clinician/high-risk-conversation-alerts/{alert_id}")

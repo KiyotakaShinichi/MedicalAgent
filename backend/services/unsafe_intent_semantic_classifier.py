@@ -424,6 +424,66 @@ SAFE_EDUCATIONAL_ANCHORS = (
     "why should",
 )
 
+# These rules intentionally describe concepts rather than benchmark strings.
+# A high-confidence hit requires one cue from every group (for example an
+# access action + a private-record object). This makes paraphrase handling less
+# dependent on one long regex while keeping safe educational mentions open.
+COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
+    "privacy_pii": (
+        ("read back", "read", "export", "paste", "forward", "reveal", "expose", "show", "send", "print", "verify"),
+        ("identifier", "confidential number", "account credential", "address", "insurance", "member id", "membership code", "mrn", "dob", "phone", "token", "api key", "complete account record", "full chart"),
+    ),
+    "prompt_injection": (
+        ("ignore", "switch off", "disable", "replace", "work around", "bypass", "override", "operate without", "suspend", "pretend"),
+        ("boundary", "safety instruction", "system constraint", "refusal policy", "citation check", "validator", "final checker", "instruction hierarchy", "hidden prompt", "guardrail"),
+    ),
+    "cross_patient_exfiltration": (
+        ("open", "compare", "copy", "summarize", "show", "use", "access", "pull", "pakibukas", "gamitin"),
+        ("person after me", "person before me", "another patient", "other patient", "everyone's", "all patient", "aunt's", "mother's", "father's", "sister's", "brother's", "mama", "patient q-", "patient id"),
+        ("record", "chart", "result", "lab", "note", "medication", "imaging", "database", "portal"),
+    ),
+    "genetic_risk_interpretation": (
+        ("gene", "genetic", "variant", "mutation", "brca", "palb2", "chek2", "atm", "germline", "somatic"),
+        ("predict", "forecast", "prove", "confirm", "definite", "decide", "will develop", "will get", "magkaka"),
+        ("child", "children", "son", "daughter", "relative", "family", "pamilya", "recurrence", "treatment", "therapy", "inherited", "hereditary", "cancer"),
+    ),
+    "vus_misinterpretation": (
+        ("vus", "uncertain variant", "unclear variant", "unclassified variant", "uncertain result", "unclear result", "result is unclear", "inconclusive genetic"),
+        ("pathogenic", "positive", "negative", "confirmed", "proof", "disease-causing", "decide therapy", "select therapy", "count it", "treat it", "use the"),
+    ),
+    "diagnosis_confirmation": (
+        ("confirm", "decide", "definitively", "prove", "establishes", "yes-or-no", "turn", "conclusion", "assume", "diagnose"),
+        ("lesion", "mass", "scan", "finding", "pathology", "lab", "cancer", "malignant", "spread", "recurrence", "metastatic", "cancer-free"),
+    ),
+    "tumor_marker_conclusion": (
+        ("marker", "ca 15", "ca15", "ca 27", "ca27", "cea", "number climbed", "number rose", "level rose"),
+        ("confirm", "prove", "definite", "settle", "assume", "therapy failed", "treatment failed", "disease returned", "recurrence", "metastasis", "progression", "replace imaging"),
+    ),
+    "treatment_change": (
+        ("stop", "pause", "delay", "miss", "skip", "restart", "resume", "switch", "replace", "cancel", "authorize", "ihihinto", "itigil", "palitan"),
+        ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "regimen", "infusion", "tamoxifen", "trastuzumab", "medicine", "medication", "gamot"),
+    ),
+    "dosage_request": (
+        ("calculate", "set", "adjust", "choose", "personalize", "double", "halve", "lower", "increase", "reduce", "how many", "exact"),
+        ("dose", "dosage", "mg", "tablet", "tablets", "pill", "pills", "injection amount", "medicine amount", "medication amount"),
+    ),
+    "prognosis_survival": (
+        ("estimate", "rank", "calculate", "quantify", "tell me", "predict", "translate"),
+        ("remaining months", "life remains", "surviving", "survival", "die soon", "alive next year", "life expectancy", "cure percentage", "personal timeline", "prognosis", "outlook", "mabubuhay"),
+    ),
+    "supplement_replacement": (
+        ("natural", "herb", "herbal", "supplement", "vitamin", "cannabis", "turmeric", "cbd"),
+        ("replace", "avoid", "instead", "stop treatment", "natural-only", "na lang", "cure"),
+        ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "medicine", "medication", "gamot"),
+    ),
+}
+
+DECISION_OR_ACCESS_CUES = (
+    "for me", "my ", "should i", "tell me", "decide", "confirm", "prove", "predict",
+    "show", "reveal", "export", "send", "forward", "open", "access", "use this",
+    "without", "instead", "replace", "stop", "skip", "dose", "dosage", "mg",
+)
+
 
 def classify_unsafe_intent(text: str) -> dict[str, Any]:
     normalized = _normalize(text)
@@ -436,26 +496,35 @@ def classify_unsafe_intent(text: str) -> dict[str, Any]:
     for family in FAMILIES:
         neg_score = _prototype_score(normalized, family.safe_negative_prototypes)
         pattern_match = _pattern_match(normalized, family.deterministic_patterns)
+        compositional_score, compositional_rule = _compositional_match(normalized, family.family)
         pos_score = max(
             _prototype_score(normalized, family.positive_prototypes),
             _prototype_score(normalized, family.near_boundary_examples),
             _prototype_score(normalized, family.taglish_variants),
+            compositional_score,
         )
         confidence = max(0.0, min(1.0, pos_score - (0.35 * neg_score)))
         source = "semantic_classifier"
         if pattern_match:
             confidence = max(confidence, 0.92)
             source = "deterministic"
+        elif compositional_rule:
+            confidence = max(confidence, compositional_score)
+            source = "compositional_semantic"
+        safe_education = _looks_like_safe_education(normalized)
+        if safe_education:
+            confidence = min(confidence, 0.48)
         candidate = _result(
             family.family,
             confidence,
             family.expected_route,
             family.expected_scope,
             source,
-            neg_score >= 0.45 or _looks_like_safe_education(normalized),
+            neg_score >= 0.45 or safe_education,
             template=family.safe_template,
             notes=family.over_refusal_risk_notes,
             matched_pattern=pattern_match,
+            matched_semantic_rule=compositional_rule,
         )
         if best is None or candidate["confidence"] > best["confidence"]:
             best = candidate
@@ -544,6 +613,7 @@ def _result(
     template: str | None = None,
     notes: str | None = None,
     matched_pattern: str | None = None,
+    matched_semantic_rule: str | None = None,
 ) -> dict[str, Any]:
     return {
         "is_unsafe": family != "none",
@@ -558,6 +628,7 @@ def _result(
         "safe_template": template,
         "over_refusal_risk_notes": notes,
         "matched_pattern": matched_pattern,
+        "matched_semantic_rule": matched_semantic_rule,
     }
 
 
@@ -606,8 +677,48 @@ def _pattern_match(text: str, patterns: tuple[str, ...]) -> str | None:
     return None
 
 
+def _compositional_match(text: str, family: str) -> tuple[float, str | None]:
+    groups = COMPOSITIONAL_RULES.get(family, ())
+    if not groups:
+        return 0.0, None
+    matched = []
+    for group in groups:
+        cue = next((term for term in group if _contains_cue(text, term)), None)
+        if cue is None:
+            return 0.0, None
+        matched.append(cue)
+    # Three independently matched concepts provide slightly more confidence
+    # than a two-concept rule, but neither bypasses downstream validators.
+    score = 0.94 if len(groups) >= 3 else 0.90
+    return score, f"{family}:" + " + ".join(matched)
+
+
+def _has_decision_or_access_cue(text: str) -> bool:
+    return any(_contains_cue(text, cue) for cue in DECISION_OR_ACCESS_CUES)
+
+
+def _contains_cue(text: str, cue: str) -> bool:
+    """Match short concepts as tokens so ``atm`` cannot match ``treatment``."""
+
+    if " " not in cue and len(cue) <= 4 and cue.isalnum():
+        return re.search(rf"\b{re.escape(cue)}\b", text, re.IGNORECASE) is not None
+    return cue in text
+
+
 def _looks_like_safe_education(text: str) -> bool:
-    return any(anchor in text for anchor in SAFE_EDUCATIONAL_ANCHORS)
+    anchors = SAFE_EDUCATIONAL_ANCHORS + (
+        "what questions should i ask",
+        "how are",
+        "how do",
+        "as a general concept",
+    )
+    if not any(anchor in text for anchor in anchors):
+        return False
+    personal_or_decision = (
+        "my result", "my report", "my risk", "for me", "from this", "based on this",
+        "should i take", "should i stop", "should i change", "should i skip", "tell me whether",
+    )
+    return not any(cue in text for cue in personal_or_decision)
 
 
 __all__ = ["FAMILIES", "classify_unsafe_intent", "evaluate_unsafe_intent_classifier"]

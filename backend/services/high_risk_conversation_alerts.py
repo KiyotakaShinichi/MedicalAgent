@@ -256,6 +256,81 @@ def process_due_alert_deliveries(
     }
 
 
+def build_alert_automation_status(db: Session, *, now: datetime | None = None) -> dict[str, Any]:
+    """Summarise outbox health while keeping delivery and review distinct."""
+    current = now or datetime.now(timezone.utc)
+    rows = db.query(HighRiskConversationAlert).all()
+    notification_counts: dict[str, int] = {}
+    local_counts: dict[str, int] = {}
+    for row in rows:
+        notification_counts[row.notification_status] = notification_counts.get(row.notification_status, 0) + 1
+        local_counts[row.status] = local_counts.get(row.status, 0) + 1
+    return {
+        "schema_version": "high_risk_alert_automation_status_v1_2026_07",
+        "total_alerts": len(rows),
+        "local_status_counts": local_counts,
+        "notification_status_counts": notification_counts,
+        "open_local_alerts": sum(1 for row in rows if row.status != "acknowledged"),
+        "retry_due": sum(
+            1 for row in rows
+            if row.notification_status == "retry_scheduled"
+            and row.next_notification_retry_at is not None
+            and _as_utc(row.next_notification_retry_at) <= _as_utc(current)
+        ),
+        "awaiting_channel_receipt": sum(1 for row in rows if row.delivery_receipt_status == "awaiting_receipt"),
+        "dead_lettered": sum(1 for row in rows if row.notification_status == "dead_lettered"),
+        "channel_delivered_but_unacknowledged": sum(
+            1 for row in rows
+            if row.notification_status == "delivered_to_channel" and row.status != "acknowledged"
+        ),
+        "human_acknowledged": sum(1 for row in rows if row.status == "acknowledged"),
+        "delivery_receipt_is_human_acknowledgement": False,
+        "monitored_emergency_service": False,
+        "clinical_validation": False,
+        "healthcare_production_ready": False,
+        "claim_boundary": (
+            "Queue and channel telemetry are engineering workflow evidence. They do not prove clinician review, "
+            "patient contact, clinical action, or emergency coverage."
+        ),
+    }
+
+
+def requeue_dead_letter_alert(
+    db: Session,
+    *,
+    alert_id: int,
+    requested_by_role: str,
+    now: datetime | None = None,
+) -> HighRiskConversationAlert:
+    """Explicitly requeue one dead letter and preserve an append-only audit row."""
+    alert = db.query(HighRiskConversationAlert).filter(HighRiskConversationAlert.id == alert_id).first()
+    if alert is None:
+        raise LookupError("Review alert not found")
+    if alert.status == "acknowledged":
+        raise ValueError("Acknowledged alerts cannot be requeued")
+    if alert.notification_status != "dead_lettered":
+        raise ValueError("Only dead-lettered alerts can be requeued")
+    current = now or datetime.now(timezone.utc)
+    prior_attempt_count = int(alert.notification_attempt_count or 0)
+    _append_attempt(
+        db,
+        alert=alert,
+        attempt_number=prior_attempt_count + 1,
+        event_id=None,
+        status="manual_requeue_requested",
+        error_code=f"requested_by_{requested_by_role}",
+        completed_at=current,
+    )
+    alert.notification_attempt_count = 0
+    alert.notification_status = "retry_scheduled"
+    alert.next_notification_retry_at = current
+    alert.notification_error = None
+    alert.dead_lettered_at = None
+    alert.dead_letter_reason = None
+    db.flush()
+    return alert
+
+
 def record_delivery_receipt(
     db: Session,
     *,
@@ -391,13 +466,19 @@ def _bounded_int(value: Any, *, default: int, minimum: int, maximum: int) -> int
     return max(minimum, min(parsed, maximum))
 
 
+def _as_utc(value: datetime) -> datetime:
+    return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
+
+
 __all__ = [
     "ALERT_WORKFLOW_ID",
     "attach_assistant_message",
     "classify_alert_trigger",
     "attempt_alert_delivery",
+    "build_alert_automation_status",
     "process_due_alert_deliveries",
     "queue_and_dispatch_alert",
     "record_delivery_receipt",
+    "requeue_dead_letter_alert",
     "serialize_alert",
 ]

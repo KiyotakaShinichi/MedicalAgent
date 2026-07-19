@@ -34,6 +34,7 @@ function FeatureBar({ label, value, positive }: { label: string; value: number; 
 export function ModelSignalPanel({ report }: Props) {
   const pred = report.synthetic_model_prediction;
   const expl = report.synthetic_model_explanation;
+  const xai = report.xai_explanation_envelope;
   const mma = report.multimodal_assessment;
 
   // Show the card even with no signal so the patient surface stays consistent
@@ -65,6 +66,34 @@ export function ModelSignalPanel({ report }: Props) {
           <p><strong>Feature contribution:</strong> how a field pushed this model output up or down. It has no clinical unit and does not prove causation.</p>
         </div>
       </details>
+
+      {xai && (
+        <div className="model-explanation-envelope mb-4" aria-label="Synthetic model explanation">
+          <div className="model-explanation-envelope__header">
+            <Info size={14} aria-hidden="true" />
+            <strong>{xai.status === "abstained" ? "Why the model abstained" : "How to read this output"}</strong>
+          </div>
+          <p>{xai.output.meaning}</p>
+          <p><strong>How calculated:</strong> {xai.output.calculation}</p>
+          <dl>
+            <div>
+              <dt>Records used</dt>
+              <dd>{xai.evidence.inputs_used.length ? xai.evidence.inputs_used.join(", ") : "No sufficient modality recorded"}</dd>
+            </div>
+            <div>
+              <dt>Missing or limited</dt>
+              <dd>{xai.evidence.inputs_missing.length ? xai.evidence.inputs_missing.join(", ") : "None reported by the evidence gate"}</dd>
+            </div>
+            <div>
+              <dt>Uncertainty</dt>
+              <dd>{xai.evidence.abstain_reason || xai.uncertainty.explanation}</dd>
+            </div>
+          </dl>
+          {xai.safe_next_steps[0] && (
+            <p className="model-explanation-envelope__next"><strong>Safe next step:</strong> {xai.safe_next_steps[0]}</p>
+          )}
+        </div>
+      )}
 
       {hybrid && (
         <div className="grid grid-cols-2 gap-3 mb-4">

@@ -204,7 +204,20 @@ def load_complete_synthetic_patient_xai(patient_id, xai_json_path: str = DEFAULT
     if not path.exists():
         return None
     payload = json.loads(path.read_text(encoding="utf-8"))
-    return payload.get("patients", {}).get(patient_id)
+    explanation = payload.get("patients", {}).get(patient_id)
+    if not isinstance(explanation, dict):
+        return None
+    normalized = dict(explanation)
+    for key in ("positive_contributions", "negative_contributions"):
+        normalized[key] = [
+            {
+                **item,
+                "shap_value": item.get("shap_value", item.get("contribution", 0.0)),
+            }
+            for item in (explanation.get(key) or [])
+            if isinstance(item, dict)
+        ]
+    return normalized
 
 
 def load_xai_global_importance(xai_json_path: str = DEFAULT_SYNTHETIC_XAI_PATH):

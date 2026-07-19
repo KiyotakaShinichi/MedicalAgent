@@ -103,6 +103,22 @@ export const getDemoPatients = () =>
 export const whoami = () =>
   get<{ role: string; patient_id: string | null }>("/auth/whoami");
 
+export const logout = () =>
+  del<{ revoked: boolean; message: string }>("/auth/session");
+
+export async function getAuthenticatedObjectUrl(path: string): Promise<string> {
+  const token = getToken();
+  const res = await fetch(`${BASE}${path}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => res.statusText);
+    throw new Error(`${res.status}: ${text}`);
+  }
+  return URL.createObjectURL(await res.blob());
+}
+
 // Patient
 export const getMyReport = () => get<PatientReport>("/me/patient-report");
 

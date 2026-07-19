@@ -1,7 +1,7 @@
 {
   "schema_version": "latency_profile_phase2_v1",
-  "generated_at": "2026-05-21T08:10:44.587531+00:00",
-  "status": "acceptable",
+  "generated_at": "2026-07-18T10:36:25.527192+00:00",
+  "status": "needs_attention",
   "routes": [
     {
       "route": "deterministic_safety_refusal",
@@ -9,10 +9,13 @@
       "acceptable_p95_ms": 1500,
       "needs_attention_p95_ms": 3000,
       "sample_count": 1,
-      "current_p50_ms": 50.03,
-      "current_p95_ms": 50.03,
-      "current_p99_ms": 50.03,
-      "latency_status": "ideal",
+      "current_p50_ms": 46.05,
+      "current_p95_ms": 46.05,
+      "current_p99_ms": 46.05,
+      "measurement_status": "insufficient_samples",
+      "percentile_credible": false,
+      "minimum_credible_percentile_samples": 30,
+      "latency_status": "insufficient_samples",
       "bottleneck_stage": "total_or_external_wait",
       "production_ready": false
     },
@@ -22,10 +25,13 @@
       "acceptable_p95_ms": 2000,
       "needs_attention_p95_ms": 4000,
       "sample_count": 1,
-      "current_p50_ms": 91.12,
-      "current_p95_ms": 91.12,
-      "current_p99_ms": 91.12,
-      "latency_status": "ideal",
+      "current_p50_ms": 113.46,
+      "current_p95_ms": 113.46,
+      "current_p99_ms": 113.46,
+      "measurement_status": "insufficient_samples",
+      "percentile_credible": false,
+      "minimum_credible_percentile_samples": 30,
+      "latency_status": "insufficient_samples",
       "bottleneck_stage": "total_or_external_wait",
       "production_ready": false
     },
@@ -35,10 +41,13 @@
       "acceptable_p95_ms": 8000,
       "needs_attention_p95_ms": 15000,
       "sample_count": 4,
-      "current_p50_ms": 184.68,
-      "current_p95_ms": 908.37,
-      "current_p99_ms": 908.37,
-      "latency_status": "ideal",
+      "current_p50_ms": 246.59,
+      "current_p95_ms": 1489.47,
+      "current_p99_ms": 1489.47,
+      "measurement_status": "insufficient_samples",
+      "percentile_credible": false,
+      "minimum_credible_percentile_samples": 30,
+      "latency_status": "insufficient_samples",
       "bottleneck_stage": "retrieval_ms",
       "production_ready": false
     },
@@ -51,6 +60,9 @@
       "current_p50_ms": null,
       "current_p95_ms": null,
       "current_p99_ms": null,
+      "measurement_status": "not_sampled",
+      "percentile_credible": false,
+      "minimum_credible_percentile_samples": 30,
       "latency_status": "not_sampled",
       "bottleneck_stage": null,
       "production_ready": false
@@ -61,10 +73,13 @@
       "acceptable_p95_ms": 3000,
       "needs_attention_p95_ms": 6000,
       "sample_count": 4,
-      "current_p50_ms": 1191.58,
-      "current_p95_ms": 1454.87,
-      "current_p99_ms": 1454.87,
-      "latency_status": "acceptable",
+      "current_p50_ms": 1644.88,
+      "current_p95_ms": 1868.61,
+      "current_p99_ms": 1868.61,
+      "measurement_status": "insufficient_samples",
+      "percentile_credible": false,
+      "minimum_credible_percentile_samples": 30,
+      "latency_status": "insufficient_samples",
       "bottleneck_stage": "retrieval_ms",
       "production_ready": false
     },
@@ -77,6 +92,9 @@
       "current_p50_ms": null,
       "current_p95_ms": null,
       "current_p99_ms": null,
+      "measurement_status": "not_sampled",
+      "percentile_credible": false,
+      "minimum_credible_percentile_samples": 30,
       "latency_status": "not_sampled",
       "bottleneck_stage": null,
       "production_ready": false
@@ -90,6 +108,9 @@
       "current_p50_ms": null,
       "current_p95_ms": null,
       "current_p99_ms": null,
+      "measurement_status": "not_sampled",
+      "percentile_credible": false,
+      "minimum_credible_percentile_samples": 30,
       "latency_status": "not_sampled",
       "bottleneck_stage": null,
       "production_ready": false
@@ -98,46 +119,46 @@
   "stage_summary": {
     "safety_gate_ms": {
       "samples": 5,
-      "median_ms": 51.22,
-      "p95_ms": 79.4,
-      "max_ms": 85.76
+      "median_ms": 44.23,
+      "p95_ms": 62.02,
+      "max_ms": 65.42
     },
     "intent_routing_ms": {
       "samples": 5,
-      "median_ms": 0.15,
-      "p95_ms": 0.5,
-      "max_ms": 0.55
+      "median_ms": 0.18,
+      "p95_ms": 0.36,
+      "max_ms": 0.4
     },
     "retrieval_ms": {
       "samples": 5,
-      "median_ms": 847.51,
-      "p95_ms": 1312.12,
-      "max_ms": 1379.91
+      "median_ms": 1509.88,
+      "p95_ms": 1739.23,
+      "max_ms": 1779.24
     },
     "rerank_ms": {
       "samples": 5,
-      "median_ms": 2.39,
-      "p95_ms": 3.5,
-      "max_ms": 3.54
+      "median_ms": 2.9,
+      "p95_ms": 5.69,
+      "max_ms": 6.24
     },
     "generation_ms": {
       "samples": 5,
       "median_ms": 0.76,
-      "p95_ms": 1.14,
-      "max_ms": 1.15
+      "p95_ms": 1.75,
+      "max_ms": 1.96
     },
     "total_ms": {
       "samples": 10,
-      "median_ms": 412.71,
-      "p95_ms": 1336.39,
-      "max_ms": 1454.87
+      "median_ms": 775.55,
+      "p95_ms": 1767.93,
+      "max_ms": 1868.61
     }
   },
   "warmup": {
     "enabled": true,
     "query": "What is a CBC?",
     "terminal_step": "generated",
-    "total_ms": 9590.23,
+    "total_ms": 27548.45,
     "rationale": "Warm-up separates local index/model initialization from steady route latency. Cold-start cost is still reported here and must not be hidden."
   },
   "optimization_policy": {

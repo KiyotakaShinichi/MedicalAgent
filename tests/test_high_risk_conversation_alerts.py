@@ -9,10 +9,12 @@ from backend.database import Base
 from backend.models import ChatMessage, HighRiskAlertDeliveryAttempt, HighRiskConversationAlert, Patient
 from backend.services.emotional_distress_detection import detect_emotional_distress
 from backend.services.high_risk_conversation_alerts import (
+    build_alert_automation_status,
     classify_alert_trigger,
     process_due_alert_deliveries,
     queue_and_dispatch_alert,
     record_delivery_receipt,
+    requeue_dead_letter_alert,
     serialize_alert,
 )
 from backend.services.n8n_webhook_dispatcher import build_signed_dispatch
@@ -196,5 +198,49 @@ def test_channel_receipt_is_not_clinician_acknowledgement_and_duplicates_do_not_
         assert alert.acknowledged_at is None
         assert alert.acknowledged_by_role is None
         assert "do not prove" in serialize_alert(alert)["delivery_claim_boundary"]
+    finally:
+        db.close()
+
+
+def test_dead_letter_status_and_manual_requeue_remain_nonclinical(tmp_path):
+    db = _session(tmp_path)
+    try:
+        db.add(Patient(id="PX", name="Synthetic Patient", diagnosis="doctor-confirmed"))
+        db.flush()
+        chat = ChatMessage(patient_id="PX", role="user", message="synthetic crisis phrase", intent="patient_support")
+        db.add(chat)
+        db.flush()
+        alert = HighRiskConversationAlert(
+            patient_id="PX",
+            source_chat_message_id=chat.id,
+            idempotency_key="dead-letter-test",
+            category="crisis_language",
+            severity="critical_review",
+            trigger_summary="Crisis-language route requires prompt human review.",
+            status="queued",
+            notification_status="dead_lettered",
+            notification_attempt_count=3,
+            notification_max_attempts=3,
+            delivery_receipt_status="failed",
+            dead_letter_reason="TimeoutError",
+        )
+        db.add(alert)
+        db.flush()
+
+        before = build_alert_automation_status(db)
+        assert before["dead_lettered"] == 1
+        assert before["delivery_receipt_is_human_acknowledgement"] is False
+        assert before["monitored_emergency_service"] is False
+
+        requeued = requeue_dead_letter_alert(db, alert_id=alert.id, requested_by_role="admin")
+        db.commit()
+        assert requeued.notification_status == "retry_scheduled"
+        assert requeued.notification_attempt_count == 0
+        assert requeued.dead_letter_reason is None
+        audit = db.query(HighRiskAlertDeliveryAttempt).filter(
+            HighRiskAlertDeliveryAttempt.alert_id == alert.id,
+            HighRiskAlertDeliveryAttempt.status == "manual_requeue_requested",
+        ).one()
+        assert audit.error_code == "requested_by_admin"
     finally:
         db.close()

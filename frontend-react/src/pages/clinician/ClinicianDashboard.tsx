@@ -255,6 +255,12 @@ function HighRiskConversationAlertsPanel({
   onAcknowledge: (alertId: number) => Promise<void>;
 }) {
   const openAlerts = alerts.filter((alert) => alert.status !== "acknowledged");
+  const deadLetters = alerts.filter((alert) => alert.notification_status === "dead_lettered").length;
+  const retries = alerts.filter((alert) => alert.notification_status === "retry_scheduled").length;
+  const awaitingReceipt = alerts.filter((alert) => alert.delivery_receipt_status === "awaiting_receipt").length;
+  const deliveredUnacknowledged = alerts.filter(
+    (alert) => alert.notification_status === "delivered_to_channel" && alert.status !== "acknowledged",
+  ).length;
   return (
     <SectionCard
       title="High-priority conversation review"
@@ -265,6 +271,13 @@ function HighRiskConversationAlertsPanel({
         Engineering review queue only. It is not a monitored emergency service, and delivery status
         does not prove that a clinician saw or acted on an item.
       </p>
+      <div className="clinician-alert-health" aria-label="Alert workflow status">
+        <div><strong>{openAlerts.length}</strong><span>open locally</span></div>
+        <div><strong>{retries}</strong><span>retry queued</span></div>
+        <div><strong>{deadLetters}</strong><span>dead letters</span></div>
+        <div><strong>{awaitingReceipt}</strong><span>awaiting receipt</span></div>
+        <div><strong>{deliveredUnacknowledged}</strong><span>delivered, not acknowledged</span></div>
+      </div>
       {loading && <LoadingPane label="Loading conversation alerts..." />}
       {error && <ErrorPane message={error} />}
       {!loading && !error && alerts.length === 0 && (

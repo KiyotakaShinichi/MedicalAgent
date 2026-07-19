@@ -1,0 +1,239 @@
+{
+  "schema_version": "citation_window_sensitivity_v1",
+  "generated_at": "2026-07-18T08:57:48.686686+00:00",
+  "status": "acceptable",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "live_patient_route_changed": false,
+  "retrieval_ranking_changed": false,
+  "configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+  "case_count": 74,
+  "baseline_cited_context_k": 5,
+  "rows": [
+    {
+      "cited_context_k": 1,
+      "citation_precision": 0.6081,
+      "citation_precision_delta_vs_k5": 0.0865,
+      "cited_window_support_rate": 0.6081,
+      "cited_window_support_delta_vs_k5": -0.2162,
+      "low_precision_case_count": 29
+    },
+    {
+      "cited_context_k": 2,
+      "citation_precision": 0.5811,
+      "citation_precision_delta_vs_k5": 0.0595,
+      "cited_window_support_rate": 0.7162,
+      "cited_window_support_delta_vs_k5": -0.1081,
+      "low_precision_case_count": 21
+    },
+    {
+      "cited_context_k": 3,
+      "citation_precision": 0.5721,
+      "citation_precision_delta_vs_k5": 0.0505,
+      "cited_window_support_rate": 0.7703,
+      "cited_window_support_delta_vs_k5": -0.0541,
+      "low_precision_case_count": 30
+    },
+    {
+      "cited_context_k": 5,
+      "citation_precision": 0.5216,
+      "citation_precision_delta_vs_k5": 0.0,
+      "cited_window_support_rate": 0.8243,
+      "cited_window_support_delta_vs_k5": 0.0,
+      "low_precision_case_count": 28
+    }
+  ],
+  "recommended_cited_context_k": 1,
+  "promotion_recommendation": "do_not_promote_without_more_evidence",
+  "why": "Citation precision can improve when fewer chunks are cited, but this does not prove retrieval improvement. Any live change should be A/B tested against generated-answer claim support and refusal behavior.",
+  "claim_boundary": "This is internal engineering evidence only. It is not clinical validation, not a patient-safety claim, and not proof that the RAG stack is clinically grounded.",
+  "failure_examples": [
+    {
+      "case_id": "retrieval_gold_001",
+      "category": null,
+      "expected_source_ids": [
+        "nci-her2-breast",
+        "curated-her2-basics"
+      ],
+      "retrieved_source_ids": [
+        "afa6a907e158ceca"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_008",
+      "category": null,
+      "expected_source_ids": [
+        "supplement-safety",
+        "curated-st-johns-wort"
+      ],
+      "retrieved_source_ids": [
+        "supportive-care-safety"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "partial_source_recall"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_012",
+      "category": null,
+      "expected_source_ids": [
+        "curated-tumor-marker-limitations",
+        "tumor-marker-context"
+      ],
+      "retrieved_source_ids": [
+        "890d72c72f9459a3"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_013",
+      "category": null,
+      "expected_source_ids": [
+        "curated-vus-boundary",
+        "genetic-counseling"
+      ],
+      "retrieved_source_ids": [
+        "dd8482fb188651cd"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_014",
+      "category": null,
+      "expected_source_ids": [
+        "Project safety policy",
+        "treatment-side-effects"
+      ],
+      "retrieved_source_ids": [
+        "4a6fee1c39db19c8"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "partial_source_recall"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_019",
+      "category": null,
+      "expected_source_ids": [
+        "Project safety policy"
+      ],
+      "retrieved_source_ids": [
+        "479e2ce02e7d9e05"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_020",
+      "category": null,
+      "expected_source_ids": [
+        "Project safety policy"
+      ],
+      "retrieved_source_ids": [
+        "c35c9264029ff9c9"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_021",
+      "category": null,
+      "expected_source_ids": [
+        "Project safety policy"
+      ],
+      "retrieved_source_ids": [
+        "479e2ce02e7d9e05"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_023",
+      "category": null,
+      "expected_source_ids": [
+        "Project safety policy"
+      ],
+      "retrieved_source_ids": [
+        "c35c9264029ff9c9"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_024",
+      "category": null,
+      "expected_source_ids": [
+        "Project safety policy"
+      ],
+      "retrieved_source_ids": [
+        "c35c9264029ff9c9"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_025",
+      "category": null,
+      "expected_source_ids": [
+        "Project safety policy"
+      ],
+      "retrieved_source_ids": [
+        "c35c9264029ff9c9"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ]
+    },
+    {
+      "case_id": "retrieval_gold_026",
+      "category": null,
+      "expected_source_ids": [
+        "Project safety policy"
+      ],
+      "retrieved_source_ids": [
+        "479e2ce02e7d9e05"
+      ],
+      "citation_precision_at_k": 0.0,
+      "failure_reasons": [
+        "retrieval_miss",
+        "unsupported_context",
+        "low_citation_precision"
+      ]
+    }
+  ]
+}

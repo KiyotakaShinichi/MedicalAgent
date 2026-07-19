@@ -3,6 +3,7 @@ import { Wrench, CheckCircle2, XCircle, Clock, AlertCircle } from "lucide-react"
 import { SectionCard } from "../../../components/ui/SectionCard";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
 import { ErrorPane, LoadingPane } from "../../../components/ui/Spinner";
+import { getNormalizedBenchmarkArtifact } from "../../../api/client";
 
 interface ToolActionCase {
   id: string;
@@ -30,8 +31,6 @@ interface ToolActionBenchmark {
   claim_boundary?: string;
 }
 
-const ARTIFACT_URL = "/artifacts/evals/tool_actions/latest_tool_action_benchmark.json";
-
 function tone(status?: string): "success" | "danger" | "warning" | "neutral" {
   if (status === "passed") return "success";
   if (status === "failed") return "danger";
@@ -47,13 +46,16 @@ export function ToolActionBenchmarkSection() {
   const fetchBenchmark = useCallback(() => {
     setLoading(true);
     setError(null);
-    fetch(ARTIFACT_URL, { cache: "no-cache" })
-      .then((r) => {
-        if (!r.ok) throw new Error(`${r.status}: ${r.statusText}`);
-        return r.json();
-      })
-      .then((json: ToolActionBenchmark) => {
-        setData(json);
+    getNormalizedBenchmarkArtifact("tool_action_benchmark")
+      .then((response) => {
+        setData({
+          schema_version: response.schema_version,
+          generated_at: response.last_run_at ?? response.generated_at,
+          status: response.status,
+          summary: response.metrics as ToolActionBenchmark["summary"],
+          cases: response.rows as ToolActionCase[],
+          claim_boundary: response.claim_boundary,
+        });
         setLoading(false);
       })
       .catch((e: Error) => {
@@ -79,7 +81,7 @@ export function ToolActionBenchmarkSection() {
   if (error || !data) {
     return (
       <ErrorPane
-        message={error ?? "Tool action benchmark artifact not found at /artifacts/evals/tool_actions/."}
+        message={error ?? "Tool action benchmark is unavailable through the authenticated admin API."}
         onRetry={fetchBenchmark}
       />
     );

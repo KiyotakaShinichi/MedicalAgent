@@ -400,10 +400,38 @@ def _run_rag_generation_branch(
     validate.  Stores the response in the cache when validation passes
     and the request is cacheable.  Embeds per-stage latency in the
     pipeline_trace's ``stage_ms`` block."""
+    from backend.services.rag_execution_policy import govern_candidates, plan_rag_execution
+
+    actor_role = (input_guardrails or {}).get("actor_role")
+    execution_policy, mode = plan_rag_execution(intent=intent, rewritten=rewritten, actor_role=actor_role)
     retrieved = hybrid_retrieval(rewritten, intent)
-    expanded = expand_parent_child_windows(retrieved)
+    governed_retrieved, initial_filter_trace = govern_candidates(
+        retrieved,
+        mode,
+        limit=execution_policy.max_governed_candidates or None,
+    )
+    expanded = (
+        expand_parent_child_windows(governed_retrieved)
+        if execution_policy.apply_parent_child
+        else governed_retrieved
+    )
+    governed_expanded, expanded_filter_trace = govern_candidates(
+        expanded,
+        mode,
+        limit=execution_policy.max_governed_candidates or None,
+    )
     t_retrieval = perf_counter()
-    reranked = rerank_context(expanded, rewritten, intent, safety)
+    if execution_policy.apply_reranker:
+        reranked = rerank_context(governed_expanded, rewritten, intent, safety)
+    else:
+        reranked = [
+            {
+                **item,
+                "rerank_score": item.get("retrieval_score", 0),
+                "reranker_backend": "intent_policy_stage_skipped",
+            }
+            for item in governed_expanded
+        ]
     compressed = contextual_compression(reranked)
     t_rerank = perf_counter()
     generated = generate_answer(
@@ -446,9 +474,19 @@ def _run_rag_generation_branch(
     result = {
         **validated,
         "cache": cache_status,
+        "rag_execution_policy": execution_policy.to_dict(),
+        "pregen_tier_filter": {
+            "initial_retrieval": initial_filter_trace,
+            "after_parent_child": expanded_filter_trace,
+        },
         "pipeline_trace": {
             **_trace(safety, intent, rewritten, retrieved, reranked, compressed, "generated", cache_policy=cache_policy),
             "stage_ms": stage_ms,
+            "rag_execution_policy": execution_policy.to_dict(),
+            "pregen_tier_filter": {
+                "initial_retrieval": initial_filter_trace,
+                "after_parent_child": expanded_filter_trace,
+            },
         },
     }
     return _finalize_result(

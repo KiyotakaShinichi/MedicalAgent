@@ -6,6 +6,20 @@ NLCare is a safety-first, non-diagnostic engineering prototype for organizing sy
 
 The patient portal uses records-first progressive loading and prepares synthetic model enrichment in a bounded process-local background job, so a slow or failed engineering bundle does not blank the underlying records. High-priority support-chat language can create an auditable local review item with idempotency, bounded retries, append-only delivery attempts, dead-letter state, signed redacted n8n events, and signed channel receipts. External delivery is disabled by default and is locked to a synthetic test recipient when enabled; workflow acceptance or channel delivery never proves that a clinician saw or acted on an alert. See [patient progressive loading and review alerts](docs/patient_progressive_loading_and_review_alerts.md).
 
+## Canonical engineering verdict (July 2026)
+
+The reviewer headline is `Data/evals/governance/latest_focused_release_summary.json`, not the largest or greenest metric in the repository.
+
+- Release gate: passed, with 27 required artifacts and 139 supporting/informational artifacts. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
+- Frozen adversarial v4: pass rate `0.614754`, unsafe leakage `0.427273`; safety is explicitly **not solved**.
+- RAG: full source-governed Recall@10 `0.7838` versus BM25 `0.8041`. Raw retrieval improvement is not proven. The governed stack raises source-tier correctness from `0.4595` to `1.0` on the internal set, with about `4.13x` BM25 p95 retrieval latency.
+- ML: the calibrated classification champion does not prove paired accuracy superiority over logistic regression on the 120-row synthetic test export (`p=1.0`). Model complexity is retained as engineering comparison, not clinical evidence.
+- Latency: current route samples range from 0 to 4, below the 30-sample minimum for credible percentile labels. These routes are `not_sampled` or `insufficient_samples`, never production-ready.
+- Automation: the local outbox, retry/dead-letter workflow, signed redacted dispatch, channel receipts, and human acknowledgement are separate states. External delivery remains disabled by default and is not an emergency service.
+- Review: no clinician, nurse, genetic counselor, or external author has completed a review.
+
+See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple synthetic ML baselines](docs/evals/synthetic_simple_baseline_audit.md), and [dependency reproducibility](docs/dependency_reproducibility.md).
+
 ## What this does NOT prove
 - No clinical validation.
 - No clinician-reviewed labels or clinician approval.
@@ -633,3 +647,41 @@ Role is inferred from credentials — no manual role selection after login.
 - `/patient` — timeline, labs, AI snapshot, model signal, chat support
 - `/clinician` — review queue, patient detail, approve/edit/reject workflow, audit trail
 - `/admin` — RAG metrics + ablation study, guardrails, Agent Trace Observatory, MLE gates + noise/temporal/error table, regression suite, feedback log
+# July 2026 constraint-bound engineering hardening
+
+The latest pass adds controls and measurements without changing the project's
+clinical boundary:
+
+- Frozen internal adversarial holdout v5 was hashed before classifier changes
+  and evaluated once afterward. It scored `0.8182` with unsafe leakage `0.20`;
+  this is improved engineering evidence, but still internally authored and
+  below target.
+- Unsafe-intent detection now combines deterministic patterns, prototype
+  similarity, and generalized action/object concept rules. A separate
+  development mutation set is marked `was_used_for_tuning: true` and is never
+  presented as held-out evidence.
+- Source-tier and allowed-use filtering now runs before answer generation, with
+  a second post-generation governance/claim check retained as the final layer.
+- Claim validation now records atomic claim type, polarity, temporality,
+  population scope, numeric facts, and structured alignment checks. The default
+  remains heuristic unless a local NLI model is available; it is not a
+  clinical-grade entailment system.
+- Chat record writes bind confirmation to the exact preview digest, expire,
+  reject tampered state, prevent duplicates, retain provenance, and remain
+  undoable. Conversation memory is explicitly untrusted and non-authoritative.
+- Repeated patient-grouped synthetic stress testing now compares simple and
+  complex classifiers/regressors across clean, MAR/MNAR missingness,
+  measurement noise, label noise, and subgroup shift. The complex models win
+  the five clean synthetic splits, but promotion remains `HOLD`.
+- The XAI fidelity audit reports `additivity_verifiable: false` because the
+  current export omits predictions/base values and flags one-hot/proxy display
+  risks rather than presenting SHAP output as causal explanation.
+- Engineering automation supports caller-supplied idempotency, bounded retries,
+  dead-letter state, and audited manual requeue. It remains redacted,
+  dry-run-first automation and cannot automate medical decisions.
+- A compact release decision surface separates hard blockers from warnings so
+  the full artifact registry cannot visually dilute weak generalization,
+  retrieval, latency, XAI, or dependency evidence.
+
+These are synthetic/internal engineering controls. NLCare remains unreviewed,
+not clinically validated, and not production healthcare ready.

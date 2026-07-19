@@ -27,6 +27,7 @@ from backend.api.routers.model import router as model_router
 from backend.api.routers.admin_eval import build_admin_eval_router
 from backend.api.routers.automation import router as automation_router
 from backend.services.request_context import reset_request_id, set_request_id
+from backend.services.api_protection import EngineeringApiProtectionMiddleware
 
 
 # ─── App setup ────────────────────────────────────────────────────────────────
@@ -75,6 +76,7 @@ app.add_middleware(
     ],
     expose_headers=["X-Request-ID", "X-Analytics-Cache"],
 )
+app.add_middleware(EngineeringApiProtectionMiddleware)
 
 
 @app.middleware("http")
@@ -88,8 +90,12 @@ async def request_id_middleware(request: Request, call_next):
     response.headers["x-request-id"] = request_id
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("X-Frame-Options", "DENY")
-    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
     response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    response.headers.setdefault(
+        "Content-Security-Policy",
+        "default-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+    )
     return response
 
 
@@ -138,7 +144,7 @@ def healthcheck(db: Session = Depends(get_db)):
     db.execute(text("SELECT 1"))
     return {
         "status": "ok",
-        "service": "ai_breast_cancer_monitoring",
+        "service": "nlcare_monitoring_prototype",
         "database": "ok",
     }
 
@@ -159,7 +165,7 @@ def readinesscheck(db: Session = Depends(get_db)):
     demo_auth_allowed = is_demo_auth_allowed()
     return {
         "status": "ready",
-        "service": "ai_breast_cancer_monitoring",
+        "service": "nlcare_monitoring_prototype",
         "database": "ok",
         "environment": environment,
         "demo_auth_allowed": demo_auth_allowed,
@@ -175,4 +181,3 @@ def readinesscheck(db: Session = Depends(get_db)):
 # ─── Static files ─────────────────────────────────────────────────────────────
 
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
-app.mount("/artifacts", StaticFiles(directory="Data"), name="artifacts")

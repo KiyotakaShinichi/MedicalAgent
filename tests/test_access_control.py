@@ -13,13 +13,15 @@ seeded with demo credentials via the same auth service used in production.
 """
 
 import unittest
+from pathlib import Path
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from backend.database import Base
-from backend.models import Patient
+from backend.models import Patient, PatientUpload
+from backend.config import UPLOAD_DIR
 from backend.api.main import app, get_db
 
 # ── In-memory DB for tests ────────────────────────────────────────────────────
@@ -114,6 +116,20 @@ class TestAuthEndpoints(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["role"], "patient")
 
+    def test_logout_revokes_server_session(self):
+        token = _get_token("P001", "patient-demo")
+        if not token:
+            self.skipTest("Could not obtain P001 token")
+        logout = client.delete("/auth/session", headers=_auth(token))
+        self.assertEqual(logout.status_code, 200)
+        self.assertTrue(logout.json()["revoked"])
+        whoami = client.get("/auth/whoami", headers=_auth(token))
+        self.assertIn(whoami.status_code, [401, 403])
+
+    def test_raw_data_artifact_mount_is_not_public(self):
+        response = client.get("/artifacts/evals/rag/latest_rag_baseline_comparison.json")
+        self.assertEqual(response.status_code, 404)
+
 
 # ── Patient isolation tests ───────────────────────────────────────────────────
 
@@ -151,6 +167,44 @@ class TestPatientIsolation(unittest.TestCase):
             self.skipTest("Could not obtain P001 token")
         resp = client.get("/patients", headers=_auth(token))
         self.assertIn(resp.status_code, [401, 403])
+
+    def test_patient_upload_content_requires_owner_token_and_hides_local_path(self):
+        token = _get_token("P001", "patient-demo")
+        if not token:
+            self.skipTest("Could not obtain P001 token")
+        path = Path(UPLOAD_DIR) / "access-control" / "protected-test.txt"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("synthetic protected upload", encoding="utf-8")
+        db = TestingSession()
+        try:
+            upload = PatientUpload(
+                patient_id="P001",
+                upload_type="test",
+                original_filename="protected-test.txt",
+                content_type="text/plain",
+                local_path=str(path),
+                notes="synthetic access-control fixture",
+            )
+            db.add(upload)
+            db.commit()
+            db.refresh(upload)
+
+            unauthenticated = client.get(f"/me/uploads/{upload.id}/content")
+            self.assertIn(unauthenticated.status_code, [401, 403])
+            owned = client.get(f"/me/uploads/{upload.id}/content", headers=_auth(token))
+            self.assertEqual(owned.status_code, 200)
+            self.assertEqual(owned.text, "synthetic protected upload")
+
+            listing = client.get("/me/uploads", headers=_auth(token))
+            self.assertEqual(listing.status_code, 200)
+            matching = next(row for row in listing.json()["uploads"] if row["id"] == upload.id)
+            self.assertNotIn("local_path", matching)
+            self.assertEqual(matching["content_url"], f"/me/uploads/{upload.id}/content")
+        finally:
+            db.query(PatientUpload).filter(PatientUpload.local_path == str(path)).delete()
+            db.commit()
+            db.close()
+            path.unlink(missing_ok=True)
 
 
 # ── Clinician access tests ────────────────────────────────────────────────────
@@ -219,6 +273,9 @@ class TestHealthEndpoint(unittest.TestCase):
         self.assertIn("status", resp.json())
         self.assertEqual(resp.headers.get("x-content-type-options"), "nosniff")
         self.assertEqual(resp.headers.get("x-frame-options"), "DENY")
+        self.assertEqual(resp.headers.get("referrer-policy"), "no-referrer")
+        self.assertIn("frame-ancestors 'none'", resp.headers.get("content-security-policy", ""))
+        self.assertEqual(resp.headers.get("x-api-protection-scope"), "process_local_engineering_control")
 
     def test_ready_unauthenticated_with_boundary(self):
         resp = client.get("/ready")

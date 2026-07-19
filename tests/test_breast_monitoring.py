@@ -15,6 +15,9 @@ from sqlalchemy.orm import sessionmaker
 # Keep unit tests local and fast. The application still uses dense FAISS
 # retrieval by default when dependencies are installed.
 os.environ.setdefault("RAG_FORCE_SPARSE", "1")
+# The integration suite validates deterministic routing and safety contracts.
+# Live-provider behavior is covered by separately labelled live-agent evals.
+os.environ.setdefault("ONCOTRACK_FAST_MODE", "1")
 
 from backend.database import Base
 from backend.models import AgentResponseCache, AgentResponseFeedback, AppEventLog, AsyncTask, ChatMessage, ClinicalIntervention, ClinicalSummaryReview, ImagingReport, LabResult, MedicationLog, MLExperimentRun, ModelRegistry, Patient, PatientUpload, PredictionAuditLog, RAGEvaluationLog, SymptomReport, Treatment, TreatmentOutcome

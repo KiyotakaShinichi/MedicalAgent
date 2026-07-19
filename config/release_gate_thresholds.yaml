@@ -1067,6 +1067,20 @@ artifacts:
       on the same frozen internal goldset. Do not tune on this artifact or
       claim clinical validation.
 
+  - path: Data/evals/rag/latest_citation_window_sensitivity.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention, informational]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [live_patient_route_changed], op: "==", value: false}
+      - {path: [retrieval_ranking_changed], op: "==", value: false}
+    note: >
+      Eval-only citation-window sensitivity check. It may identify an A/B-test
+      candidate for fewer cited chunks, but it must not change live patient
+      retrieval or imply clinical grounding is solved.
+
   - path: Data/evals/rag/latest_retrieval_failure_analysis.json
     required: false
     max_age_days: 90
@@ -1568,6 +1582,25 @@ artifacts:
       missingness/abstention language, and nonclinical boundaries. It is not
       usability testing, patient benefit evidence, or clinical validation.
 
+  - path: Data/evals/governance/latest_automation_xai_industry_alignment.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [automation_live_delivery_enabled], op: "==", value: false}
+      - {path: [patient_benefit_claim], op: "==", value: false}
+      - {path: [diagnostic_authority_claim], op: "==", value: false}
+      - {path: [treatment_recommendation_claim], op: "==", value: false}
+      - {path: [real_emergency_coverage_claim], op: "==", value: false}
+      - {path: [automation_control_count], op: ">=", value: 6}
+      - {path: [xai_control_count], op: ">=", value: 6}
+    note: >
+      Industry-alignment roadmap for automation and XAI controls. It keeps
+      email/SMS/Viber/n8n style notification paths disabled/test-only and
+      treats patient XAI as explanation governance, not clinical validation.
+
   - path: Data/evals/governance/latest_platform_control_plane_architecture.json
     required: false
     max_age_days: 90
@@ -1749,3 +1782,93 @@ artifacts:
       Process-local concurrency regression for deferred synthetic report
       enrichment. It does not establish distributed-worker durability,
       production latency, clinical validation, or healthcare readiness.
+
+  - path: Data/evals/rag/latest_rag_governance_tradeoff.json
+    required: false
+    max_age_days: 90
+    accepted_status: [needs_attention, acceptable]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [improvement_proven_vs_bm25], op: "==", value: false}
+      - {path: [external_holdout, completed], op: "==", value: false}
+    note: >
+      Canonical internal RAG trade-off report. It preserves the negative raw
+      recall comparison while showing source-governance and latency costs; it
+      is not external validation or clinical evidence.
+
+  - path: Data/evals/models/latest_synthetic_simple_baseline_audit.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [promotion_allowed], op: "==", value: false}
+    note: >
+      Simple-baseline audit on simulator-built rows. It prevents complexity
+      claims when paired superiority over logistic regression is not proven.
+
+  - path: Data/evals/ops/latest_dependency_lock_audit.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [lock_complete], op: "==", value: true}
+      - {path: [transitive_lock_complete], op: "==", value: false}
+      - {path: [vulnerability_scan_included], op: "==", value: false}
+    note: >
+      Direct Python dependency reproducibility audit. It deliberately does not
+      claim a full transitive lock, vulnerability assessment, or secure
+      healthcare deployment.
+
+  - path: Data/evals/safety/latest_adversarial_holdout_v5_baseline.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: false}
+    note: >
+      One-pass internally authored frozen v5 result. It is a generalization
+      warning and does not replace external-author adversarial evaluation.
+
+  - path: Data/evals/safety/latest_unsafe_intent_mutation_dev_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: true}
+    note: Development-only mutation set; never present it as held-out evidence.
+
+  - path: Data/evals/models/latest_synthetic_v2_model_stability.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [promotion_decision, promotion_allowed], op: "==", value: false}
+    note: Repeated grouped synthetic stress evidence; never clinical evidence.
+
+  - path: Data/evals/models/latest_xai_fidelity_audit.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [causal_interpretation_allowed], op: "==", value: false}
+    note: Mechanical XAI audit; missing additivity inputs may remain visible as needs_attention.
+
+  - path: Data/evals/governance/latest_release_decision_surface.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable, needs_attention, blocked]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+    note: Compact reviewer-facing summary over the detailed release registry.

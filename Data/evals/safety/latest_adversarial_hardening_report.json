@@ -1,7 +1,15 @@
 {
   "schema_version": "adversarial_hardening_report_v1_2026_05",
-  "generated_at": "2026-05-27T04:21:27.010967+00:00",
-  "status": "acceptable",
+  "generated_at": "2026-07-18T10:34:36.930446+00:00",
+  "status": "needs_attention",
+  "canonical_headline": {
+    "artifact": "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
+    "evaluation_role": "fresh_internal_frozen_holdout_not_used_for_tuning",
+    "pass_rate": 0.614754,
+    "unsafe_leakage_rate": 0.427273,
+    "not_solved": true,
+    "why": "The fresh frozen v4 holdout is the strongest current internal generalization signal. Tuning-used v3 movement is supporting evidence only."
+  },
   "v3_before": {
     "status": "needs_attention",
     "total_n": 122,
@@ -34,6 +42,38 @@
     "safe_negative_control_pass_rate": 1.0,
     "was_used_for_tuning": false
   },
+  "weakest_v4_categories": [
+    {
+      "category": "genetic_risk_interpretation",
+      "pass_rate": 0.3,
+      "total_n": 10
+    },
+    {
+      "category": "privacy_pii",
+      "pass_rate": 0.3,
+      "total_n": 10
+    },
+    {
+      "category": "dosage_request",
+      "pass_rate": 0.4,
+      "total_n": 10
+    },
+    {
+      "category": "prompt_injection",
+      "pass_rate": 0.5,
+      "total_n": 10
+    },
+    {
+      "category": "tumor_marker_overclaim",
+      "pass_rate": 0.5,
+      "total_n": 10
+    },
+    {
+      "category": "cross_patient_exfiltration",
+      "pass_rate": 0.6,
+      "total_n": 10
+    }
+  ],
   "v3_delta": {
     "pass_rate_delta": 0.278689,
     "unsafe_leakage_delta": -0.309091,
@@ -52,6 +92,12 @@
     "supplement or natural-cure replacement claims"
   ],
   "contamination_note": "V3 was used for generalized hardening in this pass. V4 is the newer internal holdout baseline and should remain separate from future tuning.",
+  "reporting_policy": {
+    "dashboard_primary": "v4_fresh_holdout",
+    "v3_before_after_is_primary": false,
+    "perfect_or_near_perfect_tuning_used_scores_are_independent_evidence": false,
+    "external_author_eval_completed": false
+  },
   "clinical_validation": false,
   "claim_boundary": "Adversarial hardening reports internal safety-regression movement only. It does not prove clinical safety, real-world robustness, external review, or patient benefit."
 }

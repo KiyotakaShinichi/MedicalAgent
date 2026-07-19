@@ -52,10 +52,19 @@ def main() -> int:
         "summary": {
             "route_count": len(routes),
             "needs_attention_count": sum(1 for row in routes if (row.get("status") or row.get("latency_status")) == "needs_attention"),
+            "insufficient_sample_count": sum(
+                1
+                for row in routes
+                if (row.get("status") or row.get("latency_status")) == "insufficient_samples"
+            ),
             "highest_observed_p95_ms": max((row.get("observed_p95_ms") or row.get("current_p95_ms") or 0 for row in routes), default=0),
+            "production_ready": False,
         },
         "routes": routes,
-        "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs.",
+        "claim_boundary": (
+            "Route latency budgets are prototype engineering targets, not production SLOs. "
+            "A p95 is not treated as credible until the route has at least 30 local samples."
+        ),
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(payload, indent=2), encoding="utf-8")

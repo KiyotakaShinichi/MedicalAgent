@@ -34,3 +34,6 @@ def test_conversation_state_tracks_pending_symptom_and_recent_actions():
     assert snapshot["message_count"] == 2
     assert snapshot["pending_actions"] == {}
     assert snapshot["recent_saved_actions"][-1]["type"] == "saved_symptom"
+    assert snapshot["recent_messages"][0]["trust"] == "untrusted_user_content"
+    assert snapshot["recent_messages"][0]["authoritative_patient_record"] is False
+    assert snapshot["memory_contract"]["user_messages_are_untrusted"] is True

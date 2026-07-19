@@ -15,6 +15,7 @@ from backend.services.agent_latency_probe import run_latency_probe  # noqa: E402
 
 OUTPUT_PATH = ROOT / "Data/evals/ops/latest_latency_profile.json"
 PHASE2_OUTPUT_PATH = ROOT / "Data/evals/ops/latest_latency_profile_phase2.json"
+MIN_CREDIBLE_PERCENTILE_SAMPLES = 30
 
 
 ROUTE_BUDGETS = {
@@ -85,7 +86,10 @@ def _route_rows(per_query: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "current_p50_ms": p50,
             "current_p95_ms": p95,
             "current_p99_ms": p99,
-            "latency_status": _latency_status(p95, budget),
+            "measurement_status": _measurement_status(len(rows)),
+            "percentile_credible": len(rows) >= MIN_CREDIBLE_PERCENTILE_SAMPLES,
+            "minimum_credible_percentile_samples": MIN_CREDIBLE_PERCENTILE_SAMPLES,
+            "latency_status": _latency_status(p95, budget, sample_count=len(rows)),
             "bottleneck_stage": _bottleneck(rows),
             "production_ready": False,
         })
@@ -121,9 +125,23 @@ def _pct(values: list[float], pct: int) -> float | None:
     return round(values[max(0, min(idx, len(values) - 1))], 3)
 
 
-def _latency_status(p95: float | None, budget: dict[str, float]) -> str:
-    if p95 is None:
+def _measurement_status(sample_count: int) -> str:
+    if sample_count == 0:
         return "not_sampled"
+    if sample_count < MIN_CREDIBLE_PERCENTILE_SAMPLES:
+        return "insufficient_samples"
+    return "credible_local_sample"
+
+
+def _latency_status(
+    p95: float | None,
+    budget: dict[str, float],
+    *,
+    sample_count: int,
+) -> str:
+    measurement_status = _measurement_status(sample_count)
+    if measurement_status != "credible_local_sample":
+        return measurement_status
     if p95 <= budget["ideal_p95_ms"]:
         return "ideal"
     if p95 <= budget["acceptable_p95_ms"]:
@@ -143,6 +161,8 @@ def _bottleneck(rows: list[dict[str, Any]]) -> str | None:
 
 def _status(routes: list[dict[str, Any]]) -> str:
     if any(row["latency_status"] == "needs_attention" for row in routes if row["sample_count"]):
+        return "needs_attention"
+    if any(row["latency_status"] == "insufficient_samples" for row in routes):
         return "needs_attention"
     if any(row["latency_status"] == "acceptable" for row in routes if row["sample_count"]):
         return "acceptable"

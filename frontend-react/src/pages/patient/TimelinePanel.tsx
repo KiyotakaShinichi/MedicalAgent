@@ -12,15 +12,15 @@ import {
   FileText,
   Image as ImageIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { SectionCard } from "../../components/ui/SectionCard";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { RelativeTime } from "../../components/ui/RelativeTime";
 import { EmptyState } from "../../components/ui/states";
 import { AIGeneratedLabel } from "../../components/ui/AIGeneratedLabel";
-import { API_BASE } from "../../api/client";
-import type { TimelineEvent } from "../../types/api";
+import { getAuthenticatedObjectUrl } from "../../api/client";
+import type { TimelineEvent, TimelineMedia } from "../../types/api";
 
 interface Props {
   events: TimelineEvent[];
@@ -164,19 +164,70 @@ function TimelineEventCard({ event, onSelect }: TimelineEventCardProps) {
   );
 }
 
-function artifactHref(path?: string | null): string | null {
-  if (!path) return null;
-  try {
-    return new URL(path, API_BASE).toString();
-  } catch {
-    return path;
-  }
-}
-
 function renderValue(value: unknown): string {
   if (value === null || value === undefined || value === "") return "Not recorded";
   if (typeof value === "object") return JSON.stringify(value);
   return String(value);
+}
+
+function AuthenticatedTimelineMediaCard({ item, index }: { item: TimelineMedia; index: number }) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [artifactError, setArtifactError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    let objectUrl: string | null = null;
+    if (!item.artifact_url || !item.previewable) return undefined;
+
+    getAuthenticatedObjectUrl(item.artifact_url)
+      .then((url) => {
+        objectUrl = url;
+        if (active) setPreviewUrl(url);
+      })
+      .catch(() => {
+        if (active) setArtifactError("Preview unavailable");
+      });
+
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [item.artifact_url, item.previewable]);
+
+  async function openArtifact() {
+    if (!item.artifact_url) return;
+    try {
+      setArtifactError(null);
+      const url = previewUrl ?? await getAuthenticatedObjectUrl(item.artifact_url);
+      window.open(url, "_blank", "noopener,noreferrer");
+      if (!previewUrl) window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch {
+      setArtifactError("Artifact unavailable");
+    }
+  }
+
+  return (
+    <article className="timeline-media-card" key={`${item.label ?? "media"}-${index}`}>
+      {previewUrl && item.previewable ? (
+        <img src={previewUrl} alt={item.label ?? "Timeline media preview"} />
+      ) : (
+        <div className="timeline-media-placeholder">
+          {item.previewable ? <ImageIcon size={22} /> : <FileText size={22} />}
+        </div>
+      )}
+      <div>
+        <strong>{item.label ?? "Uploaded file"}</strong>
+        <span>{item.modality ?? item.content_type ?? "Record"}</span>
+        {item.notes && <p>{item.notes}</p>}
+        {item.artifact_url && (
+          <button type="button" className="timeline-media-open" onClick={openArtifact}>
+            Open artifact <ExternalLink size={13} />
+          </button>
+        )}
+        {artifactError && <span className="timeline-media-error">{artifactError}</span>}
+      </div>
+    </article>
+  );
 }
 
 function TimelineDetailModal({ event, onClose }: { event: TimelineEvent; onClose: () => void }) {
@@ -241,30 +292,13 @@ function TimelineDetailModal({ event, onClose }: { event: TimelineEvent; onClose
           <section className="timeline-detail-section">
             <h4>Attached media / reports</h4>
             <div className="timeline-media-grid">
-              {media.map((item, index) => {
-                const href = artifactHref(item.artifact_url);
-                return (
-                  <article className="timeline-media-card" key={`${item.label ?? "media"}-${index}`}>
-                    {href && item.previewable ? (
-                      <img src={href} alt={item.label ?? "Timeline media preview"} />
-                    ) : (
-                      <div className="timeline-media-placeholder">
-                        {item.previewable ? <ImageIcon size={22} /> : <FileText size={22} />}
-                      </div>
-                    )}
-                    <div>
-                      <strong>{item.label ?? "Uploaded file"}</strong>
-                      <span>{item.modality ?? item.content_type ?? "Record"}</span>
-                      {item.notes && <p>{item.notes}</p>}
-                      {href && (
-                        <a href={href} target="_blank" rel="noreferrer">
-                          Open artifact <ExternalLink size={13} />
-                        </a>
-                      )}
-                    </div>
-                  </article>
-                );
-              })}
+              {media.map((item, index) => (
+                <AuthenticatedTimelineMediaCard
+                  item={item}
+                  index={index}
+                  key={`${item.label ?? "media"}-${index}`}
+                />
+              ))}
             </div>
           </section>
         )}

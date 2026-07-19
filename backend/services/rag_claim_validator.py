@@ -18,6 +18,11 @@ from typing import Iterable, Mapping
 
 
 _SENT_SPLIT = re.compile(r"(?<=[.!?])\s+")
+_ATOMIC_SPLIT = re.compile(r"\s*(?:;|\n+\s*[-*â€¢]\s+|\n+\s*\d+[.)]\s+)\s*")
+_NUMERIC_FACT = re.compile(
+    r"\b(\d+(?:\.\d+)?)\s*(mg|mcg|g|ml|%|percent|x10\^?\d+/[a-z]+|k/[a-z]+|g/dl|u/ml|days?|weeks?|months?|years?)\b",
+    re.IGNORECASE,
+)
 
 _CLAIM_SIGNALS = (
     "wbc", "anc", "hemoglobin", "platelets", "neutropenia", "neutrophil",
@@ -66,6 +71,12 @@ class ClaimVerdict:
     validation_method: str = "heuristic_overlap"
     entailment_score: float | None = None
     contradiction_score: float | None = None
+    claim_type: str = "other_medical_claim"
+    polarity: str = "positive"
+    temporality: str = "general"
+    population_scope: str = "general"
+    numeric_facts: list[str] = field(default_factory=list)
+    alignment_checks: dict[str, object] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return {
@@ -78,6 +89,12 @@ class ClaimVerdict:
             "validation_method": self.validation_method,
             "entailment_score": round(self.entailment_score, 4) if self.entailment_score is not None else None,
             "contradiction_score": round(self.contradiction_score, 4) if self.contradiction_score is not None else None,
+            "claim_type": self.claim_type,
+            "polarity": self.polarity,
+            "temporality": self.temporality,
+            "population_scope": self.population_scope,
+            "numeric_facts": list(self.numeric_facts),
+            "alignment_checks": dict(self.alignment_checks),
         }
 
 
@@ -122,7 +139,13 @@ def validate_claims(
 
     chunks = [c for c in retrieved_chunks if c and isinstance(c, Mapping)]
     chunk_records = [
-        {"id": _chunk_id(c), "text": str(c.get("text") or ""), "tokens": _tokens(str(c.get("text") or ""))}
+        {
+            "id": _chunk_id(c),
+            "text": str(c.get("text") or ""),
+            "tokens": _tokens(str(c.get("text") or "")),
+            "source_type": str(c.get("source_type") or c.get("record_type") or ""),
+            "is_patient_record": bool(c.get("is_patient_record")) or str(c.get("source_type") or "").lower() in {"patient_record", "timeline_record"},
+        }
         for c in chunks
     ]
     for sentence in _split_sentences(reply):
@@ -149,7 +172,10 @@ def _split_sentences(text: str) -> list[str]:
         .replace("i.e.", "i<dot>e<dot>")
     )
     sentences = [s.replace("<dot>", ".").strip() for s in _SENT_SPLIT.split(protected) if s.strip()]
-    return sentences
+    atomic: list[str] = []
+    for sentence in sentences:
+        atomic.extend(part.strip() for part in _ATOMIC_SPLIT.split(sentence) if part.strip())
+    return atomic
 
 
 def _tokens(text: str) -> set[str]:
@@ -171,12 +197,26 @@ def _is_claim_sentence(sentence: str) -> bool:
 
 
 def _evaluate_sentence(sentence: str, chunk_records: list[dict[str, object]], method: str) -> ClaimVerdict:
+    claim_type = _claim_type(sentence)
+    polarity = _polarity(sentence)
+    temporality = _temporality(sentence)
+    population_scope = _population_scope(sentence)
+    numeric_facts = _numeric_facts(sentence)
     if not _is_claim_sentence(sentence):
-        return ClaimVerdict(sentence=sentence, is_claim=False, support_score=0.0, status="non_claim", validation_method=method)
+        return ClaimVerdict(
+            sentence=sentence, is_claim=False, support_score=0.0, status="non_claim", validation_method=method,
+            claim_type=claim_type, polarity=polarity, temporality=temporality,
+            population_scope=population_scope, numeric_facts=numeric_facts,
+        )
 
     sentence_toks = _tokens(sentence)
     if not sentence_toks:
-        return ClaimVerdict(sentence=sentence, is_claim=True, support_score=0.0, status="unsupported", reason="no_substantive_tokens", validation_method=method)
+        return ClaimVerdict(
+            sentence=sentence, is_claim=True, support_score=0.0, status="unsupported",
+            reason="no_substantive_tokens", validation_method=method, claim_type=claim_type,
+            polarity=polarity, temporality=temporality, population_scope=population_scope,
+            numeric_facts=numeric_facts,
+        )
 
     best_score = 0.0
     supporting: list[str] = []
@@ -198,6 +238,17 @@ def _evaluate_sentence(sentence: str, chunk_records: list[dict[str, object]], me
     entailment_score = None
     contradiction_score = None
 
+    alignment_checks, alignment_reason = _alignment_checks(
+        sentence,
+        chunk_records,
+        numeric_facts=numeric_facts,
+        population_scope=population_scope,
+    )
+    if alignment_reason:
+        status = "unsupported"
+        reason = alignment_reason
+        validation_method = "heuristic_structured_alignment"
+
     contradiction_reason = _heuristic_contradiction_reason(
         sentence,
         [text for _, _, text in scored_chunks],
@@ -216,13 +267,13 @@ def _evaluate_sentence(sentence: str, chunk_records: list[dict[str, object]], me
             if nli["supporting_chunk_ids"]:
                 supporting = list(nli["supporting_chunk_ids"])
             best_score = max(best_score, entailment_score)
-            if contradiction_reason:
+            if contradiction_reason or alignment_reason:
                 # Safety-first: the local heuristic catches narrow medical
                 # inversions that small generic MNLI models often
                 # over-entail. NLI may upgrade paraphrased support, but it
                 # must not override these explicit risk-boundary patterns.
                 status = "unsupported"
-                reason = contradiction_reason
+                reason = contradiction_reason or alignment_reason
             elif contradiction_score >= NLI_CONTRADICTION_THRESHOLD:
                 status = "unsupported"
                 reason = "nli_contradiction_detected"
@@ -249,7 +300,87 @@ def _evaluate_sentence(sentence: str, chunk_records: list[dict[str, object]], me
         validation_method=validation_method,
         entailment_score=entailment_score,
         contradiction_score=contradiction_score,
+        claim_type=claim_type,
+        polarity=polarity,
+        temporality=temporality,
+        population_scope=population_scope,
+        numeric_facts=numeric_facts,
+        alignment_checks=alignment_checks,
     )
+
+
+def _claim_type(sentence: str) -> str:
+    lower = sentence.lower()
+    if any(term in lower for term in ("dose", "dosage", "mg", "should stop", "should start", "treatment")):
+        return "treatment_or_dose"
+    if any(term in lower for term in ("survival", "prognosis", "life expectancy", "recurrence")):
+        return "prognosis_or_outcome"
+    if any(term in lower for term in ("brca", "vus", "variant", "genetic", "germline")):
+        return "genetic"
+    if any(term in lower for term in ("tumor marker", "ca 15", "ca 27", "cea")):
+        return "tumor_marker"
+    if any(term in lower for term in ("wbc", "anc", "hemoglobin", "platelet")):
+        return "laboratory"
+    if any(term in lower for term in ("mri", "ct ", "ultrasound", "mammogram", "scan")):
+        return "imaging"
+    return "other_medical_claim"
+
+
+def _polarity(sentence: str) -> str:
+    lower = sentence.lower()
+    return "negative" if re.search(r"\b(no|not|never|cannot|can't|does not|do not|without)\b", lower) else "positive"
+
+
+def _temporality(sentence: str) -> str:
+    lower = sentence.lower()
+    if re.search(r"\b(will|future|next|going to)\b", lower):
+        return "future"
+    if re.search(r"\b(was|were|previous|last|yesterday|ago)\b", lower):
+        return "past"
+    if re.search(r"\b(now|today|currently|current)\b", lower):
+        return "current"
+    return "general"
+
+
+def _population_scope(sentence: str) -> str:
+    lower = sentence.lower()
+    if re.search(r"\b(you have|your (?:cancer|tumou?r|lab|result|scan|marker|risk|prognosis)|for you|in your case|my (?:cancer|tumou?r|lab|result|scan|marker|risk|prognosis))\b", lower):
+        return "patient_specific"
+    return "general"
+
+
+def _numeric_facts(sentence: str) -> list[str]:
+    return [f"{value} {unit.lower()}" for value, unit in _NUMERIC_FACT.findall(sentence)]
+
+
+def _alignment_checks(
+    sentence: str,
+    chunk_records: list[dict[str, object]],
+    *,
+    numeric_facts: list[str],
+    population_scope: str,
+) -> tuple[dict[str, object], str | None]:
+    evidence = "\n".join(str(chunk.get("text") or "") for chunk in chunk_records).lower()
+    normalized_evidence = re.sub(r"\s+", " ", evidence)
+    missing_numeric = [fact for fact in numeric_facts if fact.lower() not in normalized_evidence]
+    patient_record_available = any(bool(chunk.get("is_patient_record")) for chunk in chunk_records)
+    lower = sentence.lower()
+    absolute_claim = any(term in lower for term in ("always", "never", "definitely", "guarantees", "proves", "certainly"))
+    conditional_evidence = any(term in evidence for term in ("may", "might", "can", "depends", "context", "not by itself"))
+    checks: dict[str, object] = {
+        "numeric_alignment": "passed" if not missing_numeric else "failed",
+        "missing_numeric_facts": missing_numeric,
+        "patient_scope_alignment": "passed" if population_scope != "patient_specific" or patient_record_available else "failed",
+        "patient_record_available": patient_record_available,
+        "modality_alignment": "failed" if absolute_claim and conditional_evidence else "passed",
+    }
+    if missing_numeric:
+        return checks, "numeric_value_or_unit_not_found_in_evidence"
+    if population_scope == "patient_specific" and not patient_record_available:
+        return checks, "patient_specific_claim_supported_only_by_generic_evidence"
+    if absolute_claim and conditional_evidence:
+        return checks, "absolute_claim_exceeds_conditional_evidence"
+    return checks, None
 
 
 def _heuristic_contradiction_reason(sentence: str, chunk_texts: list[str]) -> str | None:

@@ -9,8 +9,10 @@ duplicate, and can be undone by the same patient.
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import re
+import time
 from datetime import date, datetime, timezone
 from typing import Any
 from uuid import uuid4
@@ -23,7 +25,12 @@ from backend.models import (
     SymptomReport,
 )
 from backend.processing.radiology_analysis import detect_possible_metastatic_indicators
-from backend.services.conversation_state import clear_pending_action, get_pending_action, set_pending_action
+from backend.services.conversation_state import (
+    DEFAULT_TTL_SECONDS,
+    clear_pending_action,
+    get_pending_action,
+    set_pending_action,
+)
 
 
 PENDING_KEY = "confirmed_record_write"
@@ -73,11 +80,14 @@ def queue_record_write(
     if candidate not in items:
         items.append(candidate)
     pending["items"] = items
+    pending["confirmation_digest"] = _confirmation_digest(pending)
     set_pending_action(patient_id, PENDING_KEY, pending)
     return {
         "type": "pending_record_confirmation",
         "record_type": record_type,
         "confirmation_id": pending["confirmation_id"],
+        "confirmation_digest": pending["confirmation_digest"],
+        "expires_at_epoch": round(time.time() + DEFAULT_TTL_SECONDS, 3),
         "preview": _preview(record_type, serial_payload),
         "message": "Nothing has been saved yet. Confirm or cancel this record preview.",
         "requires_confirmation": True,
@@ -97,6 +107,18 @@ def resolve_pending_record_write(db, patient_id: str, message: str) -> list[dict
         }]
     if not is_confirmation_message(message):
         return None
+
+    expected_digest = _confirmation_digest(pending)
+    if not pending.get("confirmation_digest") or not hmac.compare_digest(
+        str(pending.get("confirmation_digest")), expected_digest
+    ):
+        clear_pending_action(patient_id, PENDING_KEY)
+        return [{
+            "type": "record_write_cancelled",
+            "confirmation_id": pending.get("confirmation_id"),
+            "reason": "confirmation_payload_integrity_check_failed",
+            "message": "The saved preview changed before confirmation, so no patient record was written.",
+        }]
 
     actions: list[dict[str, Any]] = []
     for index, item in enumerate(pending.get("items") or []):
@@ -325,6 +347,15 @@ def _preview(record_type: str, payload: dict[str, Any]) -> str:
 
 def _fingerprint(patient_id: str, record_type: str, payload: dict[str, Any]) -> str:
     return _hash(f"{patient_id}|{record_type}|{_canonical(payload)}")
+
+
+def _confirmation_digest(pending: dict[str, Any]) -> str:
+    envelope = {
+        "confirmation_id": pending.get("confirmation_id"),
+        "source_chat_message_id": pending.get("source_chat_message_id"),
+        "items": pending.get("items") or [],
+    }
+    return _hash(_canonical(envelope))
 
 
 def _hash(value: str) -> str:

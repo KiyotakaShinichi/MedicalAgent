@@ -155,6 +155,19 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "rag_governance_tradeoff",
+        "title": "RAG effectiveness and governance trade-off",
+        "path": "Data/evals/rag/latest_rag_governance_tradeoff.json",
+        "tier": "supporting",
+        "metrics": {
+            "recall_delta": ["tradeoffs", "full_minus_bm25_recall_at_10"],
+            "source_tier_delta": ["tradeoffs", "full_minus_bm25_source_tier_correctness"],
+            "latency_ratio": ["tradeoffs", "full_vs_bm25_latency_p95_ratio"],
+            "improvement_proven": ["improvement_proven_vs_bm25"],
+            "external_holdout_completed": ["external_holdout", "completed"],
+        },
+    },
+    {
         "id": "rag_gold",
         "title": "Hand-labeled RAG gold set",
         "path": "Data/evals/rag/latest_rag_gold_eval.json",
@@ -649,6 +662,20 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "clinical_validation": ["clinical_validation"],
             "diagnostic_authority_claim": ["diagnostic_authority_claim"],
             "treatment_recommendation_claim": ["treatment_recommendation_claim"],
+        },
+    },
+    {
+        "id": "automation_xai_industry_alignment",
+        "title": "Automation and XAI industry-alignment roadmap",
+        "path": "Data/evals/governance/latest_automation_xai_industry_alignment.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "automation_control_count": ["automation_control_count"],
+            "xai_control_count": ["xai_control_count"],
+            "automation_live_delivery_enabled": ["automation_live_delivery_enabled"],
+            "healthcare_production_ready": ["healthcare_production_ready"],
+            "real_emergency_coverage_claim": ["real_emergency_coverage_claim"],
         },
     },
     {
@@ -1461,6 +1488,20 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "unsupported_context_rate": ["summary", "unsupported_context_rate"],
             "source_tier_correctness": ["summary", "source_tier_correctness"],
             "improvement_proven_vs_bm25": ["summary", "improvement_proven_vs_bm25"],
+        },
+    },
+    {
+        "id": "citation_window_sensitivity",
+        "title": "Citation window sensitivity",
+        "path": "Data/evals/rag/latest_citation_window_sensitivity.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "case_count": ["case_count"],
+            "recommended_cited_context_k": ["recommended_cited_context_k"],
+            "promotion_recommendation": ["promotion_recommendation"],
+            "live_patient_route_changed": ["live_patient_route_changed"],
+            "retrieval_ranking_changed": ["retrieval_ranking_changed"],
         },
     },
     {
