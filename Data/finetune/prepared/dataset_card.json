@@ -1,7 +1,7 @@
 {
-  "schema_version": "finetune_dataset_card_v1",
-  "generated_at": "2026-05-18T11:55:36.082860+00:00",
-  "dataset_purpose": "Behavior / style tuning for NLCare patient-safe responses. NOT medical knowledge tuning.",
+  "schema_version": "finetune_dataset_card_v2",
+  "generated_at": "2026-07-21T15:55:18.455125+00:00",
+  "dataset_purpose": "Behavior and format tuning for synthetic NLCare responses; not medical knowledge tuning.",
   "allowed_behavior_targets": [
     "clinician_summary",
     "missing_data_disclosure",
@@ -21,16 +21,21 @@
     "replace_treatment_claim"
   ],
   "synthetic_or_source": "all_synthetic",
+  "clinical_validation": false,
   "safety_filters_applied": [
-    "backend.services.medical_claim_boundary.classify_text",
-    "phrase_blocklist (safe with chemo / stop chemo / metastasis / cancer free)",
-    "behavior_allowlist_check"
+    "template_schema_validation",
+    "direct_identifier_patterns",
+    "medical_claim_boundary_fail_closed",
+    "unsafe_phrase_backstop",
+    "behavior_allowlist",
+    "exact_duplicate_rejection"
   ],
   "known_risks": [
-    "Behavior over-fits on synthetic phrasing; live patient input is more varied.",
-    "Refusal phrasing might be reused even when not needed; A/B test the candidate.",
-    "Taglish examples are small in number; do not generalize broadly.",
-    "The medical_claim_boundary checker is heuristic; future versions may catch new violations."
+    "Small internally authored examples can overfit synthetic phrasing.",
+    "The internal frozen split is not independent external evidence.",
+    "Exact-text contamination checks miss semantic paraphrases.",
+    "Heuristic medical boundaries are not clinical-grade validators.",
+    "Passing this audit does not prove adapter behavior or clinical safety."
   ],
   "example_counts": {
     "accepted_total": 27,
@@ -41,13 +46,69 @@
       "questions_to_ask_care_team": 5,
       "supplement_boundary": 6,
       "taglish_safety": 6
+    },
+    "by_split": {
+      "train": 17,
+      "internal_frozen_holdout": 5,
+      "development": 5
     }
   },
+  "deduplication": {
+    "exact_duplicates_rejected": 0,
+    "near_duplicate_threshold": 0.92,
+    "near_duplicate_pairs": []
+  },
+  "contamination_audit": {
+    "status": "acceptable",
+    "comparison": "exact_normalised_text_only",
+    "scanned_files": [
+      {
+        "path": "Data/evals/rag/retrieval_goldset.jsonl",
+        "sha256": "a622e62c5877065cf42a8ff0cc8b1dbe6b1a2363fd4e49be1aaa1198fccd8e8d"
+      },
+      {
+        "path": "Data/evals/rag/retrieval_goldset_holdout_v2_template.jsonl",
+        "sha256": "7a6a95db928c2be70162177377d3b178297cbd084ad135ac116dd32ce9df0f92"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v2.jsonl",
+        "sha256": "409c912ecbfd2c71e9bd982692e808d175a1fb6c2cc87dec854bba3d92b45c84"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v3.jsonl",
+        "sha256": "a4865bcc8a1aad4ed241938d02a3b6e7a8e6a87add1de2a285caec2d4d5807da"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v4.jsonl",
+        "sha256": "813155ce515059e5d1ab10326b78c729c9013f6ccb10ca2cfd7fcfedc30c1b08"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v5.jsonl",
+        "sha256": "f4bf3fdc751035f2ce8d78ef4c454ca26c50795d3d900ac9f4ad8d90104157f3"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v6.jsonl",
+        "sha256": "cdbfc7d2411f3451bfbbba52a15bc320dc2ec7f784632b2f62675bfd43b3309a"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_safety_holdout_variants.jsonl",
+        "sha256": "3ab8b6bc7edfb4f72d862577ee2e78280dd0f1c541ea737ea0dff32f9b14d8b6"
+      }
+    ],
+    "exact_overlap_count": 0,
+    "overlaps": [],
+    "semantic_contamination_not_measured": true
+  },
+  "training_readiness": "scaffold_only_not_ready_for_adapter_promotion",
   "system_prompt": "You are a non-diagnostic oncology monitoring support assistant. You organize information, summarize safely, ask for missing details, and route urgent or treatment-decision questions to the care team. You do not diagnose, confirm progression, recommend treatment changes, give dosage advice, interpret genetic-risk for the patient, or conclude from tumor markers. You do not declare any supplement 'safe with chemo'.",
   "rejected_examples": [],
   "files": {
-    "dataset_jsonl": "data\\finetune\\prepared\\dataset.jsonl",
-    "dataset_card": "data\\finetune\\prepared\\dataset_card.json"
+    "dataset_jsonl": "Data/finetune/prepared/dataset.jsonl",
+    "dataset_card": "Data/finetune/prepared/dataset_card.json",
+    "split_manifest": "Data/finetune/prepared/split_manifest.json",
+    "dataset_train": "Data/finetune/prepared/dataset_train.jsonl",
+    "dataset_development": "Data/finetune/prepared/dataset_development.jsonl",
+    "dataset_internal_frozen_holdout": "Data/finetune/prepared/dataset_internal_frozen_holdout.jsonl"
   },
-  "claim_boundary": "Behavior / style tuning only on synthetic data. No clinical knowledge tuning, no diagnosis training, no treatment / dosage / prognosis / genetic-risk / tumor-marker / supplement-safety training. Any deployed adapter still goes through every safety layer and clinician review."
+  "claim_boundary": "Synthetic behavior and format tuning only. No diagnosis, treatment, dosage, prognosis, genetic-risk, tumor-marker, or supplement-safety authority. Any adapter remains behind every NLCare safety layer."
 }

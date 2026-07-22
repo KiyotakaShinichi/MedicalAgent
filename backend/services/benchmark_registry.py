@@ -875,6 +875,20 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "id": "finetune_behavior_governance",
+        "title": "Behavior-only fine-tuning governance",
+        "path": "Data/evals/models/latest_finetune_governance.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "model_trained": ["model_trained"],
+            "dataset_accepted": ["dataset", "accepted"],
+            "contamination_status": ["dataset", "contamination_status"],
+            "promotion_decision": ["promotion", "decision"],
+            "promotion_scope": ["promotion", "promotion_scope"],
+        },
+    },
+    {
         "id": "mle_readiness",
         "title": "MLE readiness gate",
         "path": "Data/mle_monitoring/latest_mle_readiness.json",

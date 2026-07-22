@@ -81,6 +81,27 @@ class DatasetPreparation(unittest.TestCase):
             self.assertEqual(card["example_counts"]["rejected_total"], 1)
             self.assertEqual(card["example_counts"]["accepted_total"], 0)
 
+    def test_boundary_schema_rejects_prognosis_claim_not_in_phrase_backstop(self) -> None:
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            templates = tmp_path / "templates"
+            templates.mkdir()
+            _write_template(
+                templates / "bad.jsonl",
+                [{
+                    "id": "bad_prognosis",
+                    "behavior": "clinician_summary",
+                    "user": "How long do I have?",
+                    "assistant": "You have 3 months to live.",
+                }],
+            )
+            card = prepare.prepare_dataset(templates, tmp_path / "prepared")
+            self.assertEqual(card["example_counts"]["accepted_total"], 0)
+            self.assertIn(
+                "prognosis_estimate",
+                card["rejected_examples"][0]["violations"],
+            )
+
     def test_unknown_behavior_is_rejected(self) -> None:
         with TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
@@ -116,6 +137,48 @@ class DatasetPreparation(unittest.TestCase):
             self.assertEqual(roles, ["system", "user", "assistant"])
             self.assertIn("non-diagnostic", payload["messages"][0]["content"])
 
+    def test_preparer_emits_deterministic_splits_and_hashes(self) -> None:
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            templates = tmp_path / "templates"
+            templates.mkdir()
+            rows = [
+                {
+                    "id": f"safe_{idx}",
+                    "behavior": "missing_data_disclosure",
+                    "user": f"Please summarize record {idx}.",
+                    "assistant": (
+                        "I don't have enough detail yet. Please share the relevant "
+                        f"record section {idx} for your care team to review."
+                    ),
+                }
+                for idx in range(4)
+            ]
+            _write_template(templates / "safe.jsonl", rows)
+            output = tmp_path / "prepared"
+            card = prepare.prepare_dataset(templates, output)
+            self.assertEqual(card["example_counts"]["by_split"]["development"], 1)
+            self.assertEqual(card["example_counts"]["by_split"]["internal_frozen_holdout"], 1)
+            manifest = json.loads((output / "split_manifest.json").read_text(encoding="utf-8"))
+            self.assertFalse(manifest["internal_holdout_is_independent_external_evidence"])
+            self.assertEqual(len(manifest["splits"]["train"]["sha256"]), 64)
+
+    def test_duplicate_id_is_rejected(self) -> None:
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            templates = tmp_path / "templates"
+            templates.mkdir()
+            row = {
+                "id": "duplicate",
+                "behavior": "missing_data_disclosure",
+                "user": "Please summarize this record.",
+                "assistant": "I don't have enough detail. Please share it with your care team.",
+            }
+            _write_template(templates / "duplicates.jsonl", [row, row])
+            card = prepare.prepare_dataset(templates, tmp_path / "prepared")
+            self.assertEqual(card["example_counts"]["accepted_total"], 1)
+            self.assertIn("duplicate_id", card["rejected_examples"][0]["violations"])
+
 
 class LoRADryRun(unittest.TestCase):
     def test_dryrun_emits_manifest_and_model_card(self) -> None:
@@ -132,12 +195,19 @@ class LoRADryRun(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):
                 dryrun.run_dryrun(dataset=Path(tmp) / "missing.jsonl", output_dir=Path(tmp) / "out")
 
+    def test_dryrun_refuses_holdout_as_training_data(self) -> None:
+        with TemporaryDirectory() as tmp:
+            holdout = Path(tmp) / "dataset_internal_frozen_holdout.jsonl"
+            holdout.write_text(json.dumps({"id": "x"}) + "\n", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                dryrun.run_dryrun(holdout, Path(tmp) / "runs")
+
 
 class BehaviorEvaluator(unittest.TestCase):
     def test_template_dataset_passes(self) -> None:
         # Use the actual repo's prepared dataset (seeded by prepare_finetune_dataset).
         repo_root = Path(__file__).resolve().parents[1]
-        dataset = repo_root / "data" / "finetune" / "prepared" / "dataset.jsonl"
+        dataset = repo_root / "Data" / "finetune" / "prepared" / "dataset.jsonl"
         if not dataset.exists():
             self.skipTest("Run scripts/prepare_finetune_dataset.py first")
         with TemporaryDirectory() as tmp:

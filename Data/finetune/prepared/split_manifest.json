@@ -1,0 +1,91 @@
+{
+  "schema_version": "finetune_split_manifest_v2",
+  "generated_at": "2026-07-21T15:55:18.368932+00:00",
+  "split_seed": "nlcare-behavior-v2-20260721",
+  "split_policy": "Deterministic behavior stratification; one development and one internal frozen example per behavior where possible.",
+  "internal_holdout_is_independent_external_evidence": false,
+  "source_files": [
+    {
+      "path": "Data/finetune/templates/clinician_summary_examples.jsonl",
+      "sha256": "143b6e17916ec9ffec978ddc3465a7660e5b53da4095f4801c3f9763c8b4f97c"
+    },
+    {
+      "path": "Data/finetune/templates/missing_data_disclosure_examples.jsonl",
+      "sha256": "567f6254add8c1b9866b8c3f28fb56d4afdf8ae349bbff9a0ba0939b4239bbab"
+    },
+    {
+      "path": "Data/finetune/templates/questions_to_ask_care_team_examples.jsonl",
+      "sha256": "70b84a8a4997e6027d2e1f61224e3a35d391795f801b50263ee3e0082f34ad20"
+    },
+    {
+      "path": "Data/finetune/templates/supplement_boundary_examples.jsonl",
+      "sha256": "ed4066486540b3ab75eb12b4377c0e0936faea26d36244dcae2d1abf682bcfa6"
+    },
+    {
+      "path": "Data/finetune/templates/taglish_safety_examples.jsonl",
+      "sha256": "c3badf770592a7b5aff0b1cba595523b6ae4382d9593b7737157c4448318c513"
+    }
+  ],
+  "splits": {
+    "train": {
+      "path": "Data/finetune/prepared/dataset_train.jsonl",
+      "sha256": "075187f41330563826a0e09f0821d8aaaa9678361462974a10b0602b2d2395b7",
+      "example_count": 17,
+      "was_used_for_tuning": true
+    },
+    "development": {
+      "path": "Data/finetune/prepared/dataset_development.jsonl",
+      "sha256": "35a7909c7099ee5add445213687f38ed9ae17295bc234e74f969dc9927bc52bb",
+      "example_count": 5,
+      "was_used_for_tuning": false
+    },
+    "internal_frozen_holdout": {
+      "path": "Data/finetune/prepared/dataset_internal_frozen_holdout.jsonl",
+      "sha256": "94e40b0a61e2448c4bfacfbfc1fe92e09abffa8e8be154d9fbe01cb95911b93d",
+      "example_count": 5,
+      "was_used_for_tuning": false
+    }
+  },
+  "contamination_audit": {
+    "status": "acceptable",
+    "comparison": "exact_normalised_text_only",
+    "scanned_files": [
+      {
+        "path": "Data/evals/rag/retrieval_goldset.jsonl",
+        "sha256": "a622e62c5877065cf42a8ff0cc8b1dbe6b1a2363fd4e49be1aaa1198fccd8e8d"
+      },
+      {
+        "path": "Data/evals/rag/retrieval_goldset_holdout_v2_template.jsonl",
+        "sha256": "7a6a95db928c2be70162177377d3b178297cbd084ad135ac116dd32ce9df0f92"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v2.jsonl",
+        "sha256": "409c912ecbfd2c71e9bd982692e808d175a1fb6c2cc87dec854bba3d92b45c84"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v3.jsonl",
+        "sha256": "a4865bcc8a1aad4ed241938d02a3b6e7a8e6a87add1de2a285caec2d4d5807da"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v4.jsonl",
+        "sha256": "813155ce515059e5d1ab10326b78c729c9013f6ccb10ca2cfd7fcfedc30c1b08"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v5.jsonl",
+        "sha256": "f4bf3fdc751035f2ce8d78ef4c454ca26c50795d3d900ac9f4ad8d90104157f3"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_holdout_v6.jsonl",
+        "sha256": "cdbfc7d2411f3451bfbbba52a15bc320dc2ec7f784632b2f62675bfd43b3309a"
+      },
+      {
+        "path": "Data/evals/safety/adversarial_safety_holdout_variants.jsonl",
+        "sha256": "3ab8b6bc7edfb4f72d862577ee2e78280dd0f1c541ea737ea0dff32f9b14d8b6"
+      }
+    ],
+    "exact_overlap_count": 0,
+    "overlaps": [],
+    "semantic_contamination_not_measured": true
+  },
+  "claim_boundary": "Internal synthetic split integrity only. The frozen split is not external evidence or clinical validation."
+}

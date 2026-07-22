@@ -74,6 +74,7 @@ def run_tier_ablation(
             "source_tier_correctness":  summary.get("source_tier_correctness"),
             "refusal_correctness":      summary.get("refusal_correctness"),
             "unsafe_answer_rate":       summary.get("unsafe_answer_rate"),
+            "post_gen_validator_trigger_rate": summary.get("post_gen_validator_trigger_rate"),
             "latency_p50_ms":           summary.get("latency_p50_ms"),
             "grade_distribution":       eval_payload.get("grade_distribution") or {},
         })

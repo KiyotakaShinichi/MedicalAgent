@@ -222,6 +222,7 @@ def main(argv: list[str] | None = None) -> int:
                 "source_tier_correctness": c.get("source_tier_correctness"),
                 "refusal_correctness": c.get("refusal_correctness"),
                 "unsafe_answer_rate": c.get("unsafe_answer_rate"),
+                "post_gen_validator_trigger_rate": c.get("post_gen_validator_trigger_rate"),
                 "latency_p50_ms": c.get("latency_p50_ms"),
             }
             for c in payload.get("per_config", [])

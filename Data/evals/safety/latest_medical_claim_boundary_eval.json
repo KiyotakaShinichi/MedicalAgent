@@ -1,27 +1,27 @@
 {
   "reproducibility": {
-    "git_commit": "56ecb6b8ae710b3b404b405956b547b94232a398",
+    "git_commit": "e11d39f0f8371ea595ac87d2cb608aef37696ffc",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
     "dataset_fingerprints": {
       "synthetic_training_rows": "920991:1778238158:44a845011924",
       "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
-      "claim_boundary": "7349:1779018900:7184207dc2b0"
+      "claim_boundary": "7346:1784017460:eccb073d9a1e"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2347447:1779336675:53270a8136a3",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2750051:1784272258:8bb4c5e82263",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-05-21T08:19:34.799038+00:00"
+    "generated_at": "2026-07-21T15:13:23.068323+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-05-21T08:19:34.799038+00:00",
+    "generated_at": "2026-07-21T15:13:23.068323+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-05-22T08:19:34.799038+00:00",
+    "expires_at": "2026-07-22T15:13:23.068323+00:00",
     "status": "fresh"
   },
   "schema_version": "medical_claim_boundary_eval_v1",
-  "generated_at": "2026-05-21T08:19:36.005226+00:00",
+  "generated_at": "2026-07-21T15:13:23.607586+00:00",
   "status": "strong",
   "summary": {
     "case_count": 8,

@@ -1,0 +1,45 @@
+{
+  "schema_version": "finetune_governance_v2",
+  "generated_at": "2026-07-21T15:55:18.600017+00:00",
+  "status": "needs_attention",
+  "clinical_validation": false,
+  "model_trained": false,
+  "dataset": {
+    "accepted": 27,
+    "rejected": 0,
+    "by_split": {
+      "train": 17,
+      "internal_frozen_holdout": 5,
+      "development": 5
+    },
+    "contamination_status": "acceptable",
+    "exact_overlap_count": 0
+  },
+  "dry_run": {
+    "manifest_path": "Data/finetune/runs/latest_dryrun_manifest.json",
+    "model_card_path": "Data/finetune/runs/latest_model_card.json",
+    "dataset_example_count": 17,
+    "ready_for_real_training": false
+  },
+  "reference_audit": {
+    "status": "strong",
+    "is_model_evaluation": false,
+    "unsafe_leakage_rate": 0.0,
+    "claim_boundary_compliance": 1.0,
+    "behavior_contract_pass_rate": 1.0
+  },
+  "promotion": {
+    "status": "ready_for_candidate_generations",
+    "decision": "HOLD",
+    "reason": "Complete baseline and candidate generations are required.",
+    "promotion_scope": "offline_shadow_only"
+  },
+  "remaining_blockers": [
+    "No base model or tokenizer revision is pinned.",
+    "No adapter has been trained.",
+    "Baseline and candidate generations are absent.",
+    "The dataset is small, synthetic, and internally authored.",
+    "No external author or clinician has reviewed the outputs."
+  ],
+  "claim_boundary": "Behavior-only synthetic engineering scaffold. It does not train medical knowledge, prove safety, or provide clinical validation."
+}

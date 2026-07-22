@@ -1,106 +1,102 @@
-# NLCare fine-tuning boundaries
+# NLCare behavior fine-tuning contract
 
-NLCare's fine-tuning scaffold trains behavior / style, not medical
-knowledge. This document is the hard-rule reference; if a future
-contributor proposes adding training examples that violate one of
-these rules, the dataset must reject them.
+NLCare fine-tuning is limited to synthetic behavior and response-format
+experiments. It must not inject medical knowledge, create new clinical claims,
+or weaken source-governed RAG, deterministic safety, post-generation
+validation, authorization, confirmed writes, or human review.
 
-## Allowed behavior targets
-The dataset preparer's allow-list (`scripts/prepare_finetune_dataset.py`)
-accepts examples in **five** behavior categories:
+## Allowed targets
 
-1. `clinician_summary`            — structured chart-handoff summaries
-2. `missing_data_disclosure`      — "I don't have enough detail; please share …" phrasing
-3. `questions_to_ask_care_team`   — preparing patient questions for visits
-4. `supplement_boundary`          — non-definitive safety routing for supplements
-5. `taglish_safety`               — Filipino/Taglish patient-safe refusal phrasing
+- `clinician_summary`
+- `missing_data_disclosure`
+- `questions_to_ask_care_team`
+- `supplement_boundary`
+- `taglish_safety`
 
-## Blocked claims
-The dataset preparer's safety filter rejects any example whose
-assistant string trips:
+## Blocked targets
 
-- `diagnosis`
-- `treatment_recommendation`
-- `dosage_change`
-- `prognosis_estimate`
-- `genetic_risk_prediction`
-- `tumor_marker_conclusion`
-- `survival_estimate`
-- `supplement_safe_with_chemo_claim`
-- `replace_treatment_claim`
-- any phrase the `medical_claim_boundary.classify_medical_claim`
-  service marks as unsafe
+Diagnosis, treatment selection or change, dosage, prognosis, survival,
+genetic-risk interpretation, VUS conclusions, tumor-marker conclusions,
+supplement-safety authority, and any behavior that replaces a clinician,
+genetic counselor, or pharmacist are prohibited.
 
-A rejected example is logged in the dataset card's
-`rejected_examples` list with its violation list, and is NOT included
-in the prepared dataset.
+## Dataset preparation
 
-## Hard rules
-1. **No real patient data.** All examples are synthetic.
-2. **No clinical knowledge tuning.** The base model already has the
-   factual layer it has; fine-tuning here changes tone, format, and
-   refusal style, not medical facts.
-3. **Dry-run by default.** `scripts/run_lora_finetune_dryrun.py`
-   produces a manifest + model-card stub without loading weights.
-   Real training is gated on GPU availability + a future contributor's
-   explicit decision; the dataset card and the model card must
-   document it.
-4. **Post-deployment safety layers still apply.** Any tuned adapter
-   that ships must still pass:
-   - `agent_safety.safety_scope_check`
-   - `agent_input_gate.input_guardrail_check`
-   - `agent_output_gate.output_guardrail_check`
-   - `agent_post_gen.apply_post_gen_validator`
-   - `medical_claim_boundary.classify_medical_claim`
-   - `rag_claim_validator.validate_claims`
-5. **A/B vetting before ship.** A tuned adapter must beat the baseline
-   in the offline A/B framework (`scripts/run_offline_ab_eval.py`)
-   with NO safety regression (see `docs/offline_ab_testing.md`).
-6. **Clinician review before ship.** Even a passing A/B is engineering
-   evidence only — clinician review of the prepared dataset and the
-   tuned adapter's outputs is required before any real-patient
-   exposure.
+`scripts/prepare_finetune_dataset.py` now:
 
-## Dataset card fields (required)
-Every prepared dataset emits a JSON dataset card with:
+1. Validates required fields and rejects possible direct identifiers.
+2. Applies the medical claim boundary fail-closed.
+3. Enforces the behavior allowlist.
+4. Rejects duplicate IDs and exact-content duplicates.
+5. Reports high-overlap near duplicates.
+6. Creates deterministic behavior-stratified train, development, and internal
+   frozen holdout splits.
+7. Hashes every template and output split.
+8. Checks exact normalized-text overlap against discovered holdout/goldset
+   JSONL files.
 
-- `dataset_purpose`
-- `allowed_behavior_targets`
-- `blocked_claims`
-- `synthetic_or_source`
-- `safety_filters_applied`
-- `known_risks`
-- `example_counts.{accepted_total, rejected_total, by_behavior}`
-- `system_prompt`
-- `rejected_examples`
-- `files.{dataset_jsonl, dataset_card}`
-- `claim_boundary`
+The contamination scan is exact-text only. It does not detect paraphrase or
+semantic contamination. The internally authored frozen split is not external
+or independent evidence.
 
-## Model card stub fields (required for any future adapter)
-- `base_model`
-- `adapter_name`
-- `intended_behavior` (must be a subset of allowed behavior targets)
-- `not_intended_for`
-- `evaluation_results`
-- `safety_validator_compatibility`
-- `claim_boundary`
+## Training readiness
 
-## How to run
+`scripts/run_lora_finetune_dryrun.py` does not train a model. It verifies the
+training split hash, refuses holdout files, and emits a reproducible QLoRA
+candidate plan plus a model-card template. Real training stays blocked until a
+base model and tokenizer revision are pinned, licensing is reviewed, the GPU
+runtime is reproducible, and baseline evaluation outputs exist.
+
+The candidate plan uses conservative adapter settings because the dataset is
+small. Hyperparameters are not evidence of quality and must not be tuned on
+the internal frozen holdout.
+
+## Generation evaluation
+
+`scripts/evaluate_finetuned_behavior.py` has two explicit modes:
+
+- Reference audit: checks curated assistant text. This is not model evaluation.
+- Generation audit: checks baseline or adapter outputs keyed by case ID.
+
+The report includes output coverage, unsafe leakage, claim-boundary
+compliance, validator errors, refusal correctness, missing-data disclosure,
+Taglish routing, format compliance, behavior-contract pass rate, per-behavior
+results, and case-level failures.
+
+## Promotion policy
+
+`scripts/run_finetune_promotion_gate.py` emits `PROMOTE`, `HOLD`, or `REJECT`.
+
+- Missing baseline or candidate generations always produces `HOLD`.
+- Any unsafe leakage, incomplete output, validator failure, claim-boundary
+  violation, safety-metric regression, missing behavior, or per-behavior
+  regression produces `REJECT`.
+- Fewer than 50 complete paired cases remains `HOLD` even when the observed
+  behavior score increases.
+- A safe candidate without at least a two-percentage-point behavior lift
+  remains `HOLD`.
+- `PROMOTE` means offline/shadow evaluation only. It never authorizes
+  patient-facing use.
+
+The two-point threshold is an engineering decision rule, not statistical proof.
+The current five-case internal frozen split is a tripwire and reference audit,
+not a sufficiently powered adapter comparison.
+
+No tuned adapter may bypass the live safety stack or replace RAG as the factual
+layer. Fine-tuning changes bounded behavior and formatting only.
+
+## Commands
 
 ```bash
-# 1) prepare a dataset from the templates
 python scripts/prepare_finetune_dataset.py
-
-# 2) emit a dry-run training manifest + model-card stub (no GPU needed)
 python scripts/run_lora_finetune_dryrun.py
-
-# 3) evaluate the prepared dataset against the safety contract
 python scripts/evaluate_finetuned_behavior.py
+python scripts/run_finetune_promotion_gate.py
+python scripts/run_finetune_scaffold.py
 ```
 
 ## Claim boundary
-This scaffold does not train medical knowledge. It trains tone,
-format, and refusal style on synthetic examples whose claims are
-bounded by the medical claim boundary checker. Any deployment of a
-tuned adapter remains a **non-diagnostic clinician-in-the-loop
-engineering prototype**.
+
+This is a synthetic engineering scaffold. It does not establish clinical
+validation, real-world safety, patient benefit, clinician approval, or
+production healthcare readiness.

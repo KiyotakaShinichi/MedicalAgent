@@ -1901,3 +1901,18 @@ artifacts:
       - {path: [clinical_validation], op: "==", value: false}
       - {path: [healthcare_production_ready], op: "==", value: false}
     note: Compact reviewer-facing summary over the detailed release registry.
+
+  - path: Data/evals/models/latest_finetune_governance.json
+    required: false
+    max_age_days: 90
+    accepted_status: [needs_attention, acceptable]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [model_trained], op: "==", value: false}
+      - {path: [dry_run, ready_for_real_training], op: "==", value: false}
+      - {path: [promotion, decision], op: "==", value: HOLD}
+      - {path: [promotion, promotion_scope], op: "==", value: offline_shadow_only}
+    note: >
+      Behavior-only synthetic fine-tuning governance. The current artifact is
+      deliberately HOLD because no adapter or candidate generations exist. It
+      does not add medical knowledge or establish clinical validation.

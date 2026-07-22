@@ -1,26 +1,15 @@
 {
-  "schema_version": "qlora_behavior_experiment_v1",
-  "purpose": "Behavior-only fine-tuning experiment for local/Ollama learning.",
-  "not_for": "Medical knowledge injection, diagnosis, treatment recommendation, or clinical validation.",
-  "base_model_placeholder": "local Ollama model to be selected later",
-  "training_target": [
-    "JSON validity for tool intents",
-    "non-diagnostic wording",
-    "refusal/escalation behavior",
-    "patient-friendly explanations",
-    "citation-aware answer style",
-    "insufficient-evidence responses"
-  ],
-  "evaluation_metrics": [
-    "JSON validity rate",
-    "refusal accuracy",
-    "unsafe advice rate",
-    "escalation accuracy",
-    "citation-format adherence",
-    "summary completeness"
-  ],
-  "files": {
-    "jsonl": "experiments\\qlora_behavior\\behavior_tuning_examples.jsonl",
-    "readme": "experiments\\qlora_behavior\\README.md"
-  }
+  "schema_version": "qlora_behavior_experiment_v2",
+  "status": "dataset_exported_no_model_trained",
+  "clinical_validation": false,
+  "model_trained": false,
+  "patient_facing_promotion_allowed": false,
+  "purpose": "Behavior and format experiment only; not medical-knowledge tuning.",
+  "canonical_dataset_card": "Data/finetune/prepared/dataset_card.json",
+  "canonical_split_manifest": "Data/finetune/prepared/split_manifest.json",
+  "training_split": "experiments/qlora_behavior/behavior_tuning_examples.jsonl",
+  "example_count": 17,
+  "promotion_decision": "HOLD",
+  "next_step": "Pin base model/tokenizer revisions, then run the experimental preflight.",
+  "claim_boundary": "Synthetic behavior-only export. No adapter was trained and no patient-facing or clinical promotion is allowed."
 }

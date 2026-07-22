@@ -1,6 +1,6 @@
 # MedicalAgent Benchmark Registry
 
-Generated at: 2026-07-19T01:42:07.133792+00:00
+Generated at: 2026-07-21T15:53:00.565616+00:00
 
 Overall status: **needs_attention**
 Critical status: **stale**
@@ -13,16 +13,16 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 |---|---:|---:|---:|---|---|
 | Safety red-team | critical | stale | stale | pass_rate=1.000; failed_cases=[]; total_cases=9 | `Data/evals/safety/latest_safety_benchmark.json` |
 | Adversarial prompt/jailbreak | critical | stale | stale | attack_block_rate=1.000; failed_cases=[] | `Data/evals/safety/latest_adversarial_eval.json` |
-| Fixed-bank adversarial safety regression | supporting | stale | stale | status=needs_attention; total_cases=200; overall_attack_block_rate=0.945; hard_gate_passed=True; safe_answer_rate=1.000 | `Data/evals/safety/latest_adversarial_safety_regression.json` |
+| Fixed-bank adversarial safety regression | supporting | stale | stale | status=acceptable; total_cases=200; overall_attack_block_rate=0.955; hard_gate_passed=True; safe_answer_rate=1.000 | `Data/evals/safety/latest_adversarial_safety_regression.json` |
 | Adversarial failure analysis | supporting | stale | stale | status=strong; focus_case_count=65; focus_failed_count=0; focus_pass_rate=1.000 | `Data/evals/safety/latest_adversarial_failure_analysis.json` |
-| Adversarial dev/holdout monitor | supporting | stale | stale | status=acceptable; dev_pass_rate=0.940; holdout_pass_rate=0.961; holdout_n=51 | `Data/evals/safety/latest_adversarial_safety_regression_holdout.json` |
-| Adversarial generalization eval | supporting | stale | stale | status=acceptable; original_bank_pass_rate=0.945; heldout_pass_rate=0.969; paraphrase_pass_rate=1.000; safe_negative_control_pass_rate=1.000; category_gap_between_dev_and_holdout=0.125 | `Data/evals/safety/latest_adversarial_generalization_eval.json` |
+| Adversarial dev/holdout monitor | supporting | stale | stale | status=acceptable; dev_pass_rate=0.953; holdout_pass_rate=0.961; holdout_n=51 | `Data/evals/safety/latest_adversarial_safety_regression_holdout.json` |
+| Adversarial generalization eval | supporting | stale | stale | status=acceptable; original_bank_pass_rate=0.955; heldout_pass_rate=0.969; paraphrase_pass_rate=0.964; safe_negative_control_pass_rate=1.000; category_gap_between_dev_and_holdout=0.125 | `Data/evals/safety/latest_adversarial_generalization_eval.json` |
 | Adversarial generalization eval v2 | supporting | stale | stale | status=needs_attention; original_bank_pass_rate=0.945; heldout_v1_pass_rate=0.969; heldout_v2_pass_rate=0.691; paraphrase_pass_rate=1.000; safe_negative_control_pass_rate=1.000; unsafe_leakage_rate=0.309 | `Data/evals/safety/latest_adversarial_generalization_v2_eval.json` |
 | Held-out adversarial failure analysis | supporting | stale | stale | status=needs_attention; total_n=32; failed_n=1; failure_rate=0.031 | `Data/evals/safety/latest_heldout_adversarial_failure_analysis.json` |
 | Unsafe-intent semantic classifier eval | supporting | stale | stale | status=strong; total_n=54; pass_rate=1.000; fail_count=0 | `Data/evals/safety/latest_unsafe_intent_classifier_eval.json` |
 | Multilingual refusal routing | critical | stale | stale | pass_rate=1.000; passed=6; case_count=6 | `Data/evals/safety/latest_multilingual_refusal_eval.json` |
 | RAG regression | critical | stale | stale | pass_rate=1.000; citation_coverage_rate=1.000; expected_source_hit_rate=1.000; unsafe_answer_rate=0.000; average_grounding_score=1.000 | `Data/evals/rag/latest_rag_benchmark.json` |
-| RAG effectiveness and governance trade-off | supporting | needs_attention | fresh | recall_delta=-0.020; source_tier_delta=0.540; latency_ratio=4.131; improvement_proven=False; external_holdout_completed=False | `Data/evals/rag/latest_rag_governance_tradeoff.json` |
+| RAG effectiveness and governance trade-off | supporting | stale | stale | recall_delta=-0.020; source_tier_delta=0.540; latency_ratio=4.131; improvement_proven=False; external_holdout_completed=False | `Data/evals/rag/latest_rag_governance_tradeoff.json` |
 | Hand-labeled RAG gold set | critical | stale | stale | pass_rate=1.000; expected_source_hit_rate=1.000; case_count=45; unsafe_answer_rate=0.000 | `Data/evals/rag/latest_rag_gold_eval.json` |
 | Patient-support tool action benchmark | critical | stale | stale | pass_rate=1.000; case_count=6; average_latency_ms=68.910; max_latency_ms=97.550 | `Data/evals/tool_actions/latest_tool_action_benchmark.json` |
 | Genetic counseling readiness safety | critical | stale | stale | genetic_overclaim_rate=0.000; treatment_advice_leakage=0.000; tumor_marker_overclaim_rate=0.000; vus_correctness=1.000; referral_correctness=1.000 | `Data/evals/genetics/latest_genetic_counseling_eval.json` |
@@ -40,13 +40,13 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | Uncertainty dossier | supporting | stale | stale | status=strong; synthetic_only=True; clinical_validation=False | `Data/evals/models/latest_uncertainty_dossier.json` |
 | Real-data readiness checklist | supporting | stale | stale | status=not_ready; completed_count=0; required_count=11 | `Data/evals/models/latest_real_data_readiness_checklist.json` |
 | Clinical performance dossier template status | supporting | stale | stale | status=template_only_no_clinical_claims; clinical_validation=False; treatment_decision_influence=False | `Data/evals/models/latest_clinical_performance_dossier_status.json` |
-| Hybrid shortcut audit | critical | stale | stale | status=acceptable; shortcut_audit_status=acceptable; near_label_proxy_risk=present; review_hint_only=True; regression_mae_increase_without_mri=9.659 | `Data/evals/models/latest_shortcut_audit.json` |
+| Hybrid shortcut audit | critical | acceptable | fresh | status=acceptable; shortcut_audit_status=acceptable; near_label_proxy_risk=present; review_hint_only=True; regression_mae_increase_without_mri=9.659 | `Data/evals/models/latest_shortcut_audit.json` |
 | Unreviewed clinical advisor packet | supporting | stale | stale | status=prepared_for_future_clinician_review_unreviewed; interaction_rule_count=5 | `Data/evals/medical/latest_medical_advisor_review_packet.json` |
 | Minimum evidence controlled doc | supporting | stale | stale | status=not_clinically_approved; owner=engineering | `Data/evals/medical/latest_minimum_evidence_controlled_doc.json` |
 | Human-factors overtrust risk eval | supporting | stale | stale | status=strong | `Data/evals/medical/latest_human_factors_risk_eval.json` |
 | Clinical advisory workflow readiness | supporting | stale | stale | status=ready_for_future_review | `Data/evals/medical/latest_advisory_workflow_readiness.json` |
 | Minimum evidence standards | critical | stale | stale | status=strong; version=minimum_evidence_standards_v1_2026_05 | `Data/evals/medical/latest_minimum_evidence_standards.json` |
-| Medical claim-boundary eval | critical | stale | stale | status=strong; pass_rate=1.000; case_count=8 | `Data/evals/safety/latest_medical_claim_boundary_eval.json` |
+| Medical claim-boundary eval | critical | strong | fresh | status=strong; pass_rate=1.000; case_count=8 | `Data/evals/safety/latest_medical_claim_boundary_eval.json` |
 | Public biomarker predictor-source manifest | supporting | stale | stale | status=ready_for_candidate_mapping; dataset_count=6; manifest_hash=6a6e7277d295e383 | `Data/data_lineage/public_biomarker_dataset_manifest.json` |
 | Public biomarker mapping readiness | supporting | stale | stale | status=ready; mapping_hash=0e6c09fe52d495ce; breastdcedl_status=mapped | `Data/mle_monitoring/public_biomarker_mapping_readiness.json` |
 | Public biomarker/tumor-marker dataset readiness | supporting | stale | stale | status=strong; dataset_count=7; biomarker_external_candidate_count=6; tumor_marker_response_train_ready=0; production_retrain_now=False; candidate_training_recommended=True | `Data/evals/models/latest_public_biomarker_dataset_readiness.json` |
@@ -63,9 +63,9 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | Toxicity review-priority target v3 | supporting | stale | stale | status=candidate_needs_review; auroc=0.938; legacy_rule_auroc_against_v3=0.847; legacy_rule_does_not_define_v3=True; promotion_decision=hold_synthetic_only | `Data/evals/models/latest_toxicity_review_target_v3.json` |
 | ML coverage/risk diagnostics | supporting | stale | stale | status=strong; scenario_count=8; minimum_required_abstention_rate=1.000; promotion_decision=hold_synthetic_only | `Data/evals/models/latest_ml_coverage_risk_diagnostics.json` |
 | Automation reliability dossier | supporting | stale | stale | status=strong; check_count=8; passed_count=8; failed_required_count=0; external_delivery_enabled_by_default=False; real_emergency_coverage_claim=False; automation_center_requirement_count=5 | `Data/evals/ops/latest_automation_reliability_dossier.json` |
-| Durable automation worker controls | supporting | acceptable | fresh | status=acceptable; control_pass_rate=1.000; live_n8n_delivery_enabled=False; live_delivery_test_completed=False; clinical_validation=False | `Data/evals/ops/latest_durable_automation_worker_eval.json` |
+| Durable automation worker controls | supporting | stale | stale | status=acceptable; control_pass_rate=1.000; live_n8n_delivery_enabled=False; live_delivery_test_completed=False; clinical_validation=False | `Data/evals/ops/latest_durable_automation_worker_eval.json` |
 | Patient XAI readability dossier | supporting | stale | stale | status=strong; surface_count=5; failed_check_count=0; clinical_validation=False; diagnostic_authority_claim=False; treatment_recommendation_claim=False | `Data/evals/governance/latest_patient_xai_readability_dossier.json` |
-| Automation and XAI industry-alignment roadmap | supporting | strong | fresh | status=strong; automation_control_count=6; xai_control_count=6; automation_live_delivery_enabled=False; healthcare_production_ready=False; real_emergency_coverage_claim=False | `Data/evals/governance/latest_automation_xai_industry_alignment.json` |
+| Automation and XAI industry-alignment roadmap | supporting | stale | stale | status=strong; automation_control_count=6; xai_control_count=6; automation_live_delivery_enabled=False; healthcare_production_ready=False; real_emergency_coverage_claim=False | `Data/evals/governance/latest_automation_xai_industry_alignment.json` |
 | External failure cases by subtype/confidence | supporting | stale | stale | status=strong; failure_count=61; high_confidence_failure_count=24 | `Data/evals/models/latest_external_failure_case_analysis.json` |
 | Restricted dataset access packet | supporting | stale | stale | status=ready_for_future_access_request | `Data/evals/models/latest_restricted_data_access_packet.json` |
 | cBioPortal TCGA/METABRIC clinical export | supporting | stale | stale | status=strong; row_count=3593; validation_status=passed; full_temporal_validation=False | `Data/evals/models/latest_cbioportal_clinical_export.json` |
@@ -82,7 +82,8 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | Dataset fit matrix | supporting | stale | stale | status=strong; dataset_count=10; production_training_allowed=False | `Data/evals/models/latest_dataset_fit_matrix.json` |
 | TCGA/METABRIC cBioPortal schema mapping | supporting | stale | stale | status=ready; mapped_dataset_count=2; mapping_hash=2a75497980aec90f | `Data/mle_monitoring/cbioportal_biomarker_schema_mapping.json` |
 | Offline A/B safety-control suite | supporting | stale | stale | status=strong; test_count=3; overall_decision=REJECT; expectations_passed=3; expectations_failed=0 | `Data/evals/ab_tests/latest_ab_test_report.json` |
-| MLE readiness gate | critical | unideal | fresh | hard_gate_status=passed; release_recommendation=candidate_only_fix_calibration_or_slice_gaps_before_strong_claims; safety_regression=unideal; monitoring=acceptable | `Data/mle_monitoring/latest_mle_readiness.json` |
+| Behavior-only fine-tuning governance | supporting | needs_attention | fresh | status=needs_attention; model_trained=False; dataset_accepted=27; contamination_status=acceptable; promotion_decision=HOLD; promotion_scope=offline_shadow_only | `Data/evals/models/latest_finetune_governance.json` |
+| MLE readiness gate | critical | stale | stale | hard_gate_status=passed; release_recommendation=candidate_only_fix_calibration_or_slice_gaps_before_strong_claims; safety_regression=unideal; monitoring=acceptable | `Data/mle_monitoring/latest_mle_readiness.json` |
 | MLE readiness - realism candidate | supporting | stale | stale | hard_gate_status=passed; release_recommendation=acceptable_for_poc_demo_with_limitations; safety_regression=strong; realism=passed; monitoring=acceptable | `Data/mle_monitoring/latest_mle_readiness_realism_candidate.json` |
 | Training-data leakage audit | critical | stale | stale | status=passed; checks_passed=23; checks_failed=0; temporal_sub_audit_status=passed | `Data/evals/models/latest_leakage_audit.json` |
 | Evidence-aware abstention eval | critical | stale | stale | status=strong; full_data_coverage_rate=0.996; full_data_covered_accuracy=0.925; demographics_only_abstention_rate=1.000; scenario_count=8 | `Data/evals/models/latest_evidence_abstention_eval.json` |
@@ -97,10 +98,10 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | Synthetic generator card | supporting | stale | stale | status=passed; dataset_schema_version=complete_synthetic_breast_journey_v2; patients_created=600; rows_fingerprint=44a845011924e1f0; card_version_matches_dataset=True | `Data/evals/models/latest_synthetic_generator_card.json` |
 | Consolidated failure-mode registry | supporting | stale | stale | status=needs_attention; entry_count=17; high_severity_count=6; entries_with_unresolved_gap=15 | `Data/evals/safety/latest_failure_mode_registry.json` |
 | KB source governance (tier + allowed_use + staleness) | supporting | stale | stale | status=strong; source_count=44; chunk_count=242; governance_issue_count=[] | `Data/evals/rag/latest_kb_source_governance.json` |
-| Toxicity classifier feature-importance audit + no-proxy baseline | critical | acceptable | fresh | status=acceptable; dominant_features=['intervention_count']; near_label_proxy_features=['intervention_count', 'nadir_anc', 'nadir_wbc', 'dose_delayed', 'pre_wbc', 'pre_anc', 'recovery_wbc', 'cycle']; no_proxy_baseline_auc=1.000; strict_no_proxy_baseline_auc=0.968 | `Data/evals/models/latest_toxicity_feature_audit.json` |
+| Toxicity classifier feature-importance audit + no-proxy baseline | critical | stale | stale | status=acceptable; dominant_features=['intervention_count']; near_label_proxy_features=['intervention_count', 'nadir_anc', 'nadir_wbc', 'dose_delayed', 'pre_wbc', 'pre_anc', 'recovery_wbc', 'cycle']; no_proxy_baseline_auc=1.000; strict_no_proxy_baseline_auc=0.968 | `Data/evals/models/latest_toxicity_feature_audit.json` |
 | Intent-aware RAG benchmark | critical | stale | stale | status=strong; pass_rate=1.000; claim_support_rate=1.000; citation_precision=1.000; source_tier_correctness=1.000; refusal_correctness=1.000; unsafe_answer_rate=0.000; latency_p50_ms=0.020 | `Data/evals/rag/latest_rag_intent_aware_eval.json` |
 | Live-agent RAG benchmark | critical | stale | stale | status=strong; pass_rate=0.952; claim_support_rate=0.750; citation_precision=1.000; source_tier_correctness=1.000; refusal_correctness=0.952; escalation_correctness=1.000; unsafe_answer_rate=0.000; taglish_safety_parity_rate=1.000; latency_p50_ms=4840.900 | `Data/evals/rag/latest_live_rag_eval.json` |
-| Claim-level citation validation | critical | stale | stale | status=strong; case_count=3; hard_failures=0; nli_required_cases=2; nli_available_cases=0 | `Data/evals/rag/latest_claim_level_citation_eval.json` |
+| Claim-level citation validation | critical | strong | fresh | status=strong; case_count=3; hard_failures=0; nli_required_cases=2; nli_available_cases=0 | `Data/evals/rag/latest_claim_level_citation_eval.json` |
 | Gold claim-grounding eval set | supporting | stale | stale | status=strong; case_count=12; contradiction_trap_total=60 | `Data/evals/rag/latest_gold_claim_grounding_eval.json` |
 | Semantic citation verification | supporting | stale | stale | status=strong; case_count=7; hard_failures=0; contradicted_cases=2 | `Data/evals/rag/latest_semantic_citation_verification.json` |
 | Optional NLI/entailment claim validation | optional | stale | stale | status=strong; case_count=3; hard_failures=0; nli_required_cases=2; nli_available_cases=3 | `Data/evals/rag/latest_nli_claim_validation_eval.json` |
@@ -108,7 +109,7 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | Live RAG failure analysis | supporting | stale | stale | status=needs_attention; failure_count=14; live_pass_rate=1.000 | `Data/evals/rag/latest_live_rag_failure_analysis.json` |
 | Over-refusal negative controls | critical | stale | stale | status=strong; safe_answer_rate=1.000; inappropriate_refusal_rate=0.000; unsafe_answer_rate=0.000 | `Data/evals/rag/latest_over_refusal_eval.json` |
 | Multilingual adversarial security | critical | stale | stale | status=strong; case_count=30; pass_rate=1.000; unsafe_leakage_rate=0.000 | `Data/evals/safety/latest_multilingual_adversarial_security.json` |
-| RAG source-tier retrieval ablation (T1 / T1+T2 / T1+T2+T3 / all) | supporting | stale | stale | status=strong | `Data/evals/rag/latest_rag_tier_ablation.json` |
+| RAG source-tier retrieval ablation (T1 / T1+T2 / T1+T2+T3 / all) | supporting | acceptable | fresh | status=acceptable | `Data/evals/rag/latest_rag_tier_ablation.json` |
 | Taglish ↔ English safety-route parity | critical | stale | stale | status=strong; pass_rate=1.000; intent_parity_rate=1.000; safety_scope_parity_rate=1.000; case_count=6 | `Data/evals/safety/latest_taglish_safety_parity.json` |
 | Near-boundary medical safety eval | supporting | stale | stale | status=strong; case_count=6; unsafe_answer_rate=0.000 | `Data/evals/safety/latest_near_boundary_safety_eval.json` |
 | Model benchmark | critical | stale | stale | synthetic_champion_auroc=0.995; synthetic_champion_auprc=0.996; synthetic_champion_brier=0.047; external_breastdcedl_auroc=0.637 | `Data/evals/models/latest_model_benchmark.json` |
@@ -127,13 +128,13 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | Per-turn trace diagnostics coverage | supporting | stale | stale | status=needs_attention; rows_checked=100; rows_with_trace_diagnostics=1; rows_with_retrieval_confidence=0; sample_trace_schema_valid=True | `Data/evals/ops/latest_trace_diagnostics_coverage.json` |
 | Cost and latency observability | supporting | stale | stale | status=strong; request_count=500; latency_p50_ms=1189.780; latency_p95_ms=4078.610; estimated_total_cost_usd=0.000; cache_hit_rate=0.200 | `Data/evals/ops/latest_cost_latency_report.json` |
 | Runtime quality sentinel | supporting | stale | stale | status=needs_attention; alert_count=1; unsafe_answer_rate=0.000; unsupported_claim_rate=0.000; latency_p95_ms=4078.610; cache_hit_rate=0.200 | `Data/evals/ops/latest_runtime_quality_sentinel.json` |
-| Route latency budget | supporting | needs_attention | fresh | status=needs_attention; route_count=7; needs_attention_count=0; highest_observed_p95_ms=1868.610 | `Data/evals/ops/latest_route_latency_budget.json` |
-| Latency profile phase 2 | supporting | needs_attention | fresh | status=needs_attention; normal_rag_previous_p95_ms=7872.810; load_smoke_previous_p95_ms=7546.078 | `Data/evals/ops/latest_latency_profile_phase2.json` |
-| Latency profile | supporting | needs_attention | fresh | status=needs_attention | `Data/evals/ops/latest_latency_profile.json` |
+| Route latency budget | supporting | stale | stale | status=needs_attention; route_count=7; needs_attention_count=0; highest_observed_p95_ms=1868.610 | `Data/evals/ops/latest_route_latency_budget.json` |
+| Latency profile phase 2 | supporting | stale | stale | status=needs_attention; normal_rag_previous_p95_ms=7872.810; load_smoke_previous_p95_ms=7546.078 | `Data/evals/ops/latest_latency_profile_phase2.json` |
+| Latency profile | supporting | stale | stale | status=needs_attention | `Data/evals/ops/latest_latency_profile.json` |
 | Cross-encoder reranker ablation | supporting | stale | stale | status=acceptable; after_pass_rate_proxy=0.917; after_source_tier_correctness=1.000; after_unsupported_answer_rate=0.083; reranker_latency_ms=0.108 | `Data/evals/rag/latest_reranker_ablation.json` |
 | Retrieval goldset eval | supporting | stale | stale | status=acceptable; recall_at_5=0.797; recall_at_10=0.865; mrr=0.617; unsupported_context_rate=0.135; improvement_proven=False | `Data/evals/rag/latest_retrieval_goldset_eval.json` |
 | RAG baseline comparison | supporting | stale | stale | status=acceptable; case_count=74; bm25_recall_at_10=0.804; full_stack_recall_at_10=0.784; best_recall_at_10=0.885; complex_stack_improvement_over_bm25=-0.020; unsupported_context_rate=0.162; source_tier_correctness=1.000; improvement_proven_vs_bm25=False | `Data/evals/rag/latest_rag_baseline_comparison.json` |
-| Citation window sensitivity | supporting | acceptable | fresh | status=acceptable; case_count=74; recommended_cited_context_k=1; promotion_recommendation=do_not_promote_without_more_evidence; live_patient_route_changed=False; retrieval_ranking_changed=False | `Data/evals/rag/latest_citation_window_sensitivity.json` |
+| Citation window sensitivity | supporting | stale | stale | status=acceptable; case_count=74; recommended_cited_context_k=1; promotion_recommendation=do_not_promote_without_more_evidence; live_patient_route_changed=False; retrieval_ranking_changed=False | `Data/evals/rag/latest_citation_window_sensitivity.json` |
 | Retrieval failure analysis | supporting | stale | stale | status=needs_attention; total_n=74; failed_n=10 | `Data/evals/rag/latest_retrieval_failure_analysis.json` |
 | Medical semantic chunking quality | supporting | stale | stale | status=strong; heading_metadata_coverage=1.000; critical_context_split_rate=0.000; chunk_source_traceability=1.000 | `Data/evals/rag/latest_chunking_quality_eval.json` |
 | FHIR-aligned schema readiness | supporting | stale | stale | status=strong; mapping_coverage=1.000; unmapped_field_count=3; unit_normalization_success_rate=1.000 | `Data/evals/medical/latest_fhir_alignment_readiness.json` |
@@ -156,7 +157,7 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: unsafe_intent_classifier_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: multilingual_refusal (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: rag_regression (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
-- medium: rag_governance_tradeoff (needs_attention) - Benchmark needs review before using it as supporting evidence.
+- medium: rag_governance_tradeoff (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: rag_gold (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: tool_action_benchmark (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: genetic_counseling_readiness (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -174,13 +175,11 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: uncertainty_dossier (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: real_data_readiness_checklist (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: clinical_performance_dossier_status (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
-- medium: shortcut_audit (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: medical_advisor_review_packet (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: minimum_evidence_controlled_doc (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: human_factors_risk_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: advisory_workflow_readiness (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: minimum_evidence_standards (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
-- medium: medical_claim_boundary_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: public_biomarker_dataset_manifest (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: public_biomarker_mapping_readiness (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: public_biomarker_dataset_readiness (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -197,7 +196,9 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: toxicity_review_target_v3 (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: ml_coverage_risk_diagnostics (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: automation_reliability_dossier (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: durable_automation_worker (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: patient_xai_readability_dossier (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: automation_xai_industry_alignment (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: external_failure_case_analysis (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: restricted_data_access_packet (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: cbioportal_clinical_export (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -214,7 +215,8 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: dataset_fit_matrix (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: cbioportal_biomarker_schema_mapping (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: offline_ab_eval_controls (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
-- high: mle_readiness (unideal) - MLE readiness has one or more unideal categories; inspect category_statuses before promotion.
+- medium: finetune_behavior_governance (needs_attention) - Benchmark needs review before using it as supporting evidence.
+- medium: mle_readiness (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: mle_readiness_realism_candidate (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: leakage_audit (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: evidence_abstention_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -229,9 +231,9 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: synthetic_generator_card (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: failure_mode_registry (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: kb_source_governance (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: toxicity_feature_audit (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: rag_intent_aware_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: live_rag_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
-- medium: claim_level_citation_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: gold_claim_grounding_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: semantic_citation_verification (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: nli_claim_validation_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -239,7 +241,6 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: live_rag_failure_analysis (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: over_refusal_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: multilingual_adversarial_security (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
-- medium: rag_tier_ablation (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: taglish_safety_parity (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: near_boundary_safety_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: model_benchmark (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
@@ -254,12 +255,13 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 - medium: trace_diagnostics_coverage (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: cost_latency_report (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: runtime_quality_sentinel (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
-- medium: route_latency_budget (needs_attention) - Benchmark needs review before using it as supporting evidence.
-- medium: latency_profile_phase2 (needs_attention) - Benchmark needs review before using it as supporting evidence.
-- medium: latency_profile (needs_attention) - Benchmark needs review before using it as supporting evidence.
+- medium: route_latency_budget (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: latency_profile_phase2 (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: latency_profile (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: rag_reranker_ablation (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: retrieval_goldset_eval (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: rag_baseline_comparison (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
+- medium: citation_window_sensitivity (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: retrieval_failure_analysis (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: medical_semantic_chunking (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.
 - medium: fhir_alignment_readiness (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.

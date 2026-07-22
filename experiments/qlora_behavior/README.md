@@ -1,36 +1,69 @@
-# QLoRA / Ollama Behavior Experiment
+# Governed QLoRA Behavior Experiment
 
-This is a learning scaffold only. It is not a medical-knowledge fine tune.
+This directory is an optional, synthetic-only behavior-formatting experiment.
+It does not add medical knowledge and is not evidence of clinical performance.
 
-## Purpose
+## Current State
 
-Tune behavior around:
+- No adapter has been promoted.
+- Training is disabled unless an operator explicitly passes `--execute`.
+- The internal frozen holdout is never used for training or checkpoint selection.
+- Any successful training run remains `HOLD` until complete baseline and candidate
+  generations pass the promotion gate.
 
-- structured tool-intent JSON
-- non-diagnostic patient support wording
-- refusal and escalation
-- insufficient-evidence responses
-- citation-aware formatting
+## Governed Data Flow
 
-## Not Intended For
+The experiment does not own a second example bank. Export the canonical,
+hash-verified training split:
 
-- memorizing oncology facts
-- diagnosis
-- treatment recommendation
-- replacing RAG
-- clinical validation
+```powershell
+python scripts/build_qlora_behavior_dataset.py
+```
 
-## Dataset
+The source splits and their hashes are recorded in
+`Data/finetune/prepared/split_manifest.json`.
 
-- `experiments\qlora_behavior\behavior_tuning_examples.jsonl`
+## Preflight Only
 
-## Evaluation Before Any Claim
+The default command verifies split hashes and reports missing execution controls.
+It does not load a model or train an adapter:
 
-- JSON validity rate
-- refusal accuracy
-- unsafe advice rate
-- escalation accuracy
-- summary completeness
-- citation-format adherence
+```powershell
+python experiments/qlora_behavior/phi3_qlora_colab.py
+```
 
-RAG remains the factual grounding layer. This experiment is only for behavior and format.
+An experimental run additionally requires pinned model and tokenizer revisions,
+an acknowledged license review, and a CUDA environment:
+
+```powershell
+python experiments/qlora_behavior/phi3_qlora_colab.py `
+  --base-revision <immutable-revision> `
+  --tokenizer-revision <immutable-revision> `
+  --license-reviewed `
+  --execute
+```
+
+Dependency compatibility and the model license must be reviewed before execution.
+Completing this command does not authorize patient-facing use.
+
+## Evaluation and Promotion
+
+Generate one output per frozen case for both the baseline and candidate, then run:
+
+```powershell
+python scripts/run_finetune_promotion_gate.py
+```
+
+Hard rejection conditions include unsafe leakage, claim-boundary violations,
+validator failures, incomplete generations, safety-metric regression, or any
+per-behavior regression. Fewer than 50 paired cases remains `HOLD`, and meeting
+the lift threshold is not described as statistical proof. `PROMOTE`, when
+available, means offline shadow evaluation only.
+
+## Claim Boundary
+
+This experiment may target formatting, missing-data disclosure, safe refusal
+language, Taglish boundary wording, and care-team question generation. It must
+not target diagnosis, prognosis, treatment or dosage decisions, genetic-risk or
+tumor-marker conclusions, supplement safety, or replacement of professional
+review. RAG and deterministic safety controls remain outside the adapter.

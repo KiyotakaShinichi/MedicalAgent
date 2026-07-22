@@ -1,24 +1,17 @@
-"""Prepare an NLCare behavior-tuning dataset from the templates.
+"""Prepare the synthetic NLCare behavior-tuning dataset.
 
-Reads every JSONL file under ``data/finetune/templates/``, applies the
-medical claim boundary checker as a safety filter, and writes a unified
-dataset under ``data/finetune/prepared/`` along with a dataset card.
-
-Hard rule: examples that trip the claim boundary checker are dropped
-from the output and surfaced in the dataset card's ``rejected_examples``
-section.  The user-facing assistant strings in the templates are
-deliberately conservative; if a future contributor adds an unsafe
-example, this script catches it.
-
-Usage
-~~~~~
-    python scripts/prepare_finetune_dataset.py
-    python scripts/prepare_finetune_dataset.py --output-dir data/finetune/prepared
+The preparer is intentionally fail-closed. It validates template schemas,
+applies the medical claim boundary, rejects direct identifiers and duplicate
+examples, creates deterministic behavior-stratified splits, and records hashes
+and exact-text contamination evidence. The internal frozen split is an
+engineering control, not independent or clinical evidence.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -28,19 +21,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-DEFAULT_TEMPLATES_DIR = ROOT / "data" / "finetune" / "templates"
-DEFAULT_OUTPUT_DIR = ROOT / "data" / "finetune" / "prepared"
-
-
-def _rel(path: Path) -> str:
-    """Stringify a path relative to ROOT when possible; fall back to the
-    absolute form for paths outside the repo (e.g. tests using temp
-    directories)."""
-    try:
-        return str(path.relative_to(ROOT))
-    except ValueError:
-        return str(path)
-
+DEFAULT_TEMPLATES_DIR = ROOT / "Data" / "finetune" / "templates"
+DEFAULT_OUTPUT_DIR = ROOT / "Data" / "finetune" / "prepared"
+DEFAULT_SPLIT_SEED = "nlcare-behavior-v2-20260721"
 
 SYSTEM_BOUNDARY = (
     "You are a non-diagnostic oncology monitoring support assistant. "
@@ -51,7 +34,6 @@ SYSTEM_BOUNDARY = (
     "from tumor markers. You do not declare any supplement 'safe with chemo'."
 )
 
-
 ALLOWED_BEHAVIOR_TARGETS = (
     "clinician_summary",
     "missing_data_disclosure",
@@ -59,7 +41,6 @@ ALLOWED_BEHAVIOR_TARGETS = (
     "supplement_boundary",
     "taglish_safety",
 )
-
 
 BLOCKED_CLAIMS = (
     "diagnosis",
@@ -73,29 +54,83 @@ BLOCKED_CLAIMS = (
     "replace_treatment_claim",
 )
 
+REQUIRED_TEMPLATE_FIELDS = ("id", "behavior", "user", "assistant")
+SPLIT_NAMES = ("train", "development", "internal_frozen_holdout")
+PRIVACY_PATTERNS = (
+    re.compile(r"\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b"),
+    re.compile(
+        r"\b(?:mrn|medical record number|patient id)\s*[:#-]?\s*[A-Za-z0-9-]{4,}\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\b(?:\+?63|0)9\d{9}\b"),
+)
+
+
+def _rel(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def _normalise_text(value: str) -> str:
+    return " ".join(re.findall(r"[a-z0-9]+", value.lower()))
+
+
+def _sha256_text(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _example_fingerprint(example: dict[str, Any]) -> str:
+    canonical = "\n".join(
+        _normalise_text(str(example.get(field) or ""))
+        for field in ("behavior", "user", "assistant")
+    )
+    return _sha256_text(canonical)
+
+
+def _schema_violations(example: dict[str, Any]) -> list[str]:
+    violations: list[str] = []
+    for field in REQUIRED_TEMPLATE_FIELDS:
+        value = example.get(field)
+        if not isinstance(value, str) or not value.strip():
+            violations.append(f"missing_or_invalid_{field}")
+    for field in ("user", "assistant"):
+        value = str(example.get(field) or "")
+        if any(pattern.search(value) for pattern in PRIVACY_PATTERNS):
+            violations.append(f"possible_direct_identifier_in_{field}")
+    return sorted(set(violations))
+
 
 def _safety_filter(example: dict[str, Any]) -> list[str]:
-    """Return the list of blocked-claim categories this example trips.
-    Empty list means the example passes the filter."""
+    """Return blocked categories. Boundary checker failure is a rejection."""
     from backend.services.medical_claim_boundary import classify_medical_claim
 
     violations: list[str] = []
     try:
-        verdict = classify_medical_claim(example.get("assistant") or "")
-        if not verdict.get("safe", True):
-            violations.extend(str(c) for c in verdict.get("blocked_claims") or [])
-    except Exception:  # noqa: BLE001 — the filter must never crash dataset prep
-        pass
+        verdict = classify_medical_claim(str(example.get("assistant") or ""))
+        if verdict.get("decision") == "blocked":
+            blocked_types = verdict.get("blocked_claim_types") or ["blocked_medical_claim"]
+            violations.extend(str(item) for item in blocked_types)
+    except Exception:  # noqa: BLE001 - training data safety must fail closed
+        violations.append("medical_claim_boundary_unavailable")
 
-    text = (example.get("assistant") or "").lower()
-    # Belt-and-suspenders pattern check that does not depend on the
-    # claim-boundary module's evolving rule set.
+    text = str(example.get("assistant") or "").lower()
     if "safe with chemo" in text and "cannot" not in text:
         violations.append("supplement_safe_with_chemo_claim")
-    if any(phrase in text for phrase in (
-        "you should stop chemo", "you should start chemo",
-        "you have metastasis", "you are cancer free",
-    )):
+    if any(
+        phrase in text
+        for phrase in (
+            "you should stop chemo",
+            "you should start chemo",
+            "you have metastasis",
+            "you are cancer free",
+        )
+    ):
         violations.append("treatment_or_diagnostic_overclaim")
     return sorted(set(violations))
 
@@ -103,114 +138,361 @@ def _safety_filter(example: dict[str, Any]) -> list[str]:
 def _load_templates(templates_dir: Path) -> list[dict[str, Any]]:
     examples: list[dict[str, Any]] = []
     for path in sorted(templates_dir.glob("*.jsonl")):
-        for idx, line in enumerate(path.read_text(encoding="utf-8").splitlines()):
-            line = line.strip()
-            if not line:
+        for line_number, line in enumerate(
+            path.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            if not line.strip():
                 continue
             try:
-                data = json.loads(line)
+                payload = json.loads(line)
             except json.JSONDecodeError as exc:
-                raise ValueError(f"Invalid JSON at {path.name}:{idx + 1}: {exc}") from exc
-            data["_source_file"] = path.name
-            examples.append(data)
+                raise ValueError(f"Invalid JSON at {path.name}:{line_number}: {exc}") from exc
+            if not isinstance(payload, dict):
+                raise ValueError(f"Expected object at {path.name}:{line_number}")
+            payload["_source_file"] = path.name
+            payload["_source_line"] = line_number
+            examples.append(payload)
     return examples
+
+
+def _jaccard(left: str, right: str) -> float:
+    left_tokens = set(_normalise_text(left).split())
+    right_tokens = set(_normalise_text(right).split())
+    union = left_tokens | right_tokens
+    return len(left_tokens & right_tokens) / len(union) if union else 1.0
+
+
+def _deduplicate(
+    examples: list[dict[str, Any]],
+    near_duplicate_threshold: float = 0.92,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    accepted: list[dict[str, Any]] = []
+    rejected: list[dict[str, Any]] = []
+    near_duplicates: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    seen_fingerprints: dict[str, str] = {}
+
+    for example in examples:
+        example_id = str(example["id"])
+        fingerprint = _example_fingerprint(example)
+        if example_id in seen_ids:
+            rejected.append(_rejection(example, ["duplicate_id"]))
+            continue
+        if fingerprint in seen_fingerprints:
+            rejection = _rejection(example, ["exact_content_duplicate"])
+            rejection["duplicate_of"] = seen_fingerprints[fingerprint]
+            rejected.append(rejection)
+            continue
+
+        combined = f"{example['user']}\n{example['assistant']}"
+        for prior in accepted:
+            similarity = _jaccard(combined, f"{prior['user']}\n{prior['assistant']}")
+            if similarity >= near_duplicate_threshold:
+                near_duplicates.append(
+                    {
+                        "id": example_id,
+                        "near_duplicate_of": prior["id"],
+                        "token_jaccard": round(similarity, 4),
+                    }
+                )
+        example["_fingerprint"] = fingerprint
+        seen_ids.add(example_id)
+        seen_fingerprints[fingerprint] = example_id
+        accepted.append(example)
+    return accepted, rejected, near_duplicates
+
+
+def _rejection(example: dict[str, Any], violations: list[str]) -> dict[str, Any]:
+    return {
+        "id": example.get("id"),
+        "behavior": example.get("behavior"),
+        "violations": sorted(set(violations)),
+        "source_file": example.get("_source_file"),
+        "source_line": example.get("_source_line"),
+    }
+
+
+def _stratified_split(
+    examples: list[dict[str, Any]], seed: str = DEFAULT_SPLIT_SEED
+) -> dict[str, list[dict[str, Any]]]:
+    splits = {name: [] for name in SPLIT_NAMES}
+    by_behavior: dict[str, list[dict[str, Any]]] = {}
+    for example in examples:
+        by_behavior.setdefault(str(example["behavior"]), []).append(example)
+
+    for behavior, group in sorted(by_behavior.items()):
+        ordered = sorted(
+            group,
+            key=lambda item: _sha256_text(f"{seed}:{behavior}:{item['id']}"),
+        )
+        if len(ordered) >= 3:
+            train, development, holdout = ordered[:-2], ordered[-2:-1], ordered[-1:]
+        elif len(ordered) == 2:
+            train, development, holdout = ordered[:1], ordered[1:], []
+        else:
+            train, development, holdout = ordered, [], []
+        splits["train"].extend(train)
+        splits["development"].extend(development)
+        splits["internal_frozen_holdout"].extend(holdout)
+    return splits
+
+
+def _candidate_contamination_paths() -> list[Path]:
+    patterns = (
+        "Data/evals/safety/*holdout*.jsonl",
+        "Data/evals/rag/*holdout*.jsonl",
+        "Data/evals/rag/*goldset*.jsonl",
+    )
+    paths: set[Path] = set()
+    for pattern in patterns:
+        paths.update(ROOT.glob(pattern))
+    return sorted(path for path in paths if path.is_file())
+
+
+def _iter_strings(value: Any) -> list[str]:
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, dict):
+        return [text for nested in value.values() for text in _iter_strings(nested)]
+    if isinstance(value, list):
+        return [text for nested in value for text in _iter_strings(nested)]
+    return []
+
+
+def _contamination_audit(
+    examples: list[dict[str, Any]], paths: list[Path] | None = None
+) -> dict[str, Any]:
+    comparison_paths = _candidate_contamination_paths() if paths is None else paths
+    corpus: dict[str, list[dict[str, Any]]] = {}
+    scanned_files: list[dict[str, str]] = []
+    for path in comparison_paths:
+        scanned_files.append({"path": _rel(path), "sha256": _sha256_file(path)})
+        for line_number, line in enumerate(
+            path.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            if not line.strip():
+                continue
+            try:
+                payload = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            for text in _iter_strings(payload):
+                normalised = _normalise_text(text)
+                if len(normalised) >= 24:
+                    corpus.setdefault(normalised, []).append(
+                        {"path": _rel(path), "line": line_number}
+                    )
+
+    overlaps: list[dict[str, Any]] = []
+    for example in examples:
+        for field in ("user", "assistant"):
+            normalised = _normalise_text(str(example.get(field) or ""))
+            if normalised in corpus:
+                overlaps.append(
+                    {
+                        "training_example_id": example["id"],
+                        "training_field": field,
+                        "matches": corpus[normalised],
+                    }
+                )
+    return {
+        "status": "needs_attention" if overlaps else "acceptable",
+        "comparison": "exact_normalised_text_only",
+        "scanned_files": scanned_files,
+        "exact_overlap_count": len(overlaps),
+        "overlaps": overlaps,
+        "semantic_contamination_not_measured": True,
+    }
+
+
+def _count_by(items: list[dict[str, Any]], key: str) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for item in items:
+        value = str(item.get(key, "unknown"))
+        counts[value] = counts.get(value, 0) + 1
+    return counts
 
 
 def prepare_dataset(
     templates_dir: Path = DEFAULT_TEMPLATES_DIR,
     output_dir: Path = DEFAULT_OUTPUT_DIR,
 ) -> dict[str, Any]:
-    examples = _load_templates(templates_dir)
-    accepted: list[dict[str, Any]] = []
+    templates = _load_templates(templates_dir)
+    candidates: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
 
-    for example in examples:
-        violations = _safety_filter(example)
+    for example in templates:
+        violations = _schema_violations(example)
+        if not violations:
+            violations = _safety_filter(example)
+        if not violations and example.get("behavior") not in ALLOWED_BEHAVIOR_TARGETS:
+            violations = ["behavior_not_in_allowlist"]
         if violations:
-            rejected.append({"id": example.get("id"), "behavior": example.get("behavior"), "violations": violations, "source_file": example["_source_file"]})
-            continue
-        if example.get("behavior") not in ALLOWED_BEHAVIOR_TARGETS:
-            rejected.append({"id": example.get("id"), "behavior": example.get("behavior"), "violations": ["behavior_not_in_allowlist"], "source_file": example["_source_file"]})
-            continue
-        accepted.append({
-            "id": example["id"],
-            "behavior": example["behavior"],
-            "messages": [
-                {"role": "system", "content": SYSTEM_BOUNDARY},
-                {"role": "user",   "content": example["user"]},
-                {"role": "assistant", "content": example["assistant"]},
-            ],
-            "source_file": example["_source_file"],
-        })
+            rejected.append(_rejection(example, violations))
+        else:
+            candidates.append(example)
+
+    deduplicated, duplicate_rejections, near_duplicates = _deduplicate(candidates)
+    rejected.extend(duplicate_rejections)
+    splits = _stratified_split(deduplicated)
+    split_by_id = {
+        str(example["id"]): split_name
+        for split_name, items in splits.items()
+        for example in items
+    }
+
+    accepted: list[dict[str, Any]] = []
+    for example in deduplicated:
+        split = split_by_id[str(example["id"])]
+        accepted.append(
+            {
+                "id": example["id"],
+                "behavior": example["behavior"],
+                "split": split,
+                "example_sha256": example["_fingerprint"],
+                "messages": [
+                    {"role": "system", "content": SYSTEM_BOUNDARY},
+                    {"role": "user", "content": example["user"]},
+                    {"role": "assistant", "content": example["assistant"]},
+                ],
+                "source_file": example["_source_file"],
+                "source_line": example["_source_line"],
+                "provenance": {
+                    "source_type": "synthetic_template",
+                    "authorship": "internal",
+                    "contains_real_patient_data": False,
+                    "was_used_for_tuning": split == "train",
+                },
+            }
+        )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     dataset_path = output_dir / "dataset.jsonl"
-    with dataset_path.open("w", encoding="utf-8") as handle:
-        for item in accepted:
-            handle.write(json.dumps(item, ensure_ascii=False) + "\n")
+    _write_jsonl(dataset_path, accepted)
+    split_paths = {
+        "train": output_dir / "dataset_train.jsonl",
+        "development": output_dir / "dataset_development.jsonl",
+        "internal_frozen_holdout": output_dir / "dataset_internal_frozen_holdout.jsonl",
+    }
+    for split_name, path in split_paths.items():
+        _write_jsonl(path, [item for item in accepted if item["split"] == split_name])
 
-    behavior_counts = _count_by(accepted, "behavior")
-    card = {
-        "schema_version":             "finetune_dataset_card_v1",
-        "generated_at":               datetime.now(timezone.utc).isoformat(),
-        "dataset_purpose":            "Behavior / style tuning for NLCare patient-safe responses. NOT medical knowledge tuning.",
-        "allowed_behavior_targets":   list(ALLOWED_BEHAVIOR_TARGETS),
-        "blocked_claims":             list(BLOCKED_CLAIMS),
-        "synthetic_or_source":        "all_synthetic",
-        "safety_filters_applied":     [
-            "backend.services.medical_claim_boundary.classify_text",
-            "phrase_blocklist (safe with chemo / stop chemo / metastasis / cancer free)",
-            "behavior_allowlist_check",
+    contamination = _contamination_audit(deduplicated)
+    source_files = sorted(templates_dir.glob("*.jsonl"))
+    split_manifest = {
+        "schema_version": "finetune_split_manifest_v2",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "split_seed": DEFAULT_SPLIT_SEED,
+        "split_policy": (
+            "Deterministic behavior stratification; one development and one "
+            "internal frozen example per behavior where possible."
+        ),
+        "internal_holdout_is_independent_external_evidence": False,
+        "source_files": [
+            {"path": _rel(path), "sha256": _sha256_file(path)} for path in source_files
         ],
-        "known_risks": [
-            "Behavior over-fits on synthetic phrasing; live patient input is more varied.",
-            "Refusal phrasing might be reused even when not needed; A/B test the candidate.",
-            "Taglish examples are small in number; do not generalize broadly.",
-            "The medical_claim_boundary checker is heuristic; future versions may catch new violations.",
-        ],
-        "example_counts": {
-            "accepted_total":    len(accepted),
-            "rejected_total":    len(rejected),
-            "by_behavior":       behavior_counts,
+        "splits": {
+            name: {
+                "path": _rel(path),
+                "sha256": _sha256_file(path),
+                "example_count": sum(1 for item in accepted if item["split"] == name),
+                "was_used_for_tuning": name == "train",
+            }
+            for name, path in split_paths.items()
         },
-        "system_prompt":              SYSTEM_BOUNDARY,
-        "rejected_examples":          rejected,
-        "files": {
-            "dataset_jsonl":    _rel(dataset_path),
-            "dataset_card":     _rel(output_dir / "dataset_card.json"),
-        },
+        "contamination_audit": contamination,
         "claim_boundary": (
-            "Behavior / style tuning only on synthetic data. No clinical "
-            "knowledge tuning, no diagnosis training, no treatment / dosage "
-            "/ prognosis / genetic-risk / tumor-marker / supplement-safety "
-            "training. Any deployed adapter still goes through every safety "
-            "layer and clinician review."
+            "Internal synthetic split integrity only. The frozen split is not "
+            "external evidence or clinical validation."
         ),
     }
-    (output_dir / "dataset_card.json").write_text(json.dumps(card, indent=2), encoding="utf-8")
+    split_manifest_path = output_dir / "split_manifest.json"
+    split_manifest_path.write_text(json.dumps(split_manifest, indent=2), encoding="utf-8")
+
+    card = {
+        "schema_version": "finetune_dataset_card_v2",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "dataset_purpose": (
+            "Behavior and format tuning for synthetic NLCare responses; not "
+            "medical knowledge tuning."
+        ),
+        "allowed_behavior_targets": list(ALLOWED_BEHAVIOR_TARGETS),
+        "blocked_claims": list(BLOCKED_CLAIMS),
+        "synthetic_or_source": "all_synthetic",
+        "clinical_validation": False,
+        "safety_filters_applied": [
+            "template_schema_validation",
+            "direct_identifier_patterns",
+            "medical_claim_boundary_fail_closed",
+            "unsafe_phrase_backstop",
+            "behavior_allowlist",
+            "exact_duplicate_rejection",
+        ],
+        "known_risks": [
+            "Small internally authored examples can overfit synthetic phrasing.",
+            "The internal frozen split is not independent external evidence.",
+            "Exact-text contamination checks miss semantic paraphrases.",
+            "Heuristic medical boundaries are not clinical-grade validators.",
+            "Passing this audit does not prove adapter behavior or clinical safety.",
+        ],
+        "example_counts": {
+            "accepted_total": len(accepted),
+            "rejected_total": len(rejected),
+            "by_behavior": _count_by(accepted, "behavior"),
+            "by_split": _count_by(accepted, "split"),
+        },
+        "deduplication": {
+            "exact_duplicates_rejected": len(duplicate_rejections),
+            "near_duplicate_threshold": 0.92,
+            "near_duplicate_pairs": near_duplicates,
+        },
+        "contamination_audit": contamination,
+        "training_readiness": "scaffold_only_not_ready_for_adapter_promotion",
+        "system_prompt": SYSTEM_BOUNDARY,
+        "rejected_examples": rejected,
+        "files": {
+            "dataset_jsonl": _rel(dataset_path),
+            "dataset_card": _rel(output_dir / "dataset_card.json"),
+            "split_manifest": _rel(split_manifest_path),
+            **{f"dataset_{name}": _rel(path) for name, path in split_paths.items()},
+        },
+        "claim_boundary": (
+            "Synthetic behavior and format tuning only. No diagnosis, treatment, "
+            "dosage, prognosis, genetic-risk, tumor-marker, or supplement-safety "
+            "authority. Any adapter remains behind every NLCare safety layer."
+        ),
+    }
+    (output_dir / "dataset_card.json").write_text(
+        json.dumps(card, indent=2), encoding="utf-8"
+    )
     return card
 
 
-def _count_by(items: list[dict[str, Any]], key: str) -> dict[str, int]:
-    counts: dict[str, int] = {}
-    for item in items:
-        counts[item.get(key, "unknown")] = counts.get(item.get(key, "unknown"), 0) + 1
-    return counts
+def _write_jsonl(path: Path, items: list[dict[str, Any]]) -> None:
+    with path.open("w", encoding="utf-8") as handle:
+        for item in items:
+            handle.write(json.dumps(item, ensure_ascii=False) + "\n")
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Prepare the NLCare behavior fine-tuning dataset.")
+    parser = argparse.ArgumentParser(description="Prepare NLCare behavior-tuning data.")
     parser.add_argument("--templates-dir", type=Path, default=DEFAULT_TEMPLATES_DIR)
-    parser.add_argument("--output-dir",    type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args(argv)
-
     card = prepare_dataset(args.templates_dir, args.output_dir)
-    print(json.dumps({
-        "accepted": card["example_counts"]["accepted_total"],
-        "rejected": card["example_counts"]["rejected_total"],
-        "by_behavior": card["example_counts"]["by_behavior"],
-        "files": card["files"],
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "accepted": card["example_counts"]["accepted_total"],
+                "rejected": card["example_counts"]["rejected_total"],
+                "by_behavior": card["example_counts"]["by_behavior"],
+                "by_split": card["example_counts"]["by_split"],
+                "contamination": card["contamination_audit"]["status"],
+                "files": card["files"],
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

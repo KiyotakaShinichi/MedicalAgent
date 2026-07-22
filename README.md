@@ -266,6 +266,17 @@ Implementation: [backend/services/complete_synthetic_training.py](backend/servic
 
 Details: [docs/synthetic_data.md](docs/synthetic_data.md), [DATA_CARD.md](DATA_CARD.md), and [docs/data_dictionary.md](docs/data_dictionary.md).
 
+## Behavior fine-tuning scaffold
+
+- Fine-tuning is limited to synthetic response behavior and formatting; it does not inject medical knowledge.
+- Dataset preparation is fail-closed and emits schema/privacy rejections, duplicate diagnostics, source hashes, deterministic train/development/internal-frozen splits, and exact-text contamination evidence.
+- The QLoRA plan is a dry run only. No base revision is pinned, no weights are loaded, and no adapter has been trained.
+- Baseline and candidate generations must cover at least 50 paired cases with complete IDs, zero unsafe leakage, full claim-boundary compliance, and no aggregate or per-behavior safety regression.
+- The current five-case internal frozen split is a tripwire, not a powered comparison; meeting the two-point lift threshold is not statistical proof.
+- Promotion remains `HOLD`; even a future `PROMOTE` verdict means offline/shadow testing only, never patient-facing or clinical use.
+
+Run `python scripts/run_finetune_scaffold.py`. Contract: [docs/finetuning_boundaries.md](docs/finetuning_boundaries.md).
+
 ## Evaluation suite
 - RAG regression, safety regression, ML metrics, and workflow feedback tracking.
 - Genetic Counseling Readiness benchmark covers overclaim rate, VUS handling, germline/somatic correctness, referral correctness, treatment-advice leakage, family privacy boundaries, biomarker safety, tumor-marker overclaim rate, citation coverage, and clinician-review routing.

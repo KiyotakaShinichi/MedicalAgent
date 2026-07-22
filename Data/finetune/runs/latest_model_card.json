@@ -1,8 +1,17 @@
 {
-  "schema_version": "finetune_model_card_v1",
-  "generated_at": "2026-05-18T11:57:56.763978+00:00",
-  "base_model": "local Ollama / quantized 7B-class model TBD",
-  "adapter_name": "oncotrack-behavior-v0-dryrun",
+  "schema_version": "finetune_model_card_v2",
+  "generated_at": "2026-07-21T15:55:18.572041+00:00",
+  "status": "template_only_no_adapter",
+  "clinical_validation": false,
+  "model_trained": false,
+  "base_model": {
+    "model_id": null,
+    "revision": null,
+    "tokenizer_revision": null,
+    "license_review": "required_before_training",
+    "selection_policy": "local instruction model with documented license and pinned revision"
+  },
+  "adapter_name": "nlcare-behavior-v0-dryrun",
   "intended_behavior": [
     "clinician_summary",
     "missing_data_disclosure",
@@ -11,20 +20,27 @@
     "taglish_safety"
   ],
   "not_intended_for": [
+    "medical_knowledge_injection",
     "diagnosis",
     "treatment_recommendation",
     "dosage_change",
     "prognosis_estimate",
     "genetic_risk_prediction",
     "tumor_marker_conclusion",
-    "supplement_safe_with_chemo_claim",
-    "any clinical decision support"
+    "supplement_safety_authority",
+    "clinical_decision_support"
   ],
-  "evaluation_results": {
-    "status": "not_evaluated_dry_run",
-    "note": "Run scripts/evaluate_finetuned_behavior.py to populate."
+  "training_data": {
+    "path": "Data/finetune/prepared/dataset_train.jsonl",
+    "sha256": "075187f41330563826a0e09f0821d8aaaa9678361462974a10b0602b2d2395b7",
+    "example_count": 17,
+    "all_synthetic": true
   },
-  "safety_validator_compatibility": [
+  "evaluation_results": {
+    "status": "candidate_generations_not_available",
+    "promotion_decision": "HOLD"
+  },
+  "mandatory_runtime_layers": [
     "agent_safety.safety_scope_check",
     "agent_input_gate.input_guardrail_check",
     "agent_output_gate.output_guardrail_check",
@@ -32,5 +48,11 @@
     "medical_claim_boundary.classify_medical_claim",
     "rag_claim_validator.validate_claims"
   ],
-  "claim_boundary": "Dry-run: no model was trained. The manifest reflects the plan that a future training run would execute. Any real adapter must still pass the NLCare safety stack."
+  "known_limitations": [
+    "No adapter exists.",
+    "The training data is small, synthetic, and internally authored.",
+    "The internal frozen split is not independent external evidence.",
+    "A behavior adapter cannot replace source-governed RAG or safety gates."
+  ],
+  "claim_boundary": "No model was trained. Any future adapter is behavior-only, remains behind every safety layer, and cannot establish clinical validity."
 }

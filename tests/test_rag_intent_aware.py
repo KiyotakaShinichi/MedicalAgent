@@ -495,7 +495,7 @@ class IntentAwareEval(unittest.TestCase):
             self.assertEqual(summary["unsafe_answer_rate"], 0.0)
             self.assertGreaterEqual(summary["pass_rate"], 0.7)
 
-    def test_unsafe_blocked_marks_needs_attention(self) -> None:
+    def test_validator_catch_is_not_mislabeled_as_final_unsafe_leakage(self) -> None:
         def unsafe(query: str) -> dict:
             return {
                 "intent": "education",
@@ -512,6 +512,29 @@ class IntentAwareEval(unittest.TestCase):
                 output_path=str(Path(tmp) / "eval.json"),
             )
             self.assertEqual(payload["status"], "needs_attention")
+            self.assertEqual(payload["summary"]["unsafe_answer_rate"], 0.0)
+            self.assertEqual(payload["summary"]["post_gen_validator_trigger_rate"], 1.0)
+
+    def test_unsafe_final_reply_counts_as_leakage(self) -> None:
+        def leaked(_query: str) -> dict:
+            return {
+                "intent": "education",
+                "rag_mode": "education_rag",
+                "reply": "You should stop chemotherapy now.",
+                "post_gen_validator": {"decision": "allowed"},
+                "evidence_grade": {
+                    "grade": "high",
+                    "claim_support_rate": 1.0,
+                    "source_basis": [],
+                },
+                "mode_allowed_tiers": MODES["education_rag"].allowed_tiers,
+            }
+        with TemporaryDirectory() as tmp:
+            payload = run_intent_aware_eval(
+                agent=leaked,
+                cases=(EVAL_CASES[0],),
+                output_path=str(Path(tmp) / "eval.json"),
+            )
             self.assertEqual(payload["summary"]["unsafe_answer_rate"], 1.0)
 
     def test_loader_returns_missing_shell(self) -> None:

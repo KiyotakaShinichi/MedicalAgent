@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "f28a50177d2768f60aa5024033d67e62c1a9f68b",
+    "git_commit": "e11d39f0f8371ea595ac87d2cb608aef37696ffc",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -15,16 +15,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2750051:1784272258:8bb4c5e82263",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-07-19T01:42:06.000933+00:00"
+    "generated_at": "2026-07-21T15:52:59.117065+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-07-19T01:42:06.000933+00:00",
+    "generated_at": "2026-07-21T15:52:59.117065+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-07-20T01:42:06.000933+00:00",
+    "expires_at": "2026-07-22T15:52:59.117065+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-07-19T01:42:07.133792+00:00",
+  "generated_at": "2026-07-21T15:53:00.565616+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -76,14 +76,14 @@
       "title": "Fixed-bank adversarial safety regression",
       "tier": "supporting",
       "status": "stale",
-      "source_status": "needs_attention",
+      "source_status": "acceptable",
       "freshness": "stale",
-      "generated_at": "2026-07-13T05:04:55.640944+00:00",
+      "generated_at": "2026-07-19T01:47:24.943823+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_safety_regression.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "acceptable",
         "total_cases": 200,
-        "overall_attack_block_rate": 0.945,
+        "overall_attack_block_rate": 0.955,
         "hard_gate_passed": true,
         "safe_answer_rate": 1.0
       },
@@ -97,7 +97,7 @@
       "status": "stale",
       "source_status": "strong",
       "freshness": "stale",
-      "generated_at": "2026-07-13T05:04:55.641572+00:00",
+      "generated_at": "2026-07-19T01:47:24.947079+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_failure_analysis.json",
       "metrics": {
         "status": "strong",
@@ -115,11 +115,11 @@
       "status": "stale",
       "source_status": "acceptable",
       "freshness": "stale",
-      "generated_at": "2026-07-13T05:04:55.642405+00:00",
+      "generated_at": "2026-07-19T01:47:24.951431+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_safety_regression_holdout.json",
       "metrics": {
         "status": "acceptable",
-        "dev_pass_rate": 0.9395973154362416,
+        "dev_pass_rate": 0.9530201342281879,
         "holdout_pass_rate": 0.9607843137254902,
         "holdout_n": 51
       },
@@ -133,13 +133,13 @@
       "status": "stale",
       "source_status": "acceptable",
       "freshness": "stale",
-      "generated_at": "2026-07-13T05:04:53.597623+00:00",
+      "generated_at": "2026-07-19T01:47:27.285234+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_generalization_eval.json",
       "metrics": {
         "status": "acceptable",
-        "original_bank_pass_rate": 0.945,
+        "original_bank_pass_rate": 0.955,
         "heldout_pass_rate": 0.96875,
-        "paraphrase_pass_rate": 1.0,
+        "paraphrase_pass_rate": 0.9636363636363636,
         "safe_negative_control_pass_rate": 1.0,
         "category_gap_between_dev_and_holdout": 0.125
       },
@@ -252,9 +252,9 @@
       "id": "rag_governance_tradeoff",
       "title": "RAG effectiveness and governance trade-off",
       "tier": "supporting",
-      "status": "needs_attention",
+      "status": "stale",
       "source_status": "needs_attention",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-18T10:35:07.815958+00:00",
       "source_path": "Data/evals/rag/latest_rag_governance_tradeoff.json",
       "metrics": {
@@ -589,10 +589,10 @@
       "id": "shortcut_audit",
       "title": "Hybrid shortcut audit",
       "tier": "critical",
-      "status": "stale",
+      "status": "acceptable",
       "source_status": "acceptable",
-      "freshness": "stale",
-      "generated_at": "2026-05-20T05:48:38.978845+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-21T15:22:09.671555+00:00",
       "source_path": "Data/evals/models/latest_shortcut_audit.json",
       "metrics": {
         "status": "acceptable",
@@ -686,10 +686,10 @@
       "id": "medical_claim_boundary_eval",
       "title": "Medical claim-boundary eval",
       "tier": "critical",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-05-21T08:19:36.005226+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-21T15:13:23.607586+00:00",
       "source_path": "Data/evals/safety/latest_medical_claim_boundary_eval.json",
       "metrics": {
         "status": "strong",
@@ -997,9 +997,9 @@
       "id": "durable_automation_worker",
       "title": "Durable automation worker controls",
       "tier": "supporting",
-      "status": "acceptable",
+      "status": "stale",
       "source_status": "acceptable",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-19T01:30:59.933113+00:00",
       "source_path": "Data/evals/ops/latest_durable_automation_worker_eval.json",
       "metrics": {
@@ -1036,9 +1036,9 @@
       "id": "automation_xai_industry_alignment",
       "title": "Automation and XAI industry-alignment roadmap",
       "tier": "supporting",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-18T08:58:22.505942+00:00",
       "source_path": "Data/evals/governance/latest_automation_xai_industry_alignment.json",
       "metrics": {
@@ -1332,12 +1332,32 @@
       "claim_boundary": "Offline engineering evaluation only. Cases here are synthetic / curated, not real patient interactions. PROMOTE/HOLD/REJECT verdicts are engineering signals. Real-patient deployment requires the live safety gates, source-governed RAG, the medical claim boundary checker, the post-generation validator, and clinician review.\n"
     },
     {
+      "id": "finetune_behavior_governance",
+      "title": "Behavior-only fine-tuning governance",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-21T15:50:56.852015+00:00",
+      "source_path": "Data/evals/models/latest_finetune_governance.json",
+      "metrics": {
+        "status": "needs_attention",
+        "model_trained": false,
+        "dataset_accepted": 27,
+        "contamination_status": "acceptable",
+        "promotion_decision": "HOLD",
+        "promotion_scope": "offline_shadow_only"
+      },
+      "limitations": [],
+      "claim_boundary": "Behavior-only synthetic engineering scaffold. It does not train medical knowledge, prove safety, or provide clinical validation."
+    },
+    {
       "id": "mle_readiness",
       "title": "MLE readiness gate",
       "tier": "critical",
-      "status": "unideal",
+      "status": "stale",
       "source_status": "unideal",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-18T10:26:14.347878+00:00",
       "source_path": "Data/mle_monitoring/latest_mle_readiness.json",
       "metrics": {
@@ -1615,9 +1635,9 @@
       "id": "toxicity_feature_audit",
       "title": "Toxicity classifier feature-importance audit + no-proxy baseline",
       "tier": "critical",
-      "status": "acceptable",
+      "status": "stale",
       "source_status": "acceptable",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-18T09:02:24.193372+00:00",
       "source_path": "Data/evals/models/latest_toxicity_feature_audit.json",
       "metrics": {
@@ -1691,10 +1711,10 @@
       "id": "claim_level_citation_eval",
       "title": "Claim-level citation validation",
       "tier": "critical",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-05-21T04:18:24.454422+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-21T15:13:31.919917+00:00",
       "source_path": "Data/evals/rag/latest_claim_level_citation_eval.json",
       "metrics": {
         "status": "strong",
@@ -1803,7 +1823,7 @@
       "status": "stale",
       "source_status": "strong",
       "freshness": "stale",
-      "generated_at": "2026-07-13T05:05:17.313974+00:00",
+      "generated_at": "2026-07-19T01:48:06.278163+00:00",
       "source_path": "Data/evals/rag/latest_over_refusal_eval.json",
       "metrics": {
         "status": "strong",
@@ -1836,13 +1856,13 @@
       "id": "rag_tier_ablation",
       "title": "RAG source-tier retrieval ablation (T1 / T1+T2 / T1+T2+T3 / all)",
       "tier": "supporting",
-      "status": "stale",
-      "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-05-20T05:58:43.687654+00:00",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-07-21T15:41:47.656478+00:00",
       "source_path": "Data/evals/rag/latest_rag_tier_ablation.json",
       "metrics": {
-        "status": "strong"
+        "status": "acceptable"
       },
       "limitations": [],
       "claim_boundary": "Engineering instrumentation only. Does not establish clinical preference for any tier configuration."
@@ -1956,7 +1976,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-07-19T01:40:54.420646+00:00",
+      "generated_at": "2026-07-21T15:45:19.438715+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -1973,7 +1993,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-07-19T01:40:53.361577+00:00",
+      "generated_at": "2026-07-21T15:45:18.377150+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -1990,7 +2010,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-07-19T01:40:54.521934+00:00",
+      "generated_at": "2026-07-21T15:45:19.512498+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2242,7 +2262,7 @@
       "status": "stale",
       "source_status": "needs_attention",
       "freshness": "stale",
-      "generated_at": "2026-07-13T05:05:18.649146+00:00",
+      "generated_at": "2026-07-19T01:50:24.695526+00:00",
       "source_path": "Data/evals/ops/latest_runtime_quality_sentinel.json",
       "metrics": {
         "status": "needs_attention",
@@ -2259,9 +2279,9 @@
       "id": "route_latency_budget",
       "title": "Route latency budget",
       "tier": "supporting",
-      "status": "needs_attention",
+      "status": "stale",
       "source_status": "needs_attention",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-18T10:36:43.276916+00:00",
       "source_path": "Data/evals/ops/latest_route_latency_budget.json",
       "metrics": {
@@ -2277,9 +2297,9 @@
       "id": "latency_profile_phase2",
       "title": "Latency profile phase 2",
       "tier": "supporting",
-      "status": "needs_attention",
+      "status": "stale",
       "source_status": "needs_attention",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-18T10:36:25.527192+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile_phase2.json",
       "metrics": {
@@ -2294,9 +2314,9 @@
       "id": "latency_profile",
       "title": "Latency profile",
       "tier": "supporting",
-      "status": "needs_attention",
+      "status": "stale",
       "source_status": "needs_attention",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-18T10:36:25.527192+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile.json",
       "metrics": {
@@ -2371,9 +2391,9 @@
       "id": "citation_window_sensitivity",
       "title": "Citation window sensitivity",
       "tier": "supporting",
-      "status": "acceptable",
+      "status": "stale",
       "source_status": "acceptable",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-18T08:57:48.686686+00:00",
       "source_path": "Data/evals/rag/latest_citation_window_sensitivity.json",
       "metrics": {
@@ -2483,7 +2503,7 @@
       "status": "stale",
       "source_status": "strong",
       "freshness": "stale",
-      "generated_at": "2026-07-13T08:32:22.177451+00:00",
+      "generated_at": "2026-07-19T01:50:26.659433+00:00",
       "source_path": "Data/evals/governance/latest_release_gate_explanation.json",
       "metrics": {
         "status": "strong"
@@ -2612,8 +2632,8 @@
     {
       "benchmark_id": "rag_governance_tradeoff",
       "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "rag_gold",
@@ -2718,12 +2738,6 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "shortcut_audit",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "medical_advisor_review_packet",
       "severity": "medium",
       "status": "stale",
@@ -2749,12 +2763,6 @@
     },
     {
       "benchmark_id": "minimum_evidence_standards",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "medical_claim_boundary_eval",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -2856,7 +2864,19 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
+      "benchmark_id": "durable_automation_worker",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
       "benchmark_id": "patient_xai_readability_dossier",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "automation_xai_industry_alignment",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -2958,10 +2978,16 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
+      "benchmark_id": "finetune_behavior_governance",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
       "benchmark_id": "mle_readiness",
-      "severity": "high",
-      "status": "unideal",
-      "message": "MLE readiness has one or more unideal categories; inspect category_statuses before promotion."
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "mle_readiness_realism_candidate",
@@ -3048,6 +3074,12 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
+      "benchmark_id": "toxicity_feature_audit",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
       "benchmark_id": "rag_intent_aware_eval",
       "severity": "medium",
       "status": "stale",
@@ -3055,12 +3087,6 @@
     },
     {
       "benchmark_id": "live_rag_eval",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "claim_level_citation_eval",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3103,12 +3129,6 @@
     },
     {
       "benchmark_id": "multilingual_adversarial_security",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "rag_tier_ablation",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3200,20 +3220,20 @@
     {
       "benchmark_id": "route_latency_budget",
       "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "latency_profile_phase2",
       "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "latency_profile",
       "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "rag_reranker_ablation",
@@ -3229,6 +3249,12 @@
     },
     {
       "benchmark_id": "rag_baseline_comparison",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "citation_window_sensitivity",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
