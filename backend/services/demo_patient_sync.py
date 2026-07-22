@@ -46,7 +46,7 @@ def sync_demo_patient_journey(db, patient_id=DEMO_PATIENT_ID):
     profile.treatment_intent = "neoadjuvant chemotherapy monitoring"
     profile.menopausal_status = "premenopausal"
 
-    for model in [
+    reset_models = (
         CTReport,
         ImagingReport,
         MRIFileRegistry,
@@ -56,8 +56,15 @@ def sync_demo_patient_journey(db, patient_id=DEMO_PATIENT_ID):
         MedicationLog,
         ClinicalIntervention,
         TreatmentOutcome,
-    ]:
+    )
+    for model in reset_models:
         db.query(model).filter(model.patient_id == patient_id).delete(synchronize_session=False)
+
+    # Bulk deletes bypass ORM state synchronization. Remove any previously loaded
+    # demo children before SQLite can reuse their primary keys during reseeding.
+    for instance in list(db.identity_map.values()):
+        if isinstance(instance, reset_models):
+            db.expunge(instance)
 
     treatments = [
         Treatment(patient_id=patient_id, date=date(2026, 1, 5), cycle=1, drug="Dose-dense AC (doxorubicin/cyclophosphamide)"),

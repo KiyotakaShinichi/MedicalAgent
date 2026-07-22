@@ -1,13 +1,19 @@
 {
-  "schema_version": "deployment_profile_validation_v1",
-  "generated_at": "2026-07-14T13:33:19.284528+00:00",
+  "schema_version": "deployment_profile_validation_v2",
+  "generated_at": "2026-07-22T06:31:12.105542+00:00",
   "status": "development_profile",
   "profile": "development",
   "strict_profile": false,
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "secrets_included_in_artifact": false,
-  "n_checks": 7,
+  "non_demo_auth_implemented": true,
+  "oidc_enabled": false,
+  "oidc_config_valid": false,
+  "oidc_config_issue_count": 0,
+  "external_dispatch_enabled": false,
+  "deployment_capability": "local_or_controlled_demo_only",
+  "n_checks": 12,
   "n_failed": 0,
   "checks": [
     {
@@ -36,16 +42,41 @@
       "reason": "production browser origins must use HTTPS"
     },
     {
+      "name": "production_cors_excludes_localhost",
+      "ok": true,
+      "reason": "production browser origins must not resolve to local development hosts"
+    },
+    {
       "name": "redis_configured",
       "ok": true,
       "reason": "staging/production requires Redis for background engineering jobs"
     },
     {
-      "name": "migration_present",
+      "name": "latest_migration_present",
       "ok": true,
-      "reason": "confirmed-write audit migration must ship with the image"
+      "reason": "the latest automation leasing migration must ship with the image"
+    },
+    {
+      "name": "non_demo_identity_provider_integrated",
+      "ok": true,
+      "reason": "strict profiles require the feature-flagged OIDC issuer, audience, HTTPS JWKS URL, and RS256 validation"
+    },
+    {
+      "name": "external_dispatch_uses_https",
+      "ok": true,
+      "reason": "enabled n8n dispatch must use an HTTPS webhook endpoint"
+    },
+    {
+      "name": "external_dispatch_secret_strong",
+      "ok": true,
+      "reason": "enabled n8n dispatch requires a non-placeholder signing secret of at least 32 characters"
+    },
+    {
+      "name": "external_dispatch_test_recipient_only",
+      "ok": true,
+      "reason": "prototype external dispatch must remain restricted to synthetic test recipients"
     }
   ],
   "failed_checks": [],
-  "claim_boundary": "Runtime configuration validation for a production-shaped engineering prototype. It is not a security certification, HIPAA claim, clinical validation, or evidence of production healthcare readiness."
+  "claim_boundary": "Runtime configuration validation for a deployment-shaped engineering prototype. It is not a security certification, HIPAA claim, clinical validation, or evidence of production healthcare readiness."
 }

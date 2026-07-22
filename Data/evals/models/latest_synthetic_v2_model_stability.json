@@ -1,10 +1,10 @@
 {
   "schema_version": "synthetic_v2_model_stability_v1",
-  "generated_at": "2026-07-18T15:02:12.832887+00:00",
+  "generated_at": "2026-07-22T01:40:04.593875+00:00",
   "status": "acceptable",
-  "input_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
-  "n_rows": 3600,
-  "n_patients": 600,
+  "input_path": "Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv",
+  "n_rows": 1440,
+  "n_patients": 240,
   "seeds": [
     17,
     29,
@@ -38,6 +38,10 @@
     "recovery_hemoglobin",
     "recovery_platelets",
     "mri_tumor_size_cm",
+    "has_mri",
+    "has_ct",
+    "has_ultrasound",
+    "imaging_modality_count",
     "max_symptom_severity",
     "symptom_count",
     "intervention_count",
@@ -66,1320 +70,1320 @@
       "scenario": "clean",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.720073,
-      "brier": 0.208245,
-      "ece": 0.07328
+      "auroc": 0.62709,
+      "brier": 0.252894,
+      "ece": 0.170268
     },
     {
       "seed": 17,
       "scenario": "clean",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.748371,
-      "brier": 0.191954,
-      "ece": 0.055055
+      "auroc": 0.646798,
+      "brier": 0.222044,
+      "ece": 0.149536
     },
     {
       "seed": 17,
       "scenario": "clean",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.13304
+      "mae": 13.378122
     },
     {
       "seed": 17,
       "scenario": "clean",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.344785
+      "mae": 10.416067
     },
     {
       "seed": 17,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.692711,
-      "brier": 0.214751,
-      "ece": 0.076068
+      "auroc": 0.61513,
+      "brier": 0.253521,
+      "ece": 0.178134
     },
     {
       "seed": 17,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.708442,
-      "brier": 0.200651,
-      "ece": 0.062061
+      "auroc": 0.628794,
+      "brier": 0.23147,
+      "ece": 0.142493
     },
     {
       "seed": 17,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.502722
+      "mae": 13.940912
     },
     {
       "seed": 17,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.958349
+      "mae": 11.134267
     },
     {
       "seed": 17,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.689954,
-      "brier": 0.216677,
-      "ece": 0.070357
+      "auroc": 0.590856,
+      "brier": 0.26486,
+      "ece": 0.184428
     },
     {
       "seed": 17,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.698679,
-      "brier": 0.204567,
-      "ece": 0.058419
+      "auroc": 0.597383,
+      "brier": 0.236307,
+      "ece": 0.153666
     },
     {
       "seed": 17,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.66938
+      "mae": 13.814804
     },
     {
       "seed": 17,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.133764
+      "mae": 11.23775
     },
     {
       "seed": 17,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.713287,
-      "brier": 0.210464,
-      "ece": 0.068226
+      "auroc": 0.621496,
+      "brier": 0.255865,
+      "ece": 0.174116
     },
     {
       "seed": 17,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.73376,
-      "brier": 0.196644,
-      "ece": 0.062828
+      "auroc": 0.615998,
+      "brier": 0.232366,
+      "ece": 0.164872
     },
     {
       "seed": 17,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.220074
+      "mae": 13.409785
     },
     {
       "seed": 17,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.412175
+      "mae": 10.444171
     },
     {
       "seed": 17,
       "scenario": "label_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.717757,
-      "brier": 0.206936,
-      "ece": 0.055209
+      "auroc": 0.627347,
+      "brier": 0.234729,
+      "ece": 0.123444
     },
     {
       "seed": 17,
       "scenario": "label_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.732214,
-      "brier": 0.198159,
-      "ece": 0.058537
+      "auroc": 0.644113,
+      "brier": 0.219904,
+      "ece": 0.099572
     },
     {
       "seed": 17,
       "scenario": "label_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.128039
+      "mae": 13.352915
     },
     {
       "seed": 17,
       "scenario": "label_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.416246
+      "mae": 10.281595
     },
     {
       "seed": 17,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.679281,
-      "brier": 0.219663,
-      "ece": 0.080429
+      "auroc": 0.618313,
+      "brier": 0.247534,
+      "ece": 0.161567
     },
     {
       "seed": 17,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.688685,
-      "brier": 0.206404,
-      "ece": 0.050056
+      "auroc": 0.606899,
+      "brier": 0.235131,
+      "ece": 0.135603
     },
     {
       "seed": 17,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.927581
+      "mae": 14.135288
     },
     {
       "seed": 17,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.843494
+      "mae": 11.889087
     },
     {
       "seed": 29,
       "scenario": "clean",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.788951,
-      "brier": 0.186452,
-      "ece": 0.09467
+      "auroc": 0.693135,
+      "brier": 0.229511,
+      "ece": 0.123552
     },
     {
       "seed": 29,
       "scenario": "clean",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.818758,
-      "brier": 0.168123,
-      "ece": 0.052127
+      "auroc": 0.696097,
+      "brier": 0.220545,
+      "ece": 0.108293
     },
     {
       "seed": 29,
       "scenario": "clean",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.933282
+      "mae": 16.21542
     },
     {
       "seed": 29,
       "scenario": "clean",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.30582
+      "mae": 12.477959
     },
     {
       "seed": 29,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.759322,
-      "brier": 0.196951,
-      "ece": 0.091421
+      "auroc": 0.694413,
+      "brier": 0.228154,
+      "ece": 0.108677
     },
     {
       "seed": 29,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.786496,
-      "brier": 0.178059,
-      "ece": 0.068734
+      "auroc": 0.684905,
+      "brier": 0.22353,
+      "ece": 0.089963
     },
     {
       "seed": 29,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.697908
+      "mae": 16.201134
     },
     {
       "seed": 29,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.106593
+      "mae": 12.996814
     },
     {
       "seed": 29,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.732265,
-      "brier": 0.205064,
-      "ece": 0.09815
+      "auroc": 0.670751,
+      "brier": 0.234995,
+      "ece": 0.112561
     },
     {
       "seed": 29,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.754956,
-      "brier": 0.186549,
-      "ece": 0.051996
+      "auroc": 0.676892,
+      "brier": 0.229956,
+      "ece": 0.097841
     },
     {
       "seed": 29,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.873676
+      "mae": 16.484371
     },
     {
       "seed": 29,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.440258
+      "mae": 13.383925
     },
     {
       "seed": 29,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.787034,
-      "brier": 0.186838,
-      "ece": 0.080577
+      "auroc": 0.695473,
+      "brier": 0.227719,
+      "ece": 0.116161
     },
     {
       "seed": 29,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.820658,
-      "brier": 0.168138,
-      "ece": 0.052414
+      "auroc": 0.679464,
+      "brier": 0.226116,
+      "ece": 0.098002
     },
     {
       "seed": 29,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.071014
+      "mae": 16.205532
     },
     {
       "seed": 29,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.626543
+      "mae": 12.249441
     },
     {
       "seed": 29,
       "scenario": "label_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.787276,
-      "brier": 0.188924,
-      "ece": 0.099754
+      "auroc": 0.69856,
+      "brier": 0.218191,
+      "ece": 0.091776
     },
     {
       "seed": 29,
       "scenario": "label_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.814203,
-      "brier": 0.175615,
-      "ece": 0.090922
+      "auroc": 0.711778,
+      "brier": 0.215121,
+      "ece": 0.039841
     },
     {
       "seed": 29,
       "scenario": "label_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.923461
+      "mae": 16.205351
     },
     {
       "seed": 29,
       "scenario": "label_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.168733
+      "mae": 12.434268
     },
     {
       "seed": 29,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.738852,
-      "brier": 0.204169,
-      "ece": 0.09512
+      "auroc": 0.685871,
+      "brier": 0.22978,
+      "ece": 0.112676
     },
     {
       "seed": 29,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.763387,
-      "brier": 0.18515,
-      "ece": 0.057884
+      "auroc": 0.665731,
+      "brier": 0.231121,
+      "ece": 0.090833
     },
     {
       "seed": 29,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.19664
+      "mae": 16.770304
     },
     {
       "seed": 29,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.069533
+      "mae": 13.757836
     },
     {
       "seed": 43,
       "scenario": "clean",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.778277,
-      "brier": 0.188738,
-      "ece": 0.039687
+      "auroc": 0.75346,
+      "brier": 0.20093,
+      "ece": 0.095611
     },
     {
       "seed": 43,
       "scenario": "clean",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.810462,
-      "brier": 0.174664,
-      "ece": 0.063992
+      "auroc": 0.768,
+      "brier": 0.18452,
+      "ece": 0.089744
     },
     {
       "seed": 43,
       "scenario": "clean",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.171535
+      "mae": 15.66901
     },
     {
       "seed": 43,
       "scenario": "clean",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.344679
+      "mae": 12.509058
     },
     {
       "seed": 43,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.726563,
-      "brier": 0.207755,
-      "ece": 0.059305
+      "auroc": 0.766889,
+      "brier": 0.197064,
+      "ece": 0.09558
     },
     {
       "seed": 43,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.750933,
-      "brier": 0.193224,
-      "ece": 0.076435
+      "auroc": 0.733333,
+      "brier": 0.193308,
+      "ece": 0.097846
     },
     {
       "seed": 43,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.922807
+      "mae": 15.52566
     },
     {
       "seed": 43,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.199562
+      "mae": 13.326072
     },
     {
       "seed": 43,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.738588,
-      "brier": 0.204002,
-      "ece": 0.052707
+      "auroc": 0.746032,
+      "brier": 0.20236,
+      "ece": 0.091752
     },
     {
       "seed": 43,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.754602,
-      "brier": 0.192901,
-      "ece": 0.067557
+      "auroc": 0.733063,
+      "brier": 0.196547,
+      "ece": 0.096951
     },
     {
       "seed": 43,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 15.054388
+      "mae": 15.888304
     },
     {
       "seed": 43,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.351266
+      "mae": 13.442786
     },
     {
       "seed": 43,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.776914,
-      "brier": 0.189261,
-      "ece": 0.033119
+      "auroc": 0.754095,
+      "brier": 0.200229,
+      "ece": 0.09734
     },
     {
       "seed": 43,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.808168,
-      "brier": 0.176206,
-      "ece": 0.063513
+      "auroc": 0.761984,
+      "brier": 0.186361,
+      "ece": 0.09414
     },
     {
       "seed": 43,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.221544
+      "mae": 15.797507
     },
     {
       "seed": 43,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.584567
+      "mae": 12.701378
     },
     {
       "seed": 43,
       "scenario": "label_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.767546,
-      "brier": 0.194179,
-      "ece": 0.043171
+      "auroc": 0.746317,
+      "brier": 0.20433,
+      "ece": 0.110844
     },
     {
       "seed": 43,
       "scenario": "label_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.79316,
-      "brier": 0.186663,
-      "ece": 0.061522
+      "auroc": 0.767746,
+      "brier": 0.190445,
+      "ece": 0.077925
     },
     {
       "seed": 43,
       "scenario": "label_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.179134
+      "mae": 15.648627
     },
     {
       "seed": 43,
       "scenario": "label_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.362917
+      "mae": 12.581596
     },
     {
       "seed": 43,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.732232,
-      "brier": 0.204513,
-      "ece": 0.061832
+      "auroc": 0.761143,
+      "brier": 0.197045,
+      "ece": 0.096719
     },
     {
       "seed": 43,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.760311,
-      "brier": 0.190484,
-      "ece": 0.07208
+      "auroc": 0.768317,
+      "brier": 0.186204,
+      "ece": 0.118763
     },
     {
       "seed": 43,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 15.082644
+      "mae": 15.708466
     },
     {
       "seed": 43,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.5648
+      "mae": 13.348383
     },
     {
       "seed": 71,
       "scenario": "clean",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.721839,
-      "brier": 0.209238,
-      "ece": 0.103836
+      "auroc": 0.827654,
+      "brier": 0.177312,
+      "ece": 0.129675
     },
     {
       "seed": 71,
       "scenario": "clean",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.732142,
-      "brier": 0.192782,
-      "ece": 0.091594
+      "auroc": 0.832403,
+      "brier": 0.166343,
+      "ece": 0.09105
     },
     {
       "seed": 71,
       "scenario": "clean",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.827951
+      "mae": 14.794874
     },
     {
       "seed": 71,
       "scenario": "clean",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.043074
+      "mae": 11.795483
     },
     {
       "seed": 71,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.70799,
-      "brier": 0.212194,
-      "ece": 0.108392
+      "auroc": 0.816425,
+      "brier": 0.18634,
+      "ece": 0.136859
     },
     {
       "seed": 71,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.706145,
-      "brier": 0.198803,
-      "ece": 0.095122
+      "auroc": 0.838197,
+      "brier": 0.170508,
+      "ece": 0.098331
     },
     {
       "seed": 71,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.982545
+      "mae": 15.65912
     },
     {
       "seed": 71,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.304285
+      "mae": 12.883434
     },
     {
       "seed": 71,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.675279,
-      "brier": 0.221207,
-      "ece": 0.111372
+      "auroc": 0.812443,
+      "brier": 0.184599,
+      "ece": 0.133268
     },
     {
       "seed": 71,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.67857,
-      "brier": 0.204507,
-      "ece": 0.094965
+      "auroc": 0.8082,
+      "brier": 0.175422,
+      "ece": 0.085496
     },
     {
       "seed": 71,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.159897
+      "mae": 15.005101
     },
     {
       "seed": 71,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.534007
+      "mae": 12.222849
     },
     {
       "seed": 71,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.715884,
-      "brier": 0.210862,
-      "ece": 0.103754
+      "auroc": 0.825499,
+      "brier": 0.177285,
+      "ece": 0.127514
     },
     {
       "seed": 71,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.721739,
-      "brier": 0.195216,
-      "ece": 0.098891
+      "auroc": 0.834019,
+      "brier": 0.166224,
+      "ece": 0.104615
     },
     {
       "seed": 71,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.843918
+      "mae": 14.970527
     },
     {
       "seed": 71,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.187169
+      "mae": 12.028983
     },
     {
       "seed": 71,
       "scenario": "label_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.708558,
-      "brier": 0.20973,
-      "ece": 0.127726
+      "auroc": 0.814793,
+      "brier": 0.186009,
+      "ece": 0.137676
     },
     {
       "seed": 71,
       "scenario": "label_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.71944,
-      "brier": 0.202487,
-      "ece": 0.124309
+      "auroc": 0.795094,
+      "brier": 0.187682,
+      "ece": 0.114768
     },
     {
       "seed": 71,
       "scenario": "label_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 12.866138
+      "mae": 14.966658
     },
     {
       "seed": 71,
       "scenario": "label_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 9.967675
+      "mae": 11.746238
     },
     {
       "seed": 71,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.684584,
-      "brier": 0.21758,
-      "ece": 0.104667
+      "auroc": 0.784796,
+      "brier": 0.1927,
+      "ece": 0.137295
     },
     {
       "seed": 71,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.699456,
-      "brier": 0.198686,
-      "ece": 0.093599
+      "auroc": 0.816474,
+      "brier": 0.173392,
+      "ece": 0.088832
     },
     {
       "seed": 71,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.134088
+      "mae": 15.380964
     },
     {
       "seed": 71,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.789719
+      "mae": 12.735608
     },
     {
       "seed": 101,
       "scenario": "clean",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.769587,
-      "brier": 0.186307,
-      "ece": 0.091099
+      "auroc": 0.732952,
+      "brier": 0.207093,
+      "ece": 0.06222
     },
     {
       "seed": 101,
       "scenario": "clean",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.777558,
-      "brier": 0.176507,
-      "ece": 0.095348
+      "auroc": 0.769349,
+      "brier": 0.190124,
+      "ece": 0.066319
     },
     {
       "seed": 101,
       "scenario": "clean",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.198477
+      "mae": 14.681235
     },
     {
       "seed": 101,
       "scenario": "clean",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.409164
+      "mae": 12.03086
     },
     {
       "seed": 101,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.738645,
-      "brier": 0.197203,
-      "ece": 0.08983
+      "auroc": 0.707746,
+      "brier": 0.217375,
+      "ece": 0.080771
     },
     {
       "seed": 101,
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.732909,
-      "brier": 0.189953,
-      "ece": 0.097037
+      "auroc": 0.730619,
+      "brier": 0.200215,
+      "ece": 0.072902
     },
     {
       "seed": 101,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.745122
+      "mae": 15.098161
     },
     {
       "seed": 101,
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.315991
+      "mae": 12.502667
     },
     {
       "seed": 101,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.727813,
-      "brier": 0.199168,
-      "ece": 0.083117
+      "auroc": 0.698889,
+      "brier": 0.220419,
+      "ece": 0.077136
     },
     {
       "seed": 101,
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.720826,
-      "brier": 0.19418,
-      "ece": 0.093627
+      "auroc": 0.736651,
+      "brier": 0.201965,
+      "ece": 0.070863
     },
     {
       "seed": 101,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.596728
+      "mae": 15.09569
     },
     {
       "seed": 101,
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.9222
+      "mae": 12.862122
     },
     {
       "seed": 101,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.765767,
-      "brier": 0.187804,
-      "ece": 0.090396
+      "auroc": 0.730825,
+      "brier": 0.207625,
+      "ece": 0.060068
     },
     {
       "seed": 101,
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.774225,
-      "brier": 0.177428,
-      "ece": 0.081979
+      "auroc": 0.776127,
+      "brier": 0.189857,
+      "ece": 0.06691
     },
     {
       "seed": 101,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.355986
+      "mae": 14.703689
     },
     {
       "seed": 101,
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.531389
+      "mae": 12.057166
     },
     {
       "seed": 101,
       "scenario": "label_noise",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.767402,
-      "brier": 0.192583,
-      "ece": 0.124045
+      "auroc": 0.699587,
+      "brier": 0.216756,
+      "ece": 0.068981
     },
     {
       "seed": 101,
       "scenario": "label_noise",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.767002,
-      "brier": 0.190288,
-      "ece": 0.125547
+      "auroc": 0.694635,
+      "brier": 0.207237,
+      "ece": 0.071389
     },
     {
       "seed": 101,
       "scenario": "label_noise",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 13.203247
+      "mae": 14.725322
     },
     {
       "seed": 101,
       "scenario": "label_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 10.411419
+      "mae": 11.988206
     },
     {
       "seed": 101,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "logistic_regression",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.706418,
-      "brier": 0.210676,
-      "ece": 0.110225
+      "auroc": 0.704762,
+      "brier": 0.216199,
+      "ece": 0.080285
     },
     {
       "seed": 101,
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "gradient_boosting",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "auroc": 0.704568,
-      "brier": 0.197575,
-      "ece": 0.103234
+      "auroc": 0.746651,
+      "brier": 0.195713,
+      "ece": 0.054863
     },
     {
       "seed": 101,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "ridge",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 14.091907
+      "mae": 14.625787
     },
     {
       "seed": 101,
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "gradient_boosting_regressor",
-      "n_train": 2700,
-      "n_test": 900,
+      "n_train": 1080,
+      "n_test": 360,
       "patient_overlap_count": 0,
-      "mae": 11.269109
+      "mae": 12.186328
     }
   ],
   "aggregate": [
@@ -1388,288 +1392,446 @@
       "task": "classification",
       "model": "gradient_boosting",
       "n_seeds": 5,
-      "mean_auroc": 0.777458,
-      "min_auroc": 0.732142,
-      "max_auroc": 0.818758,
-      "mean_brier": 0.180806,
-      "min_brier": 0.168123,
-      "max_brier": 0.192782,
-      "mean_ece": 0.071623,
-      "min_ece": 0.052127,
-      "max_ece": 0.095348
+      "mean_auroc": 0.742529,
+      "min_auroc": 0.646798,
+      "max_auroc": 0.832403,
+      "mean_brier": 0.196715,
+      "min_brier": 0.166343,
+      "max_brier": 0.222044,
+      "mean_ece": 0.100988,
+      "min_ece": 0.066319,
+      "max_ece": 0.149536
     },
     {
       "scenario": "clean",
       "task": "classification",
       "model": "logistic_regression",
       "n_seeds": 5,
-      "mean_auroc": 0.755745,
-      "min_auroc": 0.720073,
-      "max_auroc": 0.788951,
-      "mean_brier": 0.195796,
-      "min_brier": 0.186307,
-      "max_brier": 0.209238,
-      "mean_ece": 0.080514,
-      "min_ece": 0.039687,
-      "max_ece": 0.103836
+      "mean_auroc": 0.726858,
+      "min_auroc": 0.62709,
+      "max_auroc": 0.827654,
+      "mean_brier": 0.213548,
+      "min_brier": 0.177312,
+      "max_brier": 0.252894,
+      "mean_ece": 0.116265,
+      "min_ece": 0.06222,
+      "max_ece": 0.170268
     },
     {
       "scenario": "clean",
       "task": "regression",
       "model": "gradient_boosting_regressor",
       "n_seeds": 5,
-      "mean_mae": 10.689504,
-      "min_mae": 10.043074,
-      "max_mae": 11.344785
+      "mean_mae": 11.845885,
+      "min_mae": 10.416067,
+      "max_mae": 12.509058
     },
     {
       "scenario": "clean",
       "task": "regression",
       "model": "ridge",
       "n_seeds": 5,
-      "mean_mae": 13.452857,
-      "min_mae": 12.827951,
-      "max_mae": 14.171535
+      "mean_mae": 14.947732,
+      "min_mae": 13.378122,
+      "max_mae": 16.21542
     },
     {
       "scenario": "label_noise",
       "task": "classification",
       "model": "gradient_boosting",
       "n_seeds": 5,
-      "mean_auroc": 0.765204,
-      "min_auroc": 0.71944,
-      "max_auroc": 0.814203,
-      "mean_brier": 0.190642,
-      "min_brier": 0.175615,
-      "max_brier": 0.202487,
-      "mean_ece": 0.092167,
-      "min_ece": 0.058537,
-      "max_ece": 0.125547
+      "mean_auroc": 0.722673,
+      "min_auroc": 0.644113,
+      "max_auroc": 0.795094,
+      "mean_brier": 0.204078,
+      "min_brier": 0.187682,
+      "max_brier": 0.219904,
+      "mean_ece": 0.080699,
+      "min_ece": 0.039841,
+      "max_ece": 0.114768
     },
     {
       "scenario": "label_noise",
       "task": "classification",
       "model": "logistic_regression",
       "n_seeds": 5,
-      "mean_auroc": 0.749708,
-      "min_auroc": 0.708558,
-      "max_auroc": 0.787276,
-      "mean_brier": 0.19847,
-      "min_brier": 0.188924,
-      "max_brier": 0.20973,
-      "mean_ece": 0.089981,
-      "min_ece": 0.043171,
-      "max_ece": 0.127726
+      "mean_auroc": 0.717321,
+      "min_auroc": 0.627347,
+      "max_auroc": 0.814793,
+      "mean_brier": 0.212003,
+      "min_brier": 0.186009,
+      "max_brier": 0.234729,
+      "mean_ece": 0.106544,
+      "min_ece": 0.068981,
+      "max_ece": 0.137676
     },
     {
       "scenario": "label_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
       "n_seeds": 5,
-      "mean_mae": 10.665398,
-      "min_mae": 9.967675,
-      "max_mae": 11.416246
+      "mean_mae": 11.806381,
+      "min_mae": 10.281595,
+      "max_mae": 12.581596
     },
     {
       "scenario": "label_noise",
       "task": "regression",
       "model": "ridge",
       "n_seeds": 5,
-      "mean_mae": 13.460004,
-      "min_mae": 12.866138,
-      "max_mae": 14.179134
+      "mean_mae": 14.979775,
+      "min_mae": 13.352915,
+      "max_mae": 16.205351
     },
     {
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
       "n_seeds": 5,
-      "mean_auroc": 0.736985,
-      "min_auroc": 0.706145,
-      "max_auroc": 0.786496,
-      "mean_brier": 0.192138,
-      "min_brier": 0.178059,
-      "max_brier": 0.200651,
-      "mean_ece": 0.079878,
-      "min_ece": 0.062061,
-      "max_ece": 0.097037
+      "mean_auroc": 0.72317,
+      "min_auroc": 0.628794,
+      "max_auroc": 0.838197,
+      "mean_brier": 0.203806,
+      "min_brier": 0.170508,
+      "max_brier": 0.23147,
+      "mean_ece": 0.100307,
+      "min_ece": 0.072902,
+      "max_ece": 0.142493
     },
     {
       "scenario": "mar_missingness",
       "task": "classification",
       "model": "logistic_regression",
       "n_seeds": 5,
-      "mean_auroc": 0.725046,
-      "min_auroc": 0.692711,
-      "max_auroc": 0.759322,
-      "mean_brier": 0.205771,
-      "min_brier": 0.196951,
-      "max_brier": 0.214751,
-      "mean_ece": 0.085003,
-      "min_ece": 0.059305,
-      "max_ece": 0.108392
+      "mean_auroc": 0.720121,
+      "min_auroc": 0.61513,
+      "max_auroc": 0.816425,
+      "mean_brier": 0.216491,
+      "min_brier": 0.18634,
+      "max_brier": 0.253521,
+      "mean_ece": 0.120004,
+      "min_ece": 0.080771,
+      "max_ece": 0.178134
     },
     {
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
       "n_seeds": 5,
-      "mean_mae": 11.376956,
-      "min_mae": 10.304285,
-      "max_mae": 12.199562
+      "mean_mae": 12.568651,
+      "min_mae": 11.134267,
+      "max_mae": 13.326072
     },
     {
       "scenario": "mar_missingness",
       "task": "regression",
       "model": "ridge",
       "n_seeds": 5,
-      "mean_mae": 13.970221,
-      "min_mae": 12.982545,
-      "max_mae": 14.922807
+      "mean_mae": 15.284997,
+      "min_mae": 13.940912,
+      "max_mae": 16.201134
     },
     {
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "gradient_boosting",
       "n_seeds": 5,
-      "mean_auroc": 0.77171,
-      "min_auroc": 0.721739,
-      "max_auroc": 0.820658,
-      "mean_brier": 0.182726,
-      "min_brier": 0.168138,
-      "max_brier": 0.196644,
-      "mean_ece": 0.071925,
-      "min_ece": 0.052414,
-      "max_ece": 0.098891
+      "mean_auroc": 0.733518,
+      "min_auroc": 0.615998,
+      "max_auroc": 0.834019,
+      "mean_brier": 0.200185,
+      "min_brier": 0.166224,
+      "max_brier": 0.232366,
+      "mean_ece": 0.105708,
+      "min_ece": 0.06691,
+      "max_ece": 0.164872
     },
     {
       "scenario": "measurement_noise",
       "task": "classification",
       "model": "logistic_regression",
       "n_seeds": 5,
-      "mean_auroc": 0.751777,
-      "min_auroc": 0.713287,
-      "max_auroc": 0.787034,
-      "mean_brier": 0.197046,
-      "min_brier": 0.186838,
-      "max_brier": 0.210862,
-      "mean_ece": 0.075214,
-      "min_ece": 0.033119,
-      "max_ece": 0.103754
+      "mean_auroc": 0.725478,
+      "min_auroc": 0.621496,
+      "max_auroc": 0.825499,
+      "mean_brier": 0.213745,
+      "min_brier": 0.177285,
+      "max_brier": 0.255865,
+      "mean_ece": 0.11504,
+      "min_ece": 0.060068,
+      "max_ece": 0.174116
     },
     {
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "gradient_boosting_regressor",
       "n_seeds": 5,
-      "mean_mae": 10.868369,
-      "min_mae": 10.187169,
-      "max_mae": 11.584567
+      "mean_mae": 11.896228,
+      "min_mae": 10.444171,
+      "max_mae": 12.701378
     },
     {
       "scenario": "measurement_noise",
       "task": "regression",
       "model": "ridge",
       "n_seeds": 5,
-      "mean_mae": 13.542507,
-      "min_mae": 12.843918,
-      "max_mae": 14.221544
+      "mean_mae": 15.017408,
+      "min_mae": 13.409785,
+      "max_mae": 16.205532
     },
     {
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "gradient_boosting",
       "n_seeds": 5,
-      "mean_auroc": 0.721527,
-      "min_auroc": 0.67857,
-      "max_auroc": 0.754956,
-      "mean_brier": 0.196541,
-      "min_brier": 0.186549,
-      "max_brier": 0.204567,
-      "mean_ece": 0.073313,
-      "min_ece": 0.051996,
-      "max_ece": 0.094965
+      "mean_auroc": 0.710438,
+      "min_auroc": 0.597383,
+      "max_auroc": 0.8082,
+      "mean_brier": 0.208039,
+      "min_brier": 0.175422,
+      "max_brier": 0.236307,
+      "mean_ece": 0.100963,
+      "min_ece": 0.070863,
+      "max_ece": 0.153666
     },
     {
       "scenario": "mnar_missingness",
       "task": "classification",
       "model": "logistic_regression",
       "n_seeds": 5,
-      "mean_auroc": 0.71278,
-      "min_auroc": 0.675279,
-      "max_auroc": 0.738588,
-      "mean_brier": 0.209224,
-      "min_brier": 0.199168,
-      "max_brier": 0.221207,
-      "mean_ece": 0.083141,
-      "min_ece": 0.052707,
-      "max_ece": 0.111372
+      "mean_auroc": 0.703794,
+      "min_auroc": 0.590856,
+      "max_auroc": 0.812443,
+      "mean_brier": 0.221447,
+      "min_brier": 0.184599,
+      "max_brier": 0.26486,
+      "mean_ece": 0.119829,
+      "min_ece": 0.077136,
+      "max_ece": 0.184428
     },
     {
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "gradient_boosting_regressor",
       "n_seeds": 5,
-      "mean_mae": 11.476299,
-      "min_mae": 10.534007,
-      "max_mae": 12.351266
+      "mean_mae": 12.629886,
+      "min_mae": 11.23775,
+      "max_mae": 13.442786
     },
     {
       "scenario": "mnar_missingness",
       "task": "regression",
       "model": "ridge",
       "n_seeds": 5,
-      "mean_mae": 14.070814,
-      "min_mae": 13.159897,
-      "max_mae": 15.054388
+      "mean_mae": 15.257654,
+      "min_mae": 13.814804,
+      "max_mae": 16.484371
     },
     {
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "gradient_boosting",
       "n_seeds": 5,
-      "mean_auroc": 0.723281,
-      "min_auroc": 0.688685,
-      "max_auroc": 0.763387,
-      "mean_brier": 0.19566,
-      "min_brier": 0.18515,
-      "max_brier": 0.206404,
-      "mean_ece": 0.075371,
-      "min_ece": 0.050056,
-      "max_ece": 0.103234
+      "mean_auroc": 0.720814,
+      "min_auroc": 0.606899,
+      "max_auroc": 0.816474,
+      "mean_brier": 0.204312,
+      "min_brier": 0.173392,
+      "max_brier": 0.235131,
+      "mean_ece": 0.097779,
+      "min_ece": 0.054863,
+      "max_ece": 0.135603
     },
     {
       "scenario": "subgroup_shift",
       "task": "classification",
       "model": "logistic_regression",
       "n_seeds": 5,
-      "mean_auroc": 0.708273,
-      "min_auroc": 0.679281,
-      "max_auroc": 0.738852,
-      "mean_brier": 0.21132,
-      "min_brier": 0.204169,
-      "max_brier": 0.219663,
-      "mean_ece": 0.090455,
-      "min_ece": 0.061832,
-      "max_ece": 0.110225
+      "mean_auroc": 0.710977,
+      "min_auroc": 0.618313,
+      "max_auroc": 0.784796,
+      "mean_brier": 0.216652,
+      "min_brier": 0.1927,
+      "max_brier": 0.247534,
+      "mean_ece": 0.117708,
+      "min_ece": 0.080285,
+      "max_ece": 0.161567
     },
     {
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "gradient_boosting_regressor",
       "n_seeds": 5,
-      "mean_mae": 11.907331,
-      "min_mae": 10.789719,
-      "max_mae": 12.843494
+      "mean_mae": 12.783448,
+      "min_mae": 11.889087,
+      "max_mae": 13.757836
     },
     {
       "scenario": "subgroup_shift",
       "task": "regression",
       "model": "ridge",
       "n_seeds": 5,
-      "mean_mae": 14.286572,
-      "min_mae": 13.134088,
-      "max_mae": 15.082644
+      "mean_mae": 15.324162,
+      "min_mae": 14.135288,
+      "max_mae": 16.770304
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "scenario": "clean",
+      "task": "classification",
+      "metric": "auroc_delta_complex_minus_simple",
+      "n_paired_seeds": 5,
+      "mean_delta": 0.015671,
+      "bootstrap_95_ci": [
+        0.005992,
+        0.02673
+      ],
+      "complex_seed_win_count": 5,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "clean",
+      "task": "regression",
+      "metric": "mae_reduction_simple_minus_complex",
+      "n_paired_seeds": 5,
+      "mean_delta": 3.101847,
+      "bootstrap_95_ci": [
+        2.822094,
+        3.442233
+      ],
+      "complex_seed_win_count": 5,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "mar_missingness",
+      "task": "classification",
+      "metric": "auroc_delta_complex_minus_simple",
+      "n_paired_seeds": 5,
+      "mean_delta": 0.003049,
+      "bootstrap_95_ci": [
+        -0.017681,
+        0.020591
+      ],
+      "complex_seed_win_count": 3,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "mar_missingness",
+      "task": "regression",
+      "metric": "mae_reduction_simple_minus_complex",
+      "n_paired_seeds": 5,
+      "mean_delta": 2.716347,
+      "bootstrap_95_ci": [
+        2.400534,
+        2.996828
+      ],
+      "complex_seed_win_count": 5,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "mnar_missingness",
+      "task": "classification",
+      "metric": "auroc_delta_complex_minus_simple",
+      "n_paired_seeds": 5,
+      "mean_delta": 0.006644,
+      "bootstrap_95_ci": [
+        -0.005988,
+        0.023037
+      ],
+      "complex_seed_win_count": 3,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "mnar_missingness",
+      "task": "regression",
+      "metric": "mae_reduction_simple_minus_complex",
+      "n_paired_seeds": 5,
+      "mean_delta": 2.627768,
+      "bootstrap_95_ci": [
+        2.387045,
+        2.905822
+      ],
+      "complex_seed_win_count": 5,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "measurement_noise",
+      "task": "classification",
+      "metric": "auroc_delta_complex_minus_simple",
+      "n_paired_seeds": 5,
+      "mean_delta": 0.008041,
+      "bootstrap_95_ci": [
+        -0.0076,
+        0.027786
+      ],
+      "complex_seed_win_count": 3,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "measurement_noise",
+      "task": "regression",
+      "metric": "mae_reduction_simple_minus_complex",
+      "n_paired_seeds": 5,
+      "mean_delta": 3.12118,
+      "bootstrap_95_ci": [
+        2.800262,
+        3.555086
+      ],
+      "complex_seed_win_count": 5,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "label_noise",
+      "task": "classification",
+      "metric": "auroc_delta_complex_minus_simple",
+      "n_paired_seeds": 5,
+      "mean_delta": 0.005352,
+      "bootstrap_95_ci": [
+        -0.009457,
+        0.017922
+      ],
+      "complex_seed_win_count": 3,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "label_noise",
+      "task": "regression",
+      "metric": "mae_reduction_simple_minus_complex",
+      "n_paired_seeds": 5,
+      "mean_delta": 3.173394,
+      "bootstrap_95_ci": [
+        2.900618,
+        3.491178
+      ],
+      "complex_seed_win_count": 5,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "subgroup_shift",
+      "task": "classification",
+      "metric": "auroc_delta_complex_minus_simple",
+      "n_paired_seeds": 5,
+      "mean_delta": 0.009837,
+      "bootstrap_95_ci": [
+        -0.009776,
+        0.030862
+      ],
+      "complex_seed_win_count": 3,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
+    },
+    {
+      "scenario": "subgroup_shift",
+      "task": "regression",
+      "metric": "mae_reduction_simple_minus_complex",
+      "n_paired_seeds": 5,
+      "mean_delta": 2.540713,
+      "bootstrap_95_ci": [
+        2.330405,
+        2.792201
+      ],
+      "complex_seed_win_count": 5,
+      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
     }
   ],
   "promotion_decision": {
@@ -1691,163 +1853,5 @@
   },
   "synthetic_only": true,
   "clinical_validation": false,
-  "claim_boundary": "Repeated grouped stress tests are synthetic engineering evidence only. They do not show clinical accuracy, realism, patient benefit, treatment utility, or production healthcare readiness.",
-  "paired_comparisons": [
-    {
-      "scenario": "clean",
-      "task": "classification",
-      "metric": "auroc_delta_complex_minus_simple",
-      "n_paired_seeds": 5,
-      "mean_delta": 0.021713,
-      "bootstrap_95_ci": [
-        0.012814,
-        0.030456
-      ],
-      "complex_seed_win_count": 5,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "clean",
-      "task": "regression",
-      "metric": "mae_reduction_simple_minus_complex",
-      "n_paired_seeds": 5,
-      "mean_delta": 2.763353,
-      "bootstrap_95_ci": [
-        2.691991,
-        2.81074
-      ],
-      "complex_seed_win_count": 5,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "mar_missingness",
-      "task": "classification",
-      "metric": "auroc_delta_complex_minus_simple",
-      "n_paired_seeds": 5,
-      "mean_delta": 0.011939,
-      "bootstrap_95_ci": [
-        0.000114,
-        0.023764
-      ],
-      "complex_seed_win_count": 3,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "mar_missingness",
-      "task": "regression",
-      "metric": "mae_reduction_simple_minus_complex",
-      "n_paired_seeds": 5,
-      "mean_delta": 2.593265,
-      "bootstrap_95_ci": [
-        2.502005,
-        2.678865
-      ],
-      "complex_seed_win_count": 5,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "mnar_missingness",
-      "task": "classification",
-      "metric": "auroc_delta_complex_minus_simple",
-      "n_paired_seeds": 5,
-      "mean_delta": 0.008747,
-      "bootstrap_95_ci": [
-        -0.000331,
-        0.017227
-      ],
-      "complex_seed_win_count": 4,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "mnar_missingness",
-      "task": "regression",
-      "metric": "mae_reduction_simple_minus_complex",
-      "n_paired_seeds": 5,
-      "mean_delta": 2.594515,
-      "bootstrap_95_ci": [
-        2.50208,
-        2.672229
-      ],
-      "complex_seed_win_count": 5,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "measurement_noise",
-      "task": "classification",
-      "metric": "auroc_delta_complex_minus_simple",
-      "n_paired_seeds": 5,
-      "mean_delta": 0.019933,
-      "bootstrap_95_ci": [
-        0.00982,
-        0.030046
-      ],
-      "complex_seed_win_count": 5,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "measurement_noise",
-      "task": "regression",
-      "metric": "mae_reduction_simple_minus_complex",
-      "n_paired_seeds": 5,
-      "mean_delta": 2.674139,
-      "bootstrap_95_ci": [
-        2.555658,
-        2.784348
-      ],
-      "complex_seed_win_count": 5,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "label_noise",
-      "task": "classification",
-      "metric": "auroc_delta_complex_minus_simple",
-      "n_paired_seeds": 5,
-      "mean_delta": 0.015496,
-      "bootstrap_95_ci": [
-        0.007059,
-        0.023908
-      ],
-      "complex_seed_win_count": 4,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "label_noise",
-      "task": "regression",
-      "metric": "mae_reduction_simple_minus_complex",
-      "n_paired_seeds": 5,
-      "mean_delta": 2.794606,
-      "bootstrap_95_ci": [
-        2.741265,
-        2.853267
-      ],
-      "complex_seed_win_count": 5,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "subgroup_shift",
-      "task": "classification",
-      "metric": "auroc_delta_complex_minus_simple",
-      "n_paired_seeds": 5,
-      "mean_delta": 0.015008,
-      "bootstrap_95_ci": [
-        0.005678,
-        0.02402
-      ],
-      "complex_seed_win_count": 4,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    },
-    {
-      "scenario": "subgroup_shift",
-      "task": "regression",
-      "metric": "mae_reduction_simple_minus_complex",
-      "n_paired_seeds": 5,
-      "mean_delta": 2.379241,
-      "bootstrap_95_ci": [
-        2.153351,
-        2.622669
-      ],
-      "complex_seed_win_count": 5,
-      "uncertainty_note": "Bootstrap over five synthetic grouped splits; narrow or positive intervals do not imply external or clinical generalization."
-    }
-  ]
+  "claim_boundary": "Repeated grouped stress tests are synthetic engineering evidence only. They do not show clinical accuracy, realism, patient benefit, treatment utility, or production healthcare readiness."
 }

@@ -31,3 +31,6 @@ rank-bm25
 
 # Optional external queue/cache adapter; the default local queue remains DB-backed.
 redis
+
+# Feature-flagged OIDC/JWKS bearer validation for non-demo identity providers.
+PyJWT[crypto]

@@ -59,11 +59,14 @@ def build_signed_dispatch(
     secret: str,
     timestamp: str | None = None,
     event_id: str | None = None,
+    key_id: str = "current",
 ) -> dict[str, Any]:
     if workflow_id not in ALLOWED_WORKFLOW_IDS:
         raise ValueError(f"Unsupported n8n workflow_id={workflow_id}")
     if not secret:
         raise ValueError("A non-empty signing secret is required")
+    if not str(key_id).strip():
+        raise ValueError("A non-empty signing key ID is required")
     blocked_fields = find_blocked_fields(payload)
     if blocked_fields:
         raise ValueError(f"Blocked payload fields present: {blocked_fields}")
@@ -90,6 +93,7 @@ def build_signed_dispatch(
             "X-NLCare-Event-ID": envelope["event_id"],
             "X-NLCare-Timestamp": envelope["created_at"],
             "X-NLCare-Signature-Algorithm": "hmac-sha256",
+            "X-NLCare-Key-ID": str(key_id),
             "X-NLCare-Signature": signature,
         },
     }
@@ -99,6 +103,42 @@ def verify_signed_dispatch(*, body: str | bytes, signature: str, secret: str) ->
     raw = body.encode("utf-8") if isinstance(body, str) else body
     expected = hmac.new(secret.encode("utf-8"), raw, hashlib.sha256).hexdigest()
     return hmac.compare_digest(expected, signature)
+
+
+def verify_signed_dispatch_with_keyring(
+    *,
+    body: str | bytes,
+    signature: str,
+    key_id: str,
+    secrets: Mapping[str, str],
+) -> bool:
+    """Verify against an explicit key ID so secrets can rotate without ambiguity."""
+    secret = str(secrets.get(str(key_id)) or "")
+    return bool(secret) and verify_signed_dispatch(body=body, signature=signature, secret=secret)
+
+
+def validate_signed_dispatch_envelope_with_keyring(
+    *,
+    body: str | bytes,
+    signature: str,
+    key_id: str,
+    secrets: Mapping[str, str],
+    now: datetime | None = None,
+    max_age_seconds: int = 300,
+    seen_event_ids: set[str] | None = None,
+) -> dict[str, Any]:
+    if not verify_signed_dispatch_with_keyring(
+        body=body, signature=signature, key_id=key_id, secrets=secrets,
+    ):
+        return {"valid": False, "reason": "unknown_key_or_invalid_signature", "event_id": None}
+    return validate_signed_dispatch_envelope(
+        body=body,
+        signature=signature,
+        secret=str(secrets[key_id]),
+        now=now,
+        max_age_seconds=max_age_seconds,
+        seen_event_ids=seen_event_ids,
+    )
 
 
 def validate_signed_dispatch_envelope(
@@ -149,6 +189,7 @@ def dispatch_signed_webhook(
     values = dict(os.environ if env is None else env)
     enabled = _truthy(values.get("N8N_WEBHOOK_DISPATCH_ENABLED"))
     secret = str(values.get("N8N_WEBHOOK_SIGNING_SECRET") or "")
+    key_id = str(values.get("N8N_WEBHOOK_SIGNING_KEY_ID") or "current")
     base_url = str(values.get("N8N_WEBHOOK_BASE_URL") or "").rstrip("/")
     blocked_fields = find_blocked_fields(payload)
     if blocked_fields:
@@ -170,7 +211,9 @@ def dispatch_signed_webhook(
         raise ValueError("High-risk alert delivery is restricted to a synthetic test recipient in this prototype")
 
     _validate_webhook_url(base_url)
-    signed = build_signed_dispatch(workflow_id=workflow_id, payload=payload, secret=secret)
+    signed = build_signed_dispatch(
+        workflow_id=workflow_id, payload=payload, secret=secret, key_id=key_id,
+    )
     endpoint = f"{base_url}/{workflow_id}"
     sender = transport or _urllib_transport
     response = sender(endpoint, signed["body"], signed["headers"], timeout_seconds)
@@ -296,5 +339,7 @@ __all__ = [
     "find_blocked_fields",
     "validate_signed_receipt",
     "validate_signed_dispatch_envelope",
+    "validate_signed_dispatch_envelope_with_keyring",
     "verify_signed_dispatch",
+    "verify_signed_dispatch_with_keyring",
 ]

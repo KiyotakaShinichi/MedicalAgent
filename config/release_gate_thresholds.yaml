@@ -189,6 +189,36 @@ artifacts:
       - {path: [validation, status], op: "==", value: passed}
       - {path: [coverage, roles_supported, full_oncotrack_timeline_training], op: "==", value: false}
 
+  - path: Data/evals/models/latest_ispy2_tcia_external_stress.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable_external_engineering_stress]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [used_for_nlcare_training], op: "==", value: false}
+      - {path: [patient_facing_allowed], op: "==", value: false}
+      - {path: [promotion_allowed], op: "==", value: false}
+      - {path: [task_boundary, nlcare_target_match], op: "==", value: false}
+    note: >
+      Official TCIA I-SPY2 tabular data is used only for a target-mismatched
+      external engineering stress benchmark. It is not clinical validation or
+      evidence for promotion of NLCare's synthetic monitoring heads.
+
+  - path: Data/evals/models/latest_duke_tcia_external_stress.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable_external_engineering_stress]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [used_for_nlcare_training], op: "==", value: false}
+      - {path: [patient_facing_allowed], op: "==", value: false}
+      - {path: [promotion_allowed], op: "==", value: false}
+      - {path: [task_boundary, nlcare_target_match], op: "==", value: false}
+    note: >
+      Official Duke/TCIA tabular data is a separate endpoint stress test with
+      leakage-aware features and negative results preserved. It is not an
+      NLCare model validation or clinical result.
+
   - path: Data/evals/models/latest_external_failure_case_gallery.json
     required: false
     max_age_days: 90
@@ -1677,6 +1707,33 @@ artifacts:
       profile is deployment engineering evidence only, not HIPAA, security,
       clinical-validation, or healthcare-production certification.
 
+  - path: Data/evals/ops/latest_deployment_recovery_drill.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong_local_only]
+    metric_thresholds:
+      - {path: [passed], op: "==", value: true}
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+
+  - path: Data/evals/ops/latest_container_recovery_smoke.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable_local_container_smoke, blocked_environment, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+    note: >
+      Disposable local container smoke. A blocked Docker daemon remains a
+      visible incomplete result and is never converted into a recovery pass.
+      - {path: [contains_patient_data], op: "==", value: false}
+      - {path: [strict_profile_validated], op: "==", value: false}
+      - {path: [postgres_restore_tested], op: "==", value: false}
+    note: >
+      Temporary local SQLite backup/restore evidence over synthetic operations
+      rows only. It does not establish managed Postgres recovery, production
+      RPO/RTO, security compliance, or healthcare readiness.
+
   - path: Data/evals/governance/latest_focused_release_summary.json
     required: false
     max_age_days: 90
@@ -1846,9 +1903,19 @@ artifacts:
       - {path: [clinical_validation], op: "==", value: false}
       - {path: [was_used_for_tuning], op: "==", value: false}
     note: >
-      One-pass frozen internal v6 result. Its low pass rate and high unsafe
-      leakage remain visible as a generalization warning; no tuning is allowed
-      against this set during the current pass.
+      Historical one-pass frozen internal v6 result. Its failures were later
+      inspected, so the separate retrospective disclosure now classifies it as
+      tuning-informed and no longer independent held-out evidence.
+
+  - path: Data/evals/safety/latest_adversarial_v6_retrospective.json
+    required: false
+    max_age_days: 90
+    accepted_status: [tuning_informed_not_held_out]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: true}
+      - {path: [frozen_bank_was_rerun], op: "==", value: false}
+    note: Failure-inspection disclosure; never present v6 as independent evidence after this point.
 
   - path: Data/evals/safety/latest_unsafe_intent_mutation_dev_eval.json
     required: false

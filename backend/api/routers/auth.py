@@ -59,6 +59,14 @@ def demo_credential_login(payload: DemoCredentialLoginRequest, db: Session = Dep
 @router.get("/demo-patients", response_model=DemoPatientsResponse)
 def demo_patient_options(db: Session = Depends(get_db)):
     """List demo patient IDs. Used by the legacy HTML login form only."""
+    from backend.services.auth import _ensure_demo_auth_allowed
+
+    try:
+        _ensure_demo_auth_allowed()
+    except ValueError as exc:
+        # Do not expose even synthetic/demo identifiers when the demo auth
+        # surface is disabled for a staging or production-shaped profile.
+        raise HTTPException(status_code=404, detail="Demo patient listing is disabled") from exc
     patients = get_all_patients(db)[:50]
     return {
         "patients": [
@@ -82,6 +90,11 @@ def logout(context=Depends(get_access_context), db: Session = Depends(get_db)):
     revoked = revoke_session(db, context.token)
     return {
         "revoked": revoked,
-        "message": "Session revoked.",
+        "message": (
+            "Session revoked."
+            if context.auth_source == "demo_session"
+            else "OIDC access tokens are revoked by the configured identity provider."
+        ),
+        "auth_source": context.auth_source,
         "clinical_validation": False,
     }

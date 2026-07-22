@@ -1,17 +1,19 @@
 {
-  "schema_version": "release_decision_surface_v1",
-  "generated_at": "2026-07-19T01:50:28.694486+00:00",
+  "schema_version": "release_decision_surface_v2",
+  "generated_at": "2026-07-22T06:52:41.902495+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "hard_blocker_count": 0,
-  "warning_count": 5,
+  "warning_count": 6,
   "checks": [
     {
       "id": "critical_safety_regression",
       "tier": "hard_blocker",
       "owner": "AI safety",
       "path": "Data/evals/safety/latest_safety_benchmark.json",
+      "domain": "aie",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-06T06:47:17.440388+00:00",
       "key_metrics": {}
@@ -21,9 +23,11 @@
       "tier": "hard_blocker",
       "owner": "medical safety",
       "path": "Data/evals/safety/latest_medical_claim_boundary_eval.json",
+      "domain": "medical",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-05-21T08:19:36.005226+00:00",
+      "generated_at": "2026-07-21T15:13:23.607586+00:00",
       "key_metrics": {}
     },
     {
@@ -31,7 +35,9 @@
       "tier": "hard_blocker",
       "owner": "MLE",
       "path": "Data/evals/models/latest_leakage_audit.json",
+      "domain": "mle",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-17T06:27:38.556411+00:00",
       "key_metrics": {}
@@ -41,7 +47,9 @@
       "tier": "hard_blocker",
       "owner": "governance",
       "path": "Data/evals/governance/latest_portfolio_claim_safety_check.json",
+      "domain": "swe",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "informational",
       "generated_at": "2026-07-19T01:45:30.008544+00:00",
       "key_metrics": {}
@@ -51,12 +59,14 @@
       "tier": "warning",
       "owner": "AI safety",
       "path": "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
+      "domain": "aie",
       "decision": "attention",
+      "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
-      "generated_at": "2026-05-27T04:20:47.422342+00:00",
+      "generated_at": "2026-07-22T04:10:45.888332+00:00",
       "key_metrics": {
-        "pass_rate": 0.614754,
-        "unsafe_leakage_rate": 0.427273,
+        "pass_rate": 0.704918,
+        "unsafe_leakage_rate": 0.327273,
         "over_refusal_rate": 0.0
       }
     },
@@ -65,13 +75,15 @@
       "tier": "warning",
       "owner": "AI safety",
       "path": "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
-      "decision": "attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-18T14:33:27.587023+00:00",
+      "domain": "aie",
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-22T04:10:51.480213+00:00",
       "key_metrics": {
-        "pass_rate": 0.818182,
-        "unsafe_leakage_rate": 0.2,
-        "over_refusal_rate": 0.090909
+        "pass_rate": 0.969697,
+        "unsafe_leakage_rate": 0.027273,
+        "over_refusal_rate": 0.045455
       }
     },
     {
@@ -79,9 +91,11 @@
       "tier": "warning",
       "owner": "AI safety",
       "path": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+      "domain": "aie",
       "decision": "attention",
+      "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
-      "generated_at": "2026-07-19T00:58:22.724350+00:00",
+      "generated_at": "2026-07-22T04:11:00.107674+00:00",
       "key_metrics": {
         "pass_rate": 0.518519,
         "unsafe_leakage_rate": 0.560606,
@@ -93,7 +107,9 @@
       "tier": "warning",
       "owner": "RAG",
       "path": "Data/evals/rag/latest_rag_governance_tradeoff.json",
+      "domain": "aie",
       "decision": "attention",
+      "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-07-18T10:35:07.815958+00:00",
       "key_metrics": {
@@ -103,11 +119,25 @@
       }
     },
     {
+      "id": "live_rag_internal",
+      "tier": "warning",
+      "owner": "RAG",
+      "path": "Data/evals/rag/latest_live_rag_eval.json",
+      "domain": "aie",
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "strong",
+      "generated_at": "2026-07-22T04:13:27.466200+00:00",
+      "key_metrics": {}
+    },
+    {
       "id": "route_latency",
       "tier": "warning",
       "owner": "SWE/ops",
       "path": "Data/evals/ops/latest_route_latency_budget.json",
+      "domain": "swe",
       "decision": "attention",
+      "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-07-18T10:36:43.276916+00:00",
       "key_metrics": {
@@ -121,9 +151,11 @@
       "tier": "warning",
       "owner": "MLE",
       "path": "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
+      "domain": "mle",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "acceptable",
-      "generated_at": "2026-07-18T10:35:05.265026+00:00",
+      "generated_at": "2026-07-22T01:29:19.050963+00:00",
       "key_metrics": {}
     },
     {
@@ -131,9 +163,11 @@
       "tier": "warning",
       "owner": "MLE",
       "path": "Data/evals/models/latest_synthetic_v2_model_stability.json",
+      "domain": "mle",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "acceptable",
-      "generated_at": "2026-07-18T15:02:12.832887+00:00",
+      "generated_at": "2026-07-22T01:40:04.593875+00:00",
       "key_metrics": {
         "synthetic_only": true,
         "clinical_validation": false
@@ -144,7 +178,9 @@
       "tier": "warning",
       "owner": "XAI",
       "path": "Data/evals/models/latest_xai_fidelity_audit.json",
+      "domain": "swe",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-19T01:14:51.357234+00:00",
       "key_metrics": {
@@ -158,7 +194,9 @@
       "tier": "warning",
       "owner": "SWE/ops",
       "path": "Data/evals/ops/latest_dependency_lock_audit.json",
+      "domain": "swe",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-19T01:21:42.157809+00:00",
       "key_metrics": {}
@@ -168,7 +206,9 @@
       "tier": "warning",
       "owner": "automation",
       "path": "Data/evals/ops/latest_durable_automation_worker_eval.json",
+      "domain": "automation",
       "decision": "pass",
+      "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-19T01:30:59.933113+00:00",
       "key_metrics": {
@@ -178,11 +218,121 @@
       }
     },
     {
+      "id": "automation_reliability",
+      "tier": "warning",
+      "owner": "automation",
+      "path": "Data/evals/ops/latest_automation_reliability_dossier.json",
+      "domain": "automation",
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "strong",
+      "generated_at": "2026-07-22T00:31:03.740906+00:00",
+      "key_metrics": {
+        "check_count": 8,
+        "passed_count": 8,
+        "external_delivery_enabled_by_default": false,
+        "real_emergency_coverage_claim": false
+      }
+    },
+    {
+      "id": "deployment_profile",
+      "tier": "warning",
+      "owner": "deployment",
+      "path": "Data/evals/ops/latest_deployment_profile_validation.json",
+      "domain": "deployment",
+      "decision": "attention",
+      "evidence_state": "needs_attention",
+      "observed_status": "development_profile",
+      "generated_at": "2026-07-22T06:31:12.105542+00:00",
+      "key_metrics": {
+        "profile": "development",
+        "strict_profile": false,
+        "n_failed": 0,
+        "non_demo_auth_implemented": true,
+        "deployment_capability": "local_or_controlled_demo_only"
+      }
+    },
+    {
+      "id": "deployment_recovery_local",
+      "tier": "warning",
+      "owner": "deployment",
+      "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
+      "domain": "deployment",
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "strong_local_only",
+      "generated_at": "2026-07-22T01:36:04.334571+00:00",
+      "key_metrics": {}
+    },
+    {
+      "id": "benchmark_freshness",
+      "tier": "warning",
+      "owner": "SWE/ops",
+      "path": "Data/evals/benchmark/latest_benchmark_summary.json",
+      "domain": "swe",
+      "decision": "attention",
+      "evidence_state": "needs_attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-22T06:47:35.692268+00:00",
+      "key_metrics": {
+        "critical_status": "stale",
+        "issue_count": null,
+        "benchmark_count": null
+      }
+    },
+    {
+      "id": "finetune_governance",
+      "tier": "informational",
+      "owner": "fine-tuning",
+      "path": "Data/evals/models/latest_finetune_governance.json",
+      "domain": "fine_tuning",
+      "decision": "informational",
+      "evidence_state": "scaffolded",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-22T06:27:39.069835+00:00",
+      "key_metrics": {
+        "model_trained": false,
+        "readiness_state": "not_ready_for_training_or_promotion",
+        "training_ready": false,
+        "promotion_ready": false
+      }
+    },
+    {
+      "id": "finetune_promotion",
+      "tier": "informational",
+      "owner": "fine-tuning",
+      "path": "Data/evals/models/latest_finetune_promotion_gate.json",
+      "domain": "fine_tuning",
+      "decision": "informational",
+      "evidence_state": "scaffolded",
+      "observed_status": "ready_for_candidate_generations",
+      "generated_at": "2026-07-22T06:27:39.048643+00:00",
+      "key_metrics": {
+        "decision": "HOLD",
+        "promotion_scope": "offline_shadow_only",
+        "behavior_improvement_statistically_proven": false
+      }
+    },
+    {
+      "id": "ispy2_external_stress",
+      "tier": "informational",
+      "owner": "MLE",
+      "path": "Data/evals/models/latest_ispy2_tcia_external_stress.json",
+      "domain": "mle",
+      "decision": "informational",
+      "evidence_state": "informational",
+      "observed_status": "acceptable_external_engineering_stress",
+      "generated_at": "2026-07-22T01:26:06.224066+00:00",
+      "key_metrics": {}
+    },
+    {
       "id": "external_rag_holdout",
       "tier": "informational",
       "owner": "external review",
       "path": "Data/evals/rag/latest_rag_holdout_baseline_comparison.json",
+      "domain": "medical",
       "decision": "informational",
+      "evidence_state": "external_blocked",
       "observed_status": "ready_for_external_authoring",
       "generated_at": "2026-06-01T09:31:25.525481+00:00",
       "key_metrics": {}
@@ -192,17 +342,110 @@
       "tier": "informational",
       "owner": "external review",
       "path": "Data/evals/rag/latest_goldset_adjudication_readiness.json",
+      "domain": "medical",
       "decision": "informational",
+      "evidence_state": "external_blocked",
       "observed_status": "ready_for_adjudication",
       "generated_at": "2026-06-01T11:52:07.836963+00:00",
       "key_metrics": {}
+    },
+    {
+      "id": "external_review_execution",
+      "tier": "informational",
+      "owner": "external review",
+      "path": "Data/evals/governance/latest_external_review_execution_readiness.json",
+      "domain": "medical",
+      "decision": "informational",
+      "evidence_state": "external_blocked",
+      "observed_status": "ready_to_request_review",
+      "generated_at": "2026-06-01T17:33:21.375512+00:00",
+      "key_metrics": {
+        "completed": null,
+        "clinical_validation": false
+      }
     }
   ],
+  "domains": [
+    {
+      "domain": "aie",
+      "state": "needs_attention",
+      "check_count": 6,
+      "verified_internal_count": 3,
+      "needs_attention_count": 3,
+      "scaffolded_count": 0,
+      "external_blocked_count": 0
+    },
+    {
+      "domain": "swe",
+      "state": "needs_attention",
+      "check_count": 5,
+      "verified_internal_count": 3,
+      "needs_attention_count": 2,
+      "scaffolded_count": 0,
+      "external_blocked_count": 0
+    },
+    {
+      "domain": "mle",
+      "state": "verified_internal_only",
+      "check_count": 4,
+      "verified_internal_count": 3,
+      "needs_attention_count": 0,
+      "scaffolded_count": 0,
+      "external_blocked_count": 0
+    },
+    {
+      "domain": "medical",
+      "state": "external_evidence_incomplete",
+      "check_count": 4,
+      "verified_internal_count": 1,
+      "needs_attention_count": 0,
+      "scaffolded_count": 0,
+      "external_blocked_count": 3
+    },
+    {
+      "domain": "automation",
+      "state": "verified_internal_only",
+      "check_count": 2,
+      "verified_internal_count": 2,
+      "needs_attention_count": 0,
+      "scaffolded_count": 0,
+      "external_blocked_count": 0
+    },
+    {
+      "domain": "fine_tuning",
+      "state": "prepared_not_proven",
+      "check_count": 2,
+      "verified_internal_count": 0,
+      "needs_attention_count": 0,
+      "scaffolded_count": 2,
+      "external_blocked_count": 0
+    },
+    {
+      "domain": "deployment",
+      "state": "needs_attention",
+      "check_count": 2,
+      "verified_internal_count": 1,
+      "needs_attention_count": 1,
+      "scaffolded_count": 0,
+      "external_blocked_count": 0
+    }
+  ],
+  "domain_count": 7,
+  "evidence_state_counts": {
+    "verified_internal": 13,
+    "needs_attention": 6,
+    "scaffolded": 2,
+    "informational": 1,
+    "external_blocked": 3
+  },
   "headline_limitations": [
     "No real patient data, IRB approval, clinician sign-off, or clinical validation.",
     "Frozen adversarial generalization remains below target and is internally authored.",
     "Raw retrieval superiority over BM25 is not proven on the internal goldset.",
     "Synthetic ML metrics do not establish clinical performance or transfer.",
+    "Fine-tuning is scaffolded only; no adapter or candidate generations exist.",
+    "OIDC bearer-token verification exists, but no live provider, browser PKCE flow, or provider logout has been demonstrated.",
+    "Automation delivery evidence is not human acknowledgement or emergency coverage.",
     "Latency and dependency reproducibility do not establish production readiness."
   ],
   "detailed_registry_remains_authoritative": true,

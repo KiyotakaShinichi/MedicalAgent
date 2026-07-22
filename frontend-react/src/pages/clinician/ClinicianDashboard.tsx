@@ -261,6 +261,7 @@ function HighRiskConversationAlertsPanel({
   const deliveredUnacknowledged = alerts.filter(
     (alert) => alert.notification_status === "delivered_to_channel" && alert.status !== "acknowledged",
   ).length;
+  const agedOpen = openAlerts.filter((alert) => alertAgeMinutes(alert.created_at) >= 15).length;
   return (
     <SectionCard
       title="High-priority conversation review"
@@ -269,7 +270,8 @@ function HighRiskConversationAlertsPanel({
     >
       <p className="clinician-alert-boundary">
         Engineering review queue only. It is not a monitored emergency service, and delivery status
-        does not prove that a clinician saw or acted on an item.
+        does not prove that a clinician saw or acted on an item. Queue age is operator visibility,
+        not a clinical response-time commitment.
       </p>
       <div className="clinician-alert-health" aria-label="Alert workflow status">
         <div><strong>{openAlerts.length}</strong><span>open locally</span></div>
@@ -277,6 +279,7 @@ function HighRiskConversationAlertsPanel({
         <div><strong>{deadLetters}</strong><span>dead letters</span></div>
         <div><strong>{awaitingReceipt}</strong><span>awaiting receipt</span></div>
         <div><strong>{deliveredUnacknowledged}</strong><span>delivered, not acknowledged</span></div>
+        <div><strong>{agedOpen}</strong><span>open longer than 15 min</span></div>
       </div>
       {loading && <LoadingPane label="Loading conversation alerts..." />}
       {error && <ErrorPane message={error} />}
@@ -294,6 +297,9 @@ function HighRiskConversationAlertsPanel({
                   </Badge>
                   <span>{alert.patient_id}</span>
                   <span>{alert.created_at?.slice(0, 16).replace("T", " ") ?? "time unavailable"}</span>
+                  {alert.status !== "acknowledged" && alertAgeMinutes(alert.created_at) >= 15 && (
+                    <Badge variant="amber">operator queue age {alertAgeMinutes(alert.created_at)}m</Badge>
+                  )}
                 </div>
                 <strong>{alert.trigger_summary}</strong>
                 <span>
@@ -318,6 +324,13 @@ function HighRiskConversationAlertsPanel({
       )}
     </SectionCard>
   );
+}
+
+function alertAgeMinutes(createdAt: string | null | undefined): number {
+  if (!createdAt) return 0;
+  const timestamp = Date.parse(createdAt);
+  if (Number.isNaN(timestamp)) return 0;
+  return Math.max(0, Math.floor((Date.now() - timestamp) / 60_000));
 }
 
 function BreastProfileCard({ profile }: { profile: NonNullable<PatientReport["breast_cancer_profile"]> }) {

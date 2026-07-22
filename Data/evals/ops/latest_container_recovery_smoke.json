@@ -1,0 +1,11 @@
+{
+  "schema_version": "container_recovery_smoke_v1",
+  "generated_at": "2026-07-22T06:19:33.332567+00:00",
+  "status": "blocked_environment",
+  "completed": false,
+  "docker_available": false,
+  "block_reason": "Docker daemon unavailable; no migration or recovery claim is made.",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "Local infrastructure smoke only; not production or healthcare readiness evidence."
+}

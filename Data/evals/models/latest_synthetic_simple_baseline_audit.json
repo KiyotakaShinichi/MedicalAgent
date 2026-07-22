@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_simple_baseline_audit_v1_2026_07",
-  "generated_at": "2026-07-18T10:35:05.265026+00:00",
+  "generated_at": "2026-07-22T01:29:19.050963+00:00",
   "status": "acceptable",
   "total_n": 120,
   "data_scope": "internal synthetic held-out rows",
@@ -32,6 +32,218 @@
       "auroc": 0.989759
     }
   },
+  "classification_selective_risk": {
+    "constant_half": {
+      "ranking_signal": "absolute_distance_from_probability_0.5",
+      "points": [
+        {
+          "requested_coverage": 1.0,
+          "observed_coverage": 1.0,
+          "n_kept": 120,
+          "accuracy": 0.55,
+          "selective_risk": 0.45,
+          "brier_score": 0.25,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.9,
+          "observed_coverage": 0.9,
+          "n_kept": 108,
+          "accuracy": 0.509259,
+          "selective_risk": 0.490741,
+          "brier_score": 0.25,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.75,
+          "observed_coverage": 0.75,
+          "n_kept": 90,
+          "accuracy": 0.6,
+          "selective_risk": 0.4,
+          "brier_score": 0.25,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.5,
+          "observed_coverage": 0.5,
+          "n_kept": 60,
+          "accuracy": 0.633333,
+          "selective_risk": 0.366667,
+          "brier_score": 0.25,
+          "auroc": 0.5
+        }
+      ],
+      "mean_selective_risk_proxy": 0.426852
+    },
+    "posthoc_test_prevalence": {
+      "ranking_signal": "absolute_distance_from_probability_0.5",
+      "points": [
+        {
+          "requested_coverage": 1.0,
+          "observed_coverage": 1.0,
+          "n_kept": 120,
+          "accuracy": 0.55,
+          "selective_risk": 0.45,
+          "brier_score": 0.2475,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.9,
+          "observed_coverage": 0.9,
+          "n_kept": 108,
+          "accuracy": 0.509259,
+          "selective_risk": 0.490741,
+          "brier_score": 0.251574,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.75,
+          "observed_coverage": 0.75,
+          "n_kept": 90,
+          "accuracy": 0.6,
+          "selective_risk": 0.4,
+          "brier_score": 0.2425,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.5,
+          "observed_coverage": 0.5,
+          "n_kept": 60,
+          "accuracy": 0.633333,
+          "selective_risk": 0.366667,
+          "brier_score": 0.239167,
+          "auroc": 0.5
+        }
+      ],
+      "mean_selective_risk_proxy": 0.426852
+    },
+    "posthoc_test_majority": {
+      "ranking_signal": "absolute_distance_from_probability_0.5",
+      "points": [
+        {
+          "requested_coverage": 1.0,
+          "observed_coverage": 1.0,
+          "n_kept": 120,
+          "accuracy": 0.55,
+          "selective_risk": 0.45,
+          "brier_score": 0.45,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.9,
+          "observed_coverage": 0.9,
+          "n_kept": 108,
+          "accuracy": 0.509259,
+          "selective_risk": 0.490741,
+          "brier_score": 0.490741,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.75,
+          "observed_coverage": 0.75,
+          "n_kept": 90,
+          "accuracy": 0.6,
+          "selective_risk": 0.4,
+          "brier_score": 0.4,
+          "auroc": 0.5
+        },
+        {
+          "requested_coverage": 0.5,
+          "observed_coverage": 0.5,
+          "n_kept": 60,
+          "accuracy": 0.633333,
+          "selective_risk": 0.366667,
+          "brier_score": 0.366667,
+          "auroc": 0.5
+        }
+      ],
+      "mean_selective_risk_proxy": 0.426852
+    },
+    "logistic_regression": {
+      "ranking_signal": "absolute_distance_from_probability_0.5",
+      "points": [
+        {
+          "requested_coverage": 1.0,
+          "observed_coverage": 1.0,
+          "n_kept": 120,
+          "accuracy": 0.966667,
+          "selective_risk": 0.033333,
+          "brier_score": 0.055677,
+          "auroc": 0.991302
+        },
+        {
+          "requested_coverage": 0.9,
+          "observed_coverage": 0.9,
+          "n_kept": 108,
+          "accuracy": 0.990741,
+          "selective_risk": 0.009259,
+          "brier_score": 0.037555,
+          "auroc": 0.995503
+        },
+        {
+          "requested_coverage": 0.75,
+          "observed_coverage": 0.75,
+          "n_kept": 90,
+          "accuracy": 0.988889,
+          "selective_risk": 0.011111,
+          "brier_score": 0.023777,
+          "auroc": 0.996964
+        },
+        {
+          "requested_coverage": 0.5,
+          "observed_coverage": 0.5,
+          "n_kept": 60,
+          "accuracy": 1,
+          "selective_risk": 0.0,
+          "brier_score": 0.00492,
+          "auroc": 1.0
+        }
+      ],
+      "mean_selective_risk_proxy": 0.013426
+    },
+    "gradient_boosting_calibrated_champion": {
+      "ranking_signal": "absolute_distance_from_probability_0.5",
+      "points": [
+        {
+          "requested_coverage": 1.0,
+          "observed_coverage": 1.0,
+          "n_kept": 120,
+          "accuracy": 0.966667,
+          "selective_risk": 0.033333,
+          "brier_score": 0.025354,
+          "auroc": 0.989759
+        },
+        {
+          "requested_coverage": 0.9,
+          "observed_coverage": 0.9,
+          "n_kept": 108,
+          "accuracy": 0.990741,
+          "selective_risk": 0.009259,
+          "brier_score": 0.010015,
+          "auroc": 0.990909
+        },
+        {
+          "requested_coverage": 0.75,
+          "observed_coverage": 0.75,
+          "n_kept": 90,
+          "accuracy": 0.988889,
+          "selective_risk": 0.011111,
+          "brier_score": 0.011111,
+          "auroc": 0.988095
+        },
+        {
+          "requested_coverage": 0.5,
+          "observed_coverage": 0.5,
+          "n_kept": 60,
+          "accuracy": 1,
+          "selective_risk": 0.0,
+          "brier_score": 0.0,
+          "auroc": 1.0
+        }
+      ],
+      "mean_selective_risk_proxy": 0.013426
+    }
+  },
   "regression": {
     "zero_signal": {
       "mae": 54.447167,
@@ -50,6 +262,45 @@
       "rmse": 6.478562
     }
   },
+  "regression_disagreement_abstention": {
+    "ranking_signal": "absolute_ridge_vs_random_forest_disagreement",
+    "calibrated_uncertainty": false,
+    "points": [
+      {
+        "requested_coverage": 1.0,
+        "observed_coverage": 1.0,
+        "n_kept": 120,
+        "random_forest_mae": 1.479933,
+        "random_forest_rmse": 6.478562,
+        "max_kept_model_disagreement": 49.146
+      },
+      {
+        "requested_coverage": 0.9,
+        "observed_coverage": 0.9,
+        "n_kept": 108,
+        "random_forest_mae": 0.889583,
+        "random_forest_rmse": 5.632119,
+        "max_kept_model_disagreement": 3.688
+      },
+      {
+        "requested_coverage": 0.75,
+        "observed_coverage": 0.75,
+        "n_kept": 90,
+        "random_forest_mae": 0.932989,
+        "random_forest_rmse": 6.06872,
+        "max_kept_model_disagreement": 1.975
+      },
+      {
+        "requested_coverage": 0.5,
+        "observed_coverage": 0.5,
+        "n_kept": 60,
+        "random_forest_mae": 0.340483,
+        "random_forest_rmse": 1.34454,
+        "max_kept_model_disagreement": 1.046
+      }
+    ],
+    "interpretation": "Lower-disagreement rows are retained first; this is a model-disagreement proxy only."
+  },
   "paired_champion_vs_logistic": {
     "method": "exact_mcnemar_binomial_on_paired_correctness",
     "accuracy_delta": 0.0,
@@ -58,6 +309,7 @@
   },
   "complexity_decision": "retain_for_engineering_comparison_without_superiority_claim",
   "posthoc_baseline_warning": "Prevalence, majority, and mean baselines use the evaluation labels and are descriptive lower-bound checks, not deployable fitted models.",
+  "uncertainty_boundary": "Classification confidence and regression model disagreement are selective-risk engineering proxies. They are not calibrated clinical uncertainty or evidence that abstention is safe for patient care.",
   "promotion_allowed": false,
   "synthetic_only": true,
   "clinical_validation": false,

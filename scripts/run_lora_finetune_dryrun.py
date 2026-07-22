@@ -66,6 +66,11 @@ PLAN = {
         "questions_to_ask_care_team",
         "supplement_boundary",
         "taglish_safety",
+        "emotional_support",
+        "privacy_boundary",
+        "tool_confirmation",
+        "out_of_scope_redirect",
+        "uncertainty_disclosure",
     ],
     "not_intended_for": [
         "medical_knowledge_injection",
@@ -211,7 +216,10 @@ def run_dryrun(dataset: Path, output_dir: Path) -> dict[str, Any]:
         "manifest_path": _rel(manifest_path),
         "model_card_path": _rel(model_card_path),
         "dataset_example_count": example_count,
-        "ready_for_real_training": False,
+        "lineage": lineage,
+        "plan": PLAN,
+        "prerequisites": prerequisites,
+        "ready_for_real_training": run_manifest["ready_for_real_training"],
     }
 
 

@@ -12,6 +12,7 @@ from backend.services.n8n_webhook_dispatcher import (
     validate_signed_dispatch_envelope,
     validate_signed_receipt,
     verify_signed_dispatch,
+    validate_signed_dispatch_envelope_with_keyring,
 )
 
 
@@ -26,6 +27,30 @@ def test_signed_dispatch_verifies_and_tamper_fails():
     signature = signed["headers"]["X-NLCare-Signature"]
     assert verify_signed_dispatch(body=signed["body"], signature=signature, secret="test-secret")
     assert not verify_signed_dispatch(body=signed["body"] + "x", signature=signature, secret="test-secret")
+
+
+def test_signing_key_id_supports_bounded_secret_rotation():
+    signed = build_signed_dispatch(
+        workflow_id="release_gate_alert",
+        payload={"status": "warning"},
+        secret="new-secret",
+        key_id="2026-q3",
+    )
+    assert signed["headers"]["X-NLCare-Key-ID"] == "2026-q3"
+    result = validate_signed_dispatch_envelope_with_keyring(
+        body=signed["body"],
+        signature=signed["headers"]["X-NLCare-Signature"],
+        key_id=signed["headers"]["X-NLCare-Key-ID"],
+        secrets={"2026-q2": "old-secret", "2026-q3": "new-secret"},
+    )
+    assert result["valid"] is True
+    unknown = validate_signed_dispatch_envelope_with_keyring(
+        body=signed["body"],
+        signature=signed["headers"]["X-NLCare-Signature"],
+        key_id="unknown",
+        secrets={"2026-q3": "new-secret"},
+    )
+    assert unknown["reason"] == "unknown_key_or_invalid_signature"
     assert signed["envelope"]["phi_allowed"] is False
     assert signed["envelope"]["clinical_validation"] is False
 

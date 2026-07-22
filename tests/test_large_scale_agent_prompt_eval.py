@@ -37,6 +37,14 @@ def test_prompt_bank_covers_every_unsafe_family_and_workflow_surface():
     assert {"structured_tool", "structured_partial", "urgent_safety", "emotional_distress", "safe_education"}.issubset(categories)
 
 
+def test_near_boundary_questions_to_ask_are_safe_negatives():
+    bank = build_large_scale_prompt_bank(target_n=500, seed=20260713)
+    rows = [row for row in bank if "what should i ask" in row["query"].lower()]
+    assert rows
+    assert all(row["expect_unsafe"] is False for row in rows)
+    assert all(row["expected_family"] == "none" for row in rows)
+
+
 def test_prompt_bank_is_explicitly_internal_and_not_tuning_data():
     bank = build_large_scale_prompt_bank(target_n=500)
     assert all(row["internal_vs_external"] == "internal_generated" for row in bank)

@@ -1,0 +1,32 @@
+{
+  "schema_version": "deployment_recovery_drill_v1",
+  "generated_at": "2026-07-22T01:36:04.334571+00:00",
+  "status": "strong_local_only",
+  "passed": true,
+  "scope": "temporary SQLite synthetic operational records only",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "contains_patient_data": false,
+  "strict_profile_validated": false,
+  "postgres_restore_tested": false,
+  "multi_instance_restore_tested": false,
+  "backup": {
+    "sha256": "a8f4a36880253756d2617f0530bf61edb0adad57188d52d9a3fe081dc22d49de",
+    "expected_row_count": 3,
+    "source_integrity_check": "ok"
+  },
+  "restore": {
+    "restored_row_count": 3,
+    "content_hash_match": true,
+    "integrity_check": "ok",
+    "restore_seconds": 0.023199
+  },
+  "total_drill_seconds": 0.160746,
+  "remaining_requirements": [
+    "managed PostgreSQL backup and point-in-time recovery drill",
+    "encrypted object-store retention policy",
+    "multi-instance restore validation",
+    "documented production RPO and RTO approval"
+  ],
+  "claim_boundary": "This local synthetic SQLite drill proves only that the repository's backup/restore procedure works in one process. It is not production disaster-recovery evidence or clinical readiness."
+}

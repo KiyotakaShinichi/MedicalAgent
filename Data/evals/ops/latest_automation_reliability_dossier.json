@@ -1,6 +1,6 @@
 {
   "schema_version": "automation_reliability_dossier_v1",
-  "generated_at": "2026-07-17T08:39:49.700531+00:00",
+  "generated_at": "2026-07-22T00:31:03.740906+00:00",
   "status": "strong",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -214,9 +214,19 @@
         "test_recipient_only"
       ],
       "why": "Automation must not make the product look clinically monitored or production-ready."
+    },
+    {
+      "id": "unacknowledged_age_visibility",
+      "label": "Unacknowledged queue age",
+      "must_show": [
+        "oldest_open_age",
+        "open_older_than_attention_threshold",
+        "not_a_clinical_sla"
+      ],
+      "why": "Operators need stale-queue visibility while the UI must state that the threshold is not a clinical response commitment."
     }
   ],
-  "automation_center_requirement_count": 5,
+  "automation_center_requirement_count": 6,
   "blocked_payload_fields": [
     "patient_name",
     "patient_id",

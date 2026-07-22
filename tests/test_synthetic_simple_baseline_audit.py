@@ -31,7 +31,14 @@ def test_simple_baseline_audit_keeps_synthetic_boundary(tmp_path) -> None:
     artifact = build_simple_baseline_audit(rows_path, paired_path)
     assert artifact["total_n"] == 2
     assert artifact["classification"]["constant_half"]["auroc"] == 0.5
+    selective = artifact["classification_selective_risk"]["logistic_regression"]
+    assert [point["requested_coverage"] for point in selective["points"]] == [1.0, 0.9, 0.75, 0.5]
+    assert selective["ranking_signal"] == "absolute_distance_from_probability_0.5"
+    regression_curve = artifact["regression_disagreement_abstention"]
+    assert regression_curve["calibrated_uncertainty"] is False
+    assert len(regression_curve["points"]) == 4
     assert artifact["paired_champion_vs_logistic"]["superiority_proven"] is False
     assert artifact["promotion_allowed"] is False
     assert artifact["clinical_validation"] is False
     assert "real patients" in artifact["claim_boundary"]
+    assert "not calibrated clinical uncertainty" in artifact["uncertainty_boundary"]

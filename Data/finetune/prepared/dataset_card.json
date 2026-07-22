@@ -1,13 +1,18 @@
 {
   "schema_version": "finetune_dataset_card_v2",
-  "generated_at": "2026-07-21T15:55:18.455125+00:00",
+  "generated_at": "2026-07-22T06:27:38.785972+00:00",
   "dataset_purpose": "Behavior and format tuning for synthetic NLCare responses; not medical knowledge tuning.",
   "allowed_behavior_targets": [
     "clinician_summary",
     "missing_data_disclosure",
     "questions_to_ask_care_team",
     "supplement_boundary",
-    "taglish_safety"
+    "taglish_safety",
+    "emotional_support",
+    "privacy_boundary",
+    "tool_confirmation",
+    "out_of_scope_redirect",
+    "uncertainty_disclosure"
   ],
   "blocked_claims": [
     "diagnosis",
@@ -38,25 +43,99 @@
     "Passing this audit does not prove adapter behavior or clinical safety."
   ],
   "example_counts": {
-    "accepted_total": 27,
-    "rejected_total": 0,
+    "accepted_total": 417,
+    "rejected_total": 10,
     "by_behavior": {
-      "clinician_summary": 5,
-      "missing_data_disclosure": 5,
-      "questions_to_ask_care_team": 5,
-      "supplement_boundary": 6,
-      "taglish_safety": 6
+      "clinician_summary": 45,
+      "missing_data_disclosure": 45,
+      "questions_to_ask_care_team": 45,
+      "supplement_boundary": 36,
+      "taglish_safety": 46,
+      "emotional_support": 40,
+      "privacy_boundary": 40,
+      "tool_confirmation": 40,
+      "out_of_scope_redirect": 40,
+      "uncertainty_disclosure": 40
     },
     "by_split": {
-      "train": 17,
-      "internal_frozen_holdout": 5,
-      "development": 5
+      "development": 63,
+      "internal_frozen_holdout": 63,
+      "train": 291
     }
   },
   "deduplication": {
     "exact_duplicates_rejected": 0,
     "near_duplicate_threshold": 0.92,
     "near_duplicate_pairs": []
+  },
+  "linguistic_diversity": {
+    "unique_normalized_user_rate": 1.0,
+    "unique_normalized_assistant_rate": 0.978417,
+    "unique_response_opening_rate": 0.438849,
+    "mean_user_token_count": 16.23,
+    "mean_assistant_token_count": 30.37,
+    "by_behavior": {
+      "clinician_summary": {
+        "n": 45,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      },
+      "emotional_support": {
+        "n": 40,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 0.775,
+        "unique_pair_rate": 1.0
+      },
+      "missing_data_disclosure": {
+        "n": 45,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      },
+      "out_of_scope_redirect": {
+        "n": 40,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      },
+      "privacy_boundary": {
+        "n": 40,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      },
+      "questions_to_ask_care_team": {
+        "n": 45,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      },
+      "supplement_boundary": {
+        "n": 36,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      },
+      "taglish_safety": {
+        "n": 46,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      },
+      "tool_confirmation": {
+        "n": 40,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      },
+      "uncertainty_disclosure": {
+        "n": 40,
+        "unique_user_rate": 1.0,
+        "unique_assistant_rate": 1.0,
+        "unique_pair_rate": 1.0
+      }
+    }
   },
   "contamination_audit": {
     "status": "acceptable",
@@ -101,7 +180,98 @@
   },
   "training_readiness": "scaffold_only_not_ready_for_adapter_promotion",
   "system_prompt": "You are a non-diagnostic oncology monitoring support assistant. You organize information, summarize safely, ask for missing details, and route urgent or treatment-decision questions to the care team. You do not diagnose, confirm progression, recommend treatment changes, give dosage advice, interpret genetic-risk for the patient, or conclude from tumor markers. You do not declare any supplement 'safe with chemo'.",
-  "rejected_examples": [],
+  "rejected_examples": [
+    {
+      "id": "generated_v3_supplement_boundary_001",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 121
+    },
+    {
+      "id": "generated_v3_supplement_boundary_005",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 125
+    },
+    {
+      "id": "generated_v3_supplement_boundary_009",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 129
+    },
+    {
+      "id": "generated_v3_supplement_boundary_012",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 132
+    },
+    {
+      "id": "generated_v3_supplement_boundary_016",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 136
+    },
+    {
+      "id": "generated_v3_supplement_boundary_020",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 140
+    },
+    {
+      "id": "generated_v3_supplement_boundary_023",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 143
+    },
+    {
+      "id": "generated_v3_supplement_boundary_027",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 147
+    },
+    {
+      "id": "generated_v3_supplement_boundary_034",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 154
+    },
+    {
+      "id": "generated_v3_supplement_boundary_038",
+      "behavior": "supplement_boundary",
+      "violations": [
+        "false_reassurance"
+      ],
+      "source_file": "generated_behavior_v3.jsonl",
+      "source_line": 158
+    }
+  ],
   "files": {
     "dataset_jsonl": "Data/finetune/prepared/dataset.jsonl",
     "dataset_card": "Data/finetune/prepared/dataset_card.json",

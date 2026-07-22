@@ -1,13 +1,13 @@
 {
   "schema_version": "finetune_dryrun_manifest_v2",
-  "generated_at": "2026-07-21T15:55:18.554591+00:00",
+  "generated_at": "2026-07-22T06:27:38.938755+00:00",
   "status": "dry_run_completed_not_ready_for_training",
   "clinical_validation": false,
   "model_trained": false,
   "dataset_path": "Data/finetune/prepared/dataset_train.jsonl",
-  "dataset_example_count": 17,
+  "dataset_example_count": 291,
   "lineage": {
-    "dataset_sha256": "075187f41330563826a0e09f0821d8aaaa9678361462974a10b0602b2d2395b7",
+    "dataset_sha256": "48e26cb64f9d63ad80c7eb77fb7b14b9964b2898f00b69baaef155ccc5163e8e",
     "split_manifest_path": "Data/finetune/prepared/split_manifest.json",
     "split_manifest_present": true,
     "manifest_hash_match": true,
@@ -49,7 +49,12 @@
       "missing_data_disclosure",
       "questions_to_ask_care_team",
       "supplement_boundary",
-      "taglish_safety"
+      "taglish_safety",
+      "emotional_support",
+      "privacy_boundary",
+      "tool_confirmation",
+      "out_of_scope_redirect",
+      "uncertainty_disclosure"
     ],
     "not_intended_for": [
       "medical_knowledge_injection",

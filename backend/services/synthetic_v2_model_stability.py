@@ -24,7 +24,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
-DEFAULT_INPUT_PATH = Path("Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv")
+REALISM_V2_INPUT_PATH = Path("Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv")
+LEGACY_INPUT_PATH = Path("Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv")
+DEFAULT_INPUT_PATH = REALISM_V2_INPUT_PATH if REALISM_V2_INPUT_PATH.exists() else LEGACY_INPUT_PATH
 DEFAULT_OUTPUT_PATH = Path("Data/evals/models/latest_synthetic_v2_model_stability.json")
 SEEDS = (17, 29, 43, 71, 101)
 SCENARIOS = ("clean", "mar_missingness", "mnar_missingness", "measurement_noise", "label_noise", "subgroup_shift")

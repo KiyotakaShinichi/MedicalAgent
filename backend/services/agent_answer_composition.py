@@ -261,6 +261,34 @@ def contains_diagnostic_or_treatment_claim(reply: str) -> bool:
     return any(pattern in lower for pattern in _BLOCKED_CLAIM_PATTERNS)
 
 
+def _citation_context_for_strategy(
+    query: str,
+    intent: str,
+    safety: Mapping[str, Any],
+    compressed_context: list[Mapping[str, Any]],
+    actions: Iterable[Any],
+) -> list[Mapping[str, Any]]:
+    """Return only context that the selected response strategy can surface."""
+    if intent in REFUSAL_INTENTS or uses_direct_support_lane(intent, safety):
+        return []
+    if safety.get("level") == "high_risk":
+        if safety.get("scope") in _REFUSAL_SCOPES_NO_BACKGROUND:
+            return []
+        return compressed_context[:2]
+    if actions:
+        return compressed_context[:1]
+    if intent in _EDUCATIONAL_INTENTS and compressed_context:
+        selected = compressed_context[:1]
+        if len(compressed_context) > 1 and _should_include_supporting_context(
+            query,
+            str(compressed_context[0].get("text") or ""),
+            str(compressed_context[1].get("text") or ""),
+        ):
+            selected = compressed_context[:2]
+        return selected
+    return []
+
+
 # ─── Top-level entry points ──────────────────────────────────────────────────
 
 
@@ -274,6 +302,14 @@ def generate_answer(
     patient_context: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Choose the reply strategy and assemble the agent's response envelope."""
+    action_list = list(actions)
+    citation_context = _citation_context_for_strategy(
+        query,
+        intent,
+        safety,
+        compressed_context,
+        action_list,
+    )
     citations = [
         {
             "id":          item["id"],
@@ -281,13 +317,13 @@ def generate_answer(
             "source_name": item["source_name"],
             "source_url":  item["source_url"],
         }
-        for item in compressed_context
+        for item in citation_context
     ]
     if uses_direct_support_lane(intent, safety):
         reply = fallback_response
     elif safety.get("level") == "high_risk":
         reply = safety_reply(fallback_response, compressed_context, safety)
-    elif actions:
+    elif action_list:
         reply = with_related_guidance(fallback_response, compressed_context)
     elif intent in _EDUCATIONAL_INTENTS and compressed_context:
         reply = educational_reply(query, intent, compressed_context)

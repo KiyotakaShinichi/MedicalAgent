@@ -44,6 +44,11 @@ def build_report() -> dict[str, Any]:
     xai = _load("Data/evals/models/latest_xai_fidelity_audit.json")
     dependencies = _load("Data/evals/ops/latest_dependency_lock_audit.json")
     automation = _load("Data/evals/ops/latest_durable_automation_worker_eval.json")
+    live_rag = _load("Data/evals/rag/latest_live_rag_eval.json")
+    ispy2 = _load("Data/evals/models/latest_ispy2_tcia_external_stress.json")
+    finetune = _load("Data/evals/models/latest_finetune_governance.json")
+    recovery = _load("Data/evals/ops/latest_deployment_recovery_drill.json")
+    registry = _load("Data/evals/benchmark/latest_benchmark_summary.json")
 
     baseline_summary = rag.get("summary") or {}
     required_count = sum(1 for row in gate["artifacts"] if row["required"])
@@ -82,6 +87,10 @@ def build_report() -> dict[str, Any]:
                 "route_policy_promotion": route_policy.get("promotion_decision"),
                 "route_policy_source_tier_correctness": _metric(route_policy, "route_aware_summary", "source_tier_correct"),
                 "external_holdout_completed": holdout_rag.get("completed", False),
+                "live_internal_case_count": _metric(live_rag, "summary", "case_count"),
+                "live_internal_citation_precision": _metric(live_rag, "summary", "citation_precision"),
+                "live_internal_claim_support_rate": _metric(live_rag, "summary", "claim_support_rate"),
+                "live_internal_unsafe_answer_rate": _metric(live_rag, "summary", "unsafe_answer_rate"),
             },
             "adversarial_safety": {
                 "original_internal_pass_rate": original_pass_rate,
@@ -128,12 +137,54 @@ def build_report() -> dict[str, Any]:
                 "profile": deployment.get("profile"),
                 "healthcare_production_ready": False,
             },
+            "external_data_stress": {
+                "status": ispy2.get("status"),
+                "dataset": _metric(ispy2, "source", "dataset"),
+                "joined_row_count": _metric(ispy2, "source", "joined_row_count"),
+                "target_match_to_nlcare": _metric(ispy2, "task_boundary", "nlcare_target_match", default=False),
+                "used_for_nlcare_training": ispy2.get("used_for_nlcare_training", False),
+                "promotion_allowed": ispy2.get("promotion_allowed", False),
+            },
+            "finetuning": {
+                "status": finetune.get("status"),
+                "accepted_examples": _metric(finetune, "dataset", "accepted"),
+                "training_ready": finetune.get("training_ready", False),
+                "promotion_ready": finetune.get("promotion_ready", False),
+                "failed_checks": _metric(finetune, "execution_readiness", "failed_checks", default=[]),
+            },
+            "recovery": {
+                "status": recovery.get("status"),
+                "local_restore_passed": recovery.get("passed", False),
+                "postgres_restore_tested": recovery.get("postgres_restore_tested", False),
+                "strict_profile_validated": recovery.get("strict_profile_validated", False),
+            },
+        },
+        "canonical_evidence_paths": [
+            "Data/evals/governance/latest_release_decision_surface.json",
+            "Data/evals/rag/latest_rag_baseline_comparison.json",
+            "Data/evals/rag/latest_live_rag_eval.json",
+            "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
+            "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
+            "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+            "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
+            "Data/evals/models/latest_synthetic_v2_model_stability.json",
+            "Data/evals/models/latest_ispy2_tcia_external_stress.json",
+            "Data/evals/models/latest_finetune_governance.json",
+            "Data/evals/ops/latest_deployment_profile_validation.json",
+            "Data/evals/ops/latest_deployment_recovery_drill.json",
+        ],
+        "registry_health": {
+            "status": registry.get("status"),
+            "issue_count": registry.get("issue_count"),
+            "reviewer_instruction": "Use canonical_evidence_paths first; treat the remaining registry as supporting appendix evidence.",
         },
         "active_warnings": [
             "Full source-governed retrieval has not proven raw Recall@10 improvement over BM25.",
             "The post-hoc route-aware policy is held because it reduces source-tier correctness.",
             "The no-read external-author RAG holdout remains incomplete.",
             "All ML results remain synthetic-only engineering self-tests.",
+            "The I-SPY2 pCR benchmark is target-mismatched and cannot validate or promote NLCare model heads.",
+            "The 5,000-prompt perfect result is an internal tuning-used regression bank, not independent robustness evidence.",
             "No clinician, genetic counselor, or external-author review has been completed.",
             "Frozen internal v6 scored 0.5185 with unsafe leakage 0.5606; it is the newest safety warning and must not be tuned against in this pass.",
             "The exact transitive dependency lock covers CPython 3.14/Windows only and has no vulnerability scan.",

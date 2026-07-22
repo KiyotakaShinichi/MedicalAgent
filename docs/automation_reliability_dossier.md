@@ -34,6 +34,7 @@ Automation reliability evidence is engineering evidence only. It does not prove 
 - `retry_dead_letter_visibility`: Retry/dead-letter visibility - Operators need failure visibility without losing the local review item.
 - `redaction_and_signature_visibility`: Redaction/signature visibility - Webhook safety should be inspectable before any optional n8n/email/SMS/Viber path is used.
 - `claim_boundary_visibility`: Claim-boundary visibility - Automation must not make the product look clinically monitored or production-ready.
+- `unacknowledged_age_visibility`: Unacknowledged queue age - Operators need stale-queue visibility while the UI must state that the threshold is not a clinical response commitment.
 
 ## What This Does Not Prove
 

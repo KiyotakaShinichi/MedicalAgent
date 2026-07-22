@@ -1,17 +1,17 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-07-19T02:07:07.673187+00:00",
+  "generated_at": "2026-07-22T06:48:40.544548+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "release_gate": {
     "status": "passed",
-    "artifact_count": 173,
+    "artifact_count": 179,
     "hard_blocker_failure_count": 0,
     "required_artifact_count": 27,
-    "optional_artifact_count": 146,
-    "optional_artifact_ratio": 0.8439,
-    "optional_issue_count": 2,
+    "optional_artifact_count": 152,
+    "optional_artifact_ratio": 0.8492,
+    "optional_issue_count": 4,
     "failures": []
   },
   "core_evidence": {
@@ -26,14 +26,18 @@
       "bm25_recall_at_10": 0.8041,
       "route_policy_promotion": "hold_for_external_holdout",
       "route_policy_source_tier_correctness": 0.8649,
-      "external_holdout_completed": false
+      "external_holdout_completed": false,
+      "live_internal_case_count": 21,
+      "live_internal_citation_precision": 1.0,
+      "live_internal_claim_support_rate": 0.8333,
+      "live_internal_unsafe_answer_rate": 0.0
     },
     "adversarial_safety": {
       "original_internal_pass_rate": 0.955,
-      "holdout_v4_pass_rate": 0.614754,
-      "holdout_v4_unsafe_leakage_rate": 0.427273,
-      "holdout_v5_pass_rate": 0.818182,
-      "holdout_v5_unsafe_leakage_rate": 0.2,
+      "holdout_v4_pass_rate": 0.704918,
+      "holdout_v4_unsafe_leakage_rate": 0.327273,
+      "holdout_v5_pass_rate": 0.969697,
+      "holdout_v5_unsafe_leakage_rate": 0.027273,
       "holdout_v6_pass_rate": 0.518519,
       "holdout_v6_unsafe_leakage_rate": 0.560606,
       "holdout_v6_over_refusal_rate": 0.133333,
@@ -72,13 +76,62 @@
       "status": "development_profile",
       "profile": "development",
       "healthcare_production_ready": false
+    },
+    "external_data_stress": {
+      "status": "acceptable_external_engineering_stress",
+      "dataset": "I-SPY2 Imaging Cohort 1",
+      "joined_row_count": 384,
+      "target_match_to_nlcare": false,
+      "used_for_nlcare_training": false,
+      "promotion_allowed": false
+    },
+    "finetuning": {
+      "status": "needs_attention",
+      "accepted_examples": 417,
+      "training_ready": false,
+      "promotion_ready": false,
+      "failed_checks": [
+        "base_model_revision_pinned",
+        "tokenizer_revision_pinned",
+        "license_review_complete",
+        "baseline_generations_complete",
+        "candidate_generations_complete",
+        "promotion_gate_not_hold"
+      ]
+    },
+    "recovery": {
+      "status": "strong_local_only",
+      "local_restore_passed": true,
+      "postgres_restore_tested": false,
+      "strict_profile_validated": false
     }
+  },
+  "canonical_evidence_paths": [
+    "Data/evals/governance/latest_release_decision_surface.json",
+    "Data/evals/rag/latest_rag_baseline_comparison.json",
+    "Data/evals/rag/latest_live_rag_eval.json",
+    "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
+    "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
+    "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+    "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
+    "Data/evals/models/latest_synthetic_v2_model_stability.json",
+    "Data/evals/models/latest_ispy2_tcia_external_stress.json",
+    "Data/evals/models/latest_finetune_governance.json",
+    "Data/evals/ops/latest_deployment_profile_validation.json",
+    "Data/evals/ops/latest_deployment_recovery_drill.json"
+  ],
+  "registry_health": {
+    "status": "needs_attention",
+    "issue_count": null,
+    "reviewer_instruction": "Use canonical_evidence_paths first; treat the remaining registry as supporting appendix evidence."
   },
   "active_warnings": [
     "Full source-governed retrieval has not proven raw Recall@10 improvement over BM25.",
     "The post-hoc route-aware policy is held because it reduces source-tier correctness.",
     "The no-read external-author RAG holdout remains incomplete.",
     "All ML results remain synthetic-only engineering self-tests.",
+    "The I-SPY2 pCR benchmark is target-mismatched and cannot validate or promote NLCare model heads.",
+    "The 5,000-prompt perfect result is an internal tuning-used regression bank, not independent robustness evidence.",
     "No clinician, genetic counselor, or external-author review has been completed.",
     "Frozen internal v6 scored 0.5185 with unsafe leakage 0.5606; it is the newest safety warning and must not be tuned against in this pass.",
     "The exact transitive dependency lock covers CPython 3.14/Windows only and has no vulnerability scan.",

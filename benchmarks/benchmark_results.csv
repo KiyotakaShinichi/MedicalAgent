@@ -172,6 +172,18 @@ external_data_bridge_eval,External public-data canonical bridge,supporting,stale
 external_data_bridge_eval,External public-data canonical bridge,supporting,stale,strong,stale,Data/evals/models/latest_external_data_bridge_eval.json,row_count,159
 external_data_bridge_eval,External public-data canonical bridge,supporting,stale,strong,stale,Data/evals/models/latest_external_data_bridge_eval.json,validation_status,passed
 external_data_bridge_eval,External public-data canonical bridge,supporting,stale,strong,stale,Data/evals/models/latest_external_data_bridge_eval.json,breastdcedl_roc_auc,0.637
+ispy2_tcia_external_stress,TCIA I-SPY2 separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_ispy2_tcia_external_stress.json,status,acceptable_external_engineering_stress
+ispy2_tcia_external_stress,TCIA I-SPY2 separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_ispy2_tcia_external_stress.json,joined_row_count,384
+ispy2_tcia_external_stress,TCIA I-SPY2 separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_ispy2_tcia_external_stress.json,nlcare_target_match,False
+ispy2_tcia_external_stress,TCIA I-SPY2 separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_ispy2_tcia_external_stress.json,used_for_nlcare_training,False
+ispy2_tcia_external_stress,TCIA I-SPY2 separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_ispy2_tcia_external_stress.json,patient_facing_allowed,False
+ispy2_tcia_external_stress,TCIA I-SPY2 separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_ispy2_tcia_external_stress.json,promotion_allowed,False
+duke_tcia_external_stress,Duke/TCIA separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_duke_tcia_external_stress.json,status,acceptable_external_engineering_stress
+duke_tcia_external_stress,Duke/TCIA separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_duke_tcia_external_stress.json,joined_labeled_row_count,312
+duke_tcia_external_stress,Duke/TCIA separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_duke_tcia_external_stress.json,nlcare_target_match,False
+duke_tcia_external_stress,Duke/TCIA separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_duke_tcia_external_stress.json,used_for_nlcare_training,False
+duke_tcia_external_stress,Duke/TCIA separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_duke_tcia_external_stress.json,patient_facing_allowed,False
+duke_tcia_external_stress,Duke/TCIA separate-task external stress benchmark,supporting,acceptable_external_engineering_stress,acceptable_external_engineering_stress,fresh,Data/evals/models/latest_duke_tcia_external_stress.json,promotion_allowed,False
 external_failure_case_gallery,External benchmark failure-case gallery,supporting,stale,strong,stale,Data/evals/models/latest_external_failure_case_gallery.json,status,strong
 external_failure_case_gallery,External benchmark failure-case gallery,supporting,stale,strong,stale,Data/evals/models/latest_external_failure_case_gallery.json,case_count,61
 external_failure_case_gallery,External benchmark failure-case gallery,supporting,stale,strong,stale,Data/evals/models/latest_external_failure_case_gallery.json,false_positive_count,46
@@ -204,13 +216,13 @@ ml_coverage_risk_diagnostics,ML coverage/risk diagnostics,supporting,stale,stron
 ml_coverage_risk_diagnostics,ML coverage/risk diagnostics,supporting,stale,strong,stale,Data/evals/models/latest_ml_coverage_risk_diagnostics.json,scenario_count,8
 ml_coverage_risk_diagnostics,ML coverage/risk diagnostics,supporting,stale,strong,stale,Data/evals/models/latest_ml_coverage_risk_diagnostics.json,minimum_required_abstention_rate,1.0
 ml_coverage_risk_diagnostics,ML coverage/risk diagnostics,supporting,stale,strong,stale,Data/evals/models/latest_ml_coverage_risk_diagnostics.json,promotion_decision,hold_synthetic_only
-automation_reliability_dossier,Automation reliability dossier,supporting,stale,strong,stale,Data/evals/ops/latest_automation_reliability_dossier.json,status,strong
-automation_reliability_dossier,Automation reliability dossier,supporting,stale,strong,stale,Data/evals/ops/latest_automation_reliability_dossier.json,check_count,8
-automation_reliability_dossier,Automation reliability dossier,supporting,stale,strong,stale,Data/evals/ops/latest_automation_reliability_dossier.json,passed_count,8
-automation_reliability_dossier,Automation reliability dossier,supporting,stale,strong,stale,Data/evals/ops/latest_automation_reliability_dossier.json,failed_required_count,0
-automation_reliability_dossier,Automation reliability dossier,supporting,stale,strong,stale,Data/evals/ops/latest_automation_reliability_dossier.json,external_delivery_enabled_by_default,False
-automation_reliability_dossier,Automation reliability dossier,supporting,stale,strong,stale,Data/evals/ops/latest_automation_reliability_dossier.json,real_emergency_coverage_claim,False
-automation_reliability_dossier,Automation reliability dossier,supporting,stale,strong,stale,Data/evals/ops/latest_automation_reliability_dossier.json,automation_center_requirement_count,5
+automation_reliability_dossier,Automation reliability dossier,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_reliability_dossier.json,status,strong
+automation_reliability_dossier,Automation reliability dossier,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_reliability_dossier.json,check_count,8
+automation_reliability_dossier,Automation reliability dossier,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_reliability_dossier.json,passed_count,8
+automation_reliability_dossier,Automation reliability dossier,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_reliability_dossier.json,failed_required_count,0
+automation_reliability_dossier,Automation reliability dossier,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_reliability_dossier.json,external_delivery_enabled_by_default,False
+automation_reliability_dossier,Automation reliability dossier,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_reliability_dossier.json,real_emergency_coverage_claim,False
+automation_reliability_dossier,Automation reliability dossier,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_reliability_dossier.json,automation_center_requirement_count,6
 durable_automation_worker,Durable automation worker controls,supporting,stale,acceptable,stale,Data/evals/ops/latest_durable_automation_worker_eval.json,status,acceptable
 durable_automation_worker,Durable automation worker controls,supporting,stale,acceptable,stale,Data/evals/ops/latest_durable_automation_worker_eval.json,control_pass_rate,1.0
 durable_automation_worker,Durable automation worker controls,supporting,stale,acceptable,stale,Data/evals/ops/latest_durable_automation_worker_eval.json,live_n8n_delivery_enabled,False
@@ -285,14 +297,17 @@ offline_ab_eval_controls,Offline A/B safety-control suite,supporting,stale,stron
 offline_ab_eval_controls,Offline A/B safety-control suite,supporting,stale,strong,stale,Data/evals/ab_tests/latest_ab_test_report.json,expectations_failed,0
 finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,status,needs_attention
 finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,model_trained,False
-finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,dataset_accepted,27
+finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,readiness_state,not_ready_for_training_or_promotion
+finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,training_ready,False
+finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,promotion_ready,False
+finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,dataset_accepted,417
 finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,contamination_status,acceptable
 finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,promotion_decision,HOLD
 finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_governance.json,promotion_scope,offline_shadow_only
-mle_readiness,MLE readiness gate,critical,stale,unideal,stale,Data/mle_monitoring/latest_mle_readiness.json,hard_gate_status,passed
-mle_readiness,MLE readiness gate,critical,stale,unideal,stale,Data/mle_monitoring/latest_mle_readiness.json,release_recommendation,candidate_only_fix_calibration_or_slice_gaps_before_strong_claims
-mle_readiness,MLE readiness gate,critical,stale,unideal,stale,Data/mle_monitoring/latest_mle_readiness.json,safety_regression,unideal
-mle_readiness,MLE readiness gate,critical,stale,unideal,stale,Data/mle_monitoring/latest_mle_readiness.json,monitoring,acceptable
+mle_readiness,MLE readiness gate,critical,unideal,unideal,fresh,Data/mle_monitoring/latest_mle_readiness.json,hard_gate_status,passed
+mle_readiness,MLE readiness gate,critical,unideal,unideal,fresh,Data/mle_monitoring/latest_mle_readiness.json,release_recommendation,candidate_only_fix_calibration_or_slice_gaps_before_strong_claims
+mle_readiness,MLE readiness gate,critical,unideal,unideal,fresh,Data/mle_monitoring/latest_mle_readiness.json,safety_regression,unideal
+mle_readiness,MLE readiness gate,critical,unideal,unideal,fresh,Data/mle_monitoring/latest_mle_readiness.json,monitoring,acceptable
 mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,stale,acceptable,stale,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,hard_gate_status,passed
 mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,stale,acceptable,stale,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,release_recommendation,acceptable_for_poc_demo_with_limitations
 mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,stale,acceptable,stale,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,safety_regression,strong
@@ -372,16 +387,16 @@ rag_intent_aware_eval,Intent-aware RAG benchmark,critical,stale,strong,stale,Dat
 rag_intent_aware_eval,Intent-aware RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_rag_intent_aware_eval.json,refusal_correctness,1.0
 rag_intent_aware_eval,Intent-aware RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_rag_intent_aware_eval.json,unsafe_answer_rate,0.0
 rag_intent_aware_eval,Intent-aware RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_rag_intent_aware_eval.json,latency_p50_ms,0.02
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,status,strong
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,pass_rate,0.9524
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,claim_support_rate,0.75
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,citation_precision,1.0
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,source_tier_correctness,1.0
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,refusal_correctness,0.9524
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,escalation_correctness,1.0
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,unsafe_answer_rate,0.0
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,taglish_safety_parity_rate,1.0
-live_rag_eval,Live-agent RAG benchmark,critical,stale,strong,stale,Data/evals/rag/latest_live_rag_eval.json,latency_p50_ms,4840.9
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,status,strong
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,pass_rate,0.9048
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,claim_support_rate,0.8333
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,citation_precision,1.0
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,source_tier_correctness,1.0
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,refusal_correctness,0.9524
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,escalation_correctness,1.0
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,unsafe_answer_rate,0.0
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,taglish_safety_parity_rate,1.0
+live_rag_eval,Live-agent RAG benchmark,critical,strong,strong,fresh,Data/evals/rag/latest_live_rag_eval.json,latency_p50_ms,3810.25
 claim_level_citation_eval,Claim-level citation validation,critical,strong,strong,fresh,Data/evals/rag/latest_claim_level_citation_eval.json,status,strong
 claim_level_citation_eval,Claim-level citation validation,critical,strong,strong,fresh,Data/evals/rag/latest_claim_level_citation_eval.json,case_count,3
 claim_level_citation_eval,Claim-level citation validation,critical,strong,strong,fresh,Data/evals/rag/latest_claim_level_citation_eval.json,hard_failures,0
@@ -465,6 +480,17 @@ event_taxonomy_manifest,Structured event taxonomy,supporting,stale,strong,stale,
 service_health_snapshot,PoC service health snapshot,supporting,stale,strong,stale,Data/evals/ops/latest_service_health_snapshot.json,status,strong
 service_health_snapshot,PoC service health snapshot,supporting,stale,strong,stale,Data/evals/ops/latest_service_health_snapshot.json,stale_artifact_count,75
 service_health_snapshot,PoC service health snapshot,supporting,stale,strong,stale,Data/evals/ops/latest_service_health_snapshot.json,failed_benchmark_count,0
+deployment_recovery_drill,Local synthetic backup and restore drill,supporting,strong_local_only,strong_local_only,fresh,Data/evals/ops/latest_deployment_recovery_drill.json,status,strong_local_only
+deployment_recovery_drill,Local synthetic backup and restore drill,supporting,strong_local_only,strong_local_only,fresh,Data/evals/ops/latest_deployment_recovery_drill.json,passed,True
+deployment_recovery_drill,Local synthetic backup and restore drill,supporting,strong_local_only,strong_local_only,fresh,Data/evals/ops/latest_deployment_recovery_drill.json,content_hash_match,True
+deployment_recovery_drill,Local synthetic backup and restore drill,supporting,strong_local_only,strong_local_only,fresh,Data/evals/ops/latest_deployment_recovery_drill.json,strict_profile_validated,False
+deployment_recovery_drill,Local synthetic backup and restore drill,supporting,strong_local_only,strong_local_only,fresh,Data/evals/ops/latest_deployment_recovery_drill.json,postgres_restore_tested,False
+deployment_recovery_drill,Local synthetic backup and restore drill,supporting,strong_local_only,strong_local_only,fresh,Data/evals/ops/latest_deployment_recovery_drill.json,multi_instance_restore_tested,False
+deployment_recovery_drill,Local synthetic backup and restore drill,supporting,strong_local_only,strong_local_only,fresh,Data/evals/ops/latest_deployment_recovery_drill.json,healthcare_production_ready,False
+container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,blocked_environment,blocked_environment,fresh,Data/evals/ops/latest_container_recovery_smoke.json,status,blocked_environment
+container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,blocked_environment,blocked_environment,fresh,Data/evals/ops/latest_container_recovery_smoke.json,completed,False
+container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,blocked_environment,blocked_environment,fresh,Data/evals/ops/latest_container_recovery_smoke.json,docker_available,False
+container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,blocked_environment,blocked_environment,fresh,Data/evals/ops/latest_container_recovery_smoke.json,healthcare_production_ready,False
 trace_diagnostics_coverage,Per-turn trace diagnostics coverage,supporting,stale,needs_attention,stale,Data/evals/ops/latest_trace_diagnostics_coverage.json,status,needs_attention
 trace_diagnostics_coverage,Per-turn trace diagnostics coverage,supporting,stale,needs_attention,stale,Data/evals/ops/latest_trace_diagnostics_coverage.json,rows_checked,100
 trace_diagnostics_coverage,Per-turn trace diagnostics coverage,supporting,stale,needs_attention,stale,Data/evals/ops/latest_trace_diagnostics_coverage.json,rows_with_trace_diagnostics,1

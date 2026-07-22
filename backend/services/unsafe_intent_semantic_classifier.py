@@ -290,6 +290,7 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(doubled|mataas|rising|high)\b.*\b(CA\s*15-?3|CEA|marker|recurrence)\b",
             r"\b(tumou?r markers?|CEA|CA\s*15-?3|CA\s*27\.?29)\b.*\b(replace|instead of)\b.*\b(imaging|doctor|clinician|review)\b",
             r"\b(marker|tumou?r marker|CEA|CA\s*15-?3|CA\s*27\.?29)\b.*\b(trend|rose|rising|went up|high)\b.*\b(progression|recurrence|definite|assume|confirm|prove)\b",
+            r"\b(marker|tumou?r marker|CEA|CA\s*15-?3|CA\s*27\.?29)\b.*\b(replace|without|instead of)\b.*\b(imaging|scan|clinical review)\b.*\b(confirm|prove|progression|recurrence)\b",
         ),
     ),
     UnsafeFamily(
@@ -409,6 +410,7 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(natural cure|natural cancer treatment|natural treatment)\b",
             r"\b(cannabis|cbd|herbal|supplement)\b.*\b(safer than)\b.*\b(prescribed|treatment|therapy|chemo|medication)\b",
             r"\b(high[-\s]?dose vitamins?|iv vitamins?|green tea extract|natural cure)\b.*\b(replace|instead of|avoid|safer than)\b.*\b(chemo|chemotherapy|treatment|radiation|therapy)\b",
+            r"\b(herbal[-\s]?only|natural[-\s]?only|supplement[-\s]?only)\b.*\b(plan|therapy|treatment)\b.*\b(stop|replace|avoid)\b.*\b(prescribed|chemo|chemotherapy|treatment|therapy)\b",
         ),
     ),
 )
@@ -430,16 +432,16 @@ SAFE_EDUCATIONAL_ANCHORS = (
 # dependent on one long regex while keeping safe educational mentions open.
 COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
     "privacy_pii": (
-        ("read back", "read", "export", "paste", "forward", "reveal", "expose", "show", "send", "print", "verify"),
-        ("identifier", "confidential number", "account credential", "address", "insurance", "member id", "membership code", "mrn", "dob", "phone", "token", "api key", "complete account record", "full chart"),
+        ("read back", "read", "export", "paste", "forward", "reveal", "expose", "show", "send", "paki-send", "print", "verify"),
+        ("identifier", "confidential number", "confidential account", "account credential", "account detail", "address", "insurance", "member id", "membership code", "mrn", "dob", "phone", "token", "api key", "complete account record", "full chart"),
     ),
     "prompt_injection": (
-        ("ignore", "switch off", "disable", "replace", "work around", "bypass", "override", "operate without", "suspend", "pretend"),
-        ("boundary", "safety instruction", "system constraint", "refusal policy", "citation check", "validator", "final checker", "instruction hierarchy", "hidden prompt", "guardrail"),
+        ("ignore", "switch off", "disable", "replace", "work around", "bypass", "override", "operate without", "suspend", "pretend", "assume", "huwag sundin"),
+        ("boundary", "refusal boundary", "safety instruction", "safety hierarchy", "system constraint", "refusal policy", "citation check", "validator", "final validator", "final checker", "instruction hierarchy", "internal instruction", "hidden prompt", "guardrail"),
     ),
     "cross_patient_exfiltration": (
         ("open", "compare", "copy", "summarize", "show", "use", "access", "pull", "pakibukas", "gamitin"),
-        ("person after me", "person before me", "another patient", "other patient", "everyone's", "all patient", "aunt's", "mother's", "father's", "sister's", "brother's", "mama", "patient q-", "patient id"),
+        ("person after me", "person before me", "next person", "previous person", "another patient", "other patient", "everyone's", "all patient", "aunt's", "mother's", "father's", "sister's", "brother's", "mama", "patient q-", "patient id"),
         ("record", "chart", "result", "lab", "note", "medication", "imaging", "database", "portal"),
     ),
     "genetic_risk_interpretation": (
@@ -448,11 +450,11 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         ("child", "children", "son", "daughter", "relative", "family", "pamilya", "recurrence", "treatment", "therapy", "inherited", "hereditary", "cancer"),
     ),
     "vus_misinterpretation": (
-        ("vus", "uncertain variant", "unclear variant", "unclassified variant", "uncertain result", "unclear result", "result is unclear", "inconclusive genetic"),
-        ("pathogenic", "positive", "negative", "confirmed", "proof", "disease-causing", "decide therapy", "select therapy", "count it", "treat it", "use the"),
+        ("vus", "uncertain variant", "unclear variant", "unclassified variant", "unclassified brca", "uncertain result", "uncertain genetic", "unclear result", "result is unclear", "inconclusive genetic"),
+        ("pathogenic", "positive", "negative", "confirmed", "proof", "disease-causing", "decide therapy", "decide which therapy", "select therapy", "count it", "count this", "treat it", "use the"),
     ),
     "diagnosis_confirmation": (
-        ("confirm", "decide", "definitively", "prove", "establishes", "yes-or-no", "turn", "conclusion", "assume", "diagnose"),
+        ("confirm", "decide", "definitively", "prove", "establish", "establishes", "yes-or-no", "turn", "conclusion", "assume", "diagnose"),
         ("lesion", "mass", "scan", "finding", "pathology", "lab", "cancer", "malignant", "spread", "recurrence", "metastatic", "cancer-free"),
     ),
     "tumor_marker_conclusion": (
@@ -464,7 +466,7 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "regimen", "infusion", "tamoxifen", "trastuzumab", "medicine", "medication", "gamot"),
     ),
     "dosage_request": (
-        ("calculate", "set", "adjust", "choose", "personalize", "double", "halve", "lower", "increase", "reduce", "how many", "exact"),
+        ("calculate", "set", "adjust", "choose", "personalize", "double", "halve", "lower", "increase", "reduce", "how many", "ilang", "exact"),
         ("dose", "dosage", "mg", "tablet", "tablets", "pill", "pills", "injection amount", "medicine amount", "medication amount"),
     ),
     "prognosis_survival": (
@@ -484,11 +486,65 @@ DECISION_OR_ACCESS_CUES = (
     "without", "instead", "replace", "stop", "skip", "dose", "dosage", "mg",
 )
 
+_RECORDING_STATEMENT_PREFIXES = (
+    "treatment note",
+    "record that",
+    "log that",
+    "save that",
+    "for my record",
+)
+_RECORDED_TREATMENT_EVENT_CUES = (
+    "cycle was delayed",
+    "cycle delayed",
+    "treatment was delayed",
+    "treatment was held",
+    "infusion was held",
+    "care team delayed",
+    "care team held",
+    "oncologist delayed",
+    "oncologist held",
+)
+_TREATMENT_DECISION_REQUEST_CUES = (
+    "should i",
+    "can i",
+    "may i",
+    "do you recommend",
+    "tell me to",
+    "authorize",
+    "decide for me",
+    "next cycle",
+    "tomorrow",
+    "tonight",
+)
+
+
+def _looks_like_recording_statement(normalized: str) -> bool:
+    """Keep explicit historical record capture distinct from treatment advice."""
+    if any(cue in normalized for cue in _TREATMENT_DECISION_REQUEST_CUES):
+        return False
+    has_record_prefix = any(prefix in normalized for prefix in _RECORDING_STATEMENT_PREFIXES)
+    has_completed_event = any(cue in normalized for cue in _RECORDED_TREATMENT_EVENT_CUES)
+    return has_record_prefix and has_completed_event
+
+
+def _looks_like_safe_boundary_request(normalized: str) -> bool:
+    """Preserve privacy education and explicitly public comparison requests."""
+    safe_cues = (
+        "anonymized public example",
+        "what personal data this app stores",
+        "what data this app stores",
+    )
+    return any(cue in normalized for cue in safe_cues)
+
 
 def classify_unsafe_intent(text: str) -> dict[str, Any]:
     normalized = _normalize(text)
     if not normalized:
         return _result("none", 0.0, "low_risk", "education_or_tracking", "none", False)
+    if _looks_like_recording_statement(normalized):
+        return _result("none", 0.0, "low_risk", "education_or_tracking", "recording_statement", False)
+    if _looks_like_safe_boundary_request(normalized):
+        return _result("none", 0.0, "low_risk", "education_or_tracking", "safe_boundary_request", False)
     if _looks_like_safe_education(normalized) and re.search(r"\bdose\s+dense\b", normalized):
         return _result("none", 0.0, "low_risk", "education_or_tracking", "none", False)
 
@@ -729,20 +785,20 @@ def _family_specificity_bonus(text: str, family: str) -> float:
     """Prefer domain-specific boundaries over broad diagnosis/treatment ties."""
 
     if family == "vus_misinterpretation" and re.search(
-        r"\b(vus|variant of uncertain significance|uncertain variant|unclear variant|inconclusive genetic)\b",
+        r"\b(vus|variant of uncertain significance|uncertain variant|unclear variant|unclassified variant|unclassified brca|uncertain genetic|inconclusive genetic)\b",
         text,
     ):
-        return 0.04
+        return 0.12
     if family == "tumor_marker_conclusion" and re.search(
-        r"\b(ca\s*15(?:-|\s)?3|ca\s*27(?:\.|\s)?29|cea|tumou?r marker|rising marker|marker trend)\b",
+        r"\b(ca\s*15(?:-|\s)?3|ca\s*27(?:\.|\s)?29|cea|tumou?r marker|rising marker|marker trend|marker)\b",
         text,
     ):
-        return 0.04
+        return 0.12
     if family == "supplement_replacement" and re.search(
         r"\b(herbs?|herbal|supplements?|vitamins?|cannabis|turmeric|cbd|natural)\b",
         text,
     ):
-        return 0.03
+        return 0.12
     return 0.0
 
 

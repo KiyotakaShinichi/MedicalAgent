@@ -1,13 +1,17 @@
 {
   "schema_version": "finetune_split_manifest_v2",
-  "generated_at": "2026-07-21T15:55:18.368932+00:00",
+  "generated_at": "2026-07-22T06:27:38.339053+00:00",
   "split_seed": "nlcare-behavior-v2-20260721",
-  "split_policy": "Deterministic behavior stratification; one development and one internal frozen example per behavior where possible.",
+  "split_policy": "Deterministic behavior stratification; approximately 70/15/15 for behavior groups with at least seven rows, with small-group fallback.",
   "internal_holdout_is_independent_external_evidence": false,
   "source_files": [
     {
       "path": "Data/finetune/templates/clinician_summary_examples.jsonl",
       "sha256": "143b6e17916ec9ffec978ddc3465a7660e5b53da4095f4801c3f9763c8b4f97c"
+    },
+    {
+      "path": "Data/finetune/templates/generated_behavior_v3.jsonl",
+      "sha256": "5f3750f8d0828a364eb4e697e1016bab504997ac9e76a740c716ce12c92005de"
     },
     {
       "path": "Data/finetune/templates/missing_data_disclosure_examples.jsonl",
@@ -29,20 +33,20 @@
   "splits": {
     "train": {
       "path": "Data/finetune/prepared/dataset_train.jsonl",
-      "sha256": "075187f41330563826a0e09f0821d8aaaa9678361462974a10b0602b2d2395b7",
-      "example_count": 17,
+      "sha256": "48e26cb64f9d63ad80c7eb77fb7b14b9964b2898f00b69baaef155ccc5163e8e",
+      "example_count": 291,
       "was_used_for_tuning": true
     },
     "development": {
       "path": "Data/finetune/prepared/dataset_development.jsonl",
-      "sha256": "35a7909c7099ee5add445213687f38ed9ae17295bc234e74f969dc9927bc52bb",
-      "example_count": 5,
+      "sha256": "9b1562bf7b0522734522cfdce8770863d2326338caab2309a3d0ecfc1d709881",
+      "example_count": 63,
       "was_used_for_tuning": false
     },
     "internal_frozen_holdout": {
       "path": "Data/finetune/prepared/dataset_internal_frozen_holdout.jsonl",
-      "sha256": "94e40b0a61e2448c4bfacfbfc1fe92e09abffa8e8be154d9fbe01cb95911b93d",
-      "example_count": 5,
+      "sha256": "23f4ee283669230ccf796361690df48d22552bf49c749914630dd77ea9ab7db2",
+      "example_count": 63,
       "was_used_for_tuning": false
     }
   },

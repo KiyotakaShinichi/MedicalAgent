@@ -101,4 +101,6 @@ def test_automation_center_visibility_contract_distinguishes_delivery_from_ackno
     assert "manual_acknowledgement" in requirements["local_outbox_status"]["must_show"]
     assert "delivery_receipt_validated" in requirements["delivery_receipt_status"]["must_show"]
     assert "clinician acknowledgement" in requirements["delivery_receipt_status"]["why"]
+    assert "unacknowledged_age_visibility" in requirements
+    assert "not_a_clinical_sla" in requirements["unacknowledged_age_visibility"]["must_show"]
     assert "not_emergency_service" in requirements["claim_boundary_visibility"]["must_show"]

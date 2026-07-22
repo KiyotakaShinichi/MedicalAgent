@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_model_card_v2",
-  "generated_at": "2026-07-21T15:55:18.572041+00:00",
+  "generated_at": "2026-07-22T06:27:38.943715+00:00",
   "status": "template_only_no_adapter",
   "clinical_validation": false,
   "model_trained": false,
@@ -17,7 +17,12 @@
     "missing_data_disclosure",
     "questions_to_ask_care_team",
     "supplement_boundary",
-    "taglish_safety"
+    "taglish_safety",
+    "emotional_support",
+    "privacy_boundary",
+    "tool_confirmation",
+    "out_of_scope_redirect",
+    "uncertainty_disclosure"
   ],
   "not_intended_for": [
     "medical_knowledge_injection",
@@ -32,8 +37,8 @@
   ],
   "training_data": {
     "path": "Data/finetune/prepared/dataset_train.jsonl",
-    "sha256": "075187f41330563826a0e09f0821d8aaaa9678361462974a10b0602b2d2395b7",
-    "example_count": 17,
+    "sha256": "48e26cb64f9d63ad80c7eb77fb7b14b9964b2898f00b69baaef155ccc5163e8e",
+    "example_count": 291,
     "all_synthetic": true
   },
   "evaluation_results": {

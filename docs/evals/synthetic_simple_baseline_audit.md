@@ -18,3 +18,9 @@ the system must not claim that model complexity is proven better.
 All rows are simulator-built. This artifact is not clinical validation, does
 not represent real patients, and cannot support diagnosis, prognosis,
 treatment, patient-benefit, or healthcare-production claims.
+
+The audit also reports selective-risk curves at 100%, 90%, 75%, and 50%
+coverage. Classification rows are ranked by distance from probability 0.5;
+regression rows use ridge-versus-random-forest disagreement as an abstention
+stress proxy. Neither measure is calibrated clinical uncertainty, and neither
+shows that abstention is safe for patient care.

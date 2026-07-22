@@ -11,16 +11,18 @@ The patient portal uses records-first progressive loading and prepares synthetic
 The reviewer headline is `Data/evals/governance/latest_focused_release_summary.json`, not the largest or greenest metric in the repository.
 
 - Release gate: passed, with 27 required artifacts and 146 supporting/informational artifacts. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
-- Frozen internally authored adversarial results remain weak: v4 pass rate `0.614754`, v5 `0.818182`, and the new one-pass v6 `0.518519` with unsafe leakage `0.560606`. V6 was frozen before the latest generalized hardening and was not tuned against; safety is explicitly **not solved**.
+- Frozen internally authored adversarial results remain inconsistent after a one-pass rerun: v4 pass rate `0.704918` with unsafe leakage `0.327273`, v5 `0.969697` with leakage `0.027273`, and v6 `0.518519` with leakage `0.560606` and over-refusal `0.133333`. These sets disagree sharply; safety is explicitly **not solved**.
 - RAG: full source-governed Recall@10 `0.7838` versus BM25 `0.8041`. Raw retrieval improvement is not proven. The governed stack raises source-tier correctness from `0.4595` to `1.0` on the internal set, with about `4.13x` BM25 p95 retrieval latency.
 - ML: the calibrated classification champion does not prove paired accuracy superiority over logistic regression on the 120-row synthetic test export (`p=1.0`). Model complexity is retained as engineering comparison, not clinical evidence.
+- External data: an official TCIA I-SPY2 tabular bridge now joins 384 MRI-feature rows to its clinical cohort and compares simple/nonlinear pCR baselines over five fixed splits. The pCR task is target-mismatched, excluded from NLCare training and live inference, and cannot promote any NLCare model.
+- Live RAG: the latest 21-case internal run reports citation precision `1.0`, source-tier correctness `1.0`, claim support `0.8333`, no unsafe answers, and p50 latency about `3.81s`. The sample is small and internal, so this is regression evidence only.
 - Latency: current route samples range from 0 to 4, below the 30-sample minimum for credible percentile labels. These routes are `not_sampled` or `insufficient_samples`, never production-ready.
 - XAI: all 600 synthetic patient explanations now export base values, complete contributions, and model outputs; log-odds additivity passes for every row with maximum residual `6e-10`. This verifies arithmetic, not causality or clinical validity.
 - Dependencies: the known-good CPython 3.14/Windows environment has an exact 100-distribution transitive lock. It is not portable to the Python 3.11/Linux CI environment and does not include a vulnerability scan.
 - Automation: redacted engineering jobs now have database leases, worker heartbeats, crash recovery, bounded retries/dead letters, signed dispatch, and persisted signed receipts. External delivery remains disabled and untested; channel delivery and human acknowledgement are separate states, and the system is not an emergency service.
 - Review: no clinician, nurse, genetic counselor, or external author has completed a review.
 
-See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple synthetic ML baselines](docs/evals/synthetic_simple_baseline_audit.md), and [dependency reproducibility](docs/dependency_reproducibility.md).
+See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple synthetic ML baselines](docs/evals/synthetic_simple_baseline_audit.md), [external dataset strategy](docs/data/external_dataset_integration_strategy.md), and [dependency reproducibility](docs/dependency_reproducibility.md).
 
 ## What this does NOT prove
 - No clinical validation.
@@ -47,6 +49,7 @@ See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple s
 
 ## External stress-test readiness
 - External/public data bridges are used for schema stress tests and missing-field analysis only.
+- `python scripts/run_ispy2_tcia_tabular_bridge.py` runs the checksum-locked, de-identified TCIA I-SPY2 pCR stress benchmark. It excludes treatment arm and never feeds NLCare training or patient-facing inference.
 - `python scripts/run_external_stress_readiness.py` checks TCGA-BRCA, METABRIC, BreastDCEDL/I-SPY common-feature rows, and Duke MRI/TCIA candidate mappings where artifacts exist.
 - The output documents mapped fields, missing longitudinal modalities, expected abstentions, and failure cases.
 - These stress tests do not validate the hybrid model clinically and cannot promote model outputs without exact-label temporal validation and clinician-reviewed endpoints.
@@ -88,6 +91,8 @@ See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple s
 - `docker-compose.prod.yml` plus `frontend-react/Dockerfile` provide a production-shaped local container smoke path with a static Vite build served by Nginx and `/api` proxied to FastAPI. It is not a hospital/EHR/PHI deployment.
 - `.github/workflows/ship.yml` runs `python scripts/ship.py` on PRs and checks generated OpenAPI frontend types for drift.
 - Demo authentication is intended for development only and is disabled when `ENVIRONMENT=production` unless `ALLOW_DEMO_AUTH=true`.
+- Strict deployment is intentionally blocked because no non-demo identity provider is implemented yet. The current deployment profile is local or controlled-demo only, even when container and environment checks pass.
+- The evidence-based cross-domain critique and prioritized roadmap are in `docs/comprehensive_engineering_critique.md`; its ratings cover engineering credibility only, not clinical readiness.
 
 ## External-author eval readiness
 - External-author RAG and adversarial templates are prepared, but external-author evaluation has not yet been completed.
@@ -272,7 +277,7 @@ Details: [docs/synthetic_data.md](docs/synthetic_data.md), [DATA_CARD.md](DATA_C
 - Dataset preparation is fail-closed and emits schema/privacy rejections, duplicate diagnostics, source hashes, deterministic train/development/internal-frozen splits, and exact-text contamination evidence.
 - The QLoRA plan is a dry run only. No base revision is pinned, no weights are loaded, and no adapter has been trained.
 - Baseline and candidate generations must cover at least 50 paired cases with complete IDs, zero unsafe leakage, full claim-boundary compliance, and no aggregate or per-behavior safety regression.
-- The current five-case internal frozen split is a tripwire, not a powered comparison; meeting the two-point lift threshold is not statistical proof.
+- The current 63-case internally authored frozen split is a tripwire and reference set, not independent evidence or a powered adapter comparison; meeting the two-point lift threshold would not be statistical proof by itself.
 - Promotion remains `HOLD`; even a future `PROMOTE` verdict means offline/shadow testing only, never patient-facing or clinical use.
 
 Run `python scripts/run_finetune_scaffold.py`. Contract: [docs/finetuning_boundaries.md](docs/finetuning_boundaries.md).
@@ -665,11 +670,11 @@ Role is inferred from credentials — no manual role selection after login.
 The latest pass adds controls and measurements without changing the project's
 clinical boundary:
 
-- Frozen internal adversarial holdout v6 was hashed before the latest
-  classifier changes and evaluated exactly once afterward. It scored `0.5185`
-  with unsafe leakage `0.5606` and over-refusal `0.1333`. This is a severe
-  negative generalization result, remains internally authored, and is locked
-  against tuning in this pass.
+- Frozen internal adversarial v6 scored `0.5185` with unsafe leakage `0.5606`
+  and over-refusal `0.1333`. Its failure taxonomy subsequently informed
+  generalized classifier work, so a separate retrospective now labels v6
+  `tuning_informed_not_held_out`. The frozen file was not rerun or overwritten,
+  but it is no longer presented as independent post-tuning evidence.
 - Unsafe-intent detection now combines deterministic patterns, prototype
   similarity, and generalized action/object concept rules. A separate
   development mutation set is marked `was_used_for_tuning: true` and is never
@@ -703,6 +708,22 @@ clinical boundary:
 - A compact release decision surface separates hard blockers from warnings so
   the full artifact registry cannot visually dilute weak generalization,
   retrieval, latency, XAI, or dependency evidence.
+- A separate 66-case compositional safety-development bank now passes internally
+  across indirect, hypothetical, emotional, Taglish, and safe-negative cases.
+  It is tuning-used evidence and does not prove external generalization.
+- The behavior-only fine-tuning corpus now has 417 accepted examples with
+  291/63/63 train, development, and internal-frozen splits. No adapter has been
+  trained, no model revision is pinned, and the promotion decision remains HOLD.
+- Duke Breast Cancer MRI / TCIA tabular data is evaluated as a checksum-locked,
+  isolated pCR engineering stress task. MRI feature addition hurt the tested
+  clinical baseline, so the negative result is retained and no NLCare model is
+  promoted.
+- A feature-flagged OIDC verifier now enforces signed RS256 JWTs, issuer,
+  audience, timestamps, role mapping, and patient identity claims. Browser PKCE
+  and provider logout are not yet demonstrated.
+- Production and recovery Compose manifests validate, while the full isolated
+  Postgres/Redis migration, backup, restore, and persistence smoke remains
+  `blocked_environment` because the local Docker daemon was not healthy.
 
 These are synthetic/internal engineering controls. NLCare remains unreviewed,
 not clinically validated, and not production healthcare ready.

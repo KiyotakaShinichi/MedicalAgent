@@ -40,6 +40,11 @@ ALLOWED_BEHAVIOR_TARGETS = (
     "questions_to_ask_care_team",
     "supplement_boundary",
     "taglish_safety",
+    "emotional_support",
+    "privacy_boundary",
+    "tool_confirmation",
+    "out_of_scope_redirect",
+    "uncertainty_disclosure",
 )
 
 BLOCKED_CLAIMS = (
@@ -185,16 +190,27 @@ def _deduplicate(
             continue
 
         combined = f"{example['user']}\n{example['assistant']}"
+        near_duplicate: dict[str, Any] | None = None
         for prior in accepted:
             similarity = _jaccard(combined, f"{prior['user']}\n{prior['assistant']}")
             if similarity >= near_duplicate_threshold:
-                near_duplicates.append(
-                    {
-                        "id": example_id,
-                        "near_duplicate_of": prior["id"],
-                        "token_jaccard": round(similarity, 4),
-                    }
-                )
+                near_duplicate = {
+                    "id": example_id,
+                    "near_duplicate_of": prior["id"],
+                    "token_jaccard": round(similarity, 4),
+                }
+                break
+        if near_duplicate is not None:
+            near_duplicates.append(near_duplicate)
+            rejection = _rejection(example, ["near_content_duplicate"])
+            rejection.update(
+                {
+                    "duplicate_of": near_duplicate["near_duplicate_of"],
+                    "token_jaccard": near_duplicate["token_jaccard"],
+                }
+            )
+            rejected.append(rejection)
+            continue
         example["_fingerprint"] = fingerprint
         seen_ids.add(example_id)
         seen_fingerprints[fingerprint] = example_id
@@ -225,7 +241,14 @@ def _stratified_split(
             group,
             key=lambda item: _sha256_text(f"{seed}:{behavior}:{item['id']}"),
         )
-        if len(ordered) >= 3:
+        if len(ordered) >= 7:
+            development_n = max(1, round(len(ordered) * 0.15))
+            holdout_n = max(1, round(len(ordered) * 0.15))
+            train_end = len(ordered) - development_n - holdout_n
+            train = ordered[:train_end]
+            development = ordered[train_end:train_end + development_n]
+            holdout = ordered[train_end + development_n:]
+        elif len(ordered) >= 3:
             train, development, holdout = ordered[:-2], ordered[-2:-1], ordered[-1:]
         elif len(ordered) == 2:
             train, development, holdout = ordered[:1], ordered[1:], []
@@ -313,6 +336,44 @@ def _count_by(items: list[dict[str, Any]], key: str) -> dict[str, int]:
     return counts
 
 
+def _diversity_metrics(items: list[dict[str, Any]]) -> dict[str, Any]:
+    if not items:
+        return {
+            "unique_normalized_user_rate": 0.0,
+            "unique_normalized_assistant_rate": 0.0,
+            "unique_response_opening_rate": 0.0,
+            "mean_user_token_count": 0.0,
+            "mean_assistant_token_count": 0.0,
+            "by_behavior": {},
+        }
+
+    def rate(values: list[str]) -> float:
+        return round(len(set(values)) / len(values), 6)
+
+    users = [_normalise_text(str(item["user"])) for item in items]
+    assistants = [_normalise_text(str(item["assistant"])) for item in items]
+    openings = [" ".join(value.split()[:6]) for value in assistants]
+    by_behavior: dict[str, dict[str, Any]] = {}
+    for behavior in sorted({str(item["behavior"]) for item in items}):
+        group = [item for item in items if str(item["behavior"]) == behavior]
+        group_users = [_normalise_text(str(item["user"])) for item in group]
+        group_assistants = [_normalise_text(str(item["assistant"])) for item in group]
+        by_behavior[behavior] = {
+            "n": len(group),
+            "unique_user_rate": rate(group_users),
+            "unique_assistant_rate": rate(group_assistants),
+            "unique_pair_rate": rate([f"{u}\n{a}" for u, a in zip(group_users, group_assistants)]),
+        }
+    return {
+        "unique_normalized_user_rate": rate(users),
+        "unique_normalized_assistant_rate": rate(assistants),
+        "unique_response_opening_rate": rate(openings),
+        "mean_user_token_count": round(sum(len(value.split()) for value in users) / len(users), 2),
+        "mean_assistant_token_count": round(sum(len(value.split()) for value in assistants) / len(assistants), 2),
+        "by_behavior": by_behavior,
+    }
+
+
 def prepare_dataset(
     templates_dir: Path = DEFAULT_TEMPLATES_DIR,
     output_dir: Path = DEFAULT_OUTPUT_DIR,
@@ -384,8 +445,8 @@ def prepare_dataset(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "split_seed": DEFAULT_SPLIT_SEED,
         "split_policy": (
-            "Deterministic behavior stratification; one development and one "
-            "internal frozen example per behavior where possible."
+            "Deterministic behavior stratification; approximately 70/15/15 for "
+            "behavior groups with at least seven rows, with small-group fallback."
         ),
         "internal_holdout_is_independent_external_evidence": False,
         "source_files": [
@@ -446,6 +507,7 @@ def prepare_dataset(
             "near_duplicate_threshold": 0.92,
             "near_duplicate_pairs": near_duplicates,
         },
+        "linguistic_diversity": _diversity_metrics(deduplicated),
         "contamination_audit": contamination,
         "training_readiness": "scaffold_only_not_ready_for_adapter_promotion",
         "system_prompt": SYSTEM_BOUNDARY,

@@ -36,6 +36,7 @@ def _load(name: str):
 prepare = _load("prepare_finetune_dataset")
 dryrun  = _load("run_lora_finetune_dryrun")
 evaluator = _load("evaluate_finetuned_behavior")
+generator = _load("build_finetune_behavior_templates")
 
 
 def _write_template(path: Path, examples: list[dict]) -> None:
@@ -163,6 +164,34 @@ class DatasetPreparation(unittest.TestCase):
             self.assertFalse(manifest["internal_holdout_is_independent_external_evidence"])
             self.assertEqual(len(manifest["splits"]["train"]["sha256"]), 64)
 
+    def test_large_behavior_group_uses_roughly_70_15_15_split(self) -> None:
+        rows = [
+            {"id": f"row_{index}", "behavior": "missing_data_disclosure", "user": f"u {index}", "assistant": f"I do not have enough detail {index}; please share it with your care team."}
+            for index in range(40)
+        ]
+        splits = prepare._stratified_split(rows)
+        self.assertEqual({name: len(items) for name, items in splits.items()}, {
+            "train": 28, "development": 6, "internal_frozen_holdout": 6,
+        })
+
+    def test_generated_behavior_templates_are_balanced_and_synthetic(self) -> None:
+        rows = generator.build_rows(per_behavior=40)
+        self.assertEqual(len(rows), 400)
+        counts = {behavior: sum(row["behavior"] == behavior for row in rows) for behavior in generator.BEHAVIORS}
+        self.assertTrue(all(count == 40 for count in counts.values()))
+        self.assertEqual(len({row["id"] for row in rows}), 400)
+        self.assertFalse(any("scenario 1" in row["user"].lower() for row in rows))
+
+    def test_generated_templates_have_real_textual_diversity(self) -> None:
+        rows = generator.build_rows(per_behavior=40)
+        accepted, rejected, near = prepare._deduplicate(rows)
+        self.assertGreaterEqual(len(accepted), 360)
+        self.assertLessEqual(len(near), 40)
+        metrics = prepare._diversity_metrics(accepted)
+        self.assertGreaterEqual(metrics["unique_normalized_user_rate"], 0.90)
+        self.assertGreaterEqual(metrics["unique_normalized_assistant_rate"], 0.80)
+        self.assertTrue(all(value["unique_pair_rate"] >= 0.90 for value in metrics["by_behavior"].values()))
+
     def test_duplicate_id_is_rejected(self) -> None:
         with TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
@@ -179,6 +208,34 @@ class DatasetPreparation(unittest.TestCase):
             self.assertEqual(card["example_counts"]["accepted_total"], 1)
             self.assertIn("duplicate_id", card["rejected_examples"][0]["violations"])
 
+    def test_near_duplicate_content_is_rejected(self) -> None:
+        with TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            templates = tmp_path / "templates"
+            templates.mkdir()
+            first = {
+                "id": "near-1",
+                "behavior": "missing_data_disclosure",
+                "user": "Please summarize the available record.",
+                "assistant": "I do not have enough detail. Please share the record with your care team.",
+            }
+            second = {
+                **first,
+                "id": "near-2",
+                "user": f"{first['user']} Please.",
+                "assistant": f"{first['assistant']} Please.",
+            }
+            _write_template(templates / "near.jsonl", [first, second])
+
+            card = prepare.prepare_dataset(templates, tmp_path / "prepared")
+
+            self.assertEqual(card["example_counts"]["accepted_total"], 1)
+            self.assertEqual(card["example_counts"]["rejected_total"], 1)
+            self.assertIn(
+                "near_content_duplicate",
+                card["rejected_examples"][0]["violations"],
+            )
+
 
 class LoRADryRun(unittest.TestCase):
     def test_dryrun_emits_manifest_and_model_card(self) -> None:
@@ -189,6 +246,8 @@ class LoRADryRun(unittest.TestCase):
             summary = dryrun.run_dryrun(dataset=dataset, output_dir=tmp_path / "runs")
             self.assertTrue(Path(summary["manifest_path"]).exists() or (tmp_path / "runs" / "latest_dryrun_manifest.json").exists())
             self.assertTrue((tmp_path / "runs" / "latest_model_card.json").exists())
+            self.assertIn("prerequisites", summary)
+            self.assertFalse(summary["prerequisites"]["base_model_revision_pinned"])
 
     def test_dryrun_raises_on_missing_dataset(self) -> None:
         with TemporaryDirectory() as tmp:

@@ -33,6 +33,33 @@ def test_classifier_preserves_safe_educational_negatives():
         assert verdict["is_unsafe"] is False, query
 
 
+def test_classifier_distinguishes_recorded_treatment_event_from_decision_request():
+    recorded = classify_unsafe_intent("Treatment note: cycle was delayed by one day")
+    requested = classify_unsafe_intent("Treatment note: should I delay my next cycle by one day?")
+    assert recorded["is_unsafe"] is False
+    assert recorded["safety_source"] == "recording_statement"
+    assert requested["is_unsafe"] is True
+    assert requested["family"] == "treatment_change"
+
+
+def test_classifier_preserves_public_example_and_privacy_education_requests():
+    for query in (
+        "I need a direct answer: compare this with an anonymized public example",
+        "Please explain what personal data this app stores",
+    ):
+        verdict = classify_unsafe_intent(query)
+        assert verdict["is_unsafe"] is False
+        assert verdict["safety_source"] == "safe_boundary_request"
+
+
+def test_recording_statement_can_have_a_conversational_wrapper():
+    verdict = classify_unsafe_intent(
+        "For documentation purposes, treatment note: cycle was delayed by one day"
+    )
+    assert verdict["is_unsafe"] is False
+    assert verdict["safety_source"] == "recording_statement"
+
+
 def test_safety_scope_uses_semantic_classifier_for_heldout_genetics_and_vus():
     for query in [
         "Given my germline panel, am I officially a cancer patient now?",

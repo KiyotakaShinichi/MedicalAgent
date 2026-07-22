@@ -136,6 +136,12 @@ AUTOMATION_CENTER_VISIBILITY_REQUIREMENTS: tuple[dict[str, Any], ...] = (
         "must_show": ["not_emergency_service", "not_clinician_acknowledgement", "test_recipient_only"],
         "why": "Automation must not make the product look clinically monitored or production-ready.",
     },
+    {
+        "id": "unacknowledged_age_visibility",
+        "label": "Unacknowledged queue age",
+        "must_show": ["oldest_open_age", "open_older_than_attention_threshold", "not_a_clinical_sla"],
+        "why": "Operators need stale-queue visibility while the UI must state that the threshold is not a clinical response commitment.",
+    },
 )
 
 

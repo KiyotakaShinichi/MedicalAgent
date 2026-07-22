@@ -1,5 +1,15 @@
 # NLCare behavior fine-tuning contract
 
+## Execution readiness floors
+
+The behavior-only experiment remains blocked until it has at least 100
+governed training examples, 25 development examples, and 50 internal frozen
+comparison examples; pinned model and tokenizer revisions; completed license
+review; paired baseline and candidate generations; and a non-HOLD candidate
+decision. Meeting these controls would allow only an offline shadow candidate.
+It would not create independent evidence, clinical validation, or
+patient-facing authority.
+
 NLCare fine-tuning is limited to synthetic behavior and response-format
 experiments. It must not inject medical knowledge, create new clinical claims,
 or weaken source-governed RAG, deterministic safety, post-generation
@@ -27,8 +37,8 @@ genetic counselor, or pharmacist are prohibited.
 1. Validates required fields and rejects possible direct identifiers.
 2. Applies the medical claim boundary fail-closed.
 3. Enforces the behavior allowlist.
-4. Rejects duplicate IDs and exact-content duplicates.
-5. Reports high-overlap near duplicates.
+4. Rejects duplicate IDs, exact-content duplicates, and high-overlap near
+   duplicates.
 6. Creates deterministic behavior-stratified train, development, and internal
    frozen holdout splits.
 7. Hashes every template and output split.
@@ -79,8 +89,9 @@ results, and case-level failures.
   patient-facing use.
 
 The two-point threshold is an engineering decision rule, not statistical proof.
-The current five-case internal frozen split is a tripwire and reference audit,
-not a sufficiently powered adapter comparison.
+The current 63-case internally authored frozen split is a tripwire and reference
+audit, not an independent or sufficiently powered adapter comparison. It has
+not been used to compare a trained adapter because no adapter exists.
 
 No tuned adapter may bypass the live safety stack or replace RAG as the factual
 layer. Fine-tuning changes bounded behavior and formatting only.
@@ -100,3 +111,16 @@ python scripts/run_finetune_scaffold.py
 This is a synthetic engineering scaffold. It does not establish clinical
 validation, real-world safety, patient benefit, clinician approval, or
 production healthcare readiness.
+The current internal behavior corpus contains 417 accepted synthetic examples
+across ten allowed behaviors. It is split deterministically into 291 training,
+63 development, and 63 internal frozen cases. The generator varies context,
+framing, tone, English/Taglish phrasing, and response shape instead of changing
+only a scenario number. The dataset card reports 100% unique normalized user
+prompts, 97.8% unique normalized reference responses, exact-text contamination
+status, and per-behavior diversity. Ten candidate rows were rejected by the
+medical boundary rather than silently admitted.
+
+Those counts improve the behavior-data engineering surface, but they do not
+evaluate a model. Training and promotion remain blocked because no
+license-reviewed base model/tokenizer revision is pinned, no adapter exists,
+baseline/candidate generations are absent, and no external review is complete.

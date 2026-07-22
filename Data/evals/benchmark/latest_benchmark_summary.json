@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "e11d39f0f8371ea595ac87d2cb608aef37696ffc",
+    "git_commit": "0a541c6d7adcdc32288caf48034154a7a786b228",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -15,16 +15,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2750051:1784272258:8bb4c5e82263",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-07-21T15:52:59.117065+00:00"
+    "generated_at": "2026-07-22T06:47:34.007172+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-07-21T15:52:59.117065+00:00",
+    "generated_at": "2026-07-22T06:47:34.007172+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-07-22T15:52:59.117065+00:00",
+    "expires_at": "2026-07-23T06:47:34.007172+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-07-21T15:53:00.565616+00:00",
+  "generated_at": "2026-07-22T06:47:35.692268+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -829,6 +829,46 @@
       "claim_boundary": "External bridge artifacts align public benchmark fields to the OncoTrack schema for engineering readiness only. BreastDCEDL/I-SPY is an imaging/pCR benchmark and is not a full OncoTrack longitudinal treatment, CBC, symptom, medication, tumor-marker, or clinical-validation dataset."
     },
     {
+      "id": "ispy2_tcia_external_stress",
+      "title": "TCIA I-SPY2 separate-task external stress benchmark",
+      "tier": "supporting",
+      "status": "acceptable_external_engineering_stress",
+      "source_status": "acceptable_external_engineering_stress",
+      "freshness": "fresh",
+      "generated_at": "2026-07-22T01:26:06.224066+00:00",
+      "source_path": "Data/evals/models/latest_ispy2_tcia_external_stress.json",
+      "metrics": {
+        "status": "acceptable_external_engineering_stress",
+        "joined_row_count": 384,
+        "nlcare_target_match": false,
+        "used_for_nlcare_training": false,
+        "patient_facing_allowed": false,
+        "promotion_allowed": false
+      },
+      "limitations": [],
+      "claim_boundary": "Public-data engineering stress evidence only. This is not clinical validation, not an NLCare model promotion result, and not evidence of patient benefit or safety."
+    },
+    {
+      "id": "duke_tcia_external_stress",
+      "title": "Duke/TCIA separate-task external stress benchmark",
+      "tier": "supporting",
+      "status": "acceptable_external_engineering_stress",
+      "source_status": "acceptable_external_engineering_stress",
+      "freshness": "fresh",
+      "generated_at": "2026-07-22T05:53:31.422023+00:00",
+      "source_path": "Data/evals/models/latest_duke_tcia_external_stress.json",
+      "metrics": {
+        "status": "acceptable_external_engineering_stress",
+        "joined_labeled_row_count": 312,
+        "nlcare_target_match": false,
+        "used_for_nlcare_training": false,
+        "patient_facing_allowed": false,
+        "promotion_allowed": false
+      },
+      "limitations": [],
+      "claim_boundary": "Public-data engineering stress evidence only. This is not clinical validation, not an NLCare model promotion result, and not evidence of patient benefit or safety."
+    },
+    {
       "id": "external_failure_case_gallery",
       "title": "External benchmark failure-case gallery",
       "tier": "supporting",
@@ -976,10 +1016,10 @@
       "id": "automation_reliability_dossier",
       "title": "Automation reliability dossier",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-17T08:39:49.700531+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-22T00:31:03.740906+00:00",
       "source_path": "Data/evals/ops/latest_automation_reliability_dossier.json",
       "metrics": {
         "status": "strong",
@@ -988,7 +1028,7 @@
         "failed_required_count": 0,
         "external_delivery_enabled_by_default": false,
         "real_emergency_coverage_claim": false,
-        "automation_center_requirement_count": 5
+        "automation_center_requirement_count": 6
       },
       "limitations": [],
       "claim_boundary": "Automation reliability evidence is engineering evidence only. It does not prove emergency coverage, clinician receipt, patient benefit, clinical validation, compliance, or healthcare production readiness. All external notification channels remain redacted, test-recipient-only unless an operator deliberately configures them under a separate security and clinical-review process."
@@ -1338,12 +1378,15 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-21T15:50:56.852015+00:00",
+      "generated_at": "2026-07-22T06:27:39.069835+00:00",
       "source_path": "Data/evals/models/latest_finetune_governance.json",
       "metrics": {
         "status": "needs_attention",
         "model_trained": false,
-        "dataset_accepted": 27,
+        "readiness_state": "not_ready_for_training_or_promotion",
+        "training_ready": false,
+        "promotion_ready": false,
+        "dataset_accepted": 417,
         "contamination_status": "acceptable",
         "promotion_decision": "HOLD",
         "promotion_scope": "offline_shadow_only"
@@ -1355,10 +1398,10 @@
       "id": "mle_readiness",
       "title": "MLE readiness gate",
       "tier": "critical",
-      "status": "stale",
+      "status": "unideal",
       "source_status": "unideal",
-      "freshness": "stale",
-      "generated_at": "2026-07-18T10:26:14.347878+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-22T00:32:28.188168+00:00",
       "source_path": "Data/mle_monitoring/latest_mle_readiness.json",
       "metrics": {
         "hard_gate_status": "passed",
@@ -1687,22 +1730,22 @@
       "id": "live_rag_eval",
       "title": "Live-agent RAG benchmark",
       "tier": "critical",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-06T06:49:51.244865+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-22T04:13:27.466200+00:00",
       "source_path": "Data/evals/rag/latest_live_rag_eval.json",
       "metrics": {
         "status": "strong",
-        "pass_rate": 0.9524,
-        "claim_support_rate": 0.75,
+        "pass_rate": 0.9048,
+        "claim_support_rate": 0.8333,
         "citation_precision": 1.0,
         "source_tier_correctness": 1.0,
         "refusal_correctness": 0.9524,
         "escalation_correctness": 1.0,
         "unsafe_answer_rate": 0.0,
         "taglish_safety_parity_rate": 1.0,
-        "latency_p50_ms": 4840.9
+        "latency_p50_ms": 3810.25
       },
       "limitations": [],
       "claim_boundary": "Live-agent RAG evaluation is an engineering regression artifact. It exercises the real local pipeline but does not establish clinical medical correctness or patient safety in real care."
@@ -1976,7 +2019,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-07-21T15:45:19.438715+00:00",
+      "generated_at": "2026-07-22T06:46:00.472908+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -1993,7 +2036,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-07-21T15:45:18.377150+00:00",
+      "generated_at": "2026-07-22T06:45:54.908201+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -2010,7 +2053,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-07-21T15:45:19.512498+00:00",
+      "generated_at": "2026-07-22T06:46:01.334760+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2215,6 +2258,45 @@
       },
       "limitations": [],
       "claim_boundary": "PoC operational health snapshot only; no production SLO/SLA or compliance claim."
+    },
+    {
+      "id": "deployment_recovery_drill",
+      "title": "Local synthetic backup and restore drill",
+      "tier": "supporting",
+      "status": "strong_local_only",
+      "source_status": "strong_local_only",
+      "freshness": "fresh",
+      "generated_at": "2026-07-22T01:36:04.334571+00:00",
+      "source_path": "Data/evals/ops/latest_deployment_recovery_drill.json",
+      "metrics": {
+        "status": "strong_local_only",
+        "passed": true,
+        "content_hash_match": true,
+        "strict_profile_validated": false,
+        "postgres_restore_tested": false,
+        "multi_instance_restore_tested": false,
+        "healthcare_production_ready": false
+      },
+      "limitations": [],
+      "claim_boundary": "This local synthetic SQLite drill proves only that the repository's backup/restore procedure works in one process. It is not production disaster-recovery evidence or clinical readiness."
+    },
+    {
+      "id": "container_recovery_smoke",
+      "title": "Disposable Postgres/Redis migration and recovery smoke",
+      "tier": "supporting",
+      "status": "blocked_environment",
+      "source_status": "blocked_environment",
+      "freshness": "fresh",
+      "generated_at": "2026-07-22T06:19:33.332567+00:00",
+      "source_path": "Data/evals/ops/latest_container_recovery_smoke.json",
+      "metrics": {
+        "status": "blocked_environment",
+        "completed": false,
+        "docker_available": false,
+        "healthcare_production_ready": false
+      },
+      "limitations": [],
+      "claim_boundary": "Local infrastructure smoke only; not production or healthcare readiness evidence."
     },
     {
       "id": "trace_diagnostics_coverage",
@@ -2858,12 +2940,6 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "automation_reliability_dossier",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "durable_automation_worker",
       "severity": "medium",
       "status": "stale",
@@ -2985,9 +3061,9 @@
     },
     {
       "benchmark_id": "mle_readiness",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+      "severity": "high",
+      "status": "unideal",
+      "message": "MLE readiness has one or more unideal categories; inspect category_statuses before promotion."
     },
     {
       "benchmark_id": "mle_readiness_realism_candidate",
@@ -3081,12 +3157,6 @@
     },
     {
       "benchmark_id": "rag_intent_aware_eval",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "live_rag_eval",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."

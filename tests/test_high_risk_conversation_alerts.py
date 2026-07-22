@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -231,6 +231,7 @@ def test_dead_letter_status_and_manual_requeue_remain_nonclinical(tmp_path):
         assert before["dead_lettered"] == 1
         assert before["delivery_receipt_is_human_acknowledgement"] is False
         assert before["monitored_emergency_service"] is False
+        assert before["attention_threshold_is_clinical_sla"] is False
 
         requeued = requeue_dead_letter_alert(db, alert_id=alert.id, requested_by_role="admin")
         db.commit()
@@ -242,5 +243,42 @@ def test_dead_letter_status_and_manual_requeue_remain_nonclinical(tmp_path):
             HighRiskAlertDeliveryAttempt.status == "manual_requeue_requested",
         ).one()
         assert audit.error_code == "requested_by_admin"
+    finally:
+        db.close()
+
+
+def test_automation_status_surfaces_age_without_claiming_a_clinical_sla(tmp_path):
+    db = _session(tmp_path)
+    try:
+        db.add(Patient(id="PA", name="Synthetic Patient", diagnosis="doctor-confirmed"))
+        db.flush()
+        chat = ChatMessage(patient_id="PA", role="user", message="synthetic distress", intent="patient_support")
+        db.add(chat)
+        db.flush()
+        now = datetime.now(timezone.utc)
+        db.add(HighRiskConversationAlert(
+            patient_id="PA",
+            source_chat_message_id=chat.id,
+            idempotency_key="age-visibility-test",
+            category="crisis_language",
+            severity="critical_review",
+            trigger_summary="Synthetic review item.",
+            status="queued",
+            notification_status="disabled",
+            delivery_receipt_status="not_received",
+            created_at=now - timedelta(minutes=20),
+        ))
+        db.flush()
+
+        report = build_alert_automation_status(
+            db,
+            now=now,
+            operator_attention_after_seconds=900,
+        )
+
+        assert report["open_older_than_attention_threshold"] == 1
+        assert report["oldest_open_age_seconds"] >= 1200
+        assert report["attention_threshold_is_clinical_sla"] is False
+        assert "not a clinical response-time commitment" in report["claim_boundary"]
     finally:
         db.close()

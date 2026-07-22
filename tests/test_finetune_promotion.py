@@ -10,6 +10,7 @@ from backend.services.finetune_promotion import build_promotion_decision
 from scripts.evaluate_finetuned_behavior import evaluate_dataset
 from scripts.run_finetune_promotion_gate import _validate_internal_holdout
 from experiments.qlora_behavior.phi3_qlora_colab import preflight
+from scripts.run_finetune_scaffold import build_execution_readiness
 
 
 def _report(**overrides):
@@ -232,6 +233,47 @@ class QLoRAPreflightTests(unittest.TestCase):
         self.assertEqual(report["status"], "ready_for_explicit_experimental_execution")
         self.assertFalse(report["checks"]["frozen_holdout_used_for_training_or_selection"])
         self.assertFalse(report["model_trained"])
+
+
+class FineTuneExecutionReadinessTests(unittest.TestCase):
+    def test_small_unpinned_scaffold_is_not_training_or_promotion_ready(self) -> None:
+        card = {
+            "example_counts": {"by_split": {"train": 17, "development": 5, "internal_frozen_holdout": 5}},
+            "contamination_audit": {"status": "acceptable", "exact_overlap_count": 0},
+        }
+        dryrun = {"prerequisites": {
+            "base_model_revision_pinned": False,
+            "tokenizer_revision_pinned": False,
+            "license_review_complete": False,
+            "baseline_generations_complete": False,
+            "candidate_generations_complete": False,
+        }}
+        report = build_execution_readiness(card, dryrun, {"decision": "HOLD"})
+
+        self.assertEqual(report["state"], "not_ready_for_training_or_promotion")
+        self.assertFalse(report["training_ready"])
+        self.assertFalse(report["promotion_ready"])
+        self.assertIn("training_case_floor", report["failed_checks"])
+        self.assertIn("promotion_gate_not_hold", report["failed_checks"])
+
+    def test_complete_internal_controls_only_enable_offline_shadow_candidate(self) -> None:
+        card = {
+            "example_counts": {"by_split": {"train": 100, "development": 25, "internal_frozen_holdout": 50}},
+            "contamination_audit": {"status": "acceptable", "exact_overlap_count": 0},
+        }
+        dryrun = {"prerequisites": {
+            "base_model_revision_pinned": True,
+            "tokenizer_revision_pinned": True,
+            "license_review_complete": True,
+            "baseline_generations_complete": True,
+            "candidate_generations_complete": True,
+        }}
+        report = build_execution_readiness(card, dryrun, {"decision": "PROMOTE"})
+
+        self.assertEqual(report["state"], "ready_for_offline_shadow_candidate")
+        self.assertTrue(report["training_ready"])
+        self.assertTrue(report["promotion_ready"])
+        self.assertFalse(report["independent_external_evidence"])
 
 
 if __name__ == "__main__":

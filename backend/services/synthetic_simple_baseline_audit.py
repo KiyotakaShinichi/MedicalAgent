@@ -13,6 +13,7 @@ from typing import Any
 DEFAULT_ROWS = Path("Data/evals/models/latest_row_level_prediction_export.csv")
 DEFAULT_PAIRED = Path("Data/evals/models/latest_paired_model_comparison.json")
 DEFAULT_OUTPUT = Path("Data/evals/models/latest_synthetic_simple_baseline_audit.json")
+COVERAGE_LEVELS = (1.0, 0.9, 0.75, 0.5)
 
 
 def build_simple_baseline_audit(
@@ -39,9 +40,15 @@ def build_simple_baseline_audit(
         for name, probabilities in classifiers.items()
         if len(probabilities) == len(labels)
     }
+    classification_selective_risk = {
+        name: _classification_selective_risk(labels, probabilities)
+        for name, probabilities in classifiers.items()
+        if len(probabilities) == len(labels)
+    }
 
     actual_scores = _column(rows, "actual_response_score_percent")
     regression: dict[str, Any] = {}
+    regression_disagreement_abstention: dict[str, Any] = {}
     if len(actual_scores) == len(labels):
         posthoc_mean = mean(actual_scores)
         regressors = {
@@ -55,6 +62,12 @@ def build_simple_baseline_audit(
             for name, predictions in regressors.items()
             if len(predictions) == len(actual_scores)
         }
+        ridge = regressors.get("ridge_regression", [])
+        forest = regressors.get("random_forest_regressor_champion", [])
+        if len(ridge) == len(actual_scores) and len(forest) == len(actual_scores):
+            regression_disagreement_abstention = _regression_disagreement_curve(
+                actual_scores, ridge, forest,
+            )
 
     paired = _read_json(Path(paired_path))
     logistic_comparison = next(
@@ -81,7 +94,9 @@ def build_simple_baseline_audit(
         "data_scope": "internal synthetic held-out rows",
         "classification_prevalence": round(prevalence, 6),
         "classification": classification,
+        "classification_selective_risk": classification_selective_risk,
         "regression": regression,
+        "regression_disagreement_abstention": regression_disagreement_abstention,
         "paired_champion_vs_logistic": {
             "method": logistic_comparison.get("method"),
             "accuracy_delta": champion_accuracy_delta,
@@ -96,6 +111,10 @@ def build_simple_baseline_audit(
         "posthoc_baseline_warning": (
             "Prevalence, majority, and mean baselines use the evaluation labels and are descriptive lower-bound checks, "
             "not deployable fitted models."
+        ),
+        "uncertainty_boundary": (
+            "Classification confidence and regression model disagreement are selective-risk engineering proxies. "
+            "They are not calibrated clinical uncertainty or evidence that abstention is safe for patient care."
         ),
         "promotion_allowed": False,
         "synthetic_only": True,
@@ -137,6 +156,70 @@ def _regression_metrics(actual: list[float], predicted: list[float]) -> dict[str
     return {
         "mae": round(mean(abs(error) for error in errors), 6),
         "rmse": round(mean(error * error for error in errors) ** 0.5, 6),
+    }
+
+
+def _classification_selective_risk(
+    labels: list[int], probabilities: list[float]
+) -> dict[str, Any]:
+    ranked = sorted(
+        zip(labels, probabilities),
+        key=lambda item: abs(float(item[1]) - 0.5),
+        reverse=True,
+    )
+    points = []
+    for coverage in COVERAGE_LEVELS:
+        keep = max(1, min(len(ranked), int(round(len(ranked) * coverage))))
+        selected = ranked[:keep]
+        selected_labels = [int(item[0]) for item in selected]
+        selected_probabilities = [float(item[1]) for item in selected]
+        metrics = _binary_metrics(selected_labels, selected_probabilities)
+        points.append({
+            "requested_coverage": coverage,
+            "observed_coverage": round(keep / len(ranked), 6),
+            "n_kept": keep,
+            "accuracy": metrics["accuracy"],
+            "selective_risk": round(1.0 - metrics["accuracy"], 6),
+            "brier_score": metrics["brier_score"],
+            "auroc": metrics["auroc"],
+        })
+    return {
+        "ranking_signal": "absolute_distance_from_probability_0.5",
+        "points": points,
+        "mean_selective_risk_proxy": round(mean(point["selective_risk"] for point in points), 6),
+    }
+
+
+def _regression_disagreement_curve(
+    actual: list[float], ridge: list[float], forest: list[float]
+) -> dict[str, Any]:
+    ranked = sorted(
+        zip(actual, ridge, forest),
+        key=lambda item: abs(float(item[1]) - float(item[2])),
+    )
+    points = []
+    for coverage in COVERAGE_LEVELS:
+        keep = max(1, min(len(ranked), int(round(len(ranked) * coverage))))
+        selected = ranked[:keep]
+        metrics = _regression_metrics(
+            [float(item[0]) for item in selected],
+            [float(item[2]) for item in selected],
+        )
+        points.append({
+            "requested_coverage": coverage,
+            "observed_coverage": round(keep / len(ranked), 6),
+            "n_kept": keep,
+            "random_forest_mae": metrics["mae"],
+            "random_forest_rmse": metrics["rmse"],
+            "max_kept_model_disagreement": round(
+                max(abs(float(item[1]) - float(item[2])) for item in selected), 6
+            ),
+        })
+    return {
+        "ranking_signal": "absolute_ridge_vs_random_forest_disagreement",
+        "calibrated_uncertainty": False,
+        "points": points,
+        "interpretation": "Lower-disagreement rows are retained first; this is a model-disagreement proxy only.",
     }
 
 

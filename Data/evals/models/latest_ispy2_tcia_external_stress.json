@@ -1,0 +1,548 @@
+{
+  "schema_version": "ispy2_tcia_external_stress_v1",
+  "generated_at": "2026-07-22T01:26:06.224066+00:00",
+  "status": "acceptable_external_engineering_stress",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "used_for_nlcare_training": false,
+  "patient_facing_allowed": false,
+  "promotion_allowed": false,
+  "source": {
+    "dataset": "I-SPY2 Imaging Cohort 1",
+    "publisher": "The Cancer Imaging Archive",
+    "official_collection_url": "https://www.cancerimagingarchive.net/collection/ispy2/",
+    "license": "CC BY 4.0 as stated by the official collection page",
+    "input_sha256": {
+      "ISPY2-Imaging-Cohort-1-Clinical-Data.xlsx": "c016962d2d1e23686746ad3e74a58caeb2d1362f6393fd6209c10723f87c3a53",
+      "Multi-feature-MRI-NACT-Data.xlsx": "f714c7784b1e57daa74d7cfb20db71cd432b4e4596b9b4eacdd5a76b7f8a58dc"
+    },
+    "clinical_row_count": 985,
+    "mri_row_count": 384,
+    "joined_row_count": 384,
+    "raw_subject_identifier_exported": false,
+    "treatment_arm_exported_or_used_as_feature": false
+  },
+  "canonical_export": {
+    "path": "Data/external_bridge/ispy2_tcia/canonical_ispy2_tabular.csv",
+    "sha256": "2539c4b6d0b44c766e5da8a142670b28837a1f0d3cdf286b18914f1bcc2844e9",
+    "row_count": 384,
+    "raw_subject_identifier_exported": false,
+    "treatment_arm_exported_or_used_as_feature": false
+  },
+  "task_boundary": {
+    "external_target": "pathologic complete response (pCR)",
+    "nlcare_target_match": false,
+    "reason": "pCR is not the same endpoint as NLCare's synthetic longitudinal monitoring heads.",
+    "allowed_reading": "separate public-data pipeline and model stress benchmark"
+  },
+  "protocol": {
+    "seeds": [
+      17,
+      29,
+      43,
+      71,
+      101
+    ],
+    "split": "repeated stratified 75/25 holdout",
+    "feature_sets": {
+      "clinical_only": [
+        "age_at_screening",
+        "hr",
+        "her2",
+        "mp"
+      ],
+      "baseline_mri": [
+        "age_at_screening",
+        "hr",
+        "her2",
+        "mp",
+        "volume_tum_blu_v10",
+        "sphericity_t0",
+        "ld_t0",
+        "bpe_5slice_mean_t0"
+      ],
+      "early_change": [
+        "age_at_screening",
+        "hr",
+        "her2",
+        "mp",
+        "volume_tum_blu_v10",
+        "sphericity_t0",
+        "ld_t0",
+        "bpe_5slice_mean_t0",
+        "ftv_pch_t0_t1",
+        "sphericity_pch_t0_t1",
+        "ld_pch_t0_t1",
+        "bpe_pch_t0_t1"
+      ]
+    },
+    "treatment_arm_used": false,
+    "models": [
+      "logistic_regression",
+      "gradient_boosting"
+    ]
+  },
+  "per_seed_results": [
+    {
+      "seed": 17,
+      "feature_set": "clinical_only",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.713235,
+      "average_precision": 0.495195,
+      "brier": 0.21507
+    },
+    {
+      "seed": 17,
+      "feature_set": "clinical_only",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.69958,
+      "average_precision": 0.5026,
+      "brier": 0.191825
+    },
+    {
+      "seed": 17,
+      "feature_set": "baseline_mri",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.696954,
+      "average_precision": 0.464881,
+      "brier": 0.223424
+    },
+    {
+      "seed": 17,
+      "feature_set": "baseline_mri",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.648372,
+      "average_precision": 0.426318,
+      "brier": 0.211316
+    },
+    {
+      "seed": 17,
+      "feature_set": "early_change",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.815651,
+      "average_precision": 0.616345,
+      "brier": 0.182888
+    },
+    {
+      "seed": 17,
+      "feature_set": "early_change",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.776786,
+      "average_precision": 0.557308,
+      "brier": 0.171488
+    },
+    {
+      "seed": 29,
+      "feature_set": "clinical_only",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.676996,
+      "average_precision": 0.421684,
+      "brier": 0.216333
+    },
+    {
+      "seed": 29,
+      "feature_set": "clinical_only",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.6875,
+      "average_precision": 0.429253,
+      "brier": 0.206533
+    },
+    {
+      "seed": 29,
+      "feature_set": "baseline_mri",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.753676,
+      "average_precision": 0.549167,
+      "brier": 0.207855
+    },
+    {
+      "seed": 29,
+      "feature_set": "baseline_mri",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.587185,
+      "average_precision": 0.42435,
+      "brier": 0.214713
+    },
+    {
+      "seed": 29,
+      "feature_set": "early_change",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.805672,
+      "average_precision": 0.637915,
+      "brier": 0.163265
+    },
+    {
+      "seed": 29,
+      "feature_set": "early_change",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.746324,
+      "average_precision": 0.570316,
+      "brier": 0.177263
+    },
+    {
+      "seed": 43,
+      "feature_set": "clinical_only",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.672532,
+      "average_precision": 0.434314,
+      "brier": 0.221214
+    },
+    {
+      "seed": 43,
+      "feature_set": "clinical_only",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.627101,
+      "average_precision": 0.38766,
+      "brier": 0.211499
+    },
+    {
+      "seed": 43,
+      "feature_set": "baseline_mri",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.685924,
+      "average_precision": 0.429232,
+      "brier": 0.215237
+    },
+    {
+      "seed": 43,
+      "feature_set": "baseline_mri",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.644433,
+      "average_precision": 0.363474,
+      "brier": 0.220919
+    },
+    {
+      "seed": 43,
+      "feature_set": "early_change",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.783613,
+      "average_precision": 0.582938,
+      "brier": 0.18713
+    },
+    {
+      "seed": 43,
+      "feature_set": "early_change",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.696954,
+      "average_precision": 0.493964,
+      "brier": 0.190515
+    },
+    {
+      "seed": 71,
+      "feature_set": "clinical_only",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.750525,
+      "average_precision": 0.534934,
+      "brier": 0.197465
+    },
+    {
+      "seed": 71,
+      "feature_set": "clinical_only",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.740021,
+      "average_precision": 0.469814,
+      "brier": 0.187033
+    },
+    {
+      "seed": 71,
+      "feature_set": "baseline_mri",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.730042,
+      "average_precision": 0.489066,
+      "brier": 0.199214
+    },
+    {
+      "seed": 71,
+      "feature_set": "baseline_mri",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.647059,
+      "average_precision": 0.438904,
+      "brier": 0.203939
+    },
+    {
+      "seed": 71,
+      "feature_set": "early_change",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.803046,
+      "average_precision": 0.653565,
+      "brier": 0.168558
+    },
+    {
+      "seed": 71,
+      "feature_set": "early_change",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.713761,
+      "average_precision": 0.584987,
+      "brier": 0.182024
+    },
+    {
+      "seed": 101,
+      "feature_set": "clinical_only",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.716124,
+      "average_precision": 0.492603,
+      "brier": 0.220565
+    },
+    {
+      "seed": 101,
+      "feature_set": "clinical_only",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.680672,
+      "average_precision": 0.410938,
+      "brier": 0.201845
+    },
+    {
+      "seed": 101,
+      "feature_set": "baseline_mri",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.768382,
+      "average_precision": 0.605821,
+      "brier": 0.216365
+    },
+    {
+      "seed": 101,
+      "feature_set": "baseline_mri",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.700893,
+      "average_precision": 0.441474,
+      "brier": 0.197306
+    },
+    {
+      "seed": 101,
+      "feature_set": "early_change",
+      "model": "logistic_regression",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.819853,
+      "average_precision": 0.670622,
+      "brier": 0.182221
+    },
+    {
+      "seed": 101,
+      "feature_set": "early_change",
+      "model": "gradient_boosting",
+      "n_train": 288,
+      "n_test": 96,
+      "auroc": 0.808824,
+      "average_precision": 0.679706,
+      "brier": 0.150402
+    }
+  ],
+  "aggregate_results": [
+    {
+      "feature_set": "baseline_mri",
+      "model": "gradient_boosting",
+      "n_seeds": 5,
+      "mean_auroc": 0.645588,
+      "min_auroc": 0.587185,
+      "max_auroc": 0.700893,
+      "mean_average_precision": 0.418904,
+      "min_average_precision": 0.363474,
+      "max_average_precision": 0.441474,
+      "mean_brier": 0.209639,
+      "min_brier": 0.197306,
+      "max_brier": 0.220919
+    },
+    {
+      "feature_set": "baseline_mri",
+      "model": "logistic_regression",
+      "n_seeds": 5,
+      "mean_auroc": 0.726996,
+      "min_auroc": 0.685924,
+      "max_auroc": 0.768382,
+      "mean_average_precision": 0.507633,
+      "min_average_precision": 0.429232,
+      "max_average_precision": 0.605821,
+      "mean_brier": 0.212419,
+      "min_brier": 0.199214,
+      "max_brier": 0.223424
+    },
+    {
+      "feature_set": "clinical_only",
+      "model": "gradient_boosting",
+      "n_seeds": 5,
+      "mean_auroc": 0.686975,
+      "min_auroc": 0.627101,
+      "max_auroc": 0.740021,
+      "mean_average_precision": 0.440053,
+      "min_average_precision": 0.38766,
+      "max_average_precision": 0.5026,
+      "mean_brier": 0.199747,
+      "min_brier": 0.187033,
+      "max_brier": 0.211499
+    },
+    {
+      "feature_set": "clinical_only",
+      "model": "logistic_regression",
+      "n_seeds": 5,
+      "mean_auroc": 0.705882,
+      "min_auroc": 0.672532,
+      "max_auroc": 0.750525,
+      "mean_average_precision": 0.475746,
+      "min_average_precision": 0.421684,
+      "max_average_precision": 0.534934,
+      "mean_brier": 0.214129,
+      "min_brier": 0.197465,
+      "max_brier": 0.221214
+    },
+    {
+      "feature_set": "early_change",
+      "model": "gradient_boosting",
+      "n_seeds": 5,
+      "mean_auroc": 0.74853,
+      "min_auroc": 0.696954,
+      "max_auroc": 0.808824,
+      "mean_average_precision": 0.577256,
+      "min_average_precision": 0.493964,
+      "max_average_precision": 0.679706,
+      "mean_brier": 0.174338,
+      "min_brier": 0.150402,
+      "max_brier": 0.190515
+    },
+    {
+      "feature_set": "early_change",
+      "model": "logistic_regression",
+      "n_seeds": 5,
+      "mean_auroc": 0.805567,
+      "min_auroc": 0.783613,
+      "max_auroc": 0.819853,
+      "mean_average_precision": 0.632277,
+      "min_average_precision": 0.582938,
+      "max_average_precision": 0.670622,
+      "mean_brier": 0.176812,
+      "min_brier": 0.163265,
+      "max_brier": 0.18713
+    }
+  ],
+  "paired_feature_deltas": [
+    {
+      "model": "logistic_regression",
+      "comparison": "early_change_minus_clinical_only",
+      "metric": "auroc",
+      "mean_delta": 0.099685,
+      "bootstrap_95_ci": [
+        0.074212,
+        0.119905
+      ],
+      "n_paired_seeds": 5,
+      "direction_note": "higher_is_better"
+    },
+    {
+      "model": "logistic_regression",
+      "comparison": "early_change_minus_clinical_only",
+      "metric": "average_precision",
+      "mean_delta": 0.156531,
+      "bootstrap_95_ci": [
+        0.125637,
+        0.189069
+      ],
+      "n_paired_seeds": 5,
+      "direction_note": "higher_is_better"
+    },
+    {
+      "model": "logistic_regression",
+      "comparison": "early_change_minus_clinical_only",
+      "metric": "brier",
+      "mean_delta": -0.037317,
+      "bootstrap_95_ci": [
+        -0.045291,
+        -0.030978
+      ],
+      "n_paired_seeds": 5,
+      "direction_note": "lower_is_better"
+    },
+    {
+      "model": "gradient_boosting",
+      "comparison": "early_change_minus_clinical_only",
+      "metric": "auroc",
+      "mean_delta": 0.061555,
+      "bootstrap_95_ci": [
+        0.01145,
+        0.102627
+      ],
+      "n_paired_seeds": 5,
+      "direction_note": "higher_is_better"
+    },
+    {
+      "model": "gradient_boosting",
+      "comparison": "early_change_minus_clinical_only",
+      "metric": "average_precision",
+      "mean_delta": 0.137203,
+      "bootstrap_95_ci": [
+        0.082298,
+        0.205556
+      ],
+      "n_paired_seeds": 5,
+      "direction_note": "higher_is_better"
+    },
+    {
+      "model": "gradient_boosting",
+      "comparison": "early_change_minus_clinical_only",
+      "metric": "brier",
+      "mean_delta": -0.025409,
+      "bootstrap_95_ci": [
+        -0.03913,
+        -0.013053
+      ],
+      "n_paired_seeds": 5,
+      "direction_note": "lower_is_better"
+    }
+  ],
+  "claim_boundary": "Public-data engineering stress evidence only. This is not clinical validation, not an NLCare model promotion result, and not evidence of patient benefit or safety."
+}

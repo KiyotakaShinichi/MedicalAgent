@@ -256,21 +256,37 @@ def process_due_alert_deliveries(
     }
 
 
-def build_alert_automation_status(db: Session, *, now: datetime | None = None) -> dict[str, Any]:
+def build_alert_automation_status(
+    db: Session,
+    *,
+    now: datetime | None = None,
+    operator_attention_after_seconds: int = 900,
+) -> dict[str, Any]:
     """Summarise outbox health while keeping delivery and review distinct."""
     current = now or datetime.now(timezone.utc)
+    attention_threshold = max(60, min(int(operator_attention_after_seconds), 86400))
     rows = db.query(HighRiskConversationAlert).all()
     notification_counts: dict[str, int] = {}
     local_counts: dict[str, int] = {}
     for row in rows:
         notification_counts[row.notification_status] = notification_counts.get(row.notification_status, 0) + 1
         local_counts[row.status] = local_counts.get(row.status, 0) + 1
+    open_rows = [row for row in rows if row.status != "acknowledged"]
+    open_ages = [
+        max(0, int((_as_utc(current) - _as_utc(row.created_at)).total_seconds()))
+        for row in open_rows
+        if row.created_at is not None
+    ]
     return {
-        "schema_version": "high_risk_alert_automation_status_v1_2026_07",
+        "schema_version": "high_risk_alert_automation_status_v2_2026_07",
         "total_alerts": len(rows),
         "local_status_counts": local_counts,
         "notification_status_counts": notification_counts,
-        "open_local_alerts": sum(1 for row in rows if row.status != "acknowledged"),
+        "open_local_alerts": len(open_rows),
+        "operator_attention_after_seconds": attention_threshold,
+        "open_older_than_attention_threshold": sum(age >= attention_threshold for age in open_ages),
+        "oldest_open_age_seconds": max(open_ages, default=0),
+        "attention_threshold_is_clinical_sla": False,
         "retry_due": sum(
             1 for row in rows
             if row.notification_status == "retry_scheduled"
@@ -290,7 +306,8 @@ def build_alert_automation_status(db: Session, *, now: datetime | None = None) -
         "healthcare_production_ready": False,
         "claim_boundary": (
             "Queue and channel telemetry are engineering workflow evidence. They do not prove clinician review, "
-            "patient contact, clinical action, or emergency coverage."
+            "patient contact, clinical action, or emergency coverage. The attention-age threshold is an operator "
+            "visibility control, not a clinical response-time commitment."
         ),
     }
 

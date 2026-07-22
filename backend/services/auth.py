@@ -24,6 +24,7 @@ class AccessContext:
     role: str
     patient_id: str | None
     token: str
+    auth_source: str = "demo_session"
 
 
 def create_demo_session(db, role: str, patient_id: str | None = None):
@@ -99,7 +100,18 @@ def get_context_from_authorization(db, authorization_header: str | None):
     token = authorization_header.split(" ", 1)[1].strip()
     session = db.query(AccessSession).filter(AccessSession.token == token).first()
     if session is None:
-        raise PermissionError("Invalid bearer token")
+        from backend.services.oidc_auth import OIDCAuthError, authenticate_oidc_token
+
+        try:
+            identity = authenticate_oidc_token(token)
+        except OIDCAuthError as exc:
+            raise PermissionError(str(exc)) from exc
+        return AccessContext(
+            role=identity.role,
+            patient_id=identity.patient_id,
+            token=token,
+            auth_source="oidc",
+        )
 
     expires_at = session.expires_at
     if expires_at.tzinfo is None:
@@ -107,7 +119,7 @@ def get_context_from_authorization(db, authorization_header: str | None):
     if expires_at < datetime.now(timezone.utc):
         raise PermissionError("Expired bearer token")
 
-    return AccessContext(role=session.role, patient_id=session.patient_id, token=token)
+    return AccessContext(role=session.role, patient_id=session.patient_id, token=token, auth_source="demo_session")
 
 
 def revoke_session(db, token: str) -> bool:
