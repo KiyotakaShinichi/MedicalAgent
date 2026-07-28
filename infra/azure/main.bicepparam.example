@@ -1,0 +1,12 @@
+using './main.bicep'
+
+param prefix = 'nlcare'
+param environment = 'dev'
+param location = 'southeastasia'
+param allowPublicNetworkAccess = false
+param deployManagedSearch = false
+param deployMessaging = false
+param deployPostgres = false
+
+// Supply postgresAdminPassword through a secure CI secret only when
+// deployPostgres=true. Do not commit credentials to this file.

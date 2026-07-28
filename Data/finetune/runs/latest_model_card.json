@@ -1,14 +1,16 @@
 {
   "schema_version": "finetune_model_card_v2",
-  "generated_at": "2026-07-22T06:27:38.943715+00:00",
+  "generated_at": "2026-07-22T08:26:06.582347+00:00",
   "status": "template_only_no_adapter",
   "clinical_validation": false,
   "model_trained": false,
   "base_model": {
-    "model_id": null,
-    "revision": null,
-    "tokenizer_revision": null,
-    "license_review": "required_before_training",
+    "model_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+    "tokenizer_revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+    "license": "Apache-2.0",
+    "license_review": "recorded_for_offline_behavior_experiment_only",
+    "official_model_card": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
     "selection_policy": "local instruction model with documented license and pinned revision"
   },
   "adapter_name": "nlcare-behavior-v0-dryrun",

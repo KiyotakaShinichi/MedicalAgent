@@ -119,12 +119,16 @@ export default function AdminDashboard() {
               <RagSection />
             </ErrorBoundary>
           )}
-          {section !== "system_health" && section !== "rag" && status === "loading" && <LoadingPane label="Loading analytics..." />}
-          {section !== "system_health" && status === "error" && <ErrorPane message={error ?? "Failed to load"} />}
-          {section !== "system_health" && status === "success" && data && (
+          {section === "safety_center" && (
+            <ErrorBoundary surface="the safety and evaluation section">
+              <SafetyCenterSection />
+            </ErrorBoundary>
+          )}
+          {section !== "system_health" && section !== "safety_center" && section !== "rag" && status === "loading" && <LoadingPane label="Loading analytics..." />}
+          {section !== "system_health" && section !== "safety_center" && status === "error" && <ErrorPane message={error ?? "Failed to load"} />}
+          {section !== "system_health" && section !== "safety_center" && status === "success" && data && (
             <ErrorBoundary surface={`the ${section.replace(/_/g, " ")} section`}>
               {section === "overview" && <OverviewSection analytics={data} />}
-              {section === "safety_center" && <SafetyCenterSection />}
               {section === "rag" && <RagSection analytics={data} />}
               {section === "guardrails" && <GuardrailsSection analytics={data} />}
               {section === "mle" && <MleSection analytics={data} onRefresh={refetch} />}

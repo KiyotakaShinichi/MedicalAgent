@@ -1,0 +1,114 @@
+{
+  "schema_version": "nlcare_cloud_infrastructure_readiness_v1",
+  "generated_at": "2026-07-28T04:29:37.269001+00:00",
+  "status": "reference_architecture_only",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "cloud_deployment_completed": false,
+  "patient_data_allowed": false,
+  "provider": "azure_reference_profile",
+  "template_path": "infra/azure/main.bicep",
+  "template_exists": true,
+  "bicep_cli_available": false,
+  "azure_cli_available": false,
+  "bicep_compile_completed": false,
+  "what_if_completed": false,
+  "n_checks": 13,
+  "passed": 13,
+  "failed": 0,
+  "checks": [
+    {
+      "check_id": "resource_container_apps_environment",
+      "passed": true,
+      "description": "Reference foundation declares container apps environment."
+    },
+    {
+      "check_id": "resource_adls_gen2",
+      "passed": true,
+      "description": "Reference foundation declares adls gen2."
+    },
+    {
+      "check_id": "resource_key_vault",
+      "passed": true,
+      "description": "Reference foundation declares key vault."
+    },
+    {
+      "check_id": "resource_azure_ai_search",
+      "passed": true,
+      "description": "Reference foundation declares azure ai search."
+    },
+    {
+      "check_id": "resource_service_bus",
+      "passed": true,
+      "description": "Reference foundation declares service bus."
+    },
+    {
+      "check_id": "resource_postgres_flexible",
+      "passed": true,
+      "description": "Reference foundation declares postgres flexible."
+    },
+    {
+      "check_id": "resource_log_analytics",
+      "passed": true,
+      "description": "Reference foundation declares log analytics."
+    },
+    {
+      "check_id": "managed_services_default_off",
+      "passed": true,
+      "description": "Cost-bearing managed services remain opt-in."
+    },
+    {
+      "check_id": "public_network_default_off",
+      "passed": true,
+      "description": "Public network access is disabled by default."
+    },
+    {
+      "check_id": "storage_security_baseline",
+      "passed": true,
+      "description": "ADLS Gen2 uses OAuth-first access and blocks public blobs/shared keys."
+    },
+    {
+      "check_id": "service_bus_idempotency",
+      "passed": true,
+      "description": "Engineering event queue enables duplicate detection and dead lettering."
+    },
+    {
+      "check_id": "secrets_not_committed",
+      "passed": true,
+      "description": "PostgreSQL password is a secure deployment parameter, not a committed value."
+    },
+    {
+      "check_id": "anti_overclaim_outputs",
+      "passed": true,
+      "description": "Template outputs preserve the project claim boundary."
+    }
+  ],
+  "service_decisions": {
+    "azure_container_apps": "reference compute environment; application revisions not deployed",
+    "adls_gen2": "bronze/silver/gold/quarantine target for curated non-patient data products",
+    "azure_ai_search": "optional managed hybrid-search shadow candidate",
+    "service_bus": "optional engineering events; stable message IDs and idempotent consumers still required",
+    "postgres_flexible_server": "optional durable application database; private access and Entra auth remain future work",
+    "key_vault": "RBAC-oriented secret boundary; workload role assignments remain future work",
+    "log_analytics": "central log target; dashboards, alerts, sampling, and retention review remain future work",
+    "data_factory_or_databricks": "not justified at current data volume; local incremental pipeline is the default",
+    "azure_managed_redis": "not provisioned; current Redis boundary remains replaceable"
+  },
+  "known_blockers": [
+    "No Azure subscription deployment or what-if run has been completed.",
+    "Private endpoints, VNet integration, private DNS, WAF, and egress policy are not implemented.",
+    "Container application revisions and managed-identity RBAC assignments are not provisioned.",
+    "PostgreSQL Entra-only authentication, backup restore drill, and regional recovery are not proven.",
+    "Azure AI Search index creation and frozen shadow retrieval comparison are incomplete.",
+    "No measured cloud load, reliability, security, or cost evidence exists."
+  ],
+  "official_references": [
+    "https://learn.microsoft.com/azure/container-apps/managed-identity",
+    "https://learn.microsoft.com/azure/container-apps/manage-secrets",
+    "https://learn.microsoft.com/azure/search/search-get-started-vector",
+    "https://learn.microsoft.com/rest/api/searchservice/search-service-api-versions",
+    "https://learn.microsoft.com/azure/service-bus-messaging/service-bus-message-loss-and-duplicates",
+    "https://learn.microsoft.com/azure/architecture/data-guide/scenarios/data-lake"
+  ],
+  "claim_boundary": "This artifact validates a local Azure reference template only. It is not evidence of a successful cloud deployment, security certification, HIPAA compliance, clinical validation, or production healthcare readiness."
+}

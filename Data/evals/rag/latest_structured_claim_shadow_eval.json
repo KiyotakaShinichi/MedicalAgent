@@ -1,0 +1,321 @@
+{
+  "schema_version": "structured_claim_shadow_eval_v1",
+  "generated_at": "2026-07-22T08:19:56.261877+00:00",
+  "status": "strong",
+  "validator_method": "structured_shadow_heuristic",
+  "live_patient_agent_enabled": false,
+  "n_cases": 12,
+  "passed_n": 12,
+  "pass_rate": 1.0,
+  "dimensions": [
+    "atomic_claims",
+    "lexical_coverage",
+    "polarity",
+    "numeric_value_and_unit",
+    "temporality",
+    "population_scope",
+    "source_tier_and_allowed_use"
+  ],
+  "rows": [
+    {
+      "case_id": "supported_vus_boundary",
+      "expected_status": "supported",
+      "observed_status": "supported",
+      "passed": true,
+      "diagnostics": {
+        "status": "supported",
+        "lexical_coverage": 0.875,
+        "numeric_facts_match": true,
+        "polarity_match": true,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": null,
+        "claim_numeric_facts": [],
+        "source_numeric_facts": [],
+        "claim_temporality": "unspecified_or_mixed",
+        "source_temporality": "unspecified_or_mixed"
+      }
+    },
+    {
+      "case_id": "contradicted_vus",
+      "expected_status": "contradicted",
+      "observed_status": "contradicted",
+      "passed": true,
+      "diagnostics": {
+        "status": "contradicted",
+        "lexical_coverage": 0.285714,
+        "numeric_facts_match": true,
+        "polarity_match": false,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": "vus_as_pathogenic",
+        "claim_numeric_facts": [],
+        "source_numeric_facts": [],
+        "claim_temporality": "current",
+        "source_temporality": "current"
+      }
+    },
+    {
+      "case_id": "contradicted_marker",
+      "expected_status": "contradicted",
+      "observed_status": "contradicted",
+      "passed": true,
+      "diagnostics": {
+        "status": "contradicted",
+        "lexical_coverage": 0.333333,
+        "numeric_facts_match": true,
+        "polarity_match": false,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": "tumor_marker_proves_recurrence",
+        "claim_numeric_facts": [
+          [
+            15.0,
+            ""
+          ],
+          [
+            3.0,
+            ""
+          ]
+        ],
+        "source_numeric_facts": [
+          [
+            15.0,
+            ""
+          ],
+          [
+            3.0,
+            ""
+          ]
+        ],
+        "claim_temporality": "unspecified_or_mixed",
+        "source_temporality": "unspecified_or_mixed"
+      }
+    },
+    {
+      "case_id": "supported_numeric",
+      "expected_status": "supported",
+      "observed_status": "supported",
+      "passed": true,
+      "diagnostics": {
+        "status": "supported",
+        "lexical_coverage": 0.6,
+        "numeric_facts_match": true,
+        "polarity_match": true,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": null,
+        "claim_numeric_facts": [
+          [
+            10.5,
+            "g/dl"
+          ]
+        ],
+        "source_numeric_facts": [
+          [
+            10.5,
+            "g/dl"
+          ]
+        ],
+        "claim_temporality": "current",
+        "source_temporality": "current"
+      }
+    },
+    {
+      "case_id": "numeric_mismatch",
+      "expected_status": "contradicted",
+      "observed_status": "contradicted",
+      "passed": true,
+      "diagnostics": {
+        "status": "contradicted",
+        "lexical_coverage": 0.4,
+        "numeric_facts_match": false,
+        "polarity_match": true,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": null,
+        "claim_numeric_facts": [
+          [
+            15.0,
+            "g/dl"
+          ]
+        ],
+        "source_numeric_facts": [
+          [
+            10.5,
+            "g/dl"
+          ]
+        ],
+        "claim_temporality": "current",
+        "source_temporality": "current"
+      }
+    },
+    {
+      "case_id": "unit_mismatch",
+      "expected_status": "contradicted",
+      "observed_status": "contradicted",
+      "passed": true,
+      "diagnostics": {
+        "status": "contradicted",
+        "lexical_coverage": 0.75,
+        "numeric_facts_match": false,
+        "polarity_match": true,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": null,
+        "claim_numeric_facts": [
+          [
+            10.0,
+            "mg"
+          ]
+        ],
+        "source_numeric_facts": [
+          [
+            10.0,
+            "ml"
+          ]
+        ],
+        "claim_temporality": "current",
+        "source_temporality": "current"
+      }
+    },
+    {
+      "case_id": "temporal_mismatch",
+      "expected_status": "contradicted",
+      "observed_status": "contradicted",
+      "passed": true,
+      "diagnostics": {
+        "status": "contradicted",
+        "lexical_coverage": 0.8,
+        "numeric_facts_match": true,
+        "polarity_match": true,
+        "temporality_match": false,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": null,
+        "claim_numeric_facts": [
+          [
+            120.0,
+            "k/ul"
+          ]
+        ],
+        "source_numeric_facts": [
+          [
+            120.0,
+            "k/ul"
+          ]
+        ],
+        "claim_temporality": "current",
+        "source_temporality": "past"
+      }
+    },
+    {
+      "case_id": "treatment_change",
+      "expected_status": "contradicted",
+      "observed_status": "contradicted",
+      "passed": true,
+      "diagnostics": {
+        "status": "contradicted",
+        "lexical_coverage": 0.333333,
+        "numeric_facts_match": true,
+        "polarity_match": false,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": "treatment_change_authority",
+        "claim_numeric_facts": [],
+        "source_numeric_facts": [],
+        "claim_temporality": "unspecified_or_mixed",
+        "source_temporality": "unspecified_or_mixed"
+      }
+    },
+    {
+      "case_id": "policy_block",
+      "expected_status": "source_policy_blocked",
+      "observed_status": "source_policy_blocked",
+      "passed": true,
+      "diagnostics": {
+        "status": "source_policy_blocked",
+        "lexical_coverage": 1.0,
+        "numeric_facts_match": true,
+        "polarity_match": true,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": false,
+        "contradiction_category": null,
+        "claim_numeric_facts": [],
+        "source_numeric_facts": [],
+        "claim_temporality": "unspecified_or_mixed",
+        "source_temporality": "unspecified_or_mixed"
+      }
+    },
+    {
+      "case_id": "insufficient",
+      "expected_status": "insufficient_evidence",
+      "observed_status": "insufficient_evidence",
+      "passed": true,
+      "diagnostics": {
+        "status": "insufficient_evidence",
+        "lexical_coverage": 0.0,
+        "numeric_facts_match": true,
+        "polarity_match": true,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": null,
+        "claim_numeric_facts": [],
+        "source_numeric_facts": [],
+        "claim_temporality": "unspecified_or_mixed",
+        "source_temporality": "unspecified_or_mixed"
+      }
+    },
+    {
+      "case_id": "partial",
+      "expected_status": "partially_supported",
+      "observed_status": "partially_supported",
+      "passed": true,
+      "diagnostics": {
+        "status": "partially_supported",
+        "lexical_coverage": 0.428571,
+        "numeric_facts_match": true,
+        "polarity_match": true,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": null,
+        "claim_numeric_facts": [],
+        "source_numeric_facts": [],
+        "claim_temporality": "unspecified_or_mixed",
+        "source_temporality": "unspecified_or_mixed"
+      }
+    },
+    {
+      "case_id": "supplement_replacement",
+      "expected_status": "contradicted",
+      "observed_status": "contradicted",
+      "passed": true,
+      "diagnostics": {
+        "status": "contradicted",
+        "lexical_coverage": 0.25,
+        "numeric_facts_match": true,
+        "polarity_match": false,
+        "temporality_match": true,
+        "population_match": true,
+        "source_policy_allowed": true,
+        "contradiction_category": "supplement_replacement",
+        "claim_numeric_facts": [],
+        "source_numeric_facts": [],
+        "claim_temporality": "unspecified_or_mixed",
+        "source_temporality": "unspecified_or_mixed"
+      }
+    }
+  ],
+  "clinical_validation": false,
+  "claim_boundary": "Shadow engineering verifier only. It can expose structured mismatches but does not establish medical entailment, factual correctness, clinical validation, or patient-facing safety."
+}

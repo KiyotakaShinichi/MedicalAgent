@@ -1,0 +1,67 @@
+{
+  "schema_version": "nlcare_data_contract_registry_v1",
+  "clinical_validation": false,
+  "patient_data_allowed": false,
+  "contracts": {
+    "knowledge_source_bronze_v1": {
+      "layer": "bronze",
+      "description": "Content-addressed, immutable copies of curated non-patient knowledge-base source files.",
+      "required_fields": [
+        "source_path",
+        "content_hash",
+        "size_bytes",
+        "extension",
+        "bronze_uri"
+      ],
+      "unique_key": ["content_hash"],
+      "freshness_field": "source_mtime_ns"
+    },
+    "knowledge_chunk_silver_v1": {
+      "layer": "silver",
+      "description": "Validated and governance-enriched chunks derived from the bronze source layer.",
+      "required_fields": [
+        "id",
+        "parent_id",
+        "text",
+        "content_hash",
+        "source_tier",
+        "allowed_use",
+        "staleness_status",
+        "patient_facing",
+        "clinical_validation"
+      ],
+      "unique_key": ["id"],
+      "allowed_source_tiers": ["T1", "T2", "T3", "T4", "T5"]
+    },
+    "vector_record_gold_v1": {
+      "layer": "gold",
+      "description": "Provider-neutral, metadata-complete records prepared for offline embedding and shadow vector-index loading.",
+      "required_fields": [
+        "record_id",
+        "embedding_input",
+        "namespace",
+        "metadata"
+      ],
+      "unique_key": ["record_id"],
+      "remote_safe_namespaces": [
+        "nlcare_kb_demo_t1_t3",
+        "nlcare_eval_synthetic",
+        "nlcare_portal_help"
+      ],
+      "required_metadata_fields": [
+        "source_id",
+        "chunk_id",
+        "parent_id",
+        "source_tier",
+        "allowed_use",
+        "patient_facing",
+        "staleness_status",
+        "kb_fingerprint",
+        "doc_type",
+        "data_scope",
+        "clinical_validation"
+      ]
+    }
+  },
+  "claim_boundary": "These contracts cover curated non-patient knowledge and synthetic evaluation data only. Banned-key checks are not a general PHI detector. They are data-engineering controls, not clinical validation, interoperability certification, or healthcare production readiness."
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "finetune_runtime_preflight_v1",
+  "generated_at": "2026-07-22T08:20:48.366750+00:00",
+  "status": "blocked_runtime",
+  "clinical_validation": false,
+  "model_trained": false,
+  "adapter_created": false,
+  "patient_facing_promotion_allowed": false,
+  "candidate": {
+    "schema_version": "finetune_candidate_v1",
+    "model_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+    "tokenizer_revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+    "license": "Apache-2.0",
+    "license_review": "recorded_for_offline_behavior_experiment_only",
+    "official_model_card": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
+    "selection_reason": "Small instruction-tuned candidate for a bounded offline behavior-format experiment.",
+    "known_limitations": [
+      "Primarily English training data",
+      "Generated text may be inaccurate or biased",
+      "Not a medical model",
+      "Not approved for patient-facing or clinical use"
+    ],
+    "clinical_validation": false,
+    "patient_facing_promotion_allowed": false
+  },
+  "candidate_config_ready": true,
+  "dataset": {
+    "path": "Data\\finetune\\prepared\\dataset_train.jsonl",
+    "exists": true,
+    "sha256": "48e26cb64f9d63ad80c7eb77fb7b14b9964b2898f00b69baaef155ccc5163e8e"
+  },
+  "dependency_presence": {
+    "torch": true,
+    "transformers": true,
+    "peft": false,
+    "accelerate": false
+  },
+  "runtime_probe": {
+    "status": "timeout",
+    "timeout_seconds": 15,
+    "healthy": false
+  },
+  "explicit_experiment_enable": false,
+  "ready_for_offline_experiment": false,
+  "next_step": "Repair or provision an isolated supported training runtime, install pinned PEFT dependencies, then run baseline and candidate generations on the internal behavior eval.",
+  "claim_boundary": "This is a runtime and lineage preflight only. No adapter was trained, no behavior improvement was demonstrated, and no clinical or patient-facing use is allowed."
+}

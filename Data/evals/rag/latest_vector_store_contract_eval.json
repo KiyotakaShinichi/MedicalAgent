@@ -1,0 +1,79 @@
+{
+  "schema_version": "nlcare_vector_store_contract_eval_v1",
+  "generated_at": "2026-07-28T04:28:23.638958+00:00",
+  "status": "strong_contract_only",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "live_patient_route_backend": "local_faiss_bm25_rrf",
+  "managed_backend_mode": "shadow_only_disabled_by_default",
+  "managed_network_request_performed": false,
+  "managed_vector_comparison_completed": false,
+  "retrieval_improvement_proven": false,
+  "gold_record_count": 240,
+  "gold_record_validation_failures": [],
+  "n_cases": 6,
+  "passed": 6,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "cases": [
+    {
+      "case_id": "local_contract_ranking",
+      "passed": true,
+      "description": "In-memory contract preserves deterministic vector ranking and tier/use filters."
+    },
+    {
+      "case_id": "azure_prefilter_policy",
+      "passed": true,
+      "description": "Azure AI Search hybrid request applies governance before vector selection."
+    },
+    {
+      "case_id": "pinecone_metadata_policy",
+      "passed": true,
+      "description": "Pinecone shadow query carries the same canonical governance fields."
+    },
+    {
+      "case_id": "azure_network_default_off",
+      "passed": true,
+      "description": "Managed-vector network execution is blocked without explicit configuration."
+    },
+    {
+      "case_id": "pinecone_network_default_off",
+      "passed": true,
+      "description": "Managed-vector network execution is blocked without explicit configuration."
+    },
+    {
+      "case_id": "gold_records_remote_safe",
+      "passed": true,
+      "description": "All generated vector records satisfy the provider-neutral banned-identity-metadata contract."
+    }
+  ],
+  "provider_matrix": {
+    "local_faiss": {
+      "role": "live_default_and_fallback",
+      "hybrid": true,
+      "network": false,
+      "current_quality_evidence": "existing frozen baseline comparison"
+    },
+    "azure_ai_search": {
+      "role": "managed_hybrid_shadow_candidate",
+      "hybrid": true,
+      "pre_filter_governance": true,
+      "configured": false
+    },
+    "pinecone": {
+      "role": "managed_vector_shadow_candidate",
+      "hybrid": "client_side_sparse_dense_comparison_required",
+      "metadata_filter_governance": true,
+      "configured": false
+    }
+  },
+  "promotion_requirements": [
+    "Run the same frozen goldset through local and managed candidates.",
+    "Preserve source-tier correctness and refusal correctness.",
+    "Do not regress citation precision or unsupported-context rate.",
+    "Report p50/p95 latency, ingestion freshness, and measured cost.",
+    "Demonstrate delete/rebuild and local fallback recovery.",
+    "Keep PHI and patient-specific memory out of managed indexes."
+  ],
+  "claim_boundary": "This verifies adapter schemas and metadata-policy behavior offline. It is not a live Azure or Pinecone benchmark, does not prove retrieval improvement, and does not establish clinical validation or production healthcare readiness."
+}

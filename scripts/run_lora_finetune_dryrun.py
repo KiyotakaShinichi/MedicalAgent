@@ -21,6 +21,7 @@ if str(ROOT) not in sys.path:
 
 DEFAULT_DATASET = ROOT / "Data" / "finetune" / "prepared" / "dataset_train.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "Data" / "finetune" / "runs"
+CANDIDATE_CONFIG = ROOT / "config" / "finetune_candidate.json"
 
 
 def _rel(path: Path) -> str:
@@ -34,13 +35,17 @@ def _sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+_CANDIDATE = json.loads(CANDIDATE_CONFIG.read_text(encoding="utf-8"))
+
 PLAN = {
     "execution_mode": "dry_run_only",
     "base_model": {
-        "model_id": None,
-        "revision": None,
-        "tokenizer_revision": None,
-        "license_review": "required_before_training",
+        "model_id": _CANDIDATE["model_id"],
+        "revision": _CANDIDATE["revision"],
+        "tokenizer_revision": _CANDIDATE["tokenizer_revision"],
+        "license": _CANDIDATE["license"],
+        "license_review": _CANDIDATE["license_review"],
+        "official_model_card": _CANDIDATE["official_model_card"],
         "selection_policy": "local instruction model with documented license and pinned revision",
     },
     "adapter_name": "nlcare-behavior-v0-dryrun",
@@ -139,9 +144,9 @@ def run_dryrun(dataset: Path, output_dir: Path) -> dict[str, Any]:
     example_count = _line_count(dataset)
     prerequisites = {
         "training_split_hash_verified": lineage["manifest_hash_match"] is True,
-        "base_model_revision_pinned": False,
-        "tokenizer_revision_pinned": False,
-        "license_review_complete": False,
+        "base_model_revision_pinned": bool(PLAN["base_model"]["revision"]),
+        "tokenizer_revision_pinned": bool(PLAN["base_model"]["tokenizer_revision"]),
+        "license_review_complete": PLAN["base_model"]["license_review"].startswith("recorded_"),
         "gpu_runtime_verified": False,
         "baseline_generations_complete": False,
         "candidate_generations_complete": False,

@@ -8,13 +8,16 @@ Scores measure implementation quality, evidence quality, and honest governance u
 
 | Area | Current | Constraint-aware ceiling | Main reason for the gap |
 | --- | ---: | ---: | --- |
-| AI engineering and RAG | 7.9/10 | 9.0/10 | Compositional safety mutations now pass the tuning-used development bank, but raw retrieval superiority and independent adversarial generalization remain unproven. |
-| Software engineering | 8.4/10 | 9.0/10 | Modular code, tests, traces, OIDC token verification, and recovery tooling are credible; artifact volume and an incomplete browser-to-provider identity flow reduce operational credibility. |
-| ML and MLE | 7.5/10 | 8.0/10 | Selective-risk, realism-v2 stability, and isolated I-SPY2 and Duke/TCIA stress tasks improve rigor, but NLCare heads remain synthetic and externally unvalidated. |
-| Medical safety structure | 5.5/10 | 7.0/10 | Boundaries are explicit, but every clinical rule and phrase remains engineer-authored and unreviewed. |
-| Automation | 8.0/10 | 8.5/10 | Durable jobs plus signing-key rotation are credible; no real channel, operator rota, or emergency coverage is proven. |
-| Fine-tuning | 6.5/10 | 8.0/10 | The diverse behavior corpus now clears internal case floors, but no pinned model, trained adapter, paired generations, or independent review exists. |
-| Deployment | 6.2/10 | 8.0/10 | A fail-closed OIDC adapter and container recovery workflow exist, but browser PKCE/provider logout are incomplete and the Docker recovery smoke is environment-blocked. |
+| AI engineering and RAG | 8.1/10 | 9.0/10 | A structured claim/source shadow verifier adds polarity, numeric, temporal, population, and source-policy checks, but it is only a 12-case heuristic shadow and raw retrieval superiority remains unproven. |
+| Software engineering | 8.6/10 | 9.0/10 | Durable event identity, fault-injection tests, trace contracts, and a capped 20-check decision surface improve reviewability; the live identity and container paths remain incomplete. |
+| ML and MLE | 7.9/10 | 8.5/10 | The 30-seed causal-order v3 stress benchmark adds MAR/MNAR, noise, subgroup shift, simple baselines, and bootstrap intervals, but every NLCare target remains simulator-built. |
+| Medical safety structure | 5.8/10 | 7.0/10 | Explanation contracts now require meaning, calculation, missingness, limitations, and a safe review action, but the benchmark is an internal wording proxy with no human or clinician participants. |
+| Automation | 8.5/10 | 9.0/10 | Durable jobs, stable retry event IDs, signed receipts, and eight fault-injection scenarios are credible; no real channel, operator rota, or emergency coverage is proven. |
+| Fine-tuning | 7.2/10 | 8.0/10 | A license-reviewed 135M candidate and immutable revisions are pinned, but the local PEFT runtime times out and no adapter or paired generations exist. |
+| Deployment | 6.7/10 | 8.0/10 | RS256 bearer validation and S256 PKCE primitives exist, but no live provider, transaction store, token exchange, logout, or healthy Docker recovery run has been demonstrated. |
+| Data engineering | 7.6/10 | 8.5/10 | Contracts, incremental bronze/silver/gold materialization, quarantine, fingerprints, and lineage exist for non-patient KB assets; there is no orchestrated cloud run, schema-evolution drill, or real-data quality evidence. |
+| Vector database engineering | 7.3/10 | 8.5/10 | Local, Azure AI Search, and Pinecone share a guarded adapter contract, but managed paths are network-disabled scaffolds with no frozen parity, load, cost, or failure comparison. |
+| Cloud infrastructure | 6.4/10 | 8.0/10 | Cost-gated Bicep and static security checks exist, but the template is uncompiled and undeployed and lacks private endpoints, workload role assignments, app revisions, budgets, and recovery proof. |
 | Real clinical readiness | 1.5/10 | 2.0/10 under current constraints | Engineering controls cannot substitute for real data, clinical review, IRB, or prospective evaluation. |
 
 ## Executive verdict
@@ -43,7 +46,7 @@ The correct portfolio claim is "advanced, safety-governed engineering prototype.
 14. Medical wording and urgent-route vocabularies are engineer-authored, including Taglish variants.
 15. Latency measurements are local and do not represent production traffic, concurrency, or provider variance.
 16. Demo data and demo routes remain part of the same application surface as deployment-shaped code.
-17. The project has more evaluation surfaces than reviewer attention can realistically absorb.
+17. The detailed registry still exceeds reviewer attention, although the canonical release decision surface is now capped at 20 checks.
 18. Static self-ratings age quickly and can contradict current artifacts.
 19. Public-dataset mapping is readiness work, not external model validation.
 20. A passed release gate is an engineering consistency result, not a safety or deployment certificate.
@@ -106,6 +109,61 @@ Weak: production-shaped is not production-ready. The repo can verify OIDC JWTs t
 
 Best next internal work: configure a disposable OIDC provider and browser PKCE flow; rerun the strict Docker Postgres/Redis migration and recovery smoke on a healthy daemon; export OpenTelemetry traces to a local collector; perform dependency and container scans; keep healthcare production readiness false.
 
+### Data engineering
+
+Strong: curated knowledge sources now flow through content-addressed bronze
+copies, contract-checked and governance-enriched silver chunks, provider-neutral
+gold vector records, quarantine, change detection, fingerprints, and explicit
+lineage. An unchanged second run reuses materializations instead of rewriting
+them.
+
+Weak: this is a small-file local JSON/JSONL pipeline, not a demonstrated data
+platform. There is no scheduler, cloud object-store execution, event backfill,
+schema-evolution migration, partition strategy, freshness SLO history, or real
+patient-data governance. The structural banned-key check is not a PHI detector
+or compliance control.
+
+Best next internal work: run repeatable backfill and schema-evolution drills;
+add row-count, null, uniqueness, freshness, and contract-drift tests to each
+layer; then execute the same non-patient pipeline against a disposable ADLS
+development account with immutable manifests and cost telemetry.
+
+### Vector database engineering
+
+Strong: a provider-neutral contract now enforces approved namespaces,
+source-tier and allowed-use metadata, KB fingerprints, patient-facing policy,
+network-default-off behavior, and banned identity metadata across local,
+Azure AI Search, and Pinecone request builders.
+
+Weak: request construction is not retrieval parity. Azure AI Search and
+Pinecone have not been provisioned, populated, queried, load-tested, or compared
+against local FAISS/BM25. Eventual consistency, filter semantics, index-schema
+migrations, dimensional mismatch, partial upserts, deletes, and rollback have
+not been exercised.
+
+Best next internal work: choose one managed shadow candidate, load only frozen
+non-patient gold records, and compare Recall@k, MRR, nDCG, source-policy
+correctness, unsupported context, p50/p95, cost, index freshness, delete
+propagation, and failure recovery. Do not operate Azure AI Search and Pinecone
+simultaneously without a measured reason.
+
+### Cloud infrastructure
+
+Strong: the Azure reference template separates core observability/storage from
+optional cost-bearing Search, Service Bus, and PostgreSQL resources. Public
+network access is disabled for optional data services, and the readiness
+artifact keeps deployment and healthcare readiness false.
+
+Weak: static Bicep text checks are weak evidence. No compile, `what-if`,
+deployment, managed-identity role binding, Key Vault secret reference, private
+DNS, budget alert, backup restore, zone-failure exercise, or teardown-cost check
+has run.
+
+Best next internal work: compile and lint Bicep in CI; use `what-if` against a
+disposable development subscription; deploy a non-patient minimal profile;
+verify identity, private connectivity, logs, budgets, backup/restore, and
+idempotent teardown; preserve a no-deploy default.
+
 ## Implemented in this hardening pass
 
 1. Demo patient enumeration is hidden when demo authentication is disabled.
@@ -126,6 +184,20 @@ Best next internal work: configure a disposable OIDC provider and browser PKCE f
 16. Duke Breast Cancer MRI / TCIA tabular data is checksum-locked and evaluated in an isolated pCR stress task. Adding the selected MRI features reduced AUROC versus the clinical-only baseline, so the negative result is preserved and no NLCare model was promoted.
 17. The behavior-only corpus now contains 417 accepted examples with 291/63/63 train/development/internal-frozen splits and high normalized text diversity. The scaffold still returns HOLD because no model revision, license approval, adapter, paired generations, or external review exists.
 18. OIDC JWT verification now validates RS256 signatures, issuer, audience, timestamps, role mapping, and patient identity claims behind a feature flag. Compose manifests are valid, but the isolated Postgres/Redis recovery smoke is `blocked_environment` until the local Docker daemon is healthy.
+19. Automation fault injection now covers duplicate enqueue, lease contention, stale recovery, dead-letter requeue, receipt conflict, retry-after-side-effect replay, key rotation, tampering, and stale events. Retry dispatch reuses the durable job ID as the external event ID.
+20. The structured claim/source validator now runs as a 12-case shadow benchmark across lexical, polarity, number/unit, temporal, population, and allowed-use dimensions. It remains disabled on the live patient agent because heuristic medical entailment is not proven.
+21. Synthetic causal v3 runs 30 independent seeds across clean, MAR, MNAR, measurement-noise, and subgroup-shift scenarios, with paired simple-versus-nonlinear deltas and bootstrap intervals. Promotion remains `HOLD` and realism remains explicitly unclaimed.
+22. The fine-tuning candidate is now pinned to `HuggingFaceTB/SmolLM2-135M-Instruct` and an immutable revision with Apache-2.0 license metadata. Runtime preflight is `blocked_runtime`, no model was trained, and governance now reports training as not ready.
+23. S256 PKCE request/state/nonce primitives and fail-closed callback checks are implemented. The readiness artifact remains blocked until a live provider and server-side flow are completed.
+24. The patient XAI contract benchmark checks 20 positive and negative wording cases. Its 1.0 internal pass rate is a deterministic proxy, not evidence of patient comprehension.
+25. The primary release decision surface is capped at 20 canonical checks: 11 verified internal, five needs-attention, two scaffolded, and two external-blocked in the latest run.
+26. A non-patient bronze/silver/gold knowledge pipeline now emits data
+    contracts, quarantine, source and KB fingerprints, change sets, and lineage.
+27. Provider-neutral local, Azure AI Search, and Pinecone adapters now enforce
+    namespaces and governance metadata while keeping remote networking off by
+    default.
+28. Azure reference Bicep and an offline readiness artifact document a
+    cost-gated target foundation; neither is presented as a live deployment.
 
 ## Prioritized roadmap
 
@@ -141,12 +213,19 @@ Best next internal work: configure a disposable OIDC provider and browser PKCE f
 
 1. Obtain a genuinely independent adversarial bank after the tuning-informed v6 retrospective; do not treat the development mutation pass as held-out evidence.
 2. Improve citation selection and claim-source alignment without weakening source-tier policy.
-3. Build a challenging synthetic v2 with multi-seed ambiguity, missingness, and subgroup shift.
-4. Pin and license-review a base model, then run the first paired base-versus-adapter shadow evaluation on the existing behavior corpus.
-5. Complete OIDC browser PKCE/provider logout and remove demo routes from strict profiles.
+3. Use causal v3 failures to improve generator assumptions without tuning for saturated scores; keep promotion at HOLD.
+4. Repair or provision an isolated PEFT runtime, then run paired base-versus-adapter generations on the existing behavior corpus.
+5. Complete the server-side OIDC transaction store, code exchange, provider logout, and remove demo routes from strict profiles.
 6. Execute the existing Docker Postgres/Redis migration, backup, restore, and Redis-persistence smoke on a healthy daemon.
-7. Run automation fault injection and expose operator-age telemetry in the admin dashboard.
-8. Prune stale informational artifacts from the primary release path.
+7. Exercise the signed webhook contract against a disposable local n8n instance while retaining synthetic recipients and disabled real delivery.
+8. Keep the 20-check primary surface stable and archive superseded diagnostics from headline documentation.
+9. Install Azure CLI/Bicep and add compile/lint plus `what-if` evidence without
+   deploying patient-facing infrastructure.
+10. Run one non-patient managed-vector shadow comparison; retain local retrieval
+    unless quality, governance, latency, reliability, and cost jointly justify
+    promotion.
+11. Add schema-evolution, delete-propagation, backfill, and partial-failure
+    drills for the data and vector pipelines.
 
 ### P2: external work that cannot be implemented honestly inside this pass
 

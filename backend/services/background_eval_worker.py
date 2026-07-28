@@ -229,6 +229,7 @@ def execute_job(
         return dispatch_signed_webhook(
             workflow_id=workflow_id,
             payload=payload,
+            event_id=str(job.get("job_id") or "") or None,
             env=env,
         )
 

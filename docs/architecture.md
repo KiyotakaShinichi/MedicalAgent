@@ -1,7 +1,11 @@
 # Architecture
 
 ## Overview
-MedicalAgent is a safety-first clinical decision-support proof of concept for breast cancer monitoring and clinician review. It fuses labs, imaging summaries, symptoms, treatment cycles, and longitudinal trends into a unified clinician view while enforcing non-diagnostic boundaries, auditability, and guardrails.
+NLCare is a safety-first, non-diagnostic engineering prototype for breast
+cancer monitoring and clinician review. It organizes synthetic labs, imaging
+summaries, symptoms, treatment-cycle context, and longitudinal trends while
+enforcing explicit claim boundaries, auditability, and guardrails. It is not
+clinically validated or production healthcare ready.
 
 ## End-to-end flow
 Frontend / Dashboards
@@ -20,6 +24,9 @@ Frontend / Dashboards
 - Timeline and risk processing: [backend/processing/timeline.py](backend/processing/timeline.py), [backend/processing/risk_engine.py](backend/processing/risk_engine.py)
 - Clinical summaries and clinician-facing signals: [backend/processing/clinical_summary.py](backend/processing/clinical_summary.py), [backend/services/patient_timeline_summary.py](backend/services/patient_timeline_summary.py)
 - RAG agent and retrieval: [backend/services/agent_rag.py](backend/services/agent_rag.py), [backend/services/rag_vector_index.py](backend/services/rag_vector_index.py)
+- Managed vector-store contract: [backend/services/managed_vector_store.py](backend/services/managed_vector_store.py)
+- Non-patient data pipeline: [backend/services/data_platform_pipeline.py](backend/services/data_platform_pipeline.py)
+- Azure reference infrastructure: [infra/azure/main.bicep](infra/azure/main.bicep)
 - Safety guardrails: [backend/services/security_guardrails.py](backend/services/security_guardrails.py)
 - ML training and registry: [backend/services/complete_synthetic_training.py](backend/services/complete_synthetic_training.py), [backend/services/model_artifacts.py](backend/services/model_artifacts.py)
 - Feature store: [backend/services/feature_store.py](backend/services/feature_store.py)
@@ -29,3 +36,14 @@ Frontend / Dashboards
 ## Non-diagnostic boundary
 - Outputs are monitoring signals and clinician-review flags.
 - The system does not diagnose or recommend treatment changes.
+
+## Cloud, data, and vector boundary
+
+The local FAISS/BM25 path remains canonical. Azure AI Search and Pinecone are
+optional, network-disabled shadow adapters until frozen comparisons justify a
+promotion. The local bronze/silver/gold pipeline processes curated non-patient
+knowledge assets only and emits contracts, quarantine records, fingerprints,
+and lineage. Azure Bicep is reference infrastructure that has not been
+compiled, deployed, or validated in a live subscription.
+
+See [cloud, data, and vector architecture](cloud_data_vector_architecture.md).

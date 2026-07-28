@@ -1,0 +1,432 @@
+{
+  "schema_version": "xai_comprehension_contract_eval_v1",
+  "generated_at": "2026-07-22T08:20:08.511690+00:00",
+  "status": "acceptable_internal_proxy",
+  "n_cases": 20,
+  "passed_n": 20,
+  "pass_rate": 1.0,
+  "valid_template_mean_reading_ease_proxy": 56.5,
+  "contract_elements": [
+    "meaning",
+    "calculation",
+    "missingness",
+    "limitation",
+    "safe_next_step"
+  ],
+  "rows": [
+    {
+      "case_id": "valid_01",
+      "text": "This number means how much recorded information currently needs review. It starts from the available record and combines capped review flags. Missing data can lower it. It is not a diagnosis and does not measure cancer status. Bring this to your care team for review.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 60.46,
+        "word_count": 45
+      }
+    },
+    {
+      "case_id": "valid_02",
+      "text": "This groups the available record with similar synthetic examples. It is calculated from recorded labs, symptoms, and imaging fields. Missing fields reduce confidence. It is not a clinical prediction and cannot tell whether treatment works. Review with your care team.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 44.32,
+        "word_count": 40
+      }
+    },
+    {
+      "case_id": "valid_03",
+      "text": "This count shows how many record items are queued for review. It counts the available rule-based flags. Missing records may hide context. It is not a diagnosis. Add the missing record or bring the list to your care team.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 73.93,
+        "word_count": 40
+      }
+    },
+    {
+      "case_id": "valid_04",
+      "text": "This number means model confidence within a synthetic engineering test. It is calculated from the recorded data fields. Missing inputs can change it. It is not a clinical prediction and cannot tell your outcome. Review with your care team.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 51.41,
+        "word_count": 39
+      }
+    },
+    {
+      "case_id": "valid_05",
+      "text": "This number means how much recorded information currently needs review. It starts from the available record and combines capped review flags. Missing data can lower it. It is not a diagnosis and does not measure cancer status. Bring this to your care team for review.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 60.46,
+        "word_count": 45
+      }
+    },
+    {
+      "case_id": "valid_06",
+      "text": "This groups the available record with similar synthetic examples. It is calculated from recorded labs, symptoms, and imaging fields. Missing fields reduce confidence. It is not a clinical prediction and cannot tell whether treatment works. Review with your care team.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 44.32,
+        "word_count": 40
+      }
+    },
+    {
+      "case_id": "valid_07",
+      "text": "This count shows how many record items are queued for review. It counts the available rule-based flags. Missing records may hide context. It is not a diagnosis. Add the missing record or bring the list to your care team.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 73.93,
+        "word_count": 40
+      }
+    },
+    {
+      "case_id": "valid_08",
+      "text": "This number means model confidence within a synthetic engineering test. It is calculated from the recorded data fields. Missing inputs can change it. It is not a clinical prediction and cannot tell your outcome. Review with your care team.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 51.41,
+        "word_count": 39
+      }
+    },
+    {
+      "case_id": "valid_09",
+      "text": "This number means how much recorded information currently needs review. It starts from the available record and combines capped review flags. Missing data can lower it. It is not a diagnosis and does not measure cancer status. Bring this to your care team for review.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 60.46,
+        "word_count": 45
+      }
+    },
+    {
+      "case_id": "valid_10",
+      "text": "This groups the available record with similar synthetic examples. It is calculated from recorded labs, symptoms, and imaging fields. Missing fields reduce confidence. It is not a clinical prediction and cannot tell whether treatment works. Review with your care team.",
+      "expected_valid": true,
+      "observed_valid": true,
+      "passed": true,
+      "diagnostics": {
+        "valid": true,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 44.32,
+        "word_count": 40
+      }
+    },
+    {
+      "case_id": "invalid_01",
+      "text": "Your cancer is responding. Treatment will work.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": false,
+          "calculation": false,
+          "missingness": false,
+          "limitation": false,
+          "safe_next_step": false
+        },
+        "authority_pattern_hits": [
+          "\\byour cancer (?:is|has|will)\\b",
+          "\\btreatment (?:will|is guaranteed to) work\\b"
+        ],
+        "reading_ease_proxy": 70.34,
+        "word_count": 7
+      }
+    },
+    {
+      "case_id": "invalid_02",
+      "text": "The model says 96.8 percent.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": false,
+          "calculation": false,
+          "missingness": false,
+          "limitation": false,
+          "safe_next_step": false
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 77.91,
+        "word_count": 6
+      }
+    },
+    {
+      "case_id": "invalid_03",
+      "text": "This is clinically validated and safe.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": false,
+          "calculation": false,
+          "missingness": false,
+          "limitation": false,
+          "safe_next_step": false
+        },
+        "authority_pattern_hits": [
+          "\\bclinically validated\\b"
+        ],
+        "reading_ease_proxy": 17.45,
+        "word_count": 6
+      }
+    },
+    {
+      "case_id": "invalid_04",
+      "text": "Stop chemotherapy because this score is low.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": false,
+          "calculation": false,
+          "missingness": false,
+          "limitation": false,
+          "safe_next_step": false
+        },
+        "authority_pattern_hits": [
+          "\\b(?:start|stop|increase|decrease|switch) (?:your )?(?:dose|medication|treatment|chemotherapy)\\b"
+        ],
+        "reading_ease_proxy": 30.53,
+        "word_count": 7
+      }
+    },
+    {
+      "case_id": "invalid_05",
+      "text": "Your doctor has been notified.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": false,
+          "calculation": false,
+          "missingness": false,
+          "limitation": false,
+          "safe_next_step": false
+        },
+        "authority_pattern_hits": [
+          "\\bdoctor (?:was|has been) notified\\b"
+        ],
+        "reading_ease_proxy": 66.4,
+        "word_count": 5
+      }
+    },
+    {
+      "case_id": "invalid_06",
+      "text": "This number means risk. It combines data.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": false,
+          "limitation": false,
+          "safe_next_step": false
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 70.34,
+        "word_count": 7
+      }
+    },
+    {
+      "case_id": "invalid_07",
+      "text": "This number means the result. It is calculated from records. Missing data matters. Review with your care team.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": false,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 65.97,
+        "word_count": 18
+      }
+    },
+    {
+      "case_id": "invalid_08",
+      "text": "This number means prognosis. It starts from labs. Missing values reduce it. You have 3 months to live. Review with your care team.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": true,
+          "calculation": true,
+          "missingness": true,
+          "limitation": false,
+          "safe_next_step": true
+        },
+        "authority_pattern_hits": [
+          "\\byou have \\d+ (?:days|weeks|months|years) to live\\b"
+        ],
+        "reading_ease_proxy": 75.47,
+        "word_count": 23
+      }
+    },
+    {
+      "case_id": "invalid_09",
+      "text": "The posterior predictive epistemic decomposition has calibrated aleatoric variance.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": false,
+          "calculation": false,
+          "missingness": false,
+          "limitation": false,
+          "safe_next_step": false
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": -74.9,
+        "word_count": 9
+      }
+    },
+    {
+      "case_id": "invalid_10",
+      "text": "This count shows six items and counts flags. Missingness is present. It is not a diagnosis.",
+      "expected_valid": false,
+      "observed_valid": false,
+      "passed": true,
+      "diagnostics": {
+        "valid": false,
+        "required_elements": {
+          "meaning": true,
+          "calculation": false,
+          "missingness": true,
+          "limitation": true,
+          "safe_next_step": false
+        },
+        "authority_pattern_hits": [],
+        "reading_ease_proxy": 85.1,
+        "word_count": 16
+      }
+    }
+  ],
+  "human_participant_study_completed": false,
+  "clinical_validation": false,
+  "claim_boundary": "This deterministic wording proxy does not show that patients understand, trust appropriately, or use the interface safely. Independent human-factors review has not been completed."
+}

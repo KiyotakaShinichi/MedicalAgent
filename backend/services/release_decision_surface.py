@@ -15,26 +15,21 @@ CHECKS: tuple[dict[str, Any], ...] = (
     {"id": "medical_claim_boundary", "tier": "hard_blocker", "owner": "medical safety", "path": "Data/evals/safety/latest_medical_claim_boundary_eval.json", "status_path": ("status",), "accepted": {"strong", "acceptable"}},
     {"id": "training_leakage", "tier": "hard_blocker", "owner": "MLE", "path": "Data/evals/models/latest_leakage_audit.json", "status_path": ("status",), "accepted": {"passed", "strong", "acceptable"}},
     {"id": "portfolio_claim_safety", "tier": "hard_blocker", "owner": "governance", "path": "Data/evals/governance/latest_portfolio_claim_safety_check.json", "status_path": ("status",), "accepted": {"informational", "strong", "acceptable", "passed"}},
-    {"id": "frozen_adversarial_v4", "tier": "warning", "owner": "AI safety", "path": "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
-    {"id": "frozen_adversarial_v5", "tier": "warning", "owner": "AI safety", "path": "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "frozen_adversarial_v6", "tier": "warning", "owner": "AI safety", "path": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "rag_governance_tradeoff", "tier": "warning", "owner": "RAG", "path": "Data/evals/rag/latest_rag_governance_tradeoff.json", "status_path": ("status",), "accepted": {"acceptable"}},
-    {"id": "live_rag_internal", "tier": "warning", "owner": "RAG", "path": "Data/evals/rag/latest_live_rag_eval.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
+    {"id": "structured_claim_shadow", "tier": "warning", "owner": "RAG", "path": "Data/evals/rag/latest_structured_claim_shadow_eval.json", "status_path": ("status",), "accepted": {"strong"}},
     {"id": "route_latency", "tier": "warning", "owner": "SWE/ops", "path": "Data/evals/ops/latest_route_latency_budget.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
     {"id": "simple_baseline_superiority", "tier": "warning", "owner": "MLE", "path": "Data/evals/models/latest_synthetic_simple_baseline_audit.json", "status_path": ("status",), "accepted": {"acceptable"}},
-    {"id": "synthetic_v2_stability", "tier": "warning", "owner": "MLE", "path": "Data/evals/models/latest_synthetic_v2_model_stability.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
+    {"id": "synthetic_causal_v3", "tier": "warning", "owner": "MLE", "path": "Data/evals/models/latest_synthetic_causal_v3_stress.json", "status_path": ("status",), "accepted": {"acceptable_internal_stress_test"}},
     {"id": "xai_fidelity", "tier": "warning", "owner": "XAI", "path": "Data/evals/models/latest_xai_fidelity_audit.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
-    {"id": "dependency_reproducibility", "tier": "warning", "owner": "SWE/ops", "path": "Data/evals/ops/latest_dependency_lock_audit.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
+    {"id": "xai_comprehension_proxy", "tier": "warning", "owner": "XAI", "path": "Data/evals/models/latest_xai_comprehension_contract_eval.json", "status_path": ("status",), "accepted": {"acceptable_internal_proxy"}},
     {"id": "durable_automation_worker", "tier": "warning", "owner": "automation", "path": "Data/evals/ops/latest_durable_automation_worker_eval.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
-    {"id": "automation_reliability", "tier": "warning", "owner": "automation", "path": "Data/evals/ops/latest_automation_reliability_dossier.json", "status_path": ("status",), "accepted": {"strong"}},
+    {"id": "automation_fault_injection", "tier": "warning", "owner": "automation", "path": "Data/evals/ops/latest_automation_fault_injection.json", "status_path": ("status",), "accepted": {"strong"}},
     {"id": "deployment_profile", "tier": "warning", "owner": "deployment", "path": "Data/evals/ops/latest_deployment_profile_validation.json", "status_path": ("status",), "accepted": {"strong"}},
-    {"id": "deployment_recovery_local", "tier": "warning", "owner": "deployment", "path": "Data/evals/ops/latest_deployment_recovery_drill.json", "status_path": ("status",), "accepted": {"strong_local_only"}},
     {"id": "benchmark_freshness", "tier": "warning", "owner": "SWE/ops", "path": "Data/evals/benchmark/latest_benchmark_summary.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}},
-    {"id": "finetune_governance", "tier": "informational", "owner": "fine-tuning", "path": "Data/evals/models/latest_finetune_governance.json", "status_path": ("status",), "accepted": set()},
-    {"id": "finetune_promotion", "tier": "informational", "owner": "fine-tuning", "path": "Data/evals/models/latest_finetune_promotion_gate.json", "status_path": ("status",), "accepted": set()},
-    {"id": "ispy2_external_stress", "tier": "informational", "owner": "MLE", "path": "Data/evals/models/latest_ispy2_tcia_external_stress.json", "status_path": ("status",), "accepted": set()},
+    {"id": "finetune_runtime", "tier": "informational", "owner": "fine-tuning", "path": "Data/evals/models/latest_finetune_runtime_preflight.json", "status_path": ("status",), "accepted": set()},
+    {"id": "oidc_browser_pkce", "tier": "informational", "owner": "deployment", "path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json", "status_path": ("status",), "accepted": set()},
     {"id": "external_rag_holdout", "tier": "informational", "owner": "external review", "path": "Data/evals/rag/latest_rag_holdout_baseline_comparison.json", "status_path": ("status",), "accepted": set()},
-    {"id": "goldset_adjudication", "tier": "informational", "owner": "external review", "path": "Data/evals/rag/latest_goldset_adjudication_readiness.json", "status_path": ("status",), "accepted": set()},
     {"id": "external_review_execution", "tier": "informational", "owner": "external review", "path": "Data/evals/governance/latest_external_review_execution_readiness.json", "status_path": ("status",), "accepted": set()},
 )
 
@@ -51,6 +46,8 @@ def build_release_decision_surface(output_path: str | Path = DEFAULT_OUTPUT_PATH
         "engineering_release_decision": "BLOCK" if blocker_failures else "PROCEED_WITH_WARNINGS" if warnings else "PROCEED",
         "hard_blocker_count": len(blocker_failures),
         "warning_count": len(warnings),
+        "primary_check_count": len(rows),
+        "primary_surface_cap": 20,
         "checks": rows,
         "domains": domains,
         "domain_count": len(domains),
@@ -128,7 +125,7 @@ def _evidence_state(check_id: str, decision: str, artifact: dict[str, Any]) -> s
     if check_id in {"external_rag_holdout", "goldset_adjudication", "external_review_execution"}:
         completed = artifact.get("completed") is True or artifact.get("external_author_eval_completed") is True
         return "externally_completed" if completed else "external_blocked"
-    if check_id in {"finetune_governance", "finetune_promotion"}:
+    if check_id in {"finetune_governance", "finetune_promotion", "finetune_runtime", "oidc_browser_pkce"}:
         if artifact.get("model_trained") is True and artifact.get("decision") in {"HOLD", "REJECT", "PROMOTE"}:
             return "candidate_evaluated"
         return "scaffolded"
@@ -185,13 +182,17 @@ def _key_metrics(check_id: str, artifact: dict[str, Any]) -> dict[str, Any]:
         "rag_governance_tradeoff": ("improvement_proven_vs_bm25", "full_stack_recall_at_10", "bm25_recall_at_10"),
         "route_latency": ("production_ready", "insufficient_sample_count", "highest_observed_p95_ms"),
         "xai_fidelity": ("additivity_verifiable", "prediction_present_rate", "multiple_one_hot_feature_patient_rate"),
-        "synthetic_v2_stability": ("synthetic_only", "clinical_validation"),
+        "xai_comprehension_proxy": ("pass_rate", "human_participant_study_completed", "clinical_validation"),
+        "synthetic_causal_v3": ("seed_count", "model_promotion_decision", "realism_claim", "clinical_validation"),
+        "structured_claim_shadow": ("pass_rate", "live_patient_agent_enabled", "clinical_validation"),
         "durable_automation_worker": ("control_pass_rate", "live_n8n_delivery_enabled", "live_delivery_test_completed"),
-        "automation_reliability": ("check_count", "passed_count", "external_delivery_enabled_by_default", "real_emergency_coverage_claim"),
+        "automation_fault_injection": ("scenario_count", "passed_count", "external_delivery_performed", "clinical_validation"),
         "deployment_profile": ("profile", "strict_profile", "n_failed", "non_demo_auth_implemented", "deployment_capability"),
         "benchmark_freshness": ("critical_status", "issue_count", "benchmark_count"),
         "finetune_governance": ("model_trained", "readiness_state", "training_ready", "promotion_ready"),
         "finetune_promotion": ("decision", "promotion_scope", "behavior_improvement_statistically_proven"),
+        "finetune_runtime": ("model_trained", "ready_for_offline_experiment", "explicit_experiment_enable"),
+        "oidc_browser_pkce": ("browser_login_completed", "production_auth_ready", "clinical_validation"),
         "external_review_execution": ("completed", "clinical_validation"),
     }.get(check_id, ())
     return {key: artifact.get(key, summary.get(key)) for key in candidates}

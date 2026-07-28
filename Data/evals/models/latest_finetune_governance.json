@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_governance_v3",
-  "generated_at": "2026-07-22T06:27:39.069835+00:00",
+  "generated_at": "2026-07-22T08:26:06.792463+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "model_trained": false,
@@ -32,10 +32,12 @@
     "plan": {
       "execution_mode": "dry_run_only",
       "base_model": {
-        "model_id": null,
-        "revision": null,
-        "tokenizer_revision": null,
-        "license_review": "required_before_training",
+        "model_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+        "tokenizer_revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+        "license": "Apache-2.0",
+        "license_review": "recorded_for_offline_behavior_experiment_only",
+        "official_model_card": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
         "selection_policy": "local instruction model with documented license and pinned revision"
       },
       "adapter_name": "nlcare-behavior-v0-dryrun",
@@ -94,15 +96,63 @@
     },
     "prerequisites": {
       "training_split_hash_verified": true,
-      "base_model_revision_pinned": false,
-      "tokenizer_revision_pinned": false,
-      "license_review_complete": false,
+      "base_model_revision_pinned": true,
+      "tokenizer_revision_pinned": true,
+      "license_review_complete": true,
       "gpu_runtime_verified": false,
       "baseline_generations_complete": false,
       "candidate_generations_complete": false,
       "external_review_complete": false
     },
     "ready_for_real_training": false
+  },
+  "runtime_preflight": {
+    "schema_version": "finetune_runtime_preflight_v1",
+    "generated_at": "2026-07-22T08:20:48.366750+00:00",
+    "status": "blocked_runtime",
+    "clinical_validation": false,
+    "model_trained": false,
+    "adapter_created": false,
+    "patient_facing_promotion_allowed": false,
+    "candidate": {
+      "schema_version": "finetune_candidate_v1",
+      "model_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+      "tokenizer_revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+      "license": "Apache-2.0",
+      "license_review": "recorded_for_offline_behavior_experiment_only",
+      "official_model_card": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
+      "selection_reason": "Small instruction-tuned candidate for a bounded offline behavior-format experiment.",
+      "known_limitations": [
+        "Primarily English training data",
+        "Generated text may be inaccurate or biased",
+        "Not a medical model",
+        "Not approved for patient-facing or clinical use"
+      ],
+      "clinical_validation": false,
+      "patient_facing_promotion_allowed": false
+    },
+    "candidate_config_ready": true,
+    "dataset": {
+      "path": "Data\\finetune\\prepared\\dataset_train.jsonl",
+      "exists": true,
+      "sha256": "48e26cb64f9d63ad80c7eb77fb7b14b9964b2898f00b69baaef155ccc5163e8e"
+    },
+    "dependency_presence": {
+      "torch": true,
+      "transformers": true,
+      "peft": false,
+      "accelerate": false
+    },
+    "runtime_probe": {
+      "status": "timeout",
+      "timeout_seconds": 15,
+      "healthy": false
+    },
+    "explicit_experiment_enable": false,
+    "ready_for_offline_experiment": false,
+    "next_step": "Repair or provision an isolated supported training runtime, install pinned PEFT dependencies, then run baseline and candidate generations on the internal behavior eval.",
+    "claim_boundary": "This is a runtime and lineage preflight only. No adapter was trained, no behavior improvement was demonstrated, and no clinical or patient-facing use is allowed."
   },
   "reference_audit": {
     "status": "strong",
@@ -121,15 +171,13 @@
     "state": "not_ready_for_training_or_promotion",
     "training_ready": false,
     "promotion_ready": false,
-    "check_count": 10,
-    "passed_count": 4,
+    "check_count": 11,
+    "passed_count": 7,
     "failed_checks": [
-      "base_model_revision_pinned",
-      "tokenizer_revision_pinned",
-      "license_review_complete",
       "baseline_generations_complete",
       "candidate_generations_complete",
-      "promotion_gate_not_hold"
+      "promotion_gate_not_hold",
+      "training_runtime_healthy_and_explicitly_enabled"
     ],
     "checks": [
       {
@@ -160,17 +208,17 @@
       },
       {
         "id": "base_model_revision_pinned",
-        "passed": false,
+        "passed": true,
         "required_for": "experimental_training"
       },
       {
         "id": "tokenizer_revision_pinned",
-        "passed": false,
+        "passed": true,
         "required_for": "experimental_training"
       },
       {
         "id": "license_review_complete",
-        "passed": false,
+        "passed": true,
         "required_for": "experimental_training"
       },
       {
@@ -187,12 +235,17 @@
         "id": "promotion_gate_not_hold",
         "passed": false,
         "required_for": "candidate_decision"
+      },
+      {
+        "id": "training_runtime_healthy_and_explicitly_enabled",
+        "passed": false,
+        "required_for": "experimental_training"
       }
     ],
     "independent_external_evidence": false
   },
   "remaining_blockers": [
-    "No base model or tokenizer revision is pinned.",
+    "The local PEFT training runtime is not healthy and explicitly enabled.",
     "No adapter has been trained.",
     "Baseline and candidate generations are absent.",
     "The dataset is small, synthetic, and internally authored.",

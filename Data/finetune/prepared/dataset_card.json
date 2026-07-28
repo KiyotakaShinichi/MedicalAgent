@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_dataset_card_v2",
-  "generated_at": "2026-07-22T06:27:38.785972+00:00",
+  "generated_at": "2026-07-22T08:26:06.082849+00:00",
   "dataset_purpose": "Behavior and format tuning for synthetic NLCare responses; not medical knowledge tuning.",
   "allowed_behavior_targets": [
     "clinician_summary",

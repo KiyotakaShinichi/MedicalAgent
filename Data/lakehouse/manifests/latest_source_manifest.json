@@ -1,0 +1,407 @@
+{
+  "schema_version": "nlcare_bronze_source_manifest_v1",
+  "generated_at": "2026-07-28T04:28:22.865787+00:00",
+  "clinical_validation": false,
+  "patient_data_allowed": false,
+  "source_count": 48,
+  "sources": [
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/00_safety_boundaries/diagnosis_treatment_and_supplement_boundaries.md",
+      "content_hash": "4bd1d51156d00b785e3a6c74f9c518eebac989a02a1717a13efa85d1bafda141",
+      "size_bytes": 3764,
+      "source_mtime_ns": 1784017459910850000,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/4bd1d51156d00b785e3a6c74f9c518eebac989a02a1717a13efa85d1bafda141.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/00_safety_boundaries/minimum_evidence_medical_claim_boundaries.md",
+      "content_hash": "59a761f5f39fd24730795bd2eb25ded2c1e2723f442693ab891644fb0d6f73c7",
+      "size_bytes": 2422,
+      "source_mtime_ns": 1784017459880018100,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/59a761f5f39fd24730795bd2eb25ded2c1e2723f442693ab891644fb0d6f73c7.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/01_breast_cancer_basics/breast_cancer_basics_and_monitoring.md",
+      "content_hash": "a3b005fc61bc495028eb7981284fd4af321f9ef1ab66a3089634a5a6cde8c912",
+      "size_bytes": 3315,
+      "source_mtime_ns": 1784017459982186700,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/a3b005fc61bc495028eb7981284fd4af321f9ef1ab66a3089634a5a6cde8c912.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/01_breast_cancer_basics/structured_core_breast_cancer_education.md",
+      "content_hash": "a04d733528deb426aa46b85b25db6db2872eae817233e697953efae0caf87da4",
+      "size_bytes": 2101,
+      "source_mtime_ns": 1784017459979189300,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/a04d733528deb426aa46b85b25db6db2872eae817233e697953efae0caf87da4.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/02_treatments/anthracycline_cyclophosphamide_taxane_reference.md",
+      "content_hash": "adffea42f1a1f23064c64097e31a9ff4e8117e2dad2f6371f2b44570fc6e4525",
+      "size_bytes": 2299,
+      "source_mtime_ns": 1779073751979904200,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/adffea42f1a1f23064c64097e31a9ff4e8117e2dad2f6371f2b44570fc6e4525.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/02_treatments/breast_cancer_treatment_drug_reference.md",
+      "content_hash": "a6ff5c40e133f59656446d826b4fb585216f9b6fc486a5d08b72eb1aaee9464a",
+      "size_bytes": 5766,
+      "source_mtime_ns": 1778844441330125300,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/a6ff5c40e133f59656446d826b4fb585216f9b6fc486a5d08b72eb1aaee9464a.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/02_treatments/endocrine_cdk46_immunotherapy_reference.md",
+      "content_hash": "9e7ccbac680b34555ca831a5bed8bb9d3d76e4ef0684612b59c548a7356fbca4",
+      "size_bytes": 2283,
+      "source_mtime_ns": 1784017459947207900,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/9e7ccbac680b34555ca831a5bed8bb9d3d76e4ef0684612b59c548a7356fbca4.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/02_treatments/her2_targeted_therapy_reference.md",
+      "content_hash": "c71f9c9639b558e6790c7f53ca4f11606566cd50cf954510320911233df69700",
+      "size_bytes": 1990,
+      "source_mtime_ns": 1784017459944203500,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/c71f9c9639b558e6790c7f53ca4f11606566cd50cf954510320911233df69700.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/02_treatments/platinum_capecitabine_gemcitabine_reference.md",
+      "content_hash": "7add6413e172eb58d02a00dd20f903279167e7179d70aa8067fab90308a3546d",
+      "size_bytes": 2124,
+      "source_mtime_ns": 1784017459915855200,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/7add6413e172eb58d02a00dd20f903279167e7179d70aa8067fab90308a3546d.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/02_treatments/supportive_medications_reference.md",
+      "content_hash": "c8649039f2218faf7b98c3be966a67f9f133b189f1e60da57d60ff642435a388",
+      "size_bytes": 2061,
+      "source_mtime_ns": 1784017459905598700,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/c8649039f2218faf7b98c3be966a67f9f133b189f1e60da57d60ff642435a388.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/03_side_effects/gi_mouth_neuropathy_fatigue_reference.md",
+      "content_hash": "0c618ca583d705e5334c9070977e711e6ff41039fb688454e58d31b1be72f090",
+      "size_bytes": 2089,
+      "source_mtime_ns": 1784017459867856100,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/0c618ca583d705e5334c9070977e711e6ff41039fb688454e58d31b1be72f090.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/03_side_effects/hematology_bleeding_infection_reference.md",
+      "content_hash": "776dc2a1578c2bd7cde4362851f57b5630adf0a67d283c3efe613fbac18dc4c6",
+      "size_bytes": 2025,
+      "source_mtime_ns": 1784017459865853300,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/776dc2a1578c2bd7cde4362851f57b5630adf0a67d283c3efe613fbac18dc4c6.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/03_side_effects/side_effects_and_red_flags.md",
+      "content_hash": "260d58808017f3bc3cc5e0d952cc7cd337368552da4da1e125ca0fb7678bb4e1",
+      "size_bytes": 3432,
+      "source_mtime_ns": 1778844441348235200,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/260d58808017f3bc3cc5e0d952cc7cd337368552da4da1e125ca0fb7678bb4e1.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/03_side_effects/symptom_red_flags_and_review_hints.md",
+      "content_hash": "c06f33870131d7bb6b003e84115447c2000281167f39b681895da2f75943075d",
+      "size_bytes": 2098,
+      "source_mtime_ns": 1784017459853594800,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/c06f33870131d7bb6b003e84115447c2000281167f39b681895da2f75943075d.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/04_labs_and_monitoring/cbc_anc_labs_reference.md",
+      "content_hash": "4cb2f7f5f06c4f240411aeb8072a6839940726e935cbf1351dcce69c7f533bee",
+      "size_bytes": 1931,
+      "source_mtime_ns": 1784017459851574900,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/4cb2f7f5f06c4f240411aeb8072a6839940726e935cbf1351dcce69c7f533bee.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/04_labs_and_monitoring/cbc_labs_and_trend_monitoring.md",
+      "content_hash": "dbdf35cbe368df4297773abebcda9e3e9b15d191f2de5164f00511b2381de7d3",
+      "size_bytes": 2462,
+      "source_mtime_ns": 1784017459849062600,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/dbdf35cbe368df4297773abebcda9e3e9b15d191f2de5164f00511b2381de7d3.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/05_imaging/ct_ascites_report_monitoring.md",
+      "content_hash": "d398f319449c0051ee4e6596ca8572763b17b7ebb44a3d01a62a08c6653b6ecf",
+      "size_bytes": 1740,
+      "source_mtime_ns": 1784017460044178700,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/d398f319449c0051ee4e6596ca8572763b17b7ebb44a3d01a62a08c6653b6ecf.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/05_imaging/imaging_report_monitoring.md",
+      "content_hash": "44e6836acf012977476ae2645db6e2ace00fb74db6fbdd40d03c0a54700decb7",
+      "size_bytes": 2194,
+      "source_mtime_ns": 1784017460012407500,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/44e6836acf012977476ae2645db6e2ace00fb74db6fbdd40d03c0a54700decb7.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/05_imaging/mri_ct_ultrasound_terms_reference.md",
+      "content_hash": "37305abbd7b9614596e1293a7c0290a7fd22b526d75b4b3f6c76ce5de3dbc34d",
+      "size_bytes": 2023,
+      "source_mtime_ns": 1784017460008405000,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/37305abbd7b9614596e1293a7c0290a7fd22b526d75b4b3f6c76ce5de3dbc34d.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/05_imaging/pathology_biomarker_report_terms.md",
+      "content_hash": "19ae519ad9380ea5b663a424d01b1fe12f68991d78cac3a5f5db4cad3a41ea39",
+      "size_bytes": 1886,
+      "source_mtime_ns": 1784017459977186400,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/19ae519ad9380ea5b663a424d01b1fe12f68991d78cac3a5f5db4cad3a41ea39.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/06_integrative_supportive_care/integrative_supportive_care.md",
+      "content_hash": "6e707d4f4cbc7c964959309b409c30aedfd488e5014e1f7b08e52511e74713e5",
+      "size_bytes": 2706,
+      "source_mtime_ns": 1778844441366166600,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/6e707d4f4cbc7c964959309b409c30aedfd488e5014e1f7b08e52511e74713e5.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/06_integrative_supportive_care/lymphedema_fertility_psychosocial_reference.md",
+      "content_hash": "3c05ac0e2cec96172c4cdb73e963530e668911cc69154fd8f3ddc19db25bf4db",
+      "size_bytes": 2016,
+      "source_mtime_ns": 1784017459958189600,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/3c05ac0e2cec96172c4cdb73e963530e668911cc69154fd8f3ddc19db25bf4db.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/06_integrative_supportive_care/pregnancy_breastfeeding_pediatric_boundary.md",
+      "content_hash": "d89dd3c3bc50b695ffe4fe7e40da292d9ab184868cb8d8cfde9dfc1de1ed0ba6",
+      "size_bytes": 1665,
+      "source_mtime_ns": 1784017459955192900,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/d89dd3c3bc50b695ffe4fe7e40da292d9ab184868cb8d8cfde9dfc1de1ed0ba6.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/06_integrative_supportive_care/supportive_survivorship_care_reference.md",
+      "content_hash": "4434e692d1c31e08f52a410af02b6fab5906cd9ddf845ad8eb56ca61bb66ebd4",
+      "size_bytes": 1913,
+      "source_mtime_ns": 1779069724221756100,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/4434e692d1c31e08f52a410af02b6fab5906cd9ddf845ad8eb56ca61bb66ebd4.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/07_supplements_interactions/supplement_safety_by_product_reference.md",
+      "content_hash": "9827b2cc1ce5b67fae19f3ca244b37525fcd2fcdd560aabe3e0978101f9bafc2",
+      "size_bytes": 3157,
+      "source_mtime_ns": 1779069744028993800,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/9827b2cc1ce5b67fae19f3ca244b37525fcd2fcdd560aabe3e0978101f9bafc2.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/07_supplements_interactions/supplements_interactions_reference.md",
+      "content_hash": "9e34a4b545ac19c6663059cee94e7744cbfefa0e3d36d98852e4cc63da7f208d",
+      "size_bytes": 4840,
+      "source_mtime_ns": 1778844441376266200,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/9e34a4b545ac19c6663059cee94e7744cbfefa0e3d36d98852e4cc63da7f208d.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/08_portal_help/onctrack_portal_help_and_data_entry.md",
+      "content_hash": "8f2d838c1aa020c4e7f530d03806db2e5032e51cf3642c6a501739de9e4db225",
+      "size_bytes": 2129,
+      "source_mtime_ns": 1784017459951728000,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/8f2d838c1aa020c4e7f530d03806db2e5032e51cf3642c6a501739de9e4db225.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/08_portal_help/patient_portal_workflows_reference.md",
+      "content_hash": "fca66139c3cf20d7f62b5e1dbcabc79bcf86c86716d2d1f3d3b730d4c71e129b",
+      "size_bytes": 1618,
+      "source_mtime_ns": 1784017459950208500,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/fca66139c3cf20d7f62b5e1dbcabc79bcf86c86716d2d1f3d3b730d4c71e129b.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/biomarkers_and_tumor_markers.md",
+      "content_hash": "5731c3455d8148e096319488c69ba8dfa7e7f07f4bcfbd929a991140205ecd40",
+      "size_bytes": 2350,
+      "source_mtime_ns": 1784017459917854200,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/5731c3455d8148e096319488c69ba8dfa7e7f07f4bcfbd929a991140205ecd40.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/family_history_readiness_depth.md",
+      "content_hash": "bc863961741d0e53e5f69e199a2ee335341faf8321bff1cbb71ff484deb41c1a",
+      "size_bytes": 1831,
+      "source_mtime_ns": 1784017459913853500,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/bc863961741d0e53e5f69e199a2ee335341faf8321bff1cbb71ff484deb41c1a.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/gene_specific_readiness_reference.md",
+      "content_hash": "7a848dbb8ff129d8fef1994da3e118156eaf2e867f52f264f2d7bb52a1c6f570",
+      "size_bytes": 1674,
+      "source_mtime_ns": 1779073752021992700,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/7a848dbb8ff129d8fef1994da3e118156eaf2e867f52f264f2d7bb52a1c6f570.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/genetic_counseling_readiness.md",
+      "content_hash": "0eb390d768cd0e59f34aa3c4d3df42b793f719fa6c7b9f032d6bddcbe1c7615d",
+      "size_bytes": 3275,
+      "source_mtime_ns": 1784017459877016400,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/0eb390d768cd0e59f34aa3c4d3df42b793f719fa6c7b9f032d6bddcbe1c7615d.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/genetics_biomarker_marker_safety_terms.md",
+      "content_hash": "c3d5c62323d96ef2ef9bf59648fb0ea2db55eda212f8d260457ab014e33be07a",
+      "size_bytes": 2430,
+      "source_mtime_ns": 1784017459900599700,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/c3d5c62323d96ef2ef9bf59648fb0ea2db55eda212f8d260457ab014e33be07a.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/germline_somatic_vus_multigene_panels.md",
+      "content_hash": "406a8855da32efaa7c24084a8f7e655f7ab80b72536ce12b3f18f9d7bbdfb4e4",
+      "size_bytes": 2196,
+      "source_mtime_ns": 1784017459874856300,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/406a8855da32efaa7c24084a8f7e655f7ab80b72536ce12b3f18f9d7bbdfb4e4.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/hereditary_breast_ovarian_cancer_and_brca.md",
+      "content_hash": "ca6ec47a8c405833145907b16cf1f3aeb55282e3358232f104a6111ce3bc91ce",
+      "size_bytes": 2707,
+      "source_mtime_ns": 1784017459872852700,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/ca6ec47a8c405833145907b16cf1f3aeb55282e3358232f104a6111ce3bc91ce.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/tumor_marker_trend_limitations_reference.md",
+      "content_hash": "b73ddabbda82312fd227c0959f9260b897effc75a44a34f7b408a1935478839c",
+      "size_bytes": 1905,
+      "source_mtime_ns": 1784017459870855300,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/b73ddabbda82312fd227c0959f9260b897effc75a44a34f7b408a1935478839c.md"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/curated_medical_kb/research_papers_manifest.json",
+      "content_hash": "5127a47ac7ac74ed7c8368dcedcec475dc490935646bf6fd942d8da30cbd8125",
+      "size_bytes": 16744,
+      "source_mtime_ns": 1784017459843065100,
+      "extension": ".json",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/5127a47ac7ac74ed7c8368dcedcec475dc490935646bf6fd942d8da30cbd8125.json"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC10898895_occurrence-and-risk-factors-of-chemotherapy-induced-neutropenia-in-breast-cancer.txt",
+      "content_hash": "e526055d4a105f69ffbc024972463bea2ab4daa9ad1919e9dab33361ed23204b",
+      "size_bytes": 57658,
+      "source_mtime_ns": 1777952368520230600,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/e526055d4a105f69ffbc024972463bea2ab4daa9ad1919e9dab33361ed23204b.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC2846279_prophylaxis-of-chemotherapy-induced-febrile-neutropenia-with-g-csf.txt",
+      "content_hash": "0829ac2f285cbae694ce6a1695d6f114d44aebd933077873b4d214520d28e1ba",
+      "size_bytes": 75168,
+      "source_mtime_ns": 1777952379978877700,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/0829ac2f285cbae694ce6a1695d6f114d44aebd933077873b4d214520d28e1ba.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC3609956_the-role-of-mri-in-assessing-residual-disease-and-pcr-after-neoadjuvant-chemotherapy.txt",
+      "content_hash": "c8b2e0948d29989d4edd63193a6d5e63e0dd914af107d27505ba3831ddd04432",
+      "size_bytes": 63490,
+      "source_mtime_ns": 1777952359881290700,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/c8b2e0948d29989d4edd63193a6d5e63e0dd914af107d27505ba3831ddd04432.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC3940691_risk-of-hematological-toxicities-in-a-swog-breast-cancer-chemotherapy-trial.txt",
+      "content_hash": "53dbb8ab01f62bf68521be5149dee6c35e604520412c549782e06ebd35991693",
+      "size_bytes": 45272,
+      "source_mtime_ns": 1777952382421276300,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/53dbb8ab01f62bf68521be5149dee6c35e604520412c549782e06ebd35991693.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC3987093_patterns-of-chemotherapy-associated-toxicity-and-supportive-care-in-oncology-practice.txt",
+      "content_hash": "614bff88142d27679cf7267bb0de6348b071c5c15ec4d33a1ebda47e3c593f37",
+      "size_bytes": 42075,
+      "source_mtime_ns": 1777952373985401000,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/614bff88142d27679cf7267bb0de6348b071c5c15ec4d33a1ebda47e3c593f37.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC4998558_prognostic-value-of-chemotherapy-induced-neutropenia-at-first-cycle-in-invasive-breast-can.txt",
+      "content_hash": "c265e6f98b28f6bfcee2195c9f3ae579a87f21bb8ea296d57ccdc8d1a59ea449",
+      "size_bytes": 36857,
+      "source_mtime_ns": 1777952376775831900,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/c265e6f98b28f6bfcee2195c9f3ae579a87f21bb8ea296d57ccdc8d1a59ea449.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC5500247_dce-mri-texture-features-for-early-breast-cancer-therapy-response-prediction.txt",
+      "content_hash": "fcc61947c185eb44c4edb1601c5c697cf40f869b15286ec2240d9b415ac214d0",
+      "size_bytes": 65860,
+      "source_mtime_ns": 1777952365222913500,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/fcc61947c185eb44c4edb1601c5c697cf40f869b15286ec2240d9b415ac214d0.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC6180804_primary-febrile-neutropenia-prophylaxis-for-fec-d-chemotherapy-in-breast-cancer.txt",
+      "content_hash": "2f0bf600b3a0a2a6378b259dbf4d432f2b870757520e03fcf7c9853e7fc40c20",
+      "size_bytes": 42369,
+      "source_mtime_ns": 1777952371325398900,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/2f0bf600b3a0a2a6378b259dbf4d432f2b870757520e03fcf7c9853e7fc40c20.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC6702160_early-treatment-response-prediction-using-dce-mri-tumor-heterogeneity-changes.txt",
+      "content_hash": "fa490e8d56594b61d6b3bb580240278bc8c147e8fa25e5dc68df5482e3603dd4",
+      "size_bytes": 54444,
+      "source_mtime_ns": 1777952362567821800,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/fa490e8d56594b61d6b3bb580240278bc8c147e8fa25e5dc68df5482e3603dd4.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/research_papers_manifest.json",
+      "content_hash": "09bf81ee9d7abd198be4daf066594b76068809c266df3c04ce7fd86a6ba51669",
+      "size_bytes": 8919,
+      "source_mtime_ns": 1777953328608286400,
+      "extension": ".json",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/09bf81ee9d7abd198be4daf066594b76068809c266df3c04ce7fd86a6ba51669.json"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/supplements_cancer_treatment_safety_nci_msk_nccih.md",
+      "content_hash": "de808f3d3b8ba0c27b7070e118d6e1beb11fed0851f35f5f28107721d52965b6",
+      "size_bytes": 3961,
+      "source_mtime_ns": 1778839696504034500,
+      "extension": ".md",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/de808f3d3b8ba0c27b7070e118d6e1beb11fed0851f35f5f28107721d52965b6.md"
+    }
+  ],
+  "dependencies": {
+    "chunk_artifact": {
+      "path": "Data/rag_knowledge_base_chunks.json",
+      "content_hash": "cad803bb10f7871c3898269799146bdb6aac3be3565acea89c971a76db7ca814"
+    },
+    "governance_artifact": {
+      "path": "Data/evals/rag/latest_kb_source_governance.json",
+      "content_hash": "dad5068baef813e8448ef5fed5f917be5c36b7b787f72ff2eebb3bc81ab8dc0d"
+    },
+    "data_contract": {
+      "path": "config/data_contracts.json",
+      "content_hash": "59d3e464986694714949c8bd36be90b72023cf12d15918c2c97ee73967df2dae"
+    }
+  }
+}

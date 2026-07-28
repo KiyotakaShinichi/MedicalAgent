@@ -94,6 +94,13 @@ See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple s
 - Strict deployment is intentionally blocked because no non-demo identity provider is implemented yet. The current deployment profile is local or controlled-demo only, even when container and environment checks pass.
 - The evidence-based cross-domain critique and prioritized roadmap are in `docs/comprehensive_engineering_critique.md`; its ratings cover engineering credibility only, not clinical readiness.
 
+## Cloud, data engineering, and managed vector readiness
+- `python scripts/run_data_platform_pipeline.py` materializes a non-patient knowledge pipeline with content-addressed bronze sources, governance-enriched silver chunks, provider-neutral gold vector records, quarantine, data contracts, fingerprints, and lineage.
+- `backend/services/managed_vector_store.py` exposes network-disabled-by-default contracts for local FAISS, Azure AI Search, and Pinecone. Managed services remain shadow candidates; no managed-vector improvement or deployment is claimed.
+- `python scripts/run_vector_store_contract_eval.py` verifies namespace isolation, filter equivalence, banned identity-metadata rejection, and gold-record compatibility without making network calls.
+- `infra/azure/main.bicep` is a cost-gated reference foundation for Container Apps, ADLS Gen2, Key Vault, and optional Search, Service Bus, and PostgreSQL. It has not been deployed, and strict identity, private networking, alerting, restore, and live load validation remain blockers.
+- See [cloud, data, and vector architecture](docs/cloud_data_vector_architecture.md). These additions improve engineering structure only; they do not establish clinical validity, privacy compliance, real-world safety, or production healthcare readiness.
+
 ## External-author eval readiness
 - External-author RAG and adversarial templates are prepared, but external-author evaluation has not yet been completed.
 - Authors should not read prompts, code internals, safety-rule lists, or existing gold cases before writing cases.
@@ -275,7 +282,7 @@ Details: [docs/synthetic_data.md](docs/synthetic_data.md), [DATA_CARD.md](DATA_C
 
 - Fine-tuning is limited to synthetic response behavior and formatting; it does not inject medical knowledge.
 - Dataset preparation is fail-closed and emits schema/privacy rejections, duplicate diagnostics, source hashes, deterministic train/development/internal-frozen splits, and exact-text contamination evidence.
-- The QLoRA plan is a dry run only. No base revision is pinned, no weights are loaded, and no adapter has been trained.
+- The QLoRA plan is a dry run only. A small official candidate, tokenizer, immutable revision, and Apache-2.0 license record are pinned; no weights are loaded and no adapter has been trained because runtime preflight is currently blocked.
 - Baseline and candidate generations must cover at least 50 paired cases with complete IDs, zero unsafe leakage, full claim-boundary compliance, and no aggregate or per-behavior safety regression.
 - The current 63-case internally authored frozen split is a tripwire and reference set, not independent evidence or a powered adapter comparison; meeting the two-point lift threshold would not be statistical proof by itself.
 - Promotion remains `HOLD`; even a future `PROMOTE` verdict means offline/shadow testing only, never patient-facing or clinical use.
@@ -688,10 +695,10 @@ clinical boundary:
 - Chat record writes bind confirmation to the exact preview digest, expire,
   reject tampered state, prevent duplicates, retain provenance, and remain
   undoable. Conversation memory is explicitly untrusted and non-authoritative.
-- Repeated patient-grouped synthetic stress testing now compares simple and
-  complex classifiers/regressors across clean, MAR/MNAR missingness,
-  measurement noise, label noise, and subgroup shift. The complex models win
-  the five clean synthetic splits, but promotion remains `HOLD`.
+- A causal-order synthetic v3 stress benchmark now compares simple and
+  nonlinear classifiers/regressors across 30 seeds and clean, MAR/MNAR,
+  measurement-noise, and subgroup-shift scenarios with paired bootstrap
+  intervals. Promotion remains `HOLD`; the simulator is not clinical realism.
 - The XAI export now includes base values, all feature contributions, mean model
   log-odds/probabilities, and reconstruction residuals for all 600 synthetic
   patients. Additivity passes mechanically, while one-hot/proxy display risks
@@ -705,22 +712,30 @@ clinical boundary:
   transitive dependency lock and fingerprint audit. It does not cover the
   Python 3.11/Linux CI environment or substitute for dependency vulnerability
   scanning.
-- A compact release decision surface separates hard blockers from warnings so
+- A compact 20-check release decision surface separates hard blockers from warnings so
   the full artifact registry cannot visually dilute weak generalization,
   retrieval, latency, XAI, or dependency evidence.
 - A separate 66-case compositional safety-development bank now passes internally
   across indirect, hypothetical, emotional, Taglish, and safe-negative cases.
   It is tuning-used evidence and does not prove external generalization.
 - The behavior-only fine-tuning corpus now has 417 accepted examples with
-  291/63/63 train, development, and internal-frozen splits. No adapter has been
-  trained, no model revision is pinned, and the promotion decision remains HOLD.
+  291/63/63 train, development, and internal-frozen splits. A 135M candidate
+  and revision are pinned, but runtime preflight is blocked, no adapter has
+  been trained, and the promotion decision remains HOLD.
 - Duke Breast Cancer MRI / TCIA tabular data is evaluated as a checksum-locked,
   isolated pCR engineering stress task. MRI feature addition hurt the tested
   clinical baseline, so the negative result is retained and no NLCare model is
   promoted.
 - A feature-flagged OIDC verifier now enforces signed RS256 JWTs, issuer,
-  audience, timestamps, role mapping, and patient identity claims. Browser PKCE
-  and provider logout are not yet demonstrated.
+  audience, timestamps, role mapping, and patient identity claims. S256 PKCE
+  request/callback primitives exist, but a live provider, token exchange,
+  transaction store, and provider logout are not yet demonstrated.
+- Automation fault injection covers eight queue, lease, replay, receipt,
+  signing, and stale-event failures. Retry attempts now preserve one durable
+  external event ID; no live recipient reliability or human acknowledgement is claimed.
+- A structured claim/source verifier runs in shadow only, and the XAI wording
+  contract checks explanation completeness. Neither is a clinical entailment
+  system or a human-factors study.
 - Production and recovery Compose manifests validate, while the full isolated
   Postgres/Redis migration, backup, restore, and persistence smoke remains
   `blocked_environment` because the local Docker daemon was not healthy.

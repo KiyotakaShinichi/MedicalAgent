@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_split_manifest_v2",
-  "generated_at": "2026-07-22T06:27:38.339053+00:00",
+  "generated_at": "2026-07-22T08:26:05.870204+00:00",
   "split_seed": "nlcare-behavior-v2-20260721",
   "split_policy": "Deterministic behavior stratification; approximately 70/15/15 for behavior groups with at least seven rows, with small-group fallback.",
   "internal_holdout_is_independent_external_evidence": false,

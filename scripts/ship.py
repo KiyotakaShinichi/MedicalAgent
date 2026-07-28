@@ -65,6 +65,19 @@ def main() -> int:
             ],
         ),
         Step(
+            name="Cloud, data-platform, and managed-vector contract tests",
+            command=[
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/test_managed_vector_store.py",
+                "tests/test_data_platform_pipeline.py",
+                "tests/test_cloud_infrastructure_readiness.py",
+                "tests/test_vector_store_contract_eval.py",
+                "-q",
+            ],
+        ),
+        Step(
             name="Frontend Vitest unit tests",
             command=_npm_cmd("run", "test"),
             cwd=FRONTEND,
@@ -87,6 +100,22 @@ def main() -> int:
         Step(
             name="Focused release summary",
             command=[sys.executable, "scripts/run_focused_release_summary.py"],
+        ),
+        Step(
+            name="Reproducible knowledge-base chunk materialization",
+            command=[sys.executable, "scripts/ingest_knowledge_base.py", "--skip-index"],
+        ),
+        Step(
+            name="Non-patient data-platform pipeline",
+            command=[sys.executable, "scripts/run_data_platform_pipeline.py"],
+        ),
+        Step(
+            name="Managed-vector contract evaluation",
+            command=[sys.executable, "scripts/run_vector_store_contract_eval.py"],
+        ),
+        Step(
+            name="Azure reference-infrastructure readiness",
+            command=[sys.executable, "scripts/run_cloud_infrastructure_readiness.py"],
         ),
         Step(
             name="Patient enrichment background eval",

@@ -1,0 +1,121 @@
+{
+  "schema_version": "nlcare_data_platform_pipeline_v1",
+  "generated_at": "2026-07-28T04:28:22.893076+00:00",
+  "status": "strong",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "patient_data_processed": false,
+  "external_cloud_write_performed": false,
+  "incremental_run": {
+    "new": [],
+    "changed": [],
+    "unchanged": [
+      "KnowledgeBase/raw/curated_medical_kb/00_safety_boundaries/diagnosis_treatment_and_supplement_boundaries.md",
+      "KnowledgeBase/raw/curated_medical_kb/00_safety_boundaries/minimum_evidence_medical_claim_boundaries.md",
+      "KnowledgeBase/raw/curated_medical_kb/01_breast_cancer_basics/breast_cancer_basics_and_monitoring.md",
+      "KnowledgeBase/raw/curated_medical_kb/01_breast_cancer_basics/structured_core_breast_cancer_education.md",
+      "KnowledgeBase/raw/curated_medical_kb/02_treatments/anthracycline_cyclophosphamide_taxane_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/02_treatments/breast_cancer_treatment_drug_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/02_treatments/endocrine_cdk46_immunotherapy_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/02_treatments/her2_targeted_therapy_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/02_treatments/platinum_capecitabine_gemcitabine_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/02_treatments/supportive_medications_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/03_side_effects/gi_mouth_neuropathy_fatigue_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/03_side_effects/hematology_bleeding_infection_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/03_side_effects/side_effects_and_red_flags.md",
+      "KnowledgeBase/raw/curated_medical_kb/03_side_effects/symptom_red_flags_and_review_hints.md",
+      "KnowledgeBase/raw/curated_medical_kb/04_labs_and_monitoring/cbc_anc_labs_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/04_labs_and_monitoring/cbc_labs_and_trend_monitoring.md",
+      "KnowledgeBase/raw/curated_medical_kb/05_imaging/ct_ascites_report_monitoring.md",
+      "KnowledgeBase/raw/curated_medical_kb/05_imaging/imaging_report_monitoring.md",
+      "KnowledgeBase/raw/curated_medical_kb/05_imaging/mri_ct_ultrasound_terms_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/05_imaging/pathology_biomarker_report_terms.md",
+      "KnowledgeBase/raw/curated_medical_kb/06_integrative_supportive_care/integrative_supportive_care.md",
+      "KnowledgeBase/raw/curated_medical_kb/06_integrative_supportive_care/lymphedema_fertility_psychosocial_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/06_integrative_supportive_care/pregnancy_breastfeeding_pediatric_boundary.md",
+      "KnowledgeBase/raw/curated_medical_kb/06_integrative_supportive_care/supportive_survivorship_care_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/07_supplements_interactions/supplement_safety_by_product_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/07_supplements_interactions/supplements_interactions_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/08_portal_help/onctrack_portal_help_and_data_entry.md",
+      "KnowledgeBase/raw/curated_medical_kb/08_portal_help/patient_portal_workflows_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/biomarkers_and_tumor_markers.md",
+      "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/family_history_readiness_depth.md",
+      "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/gene_specific_readiness_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/genetic_counseling_readiness.md",
+      "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/genetics_biomarker_marker_safety_terms.md",
+      "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/germline_somatic_vus_multigene_panels.md",
+      "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/hereditary_breast_ovarian_cancer_and_brca.md",
+      "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/tumor_marker_trend_limitations_reference.md",
+      "KnowledgeBase/raw/curated_medical_kb/research_papers_manifest.json",
+      "KnowledgeBase/raw/research_papers/PMC10898895_occurrence-and-risk-factors-of-chemotherapy-induced-neutropenia-in-breast-cancer.txt",
+      "KnowledgeBase/raw/research_papers/PMC2846279_prophylaxis-of-chemotherapy-induced-febrile-neutropenia-with-g-csf.txt",
+      "KnowledgeBase/raw/research_papers/PMC3609956_the-role-of-mri-in-assessing-residual-disease-and-pcr-after-neoadjuvant-chemotherapy.txt",
+      "KnowledgeBase/raw/research_papers/PMC3940691_risk-of-hematological-toxicities-in-a-swog-breast-cancer-chemotherapy-trial.txt",
+      "KnowledgeBase/raw/research_papers/PMC3987093_patterns-of-chemotherapy-associated-toxicity-and-supportive-care-in-oncology-practice.txt",
+      "KnowledgeBase/raw/research_papers/PMC4998558_prognostic-value-of-chemotherapy-induced-neutropenia-at-first-cycle-in-invasive-breast-can.txt",
+      "KnowledgeBase/raw/research_papers/PMC5500247_dce-mri-texture-features-for-early-breast-cancer-therapy-response-prediction.txt",
+      "KnowledgeBase/raw/research_papers/PMC6180804_primary-febrile-neutropenia-prophylaxis-for-fec-d-chemotherapy-in-breast-cancer.txt",
+      "KnowledgeBase/raw/research_papers/PMC6702160_early-treatment-response-prediction-using-dce-mri-tumor-heterogeneity-changes.txt",
+      "KnowledgeBase/raw/research_papers/research_papers_manifest.json",
+      "KnowledgeBase/raw/research_papers/supplements_cancer_treatment_safety_nci_msk_nccih.md"
+    ],
+    "deleted": [],
+    "source_change_detected": false,
+    "upstream_changed": [],
+    "upstream_change_detected": false,
+    "rebuild_performed": false
+  },
+  "layers": {
+    "bronze": {
+      "record_count": 48,
+      "manifest": "Data/lakehouse/manifests/latest_source_manifest.json",
+      "content_addressed": true
+    },
+    "silver": {
+      "record_count": 240,
+      "path": "Data/lakehouse/silver/knowledge_chunks.jsonl",
+      "schema": "knowledge_chunk_silver_v1"
+    },
+    "gold": {
+      "record_count": 240,
+      "path": "Data/lakehouse/gold/vector_records.jsonl",
+      "schema": "vector_record_gold_v1",
+      "embedding_generated": false,
+      "managed_vector_upsert_performed": false
+    },
+    "quarantine": {
+      "record_count": 0,
+      "path": "Data/lakehouse/quarantine/knowledge_chunks.jsonl"
+    }
+  },
+  "quality": {
+    "hard_failures": 0,
+    "source_count": 48,
+    "silver_record_count": 240,
+    "gold_record_count": 240,
+    "quarantined_record_count": 0,
+    "duplicate_source_content_count": 0,
+    "duplicate_chunk_id_count": 0,
+    "governed_tier_coverage": 1.0,
+    "all_gold_metadata_excludes_banned_identity_keys": true,
+    "all_gold_metadata_complete": true,
+    "all_gold_records_clinical_validation_false": true
+  },
+  "lineage": {
+    "path": "Data/lakehouse/lineage/latest_lineage.json",
+    "kb_fingerprint": "978d49b16676c7b1cf63b710cb480c3c691830aa741796126eb0f1e14016dbc3",
+    "complete": true
+  },
+  "contracts": {
+    "path": "config/data_contracts.json",
+    "registry_schema": "nlcare_data_contract_registry_v1",
+    "validated": true
+  },
+  "cloud_target": {
+    "local_layout": "implemented",
+    "azure_adls_gen2": "reference_target_not_written",
+    "delta_or_parquet": "not_required_at_current_scale",
+    "data_factory_or_databricks": "not_deployed"
+  },
+  "claim_boundary": "This is an incremental pipeline over curated non-patient knowledge assets with structural identity-metadata exclusions; it is not a general PHI detector. It does not establish clinical validity, FHIR interoperability, HIPAA compliance, real-patient data quality, or production healthcare readiness."
+}

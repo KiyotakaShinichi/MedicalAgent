@@ -1,0 +1,18 @@
+{
+  "schema_version": "finetune_candidate_v1",
+  "model_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+  "tokenizer_revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+  "license": "Apache-2.0",
+  "license_review": "recorded_for_offline_behavior_experiment_only",
+  "official_model_card": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
+  "selection_reason": "Small instruction-tuned candidate for a bounded offline behavior-format experiment.",
+  "known_limitations": [
+    "Primarily English training data",
+    "Generated text may be inaccurate or biased",
+    "Not a medical model",
+    "Not approved for patient-facing or clinical use"
+  ],
+  "clinical_validation": false,
+  "patient_facing_promotion_allowed": false
+}

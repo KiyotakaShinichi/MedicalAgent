@@ -21,7 +21,7 @@ MINIMUM_DEVELOPMENT_EXAMPLES = 25
 MINIMUM_INTERNAL_HOLDOUT_EXAMPLES = 50
 
 
-def build_execution_readiness(card: dict, dryrun: dict, promotion: dict) -> dict:
+def build_execution_readiness(card: dict, dryrun: dict, promotion: dict, runtime_preflight: dict | None = None) -> dict:
     counts = card["example_counts"]["by_split"]
     prerequisites = dryrun.get("prerequisites") or {}
     checks = [
@@ -83,6 +83,12 @@ def build_execution_readiness(card: dict, dryrun: dict, promotion: dict) -> dict
             "required_for": "candidate_decision",
         },
     ]
+    if runtime_preflight is not None:
+        checks.append({
+            "id": "training_runtime_healthy_and_explicitly_enabled",
+            "passed": runtime_preflight.get("ready_for_offline_experiment") is True,
+            "required_for": "experimental_training",
+        })
     failed = [check["id"] for check in checks if not check["passed"]]
     return {
         "state": "ready_for_offline_shadow_candidate" if not failed else "not_ready_for_training_or_promotion",
@@ -112,7 +118,12 @@ def run() -> dict:
         subject_label="internal_frozen_reference_audit",
     )
     promotion = run_gate(holdout=holdout)
-    readiness = build_execution_readiness(card, dryrun, promotion)
+    runtime_path = ROOT / "Data" / "evals" / "models" / "latest_finetune_runtime_preflight.json"
+    runtime_preflight = json.loads(runtime_path.read_text(encoding="utf-8")) if runtime_path.exists() else {
+        "status": "missing",
+        "ready_for_offline_experiment": False,
+    }
+    readiness = build_execution_readiness(card, dryrun, promotion, runtime_preflight)
     report = {
         "schema_version": "finetune_governance_v3",
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -130,6 +141,7 @@ def run() -> dict:
             "exact_overlap_count": card["contamination_audit"]["exact_overlap_count"],
         },
         "dry_run": dryrun,
+        "runtime_preflight": runtime_preflight,
         "reference_audit": {
             "status": reference_eval["status"],
             "is_model_evaluation": reference_eval["is_model_evaluation"],
@@ -145,7 +157,7 @@ def run() -> dict:
         },
         "execution_readiness": readiness,
         "remaining_blockers": [
-            "No base model or tokenizer revision is pinned.",
+            "The local PEFT training runtime is not healthy and explicitly enabled.",
             "No adapter has been trained.",
             "Baseline and candidate generations are absent.",
             "The dataset is small, synthetic, and internally authored.",

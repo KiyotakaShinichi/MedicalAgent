@@ -11,6 +11,10 @@ decision surface separates four hard engineering blockers from warnings and
 informational review-readiness artifacts so a large optional artifact count
 cannot visually dilute a critical failure.
 
+The primary surface is capped at 20 canonical checks. Superseded holdouts,
+component diagnostics, and duplicate readiness artifacts remain discoverable
+in the detailed registry, but they do not compete with the primary decision.
+
 Run:
 
 ```bash

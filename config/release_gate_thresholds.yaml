@@ -1983,3 +1983,115 @@ artifacts:
       Behavior-only synthetic fine-tuning governance. The current artifact is
       deliberately HOLD because no adapter or candidate generations exist. It
       does not add medical knowledge or establish clinical validation.
+
+  - path: Data/evals/ops/latest_automation_fault_injection.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [external_delivery_performed], op: "==", value: false}
+      - {path: [human_acknowledgement_proven], op: "==", value: false}
+      - {path: [scenario_count], op: ">=", value: 8}
+    note: In-process and disposable-database fault injection; not live channel reliability or clinician acknowledgement.
+
+  - path: Data/evals/rag/latest_structured_claim_shadow_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [live_patient_agent_enabled], op: "==", value: false}
+      - {path: [n_cases], op: ">=", value: 12}
+    note: Shadow heuristic only; it is not clinical entailment and is not enabled on patient responses.
+
+  - path: Data/evals/models/latest_synthetic_causal_v3_stress.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable_internal_stress_test, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [realism_claim], op: "==", value: false}
+      - {path: [model_promotion_decision], op: "==", value: HOLD}
+      - {path: [seed_count], op: ">=", value: 30}
+    note: Multi-seed simulator stress test only; it cannot establish external validity or treatment effects.
+
+  - path: Data/evals/models/latest_xai_comprehension_contract_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable_internal_proxy, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [human_participant_study_completed], op: "==", value: false}
+      - {path: [n_cases], op: ">=", value: 20}
+    note: Wording-contract proxy only; no human comprehension or usability claim.
+
+  - path: Data/evals/models/latest_finetune_runtime_preflight.json
+    required: false
+    max_age_days: 90
+    accepted_status: [blocked_runtime, ready_for_offline_experiment]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [model_trained], op: "==", value: false}
+      - {path: [patient_facing_promotion_allowed], op: "==", value: false}
+    note: Pinned-model runtime preflight; no adapter or behavior improvement exists.
+
+  - path: Data/evals/ops/latest_oidc_browser_pkce_readiness.json
+    required: false
+    max_age_days: 90
+    accepted_status: [blocked_configuration, prepared_not_integrated]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [browser_login_completed], op: "==", value: false}
+      - {path: [production_auth_ready], op: "==", value: false}
+    note: Standards-oriented PKCE preparation; no live provider flow or production authentication proof.
+
+  - path: Data/lakehouse/manifests/latest_pipeline_run.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [patient_data_processed], op: "==", value: false}
+      - {path: [external_cloud_write_performed], op: "==", value: false}
+      - {path: [quality, hard_failures], op: "==", value: 0}
+      - {path: [quality, all_gold_metadata_complete], op: "==", value: true}
+      - {path: [quality, all_gold_metadata_excludes_banned_identity_keys], op: "==", value: true}
+      - {path: [lineage, complete], op: "==", value: true}
+    note: >
+      Incremental bronze/silver/gold engineering pipeline for curated
+      non-patient knowledge assets. Banned-key checks are not a general PHI
+      detector. This is not real-patient data engineering, FHIR
+      interoperability, or evidence of a deployed cloud lakehouse.
+
+  - path: Data/evals/rag/latest_vector_store_contract_eval.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong_contract_only, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [managed_network_request_performed], op: "==", value: false}
+      - {path: [managed_vector_comparison_completed], op: "==", value: false}
+      - {path: [retrieval_improvement_proven], op: "==", value: false}
+      - {path: [failed], op: "==", value: 0}
+    note: >
+      Provider-neutral Azure AI Search/Pinecone payload and metadata-policy
+      contract. Managed retrieval remains shadow-only; no quality or latency
+      comparison has been completed.
+
+  - path: Data/evals/ops/latest_cloud_infrastructure_readiness.json
+    required: false
+    max_age_days: 30
+    accepted_status: [reference_architecture_only, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [cloud_deployment_completed], op: "==", value: false}
+      - {path: [patient_data_allowed], op: "==", value: false}
+      - {path: [failed], op: "==", value: 0}
+    note: >
+      Static Azure Bicep reference foundation only. Azure CLI/Bicep compile,
+      what-if, deployment, private networking, workload identities, backup
+      recovery, and cloud load/cost evidence remain incomplete.

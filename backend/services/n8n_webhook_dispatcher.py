@@ -182,6 +182,7 @@ def dispatch_signed_webhook(
     *,
     workflow_id: str,
     payload: Mapping[str, Any],
+    event_id: str | None = None,
     env: Mapping[str, str] | None = None,
     transport: Callable[[str, str, Mapping[str, str], float], Mapping[str, Any]] | None = None,
     timeout_seconds: float = 8.0,
@@ -212,7 +213,11 @@ def dispatch_signed_webhook(
 
     _validate_webhook_url(base_url)
     signed = build_signed_dispatch(
-        workflow_id=workflow_id, payload=payload, secret=secret, key_id=key_id,
+        workflow_id=workflow_id,
+        payload=payload,
+        secret=secret,
+        key_id=key_id,
+        event_id=event_id,
     )
     endpoint = f"{base_url}/{workflow_id}"
     sender = transport or _urllib_transport

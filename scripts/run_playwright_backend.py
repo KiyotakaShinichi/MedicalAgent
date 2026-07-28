@@ -28,6 +28,8 @@ def main() -> int:
     env["DATABASE_URL"] = DATABASE_URL
     env["NLCARE_CORS_ORIGINS"] = FRONTEND_ORIGIN
     env["ENVIRONMENT"] = "test"
+    env["ONCOTRACK_FAST_MODE"] = "1"
+    env["RAG_FORCE_SPARSE"] = "true"
 
     subprocess.run(
         [
@@ -46,6 +48,8 @@ def main() -> int:
             "DATABASE_URL": DATABASE_URL,
             "NLCARE_CORS_ORIGINS": FRONTEND_ORIGIN,
             "ENVIRONMENT": "test",
+            "ONCOTRACK_FAST_MODE": "1",
+            "RAG_FORCE_SPARSE": "true",
         }
     )
     import uvicorn

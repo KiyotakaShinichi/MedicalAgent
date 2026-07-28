@@ -1,0 +1,51 @@
+{
+  "schema_version": "nlcare_data_lineage_v1",
+  "generated_at": "2026-07-28T04:28:22.872814+00:00",
+  "clinical_validation": false,
+  "nodes": [
+    {
+      "id": "knowledge_sources",
+      "layer": "source",
+      "record_count": 48,
+      "fingerprint": "8facc37d366ef5ebb2c40045ff9bbd4e3feeb40dd1e9178959686ad68bd28037"
+    },
+    {
+      "id": "knowledge_bronze",
+      "layer": "bronze",
+      "record_count": 48,
+      "path": "Data/lakehouse/manifests/latest_source_manifest.json"
+    },
+    {
+      "id": "knowledge_silver",
+      "layer": "silver",
+      "record_count": 240,
+      "path": "Data/lakehouse/silver/knowledge_chunks.jsonl",
+      "fingerprint": "978d49b16676c7b1cf63b710cb480c3c691830aa741796126eb0f1e14016dbc3"
+    },
+    {
+      "id": "vector_gold",
+      "layer": "gold",
+      "record_count": 240,
+      "path": "Data/lakehouse/gold/vector_records.jsonl",
+      "fingerprint": "b4f0ec3896285db1271505bd7ae61aa703010316d8dcae1937d85ce50b241aa7"
+    }
+  ],
+  "edges": [
+    {
+      "from": "knowledge_sources",
+      "to": "knowledge_bronze",
+      "operation": "content_addressed_copy"
+    },
+    {
+      "from": "knowledge_bronze",
+      "to": "knowledge_silver",
+      "operation": "chunk_validate_govern"
+    },
+    {
+      "from": "knowledge_silver",
+      "to": "vector_gold",
+      "operation": "remote_safe_projection"
+    }
+  ],
+  "quarantine_path": "Data/lakehouse/quarantine/knowledge_chunks.jsonl"
+}

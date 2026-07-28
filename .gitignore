@@ -20,6 +20,11 @@ Data/feature_store/
 Data/rag_index/
 Data/rag_knowledge_base_chunks.json
 Data/agent_eval/
+# Reproducible content-addressed copies generated from KnowledgeBase/raw.
+Data/lakehouse/bronze/
+Data/lakehouse/silver/*.jsonl
+Data/lakehouse/gold/*.jsonl
+Data/lakehouse/quarantine/*.jsonl
 KnowledgeBase/raw/*
 !KnowledgeBase/raw/curated_medical_kb/
 !KnowledgeBase/raw/curated_medical_kb/**

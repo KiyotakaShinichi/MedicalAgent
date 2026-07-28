@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "0a541c6d7adcdc32288caf48034154a7a786b228",
+    "git_commit": "62e9c71be621255682c5b132bd1ddd5c2a6968c0",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -15,16 +15,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2750051:1784272258:8bb4c5e82263",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-07-22T06:47:34.007172+00:00"
+    "generated_at": "2026-07-28T04:29:52.105281+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-07-22T06:47:34.007172+00:00",
+    "generated_at": "2026-07-28T04:29:52.105281+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-07-23T06:47:34.007172+00:00",
+    "expires_at": "2026-07-29T04:29:52.105281+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-07-22T06:47:35.692268+00:00",
+  "generated_at": "2026-07-28T04:29:53.556457+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -589,9 +589,9 @@
       "id": "shortcut_audit",
       "title": "Hybrid shortcut audit",
       "tier": "critical",
-      "status": "acceptable",
+      "status": "stale",
       "source_status": "acceptable",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-21T15:22:09.671555+00:00",
       "source_path": "Data/evals/models/latest_shortcut_audit.json",
       "metrics": {
@@ -686,9 +686,9 @@
       "id": "medical_claim_boundary_eval",
       "title": "Medical claim-boundary eval",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-21T15:13:23.607586+00:00",
       "source_path": "Data/evals/safety/latest_medical_claim_boundary_eval.json",
       "metrics": {
@@ -832,9 +832,9 @@
       "id": "ispy2_tcia_external_stress",
       "title": "TCIA I-SPY2 separate-task external stress benchmark",
       "tier": "supporting",
-      "status": "acceptable_external_engineering_stress",
+      "status": "stale",
       "source_status": "acceptable_external_engineering_stress",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-22T01:26:06.224066+00:00",
       "source_path": "Data/evals/models/latest_ispy2_tcia_external_stress.json",
       "metrics": {
@@ -852,9 +852,9 @@
       "id": "duke_tcia_external_stress",
       "title": "Duke/TCIA separate-task external stress benchmark",
       "tier": "supporting",
-      "status": "acceptable_external_engineering_stress",
+      "status": "stale",
       "source_status": "acceptable_external_engineering_stress",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-22T05:53:31.422023+00:00",
       "source_path": "Data/evals/models/latest_duke_tcia_external_stress.json",
       "metrics": {
@@ -1016,9 +1016,9 @@
       "id": "automation_reliability_dossier",
       "title": "Automation reliability dossier",
       "tier": "supporting",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-22T00:31:03.740906+00:00",
       "source_path": "Data/evals/ops/latest_automation_reliability_dossier.json",
       "metrics": {
@@ -1375,10 +1375,10 @@
       "id": "finetune_behavior_governance",
       "title": "Behavior-only fine-tuning governance",
       "tier": "supporting",
-      "status": "needs_attention",
+      "status": "stale",
       "source_status": "needs_attention",
-      "freshness": "fresh",
-      "generated_at": "2026-07-22T06:27:39.069835+00:00",
+      "freshness": "stale",
+      "generated_at": "2026-07-22T08:26:06.792463+00:00",
       "source_path": "Data/evals/models/latest_finetune_governance.json",
       "metrics": {
         "status": "needs_attention",
@@ -1398,9 +1398,9 @@
       "id": "mle_readiness",
       "title": "MLE readiness gate",
       "tier": "critical",
-      "status": "unideal",
+      "status": "stale",
       "source_status": "unideal",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-22T00:32:28.188168+00:00",
       "source_path": "Data/mle_monitoring/latest_mle_readiness.json",
       "metrics": {
@@ -1730,9 +1730,9 @@
       "id": "live_rag_eval",
       "title": "Live-agent RAG benchmark",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-22T04:13:27.466200+00:00",
       "source_path": "Data/evals/rag/latest_live_rag_eval.json",
       "metrics": {
@@ -1754,9 +1754,9 @@
       "id": "claim_level_citation_eval",
       "title": "Claim-level citation validation",
       "tier": "critical",
-      "status": "strong",
+      "status": "stale",
       "source_status": "strong",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-21T15:13:31.919917+00:00",
       "source_path": "Data/evals/rag/latest_claim_level_citation_eval.json",
       "metrics": {
@@ -1899,9 +1899,9 @@
       "id": "rag_tier_ablation",
       "title": "RAG source-tier retrieval ablation (T1 / T1+T2 / T1+T2+T3 / all)",
       "tier": "supporting",
-      "status": "acceptable",
+      "status": "stale",
       "source_status": "acceptable",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-21T15:41:47.656478+00:00",
       "source_path": "Data/evals/rag/latest_rag_tier_ablation.json",
       "metrics": {
@@ -2019,7 +2019,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-07-22T06:46:00.472908+00:00",
+      "generated_at": "2026-07-28T04:15:49.198948+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -2036,7 +2036,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-07-22T06:45:54.908201+00:00",
+      "generated_at": "2026-07-28T04:15:48.294920+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -2053,7 +2053,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-07-22T06:46:01.334760+00:00",
+      "generated_at": "2026-07-28T04:15:49.301930+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2263,9 +2263,9 @@
       "id": "deployment_recovery_drill",
       "title": "Local synthetic backup and restore drill",
       "tier": "supporting",
-      "status": "strong_local_only",
+      "status": "stale",
       "source_status": "strong_local_only",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-22T01:36:04.334571+00:00",
       "source_path": "Data/evals/ops/latest_deployment_recovery_drill.json",
       "metrics": {
@@ -2284,9 +2284,9 @@
       "id": "container_recovery_smoke",
       "title": "Disposable Postgres/Redis migration and recovery smoke",
       "tier": "supporting",
-      "status": "blocked_environment",
+      "status": "stale",
       "source_status": "blocked_environment",
-      "freshness": "fresh",
+      "freshness": "stale",
       "generated_at": "2026-07-22T06:19:33.332567+00:00",
       "source_path": "Data/evals/ops/latest_container_recovery_smoke.json",
       "metrics": {
@@ -2585,7 +2585,7 @@
       "status": "stale",
       "source_status": "strong",
       "freshness": "stale",
-      "generated_at": "2026-07-19T01:50:26.659433+00:00",
+      "generated_at": "2026-07-22T06:48:25.398032+00:00",
       "source_path": "Data/evals/governance/latest_release_gate_explanation.json",
       "metrics": {
         "status": "strong"
@@ -2642,6 +2642,165 @@
       },
       "limitations": [],
       "claim_boundary": "Unavailable artifacts are explicit so the dashboard does not imply hidden validation."
+    },
+    {
+      "id": "structured_claim_shadow",
+      "title": "Structured claim/source shadow verifier",
+      "tier": "supporting",
+      "status": "stale",
+      "source_status": "strong",
+      "freshness": "stale",
+      "generated_at": "2026-07-22T08:19:56.261877+00:00",
+      "source_path": "Data/evals/rag/latest_structured_claim_shadow_eval.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "live_enabled": false
+      },
+      "limitations": [],
+      "claim_boundary": "Shadow engineering verifier only. It can expose structured mismatches but does not establish medical entailment, factual correctness, clinical validation, or patient-facing safety."
+    },
+    {
+      "id": "synthetic_causal_v3",
+      "title": "Synthetic causal-order multi-seed stress test",
+      "tier": "supporting",
+      "status": "stale",
+      "source_status": "acceptable_internal_stress_test",
+      "freshness": "stale",
+      "generated_at": "2026-07-22T08:19:42.048848+00:00",
+      "source_path": "Data/evals/models/latest_synthetic_causal_v3_stress.json",
+      "metrics": {
+        "seed_count": 30,
+        "promotion": "HOLD",
+        "realism_claim": false
+      },
+      "limitations": [],
+      "claim_boundary": "This benchmark tests engineering behavior under an explicit synthetic mechanism. It uses no real patient data, provides no clinical validation, and cannot support diagnosis, treatment, prognosis, patient benefit, or real-world readiness claims."
+    },
+    {
+      "id": "xai_comprehension_proxy",
+      "title": "XAI explanation-contract proxy",
+      "tier": "supporting",
+      "status": "stale",
+      "source_status": "acceptable_internal_proxy",
+      "freshness": "stale",
+      "generated_at": "2026-07-22T08:20:08.511690+00:00",
+      "source_path": "Data/evals/models/latest_xai_comprehension_contract_eval.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "human_study": false
+      },
+      "limitations": [],
+      "claim_boundary": "This deterministic wording proxy does not show that patients understand, trust appropriately, or use the interface safely. Independent human-factors review has not been completed."
+    },
+    {
+      "id": "automation_fault_injection",
+      "title": "Automation queue and webhook fault injection",
+      "tier": "supporting",
+      "status": "stale",
+      "source_status": "strong",
+      "freshness": "stale",
+      "generated_at": "2026-07-22T07:57:15.564836+00:00",
+      "source_path": "Data/evals/ops/latest_automation_fault_injection.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "scenario_count": 8,
+        "external_delivery": false
+      },
+      "limitations": [],
+      "claim_boundary": "Disposable engineering fault injection only. A passing result does not prove external channel reliability, clinician acknowledgement, emergency coverage, patient benefit, or healthcare production readiness."
+    },
+    {
+      "id": "finetune_runtime_preflight",
+      "title": "Behavior-adapter runtime preflight",
+      "tier": "supporting",
+      "status": "stale",
+      "source_status": "blocked_runtime",
+      "freshness": "stale",
+      "generated_at": "2026-07-22T08:20:48.366750+00:00",
+      "source_path": "Data/evals/models/latest_finetune_runtime_preflight.json",
+      "metrics": {
+        "status": "blocked_runtime",
+        "model_trained": false,
+        "ready": false
+      },
+      "limitations": [],
+      "claim_boundary": "This is a runtime and lineage preflight only. No adapter was trained, no behavior improvement was demonstrated, and no clinical or patient-facing use is allowed."
+    },
+    {
+      "id": "oidc_browser_pkce_readiness",
+      "title": "OIDC browser PKCE readiness",
+      "tier": "supporting",
+      "status": "stale",
+      "source_status": "blocked_configuration",
+      "freshness": "stale",
+      "generated_at": "2026-07-22T08:20:20.946027+00:00",
+      "source_path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
+      "metrics": {
+        "status": "blocked_configuration",
+        "browser_login": false,
+        "production_ready": false
+      },
+      "limitations": [],
+      "claim_boundary": "PKCE primitives and readiness checks are engineering preparation only. No live provider flow, healthcare compliance, clinical validation, or production authentication readiness is claimed."
+    },
+    {
+      "id": "data_platform_pipeline",
+      "title": "Incremental non-patient data-platform pipeline",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T04:28:22.893076+00:00",
+      "source_path": "Data/lakehouse/manifests/latest_pipeline_run.json",
+      "metrics": {
+        "status": "strong",
+        "source_count": 48,
+        "silver_records": 240,
+        "gold_records": 240,
+        "quarantined": 0,
+        "metadata_complete": true,
+        "external_cloud_write": false
+      },
+      "limitations": [],
+      "claim_boundary": "This is an incremental pipeline over curated non-patient knowledge assets with structural identity-metadata exclusions; it is not a general PHI detector. It does not establish clinical validity, FHIR interoperability, HIPAA compliance, real-patient data quality, or production healthcare readiness."
+    },
+    {
+      "id": "managed_vector_contract",
+      "title": "Managed vector-store offline contract",
+      "tier": "supporting",
+      "status": "strong_contract_only",
+      "source_status": "strong_contract_only",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T04:28:23.638958+00:00",
+      "source_path": "Data/evals/rag/latest_vector_store_contract_eval.json",
+      "metrics": {
+        "status": "strong_contract_only",
+        "pass_rate": 1.0,
+        "gold_records": 240,
+        "network_request": false,
+        "comparison_completed": false
+      },
+      "limitations": [],
+      "claim_boundary": "This verifies adapter schemas and metadata-policy behavior offline. It is not a live Azure or Pinecone benchmark, does not prove retrieval improvement, and does not establish clinical validation or production healthcare readiness."
+    },
+    {
+      "id": "azure_reference_infrastructure",
+      "title": "Azure reference-infrastructure readiness",
+      "tier": "supporting",
+      "status": "reference_architecture_only",
+      "source_status": "reference_architecture_only",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T04:29:37.269001+00:00",
+      "source_path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
+      "metrics": {
+        "status": "reference_architecture_only",
+        "checks_passed": 13,
+        "checks_failed": 0,
+        "cloud_deployed": false,
+        "bicep_compiled": false
+      },
+      "limitations": [],
+      "claim_boundary": "This artifact validates a local Azure reference template only. It is not evidence of a successful cloud deployment, security certification, HIPAA compliance, clinical validation, or production healthcare readiness."
     }
   ],
   "issues": [
@@ -2820,6 +2979,12 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
+      "benchmark_id": "shortcut_audit",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
       "benchmark_id": "medical_advisor_review_packet",
       "severity": "medium",
       "status": "stale",
@@ -2845,6 +3010,12 @@
     },
     {
       "benchmark_id": "minimum_evidence_standards",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "medical_claim_boundary_eval",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -2887,6 +3058,18 @@
     },
     {
       "benchmark_id": "external_data_bridge_eval",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "ispy2_tcia_external_stress",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "duke_tcia_external_stress",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -2935,6 +3118,12 @@
     },
     {
       "benchmark_id": "ml_coverage_risk_diagnostics",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "automation_reliability_dossier",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3056,14 +3245,14 @@
     {
       "benchmark_id": "finetune_behavior_governance",
       "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "mle_readiness",
-      "severity": "high",
-      "status": "unideal",
-      "message": "MLE readiness has one or more unideal categories; inspect category_statuses before promotion."
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "mle_readiness_realism_candidate",
@@ -3162,6 +3351,18 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
+      "benchmark_id": "live_rag_eval",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "claim_level_citation_eval",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
       "benchmark_id": "gold_claim_grounding_eval",
       "severity": "medium",
       "status": "stale",
@@ -3199,6 +3400,12 @@
     },
     {
       "benchmark_id": "multilingual_adversarial_security",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "rag_tier_ablation",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3265,6 +3472,18 @@
     },
     {
       "benchmark_id": "service_health_snapshot",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "deployment_recovery_drill",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "container_recovery_smoke",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3373,6 +3592,42 @@
     },
     {
       "benchmark_id": "ultrasound_baseline",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "structured_claim_shadow",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "synthetic_causal_v3",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "xai_comprehension_proxy",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "automation_fault_injection",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "finetune_runtime_preflight",
+      "severity": "medium",
+      "status": "stale",
+      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "oidc_browser_pkce_readiness",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."

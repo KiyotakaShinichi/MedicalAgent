@@ -247,7 +247,10 @@ class LoRADryRun(unittest.TestCase):
             self.assertTrue(Path(summary["manifest_path"]).exists() or (tmp_path / "runs" / "latest_dryrun_manifest.json").exists())
             self.assertTrue((tmp_path / "runs" / "latest_model_card.json").exists())
             self.assertIn("prerequisites", summary)
-            self.assertFalse(summary["prerequisites"]["base_model_revision_pinned"])
+            self.assertTrue(summary["prerequisites"]["base_model_revision_pinned"])
+            self.assertTrue(summary["prerequisites"]["tokenizer_revision_pinned"])
+            self.assertTrue(summary["prerequisites"]["license_review_complete"])
+            self.assertFalse(summary["ready_for_real_training"])
 
     def test_dryrun_raises_on_missing_dataset(self) -> None:
         with TemporaryDirectory() as tmp:

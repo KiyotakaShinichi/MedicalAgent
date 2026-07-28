@@ -1,0 +1,40 @@
+{
+  "schema_version": "oidc_browser_pkce_readiness_v1",
+  "generated_at": "2026-07-22T08:20:20.946027+00:00",
+  "status": "blocked_configuration",
+  "clinical_validation": false,
+  "configuration": {
+    "authorization_endpoint": "",
+    "token_endpoint": "",
+    "client_id": "missing",
+    "redirect_uri": "",
+    "scopes": [
+      "openid",
+      "profile"
+    ]
+  },
+  "configuration_issues": [
+    "authorization endpoint is required",
+    "token endpoint is required",
+    "client ID is required",
+    "redirect URI is required"
+  ],
+  "implemented_primitives": [
+    "authorization code request",
+    "S256 PKCE verifier and challenge",
+    "cryptographic state and nonce",
+    "constant-time callback state validation",
+    "HTTPS strict-profile validation"
+  ],
+  "not_demonstrated": [
+    "live identity-provider login",
+    "server-side transaction persistence",
+    "authorization-code token exchange",
+    "refresh-token rotation",
+    "provider logout and session revocation",
+    "consent or identity proofing"
+  ],
+  "browser_login_completed": false,
+  "production_auth_ready": false,
+  "claim_boundary": "PKCE primitives and readiness checks are engineering preparation only. No live provider flow, healthcare compliance, clinical validation, or production authentication readiness is claimed."
+}

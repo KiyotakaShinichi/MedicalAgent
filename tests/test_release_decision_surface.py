@@ -48,3 +48,7 @@ def test_scaffold_and_external_blocker_are_not_reported_as_verified(tmp_path, mo
         "external_review_execution": "external_blocked",
     }
     assert result["engineering_release_decision"] == "PROCEED"
+
+
+def test_primary_surface_is_capped_at_twenty_checks():
+    assert len(surface.CHECKS) <= 20

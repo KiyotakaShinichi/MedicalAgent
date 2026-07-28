@@ -1,10 +1,12 @@
 {
   "schema_version": "release_decision_surface_v2",
-  "generated_at": "2026-07-22T06:52:41.902495+00:00",
+  "generated_at": "2026-07-22T08:37:14.750141+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "hard_blocker_count": 0,
-  "warning_count": 6,
+  "warning_count": 5,
+  "primary_check_count": 20,
+  "primary_surface_cap": 20,
   "checks": [
     {
       "id": "critical_safety_regression",
@@ -55,38 +57,6 @@
       "key_metrics": {}
     },
     {
-      "id": "frozen_adversarial_v4",
-      "tier": "warning",
-      "owner": "AI safety",
-      "path": "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
-      "domain": "aie",
-      "decision": "attention",
-      "evidence_state": "needs_attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-22T04:10:45.888332+00:00",
-      "key_metrics": {
-        "pass_rate": 0.704918,
-        "unsafe_leakage_rate": 0.327273,
-        "over_refusal_rate": 0.0
-      }
-    },
-    {
-      "id": "frozen_adversarial_v5",
-      "tier": "warning",
-      "owner": "AI safety",
-      "path": "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
-      "domain": "aie",
-      "decision": "pass",
-      "evidence_state": "verified_internal",
-      "observed_status": "acceptable",
-      "generated_at": "2026-07-22T04:10:51.480213+00:00",
-      "key_metrics": {
-        "pass_rate": 0.969697,
-        "unsafe_leakage_rate": 0.027273,
-        "over_refusal_rate": 0.045455
-      }
-    },
-    {
       "id": "frozen_adversarial_v6",
       "tier": "warning",
       "owner": "AI safety",
@@ -119,16 +89,20 @@
       }
     },
     {
-      "id": "live_rag_internal",
+      "id": "structured_claim_shadow",
       "tier": "warning",
       "owner": "RAG",
-      "path": "Data/evals/rag/latest_live_rag_eval.json",
+      "path": "Data/evals/rag/latest_structured_claim_shadow_eval.json",
       "domain": "aie",
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-22T04:13:27.466200+00:00",
-      "key_metrics": {}
+      "generated_at": "2026-07-22T08:19:56.261877+00:00",
+      "key_metrics": {
+        "pass_rate": 1.0,
+        "live_patient_agent_enabled": false,
+        "clinical_validation": false
+      }
     },
     {
       "id": "route_latency",
@@ -159,17 +133,19 @@
       "key_metrics": {}
     },
     {
-      "id": "synthetic_v2_stability",
+      "id": "synthetic_causal_v3",
       "tier": "warning",
       "owner": "MLE",
-      "path": "Data/evals/models/latest_synthetic_v2_model_stability.json",
+      "path": "Data/evals/models/latest_synthetic_causal_v3_stress.json",
       "domain": "mle",
       "decision": "pass",
       "evidence_state": "verified_internal",
-      "observed_status": "acceptable",
-      "generated_at": "2026-07-22T01:40:04.593875+00:00",
+      "observed_status": "acceptable_internal_stress_test",
+      "generated_at": "2026-07-22T08:19:42.048848+00:00",
       "key_metrics": {
-        "synthetic_only": true,
+        "seed_count": 30,
+        "model_promotion_decision": "HOLD",
+        "realism_claim": false,
         "clinical_validation": false
       }
     },
@@ -190,16 +166,20 @@
       }
     },
     {
-      "id": "dependency_reproducibility",
+      "id": "xai_comprehension_proxy",
       "tier": "warning",
-      "owner": "SWE/ops",
-      "path": "Data/evals/ops/latest_dependency_lock_audit.json",
+      "owner": "XAI",
+      "path": "Data/evals/models/latest_xai_comprehension_contract_eval.json",
       "domain": "swe",
       "decision": "pass",
       "evidence_state": "verified_internal",
-      "observed_status": "acceptable",
-      "generated_at": "2026-07-19T01:21:42.157809+00:00",
-      "key_metrics": {}
+      "observed_status": "acceptable_internal_proxy",
+      "generated_at": "2026-07-22T08:20:08.511690+00:00",
+      "key_metrics": {
+        "pass_rate": 1.0,
+        "human_participant_study_completed": false,
+        "clinical_validation": false
+      }
     },
     {
       "id": "durable_automation_worker",
@@ -218,20 +198,20 @@
       }
     },
     {
-      "id": "automation_reliability",
+      "id": "automation_fault_injection",
       "tier": "warning",
       "owner": "automation",
-      "path": "Data/evals/ops/latest_automation_reliability_dossier.json",
+      "path": "Data/evals/ops/latest_automation_fault_injection.json",
       "domain": "automation",
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-22T00:31:03.740906+00:00",
+      "generated_at": "2026-07-22T07:57:15.564836+00:00",
       "key_metrics": {
-        "check_count": 8,
+        "scenario_count": 8,
         "passed_count": 8,
-        "external_delivery_enabled_by_default": false,
-        "real_emergency_coverage_claim": false
+        "external_delivery_performed": false,
+        "clinical_validation": false
       }
     },
     {
@@ -253,18 +233,6 @@
       }
     },
     {
-      "id": "deployment_recovery_local",
-      "tier": "warning",
-      "owner": "deployment",
-      "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
-      "domain": "deployment",
-      "decision": "pass",
-      "evidence_state": "verified_internal",
-      "observed_status": "strong_local_only",
-      "generated_at": "2026-07-22T01:36:04.334571+00:00",
-      "key_metrics": {}
-    },
-    {
       "id": "benchmark_freshness",
       "tier": "warning",
       "owner": "SWE/ops",
@@ -273,7 +241,7 @@
       "decision": "attention",
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
-      "generated_at": "2026-07-22T06:47:35.692268+00:00",
+      "generated_at": "2026-07-22T08:36:53.838713+00:00",
       "key_metrics": {
         "critical_status": "stale",
         "issue_count": null,
@@ -281,49 +249,36 @@
       }
     },
     {
-      "id": "finetune_governance",
+      "id": "finetune_runtime",
       "tier": "informational",
       "owner": "fine-tuning",
-      "path": "Data/evals/models/latest_finetune_governance.json",
+      "path": "Data/evals/models/latest_finetune_runtime_preflight.json",
       "domain": "fine_tuning",
       "decision": "informational",
       "evidence_state": "scaffolded",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-22T06:27:39.069835+00:00",
+      "observed_status": "blocked_runtime",
+      "generated_at": "2026-07-22T08:20:48.366750+00:00",
       "key_metrics": {
         "model_trained": false,
-        "readiness_state": "not_ready_for_training_or_promotion",
-        "training_ready": false,
-        "promotion_ready": false
+        "ready_for_offline_experiment": false,
+        "explicit_experiment_enable": false
       }
     },
     {
-      "id": "finetune_promotion",
+      "id": "oidc_browser_pkce",
       "tier": "informational",
-      "owner": "fine-tuning",
-      "path": "Data/evals/models/latest_finetune_promotion_gate.json",
-      "domain": "fine_tuning",
+      "owner": "deployment",
+      "path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
+      "domain": "deployment",
       "decision": "informational",
       "evidence_state": "scaffolded",
-      "observed_status": "ready_for_candidate_generations",
-      "generated_at": "2026-07-22T06:27:39.048643+00:00",
+      "observed_status": "blocked_configuration",
+      "generated_at": "2026-07-22T08:20:20.946027+00:00",
       "key_metrics": {
-        "decision": "HOLD",
-        "promotion_scope": "offline_shadow_only",
-        "behavior_improvement_statistically_proven": false
+        "browser_login_completed": false,
+        "production_auth_ready": false,
+        "clinical_validation": false
       }
-    },
-    {
-      "id": "ispy2_external_stress",
-      "tier": "informational",
-      "owner": "MLE",
-      "path": "Data/evals/models/latest_ispy2_tcia_external_stress.json",
-      "domain": "mle",
-      "decision": "informational",
-      "evidence_state": "informational",
-      "observed_status": "acceptable_external_engineering_stress",
-      "generated_at": "2026-07-22T01:26:06.224066+00:00",
-      "key_metrics": {}
     },
     {
       "id": "external_rag_holdout",
@@ -335,18 +290,6 @@
       "evidence_state": "external_blocked",
       "observed_status": "ready_for_external_authoring",
       "generated_at": "2026-06-01T09:31:25.525481+00:00",
-      "key_metrics": {}
-    },
-    {
-      "id": "goldset_adjudication",
-      "tier": "informational",
-      "owner": "external review",
-      "path": "Data/evals/rag/latest_goldset_adjudication_readiness.json",
-      "domain": "medical",
-      "decision": "informational",
-      "evidence_state": "external_blocked",
-      "observed_status": "ready_for_adjudication",
-      "generated_at": "2026-06-01T11:52:07.836963+00:00",
       "key_metrics": {}
     },
     {
@@ -369,9 +312,9 @@
     {
       "domain": "aie",
       "state": "needs_attention",
-      "check_count": 6,
-      "verified_internal_count": 3,
-      "needs_attention_count": 3,
+      "check_count": 4,
+      "verified_internal_count": 2,
+      "needs_attention_count": 2,
       "scaffolded_count": 0,
       "external_blocked_count": 0
     },
@@ -387,7 +330,7 @@
     {
       "domain": "mle",
       "state": "verified_internal_only",
-      "check_count": 4,
+      "check_count": 3,
       "verified_internal_count": 3,
       "needs_attention_count": 0,
       "scaffolded_count": 0,
@@ -396,11 +339,11 @@
     {
       "domain": "medical",
       "state": "external_evidence_incomplete",
-      "check_count": 4,
+      "check_count": 3,
       "verified_internal_count": 1,
       "needs_attention_count": 0,
       "scaffolded_count": 0,
-      "external_blocked_count": 3
+      "external_blocked_count": 2
     },
     {
       "domain": "automation",
@@ -414,29 +357,28 @@
     {
       "domain": "fine_tuning",
       "state": "prepared_not_proven",
-      "check_count": 2,
+      "check_count": 1,
       "verified_internal_count": 0,
       "needs_attention_count": 0,
-      "scaffolded_count": 2,
+      "scaffolded_count": 1,
       "external_blocked_count": 0
     },
     {
       "domain": "deployment",
       "state": "needs_attention",
       "check_count": 2,
-      "verified_internal_count": 1,
+      "verified_internal_count": 0,
       "needs_attention_count": 1,
-      "scaffolded_count": 0,
+      "scaffolded_count": 1,
       "external_blocked_count": 0
     }
   ],
   "domain_count": 7,
   "evidence_state_counts": {
-    "verified_internal": 13,
-    "needs_attention": 6,
+    "verified_internal": 11,
+    "needs_attention": 5,
     "scaffolded": 2,
-    "informational": 1,
-    "external_blocked": 3
+    "external_blocked": 2
   },
   "headline_limitations": [
     "No real patient data, IRB approval, clinician sign-off, or clinical validation.",

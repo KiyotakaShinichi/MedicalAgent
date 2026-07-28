@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_dryrun_manifest_v2",
-  "generated_at": "2026-07-22T06:27:38.938755+00:00",
+  "generated_at": "2026-07-22T08:26:06.567942+00:00",
   "status": "dry_run_completed_not_ready_for_training",
   "clinical_validation": false,
   "model_trained": false,
@@ -16,10 +16,12 @@
   "plan": {
     "execution_mode": "dry_run_only",
     "base_model": {
-      "model_id": null,
-      "revision": null,
-      "tokenizer_revision": null,
-      "license_review": "required_before_training",
+      "model_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+      "tokenizer_revision": "83212e1e2b3cfd6958f3707877bb878945dea8ee",
+      "license": "Apache-2.0",
+      "license_review": "recorded_for_offline_behavior_experiment_only",
+      "official_model_card": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
       "selection_policy": "local instruction model with documented license and pinned revision"
     },
     "adapter_name": "nlcare-behavior-v0-dryrun",
@@ -78,9 +80,9 @@
   },
   "prerequisites": {
     "training_split_hash_verified": true,
-    "base_model_revision_pinned": false,
-    "tokenizer_revision_pinned": false,
-    "license_review_complete": false,
+    "base_model_revision_pinned": true,
+    "tokenizer_revision_pinned": true,
+    "license_review_complete": true,
     "gpu_runtime_verified": false,
     "baseline_generations_complete": false,
     "candidate_generations_complete": false,

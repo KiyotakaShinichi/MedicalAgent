@@ -1,0 +1,108 @@
+{
+  "schema_version": "automation_fault_injection_v1",
+  "generated_at": "2026-07-22T07:57:15.564836+00:00",
+  "status": "strong",
+  "scenario_count": 8,
+  "passed_count": 8,
+  "pass_rate": 1.0,
+  "scenarios": [
+    {
+      "id": "duplicate_enqueue_idempotency",
+      "passed": true,
+      "evidence": {
+        "first_task_id": 1,
+        "second_task_id": 1,
+        "row_count": 1
+      },
+      "error": null
+    },
+    {
+      "id": "database_lease_contention",
+      "passed": true,
+      "evidence": {
+        "first_claimed": true,
+        "second_claimed": false
+      },
+      "error": null
+    },
+    {
+      "id": "stale_lease_recovery_rotates_token",
+      "passed": true,
+      "evidence": {
+        "recovery": {
+          "recovered": 1,
+          "dead_lettered": 0
+        },
+        "old_token_reused": false,
+        "replacement_claimed": true
+      },
+      "error": null
+    },
+    {
+      "id": "bounded_attempts_dead_letter_and_audited_requeue",
+      "passed": true,
+      "evidence": {
+        "recovery": {
+          "recovered": 0,
+          "dead_lettered": 1
+        },
+        "dead_lettered_before_requeue": true,
+        "requeue_history": [
+          {
+            "requested_by": "fault-operator",
+            "requested_at": "2026-07-22T07:57:15.449860+00:00",
+            "prior_attempts": 3
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "id": "delivery_receipt_idempotency_and_conflict",
+      "passed": true,
+      "evidence": {
+        "same_receipt_idempotent": true,
+        "conflicting_receipt_rejected": true,
+        "human_acknowledgement_inferred": false
+      },
+      "error": null
+    },
+    {
+      "id": "crash_after_side_effect_uses_stable_event_id",
+      "passed": true,
+      "evidence": {
+        "event_ids": [
+          "durable-job-42",
+          "durable-job-42"
+        ],
+        "first_receiver_result": "accepted",
+        "second_receiver_result": "replay"
+      },
+      "error": null
+    },
+    {
+      "id": "signing_key_rotation_and_tamper_rejection",
+      "passed": true,
+      "evidence": {
+        "active_old_key_accepted": true,
+        "retired_key_rejected": "unknown_key_or_invalid_signature",
+        "tampered_body_rejected": "unknown_key_or_invalid_signature"
+      },
+      "error": null
+    },
+    {
+      "id": "delayed_stale_event_rejected",
+      "passed": true,
+      "evidence": {
+        "receiver_result": "expired"
+      },
+      "error": null
+    }
+  ],
+  "external_delivery_performed": false,
+  "human_acknowledgement_proven": false,
+  "clinical_action_automated": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "Disposable engineering fault injection only. A passing result does not prove external channel reliability, clinician acknowledgement, emergency coverage, patient benefit, or healthcare production readiness."
+}

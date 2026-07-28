@@ -1,0 +1,4024 @@
+{
+  "schema_version": "synthetic_causal_v3_stress_v1",
+  "generated_at": "2026-07-22T08:19:42.048848+00:00",
+  "status": "acceptable_internal_stress_test",
+  "clinical_validation": false,
+  "realism_claim": false,
+  "model_promotion_decision": "HOLD",
+  "seed_count": 30,
+  "n_train_per_seed": 800,
+  "n_test_per_scenario_per_seed": 400,
+  "scenarios": [
+    "clean",
+    "mar_missingness",
+    "mnar_missingness",
+    "measurement_noise",
+    "subgroup_shift"
+  ],
+  "causal_order": [
+    "synthetic subgroup -> baseline reserve and latent burden",
+    "baseline reserve and latent burden -> latent response",
+    "latent state -> noisy observed CBC, symptom, and imaging signals",
+    "latent response -> noisy synthetic classification and regression targets",
+    "missingness and measurement processes -> observed evaluation frame"
+  ],
+  "explicit_non_causal_context": [
+    "treatment_context"
+  ],
+  "blocked_uses": [
+    "treatment effect estimation",
+    "clinical outcome prediction",
+    "patient-level decision support",
+    "clinical realism or external validity claim"
+  ],
+  "paired_seed_summaries": {
+    "clean": {
+      "nonlinear_minus_simple_auroc": {
+        "mean": -0.018468,
+        "ci95_low": -0.023282,
+        "ci95_high": -0.013743
+      },
+      "nonlinear_minus_simple_brier": {
+        "mean": 0.006916,
+        "ci95_low": 0.005161,
+        "ci95_high": 0.008642
+      },
+      "nonlinear_minus_simple_mae": {
+        "mean": 0.399249,
+        "ci95_low": 0.340863,
+        "ci95_high": 0.45544
+      }
+    },
+    "mar_missingness": {
+      "nonlinear_minus_simple_auroc": {
+        "mean": -0.021881,
+        "ci95_low": -0.025583,
+        "ci95_high": -0.017893
+      },
+      "nonlinear_minus_simple_brier": {
+        "mean": 0.007445,
+        "ci95_low": 0.00604,
+        "ci95_high": 0.008865
+      },
+      "nonlinear_minus_simple_mae": {
+        "mean": 0.381571,
+        "ci95_low": 0.314111,
+        "ci95_high": 0.443977
+      }
+    },
+    "mnar_missingness": {
+      "nonlinear_minus_simple_auroc": {
+        "mean": -0.023253,
+        "ci95_low": -0.030493,
+        "ci95_high": -0.016768
+      },
+      "nonlinear_minus_simple_brier": {
+        "mean": 0.007758,
+        "ci95_low": 0.0057,
+        "ci95_high": 0.009884
+      },
+      "nonlinear_minus_simple_mae": {
+        "mean": 0.419487,
+        "ci95_low": 0.364429,
+        "ci95_high": 0.473004
+      }
+    },
+    "measurement_noise": {
+      "nonlinear_minus_simple_auroc": {
+        "mean": -0.01756,
+        "ci95_low": -0.021998,
+        "ci95_high": -0.013166
+      },
+      "nonlinear_minus_simple_brier": {
+        "mean": 0.006935,
+        "ci95_low": 0.005323,
+        "ci95_high": 0.008531
+      },
+      "nonlinear_minus_simple_mae": {
+        "mean": 0.271299,
+        "ci95_low": 0.20066,
+        "ci95_high": 0.347148
+      }
+    },
+    "subgroup_shift": {
+      "nonlinear_minus_simple_auroc": {
+        "mean": -0.017452,
+        "ci95_low": -0.021523,
+        "ci95_high": -0.013378
+      },
+      "nonlinear_minus_simple_brier": {
+        "mean": 0.006682,
+        "ci95_low": 0.005213,
+        "ci95_high": 0.008142
+      },
+      "nonlinear_minus_simple_mae": {
+        "mean": 0.332546,
+        "ci95_low": 0.274393,
+        "ci95_high": 0.392978
+      }
+    }
+  },
+  "seed_level_rows": [
+    {
+      "seed": 0,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6722762621589858,
+          "brier": 0.22860706211940968,
+          "ece10": 0.049830691709817
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6428446400440098,
+          "brier": 0.23875056345464749,
+          "ece10": 0.07448396432040627
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.879125036479097
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.30451306702942
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 0,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6658998274611787,
+          "brier": 0.23139158783158498,
+          "ece10": 0.05674293354607654
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6362056462704108,
+          "brier": 0.2407408715473435,
+          "ece10": 0.055665879947134046
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.70493850905213
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.891765439921787
+        }
+      },
+      "missing_fraction": 0.07,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 0,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6454702308019304,
+          "brier": 0.23326282653755606,
+          "ece10": 0.05116609662834131
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6331424570528369,
+          "brier": 0.23850274814468148,
+          "ece10": 0.04448929651090308
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.742630057602941
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.209411282972894
+        }
+      },
+      "missing_fraction": 0.06375,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 0,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6509464629541647,
+          "brier": 0.23456377172610435,
+          "ece10": 0.05545216012449561
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6492710859943488,
+          "brier": 0.23690476226384816,
+          "ece10": 0.06351644149497652
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.292513342954102
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.612093485350965
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 0,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.729064039408867,
+          "brier": 0.21347544155505307,
+          "ece10": 0.06975749632843373
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6954439748943513,
+          "brier": 0.22239881442003223,
+          "ece10": 0.06534228835892851
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.13515063076148
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.429086676606499
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.705
+    },
+    {
+      "seed": 1,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.686267156678917,
+          "brier": 0.2243647326192187,
+          "ece10": 0.060050129611448025
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6777794444861122,
+          "brier": 0.22889966385265936,
+          "ece10": 0.07260271333106988
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.956990166520674
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.289874518041733
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 1,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6771169279231981,
+          "brier": 0.22586943227426723,
+          "ece10": 0.06420285102128545
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6638040951023776,
+          "brier": 0.23223036866286972,
+          "ece10": 0.05690750698173754
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.428558404190206
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.795883169933488
+        }
+      },
+      "missing_fraction": 0.07125000000000001,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 1,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6649666241656041,
+          "brier": 0.22985795799755884,
+          "ece10": 0.05032377553494354
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.656566414160354,
+          "brier": 0.23477115786373048,
+          "ece10": 0.05950644436138184
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.157063611824485
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.626987275148608
+        }
+      },
+      "missing_fraction": 0.06125,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 1,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6708917722943074,
+          "brier": 0.2311455335915737,
+          "ece10": 0.07401390728640853
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6434035850896273,
+          "brier": 0.24036557113366755,
+          "ece10": 0.08456188079361195
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.01606611896657
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.318565125724222
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 1,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7078715106732348,
+          "brier": 0.21122132629090104,
+          "ece10": 0.036500060916804425
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.69215671182266,
+          "brier": 0.22026129336199005,
+          "ece10": 0.047567438623487585
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.789880838698787
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.415049516593003
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7225
+    },
+    {
+      "seed": 2,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7388238823882389,
+          "brier": 0.208809219932928,
+          "ece10": 0.05501004391078744
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7153340334033402,
+          "brier": 0.21608221033474925,
+          "ece10": 0.05485160734803759
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.352480059487917
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.730972201350175
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.275
+    },
+    {
+      "seed": 2,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7181468146814682,
+          "brier": 0.21714438288094917,
+          "ece10": 0.059104098969420045
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6889313931393138,
+          "brier": 0.22656145984110232,
+          "ece10": 0.05424525601232832
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.138997601304206
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.521605828655032
+        }
+      },
+      "missing_fraction": 0.076875,
+      "shifted_group_fraction": 0.275
+    },
+    {
+      "seed": 2,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.706045604560456,
+          "brier": 0.21999836011905813,
+          "ece10": 0.03377278804083008
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6910941094109411,
+          "brier": 0.22566209285078373,
+          "ece10": 0.07334131900055199
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.563577472051485
+        },
+        "hist_gradient_boosting": {
+          "mae": 12.00395411698863
+        }
+      },
+      "missing_fraction": 0.060625,
+      "shifted_group_fraction": 0.275
+    },
+    {
+      "seed": 2,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6913941394139415,
+          "brier": 0.22669386361405422,
+          "ece10": 0.06577034817817443
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6679792979297929,
+          "brier": 0.23745384766812122,
+          "ece10": 0.09041094606410288
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.538353962633405
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.88524459380295
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.275
+    },
+    {
+      "seed": 2,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7154629793473041,
+          "brier": 0.2124588432914792,
+          "ece10": 0.05189019606568729
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6938749715614652,
+          "brier": 0.22132339656572111,
+          "ece10": 0.046964154048051
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.431821513111858
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.619636917152473
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.6925
+    },
+    {
+      "seed": 3,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7314145682778626,
+          "brier": 0.2087335378791611,
+          "ece10": 0.050890420553015764
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.688854992373284,
+          "brier": 0.2241534603041242,
+          "ece10": 0.05505177692783846
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.969493570252018
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.585445759140562
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2825
+    },
+    {
+      "seed": 3,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.716311170013253,
+          "brier": 0.21404404433664673,
+          "ece10": 0.05133867459054288
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6786151884173939,
+          "brier": 0.22630965567066397,
+          "ece10": 0.06873591607159048
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.610478266076484
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.307333027084264
+        }
+      },
+      "missing_fraction": 0.07781249999999999,
+      "shifted_group_fraction": 0.2825
+    },
+    {
+      "seed": 3,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7261383811357556,
+          "brier": 0.21128634132066565,
+          "ece10": 0.04876835734706778
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6445700282563577,
+          "brier": 0.23399455520098514,
+          "ece10": 0.060014136482758135
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.919731694699783
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.554671306612398
+        }
+      },
+      "missing_fraction": 0.0646875,
+      "shifted_group_fraction": 0.2825
+    },
+    {
+      "seed": 3,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7136855792553324,
+          "brier": 0.214955965200214,
+          "ece10": 0.05854497060636511
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6861793903628317,
+          "brier": 0.2260557424840833,
+          "ece10": 0.06156701614552163
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.84782394506582
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.20421853406707
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2825
+    },
+    {
+      "seed": 3,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.698066907051282,
+          "brier": 0.22908611971192805,
+          "ece10": 0.09117614776009589
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6716245993589743,
+          "brier": 0.2377065609360863,
+          "ece10": 0.09628756876727573
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.525784800629852
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.539670398047205
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.715
+    },
+    {
+      "seed": 4,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6920514040932889,
+          "brier": 0.22441572807208945,
+          "ece10": 0.062097542511011655
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6546631929657556,
+          "brier": 0.23829090317201365,
+          "ece10": 0.07416251280950216
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.646417724321791
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.17658884304408
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2925
+    },
+    {
+      "seed": 4,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6886445051228738,
+          "brier": 0.22385473248840795,
+          "ece10": 0.04318875161096247
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6433026879430847,
+          "brier": 0.2411094190934825,
+          "ece10": 0.07508610291179725
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.363157449617908
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.80585436992168
+        }
+      },
+      "missing_fraction": 0.07375,
+      "shifted_group_fraction": 0.2925
+    },
+    {
+      "seed": 4,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6761692427165009,
+          "brier": 0.2288918055722067,
+          "ece10": 0.06011656718147441
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6288108419549587,
+          "brier": 0.2465993928805781,
+          "ece10": 0.08966683817429388
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.460011943290679
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.887747927650507
+        }
+      },
+      "missing_fraction": 0.065625,
+      "shifted_group_fraction": 0.2925
+    },
+    {
+      "seed": 4,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6703324231568927,
+          "brier": 0.23459258549818898,
+          "ece10": 0.08364045813865317
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6325434003857813,
+          "brier": 0.25053053259332403,
+          "ece10": 0.11846468159314583
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.592891878722712
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.907314124105005
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2925
+    },
+    {
+      "seed": 4,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7280403665945835,
+          "brier": 0.20798776050435436,
+          "ece10": 0.04932053199146118
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7024379569560293,
+          "brier": 0.21785413335286782,
+          "ece10": 0.11935782388807017
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.213399039955547
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.820023126072112
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.6925
+    },
+    {
+      "seed": 5,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7449656035021889,
+          "brier": 0.20432626165226012,
+          "ece10": 0.04235565751642789
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7181488430268917,
+          "brier": 0.21565902279723165,
+          "ece10": 0.03948117166541633
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.406245815637961
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.82452158018077
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3375
+    },
+    {
+      "seed": 5,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7252782989368356,
+          "brier": 0.21146567865453103,
+          "ece10": 0.03335936513696077
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6968855534709193,
+          "brier": 0.22292537258408746,
+          "ece10": 0.05838724550234165
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.250588956717277
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.526059475512238
+        }
+      },
+      "missing_fraction": 0.074375,
+      "shifted_group_fraction": 0.3375
+    },
+    {
+      "seed": 5,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7268792995622264,
+          "brier": 0.21099530583050743,
+          "ece10": 0.03537276443749139
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7042901813633521,
+          "brier": 0.22129454998228978,
+          "ece10": 0.04625297112158882
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.985854374320002
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.487340635595908
+        }
+      },
+      "missing_fraction": 0.0653125,
+      "shifted_group_fraction": 0.3375
+    },
+    {
+      "seed": 5,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7185991244527831,
+          "brier": 0.21617297866785967,
+          "ece10": 0.04338720326100452
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6914571607254534,
+          "brier": 0.2262297097428285,
+          "ece10": 0.08084119559952439
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.74137432031888
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.667403858349555
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3375
+    },
+    {
+      "seed": 5,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6777887563020952,
+          "brier": 0.22711391986222312,
+          "ece10": 0.07364100120943903
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6684654556509843,
+          "brier": 0.23195075620082853,
+          "ece10": 0.08161167295048291
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.224179470952416
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.531679318982752
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.67
+    },
+    {
+      "seed": 6,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6736892206718605,
+          "brier": 0.23227469622107996,
+          "ece10": 0.08338390885664423
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6626669004734588,
+          "brier": 0.23497298875677702,
+          "ece10": 0.06671040476397146
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.727777575230926
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.079164514685628
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 6,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6616398206367895,
+          "brier": 0.23526687818877093,
+          "ece10": 0.08170913838784503
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6472481775595582,
+          "brier": 0.23979827863947673,
+          "ece10": 0.08180493574814388
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.147559883402554
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.61199706359401
+        }
+      },
+      "missing_fraction": 0.0759375,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 6,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.663343270121997,
+          "brier": 0.23415948687602228,
+          "ece10": 0.07457819641446183
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6462711991783362,
+          "brier": 0.23962226166009487,
+          "ece10": 0.07050736545734455
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.28581409809135
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.670338086100301
+        }
+      },
+      "missing_fraction": 0.065,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 6,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6739397279490968,
+          "brier": 0.23276988946459512,
+          "ece10": 0.08801232895804473
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6559407800796614,
+          "brier": 0.23705182438698366,
+          "ece10": 0.08013451287766224
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.632815807923055
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.926257504117261
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 6,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7030576441102756,
+          "brier": 0.22250734606027237,
+          "ece10": 0.06907275400442982
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6927944862155389,
+          "brier": 0.2229290226632231,
+          "ece10": 0.062295920373049075
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.789710471300197
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.128128275917813
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7075
+    },
+    {
+      "seed": 7,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6858869031067519,
+          "brier": 0.22426111860882258,
+          "ece10": 0.06299158808766162
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6843069845041585,
+          "brier": 0.22507055323660996,
+          "ece10": 0.08362752061155708
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.15985017293168
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.775688942130305
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 7,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6800222452539246,
+          "brier": 0.22683805619537648,
+          "ece10": 0.06909683328876742
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.647855102505119,
+          "brier": 0.2347948568148727,
+          "ece10": 0.07853967908349885
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.963970305963429
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.465634219643722
+        }
+      },
+      "missing_fraction": 0.08375,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 7,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6664223059227988,
+          "brier": 0.2284054920912729,
+          "ece10": 0.057036354998382444
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6457064132055916,
+          "brier": 0.23477284184216413,
+          "ece10": 0.07413485532952847
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.981270250160906
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.58825234034367
+        }
+      },
+      "missing_fraction": 0.071875,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 7,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6712505371723247,
+          "brier": 0.22852494795012424,
+          "ece10": 0.061232360649144786
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6404610834449809,
+          "brier": 0.23787714354471973,
+          "ece10": 0.07151423001604501
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.914403151610308
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.486932252377333
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 7,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7160752091944752,
+          "brier": 0.21251482504395405,
+          "ece10": 0.06001504941774373
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6898124810968849,
+          "brier": 0.22221304055341043,
+          "ece10": 0.052165418502329655
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.45339633248159
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.036929242193969
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.715
+    },
+    {
+      "seed": 8,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7309923969587835,
+          "brier": 0.2124063781897273,
+          "ece10": 0.06594412111387575
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7049319727891157,
+          "brier": 0.2210886500248396,
+          "ece10": 0.060892120466445154
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.465163151949714
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.741026862284393
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 8,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7299169667867147,
+          "brier": 0.21420820378432817,
+          "ece10": 0.06996165542284051
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7035064025610244,
+          "brier": 0.2206526298404818,
+          "ece10": 0.058730811490396315
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.917191773986021
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.23983060979612
+        }
+      },
+      "missing_fraction": 0.0675,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 8,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7222889155662264,
+          "brier": 0.2190433783847804,
+          "ece10": 0.09798709723156976
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.687312424969988,
+          "brier": 0.22819752632197055,
+          "ece10": 0.05262039705409147
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.184926361710259
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.48627439545598
+        }
+      },
+      "missing_fraction": 0.065,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 8,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7257402961184475,
+          "brier": 0.21302708096473474,
+          "ece10": 0.035789005250468575
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7116596638655464,
+          "brier": 0.2200351591443222,
+          "ece10": 0.05949284419954958
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.517490615414312
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.673005034864087
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 8,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7266656662665066,
+          "brier": 0.21427108472568868,
+          "ece10": 0.055119346938991794
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7279411764705882,
+          "brier": 0.21435193430604443,
+          "ece10": 0.08662596218854368
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.247251642149676
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.443118826016239
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.69
+    },
+    {
+      "seed": 9,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.693199168982003,
+          "brier": 0.22002103809692408,
+          "ece10": 0.054015624450531825
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.672799178994268,
+          "brier": 0.22578355904390068,
+          "ece10": 0.07113780164118648
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.076963541421799
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.569257239729131
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2875
+    },
+    {
+      "seed": 9,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6806337763760607,
+          "brier": 0.22334594012464698,
+          "ece10": 0.04868513195137109
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.655227653875998,
+          "brier": 0.23096443351805054,
+          "ece10": 0.05576892059230746
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.782078118503915
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.156662561160147
+        }
+      },
+      "missing_fraction": 0.0690625,
+      "shifted_group_fraction": 0.2875
+    },
+    {
+      "seed": 9,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6765537783785137,
+          "brier": 0.22434650527921413,
+          "ece10": 0.04391519188362802
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.674801631999199,
+          "brier": 0.22679653916403672,
+          "ece10": 0.061898559618787735
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.906451126758828
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.408659124855085
+        }
+      },
+      "missing_fraction": 0.0653125,
+      "shifted_group_fraction": 0.2875
+    },
+    {
+      "seed": 9,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6890190483342093,
+          "brier": 0.22409339129857345,
+          "ece10": 0.05862350562072455
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6864784360842032,
+          "brier": 0.22501550183964608,
+          "ece10": 0.046662591417712306
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.517570928236767
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.497748904573914
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2875
+    },
+    {
+      "seed": 9,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7241749999999999,
+          "brier": 0.21576311382526325,
+          "ece10": 0.06153446447607154
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6835375,
+          "brier": 0.22826430464716488,
+          "ece10": 0.0635350920830867
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.254623601813947
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.705751741366857
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7075
+    },
+    {
+      "seed": 10,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7323433085827146,
+          "brier": 0.21048584894850958,
+          "ece10": 0.04122632785593389
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7390934773369334,
+          "brier": 0.2095971600007949,
+          "ece10": 0.05027250371147163
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.644885101060467
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.739691392761593
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2975
+    },
+    {
+      "seed": 10,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7163179079476987,
+          "brier": 0.2162272478228963,
+          "ece10": 0.051104153556885946
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7128803220080502,
+          "brier": 0.21869246895329233,
+          "ece10": 0.06519297863727758
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.268762683476526
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.377980214418725
+        }
+      },
+      "missing_fraction": 0.078125,
+      "shifted_group_fraction": 0.2975
+    },
+    {
+      "seed": 10,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7076426910672766,
+          "brier": 0.21884572279831402,
+          "ece10": 0.04346079836546199
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6923798094952374,
+          "brier": 0.22285979681923881,
+          "ece10": 0.05813322974393386
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.04326194853379
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.279123452774897
+        }
+      },
+      "missing_fraction": 0.070625,
+      "shifted_group_fraction": 0.2975
+    },
+    {
+      "seed": 10,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7039925998149952,
+          "brier": 0.220018363018161,
+          "ece10": 0.045236232108487845
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6937673441836045,
+          "brier": 0.2267779189709718,
+          "ece10": 0.07487329332661183
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.258713195145777
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.264982998805236
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2975
+    },
+    {
+      "seed": 10,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6902046035805627,
+          "brier": 0.2196064266000522,
+          "ece10": 0.05850833875327813
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.679156010230179,
+          "brier": 0.22506253160064404,
+          "ece10": 0.06859312474045343
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.805027013378982
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.260868255492333
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7075
+    },
+    {
+      "seed": 11,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7223884349465745,
+          "brier": 0.21252189994269804,
+          "ece10": 0.04839662404809589
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7026775612822125,
+          "brier": 0.2196931721527925,
+          "ece10": 0.04782724521954655
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.129176201444343
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.245476200933616
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2675
+    },
+    {
+      "seed": 11,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7104714016341924,
+          "brier": 0.2170726683596419,
+          "ece10": 0.05989150652526057
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6834318038969202,
+          "brier": 0.2272279728507478,
+          "ece10": 0.08410160225301133
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.816357311375281
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.700554680075193
+        }
+      },
+      "missing_fraction": 0.0728125,
+      "shifted_group_fraction": 0.2675
+    },
+    {
+      "seed": 11,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7022250157133878,
+          "brier": 0.22063325612798454,
+          "ece10": 0.04370050895319769
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.674934003771213,
+          "brier": 0.23001387920137334,
+          "ece10": 0.0846546049141161
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.00375764792806
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.043031613522931
+        }
+      },
+      "missing_fraction": 0.063125,
+      "shifted_group_fraction": 0.2675
+    },
+    {
+      "seed": 11,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6951099937146448,
+          "brier": 0.22050781210791748,
+          "ece10": 0.06626216387487874
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6500817096165934,
+          "brier": 0.23624227679942664,
+          "ece10": 0.08982207320083536
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.237503034205472
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.154012349483327
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2675
+    },
+    {
+      "seed": 11,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.69287006331022,
+          "brier": 0.21999129705589027,
+          "ece10": 0.031344514147635595
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.69287006331022,
+          "brier": 0.2200786328460892,
+          "ece10": 0.043278927673551855
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.643372488913515
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.636042475452479
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7
+    },
+    {
+      "seed": 12,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7343359023120808,
+          "brier": 0.20931553221276353,
+          "ece10": 0.02862862033197771
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6973025723150836,
+          "brier": 0.22199415131192743,
+          "ece10": 0.06586931205647825
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.824648464766865
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.24470623899145
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3175
+    },
+    {
+      "seed": 12,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7165198678810929,
+          "brier": 0.21504517143240562,
+          "ece10": 0.031303928146576544
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6840406365729156,
+          "brier": 0.22536151461649126,
+          "ece10": 0.043021682306260974
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.14591536877963
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.530606551625063
+        }
+      },
+      "missing_fraction": 0.079375,
+      "shifted_group_fraction": 0.3175
+    },
+    {
+      "seed": 12,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7151936743068762,
+          "brier": 0.21689930439733957,
+          "ece10": 0.04391191186390351
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6639100190171153,
+          "brier": 0.23022543278656657,
+          "ece10": 0.0523067676985815
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.907743359184524
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.364801211745803
+        }
+      },
+      "missing_fraction": 0.068125,
+      "shifted_group_fraction": 0.3175
+    },
+    {
+      "seed": 12,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7148934040636572,
+          "brier": 0.21629223818330587,
+          "ece10": 0.043080135663706894
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6770593534180763,
+          "brier": 0.23041858582754615,
+          "ece10": 0.06510223639703859
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.972871689457774
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.196964944551576
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3175
+    },
+    {
+      "seed": 12,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7426372155287818,
+          "brier": 0.2022708035023185,
+          "ece10": 0.04537031778818464
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7074065492740191,
+          "brier": 0.2173465548453116,
+          "ece10": 0.07931873041680185
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.808666256670856
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.24596111184613
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7
+    },
+    {
+      "seed": 13,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7254607371794871,
+          "brier": 0.21158754822131873,
+          "ece10": 0.04147699918346672
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6966396233974359,
+          "brier": 0.22135376306640225,
+          "ece10": 0.049407712947826234
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.49313640078087
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.029126678542589
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3
+    },
+    {
+      "seed": 13,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7016726762820513,
+          "brier": 0.21831415370997473,
+          "ece10": 0.03877880963404012
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6830553886217949,
+          "brier": 0.2251411338898368,
+          "ece10": 0.04819329179085073
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.398833426356761
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.879689691425733
+        }
+      },
+      "missing_fraction": 0.07843750000000001,
+      "shifted_group_fraction": 0.3
+    },
+    {
+      "seed": 13,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7141676682692307,
+          "brier": 0.2150051577613905,
+          "ece10": 0.023776614820092613
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7012344751602564,
+          "brier": 0.22007534636157403,
+          "ece10": 0.03506542006033548
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.856461831551178
+        },
+        "hist_gradient_boosting": {
+          "mae": 12.249945820550634
+        }
+      },
+      "missing_fraction": 0.066875,
+      "shifted_group_fraction": 0.3
+    },
+    {
+      "seed": 13,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6771083733974359,
+          "brier": 0.22988034762853204,
+          "ece10": 0.08981933807334595
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6536959134615384,
+          "brier": 0.23916746469770372,
+          "ece10": 0.09367055195085619
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.150428028520405
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.992362855182854
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3
+    },
+    {
+      "seed": 13,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7414015034496961,
+          "brier": 0.2035411405487133,
+          "ece10": 0.05642365398098645
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7177942539388322,
+          "brier": 0.21346071229203717,
+          "ece10": 0.06812499067413942
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.82280267023865
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.35678142335279
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.6925
+    },
+    {
+      "seed": 14,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.700405162064826,
+          "brier": 0.22081520916643582,
+          "ece10": 0.05532532653091506
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.70265606242497,
+          "brier": 0.22114023599608004,
+          "ece10": 0.06630086035321091
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 8.613295113022696
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.115914146458755
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3025
+    },
+    {
+      "seed": 14,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6916016406562626,
+          "brier": 0.22267670779878773,
+          "ece10": 0.03937494376547827
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6877000800320128,
+          "brier": 0.22387890181967215,
+          "ece10": 0.06525135788977772
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.132486268044191
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.659396229614504
+        }
+      },
+      "missing_fraction": 0.078125,
+      "shifted_group_fraction": 0.3025
+    },
+    {
+      "seed": 14,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7015806322529012,
+          "brier": 0.22013677768793194,
+          "ece10": 0.04645909099782154
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7100340136054422,
+          "brier": 0.21791124077448798,
+          "ece10": 0.05453385171666825
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.183966305952938
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.683020734512176
+        }
+      },
+      "missing_fraction": 0.060625,
+      "shifted_group_fraction": 0.3025
+    },
+    {
+      "seed": 14,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6706932773109244,
+          "brier": 0.23169191804006029,
+          "ece10": 0.07885679359916675
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6590886354541817,
+          "brier": 0.23831350564383316,
+          "ece10": 0.08734976062087038
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.436530863213349
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.871715370394114
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3025
+    },
+    {
+      "seed": 14,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7326650587880617,
+          "brier": 0.2101913896259964,
+          "ece10": 0.06625851750673878
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7201286302884133,
+          "brier": 0.21468954933231196,
+          "ece10": 0.048145183573433926
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.046353138131673
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.141603364410408
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7175
+    },
+    {
+      "seed": 15,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7686798878205128,
+          "brier": 0.1979237638005936,
+          "ece10": 0.08039090216837588
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7508764022435898,
+          "brier": 0.20337511621979013,
+          "ece10": 0.083105426093614
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.709364150688563
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.118822542556947
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 15,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7454176682692307,
+          "brier": 0.20607248621214314,
+          "ece10": 0.0598463282817982
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7296674679487178,
+          "brier": 0.21415797394715008,
+          "ece10": 0.06835084262430784
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.429779527887668
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.95586430808052
+        }
+      },
+      "missing_fraction": 0.0784375,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 15,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7321213942307694,
+          "brier": 0.21153054934267027,
+          "ece10": 0.06469404756589255
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7180739182692307,
+          "brier": 0.2168697348779217,
+          "ece10": 0.06711365723193422
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.795299907128928
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.220032628204851
+        }
+      },
+      "missing_fraction": 0.06375,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 15,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7398838141025641,
+          "brier": 0.2067060166679277,
+          "ece10": 0.046118824002964964
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7266751802884616,
+          "brier": 0.2114344210120904,
+          "ece10": 0.051868622103651986
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.845123908297296
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.33630174973835
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 15,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6700188560653676,
+          "brier": 0.2274273061970475,
+          "ece10": 0.05758988284653174
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6597360150848524,
+          "brier": 0.2319955276224208,
+          "ece10": 0.07525722529042725
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.760722657205351
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.00821347054469
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.6925
+    },
+    {
+      "seed": 16,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6979452751500356,
+          "brier": 0.22214008855550404,
+          "ece10": 0.07953983296523524
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6598642050656087,
+          "brier": 0.2409259601973106,
+          "ece10": 0.11249887114176126
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.771572485849543
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.42295656821474
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 16,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6937239344929305,
+          "brier": 0.22236049345558784,
+          "ece10": 0.08051980212860284
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6612119825043231,
+          "brier": 0.23910218480148943,
+          "ece10": 0.1084257512872294
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.479799263181617
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.204806272454993
+        }
+      },
+      "missing_fraction": 0.0821875,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 16,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6976655477570949,
+          "brier": 0.2231832510097151,
+          "ece10": 0.09405482192353165
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6498321635642356,
+          "brier": 0.24410514176745302,
+          "ece10": 0.11142787264466888
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.93013797841919
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.375978254157165
+        }
+      },
+      "missing_fraction": 0.0721875,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 16,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6944613976197742,
+          "brier": 0.2260378958137408,
+          "ece10": 0.07763311202713054
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6770420099684671,
+          "brier": 0.23425331484719195,
+          "ece10": 0.10401776373362691
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.491219969173128
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.726332941048499
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 16,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7255655142979087,
+          "brier": 0.21162679010466662,
+          "ece10": 0.06111046869006096
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7071627626722905,
+          "brier": 0.21999693188246178,
+          "ece10": 0.06229251210114829
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.431376320520306
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.96864774718259
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.66
+    },
+    {
+      "seed": 17,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.663074191693131,
+          "brier": 0.2342326242867703,
+          "ece10": 0.07576678207846536
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6601360306068865,
+          "brier": 0.23588420355518017,
+          "ece10": 0.08398204142105921
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.248281667438869
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.946114163582761
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 17,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.666399939986497,
+          "brier": 0.23114045848304535,
+          "ece10": 0.056073616313818214
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6438698707209122,
+          "brier": 0.23690963581791963,
+          "ece10": 0.05197159260983455
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.919820202802674
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.582188902951316
+        }
+      },
+      "missing_fraction": 0.0725,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 17,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6581730889450126,
+          "brier": 0.23369170871925513,
+          "ece10": 0.07833590351887719
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6341676877297392,
+          "brier": 0.23969129675367754,
+          "ece10": 0.05350555900457303
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.219205019180514
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.866794494057253
+        }
+      },
+      "missing_fraction": 0.0678125,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 17,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6368182841139256,
+          "brier": 0.24387990639641907,
+          "ece10": 0.09527758573384285
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6381310794928858,
+          "brier": 0.24277269797947074,
+          "ece10": 0.10130230011875058
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.032878728407077
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.480864466390067
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 17,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7440567148475664,
+          "brier": 0.2072636616240676,
+          "ece10": 0.057378020154387296
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7163380846213583,
+          "brier": 0.21483511857357598,
+          "ece10": 0.046237028113671155
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.283738559426636
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.590130431978874
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7475
+    },
+    {
+      "seed": 18,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7039641943734015,
+          "brier": 0.216122501798979,
+          "ece10": 0.05949873211919398
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6854347826086957,
+          "brier": 0.2271140648038374,
+          "ece10": 0.08075417587880086
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.498797128491212
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.835872255721002
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 18,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.700460358056266,
+          "brier": 0.2177045513521243,
+          "ece10": 0.06329129659005212
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6735421994884911,
+          "brier": 0.22882400387177182,
+          "ece10": 0.07140661665300904
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.010293863616702
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.441517323216999
+        }
+      },
+      "missing_fraction": 0.078125,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 18,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6888746803069054,
+          "brier": 0.22036110956620383,
+          "ece10": 0.06716581234069298
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.654923273657289,
+          "brier": 0.23416567776982355,
+          "ece10": 0.08931218610580947
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.067190630754055
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.346422381161128
+        }
+      },
+      "missing_fraction": 0.0671875,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 18,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6842455242966752,
+          "brier": 0.22322246350762356,
+          "ece10": 0.05657388488559663
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6684398976982098,
+          "brier": 0.23191712638227377,
+          "ece10": 0.07143103246910028
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.29606189812381
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.472933822383524
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 18,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7481948772516531,
+          "brier": 0.2030708275881976,
+          "ece10": 0.067695596565716
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7452180081578881,
+          "brier": 0.20482909316676615,
+          "ece10": 0.04899229091399944
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.493729608876523
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.662322245286393
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7025
+    },
+    {
+      "seed": 19,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7271224229063854,
+          "brier": 0.21042572556394326,
+          "ece10": 0.059110214932608464
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6956962849770786,
+          "brier": 0.22104218974116085,
+          "ece10": 0.062185131706730096
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.7548751297058
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.345435609610629
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 19,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7138956386683033,
+          "brier": 0.21473620173637875,
+          "ece10": 0.048020066779385855
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6844234575014404,
+          "brier": 0.22403123930458488,
+          "ece10": 0.05101942434785256
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.24904442714154
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.718138131070363
+        }
+      },
+      "missing_fraction": 0.0796875,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 19,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7215361106240137,
+          "brier": 0.21212791308837392,
+          "ece10": 0.05703371578035096
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6966857887221625,
+          "brier": 0.2183531906705837,
+          "ece10": 0.039626630951373525
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.32933545844191
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.89143740439849
+        }
+      },
+      "missing_fraction": 0.065625,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 19,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7104636889701645,
+          "brier": 0.21715605912081756,
+          "ece10": 0.05260925589634458
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6882436934792956,
+          "brier": 0.2248686766349276,
+          "ece10": 0.04848517526514487
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.628005204394508
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.044326652971383
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 19,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6972525272745471,
+          "brier": 0.22155294813117832,
+          "ece10": 0.0438016751073834
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6676508857972174,
+          "brier": 0.2313383674482259,
+          "ece10": 0.04982163770774954
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.38509747224797
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.67995967071898
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7
+    },
+    {
+      "seed": 20,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7180988117573484,
+          "brier": 0.21484831324957024,
+          "ece10": 0.0746717676079032
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7115822388993122,
+          "brier": 0.2160968020751978,
+          "ece10": 0.05096669678581753
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.386434853173204
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.87705036504078
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2975
+    },
+    {
+      "seed": 20,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7002626641651032,
+          "brier": 0.22063652739815498,
+          "ece10": 0.05789296371384291
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6891432145090681,
+          "brier": 0.223045158888101,
+          "ece10": 0.041732757661014336
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.893134727834555
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.35326304531582
+        }
+      },
+      "missing_fraction": 0.0753125,
+      "shifted_group_fraction": 0.2975
+    },
+    {
+      "seed": 20,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7039899937460913,
+          "brier": 0.21742393246466407,
+          "ece10": 0.027324279213596807
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7052657911194496,
+          "brier": 0.21654975167145524,
+          "ece10": 0.0274330304255201
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.223053511819678
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.771717323228353
+        }
+      },
+      "missing_fraction": 0.0653125,
+      "shifted_group_fraction": 0.2975
+    },
+    {
+      "seed": 20,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6935334584115072,
+          "brier": 0.22498089568416052,
+          "ece10": 0.07275475131149729
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6976485303314571,
+          "brier": 0.22383675710900244,
+          "ece10": 0.06848529305414232
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.098239759628752
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.472812701795526
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2975
+    },
+    {
+      "seed": 20,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7412671404263838,
+          "brier": 0.20777488259631485,
+          "ece10": 0.05677795469245237
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7208862976679011,
+          "brier": 0.21431627459268554,
+          "ece10": 0.07495356466367607
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.25287452620174
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.573302037300941
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.68
+    },
+    {
+      "seed": 21,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7155699118589742,
+          "brier": 0.21561680073554787,
+          "ece10": 0.0851469067619354
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7114383012820512,
+          "brier": 0.21565552673221752,
+          "ece10": 0.050471918670137284
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.800494669021068
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.081719988177527
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 21,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7126903044871795,
+          "brier": 0.21675125271901508,
+          "ece10": 0.0618202985679977
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.692207532051282,
+          "brier": 0.2217597487667804,
+          "ece10": 0.04270724219484094
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.319371063482112
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.711873934161362
+        }
+      },
+      "missing_fraction": 0.075625,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 21,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6910556891025641,
+          "brier": 0.22206981878316762,
+          "ece10": 0.08271954281641504
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6824168669871795,
+          "brier": 0.22387028114984672,
+          "ece10": 0.033647638733611804
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.559888646128584
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.997381934793102
+        }
+      },
+      "missing_fraction": 0.0684375,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 21,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7204026442307694,
+          "brier": 0.21474356134606673,
+          "ece10": 0.08592121388540272
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6920072115384616,
+          "brier": 0.22364214861675738,
+          "ece10": 0.06773062415469235
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.8127812320504
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.930747818080338
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.29
+    },
+    {
+      "seed": 21,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7357735773577357,
+          "brier": 0.20902283349652614,
+          "ece10": 0.03943815756175466
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7221847184718472,
+          "brier": 0.21295932554002112,
+          "ece10": 0.028191352394899633
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.734507515328879
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.965571804926158
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.71
+    },
+    {
+      "seed": 22,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6975947594759475,
+          "brier": 0.2202857764092255,
+          "ece10": 0.059322637656755224
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6914566456645665,
+          "brier": 0.22481507976567222,
+          "ece10": 0.06166860177762854
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.628784245466468
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.082310329084414
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3025
+    },
+    {
+      "seed": 22,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6817181718171816,
+          "brier": 0.22492769468493123,
+          "ece10": 0.028351903240823508
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6777677767776779,
+          "brier": 0.22829692505223087,
+          "ece10": 0.05809255898265968
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.416788095382529
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.832735127965107
+        }
+      },
+      "missing_fraction": 0.0734375,
+      "shifted_group_fraction": 0.3025
+    },
+    {
+      "seed": 22,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6893939393939394,
+          "brier": 0.22359240001654399,
+          "ece10": 0.055107409514393656
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6803930393039305,
+          "brier": 0.2275985101779092,
+          "ece10": 0.06841347966793483
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.391851757823156
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.802830962709741
+        }
+      },
+      "missing_fraction": 0.06625,
+      "shifted_group_fraction": 0.3025
+    },
+    {
+      "seed": 22,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6803430343034303,
+          "brier": 0.22669943545381663,
+          "ece10": 0.05541492484462706
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6650665066506651,
+          "brier": 0.23391298578578432,
+          "ece10": 0.08041887581534399
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.851919173621518
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.980077115598469
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3025
+    },
+    {
+      "seed": 22,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7146412698412697,
+          "brier": 0.21187451610608002,
+          "ece10": 0.05909964779813007
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.682768253968254,
+          "brier": 0.2266448723589197,
+          "ece10": 0.06499449675474153
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.323401613023313
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.815137014247014
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7075
+    },
+    {
+      "seed": 23,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6851837836474179,
+          "brier": 0.2234163956791758,
+          "ece10": 0.0648460934478998
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6747521380458639,
+          "brier": 0.22832993716449812,
+          "ece10": 0.08327840691176872
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.64646282641532
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.828943734700553
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 23,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6699714927218143,
+          "brier": 0.22744587360656168,
+          "ece10": 0.06177347557384784
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6444663084336133,
+          "brier": 0.23359253318635162,
+          "ece10": 0.09534190781085339
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.992422451155763
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.29051401603876
+        }
+      },
+      "missing_fraction": 0.07125000000000001,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 23,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6538257776432302,
+          "brier": 0.23224416353208274,
+          "ece10": 0.060373714477882166
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6243472337849088,
+          "brier": 0.2406389132818984,
+          "ece10": 0.08577674151574159
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.429585284236405
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.757828072083337
+        }
+      },
+      "missing_fraction": 0.06375,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 23,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6735033678952547,
+          "brier": 0.229595895871523,
+          "ece10": 0.06824931635194019
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6612805570271703,
+          "brier": 0.23362551406332466,
+          "ece10": 0.10197391447133604
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.886029168472541
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.431890716387377
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.295
+    },
+    {
+      "seed": 23,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.711520900974026,
+          "brier": 0.21462404671894347,
+          "ece10": 0.048104742323459314
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.705078125,
+          "brier": 0.21762194904356405,
+          "ece10": 0.03258912623478997
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.705692036935096
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.084897083104204
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.71
+    },
+    {
+      "seed": 24,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.696703681472589,
+          "brier": 0.22127655487418438,
+          "ece10": 0.042779192761554695
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6921393557422969,
+          "brier": 0.223515371762319,
+          "ece10": 0.04559265931878933
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.829828350471626
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.305640582219247
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3
+    },
+    {
+      "seed": 24,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6592136854741897,
+          "brier": 0.23135957229087034,
+          "ece10": 0.044871139532941626
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6558123249299721,
+          "brier": 0.2336295290188262,
+          "ece10": 0.060790567260069914
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.53942241783729
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.012736909086513
+        }
+      },
+      "missing_fraction": 0.075625,
+      "shifted_group_fraction": 0.3
+    },
+    {
+      "seed": 24,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6762454981992797,
+          "brier": 0.22632528075594902,
+          "ece10": 0.04442879221769385
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.666841736694678,
+          "brier": 0.2315057447397461,
+          "ece10": 0.04980334826862997
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.523152358735981
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.129087664654248
+        }
+      },
+      "missing_fraction": 0.065,
+      "shifted_group_fraction": 0.3
+    },
+    {
+      "seed": 24,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6882753101240495,
+          "brier": 0.22530081203487218,
+          "ece10": 0.047508026833078934
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6897258903561425,
+          "brier": 0.22447725164190518,
+          "ece10": 0.04362457750095161
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.75737958150813
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.039307667003891
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3
+    },
+    {
+      "seed": 24,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6673947427882805,
+          "brier": 0.2315831154545645,
+          "ece10": 0.05703073378379132
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6430920639702744,
+          "brier": 0.2406861251647217,
+          "ece10": 0.07805742990186335
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.243258964267202
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.50228494221812
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7
+    },
+    {
+      "seed": 25,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7156112444977992,
+          "brier": 0.21536437498650574,
+          "ece10": 0.03148328996015396
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6958158263305323,
+          "brier": 0.22200776513359302,
+          "ece10": 0.07355039036206469
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.729111343452438
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.951424563766443
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3275
+    },
+    {
+      "seed": 25,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7161364545818327,
+          "brier": 0.21601307821843585,
+          "ece10": 0.0315558347879456
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6962535014005602,
+          "brier": 0.2218182775873019,
+          "ece10": 0.04738805674192213
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.078286766653452
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.192464317461223
+        }
+      },
+      "missing_fraction": 0.065,
+      "shifted_group_fraction": 0.3275
+    },
+    {
+      "seed": 25,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7031562625050021,
+          "brier": 0.21921533207218188,
+          "ece10": 0.024454759031461173
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6658288315326131,
+          "brier": 0.23035557123185638,
+          "ece10": 0.04003768538874006
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.756943149534864
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.954235318516885
+        }
+      },
+      "missing_fraction": 0.0675,
+      "shifted_group_fraction": 0.3275
+    },
+    {
+      "seed": 25,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.701780712284914,
+          "brier": 0.21989338447600482,
+          "ece10": 0.04172687254115735
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7009428771508603,
+          "brier": 0.22170817731710016,
+          "ece10": 0.04194757873911163
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.115525951102452
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.068936763352786
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.3275
+    },
+    {
+      "seed": 25,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7311000000000001,
+          "brier": 0.20903120012411627,
+          "ece10": 0.06032743987931708
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7331625,
+          "brier": 0.20860594694173443,
+          "ece10": 0.06699354836820096
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.495719193388986
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.958121636673972
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7125
+    },
+    {
+      "seed": 26,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6959037842190017,
+          "brier": 0.21847327614192533,
+          "ece10": 0.05878399959172089
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6619112318840579,
+          "brier": 0.2290450641663938,
+          "ece10": 0.08433663931637427
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.284503776351556
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.554593630694173
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 26,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6779891304347827,
+          "brier": 0.22314562505659985,
+          "ece10": 0.046607474321884626
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.653155193236715,
+          "brier": 0.23047997257673397,
+          "ece10": 0.06728783818794556
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.954969451044283
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.136273529571353
+        }
+      },
+      "missing_fraction": 0.07906250000000001,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 26,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6933625201288246,
+          "brier": 0.22018516917446704,
+          "ece10": 0.03901889864205873
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6583761070853463,
+          "brier": 0.227882491815184,
+          "ece10": 0.06613148977688804
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.27953290627486
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.4477414499329
+        }
+      },
+      "missing_fraction": 0.0675,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 26,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6726046698872785,
+          "brier": 0.22628205947103402,
+          "ece10": 0.09398973677759288
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6475694444444444,
+          "brier": 0.23461251496304933,
+          "ece10": 0.08711980535022397
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.218770189008628
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.629912294263889
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.31
+    },
+    {
+      "seed": 26,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7127164448003203,
+          "brier": 0.2153077197233914,
+          "ece10": 0.03019159105772895
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6982909618656792,
+          "brier": 0.22150260081678524,
+          "ece10": 0.027495209987442197
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.947266386339585
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.02041450699187
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.72
+    },
+    {
+      "seed": 27,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7598491514770584,
+          "brier": 0.19954691448301382,
+          "ece10": 0.06226146064688856
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7221118793211816,
+          "brier": 0.21257678500108454,
+          "ece10": 0.04239820601764354
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.162640083594827
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.549755604943103
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 27,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.749365179132621,
+          "brier": 0.20303549507803367,
+          "ece10": 0.05969954417450384
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7137774984286612,
+          "brier": 0.2137182167718138,
+          "ece10": 0.02730392648364702
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.86091501765324
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.364676129821591
+        }
+      },
+      "missing_fraction": 0.071875,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 27,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.74634820867379,
+          "brier": 0.20406615860117178,
+          "ece10": 0.053636000894822865
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.698830923947203,
+          "brier": 0.219591156528394,
+          "ece10": 0.03733476788890475
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.49076144498902
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.120157609206068
+        }
+      },
+      "missing_fraction": 0.06875,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 27,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7457448145820238,
+          "brier": 0.20307174035311448,
+          "ece10": 0.043070049404381215
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7159270898805783,
+          "brier": 0.21409115905484064,
+          "ece10": 0.042993382637363464
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.866560885110376
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.164504663809247
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.28
+    },
+    {
+      "seed": 27,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7218868208121445,
+          "brier": 0.21375738986471637,
+          "ece10": 0.04463879671734674
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7146722112277362,
+          "brier": 0.21815699445498876,
+          "ece10": 0.06113115251805332
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.801239106580491
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.07991055485769
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.655
+    },
+    {
+      "seed": 28,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6971674291857295,
+          "brier": 0.22080183167885828,
+          "ece10": 0.08290307400608049
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6905047626190655,
+          "brier": 0.22327999800215664,
+          "ece10": 0.07043782014326529
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.052974759890583
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.319354427834805
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2925
+    },
+    {
+      "seed": 28,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6774419360484012,
+          "brier": 0.22587008410750983,
+          "ece10": 0.0773249000724005
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6678416960424012,
+          "brier": 0.22960324104497623,
+          "ece10": 0.056785405581055236
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.54637218744349
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.868364641106702
+        }
+      },
+      "missing_fraction": 0.07875,
+      "shifted_group_fraction": 0.2925
+    },
+    {
+      "seed": 28,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6761169029225731,
+          "brier": 0.22615221271552002,
+          "ece10": 0.06746444726690416
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6636040901022526,
+          "brier": 0.23060511399403755,
+          "ece10": 0.05395783104270383
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.92080322743851
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.276170871403446
+        }
+      },
+      "missing_fraction": 0.07250000000000001,
+      "shifted_group_fraction": 0.2925
+    },
+    {
+      "seed": 28,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6933673341833546,
+          "brier": 0.22514313906995057,
+          "ece10": 0.05503041948941455
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6866296657416435,
+          "brier": 0.22835393781211583,
+          "ece10": 0.07483481239375935
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 11.028296457118799
+        },
+        "hist_gradient_boosting": {
+          "mae": 11.139362846731649
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.2925
+    },
+    {
+      "seed": 28,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.696817420435511,
+          "brier": 0.22088915178541582,
+          "ece10": 0.0751676719904066
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.672654316357909,
+          "brier": 0.22990773683181545,
+          "ece10": 0.060853063761351814
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.33463958518059
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.838190167154574
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.7225
+    },
+    {
+      "seed": 29,
+      "scenario": "clean",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7072865579021119,
+          "brier": 0.21763871842255683,
+          "ece10": 0.04158981526403568
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.695801221098989,
+          "brier": 0.22235124102441592,
+          "ece10": 0.05566157941523506
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.351185505195991
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.506472870967368
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.315
+    },
+    {
+      "seed": 29,
+      "scenario": "mar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.7157191472325093,
+          "brier": 0.21524175543562754,
+          "ece10": 0.047278647927931995
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7083500150135122,
+          "brier": 0.21720218066072236,
+          "ece10": 0.02815424982066113
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.935699140122635
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.006851064632265
+        }
+      },
+      "missing_fraction": 0.0715625,
+      "shifted_group_fraction": 0.315
+    },
+    {
+      "seed": 29,
+      "scenario": "mnar_missingness",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.6872935642077871,
+          "brier": 0.22396887362988877,
+          "ece10": 0.04630245206366381
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.682001301171054,
+          "brier": 0.22756665473655616,
+          "ece10": 0.06166511969858163
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 10.626225851627929
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.808721617633932
+        }
+      },
+      "missing_fraction": 0.064375,
+      "shifted_group_fraction": 0.315
+    },
+    {
+      "seed": 29,
+      "scenario": "measurement_noise",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.693424081673506,
+          "brier": 0.22349424268119697,
+          "ece10": 0.05849808192588047
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.6852667400660595,
+          "brier": 0.2272461422497384,
+          "ece10": 0.048844808309599565
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.96980455775066
+        },
+        "hist_gradient_boosting": {
+          "mae": 10.127778762899789
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.315
+    },
+    {
+      "seed": 29,
+      "scenario": "subgroup_shift",
+      "classification": {
+        "logistic_regression": {
+          "auroc": 0.769377749842866,
+          "brier": 0.1960354916699014,
+          "ece10": 0.044672671912081574
+        },
+        "hist_gradient_boosting": {
+          "auroc": 0.7657196731615337,
+          "brier": 0.20001609743175486,
+          "ece10": 0.06960511707180227
+        }
+      },
+      "regression": {
+        "ridge": {
+          "mae": 9.643752063324962
+        },
+        "hist_gradient_boosting": {
+          "mae": 9.947373256523464
+        }
+      },
+      "missing_fraction": 0.0,
+      "shifted_group_fraction": 0.6975
+    }
+  ],
+  "claim_boundary": "This benchmark tests engineering behavior under an explicit synthetic mechanism. It uses no real patient data, provides no clinical validation, and cannot support diagnosis, treatment, prognosis, patient benefit, or real-world readiness claims."
+}
