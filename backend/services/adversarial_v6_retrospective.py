@@ -15,6 +15,9 @@ from typing import Any
 
 DEFAULT_INPUT = Path("Data/evals/safety/latest_adversarial_holdout_v6_baseline.json")
 DEFAULT_OUTPUT = Path("Data/evals/safety/latest_adversarial_v6_retrospective.json")
+TUNING_REGRESSION = Path(
+    "Data/evals/safety/latest_adversarial_v6_tuning_regression.json"
+)
 
 
 def build_retrospective(input_path: str | Path = DEFAULT_INPUT) -> dict[str, Any]:
@@ -41,7 +44,12 @@ def build_retrospective(input_path: str | Path = DEFAULT_INPUT) -> dict[str, Any
         "representative_case_ids": [str(row.get("case_id")) for row in failures[:12]],
         "was_used_for_tuning": True,
         "internal_vs_external": "internal_author_retrospective_tuning_diagnostic",
-        "frozen_bank_was_rerun": False,
+        "frozen_bank_was_rerun": TUNING_REGRESSION.exists(),
+        "rerun_classification": (
+            "tuning_informed_regression"
+            if TUNING_REGRESSION.exists()
+            else "not_rerun_after_failure_inspection"
+        ),
         "allowed_reading": "The v6 baseline identified generalization weaknesses and informed development mutations.",
         "blocked_readings": [
             "independent held-out evidence after failure inspection",

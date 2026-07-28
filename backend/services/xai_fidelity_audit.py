@@ -11,6 +11,8 @@ from typing import Any
 
 DEFAULT_INPUT_PATH = Path("Data/complete_synthetic_training/synthetic_xai_explanations.json")
 DEFAULT_OUTPUT_PATH = Path("Data/evals/models/latest_xai_fidelity_audit.json")
+RANK_STABILITY_PATH = Path("Data/evals/models/latest_xai_rank_stability.json")
+RETRAINING_STABILITY_PATH = Path("Data/evals/models/latest_xai_retraining_stability.json")
 NEAR_OUTCOME_PROXIES = {"mri_percent_change_from_baseline", "response_score_percent", "latent_response_strength"}
 ADDITIVITY_TOLERANCE_LOG_ODDS = 1e-5
 
@@ -75,8 +77,10 @@ def build_xai_fidelity_audit(
     n = len(rows)
     additivity_verifiable = n > 0 and additivity_fields_present == n
     additivity_pass_rate = _rate(additivity_within_tolerance, n)
+    rank_stability = _read_optional(RANK_STABILITY_PATH)
+    retraining_stability = _read_optional(RETRAINING_STABILITY_PATH)
     payload = {
-        "schema_version": "xai_fidelity_audit_v2",
+        "schema_version": "xai_fidelity_audit_v3",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": (
             "acceptable"
@@ -100,7 +104,23 @@ def build_xai_fidelity_audit(
         "mean_absolute_additivity_residual_log_odds": (
             round(sum(residuals) / len(residuals), 12) if residuals else None
         ),
-        "rank_stability_evaluated": False,
+        "rank_stability_evaluated": bool(rank_stability),
+        "rank_stability_artifact": (
+            RANK_STABILITY_PATH.as_posix() if rank_stability else None
+        ),
+        "rank_stability_status": rank_stability.get("status") if rank_stability else None,
+        "model_retraining_stability_evaluated": bool(
+            retraining_stability.get("model_retraining_stability_evaluated")
+        ) if retraining_stability else False,
+        "local_patient_explanation_stability_evaluated": bool(
+            retraining_stability.get("local_patient_explanation_stability_evaluated")
+        ) if retraining_stability else False,
+        "retraining_stability_artifact": (
+            RETRAINING_STABILITY_PATH.as_posix() if retraining_stability else None
+        ),
+        "retraining_stability_status": (
+            retraining_stability.get("status") if retraining_stability else None
+        ),
         "causal_interpretation_allowed": False,
         "presentation_risks": [
             "Centered one-hot SHAP values can display several mutually exclusive categories and confuse users.",
@@ -111,7 +131,13 @@ def build_xai_fidelity_audit(
         "required_next_actions": [
             "collapse mutually exclusive one-hot groups for patient-facing display",
             "separate near-outcome proxy features from ordinary context features",
-            "measure explanation rank stability across resamples before promotion",
+            (
+                "complete a human-comprehension study before presenting explanations as user-validated"
+                if retraining_stability
+                else "repeat explanation ranking stability across independently trained seeds"
+                if rank_stability
+                else "measure explanation rank stability across patient resamples before promotion"
+            ),
         ],
         "synthetic_only": True,
         "clinical_validation": False,
@@ -136,6 +162,14 @@ def _finite(value: Any) -> bool:
 
 def _rate(numerator: int, denominator: int) -> float:
     return round(numerator / denominator, 6) if denominator else 0.0
+
+
+def _read_optional(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, json.JSONDecodeError):
+        return {}
+    return payload if isinstance(payload, dict) else {}
 
 
 __all__ = ["build_xai_fidelity_audit"]

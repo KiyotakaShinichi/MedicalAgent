@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_data_platform_reliability_eval_v1",
-  "generated_at": "2026-07-28T06:02:18.416002+00:00",
+  "generated_at": "2026-07-28T12:03:52.764551+00:00",
   "status": "strong_offline_drill",
   "clinical_validation": false,
   "healthcare_production_ready": false,

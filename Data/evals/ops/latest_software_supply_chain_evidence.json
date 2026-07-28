@@ -1,0 +1,62 @@
+{
+  "schema_version": "software_supply_chain_evidence_v1",
+  "generated_at": "2026-07-28T12:05:36.027817+00:00",
+  "status": "acceptable",
+  "lockfiles": {
+    "python": {
+      "path": "requirements-lock-py314-win.txt",
+      "exists": true,
+      "sha256": "fc68a7b3b7706937b2db60480f09d114bf6cfbdc73844e23fbe20bbdaa4ef216",
+      "component_count": 101
+    },
+    "frontend": {
+      "path": "frontend-react/package-lock.json",
+      "exists": true,
+      "sha256": "e16d055c6ade1fef212ab315bdc588a4aa25656b1a02c7df57a9346f9689ddf5",
+      "component_count": 404
+    }
+  },
+  "sbom": {
+    "format": "CycloneDX",
+    "spec_version": "1.5",
+    "python_path": "Data/evals/ops/sbom/python.cdx.json",
+    "frontend_path": "Data/evals/ops/sbom/frontend.cdx.json",
+    "component_count": 505
+  },
+  "secret_scan": {
+    "executed": true,
+    "finding_count": 0,
+    "findings": [],
+    "secret_values_included": false
+  },
+  "container_scan": {
+    "executed": false,
+    "tools": {
+      "trivy": {
+        "available": false,
+        "executed": false,
+        "reason": "tool unavailable in this environment"
+      },
+      "syft": {
+        "available": false,
+        "executed": false,
+        "reason": "tool unavailable in this environment"
+      },
+      "grype": {
+        "available": false,
+        "executed": false,
+        "reason": "tool unavailable in this environment"
+      },
+      "docker": {
+        "available": true,
+        "executed": false,
+        "reason": "image build and scan are separate deployment actions"
+      }
+    },
+    "gap": "No container vulnerability result is claimed until an image is built and scanned."
+  },
+  "dependency_vulnerability_artifact": "Data/evals/ops/latest_dependency_security_scan.json",
+  "clinical_validation": false,
+  "production_healthcare_ready": false,
+  "claim_boundary": "Lock-derived SBOMs and a repository secret scan are software-engineering evidence only. They are not a security certification, compliance proof, clinical validation, or production healthcare readiness."
+}

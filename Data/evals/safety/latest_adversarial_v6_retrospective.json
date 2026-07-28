@@ -1,6 +1,6 @@
 {
   "schema_version": "adversarial_v6_retrospective_v1",
-  "generated_at": "2026-07-22T05:45:40.354376+00:00",
+  "generated_at": "2026-07-28T12:05:58.507716+00:00",
   "status": "tuning_informed_not_held_out",
   "source_artifact": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
   "source_bank_sha256": "1b4825e038fa74c0bd7746c59df383f442877fb9f8e5088fb5f9986968df0b51",
@@ -50,7 +50,8 @@
   ],
   "was_used_for_tuning": true,
   "internal_vs_external": "internal_author_retrospective_tuning_diagnostic",
-  "frozen_bank_was_rerun": false,
+  "frozen_bank_was_rerun": true,
+  "rerun_classification": "tuning_informed_regression",
   "allowed_reading": "The v6 baseline identified generalization weaknesses and informed development mutations.",
   "blocked_readings": [
     "independent held-out evidence after failure inspection",

@@ -22,23 +22,40 @@ SKIP_DIRS = {
 SKIP_SUFFIXES = {".db", ".sqlite", ".nii", ".gz", ".dcm", ".png", ".jpg", ".jpeg", ".xlsx", ".zip", ".pt", ".joblib", ".pyc"}
 ALLOWLIST = {
     "replace_with_your_groq_key",
+    "replace_with_a_long_random_secret",
+    "eval-only-signing-secret",
 }
 
 PATTERNS = [
     ("groq_api_key", re.compile(r"gsk_[A-Za-z0-9]{20,}")),
     ("openai_api_key", re.compile(r"sk-[A-Za-z0-9]{20,}")),
-    ("generic_secret_assignment", re.compile(r"(?i)(api[_-]?key|secret|token|password)\s*=\s*['\"]?[A-Za-z0-9_\-]{24,}")),
+    (
+        "generic_secret_assignment",
+        re.compile(
+            r"(?i)(api[_-]?key|secret|token|password)[ \t]*=[ \t]*"
+            r"['\"]?[A-Za-z0-9_\-]{24,}"
+        ),
+    ),
 ]
 
 
 def main():
+    findings = scan_secret_findings()
+    if findings:
+        for finding in findings:
+            print(f"{finding['path']}:{finding['line']} possible {finding['pattern']}")
+        raise SystemExit(1)
+    print("Secret scan passed.")
+
+
+def scan_secret_findings(root: Path = ROOT):
     findings = []
-    for dirpath, dirnames, filenames in os.walk(ROOT):
+    for dirpath, dirnames, filenames in os.walk(root):
         current = Path(dirpath)
-        dirnames[:] = [name for name in dirnames if not _should_skip_dir(current / name)]
+        dirnames[:] = [name for name in dirnames if not _should_skip_dir(current / name, root)]
         for filename in filenames:
             path = current / filename
-            if _should_skip(path):
+            if _should_skip(path, root):
                 continue
             try:
                 text = path.read_text(encoding="utf-8")
@@ -51,18 +68,14 @@ def main():
                         continue
                     findings.append({
                         "pattern": name,
-                        "path": str(path.relative_to(ROOT)),
+                        "path": str(path.relative_to(root)),
                         "line": text[:match.start()].count("\n") + 1,
                     })
-    if findings:
-        for finding in findings:
-            print(f"{finding['path']}:{finding['line']} possible {finding['pattern']}")
-        raise SystemExit(1)
-    print("Secret scan passed.")
+    return findings
 
 
-def _should_skip(path):
-    relative = path.relative_to(ROOT)
+def _should_skip(path, root: Path = ROOT):
+    relative = path.relative_to(root)
     if path.name.startswith(".env") and path.name != ".env.example":
         return True
     parts = set(relative.parts)
@@ -76,9 +89,9 @@ def _should_skip(path):
     return False
 
 
-def _should_skip_dir(path: Path) -> bool:
+def _should_skip_dir(path: Path, root: Path = ROOT) -> bool:
     try:
-        relative = path.relative_to(ROOT)
+        relative = path.relative_to(root)
     except ValueError:
         return False
     parts = set(relative.parts)

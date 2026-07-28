@@ -78,6 +78,22 @@ def main() -> int:
                 "tests/test_managed_vector_shadow_sync.py",
                 "tests/test_managed_vector_shadow_comparison.py",
                 "tests/test_data_platform_reliability_eval.py",
+                "tests/test_ops_health_snapshot.py",
+                "tests/test_release_decision_surface.py",
+                "tests/test_constraint_aware_improvement_program.py",
+                "tests/test_oidc_pkce.py",
+                "tests/test_dependency_security_scan.py",
+                "tests/test_software_supply_chain_evidence.py",
+                "tests/test_synthetic_automation_staging_readiness.py",
+                "tests/test_rag_degradation_resilience_eval.py",
+                "tests/test_agent_execution_policy_eval.py",
+                "tests/test_agent_execution_policy.py",
+                "tests/test_xai_retraining_stability_audit.py",
+                "tests/test_xai_rank_stability_audit.py",
+                "tests/test_credible_route_latency_sample.py",
+                "tests/test_automation_channel_drill.py",
+                "tests/test_adversarial_v6_tuning_regression.py",
+                "tests/test_unsafe_intent_mutation_dev_eval.py",
                 "-q",
             ],
         ),
@@ -100,10 +116,6 @@ def main() -> int:
             name="Frontend production build",
             command=_npm_cmd("run", "build"),
             cwd=FRONTEND,
-        ),
-        Step(
-            name="Focused release summary",
-            command=[sys.executable, "scripts/run_focused_release_summary.py"],
         ),
         Step(
             name="Reproducible knowledge-base chunk materialization",
@@ -148,6 +160,86 @@ def main() -> int:
         Step(
             name="ML logic/safety alignment audit",
             command=[sys.executable, "scripts/run_ml_logic_safety_alignment.py"],
+        ),
+        Step(
+            name="OIDC browser PKCE readiness",
+            command=[sys.executable, "scripts/run_oidc_browser_pkce_readiness.py"],
+        ),
+        Step(
+            name="Dependency security scan",
+            command=[sys.executable, "scripts/run_dependency_security_scan.py"],
+        ),
+        Step(
+            name="Lock-derived SBOM and repository secret scan",
+            command=[sys.executable, "scripts/run_software_supply_chain_evidence.py"],
+        ),
+        Step(
+            name="Development unsafe-intent mutation regression",
+            command=[sys.executable, "scripts/run_unsafe_intent_mutation_dev_eval.py"],
+        ),
+        Step(
+            name="Tuning-informed adversarial v6 regression",
+            command=[sys.executable, "scripts/run_adversarial_v6_tuning_regression.py"],
+        ),
+        Step(
+            name="Adversarial v6 contamination retrospective",
+            command=[sys.executable, "scripts/run_adversarial_v6_retrospective.py"],
+        ),
+        Step(
+            name="Synthetic XAI rank-stability audit",
+            command=[sys.executable, "scripts/run_xai_rank_stability_audit.py"],
+        ),
+        Step(
+            name="Synthetic XAI retraining-stability audit",
+            command=[sys.executable, "scripts/run_xai_retraining_stability_audit.py"],
+        ),
+        Step(
+            name="Synthetic XAI mechanical fidelity audit",
+            command=[sys.executable, "scripts/run_xai_fidelity_audit.py"],
+        ),
+        Step(
+            name="Bounded agent execution-policy eval",
+            command=[sys.executable, "scripts/run_agent_execution_policy_eval.py"],
+        ),
+        Step(
+            name="Local RAG degradation resilience drill",
+            command=[sys.executable, "scripts/run_rag_degradation_resilience_eval.py"],
+        ),
+        Step(
+            name="Credible local route-latency sample",
+            command=[sys.executable, "scripts/run_credible_route_latency_sample.py"],
+        ),
+        Step(
+            name="Route-latency budget refresh",
+            command=[sys.executable, "scripts/run_route_latency_budget.py"],
+        ),
+        Step(
+            name="Signed localhost automation channel drill",
+            command=[sys.executable, "scripts/run_automation_channel_drill.py"],
+        ),
+        Step(
+            name="Synthetic n8n and MailHog staging readiness",
+            command=[sys.executable, "scripts/run_synthetic_automation_staging_readiness.py"],
+        ),
+        Step(
+            name="Canonical release decision surface",
+            command=[sys.executable, "scripts/run_release_decision_surface.py"],
+        ),
+        Step(
+            name="Constraint-aware cross-domain improvement program",
+            command=[sys.executable, "scripts/run_constraint_aware_improvement_program.py"],
+        ),
+        Step(
+            name="Consolidated benchmark registry",
+            command=[sys.executable, "scripts/generate_benchmark_report.py"],
+        ),
+        Step(
+            name="Evidence-backed service health snapshot",
+            command=[sys.executable, "scripts/run_ops_health_snapshot.py"],
+        ),
+        Step(
+            name="Focused release summary",
+            command=[sys.executable, "scripts/run_focused_release_summary.py"],
         ),
         Step(
             name="Release artifact gate",

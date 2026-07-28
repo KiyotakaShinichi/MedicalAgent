@@ -82,6 +82,13 @@ export default function PatientDashboard() {
           setEnrichmentFetchedAt(Date.now());
           return;
         }
+        if (jobStatus === "failed" && attempt < 3) {
+          // A cold local start can fail once while synthetic model artifacts
+          // are still being loaded. The backend reschedules failed jobs on
+          // the next poll, so allow a small bounded recovery window.
+          enrichmentPollTimer.current = window.setTimeout(() => { void poll(attempt + 1); }, 1500);
+          return;
+        }
         if (jobStatus === "failed" || attempt >= 60) {
           setEnrichmentStatus("error");
           return;

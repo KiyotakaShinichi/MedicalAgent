@@ -49,8 +49,17 @@ def main() -> int:
         "schema_version": "route_latency_budget_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
+        "minimum_samples_for_percentile_credibility": 30,
+        "production_ready": False,
+        "clinical_validation": False,
         "summary": {
             "route_count": len(routes),
+            "measured_route_count": sum(
+                1 for row in routes if int(row.get("sample_count") or 0) > 0
+            ),
+            "credible_percentile_route_count": sum(
+                1 for row in routes if row.get("percentile_credible") is True
+            ),
             "needs_attention_count": sum(1 for row in routes if (row.get("status") or row.get("latency_status")) == "needs_attention"),
             "insufficient_sample_count": sum(
                 1
@@ -63,7 +72,8 @@ def main() -> int:
         "routes": routes,
         "claim_boundary": (
             "Route latency budgets are prototype engineering targets, not production SLOs. "
-            "A p95 is not treated as credible until the route has at least 30 local samples."
+            "A p95 is not treated as credible until the route has at least 30 local samples. "
+            "Repeated sparse/fast-mode local workloads are regression evidence only."
         ),
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)

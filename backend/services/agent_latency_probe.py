@@ -97,6 +97,8 @@ def _percentile(values: list[float], pct: int) -> float:
 def run_latency_probe(
     queries: tuple[tuple[str, str], ...] = DEFAULT_PROBE_QUERIES,
     output_path: Path = DEFAULT_OUTPUT,
+    *,
+    fresh_session_per_query: bool = False,
 ) -> dict[str, Any]:
     # Force sparse retrieval so the probe is deterministic + doesn't
     # download a dense embedding model.  Callers who want the dense
@@ -129,9 +131,10 @@ def run_latency_probe(
     }
 
     for query_id, query in queries:
+        query_db = _new_db_session() if fresh_session_per_query else db
         t0 = perf_counter()
         result = run_patient_agent_pipeline(
-            db=db,
+            db=query_db,
             patient_id=f"PROBE-{query_id}",
             query=query,
             patient_context={},
@@ -156,6 +159,8 @@ def run_latency_probe(
         for stage, value in stage_ms.items():
             stage_buckets.setdefault(stage, []).append(float(value))
         stage_buckets["total_ms"].append(total_ms)
+        if fresh_session_per_query:
+            query_db.close()
 
     summary = {
         stage: {
@@ -178,6 +183,7 @@ def run_latency_probe(
             "rag_force_sparse": os.environ.get("RAG_FORCE_SPARSE"),
             "rag_enable_cross_encoder": os.environ.get("RAG_ENABLE_CROSS_ENCODER"),
             "fast_mode": os.environ.get("ONCOTRACK_FAST_MODE"),
+            "fresh_session_per_query": fresh_session_per_query,
             "python":           sys.version.split()[0],
         },
         "warmup": {

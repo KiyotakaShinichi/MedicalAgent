@@ -1,10 +1,11 @@
 # Release decision surface
 
-The v2 surface groups evidence into `aie`, `swe`, `mle`, `medical`,
-`automation`, `fine_tuning`, and `deployment`. Each check is labelled as
-verified internal evidence, needs attention, scaffolded, externally blocked,
-missing, or invalid. Prepared packets and dry-run scaffolds therefore cannot
-read like completed validation.
+The v3 surface groups evidence into `aie`, `mle`, `swe`,
+`data_engineering`, `infrastructure`, `medical`, `automation`,
+`deployment`, and `fine_tuning`. Each check is labelled as verified internal
+evidence, needs attention, scaffolded, externally blocked, stale, missing, or
+invalid. Prepared packets, old artifacts, and dry-run scaffolds therefore
+cannot read like current completed validation.
 
 The full release registry remains the detailed evidence index. The compact
 decision surface separates four hard engineering blockers from warnings and
@@ -14,6 +15,10 @@ cannot visually dilute a critical failure.
 The primary surface is capped at 20 canonical checks. Superseded holdouts,
 component diagnostics, and duplicate readiness artifacts remain discoverable
 in the detailed registry, but they do not compete with the primary decision.
+
+The ship workflow regenerates source artifacts before this surface, then builds
+the cross-domain improvement program, benchmark registry, service-health
+snapshot, focused summary, and final release gate in dependency order.
 
 Run:
 

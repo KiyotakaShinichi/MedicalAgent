@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "be4cdc47aad0454e821d181b267273dcca0824bf",
+    "git_commit": "b404008f64f2f1dd3dbf85a2f6037aa58703902a",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -15,16 +15,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2344146:1785216471:770507376ae9",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-07-28T05:50:34.120400+00:00"
+    "generated_at": "2026-07-28T12:09:05.836517+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-07-28T05:50:34.120400+00:00",
+    "generated_at": "2026-07-28T12:09:05.836517+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-07-29T05:50:34.120400+00:00",
+    "expires_at": "2026-07-29T12:09:05.836517+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-07-28T05:50:34.805558+00:00",
+  "generated_at": "2026-07-28T12:09:07.095117+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -2019,7 +2019,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:35:06.631940+00:00",
+      "generated_at": "2026-07-28T12:00:34.023640+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -2036,7 +2036,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:35:05.618469+00:00",
+      "generated_at": "2026-07-28T12:00:32.780423+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -2053,7 +2053,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:35:06.745118+00:00",
+      "generated_at": "2026-07-28T12:00:34.158760+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2246,18 +2246,18 @@
       "id": "service_health_snapshot",
       "title": "PoC service health snapshot",
       "tier": "supporting",
-      "status": "stale",
-      "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-13T08:39:07.237772+00:00",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T10:48:28.823995+00:00",
       "source_path": "Data/evals/ops/latest_service_health_snapshot.json",
       "metrics": {
-        "status": "strong",
-        "stale_artifact_count": 75,
+        "status": "needs_attention",
+        "stale_artifact_count": 135,
         "failed_benchmark_count": 0
       },
       "limitations": [],
-      "claim_boundary": "PoC operational health snapshot only; no production SLO/SLA or compliance claim."
+      "claim_boundary": "Internal engineering observability assembled from local evaluation artifacts. These values are not production SLOs, clinical monitoring, emergency coverage, real-world safety evidence, or healthcare production readiness."
     },
     {
       "id": "deployment_recovery_drill",
@@ -2361,51 +2361,51 @@
       "id": "route_latency_budget",
       "title": "Route latency budget",
       "tier": "supporting",
-      "status": "stale",
-      "source_status": "needs_attention",
-      "freshness": "stale",
-      "generated_at": "2026-07-18T10:36:43.276916+00:00",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:08:48.839139+00:00",
       "source_path": "Data/evals/ops/latest_route_latency_budget.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "acceptable",
         "route_count": 7,
         "needs_attention_count": 0,
-        "highest_observed_p95_ms": 1868.61
+        "highest_observed_p95_ms": 1138.42
       },
       "limitations": [],
-      "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs. A p95 is not treated as credible until the route has at least 30 local samples."
+      "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs. A p95 is not treated as credible until the route has at least 30 local samples. Repeated sparse/fast-mode local workloads are regression evidence only."
     },
     {
       "id": "latency_profile_phase2",
       "title": "Latency profile phase 2",
       "tier": "supporting",
-      "status": "stale",
-      "source_status": "needs_attention",
-      "freshness": "stale",
-      "generated_at": "2026-07-18T10:36:25.527192+00:00",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:08:46.261903+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile_phase2.json",
       "metrics": {
-        "status": "needs_attention",
-        "normal_rag_previous_p95_ms": 7872.81,
-        "load_smoke_previous_p95_ms": 7546.078
+        "status": "acceptable",
+        "normal_rag_previous_p95_ms": null,
+        "load_smoke_previous_p95_ms": null
       },
       "limitations": [],
-      "claim_boundary": "Latency profile is local engineering observability only. It is not a production SLO, hospital-readiness claim, or real-world performance guarantee."
+      "claim_boundary": "These are repeated local engineering measurements over in-memory SQLite, fast mode, and forced sparse retrieval. They are useful for regression detection only and are not production SLOs, cloud performance evidence, hospital readiness, or clinical validation."
     },
     {
       "id": "latency_profile",
       "title": "Latency profile",
       "tier": "supporting",
-      "status": "stale",
-      "source_status": "needs_attention",
-      "freshness": "stale",
-      "generated_at": "2026-07-18T10:36:25.527192+00:00",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:08:46.261903+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile.json",
       "metrics": {
-        "status": "needs_attention"
+        "status": "acceptable"
       },
       "limitations": [],
-      "claim_boundary": "Latency profile is local engineering observability only. It is not a production SLO, hospital-readiness claim, or real-world performance guarantee."
+      "claim_boundary": "These are repeated local engineering measurements over in-memory SQLite, fast mode, and forced sparse retrieval. They are useful for regression detection only and are not production SLOs, cloud performance evidence, hospital readiness, or clinical validation."
     },
     {
       "id": "rag_reranker_ablation",
@@ -2693,6 +2693,81 @@
       "claim_boundary": "This deterministic wording proxy does not show that patients understand, trust appropriately, or use the interface safely. Independent human-factors review has not been completed."
     },
     {
+      "id": "xai_rank_stability",
+      "title": "Synthetic SHAP ranking stability",
+      "tier": "supporting",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:06:10.768527+00:00",
+      "source_path": "Data/evals/models/latest_xai_rank_stability.json",
+      "metrics": {
+        "status": "acceptable",
+        "patient_n": 600,
+        "bootstrap_n": 300,
+        "model_retraining_stability": false,
+        "clinical_validation": false
+      },
+      "limitations": [],
+      "claim_boundary": "Bootstrap ranking stability over synthetic SHAP exports is an engineering sensitivity check only. It is not causal explanation, human comprehension, clinical validation, or evidence that the synthetic feature relationships transfer to real patients."
+    },
+    {
+      "id": "xai_retraining_stability",
+      "title": "Synthetic XAI retraining stability",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:06:49.726582+00:00",
+      "source_path": "Data/evals/models/latest_xai_retraining_stability.json",
+      "metrics": {
+        "status": "needs_attention",
+        "seed_count": 12,
+        "global_top_k_jaccard_p05": 0.6,
+        "global_rank_correlation_p05": -1.0,
+        "local_top_k_jaccard_median": 0.777778,
+        "clinical_validation": false
+      },
+      "limitations": [],
+      "claim_boundary": "This audit measures explanation sensitivity to retraining and patient-level split variation on synthetic data. It is not causal explanation, clinical validation, human-factors evidence, or proof of transfer to real patients."
+    },
+    {
+      "id": "agent_execution_policy",
+      "title": "Bounded agent execution policy",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:07:09.605191+00:00",
+      "source_path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
+      "metrics": {
+        "status": "strong",
+        "pass_rate": 1.0,
+        "live_patient_write": false,
+        "clinical_authority": false
+      },
+      "limitations": [],
+      "claim_boundary": "These offline cases verify software action boundaries, confirmation, budgets, and memory provenance. They do not validate medical correctness, real-world agent safety, clinician review, or clinical outcomes."
+    },
+    {
+      "id": "rag_degradation_resilience",
+      "title": "Local RAG degradation resilience",
+      "tier": "supporting",
+      "status": "strong_offline_drill",
+      "source_status": "strong_offline_drill",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:07:24.860388+00:00",
+      "source_path": "Data/evals/rag/latest_rag_degradation_resilience.json",
+      "metrics": {
+        "status": "strong_offline_drill",
+        "pass_rate": 1.0,
+        "managed_network_request": false,
+        "production_recovery_proven": false
+      },
+      "limitations": [],
+      "claim_boundary": "These disposable local-index drills test software degradation behavior. They do not prove answer grounding, managed-service recovery, production availability, medical safety, or clinical validation."
+    },
+    {
       "id": "automation_fault_injection",
       "title": "Automation queue and webhook fault injection",
       "tier": "supporting",
@@ -2708,6 +2783,60 @@
       },
       "limitations": [],
       "claim_boundary": "Disposable engineering fault injection only. A passing result does not prove external channel reliability, clinician acknowledgement, emergency coverage, patient benefit, or healthcare production readiness."
+    },
+    {
+      "id": "automation_channel_drill",
+      "title": "Signed localhost automation channel drill",
+      "tier": "supporting",
+      "status": "strong",
+      "source_status": "strong",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:08:52.837906+00:00",
+      "source_path": "Data/evals/ops/latest_automation_channel_drill.json",
+      "metrics": {
+        "pass_rate": 1.0,
+        "attempt_count": 30,
+        "external_delivery": false,
+        "human_acknowledgement": false
+      },
+      "limitations": [],
+      "claim_boundary": "This drill uses a localhost HTTP receiver and synthetic test-recipient metadata only. A valid channel receipt proves local protocol delivery, not clinician acknowledgement, emergency coverage, patient contact, clinical action, external-channel reliability, or healthcare production readiness."
+    },
+    {
+      "id": "synthetic_automation_staging",
+      "title": "Synthetic n8n and MailHog staging readiness",
+      "tier": "supporting",
+      "status": "ready_for_synthetic_runtime",
+      "source_status": "ready_for_synthetic_runtime",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:08:57.486164+00:00",
+      "source_path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
+      "metrics": {
+        "status": "ready_for_synthetic_runtime",
+        "runtime_completed": false,
+        "external_delivery": false,
+        "human_acknowledgement": false
+      },
+      "limitations": [],
+      "claim_boundary": "This artifact validates static local staging configuration. It does not claim a running n8n workflow, external delivery, clinician acknowledgement, production automation, medical safety, or clinical validation."
+    },
+    {
+      "id": "software_supply_chain",
+      "title": "Lock-derived SBOM and secret-scan evidence",
+      "tier": "supporting",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:05:36.027817+00:00",
+      "source_path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
+      "metrics": {
+        "status": "acceptable",
+        "component_count": 505,
+        "secret_findings": 0,
+        "container_scan_executed": false
+      },
+      "limitations": [],
+      "claim_boundary": "Lock-derived SBOMs and a repository secret scan are software-engineering evidence only. They are not a security certification, compliance proof, clinical validation, or production healthcare readiness."
     },
     {
       "id": "finetune_runtime_preflight",
@@ -2730,10 +2859,10 @@
       "id": "oidc_browser_pkce_readiness",
       "title": "OIDC browser PKCE readiness",
       "tier": "supporting",
-      "status": "stale",
+      "status": "blocked_configuration",
       "source_status": "blocked_configuration",
-      "freshness": "stale",
-      "generated_at": "2026-07-22T08:20:20.946027+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:04:55.523195+00:00",
       "source_path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
       "metrics": {
         "status": "blocked_configuration",
@@ -2750,7 +2879,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:38:38.524531+00:00",
+      "generated_at": "2026-07-28T12:03:48.722817+00:00",
       "source_path": "Data/lakehouse/manifests/latest_pipeline_run.json",
       "metrics": {
         "status": "strong",
@@ -2771,7 +2900,7 @@
       "status": "strong_contract_only",
       "source_status": "strong_contract_only",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:38:41.282485+00:00",
+      "generated_at": "2026-07-28T12:03:50.838422+00:00",
       "source_path": "Data/evals/rag/latest_vector_store_contract_eval.json",
       "metrics": {
         "status": "strong_contract_only",
@@ -2790,7 +2919,7 @@
       "status": "compiled_reference_architecture",
       "source_status": "compiled_reference_architecture",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:50:06.603137+00:00",
+      "generated_at": "2026-07-28T12:04:31.954090+00:00",
       "source_path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
       "metrics": {
         "status": "compiled_reference_architecture",
@@ -2809,7 +2938,7 @@
       "status": "ready_for_opt_in_provisioning",
       "source_status": "ready_for_opt_in_provisioning",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:38:45.486292+00:00",
+      "generated_at": "2026-07-28T12:03:54.960916+00:00",
       "source_path": "Data/evals/rag/latest_azure_search_index_readiness.json",
       "metrics": {
         "status": "ready_for_opt_in_provisioning",
@@ -2828,7 +2957,7 @@
       "status": "ready_for_opt_in_shadow_sync",
       "source_status": "ready_for_opt_in_shadow_sync",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:50:14.493087+00:00",
+      "generated_at": "2026-07-28T12:03:57.442819+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
       "metrics": {
         "status": "ready_for_opt_in_shadow_sync",
@@ -2848,7 +2977,7 @@
       "status": "ready_for_managed_shadow_run",
       "source_status": "ready_for_managed_shadow_run",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:38:53.663516+00:00",
+      "generated_at": "2026-07-28T12:04:07.809516+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
       "metrics": {
         "status": "ready_for_managed_shadow_run",
@@ -2867,7 +2996,7 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T05:38:43.709256+00:00",
+      "generated_at": "2026-07-28T12:03:52.764551+00:00",
       "source_path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
       "metrics": {
         "status": "strong_offline_drill",
@@ -2878,6 +3007,24 @@
       },
       "limitations": [],
       "claim_boundary": "These are deterministic offline drills over curated non-patient fixtures and local data products. They do not prove managed-cloud durability, backup restoration, patient-data safety, clinical validation, or production healthcare readiness."
+    },
+    {
+      "id": "constraint_aware_improvement_program",
+      "title": "Constraint-aware cross-domain improvement program",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T12:09:01.572270+00:00",
+      "source_path": "Data/evals/governance/latest_constraint_aware_improvement_program.json",
+      "metrics": {
+        "status": "needs_attention",
+        "domain_count": 8,
+        "clinical_validation": false,
+        "healthcare_production_ready": false
+      },
+      "limitations": [],
+      "claim_boundary": "Constraint-aware engineering plan only. Completion means stronger internal engineering evidence, not clinical validation, clinician approval, real-world patient safety, or production healthcare readiness."
     }
   ],
   "issues": [
@@ -3550,8 +3697,8 @@
     {
       "benchmark_id": "service_health_snapshot",
       "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
     },
     {
       "benchmark_id": "deployment_recovery_drill",
@@ -3579,24 +3726,6 @@
     },
     {
       "benchmark_id": "runtime_quality_sentinel",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "route_latency_budget",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "latency_profile_phase2",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "latency_profile",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3692,6 +3821,12 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
+      "benchmark_id": "xai_retraining_stability",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
       "benchmark_id": "automation_fault_injection",
       "severity": "medium",
       "status": "stale",
@@ -3704,10 +3839,10 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "oidc_browser_pkce_readiness",
+      "benchmark_id": "constraint_aware_improvement_program",
       "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
     }
   ],
   "next_actions": [

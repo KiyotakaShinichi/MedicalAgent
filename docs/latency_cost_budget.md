@@ -16,7 +16,7 @@ Routes:
 Run:
 
 ```bash
-python scripts/run_latency_profile.py
+python scripts/run_credible_route_latency_sample.py
 python scripts/run_route_latency_budget.py
 ```
 
@@ -51,3 +51,10 @@ Phase 2 also reports cold-start warm-up separately from steady local route
 timing. That makes regression tracking cleaner, but it is still not a
 production SLO. If warm-up is high, record it honestly instead of folding it
 into a fake steady-state claim.
+
+The credible local sample collects 30 observations for routes that can be
+exercised through the sparse/fast-mode patient-agent probe. The disabled
+cross-encoder reranker and the separate hybrid-prediction route remain
+`not_sampled`; they are not assigned borrowed timings. Each measured row also
+records terminal-step distribution and unique-query count so repeated cache
+traffic cannot be mistaken for a diverse production workload.

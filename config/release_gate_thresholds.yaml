@@ -475,8 +475,31 @@ artifacts:
 
   - path: Data/evals/ops/latest_service_health_snapshot.json
     required: false
-    max_age_days: 180
-    accepted_status: [strong, acceptable, needs_attention]
+    max_age_days: 30
+    accepted_status: [acceptable_internal_snapshot, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [production_slo_claimed], op: "==", value: false}
+      - {path: [measurement_coverage], op: ">=", value: 0.75}
+      - {path: [metrics, data_patient_records_processed], op: "==", value: false}
+    note: >
+      Evidence-backed local operational snapshot. It intentionally keeps
+      cloud, strict-deployment, live-channel, and low-sample gaps visible and
+      must not be presented as production SLO or clinical monitoring evidence.
+
+  - path: Data/evals/governance/latest_constraint_aware_improvement_program.json
+    required: false
+    max_age_days: 30
+    accepted_status: [needs_attention, blocked]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [real_patient_data_used], op: "==", value: false}
+      - {path: [domain_count], op: "==", value: 8}
+    note: >
+      Executable cross-domain roadmap linked to the canonical release surface.
+      Completion improves internal engineering evidence only.
 
   - path: Data/evals/ops/latest_trace_diagnostics_coverage.json
     required: false
@@ -527,6 +550,10 @@ artifacts:
     required: false
     max_age_days: 180
     accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [production_ready], op: "==", value: false}
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [minimum_samples_for_percentile_credibility], op: ">=", value: 30}
     note: >
       Route latency budgets are local engineering budgets only. Exceeding a
       budget should be reported honestly as needs_attention, not translated
@@ -536,6 +563,9 @@ artifacts:
     required: false
     max_age_days: 180
     accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [production_ready], op: "==", value: false}
+      - {path: [clinical_validation], op: "==", value: false}
     note: >
       Local per-route/stage latency profile. It is supporting observability,
       not a production SLO or readiness claim.
@@ -544,6 +574,9 @@ artifacts:
     required: false
     max_age_days: 180
     accepted_status: [strong, acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [production_ready], op: "==", value: false}
+      - {path: [clinical_validation], op: "==", value: false}
     note: >
       Phase-2 latency profile separates cold-start warm-up from steady local
       route latency. Passing this artifact still does not mean production
@@ -1914,8 +1947,22 @@ artifacts:
     metric_thresholds:
       - {path: [clinical_validation], op: "==", value: false}
       - {path: [was_used_for_tuning], op: "==", value: true}
-      - {path: [frozen_bank_was_rerun], op: "==", value: false}
+      - {path: [frozen_bank_was_rerun], op: "==", value: true}
     note: Failure-inspection disclosure; never present v6 as independent evidence after this point.
+
+  - path: Data/evals/safety/latest_adversarial_v6_tuning_regression.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: true}
+      - {path: [independent_holdout_evidence], op: "==", value: false}
+      - {path: [external_author_eval_completed], op: "==", value: false}
+      - {path: [historical_baseline_preserved], op: "==", value: true}
+    note: >
+      Tuning-informed regression over the inspected v6 bank. It may detect
+      regressions but must never be presented as held-out or external evidence.
 
   - path: Data/evals/safety/latest_unsafe_intent_mutation_dev_eval.json
     required: false
@@ -1946,6 +1993,65 @@ artifacts:
       - {path: [additivity_verifiable], op: "==", value: true}
       - {path: [additivity_pass_rate], op: ">=", value: 1.0}
     note: Mechanical log-odds additivity audit; it is not causal or clinical explainability.
+
+  - path: Data/evals/models/latest_xai_rank_stability.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [causal_interpretation_allowed], op: "==", value: false}
+      - {path: [model_retraining_stability_evaluated], op: "==", value: false}
+      - {path: [human_participant_study_completed], op: "==", value: false}
+      - {path: [bootstrap_n], op: ">=", value: 100}
+    note: >
+      Patient-bootstrap SHAP ranking sensitivity only. Stable synthetic
+      rankings are not causal, clinical, or real-patient explainability.
+
+  - path: Data/evals/models/latest_xai_retraining_stability.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [synthetic_only], op: "==", value: true}
+      - {path: [causal_interpretation_allowed], op: "==", value: false}
+      - {path: [model_retraining_stability_evaluated], op: "==", value: true}
+      - {path: [local_patient_explanation_stability_evaluated], op: "==", value: true}
+      - {path: [seed_count], op: ">=", value: 8}
+    note: >
+      Independent synthetic retraining/split sensitivity. Current rank
+      instability remains visible; this is not causal, clinical, or
+      real-patient explainability.
+
+  - path: Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [clinical_authority_allowed], op: "==", value: false}
+      - {path: [live_patient_write_performed], op: "==", value: false}
+      - {path: [case_count], op: ">=", value: 6}
+      - {path: [pass_rate], op: ">=", value: 1.0}
+    note: >
+      Offline action-policy cases for confirmation, tool budgets, forbidden
+      authority, and memory provenance. They do not validate medical content.
+
+  - path: Data/evals/rag/latest_rag_degradation_resilience.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong_offline_drill, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [managed_network_request_performed], op: "==", value: false}
+      - {path: [production_outage_recovery_proven], op: "==", value: false}
+      - {path: [case_count], op: ">=", value: 5}
+      - {path: [pass_rate], op: ">=", value: 1.0}
+    note: >
+      Disposable local-index corruption, freshness, sparse fallback, and
+      malformed-input drills only; not managed-service or production recovery.
 
   - path: Data/evals/ops/latest_durable_automation_worker_eval.json
     required: false
@@ -1994,6 +2100,51 @@ artifacts:
       - {path: [human_acknowledgement_proven], op: "==", value: false}
       - {path: [scenario_count], op: ">=", value: 8}
     note: In-process and disposable-database fault injection; not live channel reliability or clinician acknowledgement.
+
+  - path: Data/evals/ops/latest_automation_channel_drill.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [synthetic_test_recipient_only], op: "==", value: true}
+      - {path: [external_delivery_performed], op: "==", value: false}
+      - {path: [delivery_receipt_is_human_acknowledgement], op: "==", value: false}
+      - {path: [clinical_action_automated], op: "==", value: false}
+      - {path: [attempt_count], op: ">=", value: 10}
+    note: >
+      Signed localhost delivery/receipt protocol drill only; not live n8n,
+      clinician acknowledgement, emergency coverage, or channel reliability.
+
+  - path: Data/evals/ops/latest_synthetic_automation_staging_readiness.json
+    required: false
+    max_age_days: 90
+    accepted_status: [ready_for_synthetic_runtime, prepared_needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [synthetic_recipient_only], op: "==", value: true}
+      - {path: [runtime_completed], op: "==", value: false}
+      - {path: [external_delivery_completed], op: "==", value: false}
+      - {path: [human_acknowledgement_completed], op: "==", value: false}
+    note: >
+      Static and compose-validated localhost n8n/MailHog staging only. Import,
+      runtime delivery, and human acknowledgement remain incomplete.
+
+  - path: Data/evals/ops/latest_software_supply_chain_evidence.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [production_healthcare_ready], op: "==", value: false}
+      - {path: [secret_scan, finding_count], op: "==", value: 0}
+      - {path: [secret_scan, secret_values_included], op: "==", value: false}
+    note: >
+      Lock-derived CycloneDX SBOMs and repository secret scan. The separate
+      dependency artifact still reports known advisories; no container scan or
+      security certification is claimed.
 
   - path: Data/evals/rag/latest_structured_claim_shadow_eval.json
     required: false

@@ -1,0 +1,56 @@
+{
+  "schema_version": "rag_degradation_resilience_v1",
+  "generated_at": "2026-07-28T12:07:24.860388+00:00",
+  "status": "strong_offline_drill",
+  "case_count": 5,
+  "passed_count": 5,
+  "failed_count": 0,
+  "pass_rate": 1.0,
+  "cases": [
+    {
+      "case_id": "corrupted_index_rebuild",
+      "passed": true,
+      "evidence": {
+        "top_id": "cbc"
+      }
+    },
+    {
+      "case_id": "stale_fingerprint_rebuild",
+      "passed": true,
+      "evidence": {
+        "status": "current",
+        "new_source_retrieved": true
+      }
+    },
+    {
+      "case_id": "dense_component_unavailable_sparse_fallback",
+      "passed": true,
+      "evidence": {
+        "result_n": 1,
+        "backends": [
+          "local_sparse_tfidf_bm25_index"
+        ]
+      }
+    },
+    {
+      "case_id": "missing_optional_metadata_tolerated",
+      "passed": true,
+      "evidence": {
+        "result_n": 1
+      }
+    },
+    {
+      "case_id": "empty_query_fails_closed",
+      "passed": true,
+      "evidence": {
+        "result_n": 0
+      }
+    }
+  ],
+  "patient_agent_invoked": false,
+  "managed_network_request_performed": false,
+  "retrieval_improvement_proven": false,
+  "production_outage_recovery_proven": false,
+  "clinical_validation": false,
+  "claim_boundary": "These disposable local-index drills test software degradation behavior. They do not prove answer grounding, managed-service recovery, production availability, medical safety, or clinical validation."
+}

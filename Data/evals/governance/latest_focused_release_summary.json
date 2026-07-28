@@ -1,16 +1,16 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-07-28T06:02:03.253314+00:00",
+  "generated_at": "2026-07-28T12:09:13.731067+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "release_gate": {
     "status": "passed",
-    "artifact_count": 192,
+    "artifact_count": 201,
     "hard_blocker_failure_count": 0,
     "required_artifact_count": 27,
-    "optional_artifact_count": 165,
-    "optional_artifact_ratio": 0.8594,
+    "optional_artifact_count": 174,
+    "optional_artifact_ratio": 0.8657,
     "optional_issue_count": 4,
     "failures": []
   },
@@ -69,7 +69,7 @@
       "load_p95_ms": 4399.927,
       "runtime_p95_ms": 4078.61,
       "route_percentile_minimum_samples": 30,
-      "routes_with_insufficient_samples": 4,
+      "routes_with_insufficient_samples": 0,
       "production_ready": false
     },
     "deployment_profile": {

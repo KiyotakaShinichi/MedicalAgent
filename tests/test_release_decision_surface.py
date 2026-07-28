@@ -10,8 +10,8 @@ def test_missing_hard_blocker_blocks_engineering_release(tmp_path, monkeypatch):
     assert result["engineering_release_decision"] == "BLOCK"
     assert result["clinical_validation"] is False
     assert result["healthcare_production_ready"] is False
-    assert result["schema_version"] == "release_decision_surface_v2"
-    assert result["domain_count"] == 7
+    assert result["schema_version"] == "release_decision_surface_v3"
+    assert result["domain_count"] == 9
 
 
 def test_warning_does_not_hide_clean_hard_blocker(tmp_path, monkeypatch):
@@ -52,3 +52,37 @@ def test_scaffold_and_external_blocker_are_not_reported_as_verified(tmp_path, mo
 
 def test_primary_surface_is_capped_at_twenty_checks():
     assert len(surface.CHECKS) <= 20
+    assert {row["domain"] for row in surface.CHECKS} >= {
+        "aie",
+        "mle",
+        "swe",
+        "data_engineering",
+        "infrastructure",
+        "medical",
+        "automation",
+        "deployment",
+    }
+
+
+def test_stale_warning_is_not_reported_as_verified(tmp_path, monkeypatch):
+    warning = tmp_path / "warning.json"
+    warning.write_text(
+        json.dumps({"status": "acceptable", "generated_at": "2020-01-01T00:00:00+00:00"}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(surface, "CHECKS", ({
+        "id": "stale",
+        "tier": "warning",
+        "domain": "swe",
+        "owner": "test",
+        "path": str(warning),
+        "status_path": ("status",),
+        "accepted": {"acceptable"},
+        "max_age_days": 1,
+    },))
+
+    result = surface.build_release_decision_surface(tmp_path / "surface.json")
+    row = result["checks"][0]
+    assert row["decision"] == "attention"
+    assert row["evidence_state"] == "stale"
+    assert row["stale"] is True

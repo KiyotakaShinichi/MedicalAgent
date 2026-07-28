@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_managed_vector_shadow_failures_v1",
-  "generated_at": "2026-07-28T06:02:36.564597+00:00",
+  "generated_at": "2026-07-28T12:04:07.809516+00:00",
   "status": "not_run",
   "clinical_validation": false,
   "comparison_completed": false,

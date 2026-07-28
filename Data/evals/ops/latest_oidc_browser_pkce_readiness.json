@@ -1,6 +1,6 @@
 {
-  "schema_version": "oidc_browser_pkce_readiness_v1",
-  "generated_at": "2026-07-22T08:20:20.946027+00:00",
+  "schema_version": "oidc_browser_pkce_readiness_v2",
+  "generated_at": "2026-07-28T12:04:55.523195+00:00",
   "status": "blocked_configuration",
   "clinical_validation": false,
   "configuration": {
@@ -24,11 +24,15 @@
     "S256 PKCE verifier and challenge",
     "cryptographic state and nonce",
     "constant-time callback state validation",
-    "HTTPS strict-profile validation"
+    "HTTPS strict-profile validation",
+    "bounded single-process transaction storage",
+    "single-use callback consumption",
+    "expiry and replay rejection",
+    "code-verifier non-disclosure before callback"
   ],
   "not_demonstrated": [
     "live identity-provider login",
-    "server-side transaction persistence",
+    "shared encrypted transaction persistence for multiple instances",
     "authorization-code token exchange",
     "refresh-token rotation",
     "provider logout and session revocation",

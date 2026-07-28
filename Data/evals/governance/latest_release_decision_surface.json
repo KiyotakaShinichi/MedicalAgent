@@ -1,6 +1,6 @@
 {
-  "schema_version": "release_decision_surface_v2",
-  "generated_at": "2026-07-22T08:37:14.750141+00:00",
+  "schema_version": "release_decision_surface_v3",
+  "generated_at": "2026-07-28T12:08:59.971314+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "hard_blocker_count": 0,
@@ -11,61 +11,76 @@
     {
       "id": "critical_safety_regression",
       "tier": "hard_blocker",
+      "domain": "aie",
       "owner": "AI safety",
       "path": "Data/evals/safety/latest_safety_benchmark.json",
-      "domain": "aie",
+      "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-06T06:47:17.440388+00:00",
+      "age_days": 22.22,
+      "stale": false,
       "key_metrics": {}
     },
     {
       "id": "medical_claim_boundary",
       "tier": "hard_blocker",
+      "domain": "medical",
       "owner": "medical safety",
       "path": "Data/evals/safety/latest_medical_claim_boundary_eval.json",
-      "domain": "medical",
+      "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-21T15:13:23.607586+00:00",
+      "age_days": 6.87,
+      "stale": false,
       "key_metrics": {}
     },
     {
       "id": "training_leakage",
       "tier": "hard_blocker",
+      "domain": "mle",
       "owner": "MLE",
       "path": "Data/evals/models/latest_leakage_audit.json",
-      "domain": "mle",
+      "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-17T06:27:38.556411+00:00",
+      "age_days": 11.24,
+      "stale": false,
       "key_metrics": {}
     },
     {
       "id": "portfolio_claim_safety",
       "tier": "hard_blocker",
+      "domain": "swe",
       "owner": "governance",
       "path": "Data/evals/governance/latest_portfolio_claim_safety_check.json",
-      "domain": "swe",
+      "max_age_days": 90,
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "informational",
       "generated_at": "2026-07-19T01:45:30.008544+00:00",
+      "age_days": 9.43,
+      "stale": false,
       "key_metrics": {}
     },
     {
       "id": "frozen_adversarial_v6",
       "tier": "warning",
+      "domain": "aie",
       "owner": "AI safety",
       "path": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
-      "domain": "aie",
+      "max_age_days": 90,
       "decision": "attention",
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-07-22T04:11:00.107674+00:00",
+      "age_days": 6.33,
+      "stale": false,
       "key_metrics": {
         "pass_rate": 0.518519,
         "unsafe_leakage_rate": 0.560606,
@@ -75,13 +90,16 @@
     {
       "id": "rag_governance_tradeoff",
       "tier": "warning",
+      "domain": "aie",
       "owner": "RAG",
       "path": "Data/evals/rag/latest_rag_governance_tradeoff.json",
-      "domain": "aie",
+      "max_age_days": 30,
       "decision": "attention",
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-07-18T10:35:07.815958+00:00",
+      "age_days": 10.07,
+      "stale": false,
       "key_metrics": {
         "improvement_proven_vs_bm25": false,
         "full_stack_recall_at_10": null,
@@ -89,108 +107,168 @@
       }
     },
     {
-      "id": "structured_claim_shadow",
+      "id": "live_rag_grounding",
       "tier": "warning",
-      "owner": "RAG",
-      "path": "Data/evals/rag/latest_structured_claim_shadow_eval.json",
       "domain": "aie",
+      "owner": "RAG",
+      "path": "Data/evals/rag/latest_live_rag_eval.json",
+      "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-22T08:19:56.261877+00:00",
+      "generated_at": "2026-07-22T04:13:27.466200+00:00",
+      "age_days": 6.33,
+      "stale": false,
       "key_metrics": {
-        "pass_rate": 1.0,
-        "live_patient_agent_enabled": false,
-        "clinical_validation": false
+        "pass_rate": 0.9048,
+        "claim_support_rate": 0.8333,
+        "citation_precision": 1.0,
+        "unsafe_answer_rate": 0.0
       }
     },
     {
       "id": "route_latency",
       "tier": "warning",
+      "domain": "swe",
       "owner": "SWE/ops",
       "path": "Data/evals/ops/latest_route_latency_budget.json",
+      "max_age_days": 30,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-28T12:08:48.839139+00:00",
+      "age_days": 0.0,
+      "stale": false,
+      "key_metrics": {
+        "production_ready": false,
+        "insufficient_sample_count": 0,
+        "highest_observed_p95_ms": 1138.42
+      }
+    },
+    {
+      "id": "dependency_security",
+      "tier": "warning",
       "domain": "swe",
+      "owner": "SWE/security",
+      "path": "Data/evals/ops/latest_dependency_security_scan.json",
+      "max_age_days": 30,
       "decision": "attention",
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
-      "generated_at": "2026-07-18T10:36:43.276916+00:00",
+      "generated_at": "2026-07-28T12:05:35.490761+00:00",
+      "age_days": 0.0,
+      "stale": false,
       "key_metrics": {
-        "production_ready": false,
-        "insufficient_sample_count": 4,
-        "highest_observed_p95_ms": 1868.61
+        "unavailable_tool_count": 0,
+        "high_or_critical_count": 2,
+        "known_vulnerability_count": 53,
+        "vulnerable_package_count": 11
       }
     },
     {
       "id": "simple_baseline_superiority",
       "tier": "warning",
+      "domain": "mle",
       "owner": "MLE",
       "path": "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
-      "domain": "mle",
+      "max_age_days": 90,
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-22T01:29:19.050963+00:00",
+      "age_days": 6.44,
+      "stale": false,
       "key_metrics": {}
     },
     {
-      "id": "synthetic_causal_v3",
+      "id": "xai_retraining_stability",
       "tier": "warning",
-      "owner": "MLE",
-      "path": "Data/evals/models/latest_synthetic_causal_v3_stress.json",
       "domain": "mle",
-      "decision": "pass",
-      "evidence_state": "verified_internal",
-      "observed_status": "acceptable_internal_stress_test",
-      "generated_at": "2026-07-22T08:19:42.048848+00:00",
+      "owner": "MLE/XAI",
+      "path": "Data/evals/models/latest_xai_retraining_stability.json",
+      "max_age_days": 90,
+      "decision": "attention",
+      "evidence_state": "needs_attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-07-28T12:06:49.726582+00:00",
+      "age_days": 0.0,
+      "stale": false,
       "key_metrics": {
-        "seed_count": 30,
-        "model_promotion_decision": "HOLD",
-        "realism_claim": false,
+        "seed_count": 12,
+        "model_retraining_stability_evaluated": true,
+        "local_patient_explanation_stability_evaluated": true,
         "clinical_validation": false
       }
     },
     {
-      "id": "xai_fidelity",
+      "id": "data_pipeline",
       "tier": "warning",
-      "owner": "XAI",
-      "path": "Data/evals/models/latest_xai_fidelity_audit.json",
-      "domain": "swe",
+      "domain": "data_engineering",
+      "owner": "data engineering",
+      "path": "Data/lakehouse/manifests/latest_pipeline_run.json",
+      "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
-      "observed_status": "acceptable",
-      "generated_at": "2026-07-19T01:14:51.357234+00:00",
+      "observed_status": "strong",
+      "generated_at": "2026-07-28T12:03:48.722817+00:00",
+      "age_days": 0.0,
+      "stale": false,
       "key_metrics": {
-        "additivity_verifiable": true,
-        "prediction_present_rate": 1.0,
-        "multiple_one_hot_feature_patient_rate": 1.0
+        "patient_data_processed": false,
+        "external_cloud_write_performed": false
       }
     },
     {
-      "id": "xai_comprehension_proxy",
+      "id": "data_reliability",
       "tier": "warning",
-      "owner": "XAI",
-      "path": "Data/evals/models/latest_xai_comprehension_contract_eval.json",
-      "domain": "swe",
+      "domain": "data_engineering",
+      "owner": "data engineering",
+      "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
+      "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
-      "observed_status": "acceptable_internal_proxy",
-      "generated_at": "2026-07-22T08:20:08.511690+00:00",
+      "observed_status": "strong_offline_drill",
+      "generated_at": "2026-07-28T12:03:52.764551+00:00",
+      "age_days": 0.0,
+      "stale": false,
       "key_metrics": {
-        "pass_rate": 1.0,
-        "human_participant_study_completed": false,
-        "clinical_validation": false
+        "passed": 6,
+        "failed": 0,
+        "external_cloud_write_performed": false
+      }
+    },
+    {
+      "id": "cloud_infrastructure",
+      "tier": "warning",
+      "domain": "infrastructure",
+      "owner": "infrastructure",
+      "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
+      "max_age_days": 30,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "compiled_reference_architecture",
+      "generated_at": "2026-07-28T12:04:31.954090+00:00",
+      "age_days": 0.0,
+      "stale": false,
+      "key_metrics": {
+        "bicep_compile_completed": true,
+        "what_if_completed": false,
+        "cloud_deployment_completed": false
       }
     },
     {
       "id": "durable_automation_worker",
       "tier": "warning",
+      "domain": "automation",
       "owner": "automation",
       "path": "Data/evals/ops/latest_durable_automation_worker_eval.json",
-      "domain": "automation",
+      "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-19T01:30:59.933113+00:00",
+      "age_days": 9.44,
+      "stale": false,
       "key_metrics": {
         "control_pass_rate": 1.0,
         "live_n8n_delivery_enabled": false,
@@ -198,32 +276,38 @@
       }
     },
     {
-      "id": "automation_fault_injection",
+      "id": "automation_channel_drill",
       "tier": "warning",
-      "owner": "automation",
-      "path": "Data/evals/ops/latest_automation_fault_injection.json",
       "domain": "automation",
+      "owner": "automation",
+      "path": "Data/evals/ops/latest_automation_channel_drill.json",
+      "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-22T07:57:15.564836+00:00",
+      "generated_at": "2026-07-28T12:08:52.837906+00:00",
+      "age_days": 0.0,
+      "stale": false,
       "key_metrics": {
-        "scenario_count": 8,
-        "passed_count": 8,
+        "attempt_count": 30,
+        "pass_rate": 1.0,
         "external_delivery_performed": false,
-        "clinical_validation": false
+        "delivery_receipt_is_human_acknowledgement": false
       }
     },
     {
       "id": "deployment_profile",
       "tier": "warning",
+      "domain": "deployment",
       "owner": "deployment",
       "path": "Data/evals/ops/latest_deployment_profile_validation.json",
-      "domain": "deployment",
+      "max_age_days": 30,
       "decision": "attention",
       "evidence_state": "needs_attention",
       "observed_status": "development_profile",
       "generated_at": "2026-07-22T06:31:12.105542+00:00",
+      "age_days": 6.23,
+      "stale": false,
       "key_metrics": {
         "profile": "development",
         "strict_profile": false,
@@ -233,31 +317,18 @@
       }
     },
     {
-      "id": "benchmark_freshness",
-      "tier": "warning",
-      "owner": "SWE/ops",
-      "path": "Data/evals/benchmark/latest_benchmark_summary.json",
-      "domain": "swe",
-      "decision": "attention",
-      "evidence_state": "needs_attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-22T08:36:53.838713+00:00",
-      "key_metrics": {
-        "critical_status": "stale",
-        "issue_count": null,
-        "benchmark_count": null
-      }
-    },
-    {
       "id": "finetune_runtime",
       "tier": "informational",
+      "domain": "fine_tuning",
       "owner": "fine-tuning",
       "path": "Data/evals/models/latest_finetune_runtime_preflight.json",
-      "domain": "fine_tuning",
+      "max_age_days": 90,
       "decision": "informational",
       "evidence_state": "scaffolded",
       "observed_status": "blocked_runtime",
       "generated_at": "2026-07-22T08:20:48.366750+00:00",
+      "age_days": 6.16,
+      "stale": false,
       "key_metrics": {
         "model_trained": false,
         "ready_for_offline_experiment": false,
@@ -267,13 +338,16 @@
     {
       "id": "oidc_browser_pkce",
       "tier": "informational",
+      "domain": "deployment",
       "owner": "deployment",
       "path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
-      "domain": "deployment",
+      "max_age_days": 30,
       "decision": "informational",
       "evidence_state": "scaffolded",
       "observed_status": "blocked_configuration",
-      "generated_at": "2026-07-22T08:20:20.946027+00:00",
+      "generated_at": "2026-07-28T12:04:55.523195+00:00",
+      "age_days": 0.0,
+      "stale": false,
       "key_metrics": {
         "browser_login_completed": false,
         "production_auth_ready": false,
@@ -281,27 +355,18 @@
       }
     },
     {
-      "id": "external_rag_holdout",
-      "tier": "informational",
-      "owner": "external review",
-      "path": "Data/evals/rag/latest_rag_holdout_baseline_comparison.json",
-      "domain": "medical",
-      "decision": "informational",
-      "evidence_state": "external_blocked",
-      "observed_status": "ready_for_external_authoring",
-      "generated_at": "2026-06-01T09:31:25.525481+00:00",
-      "key_metrics": {}
-    },
-    {
       "id": "external_review_execution",
       "tier": "informational",
+      "domain": "medical",
       "owner": "external review",
       "path": "Data/evals/governance/latest_external_review_execution_readiness.json",
-      "domain": "medical",
+      "max_age_days": 90,
       "decision": "informational",
       "evidence_state": "external_blocked",
       "observed_status": "ready_to_request_review",
       "generated_at": "2026-06-01T17:33:21.375512+00:00",
+      "age_days": 56.77,
+      "stale": false,
       "key_metrics": {
         "completed": null,
         "clinical_validation": false
@@ -316,34 +381,58 @@
       "verified_internal_count": 2,
       "needs_attention_count": 2,
       "scaffolded_count": 0,
-      "external_blocked_count": 0
+      "external_blocked_count": 0,
+      "stale_count": 0
+    },
+    {
+      "domain": "mle",
+      "state": "needs_attention",
+      "check_count": 3,
+      "verified_internal_count": 2,
+      "needs_attention_count": 1,
+      "scaffolded_count": 0,
+      "external_blocked_count": 0,
+      "stale_count": 0
     },
     {
       "domain": "swe",
       "state": "needs_attention",
-      "check_count": 5,
-      "verified_internal_count": 3,
-      "needs_attention_count": 2,
+      "check_count": 3,
+      "verified_internal_count": 2,
+      "needs_attention_count": 1,
       "scaffolded_count": 0,
-      "external_blocked_count": 0
+      "external_blocked_count": 0,
+      "stale_count": 0
     },
     {
-      "domain": "mle",
+      "domain": "data_engineering",
       "state": "verified_internal_only",
-      "check_count": 3,
-      "verified_internal_count": 3,
+      "check_count": 2,
+      "verified_internal_count": 2,
       "needs_attention_count": 0,
       "scaffolded_count": 0,
-      "external_blocked_count": 0
+      "external_blocked_count": 0,
+      "stale_count": 0
+    },
+    {
+      "domain": "infrastructure",
+      "state": "verified_internal_only",
+      "check_count": 1,
+      "verified_internal_count": 1,
+      "needs_attention_count": 0,
+      "scaffolded_count": 0,
+      "external_blocked_count": 0,
+      "stale_count": 0
     },
     {
       "domain": "medical",
       "state": "external_evidence_incomplete",
-      "check_count": 3,
+      "check_count": 2,
       "verified_internal_count": 1,
       "needs_attention_count": 0,
       "scaffolded_count": 0,
-      "external_blocked_count": 2
+      "external_blocked_count": 1,
+      "stale_count": 0
     },
     {
       "domain": "automation",
@@ -352,16 +441,8 @@
       "verified_internal_count": 2,
       "needs_attention_count": 0,
       "scaffolded_count": 0,
-      "external_blocked_count": 0
-    },
-    {
-      "domain": "fine_tuning",
-      "state": "prepared_not_proven",
-      "check_count": 1,
-      "verified_internal_count": 0,
-      "needs_attention_count": 0,
-      "scaffolded_count": 1,
-      "external_blocked_count": 0
+      "external_blocked_count": 0,
+      "stale_count": 0
     },
     {
       "domain": "deployment",
@@ -370,15 +451,26 @@
       "verified_internal_count": 0,
       "needs_attention_count": 1,
       "scaffolded_count": 1,
-      "external_blocked_count": 0
+      "external_blocked_count": 0,
+      "stale_count": 0
+    },
+    {
+      "domain": "fine_tuning",
+      "state": "prepared_not_proven",
+      "check_count": 1,
+      "verified_internal_count": 0,
+      "needs_attention_count": 0,
+      "scaffolded_count": 1,
+      "external_blocked_count": 0,
+      "stale_count": 0
     }
   ],
-  "domain_count": 7,
+  "domain_count": 9,
   "evidence_state_counts": {
-    "verified_internal": 11,
+    "verified_internal": 12,
     "needs_attention": 5,
     "scaffolded": 2,
-    "external_blocked": 2
+    "external_blocked": 1
   },
   "headline_limitations": [
     "No real patient data, IRB approval, clinician sign-off, or clinical validation.",

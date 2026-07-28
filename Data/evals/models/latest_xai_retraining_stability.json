@@ -1,0 +1,61 @@
+{
+  "schema_version": "xai_retraining_stability_v1",
+  "generated_at": "2026-07-28T12:06:49.726582+00:00",
+  "status": "needs_attention",
+  "method": "independent_patient_split_logistic_retraining",
+  "seed_count": 12,
+  "seeds": [
+    11,
+    23,
+    37,
+    42,
+    59,
+    71,
+    83,
+    97,
+    109,
+    127,
+    149,
+    173
+  ],
+  "patient_n": 600,
+  "temporal_row_n": 3600,
+  "local_patient_n": 80,
+  "top_k": 8,
+  "baseline_seed": 11,
+  "baseline_grouped_ranking": [
+    "cycle",
+    "stage",
+    "nadir_hemoglobin",
+    "mri_tumor_size_cm",
+    "recovery_hemoglobin",
+    "pre_wbc",
+    "pre_hemoglobin",
+    "nadir_platelets"
+  ],
+  "metrics": {
+    "global_top_k_jaccard_p05": 0.6,
+    "global_top_k_jaccard_median": 0.777778,
+    "global_rank_correlation_p05": -1.0,
+    "global_rank_correlation_median": -0.27381,
+    "local_patient_top_k_jaccard_p05": 0.6,
+    "local_patient_top_k_jaccard_median": 0.777778,
+    "patient_probability_std_p50": 0.017202,
+    "patient_probability_std_p95": 0.051861
+  },
+  "model_retraining_stability_evaluated": true,
+  "local_patient_explanation_stability_evaluated": true,
+  "grouped_patient_display_features": true,
+  "near_outcome_proxies_excluded": true,
+  "human_participant_study_completed": false,
+  "causal_interpretation_allowed": false,
+  "synthetic_only": true,
+  "clinical_validation": false,
+  "known_limitations": [
+    "Every retraining run uses the same synthetic generator output.",
+    "Stable explanations can reproduce simulator shortcuts.",
+    "Only the logistic engineering baseline is evaluated.",
+    "No human comprehension or clinical decision-impact study was performed."
+  ],
+  "claim_boundary": "This audit measures explanation sensitivity to retraining and patient-level split variation on synthetic data. It is not causal explanation, clinical validation, human-factors evidence, or proof of transfer to real patients."
+}

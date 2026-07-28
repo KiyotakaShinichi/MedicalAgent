@@ -1,0 +1,38 @@
+services:
+  n8n:
+    image: ${N8N_IMAGE:-n8nio/n8n:1.99.1}
+    container_name: nlcare-synthetic-n8n
+    restart: unless-stopped
+    environment:
+      N8N_HOST: 127.0.0.1
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      N8N_SECURE_COOKIE: "false"
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-local-synthetic-only-change-before-shared-use}
+      N8N_WEBHOOK_SIGNING_SECRET: ${N8N_WEBHOOK_SIGNING_SECRET:-local-synthetic-signing-secret-change-me}
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      NODE_FUNCTION_ALLOW_BUILTIN: crypto
+      GENERIC_TIMEZONE: Asia/Manila
+      TZ: Asia/Manila
+    ports:
+      - "127.0.0.1:5678:5678"
+    volumes:
+      - n8n_synthetic_data:/home/node/.n8n
+      - ./infra/n8n:/workflows:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5678/healthz >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: nlcare-synthetic-mailhog
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+
+volumes:
+  n8n_synthetic_data:

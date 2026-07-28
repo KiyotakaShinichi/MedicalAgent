@@ -8,9 +8,13 @@ issued-at time, subject, role mapping, and patient scope. Strict profiles remain
 blocked unless the issuer, audience, HTTPS JWKS endpoint, and role claims are
 explicitly configured.
 
-This is an API authentication adapter, not a complete identity program. Browser
-authorization-code/PKCE login, identity proofing, provider-side logout and
-revocation, MFA policy, account lifecycle, consent, audit review, and formal
+This is an API authentication adapter, not a complete identity program.
+Authorization-code/PKCE primitives now include S256 challenge generation,
+bounded single-process transaction storage, expiration, single-use callback
+consumption, state validation, replay rejection, and verifier non-disclosure.
+A shared encrypted transaction store, reviewed token exchange, a demonstrated
+live provider, identity proofing, provider-side logout and revocation, MFA
+policy, account lifecycle, consent, audit review, and formal
 security/compliance assessment are still absent.
 
 Optional external automation dispatch also fails preflight unless it uses

@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_data_platform_pipeline_v1",
-  "generated_at": "2026-07-28T06:02:15.764740+00:00",
+  "generated_at": "2026-07-28T12:03:48.722817+00:00",
   "status": "strong",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -105,7 +105,7 @@
   },
   "lineage": {
     "path": "Data/lakehouse/lineage/latest_lineage.json",
-    "kb_fingerprint": "04dba1c78b9d1e01419bbdad9bcce74dc21a7706ee2c418109aebd113838c1a3",
+    "kb_fingerprint": "1d19fc80cbeeb1fa4e3841441d83594cc84792f2d260bea35cf537e06ab60c62",
     "complete": true
   },
   "contracts": {

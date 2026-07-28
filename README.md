@@ -10,16 +10,18 @@ The patient portal uses records-first progressive loading and prepares synthetic
 
 The reviewer headline is `Data/evals/governance/latest_focused_release_summary.json`, not the largest or greenest metric in the repository.
 
-- Release gate: passed, with 27 required artifacts and 146 supporting/informational artifacts. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
-- Frozen internally authored adversarial results remain inconsistent after a one-pass rerun: v4 pass rate `0.704918` with unsafe leakage `0.327273`, v5 `0.969697` with leakage `0.027273`, and v6 `0.518519` with leakage `0.560606` and over-refusal `0.133333`. These sets disagree sharply; safety is explicitly **not solved**.
+- Release gate: passed, with 27 required artifacts and 174 supporting/informational artifacts. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
+- Frozen internally authored adversarial results remain inconsistent after a one-pass rerun: v4 pass rate `0.704918` with unsafe leakage `0.327273`, v5 `0.969697` with leakage `0.027273`, and v6 `0.518519` with leakage `0.560606` and over-refusal `0.133333`. Generalized hardening raises the now tuning-used v6 regression to `0.932099`, but it is no longer independent holdout evidence. Safety is explicitly **not solved**.
 - RAG: full source-governed Recall@10 `0.7838` versus BM25 `0.8041`. Raw retrieval improvement is not proven. The governed stack raises source-tier correctness from `0.4595` to `1.0` on the internal set, with about `4.13x` BM25 p95 retrieval latency.
 - ML: the calibrated classification champion does not prove paired accuracy superiority over logistic regression on the 120-row synthetic test export (`p=1.0`). Model complexity is retained as engineering comparison, not clinical evidence.
 - External data: an official TCIA I-SPY2 tabular bridge now joins 384 MRI-feature rows to its clinical cohort and compares simple/nonlinear pCR baselines over five fixed splits. The pCR task is target-mismatched, excluded from NLCare training and live inference, and cannot promote any NLCare model.
 - Live RAG: the latest 21-case internal run reports citation precision `1.0`, source-tier correctness `1.0`, claim support `0.8333`, no unsafe answers, and p50 latency about `3.81s`. The sample is small and internal, so this is regression evidence only.
-- Latency: current route samples range from 0 to 4, below the 30-sample minimum for credible percentile labels. These routes are `not_sampled` or `insufficient_samples`, never production-ready.
-- XAI: all 600 synthetic patient explanations now export base values, complete contributions, and model outputs; log-odds additivity passes for every row with maximum residual `6e-10`. This verifies arithmetic, not causality or clinical validity.
-- Dependencies: the known-good CPython 3.14/Windows environment has an exact 100-distribution transitive lock. It is not portable to the Python 3.11/Linux CI environment and does not include a vulnerability scan.
-- Automation: redacted engineering jobs now have database leases, worker heartbeats, crash recovery, bounded retries/dead letters, signed dispatch, and persisted signed receipts. External delivery remains disabled and untested; channel delivery and human acknowledgement are separate states, and the system is not an emergency service.
+- Latency: five local routes now have 30 fresh observations each. Their p95 values range from about `87ms` for deterministic/cached routes to `1.47s` for the low-confidence safe-default route; normal RAG is about `1.04s`. These are forced-sparse local regression measurements, not production SLO evidence, and `production_ready` remains `false`.
+- XAI: all 600 synthetic patient explanations export base values, complete contributions, and model outputs; log-odds additivity passes for every row with maximum residual `6e-10`. A 300-resample patient bootstrap reports stable grouped top-8 rankings, but a stricter 12-seed retraining audit finds only moderate top-feature overlap and unstable exact ordering (global p05 Jaccard `0.6`, p05 rank correlation `-1.0`). Arithmetic fidelity is verified internally; causal meaning, human comprehension, cross-retraining stability, and clinical validity are not.
+- Dependencies: the known-good CPython 3.14/Windows environment has a platform-scoped transitive lock. Lock-derived CycloneDX SBOMs currently enumerate 505 Python/frontend components, and the repository secret scan reports zero findings. The separate vulnerability scan still reports known advisories as release warnings; no container scan or security certification is claimed.
+- Automation: redacted engineering jobs now have database leases, worker heartbeats, crash recovery, bounded retries/dead letters, signed dispatch, and persisted signed receipts. A 30-attempt localhost HMAC channel drill completed successfully. A loopback-only n8n + MailHog compose and HMAC-validating synthetic workflow now pass static/compose validation, but workflow import, runtime email delivery, external channels, and human acknowledgement remain incomplete. The system is not an emergency service.
+- Agent actions: the orchestrator now applies a typed execution state machine with tool/step/write budgets, confirmation-before-write, forbidden-authority blocking, and memory-provenance checks. The six-case offline policy eval passes without a live patient write; this verifies software action boundaries, not medical correctness or real-world agent safety.
+- RAG resilience: five disposable local-index drills cover corrupt-cache rebuild, fingerprint refresh, sparse fallback, missing optional metadata, and empty-query behavior. They pass offline, but do not establish managed-vector recovery, answer quality, production availability, or clinical safety.
 - Review: no clinician, nurse, genetic counselor, or external author has completed a review.
 
 See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple synthetic ML baselines](docs/evals/synthetic_simple_baseline_audit.md), [external dataset strategy](docs/data/external_dataset_integration_strategy.md), and [dependency reproducibility](docs/dependency_reproducibility.md).
@@ -91,8 +93,11 @@ See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple s
 - `docker-compose.prod.yml` plus `frontend-react/Dockerfile` provide a production-shaped local container smoke path with a static Vite build served by Nginx and `/api` proxied to FastAPI. It is not a hospital/EHR/PHI deployment.
 - `.github/workflows/ship.yml` runs `python scripts/ship.py` on PRs and checks generated OpenAPI frontend types for drift.
 - Demo authentication is intended for development only and is disabled when `ENVIRONMENT=production` unless `ALLOW_DEMO_AUTH=true`.
-- Strict deployment is intentionally blocked because no non-demo identity provider is implemented yet. The current deployment profile is local or controlled-demo only, even when container and environment checks pass.
+- Strict deployment is intentionally blocked because the non-demo OIDC adapter and PKCE lifecycle have not been demonstrated against a live identity provider. The current deployment profile is local or controlled-demo only, even when container and environment checks pass.
 - The evidence-based cross-domain critique and prioritized roadmap are in `docs/comprehensive_engineering_critique.md`; its ratings cover engineering credibility only, not clinical readiness.
+- The executable eight-domain plan is in `docs/constraint_aware_improvement_program.md` with machine-readable evidence at `Data/evals/governance/latest_constraint_aware_improvement_program.json`. It covers AIE, MLE, SWE, data engineering, infrastructure, medical safety, automation, and deployment while separating internal acceptance criteria from external blockers.
+- The service-health snapshot now aggregates measured RAG grounding and latency, abstention, adversarial leakage, automation controls, data quality, cloud readiness, and deployment posture. Missing proof remains visible rather than being represented by optimistic placeholders.
+- Browser OIDC preparation now includes bounded single-process PKCE transaction storage, single-use callback consumption, expiry, replay rejection, and verifier non-disclosure. A live provider, shared encrypted store, token exchange, and provider logout are still absent, so production authentication readiness remains false.
 
 ## Cloud, data engineering, and managed vector readiness
 - `python scripts/run_data_platform_pipeline.py` materializes a non-patient knowledge pipeline with content-addressed bronze sources, governance-enriched silver chunks, provider-neutral gold vector records, quarantine, data contracts, fingerprints, and lineage.
@@ -685,7 +690,9 @@ clinical boundary:
   and over-refusal `0.1333`. Its failure taxonomy subsequently informed
   generalized classifier work, so a separate retrospective now labels v6
   `tuning_informed_not_held_out`. The frozen file was not rerun or overwritten,
-  but it is no longer presented as independent post-tuning evidence.
+  while a separate tuning-regression artifact re-executes its cases without
+  overwriting the baseline. It is no longer presented as independent
+  post-tuning evidence.
 - Unsafe-intent detection now combines deterministic patterns, prototype
   similarity, and generalized action/object concept rules. A separate
   development mutation set is marked `was_used_for_tuning: true` and is never
@@ -707,6 +714,11 @@ clinical boundary:
   log-odds/probabilities, and reconstruction residuals for all 600 synthetic
   patients. Additivity passes mechanically, while one-hot/proxy display risks
   remain visible and causal/clinical interpretation stays prohibited.
+- XAI ranking stability is measured over 300 patient-bootstrap resamples using
+  grouped patient-display features, top-k overlap, and rank correlation.
+  Near-outcome proxies stay excluded from patient-facing rankings. This is
+  internal stability evidence only; no human-comprehension, causal, retraining,
+  or clinical interpretation is claimed.
 - Engineering automation supports caller-supplied idempotency, conditional
   database leases, heartbeat renewal, expired-lease recovery, bounded retries,
   dead letters, audited manual requeue, signed n8n dispatch, and persisted
@@ -732,11 +744,16 @@ clinical boundary:
   promoted.
 - A feature-flagged OIDC verifier now enforces signed RS256 JWTs, issuer,
   audience, timestamps, role mapping, and patient identity claims. S256 PKCE
-  request/callback primitives exist, but a live provider, token exchange,
-  transaction store, and provider logout are not yet demonstrated.
+  request/callback primitives and a bounded single-process, single-use
+  transaction store exist, but a live provider, shared encrypted transaction
+  store, token exchange, and provider logout are not yet demonstrated.
 - Automation fault injection covers eight queue, lease, replay, receipt,
   signing, and stale-event failures. Retry attempts now preserve one durable
   external event ID; no live recipient reliability or human acknowledgement is claimed.
+- A localhost signed-channel drill exercises 30 real HTTP round trips through
+  dispatch signature verification and synthetic receipt verification. It uses
+  redacted test payloads and does not claim external channel delivery, n8n
+  operation, clinician acknowledgement, or clinical action.
 - A structured claim/source verifier runs in shadow only, and the XAI wording
   contract checks explanation completeness. Neither is a clinical entailment
   system or a human-factors study.

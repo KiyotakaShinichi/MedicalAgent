@@ -1,28 +1,37 @@
 {
-  "schema_version": "dependency_security_scan_v1",
-  "generated_at": "2026-07-13T08:39:18.844388+00:00",
-  "status": "acceptable",
+  "schema_version": "dependency_security_scan_v2",
+  "generated_at": "2026-07-28T12:05:35.490761+00:00",
+  "status": "needs_attention",
   "summary": {
     "tool_count": 2,
-    "unavailable_tool_count": 1,
-    "high_or_critical_count": 0
+    "unavailable_tool_count": 0,
+    "high_or_critical_count": 2,
+    "known_vulnerability_count": 53,
+    "vulnerable_package_count": 11
   },
   "checks": [
     {
       "label": "python_dependencies",
-      "tool": "pip-audit",
-      "status": "tool_unavailable",
+      "tool": "C:\\Python314\\python.exe",
+      "status": "needs_attention",
+      "exit_code": 1,
       "high_or_critical_count": 0,
-      "note": "Tool not installed locally; CI can enable this without changing project behavior."
+      "known_vulnerability_count": 51,
+      "vulnerable_package_count": 9,
+      "scan_scope": "requirements-lock-py314-win.txt",
+      "stderr_tail": "WARNING:pip_audit._cli:--no-deps is supported, but users are encouraged to fully hash their pinned dependencies\nWARNING:pip_audit._cli:Consider using a tool like `pip-compile`: https://pip-tools.readthedocs.io/en/latest/#using-hashes\nFound 51 known vulnerabilities in 9 packages\n"
     },
     {
       "label": "frontend_dependencies",
       "tool": "npm.cmd",
-      "status": "acceptable",
-      "exit_code": 0,
-      "high_or_critical_count": 0,
+      "status": "needs_attention",
+      "exit_code": 1,
+      "high_or_critical_count": 2,
+      "known_vulnerability_count": 2,
+      "vulnerable_package_count": 2,
+      "scan_scope": "frontend_lockfile",
       "stderr_tail": ""
     }
   ],
-  "claim_boundary": "Dependency scanning is best-effort engineering hygiene, not a security certification."
+  "claim_boundary": "Dependency scanning is best-effort engineering hygiene, not a security certification. Python advisory feeds do not consistently expose severity, so known-vulnerability counts are reported separately from npm high/critical counts."
 }

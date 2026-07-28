@@ -1,0 +1,127 @@
+{
+  "name": "NLCare Synthetic High-Risk Review Alert",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "nlcare/high_risk_review_alert",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Signed NLCare Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\nconst envelope = $json.body || $json;\nconst headers = $json.headers || {};\nconst signature = String(headers['x-nlcare-signature'] || '');\nconst secret = String($env.N8N_WEBHOOK_SIGNING_SECRET || '');\nconst canonicalize = (value) => Array.isArray(value) ? value.map(canonicalize) : (value && typeof value === 'object' ? Object.keys(value).sort().reduce((out, key) => { out[key] = canonicalize(value[key]); return out; }, {}) : value);\nconst canonicalBody = JSON.stringify(canonicalize(envelope));\nconst expected = secret ? crypto.createHmac('sha256', secret).update(canonicalBody).digest('hex') : '';\nconst signatureOk = signature.length === expected.length && signature.length > 0 && crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));\nconst ageSeconds = Math.abs(Date.now() - Date.parse(envelope.created_at || 0)) / 1000;\nconst payload = envelope.payload || {};\nconst blocked = ['patient_name','patient_id','raw_patient_message','full_chat_transcript','medical_record_number','date_of_birth','address','phone','email','raw_prompt','raw_response','raw_trace','private_chain_of_thought'];\nconst blockedPresent = blocked.filter((key) => Object.prototype.hasOwnProperty.call(payload, key));\nconst required = ['alert_id','event_type','priority','review_path','delivery_scope','recipient_scope'];\nconst missing = required.filter((key) => payload[key] === undefined || payload[key] === null || payload[key] === '');\nconst boundaryOk = envelope.payload_redacted === true && envelope.phi_allowed === false && envelope.clinical_validation === false && envelope.healthcare_production_ready === false;\nconst recipientOk = payload.recipient_scope === 'synthetic_test_recipient';\nconst ok = signatureOk && ageSeconds <= 300 && blockedPresent.length === 0 && missing.length === 0 && boundaryOk && recipientOk;\nreturn [{json: {ok, signatureOk, freshnessOk: ageSeconds <= 300, blockedPresent, missing, boundaryOk, recipientOk, alert_id: payload.alert_id || null, review_path: payload.review_path || null}}];"
+      },
+      "id": "verify",
+      "name": "Verify HMAC and Redaction",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [
+            {
+              "id": "accepted",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {"type": "boolean", "operation": "true", "singleValue": true}
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-valid",
+      "name": "Accept Only Valid Synthetic Event",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "nlcare-synthetic@invalid.example",
+        "toEmail": "nlcare-synthetic-review@invalid.example",
+        "subject": "NLCare synthetic review item",
+        "emailFormat": "text",
+        "text": "Synthetic-only review item {{$json.alert_id}} is available at {{$json.review_path}}. Sign in to inspect it. This email contains no patient identity or raw chat content.",
+        "options": {}
+      },
+      "id": "mail",
+      "name": "Send Synthetic MailHog Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [720, -80],
+      "credentials": {
+        "smtp": {
+          "id": "CONFIGURE_MAILHOG_SMTP_CREDENTIAL",
+          "name": "MailHog synthetic localhost"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {ok: $json.ok, synthetic_only: true, clinician_acknowledged: false} }}",
+        "options": {}
+      },
+      "id": "respond-accepted",
+      "name": "Return Accepted",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [960, -80]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {ok: false, rejected: true, blockedPresent: $json.blockedPresent, missing: $json.missing} }}",
+        "options": {"responseCode": 403}
+      },
+      "id": "respond-rejected",
+      "name": "Return Rejected",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [720, 120]
+    }
+  ],
+  "connections": {
+    "Signed NLCare Webhook": {
+      "main": [[{"node": "Verify HMAC and Redaction", "type": "main", "index": 0}]]
+    },
+    "Verify HMAC and Redaction": {
+      "main": [[{"node": "Accept Only Valid Synthetic Event", "type": "main", "index": 0}]]
+    },
+    "Accept Only Valid Synthetic Event": {
+      "main": [
+        [{"node": "Send Synthetic MailHog Email", "type": "main", "index": 0}],
+        [{"node": "Return Rejected", "type": "main", "index": 0}]
+      ]
+    },
+    "Send Synthetic MailHog Email": {
+      "main": [[{"node": "Return Accepted", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {"executionOrder": "v1"},
+  "meta": {
+    "template": true,
+    "synthetic_only": true,
+    "clinical_validation": false,
+    "healthcare_production_ready": false,
+    "phi_allowed": false,
+    "external_delivery_completed": false,
+    "human_acknowledgement_completed": false,
+    "hmac_verification_in_workflow": true,
+    "replay_window_seconds": 300,
+    "test_recipient_only": true,
+    "requires_manual_mailhog_smtp_credential": true
+  }
+}

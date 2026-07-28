@@ -12,10 +12,12 @@ import hmac
 import json
 import os
 import secrets
+import threading
+import time
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Mapping
+from typing import Callable, Mapping, Protocol
 from urllib.parse import urlencode, urlparse
 
 
@@ -41,8 +43,79 @@ class PKCETransaction:
     created_at: str
 
 
+@dataclass(frozen=True)
+class PendingPKCELogin:
+    transaction_id: str
+    authorization_url: str
+    expires_at: str
+
+
 class OIDCPKCEError(ValueError):
     pass
+
+
+class PKCETransactionStore(Protocol):
+    def put(self, transaction_id: str, transaction: PKCETransaction) -> str: ...
+
+    def consume(self, transaction_id: str) -> PKCETransaction: ...
+
+
+class InMemoryPKCETransactionStore:
+    """Single-process, single-use PKCE transaction store for local integration.
+
+    A multi-instance deployment must replace this with a shared encrypted store.
+    The verifier is never returned by ``begin_pkce_login``.
+    """
+
+    def __init__(
+        self,
+        *,
+        ttl_seconds: int = 300,
+        max_entries: int = 1_000,
+        clock: Callable[[], float] = time.time,
+    ) -> None:
+        if ttl_seconds < 30 or ttl_seconds > 900:
+            raise ValueError("PKCE transaction TTL must be between 30 and 900 seconds")
+        if max_entries < 1:
+            raise ValueError("PKCE transaction store capacity must be positive")
+        self._ttl_seconds = ttl_seconds
+        self._max_entries = max_entries
+        self._clock = clock
+        self._entries: dict[str, tuple[float, PKCETransaction]] = {}
+        self._lock = threading.Lock()
+
+    def put(self, transaction_id: str, transaction: PKCETransaction) -> str:
+        if not transaction_id:
+            raise OIDCPKCEError("OIDC transaction identifier is required")
+        with self._lock:
+            self._purge_expired()
+            if len(self._entries) >= self._max_entries:
+                oldest = min(self._entries, key=lambda key: self._entries[key][0])
+                self._entries.pop(oldest, None)
+            expires_at = self._clock() + self._ttl_seconds
+            self._entries[transaction_id] = (
+                expires_at,
+                transaction,
+            )
+        return datetime.fromtimestamp(expires_at, tz=timezone.utc).isoformat()
+
+    def consume(self, transaction_id: str) -> PKCETransaction:
+        if not transaction_id:
+            raise OIDCPKCEError("OIDC transaction identifier is required")
+        with self._lock:
+            entry = self._entries.pop(transaction_id, None)
+        if entry is None:
+            raise OIDCPKCEError("OIDC transaction is missing, expired, or already used")
+        expires_at, transaction = entry
+        if expires_at <= self._clock():
+            raise OIDCPKCEError("OIDC transaction is missing, expired, or already used")
+        return transaction
+
+    def _purge_expired(self) -> None:
+        now = self._clock()
+        expired = [key for key, (expires_at, _) in self._entries.items() if expires_at <= now]
+        for key in expired:
+            self._entries.pop(key, None)
 
 
 def _urlsafe(data: bytes) -> str:
@@ -112,6 +185,21 @@ def create_pkce_transaction(config: OIDCBrowserConfig) -> PKCETransaction:
     )
 
 
+def begin_pkce_login(
+    config: OIDCBrowserConfig,
+    store: PKCETransactionStore,
+) -> PendingPKCELogin:
+    """Create and persist a transaction while exposing no code verifier."""
+    transaction = create_pkce_transaction(config)
+    transaction_id = _urlsafe(secrets.token_bytes(32))
+    expires_at = store.put(transaction_id, transaction)
+    return PendingPKCELogin(
+        transaction_id=transaction_id,
+        authorization_url=transaction.authorization_url,
+        expires_at=expires_at,
+    )
+
+
 def validate_callback(*, expected_state: str, received_state: str | None, code: str | None, error: str | None = None) -> str:
     if error:
         raise OIDCPKCEError("Identity provider returned an authorization error")
@@ -120,6 +208,29 @@ def validate_callback(*, expected_state: str, received_state: str | None, code: 
     if not code or not code.strip():
         raise OIDCPKCEError("OIDC callback authorization code is missing")
     return code.strip()
+
+
+def consume_pkce_callback(
+    store: PKCETransactionStore,
+    *,
+    transaction_id: str,
+    received_state: str | None,
+    code: str | None,
+    error: str | None = None,
+) -> tuple[str, str, str]:
+    """Consume once and return code, verifier, and nonce for token exchange.
+
+    Token exchange is intentionally outside this primitive so tests never need
+    a network call and a deployment can inject its reviewed HTTP client.
+    """
+    transaction = store.consume(transaction_id)
+    authorization_code = validate_callback(
+        expected_state=transaction.state,
+        received_state=received_state,
+        code=code,
+        error=error,
+    )
+    return authorization_code, transaction.code_verifier, transaction.nonce
 
 
 def build_oidc_browser_pkce_readiness(
@@ -131,7 +242,7 @@ def build_oidc_browser_pkce_readiness(
     issues = validate_browser_oidc_config(config, strict=True)
     configured = not issues
     report: dict[str, object] = {
-        "schema_version": "oidc_browser_pkce_readiness_v1",
+        "schema_version": "oidc_browser_pkce_readiness_v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": "prepared_not_integrated" if configured else "blocked_configuration",
         "clinical_validation": False,
@@ -143,10 +254,14 @@ def build_oidc_browser_pkce_readiness(
             "cryptographic state and nonce",
             "constant-time callback state validation",
             "HTTPS strict-profile validation",
+            "bounded single-process transaction storage",
+            "single-use callback consumption",
+            "expiry and replay rejection",
+            "code-verifier non-disclosure before callback",
         ],
         "not_demonstrated": [
             "live identity-provider login",
-            "server-side transaction persistence",
+            "shared encrypted transaction persistence for multiple instances",
             "authorization-code token exchange",
             "refresh-token rotation",
             "provider logout and session revocation",
@@ -167,8 +282,13 @@ def build_oidc_browser_pkce_readiness(
 __all__ = [
     "OIDCBrowserConfig",
     "OIDCPKCEError",
+    "InMemoryPKCETransactionStore",
+    "PKCETransactionStore",
     "PKCETransaction",
+    "PendingPKCELogin",
+    "begin_pkce_login",
     "build_oidc_browser_pkce_readiness",
+    "consume_pkce_callback",
     "create_pkce_transaction",
     "load_browser_oidc_config",
     "validate_browser_oidc_config",

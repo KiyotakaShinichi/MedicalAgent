@@ -1,0 +1,78 @@
+{
+  "schema_version": "synthetic_automation_staging_readiness_v1",
+  "generated_at": "2026-07-28T12:08:57.486164+00:00",
+  "status": "ready_for_synthetic_runtime",
+  "checks": [
+    {
+      "check_id": "n8n_service_defined",
+      "passed": true
+    },
+    {
+      "check_id": "mailhog_service_defined",
+      "passed": true
+    },
+    {
+      "check_id": "ports_bound_to_loopback",
+      "passed": true
+    },
+    {
+      "check_id": "workflow_inactive",
+      "passed": true
+    },
+    {
+      "check_id": "synthetic_only",
+      "passed": true
+    },
+    {
+      "check_id": "hmac_verification_present",
+      "passed": true
+    },
+    {
+      "check_id": "constant_time_compare_present",
+      "passed": true
+    },
+    {
+      "check_id": "replay_window_bounded",
+      "passed": true
+    },
+    {
+      "check_id": "phi_blocklist_present",
+      "passed": true
+    },
+    {
+      "check_id": "test_recipient_only",
+      "passed": true
+    },
+    {
+      "check_id": "clinical_validation_false",
+      "passed": true
+    },
+    {
+      "check_id": "production_ready_false",
+      "passed": true
+    }
+  ],
+  "passed_count": 12,
+  "check_count": 12,
+  "compose_validation": {
+    "available": true,
+    "executed": true,
+    "valid": true,
+    "exit_code": 0,
+    "stderr_tail": ""
+  },
+  "workflow_import_completed": false,
+  "runtime_completed": false,
+  "external_delivery_completed": false,
+  "human_acknowledgement_completed": false,
+  "synthetic_recipient_only": true,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "next_actions": [
+    "Start docker-compose.synthetic-automation.yml on a disposable local machine.",
+    "Import the inactive workflow and configure a no-auth MailHog SMTP credential.",
+    "Send only signed synthetic events and record a delivery receipt drill.",
+    "Keep real email, SMS, and Viber recipients disabled pending organizational review."
+  ],
+  "claim_boundary": "This artifact validates static local staging configuration. It does not claim a running n8n workflow, external delivery, clinician acknowledgement, production automation, medical safety, or clinical validation."
+}

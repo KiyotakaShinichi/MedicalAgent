@@ -1,0 +1,270 @@
+{
+  "schema_version": "automation_channel_drill_v1",
+  "generated_at": "2026-07-28T12:08:52.837906+00:00",
+  "status": "strong",
+  "attempt_count": 30,
+  "passed_count": 30,
+  "failed_count": 0,
+  "pass_rate": 1.0,
+  "latency_ms": {
+    "p50": 17.428,
+    "p95": 91.082,
+    "max": 438.931
+  },
+  "transport": "localhost_http_loopback",
+  "local_network_delivery_performed": true,
+  "external_delivery_performed": false,
+  "live_n8n_delivery_completed": false,
+  "synthetic_test_recipient_only": true,
+  "payload_redacted": true,
+  "phi_allowed": false,
+  "delivery_receipt_is_human_acknowledgement": false,
+  "clinician_acknowledgement_proven": false,
+  "emergency_coverage_proven": false,
+  "clinical_action_automated": false,
+  "healthcare_production_ready": false,
+  "clinical_validation": false,
+  "cases": [
+    {
+      "event_id": "loopback-alert-001",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 438.931
+    },
+    {
+      "event_id": "loopback-alert-002",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 31.154
+    },
+    {
+      "event_id": "loopback-alert-003",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 31.743
+    },
+    {
+      "event_id": "loopback-alert-004",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 42.637
+    },
+    {
+      "event_id": "loopback-alert-005",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 78.4
+    },
+    {
+      "event_id": "loopback-alert-006",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 101.459
+    },
+    {
+      "event_id": "loopback-alert-007",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 33.705
+    },
+    {
+      "event_id": "loopback-alert-008",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 28.721
+    },
+    {
+      "event_id": "loopback-alert-009",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 35.316
+    },
+    {
+      "event_id": "loopback-alert-010",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 17.358
+    },
+    {
+      "event_id": "loopback-alert-011",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 17.499
+    },
+    {
+      "event_id": "loopback-alert-012",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 28.365
+    },
+    {
+      "event_id": "loopback-alert-013",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 32.383
+    },
+    {
+      "event_id": "loopback-alert-014",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 48.403
+    },
+    {
+      "event_id": "loopback-alert-015",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 17.537
+    },
+    {
+      "event_id": "loopback-alert-016",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 11.399
+    },
+    {
+      "event_id": "loopback-alert-017",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 13.623
+    },
+    {
+      "event_id": "loopback-alert-018",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 12.6
+    },
+    {
+      "event_id": "loopback-alert-019",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 14.604
+    },
+    {
+      "event_id": "loopback-alert-020",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 15.648
+    },
+    {
+      "event_id": "loopback-alert-021",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 10.081
+    },
+    {
+      "event_id": "loopback-alert-022",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 13.45
+    },
+    {
+      "event_id": "loopback-alert-023",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 11.366
+    },
+    {
+      "event_id": "loopback-alert-024",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 7.523
+    },
+    {
+      "event_id": "loopback-alert-025",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 8.799
+    },
+    {
+      "event_id": "loopback-alert-026",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 18.651
+    },
+    {
+      "event_id": "loopback-alert-027",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 13.961
+    },
+    {
+      "event_id": "loopback-alert-028",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 8.078
+    },
+    {
+      "event_id": "loopback-alert-029",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 7.605
+    },
+    {
+      "event_id": "loopback-alert-030",
+      "dispatch_sent": true,
+      "http_status": 202,
+      "dispatch_envelope_valid": true,
+      "receipt_valid": true,
+      "latency_ms": 14.442
+    }
+  ],
+  "claim_boundary": "This drill uses a localhost HTTP receiver and synthetic test-recipient metadata only. A valid channel receipt proves local protocol delivery, not clinician acknowledgement, emergency coverage, patient contact, clinical action, external-channel reliability, or healthcare production readiness."
+}

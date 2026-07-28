@@ -1,0 +1,300 @@
+{
+  "schema_version": "constraint_aware_improvement_program_v1",
+  "generated_at": "2026-07-28T12:09:01.572270+00:00",
+  "status": "needs_attention",
+  "engineering_release_decision": "PROCEED_WITH_WARNINGS",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "real_patient_data_used": false,
+  "domain_count": 8,
+  "domains": [
+    {
+      "domain": "aie",
+      "evidence_state": "needs_attention",
+      "canonical_check_count": 4,
+      "attention_check_ids": [
+        "frozen_adversarial_v6",
+        "rag_governance_tradeoff"
+      ],
+      "objective": "Prefer the simplest governed retrieval and routing policy that survives frozen evaluation.",
+      "implemented_controls": [
+        "dense and sparse baselines with RRF comparison",
+        "source-tier and allowed-use filtering",
+        "claim and post-generation validation",
+        "frozen adversarial and metamorphic evaluations"
+      ],
+      "acceptance_criteria": [
+        "critical safety regression remains passing",
+        "source-tier correctness remains 1.0 on patient-facing routes",
+        "raw retrieval superiority is claimed only when frozen comparison proves it",
+        "stage latency and marginal quality are reported together"
+      ],
+      "next_internal_action": "Increase independent route sample counts and preserve BM25 as the explicit simple baseline.",
+      "external_blocker": "No-read RAG holdout and external-authored adversarial cases remain incomplete."
+    },
+    {
+      "domain": "mle",
+      "evidence_state": "needs_attention",
+      "canonical_check_count": 3,
+      "attention_check_ids": [
+        "xai_retraining_stability"
+      ],
+      "objective": "Make synthetic ML statistically defensible as engineering evidence while preventing clinical interpretation.",
+      "implemented_controls": [
+        "patient-level temporal splitting and leakage audits",
+        "simple-baseline and multi-seed stress comparisons",
+        "calibration, abstention, subgroup, missingness, and shortcut audits",
+        "promotion policy fixed to HOLD or review-only use"
+      ],
+      "acceptance_criteria": [
+        "patient overlap and temporal leakage remain zero",
+        "simple baselines are always reported beside nonlinear models",
+        "selective risk versus coverage is reported for every prediction head",
+        "synthetic confidence is never described as patient outcome probability"
+      ],
+      "next_internal_action": "Keep saturated metrics out of headline surfaces and expand ambiguous-label sensitivity analyses.",
+      "external_blocker": "Simulator-built labels cannot establish real-patient transfer or clinical calibration."
+    },
+    {
+      "domain": "swe",
+      "evidence_state": "needs_attention",
+      "canonical_check_count": 3,
+      "attention_check_ids": [
+        "dependency_security"
+      ],
+      "objective": "Make the system reproducible, reviewable, secure by default, and boring to operate in controlled demos.",
+      "implemented_controls": [
+        "modular FastAPI and typed React surfaces",
+        "migrations, role isolation, request IDs, tests, and release gates",
+        "freshness-aware canonical release decision surface",
+        "evidence-backed service health aggregation"
+      ],
+      "acceptance_criteria": [
+        "full ship workflow passes from a clean checkout",
+        "hard blockers cannot be diluted by informational artifacts",
+        "canonical evidence is refreshed after its dependencies",
+        "dependency and container scans expose unavailable tools as gaps"
+      ],
+      "next_internal_action": "Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence.",
+      "external_blocker": "No production traffic, penetration test, SOC 2, HITRUST, or healthcare security review exists."
+    },
+    {
+      "domain": "data_engineering",
+      "evidence_state": "verified_internal_only",
+      "canonical_check_count": 2,
+      "attention_check_ids": [],
+      "objective": "Operate a lineage-complete, idempotent non-patient knowledge pipeline with explicit recovery behavior.",
+      "implemented_controls": [
+        "content-addressed bronze and governed silver/gold layers",
+        "contract checks, quarantine, fingerprints, and lineage",
+        "idempotency, migration, tombstone, backfill, and fallback drills"
+      ],
+      "acceptance_criteria": [
+        "all gold records retain governance metadata",
+        "duplicate identifiers and hard data-quality failures remain zero",
+        "replay produces the same KB fingerprint",
+        "no patient data or raw chat enters managed-vector payloads"
+      ],
+      "next_internal_action": "Add partition-scale benchmarks before introducing Databricks or Data Factory.",
+      "external_blocker": "No cloud lakehouse execution or real-patient data-quality evidence exists."
+    },
+    {
+      "domain": "infrastructure",
+      "evidence_state": "verified_internal_only",
+      "canonical_check_count": 1,
+      "attention_check_ids": [],
+      "objective": "Keep infrastructure reproducible, private by default, cost-bounded, and disposable.",
+      "implemented_controls": [
+        "compile-checked Bicep with cost-bearing resources default off",
+        "managed identity, RBAC, Key Vault references, private endpoints, budgets, and alerts",
+        "non-patient Azure Search shadow contracts"
+      ],
+      "acceptance_criteria": [
+        "Bicep compilation has zero diagnostics",
+        "public network and cost-bearing resources remain opt-in",
+        "no secrets are committed",
+        "deployment evidence distinguishes compile, what-if, deploy, restore, and teardown"
+      ],
+      "next_internal_action": "Run an authenticated what-if in a disposable non-patient development subscription.",
+      "external_blocker": "No cloud deployment, private-connectivity exercise, restore drill, or cost measurement exists."
+    },
+    {
+      "domain": "medical",
+      "evidence_state": "external_evidence_incomplete",
+      "canonical_check_count": 2,
+      "attention_check_ids": [],
+      "objective": "Preserve clinician authority and make uncertainty, missingness, and non-diagnostic boundaries understandable.",
+      "implemented_controls": [
+        "deterministic medical claim boundaries",
+        "minimum evidence and abstention rules",
+        "urgent, distress, genetics/VUS, tumor-marker, and supplement routing boundaries",
+        "unreviewed role-specific review packets"
+      ],
+      "acceptance_criteria": [
+        "diagnosis, prognosis, treatment, dosage, and genetic/tumor-marker conclusions remain blocked",
+        "patient explanations include meaning, calculation, missingness, limitation, and safe review action",
+        "delivery receipts are never described as clinician acknowledgement",
+        "all review packets remain labelled unreviewed until actually completed"
+      ],
+      "next_internal_action": "Run non-clinical comprehension and overtrust testing with synthetic scenarios.",
+      "external_blocker": "No clinician, nurse, genetic counselor, pharmacist, or patient review has been completed."
+    },
+    {
+      "domain": "automation",
+      "evidence_state": "verified_internal_only",
+      "canonical_check_count": 2,
+      "attention_check_ids": [],
+      "objective": "Automate redacted engineering workflows with durable delivery semantics and explicit human acknowledgement boundaries.",
+      "implemented_controls": [
+        "database leases, heartbeats, retries, dead letters, and idempotency",
+        "signed redacted webhooks and signed receipt validation",
+        "fault-injection scenarios and dry-run n8n templates",
+        "service-health metrics for automation control and live-delivery gaps"
+      ],
+      "acceptance_criteria": [
+        "duplicate enqueue and replay remain idempotent",
+        "PHI and raw chat are rejected from external payloads",
+        "delivery receipt and human acknowledgement remain separate fields",
+        "patient-facing or clinical action automation stays disabled"
+      ],
+      "next_internal_action": "Exercise one synthetic test-recipient channel and record receipt latency without claiming clinical coverage.",
+      "external_blocker": "No provider reliability, operator rota, emergency coverage, or clinician acknowledgement evidence exists."
+    },
+    {
+      "domain": "deployment",
+      "evidence_state": "needs_attention",
+      "canonical_check_count": 2,
+      "attention_check_ids": [
+        "deployment_profile"
+      ],
+      "objective": "Support controlled non-clinical deployment profiles without implying healthcare production readiness.",
+      "implemented_controls": [
+        "Docker, readiness probes, migrations, CORS and security-header checks",
+        "RS256 OIDC bearer validation",
+        "S256 PKCE transaction creation, bounded storage, expiry, and replay rejection",
+        "strict profile validation and local recovery drills"
+      ],
+      "acceptance_criteria": [
+        "demo auth and localhost CORS are disabled in strict profiles",
+        "OIDC issuer, audience, HTTPS JWKS, and exact role mapping fail closed",
+        "PKCE callback transactions are single-use and verifier material is not disclosed",
+        "production healthcare readiness remains false"
+      ],
+      "next_internal_action": "Add a shared encrypted PKCE transaction store, reviewed token exchange, and provider logout before any live browser login claim.",
+      "external_blocker": "No live identity provider, managed database recovery, production SLO history, or healthcare deployment review exists."
+    }
+  ],
+  "ranked_priorities": [
+    {
+      "priority": "P1",
+      "domain": "aie",
+      "action": "Increase independent route sample counts and preserve BM25 as the explicit simple baseline.",
+      "acceptance_criteria": [
+        "critical safety regression remains passing",
+        "source-tier correctness remains 1.0 on patient-facing routes",
+        "raw retrieval superiority is claimed only when frozen comparison proves it",
+        "stage latency and marginal quality are reported together"
+      ],
+      "blocked_by_external_evidence": "No-read RAG holdout and external-authored adversarial cases remain incomplete."
+    },
+    {
+      "priority": "P1",
+      "domain": "deployment",
+      "action": "Add a shared encrypted PKCE transaction store, reviewed token exchange, and provider logout before any live browser login claim.",
+      "acceptance_criteria": [
+        "demo auth and localhost CORS are disabled in strict profiles",
+        "OIDC issuer, audience, HTTPS JWKS, and exact role mapping fail closed",
+        "PKCE callback transactions are single-use and verifier material is not disclosed",
+        "production healthcare readiness remains false"
+      ],
+      "blocked_by_external_evidence": "No live identity provider, managed database recovery, production SLO history, or healthcare deployment review exists."
+    },
+    {
+      "priority": "P1",
+      "domain": "mle",
+      "action": "Keep saturated metrics out of headline surfaces and expand ambiguous-label sensitivity analyses.",
+      "acceptance_criteria": [
+        "patient overlap and temporal leakage remain zero",
+        "simple baselines are always reported beside nonlinear models",
+        "selective risk versus coverage is reported for every prediction head",
+        "synthetic confidence is never described as patient outcome probability"
+      ],
+      "blocked_by_external_evidence": "Simulator-built labels cannot establish real-patient transfer or clinical calibration."
+    },
+    {
+      "priority": "P1",
+      "domain": "swe",
+      "action": "Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence.",
+      "acceptance_criteria": [
+        "full ship workflow passes from a clean checkout",
+        "hard blockers cannot be diluted by informational artifacts",
+        "canonical evidence is refreshed after its dependencies",
+        "dependency and container scans expose unavailable tools as gaps"
+      ],
+      "blocked_by_external_evidence": "No production traffic, penetration test, SOC 2, HITRUST, or healthcare security review exists."
+    },
+    {
+      "priority": "P2",
+      "domain": "automation",
+      "action": "Exercise one synthetic test-recipient channel and record receipt latency without claiming clinical coverage.",
+      "acceptance_criteria": [
+        "duplicate enqueue and replay remain idempotent",
+        "PHI and raw chat are rejected from external payloads",
+        "delivery receipt and human acknowledgement remain separate fields",
+        "patient-facing or clinical action automation stays disabled"
+      ],
+      "blocked_by_external_evidence": "No provider reliability, operator rota, emergency coverage, or clinician acknowledgement evidence exists."
+    },
+    {
+      "priority": "P2",
+      "domain": "data_engineering",
+      "action": "Add partition-scale benchmarks before introducing Databricks or Data Factory.",
+      "acceptance_criteria": [
+        "all gold records retain governance metadata",
+        "duplicate identifiers and hard data-quality failures remain zero",
+        "replay produces the same KB fingerprint",
+        "no patient data or raw chat enters managed-vector payloads"
+      ],
+      "blocked_by_external_evidence": "No cloud lakehouse execution or real-patient data-quality evidence exists."
+    },
+    {
+      "priority": "P2",
+      "domain": "infrastructure",
+      "action": "Run an authenticated what-if in a disposable non-patient development subscription.",
+      "acceptance_criteria": [
+        "Bicep compilation has zero diagnostics",
+        "public network and cost-bearing resources remain opt-in",
+        "no secrets are committed",
+        "deployment evidence distinguishes compile, what-if, deploy, restore, and teardown"
+      ],
+      "blocked_by_external_evidence": "No cloud deployment, private-connectivity exercise, restore drill, or cost measurement exists."
+    },
+    {
+      "priority": "P2",
+      "domain": "medical",
+      "action": "Run non-clinical comprehension and overtrust testing with synthetic scenarios.",
+      "acceptance_criteria": [
+        "diagnosis, prognosis, treatment, dosage, and genetic/tumor-marker conclusions remain blocked",
+        "patient explanations include meaning, calculation, missingness, limitation, and safe review action",
+        "delivery receipts are never described as clinician acknowledgement",
+        "all review packets remain labelled unreviewed until actually completed"
+      ],
+      "blocked_by_external_evidence": "No clinician, nurse, genetic counselor, pharmacist, or patient review has been completed."
+    }
+  ],
+  "implemented_in_this_pass": [
+    "freshness-aware canonical evidence surface across all engineering domains",
+    "evidence-backed operational health metrics instead of null placeholders",
+    "single-use, expiring PKCE transaction lifecycle with replay rejection",
+    "ship ordering that refreshes dependent artifacts before final release summaries"
+  ],
+  "things_internal_engineering_cannot_prove": [
+    "clinical validation or patient benefit",
+    "real-world safety or medical correctness",
+    "generalisation from synthetic ML to real patients",
+    "managed-cloud reliability without deployment evidence",
+    "human acknowledgement from an automation delivery receipt",
+    "production healthcare readiness"
+  ],
+  "claim_boundary": "Constraint-aware engineering plan only. Completion means stronger internal engineering evidence, not clinical validation, clinician approval, real-world patient safety, or production healthcare readiness."
+}

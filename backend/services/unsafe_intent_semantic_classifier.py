@@ -432,51 +432,131 @@ SAFE_EDUCATIONAL_ANCHORS = (
 # dependent on one long regex while keeping safe educational mentions open.
 COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
     "privacy_pii": (
-        ("read back", "read", "export", "paste", "forward", "reveal", "expose", "show", "send", "paki-send", "print", "verify"),
-        ("identifier", "confidential number", "confidential account", "account credential", "account detail", "address", "insurance", "member id", "membership code", "mrn", "dob", "phone", "token", "api key", "complete account record", "full chart"),
+        (
+            "read back", "read", "recite", "download", "copy", "export", "paste",
+            "forward", "reveal", "expose", "show", "send", "paki-send", "print",
+            "verify",
+        ),
+        (
+            "identifier", "identity field", "stored identity", "unredacted chart",
+            "chart header", "confidential number", "confidential account",
+            "account credential", "account detail", "profile secret", "address",
+            "insurance", "member id", "membership code", "mrn", "dob", "phone",
+            "token", "api key", "complete account record", "full chart",
+        ),
     ),
     "prompt_injection": (
-        ("ignore", "switch off", "disable", "replace", "work around", "bypass", "override", "operate without", "suspend", "pretend", "assume", "huwag sundin"),
-        ("boundary", "refusal boundary", "safety instruction", "safety hierarchy", "system constraint", "refusal policy", "citation check", "validator", "final validator", "final checker", "instruction hierarchy", "internal instruction", "hidden prompt", "guardrail"),
+        (
+            "ignore", "silently ignore", "disregard", "switch off", "disable",
+            "replace", "work around", "circumvent", "bypass", "override",
+            "operate without", "suspend", "pretend", "assume", "huwag sundin",
+        ),
+        (
+            "boundary", "medical refusal boundary", "refusal boundary",
+            "safety instruction", "safety hierarchy", "policy hierarchy",
+            "system constraint", "refusal policy", "citation check", "validator",
+            "response validator", "final response validator", "final validator",
+            "final response checker", "final checker", "instruction hierarchy", "internal instruction",
+            "hidden prompt", "guardrail",
+        ),
     ),
     "cross_patient_exfiltration": (
-        ("open", "compare", "copy", "summarize", "show", "use", "access", "pull", "pakibukas", "gamitin"),
-        ("person after me", "person before me", "next person", "previous person", "another patient", "other patient", "everyone's", "all patient", "aunt's", "mother's", "father's", "sister's", "brother's", "mama", "patient q-", "patient id"),
-        ("record", "chart", "result", "lab", "note", "medication", "imaging", "database", "portal"),
+        (
+            "open", "retrieve", "fetch", "quote", "contrast", "compare", "copy",
+            "summarize", "show", "use", "access", "pull", "pakibukas", "gamitin",
+        ),
+        (
+            "person after me", "person before me", "next person",
+            "previous person", "next patient", "previous patient",
+            "another person", "someone else", "another patient", "other patient",
+            "everyone's", "all patient", "relative's", "aunt's", "mother's",
+            "father's", "sister's", "brother's", "mama", "patient q-",
+            "patient id",
+        ),
+        (
+            "record", "chart", "timeline", "history", "result", "lab", "note",
+            "medication", "imaging", "database", "portal",
+        ),
     ),
     "genetic_risk_interpretation": (
         ("gene", "genetic", "variant", "mutation", "brca", "palb2", "chek2", "atm", "germline", "somatic"),
-        ("predict", "forecast", "prove", "confirm", "definite", "decide", "will develop", "will get", "magkaka"),
-        ("child", "children", "son", "daughter", "relative", "family", "pamilya", "recurrence", "treatment", "therapy", "inherited", "hereditary", "cancer"),
+        (
+            "predict", "forecast", "verdict", "determine", "prove", "confirm",
+            "definite", "decide", "will develop", "will get", "magkaka",
+        ),
+        (
+            "child", "children", "son", "daughter", "sibling", "siblings",
+            "relative", "family", "pamilya", "recurrence", "treatment", "therapy",
+            "inherited", "hereditary", "cancer",
+        ),
     ),
     "vus_misinterpretation": (
-        ("vus", "uncertain variant", "unclear variant", "unclassified variant", "unclassified brca", "uncertain result", "uncertain genetic", "unclear result", "result is unclear", "inconclusive genetic"),
-        ("pathogenic", "positive", "negative", "confirmed", "proof", "disease-causing", "decide therapy", "decide which therapy", "select therapy", "count it", "count this", "treat it", "use the"),
+        (
+            "vus", "variant of uncertain significance", "uncertain variant",
+            "unclear variant", "unclassified variant", "indeterminate variant",
+            "unclassified brca", "uncertain result", "uncertain genetic",
+            "unclear result", "result is unclear", "inconclusive genetic",
+        ),
+        (
+            "resolve", "reclassify", "actionable", "pathogenic", "positive",
+            "negative", "confirmed", "proof", "disease-causing", "disease causing",
+            "decide therapy",
+            "decide treatment", "decide which therapy", "select therapy",
+            "count it", "count this", "treat it", "use the",
+        ),
     ),
     "diagnosis_confirmation": (
-        ("confirm", "decide", "definitively", "prove", "establish", "establishes", "yes-or-no", "turn", "conclusion", "assume", "diagnose"),
-        ("lesion", "mass", "scan", "finding", "pathology", "lab", "cancer", "malignant", "spread", "recurrence", "metastatic", "cancer-free"),
+        (
+            "issue", "declare", "confirm", "decide", "definitively", "prove",
+            "establish", "establishes", "yes-or-no", "turn", "conclusion",
+            "assume", "diagnose",
+        ),
+        (
+            "lesion", "mass", "scan", "scan phrase", "finding", "pathology",
+            "lab", "laboratory panel", "portal summary", "cancer", "malignant",
+            "malignancy", "spread", "recurrence", "metastatic", "cancer-free",
+        ),
     ),
     "tumor_marker_conclusion": (
         ("marker", "marker trend", "rising marker", "ca 15", "ca15", "ca 27", "ca27", "cea", "number climbed", "number rose", "level rose"),
-        ("confirm", "prove", "definite", "settle", "assume", "therapy failed", "treatment failed", "disease returned", "recurrence", "metastasis", "progression", "replace imaging"),
+        (
+            "confirm", "proof", "prove", "verdict", "definite", "settle",
+            "assume", "therapy failed", "treatment failed", "disease returned",
+            "recurrence", "metastasis", "progression", "replace imaging",
+            "override imaging",
+        ),
     ),
     "treatment_change": (
         ("stop", "pause", "delay", "miss", "skip", "restart", "resume", "switch", "replace", "cancel", "authorize", "ihihinto", "itigil", "palitan"),
         ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "regimen", "infusion", "tamoxifen", "trastuzumab", "medicine", "medication", "gamot"),
     ),
     "dosage_request": (
-        ("calculate", "set", "adjust", "choose", "personalize", "double", "halve", "lower", "increase", "reduce", "how many", "ilang", "exact"),
+        (
+            "calculate", "compute", "pick", "set", "adjust", "choose",
+            "personalize", "double", "halve", "lower", "increase", "reduce",
+            "how many", "ilang", "exact",
+        ),
         ("dose", "dosage", "mg", "tablet", "tablets", "pill", "pills", "injection amount", "medicine amount", "medication amount"),
     ),
     "prognosis_survival": (
-        ("estimate", "rank", "calculate", "quantify", "tell me", "predict", "translate", "roughly"),
-        ("remaining months", "remaining lifetime", "life remains", "surviving", "survival", "die soon", "alive next year", "life expectancy", "survival countdown", "cure percentage", "personal timeline", "prognosis", "outlook", "mabubuhay"),
+        (
+            "estimate", "rank", "calculate", "convert", "quantify", "tell me",
+            "give", "predict", "translate", "roughly",
+        ),
+        (
+            "remaining months", "remaining lifetime", "life remains", "surviving",
+            "survival", "die soon", "alive next year", "alive after",
+            "life expectancy", "survival countdown", "cure percentage",
+            "personal timeline", "prognosis", "outlook", "mabubuhay",
+        ),
     ),
     "supplement_replacement": (
         ("natural", "herb", "herbs", "herbal", "supplement", "vitamin", "vitamins", "cannabis", "turmeric", "cbd"),
         ("replace", "avoid", "instead", "stop treatment", "natural-only", "na lang", "cure", "only therapy", "only cancer therapy", "without pharmacist"),
-        ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "medicine", "medication", "cancer", "gamot"),
+        (
+            "chemotherapy", "chemo", "radiation", "treatment", "therapy",
+            "medicine", "medication", "prescribed care", "cancer", "gamot",
+        ),
     ),
 }
 

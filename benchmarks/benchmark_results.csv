@@ -477,9 +477,9 @@ medical_safety_contract,Medical safety contract,critical,stale,strong,stale,Data
 system_health,System health,supporting,stale,needs_attention,stale,Data/evals/system/latest_system_health.json,status,needs_attention
 system_health,System health,supporting,stale,needs_attention,stale,Data/evals/system/latest_system_health.json,issue_count,"[{'area': 'artifact', 'severity': 'info', 'message': 'rag_eval is stale.'}, {'area': 'artifact', 'severity': 'info', 'message': 'safety_red_team is stale.'}]"
 event_taxonomy_manifest,Structured event taxonomy,supporting,stale,strong,stale,Data/evals/ops/latest_event_taxonomy_manifest.json,status,strong
-service_health_snapshot,PoC service health snapshot,supporting,stale,strong,stale,Data/evals/ops/latest_service_health_snapshot.json,status,strong
-service_health_snapshot,PoC service health snapshot,supporting,stale,strong,stale,Data/evals/ops/latest_service_health_snapshot.json,stale_artifact_count,75
-service_health_snapshot,PoC service health snapshot,supporting,stale,strong,stale,Data/evals/ops/latest_service_health_snapshot.json,failed_benchmark_count,0
+service_health_snapshot,PoC service health snapshot,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_service_health_snapshot.json,status,needs_attention
+service_health_snapshot,PoC service health snapshot,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_service_health_snapshot.json,stale_artifact_count,135
+service_health_snapshot,PoC service health snapshot,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_service_health_snapshot.json,failed_benchmark_count,0
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,status,strong_local_only
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,passed,True
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,content_hash_match,True
@@ -508,14 +508,14 @@ runtime_quality_sentinel,Runtime quality sentinel,supporting,stale,needs_attenti
 runtime_quality_sentinel,Runtime quality sentinel,supporting,stale,needs_attention,stale,Data/evals/ops/latest_runtime_quality_sentinel.json,unsupported_claim_rate,0.0
 runtime_quality_sentinel,Runtime quality sentinel,supporting,stale,needs_attention,stale,Data/evals/ops/latest_runtime_quality_sentinel.json,latency_p95_ms,4078.61
 runtime_quality_sentinel,Runtime quality sentinel,supporting,stale,needs_attention,stale,Data/evals/ops/latest_runtime_quality_sentinel.json,cache_hit_rate,0.2
-route_latency_budget,Route latency budget,supporting,stale,needs_attention,stale,Data/evals/ops/latest_route_latency_budget.json,status,needs_attention
-route_latency_budget,Route latency budget,supporting,stale,needs_attention,stale,Data/evals/ops/latest_route_latency_budget.json,route_count,7
-route_latency_budget,Route latency budget,supporting,stale,needs_attention,stale,Data/evals/ops/latest_route_latency_budget.json,needs_attention_count,0
-route_latency_budget,Route latency budget,supporting,stale,needs_attention,stale,Data/evals/ops/latest_route_latency_budget.json,highest_observed_p95_ms,1868.61
-latency_profile_phase2,Latency profile phase 2,supporting,stale,needs_attention,stale,Data/evals/ops/latest_latency_profile_phase2.json,status,needs_attention
-latency_profile_phase2,Latency profile phase 2,supporting,stale,needs_attention,stale,Data/evals/ops/latest_latency_profile_phase2.json,normal_rag_previous_p95_ms,7872.81
-latency_profile_phase2,Latency profile phase 2,supporting,stale,needs_attention,stale,Data/evals/ops/latest_latency_profile_phase2.json,load_smoke_previous_p95_ms,7546.078
-latency_profile,Latency profile,supporting,stale,needs_attention,stale,Data/evals/ops/latest_latency_profile.json,status,needs_attention
+route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,status,acceptable
+route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,route_count,7
+route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,needs_attention_count,0
+route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,highest_observed_p95_ms,1138.42
+latency_profile_phase2,Latency profile phase 2,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_latency_profile_phase2.json,status,acceptable
+latency_profile_phase2,Latency profile phase 2,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_latency_profile_phase2.json,normal_rag_previous_p95_ms,
+latency_profile_phase2,Latency profile phase 2,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_latency_profile_phase2.json,load_smoke_previous_p95_ms,
+latency_profile,Latency profile,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_latency_profile.json,status,acceptable
 rag_reranker_ablation,Cross-encoder reranker ablation,supporting,stale,acceptable,stale,Data/evals/rag/latest_reranker_ablation.json,status,acceptable
 rag_reranker_ablation,Cross-encoder reranker ablation,supporting,stale,acceptable,stale,Data/evals/rag/latest_reranker_ablation.json,after_pass_rate_proxy,0.9167
 rag_reranker_ablation,Cross-encoder reranker ablation,supporting,stale,acceptable,stale,Data/evals/rag/latest_reranker_ablation.json,after_source_tier_correctness,1.0
@@ -577,15 +577,46 @@ synthetic_causal_v3,Synthetic causal-order multi-seed stress test,supporting,sta
 synthetic_causal_v3,Synthetic causal-order multi-seed stress test,supporting,stale,acceptable_internal_stress_test,stale,Data/evals/models/latest_synthetic_causal_v3_stress.json,realism_claim,False
 xai_comprehension_proxy,XAI explanation-contract proxy,supporting,stale,acceptable_internal_proxy,stale,Data/evals/models/latest_xai_comprehension_contract_eval.json,pass_rate,1.0
 xai_comprehension_proxy,XAI explanation-contract proxy,supporting,stale,acceptable_internal_proxy,stale,Data/evals/models/latest_xai_comprehension_contract_eval.json,human_study,False
+xai_rank_stability,Synthetic SHAP ranking stability,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_rank_stability.json,status,acceptable
+xai_rank_stability,Synthetic SHAP ranking stability,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_rank_stability.json,patient_n,600
+xai_rank_stability,Synthetic SHAP ranking stability,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_rank_stability.json,bootstrap_n,300
+xai_rank_stability,Synthetic SHAP ranking stability,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_rank_stability.json,model_retraining_stability,False
+xai_rank_stability,Synthetic SHAP ranking stability,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_rank_stability.json,clinical_validation,False
+xai_retraining_stability,Synthetic XAI retraining stability,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_retraining_stability.json,status,needs_attention
+xai_retraining_stability,Synthetic XAI retraining stability,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_retraining_stability.json,seed_count,12
+xai_retraining_stability,Synthetic XAI retraining stability,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_retraining_stability.json,global_top_k_jaccard_p05,0.6
+xai_retraining_stability,Synthetic XAI retraining stability,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_retraining_stability.json,global_rank_correlation_p05,-1.0
+xai_retraining_stability,Synthetic XAI retraining stability,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_retraining_stability.json,local_top_k_jaccard_median,0.777778
+xai_retraining_stability,Synthetic XAI retraining stability,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_retraining_stability.json,clinical_validation,False
+agent_execution_policy,Bounded agent execution policy,supporting,strong,strong,fresh,Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json,status,strong
+agent_execution_policy,Bounded agent execution policy,supporting,strong,strong,fresh,Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json,pass_rate,1.0
+agent_execution_policy,Bounded agent execution policy,supporting,strong,strong,fresh,Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json,live_patient_write,False
+agent_execution_policy,Bounded agent execution policy,supporting,strong,strong,fresh,Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json,clinical_authority,False
+rag_degradation_resilience,Local RAG degradation resilience,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/rag/latest_rag_degradation_resilience.json,status,strong_offline_drill
+rag_degradation_resilience,Local RAG degradation resilience,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/rag/latest_rag_degradation_resilience.json,pass_rate,1.0
+rag_degradation_resilience,Local RAG degradation resilience,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/rag/latest_rag_degradation_resilience.json,managed_network_request,False
+rag_degradation_resilience,Local RAG degradation resilience,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/rag/latest_rag_degradation_resilience.json,production_recovery_proven,False
 automation_fault_injection,Automation queue and webhook fault injection,supporting,stale,strong,stale,Data/evals/ops/latest_automation_fault_injection.json,pass_rate,1.0
 automation_fault_injection,Automation queue and webhook fault injection,supporting,stale,strong,stale,Data/evals/ops/latest_automation_fault_injection.json,scenario_count,8
 automation_fault_injection,Automation queue and webhook fault injection,supporting,stale,strong,stale,Data/evals/ops/latest_automation_fault_injection.json,external_delivery,False
+automation_channel_drill,Signed localhost automation channel drill,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_channel_drill.json,pass_rate,1.0
+automation_channel_drill,Signed localhost automation channel drill,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_channel_drill.json,attempt_count,30
+automation_channel_drill,Signed localhost automation channel drill,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_channel_drill.json,external_delivery,False
+automation_channel_drill,Signed localhost automation channel drill,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_channel_drill.json,human_acknowledgement,False
+synthetic_automation_staging,Synthetic n8n and MailHog staging readiness,supporting,ready_for_synthetic_runtime,ready_for_synthetic_runtime,fresh,Data/evals/ops/latest_synthetic_automation_staging_readiness.json,status,ready_for_synthetic_runtime
+synthetic_automation_staging,Synthetic n8n and MailHog staging readiness,supporting,ready_for_synthetic_runtime,ready_for_synthetic_runtime,fresh,Data/evals/ops/latest_synthetic_automation_staging_readiness.json,runtime_completed,False
+synthetic_automation_staging,Synthetic n8n and MailHog staging readiness,supporting,ready_for_synthetic_runtime,ready_for_synthetic_runtime,fresh,Data/evals/ops/latest_synthetic_automation_staging_readiness.json,external_delivery,False
+synthetic_automation_staging,Synthetic n8n and MailHog staging readiness,supporting,ready_for_synthetic_runtime,ready_for_synthetic_runtime,fresh,Data/evals/ops/latest_synthetic_automation_staging_readiness.json,human_acknowledgement,False
+software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,status,acceptable
+software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,component_count,505
+software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,secret_findings,0
+software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,container_scan_executed,False
 finetune_runtime_preflight,Behavior-adapter runtime preflight,supporting,stale,blocked_runtime,stale,Data/evals/models/latest_finetune_runtime_preflight.json,status,blocked_runtime
 finetune_runtime_preflight,Behavior-adapter runtime preflight,supporting,stale,blocked_runtime,stale,Data/evals/models/latest_finetune_runtime_preflight.json,model_trained,False
 finetune_runtime_preflight,Behavior-adapter runtime preflight,supporting,stale,blocked_runtime,stale,Data/evals/models/latest_finetune_runtime_preflight.json,ready,False
-oidc_browser_pkce_readiness,OIDC browser PKCE readiness,supporting,stale,blocked_configuration,stale,Data/evals/ops/latest_oidc_browser_pkce_readiness.json,status,blocked_configuration
-oidc_browser_pkce_readiness,OIDC browser PKCE readiness,supporting,stale,blocked_configuration,stale,Data/evals/ops/latest_oidc_browser_pkce_readiness.json,browser_login,False
-oidc_browser_pkce_readiness,OIDC browser PKCE readiness,supporting,stale,blocked_configuration,stale,Data/evals/ops/latest_oidc_browser_pkce_readiness.json,production_ready,False
+oidc_browser_pkce_readiness,OIDC browser PKCE readiness,supporting,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_oidc_browser_pkce_readiness.json,status,blocked_configuration
+oidc_browser_pkce_readiness,OIDC browser PKCE readiness,supporting,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_oidc_browser_pkce_readiness.json,browser_login,False
+oidc_browser_pkce_readiness,OIDC browser PKCE readiness,supporting,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_oidc_browser_pkce_readiness.json,production_ready,False
 data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,status,strong
 data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,source_count,48
 data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,silver_records,240
@@ -624,3 +655,7 @@ data_platform_reliability,Non-patient data-platform reliability drills,supportin
 data_platform_reliability,Non-patient data-platform reliability drills,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/ops/latest_data_platform_reliability_eval.json,failed,0
 data_platform_reliability,Non-patient data-platform reliability drills,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/ops/latest_data_platform_reliability_eval.json,managed_delete,False
 data_platform_reliability,Non-patient data-platform reliability drills,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/ops/latest_data_platform_reliability_eval.json,azure_restore,False
+constraint_aware_improvement_program,Constraint-aware cross-domain improvement program,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_constraint_aware_improvement_program.json,status,needs_attention
+constraint_aware_improvement_program,Constraint-aware cross-domain improvement program,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_constraint_aware_improvement_program.json,domain_count,8
+constraint_aware_improvement_program,Constraint-aware cross-domain improvement program,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_constraint_aware_improvement_program.json,clinical_validation,False
+constraint_aware_improvement_program,Constraint-aware cross-domain improvement program,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_constraint_aware_improvement_program.json,healthcare_production_ready,False

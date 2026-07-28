@@ -24,3 +24,15 @@ The local outbox records bounded exponential retries, append-only attempt eviden
 Real email, SMS, or Viber recipients remain outside the prototype until privacy, consent, security, on-call ownership, and clinical-governance requirements are independently satisfied.
 
 This is engineering automation scaffolding, not clinical validation, compliance certification, emergency-service coverage, or healthcare production readiness.
+
+## Local channel drill
+
+Run `python scripts/run_automation_channel_drill.py` to exercise 30 signed
+webhook deliveries through a localhost HTTP receiver. The receiver verifies
+the HMAC envelope, enforces the redacted payload contract, emits a signed
+synthetic delivery receipt, and records local p50/p95 latency in
+`Data/evals/ops/latest_automation_channel_drill.json`.
+
+This is a real local protocol round trip, but it is not a live n8n, email, SMS,
+or Viber delivery. The recipient is synthetic, no PHI is allowed, and a receipt
+is explicitly not clinician acknowledgement.

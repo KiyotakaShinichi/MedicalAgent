@@ -11,6 +11,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from backend.services.agent_execution_policy import enforce_agent_execution_policy
 from backend.services.agent_verifier import verify_agent_turn
 from backend.services.agent_text_normalization import normalize_agent_text
 from backend.services.bounded_agentic_workflow import WRITE_TOOLS, plan_patient_agent_workflow
@@ -29,7 +30,16 @@ def run_agentic_turn(
 
     context = dict(patient_context or {})
     plan = plan_patient_agent_workflow(message, patient_context=context)
-    execution = _simulate_execution(plan, confirmed_by_user=confirmed_by_user)
+    execution_policy = enforce_agent_execution_policy(
+        plan,
+        confirmed_by_user=confirmed_by_user,
+        memory_entries=list(context.get("memory_entries") or []),
+    )
+    execution = _simulate_execution(
+        plan,
+        confirmed_by_user=confirmed_by_user,
+        execution_policy=execution_policy,
+    )
     final_response = _package_final_response(plan, execution)
     verifier = verify_agent_turn(plan=plan, execution=execution, final_response=final_response)
     state_update = _state_update_from_turn(message, plan, execution, context)
@@ -38,6 +48,7 @@ def run_agentic_turn(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "message": message,
         "plan": plan,
+        "execution_policy": execution_policy,
         "execution": execution,
         "final_response": final_response,
         "verifier": verifier,
@@ -48,6 +59,8 @@ def run_agentic_turn(
             "tool_required": _primary_tool(plan),
             "confirmation_required": bool(plan.get("requires_confirmation_before_write")),
             "blocked_authority": plan.get("prohibited_medical_authority", []),
+            "execution_policy_decision": execution_policy["decision"],
+            "execution_terminal_state": execution_policy["terminal_state"],
             "final_verifier_passed": verifier["passed"],
         },
     }
@@ -75,8 +88,13 @@ def run_agentic_conversation(turns: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _simulate_execution(plan: dict[str, Any], *, confirmed_by_user: bool) -> dict[str, Any]:
-    allowed_tools = list(plan.get("allowed_tools") or [])
+def _simulate_execution(
+    plan: dict[str, Any],
+    *,
+    confirmed_by_user: bool,
+    execution_policy: dict[str, Any],
+) -> dict[str, Any]:
+    allowed_tools = list(execution_policy.get("effective_tools") or [])
     executed_tools: list[str] = []
     confirmation_prompted = bool(plan.get("requires_confirmation_before_write"))
     for tool in allowed_tools:
@@ -93,6 +111,8 @@ def _simulate_execution(plan: dict[str, Any], *, confirmed_by_user: bool) -> dic
         "confirmation_prompted": confirmation_prompted,
         "records_written": records_written,
         "side_effect_mode": "simulated_confirmed_write" if records_written else "no_write",
+        "policy_decision": execution_policy.get("decision"),
+        "policy_violations": list(execution_policy.get("violations") or []),
     }
 
 

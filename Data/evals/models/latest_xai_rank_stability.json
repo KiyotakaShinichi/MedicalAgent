@@ -1,0 +1,101 @@
+{
+  "schema_version": "xai_rank_stability_v1",
+  "generated_at": "2026-07-28T12:06:10.768527+00:00",
+  "status": "acceptable",
+  "method": "patient_bootstrap_mean_absolute_shap_ranking",
+  "patient_explanation_n": 600,
+  "bootstrap_n": 300,
+  "top_k": 8,
+  "seed": 20260728,
+  "raw_feature_ranking": {
+    "baseline_top_features": [
+      "mri_percent_change_from_baseline",
+      "mri_tumor_size_cm",
+      "stage_IV",
+      "cycle",
+      "stage_IIB",
+      "stage_IIIA",
+      "stage_IIIB",
+      "stage_IIA"
+    ],
+    "feature_count": 33,
+    "top_k_jaccard_p05": 1.0,
+    "top_k_jaccard_median": 1.0,
+    "top_k_jaccard_p95": 1.0,
+    "rank_correlation_p05": 0.97619,
+    "rank_correlation_median": 1.0,
+    "rank_correlation_p95": 1.0,
+    "baseline_top_feature_inclusion_rate": {
+      "mri_percent_change_from_baseline": 1.0,
+      "mri_tumor_size_cm": 1.0,
+      "stage_IV": 1.0,
+      "cycle": 1.0,
+      "stage_IIB": 1.0,
+      "stage_IIIA": 1.0,
+      "stage_IIIB": 1.0,
+      "stage_IIA": 1.0
+    }
+  },
+  "patient_display_grouped_ranking": {
+    "baseline_top_features": [
+      "stage",
+      "mri_tumor_size_cm",
+      "cycle",
+      "molecular_subtype",
+      "regimen",
+      "age",
+      "pre_wbc",
+      "nadir_hemoglobin"
+    ],
+    "feature_count": 22,
+    "top_k_jaccard_p05": 0.777778,
+    "top_k_jaccard_median": 1.0,
+    "top_k_jaccard_p95": 1.0,
+    "rank_correlation_p05": 0.952381,
+    "rank_correlation_median": 0.988095,
+    "rank_correlation_p95": 1.0,
+    "baseline_top_feature_inclusion_rate": {
+      "stage": 1.0,
+      "mri_tumor_size_cm": 1.0,
+      "cycle": 1.0,
+      "molecular_subtype": 1.0,
+      "regimen": 1.0,
+      "age": 1.0,
+      "pre_wbc": 0.95,
+      "nadir_hemoglobin": 0.806667
+    }
+  },
+  "display_transform": {
+    "grouped_prefixes": {
+      "stage_": "stage",
+      "molecular_subtype_": "molecular_subtype",
+      "treatment_type_": "treatment_type",
+      "regimen_": "regimen"
+    },
+    "near_outcome_proxies_excluded": [
+      "latent_response_strength",
+      "mri_percent_change_from_baseline",
+      "response_score_percent"
+    ],
+    "aggregation": "sum absolute contributions within each display group"
+  },
+  "stability_scope": "global feature ranking under patient resampling",
+  "model_retraining_stability_evaluated": false,
+  "local_patient_explanation_stability_evaluated": false,
+  "human_participant_study_completed": false,
+  "causal_interpretation_allowed": false,
+  "synthetic_only": true,
+  "clinical_validation": false,
+  "known_limitations": [
+    "The bootstrap resamples exported synthetic patients; it does not retrain the model.",
+    "Stable rankings can still reflect simulator shortcuts or near-label proxies.",
+    "The display grouping is a presentation contract, not a clinical feature taxonomy.",
+    "No human comprehension or decision-impact study has been completed."
+  ],
+  "next_actions": [
+    "Repeat the audit across independently trained seeds before promoting explanation stability.",
+    "Keep near-outcome proxies separated from ordinary patient-facing context.",
+    "Use grouped factors in the UI and retain raw contributions only in engineering traces."
+  ],
+  "claim_boundary": "Bootstrap ranking stability over synthetic SHAP exports is an engineering sensitivity check only. It is not causal explanation, human comprehension, clinical validation, or evidence that the synthetic feature relationships transfer to real patients."
+}
