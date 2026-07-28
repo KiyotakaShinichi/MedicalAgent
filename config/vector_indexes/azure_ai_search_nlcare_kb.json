@@ -1,0 +1,173 @@
+{
+  "name": "nlcare-kb-shadow-v1",
+  "description": "Curated non-patient NLCare knowledge chunks for engineering-only shadow retrieval.",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true,
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false,
+      "sortable": true
+    },
+    {
+      "name": "content",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": true
+    },
+    {
+      "name": "content_vector",
+      "type": "Collection(Edm.Single)",
+      "dimensions": 384,
+      "vectorSearchProfile": "nlcare-hnsw-profile",
+      "retrievable": false,
+      "searchable": true
+    },
+    {
+      "name": "source_id",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "chunk_id",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "parent_id",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "source_tier",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "allowed_use",
+      "type": "Collection(Edm.String)",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "patient_facing",
+      "type": "Edm.Boolean",
+      "filterable": true,
+      "retrievable": true
+    },
+    {
+      "name": "staleness_status",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "kb_fingerprint",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "doc_type",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "data_scope",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "clinical_validation",
+      "type": "Edm.Boolean",
+      "filterable": true,
+      "retrievable": true
+    },
+    {
+      "name": "title",
+      "type": "Edm.String",
+      "filterable": false,
+      "retrievable": true,
+      "searchable": true
+    },
+    {
+      "name": "source_name",
+      "type": "Edm.String",
+      "filterable": false,
+      "retrievable": true,
+      "searchable": true
+    },
+    {
+      "name": "source_url",
+      "type": "Edm.String",
+      "filterable": false,
+      "retrievable": true,
+      "searchable": false
+    },
+    {
+      "name": "topic",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": true
+    },
+    {
+      "name": "section",
+      "type": "Edm.String",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": true
+    },
+    {
+      "name": "tags",
+      "type": "Collection(Edm.String)",
+      "filterable": true,
+      "retrievable": true,
+      "searchable": true
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "nlcare-hnsw",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "metric": "cosine",
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500
+        }
+      },
+      {
+        "name": "nlcare-exhaustive",
+        "kind": "exhaustiveKnn",
+        "exhaustiveKnnParameters": {
+          "metric": "cosine"
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "nlcare-hnsw-profile",
+        "algorithm": "nlcare-hnsw"
+      }
+    ]
+  }
+}

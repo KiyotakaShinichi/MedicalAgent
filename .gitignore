@@ -25,6 +25,7 @@ Data/lakehouse/bronze/
 Data/lakehouse/silver/*.jsonl
 Data/lakehouse/gold/*.jsonl
 Data/lakehouse/quarantine/*.jsonl
+tools/bin/
 KnowledgeBase/raw/*
 !KnowledgeBase/raw/curated_medical_kb/
 !KnowledgeBase/raw/curated_medical_kb/**

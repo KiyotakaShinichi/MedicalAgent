@@ -1,6 +1,6 @@
 # MedicalAgent Benchmark Registry
 
-Generated at: 2026-07-28T04:29:53.556457+00:00
+Generated at: 2026-07-28T05:50:34.805558+00:00
 
 Overall status: **needs_attention**
 Critical status: **stale**
@@ -156,7 +156,11 @@ Benchmarks are engineering evidence only. They test reproducibility, guardrails,
 | OIDC browser PKCE readiness | supporting | stale | stale | status=blocked_configuration; browser_login=False; production_ready=False | `Data/evals/ops/latest_oidc_browser_pkce_readiness.json` |
 | Incremental non-patient data-platform pipeline | supporting | strong | fresh | status=strong; source_count=48; silver_records=240; gold_records=240; quarantined=0; metadata_complete=True; external_cloud_write=False | `Data/lakehouse/manifests/latest_pipeline_run.json` |
 | Managed vector-store offline contract | supporting | strong_contract_only | fresh | status=strong_contract_only; pass_rate=1.000; gold_records=240; network_request=False; comparison_completed=False | `Data/evals/rag/latest_vector_store_contract_eval.json` |
-| Azure reference-infrastructure readiness | supporting | reference_architecture_only | fresh | status=reference_architecture_only; checks_passed=13; checks_failed=0; cloud_deployed=False; bicep_compiled=False | `Data/evals/ops/latest_cloud_infrastructure_readiness.json` |
+| Compiled Azure reference-infrastructure readiness | supporting | compiled_reference_architecture | fresh | status=compiled_reference_architecture; checks_passed=26; checks_failed=0; cloud_deployed=False; bicep_compiled=True | `Data/evals/ops/latest_cloud_infrastructure_readiness.json` |
+| Azure AI Search shadow-index readiness | supporting | ready_for_opt_in_provisioning | fresh | status=ready_for_opt_in_provisioning; schema_valid=True; field_count=20; index_applied=False; network_request=False | `Data/evals/rag/latest_azure_search_index_readiness.json` |
+| Governed managed-vector shadow sync | supporting | ready_for_opt_in_shadow_sync | fresh | status=ready_for_opt_in_shadow_sync; record_count=240; validation_passed=True; sync_completed=False; indexed_count=0; failed_count=0 | `Data/evals/rag/latest_managed_vector_shadow_sync.json` |
+| Frozen managed-vector shadow comparison | supporting | ready_for_managed_shadow_run | fresh | status=ready_for_managed_shadow_run; comparison_completed=False; network_request=False; joint_improvement=False; decision=HOLD | `Data/evals/rag/latest_managed_vector_shadow_comparison.json` |
+| Non-patient data-platform reliability drills | supporting | strong_offline_drill | fresh | status=strong_offline_drill; passed=6; failed=0; managed_delete=False; azure_restore=False | `Data/evals/ops/latest_data_platform_reliability_eval.json` |
 
 ## Issues
 - medium: safety_red_team (stale) - Artifact is older than the freshness TTL; rerun this benchmark before quoting it.

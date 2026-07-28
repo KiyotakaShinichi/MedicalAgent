@@ -1761,7 +1761,7 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
     },
     {
         "id": "azure_reference_infrastructure",
-        "title": "Azure reference-infrastructure readiness",
+        "title": "Compiled Azure reference-infrastructure readiness",
         "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
         "tier": "supporting",
         "metrics": {
@@ -1770,6 +1770,59 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "checks_failed": ["failed"],
             "cloud_deployed": ["cloud_deployment_completed"],
             "bicep_compiled": ["bicep_compile_completed"],
+        },
+    },
+    {
+        "id": "azure_search_index_readiness",
+        "title": "Azure AI Search shadow-index readiness",
+        "path": "Data/evals/rag/latest_azure_search_index_readiness.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "schema_valid": ["validation", "valid"],
+            "field_count": ["validation", "field_count"],
+            "index_applied": ["index_apply_completed"],
+            "network_request": ["network_request_performed"],
+        },
+    },
+    {
+        "id": "managed_vector_shadow_sync",
+        "title": "Governed managed-vector shadow sync",
+        "path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "record_count": ["record_count"],
+            "validation_passed": ["validation_passed"],
+            "sync_completed": ["sync_completed"],
+            "indexed_count": ["indexed_count"],
+            "failed_count": ["failed_count"],
+        },
+    },
+    {
+        "id": "managed_vector_shadow_comparison",
+        "title": "Frozen managed-vector shadow comparison",
+        "path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "comparison_completed": ["comparison_completed"],
+            "network_request": ["managed_network_request_performed"],
+            "joint_improvement": ["quality_governance_joint_improvement_proven"],
+            "decision": ["candidate_decision"],
+        },
+    },
+    {
+        "id": "data_platform_reliability",
+        "title": "Non-patient data-platform reliability drills",
+        "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "passed": ["passed"],
+            "failed": ["failed"],
+            "managed_delete": ["delete_propagation", "managed_index_delete_completed"],
+            "azure_restore": ["recovery", "azure_restore_drill_completed"],
         },
     },
 ]

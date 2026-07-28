@@ -2084,14 +2084,83 @@ artifacts:
   - path: Data/evals/ops/latest_cloud_infrastructure_readiness.json
     required: false
     max_age_days: 30
-    accepted_status: [reference_architecture_only, needs_attention]
+    accepted_status: [compiled_reference_architecture, needs_attention]
     metric_thresholds:
       - {path: [clinical_validation], op: "==", value: false}
       - {path: [healthcare_production_ready], op: "==", value: false}
       - {path: [cloud_deployment_completed], op: "==", value: false}
       - {path: [patient_data_allowed], op: "==", value: false}
+      - {path: [bicep_compile_completed], op: "==", value: true}
+      - {path: [what_if_completed], op: "==", value: false}
       - {path: [failed], op: "==", value: 0}
     note: >
-      Static Azure Bicep reference foundation only. Azure CLI/Bicep compile,
-      what-if, deployment, private networking, workload identities, backup
-      recovery, and cloud load/cost evidence remain incomplete.
+      Compile-checked Azure Bicep reference foundation with opt-in private
+      networking, workload identity/RBAC, budgets/alerts, and retention
+      contracts. No authenticated what-if, deployment, restore, load, or cost
+      evidence exists.
+
+  - path: Data/evals/rag/latest_azure_search_index_readiness.json
+    required: false
+    max_age_days: 30
+    accepted_status: [ready_for_opt_in_provisioning, applied_shadow_index, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [patient_data_allowed], op: "==", value: false}
+      - {path: [validation, valid], op: "==", value: true}
+      - {path: [promotion_boundary, live_patient_route_changed], op: "==", value: false}
+      - {path: [promotion_boundary, retrieval_improvement_proven], op: "==", value: false}
+    note: >
+      Azure AI Search schema validation and opt-in idempotent provisioning.
+      A provisioned shadow index still does not prove retrieval improvement or
+      change the canonical local patient route.
+
+  - path: Data/evals/rag/latest_managed_vector_shadow_sync.json
+    required: false
+    max_age_days: 30
+    accepted_status: [ready_for_opt_in_shadow_sync, shadow_sync_completed, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [patient_data_allowed], op: "==", value: false}
+      - {path: [live_patient_route_changed], op: "==", value: false}
+      - {path: [validation_passed], op: "==", value: true}
+      - {path: [retrieval_improvement_proven], op: "==", value: false}
+      - {path: [promotion_allowed], op: "==", value: false}
+    note: >
+      Validated, batch-planned sync of governed non-patient gold records.
+      Readiness performs no network request; a completed sync still does not
+      prove retrieval quality or authorize live-route promotion.
+
+  - path: Data/evals/rag/latest_managed_vector_shadow_comparison.json
+    required: false
+    max_age_days: 30
+    accepted_status: [ready_for_managed_shadow_run, acceptable_shadow_comparison, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [patient_data_allowed], op: "==", value: false}
+      - {path: [live_patient_route_changed], op: "==", value: false}
+      - {path: [operational_evidence, local_fallback_remains_canonical], op: "==", value: true}
+    note: >
+      Frozen internal local-versus-Azure shadow comparison. Readiness is not a
+      completed benchmark; even a completed run remains internal engineering
+      evidence and must include latency, cost, freshness, deletion, and
+      recovery before any promotion.
+
+  - path: Data/evals/ops/latest_data_platform_reliability_eval.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong_offline_drill, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [patient_data_processed], op: "==", value: false}
+      - {path: [external_cloud_write_performed], op: "==", value: false}
+      - {path: [failed], op: "==", value: 0}
+      - {path: [delete_propagation, managed_index_delete_completed], op: "==", value: false}
+      - {path: [recovery, azure_restore_drill_completed], op: "==", value: false}
+    note: >
+      Offline reliability drills for curated non-patient records. Local
+      idempotency, quarantine, migration, backfill, tombstones, and fallback
+      do not prove managed-cloud deletion or restoration.

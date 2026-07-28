@@ -4,9 +4,20 @@ param prefix = 'nlcare'
 param environment = 'dev'
 param location = 'southeastasia'
 param allowPublicNetworkAccess = false
+param deployComputeEnvironment = false
+param deployApplication = false
+param backendContainerImage = ''
+param databaseUrlSecretUri = ''
+param deployPrivateNetworking = false
 param deployManagedSearch = false
 param deployMessaging = false
 param deployPostgres = false
+param deployOperationalAlerts = false
+param deployCostControls = false
+param monthlyBudgetAmount = 50
+param operationsContactEmail = ''
+param postgresBackupRetentionDays = 14
+param postgresGeoRedundantBackup = false
 
 // Supply postgresAdminPassword through a secure CI secret only when
 // deployPostgres=true. Do not commit credentials to this file.

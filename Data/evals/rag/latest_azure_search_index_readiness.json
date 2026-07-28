@@ -1,0 +1,35 @@
+{
+  "schema_version": "nlcare_azure_search_index_readiness_v1",
+  "generated_at": "2026-07-28T06:02:19.996734+00:00",
+  "status": "ready_for_opt_in_provisioning",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "patient_data_allowed": false,
+  "data_scope": "curated_non_patient_kb",
+  "schema_path": "config/vector_indexes/azure_ai_search_nlcare_kb.json",
+  "schema_sha256": "7b9ab5b70898b4290db6e53909d5ef2b86a7a63bc45ece8362097b71dbe11d2f",
+  "index_schema_name": "nlcare-kb-shadow-v1",
+  "embedding_dimension": 384,
+  "validation": {
+    "valid": true,
+    "issues": [],
+    "field_count": 20,
+    "embedding_dimension": 384,
+    "required_filter_fields_present": true,
+    "required_filter_fields_filterable": true,
+    "vector_profile_declared": true
+  },
+  "configured": false,
+  "network_allowed": false,
+  "network_request_performed": false,
+  "index_apply_completed": false,
+  "idempotent_method": "PUT create-or-update",
+  "apply_result_summary": null,
+  "promotion_boundary": {
+    "live_patient_route_changed": false,
+    "shadow_only": true,
+    "retrieval_improvement_proven": false,
+    "requires_frozen_comparison": true
+  },
+  "claim_boundary": "This validates or provisions an engineering-only Azure AI Search shadow index for curated non-patient knowledge. It does not prove retrieval improvement, clinical validity, patient benefit, security certification, or production healthcare readiness."
+}

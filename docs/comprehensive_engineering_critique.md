@@ -15,9 +15,9 @@ Scores measure implementation quality, evidence quality, and honest governance u
 | Automation | 8.5/10 | 9.0/10 | Durable jobs, stable retry event IDs, signed receipts, and eight fault-injection scenarios are credible; no real channel, operator rota, or emergency coverage is proven. |
 | Fine-tuning | 7.2/10 | 8.0/10 | A license-reviewed 135M candidate and immutable revisions are pinned, but the local PEFT runtime times out and no adapter or paired generations exist. |
 | Deployment | 6.7/10 | 8.0/10 | RS256 bearer validation and S256 PKCE primitives exist, but no live provider, transaction store, token exchange, logout, or healthy Docker recovery run has been demonstrated. |
-| Data engineering | 7.6/10 | 8.5/10 | Contracts, incremental bronze/silver/gold materialization, quarantine, fingerprints, and lineage exist for non-patient KB assets; there is no orchestrated cloud run, schema-evolution drill, or real-data quality evidence. |
-| Vector database engineering | 7.3/10 | 8.5/10 | Local, Azure AI Search, and Pinecone share a guarded adapter contract, but managed paths are network-disabled scaffolds with no frozen parity, load, cost, or failure comparison. |
-| Cloud infrastructure | 6.4/10 | 8.0/10 | Cost-gated Bicep and static security checks exist, but the template is uncompiled and undeployed and lacks private endpoints, workload role assignments, app revisions, budgets, and recovery proof. |
+| Data engineering | 8.2/10 | 8.7/10 | Contracts, incremental bronze/silver/gold materialization, quarantine, fingerprints, lineage, idempotent replay, schema migration, tombstone, backfill, and fallback drills now exist for non-patient assets. There is still no orchestrated cloud run or real-data quality evidence. |
+| Vector database engineering | 7.9/10 | 8.7/10 | Local, Azure AI Search, and Pinecone share a guarded adapter contract; Azure Search now has a validated governance-aware schema and frozen shadow runner. Managed parity, load, cost, deletion, and outage evidence remain unmeasured because no managed index is provisioned. |
+| Cloud infrastructure | 7.6/10 | 8.5/10 | The default-off Azure Bicep reference now compiles and declares private networking, workload identity/RBAC, an internal Container App revision, Key Vault references, budgets, alerts, storage recovery controls, and optional private data services. It remains undeployed: no authenticated what-if, private-connectivity proof, restore drill, cloud load, or cost evidence exists. |
 | Real clinical readiness | 1.5/10 | 2.0/10 under current constraints | Engineering controls cannot substitute for real data, clinical review, IRB, or prospective evaluation. |
 
 ## Executive verdict
@@ -117,52 +117,57 @@ gold vector records, quarantine, change detection, fingerprints, and explicit
 lineage. An unchanged second run reuses materializations instead of rewriting
 them.
 
-Weak: this is a small-file local JSON/JSONL pipeline, not a demonstrated data
-platform. There is no scheduler, cloud object-store execution, event backfill,
-schema-evolution migration, partition strategy, freshness SLO history, or real
-patient-data governance. The structural banned-key check is not a PHI detector
-or compliance control.
+The local reliability eval now exercises idempotent replay, malformed-row
+quarantine, a governance schema migration, tombstone propagation,
+deterministic backfill batches, and fail-closed managed-adapter fallback.
 
-Best next internal work: run repeatable backfill and schema-evolution drills;
-add row-count, null, uniqueness, freshness, and contract-drift tests to each
-layer; then execute the same non-patient pipeline against a disposable ADLS
-development account with immutable manifests and cost telemetry.
+Weak: this is still a small-file local JSON/JSONL pipeline, not a demonstrated
+cloud data platform. There is no scheduler, cloud object-store execution,
+partition-scale benchmark, freshness SLO history, or real patient-data
+governance. The structural banned-key check is not a PHI detector or compliance
+control.
+
+Best next internal work: execute the same non-patient pipeline against a
+disposable ADLS development account with immutable manifests, event replay,
+cost telemetry, and a measured recovery drill.
 
 ### Vector database engineering
 
-Strong: a provider-neutral contract now enforces approved namespaces,
-source-tier and allowed-use metadata, KB fingerprints, patient-facing policy,
-network-default-off behavior, and banned identity metadata across local,
-Azure AI Search, and Pinecone request builders.
+Strong: a provider-neutral contract enforces approved namespaces, source-tier
+and allowed-use metadata, KB fingerprints, patient-facing policy,
+network-default-off behavior, and banned identity metadata. Azure AI Search now
+has a validated 384-dimensional governance-aware index schema, dry-run
+provisioner, and a frozen 74-case shadow comparison runner that uses the same
+scoring contract as the local baselines.
 
-Weak: request construction is not retrieval parity. Azure AI Search and
-Pinecone have not been provisioned, populated, queried, load-tested, or compared
-against local FAISS/BM25. Eventual consistency, filter semantics, index-schema
-migrations, dimensional mismatch, partial upserts, deletes, and rollback have
-not been exercised.
+Weak: readiness is not retrieval parity. Azure AI Search has not been
+provisioned, populated, queried, or load-tested; the shadow artifact is
+correctly incomplete. Eventual consistency, real filter semantics,
+index-schema migrations, partial upserts, managed deletes, cost, and rollback
+remain unmeasured.
 
-Best next internal work: choose one managed shadow candidate, load only frozen
-non-patient gold records, and compare Recall@k, MRR, nDCG, source-policy
-correctness, unsupported context, p50/p95, cost, index freshness, delete
-propagation, and failure recovery. Do not operate Azure AI Search and Pinecone
-simultaneously without a measured reason.
+Best next internal work: run the prepared Azure Search shadow protocol on a
+disposable private, non-patient index and compare Recall@k, MRR, nDCG,
+source-policy correctness, unsupported context, p50/p95, cost, index freshness,
+delete propagation, and outage fallback. Keep local retrieval canonical unless
+all promotion dimensions jointly pass.
 
 ### Cloud infrastructure
 
-Strong: the Azure reference template separates core observability/storage from
-optional cost-bearing Search, Service Bus, and PostgreSQL resources. Public
-network access is disabled for optional data services, and the readiness
-artifact keeps deployment and healthcare readiness false.
+Strong: the default-off Azure template compiles with pinned Bicep tooling and
+declares an internal Container App revision, workload identity and scoped RBAC,
+Key Vault secret references, private endpoints and DNS, ADLS recovery controls,
+optional private Search/Service Bus/PostgreSQL, budget notifications, and an
+operations alert. CI verifies the template without requiring cloud credentials.
 
-Weak: static Bicep text checks are weak evidence. No compile, `what-if`,
-deployment, managed-identity role binding, Key Vault secret reference, private
-DNS, budget alert, backup restore, zone-failure exercise, or teardown-cost check
-has run.
+Weak: compilation is not deployment proof. No authenticated `what-if`,
+deployment, private-connectivity exercise, PostgreSQL restore, Azure Monitor
+Private Link path, zone-failure exercise, or teardown-cost check has run.
 
-Best next internal work: compile and lint Bicep in CI; use `what-if` against a
-disposable development subscription; deploy a non-patient minimal profile;
-verify identity, private connectivity, logs, budgets, backup/restore, and
-idempotent teardown; preserve a no-deploy default.
+Best next internal work: use `what-if` against a disposable development
+subscription, deploy the non-patient minimal profile, verify identity, private
+connectivity, logs, budgets, backup/restore, and idempotent teardown, then
+destroy it. Preserve the no-deploy default.
 
 ## Implemented in this hardening pass
 
@@ -219,13 +224,14 @@ idempotent teardown; preserve a no-deploy default.
 6. Execute the existing Docker Postgres/Redis migration, backup, restore, and Redis-persistence smoke on a healthy daemon.
 7. Exercise the signed webhook contract against a disposable local n8n instance while retaining synthetic recipients and disabled real delivery.
 8. Keep the 20-check primary surface stable and archive superseded diagnostics from headline documentation.
-9. Install Azure CLI/Bicep and add compile/lint plus `what-if` evidence without
-   deploying patient-facing infrastructure.
-10. Run one non-patient managed-vector shadow comparison; retain local retrieval
-    unless quality, governance, latency, reliability, and cost jointly justify
-    promotion.
-11. Add schema-evolution, delete-propagation, backfill, and partial-failure
-    drills for the data and vector pipelines.
+9. Authenticate Azure CLI only against a disposable development subscription
+   and capture `what-if` evidence; Bicep compilation is already pinned in CI.
+10. Provision one private non-patient Azure AI Search shadow index and run the
+    prepared frozen comparison; retain local retrieval unless quality,
+    governance, latency, reliability, and cost jointly justify promotion.
+11. Execute the existing schema-evolution, delete-propagation, backfill,
+    quarantine, and fallback drills against disposable ADLS/Search resources;
+    the offline drills already pass.
 
 ### P2: external work that cannot be implemented honestly inside this pass
 

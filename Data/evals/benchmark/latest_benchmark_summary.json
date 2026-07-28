@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "62e9c71be621255682c5b132bd1ddd5c2a6968c0",
+    "git_commit": "be4cdc47aad0454e821d181b267273dcca0824bf",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -12,19 +12,19 @@
       "safety_cases": "5832:1778734598:c6c93e3f07f9",
       "synthetic_realism_candidate": "378534:1778813480:a29f2214fadd"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2750051:1784272258:8bb4c5e82263",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2344146:1785216471:770507376ae9",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-07-28T04:29:52.105281+00:00"
+    "generated_at": "2026-07-28T05:50:34.120400+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-07-28T04:29:52.105281+00:00",
+    "generated_at": "2026-07-28T05:50:34.120400+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-07-29T04:29:52.105281+00:00",
+    "expires_at": "2026-07-29T05:50:34.120400+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-07-28T04:29:53.556457+00:00",
+  "generated_at": "2026-07-28T05:50:34.805558+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -2019,7 +2019,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T04:15:49.198948+00:00",
+      "generated_at": "2026-07-28T05:35:06.631940+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -2036,7 +2036,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T04:15:48.294920+00:00",
+      "generated_at": "2026-07-28T05:35:05.618469+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -2053,7 +2053,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T04:15:49.301930+00:00",
+      "generated_at": "2026-07-28T05:35:06.745118+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2750,7 +2750,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T04:28:22.893076+00:00",
+      "generated_at": "2026-07-28T05:38:38.524531+00:00",
       "source_path": "Data/lakehouse/manifests/latest_pipeline_run.json",
       "metrics": {
         "status": "strong",
@@ -2771,7 +2771,7 @@
       "status": "strong_contract_only",
       "source_status": "strong_contract_only",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T04:28:23.638958+00:00",
+      "generated_at": "2026-07-28T05:38:41.282485+00:00",
       "source_path": "Data/evals/rag/latest_vector_store_contract_eval.json",
       "metrics": {
         "status": "strong_contract_only",
@@ -2785,22 +2785,99 @@
     },
     {
       "id": "azure_reference_infrastructure",
-      "title": "Azure reference-infrastructure readiness",
+      "title": "Compiled Azure reference-infrastructure readiness",
       "tier": "supporting",
-      "status": "reference_architecture_only",
-      "source_status": "reference_architecture_only",
+      "status": "compiled_reference_architecture",
+      "source_status": "compiled_reference_architecture",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T04:29:37.269001+00:00",
+      "generated_at": "2026-07-28T05:50:06.603137+00:00",
       "source_path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
       "metrics": {
-        "status": "reference_architecture_only",
-        "checks_passed": 13,
+        "status": "compiled_reference_architecture",
+        "checks_passed": 26,
         "checks_failed": 0,
         "cloud_deployed": false,
-        "bicep_compiled": false
+        "bicep_compiled": true
       },
       "limitations": [],
-      "claim_boundary": "This artifact validates a local Azure reference template only. It is not evidence of a successful cloud deployment, security certification, HIPAA compliance, clinical validation, or production healthcare readiness."
+      "claim_boundary": "This artifact compiles and inspects a local Azure reference template only. It is not evidence of a successful cloud deployment, security certification, HIPAA compliance, clinical validation, or production healthcare readiness."
+    },
+    {
+      "id": "azure_search_index_readiness",
+      "title": "Azure AI Search shadow-index readiness",
+      "tier": "supporting",
+      "status": "ready_for_opt_in_provisioning",
+      "source_status": "ready_for_opt_in_provisioning",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T05:38:45.486292+00:00",
+      "source_path": "Data/evals/rag/latest_azure_search_index_readiness.json",
+      "metrics": {
+        "status": "ready_for_opt_in_provisioning",
+        "schema_valid": true,
+        "field_count": 20,
+        "index_applied": false,
+        "network_request": false
+      },
+      "limitations": [],
+      "claim_boundary": "This validates or provisions an engineering-only Azure AI Search shadow index for curated non-patient knowledge. It does not prove retrieval improvement, clinical validity, patient benefit, security certification, or production healthcare readiness."
+    },
+    {
+      "id": "managed_vector_shadow_sync",
+      "title": "Governed managed-vector shadow sync",
+      "tier": "supporting",
+      "status": "ready_for_opt_in_shadow_sync",
+      "source_status": "ready_for_opt_in_shadow_sync",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T05:50:14.493087+00:00",
+      "source_path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
+      "metrics": {
+        "status": "ready_for_opt_in_shadow_sync",
+        "record_count": 240,
+        "validation_passed": true,
+        "sync_completed": false,
+        "indexed_count": 0,
+        "failed_count": 0
+      },
+      "limitations": [],
+      "claim_boundary": "This validates or synchronizes curated non-patient engineering records to an isolated shadow index. It does not change the live route or prove retrieval improvement, clinical validation, patient benefit, security certification, or production healthcare readiness."
+    },
+    {
+      "id": "managed_vector_shadow_comparison",
+      "title": "Frozen managed-vector shadow comparison",
+      "tier": "supporting",
+      "status": "ready_for_managed_shadow_run",
+      "source_status": "ready_for_managed_shadow_run",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T05:38:53.663516+00:00",
+      "source_path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
+      "metrics": {
+        "status": "ready_for_managed_shadow_run",
+        "comparison_completed": false,
+        "network_request": false,
+        "joint_improvement": false,
+        "decision": "HOLD"
+      },
+      "limitations": [],
+      "claim_boundary": "This is a frozen internal engineering shadow comparison. It is not external validation, clinical validation, a real-world safety guarantee, or evidence of production healthcare readiness. The local FAISS/BM25 route remains canonical unless joint quality, governance, latency, cost, deletion, freshness, and recovery evidence is complete."
+    },
+    {
+      "id": "data_platform_reliability",
+      "title": "Non-patient data-platform reliability drills",
+      "tier": "supporting",
+      "status": "strong_offline_drill",
+      "source_status": "strong_offline_drill",
+      "freshness": "fresh",
+      "generated_at": "2026-07-28T05:38:43.709256+00:00",
+      "source_path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
+      "metrics": {
+        "status": "strong_offline_drill",
+        "passed": 6,
+        "failed": 0,
+        "managed_delete": false,
+        "azure_restore": false
+      },
+      "limitations": [],
+      "claim_boundary": "These are deterministic offline drills over curated non-patient fixtures and local data products. They do not prove managed-cloud durability, backup restoration, patient-data safety, clinical validation, or production healthcare readiness."
     }
   ],
   "issues": [

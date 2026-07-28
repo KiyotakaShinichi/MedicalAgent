@@ -43,7 +43,9 @@ The local FAISS/BM25 path remains canonical. Azure AI Search and Pinecone are
 optional, network-disabled shadow adapters until frozen comparisons justify a
 promotion. The local bronze/silver/gold pipeline processes curated non-patient
 knowledge assets only and emits contracts, quarantine records, fingerprints,
-and lineage. Azure Bicep is reference infrastructure that has not been
-compiled, deployed, or validated in a live subscription.
+and lineage. Azure Bicep now compiles locally and includes opt-in private
+networking, workload identity/RBAC, cost alerts, and recovery-retention
+contracts. It has not been run through an authenticated subscription
+`what-if`, deployed, restore-tested, or load-tested.
 
 See [cloud, data, and vector architecture](cloud_data_vector_architecture.md).

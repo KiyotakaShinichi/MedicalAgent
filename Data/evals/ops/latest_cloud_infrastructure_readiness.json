@@ -1,26 +1,38 @@
 {
-  "schema_version": "nlcare_cloud_infrastructure_readiness_v1",
-  "generated_at": "2026-07-28T04:29:37.269001+00:00",
-  "status": "reference_architecture_only",
+  "schema_version": "nlcare_cloud_infrastructure_readiness_v2",
+  "generated_at": "2026-07-28T06:02:58.982714+00:00",
+  "status": "compiled_reference_architecture",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "cloud_deployment_completed": false,
   "patient_data_allowed": false,
   "provider": "azure_reference_profile",
+  "deployment_environment": "disposable_non_patient_dev_only",
   "template_path": "infra/azure/main.bicep",
   "template_exists": true,
-  "bicep_cli_available": false,
+  "bicep_cli_available": true,
+  "bicep_cli_path": "tools/bin/bicep.exe",
   "azure_cli_available": false,
-  "bicep_compile_completed": false,
+  "azure_authenticated": false,
+  "azure_subscription_id_present": false,
+  "bicep_compile_completed": true,
+  "bicep_compile_exit_code": 0,
+  "bicep_compile_diagnostics": [],
   "what_if_completed": false,
-  "n_checks": 13,
-  "passed": 13,
+  "what_if_blocker": "azure_cli_unavailable",
+  "n_checks": 26,
+  "passed": 26,
   "failed": 0,
   "checks": [
     {
       "check_id": "resource_container_apps_environment",
       "passed": true,
       "description": "Reference foundation declares container apps environment."
+    },
+    {
+      "check_id": "resource_container_app_revision",
+      "passed": true,
+      "description": "Reference foundation declares container app revision."
     },
     {
       "check_id": "resource_adls_gen2",
@@ -53,9 +65,39 @@
       "description": "Reference foundation declares log analytics."
     },
     {
-      "check_id": "managed_services_default_off",
+      "check_id": "resource_workload_identity",
       "passed": true,
-      "description": "Cost-bearing managed services remain opt-in."
+      "description": "Reference foundation declares workload identity."
+    },
+    {
+      "check_id": "resource_private_endpoints",
+      "passed": true,
+      "description": "Reference foundation declares private endpoints."
+    },
+    {
+      "check_id": "resource_private_dns",
+      "passed": true,
+      "description": "Reference foundation declares private dns."
+    },
+    {
+      "check_id": "resource_role_assignments",
+      "passed": true,
+      "description": "Reference foundation declares role assignments."
+    },
+    {
+      "check_id": "resource_action_groups",
+      "passed": true,
+      "description": "Reference foundation declares action groups."
+    },
+    {
+      "check_id": "resource_cost_budget",
+      "passed": true,
+      "description": "Reference foundation declares cost budget."
+    },
+    {
+      "check_id": "cost_bearing_services_default_off",
+      "passed": true,
+      "description": "Cost-bearing and network resources remain opt-in."
     },
     {
       "check_id": "public_network_default_off",
@@ -63,14 +105,39 @@
       "description": "Public network access is disabled by default."
     },
     {
-      "check_id": "storage_security_baseline",
+      "check_id": "container_app_identity_secret_reference",
       "passed": true,
-      "description": "ADLS Gen2 uses OAuth-first access and blocks public blobs/shared keys."
+      "description": "Optional internal app revision uses workload identity, Key Vault reference, and probes."
+    },
+    {
+      "check_id": "private_network_contract",
+      "passed": true,
+      "description": "Private endpoint, DNS, and delegated PostgreSQL network contracts are declared."
+    },
+    {
+      "check_id": "storage_security_and_recovery_baseline",
+      "passed": true,
+      "description": "ADLS Gen2 uses OAuth-first access, versioning, and soft-delete retention."
+    },
+    {
+      "check_id": "managed_identity_rbac",
+      "passed": true,
+      "description": "A user-assigned workload identity receives scoped data-plane roles."
     },
     {
       "check_id": "service_bus_idempotency",
       "passed": true,
       "description": "Engineering event queue enables duplicate detection and dead lettering."
+    },
+    {
+      "check_id": "cost_and_operational_alert_contract",
+      "passed": true,
+      "description": "Budget and operational alerts require an explicit engineering contact."
+    },
+    {
+      "check_id": "postgres_backup_contract",
+      "passed": true,
+      "description": "PostgreSQL declares retention, optional geo-backup, and storage autogrow."
     },
     {
       "check_id": "secrets_not_committed",
@@ -81,34 +148,44 @@
       "check_id": "anti_overclaim_outputs",
       "passed": true,
       "description": "Template outputs preserve the project claim boundary."
+    },
+    {
+      "check_id": "bicep_compiles",
+      "passed": true,
+      "description": "The checked-in template compiles with the available Bicep CLI."
     }
   ],
   "service_decisions": {
-    "azure_container_apps": "reference compute environment; application revisions not deployed",
-    "adls_gen2": "bronze/silver/gold/quarantine target for curated non-patient data products",
-    "azure_ai_search": "optional managed hybrid-search shadow candidate",
-    "service_bus": "optional engineering events; stable message IDs and idempotent consumers still required",
-    "postgres_flexible_server": "optional durable application database; private access and Entra auth remain future work",
-    "key_vault": "RBAC-oriented secret boundary; workload role assignments remain future work",
-    "log_analytics": "central log target; dashboards, alerts, sampling, and retention review remain future work",
-    "data_factory_or_databricks": "not justified at current data volume; local incremental pipeline is the default",
-    "azure_managed_redis": "not provisioned; current Redis boundary remains replaceable"
+    "azure_container_apps": "optional internal API revision with managed identity, Key Vault reference, and health probes",
+    "adls_gen2": "curated non-patient bronze/silver/gold/quarantine target with versioning and soft delete",
+    "azure_ai_search": "optional Entra/RBAC, private-endpoint hybrid-search shadow candidate",
+    "service_bus": "optional engineering events with duplicate detection and dead lettering",
+    "postgres_flexible_server": "optional private delegated-subnet database with 14-day default backup retention",
+    "key_vault": "RBAC secret boundary with private endpoint contract and purge protection",
+    "log_analytics": "central engineering logs; public ingestion/query disabled by default",
+    "managed_identity": "user-assigned workload identity with scoped storage, vault, search, and messaging roles",
+    "cost_management": "optional 80% actual and 100% forecast budget notifications",
+    "alerts": "optional failed control-plane operation alert to an engineering address",
+    "data_factory_or_databricks": "not justified at current volume; local incremental pipeline remains canonical",
+    "azure_managed_redis": "not provisioned; existing cache abstraction remains replaceable"
   },
   "known_blockers": [
-    "No Azure subscription deployment or what-if run has been completed.",
-    "Private endpoints, VNet integration, private DNS, WAF, and egress policy are not implemented.",
-    "Container application revisions and managed-identity RBAC assignments are not provisioned.",
-    "PostgreSQL Entra-only authentication, backup restore drill, and regional recovery are not proven.",
-    "Azure AI Search index creation and frozen shadow retrieval comparison are incomplete.",
+    "No authenticated Azure CLI or subscription what-if is available on this machine.",
+    "No Azure resource has been deployed and no cost-bearing service has been enabled.",
+    "Private connectivity has not been exercised from a deployed workload.",
+    "Container application and Key Vault references are defined but not deployed.",
+    "Private Log Analytics ingestion requires an Azure Monitor Private Link design before a private deployment.",
+    "PostgreSQL point-in-time restore and regional recovery remain unproven.",
+    "Azure AI Search index provisioning and frozen shadow retrieval comparison remain incomplete.",
     "No measured cloud load, reliability, security, or cost evidence exists."
   ],
   "official_references": [
     "https://learn.microsoft.com/azure/container-apps/managed-identity",
-    "https://learn.microsoft.com/azure/container-apps/manage-secrets",
-    "https://learn.microsoft.com/azure/search/search-get-started-vector",
-    "https://learn.microsoft.com/rest/api/searchservice/search-service-api-versions",
-    "https://learn.microsoft.com/azure/service-bus-messaging/service-bus-message-loss-and-duplicates",
-    "https://learn.microsoft.com/azure/architecture/data-guide/scenarios/data-lake"
+    "https://learn.microsoft.com/azure/search/search-security-rbac",
+    "https://learn.microsoft.com/azure/search/service-create-private-endpoint",
+    "https://learn.microsoft.com/azure/storage/common/storage-private-endpoints",
+    "https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-networking-private",
+    "https://learn.microsoft.com/azure/cost-management-billing/costs/quick-create-budget-bicep"
   ],
-  "claim_boundary": "This artifact validates a local Azure reference template only. It is not evidence of a successful cloud deployment, security certification, HIPAA compliance, clinical validation, or production healthcare readiness."
+  "claim_boundary": "This artifact compiles and inspects a local Azure reference template only. It is not evidence of a successful cloud deployment, security certification, HIPAA compliance, clinical validation, or production healthcare readiness."
 }

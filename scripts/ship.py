@@ -74,6 +74,10 @@ def main() -> int:
                 "tests/test_data_platform_pipeline.py",
                 "tests/test_cloud_infrastructure_readiness.py",
                 "tests/test_vector_store_contract_eval.py",
+                "tests/test_azure_search_index_admin.py",
+                "tests/test_managed_vector_shadow_sync.py",
+                "tests/test_managed_vector_shadow_comparison.py",
+                "tests/test_data_platform_reliability_eval.py",
                 "-q",
             ],
         ),
@@ -114,7 +118,23 @@ def main() -> int:
             command=[sys.executable, "scripts/run_vector_store_contract_eval.py"],
         ),
         Step(
-            name="Azure reference-infrastructure readiness",
+            name="Data-platform reliability drills",
+            command=[sys.executable, "scripts/run_data_platform_reliability_eval.py"],
+        ),
+        Step(
+            name="Azure AI Search index readiness",
+            command=[sys.executable, "scripts/run_azure_search_index_readiness.py"],
+        ),
+        Step(
+            name="Managed-vector shadow sync readiness",
+            command=[sys.executable, "scripts/run_managed_vector_shadow_sync.py"],
+        ),
+        Step(
+            name="Managed-vector frozen shadow comparison readiness",
+            command=[sys.executable, "scripts/run_managed_vector_shadow_comparison.py"],
+        ),
+        Step(
+            name="Azure compiled reference-infrastructure readiness",
             command=[sys.executable, "scripts/run_cloud_infrastructure_readiness.py"],
         ),
         Step(

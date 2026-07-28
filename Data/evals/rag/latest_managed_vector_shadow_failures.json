@@ -1,0 +1,10 @@
+{
+  "schema_version": "nlcare_managed_vector_shadow_failures_v1",
+  "generated_at": "2026-07-28T06:02:36.564597+00:00",
+  "status": "not_run",
+  "clinical_validation": false,
+  "comparison_completed": false,
+  "failure_count": 0,
+  "failures": [],
+  "claim_boundary": "This is a frozen internal engineering shadow comparison. It is not external validation, clinical validation, a real-world safety guarantee, or evidence of production healthcare readiness. The local FAISS/BM25 route remains canonical unless joint quality, governance, latency, cost, deletion, freshness, and recovery evidence is complete."
+}

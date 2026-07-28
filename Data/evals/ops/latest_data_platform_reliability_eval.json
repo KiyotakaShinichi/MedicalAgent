@@ -1,0 +1,62 @@
+{
+  "schema_version": "nlcare_data_platform_reliability_eval_v1",
+  "generated_at": "2026-07-28T06:02:18.416002+00:00",
+  "status": "strong_offline_drill",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "patient_data_processed": false,
+  "external_cloud_write_performed": false,
+  "gold_record_count": 240,
+  "n_cases": 6,
+  "passed": 6,
+  "failed": 0,
+  "cases": [
+    {
+      "case_id": "idempotent_replay",
+      "passed": true,
+      "description": "Repeated materialization yields byte-stable logical rows."
+    },
+    {
+      "case_id": "partial_failure_quarantine",
+      "passed": true,
+      "description": "One malformed row is quarantined without suppressing the valid row."
+    },
+    {
+      "case_id": "schema_evolution_v0_to_v1",
+      "passed": true,
+      "description": "Legacy non-patient records receive explicit v1 governance defaults."
+    },
+    {
+      "case_id": "local_delete_propagation",
+      "passed": true,
+      "description": "A local tombstone removes the target record deterministically."
+    },
+    {
+      "case_id": "deterministic_backfill_batches",
+      "passed": true,
+      "description": "Backfill partitions are stable regardless of input ordering."
+    },
+    {
+      "case_id": "managed_failure_local_fallback",
+      "passed": true,
+      "description": "A disabled managed adapter fails closed while the local contract remains queryable."
+    }
+  ],
+  "backfill": {
+    "batch_size": 50,
+    "batch_count": 5,
+    "deterministic": true,
+    "managed_upsert_performed": false
+  },
+  "delete_propagation": {
+    "local_tombstone_drill_completed": true,
+    "managed_index_delete_completed": false,
+    "cloud_object_delete_completed": false
+  },
+  "recovery": {
+    "local_fallback_drill_completed": true,
+    "azure_restore_drill_completed": false,
+    "postgres_point_in_time_restore_completed": false
+  },
+  "claim_boundary": "These are deterministic offline drills over curated non-patient fixtures and local data products. They do not prove managed-cloud durability, backup restoration, patient-data safety, clinical validation, or production healthcare readiness."
+}
