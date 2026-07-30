@@ -1,6 +1,6 @@
 {
   "schema_version": "xai_fidelity_audit_v3",
-  "generated_at": "2026-07-30T02:05:00.620864+00:00",
+  "generated_at": "2026-07-30T03:56:27.712600+00:00",
   "status": "acceptable",
   "method": "shap_linear_explainer_logistic_regression",
   "shap_available": true,

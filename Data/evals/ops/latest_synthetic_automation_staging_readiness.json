@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_automation_staging_readiness_v1",
-  "generated_at": "2026-07-30T02:09:45.829421+00:00",
+  "generated_at": "2026-07-30T03:59:34.894831+00:00",
   "status": "ready_for_synthetic_runtime",
   "checks": [
     {

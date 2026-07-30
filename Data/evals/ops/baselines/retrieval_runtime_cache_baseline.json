@@ -1,0 +1,22 @@
+{
+  "schema_version": "retrieval_runtime_cache_baseline_v1",
+  "captured_from_git_revision": "ac5dd1ec3ecadd488bd2a45c691c441b440ca9bf",
+  "captured_from_blob": "HEAD:Data/evals/models/latest_agent_latency_probe.json",
+  "source_generated_at": "2026-07-30T02:07:49.413016+00:00",
+  "route": "normal_rag",
+  "sample_count": 30,
+  "retrieval_p50_ms": 1215.88,
+  "retrieval_p95_ms": 1806.32,
+  "total_p50_ms": 1405.04,
+  "total_p95_ms": 2082.15,
+  "workload": {
+    "database": "in_memory_sqlite",
+    "agent_mode": "fast",
+    "retrieval_mode": "forced_sparse",
+    "query_pattern": "repeated educational query with synthetic latency suffixes",
+    "environment": "local_windows"
+  },
+  "clinical_validation": false,
+  "production_ready": false,
+  "claim_boundary": "This fixed baseline is local regression evidence only. It is not a production SLO, cloud benchmark, clinical validation result, or patient-benefit claim."
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_promotion_decision_v3",
-  "generated_at": "2026-07-30T02:09:47.216630+00:00",
+  "generated_at": "2026-07-30T03:59:37.289541+00:00",
   "clinical_validation": false,
   "promotion_scope": "offline_shadow_only",
   "patient_facing_promotion_allowed": false,

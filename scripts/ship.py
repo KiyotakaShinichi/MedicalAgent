@@ -172,6 +172,12 @@ def main() -> int:
                 "tests/test_patient_xai_envelope.py",
                 "tests/test_evidence_maturity_matrix.py",
                 "tests/test_credibility_gap_registry.py",
+                "tests/test_rag_vector_runtime_cache.py",
+                "tests/test_retrieval_runtime_cache_eval.py",
+                "tests/test_provider_usage_reconciliation.py",
+                "tests/test_finetune_contamination_adjudication.py",
+                "tests/test_synthetic_model_perturbation_retrain_eval.py",
+                "tests/test_synthetic_staging_resilience_dossier.py",
                 "-q",
             ],
         ),
@@ -318,6 +324,14 @@ def main() -> int:
             command=[sys.executable, "scripts/run_cost_latency_report.py"],
         ),
         Step(
+            name="Retrieval runtime-cache regression evidence",
+            command=[sys.executable, "scripts/run_retrieval_runtime_cache_eval.py"],
+        ),
+        Step(
+            name="Provider-token reconciliation",
+            command=[sys.executable, "scripts/run_provider_usage_reconciliation.py"],
+        ),
+        Step(
             name="Paired RAG statistical comparison",
             command=[sys.executable, "scripts/run_rag_paired_statistical_comparison.py"],
         ),
@@ -336,6 +350,28 @@ def main() -> int:
         Step(
             name="Fine-tune semantic contamination screen",
             command=[sys.executable, "scripts/run_finetune_semantic_contamination.py"],
+        ),
+        Step(
+            name="Fine-tune contamination adjudication readiness",
+            command=[
+                sys.executable,
+                "scripts/run_finetune_contamination_adjudication.py",
+            ],
+        ),
+        Step(
+            name="Synthetic ML perturbation and retraining stress",
+            command=[
+                sys.executable,
+                "scripts/run_synthetic_model_perturbation_retrain_eval.py",
+            ],
+            timeout_seconds=900,
+        ),
+        Step(
+            name="Synthetic staging resilience dossier",
+            command=[
+                sys.executable,
+                "scripts/run_synthetic_staging_resilience_dossier.py",
+            ],
         ),
         Step(
             name="Fine-tune hardening assurance",

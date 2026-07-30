@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_cross_domain_assurance_eval_v1",
-  "generated_at": "2026-07-30T02:11:10.681062+00:00",
+  "generated_at": "2026-07-30T04:03:16.293848+00:00",
   "status": "strong_internal_assurance",
   "scenario_count": 10,
   "passed_count": 10,
@@ -108,7 +108,7 @@
       "passed": true,
       "evidence": {
         "passed": true,
-        "warning_count": 12,
+        "warning_count": 17,
         "rag_negative_visible": true,
         "frozen_adversarial_warning_visible": true,
         "synthetic_ml_boundary_visible": true

@@ -24,6 +24,7 @@ import importlib.util
 import json
 import os
 import re
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -53,6 +54,17 @@ except ImportError:
 # -- Constants -----------------------------------------------------------------
 _DENSE_ENCODER_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 _ENCODER_CACHE: dict = {}
+_INDEX_FILE_CACHE: dict[str, tuple[tuple[int, int], dict]] = {}
+_INDEX_CACHE_LOCK = threading.RLock()
+_CACHE_METRICS = {
+    "index_file_hits": 0,
+    "index_file_loads": 0,
+    "bm25_builds": 0,
+    "faiss_builds": 0,
+    "dense_query_hits": 0,
+    "tfidf_query_hits": 0,
+}
+_QUERY_CACHE_LIMIT = 256
 
 DENSE_HYBRID_SCHEMA_VERSION = "local_dense_faiss_hybrid_index_v2"
 SPARSE_BM25_SCHEMA_VERSION = "local_sparse_tfidf_bm25_index_v2"
@@ -160,6 +172,7 @@ def build_rag_vector_index(corpus, index_path=DEFAULT_RAG_INDEX_PATH, knowledge_
     path = Path(index_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(payload, path)
+    _seed_index_file_cache(path, payload)
     return index_summary(payload, path)
 
 
@@ -265,6 +278,17 @@ def load_rag_vector_index(index_path=DEFAULT_RAG_INDEX_PATH):
     path = Path(index_path)
     if not path.exists():
         return None
+    cache_key = str(path.resolve())
+    try:
+        stat = path.stat()
+        signature = (stat.st_mtime_ns, stat.st_size)
+    except OSError:
+        return None
+    with _INDEX_CACHE_LOCK:
+        cached = _INDEX_FILE_CACHE.get(cache_key)
+        if cached and cached[0] == signature:
+            _CACHE_METRICS["index_file_hits"] += 1
+            return cached[1]
     try:
         payload = joblib.load(path)
     except Exception:
@@ -275,10 +299,47 @@ def load_rag_vector_index(index_path=DEFAULT_RAG_INDEX_PATH):
             path.unlink(missing_ok=True)
         except Exception:
             pass
+        with _INDEX_CACHE_LOCK:
+            _INDEX_FILE_CACHE.pop(cache_key, None)
         return None
     if not isinstance(payload, dict):
         return None
+    with _INDEX_CACHE_LOCK:
+        _INDEX_FILE_CACHE[cache_key] = (signature, payload)
+        _CACHE_METRICS["index_file_loads"] += 1
     return payload
+
+
+def clear_rag_runtime_cache() -> None:
+    """Clear disposable process-local retrieval objects.
+
+    The persisted index remains untouched. Tests, ingestion, and maintenance
+    jobs use this when they need to prove cold-start behavior.
+    """
+    with _INDEX_CACHE_LOCK:
+        _INDEX_FILE_CACHE.clear()
+        for key in _CACHE_METRICS:
+            _CACHE_METRICS[key] = 0
+
+
+def rag_runtime_cache_stats() -> dict[str, int]:
+    with _INDEX_CACHE_LOCK:
+        return {
+            **_CACHE_METRICS,
+            "cached_index_count": len(_INDEX_FILE_CACHE),
+        }
+
+
+def _seed_index_file_cache(path: Path, payload: dict) -> None:
+    try:
+        stat = path.stat()
+    except OSError:
+        return
+    with _INDEX_CACHE_LOCK:
+        _INDEX_FILE_CACHE[str(path.resolve())] = (
+            (stat.st_mtime_ns, stat.st_size),
+            payload,
+        )
 
 
 def rag_index_status(corpus=None, index_path=DEFAULT_RAG_INDEX_PATH, knowledge_fingerprint=None):
@@ -349,7 +410,12 @@ def _compute_bm25_scores(index, query_tokens):
     tokenized_corpus = index.get("bm25_tokenized_corpus")
     if not _BM25_AVAILABLE or not tokenized_corpus:
         return None
-    bm25 = _BM25Okapi(tokenized_corpus)
+    runtime = index.setdefault("_runtime_cache", {})
+    bm25 = runtime.get("bm25")
+    if bm25 is None:
+        bm25 = _BM25Okapi(tokenized_corpus)
+        runtime["bm25"] = bm25
+        _CACHE_METRICS["bm25_builds"] += 1
     return list(bm25.get_scores(query_tokens))
 
 
@@ -360,9 +426,17 @@ def _compute_tfidf_scores(index, query):
     if vectorizer is None or matrix is None:
         n = len(index.get("documents") or [])
         return [0.0] * n
+    runtime = index.setdefault("_runtime_cache", {})
+    query_cache = runtime.setdefault("tfidf_queries", {})
+    cache_key = str(query).strip().lower()
+    if cache_key in query_cache:
+        _CACHE_METRICS["tfidf_query_hits"] += 1
+        return query_cache[cache_key]
     query_vector = vectorizer.transform([query])
     scores = (matrix @ query_vector.T).toarray().ravel()
-    return [float(s) for s in scores]
+    values = [float(s) for s in scores]
+    _bounded_cache_put(query_cache, cache_key, values)
+    return values
 
 
 def _compute_dense_scores(index, query):
@@ -375,17 +449,28 @@ def _compute_dense_scores(index, query):
     if encoder is None:
         return None
 
-    q_raw = encoder.encode([query], show_progress_bar=False, convert_to_numpy=True)
-    norm = np.linalg.norm(q_raw)
-    q_emb = (q_raw / norm).astype("float32") if norm > 0 else q_raw.astype("float32")
+    runtime = index.setdefault("_runtime_cache", {})
+    query_cache = runtime.setdefault("dense_queries", {})
+    cache_key = str(query).strip().lower()
+    q_emb = query_cache.get(cache_key)
+    if q_emb is None:
+        q_raw = encoder.encode([query], show_progress_bar=False, convert_to_numpy=True)
+        norm = np.linalg.norm(q_raw)
+        q_emb = (q_raw / norm).astype("float32") if norm > 0 else q_raw.astype("float32")
+        _bounded_cache_put(query_cache, cache_key, q_emb)
+    else:
+        _CACHE_METRICS["dense_query_hits"] += 1
 
-    # Rebuild FAISS IndexFlatIP cheaply (microseconds for <200 docs)
-    d = doc_embeddings.shape[1]
     faiss_module = _get_faiss()
     if faiss_module is None:
         return None
-    faiss_idx = faiss_module.IndexFlatIP(d)
-    faiss_idx.add(doc_embeddings)
+    faiss_idx = runtime.get("faiss_index")
+    if faiss_idx is None:
+        d = doc_embeddings.shape[1]
+        faiss_idx = faiss_module.IndexFlatIP(d)
+        faiss_idx.add(doc_embeddings)
+        runtime["faiss_index"] = faiss_idx
+        _CACHE_METRICS["faiss_builds"] += 1
     n = doc_embeddings.shape[0]
     scores, indices = faiss_idx.search(q_emb, n)
 
@@ -394,6 +479,12 @@ def _compute_dense_scores(index, query):
     for rank_idx, (doc_idx, score) in enumerate(zip(indices[0], scores[0])):
         ordered[int(doc_idx)] = float(score)
     return ordered.tolist()
+
+
+def _bounded_cache_put(cache: dict, key: str, value) -> None:
+    cache[key] = value
+    if len(cache) > _QUERY_CACHE_LIMIT:
+        cache.pop(next(iter(cache)))
 
 
 # -- RRF -----------------------------------------------------------------------

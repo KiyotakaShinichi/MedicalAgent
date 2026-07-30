@@ -1,6 +1,6 @@
 {
   "schema_version": "service_health_snapshot_v2",
-  "generated_at": "2026-07-30T02:11:37.478745+00:00",
+  "generated_at": "2026-07-30T04:03:32.323270+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -11,7 +11,7 @@
   "metrics": {
     "live_rag_case_count": 21,
     "live_rag_latency_p50_ms": 3810.25,
-    "normal_rag_latency_p95_ms": 2254.9,
+    "normal_rag_latency_p95_ms": 224.86,
     "normal_rag_percentile_credible": true,
     "routes_with_insufficient_samples": 0,
     "retrieval_case_failure_rate": 0.0952,
@@ -33,7 +33,7 @@
     "deployment_profile_status": "development_profile",
     "release_decision": "PROCEED_WITH_WARNINGS",
     "release_gate_status": "needs_attention",
-    "stale_artifact_count": 133,
+    "stale_artifact_count": 123,
     "failed_benchmark_count": 0
   },
   "attention_items": [
@@ -46,10 +46,6 @@
   "stale_artifacts": [
     "safety_red_team",
     "adversarial",
-    "adversarial_safety_regression",
-    "adversarial_failure_analysis",
-    "adversarial_holdout_monitor",
-    "adversarial_generalization_eval",
     "adversarial_generalization_v2_eval",
     "heldout_adversarial_failure_analysis",
     "unsafe_intent_classifier_eval",
@@ -93,7 +89,11 @@
     "treatment_sequence_feature_eval",
     "data_promotion_roadmap",
     "tcga_metabric_canonical_mapping",
-    "strict_common_feature_ab_eval"
+    "strict_common_feature_ab_eval",
+    "toxicity_review_target_v2",
+    "toxicity_review_target_v3",
+    "ml_coverage_risk_diagnostics",
+    "automation_reliability_dossier"
   ],
   "failed_artifacts": [],
   "source_artifacts": {

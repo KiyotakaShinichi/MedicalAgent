@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_senior_engineering_evidence_v1",
-  "generated_at": "2026-07-30T02:11:18.470483+00:00",
+  "generated_at": "2026-07-30T04:03:21.944621+00:00",
   "status": "strong_internal_engineering_evidence",
   "evidence_maturity": "advanced_internal_candidate",
   "senior_title_awarded_by_artifact": false,
@@ -72,7 +72,7 @@
       "artifact": {
         "path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
         "exists": true,
-        "sha256": "cc27bd3d4a5bc282b5001c9b4a0dfaa5166fde077d71041f0c6759ef945ae511",
+        "sha256": "94f07fb8fd10c2a5dd74e61605a897126eedab0eff0236ea75aeec5d7246f7dd",
         "size_bytes": 8005
       },
       "artifact_status": "strong",
@@ -96,7 +96,7 @@
       "artifact": {
         "path": "Data/evals/governance/latest_cross_domain_assurance_eval.json",
         "exists": true,
-        "sha256": "606ceaaa7d8aac7a7ff42e1fbe5fd7065f2768a66b3303af0b8b4edbe93c83cc",
+        "sha256": "76ab0a92c5ec2e09119567c20e62115081df4e9b81f9a0d5ba4fc274d58a6d38",
         "size_bytes": 4051
       },
       "artifact_status": "strong_internal_assurance",
@@ -120,7 +120,7 @@
       "artifact": {
         "path": "Data/evals/ops/latest_automation_fault_injection.json",
         "exists": true,
-        "sha256": "e159ba420ce1ab524f9e141f3cd5409c1031f139d6511177eb5f0f59a14dbd8b",
+        "sha256": "cf349663184b951ef25e20bf0729680c4a9fa03d91bc4f097c62d186d81db351",
         "size_bytes": 3002
       },
       "artifact_status": "strong",
@@ -144,7 +144,7 @@
       "artifact": {
         "path": "Data/evals/rag/latest_rag_degradation_resilience.json",
         "exists": true,
-        "sha256": "7ef7653b9352de8d2f0aa6b009289095ddb01ea57901db4d79e5c24c5beef8a9",
+        "sha256": "8a226d1c0bda56b5a6910e3d6f77ea57f7fbaf42c15c61ba690d2f6ffb988c5d",
         "size_bytes": 1520
       },
       "artifact_status": "strong_offline_drill",
@@ -168,7 +168,7 @@
       "artifact": {
         "path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
         "exists": true,
-        "sha256": "8e9d086bb04c368211a27b147530f334c3557bf6110c705fd67e6e562f3718fd",
+        "sha256": "2c2abc93abdb3877b4225d690c59060402fec54c3348b63f46422d085d6267d2",
         "size_bytes": 11274
       },
       "artifact_status": "needs_attention",
@@ -192,7 +192,7 @@
       "artifact": {
         "path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
         "exists": true,
-        "sha256": "6bba8761525c5adf20ce16cb37bf2f917aa2723d96f38bf215e31058042a5bd8",
+        "sha256": "d25cc2610b0cd499f0b1d61d5905b7b9a42043f9c8446fc285dcf4cc1b4dd682",
         "size_bytes": 6545
       },
       "artifact_status": "strong",
@@ -216,7 +216,7 @@
       "artifact": {
         "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
         "exists": true,
-        "sha256": "1a1b1f07a38622ade4d6c382fe6c5424577a3f5499977c3465ab5c500d47eb53",
+        "sha256": "e48b4bde4fbaf4e1bcb671430c12aa82fc836840651c116eaa4d0b3b3a486534",
         "size_bytes": 2831
       },
       "artifact_status": "strong_offline_drill",
@@ -240,7 +240,7 @@
       "artifact": {
         "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
         "exists": true,
-        "sha256": "24c36471a1fdf3a14aef01874bb483037d189cb749f1ec9998a535cdd2050e5b",
+        "sha256": "a40b4787098b90e79e0d547128756de1160c656e1a885c4b4827f2548ecd3cad",
         "size_bytes": 8283
       },
       "artifact_status": "compiled_reference_architecture",
@@ -252,8 +252,8 @@
     {
       "path": "Data/evals/ops/latest_ship_run.json",
       "exists": true,
-      "sha256": "211ea9e5af05bc2cd042d6ca5354b6d5267adc998c9e985b4be910d74d735dd3",
-      "size_bytes": 17104,
+      "sha256": "16a53ffe2db4cb8774e10947dd2aecd55e5ce4488dfaff145ef5a8c967bdc80c",
+      "size_bytes": 18594,
       "status": "passed",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -261,8 +261,8 @@
     {
       "path": "Data/evals/governance/latest_release_decision_surface.json",
       "exists": true,
-      "sha256": "42c1657623fc22376928ee81b4c93c169a083c591f0269bfda012143c37f0e97",
-      "size_bytes": 16042,
+      "sha256": "2ca92c5fe672d651678d586f49abb8daa60430e4ddbaf3fabe41aa34e7ff2878",
+      "size_bytes": 16048,
       "status": "needs_attention",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -270,8 +270,8 @@
     {
       "path": "Data/evals/governance/latest_focused_release_summary.json",
       "exists": true,
-      "sha256": "fb61dcfcc084eb99e0dd7f9809e6a467f2c8cf0c2d627ec53172007f326d5b56",
-      "size_bytes": 6924,
+      "sha256": "305ee401ab345e840af3da08aac2c7fc3aaf434e405aa9a9795880fac9ea189b",
+      "size_bytes": 9515,
       "status": "needs_attention",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -297,7 +297,7 @@
     {
       "path": "Data/evals/ops/latest_dependency_security_scan.json",
       "exists": true,
-      "sha256": "a36e18bf76f259def00679861e001dc62938a13983800242826a35a9e0609093",
+      "sha256": "19cde85de552e5ab193dd788436bb25fb18db760b438630203830ca64f755d2e",
       "size_bytes": 3916,
       "status": "acceptable",
       "clinical_validation": null,
@@ -306,7 +306,7 @@
     {
       "path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
       "exists": true,
-      "sha256": "3eda265b14fecdfc216093fdadaa612eb01e54125fc37f147e0f8f3f786316a0",
+      "sha256": "0fa639cca33bee20650a41fed70d745df31d73202af870fda999601647fdf0e2",
       "size_bytes": 2106,
       "status": "acceptable",
       "clinical_validation": false,
@@ -315,7 +315,7 @@
     {
       "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
       "exists": true,
-      "sha256": "4a9c99a177c9be575b558e8acb958ccd0e58e0ea3ed5da8439bad6cbfa927ea5",
+      "sha256": "074cb7055e26690b2798496f9c0d8fb923729f64fbd096965eb9264028e11fbb",
       "size_bytes": 1266,
       "status": "strong_local_only",
       "clinical_validation": false,
@@ -333,7 +333,7 @@
   ],
   "reproducibility": {
     "ship_status": "passed",
-    "ship_completed_step_count": 48,
+    "ship_completed_step_count": 52,
     "recorded_commands": [
       {
         "name": "Backend breast-monitoring integration tests",
@@ -345,7 +345,7 @@
           "-q"
         ],
         "cwd": ".",
-        "duration_seconds": 93.493,
+        "duration_seconds": 103.745,
         "timeout_seconds": 900
       },
       {
@@ -362,7 +362,7 @@
           "-q"
         ],
         "cwd": ".",
-        "duration_seconds": 51.039,
+        "duration_seconds": 27.352,
         "timeout_seconds": 900
       },
       {
@@ -403,12 +403,17 @@
           "tests/test_senior_engineering_evidence.py",
           "tests/test_llm_usage_telemetry.py",
           "tests/test_finetune_promotion.py",
+          "tests/test_finetune_semantic_contamination.py",
           "tests/test_finetune_hardening_assurance.py",
+          "tests/test_rag_paired_statistical_comparison.py",
+          "tests/test_xai_reliability_gate.py",
+          "tests/test_patient_xai_envelope.py",
+          "tests/test_evidence_maturity_matrix.py",
           "tests/test_credibility_gap_registry.py",
           "-q"
         ],
         "cwd": ".",
-        "duration_seconds": 108.338,
+        "duration_seconds": 82.87,
         "timeout_seconds": 900
       },
       {
@@ -419,7 +424,7 @@
           "test"
         ],
         "cwd": "frontend-react",
-        "duration_seconds": 58.272,
+        "duration_seconds": 31.147,
         "timeout_seconds": 900
       },
       {
@@ -432,7 +437,7 @@
           "tests/e2e/smoke.spec.ts"
         ],
         "cwd": "frontend-react",
-        "duration_seconds": 268.609,
+        "duration_seconds": 145.445,
         "timeout_seconds": 900
       },
       {
@@ -443,7 +448,7 @@
           "lint"
         ],
         "cwd": "frontend-react",
-        "duration_seconds": 48.669,
+        "duration_seconds": 38.203,
         "timeout_seconds": 900
       },
       {
@@ -454,7 +459,7 @@
           "build"
         ],
         "cwd": "frontend-react",
-        "duration_seconds": 42.852,
+        "duration_seconds": 31.592,
         "timeout_seconds": 900
       },
       {
@@ -465,7 +470,7 @@
           "--skip-index"
         ],
         "cwd": ".",
-        "duration_seconds": 8.989,
+        "duration_seconds": 6.569,
         "timeout_seconds": 900
       },
       {
@@ -475,7 +480,7 @@
           "scripts/run_data_platform_pipeline.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.35,
+        "duration_seconds": 1.074,
         "timeout_seconds": 900
       },
       {
@@ -485,7 +490,7 @@
           "scripts/run_vector_store_contract_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 3.535,
+        "duration_seconds": 1.394,
         "timeout_seconds": 900
       },
       {
@@ -495,7 +500,7 @@
           "scripts/run_data_platform_reliability_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.686,
+        "duration_seconds": 1.087,
         "timeout_seconds": 900
       },
       {
@@ -505,7 +510,7 @@
           "scripts/run_azure_search_index_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.55,
+        "duration_seconds": 1.656,
         "timeout_seconds": 900
       },
       {
@@ -515,7 +520,7 @@
           "scripts/run_managed_vector_shadow_sync.py"
         ],
         "cwd": ".",
-        "duration_seconds": 3.06,
+        "duration_seconds": 1.291,
         "timeout_seconds": 900
       },
       {
@@ -525,7 +530,7 @@
           "scripts/run_managed_vector_shadow_comparison.py"
         ],
         "cwd": ".",
-        "duration_seconds": 13.106,
+        "duration_seconds": 5.492,
         "timeout_seconds": 900
       },
       {
@@ -535,7 +540,7 @@
           "scripts/run_cloud_infrastructure_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 24.805,
+        "duration_seconds": 15.294,
         "timeout_seconds": 900
       },
       {
@@ -545,7 +550,7 @@
           "scripts/run_patient_enrichment_background_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 12.993,
+        "duration_seconds": 10.047,
         "timeout_seconds": 900
       },
       {
@@ -555,7 +560,7 @@
           "scripts/run_high_risk_conversation_alert_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 10.139,
+        "duration_seconds": 7.023,
         "timeout_seconds": 900
       },
       {
@@ -565,7 +570,7 @@
           "scripts/run_ml_logic_safety_alignment.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.023,
+        "duration_seconds": 0.334,
         "timeout_seconds": 900
       },
       {
@@ -575,7 +580,7 @@
           "scripts/run_synthetic_prediction_statistical_audit.py"
         ],
         "cwd": ".",
-        "duration_seconds": 9.732,
+        "duration_seconds": 4.242,
         "timeout_seconds": 900
       },
       {
@@ -585,7 +590,7 @@
           "scripts/run_patient_xai_readability_dossier.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.297,
+        "duration_seconds": 0.529,
         "timeout_seconds": 900
       },
       {
@@ -595,7 +600,7 @@
           "scripts/run_oidc_browser_pkce_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.482,
+        "duration_seconds": 0.608,
         "timeout_seconds": 900
       },
       {
@@ -605,7 +610,7 @@
           "scripts/validate_deployment_env.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.798,
+        "duration_seconds": 0.652,
         "timeout_seconds": 900
       },
       {
@@ -615,7 +620,7 @@
           "scripts/run_dependency_security_scan.py"
         ],
         "cwd": ".",
-        "duration_seconds": 57.803,
+        "duration_seconds": 32.677,
         "timeout_seconds": 900
       },
       {
@@ -625,7 +630,7 @@
           "scripts/run_software_supply_chain_evidence.py"
         ],
         "cwd": ".",
-        "duration_seconds": 19.48,
+        "duration_seconds": 6.688,
         "timeout_seconds": 900
       },
       {
@@ -635,7 +640,7 @@
           "scripts/run_unsafe_intent_mutation_dev_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 3.503,
+        "duration_seconds": 1.435,
         "timeout_seconds": 900
       },
       {
@@ -645,7 +650,7 @@
           "scripts/run_adversarial_v6_tuning_regression.py"
         ],
         "cwd": ".",
-        "duration_seconds": 12.739,
+        "duration_seconds": 6.222,
         "timeout_seconds": 900
       },
       {
@@ -655,7 +660,7 @@
           "scripts/run_adversarial_v6_retrospective.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.47,
+        "duration_seconds": 0.309,
         "timeout_seconds": 900
       },
       {
@@ -665,7 +670,7 @@
           "scripts/run_xai_rank_stability_audit.py"
         ],
         "cwd": ".",
-        "duration_seconds": 12.496,
+        "duration_seconds": 8.007,
         "timeout_seconds": 900
       },
       {
@@ -675,7 +680,7 @@
           "scripts/run_xai_retraining_stability_audit.py"
         ],
         "cwd": ".",
-        "duration_seconds": 51.09,
+        "duration_seconds": 72.159,
         "timeout_seconds": 900
       },
       {
@@ -685,7 +690,17 @@
           "scripts/run_xai_fidelity_audit.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.529,
+        "duration_seconds": 2.673,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Fail-closed synthetic XAI presentation policy",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_xai_reliability_gate.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.384,
         "timeout_seconds": 900
       },
       {
@@ -695,7 +710,7 @@
           "scripts/run_agent_execution_policy_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 22.991,
+        "duration_seconds": 30.054,
         "timeout_seconds": 900
       },
       {
@@ -705,7 +720,7 @@
           "scripts/run_rag_degradation_resilience_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 12.69,
+        "duration_seconds": 12.178,
         "timeout_seconds": 900
       },
       {
@@ -715,7 +730,7 @@
           "scripts/run_credible_route_latency_sample.py"
         ],
         "cwd": ".",
-        "duration_seconds": 90.771,
+        "duration_seconds": 127.384,
         "timeout_seconds": 900
       },
       {
@@ -725,7 +740,7 @@
           "scripts/run_route_latency_budget.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.258,
+        "duration_seconds": 1.898,
         "timeout_seconds": 900
       },
       {
@@ -735,7 +750,17 @@
           "scripts/run_cost_latency_report.py"
         ],
         "cwd": ".",
-        "duration_seconds": 7.508,
+        "duration_seconds": 15.248,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Paired RAG statistical comparison",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_rag_paired_statistical_comparison.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 88.542,
         "timeout_seconds": 900
       },
       {
@@ -745,7 +770,7 @@
           "scripts/run_automation_channel_drill.py"
         ],
         "cwd": ".",
-        "duration_seconds": 3.885,
+        "duration_seconds": 2.112,
         "timeout_seconds": 900
       },
       {
@@ -755,7 +780,7 @@
           "scripts/run_synthetic_automation_staging_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 4.121,
+        "duration_seconds": 6.388,
         "timeout_seconds": 900
       },
       {
@@ -765,7 +790,17 @@
           "scripts/run_finetune_promotion_gate.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.198,
+        "duration_seconds": 1.36,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Fine-tune semantic contamination screen",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_finetune_semantic_contamination.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 29.26,
         "timeout_seconds": 900
       },
       {
@@ -775,7 +810,17 @@
           "scripts/run_finetune_hardening_assurance.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.349,
+        "duration_seconds": 0.674,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Cross-domain evidence maturity matrix",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_evidence_maturity_matrix.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 4.261,
         "timeout_seconds": 900
       },
       {
@@ -785,7 +830,7 @@
           "scripts/run_credibility_gap_registry.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.595,
+        "duration_seconds": 0.772,
         "timeout_seconds": 900
       },
       {
@@ -795,7 +840,7 @@
           "scripts/run_cross_domain_assurance_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 25.965,
+        "duration_seconds": 50.723,
         "timeout_seconds": 900
       },
       {
@@ -805,7 +850,7 @@
           "scripts/run_senior_engineering_evidence.py"
         ],
         "cwd": ".",
-        "duration_seconds": 4.0,
+        "duration_seconds": 6.194,
         "timeout_seconds": 900
       },
       {
@@ -815,7 +860,7 @@
           "scripts/run_release_decision_surface.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.171,
+        "duration_seconds": 1.631,
         "timeout_seconds": 900
       },
       {
@@ -825,7 +870,7 @@
           "scripts/run_constraint_aware_improvement_program.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.147,
+        "duration_seconds": 1.399,
         "timeout_seconds": 900
       },
       {
@@ -835,7 +880,7 @@
           "scripts/generate_benchmark_report.py"
         ],
         "cwd": ".",
-        "duration_seconds": 5.335,
+        "duration_seconds": 13.392,
         "timeout_seconds": 900
       },
       {
@@ -845,7 +890,7 @@
           "scripts/run_ops_health_snapshot.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.015,
+        "duration_seconds": 1.939,
         "timeout_seconds": 900
       },
       {
@@ -855,7 +900,7 @@
           "scripts/run_focused_release_summary.py"
         ],
         "cwd": ".",
-        "duration_seconds": 7.928,
+        "duration_seconds": 15.593,
         "timeout_seconds": 900
       },
       {
@@ -865,7 +910,7 @@
           "scripts/run_release_gate.py"
         ],
         "cwd": ".",
-        "duration_seconds": 4.9,
+        "duration_seconds": 8.863,
         "timeout_seconds": 900
       }
     ],
@@ -877,9 +922,9 @@
     },
     "repository_state": {
       "git_available": true,
-      "commit": "e84fa5955959e8d3efb9f9343610ff8e7b54da69",
+      "commit": "ac5dd1ec3ecadd488bd2a45c691c441b440ca9bf",
       "worktree_dirty": true,
-      "dirty_path_count": 164,
+      "dirty_path_count": 112,
       "note": "Hashes in this dossier bind the evaluated working tree even when it is not a clean commit."
     }
   },

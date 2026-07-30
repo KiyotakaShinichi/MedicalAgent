@@ -2447,3 +2447,68 @@ artifacts:
       Reviewer-first source/test/artifact provenance, exact ship-command
       evidence, negative-result visibility, and falsification criteria. This
       does not award seniority or replace independent reproduction.
+
+  - path: Data/evals/ops/latest_retrieval_runtime_cache_eval.json
+    required: false
+    max_age_days: 30
+    accepted_status: [improved_local_regression, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [production_ready], op: "==", value: false}
+      - {path: [sample_contract_met], op: "==", value: true}
+      - {path: [dense_unique_query_latency_measured], op: "==", value: false}
+    note: >
+      Fixed-baseline local repeated-route regression evidence for the runtime
+      index/BM25/FAISS caches. It is not dense unique-query, cloud, network, or
+      production latency evidence.
+
+  - path: Data/evals/ops/latest_provider_usage_reconciliation.json
+    required: false
+    max_age_days: 30
+    accepted_status: [reconciled, insufficient_provider_sample, configured_no_observations, blocked_configuration]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [production_ready], op: "==", value: false}
+      - {path: [reconciliation_metrics, estimated_tokens_are_billing_truth], op: "==", value: false}
+    note: >
+      Separates provider-reported usage from character estimates. Missing
+      provider observations remain an explicit operational blocker.
+
+  - path: Data/evals/models/latest_finetune_contamination_adjudication_readiness.json
+    required: false
+    max_age_days: 30
+    accepted_status: [ready_for_human_adjudication, completed_internal_review]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [adapter_promotion_allowed], op: "==", value: false}
+      - {path: [external_no_read_evaluation_completed], op: "==", value: false}
+    note: >
+      Resumable internal review packet for semantic-similarity candidates.
+      Completion would not prove absence of contamination or adapter safety.
+
+  - path: Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable_synthetic_only, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [production_ready], op: "==", value: false}
+      - {path: [promotion_decision], op: "==", value: HOLD_SYNTHETIC_ONLY}
+    note: >
+      Patient-grouped retraining under feature noise, modality dropout, label
+      noise, guarded features, and cross-generator transfer. Stress failures
+      are warnings and all results remain synthetic-only.
+
+  - path: Data/evals/ops/latest_synthetic_staging_resilience_dossier.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong_local_only_external_blocked, local_drill_needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [managed_cloud_drill_completed], op: "==", value: false}
+      - {path: [human_acknowledgement_proven], op: "==", value: false}
+    note: >
+      Consolidated local outbox, key-rotation, loopback, restore, and data
+      replay evidence. Managed infrastructure and organizational blockers
+      remain explicit.

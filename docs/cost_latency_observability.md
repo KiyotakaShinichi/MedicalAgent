@@ -18,6 +18,22 @@ Output:
 Data/evals/ops/latest_cost_latency_report.json
 ```
 
+Two narrower companion evaluations keep optimization claims separated from
+billing and deployment claims:
+
+```bash
+python scripts/run_retrieval_runtime_cache_eval.py
+python scripts/run_provider_usage_reconciliation.py
+```
+
+The first compares a fixed pre-cache baseline with a repeated local
+forced-sparse regression probe. It does not measure dense unique-query,
+network, cloud-load, or production latency. The second only computes estimate
+error when the same request has both an estimate and provider-reported usage.
+It remains `blocked_configuration` until at least 30 paired requests and 80%
+provider-usage coverage exist; it never creates paid traffic to satisfy that
+requirement.
+
 The report includes:
 
 - route and intent

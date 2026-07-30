@@ -1,17 +1,18 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-07-30T02:11:47.418223+00:00",
+  "generated_at": "2026-07-30T04:03:37.494254+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "release_gate": {
     "status": "passed",
-    "artifact_count": 210,
+    "artifact_count": 215,
     "hard_blocker_failure_count": 0,
+    "appendix_warning_count": 1,
     "required_artifact_count": 27,
-    "optional_artifact_count": 183,
-    "optional_artifact_ratio": 0.8714,
-    "optional_issue_count": 4,
+    "optional_artifact_count": 188,
+    "optional_artifact_ratio": 0.8744,
+    "optional_issue_count": 1,
     "failures": []
   },
   "core_evidence": {
@@ -72,6 +73,19 @@
       "routes_with_insufficient_samples": 0,
       "production_ready": false
     },
+    "retrieval_runtime_cache": {
+      "status": "improved_local_regression",
+      "local_regression_improvement_observed": true,
+      "retrieval_p95_delta_ms": -1740.32,
+      "dense_unique_query_latency_measured": false,
+      "production_ready": false
+    },
+    "provider_usage_reconciliation": {
+      "status": "blocked_configuration",
+      "completed": false,
+      "paired_request_count": 0,
+      "actual_usage_coverage_rate": 0.0
+    },
     "deployment_profile": {
       "status": "development_profile",
       "profile": "development",
@@ -95,7 +109,42 @@
         "candidate_generations_complete",
         "promotion_gate_not_hold",
         "training_runtime_healthy_and_explicitly_enabled"
-      ]
+      ],
+      "semantic_adjudication_status": "ready_for_human_adjudication",
+      "semantic_unresolved_count": 150,
+      "semantic_critical_unresolved_count": 7
+    },
+    "synthetic_ml_perturbation": {
+      "status": "needs_attention",
+      "promotion_decision": "HOLD_SYNTHETIC_ONLY",
+      "stress_failure_count": 2,
+      "guarded_feature_policy": {
+        "patient_count": 150,
+        "classification_auroc": 0.854343,
+        "classification_brier": 0.159178,
+        "regression_mae": 15.504482,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.795343,
+            0.907432
+          ],
+          "classification_brier": [
+            0.138892,
+            0.181353
+          ],
+          "regression_mae": [
+            13.220327,
+            17.986475
+          ]
+        },
+        "bootstrap_resamples": 300
+      }
+    },
+    "synthetic_staging_resilience": {
+      "status": "strong_local_only_external_blocked",
+      "local_checks": "6/6",
+      "unresolved_external_or_managed_blockers": 5,
+      "managed_cloud_drill_completed": false
     },
     "recovery": {
       "status": "strong_local_only",
@@ -116,7 +165,12 @@
     "Data/evals/models/latest_ispy2_tcia_external_stress.json",
     "Data/evals/models/latest_finetune_governance.json",
     "Data/evals/ops/latest_deployment_profile_validation.json",
-    "Data/evals/ops/latest_deployment_recovery_drill.json"
+    "Data/evals/ops/latest_deployment_recovery_drill.json",
+    "Data/evals/ops/latest_retrieval_runtime_cache_eval.json",
+    "Data/evals/ops/latest_provider_usage_reconciliation.json",
+    "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
+    "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
+    "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json"
   ],
   "registry_health": {
     "status": "needs_attention",
@@ -135,7 +189,12 @@
     "The exact transitive dependency lock covers CPython 3.14/Windows only and has no vulnerability scan.",
     "Automation durability controls are code-tested, but live n8n/channel reliability is untested.",
     "Route percentile labels require at least 30 samples; smaller samples are insufficient, not ideal.",
-    "Most gate entries are supporting or informational, so the focused core view is the reviewer headline."
+    "Most gate entries are supporting or informational, so the focused core view is the reviewer headline.",
+    "Provider-reported token reconciliation is incomplete; character-based estimates are not billing truth.",
+    "The local RAG cache speedup does not cover dense unique-query, network, cloud-load, or production latency.",
+    "The guarded synthetic feature policy exposes materially weaker ML results after removing a direct response proxy.",
+    "Synthetic modality-dropout and cross-generator transfer stress failures remain visible and block promotion.",
+    "Local automation/restore drills pass, but container, managed Postgres, Azure, managed-vector, and human acknowledgement evidence is absent."
   ],
   "what_this_release_can_claim": [
     "patient-confirmed, provenance-stamped, undoable record writes",

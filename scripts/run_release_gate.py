@@ -176,6 +176,8 @@ def run_release_gate(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
     rows = [_check_artifact(entry) for entry in artifacts]
 
     failures = [r for r in rows if r["required"] and r["issues"]]
+    warnings = [r for r in rows if not r["required"] and r["issues"]]
+    required_count = sum(1 for row in rows if row["required"])
     overall_status = "passed" if not failures else "failed"
     return {
         "schema_version": "release_gate_v1",
@@ -183,7 +185,11 @@ def run_release_gate(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
         "status": overall_status,
         "config_path": config_label,
         "artifact_count": len(rows),
+        "decision_artifact_count": required_count,
+        "appendix_artifact_count": len(rows) - required_count,
         "failure_count": len(failures),
+        "warning_count": len(warnings),
+        "warnings": warnings,
         "artifacts": rows,
     }
 
@@ -192,7 +198,10 @@ def _print_human(report: dict[str, Any]) -> None:
     print(f"NLCare release gate: {report['status'].upper()}")
     print(f"  config: {report['config_path']}")
     print(f"  artifacts checked: {report['artifact_count']}")
+    print(f"  decision artifacts: {report['decision_artifact_count']}")
+    print(f"  appendix artifacts: {report['appendix_artifact_count']}")
     print(f"  failures: {report['failure_count']}")
+    print(f"  appendix warnings: {report['warning_count']}")
     print()
     for row in report["artifacts"]:
         mark = "OK  " if not row["issues"] else "FAIL" if row["required"] else "warn"

@@ -1,6 +1,6 @@
 {
   "schema_version": "patient_xai_readability_dossier_v1",
-  "generated_at": "2026-07-30T02:02:49.256619+00:00",
+  "generated_at": "2026-07-30T03:53:32.461822+00:00",
   "status": "strong",
   "clinical_validation": false,
   "healthcare_production_ready": false,

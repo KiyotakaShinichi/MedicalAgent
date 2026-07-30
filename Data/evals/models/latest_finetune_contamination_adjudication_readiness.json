@@ -1,0 +1,21 @@
+{
+  "schema_version": "finetune_contamination_adjudication_readiness_v1",
+  "generated_at": "2026-07-30T03:59:53.974588+00:00",
+  "status": "ready_for_human_adjudication",
+  "completed": false,
+  "source_artifact": "Data/evals/models/latest_finetune_semantic_contamination.json",
+  "packet_path": "Data/finetune/evaluations/semantic_contamination_adjudication_packet.json",
+  "candidate_count": 150,
+  "reviewed_count": 0,
+  "unresolved_count": 150,
+  "critical_unresolved_count": 7,
+  "counts_by_channel": {
+    "assistant": 149,
+    "user": 1
+  },
+  "validation_issues": [],
+  "adapter_promotion_allowed": false,
+  "external_no_read_evaluation_completed": false,
+  "clinical_validation": false,
+  "claim_boundary": "This packet is a lexical-semantic reviewer aid. It does not prove absence of contamination, adapter safety, clinical validity, or patient-facing readiness."
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "route_latency_budget_v1",
-  "generated_at": "2026-07-30T02:07:53.553074+00:00",
+  "generated_at": "2026-07-30T03:58:08.657735+00:00",
   "status": "acceptable",
   "minimum_samples_for_percentile_credibility": 30,
   "production_ready": false,
@@ -11,7 +11,7 @@
     "credible_percentile_route_count": 5,
     "needs_attention_count": 0,
     "insufficient_sample_count": 0,
-    "highest_observed_p95_ms": 2254.9,
+    "highest_observed_p95_ms": 224.86,
     "production_ready": false
   },
   "routes": [
@@ -21,9 +21,9 @@
       "acceptable_p95_ms": 1500,
       "needs_attention_p95_ms": 3000,
       "sample_count": 30,
-      "current_p50_ms": 35.19,
-      "current_p95_ms": 86.45,
-      "current_p99_ms": 109.67,
+      "current_p50_ms": 46.37,
+      "current_p95_ms": 179.42,
+      "current_p99_ms": 216.91,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -35,7 +35,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 86.45,
+      "observed_p95_ms": 179.42,
       "status": "ideal"
     },
     {
@@ -44,9 +44,9 @@
       "acceptable_p95_ms": 2000,
       "needs_attention_p95_ms": 4000,
       "sample_count": 30,
-      "current_p50_ms": 48.65,
-      "current_p95_ms": 81.94,
-      "current_p99_ms": 83.59,
+      "current_p50_ms": 111.3,
+      "current_p95_ms": 166.55,
+      "current_p99_ms": 178.95,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -58,7 +58,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 1,
       "production_ready": false,
-      "observed_p95_ms": 81.94,
+      "observed_p95_ms": 166.55,
       "status": "ideal"
     },
     {
@@ -67,9 +67,9 @@
       "acceptable_p95_ms": 8000,
       "needs_attention_p95_ms": 15000,
       "sample_count": 30,
-      "current_p50_ms": 1372.24,
-      "current_p95_ms": 2254.9,
-      "current_p99_ms": 3620.52,
+      "current_p50_ms": 130.69,
+      "current_p95_ms": 224.86,
+      "current_p99_ms": 227.91,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -81,7 +81,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 2254.9,
+      "observed_p95_ms": 224.86,
       "status": "ideal"
     },
     {
@@ -111,13 +111,13 @@
       "acceptable_p95_ms": 3000,
       "needs_attention_p95_ms": 6000,
       "sample_count": 30,
-      "current_p50_ms": 983.31,
-      "current_p95_ms": 1765.49,
-      "current_p99_ms": 1967.44,
+      "current_p50_ms": 93.8,
+      "current_p95_ms": 172.76,
+      "current_p99_ms": 202.85,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
-      "latency_status": "acceptable",
+      "latency_status": "ideal",
       "bottleneck_stage": "retrieval_ms",
       "terminal_step_distribution": {
         "generated": 27,
@@ -126,8 +126,8 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 1765.49,
-      "status": "acceptable"
+      "observed_p95_ms": 172.76,
+      "status": "ideal"
     },
     {
       "route": "hybrid_prediction",
@@ -156,9 +156,9 @@
       "acceptable_p95_ms": 5000,
       "needs_attention_p95_ms": 10000,
       "sample_count": 30,
-      "current_p50_ms": 95.19,
-      "current_p95_ms": 218.75,
-      "current_p99_ms": 291.24,
+      "current_p50_ms": 52.14,
+      "current_p95_ms": 84.72,
+      "current_p99_ms": 92.43,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -170,7 +170,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 218.75,
+      "observed_p95_ms": 84.72,
       "status": "ideal"
     }
   ],

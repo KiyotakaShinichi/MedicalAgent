@@ -1,17 +1,17 @@
 {
   "schema_version": "nlcare_ship_run_v1",
-  "generated_at": "2026-07-30T02:12:02.046834+00:00",
+  "generated_at": "2026-07-30T04:03:45.091825+00:00",
   "status": "passed",
   "clinical_validation": false,
   "healthcare_production_ready": false,
-  "completed_step_count": 52,
+  "completed_step_count": 57,
   "failed_step": null,
   "failure_kind": null,
   "steps": [
     {
       "name": "Backend breast-monitoring integration tests",
       "status": "passed",
-      "duration_seconds": 103.745,
+      "duration_seconds": 102.128,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -25,7 +25,7 @@
     {
       "name": "Backend progressive-loading and notification reliability tests",
       "status": "passed",
-      "duration_seconds": 27.352,
+      "duration_seconds": 29.275,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -43,7 +43,7 @@
     {
       "name": "Cloud, data-platform, and managed-vector contract tests",
       "status": "passed",
-      "duration_seconds": 82.87,
+      "duration_seconds": 89.151,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -89,13 +89,19 @@
         "tests/test_patient_xai_envelope.py",
         "tests/test_evidence_maturity_matrix.py",
         "tests/test_credibility_gap_registry.py",
+        "tests/test_rag_vector_runtime_cache.py",
+        "tests/test_retrieval_runtime_cache_eval.py",
+        "tests/test_provider_usage_reconciliation.py",
+        "tests/test_finetune_contamination_adjudication.py",
+        "tests/test_synthetic_model_perturbation_retrain_eval.py",
+        "tests/test_synthetic_staging_resilience_dossier.py",
         "-q"
       ]
     },
     {
       "name": "Frontend Vitest unit tests",
       "status": "passed",
-      "duration_seconds": 31.147,
+      "duration_seconds": 51.311,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -107,7 +113,7 @@
     {
       "name": "Frontend Playwright smoke",
       "status": "passed",
-      "duration_seconds": 145.445,
+      "duration_seconds": 219.633,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -121,7 +127,7 @@
     {
       "name": "Frontend lint",
       "status": "passed",
-      "duration_seconds": 38.203,
+      "duration_seconds": 62.976,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -133,7 +139,7 @@
     {
       "name": "Frontend production build",
       "status": "passed",
-      "duration_seconds": 31.592,
+      "duration_seconds": 33.592,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -145,7 +151,7 @@
     {
       "name": "Reproducible knowledge-base chunk materialization",
       "status": "passed",
-      "duration_seconds": 6.569,
+      "duration_seconds": 7.095,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -157,7 +163,7 @@
     {
       "name": "Non-patient data-platform pipeline",
       "status": "passed",
-      "duration_seconds": 1.074,
+      "duration_seconds": 1.693,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -168,7 +174,7 @@
     {
       "name": "Managed-vector contract evaluation",
       "status": "passed",
-      "duration_seconds": 1.394,
+      "duration_seconds": 1.61,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -179,7 +185,7 @@
     {
       "name": "Data-platform reliability drills",
       "status": "passed",
-      "duration_seconds": 1.087,
+      "duration_seconds": 1.083,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -190,7 +196,7 @@
     {
       "name": "Azure AI Search index readiness",
       "status": "passed",
-      "duration_seconds": 1.656,
+      "duration_seconds": 0.895,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -201,7 +207,7 @@
     {
       "name": "Managed-vector shadow sync readiness",
       "status": "passed",
-      "duration_seconds": 1.291,
+      "duration_seconds": 1.224,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -212,7 +218,7 @@
     {
       "name": "Managed-vector frozen shadow comparison readiness",
       "status": "passed",
-      "duration_seconds": 5.492,
+      "duration_seconds": 9.596,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -223,7 +229,7 @@
     {
       "name": "Azure compiled reference-infrastructure readiness",
       "status": "passed",
-      "duration_seconds": 15.294,
+      "duration_seconds": 21.206,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -234,7 +240,7 @@
     {
       "name": "Patient enrichment background eval",
       "status": "passed",
-      "duration_seconds": 10.047,
+      "duration_seconds": 10.641,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -245,7 +251,7 @@
     {
       "name": "High-risk conversation alert eval",
       "status": "passed",
-      "duration_seconds": 7.023,
+      "duration_seconds": 10.939,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -256,7 +262,7 @@
     {
       "name": "ML logic/safety alignment audit",
       "status": "passed",
-      "duration_seconds": 0.334,
+      "duration_seconds": 0.33,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -267,7 +273,7 @@
     {
       "name": "Synthetic statistical sensitivity audit",
       "status": "passed",
-      "duration_seconds": 4.242,
+      "duration_seconds": 9.321,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -278,7 +284,7 @@
     {
       "name": "Patient XAI implementation-readability audit",
       "status": "passed",
-      "duration_seconds": 0.529,
+      "duration_seconds": 1.309,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -289,7 +295,7 @@
     {
       "name": "OIDC browser PKCE readiness",
       "status": "passed",
-      "duration_seconds": 0.608,
+      "duration_seconds": 1.012,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -300,7 +306,7 @@
     {
       "name": "Deployment profile and fail-closed matrix",
       "status": "passed",
-      "duration_seconds": 0.652,
+      "duration_seconds": 2.313,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -311,7 +317,7 @@
     {
       "name": "Dependency security scan",
       "status": "passed",
-      "duration_seconds": 32.677,
+      "duration_seconds": 47.113,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -322,7 +328,7 @@
     {
       "name": "Lock-derived SBOM and repository secret scan",
       "status": "passed",
-      "duration_seconds": 6.688,
+      "duration_seconds": 8.932,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -333,7 +339,7 @@
     {
       "name": "Development unsafe-intent mutation regression",
       "status": "passed",
-      "duration_seconds": 1.435,
+      "duration_seconds": 1.844,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -344,7 +350,7 @@
     {
       "name": "Tuning-informed adversarial v6 regression",
       "status": "passed",
-      "duration_seconds": 6.222,
+      "duration_seconds": 15.594,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -355,7 +361,7 @@
     {
       "name": "Adversarial v6 contamination retrospective",
       "status": "passed",
-      "duration_seconds": 0.309,
+      "duration_seconds": 0.841,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -366,7 +372,7 @@
     {
       "name": "Synthetic XAI rank-stability audit",
       "status": "passed",
-      "duration_seconds": 8.007,
+      "duration_seconds": 12.817,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -377,7 +383,7 @@
     {
       "name": "Synthetic XAI retraining-stability audit",
       "status": "passed",
-      "duration_seconds": 72.159,
+      "duration_seconds": 80.365,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -388,7 +394,7 @@
     {
       "name": "Synthetic XAI mechanical fidelity audit",
       "status": "passed",
-      "duration_seconds": 2.673,
+      "duration_seconds": 4.551,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -399,7 +405,7 @@
     {
       "name": "Fail-closed synthetic XAI presentation policy",
       "status": "passed",
-      "duration_seconds": 1.384,
+      "duration_seconds": 3.251,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -410,7 +416,7 @@
     {
       "name": "Bounded agent execution-policy eval",
       "status": "passed",
-      "duration_seconds": 30.054,
+      "duration_seconds": 36.533,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -421,7 +427,7 @@
     {
       "name": "Local RAG degradation resilience drill",
       "status": "passed",
-      "duration_seconds": 12.178,
+      "duration_seconds": 16.092,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -432,7 +438,7 @@
     {
       "name": "Credible local route-latency sample",
       "status": "passed",
-      "duration_seconds": 127.384,
+      "duration_seconds": 44.465,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -443,7 +449,7 @@
     {
       "name": "Route-latency budget refresh",
       "status": "passed",
-      "duration_seconds": 1.898,
+      "duration_seconds": 0.397,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -454,7 +460,7 @@
     {
       "name": "Token, cost, and stage-latency observability refresh",
       "status": "passed",
-      "duration_seconds": 15.248,
+      "duration_seconds": 6.228,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -463,9 +469,31 @@
       ]
     },
     {
+      "name": "Retrieval runtime-cache regression evidence",
+      "status": "passed",
+      "duration_seconds": 1.019,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_retrieval_runtime_cache_eval.py"
+      ]
+    },
+    {
+      "name": "Provider-token reconciliation",
+      "status": "passed",
+      "duration_seconds": 1.527,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_provider_usage_reconciliation.py"
+      ]
+    },
+    {
       "name": "Paired RAG statistical comparison",
       "status": "passed",
-      "duration_seconds": 88.542,
+      "duration_seconds": 70.66,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -476,7 +504,7 @@
     {
       "name": "Signed localhost automation channel drill",
       "status": "passed",
-      "duration_seconds": 2.112,
+      "duration_seconds": 1.423,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -487,7 +515,7 @@
     {
       "name": "Synthetic n8n and MailHog staging readiness",
       "status": "passed",
-      "duration_seconds": 6.388,
+      "duration_seconds": 5.544,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -498,7 +526,7 @@
     {
       "name": "Fine-tune promotion evidence gate",
       "status": "passed",
-      "duration_seconds": 1.36,
+      "duration_seconds": 2.335,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -509,7 +537,7 @@
     {
       "name": "Fine-tune semantic contamination screen",
       "status": "passed",
-      "duration_seconds": 29.26,
+      "duration_seconds": 15.999,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -518,9 +546,42 @@
       ]
     },
     {
+      "name": "Fine-tune contamination adjudication readiness",
+      "status": "passed",
+      "duration_seconds": 0.589,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_finetune_contamination_adjudication.py"
+      ]
+    },
+    {
+      "name": "Synthetic ML perturbation and retraining stress",
+      "status": "passed",
+      "duration_seconds": 156.461,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_synthetic_model_perturbation_retrain_eval.py"
+      ]
+    },
+    {
+      "name": "Synthetic staging resilience dossier",
+      "status": "passed",
+      "duration_seconds": 1.063,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_synthetic_staging_resilience_dossier.py"
+      ]
+    },
+    {
       "name": "Fine-tune hardening assurance",
       "status": "passed",
-      "duration_seconds": 0.674,
+      "duration_seconds": 0.871,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -531,7 +592,7 @@
     {
       "name": "Cross-domain evidence maturity matrix",
       "status": "passed",
-      "duration_seconds": 4.261,
+      "duration_seconds": 3.317,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -542,7 +603,7 @@
     {
       "name": "Canonical credibility-gap registry",
       "status": "passed",
-      "duration_seconds": 0.772,
+      "duration_seconds": 1.079,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -553,7 +614,7 @@
     {
       "name": "Cross-domain composed assurance drill",
       "status": "passed",
-      "duration_seconds": 50.723,
+      "duration_seconds": 41.213,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -564,7 +625,7 @@
     {
       "name": "Senior engineering evidence dossier",
       "status": "passed",
-      "duration_seconds": 6.194,
+      "duration_seconds": 4.28,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -575,7 +636,7 @@
     {
       "name": "Canonical release decision surface",
       "status": "passed",
-      "duration_seconds": 1.631,
+      "duration_seconds": 1.074,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -586,7 +647,7 @@
     {
       "name": "Constraint-aware cross-domain improvement program",
       "status": "passed",
-      "duration_seconds": 1.399,
+      "duration_seconds": 1.386,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -597,7 +658,7 @@
     {
       "name": "Consolidated benchmark registry",
       "status": "passed",
-      "duration_seconds": 13.392,
+      "duration_seconds": 6.439,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -608,7 +669,7 @@
     {
       "name": "Evidence-backed service health snapshot",
       "status": "passed",
-      "duration_seconds": 1.939,
+      "duration_seconds": 1.175,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -619,7 +680,7 @@
     {
       "name": "Focused release summary",
       "status": "passed",
-      "duration_seconds": 15.593,
+      "duration_seconds": 8.32,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -630,7 +691,7 @@
     {
       "name": "Release artifact gate",
       "status": "passed",
-      "duration_seconds": 8.863,
+      "duration_seconds": 4.35,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [

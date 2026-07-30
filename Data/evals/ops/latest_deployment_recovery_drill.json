@@ -1,6 +1,6 @@
 {
   "schema_version": "deployment_recovery_drill_v1",
-  "generated_at": "2026-07-22T01:36:04.334571+00:00",
+  "generated_at": "2026-07-30T02:58:55.139336+00:00",
   "status": "strong_local_only",
   "passed": true,
   "scope": "temporary SQLite synthetic operational records only",
@@ -19,9 +19,9 @@
     "restored_row_count": 3,
     "content_hash_match": true,
     "integrity_check": "ok",
-    "restore_seconds": 0.023199
+    "restore_seconds": 0.016001
   },
-  "total_drill_seconds": 0.160746,
+  "total_drill_seconds": 0.108472,
   "remaining_requirements": [
     "managed PostgreSQL backup and point-in-time recovery drill",
     "encrypted object-store retention policy",

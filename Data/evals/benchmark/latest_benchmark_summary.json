@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "e84fa5955959e8d3efb9f9343610ff8e7b54da69",
+    "git_commit": "ac5dd1ec3ecadd488bd2a45c691c441b440ca9bf",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -12,19 +12,19 @@
       "safety_cases": "5832:1778734598:c6c93e3f07f9",
       "synthetic_realism_candidate": "378534:1778813480:a29f2214fadd"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2344146:1785216471:770507376ae9",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2344146:1785379046:56e4cb20171c",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-07-30T02:11:28.283295+00:00"
+    "generated_at": "2026-07-30T04:03:28.177661+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-07-30T02:11:28.283295+00:00",
+    "generated_at": "2026-07-30T04:03:28.177661+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-07-31T02:11:28.283295+00:00",
+    "expires_at": "2026-07-31T04:03:28.177661+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-07-30T02:11:32.964024+00:00",
+  "generated_at": "2026-07-30T04:03:30.698486+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -75,10 +75,10 @@
       "id": "adversarial_safety_regression",
       "title": "Fixed-bank adversarial safety regression",
       "tier": "supporting",
-      "status": "stale",
+      "status": "acceptable",
       "source_status": "acceptable",
-      "freshness": "stale",
-      "generated_at": "2026-07-19T01:47:24.943823+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:01:40.963291+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_safety_regression.json",
       "metrics": {
         "status": "acceptable",
@@ -94,10 +94,10 @@
       "id": "adversarial_failure_analysis",
       "title": "Adversarial failure analysis",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-19T01:47:24.947079+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:01:40.966232+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_failure_analysis.json",
       "metrics": {
         "status": "strong",
@@ -112,10 +112,10 @@
       "id": "adversarial_holdout_monitor",
       "title": "Adversarial dev/holdout monitor",
       "tier": "supporting",
-      "status": "stale",
+      "status": "acceptable",
       "source_status": "acceptable",
-      "freshness": "stale",
-      "generated_at": "2026-07-19T01:47:24.951431+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:01:40.970758+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_safety_regression_holdout.json",
       "metrics": {
         "status": "acceptable",
@@ -130,16 +130,16 @@
       "id": "adversarial_generalization_eval",
       "title": "Adversarial generalization eval",
       "tier": "supporting",
-      "status": "stale",
+      "status": "acceptable",
       "source_status": "acceptable",
-      "freshness": "stale",
-      "generated_at": "2026-07-19T01:47:27.285234+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:01:43.551158+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_generalization_eval.json",
       "metrics": {
         "status": "acceptable",
         "original_bank_pass_rate": 0.955,
         "heldout_pass_rate": 0.96875,
-        "paraphrase_pass_rate": 0.9636363636363636,
+        "paraphrase_pass_rate": 0.9272727272727272,
         "safe_negative_control_pass_rate": 1.0,
         "category_gap_between_dev_and_holdout": 0.125
       },
@@ -1059,7 +1059,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:49.256619+00:00",
+      "generated_at": "2026-07-30T03:53:32.461822+00:00",
       "source_path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
       "metrics": {
         "status": "strong",
@@ -1356,10 +1356,10 @@
       "id": "offline_ab_eval_controls",
       "title": "Offline A/B safety-control suite",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-05-19T01:37:01.329736+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:01:34.886890+00:00",
       "source_path": "Data/evals/ab_tests/latest_ab_test_report.json",
       "metrics": {
         "status": "strong",
@@ -2019,7 +2019,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:00:28.941219+00:00",
+      "generated_at": "2026-07-30T03:49:28.757986+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -2036,7 +2036,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:00:28.028097+00:00",
+      "generated_at": "2026-07-30T03:49:27.229683+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -2053,7 +2053,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:00:29.006643+00:00",
+      "generated_at": "2026-07-30T03:49:28.871398+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2249,11 +2249,11 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-29T15:37:33.468306+00:00",
+      "generated_at": "2026-07-30T02:11:37.478745+00:00",
       "source_path": "Data/evals/ops/latest_service_health_snapshot.json",
       "metrics": {
         "status": "needs_attention",
-        "stale_artifact_count": 132,
+        "stale_artifact_count": 133,
         "failed_benchmark_count": 0
       },
       "limitations": [],
@@ -2263,10 +2263,10 @@
       "id": "deployment_recovery_drill",
       "title": "Local synthetic backup and restore drill",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong_local_only",
       "source_status": "strong_local_only",
-      "freshness": "stale",
-      "generated_at": "2026-07-22T01:36:04.334571+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:58:55.139336+00:00",
       "source_path": "Data/evals/ops/latest_deployment_recovery_drill.json",
       "metrics": {
         "status": "strong_local_only",
@@ -2284,10 +2284,10 @@
       "id": "container_recovery_smoke",
       "title": "Disposable Postgres/Redis migration and recovery smoke",
       "tier": "supporting",
-      "status": "stale",
+      "status": "blocked_environment",
       "source_status": "blocked_environment",
-      "freshness": "stale",
-      "generated_at": "2026-07-22T06:19:33.332567+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:59:07.886871+00:00",
       "source_path": "Data/evals/ops/latest_container_recovery_smoke.json",
       "metrics": {
         "status": "blocked_environment",
@@ -2302,15 +2302,15 @@
       "id": "trace_diagnostics_coverage",
       "title": "Per-turn trace diagnostics coverage",
       "tier": "supporting",
-      "status": "stale",
+      "status": "needs_attention",
       "source_status": "needs_attention",
-      "freshness": "stale",
-      "generated_at": "2026-05-20T11:51:23.637314+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:01:33.633098+00:00",
       "source_path": "Data/evals/ops/latest_trace_diagnostics_coverage.json",
       "metrics": {
         "status": "needs_attention",
         "rows_checked": 100,
-        "rows_with_trace_diagnostics": 1,
+        "rows_with_trace_diagnostics": 50,
         "rows_with_retrieval_confidence": 0,
         "sample_trace_schema_valid": true
       },
@@ -2324,7 +2324,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:08:08.218459+00:00",
+      "generated_at": "2026-07-30T03:58:14.172983+00:00",
       "source_path": "Data/evals/ops/latest_cost_latency_report.json",
       "metrics": {
         "status": "strong",
@@ -2339,8 +2339,8 @@
         "estimated_total_cost_usd": 0.0,
         "cache_hit_rate": 0.19,
         "local_probe_stage_sample_count": 708,
-        "normal_rag_probe_p95_ms": 2082.15,
-        "normal_rag_retrieval_p95_ms": 1806.32
+        "normal_rag_probe_p95_ms": 224.51,
+        "normal_rag_retrieval_p95_ms": 66.0
       },
       "limitations": [],
       "claim_boundary": "Cost and latency observability is engineering telemetry only. It does not establish clinical safety, clinical validation, or real-world patient benefit."
@@ -2372,13 +2372,13 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:07:53.553074+00:00",
+      "generated_at": "2026-07-30T03:58:08.657735+00:00",
       "source_path": "Data/evals/ops/latest_route_latency_budget.json",
       "metrics": {
         "status": "acceptable",
         "route_count": 7,
         "needs_attention_count": 0,
-        "highest_observed_p95_ms": 2254.9
+        "highest_observed_p95_ms": 224.86
       },
       "limitations": [],
       "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs. A p95 is not treated as credible until the route has at least 30 local samples. Repeated sparse/fast-mode local workloads are regression evidence only."
@@ -2390,7 +2390,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:07:49.421804+00:00",
+      "generated_at": "2026-07-30T03:58:07.212373+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile_phase2.json",
       "metrics": {
         "status": "acceptable",
@@ -2407,7 +2407,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:07:49.421804+00:00",
+      "generated_at": "2026-07-30T03:58:07.212373+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile.json",
       "metrics": {
         "status": "acceptable"
@@ -2484,7 +2484,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:09:37.376461+00:00",
+      "generated_at": "2026-07-30T03:59:28.091459+00:00",
       "source_path": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
       "metrics": {
         "status": "acceptable",
@@ -2621,10 +2621,10 @@
       "id": "release_gate_explanation",
       "title": "Release-gate explanation",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-22T06:48:25.398032+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:07:44.483203+00:00",
       "source_path": "Data/evals/governance/latest_release_gate_explanation.json",
       "metrics": {
         "status": "strong"
@@ -2738,7 +2738,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:45.877027+00:00",
+      "generated_at": "2026-07-30T03:53:24.486636+00:00",
       "source_path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
       "metrics": {
         "status": "needs_attention",
@@ -2768,7 +2768,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:03:45.854892+00:00",
+      "generated_at": "2026-07-30T03:55:02.950926+00:00",
       "source_path": "Data/evals/models/latest_xai_rank_stability.json",
       "metrics": {
         "status": "acceptable",
@@ -2787,7 +2787,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:04:55.987813+00:00",
+      "generated_at": "2026-07-30T03:56:19.873099+00:00",
       "source_path": "Data/evals/models/latest_xai_retraining_stability.json",
       "metrics": {
         "status": "acceptable",
@@ -2807,7 +2807,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:05:02.054421+00:00",
+      "generated_at": "2026-07-30T03:56:30.996122+00:00",
       "source_path": "Data/evals/models/latest_xai_reliability_gate.json",
       "metrics": {
         "status": "needs_attention",
@@ -2828,7 +2828,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:05:31.515537+00:00",
+      "generated_at": "2026-07-30T03:57:07.134129+00:00",
       "source_path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
       "metrics": {
         "status": "strong",
@@ -2846,7 +2846,7 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:05:43.691724+00:00",
+      "generated_at": "2026-07-30T03:57:22.746706+00:00",
       "source_path": "Data/evals/rag/latest_rag_degradation_resilience.json",
       "metrics": {
         "status": "strong_offline_drill",
@@ -2861,10 +2861,10 @@
       "id": "automation_fault_injection",
       "title": "Automation queue and webhook fault injection",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-22T07:57:15.564836+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:58:52.375330+00:00",
       "source_path": "Data/evals/ops/latest_automation_fault_injection.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -2881,7 +2881,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:09:39.463717+00:00",
+      "generated_at": "2026-07-30T03:59:29.500200+00:00",
       "source_path": "Data/evals/ops/latest_automation_channel_drill.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -2899,7 +2899,7 @@
       "status": "ready_for_synthetic_runtime",
       "source_status": "ready_for_synthetic_runtime",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:09:45.829421+00:00",
+      "generated_at": "2026-07-30T03:59:34.894831+00:00",
       "source_path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
       "metrics": {
         "status": "ready_for_synthetic_runtime",
@@ -2917,7 +2917,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:03:23.559463+00:00",
+      "generated_at": "2026-07-30T03:54:23.609857+00:00",
       "source_path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
       "metrics": {
         "status": "acceptable",
@@ -2952,7 +2952,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:10:15.638433+00:00",
+      "generated_at": "2026-07-30T03:59:52.487976+00:00",
       "source_path": "Data/evals/models/latest_finetune_semantic_contamination.json",
       "metrics": {
         "status": "needs_attention",
@@ -2982,7 +2982,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:10:17.184802+00:00",
+      "generated_at": "2026-07-30T04:02:32.366223+00:00",
       "source_path": "Data/evals/models/latest_finetune_hardening_assurance.json",
       "metrics": {
         "status": "needs_attention",
@@ -3006,7 +3006,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:10:21.168486+00:00",
+      "generated_at": "2026-07-30T04:02:35.690411+00:00",
       "source_path": "Data/evals/governance/latest_evidence_maturity_matrix.json",
       "metrics": {
         "status": "needs_attention",
@@ -3020,9 +3020,9 @@
           "5": 0
         },
         "architecture_budget_status": "needs_attention",
-        "oversized_file_count": 14,
-        "critical_file_count": 4,
-        "backend_service_file_count": 356,
+        "oversized_file_count": 11,
+        "critical_file_count": 0,
+        "backend_service_file_count": 364,
         "clinical_validation": false,
         "healthcare_production_ready": false
       },
@@ -3036,7 +3036,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:10:22.220544+00:00",
+      "generated_at": "2026-07-30T04:02:36.745441+00:00",
       "source_path": "Data/evals/governance/latest_credibility_gap_registry.json",
       "metrics": {
         "status": "needs_attention",
@@ -3058,7 +3058,7 @@
       "status": "blocked_configuration",
       "source_status": "blocked_configuration",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:49.861705+00:00",
+      "generated_at": "2026-07-30T03:53:33.464599+00:00",
       "source_path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
       "metrics": {
         "status": "blocked_configuration",
@@ -3075,7 +3075,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:00.833382+00:00",
+      "generated_at": "2026-07-30T03:52:24.299438+00:00",
       "source_path": "Data/lakehouse/manifests/latest_pipeline_run.json",
       "metrics": {
         "status": "strong",
@@ -3096,7 +3096,7 @@
       "status": "strong_contract_only",
       "source_status": "strong_contract_only",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:02.172157+00:00",
+      "generated_at": "2026-07-30T03:52:25.929029+00:00",
       "source_path": "Data/evals/rag/latest_vector_store_contract_eval.json",
       "metrics": {
         "status": "strong_contract_only",
@@ -3115,7 +3115,7 @@
       "status": "compiled_reference_architecture",
       "source_status": "compiled_reference_architecture",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:27.081960+00:00",
+      "generated_at": "2026-07-30T03:52:59.983543+00:00",
       "source_path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
       "metrics": {
         "status": "compiled_reference_architecture",
@@ -3134,7 +3134,7 @@
       "status": "ready_for_opt_in_provisioning",
       "source_status": "ready_for_opt_in_provisioning",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:04.869383+00:00",
+      "generated_at": "2026-07-30T03:52:27.921055+00:00",
       "source_path": "Data/evals/rag/latest_azure_search_index_readiness.json",
       "metrics": {
         "status": "ready_for_opt_in_provisioning",
@@ -3153,7 +3153,7 @@
       "status": "ready_for_opt_in_shadow_sync",
       "source_status": "ready_for_opt_in_shadow_sync",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:06.218037+00:00",
+      "generated_at": "2026-07-30T03:52:29.046940+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
       "metrics": {
         "status": "ready_for_opt_in_shadow_sync",
@@ -3173,7 +3173,7 @@
       "status": "ready_for_managed_shadow_run",
       "source_status": "ready_for_managed_shadow_run",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:11.325473+00:00",
+      "generated_at": "2026-07-30T03:52:38.148984+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
       "metrics": {
         "status": "ready_for_managed_shadow_run",
@@ -3192,7 +3192,7 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:02:03.255408+00:00",
+      "generated_at": "2026-07-30T03:52:26.937112+00:00",
       "source_path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
       "metrics": {
         "status": "strong_offline_drill",
@@ -3211,7 +3211,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-30T02:11:22.105396+00:00",
+      "generated_at": "2026-07-30T04:03:24.681960+00:00",
       "source_path": "Data/evals/governance/latest_constraint_aware_improvement_program.json",
       "metrics": {
         "status": "needs_attention",
@@ -3221,6 +3221,118 @@
       },
       "limitations": [],
       "claim_boundary": "Constraint-aware engineering plan only. Completion means stronger internal engineering evidence, not clinical validation, clinician approval, real-world patient safety, or production healthcare readiness."
+    },
+    {
+      "id": "retrieval_runtime_cache_eval",
+      "title": "Fixed-baseline local retrieval runtime-cache evidence",
+      "tier": "supporting",
+      "status": "improved_local_regression",
+      "source_status": "improved_local_regression",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:58:15.881125+00:00",
+      "source_path": "Data/evals/ops/latest_retrieval_runtime_cache_eval.json",
+      "metrics": {
+        "status": "improved_local_regression",
+        "retrieval_p95_delta_ms": -1740.32,
+        "sample_contract_met": true,
+        "production_ready": false
+      },
+      "limitations": [],
+      "claim_boundary": "This comparison measures a repeated local forced-sparse regression workload. It does not measure dense unique-query latency, provider/network latency, cloud load, production SLOs, clinical validation, or patient benefit."
+    },
+    {
+      "id": "provider_usage_reconciliation",
+      "title": "Provider token-usage reconciliation",
+      "tier": "supporting",
+      "status": "blocked_configuration",
+      "source_status": "blocked_configuration",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:58:17.417671+00:00",
+      "source_path": "Data/evals/ops/latest_provider_usage_reconciliation.json",
+      "metrics": {
+        "status": "blocked_configuration",
+        "completed": false,
+        "paired_request_count": 0,
+        "actual_usage_coverage_rate": 0.0
+      },
+      "limitations": [],
+      "claim_boundary": "Provider-reported token counts are operational telemetry, not audited billing. Local character-based estimates remain visibly separate. This artifact is not clinical validation or production healthcare evidence."
+    },
+    {
+      "id": "finetune_contamination_adjudication",
+      "title": "Fine-tune contamination adjudication readiness",
+      "tier": "supporting",
+      "status": "ready_for_human_adjudication",
+      "source_status": "ready_for_human_adjudication",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T03:59:53.974588+00:00",
+      "source_path": "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
+      "metrics": {
+        "status": "ready_for_human_adjudication",
+        "unresolved_count": 150,
+        "critical_unresolved_count": 7,
+        "adapter_promotion_allowed": false
+      },
+      "limitations": [],
+      "claim_boundary": "This packet is a lexical-semantic reviewer aid. It does not prove absence of contamination, adapter safety, clinical validity, or patient-facing readiness."
+    },
+    {
+      "id": "synthetic_model_perturbation_retrain",
+      "title": "Synthetic model perturbation and retraining stress",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T04:02:28.638557+00:00",
+      "source_path": "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
+      "metrics": {
+        "status": "needs_attention",
+        "stress_failures": [
+          {
+            "scenario": "modality_dropout",
+            "metric_deltas": {
+              "classification_auroc": -0.051969,
+              "classification_brier": 0.02081,
+              "regression_mae": 4.368769
+            }
+          },
+          {
+            "scenario": "train_default_test_realism_v2",
+            "metric_deltas": {
+              "classification_auroc": -0.141673,
+              "classification_brier": 0.081659,
+              "regression_mae": 9.851866
+            }
+          }
+        ],
+        "promotion_decision": "HOLD_SYNTHETIC_ONLY",
+        "clinical_validation": false
+      },
+      "limitations": [
+        "Both generator versions share project assumptions and target semantics.",
+        "Noise distributions are engineering stressors, not estimates of clinical measurement error.",
+        "Cross-generator transfer is not external validation.",
+        "Gradient boosting is a controlled benchmark, not a promoted clinical model."
+      ],
+      "claim_boundary": "All rows and labels in this evaluation are simulator-built. Perturbation robustness measures engineering sensitivity to synthetic assumptions; it does not establish clinical realism, external validity, treatment utility, patient benefit, or production healthcare readiness."
+    },
+    {
+      "id": "synthetic_staging_resilience",
+      "title": "Synthetic staging resilience dossier",
+      "tier": "supporting",
+      "status": "strong_local_only_external_blocked",
+      "source_status": "strong_local_only_external_blocked",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T04:02:31.503554+00:00",
+      "source_path": "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json",
+      "metrics": {
+        "status": "strong_local_only_external_blocked",
+        "local_passed_count": 6,
+        "unresolved_external_blockers": 5,
+        "managed_cloud_drill_completed": false
+      },
+      "limitations": [],
+      "claim_boundary": "This dossier consolidates disposable local and offline engineering drills over synthetic or curated non-patient fixtures. It does not prove managed-cloud durability, external channel reliability, clinician acknowledgement, emergency coverage, clinical validation, or production healthcare readiness."
     }
   ],
   "issues": [
@@ -3232,30 +3344,6 @@
     },
     {
       "benchmark_id": "adversarial",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "adversarial_safety_regression",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "adversarial_failure_analysis",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "adversarial_holdout_monitor",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "adversarial_generalization_eval",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3651,12 +3739,6 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "offline_ab_eval_controls",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "finetune_behavior_governance",
       "severity": "medium",
       "status": "stale",
@@ -3891,22 +3973,10 @@
       "message": "Benchmark needs review before using it as supporting evidence."
     },
     {
-      "benchmark_id": "deployment_recovery_drill",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "container_recovery_smoke",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "trace_diagnostics_coverage",
       "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
     },
     {
       "benchmark_id": "runtime_quality_sentinel",
@@ -3969,12 +4039,6 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "release_gate_explanation",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "public_imaging_manifest",
       "severity": "medium",
       "status": "stale",
@@ -4017,12 +4081,6 @@
       "message": "Benchmark needs review before using it as supporting evidence."
     },
     {
-      "benchmark_id": "automation_fault_injection",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "finetune_runtime_preflight",
       "severity": "medium",
       "status": "stale",
@@ -4054,6 +4112,12 @@
     },
     {
       "benchmark_id": "constraint_aware_improvement_program",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
+      "benchmark_id": "synthetic_model_perturbation_retrain",
       "severity": "medium",
       "status": "needs_attention",
       "message": "Benchmark needs review before using it as supporting evidence."

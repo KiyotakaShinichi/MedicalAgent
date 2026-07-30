@@ -1,0 +1,28 @@
+{
+  "schema_version": "provider_usage_reconciliation_v1",
+  "generated_at": "2026-07-30T03:58:17.417671+00:00",
+  "status": "blocked_configuration",
+  "completed": false,
+  "reason": "No provider credential or provider-reported usage is available.",
+  "source_artifact": "Data/evals/ops/latest_cost_latency_report.json",
+  "provider_configured": false,
+  "request_count": 100,
+  "requests_with_provider_reported_usage": 0,
+  "actual_usage_coverage_rate": 0.0,
+  "paired_request_count": 0,
+  "minimum_paired_requests": 30,
+  "minimum_actual_usage_coverage_rate": 0.8,
+  "reconciliation_metrics": {
+    "mean_absolute_percentage_error": null,
+    "median_estimate_to_actual_ratio": null,
+    "estimated_tokens_are_billing_truth": false
+  },
+  "paired_requests": [],
+  "execution_policy": {
+    "automatic_paid_provider_probe": false,
+    "reason": "The evaluation does not spend provider quota automatically. Capture normal non-patient test traffic with provider metadata, then rerun this artifact."
+  },
+  "production_ready": false,
+  "clinical_validation": false,
+  "claim_boundary": "Provider-reported token counts are operational telemetry, not audited billing. Local character-based estimates remain visibly separate. This artifact is not clinical validation or production healthcare evidence."
+}

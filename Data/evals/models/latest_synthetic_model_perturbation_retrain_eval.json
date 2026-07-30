@@ -1,0 +1,420 @@
+{
+  "schema_version": "synthetic_model_perturbation_retrain_eval_v1",
+  "generated_at": "2026-07-30T04:02:28.638557+00:00",
+  "status": "needs_attention",
+  "clinical_validation": false,
+  "production_ready": false,
+  "source": {
+    "default_generator_path": "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+    "realism_v2_path": "Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv",
+    "default_rows": 3600,
+    "default_patients": 600,
+    "realism_v2_rows": 1440,
+    "realism_v2_patients": 240,
+    "patient_overlap_between_train_and_test": 0
+  },
+  "feature_policies": {
+    "existing_full_feature_policy": {
+      "numeric_features": [
+        "cycle",
+        "age",
+        "pre_wbc",
+        "pre_anc",
+        "pre_hemoglobin",
+        "pre_platelets",
+        "nadir_wbc",
+        "nadir_anc",
+        "nadir_hemoglobin",
+        "nadir_platelets",
+        "recovery_wbc",
+        "recovery_hemoglobin",
+        "recovery_platelets",
+        "mri_tumor_size_cm",
+        "mri_percent_change_from_baseline",
+        "max_symptom_severity",
+        "symptom_count",
+        "intervention_count",
+        "dose_delayed",
+        "dose_reduced"
+      ],
+      "metrics": {
+        "patient_count": 150,
+        "classification_auroc": 0.997842,
+        "classification_brier": 0.045606,
+        "regression_mae": 2.463846,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.991724,
+            1.0
+          ],
+          "classification_brier": [
+            0.034827,
+            0.056899
+          ],
+          "regression_mae": [
+            1.158614,
+            4.222263
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "direct_response_proxy_present": true,
+      "risk": "mri_percent_change_from_baseline is definitionally close to response_score_percent and can inflate regression evidence."
+    },
+    "guarded_primary_policy": {
+      "numeric_features": [
+        "cycle",
+        "age",
+        "pre_wbc",
+        "pre_anc",
+        "pre_hemoglobin",
+        "pre_platelets",
+        "nadir_wbc",
+        "nadir_anc",
+        "nadir_hemoglobin",
+        "nadir_platelets",
+        "recovery_wbc",
+        "recovery_hemoglobin",
+        "recovery_platelets",
+        "mri_tumor_size_cm",
+        "max_symptom_severity",
+        "symptom_count",
+        "intervention_count",
+        "dose_delayed",
+        "dose_reduced"
+      ],
+      "metrics": {
+        "patient_count": 150,
+        "classification_auroc": 0.854343,
+        "classification_brier": 0.159178,
+        "regression_mae": 15.504482,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.795343,
+            0.907432
+          ],
+          "classification_brier": [
+            0.138892,
+            0.181353
+          ],
+          "regression_mae": [
+            13.220327,
+            17.986475
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "direct_response_proxy_present": false,
+      "delta_vs_full": {
+        "classification_auroc": -0.143499,
+        "classification_brier": 0.113572,
+        "regression_mae": 13.040636
+      }
+    }
+  },
+  "perturbation_scenarios": [
+    {
+      "scenario": "measurement_noise",
+      "retrained_on_perturbation": {
+        "patient_count": 150,
+        "classification_auroc": 0.858659,
+        "classification_brier": 0.15726,
+        "regression_mae": 15.030242,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.792213,
+            0.911794
+          ],
+          "classification_brier": [
+            0.136629,
+            0.179107
+          ],
+          "regression_mae": [
+            12.930578,
+            17.575153
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "clean_model_on_perturbed_test": {
+        "patient_count": 150,
+        "classification_auroc": 0.854163,
+        "classification_brier": 0.158567,
+        "regression_mae": 16.111931,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.792614,
+            0.906796
+          ],
+          "classification_brier": [
+            0.137376,
+            0.181233
+          ],
+          "regression_mae": [
+            13.820281,
+            18.707424
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "retrained_delta_vs_guarded_clean": {
+        "classification_auroc": 0.004316,
+        "classification_brier": -0.001918,
+        "regression_mae": -0.47424
+      }
+    },
+    {
+      "scenario": "modality_dropout",
+      "retrained_on_perturbation": {
+        "patient_count": 150,
+        "classification_auroc": 0.802374,
+        "classification_brier": 0.179988,
+        "regression_mae": 19.873251,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.719754,
+            0.86659
+          ],
+          "classification_brier": [
+            0.158231,
+            0.20037
+          ],
+          "regression_mae": [
+            16.874467,
+            23.130401
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "clean_model_on_perturbed_test": {
+        "patient_count": 150,
+        "classification_auroc": 0.754001,
+        "classification_brier": 0.186734,
+        "regression_mae": 20.021767,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.667443,
+            0.824986
+          ],
+          "classification_brier": [
+            0.164362,
+            0.209052
+          ],
+          "regression_mae": [
+            17.126975,
+            23.256722
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "retrained_delta_vs_guarded_clean": {
+        "classification_auroc": -0.051969,
+        "classification_brier": 0.02081,
+        "regression_mae": 4.368769
+      }
+    },
+    {
+      "scenario": "combined_noise",
+      "retrained_on_perturbation": {
+        "patient_count": 150,
+        "classification_auroc": 0.81586,
+        "classification_brier": 0.17758,
+        "regression_mae": 19.00221,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.735899,
+            0.876518
+          ],
+          "classification_brier": [
+            0.156868,
+            0.200653
+          ],
+          "regression_mae": [
+            15.763861,
+            22.370152
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "clean_model_on_perturbed_test": {
+        "patient_count": 150,
+        "classification_auroc": 0.813523,
+        "classification_brier": 0.174201,
+        "regression_mae": 19.667707,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.73762,
+            0.874874
+          ],
+          "classification_brier": [
+            0.154112,
+            0.196668
+          ],
+          "regression_mae": [
+            16.50487,
+            22.935564
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "retrained_delta_vs_guarded_clean": {
+        "classification_auroc": -0.038483,
+        "classification_brier": 0.018402,
+        "regression_mae": 3.497728
+      }
+    },
+    {
+      "scenario": "five_percent_training_label_noise",
+      "retrained_on_perturbation": {
+        "patient_count": 150,
+        "classification_auroc": 0.84679,
+        "classification_brier": 0.165078,
+        "regression_mae": 15.504482,
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.777433,
+            0.90122
+          ],
+          "classification_brier": [
+            0.145149,
+            0.188286
+          ],
+          "regression_mae": [
+            13.220327,
+            17.986475
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "clean_model_on_perturbed_test": null,
+      "retrained_delta_vs_guarded_clean": {
+        "classification_auroc": -0.007553,
+        "classification_brier": 0.0059,
+        "regression_mae": 0.0
+      }
+    }
+  ],
+  "generator_version_sensitivity": {
+    "default_generator_internal": {
+      "patient_count": 150,
+      "classification_auroc": 0.854343,
+      "classification_brier": 0.159178,
+      "regression_mae": 15.504482,
+      "bootstrap_95_ci": {
+        "classification_auroc": [
+          0.795343,
+          0.907432
+        ],
+        "classification_brier": [
+          0.138892,
+          0.181353
+        ],
+        "regression_mae": [
+          13.220327,
+          17.986475
+        ]
+      },
+      "bootstrap_resamples": 300
+    },
+    "realism_v2_generator_internal": {
+      "patient_count": 60,
+      "classification_auroc": 0.697964,
+      "classification_brier": 0.213998,
+      "regression_mae": 20.564898,
+      "bootstrap_95_ci": {
+        "classification_auroc": [
+          0.561045,
+          0.821025
+        ],
+        "classification_brier": [
+          0.165452,
+          0.25988
+        ],
+        "regression_mae": [
+          15.990592,
+          25.406765
+        ]
+      },
+      "bootstrap_resamples": 300
+    },
+    "train_default_test_realism_v2": {
+      "patient_count": 60,
+      "classification_auroc": 0.71267,
+      "classification_brier": 0.240837,
+      "regression_mae": 25.356348,
+      "bootstrap_95_ci": {
+        "classification_auroc": [
+          0.572522,
+          0.838133
+        ],
+        "classification_brier": [
+          0.186585,
+          0.299559
+        ],
+        "regression_mae": [
+          21.308618,
+          29.97211
+        ]
+      },
+      "bootstrap_resamples": 300
+    },
+    "train_realism_v2_test_default": {
+      "patient_count": 150,
+      "classification_auroc": 0.671642,
+      "classification_brier": 0.225564,
+      "regression_mae": 24.085815,
+      "bootstrap_95_ci": {
+        "classification_auroc": [
+          0.574113,
+          0.747791
+        ],
+        "classification_brier": [
+          0.194214,
+          0.259505
+        ],
+        "regression_mae": [
+          19.96163,
+          27.842046
+        ]
+      },
+      "bootstrap_resamples": 300
+    },
+    "default_to_realism_delta_vs_default_internal": {
+      "classification_auroc": -0.141673,
+      "classification_brier": 0.081659,
+      "regression_mae": 9.851866
+    },
+    "realism_to_default_delta_vs_realism_internal": {
+      "classification_auroc": -0.026322,
+      "classification_brier": 0.011566,
+      "regression_mae": 3.520917
+    }
+  },
+  "stress_failures": [
+    {
+      "scenario": "modality_dropout",
+      "metric_deltas": {
+        "classification_auroc": -0.051969,
+        "classification_brier": 0.02081,
+        "regression_mae": 4.368769
+      }
+    },
+    {
+      "scenario": "train_default_test_realism_v2",
+      "metric_deltas": {
+        "classification_auroc": -0.141673,
+        "classification_brier": 0.081659,
+        "regression_mae": 9.851866
+      }
+    }
+  ],
+  "promotion_decision": "HOLD_SYNTHETIC_ONLY",
+  "model_use_boundary": "monitor_only_engineering_signal",
+  "limitations": [
+    "Both generator versions share project assumptions and target semantics.",
+    "Noise distributions are engineering stressors, not estimates of clinical measurement error.",
+    "Cross-generator transfer is not external validation.",
+    "Gradient boosting is a controlled benchmark, not a promoted clinical model."
+  ],
+  "claim_boundary": "All rows and labels in this evaluation are simulator-built. Perturbation robustness measures engineering sensitivity to synthetic assumptions; it does not establish clinical realism, external validity, treatment utility, patient benefit, or production healthcare readiness."
+}

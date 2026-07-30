@@ -1,0 +1,117 @@
+{
+  "schema_version": "synthetic_staging_resilience_dossier_v1",
+  "generated_at": "2026-07-30T04:02:31.503554+00:00",
+  "status": "strong_local_only_external_blocked",
+  "local_checks": [
+    {
+      "check_id": "outbox_retry_dead_letter_requeue",
+      "passed": true,
+      "evidence_scope": "local"
+    },
+    {
+      "check_id": "signing_key_rotation_tamper_replay",
+      "passed": true,
+      "evidence_scope": "local"
+    },
+    {
+      "check_id": "loopback_signed_delivery",
+      "passed": true,
+      "evidence_scope": "local"
+    },
+    {
+      "check_id": "sqlite_backup_restore",
+      "passed": true,
+      "evidence_scope": "local"
+    },
+    {
+      "check_id": "data_replay_quarantine_tombstone_fallback",
+      "passed": true,
+      "evidence_scope": "local"
+    },
+    {
+      "check_id": "compose_static_validation",
+      "passed": true,
+      "evidence_scope": "static_only"
+    }
+  ],
+  "local_passed_count": 6,
+  "local_check_count": 6,
+  "external_or_managed_blockers": [
+    {
+      "id": "container_runtime_drill",
+      "resolved": false,
+      "current_status": "blocked_environment"
+    },
+    {
+      "id": "managed_postgres_restore",
+      "resolved": false,
+      "current_status": "not_tested"
+    },
+    {
+      "id": "managed_vector_sync_and_comparison",
+      "resolved": false,
+      "current_status": "ready_for_managed_shadow_run"
+    },
+    {
+      "id": "azure_restore_and_failover",
+      "resolved": false,
+      "current_status": "not_tested"
+    },
+    {
+      "id": "external_delivery_and_human_acknowledgement",
+      "resolved": false,
+      "current_status": "intentionally_not_claimed"
+    }
+  ],
+  "unresolved_external_or_managed_blocker_count": 5,
+  "source_artifacts": {
+    "automation_fault_injection": {
+      "path": "Data/evals/ops/latest_automation_fault_injection.json",
+      "status": "strong",
+      "generated_at": "2026-07-30T02:58:52.375330+00:00"
+    },
+    "automation_channel_drill": {
+      "path": "Data/evals/ops/latest_automation_channel_drill.json",
+      "status": "strong",
+      "generated_at": "2026-07-30T03:59:29.500200+00:00"
+    },
+    "deployment_recovery_drill": {
+      "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
+      "status": "strong_local_only",
+      "generated_at": "2026-07-30T02:58:55.139336+00:00"
+    },
+    "data_platform_reliability": {
+      "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
+      "status": "strong_offline_drill",
+      "generated_at": "2026-07-30T03:52:26.937112+00:00"
+    },
+    "container_recovery_smoke": {
+      "path": "Data/evals/ops/latest_container_recovery_smoke.json",
+      "status": "blocked_environment",
+      "generated_at": "2026-07-30T02:59:07.886871+00:00"
+    },
+    "managed_vector_shadow_sync": {
+      "path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
+      "status": "ready_for_opt_in_shadow_sync",
+      "generated_at": "2026-07-30T03:52:29.046940+00:00"
+    },
+    "managed_vector_shadow_comparison": {
+      "path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
+      "status": "ready_for_managed_shadow_run",
+      "generated_at": "2026-07-30T03:52:38.148984+00:00"
+    },
+    "automation_staging_readiness": {
+      "path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
+      "status": "ready_for_synthetic_runtime",
+      "generated_at": "2026-07-30T03:59:34.894831+00:00"
+    }
+  },
+  "staging_runtime_completed": false,
+  "managed_cloud_drill_completed": false,
+  "real_external_delivery_completed": false,
+  "human_acknowledgement_proven": false,
+  "patient_data_processed": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This dossier consolidates disposable local and offline engineering drills over synthetic or curated non-patient fixtures. It does not prove managed-cloud durability, external channel reliability, clinician acknowledgement, emergency coverage, clinical validation, or production healthcare readiness."
+}

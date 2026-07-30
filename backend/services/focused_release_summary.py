@@ -49,6 +49,17 @@ def build_report() -> dict[str, Any]:
     finetune = _load("Data/evals/models/latest_finetune_governance.json")
     recovery = _load("Data/evals/ops/latest_deployment_recovery_drill.json")
     registry = _load("Data/evals/benchmark/latest_benchmark_summary.json")
+    retrieval_cache = _load("Data/evals/ops/latest_retrieval_runtime_cache_eval.json")
+    provider_usage = _load("Data/evals/ops/latest_provider_usage_reconciliation.json")
+    finetune_adjudication = _load(
+        "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json"
+    )
+    perturbation = _load(
+        "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json"
+    )
+    staging_resilience = _load(
+        "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json"
+    )
 
     baseline_summary = rag.get("summary") or {}
     required_count = sum(1 for row in gate["artifacts"] if row["required"])
@@ -68,6 +79,7 @@ def build_report() -> dict[str, Any]:
             "status": gate["status"],
             "artifact_count": gate["artifact_count"],
             "hard_blocker_failure_count": gate["failure_count"],
+            "appendix_warning_count": gate.get("warning_count", 0),
             "required_artifact_count": required_count,
             "optional_artifact_count": optional_count,
             "optional_artifact_ratio": round(optional_count / max(1, len(gate["artifacts"])), 4),
@@ -132,6 +144,27 @@ def build_report() -> dict[str, Any]:
                 "routes_with_insufficient_samples": _metric(route_latency, "summary", "insufficient_sample_count"),
                 "production_ready": False,
             },
+            "retrieval_runtime_cache": {
+                "status": retrieval_cache.get("status"),
+                "local_regression_improvement_observed": retrieval_cache.get(
+                    "local_regression_improvement_observed", False
+                ),
+                "retrieval_p95_delta_ms": _metric(
+                    retrieval_cache, "comparison", "retrieval_p95_ms", "delta_ms"
+                ),
+                "dense_unique_query_latency_measured": retrieval_cache.get(
+                    "dense_unique_query_latency_measured", False
+                ),
+                "production_ready": False,
+            },
+            "provider_usage_reconciliation": {
+                "status": provider_usage.get("status"),
+                "completed": provider_usage.get("completed", False),
+                "paired_request_count": provider_usage.get("paired_request_count"),
+                "actual_usage_coverage_rate": provider_usage.get(
+                    "actual_usage_coverage_rate"
+                ),
+            },
             "deployment_profile": {
                 "status": deployment.get("status"),
                 "profile": deployment.get("profile"),
@@ -151,6 +184,32 @@ def build_report() -> dict[str, Any]:
                 "training_ready": finetune.get("training_ready", False),
                 "promotion_ready": finetune.get("promotion_ready", False),
                 "failed_checks": _metric(finetune, "execution_readiness", "failed_checks", default=[]),
+                "semantic_adjudication_status": finetune_adjudication.get("status"),
+                "semantic_unresolved_count": finetune_adjudication.get(
+                    "unresolved_count"
+                ),
+                "semantic_critical_unresolved_count": finetune_adjudication.get(
+                    "critical_unresolved_count"
+                ),
+            },
+            "synthetic_ml_perturbation": {
+                "status": perturbation.get("status"),
+                "promotion_decision": perturbation.get("promotion_decision"),
+                "stress_failure_count": len(perturbation.get("stress_failures") or []),
+                "guarded_feature_policy": _metric(
+                    perturbation, "feature_policies", "guarded_primary_policy", "metrics"
+                ),
+            },
+            "synthetic_staging_resilience": {
+                "status": staging_resilience.get("status"),
+                "local_checks": (
+                    f"{staging_resilience.get('local_passed_count', 0)}/"
+                    f"{staging_resilience.get('local_check_count', 0)}"
+                ),
+                "unresolved_external_or_managed_blockers": staging_resilience.get(
+                    "unresolved_external_or_managed_blocker_count"
+                ),
+                "managed_cloud_drill_completed": False,
             },
             "recovery": {
                 "status": recovery.get("status"),
@@ -172,6 +231,11 @@ def build_report() -> dict[str, Any]:
             "Data/evals/models/latest_finetune_governance.json",
             "Data/evals/ops/latest_deployment_profile_validation.json",
             "Data/evals/ops/latest_deployment_recovery_drill.json",
+            "Data/evals/ops/latest_retrieval_runtime_cache_eval.json",
+            "Data/evals/ops/latest_provider_usage_reconciliation.json",
+            "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
+            "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
+            "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json",
         ],
         "registry_health": {
             "status": registry.get("status"),
@@ -191,6 +255,11 @@ def build_report() -> dict[str, Any]:
             "Automation durability controls are code-tested, but live n8n/channel reliability is untested.",
             "Route percentile labels require at least 30 samples; smaller samples are insufficient, not ideal.",
             "Most gate entries are supporting or informational, so the focused core view is the reviewer headline.",
+            "Provider-reported token reconciliation is incomplete; character-based estimates are not billing truth.",
+            "The local RAG cache speedup does not cover dense unique-query, network, cloud-load, or production latency.",
+            "The guarded synthetic feature policy exposes materially weaker ML results after removing a direct response proxy.",
+            "Synthetic modality-dropout and cross-generator transfer stress failures remain visible and block promotion.",
+            "Local automation/restore drills pass, but container, managed Postgres, Azure, managed-vector, and human acknowledgement evidence is absent.",
         ],
         "what_this_release_can_claim": [
             "patient-confirmed, provenance-stamped, undoable record writes",

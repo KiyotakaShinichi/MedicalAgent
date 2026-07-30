@@ -1,6 +1,6 @@
 {
   "schema_version": "evidence_maturity_matrix_v1",
-  "generated_at": "2026-07-30T02:10:21.168486+00:00",
+  "generated_at": "2026-07-30T04:02:35.690411+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -38,7 +38,7 @@
       "current_evidence_tier": 3,
       "tier_label": "frozen_internal_with_contamination_controls",
       "what_is_proven": "Frozen internal adversarial and safe-negative controls.",
-      "what_is_not_proven": "Unsafe leakage remains 0.036363636363636376; external authorship is absent.",
+      "what_is_not_proven": "Unsafe leakage remains 0.07272727272727275; external authorship is absent.",
       "next_falsifiable_evidence": "External mutation/red-team bank passes predeclared thresholds without tuning."
     },
     {
@@ -116,36 +116,22 @@
   ],
   "architecture_maintainability": {
     "budget_status": "needs_attention",
-    "oversized_file_count": 14,
-    "critical_file_count": 4,
-    "backend_service_file_count": 356,
-    "test_file_count": 196,
-    "test_to_service_file_ratio": 0.5506,
+    "oversized_file_count": 11,
+    "critical_file_count": 0,
+    "backend_service_file_count": 364,
+    "test_file_count": 202,
+    "test_to_service_file_ratio": 0.5549,
     "largest_violations": [
       {
-        "path": "backend/services/benchmark_registry.py",
-        "line_count": 2424,
-        "severity": "critical",
+        "path": "backend/api/routers/patient.py",
+        "line_count": 1729,
+        "severity": "warning",
         "warning_threshold": 1000,
         "critical_threshold": 1800
       },
       {
         "path": "backend/services/support_chat_agent.py",
-        "line_count": 2225,
-        "severity": "critical",
-        "warning_threshold": 1000,
-        "critical_threshold": 1800
-      },
-      {
-        "path": "frontend-react/src/types/api.ts",
-        "line_count": 1843,
-        "severity": "critical",
-        "warning_threshold": 800,
-        "critical_threshold": 1200
-      },
-      {
-        "path": "backend/api/routers/patient.py",
-        "line_count": 1729,
+        "line_count": 1723,
         "severity": "warning",
         "warning_threshold": 1000,
         "critical_threshold": 1800
@@ -170,13 +156,6 @@
         "severity": "warning",
         "warning_threshold": 1000,
         "critical_threshold": 1800
-      },
-      {
-        "path": "frontend-react/src/pages/admin/sections/MleSection.tsx",
-        "line_count": 1263,
-        "severity": "critical",
-        "warning_threshold": 800,
-        "critical_threshold": 1200
       },
       {
         "path": "backend/services/mle_readiness.py",

@@ -1,0 +1,82 @@
+{
+  "schema_version": "retrieval_runtime_cache_eval_v1",
+  "generated_at": "2026-07-30T03:58:15.881125+00:00",
+  "status": "improved_local_regression",
+  "optimization": {
+    "index_file_cache": true,
+    "bm25_runtime_cache": true,
+    "faiss_runtime_cache": true,
+    "bounded_exact_query_cache": true,
+    "index_change_invalidation": "mtime_and_size"
+  },
+  "baseline": {
+    "schema_version": "retrieval_runtime_cache_baseline_v1",
+    "captured_from_git_revision": "ac5dd1ec3ecadd488bd2a45c691c441b440ca9bf",
+    "captured_from_blob": "HEAD:Data/evals/models/latest_agent_latency_probe.json",
+    "source_generated_at": "2026-07-30T02:07:49.413016+00:00",
+    "route": "normal_rag",
+    "sample_count": 30,
+    "retrieval_p50_ms": 1215.88,
+    "retrieval_p95_ms": 1806.32,
+    "total_p50_ms": 1405.04,
+    "total_p95_ms": 2082.15,
+    "workload": {
+      "database": "in_memory_sqlite",
+      "agent_mode": "fast",
+      "retrieval_mode": "forced_sparse",
+      "query_pattern": "repeated educational query with synthetic latency suffixes",
+      "environment": "local_windows"
+    },
+    "clinical_validation": false,
+    "production_ready": false,
+    "claim_boundary": "This fixed baseline is local regression evidence only. It is not a production SLO, cloud benchmark, clinical validation result, or patient-benefit claim."
+  },
+  "current": {
+    "sample_count": 30,
+    "retrieval_p50_ms": 43.38,
+    "retrieval_p95_ms": 66.0,
+    "total_p50_ms": 131.31,
+    "total_p95_ms": 224.51,
+    "source_generated_at": "2026-07-30T03:58:07.206160+00:00",
+    "workload": {
+      "database": "in_memory_sqlite",
+      "agent_mode": "fast",
+      "retrieval_mode": "forced_sparse",
+      "query_pattern": "repeated educational query with synthetic latency suffixes",
+      "environment": "local_windows"
+    }
+  },
+  "comparison": {
+    "retrieval_p50_ms": {
+      "baseline_ms": 1215.88,
+      "current_ms": 43.38,
+      "delta_ms": -1172.5,
+      "relative_change": -0.9643
+    },
+    "retrieval_p95_ms": {
+      "baseline_ms": 1806.32,
+      "current_ms": 66.0,
+      "delta_ms": -1740.32,
+      "relative_change": -0.9635
+    },
+    "total_p50_ms": {
+      "baseline_ms": 1405.04,
+      "current_ms": 131.31,
+      "delta_ms": -1273.73,
+      "relative_change": -0.9065
+    },
+    "total_p95_ms": {
+      "baseline_ms": 2082.15,
+      "current_ms": 224.51,
+      "delta_ms": -1857.64,
+      "relative_change": -0.8922
+    }
+  },
+  "sample_contract_met": true,
+  "local_regression_improvement_observed": true,
+  "dense_unique_query_latency_measured": false,
+  "provider_network_latency_measured": false,
+  "production_ready": false,
+  "clinical_validation": false,
+  "claim_boundary": "This comparison measures a repeated local forced-sparse regression workload. It does not measure dense unique-query latency, provider/network latency, cloud load, production SLOs, clinical validation, or patient benefit."
+}
