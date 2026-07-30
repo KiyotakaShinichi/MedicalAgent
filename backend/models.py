@@ -578,6 +578,7 @@ class RAGEvaluationLog(Base):
     post_gen_validator_json = Column(Text, nullable=True)
     compound_intent_json = Column(Text, nullable=True)
     stage_latency_json = Column(Text, nullable=True)
+    token_usage_json = Column(Text, nullable=True)
     model_used = Column(String, nullable=True, index=True)
     retrieval_confidence_json = Column(Text, nullable=True)
     trace_diagnostics_json = Column(Text, nullable=True)

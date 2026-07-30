@@ -86,6 +86,7 @@ def ensure_schema():
             "post_gen_validator_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN post_gen_validator_json TEXT",
             "compound_intent_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN compound_intent_json TEXT",
             "stage_latency_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN stage_latency_json TEXT",
+            "token_usage_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN token_usage_json TEXT",
             "model_used": "ALTER TABLE rag_evaluation_logs ADD COLUMN model_used VARCHAR",
             "retrieval_confidence_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN retrieval_confidence_json TEXT",
             "trace_diagnostics_json": "ALTER TABLE rag_evaluation_logs ADD COLUMN trace_diagnostics_json TEXT",

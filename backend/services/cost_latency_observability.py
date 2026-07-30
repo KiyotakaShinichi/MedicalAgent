@@ -14,6 +14,7 @@ from backend.services.oncology_canonical_schema import ROOT_DIR
 
 DEFAULT_OUTPUT_PATH = "Data/evals/ops/latest_cost_latency_report.json"
 LIVE_RAG_PATH = "Data/evals/rag/latest_live_rag_eval.json"
+LATENCY_PROBE_PATH = "Data/evals/models/latest_agent_latency_probe.json"
 
 CLAIM_BOUNDARY = (
     "Cost and latency observability is engineering telemetry only. It does not "
@@ -36,25 +37,37 @@ def build_cost_latency_report(
     route_summaries = _route_summaries(request_rows)
     route_comparison = _route_cost_comparison(request_rows)
     summary = _summary(request_rows, route_comparison)
+    local_probe_stage_latency = _load_probe_stage_latency()
 
     payload = {
-        "schema_version": "cost_latency_observability_v1",
+        "schema_version": "cost_latency_observability_v3",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": "strong" if request_rows else "needs_attention",
         "summary": summary,
         "route_summaries": route_summaries,
         "route_cost_comparison": route_comparison,
+        "local_probe_stage_latency": local_probe_stage_latency,
         "requests": request_rows[:100],
         "instrumentation": {
             "per_request_fields": [
                 "route",
                 "model_used",
+                "token_usage_basis",
+                "provider_reported_input_tokens",
+                "provider_reported_output_tokens",
+                "provider_reported_total_tokens",
+                "actual_usage_coverage_rate",
                 "estimated_input_tokens",
                 "estimated_output_tokens",
                 "estimated_cost_usd",
                 "latency_ms",
+                "safety_gate_latency_ms",
+                "intent_routing_latency_ms",
                 "retrieval_latency_ms",
                 "reranker_latency_ms",
+                "pre_generation_governance_ms",
+                "compression_latency_ms",
+                "generation_latency_ms",
                 "cross_encoder_latency_ms",
                 "validator_latency_ms",
                 "cache_status",
@@ -67,9 +80,11 @@ def build_cost_latency_report(
                 "total_prediction_latency_before_after",
             ],
             "legacy_gap": (
-                "Rows created before schema revision 0005 may not have stage_latency_json. "
-                "The report keeps those stage fields null instead of inventing precision."
+                "Rows created before schema revision 0011 may not have token_usage_json, and rows "
+                "before revision 0005 may not have stage_latency_json. Missing fields remain null "
+                "or explicitly estimated instead of being presented as provider-reported usage."
             ),
+            "privacy": "No prompts or completions are retained in token_usage_json.",
         },
         "recommendations": _recommendations(summary, route_comparison),
         "claim_boundary": CLAIM_BOUNDARY,
@@ -99,6 +114,7 @@ def _load_db_request_rows(*, db=None, limit: int) -> list[dict[str, Any]]:
 
 def _db_row_to_request(row: RAGEvaluationLog) -> dict[str, Any]:
     stage = _loads_dict(getattr(row, "stage_latency_json", None))
+    token_usage = _loads_dict(getattr(row, "token_usage_json", None))
     route = _route_from_log(row)
     input_tokens = int(row.estimated_input_tokens or 0)
     output_tokens = int(row.estimated_output_tokens or 0)
@@ -109,13 +125,29 @@ def _db_row_to_request(row: RAGEvaluationLog) -> dict[str, Any]:
         "route": route,
         "intent": row.intent,
         "model_used": getattr(row, "model_used", None) or "deterministic_local_or_untracked",
+        "token_usage_basis": _token_usage_basis(token_usage),
+        "provider_reported_input_tokens": _provider_reported_tokens(token_usage, "input_tokens"),
+        "provider_reported_output_tokens": _provider_reported_tokens(token_usage, "output_tokens"),
+        "provider_reported_total_tokens": _provider_reported_tokens(token_usage, "total_tokens"),
+        "llm_call_count": int(token_usage.get("call_count") or 0),
+        "provider_reported_call_count": int(token_usage.get("provider_reported_call_count") or 0),
+        "estimated_call_count": int(token_usage.get("estimated_call_count") or 0),
+        "actual_usage_coverage_rate": _round(token_usage.get("actual_usage_coverage_rate")) or 0.0,
+        "llm_call_latency_ms": _round(token_usage.get("llm_call_latency_ms")),
         "estimated_input_tokens": input_tokens,
         "estimated_output_tokens": output_tokens,
         "estimated_total_tokens": int(row.estimated_total_tokens or input_tokens + output_tokens),
         "estimated_cost_usd": round(cost, 8),
         "latency_ms": _round(row.latency_ms),
+        "safety_gate_latency_ms": _round(stage.get("safety_gate_ms")),
+        "intent_routing_latency_ms": _round(stage.get("intent_routing_ms")),
         "retrieval_latency_ms": _round(stage.get("retrieval_ms")),
         "reranker_latency_ms": _round(stage.get("rerank_ms")),
+        "pre_generation_governance_ms": _round(
+            stage.get("pre_generation_governance_ms")
+        ),
+        "compression_latency_ms": _round(stage.get("compression_ms")),
+        "generation_latency_ms": _round(stage.get("generation_ms")),
         "validator_latency_ms": _round(stage.get("validator_ms")),
         "cache_status": row.cache_status or "unknown",
         "cache_hit": _is_cache_hit(row.cache_status),
@@ -147,13 +179,27 @@ def _load_live_rag_rows() -> list[dict[str, Any]]:
             "route": route,
             "intent": case.get("observed_intent") or case.get("expected_intent") or "unknown",
             "model_used": "deterministic_live_eval",
+            "token_usage_basis": "pipeline_estimate_only",
+            "provider_reported_input_tokens": None,
+            "provider_reported_output_tokens": None,
+            "provider_reported_total_tokens": None,
+            "llm_call_count": 0,
+            "provider_reported_call_count": 0,
+            "estimated_call_count": 0,
+            "actual_usage_coverage_rate": 0.0,
+            "llm_call_latency_ms": None,
             "estimated_input_tokens": input_tokens,
             "estimated_output_tokens": output_tokens,
             "estimated_total_tokens": input_tokens + output_tokens,
             "estimated_cost_usd": 0.0,
             "latency_ms": _round(case.get("latency_ms")),
+            "safety_gate_latency_ms": None,
+            "intent_routing_latency_ms": None,
             "retrieval_latency_ms": None,
             "reranker_latency_ms": None,
+            "pre_generation_governance_ms": None,
+            "compression_latency_ms": None,
+            "generation_latency_ms": None,
             "validator_latency_ms": None,
             "cache_status": "eval_no_cache",
             "cache_hit": False,
@@ -168,6 +214,53 @@ def _load_live_rag_rows() -> list[dict[str, Any]]:
     return rows
 
 
+def _load_probe_stage_latency() -> dict[str, Any]:
+    payload = _read_json(LATENCY_PROBE_PATH)
+    summaries = payload.get("summary_by_route")
+    if not isinstance(summaries, dict):
+        return {
+            "status": "not_measured",
+            "source_artifact": LATENCY_PROBE_PATH,
+            "route_count": 0,
+            "interpretation": "No credible local stage-latency probe is available.",
+        }
+    measured_stage_samples = 0
+    normalized: dict[str, Any] = {}
+    for route, stages in summaries.items():
+        if not isinstance(stages, dict):
+            continue
+        normalized[route] = {}
+        for stage, values in stages.items():
+            if not isinstance(values, dict):
+                continue
+            samples = int(values.get("samples") or 0)
+            measured_stage_samples += samples if stage != "total_ms" else 0
+            normalized[route][stage] = {
+                "samples": samples,
+                "p50_ms": _round(values.get("median_ms")),
+                "p95_ms": _round(values.get("p95_ms")),
+                "max_ms": _round(values.get("max_ms")),
+                "percentile_credibility": _percentile_credibility(samples),
+            }
+    return {
+        "status": "measured" if measured_stage_samples else "needs_attention",
+        "source_artifact": LATENCY_PROBE_PATH,
+        "route_count": len(normalized),
+        "measured_stage_sample_count": measured_stage_samples,
+        "routes": normalized,
+        "environment": {
+            "local_only": True,
+            "forced_sparse_retrieval": True,
+            "in_memory_sqlite": True,
+            "production_slo": False,
+        },
+        "interpretation": (
+            "Stage timings come from the repeated local route probe and remain "
+            "separate from legacy database rows with no stage envelope."
+        ),
+    }
+
+
 def _route_summaries(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
@@ -176,6 +269,12 @@ def _route_summaries(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for route, items in sorted(grouped.items()):
         latencies = [_float(item.get("latency_ms")) for item in items if _float(item.get("latency_ms")) is not None]
         costs = [_float(item.get("estimated_cost_usd")) or 0.0 for item in items]
+        actual_tokens = [
+            int(item.get("provider_reported_total_tokens") or 0)
+            for item in items
+            if item.get("provider_reported_total_tokens") is not None
+        ]
+        estimated_tokens = [int(item.get("estimated_total_tokens") or 0) for item in items]
         summaries.append({
             "route": route,
             "request_count": len(items),
@@ -185,6 +284,16 @@ def _route_summaries(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "mean_latency_ms": _round(mean(latencies)) if latencies else None,
             "estimated_cost_usd": round(sum(costs), 8),
             "cost_per_request_usd": round(sum(costs) / max(len(items), 1), 8),
+            "provider_reported_total_tokens": sum(actual_tokens),
+            "estimated_pipeline_total_tokens": sum(estimated_tokens),
+            "requests_with_provider_usage": sum(
+                1 for item in items if item.get("provider_reported_total_tokens") is not None
+            ),
+            "actual_usage_coverage_rate": round(
+                sum(1 for item in items if item.get("provider_reported_total_tokens") is not None)
+                / max(len(items), 1),
+                4,
+            ),
             "cache_hit_rate": round(sum(1 for item in items if item.get("cache_hit")) / max(len(items), 1), 4),
             "claim_validation_pass_rate": round(sum(1 for item in items if item.get("claim_validation_passed")) / max(len(items), 1), 4),
             "source_tier_correctness": round(sum(1 for item in items if item.get("source_tier_correct")) / max(len(items), 1), 4),
@@ -270,12 +379,49 @@ def _route_cost_comparison(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _summary(rows: list[dict[str, Any]], route_comparison: list[dict[str, Any]]) -> dict[str, Any]:
     latencies = [_float(row.get("latency_ms")) for row in rows if _float(row.get("latency_ms")) is not None]
     costs = [_float(row.get("estimated_cost_usd")) or 0.0 for row in rows]
+    provider_rows = [row for row in rows if row.get("provider_reported_total_tokens") is not None]
+    stage_keys = (
+        "safety_gate_latency_ms",
+        "intent_routing_latency_ms",
+        "retrieval_latency_ms",
+        "reranker_latency_ms",
+        "pre_generation_governance_ms",
+        "compression_latency_ms",
+        "generation_latency_ms",
+        "validator_latency_ms",
+        "source_governance_ms",
+        "post_generation_validation_ms",
+        "llm_call_latency_ms",
+    )
     return {
         "request_count": len(rows),
         "overall_latency_ms": {
             "p50": _percentile(latencies, 50),
             "p95": _percentile(latencies, 95),
             "p99": _percentile(latencies, 99),
+            "sample_count": len(latencies),
+            "percentile_credibility": _percentile_credibility(len(latencies)),
+        },
+        "stage_latency_ms": {
+            key.replace("_latency_ms", "").replace("_ms", ""): _stage_summary(rows, key)
+            for key in stage_keys
+        },
+        "provider_reported_usage": {
+            "requests_with_actual_usage": len(provider_rows),
+            "coverage_rate": round(len(provider_rows) / max(len(rows), 1), 4),
+            "input_tokens": sum(int(row.get("provider_reported_input_tokens") or 0) for row in provider_rows),
+            "output_tokens": sum(int(row.get("provider_reported_output_tokens") or 0) for row in provider_rows),
+            "total_tokens": sum(int(row.get("provider_reported_total_tokens") or 0) for row in provider_rows),
+            "interpretation": (
+                "Provider-reported token usage only. Requests without provider usage are excluded, "
+                "not silently mixed with estimates."
+            ),
+        },
+        "estimated_pipeline_usage": {
+            "input_tokens": sum(int(row.get("estimated_input_tokens") or 0) for row in rows),
+            "output_tokens": sum(int(row.get("estimated_output_tokens") or 0) for row in rows),
+            "total_tokens": sum(int(row.get("estimated_total_tokens") or 0) for row in rows),
+            "basis": "chars_div_4_estimate",
         },
         "estimated_total_cost_usd": round(sum(costs), 8),
         "cache_hit_rate": round(sum(1 for row in rows if row.get("cache_hit")) / max(len(rows), 1), 4),
@@ -285,8 +431,8 @@ def _summary(rows: list[dict[str, Any]], route_comparison: list[dict[str, Any]])
         "stage_latency_captured_count": sum(1 for row in rows if row.get("stage_latency_basis") == "captured"),
         "lowest_estimated_cost_route": min(route_comparison, key=lambda item: item["estimated_cost_usd"])["route"] if route_comparison else None,
         "cost_basis": (
-            "Current default local/deterministic route logs $0 provider cost. Route comparison uses explicit "
-            "token-price assumptions for capacity planning, not audited billing."
+            "Token counts use provider metadata when available and remain separate from chars/4 estimates. "
+            "Dollar values use explicit pricing assumptions for engineering capacity planning, not audited billing."
         ),
     }
 
@@ -301,6 +447,17 @@ def _recommendations(summary: dict[str, Any], route_comparison: list[dict[str, A
         recommendations.append("p95 is high; cache only safe education/portal-help answers and keep SSE stage feedback visible.")
     if summary.get("stage_latency_captured_count") == 0:
         recommendations.append("Generate new chat traces after revision 0005 to populate per-stage retrieval/reranker/validator timing fields.")
+    usage = summary.get("provider_reported_usage") or {}
+    if float(usage.get("coverage_rate") or 0.0) < 0.8:
+        recommendations.append(
+            "Provider token coverage is below 80%; keep provider-reported totals separate from "
+            "chars/4 estimates until new instrumented traffic increases coverage."
+        )
+    latency = summary.get("overall_latency_ms") or {}
+    if latency.get("percentile_credibility") == "insufficient_n_for_tail_claim":
+        recommendations.append(
+            "Fewer than 30 latency samples are available; treat p95/p99 as directional and gather more requests."
+        )
     if route_comparison:
         cached = next((item for item in route_comparison if item["route"] == "cached_path"), None)
         if cached:
@@ -317,6 +474,47 @@ def _baseline_tokens_and_latency(rows: list[dict[str, Any]]) -> dict[str, float]
         "output_tokens": mean(output_tokens) if output_tokens else 220.0,
         "p50_latency_ms": _percentile(latencies, 50) or 1600.0,
     }
+
+
+def _token_usage_basis(token_usage: dict[str, Any]) -> str:
+    if int(token_usage.get("provider_reported_call_count") or 0) > 0:
+        return "provider_reported"
+    if int(token_usage.get("call_count") or 0) > 0:
+        return "per_call_estimate"
+    return "pipeline_estimate_only"
+
+
+def _provider_reported_tokens(token_usage: dict[str, Any], field: str) -> int | None:
+    if int(token_usage.get("provider_reported_call_count") or 0) <= 0:
+        return None
+    try:
+        return max(0, int(token_usage.get(field) or 0))
+    except (TypeError, ValueError):
+        return None
+
+
+def _stage_summary(rows: list[dict[str, Any]], field: str) -> dict[str, Any]:
+    values = [
+        value
+        for row in rows
+        if (value := _float(row.get(field))) is not None
+    ]
+    return {
+        "sample_count": len(values),
+        "p50": _percentile(values, 50),
+        "p95": _percentile(values, 95),
+        "percentile_credibility": _percentile_credibility(len(values)),
+    }
+
+
+def _percentile_credibility(sample_count: int) -> str:
+    if sample_count >= 100:
+        return "stable_internal_sample"
+    if sample_count >= 30:
+        return "directional_internal_sample"
+    if sample_count > 0:
+        return "insufficient_n_for_tail_claim"
+    return "not_measured"
 
 
 def _route_from_log(row: RAGEvaluationLog) -> str:

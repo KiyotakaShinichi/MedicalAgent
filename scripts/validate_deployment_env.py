@@ -9,7 +9,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from backend.services.deployment_profile_validation import build_report, write_report  # noqa: E402
+from backend.services.deployment_profile_validation import (  # noqa: E402
+    build_profile_matrix,
+    build_report,
+    write_profile_matrix,
+    write_report,
+)
 
 
 def main() -> int:
@@ -17,11 +22,15 @@ def main() -> int:
     parser.add_argument("--strict", action="store_true", help="Fail unless the active staging/production profile passes")
     args = parser.parse_args()
     path = write_report()
+    matrix_path = write_profile_matrix()
     report = build_report()
+    matrix = build_profile_matrix()
     print(json.dumps({
         "artifact": path.as_posix(),
+        "matrix_artifact": matrix_path.as_posix(),
         "profile": report["profile"],
         "status": report["status"],
+        "matrix_status": matrix["status"],
         "failed_checks": report["failed_checks"],
     }, indent=2))
     if report["status"] == "blocked":

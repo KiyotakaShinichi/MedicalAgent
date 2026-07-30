@@ -1,6 +1,6 @@
 {
   "schema_version": "patient_xai_readability_dossier_v1",
-  "generated_at": "2026-07-17T08:39:48.829533+00:00",
+  "generated_at": "2026-07-30T02:02:49.256619+00:00",
   "status": "strong",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -80,7 +80,7 @@
     {
       "id": "patient_numbers_have_meaning_calculation_next_steps",
       "passed": true,
-      "why": "The KPI strip requires meaning, calculation, and allowed next-step copy for patient-facing indicators."
+      "why": "The actual patient KPI source implements meaning, calculation, safe-next-step, and non-authority copy."
     },
     {
       "id": "synthetic_outputs_have_nonclinical_boundary",
@@ -103,6 +103,37 @@
       "why": "Automation copy remains bounded to local review workflow and test-recipient dispatch."
     }
   ],
+  "implementation_evidence": {
+    "source_path": "frontend-react/src/pages/patient/PatientKpiStrip.tsx",
+    "source_exists": true,
+    "checks": [
+      {
+        "id": "all_four_patient_indicators_implemented",
+        "passed": true
+      },
+      {
+        "id": "meaning_calculation_and_next_step_sections_implemented",
+        "passed": true
+      },
+      {
+        "id": "synthetic_probability_boundary_implemented",
+        "passed": true
+      },
+      {
+        "id": "removed_health_score_boundary_implemented",
+        "passed": true
+      },
+      {
+        "id": "treatment_non_authority_implemented",
+        "passed": true
+      },
+      {
+        "id": "clinical_sounding_model_labels_softened",
+        "passed": true
+      }
+    ],
+    "all_passed": true
+  },
   "failed_check_count": 0,
   "weakness_visibility": {
     "rag": {

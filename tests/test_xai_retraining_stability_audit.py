@@ -49,6 +49,14 @@ def test_retraining_stability_emits_bounded_nonclinical_artifact(tmp_path) -> No
     assert payload["clinical_validation"] is False
     assert payload["causal_interpretation_allowed"] is False
     assert payload["seed_count"] == 8
+    assert payload["presentation_policy"]["enforced"] is True
+    assert "exact_rank_display_allowed" in payload["presentation_policy"]
+    assert payload["raw_exact_rank_stability_status"] in {"acceptable", "needs_attention"}
+    assert set(payload["consensus_feature_tiers"]) == {
+        "stable_core_alphabetical",
+        "variable_context_alphabetical",
+        "suppressed_low_consensus_alphabetical",
+    }
     assert output.exists()
     assert json.loads(output.read_text())["synthetic_only"] is True
 

@@ -1481,8 +1481,31 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "request_count": ["summary", "request_count"],
             "latency_p50_ms": ["summary", "overall_latency_ms", "p50"],
             "latency_p95_ms": ["summary", "overall_latency_ms", "p95"],
+            "latency_sample_count": ["summary", "overall_latency_ms", "sample_count"],
+            "latency_percentile_credibility": ["summary", "overall_latency_ms", "percentile_credibility"],
+            "provider_reported_total_tokens": ["summary", "provider_reported_usage", "total_tokens"],
+            "provider_usage_coverage_rate": ["summary", "provider_reported_usage", "coverage_rate"],
+            "estimated_pipeline_total_tokens": ["summary", "estimated_pipeline_usage", "total_tokens"],
             "estimated_total_cost_usd": ["summary", "estimated_total_cost_usd"],
             "cache_hit_rate": ["summary", "cache_hit_rate"],
+            "local_probe_stage_sample_count": [
+                "local_probe_stage_latency",
+                "measured_stage_sample_count",
+            ],
+            "normal_rag_probe_p95_ms": [
+                "local_probe_stage_latency",
+                "routes",
+                "normal_rag",
+                "total_ms",
+                "p95_ms",
+            ],
+            "normal_rag_retrieval_p95_ms": [
+                "local_probe_stage_latency",
+                "routes",
+                "normal_rag",
+                "retrieval_ms",
+                "p95_ms",
+            ],
         },
     },
     {
@@ -1573,6 +1596,34 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "unsupported_context_rate": ["summary", "unsupported_context_rate"],
             "source_tier_correctness": ["summary", "source_tier_correctness"],
             "improvement_proven_vs_bm25": ["summary", "improvement_proven_vs_bm25"],
+        },
+    },
+    {
+        "id": "rag_paired_statistical_comparison",
+        "title": "Paired RAG statistical comparison",
+        "path": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "goldset_case_count": ["goldset_case_count"],
+            "full_stack_improvement_proven_vs_bm25": [
+                "headline",
+                "full_stack_improvement_proven_vs_bm25",
+            ],
+            "full_stack_recall_at_10_favorable_delta": [
+                "headline",
+                "full_stack_recall_at_10_favorable_delta",
+            ],
+            "full_stack_recall_at_10_ci95": [
+                "headline",
+                "full_stack_recall_at_10_ci95",
+            ],
+            "full_stack_recall_at_10_adjusted_p_value": [
+                "headline",
+                "full_stack_recall_at_10_adjusted_p_value",
+            ],
+            "clinical_validation": ["clinical_validation"],
+            "external_validation": ["external_validation"],
         },
     },
     {
@@ -1711,6 +1762,38 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         "metrics": {"pass_rate": ["pass_rate"], "human_study": ["human_participant_study_completed"]},
     },
     {
+        "id": "synthetic_prediction_statistical_audit",
+        "title": "Synthetic prediction statistical credibility audit",
+        "path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "total_n": ["total_n"],
+            "synthetic_auroc": ["headline", "synthetic_auroc"],
+            "champion_superiority_over_logistic_proven": [
+                "headline",
+                "champion_superiority_over_logistic_proven",
+            ],
+            "paired_accuracy_delta": [
+                "headline",
+                "paired_accuracy_delta",
+                "observed_delta",
+            ],
+            "paired_accuracy_delta_lower_95": [
+                "headline",
+                "paired_accuracy_delta",
+                "lower_95",
+            ],
+            "paired_accuracy_delta_upper_95": [
+                "headline",
+                "paired_accuracy_delta",
+                "upper_95",
+            ],
+            "clinical_validation": ["clinical_validation"],
+            "synthetic_only": ["synthetic_only"],
+        },
+    },
+    {
         "id": "xai_rank_stability",
         "title": "Synthetic SHAP ranking stability",
         "path": "Data/evals/models/latest_xai_rank_stability.json",
@@ -1735,6 +1818,30 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
             "global_rank_correlation_p05": ["metrics", "global_rank_correlation_p05"],
             "local_top_k_jaccard_median": ["metrics", "local_patient_top_k_jaccard_median"],
             "clinical_validation": ["clinical_validation"],
+        },
+    },
+    {
+        "id": "xai_reliability_gate",
+        "title": "Fail-closed synthetic XAI presentation policy",
+        "path": "Data/evals/models/latest_xai_reliability_gate.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "display_mode": ["patient_display_policy", "mode"],
+            "show_grouped_factors": [
+                "patient_display_policy",
+                "show_grouped_factors",
+            ],
+            "ranked_feature_order_allowed": [
+                "patient_display_policy",
+                "ranked_feature_order_allowed",
+            ],
+            "show_numeric_shap_values": [
+                "patient_display_policy",
+                "show_numeric_shap_values",
+            ],
+            "clinical_validation": ["clinical_validation"],
+            "causal_interpretation_allowed": ["causal_interpretation_allowed"],
         },
     },
     {
@@ -1810,6 +1917,112 @@ BENCHMARK_SPECS: list[dict[str, Any]] = [
         "path": "Data/evals/models/latest_finetune_runtime_preflight.json",
         "tier": "supporting",
         "metrics": {"status": ["status"], "model_trained": ["model_trained"], "ready": ["ready_for_offline_experiment"]},
+    },
+    {
+        "id": "finetune_semantic_contamination",
+        "title": "Fine-tune semantic contamination screen",
+        "path": "Data/evals/models/latest_finetune_semantic_contamination.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "flagged_pair_count": ["summary", "flagged_pair_count"],
+            "retained_flagged_pair_count": [
+                "summary",
+                "retained_flagged_pair_count",
+            ],
+            "truncated_pair_count": ["summary", "truncated_pair_count"],
+            "critical_pair_count": ["summary", "critical_pair_count"],
+            "unresolved_pair_count": ["summary", "unresolved_pair_count"],
+            "review_completed": ["summary", "review_completed"],
+            "adjudication_cleared_for_candidate": [
+                "summary",
+                "adjudication_cleared_for_candidate",
+            ],
+            "semantic_similarity_proxy_completed": [
+                "screen",
+                "semantic_similarity_proxy_completed",
+            ],
+            "semantic_contamination_absence_proven": [
+                "summary",
+                "semantic_contamination_absence_proven",
+            ],
+            "clinical_validation": ["clinical_validation"],
+        },
+    },
+    {
+        "id": "finetune_hardening_assurance",
+        "title": "Fine-tune hardening assurance",
+        "path": "Data/evals/models/latest_finetune_hardening_assurance.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "promotion_decision": ["promotion_decision"],
+            "check_count": ["summary", "check_count"],
+            "passed_count": ["summary", "passed_count"],
+            "pass_rate": ["summary", "pass_rate"],
+            "blocking_gap_count": ["summary", "blocking_gap_count"],
+            "semantic_similarity_screen_completed": [
+                "summary",
+                "semantic_similarity_screen_completed",
+            ],
+            "semantic_unresolved_pair_count": [
+                "summary",
+                "semantic_unresolved_pair_count",
+            ],
+            "semantic_review_completed": [
+                "summary",
+                "semantic_review_completed",
+            ],
+            "clinical_validation": ["clinical_validation"],
+        },
+    },
+    {
+        "id": "evidence_maturity_matrix",
+        "title": "Cross-domain evidence maturity matrix",
+        "path": "Data/evals/governance/latest_evidence_maturity_matrix.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "aggregate_score_emitted": [
+                "scoring_policy",
+                "aggregate_score_emitted",
+            ],
+            "tier_counts": ["scoring_policy", "tier_counts"],
+            "architecture_budget_status": [
+                "architecture_maintainability",
+                "budget_status",
+            ],
+            "oversized_file_count": [
+                "architecture_maintainability",
+                "oversized_file_count",
+            ],
+            "critical_file_count": [
+                "architecture_maintainability",
+                "critical_file_count",
+            ],
+            "backend_service_file_count": [
+                "architecture_maintainability",
+                "backend_service_file_count",
+            ],
+            "clinical_validation": ["clinical_validation"],
+            "healthcare_production_ready": ["healthcare_production_ready"],
+        },
+    },
+    {
+        "id": "credibility_gap_registry",
+        "title": "Canonical credibility-gap registry",
+        "path": "Data/evals/governance/latest_credibility_gap_registry.json",
+        "tier": "supporting",
+        "metrics": {
+            "status": ["status"],
+            "gap_count": ["summary", "gap_count"],
+            "internally_closed_count": ["summary", "internally_closed_count"],
+            "open_or_external_count": ["summary", "open_or_external_count"],
+            "self_controllable_count": ["summary", "self_controllable_count"],
+            "cannot_be_self_certified_count": ["summary", "cannot_be_self_certified_count"],
+            "clinical_validation": ["clinical_validation"],
+            "healthcare_production_ready": ["healthcare_production_ready"],
+        },
     },
     {
         "id": "oidc_browser_pkce_readiness",

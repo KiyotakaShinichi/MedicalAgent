@@ -1,10 +1,10 @@
 {
   "schema_version": "release_decision_surface_v3",
-  "generated_at": "2026-07-28T12:08:59.971314+00:00",
+  "generated_at": "2026-07-30T02:11:20.740321+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "hard_blocker_count": 0,
-  "warning_count": 5,
+  "warning_count": 1,
   "primary_check_count": 20,
   "primary_surface_cap": 20,
   "checks": [
@@ -19,7 +19,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-06T06:47:17.440388+00:00",
-      "age_days": 22.22,
+      "age_days": 23.81,
       "stale": false,
       "key_metrics": {}
     },
@@ -34,7 +34,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-21T15:13:23.607586+00:00",
-      "age_days": 6.87,
+      "age_days": 8.46,
       "stale": false,
       "key_metrics": {}
     },
@@ -49,7 +49,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-17T06:27:38.556411+00:00",
-      "age_days": 11.24,
+      "age_days": 12.82,
       "stale": false,
       "key_metrics": {}
     },
@@ -64,7 +64,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "informational",
       "generated_at": "2026-07-19T01:45:30.008544+00:00",
-      "age_days": 9.43,
+      "age_days": 11.02,
       "stale": false,
       "key_metrics": {}
     },
@@ -79,7 +79,7 @@
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-07-22T04:11:00.107674+00:00",
-      "age_days": 6.33,
+      "age_days": 7.92,
       "stale": false,
       "key_metrics": {
         "pass_rate": 0.518519,
@@ -94,11 +94,11 @@
       "owner": "RAG",
       "path": "Data/evals/rag/latest_rag_governance_tradeoff.json",
       "max_age_days": 30,
-      "decision": "attention",
-      "evidence_state": "needs_attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-18T10:35:07.815958+00:00",
-      "age_days": 10.07,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-28T14:43:01.240454+00:00",
+      "age_days": 1.48,
       "stale": false,
       "key_metrics": {
         "improvement_proven_vs_bm25": false,
@@ -117,7 +117,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-22T04:13:27.466200+00:00",
-      "age_days": 6.33,
+      "age_days": 7.92,
       "stale": false,
       "key_metrics": {
         "pass_rate": 0.9048,
@@ -136,13 +136,13 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
-      "generated_at": "2026-07-28T12:08:48.839139+00:00",
+      "generated_at": "2026-07-30T02:07:53.553074+00:00",
       "age_days": 0.0,
       "stale": false,
       "key_metrics": {
         "production_ready": false,
         "insufficient_sample_count": 0,
-        "highest_observed_p95_ms": 1138.42
+        "highest_observed_p95_ms": 2254.9
       }
     },
     {
@@ -152,17 +152,17 @@
       "owner": "SWE/security",
       "path": "Data/evals/ops/latest_dependency_security_scan.json",
       "max_age_days": 30,
-      "decision": "attention",
-      "evidence_state": "needs_attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-28T12:05:35.490761+00:00",
-      "age_days": 0.0,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-30T02:03:23.208074+00:00",
+      "age_days": 0.01,
       "stale": false,
       "key_metrics": {
         "unavailable_tool_count": 0,
-        "high_or_critical_count": 2,
-        "known_vulnerability_count": 53,
-        "vulnerable_package_count": 11
+        "high_or_critical_count": 0,
+        "known_vulnerability_count": 2,
+        "vulnerable_package_count": 2
       }
     },
     {
@@ -176,7 +176,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-22T01:29:19.050963+00:00",
-      "age_days": 6.44,
+      "age_days": 8.03,
       "stale": false,
       "key_metrics": {}
     },
@@ -187,10 +187,10 @@
       "owner": "MLE/XAI",
       "path": "Data/evals/models/latest_xai_retraining_stability.json",
       "max_age_days": 90,
-      "decision": "attention",
-      "evidence_state": "needs_attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-07-28T12:06:49.726582+00:00",
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "acceptable",
+      "generated_at": "2026-07-30T02:04:55.987813+00:00",
       "age_days": 0.0,
       "stale": false,
       "key_metrics": {
@@ -210,8 +210,8 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-28T12:03:48.722817+00:00",
-      "age_days": 0.0,
+      "generated_at": "2026-07-30T02:02:00.833382+00:00",
+      "age_days": 0.01,
       "stale": false,
       "key_metrics": {
         "patient_data_processed": false,
@@ -228,11 +228,11 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong_offline_drill",
-      "generated_at": "2026-07-28T12:03:52.764551+00:00",
-      "age_days": 0.0,
+      "generated_at": "2026-07-30T02:02:03.255408+00:00",
+      "age_days": 0.01,
       "stale": false,
       "key_metrics": {
-        "passed": 6,
+        "passed": 7,
         "failed": 0,
         "external_cloud_write_performed": false
       }
@@ -247,8 +247,8 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "compiled_reference_architecture",
-      "generated_at": "2026-07-28T12:04:31.954090+00:00",
-      "age_days": 0.0,
+      "generated_at": "2026-07-30T02:02:27.081960+00:00",
+      "age_days": 0.01,
       "stale": false,
       "key_metrics": {
         "bicep_compile_completed": true,
@@ -267,7 +267,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-19T01:30:59.933113+00:00",
-      "age_days": 9.44,
+      "age_days": 11.03,
       "stale": false,
       "key_metrics": {
         "control_pass_rate": 1.0,
@@ -285,7 +285,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-28T12:08:52.837906+00:00",
+      "generated_at": "2026-07-30T02:09:39.463717+00:00",
       "age_days": 0.0,
       "stale": false,
       "key_metrics": {
@@ -300,20 +300,26 @@
       "tier": "warning",
       "domain": "deployment",
       "owner": "deployment",
-      "path": "Data/evals/ops/latest_deployment_profile_validation.json",
+      "path": "Data/evals/ops/latest_deployment_profile_matrix.json",
       "max_age_days": 30,
-      "decision": "attention",
-      "evidence_state": "needs_attention",
-      "observed_status": "development_profile",
-      "generated_at": "2026-07-22T06:31:12.105542+00:00",
-      "age_days": 6.23,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "strong",
+      "generated_at": "2026-07-30T02:02:50.480463+00:00",
+      "age_days": 0.01,
       "stale": false,
       "key_metrics": {
-        "profile": "development",
-        "strict_profile": false,
-        "n_failed": 0,
-        "non_demo_auth_implemented": true,
-        "deployment_capability": "local_or_controlled_demo_only"
+        "active_profile": {
+          "profile": "development",
+          "status": "development_profile",
+          "strict_profile": false,
+          "deployment_capability": "local_or_controlled_demo_only",
+          "n_failed": 0
+        },
+        "matrix_passed": true,
+        "cloud_deployment_completed": false,
+        "live_oidc_integration_completed": false,
+        "deployment_capability": "configuration_matrix_validated_local_runtime_only"
       }
     },
     {
@@ -327,7 +333,7 @@
       "evidence_state": "scaffolded",
       "observed_status": "blocked_runtime",
       "generated_at": "2026-07-22T08:20:48.366750+00:00",
-      "age_days": 6.16,
+      "age_days": 7.74,
       "stale": false,
       "key_metrics": {
         "model_trained": false,
@@ -345,8 +351,8 @@
       "decision": "informational",
       "evidence_state": "scaffolded",
       "observed_status": "blocked_configuration",
-      "generated_at": "2026-07-28T12:04:55.523195+00:00",
-      "age_days": 0.0,
+      "generated_at": "2026-07-30T02:02:49.861705+00:00",
+      "age_days": 0.01,
       "stale": false,
       "key_metrics": {
         "browser_login_completed": false,
@@ -365,7 +371,7 @@
       "evidence_state": "external_blocked",
       "observed_status": "ready_to_request_review",
       "generated_at": "2026-06-01T17:33:21.375512+00:00",
-      "age_days": 56.77,
+      "age_days": 58.36,
       "stale": false,
       "key_metrics": {
         "completed": null,
@@ -378,28 +384,28 @@
       "domain": "aie",
       "state": "needs_attention",
       "check_count": 4,
-      "verified_internal_count": 2,
-      "needs_attention_count": 2,
+      "verified_internal_count": 3,
+      "needs_attention_count": 1,
       "scaffolded_count": 0,
       "external_blocked_count": 0,
       "stale_count": 0
     },
     {
       "domain": "mle",
-      "state": "needs_attention",
+      "state": "verified_internal_only",
       "check_count": 3,
-      "verified_internal_count": 2,
-      "needs_attention_count": 1,
+      "verified_internal_count": 3,
+      "needs_attention_count": 0,
       "scaffolded_count": 0,
       "external_blocked_count": 0,
       "stale_count": 0
     },
     {
       "domain": "swe",
-      "state": "needs_attention",
+      "state": "verified_internal_only",
       "check_count": 3,
-      "verified_internal_count": 2,
-      "needs_attention_count": 1,
+      "verified_internal_count": 3,
+      "needs_attention_count": 0,
       "scaffolded_count": 0,
       "external_blocked_count": 0,
       "stale_count": 0
@@ -446,10 +452,10 @@
     },
     {
       "domain": "deployment",
-      "state": "needs_attention",
+      "state": "verified_internal_only",
       "check_count": 2,
-      "verified_internal_count": 0,
-      "needs_attention_count": 1,
+      "verified_internal_count": 1,
+      "needs_attention_count": 0,
       "scaffolded_count": 1,
       "external_blocked_count": 0,
       "stale_count": 0
@@ -467,8 +473,8 @@
   ],
   "domain_count": 9,
   "evidence_state_counts": {
-    "verified_internal": 12,
-    "needs_attention": 5,
+    "verified_internal": 16,
+    "needs_attention": 1,
     "scaffolded": 2,
     "external_blocked": 1
   },

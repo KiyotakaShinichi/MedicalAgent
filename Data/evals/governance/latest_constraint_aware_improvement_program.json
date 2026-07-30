@@ -1,6 +1,6 @@
 {
   "schema_version": "constraint_aware_improvement_program_v1",
-  "generated_at": "2026-07-28T12:09:01.572270+00:00",
+  "generated_at": "2026-07-30T02:11:22.105396+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "clinical_validation": false,
@@ -13,8 +13,7 @@
       "evidence_state": "needs_attention",
       "canonical_check_count": 4,
       "attention_check_ids": [
-        "frozen_adversarial_v6",
-        "rag_governance_tradeoff"
+        "frozen_adversarial_v6"
       ],
       "objective": "Prefer the simplest governed retrieval and routing policy that survives frozen evaluation.",
       "implemented_controls": [
@@ -34,11 +33,9 @@
     },
     {
       "domain": "mle",
-      "evidence_state": "needs_attention",
+      "evidence_state": "verified_internal_only",
       "canonical_check_count": 3,
-      "attention_check_ids": [
-        "xai_retraining_stability"
-      ],
+      "attention_check_ids": [],
       "objective": "Make synthetic ML statistically defensible as engineering evidence while preventing clinical interpretation.",
       "implemented_controls": [
         "patient-level temporal splitting and leakage audits",
@@ -57,11 +54,9 @@
     },
     {
       "domain": "swe",
-      "evidence_state": "needs_attention",
+      "evidence_state": "verified_internal_only",
       "canonical_check_count": 3,
-      "attention_check_ids": [
-        "dependency_security"
-      ],
+      "attention_check_ids": [],
       "objective": "Make the system reproducible, reviewable, secure by default, and boring to operate in controlled demos.",
       "implemented_controls": [
         "modular FastAPI and typed React surfaces",
@@ -162,11 +157,9 @@
     },
     {
       "domain": "deployment",
-      "evidence_state": "needs_attention",
+      "evidence_state": "verified_internal_only",
       "canonical_check_count": 2,
-      "attention_check_ids": [
-        "deployment_profile"
-      ],
+      "attention_check_ids": [],
       "objective": "Support controlled non-clinical deployment profiles without implying healthcare production readiness.",
       "implemented_controls": [
         "Docker, readiness probes, migrations, CORS and security-header checks",
@@ -198,42 +191,6 @@
       "blocked_by_external_evidence": "No-read RAG holdout and external-authored adversarial cases remain incomplete."
     },
     {
-      "priority": "P1",
-      "domain": "deployment",
-      "action": "Add a shared encrypted PKCE transaction store, reviewed token exchange, and provider logout before any live browser login claim.",
-      "acceptance_criteria": [
-        "demo auth and localhost CORS are disabled in strict profiles",
-        "OIDC issuer, audience, HTTPS JWKS, and exact role mapping fail closed",
-        "PKCE callback transactions are single-use and verifier material is not disclosed",
-        "production healthcare readiness remains false"
-      ],
-      "blocked_by_external_evidence": "No live identity provider, managed database recovery, production SLO history, or healthcare deployment review exists."
-    },
-    {
-      "priority": "P1",
-      "domain": "mle",
-      "action": "Keep saturated metrics out of headline surfaces and expand ambiguous-label sensitivity analyses.",
-      "acceptance_criteria": [
-        "patient overlap and temporal leakage remain zero",
-        "simple baselines are always reported beside nonlinear models",
-        "selective risk versus coverage is reported for every prediction head",
-        "synthetic confidence is never described as patient outcome probability"
-      ],
-      "blocked_by_external_evidence": "Simulator-built labels cannot establish real-patient transfer or clinical calibration."
-    },
-    {
-      "priority": "P1",
-      "domain": "swe",
-      "action": "Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence.",
-      "acceptance_criteria": [
-        "full ship workflow passes from a clean checkout",
-        "hard blockers cannot be diluted by informational artifacts",
-        "canonical evidence is refreshed after its dependencies",
-        "dependency and container scans expose unavailable tools as gaps"
-      ],
-      "blocked_by_external_evidence": "No production traffic, penetration test, SOC 2, HITRUST, or healthcare security review exists."
-    },
-    {
       "priority": "P2",
       "domain": "automation",
       "action": "Exercise one synthetic test-recipient channel and record receipt latency without claiming clinical coverage.",
@@ -259,6 +216,18 @@
     },
     {
       "priority": "P2",
+      "domain": "deployment",
+      "action": "Add a shared encrypted PKCE transaction store, reviewed token exchange, and provider logout before any live browser login claim.",
+      "acceptance_criteria": [
+        "demo auth and localhost CORS are disabled in strict profiles",
+        "OIDC issuer, audience, HTTPS JWKS, and exact role mapping fail closed",
+        "PKCE callback transactions are single-use and verifier material is not disclosed",
+        "production healthcare readiness remains false"
+      ],
+      "blocked_by_external_evidence": "No live identity provider, managed database recovery, production SLO history, or healthcare deployment review exists."
+    },
+    {
+      "priority": "P2",
       "domain": "infrastructure",
       "action": "Run an authenticated what-if in a disposable non-patient development subscription.",
       "acceptance_criteria": [
@@ -280,6 +249,30 @@
         "all review packets remain labelled unreviewed until actually completed"
       ],
       "blocked_by_external_evidence": "No clinician, nurse, genetic counselor, pharmacist, or patient review has been completed."
+    },
+    {
+      "priority": "P2",
+      "domain": "mle",
+      "action": "Keep saturated metrics out of headline surfaces and expand ambiguous-label sensitivity analyses.",
+      "acceptance_criteria": [
+        "patient overlap and temporal leakage remain zero",
+        "simple baselines are always reported beside nonlinear models",
+        "selective risk versus coverage is reported for every prediction head",
+        "synthetic confidence is never described as patient outcome probability"
+      ],
+      "blocked_by_external_evidence": "Simulator-built labels cannot establish real-patient transfer or clinical calibration."
+    },
+    {
+      "priority": "P2",
+      "domain": "swe",
+      "action": "Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence.",
+      "acceptance_criteria": [
+        "full ship workflow passes from a clean checkout",
+        "hard blockers cannot be diluted by informational artifacts",
+        "canonical evidence is refreshed after its dependencies",
+        "dependency and container scans expose unavailable tools as gaps"
+      ],
+      "blocked_by_external_evidence": "No production traffic, penetration test, SOC 2, HITRUST, or healthcare security review exists."
     }
   ],
   "implemented_in_this_pass": [

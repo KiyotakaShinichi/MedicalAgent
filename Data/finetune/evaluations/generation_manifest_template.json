@@ -1,0 +1,19 @@
+{
+  "schema_version": "finetune_generation_manifest_v1",
+  "subject": "<baseline_or_candidate>",
+  "base_model": "<model_id>",
+  "base_revision": "<immutable_revision>",
+  "tokenizer_revision": "<immutable_revision>",
+  "adapter_sha256": "<candidate_only_or_not_applicable>",
+  "training_dataset_sha256": "<sha256>",
+  "generations_sha256": "<sha256>",
+  "evaluation_holdout_sha256": "<sha256>",
+  "decoding": {
+    "temperature": 0.0,
+    "max_new_tokens": 512,
+    "seed": 20260729
+  },
+  "clinical_validation": false,
+  "patient_facing_use_allowed": false,
+  "claim_boundary": "Offline synthetic behavior evaluation only; not medical knowledge tuning or clinical validation."
+}

@@ -1,7 +1,8 @@
 {
-  "schema_version": "rag_governance_tradeoff_v1_2026_07",
-  "generated_at": "2026-07-18T10:35:07.815958+00:00",
-  "status": "needs_attention",
+  "schema_version": "rag_governance_tradeoff_v2_2026_07",
+  "generated_at": "2026-07-28T14:43:01.240454+00:00",
+  "status": "acceptable",
+  "status_basis": "acceptable_for_internal_policy_constrained_use",
   "internal_goldset_n": 74,
   "internal_goldset_only": true,
   "bm25": {
@@ -43,6 +44,33 @@
     "latency_p50_ms": 268.953,
     "latency_p95_ms": 307.365
   },
+  "policy_constrained_selection": {
+    "selected_configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+    "selected_for_raw_retrieval_superiority": false,
+    "selected_for_patient_facing_source_governance": true,
+    "constraints": {
+      "source_tier_correctness": {
+        "value": 1.0,
+        "minimum": 1.0,
+        "maximum": null,
+        "passed": true
+      },
+      "refusal_correctness": {
+        "value": 1.0,
+        "minimum": 1.0,
+        "maximum": null,
+        "passed": true
+      },
+      "unsupported_context_rate": {
+        "value": 0.1622,
+        "minimum": null,
+        "maximum": 0.2,
+        "passed": true
+      }
+    },
+    "all_constraints_pass": true,
+    "scope": "internal engineering prototype only"
+  },
   "tradeoffs": {
     "full_minus_bm25_recall_at_10": -0.0203,
     "full_minus_bm25_source_tier_correctness": 0.5405,
@@ -50,6 +78,14 @@
     "raw_retrieval_improvement_proven": false,
     "governance_improvement_observed_internally": true
   },
+  "raw_retrieval_superiority_status": "not_proven",
+  "governance_control_status": "passed_internal_policy_checks",
+  "residual_limitations": [
+    "BM25 has higher Recall@10 on the internal goldset.",
+    "The source-governed stack has higher p95 latency than BM25.",
+    "Citation precision and unsupported-context rate still need improvement.",
+    "No completed external no-read retrieval holdout exists."
+  ],
   "external_holdout": {
     "completed": false,
     "status": "ready_for_external_authoring",

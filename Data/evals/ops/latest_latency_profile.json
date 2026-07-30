@@ -1,6 +1,6 @@
 {
   "schema_version": "latency_profile_v2",
-  "generated_at": "2026-07-28T12:08:46.261903+00:00",
+  "generated_at": "2026-07-30T02:07:49.421804+00:00",
   "status": "acceptable",
   "routes": [
     {
@@ -9,14 +9,14 @@
       "acceptable_p95_ms": 1500,
       "needs_attention_p95_ms": 3000,
       "sample_count": 30,
-      "current_p50_ms": 33.45,
-      "current_p95_ms": 139.69,
-      "current_p99_ms": 146.39,
+      "current_p50_ms": 35.19,
+      "current_p95_ms": 86.45,
+      "current_p99_ms": 109.67,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
       "latency_status": "ideal",
-      "bottleneck_stage": "total_or_external_wait",
+      "bottleneck_stage": "post_generation_validation_ms",
       "terminal_step_distribution": {
         "input_guardrail_block": 30
       },
@@ -30,14 +30,14 @@
       "acceptable_p95_ms": 2000,
       "needs_attention_p95_ms": 4000,
       "sample_count": 30,
-      "current_p50_ms": 52.19,
-      "current_p95_ms": 72.26,
-      "current_p99_ms": 76.74,
+      "current_p50_ms": 48.65,
+      "current_p95_ms": 81.94,
+      "current_p99_ms": 83.59,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
       "latency_status": "ideal",
-      "bottleneck_stage": "total_or_external_wait",
+      "bottleneck_stage": "source_governance_ms",
       "terminal_step_distribution": {
         "cache_hit": 30
       },
@@ -51,9 +51,9 @@
       "acceptable_p95_ms": 8000,
       "needs_attention_p95_ms": 15000,
       "sample_count": 30,
-      "current_p50_ms": 728.61,
-      "current_p95_ms": 1138.42,
-      "current_p99_ms": 1175.03,
+      "current_p50_ms": 1372.24,
+      "current_p95_ms": 2254.9,
+      "current_p99_ms": 3620.52,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -91,13 +91,13 @@
       "acceptable_p95_ms": 3000,
       "needs_attention_p95_ms": 6000,
       "sample_count": 30,
-      "current_p50_ms": 679.75,
-      "current_p95_ms": 1011.06,
-      "current_p99_ms": 1039.43,
+      "current_p50_ms": 983.31,
+      "current_p95_ms": 1765.49,
+      "current_p99_ms": 1967.44,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
-      "latency_status": "ideal",
+      "latency_status": "acceptable",
       "bottleneck_stage": "retrieval_ms",
       "terminal_step_distribution": {
         "generated": 27,
@@ -132,14 +132,14 @@
       "acceptable_p95_ms": 5000,
       "needs_attention_p95_ms": 10000,
       "sample_count": 30,
-      "current_p50_ms": 59.84,
-      "current_p95_ms": 93.77,
-      "current_p99_ms": 105.65,
+      "current_p50_ms": 95.19,
+      "current_p95_ms": 218.75,
+      "current_p99_ms": 291.24,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
       "latency_status": "ideal",
-      "bottleneck_stage": "total_or_external_wait",
+      "bottleneck_stage": "post_generation_validation_ms",
       "terminal_step_distribution": {
         "direct_support": 30
       },
@@ -182,123 +182,207 @@
       },
       "total_ms": {
         "samples": 30,
-        "median_ms": 33.49,
-        "p95_ms": 103.19,
-        "max_ms": 146.39
+        "median_ms": 35.6,
+        "p95_ms": 80.6,
+        "max_ms": 109.67
+      },
+      "post_generation_validation_ms": {
+        "samples": 30,
+        "median_ms": 1.97,
+        "p95_ms": 3.5,
+        "max_ms": 4.21
+      },
+      "source_governance_ms": {
+        "samples": 30,
+        "median_ms": 0.02,
+        "p95_ms": 0.03,
+        "max_ms": 0.03
       }
     },
     "cached_educational_answer": {
       "safety_gate_ms": {
         "samples": 1,
-        "median_ms": 17.19,
-        "p95_ms": 17.19,
-        "max_ms": 17.19
+        "median_ms": 12.32,
+        "p95_ms": 12.32,
+        "max_ms": 12.32
       },
       "intent_routing_ms": {
         "samples": 1,
-        "median_ms": 0.17,
-        "p95_ms": 0.17,
-        "max_ms": 0.17
+        "median_ms": 0.23,
+        "p95_ms": 0.23,
+        "max_ms": 0.23
       },
       "retrieval_ms": {
         "samples": 1,
-        "median_ms": 641.36,
-        "p95_ms": 641.36,
-        "max_ms": 641.36
+        "median_ms": 424.53,
+        "p95_ms": 424.53,
+        "max_ms": 424.53
       },
       "rerank_ms": {
         "samples": 1,
-        "median_ms": 0.33,
-        "p95_ms": 0.33,
-        "max_ms": 0.33
+        "median_ms": 0.35,
+        "p95_ms": 0.35,
+        "max_ms": 0.35
       },
       "generation_ms": {
         "samples": 1,
-        "median_ms": 0.73,
-        "p95_ms": 0.73,
-        "max_ms": 0.73
+        "median_ms": 0.71,
+        "p95_ms": 0.71,
+        "max_ms": 0.71
       },
       "total_ms": {
         "samples": 31,
-        "median_ms": 52.4,
-        "p95_ms": 74.5,
-        "max_ms": 690.68
+        "median_ms": 48.78,
+        "p95_ms": 82.77,
+        "max_ms": 486.59
+      },
+      "pre_generation_governance_ms": {
+        "samples": 1,
+        "median_ms": 0.86,
+        "p95_ms": 0.86,
+        "max_ms": 0.86
+      },
+      "compression_ms": {
+        "samples": 1,
+        "median_ms": 0.03,
+        "p95_ms": 0.03,
+        "max_ms": 0.03
+      },
+      "post_generation_validation_ms": {
+        "samples": 31,
+        "median_ms": 1.24,
+        "p95_ms": 2.78,
+        "max_ms": 2.99
+      },
+      "source_governance_ms": {
+        "samples": 31,
+        "median_ms": 1.49,
+        "p95_ms": 2.82,
+        "max_ms": 3.1
       }
     },
     "normal_rag": {
       "safety_gate_ms": {
         "samples": 30,
-        "median_ms": 20.52,
-        "p95_ms": 39.21,
-        "max_ms": 47.4
+        "median_ms": 48.47,
+        "p95_ms": 79.03,
+        "max_ms": 93.24
       },
       "intent_routing_ms": {
         "samples": 30,
-        "median_ms": 0.27,
-        "p95_ms": 0.43,
-        "max_ms": 0.52
+        "median_ms": 0.48,
+        "p95_ms": 0.67,
+        "max_ms": 1.08
       },
       "retrieval_ms": {
         "samples": 30,
-        "median_ms": 667.2,
-        "p95_ms": 992.69,
-        "max_ms": 1052.57
+        "median_ms": 1215.88,
+        "p95_ms": 1806.32,
+        "max_ms": 3292.21
       },
       "rerank_ms": {
         "samples": 30,
-        "median_ms": 0.31,
-        "p95_ms": 0.67,
-        "max_ms": 0.75
+        "median_ms": 0.65,
+        "p95_ms": 1.32,
+        "max_ms": 1.98
       },
       "generation_ms": {
         "samples": 30,
-        "median_ms": 0.9,
-        "p95_ms": 1.87,
-        "max_ms": 2.49
+        "median_ms": 1.48,
+        "p95_ms": 3.21,
+        "max_ms": 22.14
       },
       "total_ms": {
         "samples": 30,
-        "median_ms": 731.72,
-        "p95_ms": 1088.69,
-        "max_ms": 1175.03
+        "median_ms": 1405.04,
+        "p95_ms": 2082.15,
+        "max_ms": 3620.52
+      },
+      "pre_generation_governance_ms": {
+        "samples": 30,
+        "median_ms": 1.5,
+        "p95_ms": 3.68,
+        "max_ms": 5.1
+      },
+      "compression_ms": {
+        "samples": 30,
+        "median_ms": 0.04,
+        "p95_ms": 0.06,
+        "max_ms": 0.08
+      },
+      "post_generation_validation_ms": {
+        "samples": 30,
+        "median_ms": 3.0,
+        "p95_ms": 4.76,
+        "max_ms": 6.3
+      },
+      "source_governance_ms": {
+        "samples": 30,
+        "median_ms": 3.44,
+        "p95_ms": 12.11,
+        "max_ms": 14.48
       }
     },
     "low_confidence_safe_default": {
       "safety_gate_ms": {
         "samples": 27,
-        "median_ms": 22.55,
-        "p95_ms": 35.95,
-        "max_ms": 49.66
+        "median_ms": 29.64,
+        "p95_ms": 72.41,
+        "max_ms": 78.45
       },
       "intent_routing_ms": {
         "samples": 27,
         "median_ms": 0.11,
-        "p95_ms": 0.2,
-        "max_ms": 0.29
+        "p95_ms": 0.22,
+        "max_ms": 0.27
       },
       "retrieval_ms": {
         "samples": 27,
-        "median_ms": 677.12,
-        "p95_ms": 931.46,
-        "max_ms": 955.65
+        "median_ms": 936.78,
+        "p95_ms": 1536.21,
+        "max_ms": 1767.13
       },
       "rerank_ms": {
         "samples": 27,
-        "median_ms": 0.2,
-        "p95_ms": 0.3,
-        "max_ms": 0.52
+        "median_ms": 0.26,
+        "p95_ms": 0.53,
+        "max_ms": 0.61
       },
       "generation_ms": {
         "samples": 27,
-        "median_ms": 0.36,
-        "p95_ms": 0.48,
-        "max_ms": 0.57
+        "median_ms": 0.45,
+        "p95_ms": 0.85,
+        "max_ms": 14.69
       },
       "total_ms": {
         "samples": 30,
-        "median_ms": 682.83,
-        "p95_ms": 997.06,
-        "max_ms": 1039.43
+        "median_ms": 985.43,
+        "p95_ms": 1701.15,
+        "max_ms": 1967.44
+      },
+      "pre_generation_governance_ms": {
+        "samples": 27,
+        "median_ms": 1.21,
+        "p95_ms": 2.17,
+        "max_ms": 2.87
+      },
+      "compression_ms": {
+        "samples": 27,
+        "median_ms": 0.02,
+        "p95_ms": 0.04,
+        "max_ms": 0.08
+      },
+      "post_generation_validation_ms": {
+        "samples": 30,
+        "median_ms": 1.8,
+        "p95_ms": 3.9,
+        "max_ms": 4.12
+      },
+      "source_governance_ms": {
+        "samples": 30,
+        "median_ms": 3.13,
+        "p95_ms": 5.81,
+        "max_ms": 17.33
       }
     },
     "emotional_distress_support": {
@@ -334,9 +418,21 @@
       },
       "total_ms": {
         "samples": 30,
-        "median_ms": 60.33,
-        "p95_ms": 93.68,
-        "max_ms": 105.65
+        "median_ms": 96.88,
+        "p95_ms": 214.45,
+        "max_ms": 291.24
+      },
+      "post_generation_validation_ms": {
+        "samples": 30,
+        "median_ms": 0.24,
+        "p95_ms": 0.93,
+        "max_ms": 2.07
+      },
+      "source_governance_ms": {
+        "samples": 30,
+        "median_ms": 0.02,
+        "p95_ms": 0.11,
+        "max_ms": 0.52
       }
     }
   },
@@ -345,35 +441,35 @@
       "enabled": true,
       "query": "What is a CBC?",
       "terminal_step": "generated",
-      "total_ms": 8717.71,
+      "total_ms": 7775.72,
       "rationale": "Warm-up separates local index/model initialization from steady route latency. Cold-start cost is still reported here and must not be hidden."
     },
     "cached_educational_answer": {
       "enabled": true,
       "query": "What is a CBC?",
       "terminal_step": "generated",
-      "total_ms": 774.6,
+      "total_ms": 435.63,
       "rationale": "Warm-up separates local index/model initialization from steady route latency. Cold-start cost is still reported here and must not be hidden."
     },
     "normal_rag": {
       "enabled": true,
       "query": "What is a CBC?",
       "terminal_step": "generated",
-      "total_ms": 554.54,
+      "total_ms": 808.24,
       "rationale": "Warm-up separates local index/model initialization from steady route latency. Cold-start cost is still reported here and must not be hidden."
     },
     "low_confidence_safe_default": {
       "enabled": true,
       "query": "What is a CBC?",
       "terminal_step": "generated",
-      "total_ms": 779.05,
+      "total_ms": 920.88,
       "rationale": "Warm-up separates local index/model initialization from steady route latency. Cold-start cost is still reported here and must not be hidden."
     },
     "emotional_distress_support": {
       "enabled": true,
       "query": "What is a CBC?",
       "terminal_step": "generated",
-      "total_ms": 786.14,
+      "total_ms": 1801.97,
       "rationale": "Warm-up separates local index/model initialization from steady route latency. Cold-start cost is still reported here and must not be hidden."
     }
   },

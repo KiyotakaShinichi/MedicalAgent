@@ -1,14 +1,14 @@
 {
   "schema_version": "nlcare_data_platform_reliability_eval_v1",
-  "generated_at": "2026-07-28T12:03:52.764551+00:00",
+  "generated_at": "2026-07-30T02:02:03.255408+00:00",
   "status": "strong_offline_drill",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "patient_data_processed": false,
   "external_cloud_write_performed": false,
   "gold_record_count": 240,
-  "n_cases": 6,
-  "passed": 6,
+  "n_cases": 7,
+  "passed": 7,
   "failed": 0,
   "cases": [
     {
@@ -37,6 +37,11 @@
       "description": "Backfill partitions are stable regardless of input ordering."
     },
     {
+      "case_id": "partition_scale_replay_100x",
+      "passed": true,
+      "description": "A 100x non-patient identifier replay remains unique and partition-deterministic."
+    },
+    {
       "case_id": "managed_failure_local_fallback",
       "passed": true,
       "description": "A disabled managed adapter fails closed while the local contract remains queryable."
@@ -47,6 +52,18 @@
     "batch_count": 5,
     "deterministic": true,
     "managed_upsert_performed": false
+  },
+  "partition_scale_replay": {
+    "scale_multiplier": 100,
+    "base_record_count": 240,
+    "replayed_record_count": 24000,
+    "batch_size": 1000,
+    "batch_count": 24,
+    "unique_record_ids": 24000,
+    "partition_fingerprint": "158175d25c8a5b60f72d753af39e5c785806f795ca8dd342f8ad749bff6cae8d",
+    "deterministic": true,
+    "timing_benchmark_performed": false,
+    "managed_cloud_throughput_measured": false
   },
   "delete_propagation": {
     "local_tombstone_drill_completed": true,

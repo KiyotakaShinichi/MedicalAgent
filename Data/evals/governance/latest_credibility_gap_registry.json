@@ -1,0 +1,269 @@
+{
+  "schema_version": "credibility_gap_registry_v1",
+  "generated_at": "2026-07-30T02:10:22.220544+00:00",
+  "status": "needs_attention",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "summary": {
+    "gap_count": 11,
+    "internally_closed_count": 1,
+    "open_or_external_count": 10,
+    "self_controllable_count": 7,
+    "cannot_be_self_certified_count": 4,
+    "internal_evidence_closure_rate": 0.0909,
+    "score_interpretation": "Evidence-completion bookkeeping only; not a quality, safety, or clinical-readiness score."
+  },
+  "gaps": [
+    {
+      "id": "provider_token_usage_coverage",
+      "domain": "AIE/observability",
+      "severity": "medium",
+      "current_status": "open",
+      "controllable_now": true,
+      "cannot_be_self_certified": false,
+      "evidence_artifacts": [
+        "Data/evals/ops/latest_cost_latency_report.json"
+      ],
+      "evidence_snapshot": {
+        "coverage_rate": 0.0,
+        "latency_sample_count": 500
+      },
+      "completion_criteria": "Capture provider-reported usage on at least 80% of 30+ representative requests.",
+      "verification_command": "python scripts/run_cost_latency_report.py",
+      "owner": "AI platform owner",
+      "honest_claim_until_closed": "Token totals are partly estimated; do not present them as provider billing truth."
+    },
+    {
+      "id": "tail_latency_evidence",
+      "domain": "SWE/infra",
+      "severity": "high",
+      "current_status": "complete_internal",
+      "controllable_now": true,
+      "cannot_be_self_certified": false,
+      "evidence_artifacts": [
+        "Data/evals/ops/latest_cost_latency_report.json"
+      ],
+      "evidence_snapshot": {
+        "sample_count": 500,
+        "p95_ms": 3588.73,
+        "credibility": "stable_internal_sample",
+        "local_probe_stage_sample_count": 708,
+        "local_probe_environment": {
+          "local_only": true,
+          "forced_sparse_retrieval": true,
+          "in_memory_sqlite": true,
+          "production_slo": false
+        }
+      },
+      "completion_criteria": "Collect 100+ representative requests and pass route-specific p95 budgets without hiding cold starts; reconcile the local probe against staged cloud traffic.",
+      "verification_command": "python scripts/run_cost_latency_report.py",
+      "owner": "SWE/infra owner",
+      "honest_claim_until_closed": "Current p95 is internal and sample-dependent, not a production SLO."
+    },
+    {
+      "id": "fine_tune_runtime_and_candidate",
+      "domain": "MLE/fine-tuning",
+      "severity": "high",
+      "current_status": "open",
+      "controllable_now": true,
+      "cannot_be_self_certified": false,
+      "evidence_artifacts": [
+        "Data/evals/models/latest_finetune_runtime_preflight.json",
+        "Data/evals/models/latest_finetune_hardening_assurance.json",
+        "Data/evals/models/latest_finetune_promotion_gate.json"
+      ],
+      "evidence_snapshot": {
+        "promotion_decision": "HOLD",
+        "blocking_gap_ids": [
+          "semantic_flags_cleared_for_candidate",
+          "isolated_training_runtime_ready",
+          "baseline_candidate_generations_complete",
+          "candidate_generation_lineage_verified",
+          "candidate_memorization_audit_complete",
+          "paired_statistical_lift_proven"
+        ]
+      },
+      "completion_criteria": "Pass pinned runtime, lineage, memorization, per-behavior, paired-statistical, safety, and output-length gates.",
+      "verification_command": "python scripts/run_finetune_hardening_assurance.py",
+      "owner": "MLE owner",
+      "honest_claim_until_closed": "Fine-tuning is scaffolded only; no adapter improvement is proven."
+    },
+    {
+      "id": "fine_tune_semantic_contamination",
+      "domain": "MLE/evaluation",
+      "severity": "medium",
+      "current_status": "open",
+      "controllable_now": true,
+      "cannot_be_self_certified": false,
+      "evidence_artifacts": [
+        "Data/evals/models/latest_finetune_semantic_contamination.json",
+        "Data/finetune/prepared/dataset_card.json"
+      ],
+      "evidence_snapshot": {
+        "semantic_similarity_proxy_completed": true,
+        "flagged_pair_count": 150,
+        "unresolved_pair_count": 150,
+        "review_completed": false,
+        "adjudication_cleared_for_candidate": false,
+        "artifact_flag_rows_capped": false,
+        "semantic_contamination_absence_proven": false
+      },
+      "completion_criteria": "Run semantic/paraphrase contamination detection with reviewer adjudication of flagged pairs.",
+      "verification_command": "python scripts/run_finetune_semantic_contamination.py",
+      "owner": "MLE evaluation owner",
+      "honest_claim_until_closed": "TF-IDF is a lexical-semantic proxy; even a completed review does not prove semantic independence."
+    },
+    {
+      "id": "rag_improvement_over_bm25",
+      "domain": "AIE/RAG",
+      "severity": "high",
+      "current_status": "open",
+      "controllable_now": true,
+      "cannot_be_self_certified": false,
+      "evidence_artifacts": [
+        "Data/evals/rag/latest_rag_baseline_comparison.json",
+        "Data/evals/rag/latest_rag_paired_statistical_comparison.json"
+      ],
+      "evidence_snapshot": {
+        "improvement_proven_vs_bm25": false,
+        "comparison_scope": "internal frozen goldset",
+        "paired_headline": {
+          "full_stack_improvement_proven_vs_bm25": false,
+          "full_stack_recall_at_10_favorable_delta": -0.02027,
+          "full_stack_recall_at_10_ci95": [
+            -0.108108,
+            0.067568
+          ],
+          "full_stack_recall_at_10_adjusted_p_value": 1.0,
+          "interpretation": "A negative favorable delta means the governed stack trails BM25 on raw recall. Governance gains must be reported separately."
+        }
+      },
+      "completion_criteria": "Demonstrate a predeclared improvement on an independent no-read holdout, or retain governance-first positioning.",
+      "verification_command": "python scripts/run_rag_holdout_baseline_comparison.py",
+      "owner": "RAG evaluation owner",
+      "honest_claim_until_closed": "The complex stack is governance-oriented; raw retrieval superiority over BM25 is not proven."
+    },
+    {
+      "id": "frozen_adversarial_generalization",
+      "domain": "AIE/safety",
+      "severity": "high",
+      "current_status": "open",
+      "controllable_now": true,
+      "cannot_be_self_certified": false,
+      "evidence_artifacts": [
+        "Data/evals/safety/latest_adversarial_v6_tuning_regression.json"
+      ],
+      "evidence_snapshot": {
+        "status": "acceptable",
+        "summary": null
+      },
+      "completion_criteria": "Meet predeclared frozen-bank thresholds without using the bank for tuning and preserve safe-negative performance.",
+      "verification_command": "python scripts/run_adversarial_v6_tuning_regression.py",
+      "owner": "AI safety owner",
+      "honest_claim_until_closed": "Safety is not solved; frozen adversarial weaknesses remain visible."
+    },
+    {
+      "id": "independent_clean_clone_reproduction",
+      "domain": "SWE/reproducibility",
+      "severity": "high",
+      "current_status": "blocked_external",
+      "controllable_now": false,
+      "cannot_be_self_certified": true,
+      "evidence_artifacts": [
+        "Data/evals/governance/latest_senior_engineering_evidence.json"
+      ],
+      "evidence_snapshot": {
+        "independent_reproduction_completed": false
+      },
+      "completion_criteria": "A reviewer with no project involvement reproduces setup, tests, artifacts, and demo from a clean clone.",
+      "verification_command": "python scripts/ship.py",
+      "owner": "Independent peer engineer",
+      "honest_claim_until_closed": "The owner has internal reproducibility evidence, not independent reproduction."
+    },
+    {
+      "id": "external_no_read_evaluation",
+      "domain": "Evaluation governance",
+      "severity": "high",
+      "current_status": "blocked_external",
+      "controllable_now": false,
+      "cannot_be_self_certified": true,
+      "evidence_artifacts": [
+        "Data/evals/rag/latest_rag_holdout_baseline_comparison.json",
+        "docs/evals/no_read_rag_goldset_protocol.md"
+      ],
+      "evidence_snapshot": {
+        "external_author_eval_completed": false
+      },
+      "completion_criteria": "An eligible external author completes the no-read RAG and adversarial protocols with attestation.",
+      "verification_command": "python scripts/run_rag_holdout_baseline_comparison.py",
+      "owner": "External evaluation author",
+      "honest_claim_until_closed": "Prepared external evaluation is not completed external evidence."
+    },
+    {
+      "id": "clinician_and_genetics_review",
+      "domain": "Medical governance",
+      "severity": "critical",
+      "current_status": "blocked_external",
+      "controllable_now": false,
+      "cannot_be_self_certified": true,
+      "evidence_artifacts": [
+        "docs/review_packets/nurse_or_clinician_safety_review_packet.md",
+        "docs/review_packets/genetic_counselor_vus_review_packet.md"
+      ],
+      "evidence_snapshot": {
+        "clinician_review_completed": false,
+        "genetic_counselor_review_completed": false
+      },
+      "completion_criteria": "Qualified reviewers complete dated, case-linked review logs; this still does not equal clinical approval.",
+      "verification_command": "manual external review",
+      "owner": "External clinician and genetic counselor",
+      "honest_claim_until_closed": "Medical wording and boundaries are unreviewed by clinicians."
+    },
+    {
+      "id": "live_cloud_and_delivery_evidence",
+      "domain": "Infra/automation",
+      "severity": "high",
+      "current_status": "open",
+      "controllable_now": true,
+      "cannot_be_self_certified": false,
+      "evidence_artifacts": [
+        "Data/evals/ops/latest_automation_reliability_dossier.json",
+        "Data/evals/ops/latest_cloud_infrastructure_readiness.json"
+      ],
+      "evidence_snapshot": {
+        "live_delivery_receipt_verified": null,
+        "live_failover_drill_completed": null
+      },
+      "completion_criteria": "Run staged live delivery, retry, duplicate suppression, restore, failover, load, and cost reconciliation drills.",
+      "verification_command": "python scripts/run_automation_reliability_dossier.py",
+      "owner": "Infra/automation owner",
+      "honest_claim_until_closed": "Local/synthetic automation readiness is not live cloud reliability."
+    },
+    {
+      "id": "real_data_irb_clinical_validation",
+      "domain": "Clinical evidence",
+      "severity": "critical",
+      "current_status": "blocked_institutional",
+      "controllable_now": false,
+      "cannot_be_self_certified": true,
+      "evidence_artifacts": [
+        "README.md"
+      ],
+      "evidence_snapshot": {
+        "real_patient_data": false,
+        "irb_or_ethics_approval": false,
+        "clinical_validation": false
+      },
+      "completion_criteria": "Requires institutionally governed real data, ethics/IRB review, clinical protocol, and qualified oversight.",
+      "verification_command": "not self-certifiable",
+      "owner": "Clinical institution",
+      "honest_claim_until_closed": "No clinical readiness, real-world safety, patient benefit, or healthcare-production claim is allowed."
+    }
+  ],
+  "next_three_controllable_actions": [
+    "Capture 30+ instrumented provider calls and refresh token/latency telemetry.",
+    "Provision the pinned offline PEFT runtime and generate matched baseline/candidate outputs with manifests.",
+    "Run semantic fine-tune contamination review and frozen adversarial regression without tuning on holdouts."
+  ],
+  "claim_boundary": "This registry tracks engineering evidence gaps. Closing an internal gap does not establish clinical validation, patient benefit, clinician approval, IRB approval, production healthcare readiness, or generalisation to real patients."
+}

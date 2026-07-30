@@ -1,0 +1,241 @@
+{
+  "schema_version": "evidence_maturity_matrix_v1",
+  "generated_at": "2026-07-30T02:10:21.168486+00:00",
+  "status": "needs_attention",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "scoring_policy": {
+    "aggregate_score_emitted": false,
+    "reason": "Averages hide blocking dimensions and let artifact volume compensate for missing independent evidence.",
+    "tiers": {
+      "0": "unmeasured_or_missing",
+      "1": "scaffold_or_contract_only",
+      "2": "internal_self_test",
+      "3": "frozen_internal_with_contamination_controls",
+      "4": "independent_external_engineering_evidence",
+      "5": "institutional_or_clinical_evidence"
+    },
+    "tier_counts": {
+      "0": 0,
+      "1": 3,
+      "2": 6,
+      "3": 2,
+      "4": 0,
+      "5": 0
+    }
+  },
+  "dimensions": [
+    {
+      "dimension": "AIE/RAG",
+      "current_evidence_tier": 3,
+      "tier_label": "frozen_internal_with_contamination_controls",
+      "what_is_proven": "Frozen internal case-level comparisons, paired bootstrap intervals, multiple-comparison correction, source governance, and negative results.",
+      "what_is_not_proven": "Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False.",
+      "next_falsifiable_evidence": "Independent no-read holdout repeats the predeclared comparison."
+    },
+    {
+      "dimension": "AIE/adversarial safety",
+      "current_evidence_tier": 3,
+      "tier_label": "frozen_internal_with_contamination_controls",
+      "what_is_proven": "Frozen internal adversarial and safe-negative controls.",
+      "what_is_not_proven": "Unsafe leakage remains 0.036363636363636376; external authorship is absent.",
+      "next_falsifiable_evidence": "External mutation/red-team bank passes predeclared thresholds without tuning."
+    },
+    {
+      "dimension": "LLM token/latency observability",
+      "current_evidence_tier": 2,
+      "tier_label": "internal_self_test",
+      "what_is_proven": "Request totals, local route samples, stage timings, token estimates, and provider usage fields.",
+      "what_is_not_proven": "Provider usage coverage is 0.0; cost is not billing reconciliation.",
+      "next_falsifiable_evidence": "30+ representative calls with >=80% provider usage plus staged cloud latency/cost reconciliation."
+    },
+    {
+      "dimension": "MLE/statistics",
+      "current_evidence_tier": 2,
+      "tier_label": "internal_self_test",
+      "what_is_proven": "Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, paired tests, calibration and synthetic perturbation sensitivity.",
+      "what_is_not_proven": "All outcomes and uncertainty remain simulator-bounded; transportability is unproven.",
+      "next_falsifiable_evidence": "Independent external cohort with task-aligned outcomes or retain synthetic engineering-only positioning."
+    },
+    {
+      "dimension": "XAI",
+      "current_evidence_tier": 2,
+      "tier_label": "internal_self_test",
+      "what_is_proven": "Mechanical additivity, bootstrap set stability, retraining stability, and fail-closed display policy.",
+      "what_is_not_proven": "Patient display mode is grouped_factors_without_rank_claim; exact feature rank stability is not established.",
+      "next_falsifiable_evidence": "Stable retraining evidence plus human comprehension review; causality remains blocked."
+    },
+    {
+      "dimension": "Fine-tuning",
+      "current_evidence_tier": 1,
+      "tier_label": "scaffold_or_contract_only",
+      "what_is_proven": "Behavior-only synthetic dataset, immutable revision contracts, promotion tripwires, and semantic-similarity screening.",
+      "what_is_not_proven": "Promotion=HOLD; blockers=6.",
+      "next_falsifiable_evidence": "Pinned runtime, matched generations, lineage, memorization audit, adjudicated contamination flags, and paired lift."
+    },
+    {
+      "dimension": "SWE/release discipline",
+      "current_evidence_tier": 2,
+      "tier_label": "internal_self_test",
+      "what_is_proven": "Integrated ship manifest status=passed with repeatable tests and release gates.",
+      "what_is_not_proven": "Evidence is owner-run; architecture has large modules and no independent clean-clone reproduction.",
+      "next_falsifiable_evidence": "Independent clean-clone reproduction and reduction of architecture-budget violations."
+    },
+    {
+      "dimension": "Automation",
+      "current_evidence_tier": 2,
+      "tier_label": "internal_self_test",
+      "what_is_proven": "Local redacted outbox/retry/dead-letter/idempotency contracts status=strong.",
+      "what_is_not_proven": "External delivery is disabled by default and no live clinician acknowledgement workflow is proven.",
+      "next_falsifiable_evidence": "Synthetic staging receipts, recovery SLOs, duplicate suppression, and operator drill; real use still requires governance."
+    },
+    {
+      "dimension": "Infrastructure/deployment",
+      "current_evidence_tier": 1,
+      "tier_label": "scaffold_or_contract_only",
+      "what_is_proven": "Compile-checked reference cloud architecture status=compiled_reference_architecture.",
+      "what_is_not_proven": "Deployment readiness=needs_attention; no authenticated what-if, deployment, restore, or cloud load evidence.",
+      "next_falsifiable_evidence": "Disposable non-patient staging deployment with restore, failover, load, secret rotation, and cost evidence."
+    },
+    {
+      "dimension": "Data engineering",
+      "current_evidence_tier": 2,
+      "tier_label": "internal_self_test",
+      "what_is_proven": "Non-patient bronze/silver/gold lineage pipeline status=strong.",
+      "what_is_not_proven": "No governed real-patient pipeline, managed deletion proof, or healthcare interoperability evidence.",
+      "next_falsifiable_evidence": "Managed non-patient shadow pipeline proves idempotency, deletion, replay, quality quarantine, and recovery."
+    },
+    {
+      "dimension": "Medical/human factors",
+      "current_evidence_tier": 1,
+      "tier_label": "scaffold_or_contract_only",
+      "what_is_proven": "Deterministic boundaries, evidence policies, escalation language, overtrust warnings, and review packets.",
+      "what_is_not_proven": "No clinician, nurse, pharmacist, genetic counselor, or real-user review has been completed.",
+      "next_falsifiable_evidence": "Qualified reviewers complete case-linked logs; this still does not equal clinical validation."
+    }
+  ],
+  "architecture_maintainability": {
+    "budget_status": "needs_attention",
+    "oversized_file_count": 14,
+    "critical_file_count": 4,
+    "backend_service_file_count": 356,
+    "test_file_count": 196,
+    "test_to_service_file_ratio": 0.5506,
+    "largest_violations": [
+      {
+        "path": "backend/services/benchmark_registry.py",
+        "line_count": 2424,
+        "severity": "critical",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "backend/services/support_chat_agent.py",
+        "line_count": 2225,
+        "severity": "critical",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "frontend-react/src/types/api.ts",
+        "line_count": 1843,
+        "severity": "critical",
+        "warning_threshold": 800,
+        "critical_threshold": 1200
+      },
+      {
+        "path": "backend/api/routers/patient.py",
+        "line_count": 1729,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "backend/services/admin_analytics.py",
+        "line_count": 1708,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "scripts/generate_project_guide_pdf.py",
+        "line_count": 1468,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "backend/api/routers/admin_eval.py",
+        "line_count": 1409,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "frontend-react/src/pages/admin/sections/MleSection.tsx",
+        "line_count": 1263,
+        "severity": "critical",
+        "warning_threshold": 800,
+        "critical_threshold": 1200
+      },
+      {
+        "path": "backend/services/mle_readiness.py",
+        "line_count": 1251,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "frontend-react/src/pages/admin/sections/SafetyCenterSection.tsx",
+        "line_count": 1075,
+        "severity": "warning",
+        "warning_threshold": 800,
+        "critical_threshold": 1200
+      },
+      {
+        "path": "backend/services/complete_synthetic_training.py",
+        "line_count": 1050,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "backend/services/complete_synthetic_dataset.py",
+        "line_count": 1032,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "backend/services/agent_regression_eval.py",
+        "line_count": 1017,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "frontend-react/src/api/client.ts",
+        "line_count": 866,
+        "severity": "warning",
+        "warning_threshold": 800,
+        "critical_threshold": 1200
+      }
+    ],
+    "policy": "Do not add a new service or artifact solely to increase feature count. New modules should close a measured gap, replace an older surface, or come with a deletion/consolidation plan."
+  },
+  "cross_domain_blockers": [
+    "No independent clean-clone reproduction.",
+    "No completed no-read external RAG/adversarial evaluation.",
+    "No clinician or genetic-counselor review.",
+    "No real traffic, managed-cloud failover, or audited provider billing evidence.",
+    "No real patient data, IRB/ethics approval, or clinical validation."
+  ],
+  "highest_roi_internal_actions": [
+    "Adjudicate fine-tune semantic-similarity flags before any candidate run.",
+    "Collect provider-reported token usage on 30+ representative calls.",
+    "Use paired RAG confidence intervals and adjusted p-values in every headline comparison.",
+    "Keep unstable XAI rank order hidden and expose grouped factors only.",
+    "Reduce the largest backend/frontend modules before adding more service files."
+  ],
+  "claim_boundary": "This matrix rates evidence provenance, not product quality or clinical readiness. Internal engineering evidence cannot be averaged into clinical validation, real-world safety, patient benefit, or production healthcare readiness."
+}

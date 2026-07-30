@@ -1,6 +1,6 @@
 {
   "schema_version": "high_risk_conversation_alert_eval_v2",
-  "generated_at": "2026-07-28T12:04:53.527251+00:00",
+  "generated_at": "2026-07-30T02:02:43.428140+00:00",
   "status": "strong",
   "clinical_validation": false,
   "healthcare_production_ready": false,

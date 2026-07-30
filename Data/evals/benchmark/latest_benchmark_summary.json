@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "b404008f64f2f1dd3dbf85a2f6037aa58703902a",
+    "git_commit": "e84fa5955959e8d3efb9f9343610ff8e7b54da69",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -15,16 +15,16 @@
     "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2344146:1785216471:770507376ae9",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-07-28T12:09:05.836517+00:00"
+    "generated_at": "2026-07-30T02:11:28.283295+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-07-28T12:09:05.836517+00:00",
+    "generated_at": "2026-07-30T02:11:28.283295+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-07-29T12:09:05.836517+00:00",
+    "expires_at": "2026-07-31T02:11:28.283295+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-07-28T12:09:07.095117+00:00",
+  "generated_at": "2026-07-30T02:11:32.964024+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -253,9 +253,9 @@
       "title": "RAG effectiveness and governance trade-off",
       "tier": "supporting",
       "status": "stale",
-      "source_status": "needs_attention",
+      "source_status": "acceptable",
       "freshness": "stale",
-      "generated_at": "2026-07-18T10:35:07.815958+00:00",
+      "generated_at": "2026-07-28T14:43:01.240454+00:00",
       "source_path": "Data/evals/rag/latest_rag_governance_tradeoff.json",
       "metrics": {
         "recall_delta": -0.0203,
@@ -1019,7 +1019,7 @@
       "status": "stale",
       "source_status": "strong",
       "freshness": "stale",
-      "generated_at": "2026-07-22T00:31:03.740906+00:00",
+      "generated_at": "2026-07-28T17:02:52.908460+00:00",
       "source_path": "Data/evals/ops/latest_automation_reliability_dossier.json",
       "metrics": {
         "status": "strong",
@@ -1056,10 +1056,10 @@
       "id": "patient_xai_readability_dossier",
       "title": "Patient XAI readability dossier",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-17T08:39:48.829533+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:02:49.256619+00:00",
       "source_path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
       "metrics": {
         "status": "strong",
@@ -2019,7 +2019,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:00:34.023640+00:00",
+      "generated_at": "2026-07-30T02:00:28.941219+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -2036,7 +2036,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:00:32.780423+00:00",
+      "generated_at": "2026-07-30T02:00:28.028097+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -2053,7 +2053,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:00:34.158760+00:00",
+      "generated_at": "2026-07-30T02:00:29.006643+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2249,11 +2249,11 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T10:48:28.823995+00:00",
+      "generated_at": "2026-07-29T15:37:33.468306+00:00",
       "source_path": "Data/evals/ops/latest_service_health_snapshot.json",
       "metrics": {
         "status": "needs_attention",
-        "stale_artifact_count": 135,
+        "stale_artifact_count": 132,
         "failed_benchmark_count": 0
       },
       "limitations": [],
@@ -2321,18 +2321,26 @@
       "id": "cost_latency_report",
       "title": "Cost and latency observability",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-05-21T08:22:09.898013+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:08:08.218459+00:00",
       "source_path": "Data/evals/ops/latest_cost_latency_report.json",
       "metrics": {
         "status": "strong",
         "request_count": 500,
-        "latency_p50_ms": 1189.78,
-        "latency_p95_ms": 4078.61,
+        "latency_p50_ms": 839.23,
+        "latency_p95_ms": 3588.73,
+        "latency_sample_count": 500,
+        "latency_percentile_credibility": "stable_internal_sample",
+        "provider_reported_total_tokens": 0,
+        "provider_usage_coverage_rate": 0.0,
+        "estimated_pipeline_total_tokens": 128535,
         "estimated_total_cost_usd": 0.0,
-        "cache_hit_rate": 0.2
+        "cache_hit_rate": 0.19,
+        "local_probe_stage_sample_count": 708,
+        "normal_rag_probe_p95_ms": 2082.15,
+        "normal_rag_retrieval_p95_ms": 1806.32
       },
       "limitations": [],
       "claim_boundary": "Cost and latency observability is engineering telemetry only. It does not establish clinical safety, clinical validation, or real-world patient benefit."
@@ -2364,13 +2372,13 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:08:48.839139+00:00",
+      "generated_at": "2026-07-30T02:07:53.553074+00:00",
       "source_path": "Data/evals/ops/latest_route_latency_budget.json",
       "metrics": {
         "status": "acceptable",
         "route_count": 7,
         "needs_attention_count": 0,
-        "highest_observed_p95_ms": 1138.42
+        "highest_observed_p95_ms": 2254.9
       },
       "limitations": [],
       "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs. A p95 is not treated as credible until the route has at least 30 local samples. Repeated sparse/fast-mode local workloads are regression evidence only."
@@ -2382,7 +2390,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:08:46.261903+00:00",
+      "generated_at": "2026-07-30T02:07:49.421804+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile_phase2.json",
       "metrics": {
         "status": "acceptable",
@@ -2399,7 +2407,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:08:46.261903+00:00",
+      "generated_at": "2026-07-30T02:07:49.421804+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile.json",
       "metrics": {
         "status": "acceptable"
@@ -2468,6 +2476,37 @@
       },
       "limitations": [],
       "claim_boundary": "RAG baseline comparison is engineering evidence that the retrieval stack finds and filters sources better than simpler baselines on an internal frozen goldset. It is not clinical validation, medical accuracy proof, or real-world safety evidence."
+    },
+    {
+      "id": "rag_paired_statistical_comparison",
+      "title": "Paired RAG statistical comparison",
+      "tier": "supporting",
+      "status": "acceptable",
+      "source_status": "acceptable",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:09:37.376461+00:00",
+      "source_path": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
+      "metrics": {
+        "status": "acceptable",
+        "goldset_case_count": 74,
+        "full_stack_improvement_proven_vs_bm25": false,
+        "full_stack_recall_at_10_favorable_delta": -0.02027,
+        "full_stack_recall_at_10_ci95": [
+          -0.108108,
+          0.067568
+        ],
+        "full_stack_recall_at_10_adjusted_p_value": 1.0,
+        "clinical_validation": false,
+        "external_validation": false
+      },
+      "limitations": [
+        "The goldset is internally authored and has only one case sample.",
+        "Bootstrap and randomisation quantify uncertainty inside this goldset only.",
+        "Gold source labels and alias normalisation remain judgment-dependent.",
+        "Latency is local engineering timing, not cloud or production traffic.",
+        "Statistical significance does not imply clinical or practical value."
+      ],
+      "claim_boundary": "This is paired statistical evidence over one internally authored frozen engineering goldset. It does not establish clinical validation, external generalisation, patient benefit, or production healthcare readiness."
     },
     {
       "id": "citation_window_sensitivity",
@@ -2693,13 +2732,43 @@
       "claim_boundary": "This deterministic wording proxy does not show that patients understand, trust appropriately, or use the interface safely. Independent human-factors review has not been completed."
     },
     {
+      "id": "synthetic_prediction_statistical_audit",
+      "title": "Synthetic prediction statistical credibility audit",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:02:45.877027+00:00",
+      "source_path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
+      "metrics": {
+        "status": "needs_attention",
+        "total_n": 120,
+        "synthetic_auroc": 0.9898,
+        "champion_superiority_over_logistic_proven": false,
+        "paired_accuracy_delta": 0.0,
+        "paired_accuracy_delta_lower_95": -0.041667,
+        "paired_accuracy_delta_upper_95": 0.041667,
+        "clinical_validation": false,
+        "synthetic_only": true
+      },
+      "limitations": [
+        "The export contains synthetic patients and simulator-built outcomes.",
+        "Bootstrap intervals quantify sampling variability inside this synthetic export only.",
+        "Label and outcome-missingness perturbations do not recompute model predictions from perturbed features.",
+        "Probability jitter is a decision-boundary stress test and does not simulate realistic covariate shift.",
+        "Prevalence reweighting is synthetic resampling, not external transportability evidence.",
+        "Subgroup slices are engineering checks and do not establish fairness in real populations."
+      ],
+      "claim_boundary": "Statistical engineering audit over synthetic row-level predictions only. It is not clinical evidence, external validation, a real-population fairness result, or proof that model performance generalises to patients."
+    },
+    {
       "id": "xai_rank_stability",
       "title": "Synthetic SHAP ranking stability",
       "tier": "supporting",
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:06:10.768527+00:00",
+      "generated_at": "2026-07-30T02:03:45.854892+00:00",
       "source_path": "Data/evals/models/latest_xai_rank_stability.json",
       "metrics": {
         "status": "acceptable",
@@ -2715,13 +2784,13 @@
       "id": "xai_retraining_stability",
       "title": "Synthetic XAI retraining stability",
       "tier": "supporting",
-      "status": "needs_attention",
-      "source_status": "needs_attention",
+      "status": "acceptable",
+      "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:06:49.726582+00:00",
+      "generated_at": "2026-07-30T02:04:55.987813+00:00",
       "source_path": "Data/evals/models/latest_xai_retraining_stability.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "acceptable",
         "seed_count": 12,
         "global_top_k_jaccard_p05": 0.6,
         "global_rank_correlation_p05": -1.0,
@@ -2732,13 +2801,34 @@
       "claim_boundary": "This audit measures explanation sensitivity to retraining and patient-level split variation on synthetic data. It is not causal explanation, clinical validation, human-factors evidence, or proof of transfer to real patients."
     },
     {
+      "id": "xai_reliability_gate",
+      "title": "Fail-closed synthetic XAI presentation policy",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:05:02.054421+00:00",
+      "source_path": "Data/evals/models/latest_xai_reliability_gate.json",
+      "metrics": {
+        "status": "needs_attention",
+        "display_mode": "grouped_factors_without_rank_claim",
+        "show_grouped_factors": true,
+        "ranked_feature_order_allowed": false,
+        "show_numeric_shap_values": false,
+        "clinical_validation": false,
+        "causal_interpretation_allowed": false
+      },
+      "limitations": [],
+      "claim_boundary": "This gate controls how synthetic model explanations are displayed. It does not establish causality, clinical explainability, clinical validity, or reliable explanation behavior on real patients."
+    },
+    {
       "id": "agent_execution_policy",
       "title": "Bounded agent execution policy",
       "tier": "supporting",
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:07:09.605191+00:00",
+      "generated_at": "2026-07-30T02:05:31.515537+00:00",
       "source_path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
       "metrics": {
         "status": "strong",
@@ -2747,7 +2837,7 @@
         "clinical_authority": false
       },
       "limitations": [],
-      "claim_boundary": "These offline cases verify software action boundaries, confirmation, budgets, and memory provenance. They do not validate medical correctness, real-world agent safety, clinician review, or clinical outcomes."
+      "claim_boundary": "These offline cases verify software action boundaries, patient-scoped confirmation binding, expiry/replay controls, budgets, and memory provenance. They do not validate medical correctness, real-world agent safety, clinician review, or clinical outcomes."
     },
     {
       "id": "rag_degradation_resilience",
@@ -2756,7 +2846,7 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:07:24.860388+00:00",
+      "generated_at": "2026-07-30T02:05:43.691724+00:00",
       "source_path": "Data/evals/rag/latest_rag_degradation_resilience.json",
       "metrics": {
         "status": "strong_offline_drill",
@@ -2791,7 +2881,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:08:52.837906+00:00",
+      "generated_at": "2026-07-30T02:09:39.463717+00:00",
       "source_path": "Data/evals/ops/latest_automation_channel_drill.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -2809,7 +2899,7 @@
       "status": "ready_for_synthetic_runtime",
       "source_status": "ready_for_synthetic_runtime",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:08:57.486164+00:00",
+      "generated_at": "2026-07-30T02:09:45.829421+00:00",
       "source_path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
       "metrics": {
         "status": "ready_for_synthetic_runtime",
@@ -2827,11 +2917,11 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:05:36.027817+00:00",
+      "generated_at": "2026-07-30T02:03:23.559463+00:00",
       "source_path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
       "metrics": {
         "status": "acceptable",
-        "component_count": 505,
+        "component_count": 504,
         "secret_findings": 0,
         "container_scan_executed": false
       },
@@ -2856,13 +2946,119 @@
       "claim_boundary": "This is a runtime and lineage preflight only. No adapter was trained, no behavior improvement was demonstrated, and no clinical or patient-facing use is allowed."
     },
     {
+      "id": "finetune_semantic_contamination",
+      "title": "Fine-tune semantic contamination screen",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:10:15.638433+00:00",
+      "source_path": "Data/evals/models/latest_finetune_semantic_contamination.json",
+      "metrics": {
+        "status": "needs_attention",
+        "flagged_pair_count": 150,
+        "retained_flagged_pair_count": 150,
+        "truncated_pair_count": 0,
+        "critical_pair_count": 7,
+        "unresolved_pair_count": 150,
+        "review_completed": false,
+        "adjudication_cleared_for_candidate": false,
+        "semantic_similarity_proxy_completed": true,
+        "semantic_contamination_absence_proven": false,
+        "clinical_validation": false
+      },
+      "limitations": [
+        "TF-IDF can miss low-lexical-overlap paraphrases.",
+        "High similarity can be legitimate shared safety language.",
+        "The same project owner authored much of the training and evaluation material.",
+        "A clean external no-read evaluation remains necessary."
+      ],
+      "claim_boundary": "TF-IDF similarity is a lexical-semantic screening proxy, not a clinical semantic model and not proof that contamination is absent. Flagged pairs require human adjudication before any offline adapter promotion."
+    },
+    {
+      "id": "finetune_hardening_assurance",
+      "title": "Fine-tune hardening assurance",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:10:17.184802+00:00",
+      "source_path": "Data/evals/models/latest_finetune_hardening_assurance.json",
+      "metrics": {
+        "status": "needs_attention",
+        "promotion_decision": "HOLD",
+        "check_count": 12,
+        "passed_count": 6,
+        "pass_rate": 0.5,
+        "blocking_gap_count": 6,
+        "semantic_similarity_screen_completed": true,
+        "semantic_unresolved_pair_count": 150,
+        "semantic_review_completed": false,
+        "clinical_validation": false
+      },
+      "limitations": [],
+      "claim_boundary": "This assurance artifact covers an internal, synthetic, behavior-only fine-tuning scaffold. It is not medical knowledge tuning, not clinical validation, not proof of real-world safety, and not permission for patient-facing use."
+    },
+    {
+      "id": "evidence_maturity_matrix",
+      "title": "Cross-domain evidence maturity matrix",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:10:21.168486+00:00",
+      "source_path": "Data/evals/governance/latest_evidence_maturity_matrix.json",
+      "metrics": {
+        "status": "needs_attention",
+        "aggregate_score_emitted": false,
+        "tier_counts": {
+          "0": 0,
+          "1": 3,
+          "2": 6,
+          "3": 2,
+          "4": 0,
+          "5": 0
+        },
+        "architecture_budget_status": "needs_attention",
+        "oversized_file_count": 14,
+        "critical_file_count": 4,
+        "backend_service_file_count": 356,
+        "clinical_validation": false,
+        "healthcare_production_ready": false
+      },
+      "limitations": [],
+      "claim_boundary": "This matrix rates evidence provenance, not product quality or clinical readiness. Internal engineering evidence cannot be averaged into clinical validation, real-world safety, patient benefit, or production healthcare readiness."
+    },
+    {
+      "id": "credibility_gap_registry",
+      "title": "Canonical credibility-gap registry",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-07-30T02:10:22.220544+00:00",
+      "source_path": "Data/evals/governance/latest_credibility_gap_registry.json",
+      "metrics": {
+        "status": "needs_attention",
+        "gap_count": 11,
+        "internally_closed_count": 1,
+        "open_or_external_count": 10,
+        "self_controllable_count": 7,
+        "cannot_be_self_certified_count": 4,
+        "clinical_validation": false,
+        "healthcare_production_ready": false
+      },
+      "limitations": [],
+      "claim_boundary": "This registry tracks engineering evidence gaps. Closing an internal gap does not establish clinical validation, patient benefit, clinician approval, IRB approval, production healthcare readiness, or generalisation to real patients."
+    },
+    {
       "id": "oidc_browser_pkce_readiness",
       "title": "OIDC browser PKCE readiness",
       "tier": "supporting",
       "status": "blocked_configuration",
       "source_status": "blocked_configuration",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:04:55.523195+00:00",
+      "generated_at": "2026-07-30T02:02:49.861705+00:00",
       "source_path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
       "metrics": {
         "status": "blocked_configuration",
@@ -2879,7 +3075,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:03:48.722817+00:00",
+      "generated_at": "2026-07-30T02:02:00.833382+00:00",
       "source_path": "Data/lakehouse/manifests/latest_pipeline_run.json",
       "metrics": {
         "status": "strong",
@@ -2900,7 +3096,7 @@
       "status": "strong_contract_only",
       "source_status": "strong_contract_only",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:03:50.838422+00:00",
+      "generated_at": "2026-07-30T02:02:02.172157+00:00",
       "source_path": "Data/evals/rag/latest_vector_store_contract_eval.json",
       "metrics": {
         "status": "strong_contract_only",
@@ -2919,11 +3115,11 @@
       "status": "compiled_reference_architecture",
       "source_status": "compiled_reference_architecture",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:04:31.954090+00:00",
+      "generated_at": "2026-07-30T02:02:27.081960+00:00",
       "source_path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
       "metrics": {
         "status": "compiled_reference_architecture",
-        "checks_passed": 26,
+        "checks_passed": 27,
         "checks_failed": 0,
         "cloud_deployed": false,
         "bicep_compiled": true
@@ -2938,7 +3134,7 @@
       "status": "ready_for_opt_in_provisioning",
       "source_status": "ready_for_opt_in_provisioning",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:03:54.960916+00:00",
+      "generated_at": "2026-07-30T02:02:04.869383+00:00",
       "source_path": "Data/evals/rag/latest_azure_search_index_readiness.json",
       "metrics": {
         "status": "ready_for_opt_in_provisioning",
@@ -2957,7 +3153,7 @@
       "status": "ready_for_opt_in_shadow_sync",
       "source_status": "ready_for_opt_in_shadow_sync",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:03:57.442819+00:00",
+      "generated_at": "2026-07-30T02:02:06.218037+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
       "metrics": {
         "status": "ready_for_opt_in_shadow_sync",
@@ -2977,7 +3173,7 @@
       "status": "ready_for_managed_shadow_run",
       "source_status": "ready_for_managed_shadow_run",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:04:07.809516+00:00",
+      "generated_at": "2026-07-30T02:02:11.325473+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
       "metrics": {
         "status": "ready_for_managed_shadow_run",
@@ -2996,11 +3192,11 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:03:52.764551+00:00",
+      "generated_at": "2026-07-30T02:02:03.255408+00:00",
       "source_path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
       "metrics": {
         "status": "strong_offline_drill",
-        "passed": 6,
+        "passed": 7,
         "failed": 0,
         "managed_delete": false,
         "azure_restore": false
@@ -3015,7 +3211,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-07-28T12:09:01.572270+00:00",
+      "generated_at": "2026-07-30T02:11:22.105396+00:00",
       "source_path": "Data/evals/governance/latest_constraint_aware_improvement_program.json",
       "metrics": {
         "status": "needs_attention",
@@ -3354,12 +3550,6 @@
     },
     {
       "benchmark_id": "durable_automation_worker",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "patient_xai_readability_dossier",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3719,12 +3909,6 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "cost_latency_report",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "runtime_quality_sentinel",
       "severity": "medium",
       "status": "stale",
@@ -3821,7 +4005,13 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "xai_retraining_stability",
+      "benchmark_id": "synthetic_prediction_statistical_audit",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
+      "benchmark_id": "xai_reliability_gate",
       "severity": "medium",
       "status": "needs_attention",
       "message": "Benchmark needs review before using it as supporting evidence."
@@ -3837,6 +4027,30 @@
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "finetune_semantic_contamination",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
+      "benchmark_id": "finetune_hardening_assurance",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
+      "benchmark_id": "evidence_maturity_matrix",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
+      "benchmark_id": "credibility_gap_registry",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
     },
     {
       "benchmark_id": "constraint_aware_improvement_program",

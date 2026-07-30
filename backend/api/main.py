@@ -28,6 +28,7 @@ from backend.api.routers.admin_eval import build_admin_eval_router
 from backend.api.routers.automation import router as automation_router
 from backend.services.request_context import reset_request_id, set_request_id
 from backend.services.api_protection import EngineeringApiProtectionMiddleware
+from backend.services.llm_telemetry import reset_llm_telemetry, start_llm_telemetry
 
 
 # ─── App setup ────────────────────────────────────────────────────────────────
@@ -83,9 +84,11 @@ app.add_middleware(EngineeringApiProtectionMiddleware)
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("x-request-id") or str(uuid4())
     token = set_request_id(request_id)
+    telemetry_token = start_llm_telemetry()
     try:
         response = await call_next(request)
     finally:
+        reset_llm_telemetry(telemetry_token)
         reset_request_id(token)
     response.headers["x-request-id"] = request_id
     response.headers.setdefault("X-Content-Type-Options", "nosniff")

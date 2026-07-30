@@ -1,6 +1,6 @@
 {
   "schema_version": "ml_logic_safety_alignment_v1",
-  "generated_at": "2026-07-28T12:04:54.650097+00:00",
+  "generated_at": "2026-07-30T02:02:44.493030+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "synthetic_only": true,
@@ -49,7 +49,7 @@
     "synthetic_prediction_statistical_audit": {
       "path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
       "exists": true,
-      "status": "acceptable"
+      "status": "needs_attention"
     },
     "ml_coverage_risk_diagnostics": {
       "path": "Data/evals/models/latest_ml_coverage_risk_diagnostics.json",

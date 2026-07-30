@@ -1,7 +1,8 @@
 {
-  "schema_version": "xai_retraining_stability_v1",
-  "generated_at": "2026-07-28T12:06:49.726582+00:00",
-  "status": "needs_attention",
+  "schema_version": "xai_retraining_stability_v2",
+  "generated_at": "2026-07-30T02:04:55.987813+00:00",
+  "status": "acceptable",
+  "status_basis": "set_membership_stable_exact_order_suppressed",
   "method": "independent_patient_split_logistic_retraining",
   "seed_count": 12,
   "seeds": [
@@ -33,6 +34,93 @@
     "pre_hemoglobin",
     "nadir_platelets"
   ],
+  "consensus_feature_tiers": {
+    "stable_core_alphabetical": [
+      {
+        "feature_group": "cycle",
+        "top_k_inclusion_rate": 1.0,
+        "median_rank_when_included": 1.0
+      },
+      {
+        "feature_group": "mri_tumor_size_cm",
+        "top_k_inclusion_rate": 1.0,
+        "median_rank_when_included": 4.0
+      },
+      {
+        "feature_group": "nadir_hemoglobin",
+        "top_k_inclusion_rate": 1.0,
+        "median_rank_when_included": 3.0
+      },
+      {
+        "feature_group": "pre_hemoglobin",
+        "top_k_inclusion_rate": 0.833333,
+        "median_rank_when_included": 7.0
+      },
+      {
+        "feature_group": "pre_wbc",
+        "top_k_inclusion_rate": 0.916667,
+        "median_rank_when_included": 6.0
+      },
+      {
+        "feature_group": "recovery_hemoglobin",
+        "top_k_inclusion_rate": 0.833333,
+        "median_rank_when_included": 5.0
+      },
+      {
+        "feature_group": "stage",
+        "top_k_inclusion_rate": 1.0,
+        "median_rank_when_included": 2.0
+      }
+    ],
+    "variable_context_alphabetical": [],
+    "suppressed_low_consensus_alphabetical": [
+      {
+        "feature_group": "age",
+        "top_k_inclusion_rate": 0.333333,
+        "median_rank_when_included": 7.0
+      },
+      {
+        "feature_group": "dose_delayed",
+        "top_k_inclusion_rate": 0.083333,
+        "median_rank_when_included": 6.0
+      },
+      {
+        "feature_group": "intervention_count",
+        "top_k_inclusion_rate": 0.166667,
+        "median_rank_when_included": 7.5
+      },
+      {
+        "feature_group": "max_symptom_severity",
+        "top_k_inclusion_rate": 0.166667,
+        "median_rank_when_included": 7.5
+      },
+      {
+        "feature_group": "nadir_anc",
+        "top_k_inclusion_rate": 0.083333,
+        "median_rank_when_included": 8.0
+      },
+      {
+        "feature_group": "nadir_platelets",
+        "top_k_inclusion_rate": 0.083333,
+        "median_rank_when_included": 8.0
+      },
+      {
+        "feature_group": "nadir_wbc",
+        "top_k_inclusion_rate": 0.25,
+        "median_rank_when_included": 8.0
+      },
+      {
+        "feature_group": "recovery_platelets",
+        "top_k_inclusion_rate": 0.166667,
+        "median_rank_when_included": 7.5
+      },
+      {
+        "feature_group": "recovery_wbc",
+        "top_k_inclusion_rate": 0.083333,
+        "median_rank_when_included": 6.0
+      }
+    ]
+  },
   "metrics": {
     "global_top_k_jaccard_p05": 0.6,
     "global_top_k_jaccard_median": 0.777778,
@@ -42,6 +130,16 @@
     "local_patient_top_k_jaccard_median": 0.777778,
     "patient_probability_std_p50": 0.017202,
     "patient_probability_std_p95": 0.051861
+  },
+  "raw_exact_rank_stability_status": "needs_attention",
+  "set_membership_stability_status": "acceptable",
+  "presentation_policy": {
+    "enforced": true,
+    "exact_rank_display_allowed": false,
+    "display_mode": "consensus_tiers_alphabetical_within_tier",
+    "stable_inclusion_threshold": 0.8,
+    "variable_inclusion_threshold": 0.5,
+    "required_disclosure": "Feature order may change after retraining. Read direction and broad contribution tiers, not exact rank or causality."
   },
   "model_retraining_stability_evaluated": true,
   "local_patient_explanation_stability_evaluated": true,
@@ -55,6 +153,7 @@
     "Every retraining run uses the same synthetic generator output.",
     "Stable explanations can reproduce simulator shortcuts.",
     "Only the logistic engineering baseline is evaluated.",
+    "Exact global feature order is unstable and is suppressed from patient-facing display.",
     "No human comprehension or clinical decision-impact study was performed."
   ],
   "claim_boundary": "This audit measures explanation sensitivity to retraining and patient-level split variation on synthetic data. It is not causal explanation, clinical validation, human-factors evidence, or proof of transfer to real patients."

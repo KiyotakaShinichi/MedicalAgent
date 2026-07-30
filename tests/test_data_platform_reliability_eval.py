@@ -23,6 +23,9 @@ def test_reliability_eval_runs_all_offline_drills():
     assert report["external_cloud_write_performed"] is False
     assert report["delete_propagation"]["managed_index_delete_completed"] is False
     assert report["recovery"]["azure_restore_drill_completed"] is False
+    assert report["partition_scale_replay"]["scale_multiplier"] == 100
+    assert report["partition_scale_replay"]["deterministic"] is True
+    assert report["partition_scale_replay"]["managed_cloud_throughput_measured"] is False
     assert report["clinical_validation"] is False
 
 

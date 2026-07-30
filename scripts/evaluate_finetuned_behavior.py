@@ -271,6 +271,8 @@ def evaluate_dataset(
                 "id": case["id"],
                 "behavior": case["behavior"],
                 "passed": not failures,
+                "output_chars": len(output),
+                "estimated_output_tokens": max(0, round(len(output) / 4.0)),
                 "failures": sorted(set(failures)),
             }
         )
@@ -316,9 +318,11 @@ def evaluate_dataset(
         "validator_error_rate": rate(validator_error_count, total),
         "unexpected_generation_count": len(unexpected_generation_ids),
     }
+    output_char_counts = [result["output_chars"] for result in case_results]
+    output_token_counts = [result["estimated_output_tokens"] for result in case_results]
     status = _overall_status(metrics)
     report = {
-        "schema_version": "finetune_behavior_eval_v2",
+        "schema_version": "finetune_behavior_eval_v3",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
         "clinical_validation": False,
@@ -338,6 +342,14 @@ def evaluate_dataset(
             }
             for behavior, counts in sorted(by_behavior.items())
         },
+        "output_length": {
+            "chars_p50": _percentile(output_char_counts, 50),
+            "chars_p95": _percentile(output_char_counts, 95),
+            "estimated_tokens_p50": _percentile(output_token_counts, 50),
+            "estimated_tokens_p95": _percentile(output_token_counts, 95),
+            "basis": "characters and chars_div_4 token estimate; no provider generation usage supplied",
+        },
+        "case_results": case_results,
         "case_failures": [result for result in case_results if not result["passed"]],
         "unexpected_generation_ids": unexpected_generation_ids,
         "claim_boundary": (
@@ -349,6 +361,19 @@ def evaluate_dataset(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     return report
+
+
+def _percentile(values: list[int], percentile: int) -> float | None:
+    if not values:
+        return None
+    ordered = sorted(float(value) for value in values)
+    if len(ordered) == 1:
+        return ordered[0]
+    rank = (len(ordered) - 1) * percentile / 100.0
+    low = int(rank)
+    high = min(low + 1, len(ordered) - 1)
+    weight = rank - low
+    return round(ordered[low] * (1.0 - weight) + ordered[high] * weight, 2)
 
 
 def _overall_status(metrics: dict[str, float]) -> str:
@@ -379,7 +404,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(
         json.dumps(
-            {key: value for key, value in report.items() if key not in {"case_failures", "by_behavior"}},
+            {
+                key: value
+                for key, value in report.items()
+                if key not in {"case_results", "case_failures", "by_behavior"}
+            },
             indent=2,
         )
     )

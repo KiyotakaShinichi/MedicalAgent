@@ -1,6 +1,6 @@
 {
   "schema_version": "route_latency_budget_v1",
-  "generated_at": "2026-07-28T12:08:48.839139+00:00",
+  "generated_at": "2026-07-30T02:07:53.553074+00:00",
   "status": "acceptable",
   "minimum_samples_for_percentile_credibility": 30,
   "production_ready": false,
@@ -11,7 +11,7 @@
     "credible_percentile_route_count": 5,
     "needs_attention_count": 0,
     "insufficient_sample_count": 0,
-    "highest_observed_p95_ms": 1138.42,
+    "highest_observed_p95_ms": 2254.9,
     "production_ready": false
   },
   "routes": [
@@ -21,21 +21,21 @@
       "acceptable_p95_ms": 1500,
       "needs_attention_p95_ms": 3000,
       "sample_count": 30,
-      "current_p50_ms": 33.45,
-      "current_p95_ms": 139.69,
-      "current_p99_ms": 146.39,
+      "current_p50_ms": 35.19,
+      "current_p95_ms": 86.45,
+      "current_p99_ms": 109.67,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
       "latency_status": "ideal",
-      "bottleneck_stage": "total_or_external_wait",
+      "bottleneck_stage": "post_generation_validation_ms",
       "terminal_step_distribution": {
         "input_guardrail_block": 30
       },
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 139.69,
+      "observed_p95_ms": 86.45,
       "status": "ideal"
     },
     {
@@ -44,21 +44,21 @@
       "acceptable_p95_ms": 2000,
       "needs_attention_p95_ms": 4000,
       "sample_count": 30,
-      "current_p50_ms": 52.19,
-      "current_p95_ms": 72.26,
-      "current_p99_ms": 76.74,
+      "current_p50_ms": 48.65,
+      "current_p95_ms": 81.94,
+      "current_p99_ms": 83.59,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
       "latency_status": "ideal",
-      "bottleneck_stage": "total_or_external_wait",
+      "bottleneck_stage": "source_governance_ms",
       "terminal_step_distribution": {
         "cache_hit": 30
       },
       "route_integrity_rate": 1.0,
       "unique_query_count": 1,
       "production_ready": false,
-      "observed_p95_ms": 72.26,
+      "observed_p95_ms": 81.94,
       "status": "ideal"
     },
     {
@@ -67,9 +67,9 @@
       "acceptable_p95_ms": 8000,
       "needs_attention_p95_ms": 15000,
       "sample_count": 30,
-      "current_p50_ms": 728.61,
-      "current_p95_ms": 1138.42,
-      "current_p99_ms": 1175.03,
+      "current_p50_ms": 1372.24,
+      "current_p95_ms": 2254.9,
+      "current_p99_ms": 3620.52,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -81,7 +81,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 1138.42,
+      "observed_p95_ms": 2254.9,
       "status": "ideal"
     },
     {
@@ -111,13 +111,13 @@
       "acceptable_p95_ms": 3000,
       "needs_attention_p95_ms": 6000,
       "sample_count": 30,
-      "current_p50_ms": 679.75,
-      "current_p95_ms": 1011.06,
-      "current_p99_ms": 1039.43,
+      "current_p50_ms": 983.31,
+      "current_p95_ms": 1765.49,
+      "current_p99_ms": 1967.44,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
-      "latency_status": "ideal",
+      "latency_status": "acceptable",
       "bottleneck_stage": "retrieval_ms",
       "terminal_step_distribution": {
         "generated": 27,
@@ -126,8 +126,8 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 1011.06,
-      "status": "ideal"
+      "observed_p95_ms": 1765.49,
+      "status": "acceptable"
     },
     {
       "route": "hybrid_prediction",
@@ -156,21 +156,21 @@
       "acceptable_p95_ms": 5000,
       "needs_attention_p95_ms": 10000,
       "sample_count": 30,
-      "current_p50_ms": 59.84,
-      "current_p95_ms": 93.77,
-      "current_p99_ms": 105.65,
+      "current_p50_ms": 95.19,
+      "current_p95_ms": 218.75,
+      "current_p99_ms": 291.24,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
       "latency_status": "ideal",
-      "bottleneck_stage": "total_or_external_wait",
+      "bottleneck_stage": "post_generation_validation_ms",
       "terminal_step_distribution": {
         "direct_support": 30
       },
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 93.77,
+      "observed_p95_ms": 218.75,
       "status": "ideal"
     }
   ],

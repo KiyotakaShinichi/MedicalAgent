@@ -15,6 +15,9 @@ from typing import Any
 
 DEFAULT_OUTPUT_PATH = Path("Data/evals/governance/latest_patient_xai_readability_dossier.json")
 DEFAULT_DOC_PATH = Path("docs/patient_xai_readability_dossier.md")
+DEFAULT_PATIENT_KPI_SOURCE = Path(
+    "frontend-react/src/pages/patient/PatientKpiStrip.tsx"
+)
 
 REQUIRED_PATIENT_EXPLANATION_SURFACES = [
     {
@@ -145,10 +148,65 @@ def build_patient_xai_readability_dossier(
     *,
     output_path: str | Path = DEFAULT_OUTPUT_PATH,
     doc_path: str | Path = DEFAULT_DOC_PATH,
+    patient_kpi_source: str | Path = DEFAULT_PATIENT_KPI_SOURCE,
 ) -> dict[str, Any]:
     rag = _read_json(KNOWN_WEAKNESS_INPUTS["route_aware_rag"])
     ml = _read_json(KNOWN_WEAKNESS_INPUTS["ml_logic_safety"])
     auto = _read_json(KNOWN_WEAKNESS_INPUTS["automation_reliability"])
+    source_path = Path(patient_kpi_source)
+    source_text = source_path.read_text(encoding="utf-8") if source_path.exists() else ""
+    source_lower = source_text.lower()
+    source_checks = [
+        {
+            "id": "all_four_patient_indicators_implemented",
+            "passed": all(
+                label in source_lower
+                for label in (
+                    "items for review",
+                    "synthetic model pattern",
+                    "latest cbc",
+                    "record coverage",
+                )
+            ),
+        },
+        {
+            "id": "meaning_calculation_and_next_step_sections_implemented",
+            "passed": all(
+                phrase in source_lower
+                for phrase in (
+                    "what it means",
+                    "how nlcare calculated it",
+                    "safe next steps",
+                )
+            ),
+        },
+        {
+            "id": "synthetic_probability_boundary_implemented",
+            "passed": (
+                "not a personal outcome probability" in source_lower
+                and "not the patient's chance of improving" in source_lower
+            ),
+        },
+        {
+            "id": "removed_health_score_boundary_implemented",
+            "passed": (
+                "why nlcare does not show a health score" in source_lower
+                and "0-100 monitoring context index was removed" in source_lower
+            ),
+        },
+        {
+            "id": "treatment_non_authority_implemented",
+            "passed": "do not change treatment based on portal indicators" in source_lower,
+        },
+        {
+            "id": "clinical_sounding_model_labels_softened",
+            "passed": (
+                "grouped with favorable synthetic examples" in source_lower
+                and "higher synthetic review-signal group" in source_lower
+                and "outside demo band" in source_lower
+            ),
+        },
+    ]
     surface_rows = [
         {
             **surface,
@@ -161,12 +219,8 @@ def build_patient_xai_readability_dossier(
     checks = [
         {
             "id": "patient_numbers_have_meaning_calculation_next_steps",
-            "passed": all(
-                {"what_count_means", "how_count_is_calculated", "safe_next_steps"}.intersection(surface["must_explain"])
-                or surface["id"] != "review_queue"
-                for surface in REQUIRED_PATIENT_EXPLANATION_SURFACES
-            ),
-            "why": "The KPI strip requires meaning, calculation, and allowed next-step copy for patient-facing indicators.",
+            "passed": all(check["passed"] for check in source_checks),
+            "why": "The actual patient KPI source implements meaning, calculation, safe-next-step, and non-authority copy.",
         },
         {
             "id": "synthetic_outputs_have_nonclinical_boundary",
@@ -203,6 +257,12 @@ def build_patient_xai_readability_dossier(
         "surface_count": len(surface_rows),
         "surfaces": surface_rows,
         "checks": checks,
+        "implementation_evidence": {
+            "source_path": source_path.as_posix(),
+            "source_exists": source_path.exists(),
+            "checks": source_checks,
+            "all_passed": all(check["passed"] for check in source_checks),
+        },
         "failed_check_count": len(failed),
         "weakness_visibility": {
             "rag": _rag_risk_summary(rag),
@@ -267,6 +327,7 @@ __all__ = [
     "CLAIM_BOUNDARY",
     "DEFAULT_DOC_PATH",
     "DEFAULT_OUTPUT_PATH",
+    "DEFAULT_PATIENT_KPI_SOURCE",
     "REQUIRED_PATIENT_EXPLANATION_SURFACES",
     "build_patient_xai_readability_dossier",
 ]

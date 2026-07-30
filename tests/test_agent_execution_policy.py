@@ -1,4 +1,10 @@
-from backend.services.agent_execution_policy import AgentBudget, enforce_agent_execution_policy
+from datetime import datetime, timedelta, timezone
+
+from backend.services.agent_execution_policy import (
+    AgentBudget,
+    build_confirmation_contract,
+    enforce_agent_execution_policy,
+)
 from backend.services.agentic_turn_orchestrator import run_agentic_turn
 from backend.services.bounded_agentic_workflow import plan_patient_agent_workflow
 
@@ -77,3 +83,79 @@ def test_policy_never_allows_clinical_authority() -> None:
     policy = enforce_agent_execution_policy(plan, confirmed_by_user=False)
     assert policy["clinical_authority_allowed"] is False
     assert policy["clinical_validation"] is False
+
+
+def test_bound_confirmation_rejects_payload_substitution() -> None:
+    plan = plan_patient_agent_workflow("Log nausea severity 6/10 today")
+    issued = datetime.now(timezone.utc)
+    contract = build_confirmation_contract(
+        plan,
+        patient_scope_id="patient-a",
+        action_payload={"symptom": "nausea", "severity": 6},
+        now=issued,
+        confirmation_id="confirm-a",
+    )
+    policy = enforce_agent_execution_policy(
+        plan,
+        confirmed_by_user=True,
+        patient_scope_id="patient-a",
+        action_payload={"symptom": "nausea", "severity": 9},
+        confirmation_contract=contract,
+        require_bound_confirmation=True,
+        now=issued + timedelta(seconds=1),
+    )
+    assert policy["decision"] == "block"
+    assert "confirmation_payload_mismatch" in policy["confirmation_validation"]["issues"]
+
+
+def test_bound_confirmation_rejects_cross_patient_replay_and_expiry() -> None:
+    plan = plan_patient_agent_workflow("Log nausea severity 6/10 today")
+    issued = datetime.now(timezone.utc)
+    action = {"symptom": "nausea", "severity": 6}
+    contract = build_confirmation_contract(
+        plan,
+        patient_scope_id="patient-a",
+        action_payload=action,
+        now=issued,
+        ttl_seconds=30,
+        confirmation_id="confirm-a",
+    )
+    cross_patient = enforce_agent_execution_policy(
+        plan,
+        confirmed_by_user=True,
+        patient_scope_id="patient-b",
+        action_payload=action,
+        confirmation_contract=contract,
+        require_bound_confirmation=True,
+        now=issued + timedelta(seconds=1),
+    )
+    expired = enforce_agent_execution_policy(
+        plan,
+        confirmed_by_user=True,
+        patient_scope_id="patient-a",
+        action_payload=action,
+        confirmation_contract=contract,
+        require_bound_confirmation=True,
+        now=issued + timedelta(seconds=31),
+    )
+    assert "confirmation_patient_scope_mismatch" in cross_patient["confirmation_validation"]["issues"]
+    assert "confirmation_expired" in expired["confirmation_validation"]["issues"]
+
+
+def test_cross_patient_trusted_memory_fails_closed() -> None:
+    plan = plan_patient_agent_workflow("Hello")
+    policy = enforce_agent_execution_policy(
+        plan,
+        confirmed_by_user=False,
+        patient_scope_id="patient-a",
+        memory_entries=[
+            {
+                "provenance": "patient_record",
+                "trusted": True,
+                "patient_scope_id": "patient-b",
+                "content": "unrelated patient context",
+            }
+        ],
+    )
+    assert policy["decision"] == "block"
+    assert "cross_patient_memory_scope_mismatch" in policy["violations"]

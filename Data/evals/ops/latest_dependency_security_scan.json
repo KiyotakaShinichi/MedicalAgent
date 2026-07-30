@@ -1,37 +1,92 @@
 {
-  "schema_version": "dependency_security_scan_v2",
-  "generated_at": "2026-07-28T12:05:35.490761+00:00",
-  "status": "needs_attention",
+  "schema_version": "dependency_security_scan_v3",
+  "generated_at": "2026-07-30T02:03:23.208074+00:00",
+  "status": "acceptable",
   "summary": {
     "tool_count": 2,
     "unavailable_tool_count": 0,
-    "high_or_critical_count": 2,
-    "known_vulnerability_count": 53,
-    "vulnerable_package_count": 11
+    "high_or_critical_count": 0,
+    "known_vulnerability_count": 2,
+    "accepted_known_vulnerability_count": 2,
+    "unaccepted_known_vulnerability_count": 0,
+    "vulnerable_package_count": 2
   },
   "checks": [
     {
       "label": "python_dependencies",
       "tool": "C:\\Python314\\python.exe",
-      "status": "needs_attention",
-      "exit_code": 1,
+      "status": "acceptable",
+      "exit_code": 0,
       "high_or_critical_count": 0,
-      "known_vulnerability_count": 51,
-      "vulnerable_package_count": 9,
+      "known_vulnerability_count": 0,
+      "vulnerable_package_count": 0,
+      "findings": [],
+      "unaccepted_known_vulnerability_count": 0,
       "scan_scope": "requirements-lock-py314-win.txt",
-      "stderr_tail": "WARNING:pip_audit._cli:--no-deps is supported, but users are encouraged to fully hash their pinned dependencies\nWARNING:pip_audit._cli:Consider using a tool like `pip-compile`: https://pip-tools.readthedocs.io/en/latest/#using-hashes\nFound 51 known vulnerabilities in 9 packages\n"
+      "stderr_tail": "WARNING:pip_audit._cli:--no-deps is supported, but users are encouraged to fully hash their pinned dependencies\nWARNING:pip_audit._cli:Consider using a tool like `pip-compile`: https://pip-tools.readthedocs.io/en/latest/#using-hashes\nNo known vulnerabilities found\n"
     },
     {
       "label": "frontend_dependencies",
       "tool": "npm.cmd",
-      "status": "needs_attention",
-      "exit_code": 1,
-      "high_or_critical_count": 2,
+      "status": "accepted_residual_risk",
+      "exit_code": 0,
+      "high_or_critical_count": 0,
       "known_vulnerability_count": 2,
       "vulnerable_package_count": 2,
+      "findings": [
+        {
+          "package": "react-router",
+          "version_range": ">=6.7.0 <6.30.4",
+          "advisory_id": "GHSA-2j2x-hqr9-3h42",
+          "title": "React Router's same-origin redirect with path starting // causes open redirect via protocol-relative URL reinterpretation",
+          "severity": "moderate"
+        },
+        {
+          "package": "react-router",
+          "version_range": ">=6.0.0 <7.18.0",
+          "advisory_id": "GHSA-wrjc-x8rr-h8h6",
+          "title": "React Router: Open redirect via backslash in <Link> and useNavigate (CVE-2025-68470 bypass)",
+          "severity": "moderate"
+        },
+        {
+          "package": "react-router",
+          "version_range": ">=6.4.0 <7.18.0",
+          "advisory_id": "GHSA-337j-9hxr-rhxg",
+          "title": "React Router: Arbitrary Constructor Injection via deserializeErrors() in React Router SSR Hydration",
+          "severity": "moderate"
+        },
+        {
+          "package": "react-router-dom",
+          "version_range": ">=6.30.2 <=6.30.4",
+          "advisory_id": "GHSA-jjmj-jmhj-qwj2",
+          "title": "React Router: Open redirect leading to XSS",
+          "severity": "moderate"
+        }
+      ],
+      "unaccepted_known_vulnerability_count": 0,
       "scan_scope": "frontend_lockfile",
-      "stderr_tail": ""
+      "stderr_tail": "",
+      "risk_acceptance": {
+        "config_path": "config/dependency_risk_acceptance.json",
+        "current": true,
+        "expires_on": "2026-10-28",
+        "observed_advisory_ids": [
+          "GHSA-2j2x-hqr9-3h42",
+          "GHSA-337j-9hxr-rhxg",
+          "GHSA-jjmj-jmhj-qwj2",
+          "GHSA-wrjc-x8rr-h8h6"
+        ],
+        "unaccepted_advisory_ids": [],
+        "controls": {
+          "passed": true,
+          "vite_client_spa": true,
+          "ssr_or_rsc_markers_found": [],
+          "navigation_target_review": "repository-defined routes only; enforced by test"
+        },
+        "accepted": true,
+        "claim_boundary": "This is a bounded engineering risk acceptance for a controlled prototype, not a security certification or healthcare-production approval."
+      }
     }
   ],
-  "claim_boundary": "Dependency scanning is best-effort engineering hygiene, not a security certification. Python advisory feeds do not consistently expose severity, so known-vulnerability counts are reported separately from npm high/critical counts."
+  "claim_boundary": "Dependency scanning is best-effort engineering hygiene, not a security certification. Python advisory feeds do not consistently expose severity, so known-vulnerability counts are reported separately from npm high/critical counts. Accepted residual risks remain visible and expire; they are not treated as vulnerability removal."
 }

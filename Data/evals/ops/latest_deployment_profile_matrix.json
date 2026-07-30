@@ -1,0 +1,48 @@
+{
+  "schema_version": "deployment_profile_matrix_v1",
+  "generated_at": "2026-07-30T02:02:50.480463+00:00",
+  "status": "strong",
+  "active_profile": {
+    "profile": "development",
+    "status": "development_profile",
+    "strict_profile": false,
+    "deployment_capability": "local_or_controlled_demo_only",
+    "n_failed": 0
+  },
+  "production_shaped_static_validation": {
+    "status": "strong",
+    "n_checks": 12,
+    "n_failed": 0,
+    "oidc_config_valid": true,
+    "uses_non_resolving_example_endpoints": true,
+    "live_identity_provider_contacted": false,
+    "live_database_contacted": false,
+    "live_redis_contacted": false
+  },
+  "unsafe_profile_fail_closed": {
+    "status": "blocked",
+    "n_failed": 10,
+    "failed_check_names": [
+      "database_backend",
+      "database_password_not_placeholder",
+      "demo_auth_disabled",
+      "cors_allowlist_explicit",
+      "production_cors_uses_https",
+      "redis_configured",
+      "non_demo_identity_provider_integrated",
+      "external_dispatch_uses_https",
+      "external_dispatch_secret_strong",
+      "external_dispatch_test_recipient_only"
+    ],
+    "passed": true
+  },
+  "matrix_passed": true,
+  "cloud_deployment_completed": false,
+  "live_oidc_integration_completed": false,
+  "production_traffic_observed": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "secrets_included_in_artifact": false,
+  "deployment_capability": "configuration_matrix_validated_local_runtime_only",
+  "claim_boundary": "This matrix proves static configuration checks and fail-closed behavior for an engineering prototype. It does not prove cloud deployment, live identity integration, security certification, compliance, clinical validation, or production healthcare readiness."
+}

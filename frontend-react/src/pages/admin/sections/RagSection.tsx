@@ -44,6 +44,10 @@ export function RagSection({ analytics }: Props) {
     () => getNormalizedBenchmarkArtifact("rag_baseline_comparison"),
     [],
   );
+  const { data: ragPairedComparison, status: ragPairedComparisonStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("rag_paired_statistical_comparison"),
+    [],
+  );
   const { data: routeLatencyBudget, status: routeLatencyBudgetStatus } = useApi(
     () => getNormalizedBenchmarkArtifact("route_latency_budget"),
     [],
@@ -118,8 +122,12 @@ export function RagSection({ analytics }: Props) {
           metrics={[
             ["Requests", ["metrics", "request_count"], "number"],
             ["P95 latency", ["metrics", "latency_p95_ms"], "milliseconds"],
+            ["Local RAG P95", ["metrics", "normal_rag_probe_p95_ms"], "milliseconds"],
+            ["Retrieval P95", ["metrics", "normal_rag_retrieval_p95_ms"], "milliseconds"],
+            ["Provider tokens", ["metrics", "provider_reported_total_tokens"], "number"],
+            ["Usage coverage", ["metrics", "provider_usage_coverage_rate"], "percent"],
+            ["Est. pipeline tokens", ["metrics", "estimated_pipeline_total_tokens"], "number"],
             ["Est. cost", ["metrics", "estimated_total_cost_usd"], "currency"],
-            ["Cache hit", ["metrics", "cache_hit_rate"], "percent"],
           ]}
           emptyLabel="No cost/latency report yet - run scripts/run_cost_latency_report.py"
         />
@@ -148,6 +156,18 @@ export function RagSection({ analytics }: Props) {
           emptyLabel="No retrieval goldset eval yet - run scripts/run_retrieval_goldset_eval.py"
         />
         <RagBaselineComparisonCard status={ragBaselineComparisonStatus} artifact={ragBaselineComparison} />
+        <ArtifactSummaryCard
+          title="Paired RAG Evidence"
+          status={ragPairedComparisonStatus}
+          artifact={ragPairedComparison}
+          metrics={[
+            ["Paired cases", ["metrics", "goldset_case_count"], "number"],
+            ["Recall@10 delta", ["metrics", "full_stack_recall_at_10_favorable_delta"], "percent"],
+            ["Adjusted p", ["metrics", "full_stack_recall_at_10_adjusted_p_value"], "number"],
+            ["Lift proven", ["metrics", "full_stack_improvement_proven_vs_bm25"], "boolean"],
+          ]}
+          emptyLabel="No paired comparison yet - run scripts/run_rag_paired_statistical_comparison.py"
+        />
         <ArtifactSummaryCard
           title="Route Latency Budget"
           status={routeLatencyBudgetStatus}

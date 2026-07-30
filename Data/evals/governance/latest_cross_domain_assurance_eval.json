@@ -1,0 +1,126 @@
+{
+  "schema_version": "nlcare_cross_domain_assurance_eval_v1",
+  "generated_at": "2026-07-30T02:11:10.681062+00:00",
+  "status": "strong_internal_assurance",
+  "scenario_count": 10,
+  "passed_count": 10,
+  "failed_count": 0,
+  "pass_rate": 1.0,
+  "scenarios": [
+    {
+      "scenario_id": "patient_scoped_write_confirmation_allows_only_bound_action",
+      "passed": true,
+      "evidence": {
+        "decision": "allow",
+        "effective_tools": [
+          "classify_intent",
+          "detect_safety_boundary",
+          "save_symptom",
+          "confirm_before_save"
+        ],
+        "clinical_authority_allowed": false
+      }
+    },
+    {
+      "scenario_id": "confirmation_payload_substitution_fails_closed",
+      "passed": true,
+      "evidence": {
+        "decision": "block",
+        "issues": [
+          "confirmation_payload_mismatch"
+        ]
+      }
+    },
+    {
+      "scenario_id": "consumed_confirmation_replay_fails_closed",
+      "passed": true,
+      "evidence": {
+        "decision": "block",
+        "issues": [
+          "confirmation_replayed"
+        ]
+      }
+    },
+    {
+      "scenario_id": "trace_is_redacted_and_poisoned_trace_is_rejected",
+      "passed": true,
+      "evidence": {
+        "clean_trace_valid": true,
+        "poison_issues": [
+          "forbidden_key:patient_id",
+          "forbidden_key:private_chain_of_thought"
+        ],
+        "correlation_id_preserved": true
+      }
+    },
+    {
+      "scenario_id": "automation_idempotency_leases_signatures_and_receipts",
+      "passed": true,
+      "evidence": {
+        "source_schema_version": "automation_fault_injection_v1",
+        "source_status": "strong",
+        "clinical_validation": false,
+        "healthcare_production_ready": false
+      }
+    },
+    {
+      "scenario_id": "rag_corruption_staleness_and_sparse_fallback",
+      "passed": true,
+      "evidence": {
+        "source_schema_version": "rag_degradation_resilience_v1",
+        "source_status": "strong_offline_drill",
+        "clinical_validation": false,
+        "healthcare_production_ready": null
+      }
+    },
+    {
+      "scenario_id": "data_replay_quarantine_migration_delete_and_scale",
+      "passed": true,
+      "evidence": {
+        "source_schema_version": "nlcare_data_platform_reliability_eval_v1",
+        "source_status": "strong_offline_drill",
+        "clinical_validation": false,
+        "healthcare_production_ready": false
+      }
+    },
+    {
+      "scenario_id": "local_backup_restore_preserves_synthetic_content",
+      "passed": true,
+      "evidence": {
+        "source_schema_version": "deployment_recovery_drill_v1",
+        "source_status": "strong_local_only",
+        "clinical_validation": false,
+        "healthcare_production_ready": false
+      }
+    },
+    {
+      "scenario_id": "weak_evidence_cannot_promote_rag_or_synthetic_ml",
+      "passed": true,
+      "evidence": {
+        "passed": true,
+        "rag_improvement_proven_vs_bm25": false,
+        "ml_promotion_decision": "hold_synthetic_only",
+        "clinical_validation": false
+      }
+    },
+    {
+      "scenario_id": "negative_results_remain_visible_on_release_surface",
+      "passed": true,
+      "evidence": {
+        "passed": true,
+        "warning_count": 12,
+        "rag_negative_visible": true,
+        "frozen_adversarial_warning_visible": true,
+        "synthetic_ml_boundary_visible": true
+      }
+    }
+  ],
+  "patient_write_performed": false,
+  "external_network_request_performed": false,
+  "managed_cloud_operation_performed": false,
+  "clinical_action_automated": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "independent_reviewer_completed": false,
+  "claim_boundary": "This artifact composes disposable internal software drills. It improves change-safety evidence but is not independent validation, clinical evidence, managed-cloud reliability proof, or production healthcare readiness."
+}

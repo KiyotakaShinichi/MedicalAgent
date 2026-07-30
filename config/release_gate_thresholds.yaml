@@ -1130,6 +1130,22 @@ artifacts:
       on the same frozen internal goldset. Do not tune on this artifact or
       claim clinical validation.
 
+  - path: Data/evals/rag/latest_rag_paired_statistical_comparison.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [external_validation], op: "==", value: false}
+      - {path: [goldset_was_used_for_tuning], op: "==", value: false}
+      - {path: [method, paired_case_alignment], op: "==", value: true}
+      - {path: [method, bootstrap_replicates], op: ">=", value: 1000}
+      - {path: [method, permutation_replicates], op: ">=", value: 1000}
+    note: >
+      Paired bootstrap and randomisation evidence over one internal frozen
+      goldset. Confidence intervals quantify this sample only; they do not
+      establish external or clinical generalisation.
+
   - path: Data/evals/rag/latest_citation_window_sensitivity.json
     required: false
     max_age_days: 90
@@ -1740,6 +1756,21 @@ artifacts:
       profile is deployment engineering evidence only, not HIPAA, security,
       clinical-validation, or healthcare-production certification.
 
+  - path: Data/evals/ops/latest_deployment_profile_matrix.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [cloud_deployment_completed], op: "==", value: false}
+      - {path: [secrets_included_in_artifact], op: "==", value: false}
+    note: >
+      Static production-shaped configuration and fail-closed validation only.
+      The active runtime remains development/local, no cloud deployment or live
+      identity-provider integration is claimed, and this is not healthcare
+      production readiness.
+
   - path: Data/evals/ops/latest_deployment_recovery_drill.json
     required: false
     max_age_days: 90
@@ -1791,6 +1822,7 @@ artifacts:
       - {path: [synthetic_only], op: "==", value: true}
       - {path: [healthcare_production_ready], op: "==", value: false}
       - {path: [patient_level_bootstrap, replicates], op: ">=", value: 1000}
+      - {path: [paired_baseline_comparison, paired_accuracy_delta, replicates], op: ">=", value: 1000}
       - {path: [controlled_outcome_perturbations, seed_count], op: ">=", value: 30}
       - {path: [promotion_decision], op: "==", value: "hold_synthetic_only"}
     note: >
@@ -2025,6 +2057,19 @@ artifacts:
       instability remains visible; this is not causal, clinical, or
       real-patient explainability.
 
+  - path: Data/evals/models/latest_xai_reliability_gate.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [causal_interpretation_allowed], op: "==", value: false}
+      - {path: [patient_display_policy, show_numeric_shap_values], op: "==", value: false}
+    note: >
+      Fail-closed presentation policy derived from internal synthetic XAI
+      fidelity and retraining stability. It controls wording and visibility;
+      it does not establish causal or clinical explainability.
+
   - path: Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json
     required: false
     max_age_days: 90
@@ -2187,6 +2232,60 @@ artifacts:
       - {path: [patient_facing_promotion_allowed], op: "==", value: false}
     note: Pinned-model runtime preflight; no adapter or behavior improvement exists.
 
+  - path: Data/evals/models/latest_finetune_hardening_assurance.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [patient_facing_promotion_allowed], op: "==", value: false}
+      - {path: [promotion_contract, unsafe_leakage_allowed], op: "==", value: 0.0}
+      - {path: [promotion_contract, claim_boundary_compliance_required], op: "==", value: 1.0}
+    note: >
+      Behavior-only fine-tune hardening surface. PROMOTE, if ever reached,
+      means offline shadow eligibility only and never patient-facing use.
+
+  - path: Data/evals/models/latest_finetune_semantic_contamination.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [patient_facing_promotion_allowed], op: "==", value: false}
+      - {path: [screen, semantic_similarity_proxy_completed], op: "==", value: true}
+      - {path: [summary, semantic_contamination_absence_proven], op: "==", value: false}
+    note: >
+      Word/character TF-IDF screen for likely paraphrase contamination. It is
+      a review queue, not proof of semantic independence; unresolved flags
+      remain a fine-tune promotion blocker.
+
+  - path: Data/evals/governance/latest_evidence_maturity_matrix.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [scoring_policy, aggregate_score_emitted], op: "==", value: false}
+      - {path: [architecture_maintainability, backend_service_file_count], op: ">=", value: 1}
+    note: >
+      Cross-domain provenance matrix with no aggregate score. Internal artifact
+      volume cannot compensate for missing external, institutional, or
+      clinical evidence.
+
+  - path: Data/evals/governance/latest_credibility_gap_registry.json
+    required: false
+    max_age_days: 90
+    accepted_status: [strong, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [summary, gap_count], op: ">=", value: 8}
+      - {path: [summary, cannot_be_self_certified_count], op: ">=", value: 3}
+    note: >
+      Credibility bookkeeping keeps internal, external, institutional, and
+      clinical evidence gaps distinct. It is not a readiness score.
+
   - path: Data/evals/ops/latest_oidc_browser_pkce_readiness.json
     required: false
     max_age_days: 90
@@ -2315,3 +2414,36 @@ artifacts:
       Offline reliability drills for curated non-patient records. Local
       idempotency, quarantine, migration, backfill, tombstones, and fallback
       do not prove managed-cloud deletion or restoration.
+
+  - path: Data/evals/governance/latest_cross_domain_assurance_eval.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong_internal_assurance, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [patient_write_performed], op: "==", value: false}
+      - {path: [external_network_request_performed], op: "==", value: false}
+      - {path: [managed_cloud_operation_performed], op: "==", value: false}
+      - {path: [clinical_action_automated], op: "==", value: false}
+      - {path: [failed_count], op: "==", value: 0}
+    note: >
+      Composed disposable assurance across agent confirmation, trace redaction,
+      automation fault injection, local RAG degradation, non-patient data
+      replay, and local recovery. Internal engineering evidence only.
+
+  - path: Data/evals/governance/latest_senior_engineering_evidence.json
+    required: false
+    max_age_days: 30
+    accepted_status: [strong_internal_engineering_evidence, provisional_pending_current_ship, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [senior_title_awarded_by_artifact], op: "==", value: false}
+      - {path: [independent_reproduction_completed], op: "==", value: false}
+      - {path: [external_reviewer_completed], op: "==", value: false}
+      - {path: [architecture_fitness_pass_rate], op: "==", value: 1.0}
+    note: >
+      Reviewer-first source/test/artifact provenance, exact ship-command
+      evidence, negative-result visibility, and falsification criteria. This
+      does not award seniority or replace independent reproduction.

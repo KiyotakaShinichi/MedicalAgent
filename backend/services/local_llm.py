@@ -7,6 +7,11 @@ from backend.config import (
     get_llm_adjudication_enabled,
     get_ollama_config,
 )
+from backend.services.llm_telemetry import (
+    LLMCallTimer,
+    provider_usage,
+    record_llm_call,
+)
 
 
 def local_llm_available():
@@ -323,6 +328,9 @@ def _groq_json(system, prompt, tier="router"):
     except Exception as exc:
         return {"available": False, "reason": f"groq_sdk_unavailable:{exc}"}
 
+    timer = LLMCallTimer.start()
+    operation = f"structured_{tier}"
+    prompt_parts = [system, prompt]
     try:
         client = Groq(api_key=api_key, timeout=float(config.get("timeout_seconds") or 3))
         completion = client.chat.completions.create(
@@ -336,8 +344,26 @@ def _groq_json(system, prompt, tier="router"):
         )
         raw = (completion.choices[0].message.content or "").strip()
     except Exception as exc:
+        record_llm_call(
+            provider="groq",
+            model=model,
+            operation=operation,
+            latency_ms=timer.elapsed_ms(),
+            prompt_parts=prompt_parts,
+            success=False,
+            error_type=exc.__class__.__name__,
+        )
         return {"available": False, "reason": f"groq_unavailable:{exc}"}
 
+    record_llm_call(
+        provider="groq",
+        model=model,
+        operation=operation,
+        latency_ms=timer.elapsed_ms(),
+        prompt_parts=prompt_parts,
+        completion_text=raw,
+        usage=provider_usage(completion),
+    )
     return _provider_json_result(raw=raw, provider="groq", model=model)
 
 
@@ -362,13 +388,37 @@ def _ollama_json(system, prompt):
         headers={"Content-Type": "application/json"},
         method="POST",
     )
+    timer = LLMCallTimer.start()
     try:
         with urllib.request.urlopen(request, timeout=float(config.get("timeout_seconds") or 3)) as response:
             body = json.loads(response.read().decode("utf-8"))
     except (OSError, urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        record_llm_call(
+            provider="ollama",
+            model=model,
+            operation="structured_router",
+            latency_ms=timer.elapsed_ms(),
+            prompt_parts=[system, prompt],
+            success=False,
+            error_type=exc.__class__.__name__,
+        )
         return {"available": False, "reason": f"ollama_unavailable:{exc}"}
 
     raw = body.get("response") or "{}"
+    ollama_usage = {
+        "input_tokens": body.get("prompt_eval_count") or 0,
+        "output_tokens": body.get("eval_count") or 0,
+        "total_tokens": (body.get("prompt_eval_count") or 0) + (body.get("eval_count") or 0),
+    }
+    record_llm_call(
+        provider="ollama",
+        model=model,
+        operation="structured_router",
+        latency_ms=timer.elapsed_ms(),
+        prompt_parts=[system, prompt],
+        completion_text=raw,
+        usage=ollama_usage if ollama_usage["total_tokens"] else None,
+    )
     return _provider_json_result(raw=raw, provider="ollama", model=model)
 
 

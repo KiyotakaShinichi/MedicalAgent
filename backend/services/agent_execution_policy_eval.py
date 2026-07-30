@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from backend.services.agent_execution_policy import AgentBudget, enforce_agent_execution_policy
+from backend.services.agent_execution_policy import (
+    AgentBudget,
+    build_confirmation_contract,
+    enforce_agent_execution_policy,
+)
 from backend.services.bounded_agentic_workflow import plan_patient_agent_workflow
 
 
@@ -17,6 +21,17 @@ DEFAULT_OUTPUT = Path("Data/evals/agentic_tool_use/latest_agent_execution_policy
 def build_agent_execution_policy_eval(
     output_path: str | Path = DEFAULT_OUTPUT,
 ) -> dict[str, Any]:
+    write_plan = plan_patient_agent_workflow("Log nausea severity 6/10 today")
+    issued = datetime.now(timezone.utc)
+    bound_action = {"symptom": "nausea", "severity": 6}
+    bound_contract = build_confirmation_contract(
+        write_plan,
+        patient_scope_id="synthetic-patient-a",
+        action_payload=bound_action,
+        now=issued,
+        ttl_seconds=60,
+        confirmation_id="eval-confirmation-a",
+    )
     cases = [
         _run_case(
             "safe_read_plan",
@@ -75,10 +90,49 @@ def build_agent_execution_policy_eval(
                 "requested_action": "save_medication",
             }],
         ),
+        _run_bound_confirmation_case(
+            "bound_confirmation_valid",
+            write_plan,
+            contract=bound_contract,
+            patient_scope_id="synthetic-patient-a",
+            action_payload=bound_action,
+            now=issued + timedelta(seconds=1),
+            expected_valid=True,
+        ),
+        _run_bound_confirmation_case(
+            "bound_confirmation_payload_substitution_blocked",
+            write_plan,
+            contract=bound_contract,
+            patient_scope_id="synthetic-patient-a",
+            action_payload={"symptom": "nausea", "severity": 9},
+            now=issued + timedelta(seconds=1),
+            expected_valid=False,
+            expected_issue="confirmation_payload_mismatch",
+        ),
+        _run_bound_confirmation_case(
+            "bound_confirmation_cross_patient_blocked",
+            write_plan,
+            contract=bound_contract,
+            patient_scope_id="synthetic-patient-b",
+            action_payload=bound_action,
+            now=issued + timedelta(seconds=1),
+            expected_valid=False,
+            expected_issue="confirmation_patient_scope_mismatch",
+        ),
+        _run_bound_confirmation_case(
+            "bound_confirmation_expired_blocked",
+            write_plan,
+            contract=bound_contract,
+            patient_scope_id="synthetic-patient-a",
+            action_payload=bound_action,
+            now=issued + timedelta(seconds=61),
+            expected_valid=False,
+            expected_issue="confirmation_expired",
+        ),
     ]
     passed = sum(int(case["passed"]) for case in cases)
     payload = {
-        "schema_version": "agent_execution_policy_eval_v1",
+        "schema_version": "agent_execution_policy_eval_v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": "strong" if passed == len(cases) else "needs_attention",
         "case_count": len(cases),
@@ -90,8 +144,8 @@ def build_agent_execution_policy_eval(
         "clinical_authority_allowed": False,
         "clinical_validation": False,
         "claim_boundary": (
-            "These offline cases verify software action boundaries, confirmation, "
-            "budgets, and memory provenance. They do not validate medical correctness, "
+            "These offline cases verify software action boundaries, patient-scoped confirmation "
+            "binding, expiry/replay controls, budgets, and memory provenance. They do not validate medical correctness, "
             "real-world agent safety, clinician review, or clinical outcomes."
         ),
     }
@@ -99,6 +153,49 @@ def build_agent_execution_policy_eval(
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return payload
+
+
+def _run_bound_confirmation_case(
+    case_id: str,
+    plan: dict[str, Any],
+    *,
+    contract: dict[str, Any],
+    patient_scope_id: str,
+    action_payload: dict[str, Any],
+    now: datetime,
+    expected_valid: bool,
+    expected_issue: str | None = None,
+) -> dict[str, Any]:
+    result = enforce_agent_execution_policy(
+        plan,
+        confirmed_by_user=True,
+        patient_scope_id=patient_scope_id,
+        action_payload=action_payload,
+        confirmation_contract=contract,
+        require_bound_confirmation=True,
+        now=now,
+    )
+    validation = result["confirmation_validation"]
+    checks = {
+        "validity_matches": validation["valid"] is expected_valid,
+        "decision_matches": result["decision"] == (
+            "allow" if expected_valid else "block"
+        ),
+        "clinical_authority_blocked": result["clinical_authority_allowed"] is False,
+    }
+    if expected_issue:
+        checks["expected_issue_present"] = expected_issue in validation["issues"]
+    return {
+        "case_id": case_id,
+        "passed": all(checks.values()),
+        "checks": checks,
+        "decision": result["decision"],
+        "terminal_state": result["terminal_state"],
+        "state_path": result["state_path"],
+        "effective_tools": result["effective_tools"],
+        "violations": result["violations"],
+        "confirmation_validation": validation,
+    }
 
 
 def _run_case(

@@ -1,4 +1,7 @@
-from backend.services.deployment_profile_validation import build_report
+from backend.services.deployment_profile_validation import (
+    build_profile_matrix,
+    build_report,
+)
 
 
 def test_development_profile_is_honest_and_non_clinical():
@@ -82,3 +85,18 @@ def test_disabled_external_dispatch_does_not_require_channel_secrets():
     })
     failed = {item["name"] for item in report["failed_checks"]}
     assert not any(name.startswith("external_dispatch_") for name in failed)
+
+
+def test_profile_matrix_separates_active_development_from_static_strict_readiness():
+    matrix = build_profile_matrix({
+        "ENVIRONMENT": "development",
+        "DATABASE_URL": "sqlite:///demo.db",
+    })
+    assert matrix["status"] == "strong"
+    assert matrix["active_profile"]["status"] == "development_profile"
+    assert matrix["production_shaped_static_validation"]["status"] == "strong"
+    assert matrix["production_shaped_static_validation"]["live_identity_provider_contacted"] is False
+    assert matrix["unsafe_profile_fail_closed"]["passed"] is True
+    assert matrix["cloud_deployment_completed"] is False
+    assert matrix["healthcare_production_ready"] is False
+    assert matrix["clinical_validation"] is False

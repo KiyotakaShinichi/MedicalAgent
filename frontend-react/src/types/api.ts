@@ -136,7 +136,14 @@ export interface PatientXaiEnvelope {
     direction: string;
     meaning: string | null;
     clinical_causality: false;
+    rank_interpretation_allowed?: boolean;
   }>;
+  explanation_reliability?: {
+    display_mode?: string | null;
+    ranked_feature_order_allowed?: boolean;
+    numeric_shap_values_visible?: boolean;
+    warning?: string | null;
+  };
   provenance: {
     synthetic_only: true;
     model_version: string | null;
@@ -673,7 +680,24 @@ export interface AgentTraceLog {
   hallucination_score: number | null;
   hallucination_risk: string | null;
   latency_ms: number | null;
+  estimated_input_tokens: number | null;
+  estimated_output_tokens: number | null;
   estimated_total_tokens: number | null;
+  estimated_cost_usd: number | null;
+  model_used: string | null;
+  stage_latency: Record<string, number | null> | null;
+  token_usage: {
+    call_count?: number;
+    provider_reported_call_count?: number;
+    estimated_call_count?: number;
+    actual_usage_coverage_rate?: number;
+    input_tokens?: number;
+    output_tokens?: number;
+    total_tokens?: number;
+    estimated_cost_usd?: number;
+    llm_call_latency_ms?: number;
+    content_retained?: boolean;
+  } | null;
   retrieved_source_ids: string[];
   cited_source_ids: string[];
   compound_intent: CompoundIntentTrace | null;

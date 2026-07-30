@@ -1,0 +1,936 @@
+{
+  "schema_version": "nlcare_senior_engineering_evidence_v1",
+  "generated_at": "2026-07-30T02:11:18.470483+00:00",
+  "status": "strong_internal_engineering_evidence",
+  "evidence_maturity": "advanced_internal_candidate",
+  "senior_title_awarded_by_artifact": false,
+  "independent_reproduction_completed": false,
+  "external_reviewer_completed": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "architecture_fitness": [
+    {
+      "check_id": "all_evidence_triangles_complete",
+      "passed": true,
+      "mandatory": true,
+      "description": "Every selected claim has source, focused test, and generated artifact."
+    },
+    {
+      "check_id": "cross_domain_assurance_green",
+      "passed": true,
+      "mandatory": true,
+      "description": "Composed offline control boundaries agree."
+    },
+    {
+      "check_id": "ship_manifest_passed_with_timeouts",
+      "passed": true,
+      "mandatory": false,
+      "description": "The recorded release run completed with bounded step timeouts."
+    },
+    {
+      "check_id": "new_evidence_is_wired_into_ship",
+      "passed": true,
+      "mandatory": true,
+      "description": "The evidence regenerates and its contracts execute during ship."
+    },
+    {
+      "check_id": "negative_results_are_not_promoted",
+      "passed": true,
+      "mandatory": true,
+      "description": "Known RAG, adversarial, and synthetic-ML limitations remain binding."
+    },
+    {
+      "check_id": "cloud_evidence_is_not_deployment_evidence",
+      "passed": true,
+      "mandatory": true,
+      "description": "Compiled infrastructure is not represented as a live deployment."
+    },
+    {
+      "check_id": "release_surface_preserves_warning_state",
+      "passed": true,
+      "mandatory": true,
+      "description": "The canonical release decision cannot silently become a clean proceed."
+    }
+  ],
+  "architecture_fitness_pass_rate": 1.0,
+  "all_architecture_checks_pass_rate": 1.0,
+  "evidence_triangles": [
+    {
+      "domain": "agent_execution",
+      "source": {
+        "path": "backend/services/agent_execution_policy.py",
+        "exists": true,
+        "sha256": "baaf127f0b765773e09f45fbf414fa8fe1ea42612cb38972ed5ffacadcd38924",
+        "size_bytes": 12390
+      },
+      "test": {
+        "path": "tests/test_agent_execution_policy.py",
+        "exists": true,
+        "sha256": "2d80d52718a0c09566794fb96bb9bc22e687d70b8baed06f9ec616f86cf7571f",
+        "size_bytes": 5711
+      },
+      "artifact": {
+        "path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
+        "exists": true,
+        "sha256": "cc27bd3d4a5bc282b5001c9b4a0dfaa5166fde077d71041f0c6759ef945ae511",
+        "size_bytes": 8005
+      },
+      "artifact_status": "strong",
+      "artifact_clinical_validation": false,
+      "complete": true
+    },
+    {
+      "domain": "cross_domain_assurance",
+      "source": {
+        "path": "backend/services/cross_domain_assurance_eval.py",
+        "exists": true,
+        "sha256": "ab44922582dadad113da1fbaa9d48a206f055fb1cdeb97b6a59ff285463014f1",
+        "size_bytes": 13408
+      },
+      "test": {
+        "path": "tests/test_cross_domain_assurance_eval.py",
+        "exists": true,
+        "sha256": "cc234f7d21696e21dee193bece63eb6b44fa71fe81d4d8a29d2a95daf5345e12",
+        "size_bytes": 2366
+      },
+      "artifact": {
+        "path": "Data/evals/governance/latest_cross_domain_assurance_eval.json",
+        "exists": true,
+        "sha256": "606ceaaa7d8aac7a7ff42e1fbe5fd7065f2768a66b3303af0b8b4edbe93c83cc",
+        "size_bytes": 4051
+      },
+      "artifact_status": "strong_internal_assurance",
+      "artifact_clinical_validation": false,
+      "complete": true
+    },
+    {
+      "domain": "automation",
+      "source": {
+        "path": "backend/services/automation_fault_injection_eval.py",
+        "exists": true,
+        "sha256": "15239d6dea194d1015672991e043a7440db41ac60f9c81e560b69a783fa6d805",
+        "size_bytes": 14050
+      },
+      "test": {
+        "path": "tests/test_automation_fault_injection.py",
+        "exists": true,
+        "sha256": "e5cfda8034a600c0bcd42030e40bd88ff45be54b7b543ae9c20ff8a0d2fadbc3",
+        "size_bytes": 1055
+      },
+      "artifact": {
+        "path": "Data/evals/ops/latest_automation_fault_injection.json",
+        "exists": true,
+        "sha256": "e159ba420ce1ab524f9e141f3cd5409c1031f139d6511177eb5f0f59a14dbd8b",
+        "size_bytes": 3002
+      },
+      "artifact_status": "strong",
+      "artifact_clinical_validation": false,
+      "complete": true
+    },
+    {
+      "domain": "rag_degradation",
+      "source": {
+        "path": "backend/services/rag_degradation_resilience_eval.py",
+        "exists": true,
+        "sha256": "7838b2bc03d1de0dfba84ef51421ab6121581e4d1c92948500b56ed12394ff7d",
+        "size_bytes": 7252
+      },
+      "test": {
+        "path": "tests/test_rag_degradation_resilience_eval.py",
+        "exists": true,
+        "sha256": "5b0c9e0530798a5cedcfb06ef4593d1aa0c4d200ec4d9dfb3323bc6ce31c8afd",
+        "size_bytes": 1127
+      },
+      "artifact": {
+        "path": "Data/evals/rag/latest_rag_degradation_resilience.json",
+        "exists": true,
+        "sha256": "7ef7653b9352de8d2f0aa6b009289095ddb01ea57901db4d79e5c24c5beef8a9",
+        "size_bytes": 1520
+      },
+      "artifact_status": "strong_offline_drill",
+      "artifact_clinical_validation": false,
+      "complete": true
+    },
+    {
+      "domain": "synthetic_ml_statistics",
+      "source": {
+        "path": "backend/services/synthetic_prediction_statistical_audit.py",
+        "exists": true,
+        "sha256": "430629f9a55cb57e15a062cb87ea0568a0c43de4af7819fb7b4f811af6669ed2",
+        "size_bytes": 18574
+      },
+      "test": {
+        "path": "tests/test_synthetic_prediction_statistical_audit.py",
+        "exists": true,
+        "sha256": "c076227cfb4f8615a5c7dee1fd7497bee579fb3df72b54b322cb03a649fc5802",
+        "size_bytes": 1684
+      },
+      "artifact": {
+        "path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
+        "exists": true,
+        "sha256": "8e9d086bb04c368211a27b147530f334c3557bf6110c705fd67e6e562f3718fd",
+        "size_bytes": 11274
+      },
+      "artifact_status": "needs_attention",
+      "artifact_clinical_validation": false,
+      "complete": true
+    },
+    {
+      "domain": "xai_implementation",
+      "source": {
+        "path": "backend/services/patient_xai_readability_dossier.py",
+        "exists": true,
+        "sha256": "b0d2e45632896c4f0ab74a34c1cf243fea42289d4c3ae05041efa4e2f7471dc2",
+        "size_bytes": 13232
+      },
+      "test": {
+        "path": "tests/test_patient_xai_readability_dossier.py",
+        "exists": true,
+        "sha256": "5398a91b10ad2de516a7cbcf86f8f211cd3670a7af200af286b740716927435d",
+        "size_bytes": 3519
+      },
+      "artifact": {
+        "path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
+        "exists": true,
+        "sha256": "6bba8761525c5adf20ce16cb37bf2f917aa2723d96f38bf215e31058042a5bd8",
+        "size_bytes": 6545
+      },
+      "artifact_status": "strong",
+      "artifact_clinical_validation": false,
+      "complete": true
+    },
+    {
+      "domain": "data_reliability",
+      "source": {
+        "path": "backend/services/data_platform_reliability_eval.py",
+        "exists": true,
+        "sha256": "9fdc5d090825afab54f9a35704880323ef8549f3ee25f6052ded6297e9e2fd26",
+        "size_bytes": 12352
+      },
+      "test": {
+        "path": "tests/test_data_platform_reliability_eval.py",
+        "exists": true,
+        "sha256": "0c483d0bcc06e9035192fc8993f1cfddab18cd3b07868516767e744ea75016a2",
+        "size_bytes": 2371
+      },
+      "artifact": {
+        "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
+        "exists": true,
+        "sha256": "1a1b1f07a38622ade4d6c382fe6c5424577a3f5499977c3465ab5c500d47eb53",
+        "size_bytes": 2831
+      },
+      "artifact_status": "strong_offline_drill",
+      "artifact_clinical_validation": false,
+      "complete": true
+    },
+    {
+      "domain": "infrastructure",
+      "source": {
+        "path": "backend/services/cloud_infrastructure_readiness.py",
+        "exists": true,
+        "sha256": "547235fe7c307d399ebbac268d1de0a1e6d417b952ec00f1ebde8011d041bc7b",
+        "size_bytes": 15533
+      },
+      "test": {
+        "path": "tests/test_cloud_infrastructure_readiness.py",
+        "exists": true,
+        "sha256": "efb29e5c3eb3c9f597d5d5badc72cb88cb619e796582bc3c6757c436d5f8f9e6",
+        "size_bytes": 3102
+      },
+      "artifact": {
+        "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
+        "exists": true,
+        "sha256": "24c36471a1fdf3a14aef01874bb483037d189cb749f1ec9998a535cdd2050e5b",
+        "size_bytes": 8283
+      },
+      "artifact_status": "compiled_reference_architecture",
+      "artifact_clinical_validation": false,
+      "complete": true
+    }
+  ],
+  "supporting_artifact_provenance": [
+    {
+      "path": "Data/evals/ops/latest_ship_run.json",
+      "exists": true,
+      "sha256": "211ea9e5af05bc2cd042d6ca5354b6d5267adc998c9e985b4be910d74d735dd3",
+      "size_bytes": 17104,
+      "status": "passed",
+      "clinical_validation": false,
+      "healthcare_production_ready": false
+    },
+    {
+      "path": "Data/evals/governance/latest_release_decision_surface.json",
+      "exists": true,
+      "sha256": "42c1657623fc22376928ee81b4c93c169a083c591f0269bfda012143c37f0e97",
+      "size_bytes": 16042,
+      "status": "needs_attention",
+      "clinical_validation": false,
+      "healthcare_production_ready": false
+    },
+    {
+      "path": "Data/evals/governance/latest_focused_release_summary.json",
+      "exists": true,
+      "sha256": "fb61dcfcc084eb99e0dd7f9809e6a467f2c8cf0c2d627ec53172007f326d5b56",
+      "size_bytes": 6924,
+      "status": "needs_attention",
+      "clinical_validation": false,
+      "healthcare_production_ready": false
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_baseline_comparison.json",
+      "exists": true,
+      "sha256": "9841e9adcf4d6c322715e0bf9cd97d16c952a503f5e0504ed7ba7aaf943dd40c",
+      "size_bytes": 769953,
+      "status": "acceptable",
+      "clinical_validation": false,
+      "healthcare_production_ready": null
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+      "exists": true,
+      "sha256": "626627161f6f218f0858a67b8fd0e30d6ad4dadd173601210e30078b6eef9c8b",
+      "size_bytes": 101165,
+      "status": "needs_attention",
+      "clinical_validation": false,
+      "healthcare_production_ready": null
+    },
+    {
+      "path": "Data/evals/ops/latest_dependency_security_scan.json",
+      "exists": true,
+      "sha256": "a36e18bf76f259def00679861e001dc62938a13983800242826a35a9e0609093",
+      "size_bytes": 3916,
+      "status": "acceptable",
+      "clinical_validation": null,
+      "healthcare_production_ready": null
+    },
+    {
+      "path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
+      "exists": true,
+      "sha256": "3eda265b14fecdfc216093fdadaa612eb01e54125fc37f147e0f8f3f786316a0",
+      "size_bytes": 2106,
+      "status": "acceptable",
+      "clinical_validation": false,
+      "healthcare_production_ready": false
+    },
+    {
+      "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
+      "exists": true,
+      "sha256": "4a9c99a177c9be575b558e8acb958ccd0e58e0ea3ed5da8439bad6cbfa927ea5",
+      "size_bytes": 1266,
+      "status": "strong_local_only",
+      "clinical_validation": false,
+      "healthcare_production_ready": false
+    },
+    {
+      "path": "Data/evals/ops/latest_trace_envelope_v2_eval.json",
+      "exists": true,
+      "sha256": "60726ed702166b3004f2573ae6e78319334546ba8d513998cb9fe95041cef982",
+      "size_bytes": 4375,
+      "status": "strong",
+      "clinical_validation": false,
+      "healthcare_production_ready": false
+    }
+  ],
+  "reproducibility": {
+    "ship_status": "passed",
+    "ship_completed_step_count": 48,
+    "recorded_commands": [
+      {
+        "name": "Backend breast-monitoring integration tests",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "-m",
+          "pytest",
+          "tests/test_breast_monitoring.py",
+          "-q"
+        ],
+        "cwd": ".",
+        "duration_seconds": 93.493,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Backend progressive-loading and notification reliability tests",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "-m",
+          "pytest",
+          "tests/test_patient_progressive_report.py",
+          "tests/test_patient_report_enrichment_jobs.py",
+          "tests/test_high_risk_conversation_alerts.py",
+          "tests/test_n8n_webhook_dispatcher.py",
+          "tests/test_n8n_automation_templates.py",
+          "-q"
+        ],
+        "cwd": ".",
+        "duration_seconds": 51.039,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Cloud, data-platform, and managed-vector contract tests",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "-m",
+          "pytest",
+          "tests/test_managed_vector_store.py",
+          "tests/test_data_platform_pipeline.py",
+          "tests/test_cloud_infrastructure_readiness.py",
+          "tests/test_vector_store_contract_eval.py",
+          "tests/test_azure_search_index_admin.py",
+          "tests/test_managed_vector_shadow_sync.py",
+          "tests/test_managed_vector_shadow_comparison.py",
+          "tests/test_data_platform_reliability_eval.py",
+          "tests/test_ops_health_snapshot.py",
+          "tests/test_release_decision_surface.py",
+          "tests/test_constraint_aware_improvement_program.py",
+          "tests/test_oidc_pkce.py",
+          "tests/test_dependency_security_scan.py",
+          "tests/test_software_supply_chain_evidence.py",
+          "tests/test_synthetic_automation_staging_readiness.py",
+          "tests/test_rag_degradation_resilience_eval.py",
+          "tests/test_agent_execution_policy_eval.py",
+          "tests/test_agent_execution_policy.py",
+          "tests/test_agentic_orchestrator_and_verifier.py",
+          "tests/test_synthetic_prediction_statistical_audit.py",
+          "tests/test_patient_xai_readability_dossier.py",
+          "tests/test_ship_runner.py",
+          "tests/test_xai_retraining_stability_audit.py",
+          "tests/test_xai_rank_stability_audit.py",
+          "tests/test_credible_route_latency_sample.py",
+          "tests/test_automation_channel_drill.py",
+          "tests/test_adversarial_v6_tuning_regression.py",
+          "tests/test_unsafe_intent_mutation_dev_eval.py",
+          "tests/test_cross_domain_assurance_eval.py",
+          "tests/test_senior_engineering_evidence.py",
+          "tests/test_llm_usage_telemetry.py",
+          "tests/test_finetune_promotion.py",
+          "tests/test_finetune_hardening_assurance.py",
+          "tests/test_credibility_gap_registry.py",
+          "-q"
+        ],
+        "cwd": ".",
+        "duration_seconds": 108.338,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Frontend Vitest unit tests",
+        "command": [
+          "npm.cmd",
+          "run",
+          "test"
+        ],
+        "cwd": "frontend-react",
+        "duration_seconds": 58.272,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Frontend Playwright smoke",
+        "command": [
+          "npm.cmd",
+          "run",
+          "test:e2e",
+          "--",
+          "tests/e2e/smoke.spec.ts"
+        ],
+        "cwd": "frontend-react",
+        "duration_seconds": 268.609,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Frontend lint",
+        "command": [
+          "npm.cmd",
+          "run",
+          "lint"
+        ],
+        "cwd": "frontend-react",
+        "duration_seconds": 48.669,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Frontend production build",
+        "command": [
+          "npm.cmd",
+          "run",
+          "build"
+        ],
+        "cwd": "frontend-react",
+        "duration_seconds": 42.852,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Reproducible knowledge-base chunk materialization",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/ingest_knowledge_base.py",
+          "--skip-index"
+        ],
+        "cwd": ".",
+        "duration_seconds": 8.989,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Non-patient data-platform pipeline",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_data_platform_pipeline.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 2.35,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Managed-vector contract evaluation",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_vector_store_contract_eval.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 3.535,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Data-platform reliability drills",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_data_platform_reliability_eval.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 2.686,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Azure AI Search index readiness",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_azure_search_index_readiness.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 2.55,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Managed-vector shadow sync readiness",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_managed_vector_shadow_sync.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 3.06,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Managed-vector frozen shadow comparison readiness",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_managed_vector_shadow_comparison.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 13.106,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Azure compiled reference-infrastructure readiness",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_cloud_infrastructure_readiness.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 24.805,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Patient enrichment background eval",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_patient_enrichment_background_eval.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 12.993,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "High-risk conversation alert eval",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_high_risk_conversation_alert_eval.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 10.139,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "ML logic/safety alignment audit",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_ml_logic_safety_alignment.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.023,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Synthetic statistical sensitivity audit",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_synthetic_prediction_statistical_audit.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 9.732,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Patient XAI implementation-readability audit",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_patient_xai_readability_dossier.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.297,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "OIDC browser PKCE readiness",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_oidc_browser_pkce_readiness.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.482,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Deployment profile and fail-closed matrix",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/validate_deployment_env.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 2.798,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Dependency security scan",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_dependency_security_scan.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 57.803,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Lock-derived SBOM and repository secret scan",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_software_supply_chain_evidence.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 19.48,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Development unsafe-intent mutation regression",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_unsafe_intent_mutation_dev_eval.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 3.503,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Tuning-informed adversarial v6 regression",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_adversarial_v6_tuning_regression.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 12.739,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Adversarial v6 contamination retrospective",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_adversarial_v6_retrospective.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 0.47,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Synthetic XAI rank-stability audit",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_xai_rank_stability_audit.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 12.496,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Synthetic XAI retraining-stability audit",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_xai_retraining_stability_audit.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 51.09,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Synthetic XAI mechanical fidelity audit",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_xai_fidelity_audit.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.529,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Bounded agent execution-policy eval",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_agent_execution_policy_eval.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 22.991,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Local RAG degradation resilience drill",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_rag_degradation_resilience_eval.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 12.69,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Credible local route-latency sample",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_credible_route_latency_sample.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 90.771,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Route-latency budget refresh",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_route_latency_budget.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.258,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Token, cost, and stage-latency observability refresh",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_cost_latency_report.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 7.508,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Signed localhost automation channel drill",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_automation_channel_drill.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 3.885,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Synthetic n8n and MailHog staging readiness",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_synthetic_automation_staging_readiness.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 4.121,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Fine-tune promotion evidence gate",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_finetune_promotion_gate.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.198,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Fine-tune hardening assurance",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_finetune_hardening_assurance.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.349,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Canonical credibility-gap registry",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_credibility_gap_registry.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.595,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Cross-domain composed assurance drill",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_cross_domain_assurance_eval.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 25.965,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Senior engineering evidence dossier",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_senior_engineering_evidence.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 4.0,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Canonical release decision surface",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_release_decision_surface.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 2.171,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Constraint-aware cross-domain improvement program",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_constraint_aware_improvement_program.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.147,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Consolidated benchmark registry",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/generate_benchmark_report.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 5.335,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Evidence-backed service health snapshot",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_ops_health_snapshot.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 1.015,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Focused release summary",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_focused_release_summary.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 7.928,
+        "timeout_seconds": 900
+      },
+      {
+        "name": "Release artifact gate",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_release_gate.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 4.9,
+        "timeout_seconds": 900
+      }
+    ],
+    "source_artifact_hashes_complete": true,
+    "toolchain": {
+      "python": "3.14.3",
+      "implementation": "CPython",
+      "platform": "Windows-11-10.0.26200-SP0"
+    },
+    "repository_state": {
+      "git_available": true,
+      "commit": "e84fa5955959e8d3efb9f9343610ff8e7b54da69",
+      "worktree_dirty": true,
+      "dirty_path_count": 164,
+      "note": "Hashes in this dossier bind the evaluated working tree even when it is not a clean commit."
+    }
+  },
+  "negative_results": {
+    "rag_improvement_proven_vs_bm25": false,
+    "rag_full_stack_recall_at_10": 0.7838,
+    "rag_bm25_recall_at_10": 0.8041,
+    "frozen_adversarial_v6_pass_rate": 0.518519,
+    "frozen_adversarial_v6_unsafe_leakage_rate": 0.560606,
+    "synthetic_ml_promotion_decision": "hold_synthetic_only",
+    "cloud_deployment_completed": false,
+    "independent_review_completed": false
+  },
+  "falsification_criteria": [
+    {
+      "id": "cross_domain_control_failure",
+      "effect": "downgrade_to_needs_attention",
+      "condition": "Any composed assurance scenario fails."
+    },
+    {
+      "id": "unsafe_patient_route_leakage",
+      "effect": "block_engineering_release",
+      "condition": "Critical patient-facing unsafe leakage is non-zero."
+    },
+    {
+      "id": "unbound_or_replayed_write",
+      "effect": "block_engineering_release",
+      "condition": "A write executes without a fresh patient- and payload-bound confirmation."
+    },
+    {
+      "id": "promotion_boundary_erased",
+      "effect": "block_engineering_release",
+      "condition": "Synthetic ML or unproven retrieval is promoted as clinical or production evidence."
+    },
+    {
+      "id": "negative_result_hidden",
+      "effect": "downgrade_to_needs_attention",
+      "condition": "Frozen adversarial, RAG, dependency, or external-review warnings disappear without new evidence."
+    },
+    {
+      "id": "artifact_source_mismatch",
+      "effect": "downgrade_to_needs_attention",
+      "condition": "A selected claim loses its source-test-artifact triangle or provenance hash."
+    }
+  ],
+  "remaining_senior_evidence_gaps": [
+    "Independent engineer reproduction from a clean clone is not completed.",
+    "External no-read safety and RAG evaluation is not completed.",
+    "No clinician or genetic-counselor review is completed.",
+    "No live managed-cloud load, failover, restore, cost, or delivery evidence exists.",
+    "No real patient data, clinician-reviewed labels, IRB, or clinical validation exists."
+  ],
+  "claim_boundary": "This dossier demonstrates advanced internal engineering discipline under synthetic and offline constraints. It does not award professional seniority, prove independent reproducibility, establish clinical validation, or show production healthcare readiness."
+}

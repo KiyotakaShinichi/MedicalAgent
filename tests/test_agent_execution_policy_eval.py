@@ -6,7 +6,7 @@ from backend.services.agent_execution_policy_eval import (
 def test_agent_execution_policy_eval_passes_without_live_writes(tmp_path) -> None:
     result = build_agent_execution_policy_eval(tmp_path / "result.json")
     assert result["status"] == "strong"
-    assert result["passed_count"] == result["case_count"] == 6
+    assert result["passed_count"] == result["case_count"] == 10
     assert result["live_patient_write_performed"] is False
     assert result["clinical_authority_allowed"] is False
     assert result["clinical_validation"] is False
@@ -14,3 +14,10 @@ def test_agent_execution_policy_eval_passes_without_live_writes(tmp_path) -> Non
         "forbidden_medical_authority_tool_requested" in case["violations"]
         for case in result["cases"]
     )
+    confirmation_cases = [
+        case
+        for case in result["cases"]
+        if case["case_id"].startswith("bound_confirmation")
+    ]
+    assert len(confirmation_cases) == 4
+    assert all(case["passed"] for case in confirmation_cases)

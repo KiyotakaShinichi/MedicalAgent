@@ -21,6 +21,8 @@ def test_azure_reference_foundation_covers_required_services():
     assert report["what_if_completed"] is False
     assert report["failed"] == 0
     assert report["n_checks"] >= len(REQUIRED_RESOURCE_MARKERS)
+    checks = {row["check_id"]: row for row in report["checks"]}
+    assert checks["fail_closed_deployment_guards"]["passed"] is True
 
 
 def test_reference_foundation_defaults_cost_bearing_resources_off():

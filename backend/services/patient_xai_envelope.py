@@ -14,7 +14,14 @@ def build_patient_xai_envelope(
     explanation: dict[str, Any] | None,
     hybrid_prediction: dict[str, Any] | None,
     data_availability: dict[str, Any] | None,
+    reliability_policy: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    if reliability_policy is None:
+        from backend.services.xai_reliability_gate import (
+            load_xai_reliability_policy,
+        )
+
+        reliability_policy = load_xai_reliability_policy()
     classification = (hybrid_prediction or {}).get("classification") or {}
     evidence = classification.get("evidence") or {}
     hybrid_signal = (prediction or {}).get("hybrid_mle_signal") or {}
@@ -75,7 +82,20 @@ def build_patient_xai_envelope(
                 "it does not quantify a real clinical outcome."
             ),
         },
-        "top_model_factors": _top_factors(explanation),
+        "top_model_factors": _top_factors(
+            explanation,
+            reliability_policy=reliability_policy,
+        ),
+        "explanation_reliability": {
+            "display_mode": reliability_policy.get("mode"),
+            "ranked_feature_order_allowed": bool(
+                reliability_policy.get("ranked_feature_order_allowed")
+            ),
+            "numeric_shap_values_visible": bool(
+                reliability_policy.get("show_numeric_shap_values")
+            ),
+            "warning": reliability_policy.get("warning"),
+        },
         "provenance": {
             "synthetic_only": True,
             "model_version": classification.get("model_version"),
@@ -94,22 +114,43 @@ def build_patient_xai_envelope(
     }
 
 
-def _top_factors(explanation: dict[str, Any] | None) -> list[dict[str, Any]]:
+def _top_factors(
+    explanation: dict[str, Any] | None,
+    *,
+    reliability_policy: dict[str, Any],
+) -> list[dict[str, Any]]:
+    if not reliability_policy.get("show_grouped_factors"):
+        return []
+    limit = max(
+        0,
+        min(int(reliability_policy.get("maximum_factor_count") or 0), 6),
+    )
+    if limit <= 0:
+        return []
     factors: list[dict[str, Any]] = []
     for direction, key in (
         ("toward_synthetic_positive_class", "positive_contributions"),
         ("away_from_synthetic_positive_class", "negative_contributions"),
     ):
-        for item in ((explanation or {}).get(key) or [])[:3]:
+        for item in ((explanation or {}).get(key) or []):
             if not isinstance(item, dict):
                 continue
             factors.append({
                 "feature": item.get("feature"),
-                "relative_contribution": item.get("shap_value", item.get("contribution")),
+                "relative_contribution": (
+                    item.get("shap_value", item.get("contribution"))
+                    if reliability_policy.get("show_numeric_shap_values")
+                    else None
+                ),
                 "direction": direction,
                 "meaning": item.get("meaning"),
                 "clinical_causality": False,
+                "rank_interpretation_allowed": bool(
+                    reliability_policy.get("ranked_feature_order_allowed")
+                ),
             })
+            if len(factors) >= limit:
+                return factors
     return factors
 
 

@@ -11,7 +11,10 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
-from backend.services.agent_execution_policy import enforce_agent_execution_policy
+from backend.services.agent_execution_policy import (
+    build_confirmation_contract,
+    enforce_agent_execution_policy,
+)
 from backend.services.agent_verifier import verify_agent_turn
 from backend.services.agent_text_normalization import normalize_agent_text
 from backend.services.bounded_agentic_workflow import WRITE_TOOLS, plan_patient_agent_workflow
@@ -25,15 +28,28 @@ def run_agentic_turn(
     *,
     patient_context: dict[str, Any] | None = None,
     confirmed_by_user: bool = False,
+    patient_scope_id: str = "synthetic_demo_patient",
+    require_bound_confirmation: bool = False,
 ) -> dict[str, Any]:
     """Run a side-effect-free bounded agentic turn."""
 
     context = dict(patient_context or {})
     plan = plan_patient_agent_workflow(message, patient_context=context)
+    pending_confirmation = dict(context.get("pending_confirmation") or {})
+    action_payload = (
+        dict(pending_confirmation.get("action_payload") or {})
+        if confirmed_by_user and pending_confirmation
+        else _confirmation_action_payload(message, plan, context)
+    )
     execution_policy = enforce_agent_execution_policy(
         plan,
         confirmed_by_user=confirmed_by_user,
         memory_entries=list(context.get("memory_entries") or []),
+        patient_scope_id=patient_scope_id,
+        action_payload=action_payload,
+        confirmation_contract=pending_confirmation.get("contract"),
+        consumed_confirmation_ids=set(context.get("consumed_confirmation_ids") or []),
+        require_bound_confirmation=require_bound_confirmation,
     )
     execution = _simulate_execution(
         plan,
@@ -42,7 +58,14 @@ def run_agentic_turn(
     )
     final_response = _package_final_response(plan, execution)
     verifier = verify_agent_turn(plan=plan, execution=execution, final_response=final_response)
-    state_update = _state_update_from_turn(message, plan, execution, context)
+    state_update = _state_update_from_turn(
+        message,
+        plan,
+        execution,
+        context,
+        patient_scope_id=patient_scope_id,
+        action_payload=action_payload,
+    )
     return {
         "schema_version": AGENTIC_ORCHESTRATOR_VERSION,
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -61,6 +84,8 @@ def run_agentic_turn(
             "blocked_authority": plan.get("prohibited_medical_authority", []),
             "execution_policy_decision": execution_policy["decision"],
             "execution_terminal_state": execution_policy["terminal_state"],
+            "confirmation_binding_required": bool(require_bound_confirmation),
+            "confirmation_binding_valid": execution_policy["confirmation_validation"]["valid"],
             "final_verifier_passed": verifier["passed"],
         },
     }
@@ -76,6 +101,8 @@ def run_agentic_conversation(turns: list[dict[str, Any]]) -> dict[str, Any]:
             turn["message"],
             patient_context=state,
             confirmed_by_user=bool(turn.get("confirmed_by_user", False)),
+            patient_scope_id=str(turn.get("patient_scope_id") or "synthetic_demo_patient"),
+            require_bound_confirmation=True,
         )
         state.update(result.get("state_update") or {})
         results.append(result)
@@ -172,6 +199,9 @@ def _state_update_from_turn(
     plan: dict[str, Any],
     execution: dict[str, Any],
     state: dict[str, Any],
+    *,
+    patient_scope_id: str,
+    action_payload: dict[str, Any],
 ) -> dict[str, Any]:
     route = str(plan.get("route") or "")
     update: dict[str, Any] = {}
@@ -205,16 +235,42 @@ def _state_update_from_turn(
         if symptom:
             update["pending_symptom"] = symptom
     if route.startswith("record_") and not execution.get("records_written") and execution.get("confirmation_prompted"):
+        contract = build_confirmation_contract(
+            plan,
+            patient_scope_id=patient_scope_id,
+            action_payload=action_payload,
+        )
         update["pending_confirmation"] = {
             "tool": _primary_tool(plan),
             "route": route,
             "created_by": "agentic_turn_orchestrator",
+            "patient_scope_id": patient_scope_id,
+            "action_payload": action_payload,
+            "contract": contract,
         }
     if route.startswith("record_") and execution.get("records_written"):
+        consumed = list(state.get("consumed_confirmation_ids") or [])
+        prior_contract = dict((state.get("pending_confirmation") or {}).get("contract") or {})
+        if prior_contract.get("confirmation_id"):
+            consumed.append(str(prior_contract["confirmation_id"]))
+        update["consumed_confirmation_ids"] = sorted(set(consumed))
         update["pending_confirmation"] = None
     if route == "record_symptom" and execution.get("records_written"):
         update["pending_symptom"] = None
     return update
+
+
+def _confirmation_action_payload(
+    message: str,
+    plan: dict[str, Any],
+    state: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "route": str(plan.get("route") or ""),
+        "tool": _primary_tool(plan),
+        "normalized_request": normalize_agent_text(message),
+        "pending_symptom": state.get("pending_symptom"),
+    }
 
 
 def _primary_tool(plan: dict[str, Any]) -> str | None:

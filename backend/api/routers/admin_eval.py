@@ -82,7 +82,13 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
                 "hallucination_score": row.hallucination_score,
                 "hallucination_risk": row.hallucination_risk,
                 "latency_ms": row.latency_ms,
+                "estimated_input_tokens": row.estimated_input_tokens,
+                "estimated_output_tokens": row.estimated_output_tokens,
                 "estimated_total_tokens": row.estimated_total_tokens,
+                "estimated_cost_usd": row.estimated_llm_cost_usd,
+                "model_used": getattr(row, "model_used", None),
+                "stage_latency": _loads_or_none(getattr(row, "stage_latency_json", None)),
+                "token_usage": _loads_or_none(getattr(row, "token_usage_json", None)),
                 "retrieved_source_ids": _loads(row.retrieved_source_ids_json),
                 "cited_source_ids": _loads(row.cited_source_ids_json),
                 "compound_intent": _loads_or_none(getattr(row, "compound_intent_json", None)),
@@ -93,7 +99,10 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
         return {
             "count": len(traces),
             "traces": traces,
-            "note": "Each entry is one agent/RAG pipeline call. query_preview is truncated at 120 chars.",
+            "note": (
+                "Each entry is one agent/RAG pipeline call. query_preview is truncated at 120 chars. "
+                "Provider-reported tokens are identified in token_usage; all other token counts are estimates."
+            ),
         }
 
     @router.get("/admin/noise-eval")

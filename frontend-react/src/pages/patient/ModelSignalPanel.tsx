@@ -160,16 +160,20 @@ export function ModelSignalPanel({ report }: Props) {
             className="text-[0.72rem] uppercase tracking-wider font-semibold mb-2 flex items-center gap-1.5"
             style={{ color: "var(--text-faint)" }}
           >
-            Relative model contributions (SHAP)
+            Relative model contributions (SHAP, not ranked)
           </p>
           <div>
             {[
               ...(expl.positive_contributions ?? []).slice(0, 4).map(f => ({ ...f, pos: true })),
               ...(expl.negative_contributions ?? []).slice(0, 3).map(f => ({ ...f, pos: false })),
-            ].map((f, i) => (
+            ].sort((left, right) => left.feature.localeCompare(right.feature)).map((f, i) => (
               <FeatureBar key={i} label={f.feature} value={f.shap_value} positive={f.pos} />
             ))}
           </div>
+          <p className="mt-2 text-[0.72rem] leading-relaxed" style={{ color: "var(--text-faint)" }}>
+            Alphabetical display avoids implying a stable feature rank. Direction and broad contribution
+            are model mechanics, not causes or clinical importance.
+          </p>
         </div>
       )}
 

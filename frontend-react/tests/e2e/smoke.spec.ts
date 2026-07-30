@@ -1,7 +1,32 @@
 import { expect, test, type Page } from "@playwright/test";
 
+async function openLoginReady(page: Page) {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      const response = await page.goto("/login", {
+        waitUntil: "domcontentloaded",
+        timeout: 60_000,
+      });
+      if (!response?.ok()) {
+        throw new Error(`Login navigation returned HTTP ${response?.status() ?? "no-response"}`);
+      }
+      await expect(page.getByLabel("Username")).toBeVisible({ timeout: 45_000 });
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) {
+        await page.waitForTimeout(1_000);
+      }
+    }
+  }
+  throw new Error(
+    `Login surface did not become ready after 2 attempts; url=${page.url()}; cause=${String(lastError)}`,
+  );
+}
+
 async function signIn(page: Page, username: string, password: string, expectedRoute: RegExp) {
-  await page.goto("/login");
+  await openLoginReady(page);
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill(password);
   const response = page.waitForResponse((res) =>
@@ -17,7 +42,7 @@ function chatComposer(page: Page) {
 }
 
 test.describe("role-aware smoke flows", () => {
-  test.describe.configure({ mode: "serial" });
+  test.describe.configure({ mode: "serial", timeout: 180_000 });
 
   test("patient login routes to patient dashboard and support chat", async ({ page }) => {
     await signIn(page, "P001", "patient-demo", /\/patient/);

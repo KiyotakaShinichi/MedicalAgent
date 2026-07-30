@@ -1,6 +1,6 @@
 {
   "schema_version": "rag_degradation_resilience_v1",
-  "generated_at": "2026-07-28T12:07:24.860388+00:00",
+  "generated_at": "2026-07-30T02:05:43.691724+00:00",
   "status": "strong_offline_drill",
   "case_count": 5,
   "passed_count": 5,

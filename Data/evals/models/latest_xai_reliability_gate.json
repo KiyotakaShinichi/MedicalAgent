@@ -1,0 +1,31 @@
+{
+  "schema_version": "xai_reliability_gate_v1",
+  "generated_at": "2026-07-30T02:05:02.054421+00:00",
+  "status": "needs_attention",
+  "clinical_validation": false,
+  "causal_interpretation_allowed": false,
+  "evidence": {
+    "mechanical_fidelity_passed": true,
+    "additivity_pass_rate": 1.0,
+    "finite_contribution_rate": 1.0,
+    "global_top_k_jaccard_p05": 0.6,
+    "global_rank_correlation_median": -0.27381,
+    "global_rank_correlation_p05": -1.0,
+    "rank_stability_internal_only": true,
+    "human_comprehension_study_completed": false
+  },
+  "patient_display_policy": {
+    "mode": "grouped_factors_without_rank_claim",
+    "show_grouped_factors": true,
+    "ranked_feature_order_allowed": false,
+    "show_numeric_shap_values": false,
+    "maximum_factor_count": 3,
+    "instability_warning_required": true,
+    "warning": "These are broad synthetic model factors. Their exact order was not stable across retraining and must not be interpreted as causation or medical importance."
+  },
+  "promotion_blockers": [
+    "exact_factor_order_unstable",
+    "human_comprehension_not_completed"
+  ],
+  "claim_boundary": "This gate controls how synthetic model explanations are displayed. It does not establish causality, clinical explainability, clinical validity, or reliable explanation behavior on real patients."
+}

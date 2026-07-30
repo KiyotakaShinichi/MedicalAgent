@@ -214,20 +214,42 @@ def estimate_token_and_cost(
     query: str,
     reply: str,
     compressed: list[Mapping[str, Any]],
+    llm_telemetry: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Estimate input + output token counts (chars/4 heuristic) and
-    record cost as 0 — the current agent path is deterministic/local."""
+    """Estimate pipeline tokens and attach separately labelled provider usage.
+    Provider cost remains zero when no provider call is captured."""
     context_chars = sum(len(item.get("text", "")) for item in compressed)
     input_tokens = estimate_tokens(query) + estimate_tokens(" ".join(item.get("text", "") for item in compressed))
     output_tokens = estimate_tokens(reply)
     total_tokens = input_tokens + output_tokens
+    telemetry = dict(llm_telemetry or {})
+    llm_calls = int(telemetry.get("call_count") or 0)
+    provider_calls = int(telemetry.get("provider_reported_call_count") or 0)
     return {
         "estimated_input_tokens":  input_tokens,
         "estimated_output_tokens": output_tokens,
         "estimated_total_tokens":  total_tokens,
         "estimated_context_chars": context_chars,
-        "estimated_llm_cost_usd":  0.0,
-        "cost_basis": "Current agent path is deterministic/local. Token estimates are logged for future LLM/RAGAS cost analysis.",
+        "estimated_llm_cost_usd": float(telemetry.get("estimated_cost_usd") or 0.0),
+        "provider_token_usage": telemetry if llm_calls else {
+            "schema_version": "llm_usage_telemetry_v1",
+            "call_count": 0,
+            "provider_reported_call_count": 0,
+            "estimated_call_count": 0,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "total_tokens": 0,
+            "estimated_cost_usd": 0.0,
+            "content_retained": False,
+        },
+        "provider_usage_captured": provider_calls > 0,
+        "cost_basis": (
+            "Provider token counts are used when reported; otherwise per-call and "
+            "pipeline counts are chars/4 estimates. Dollar values use engineering "
+            "pricing assumptions, not audited billing."
+            if llm_calls
+            else "No provider call was captured. Pipeline token fields are chars/4 estimates and provider cost is $0."
+        ),
     }
 
 
@@ -291,7 +313,12 @@ def evaluate_rag_response(
         compressed=compressed,
     )
     judge_result = _maybe_run_llm_judge(query, result.get("reply") or "", compressed)
-    token_cost = estimate_token_and_cost(query, result.get("reply") or "", compressed)
+    token_cost = estimate_token_and_cost(
+        query,
+        result.get("reply") or "",
+        compressed,
+        result.get("llm_telemetry") or {},
+    )
 
     payload: dict[str, Any] = {
         "retrieval_precision_at_3": retrieval_precision,

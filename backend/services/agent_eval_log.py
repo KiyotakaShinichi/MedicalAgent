@@ -69,6 +69,7 @@ def store_rag_evaluation_log(
         estimated_total_tokens=cost_latency.get("estimated_total_tokens"),
         estimated_llm_cost_usd=cost_latency.get("estimated_llm_cost_usd"),
         stage_latency_json=json.dumps(cost_latency.get("stage_ms") or {}),
+        token_usage_json=json.dumps(cost_latency.get("provider_token_usage") or {}),
         model_used=_model_used(result),
         retrieved_source_ids_json=json.dumps([item.get("id") for item in retrieved if item.get("id")]),
         cited_source_ids_json=json.dumps([item.get("id") for item in result.get("citations") or []]),
@@ -118,6 +119,20 @@ def _model_used(result: Mapping[str, Any]) -> str:
     provider metadata. Keep that explicit instead of pretending an API model
     was called.
     """
+    telemetry = result.get("llm_telemetry") or {}
+    calls = telemetry.get("calls") if isinstance(telemetry, Mapping) else None
+    if isinstance(calls, list) and calls:
+        labels = []
+        for call in calls:
+            if not isinstance(call, Mapping):
+                continue
+            provider = call.get("provider")
+            model = call.get("model")
+            label = f"{provider}/{model}" if provider and model else provider or model
+            if label and label not in labels:
+                labels.append(str(label))
+        if labels:
+            return ",".join(labels)[:255]
     llm = result.get("llm") or result.get("llm_metadata") or {}
     if isinstance(llm, Mapping):
         provider = llm.get("provider")

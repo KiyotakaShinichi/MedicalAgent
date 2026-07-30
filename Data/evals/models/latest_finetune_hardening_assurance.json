@@ -1,0 +1,127 @@
+{
+  "schema_version": "finetune_hardening_assurance_v1",
+  "generated_at": "2026-07-30T02:10:17.184802+00:00",
+  "status": "needs_attention",
+  "clinical_validation": false,
+  "model_trained": false,
+  "adapter_created": false,
+  "promotion_decision": "HOLD",
+  "patient_facing_promotion_allowed": false,
+  "summary": {
+    "check_count": 12,
+    "passed_count": 6,
+    "pass_rate": 0.5,
+    "blocking_gap_count": 6,
+    "blocking_gap_ids": [
+      "semantic_flags_cleared_for_candidate",
+      "isolated_training_runtime_ready",
+      "baseline_candidate_generations_complete",
+      "candidate_generation_lineage_verified",
+      "candidate_memorization_audit_complete",
+      "paired_statistical_lift_proven"
+    ],
+    "semantic_similarity_screen_completed": true,
+    "semantic_flagged_pair_count": 150,
+    "semantic_unresolved_pair_count": 150,
+    "semantic_review_completed": false,
+    "semantic_adjudication_cleared_for_candidate": false,
+    "semantic_artifact_flag_rows_capped": false,
+    "semantic_contamination_absence_proven": false
+  },
+  "checks": [
+    {
+      "id": "behavior_only_scope",
+      "passed": true,
+      "evidence_artifact": "Data/finetune/prepared/dataset_card.json",
+      "detail": "Dataset remains limited to behavior and format tuning."
+    },
+    {
+      "id": "synthetic_data_disclosed",
+      "passed": true,
+      "evidence_artifact": "Data/finetune/prepared/dataset_card.json",
+      "detail": "All tuning examples are declared synthetic."
+    },
+    {
+      "id": "exact_holdout_contamination_clear",
+      "passed": true,
+      "evidence_artifact": "Data/finetune/prepared/dataset_card.json",
+      "detail": "No exact normalized overlap with registered RAG/safety holdouts."
+    },
+    {
+      "id": "semantic_similarity_screen_completed",
+      "passed": true,
+      "evidence_artifact": "Data/evals/models/latest_finetune_semantic_contamination.json",
+      "detail": "Word/character TF-IDF screening must cover train and registered evaluation text."
+    },
+    {
+      "id": "semantic_flags_cleared_for_candidate",
+      "passed": false,
+      "evidence_artifact": "Data/evals/models/latest_finetune_semantic_contamination.json",
+      "detail": "Every near-match requires review; contaminated or ambiguous pairs require remediation."
+    },
+    {
+      "id": "base_and_tokenizer_revisions_pinned",
+      "passed": true,
+      "evidence_artifact": "Data/evals/models/latest_finetune_runtime_preflight.json",
+      "detail": "Immutable model and tokenizer revisions are recorded."
+    },
+    {
+      "id": "isolated_training_runtime_ready",
+      "passed": false,
+      "evidence_artifact": "Data/evals/models/latest_finetune_runtime_preflight.json",
+      "detail": "PEFT dependencies and runtime probe must pass before training."
+    },
+    {
+      "id": "baseline_candidate_generations_complete",
+      "passed": false,
+      "evidence_artifact": "Data/evals/models/latest_finetune_promotion_gate.json",
+      "detail": "Matched baseline and candidate generations are required."
+    },
+    {
+      "id": "candidate_generation_lineage_verified",
+      "passed": false,
+      "evidence_artifact": "Data/evals/models/latest_finetune_promotion_gate.json",
+      "detail": "Generation manifest must bind model, revisions, holdout hash, and generation hash."
+    },
+    {
+      "id": "candidate_memorization_audit_complete",
+      "passed": false,
+      "evidence_artifact": "Data/evals/models/latest_finetune_promotion_gate.json",
+      "detail": "Exact train-output memorization must be checked before shadow promotion."
+    },
+    {
+      "id": "paired_statistical_lift_proven",
+      "passed": false,
+      "evidence_artifact": "Data/evals/models/latest_finetune_promotion_gate.json",
+      "detail": "Exact paired McNemar/binomial evidence is required in addition to raw lift."
+    },
+    {
+      "id": "patient_facing_promotion_blocked",
+      "passed": true,
+      "evidence_artifact": "Data/evals/models/latest_finetune_promotion_gate.json",
+      "detail": "Any promotion remains offline/shadow only."
+    }
+  ],
+  "promotion_contract": {
+    "minimum_paired_cases": 50,
+    "minimum_cases_per_behavior": 5,
+    "minimum_behavior_lift": 0.02,
+    "maximum_paired_p_value": 0.05,
+    "maximum_output_p95_ratio": 1.5,
+    "unsafe_leakage_allowed": 0.0,
+    "claim_boundary_compliance_required": 1.0,
+    "generation_manifest_required": true,
+    "train_output_memorization_audit_required": true,
+    "semantic_similarity_screen_required": true,
+    "semantic_flag_adjudication_required": true,
+    "promotion_scope": "offline_shadow_only"
+  },
+  "next_actions": [
+    "Provision an isolated pinned PEFT runtime and make the runtime preflight pass.",
+    "Generate matched baseline and candidate outputs using the frozen internal holdout.",
+    "File generation manifests with model, revision, adapter, generation, and holdout hashes.",
+    "Run the paired promotion gate and inspect every safety and behavior regression.",
+    "Adjudicate every semantic-similarity flag; TF-IDF screening alone is insufficient."
+  ],
+  "claim_boundary": "This assurance artifact covers an internal, synthetic, behavior-only fine-tuning scaffold. It is not medical knowledge tuning, not clinical validation, not proof of real-world safety, and not permission for patient-facing use."
+}

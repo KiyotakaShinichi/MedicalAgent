@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:e16d055c-6ade-1fef-212a-b315bdc588a4",
+  "serialNumber": "urn:uuid:8b8c4e40-00fd-c8d4-eebf-bb94c6cf8414",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-28T12:05:36.027817+00:00",
+    "timestamp": "2026-07-30T02:03:23.559463+00:00",
     "component": {
       "type": "application",
       "name": "nlcare-frontend-runtime",
@@ -13,7 +13,7 @@
     "properties": [
       {
         "name": "nlcare:lock_sha256",
-        "value": "e16d055c6ade1fef212ab315bdc588a4aa25656b1a02c7df57a9346f9689ddf5"
+        "value": "8b8c4e4000fdc8d4eebfbb94c6cf8414faaf866c8c56416d4ddff091c756e5b4"
       }
     ]
   },
@@ -515,6 +515,12 @@
       "name": "@reduxjs/toolkit",
       "version": "2.11.2",
       "purl": "pkg:npm/%40reduxjs/toolkit@2.11.2"
+    },
+    {
+      "type": "library",
+      "name": "@remix-run/router",
+      "version": "1.23.2",
+      "purl": "pkg:npm/%40remix-run/router@1.23.2"
     },
     {
       "type": "library",
@@ -1247,12 +1253,6 @@
       "name": "convert-source-map",
       "version": "2.0.0",
       "purl": "pkg:npm/convert-source-map@2.0.0"
-    },
-    {
-      "type": "library",
-      "name": "cookie",
-      "version": "1.1.1",
-      "purl": "pkg:npm/cookie@1.1.1"
     },
     {
       "type": "library",
@@ -2055,14 +2055,14 @@
     {
       "type": "library",
       "name": "react-router",
-      "version": "7.18.1",
-      "purl": "pkg:npm/react-router@7.18.1"
+      "version": "6.30.3",
+      "purl": "pkg:npm/react-router@6.30.3"
     },
     {
       "type": "library",
       "name": "react-router-dom",
-      "version": "7.18.1",
-      "purl": "pkg:npm/react-router-dom@7.18.1"
+      "version": "6.30.3",
+      "purl": "pkg:npm/react-router-dom@6.30.3"
     },
     {
       "type": "library",
@@ -2135,12 +2135,6 @@
       "name": "semver",
       "version": "7.8.0",
       "purl": "pkg:npm/semver@7.8.0"
-    },
-    {
-      "type": "library",
-      "name": "set-cookie-parser",
-      "version": "2.7.2",
-      "purl": "pkg:npm/set-cookie-parser@2.7.2"
     },
     {
       "type": "library",

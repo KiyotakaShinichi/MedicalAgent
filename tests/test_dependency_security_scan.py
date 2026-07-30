@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import json
 
-from scripts.run_dependency_security_scan import _audit_counts
+from scripts.run_dependency_security_scan import (
+    _apply_frontend_risk_acceptance,
+    _audit_counts,
+    _audit_findings,
+    _frontend_controls,
+)
 
 
 def test_counts_npm_severity_and_packages() -> None:
@@ -49,3 +54,49 @@ def test_invalid_output_is_zeroed_instead_of_crashing() -> None:
         "known_vulnerability_count": 0,
         "vulnerable_package_count": 0,
     }
+
+
+def test_extracts_npm_advisory_ids_for_review() -> None:
+    payload = {
+        "vulnerabilities": {
+            "react-router": {
+                "via": [
+                    {
+                        "url": "https://github.com/advisories/GHSA-2j2x-hqr9-3h42",
+                        "title": "redirect",
+                        "severity": "moderate",
+                        "range": "<6.30.4",
+                    }
+                ]
+            }
+        }
+    }
+    assert _audit_findings(json.dumps(payload))[0]["advisory_id"] == "GHSA-2j2x-hqr9-3h42"
+
+
+def test_frontend_risk_acceptance_requires_current_controls_and_known_ids() -> None:
+    accepted = _apply_frontend_risk_acceptance(
+        {
+            "status": "needs_attention",
+            "known_vulnerability_count": 1,
+            "high_or_critical_count": 0,
+            "findings": [{"advisory_id": "GHSA-2j2x-hqr9-3h42"}],
+        }
+    )
+    assert accepted["status"] == "accepted_residual_risk"
+    assert accepted["unaccepted_known_vulnerability_count"] == 0
+    assert accepted["risk_acceptance"]["accepted"] is True
+    assert _frontend_controls()["passed"] is True
+
+
+def test_unknown_frontend_advisory_cannot_be_accepted() -> None:
+    rejected = _apply_frontend_risk_acceptance(
+        {
+            "status": "needs_attention",
+            "known_vulnerability_count": 1,
+            "high_or_critical_count": 0,
+            "findings": [{"advisory_id": "GHSA-unknown"}],
+        }
+    )
+    assert rejected["status"] == "needs_attention"
+    assert rejected["risk_acceptance"]["accepted"] is False

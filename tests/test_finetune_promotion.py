@@ -14,6 +14,7 @@ from scripts.run_finetune_scaffold import build_execution_readiness
 
 
 def _report(**overrides):
+    pass_count = int(overrides.pop("pass_count", 80))
     report = {
         "status": "strong",
         "generation_coverage": 1.0,
@@ -24,6 +25,23 @@ def _report(**overrides):
         "taglish_safety_parity": 1.0,
         "behavior_contract_pass_rate": 0.8,
         "total_examples": 100,
+        "generation_manifest_verified": True,
+        "memorization_audit": {
+            "completed": True,
+            "exact_train_output_match_count": 0,
+        },
+        "output_length": {"chars_p95": 200},
+        "by_behavior": {
+            "missing_data_disclosure": {
+                "total": 100,
+                "passed": pass_count,
+                "pass_rate": pass_count / 100,
+            }
+        },
+        "case_results": [
+            {"id": f"case_{index:03d}", "passed": index < pass_count}
+            for index in range(100)
+        ],
     }
     report.update(overrides)
     return report
@@ -48,13 +66,14 @@ class PromotionPolicyTests(unittest.TestCase):
 
     def test_safe_behavior_lift_is_shadow_only(self) -> None:
         decision = build_promotion_decision(
-            _report(behavior_contract_pass_rate=0.8),
-            _report(behavior_contract_pass_rate=0.9),
+            _report(behavior_contract_pass_rate=0.8, pass_count=80),
+            _report(behavior_contract_pass_rate=0.9, pass_count=90),
         )
         self.assertEqual(decision["decision"], "PROMOTE")
         self.assertEqual(decision["promotion_scope"], "offline_shadow_only")
         self.assertFalse(decision["patient_facing_promotion_allowed"])
-        self.assertFalse(decision["behavior_improvement_statistically_proven"])
+        self.assertTrue(decision["behavior_improvement_statistically_proven"])
+        self.assertLessEqual(decision["paired_test"]["p_value"], 0.05)
 
     def test_small_internal_holdout_cannot_promote(self) -> None:
         decision = build_promotion_decision(
@@ -70,11 +89,40 @@ class PromotionPolicyTests(unittest.TestCase):
         )
         candidate = _report(
             behavior_contract_pass_rate=0.9,
+            pass_count=90,
             by_behavior={"taglish_safety": {"total": 20, "passed": 18, "pass_rate": 0.9}},
         )
         decision = build_promotion_decision(baseline, candidate)
         self.assertEqual(decision["decision"], "REJECT")
         self.assertIn("behavior_regression:taglish_safety", decision["hard_failures"])
+
+    def test_unverified_generation_lineage_cannot_promote(self) -> None:
+        candidate = _report(
+            behavior_contract_pass_rate=0.9,
+            pass_count=90,
+            generation_manifest_verified=False,
+        )
+        decision = build_promotion_decision(_report(), candidate)
+        self.assertEqual(decision["decision"], "HOLD")
+        self.assertIn(
+            "candidate_generation_lineage_not_verified",
+            decision["evidence_limitations"],
+        )
+
+    def test_output_length_inflation_rejects_candidate(self) -> None:
+        decision = build_promotion_decision(
+            _report(output_length={"chars_p95": 200}),
+            _report(
+                behavior_contract_pass_rate=0.9,
+                pass_count=90,
+                output_length={"chars_p95": 400},
+            ),
+        )
+        self.assertEqual(decision["decision"], "REJECT")
+        self.assertIn(
+            "candidate_output_length_p95_regression",
+            decision["hard_failures"],
+        )
 
 
 class GenerationEvaluationTests(unittest.TestCase):

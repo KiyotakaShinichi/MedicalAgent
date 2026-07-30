@@ -1,0 +1,56 @@
+{
+  "schema_version": "dependency_risk_acceptance_v1",
+  "reviewed_at": "2026-07-28",
+  "expires_on": "2026-10-28",
+  "owner": "repository_maintainer",
+  "scope": "frontend-react client-only SPA",
+  "accepted_advisories": [
+    {
+      "package": "react-router",
+      "advisory_id": "GHSA-2j2x-hqr9-3h42",
+      "severity": "moderate",
+      "reason": "Navigation targets are repository-defined same-origin constants; no user-controlled value is passed to Link, Navigate, or useNavigate.",
+      "required_controls": [
+        "client-only Vite SPA",
+        "no SSR or RSC runtime",
+        "constant-target navigation test",
+        "quarterly expiry"
+      ]
+    },
+    {
+      "package": "react-router",
+      "advisory_id": "GHSA-wrjc-x8rr-h8h6",
+      "severity": "moderate",
+      "reason": "Navigation targets are repository-defined same-origin constants; no user-controlled backslash or protocol-relative route reaches router navigation.",
+      "required_controls": [
+        "constant-target navigation test",
+        "no external redirect feature",
+        "quarterly expiry"
+      ]
+    },
+    {
+      "package": "react-router",
+      "advisory_id": "GHSA-337j-9hxr-rhxg",
+      "severity": "moderate",
+      "reason": "The application does not use server rendering, hydration data deserialization, or React Server Components.",
+      "required_controls": [
+        "client-only Vite SPA",
+        "no SSR or RSC runtime",
+        "quarterly expiry"
+      ]
+    },
+    {
+      "package": "react-router-dom",
+      "advisory_id": "GHSA-jjmj-jmhj-qwj2",
+      "severity": "moderate",
+      "reason": "The client SPA has no redirect loader/action endpoint and does not build redirect targets from request data.",
+      "required_controls": [
+        "client-only Vite SPA",
+        "no data-router action redirects",
+        "quarterly expiry"
+      ]
+    }
+  ],
+  "clinical_validation": false,
+  "claim_boundary": "This is a bounded engineering risk acceptance for a controlled prototype, not a security certification or healthcare-production approval."
+}

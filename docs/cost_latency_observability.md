@@ -22,18 +22,34 @@ The report includes:
 
 - route and intent
 - model/provider label when known
-- estimated input/output tokens
-- estimated provider cost
+- provider-reported input/output tokens when returned by the provider
+- separately labelled per-call and pipeline token estimates when usage metadata is unavailable
+- estimated provider cost using configurable engineering pricing assumptions
 - p50/p95/p99 latency
-- retrieval, reranker, validator, source-governance, and post-generation timing when captured
+- safety-gate, intent-routing, retrieval, pre-generation governance, reranker,
+  compression, generation, source-governance, and post-generation timing when captured
 - cache hit/miss status
 - source-tier correctness
 - claim-validation pass status
 - route-level cost comparison
+- token-usage coverage and p95/p99 sample-size credibility labels
 
 Rows created before schema revision `0005_rag_cost_latency_fields` may not have
 per-stage timing. The report keeps those fields null rather than inventing
-precision.
+precision. Rows before `0011_llm_usage_telemetry` may not have structured
+provider usage. The report never silently mixes those legacy estimates with
+provider-reported totals.
+
+The `local_probe_stage_latency` section is derived separately from the repeated
+local route probe. It reports sample counts and p50/p95 values per stage, but it
+also records that the probe uses local execution, forced sparse retrieval, and
+in-memory SQLite. These numbers are useful for bottleneck attribution, not a
+production SLO.
+
+No prompt text, completion text, or private model reasoning is stored in the
+token-usage envelope. Cost is a capacity-planning estimate, not reconciled
+provider billing. Tail percentiles with fewer than 30 samples are labelled
+`insufficient_n_for_tail_claim`.
 
 ## Route Comparison
 

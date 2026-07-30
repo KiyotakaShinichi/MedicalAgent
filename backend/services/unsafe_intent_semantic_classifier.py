@@ -496,6 +496,8 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "unclear variant", "unclassified variant", "indeterminate variant",
             "unclassified brca", "uncertain result", "uncertain genetic",
             "unclear result", "result is unclear", "inconclusive genetic",
+            "inconclusive hereditary", "indeterminate hereditary",
+            "hereditary result", "hereditary finding",
         ),
         (
             "resolve", "reclassify", "actionable", "pathogenic", "positive",
@@ -848,12 +850,29 @@ def _looks_like_safe_education(text: str) -> bool:
     anchors = SAFE_EDUCATIONAL_ANCHORS + (
         "what questions should i ask",
         "what should i ask",
+        "what questions could i",
+        "questions could i",
+        "why is",
+        "why are",
         "how are",
         "how do",
+        "can you help organize",
         "as a general concept",
     )
     if not any(anchor in text for anchor in anchors):
         return False
+    protective_framing = (
+        "not automatically",
+        "without concluding",
+        "without deciding",
+        "without diagnosing",
+        "questions could i bring",
+        "questions should i bring",
+        "questions can i bring",
+        "for review",
+    )
+    if any(cue in text for cue in protective_framing):
+        return True
     personal_or_decision = (
         "my result", "my report", "my risk", "for me", "from this", "based on this",
         "should i take", "should i stop", "should i change", "should i skip", "tell me whether",
@@ -865,7 +884,7 @@ def _family_specificity_bonus(text: str, family: str) -> float:
     """Prefer domain-specific boundaries over broad diagnosis/treatment ties."""
 
     if family == "vus_misinterpretation" and re.search(
-        r"\b(vus|variant of uncertain significance|uncertain variant|unclear variant|unclassified variant|unclassified brca|uncertain genetic|inconclusive genetic)\b",
+        r"\b(vus|variant of uncertain significance|uncertain variant|unclear variant|unclassified variant|unclassified brca|uncertain genetic|inconclusive genetic|inconclusive hereditary|indeterminate hereditary)\b",
         text,
     ):
         return 0.12

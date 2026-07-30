@@ -92,16 +92,16 @@ function reviewStatusTile(report: PatientReport): Tile {
 // ─── Hybrid signal: pick the most informative slot for the headline ─────
 
 const DECISION_LABEL: Record<string, string> = {
-  favorable_pattern:        "Favorable response pattern",
-  concerning_pattern:       "Concerning response pattern",
-  uncertain:                "Uncertain pattern",
+  favorable_pattern:        "Grouped with favorable synthetic examples",
+  concerning_pattern:       "Grouped with concerning synthetic examples",
+  uncertain:                "Synthetic grouping is uncertain",
   insufficient_evidence:    "Insufficient evidence",
-  strong_response_signal:   "Strong response signal",
-  moderate_response_signal: "Moderate response signal",
-  weak_response_signal:     "Weak response signal",
-  high_toxicity_signal:     "High toxicity signal",
-  moderate_toxicity_signal: "Moderate toxicity signal",
-  low_toxicity_signal:      "Low toxicity signal",
+  strong_response_signal:   "Higher synthetic response-signal group",
+  moderate_response_signal: "Middle synthetic response-signal group",
+  weak_response_signal:     "Lower synthetic response-signal group",
+  high_toxicity_signal:     "Higher synthetic review-signal group",
+  moderate_toxicity_signal: "Middle synthetic review-signal group",
+  low_toxicity_signal:      "Lower synthetic review-signal group",
 };
 
 const DECISION_TONE: Record<string, Tone> = {
@@ -200,9 +200,9 @@ function latestCbcTile(report: PatientReport): Tile {
   const labs = report.latest_labs ?? { wbc: null, hemoglobin: null, platelets: null };
   const tone = worstTone(wbcTone(labs.wbc), hgbTone(labs.hemoglobin), pltTone(labs.platelets));
   const summary: Tile["value"] =
-    tone === "concern" ? "Below reference" :
-    tone === "watch" ? "Borderline" :
-    tone === "good" ? "Within reference" : "—";
+    tone === "concern" ? "Outside demo band" :
+    tone === "watch" ? "Near demo band" :
+    tone === "good" ? "Inside demo band" : "—";
   const subs: Sub[] = [];
   if (labs.wbc != null)       subs.push({ label: "WBC", value: `${labs.wbc.toFixed(1)} ×10³/uL` });
   if (labs.hemoglobin != null) subs.push({ label: "Hgb", value: `${labs.hemoglobin.toFixed(1)} g/dL` });
@@ -211,7 +211,7 @@ function latestCbcTile(report: PatientReport): Tile {
     label: "Latest CBC",
     icon: FlaskConical,
     value: summary,
-    caption: tone === "neutral" ? "No lab on file" : "Reference bands are population defaults",
+    caption: tone === "neutral" ? "No lab on file" : "Demonstration bands use population defaults",
     tone,
     subs,
     footer: "Reference ranges are not personalised. Discuss with your care team.",

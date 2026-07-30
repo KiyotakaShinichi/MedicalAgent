@@ -1,19 +1,19 @@
 {
   "schema_version": "software_supply_chain_evidence_v1",
-  "generated_at": "2026-07-28T12:05:36.027817+00:00",
+  "generated_at": "2026-07-30T02:03:23.559463+00:00",
   "status": "acceptable",
   "lockfiles": {
     "python": {
       "path": "requirements-lock-py314-win.txt",
       "exists": true,
-      "sha256": "fc68a7b3b7706937b2db60480f09d114bf6cfbdc73844e23fbe20bbdaa4ef216",
+      "sha256": "fe75c4f9b9af8a83e8c4a0ce5b7b43d5fc5993da336b17b261c8a9d680cd17df",
       "component_count": 101
     },
     "frontend": {
       "path": "frontend-react/package-lock.json",
       "exists": true,
-      "sha256": "e16d055c6ade1fef212ab315bdc588a4aa25656b1a02c7df57a9346f9689ddf5",
-      "component_count": 404
+      "sha256": "8b8c4e4000fdc8d4eebfbb94c6cf8414faaf866c8c56416d4ddff091c756e5b4",
+      "component_count": 403
     }
   },
   "sbom": {
@@ -21,7 +21,7 @@
     "spec_version": "1.5",
     "python_path": "Data/evals/ops/sbom/python.cdx.json",
     "frontend_path": "Data/evals/ops/sbom/frontend.cdx.json",
-    "component_count": 505
+    "component_count": 504
   },
   "secret_scan": {
     "executed": true,

@@ -107,17 +107,29 @@ def build_xai_retraining_stability_audit(
         "patient_probability_std_p50": _percentile(probability_stds, 0.5),
         "patient_probability_std_p95": _percentile(probability_stds, 0.95),
     }
-    status = (
-        "acceptable"
-        if metrics["global_top_k_jaccard_p05"] >= 0.6
-        and metrics["global_rank_correlation_p05"] >= 0.5
+    membership_stable = bool(
+        metrics["global_top_k_jaccard_p05"] >= 0.6
         and metrics["local_patient_top_k_jaccard_median"] >= 0.5
-        else "needs_attention"
     )
+    exact_order_stable = bool(metrics["global_rank_correlation_p05"] >= 0.5)
+    consensus = _consensus_feature_tiers(seed_surfaces, top_k=top_k)
+    exact_rank_display_allowed = exact_order_stable
+    presentation_control_pass = bool(
+        membership_stable
+        and (exact_order_stable or not exact_rank_display_allowed)
+    )
+    status = "acceptable" if presentation_control_pass else "needs_attention"
     payload = {
-        "schema_version": "xai_retraining_stability_v1",
+        "schema_version": "xai_retraining_stability_v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
+        "status_basis": (
+            "set_membership_stable_exact_order_suppressed"
+            if status == "acceptable" and not exact_order_stable
+            else "exact_order_and_set_membership_stable"
+            if status == "acceptable"
+            else "explanation_set_membership_unstable"
+        ),
         "method": "independent_patient_split_logistic_retraining",
         "seed_count": len(seeds),
         "seeds": list(seeds),
@@ -127,7 +139,29 @@ def build_xai_retraining_stability_audit(
         "top_k": top_k,
         "baseline_seed": seeds[0],
         "baseline_grouped_ranking": baseline["global_ranking"][:top_k],
+        "consensus_feature_tiers": consensus,
         "metrics": metrics,
+        "raw_exact_rank_stability_status": (
+            "acceptable" if exact_order_stable else "needs_attention"
+        ),
+        "set_membership_stability_status": (
+            "acceptable" if membership_stable else "needs_attention"
+        ),
+        "presentation_policy": {
+            "enforced": True,
+            "exact_rank_display_allowed": exact_rank_display_allowed,
+            "display_mode": (
+                "ordered_feature_ranks"
+                if exact_rank_display_allowed
+                else "consensus_tiers_alphabetical_within_tier"
+            ),
+            "stable_inclusion_threshold": 0.80,
+            "variable_inclusion_threshold": 0.50,
+            "required_disclosure": (
+                "Feature order may change after retraining. Read direction and broad "
+                "contribution tiers, not exact rank or causality."
+            ),
+        },
         "model_retraining_stability_evaluated": True,
         "local_patient_explanation_stability_evaluated": True,
         "grouped_patient_display_features": True,
@@ -140,6 +174,7 @@ def build_xai_retraining_stability_audit(
             "Every retraining run uses the same synthetic generator output.",
             "Stable explanations can reproduce simulator shortcuts.",
             "Only the logistic engineering baseline is evaluated.",
+            "Exact global feature order is unstable and is suppressed from patient-facing display.",
             "No human comprehension or clinical decision-impact study was performed.",
         ],
         "claim_boundary": (
@@ -152,6 +187,51 @@ def build_xai_retraining_stability_audit(
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return payload
+
+
+def _consensus_feature_tiers(
+    seed_surfaces: list[dict[str, Any]],
+    *,
+    top_k: int,
+) -> dict[str, list[dict[str, Any]]]:
+    features = sorted(
+        {
+            feature
+            for surface in seed_surfaces
+            for feature in surface["global_ranking"][:top_k]
+        }
+    )
+    stable: list[dict[str, Any]] = []
+    variable: list[dict[str, Any]] = []
+    suppressed: list[dict[str, Any]] = []
+    seed_n = max(1, len(seed_surfaces))
+    for feature in features:
+        included_ranks = []
+        for surface in seed_surfaces:
+            top = surface["global_ranking"][:top_k]
+            if feature in top:
+                included_ranks.append(top.index(feature) + 1)
+        inclusion_rate = len(included_ranks) / seed_n
+        item = {
+            "feature_group": feature,
+            "top_k_inclusion_rate": round(inclusion_rate, 6),
+            "median_rank_when_included": (
+                round(float(np.median(included_ranks)), 3)
+                if included_ranks
+                else None
+            ),
+        }
+        if inclusion_rate >= 0.80:
+            stable.append(item)
+        elif inclusion_rate >= 0.50:
+            variable.append(item)
+        else:
+            suppressed.append(item)
+    return {
+        "stable_core_alphabetical": stable,
+        "variable_context_alphabetical": variable,
+        "suppressed_low_consensus_alphabetical": suppressed,
+    }
 
 
 def _fit_seed_surface(rows: pd.DataFrame, *, seed: int, top_k: int) -> dict[str, Any]:

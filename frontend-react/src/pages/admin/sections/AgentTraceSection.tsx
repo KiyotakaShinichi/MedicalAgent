@@ -13,6 +13,8 @@ type TraceEntry = AgentTraceLog;
 
 function TraceRow({ trace, index }: { trace: TraceEntry; index: number }) {
   const [open, setOpen] = useState(false);
+  const providerTokens = trace.token_usage?.total_tokens;
+  const providerUsageCaptured = (trace.token_usage?.provider_reported_call_count ?? 0) > 0;
 
   const intentColor = (intent: string) => {
     if (intent.includes("security") || intent.includes("safety")) return "red";
@@ -83,11 +85,30 @@ function TraceRow({ trace, index }: { trace: TraceEntry; index: number }) {
             sub={`Grounding: ${trace.grounding_score != null ? (trace.grounding_score * 100).toFixed(0) + "%" : "-"} / Hallucination risk: ${trace.hallucination_score != null ? (trace.hallucination_score * 100).toFixed(0) + "%" : "-"}`}
           />
           <TraceDetail
-            label="Latency / tokens"
+            label="Latency / usage"
             icon={<Clock size={11} style={{ color: "var(--amber)" }} />}
             value={trace.latency_ms != null ? `${trace.latency_ms.toFixed(0)} ms` : "-"}
-            sub={`~${trace.estimated_total_tokens?.toFixed(0) ?? "-"} tokens`}
+            sub={
+              providerTokens != null && (trace.token_usage?.call_count ?? 0) > 0
+                ? `${providerUsageCaptured ? "" : "~"}${providerTokens.toFixed(0)} tokens · ${providerUsageCaptured ? "provider reported" : "estimated"}`
+                : `~${trace.estimated_total_tokens?.toFixed(0) ?? "-"} pipeline tokens`
+            }
           />
+          <TraceDetail
+            label="Model / estimated cost"
+            icon={<Zap size={11} style={{ color: "var(--purple)" }} />}
+            value={trace.model_used ?? "deterministic / untracked"}
+            sub={`$${(trace.token_usage?.estimated_cost_usd ?? trace.estimated_cost_usd ?? 0).toFixed(6)} · pricing assumption`}
+          />
+          {trace.stage_latency && Object.keys(trace.stage_latency).length > 0 && (
+            <div className="col-span-2 text-xs" style={{ color: "var(--text-faint)" }}>
+              <span style={{ color: "var(--text-dim)" }}>Stage latency: </span>
+              {Object.entries(trace.stage_latency)
+                .filter(([, value]) => value != null)
+                .map(([key, value]) => `${key.replace(/_ms$/, "").replace(/_/g, " ")} ${Number(value).toFixed(0)}ms`)
+                .join(" · ") || "not captured"}
+            </div>
+          )}
           {(trace.cited_source_ids?.length ?? 0) > 0 && (
             <div className="col-span-2 text-xs" style={{ color: "var(--text-faint)" }}>
               <span style={{ color: "var(--text-dim)" }}>Citations: </span>

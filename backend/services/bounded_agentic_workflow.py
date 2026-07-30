@@ -112,7 +112,7 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
         final_action = "urgent_escalation"
         rationale = "Urgent symptom or safety language detected before any record write."
     elif (
-        _specific_boundary_precedes_distress(unsafe)
+        _specific_boundary_precedes_distress(text, unsafe)
         and _unsafe_block_is_authoritative(unsafe, safety)
         and not _safe_structured_record_context(text, extracted, unsafe)
     ):
@@ -391,7 +391,15 @@ def _detect_structured_intent(
         return {"kind": "imaging", "tool": "save_imaging"}
     if re.search(r"\b(mri|ct|ultrasound|mammogram|imaging report)\b", normalized) and re.search(r"\b(upload|save|log|add)\b", normalized):
         return {"kind": "imaging_details", "tool": "request_imaging_details"}
-    if re.search(r"\b(took|taking|medication|medicine|ondansetron|pegfilgrastim|tamoxifen|trastuzumab)\b", normalized):
+    medication_object = re.search(
+        r"\b(medication|medicine|ondansetron|pegfilgrastim|tamoxifen|trastuzumab)\b",
+        normalized,
+    )
+    medication_write_cue = re.search(
+        r"\b(took|taking|started|stopped taking|save|log|add|record)\b",
+        normalized,
+    )
+    if medication_object and medication_write_cue:
         return {"kind": "medication", "tool": "save_medication"}
     if re.search(r"\b(treatment note|cycle delayed|dose delay|dose reduced|infusion|chemo cycle)\b", normalized):
         return {"kind": "treatment_note", "tool": "save_treatment_note"}
@@ -399,7 +407,12 @@ def _detect_structured_intent(
 
 
 def _looks_like_education_request(text: str) -> bool:
-    return bool(re.search(r"\b(what is|what does|explain|in general|meaning of|questions can i ask|why should)\b", text.lower()))
+    return bool(
+        re.search(
+            r"\b(what is|what does|explain|in general|meaning of|questions (?:can|could|should) i (?:ask|bring)|why (?:is|are|should)|can you help organize)\b",
+            text.lower(),
+        )
+    )
 
 
 def _looks_like_clinician_summary_request(text: str) -> bool:
@@ -418,6 +431,11 @@ def _looks_cross_patient_record_request(text: str) -> bool:
 
 def _looks_tumor_marker_conclusion_request(text: str) -> bool:
     normalized = text.lower()
+    if re.search(
+        r"\b(without (?:concluding|deciding|diagnosing)|not (?:asking|requesting) (?:you )?to conclude)\b",
+        normalized,
+    ):
+        return False
     return bool(
         re.search(r"\b(ca\s*15-?3|ca\s*27\.?29|cea|tumou?r marker|rising marker|marker trend)\b", normalized)
         and re.search(r"\b(prove|confirms?|means|assume|recurrence|progression|metastasis|treatment failure|therapy failed|bumalik)\b", normalized)
@@ -530,10 +548,18 @@ def _unsafe_block_is_authoritative(unsafe: dict[str, Any], safety: dict[str, Any
     return True
 
 
-def _specific_boundary_precedes_distress(unsafe: dict[str, Any]) -> bool:
-    """Keep explicit decision boundaries specific while preserving warm diagnosis handling."""
+def _specific_boundary_precedes_distress(text: str, unsafe: dict[str, Any]) -> bool:
+    """Keep explicit decision boundaries specific while preserving warm wording."""
 
-    return unsafe.get("family") in {
+    family = unsafe.get("family")
+    if family == "diagnosis_confirmation":
+        return bool(
+            re.search(
+                r"\b(confirm|issue|decide|diagnos(?:e|is)|yes[-\s]?or[-\s]?no|prove|declare|definitively|establish)\b",
+                text,
+            )
+        )
+    return family in {
         "genetic_risk_interpretation",
         "vus_misinterpretation",
         "tumor_marker_conclusion",

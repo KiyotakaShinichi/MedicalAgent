@@ -402,9 +402,11 @@ def _run_rag_generation_branch(
     pipeline_trace's ``stage_ms`` block."""
     from backend.services.rag_execution_policy import govern_candidates, plan_rag_execution
 
+    t_retrieval_started = perf_counter()
     actor_role = (input_guardrails or {}).get("actor_role")
     execution_policy, mode = plan_rag_execution(intent=intent, rewritten=rewritten, actor_role=actor_role)
     retrieved = hybrid_retrieval(rewritten, intent)
+    t_candidates = perf_counter()
     governed_retrieved, initial_filter_trace = govern_candidates(
         retrieved,
         mode,
@@ -432,6 +434,7 @@ def _run_rag_generation_branch(
             }
             for item in governed_expanded
         ]
+    t_rerank_only = perf_counter()
     compressed = contextual_compression(reranked)
     t_rerank = perf_counter()
     generated = generate_answer(
@@ -467,8 +470,10 @@ def _run_rag_generation_branch(
     stage_ms = {
         "safety_gate_ms":     round((t_safety - started) * 1000, 2),
         "intent_routing_ms":  round((t_routing - t_safety) * 1000, 2),
-        "retrieval_ms":       round((t_retrieval - t_routing) * 1000, 2),
-        "rerank_ms":          round((t_rerank - t_retrieval) * 1000, 2),
+        "retrieval_ms":       round((t_candidates - t_retrieval_started) * 1000, 2),
+        "pre_generation_governance_ms": round((t_retrieval - t_candidates) * 1000, 2),
+        "rerank_ms":          round((t_rerank_only - t_retrieval) * 1000, 2),
+        "compression_ms":     round((t_rerank - t_rerank_only) * 1000, 2),
         "generation_ms":      round((t_generation - t_rerank) * 1000, 2),
     }
     result = {
@@ -543,22 +548,40 @@ def _finalize_result(
 ):
     """Orchestrate the post-generation pipeline:
 
-      1. Compute latency.
-      2. Run legacy output-guardrail heuristics.
-      3. Run the post-gen safety validator (may rewrite the reply).
-      4. Run the intent-aware RAG layer (mode -> tier filter -> claim
+      1. Run legacy output-guardrail heuristics.
+      2. Run the post-gen safety validator (may rewrite the reply).
+      3. Run the intent-aware RAG layer (mode -> tier filter -> claim
          validation -> evidence grade -> optional insufficient-evidence
          substitution).
+      4. Compute end-to-end latency after all safety/governance work.
       5. Build the RAG evaluation telemetry block.
       6. Persist the RAGEvaluationLog row.
 
     Each step lives in a named helper so the failure surface is explicit
     and the call site reads top-to-bottom.
     """
-    latency_ms = round((perf_counter() - started) * 1000, 2)
+    post_generation_started = perf_counter()
     output_guardrails = output_guardrail_check(result)
     output_guardrails, pgv_decision = _apply_post_gen_validator(result, output_guardrails)
+    post_generation_finished = perf_counter()
     _apply_intent_aware_rag_layer(result, retrieved, input_guardrails, pgv_decision)
+    governance_finished = perf_counter()
+    pipeline_trace = result.setdefault("pipeline_trace", {})
+    stage_ms = pipeline_trace.setdefault("stage_ms", {})
+    stage_ms["post_generation_validation_ms"] = round(
+        (post_generation_finished - post_generation_started) * 1000,
+        2,
+    )
+    stage_ms["source_governance_ms"] = round(
+        (governance_finished - post_generation_finished) * 1000,
+        2,
+    )
+    latency_ms = round((governance_finished - started) * 1000, 2)
+    from backend.services.llm_telemetry import snapshot_llm_telemetry
+
+    llm_telemetry = snapshot_llm_telemetry()
+    if llm_telemetry.get("call_count"):
+        result["llm_telemetry"] = llm_telemetry
 
     rag_evaluation = evaluate_rag_response(
         query=query,
@@ -606,10 +629,11 @@ def _attach_turn_trace(result, patient_id, input_guardrails, output_guardrails, 
 
         pipeline = result.get("pipeline_trace") or {}
         safety = result.get("safety") or {}
+        llm_telemetry = result.get("llm_telemetry") or {}
         trace = build_turn_trace(
             correlation_id=get_request_id(),
             model_used={
-                "answer": "deterministic_local_or_untracked",
+                "answer": _trace_model_label(llm_telemetry),
                 "route": pipeline.get("terminal_step"),
             },
             safety_scope={
@@ -663,6 +687,7 @@ def _attach_turn_trace(result, patient_id, input_guardrails, output_guardrails, 
                 **((pipeline.get("stage_ms") or {}) if isinstance(pipeline, dict) else {}),
             },
             correlation_id=get_request_id(),
+            estimated_cost=_trace_usage_cost(llm_telemetry),
         )
         ok_v2, problems_v2 = validate_trace_envelope_v2(trace_v2)
         result["turn_trace_v2"] = (
@@ -681,6 +706,38 @@ def _attach_turn_trace(result, patient_id, input_guardrails, output_guardrails, 
             "diagnostics_error": str(exc)[:200],
             "clinical_validation": False,
         }
+
+
+def _trace_model_label(llm_telemetry):
+    calls = llm_telemetry.get("calls") if isinstance(llm_telemetry, dict) else None
+    if not isinstance(calls, list) or not calls:
+        return "deterministic_local_or_untracked"
+    labels = []
+    for call in calls:
+        if not isinstance(call, dict):
+            continue
+        label = f"{call.get('provider')}/{call.get('model')}"
+        if label not in labels:
+            labels.append(label)
+    return ",".join(labels)[:255] or "deterministic_local_or_untracked"
+
+
+def _trace_usage_cost(llm_telemetry):
+    if not isinstance(llm_telemetry, dict) or not llm_telemetry.get("call_count"):
+        return {"available": False, "reason": "no_provider_call_captured"}
+    return {
+        "available": True,
+        "estimated_cost_usd": llm_telemetry.get("estimated_cost_usd"),
+        "input_tokens": llm_telemetry.get("input_tokens"),
+        "output_tokens": llm_telemetry.get("output_tokens"),
+        "total_tokens": llm_telemetry.get("total_tokens"),
+        "usage_basis": (
+            "provider_reported"
+            if llm_telemetry.get("provider_reported_call_count")
+            else "chars_div_4_estimate"
+        ),
+        "audited_billing": False,
+    }
 
 
 def _trace_refused(result):

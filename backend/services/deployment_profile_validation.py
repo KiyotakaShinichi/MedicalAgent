@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 
 OUTPUT_PATH = Path("Data/evals/ops/latest_deployment_profile_validation.json")
+MATRIX_OUTPUT_PATH = Path("Data/evals/ops/latest_deployment_profile_matrix.json")
 UNSAFE_PASSWORDS = {"", "password", "postgres", "medical_agent", "change_me", "change_me_for_nonlocal_demo"}
 PLACEHOLDER_SECRETS = {"", "replace_with_a_long_random_secret", "change_me", "secret"}
 
@@ -148,4 +149,119 @@ def write_report(output_path: Path = OUTPUT_PATH) -> Path:
     return output_path
 
 
-__all__ = ["OUTPUT_PATH", "build_report", "write_report"]
+def build_profile_matrix(
+    active_environment: Mapping[str, str] | None = None,
+) -> dict[str, object]:
+    active = build_report(active_environment)
+    strict_valid = build_report(_production_shaped_environment())
+    strict_invalid = build_report(_unsafe_production_environment())
+    fail_closed = bool(
+        strict_invalid["status"] == "blocked"
+        and int(strict_invalid["n_failed"]) >= 4
+    )
+    matrix_pass = bool(
+        active["status"] != "blocked"
+        and strict_valid["status"] == "strong"
+        and fail_closed
+        and strict_valid["healthcare_production_ready"] is False
+    )
+    return {
+        "schema_version": "deployment_profile_matrix_v1",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "status": "strong" if matrix_pass else "needs_attention",
+        "active_profile": {
+            "profile": active["profile"],
+            "status": active["status"],
+            "strict_profile": active["strict_profile"],
+            "deployment_capability": active["deployment_capability"],
+            "n_failed": active["n_failed"],
+        },
+        "production_shaped_static_validation": {
+            "status": strict_valid["status"],
+            "n_checks": strict_valid["n_checks"],
+            "n_failed": strict_valid["n_failed"],
+            "oidc_config_valid": strict_valid["oidc_config_valid"],
+            "uses_non_resolving_example_endpoints": True,
+            "live_identity_provider_contacted": False,
+            "live_database_contacted": False,
+            "live_redis_contacted": False,
+        },
+        "unsafe_profile_fail_closed": {
+            "status": strict_invalid["status"],
+            "n_failed": strict_invalid["n_failed"],
+            "failed_check_names": [
+                str(item["name"]) for item in strict_invalid["failed_checks"]
+            ],
+            "passed": fail_closed,
+        },
+        "matrix_passed": matrix_pass,
+        "cloud_deployment_completed": False,
+        "live_oidc_integration_completed": False,
+        "production_traffic_observed": False,
+        "clinical_validation": False,
+        "healthcare_production_ready": False,
+        "secrets_included_in_artifact": False,
+        "deployment_capability": "configuration_matrix_validated_local_runtime_only",
+        "claim_boundary": (
+            "This matrix proves static configuration checks and fail-closed behavior for "
+            "an engineering prototype. It does not prove cloud deployment, live identity "
+            "integration, security certification, compliance, clinical validation, or "
+            "production healthcare readiness."
+        ),
+    }
+
+
+def write_profile_matrix(
+    output_path: Path = MATRIX_OUTPUT_PATH,
+    *,
+    active_environment: Mapping[str, str] | None = None,
+) -> Path:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        json.dumps(build_profile_matrix(active_environment), indent=2),
+        encoding="utf-8",
+    )
+    return output_path
+
+
+def _production_shaped_environment() -> dict[str, str]:
+    return {
+        "ENVIRONMENT": "production",
+        "DATABASE_URL": (
+            "postgresql+psycopg2://nlcare:"
+            "static-validation-password-42@db.nlcare.invalid/nlcare"
+        ),
+        "REDIS_URL": "rediss://cache.nlcare.invalid:6380/0",
+        "ALLOW_DEMO_AUTH": "false",
+        "NLCARE_CORS_ORIGINS": "https://app.nlcare.invalid",
+        "NLCARE_OIDC_ENABLED": "true",
+        "NLCARE_OIDC_ISSUER": "https://identity.nlcare.invalid",
+        "NLCARE_OIDC_AUDIENCE": "nlcare-api",
+        "NLCARE_OIDC_JWKS_URL": "https://identity.nlcare.invalid/.well-known/jwks.json",
+        "NLCARE_OIDC_ALGORITHMS": "RS256",
+        "N8N_WEBHOOK_DISPATCH_ENABLED": "false",
+    }
+
+
+def _unsafe_production_environment() -> dict[str, str]:
+    return {
+        "ENVIRONMENT": "production",
+        "DATABASE_URL": "sqlite:///unsafe.db",
+        "ALLOW_DEMO_AUTH": "true",
+        "NLCARE_CORS_ORIGINS": "*",
+        "NLCARE_OIDC_ENABLED": "false",
+        "N8N_WEBHOOK_DISPATCH_ENABLED": "true",
+        "N8N_WEBHOOK_BASE_URL": "http://127.0.0.1:5678/webhook/nlcare",
+        "N8N_WEBHOOK_SIGNING_SECRET": "change_me",
+        "NLCARE_ALERT_TEST_RECIPIENT_ONLY": "false",
+    }
+
+
+__all__ = [
+    "MATRIX_OUTPUT_PATH",
+    "OUTPUT_PATH",
+    "build_profile_matrix",
+    "build_report",
+    "write_profile_matrix",
+    "write_report",
+]

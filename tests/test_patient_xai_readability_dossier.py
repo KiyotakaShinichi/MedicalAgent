@@ -20,7 +20,22 @@ def test_patient_xai_dossier_is_nonclinical_and_strong(tmp_path):
     assert report["diagnostic_authority_claim"] is False
     assert report["treatment_recommendation_claim"] is False
     assert report["failed_check_count"] == 0
+    assert report["implementation_evidence"]["source_exists"] is True
+    assert report["implementation_evidence"]["all_passed"] is True
     assert "does not explain clinical causality" in report["claim_boundary"]
+
+
+def test_patient_xai_dossier_fails_when_ui_source_is_only_a_spec(tmp_path):
+    missing = tmp_path / "missing.tsx"
+    report = build_patient_xai_readability_dossier(
+        output_path=tmp_path / "xai.json",
+        doc_path=tmp_path / "xai.md",
+        patient_kpi_source=missing,
+    )
+
+    assert report["status"] == "needs_attention"
+    assert report["implementation_evidence"]["source_exists"] is False
+    assert report["implementation_evidence"]["all_passed"] is False
 
 
 def test_required_surfaces_cover_patient_numbers_and_removed_score():

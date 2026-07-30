@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_cloud_infrastructure_readiness_v2",
-  "generated_at": "2026-07-28T12:04:31.954090+00:00",
+  "generated_at": "2026-07-30T02:02:27.081960+00:00",
   "status": "compiled_reference_architecture",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -20,8 +20,8 @@
   "bicep_compile_diagnostics": [],
   "what_if_completed": false,
   "what_if_blocker": "azure_cli_unavailable",
-  "n_checks": 26,
-  "passed": 26,
+  "n_checks": 27,
+  "passed": 27,
   "failed": 0,
   "checks": [
     {
@@ -108,6 +108,11 @@
       "check_id": "container_app_identity_secret_reference",
       "passed": true,
       "description": "Optional internal app revision uses workload identity, Key Vault reference, and probes."
+    },
+    {
+      "check_id": "fail_closed_deployment_guards",
+      "passed": true,
+      "description": "Unsafe image, network, and secret combinations cannot create the application or managed services."
     },
     {
       "check_id": "private_network_contract",

@@ -84,6 +84,23 @@ def build_cloud_infrastructure_readiness(
                 "Optional internal app revision uses workload identity, Key Vault reference, and probes.",
             ),
             _check(
+                "fail_closed_deployment_guards",
+                all(
+                    marker in text
+                    for marker in (
+                        "var applicationDeploymentConfigurationValid",
+                        "contains(backendContainerImage, '@sha256:')",
+                        "!empty(databaseUrlSecretUri)",
+                        "var deployValidatedApplication",
+                        "var deployValidatedSearch",
+                        "var deployValidatedMessaging",
+                        "var deployValidatedPostgres",
+                        "output applicationDeploymentConfigurationValid",
+                    )
+                ),
+                "Unsafe image, network, and secret combinations cannot create the application or managed services.",
+            ),
+            _check(
                 "private_network_contract",
                 all(
                     marker in text

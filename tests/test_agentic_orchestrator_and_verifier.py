@@ -50,6 +50,22 @@ def test_multiturn_symptom_detail_then_confirmation():
     assert routes == ["request_symptom_details", "record_symptom", "record_symptom"]
     assert conversation["turns"][-1]["execution"]["records_written"] == ["save_symptom"]
     assert conversation["final_state"]["pending_confirmation"] is None
+    assert len(conversation["final_state"]["consumed_confirmation_ids"]) == 1
+
+
+def test_stateful_confirmation_cannot_cross_patient_scope():
+    conversation = run_agentic_conversation([
+        {"message": "I have nausea severity 6/10", "patient_scope_id": "patient-a"},
+        {
+            "message": "yes save it",
+            "confirmed_by_user": True,
+            "patient_scope_id": "patient-b",
+        },
+    ])
+    final = conversation["turns"][-1]
+    assert final["execution_policy"]["decision"] == "block"
+    assert "confirmation_patient_scope_mismatch" in final["execution_policy"]["confirmation_validation"]["issues"]
+    assert final["execution"]["records_written"] == []
 
 
 def test_adversarial_route_precision_regressions():

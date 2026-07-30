@@ -3,12 +3,30 @@ import { MetricCard } from "../../../components/ui/MetricCard";
 import { Badge } from "../../../components/ui/Badge";
 import { statusVariant } from "../../../components/ui/badgeUtils";
 import { Card, CardHeader, SectionTitle } from "../../../components/ui/Card";
+import { useApi } from "../../../hooks/useApi";
+import { getNormalizedBenchmarkArtifact } from "../../../api/client";
 import type { AdminAnalytics } from "../../../types/api";
 
 interface Props { analytics: AdminAnalytics }
 
 export function OverviewSection({ analytics }: Props) {
   const { rag_evaluation: rag, guardrails, mle_readiness: mle, agent_feedback: fb } = analytics;
+  const { data: credibility } = useApi(
+    () => getNormalizedBenchmarkArtifact("credibility_gap_registry"),
+    [],
+  );
+  const { data: finetune } = useApi(
+    () => getNormalizedBenchmarkArtifact("finetune_hardening_assurance"),
+    [],
+  );
+  const { data: evidenceMaturity } = useApi(
+    () => getNormalizedBenchmarkArtifact("evidence_maturity_matrix"),
+    [],
+  );
+  const { data: xaiReliability } = useApi(
+    () => getNormalizedBenchmarkArtifact("xai_reliability_gate"),
+    [],
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -63,6 +81,58 @@ export function OverviewSection({ analytics }: Props) {
         </div>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <SectionTitle>Evidence Credibility</SectionTitle>
+          <Badge variant="amber">internal engineering evidence</Badge>
+        </CardHeader>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <MetricCard
+            label="Open evidence gaps"
+            value={metricNumber(credibility?.metrics.open_or_external_count)}
+            status="amber"
+          />
+          <MetricCard
+            label="Not self-certifiable"
+            value={metricNumber(credibility?.metrics.cannot_be_self_certified_count)}
+            status="amber"
+          />
+          <MetricCard
+            label="Fine-tune decision"
+            value={metricText(finetune?.metrics.promotion_decision) ?? "HOLD"}
+            status="amber"
+          />
+          <MetricCard
+            label="Fine-tune blockers"
+            value={metricNumber(finetune?.metrics.blocking_gap_count)}
+            status="amber"
+          />
+          <MetricCard
+            label="Architecture hotspots"
+            value={metricNumber(evidenceMaturity?.metrics.oversized_file_count)}
+            status="amber"
+          />
+          <MetricCard
+            label="Critical large files"
+            value={metricNumber(evidenceMaturity?.metrics.critical_file_count)}
+            status="amber"
+          />
+          <MetricCard
+            label="XAI display policy"
+            value={xaiModeLabel(metricText(xaiReliability?.metrics.display_mode))}
+            status="amber"
+          />
+          <MetricCard
+            label="Rank claims allowed"
+            value={metricBoolean(xaiReliability?.metrics.ranked_feature_order_allowed)}
+            status="amber"
+          />
+        </div>
+        <p className="text-xs mt-3" style={{ color: "var(--text-dim)" }}>
+          These are evidence-completion fields, not clinical-readiness or safety scores.
+        </p>
+      </Card>
+
       {/* Quick stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MetricCard label="Evaluations"   value={rag.evaluations}   icon={Activity} />
@@ -72,4 +142,23 @@ export function OverviewSection({ analytics }: Props) {
       </div>
     </div>
   );
+}
+
+function metricNumber(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function metricText(value: unknown): string | null {
+  return typeof value === "string" ? value : null;
+}
+
+function metricBoolean(value: unknown): string | null {
+  return typeof value === "boolean" ? (value ? "yes" : "no") : null;
+}
+
+function xaiModeLabel(value: string | null): string | null {
+  if (value === "ranked_factors_with_noncausal_boundary") return "ranked";
+  if (value === "grouped_factors_without_rank_claim") return "grouped only";
+  if (value === "suppress_feature_factors") return "hidden";
+  return value?.replace(/_/g, " ") ?? null;
 }

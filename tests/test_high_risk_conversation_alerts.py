@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -198,6 +199,66 @@ def test_channel_receipt_is_not_clinician_acknowledgement_and_duplicates_do_not_
         assert alert.acknowledged_at is None
         assert alert.acknowledged_by_role is None
         assert "do not prove" in serialize_alert(alert)["delivery_claim_boundary"]
+    finally:
+        db.close()
+
+
+def test_delivery_receipts_reject_backward_transition_and_implausible_clock(tmp_path):
+    db = _session(tmp_path)
+    try:
+        db.add(Patient(id="PR", name="Synthetic Patient", diagnosis="doctor-confirmed"))
+        db.flush()
+        chat = ChatMessage(patient_id="PR", role="user", message="synthetic crisis phrase", intent="patient_support")
+        db.add(chat)
+        db.flush()
+        now = datetime.now(timezone.utc)
+        alert = HighRiskConversationAlert(
+            patient_id="PR",
+            source_chat_message_id=chat.id,
+            idempotency_key="receipt-state-test",
+            category="crisis_language",
+            severity="critical_review",
+            trigger_summary="Synthetic review item.",
+            status="notified",
+            notification_status="accepted_by_workflow",
+            notification_event_id="event-receipt-state",
+            notification_attempt_count=1,
+            notification_max_attempts=3,
+            last_notification_attempt_at=now,
+            delivery_receipt_status="awaiting_receipt",
+        )
+        db.add(alert)
+        db.flush()
+        record_delivery_receipt(
+            db,
+            event_id="event-receipt-state",
+            receipt_id="receipt-state",
+            delivery_status="delivered",
+            occurred_at=now + timedelta(seconds=1),
+            received_at=now + timedelta(seconds=2),
+        )
+        with pytest.raises(ValueError, match="Invalid delivery receipt transition"):
+            record_delivery_receipt(
+                db,
+                event_id="event-receipt-state",
+                receipt_id="receipt-state",
+                delivery_status="accepted",
+                occurred_at=now + timedelta(seconds=3),
+                received_at=now + timedelta(seconds=3),
+            )
+
+        alert.delivery_receipt_id = None
+        alert.delivery_receipt_status = "awaiting_receipt"
+        alert.delivery_receipt_at = None
+        with pytest.raises(ValueError, match="future"):
+            record_delivery_receipt(
+                db,
+                event_id="event-receipt-state",
+                receipt_id="receipt-future",
+                delivery_status="accepted",
+                occurred_at=now + timedelta(hours=1),
+                received_at=now,
+            )
     finally:
         db.close()
 

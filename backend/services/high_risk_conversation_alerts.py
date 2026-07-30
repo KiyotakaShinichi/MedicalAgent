@@ -21,6 +21,14 @@ from backend.services.n8n_webhook_dispatcher import dispatch_signed_webhook
 
 ALERT_WORKFLOW_ID = "high_risk_review_alert"
 RECEIPT_STATUSES = frozenset({"accepted", "delivered", "failed"})
+RECEIPT_TRANSITIONS = {
+    "awaiting_receipt": frozenset({"accepted", "delivered", "failed"}),
+    "accepted": frozenset({"accepted", "delivered", "failed"}),
+    "delivered": frozenset({"delivered"}),
+    "failed": frozenset({"failed"}),
+    "not_received": frozenset({"accepted", "delivered", "failed"}),
+}
+MAX_RECEIPT_CLOCK_SKEW_SECONDS = 300
 
 
 def classify_alert_trigger(
@@ -355,6 +363,7 @@ def record_delivery_receipt(
     receipt_id: str,
     delivery_status: str,
     occurred_at: datetime | None = None,
+    received_at: datetime | None = None,
 ) -> HighRiskConversationAlert:
     status = str(delivery_status or "").strip().lower()
     if status not in RECEIPT_STATUSES:
@@ -366,16 +375,37 @@ def record_delivery_receipt(
     )
     if alert is None:
         raise LookupError("Notification event not found")
+    current = _as_utc(received_at or datetime.now(timezone.utc))
+    occurred = _as_utc(occurred_at or current)
+    if occurred > current + timedelta(seconds=MAX_RECEIPT_CLOCK_SKEW_SECONDS):
+        raise ValueError("Delivery receipt timestamp is implausibly far in the future")
+    if (
+        alert.last_notification_attempt_at is not None
+        and occurred
+        < _as_utc(alert.last_notification_attempt_at)
+        - timedelta(seconds=MAX_RECEIPT_CLOCK_SKEW_SECONDS)
+    ):
+        raise ValueError("Delivery receipt predates the notification attempt")
+    prior_status = str(alert.delivery_receipt_status or "awaiting_receipt")
+    allowed_next = RECEIPT_TRANSITIONS.get(prior_status, frozenset())
+    if status not in allowed_next:
+        raise ValueError(
+            f"Invalid delivery receipt transition: {prior_status}->{status}"
+        )
     if alert.delivery_receipt_id:
         if alert.delivery_receipt_id == receipt_id and alert.delivery_receipt_status == status:
             return alert
         if not (alert.delivery_receipt_id == receipt_id and alert.delivery_receipt_status == "accepted" and status == "delivered"):
             raise ValueError("A different or invalid delivery receipt transition is already recorded for this event")
+        if (
+            alert.delivery_receipt_at is not None
+            and occurred < _as_utc(alert.delivery_receipt_at)
+        ):
+            raise ValueError("Delivery receipt timestamp moved backwards")
 
-    current = occurred_at or datetime.now(timezone.utc)
     alert.delivery_receipt_id = receipt_id
     alert.delivery_receipt_status = status
-    alert.delivery_receipt_at = current
+    alert.delivery_receipt_at = occurred
     attempt = (
         db.query(HighRiskAlertDeliveryAttempt)
         .filter(HighRiskAlertDeliveryAttempt.event_id == event_id)
@@ -384,7 +414,7 @@ def record_delivery_receipt(
     )
     if attempt is not None:
         attempt.status = f"receipt_{status}"
-        attempt.completed_at = current
+        attempt.completed_at = occurred
 
     if status == "delivered":
         alert.notification_status = "delivered_to_channel"
@@ -393,11 +423,11 @@ def record_delivery_receipt(
         alert.notification_status = "accepted_by_channel"
     elif int(alert.notification_attempt_count or 0) >= int(alert.notification_max_attempts or 3):
         alert.notification_status = "dead_lettered"
-        alert.dead_lettered_at = current
+        alert.dead_lettered_at = occurred
         alert.dead_letter_reason = "channel_delivery_failed"
     else:
         alert.notification_status = "retry_scheduled"
-        alert.next_notification_retry_at = current + timedelta(seconds=_retry_delay_seconds(alert.notification_attempt_count))
+        alert.next_notification_retry_at = occurred + timedelta(seconds=_retry_delay_seconds(alert.notification_attempt_count))
     db.flush()
     return alert
 

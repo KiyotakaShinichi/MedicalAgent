@@ -1,6 +1,6 @@
 {
   "schema_version": "xai_fidelity_audit_v3",
-  "generated_at": "2026-07-28T12:06:53.411739+00:00",
+  "generated_at": "2026-07-30T02:05:00.620864+00:00",
   "status": "acceptable",
   "method": "shap_linear_explainer_logistic_regression",
   "shap_available": true,
@@ -25,7 +25,7 @@
   "model_retraining_stability_evaluated": true,
   "local_patient_explanation_stability_evaluated": true,
   "retraining_stability_artifact": "Data/evals/models/latest_xai_retraining_stability.json",
-  "retraining_stability_status": "needs_attention",
+  "retraining_stability_status": "acceptable",
   "causal_interpretation_allowed": false,
   "presentation_risks": [
     "Centered one-hot SHAP values can display several mutually exclusive categories and confuse users.",

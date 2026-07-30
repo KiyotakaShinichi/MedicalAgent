@@ -1,11 +1,15 @@
 {
-  "schema_version": "finetune_promotion_decision_v2",
-  "generated_at": "2026-07-22T08:26:06.734706+00:00",
+  "schema_version": "finetune_promotion_decision_v3",
+  "generated_at": "2026-07-30T02:09:47.216630+00:00",
   "clinical_validation": false,
   "promotion_scope": "offline_shadow_only",
   "patient_facing_promotion_allowed": false,
   "medical_knowledge_tuning_allowed": false,
   "minimum_cases_for_lift_threshold": 50,
+  "minimum_cases_per_behavior": 5,
+  "minimum_behavior_lift": 0.02,
+  "maximum_output_p95_ratio": 1.5,
+  "maximum_paired_p_value": 0.05,
   "status": "ready_for_candidate_generations",
   "decision": "HOLD",
   "reason": "Complete baseline and candidate generations are required.",
@@ -16,6 +20,19 @@
   "safety_regression": null,
   "behavior_lift_threshold_met": false,
   "behavior_improvement_statistically_proven": false,
+  "paired_test": {
+    "available": false,
+    "test": "exact_mcnemar_binomial",
+    "reason": "generation_evidence_missing",
+    "case_ids_match": false,
+    "paired_case_count": 0,
+    "improved_count": 0,
+    "regressed_count": 0,
+    "discordant_count": 0,
+    "p_value": 1.0,
+    "alpha": 0.05,
+    "significant": false
+  },
   "claim_boundary": "PROMOTE is limited to an offline or shadow engineering experiment. It does not permit patient-facing use, establish clinical validation, or bypass RAG, deterministic safety, post-generation validation, or human review.",
   "evidence": {
     "holdout_path": "Data/finetune/prepared/dataset_internal_frozen_holdout.jsonl",
@@ -23,6 +40,10 @@
     "candidate_generations_path": "Data/finetune/evaluations/candidate_generations.jsonl",
     "baseline_present": false,
     "candidate_present": false,
+    "baseline_manifest_path": "Data/finetune/evaluations/baseline_generation_manifest.json",
+    "candidate_manifest_path": "Data/finetune/evaluations/candidate_generation_manifest.json",
+    "candidate_generation_lineage_verified": false,
+    "candidate_memorization_audit_completed": false,
     "internal_holdout_is_external_evidence": false
   }
 }

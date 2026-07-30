@@ -141,6 +141,28 @@ def build_data_platform_reliability_eval(
         )
     )
 
+    scale_multiplier = 100
+    scaled_ids = [
+        f"{row.get('record_id')}:synthetic-scale-{replica:03d}"
+        for replica in range(scale_multiplier)
+        for row in gold_rows
+    ]
+    scaled_first = build_backfill_batches(scaled_ids, batch_size=1000)
+    scaled_second = build_backfill_batches(reversed(scaled_ids), batch_size=1000)
+    scale_deterministic = (
+        bool(gold_rows)
+        and scaled_first == scaled_second
+        and len({record_id for batch in scaled_first for record_id in batch})
+        == len(scaled_ids)
+    )
+    cases.append(
+        _case(
+            "partition_scale_replay_100x",
+            scale_deterministic,
+            "A 100x non-patient identifier replay remains unique and partition-deterministic.",
+        )
+    )
+
     remote_blocked, local_recovered = _fallback_drill()
     cases.append(
         _case(
@@ -171,13 +193,27 @@ def build_data_platform_reliability_eval(
             "deterministic": bool(cases[4]["passed"]),
             "managed_upsert_performed": False,
         },
+        "partition_scale_replay": {
+            "scale_multiplier": scale_multiplier,
+            "base_record_count": len(gold_rows),
+            "replayed_record_count": len(scaled_ids),
+            "batch_size": 1000,
+            "batch_count": len(scaled_first),
+            "unique_record_ids": len(
+                {record_id for batch in scaled_first for record_id in batch}
+            ),
+            "partition_fingerprint": _fingerprint(scaled_first),
+            "deterministic": scale_deterministic,
+            "timing_benchmark_performed": False,
+            "managed_cloud_throughput_measured": False,
+        },
         "delete_propagation": {
             "local_tombstone_drill_completed": bool(cases[3]["passed"]),
             "managed_index_delete_completed": False,
             "cloud_object_delete_completed": False,
         },
         "recovery": {
-            "local_fallback_drill_completed": bool(cases[5]["passed"]),
+            "local_fallback_drill_completed": bool(cases[6]["passed"]),
             "azure_restore_drill_completed": False,
             "postgres_point_in_time_restore_completed": False,
         },

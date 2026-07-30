@@ -20,6 +20,11 @@ from backend.services.agent_rag import run_patient_agent_pipeline, route_intent,
 from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_imaging_report_payload, validate_symptom_payload
 from backend.services.local_llm import select_support_tools_with_local_llm
+from backend.services.llm_telemetry import (
+    LLMCallTimer,
+    provider_usage,
+    record_llm_call,
+)
 from backend.services.security_guardrails import detect_multilingual_medical_danger, normalize_security_text
 from backend.services.conversation_state import (
     clear_pending_action,
@@ -1824,22 +1829,43 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
         "recent_context": patient_context,
         "fallback_reply": fallback_response,
     }
+    model = get_groq_model()
+    prompt_json = json.dumps(user_prompt, default=str)
+    timer = LLMCallTimer.start()
     try:
         client = Groq(api_key=api_key)
         completion = client.chat.completions.create(
-            model=get_groq_model(),
+            model=model,
             temperature=0.2,
             max_tokens=220,
             messages=[
                 {"role": "system", "content": CHAT_SYSTEM_PROMPT},
-                {"role": "user", "content": json.dumps(user_prompt, default=str)},
+                {"role": "user", "content": prompt_json},
             ],
         )
         choice = completion.choices[0]
+        reply = (choice.message.content or "").strip()
+        record_llm_call(
+            provider="groq",
+            model=model,
+            operation="patient_support_answer",
+            latency_ms=timer.elapsed_ms(),
+            prompt_parts=[CHAT_SYSTEM_PROMPT, prompt_json],
+            completion_text=reply,
+            usage=provider_usage(completion),
+        )
         if getattr(choice, "finish_reason", None) not in {None, "stop"}:
             return fallback_response
-        reply = choice.message.content.strip()
-    except Exception:
+    except Exception as exc:
+        record_llm_call(
+            provider="groq",
+            model=model,
+            operation="patient_support_answer",
+            latency_ms=timer.elapsed_ms(),
+            prompt_parts=[CHAT_SYSTEM_PROMPT, prompt_json],
+            success=False,
+            error_type=exc.__class__.__name__,
+        )
         return fallback_response
 
     if not reply or _looks_truncated_reply(reply):

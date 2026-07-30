@@ -73,7 +73,12 @@ var commonTags = {
   dataScope: 'curated-non-patient-only'
 }
 var publicNetwork = allowPublicNetworkAccess ? 'Enabled' : 'Disabled'
-var deployContainerEnvironment = deployComputeEnvironment || deployApplication
+var applicationDeploymentConfigurationValid = contains(backendContainerImage, '@sha256:') && !empty(databaseUrlSecretUri) && deployPrivateNetworking && !allowPublicNetworkAccess
+var deployValidatedApplication = deployApplication && applicationDeploymentConfigurationValid
+var deployValidatedSearch = deployManagedSearch && deployPrivateNetworking && !allowPublicNetworkAccess
+var deployValidatedMessaging = deployMessaging && deployPrivateNetworking && !allowPublicNetworkAccess
+var deployValidatedPostgres = deployPostgres && deployPrivateNetworking && !allowPublicNetworkAccess
+var deployContainerEnvironment = deployComputeEnvironment || deployValidatedApplication
 var storageBlobDataContributorRoleId = subscriptionResourceId(
   'Microsoft.Authorization/roleDefinitions',
   'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
@@ -205,7 +210,7 @@ resource containerEnvironment 'Microsoft.App/managedEnvironments@2025-01-01' = i
   )
 }
 
-resource backendContainerApp 'Microsoft.App/containerApps@2025-01-01' = if (deployApplication) {
+resource backendContainerApp 'Microsoft.App/containerApps@2025-01-01' = if (deployValidatedApplication) {
   name: '${prefix}-${environment}-api-${suffix}'
   location: location
   tags: commonTags
@@ -394,7 +399,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' = {
   }
 }
 
-resource managedSearch 'Microsoft.Search/searchServices@2025-05-01' = if (deployManagedSearch) {
+resource managedSearch 'Microsoft.Search/searchServices@2025-05-01' = if (deployValidatedSearch) {
   name: '${prefix}-${environment}-search-${suffix}'
   location: location
   tags: commonTags
@@ -423,7 +428,7 @@ resource managedSearch 'Microsoft.Search/searchServices@2025-05-01' = if (deploy
   }
 }
 
-resource serviceBus 'Microsoft.ServiceBus/namespaces@2024-01-01' = if (deployMessaging) {
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2024-01-01' = if (deployValidatedMessaging) {
   name: '${prefix}-${environment}-sb-${suffix}'
   location: location
   tags: commonTags
@@ -441,7 +446,7 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2024-01-01' = if (deployMes
   }
 }
 
-resource engineeringQueue 'Microsoft.ServiceBus/namespaces/queues@2024-01-01' = if (deployMessaging) {
+resource engineeringQueue 'Microsoft.ServiceBus/namespaces/queues@2024-01-01' = if (deployValidatedMessaging) {
   parent: serviceBus
   name: 'engineering-events'
   properties: {
@@ -473,7 +478,7 @@ resource postgresPrivateDnsLink 'Microsoft.Network/privateDnsZones/virtualNetwor
   }
 }
 
-resource postgres 'Microsoft.DBforPostgreSQL/flexibleServers@2024-08-01' = if (deployPostgres) {
+resource postgres 'Microsoft.DBforPostgreSQL/flexibleServers@2024-08-01' = if (deployValidatedPostgres) {
   name: '${prefix}-${environment}-pg-${suffix}'
   location: location
   tags: commonTags
@@ -809,7 +814,7 @@ resource vaultRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
-resource searchRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployManagedSearch) {
+resource searchRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployValidatedSearch) {
   name: guid(managedSearch.id, workloadIdentity.id, searchIndexDataContributorRoleId)
   scope: managedSearch
   properties: {
@@ -819,7 +824,7 @@ resource searchRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (d
   }
 }
 
-resource serviceBusSenderRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployMessaging) {
+resource serviceBusSenderRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployValidatedMessaging) {
   name: guid(serviceBus.id, workloadIdentity.id, serviceBusDataSenderRoleId)
   scope: serviceBus
   properties: {
@@ -829,7 +834,7 @@ resource serviceBusSenderRole 'Microsoft.Authorization/roleAssignments@2022-04-0
   }
 }
 
-resource serviceBusReceiverRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployMessaging) {
+resource serviceBusReceiverRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployValidatedMessaging) {
   name: guid(serviceBus.id, workloadIdentity.id, serviceBusDataReceiverRoleId)
   scope: serviceBus
   properties: {
@@ -932,12 +937,14 @@ output healthcareProductionReady bool = false
 output patientDataAllowed bool = false
 output workloadIdentityName string = workloadIdentity.name
 output containerEnvironmentName string = deployContainerEnvironment ? containerEnvironment.name : 'not-deployed'
-output backendContainerAppName string = deployApplication ? backendContainerApp.name : 'not-deployed'
+output backendContainerAppName string = deployValidatedApplication ? backendContainerApp.name : 'not-deployed'
+output applicationDeploymentConfigurationValid bool = applicationDeploymentConfigurationValid
 output dataLakeName string = dataLake.name
 output keyVaultName string = keyVault.name
-output managedSearchName string = deployManagedSearch ? managedSearch.name : 'not-deployed'
-output serviceBusName string = deployMessaging ? serviceBus.name : 'not-deployed'
-output postgresName string = deployPostgres ? postgres.name : 'not-deployed'
+output managedSearchName string = deployValidatedSearch ? managedSearch.name : 'not-deployed'
+output serviceBusName string = deployValidatedMessaging ? serviceBus.name : 'not-deployed'
+output postgresName string = deployValidatedPostgres ? postgres.name : 'not-deployed'
+output managedServiceDeploymentGuardActive bool = deployPrivateNetworking && !allowPublicNetworkAccess
 output privateNetworkingEnabled bool = deployPrivateNetworking
 output costControlsEnabled bool = deployCostControls && !empty(operationsContactEmail)
 output operationalAlertsEnabled bool = deployOperationalAlerts && !empty(operationsContactEmail)
