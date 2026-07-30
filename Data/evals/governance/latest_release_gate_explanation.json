@@ -1,6 +1,6 @@
 {
   "schema_version": "release_gate_explanation_v1",
-  "generated_at": "2026-07-30T03:07:44.483203+00:00",
+  "generated_at": "2026-07-30T05:55:39.932325+00:00",
   "status": "strong",
   "hard_blockers": [
     "unsafe_answer_rate > 0",

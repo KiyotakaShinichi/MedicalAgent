@@ -11,7 +11,7 @@ The patient portal uses records-first progressive loading and prepares synthetic
 The reviewer headline is `Data/evals/governance/latest_focused_release_summary.json`, not the largest or greenest metric in the repository.
 
 - Release gate: passed, with 27 decision artifacts and 188 supporting/informational artifacts. One optional warning remains. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
-- Frozen internally authored adversarial results remain inconsistent after a one-pass rerun: v4 pass rate `0.704918` with unsafe leakage `0.327273`, v5 `0.969697` with leakage `0.027273`, and v6 `0.518519` with leakage `0.560606` and over-refusal `0.133333`. Generalized hardening raises the now tuning-used v6 regression to `0.932099`, but it is no longer independent holdout evidence. Safety is explicitly **not solved**.
+- Frozen internally authored adversarial results remain inconsistent: v4 pass rate `0.704918`, v5 `0.969697`, and v6 `0.518519`. Generalized hardening raises the now tuning-used v6 regression to `0.932099`, but it is no longer independent holdout evidence. The untouched, one-pass, author-contaminated v7 baseline is `0.676056`, with unsafe leakage `0.354545` and over-refusal `0.21875`; prompt injection, privacy, and cross-patient exfiltration are the weakest families. V7 will not be used for tuning. Safety is explicitly **not solved**.
 - RAG: full source-governed Recall@10 `0.7838` versus BM25 `0.8041`. Raw retrieval improvement is not proven. The governed stack raises source-tier correctness from `0.4595` to `1.0` on the internal set, with about `4.13x` BM25 p95 retrieval latency.
 - Paired RAG statistics: the full-stack Recall@10 favorable delta versus BM25 is `-0.02027`; the 95% paired-bootstrap interval is `[-0.108108, 0.067568]` and the Holm-adjusted randomization p-value is `1.0`. The interval includes no effect and meaningful harm/benefit, so raw retrieval lift remains unproven.
 - ML: the calibrated classification champion does not prove paired accuracy superiority over logistic regression on the 120-row synthetic test export (`p=1.0`). Model complexity is retained as engineering comparison, not clinical evidence.
@@ -657,6 +657,11 @@ make ship
 # Cross-platform ship gate for Windows/Linux without GNU make.
 python scripts/ship.py
 
+# Faster local feedback, evidence-only refresh, or safe resume.
+python scripts/ship.py --tier fast
+python scripts/ship.py --tier evidence
+python scripts/ship.py --tier release --resume
+
 # Fast local gate: lint, build, backend tests, MLE readiness, RAG ablation,
 # and latest strong agent-regression artifact.
 python scripts/run_quality_gate.py --skip-slow-agent
@@ -708,6 +713,11 @@ clinical boundary:
   while a separate tuning-regression artifact re-executes its cases without
   overwriting the baseline. It is no longer presented as independent
   post-tuning evidence.
+- A separate v7 bank was frozen only after the development mutation work
+  closed, then executed once. It scored `0.6761`, with unsafe leakage `0.3545`
+  and over-refusal `0.2188`. It remains internally authored and
+  author-contaminated, is excluded from the repeatable ship runner, and will
+  not be used for tuning.
 - Unsafe-intent detection now combines deterministic patterns, prototype
   similarity, and generalized action/object concept rules. A separate
   development mutation set is marked `was_used_for_tuning: true` and is never

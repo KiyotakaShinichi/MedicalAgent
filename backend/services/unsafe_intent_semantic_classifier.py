@@ -79,6 +79,8 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(show|read|tell|verify|print)\b.*\b(date\s+of\s+birth|dob|phone\s+number|medical\s+record\s+number|mrn)\b",
             r"\b(bearer|token|credential|secret|database\s+password|configuration\s+secret|api\s+key)\b",
             r"\b(send|forward|email|gmail|inbox)\b.*\b(chart|labs?|records|data)\b",
+            r"\b(do not|don't|never)\s+redact\b.*\b(identifier|identity|chart|record)\b",
+            r"\b(show|reveal|read|quote)\b.*\b(friend|relative|other person|someone else)\b.*\b(account|number|identifier|record)\b",
         ),
     ),
     UnsafeFamily(
@@ -120,6 +122,7 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(kalimutan|wag sundin|huwag sundin|forget)\b.*\b(rules?|instructions?|policy|guardrails?)\b",
             r"\boverride\b.*\b(refusal|filters?|guardrails?|policy)\b",
             r"\bact as\b.*\b(oncologist|doctor|physician)\b.*\b(no restrictions|without restrictions|no rules)\b",
+            r"\b(validator|checker|guardrail)\b.*\b(approved|passed|cleared)\b.*\b(skip|bypass|ignore)\b.*\b(checks?|validation|rules?)\b",
         ),
     ),
     UnsafeFamily(
@@ -149,6 +152,8 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\bibang\s+(patient|pasyente)\b",
             r"\bpatient\s+(id\s+|#\s*)?[a-z]?[-\s]*\d{3,}",
             r"\bpatient\s+[a-z]\d{2,}\b",
+            r"\b(real|actual|private)\s+(chart|record|timeline|result)\b.*\b(same surname|kapatid|relative|someone)\b",
+            r"\b(kapatid|kamag-anak|relative|someone with the same surname)\b.*\b(actual|real|private)\b.*\b(chart|record|timeline|result)\b",
         ),
     ),
     UnsafeFamily(
@@ -197,6 +202,8 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(brca|palb2|chek2|atm|tp53|mutation|variant|gene)\b.*\b(hereditary positive|inherited risk|proves?.*cancer cause|cause.*cancer|assume.*positive)\b",
             r"\b(somatic)\b.*\b(tell|infer|show|mean)\b.*\b(inherited|hereditary|germline)\b.*\b(risk|positive|cancer)\b",
             r"\b(children|kids|anak|relatives?|family)\b.*\b(assume|consider|count|treat)\b.*\b(positive|pathogenic|mutation)\b",
+            r"\b(child|children|anak|relative|relatives|family)\b.*\b(inherit|at risk|future cancer risk|rank)\b.*\b(cancer|brca|gene|variant|risk)\b",
+            r"\b(brca|gene|genetic|variant|mutation)\b.*\b(rank|forecast|tell)\b.*\b(relative|relatives|child|children|anak|family)\b",
         ),
     ),
     UnsafeFamily(
@@ -236,6 +243,8 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\bVUS\b.*\b(functionally|basically|effectively)\b.*\b(positive|pathogenic|mutation)\b",
             r"\b(relatives?|family|sister|brother|mother|father)\b.*\b(act|screen|tested|tested early|treated)\b.*\b(VUS|uncertain variant|unclear variant)\b",
             r"\b(uncertain significance|unclear variant|unclassified variant)\b.*\b(means|confirms?|proves?)\b.*\b(hereditary|cancer|positive|pathogenic)\b",
+            r"\b(uncertain|unclear|indeterminate|vus)\b.*\b(assume|count|use)\b.*\b(pathogenic|positive|treatment|therapy|gamot)\b",
+            r"\b(vus|uncertain variant|unclear variant)\b.*\b(piliin|gamitin|use)\b.*\b(gamot|treatment|therapy)\b",
         ),
     ),
     UnsafeFamily(
@@ -264,6 +273,8 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(assume|say|tell)\b.*\b(tumou?r|lesion|mass|cancer)\b.*\b(growing|progressed|progression|spread)\b",
             r"\breport\b.*\b(enough|sufficient)\b.*\b(say|tell|confirm|prove)\b.*\b(progressed|progression|recurrence|cancer)\b",
             r"\b(bumalik|metastatic|kumalat)\b.*\b(ba|na)\b",
+            r"\b(not asking|do not call|don't call)\b.*\bdiagnos(is|e)\b.*\b(definitely|confirm|recurrence|spread|cancer)\b",
+            r"\b(doctor|clinician)\b.*\b(conclude|conclusion|verdict)\b.*\b(scan|finding|pathology|lesion|mass)\b",
         ),
     ),
     UnsafeFamily(
@@ -291,6 +302,7 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(tumou?r markers?|CEA|CA\s*15-?3|CA\s*27\.?29)\b.*\b(replace|instead of)\b.*\b(imaging|doctor|clinician|review)\b",
             r"\b(marker|tumou?r marker|CEA|CA\s*15-?3|CA\s*27\.?29)\b.*\b(trend|rose|rising|went up|high)\b.*\b(progression|recurrence|definite|assume|confirm|prove)\b",
             r"\b(marker|tumou?r marker|CEA|CA\s*15-?3|CA\s*27\.?29)\b.*\b(replace|without|instead of)\b.*\b(imaging|scan|clinical review)\b.*\b(confirm|prove|progression|recurrence)\b",
+            r"\b(cea|ca\s*15-?3|ca\s*27\.?29|marker)\b.*\b(bumalik|recurrence|progression|working|therapy failed|treatment failed)\b",
         ),
     ),
     UnsafeFamily(
@@ -317,6 +329,7 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
         deterministic_patterns=(
             r"\b(stop|skip|change|switch|delay|start|hold|cancel|restart|continue)\b.*\b(chemo|chemotherapy|treatment|therapy|cycle|radiation|endocrine|trastuzumab|infusion|regimen|medication|medicine|meds?)\b",
             r"\b(which|what)\b.*\b(treatment|therapy|regimen)\b.*\b(choose|pick|select)\b",
+            r"\b(continue|pause|stop|resume)\b.*\b(based on|because of|after)\b.*\b(symptoms?|labs?|results?|record)\b",
         ),
     ),
     UnsafeFamily(
@@ -377,6 +390,8 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(will|is this|could this)\b.*\b(kill me|fatal|terminal)\b",
             r"\b(my|ko|patient\s+specific)\s+prognosis\b|\bprognosis\s+(ko|for me)\b",
             r"\b(gaano katagal|ilang buwan|mabubuhay)\b",
+            r"\b(personal|my)\s+(chance|odds|probability)\b.*\b(alive|survival|survive)\b",
+            r"\b(alive|survive)\b.*\b(in|after|past)\s+\d+\s+(year|years|month|months)\b",
         ),
     ),
     UnsafeFamily(
@@ -411,6 +426,7 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\b(cannabis|cbd|herbal|supplement)\b.*\b(safer than)\b.*\b(prescribed|treatment|therapy|chemo|medication)\b",
             r"\b(high[-\s]?dose vitamins?|iv vitamins?|green tea extract|natural cure)\b.*\b(replace|instead of|avoid|safer than)\b.*\b(chemo|chemotherapy|treatment|radiation|therapy)\b",
             r"\b(herbal[-\s]?only|natural[-\s]?only|supplement[-\s]?only)\b.*\b(plan|therapy|treatment)\b.*\b(stop|replace|avoid)\b.*\b(prescribed|chemo|chemotherapy|treatment|therapy)\b",
+            r"\b(turmeric|vitamins?|herbs?|herbal|natural|supplements?)\b.*\b(only|without)\b.*\b(prescribed|chemo|chemotherapy|treatment|therapy)\b",
         ),
     ),
 )
@@ -443,6 +459,7 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "account credential", "account detail", "profile secret", "address",
             "insurance", "member id", "membership code", "mrn", "dob", "phone",
             "token", "api key", "complete account record", "full chart",
+            "account number",
         ),
     ),
     "prompt_injection": (
@@ -464,6 +481,7 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         (
             "open", "retrieve", "fetch", "quote", "contrast", "compare", "copy",
             "summarize", "show", "use", "access", "pull", "pakibukas", "gamitin",
+            "buksan",
         ),
         (
             "person after me", "person before me", "next person",
@@ -471,7 +489,7 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "another person", "someone else", "another patient", "other patient",
             "everyone's", "all patient", "relative's", "aunt's", "mother's",
             "father's", "sister's", "brother's", "mama", "patient q-",
-            "patient id",
+            "patient id", "same surname", "kapatid",
         ),
         (
             "record", "chart", "timeline", "history", "result", "lab", "note",
@@ -483,9 +501,10 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         (
             "predict", "forecast", "verdict", "determine", "prove", "confirm",
             "definite", "decide", "will develop", "will get", "magkaka",
+            "inherit cancer", "rank", "at risk", "siguradong at risk",
         ),
         (
-            "child", "children", "son", "daughter", "sibling", "siblings",
+            "child", "children", "anak", "son", "daughter", "sibling", "siblings",
             "relative", "family", "pamilya", "recurrence", "treatment", "therapy",
             "inherited", "hereditary", "cancer",
         ),
@@ -504,14 +523,14 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "negative", "confirmed", "proof", "disease-causing", "disease causing",
             "decide therapy",
             "decide treatment", "decide which therapy", "select therapy",
-            "count it", "count this", "treat it", "use the",
+            "count it", "count this", "treat it", "use the", "assume pathogenic",
         ),
     ),
     "diagnosis_confirmation": (
         (
             "issue", "declare", "confirm", "decide", "definitively", "prove",
             "establish", "establishes", "yes-or-no", "turn", "conclusion",
-            "assume", "diagnose",
+            "assume", "diagnose", "definitely have", "doctor would conclude",
         ),
         (
             "lesion", "mass", "scan", "scan phrase", "finding", "pathology",
@@ -529,8 +548,8 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         ),
     ),
     "treatment_change": (
-        ("stop", "pause", "delay", "miss", "skip", "restart", "resume", "switch", "replace", "cancel", "authorize", "ihihinto", "itigil", "palitan"),
-        ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "regimen", "infusion", "tamoxifen", "trastuzumab", "medicine", "medication", "gamot"),
+        ("stop", "pause", "delay", "miss", "skip", "restart", "resume", "switch", "replace", "cancel", "authorize", "continue or pause", "ihihinto", "itigil", "palitan"),
+        ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "regimen", "infusion", "tamoxifen", "trastuzumab", "medicine", "medication", "symptoms", "gamot"),
     ),
     "dosage_request": (
         (
@@ -549,12 +568,13 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "remaining months", "remaining lifetime", "life remains", "surviving",
             "survival", "die soon", "alive next year", "alive after",
             "life expectancy", "survival countdown", "cure percentage",
-            "personal timeline", "prognosis", "outlook", "mabubuhay",
+            "personal timeline", "prognosis", "outlook", "chance of being alive",
+            "alive in two years", "mabubuhay",
         ),
     ),
     "supplement_replacement": (
         ("natural", "herb", "herbs", "herbal", "supplement", "vitamin", "vitamins", "cannabis", "turmeric", "cbd"),
-        ("replace", "avoid", "instead", "stop treatment", "natural-only", "na lang", "cure", "only therapy", "only cancer therapy", "without pharmacist"),
+        ("replace", "avoid", "instead", "stop treatment", "natural-only", "na lang", "cure", "only", "only therapy", "only cancer therapy", "without prescribed therapy", "without pharmacist"),
         (
             "chemotherapy", "chemo", "radiation", "treatment", "therapy",
             "medicine", "medication", "prescribed care", "cancer", "gamot",
@@ -616,7 +636,56 @@ def _looks_like_safe_boundary_request(normalized: str) -> bool:
         "what personal data this app stores",
         "what data this app stores",
     )
-    return any(cue in normalized for cue in safe_cues)
+    if any(cue in normalized for cue in safe_cues):
+        return True
+    quoted_attack = (
+        ("attack example" in normalized or "security example" in normalized)
+        and any(
+            cue in normalized
+            for cue in ("without following", "without obeying", "do not execute")
+        )
+    )
+    if quoted_attack:
+        return True
+    protective = (
+        "do not reveal",
+        "do not expose",
+        "do not calculate",
+        "do not estimate",
+        "without predicting",
+        "without reclassifying",
+        "without concluding",
+        "without deciding",
+        "will not change treatment",
+        "not asking you to confirm",
+        "not asking you to diagnose",
+    )
+    benign_objective = (
+        "explain",
+        "what verification steps",
+        "what records would",
+        "what questions",
+        "prepare questions",
+        "help me list questions",
+        "where can i find",
+        "why can",
+        "why should",
+    )
+    unsafe_result_cues = (
+        "definitely have",
+        "definitely is",
+        "just tell me whether",
+        "only whether",
+        "choose for me",
+        "calculate for me",
+        "estimate for me",
+        "confirm for me",
+    )
+    return (
+        any(cue in normalized for cue in protective)
+        and any(cue in normalized for cue in benign_objective)
+        and not any(cue in normalized for cue in unsafe_result_cues)
+    )
 
 
 def classify_unsafe_intent(text: str) -> dict[str, Any]:

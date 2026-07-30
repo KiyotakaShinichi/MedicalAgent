@@ -1,17 +1,17 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-07-30T04:03:37.494254+00:00",
+  "generated_at": "2026-07-30T05:56:11.264334+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "release_gate": {
     "status": "passed",
-    "artifact_count": 215,
+    "artifact_count": 219,
     "hard_blocker_failure_count": 0,
     "appendix_warning_count": 1,
     "required_artifact_count": 27,
-    "optional_artifact_count": 188,
-    "optional_artifact_ratio": 0.8744,
+    "optional_artifact_count": 192,
+    "optional_artifact_ratio": 0.8767,
     "optional_issue_count": 1,
     "failures": []
   },
@@ -42,7 +42,10 @@
       "holdout_v6_pass_rate": 0.518519,
       "holdout_v6_unsafe_leakage_rate": 0.560606,
       "holdout_v6_over_refusal_rate": 0.133333,
-      "canonical_headline": "Frozen internal v6 is the newest one-pass warning; it is not a tuning set.",
+      "holdout_v7_pass_rate": 0.676056,
+      "holdout_v7_unsafe_leakage_rate": 0.354545,
+      "holdout_v7_over_refusal_rate": 0.21875,
+      "canonical_headline": "Frozen internal v7 is the newest one-pass, author-contaminated warning and must not be used for tuning.",
       "not_solved": true
     },
     "xai_mechanics": {
@@ -76,7 +79,7 @@
     "retrieval_runtime_cache": {
       "status": "improved_local_regression",
       "local_regression_improvement_observed": true,
-      "retrieval_p95_delta_ms": -1740.32,
+      "retrieval_p95_delta_ms": -1722.07,
       "dense_unique_query_latency_measured": false,
       "production_ready": false
     },
@@ -84,7 +87,10 @@
       "status": "blocked_configuration",
       "completed": false,
       "paired_request_count": 0,
-      "actual_usage_coverage_rate": 0.0
+      "actual_usage_coverage_rate": 0.0,
+      "capture_readiness_status": "ready_for_nonpatient_provider_capture",
+      "capture_fixture_passed_count": 6,
+      "real_provider_observations_collected": 0
     },
     "deployment_profile": {
       "status": "development_profile",
@@ -138,13 +144,19 @@
           ]
         },
         "bootstrap_resamples": 300
-      }
+      },
+      "canonical_feature_policy_id": "synthetic_proxy_removed_promotion_v1",
+      "removed_direct_proxies": [
+        "mri_percent_change_from_baseline"
+      ]
     },
     "synthetic_staging_resilience": {
       "status": "strong_local_only_external_blocked",
-      "local_checks": "6/6",
+      "local_checks": "7/7",
       "unresolved_external_or_managed_blockers": 5,
-      "managed_cloud_drill_completed": false
+      "managed_cloud_drill_completed": false,
+      "disposable_runtime_readiness_status": "ready_for_disposable_synthetic_runtime",
+      "disposable_runtime_started": false
     },
     "recovery": {
       "status": "strong_local_only",
@@ -160,6 +172,7 @@
     "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
     "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
     "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+    "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
     "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
     "Data/evals/models/latest_synthetic_v2_model_stability.json",
     "Data/evals/models/latest_ispy2_tcia_external_stress.json",
@@ -168,8 +181,11 @@
     "Data/evals/ops/latest_deployment_recovery_drill.json",
     "Data/evals/ops/latest_retrieval_runtime_cache_eval.json",
     "Data/evals/ops/latest_provider_usage_reconciliation.json",
+    "Data/evals/ops/latest_provider_usage_capture_readiness.json",
     "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
+    "Data/evals/models/latest_synthetic_feature_policy.json",
     "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
+    "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
     "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json"
   ],
   "registry_health": {
@@ -185,7 +201,7 @@
     "The I-SPY2 pCR benchmark is target-mismatched and cannot validate or promote NLCare model heads.",
     "The 5,000-prompt perfect result is an internal tuning-used regression bank, not independent robustness evidence.",
     "No clinician, genetic counselor, or external-author review has been completed.",
-    "Frozen internal v6 scored 0.5185 with unsafe leakage 0.5606; it is the newest safety warning and must not be tuned against in this pass.",
+    "Frozen internal v7 scored 0.6761 with unsafe leakage 0.3545 and over-refusal 0.2188; it is author-contaminated, one-pass evidence and must not be tuned against.",
     "The exact transitive dependency lock covers CPython 3.14/Windows only and has no vulnerability scan.",
     "Automation durability controls are code-tested, but live n8n/channel reliability is untested.",
     "Route percentile labels require at least 30 samples; smaller samples are insufficient, not ideal.",

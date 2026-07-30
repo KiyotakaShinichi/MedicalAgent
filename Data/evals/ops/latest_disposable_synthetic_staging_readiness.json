@@ -1,0 +1,69 @@
+{
+  "schema_version": "disposable_synthetic_staging_readiness_v1",
+  "generated_at": "2026-07-30T05:50:13.445357+00:00",
+  "status": "ready_for_disposable_synthetic_runtime",
+  "compose_path": "docker-compose.synthetic-staging.yml",
+  "services": [
+    "backend",
+    "frontend",
+    "mailhog",
+    "n8n",
+    "postgres",
+    "redis",
+    "worker"
+  ],
+  "checks": [
+    {
+      "check_id": "required_services_defined",
+      "passed": true
+    },
+    {
+      "check_id": "all_published_ports_loopback_only",
+      "passed": true
+    },
+    {
+      "check_id": "backend_and_worker_synthetic_only",
+      "passed": true
+    },
+    {
+      "check_id": "external_automation_delivery_disabled",
+      "passed": true
+    },
+    {
+      "check_id": "managed_vector_network_disabled",
+      "passed": true
+    },
+    {
+      "check_id": "managed_vector_shadow_disabled",
+      "passed": true
+    },
+    {
+      "check_id": "stateful_services_have_healthchecks",
+      "passed": true
+    },
+    {
+      "check_id": "named_disposable_state_volumes",
+      "passed": true
+    }
+  ],
+  "passed_count": 8,
+  "check_count": 8,
+  "compose_validation": {
+    "available": true,
+    "executed": true,
+    "valid": true,
+    "exit_code": 0,
+    "stderr_tail": ""
+  },
+  "runtime_started": false,
+  "runtime_healthchecks_completed": false,
+  "postgres_restore_drill_completed": false,
+  "n8n_workflow_import_completed": false,
+  "mailhog_delivery_receipt_completed": false,
+  "managed_vector_network_call_completed": false,
+  "real_external_delivery_completed": false,
+  "patient_data_processed": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This artifact validates a disposable loopback-only synthetic staging definition and, when Docker is available, compose syntax. It does not prove a running deployment, managed-cloud resilience, real external delivery, patient-data handling, clinical validation, or production healthcare readiness."
+}

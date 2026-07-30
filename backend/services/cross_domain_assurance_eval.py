@@ -295,14 +295,14 @@ def _warning_visibility(root: Path) -> dict[str, Any]:
     joined = " ".join(warnings).lower()
     passed = (
         "recall@10 improvement over bm25" in joined
-        and "frozen internal v6 scored 0.5185" in joined
+        and "frozen internal v7 scored 0.6761" in joined
         and "all ml results remain synthetic-only" in joined
     )
     return {
         "passed": passed,
         "warning_count": len(warnings),
         "rag_negative_visible": "recall@10 improvement over bm25" in joined,
-        "frozen_adversarial_warning_visible": "frozen internal v6 scored 0.5185"
+        "frozen_adversarial_warning_visible": "frozen internal v7 scored 0.6761"
         in joined,
         "synthetic_ml_boundary_visible": "all ml results remain synthetic-only"
         in joined,

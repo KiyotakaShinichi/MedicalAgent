@@ -16,9 +16,11 @@ from sklearn.metrics import brier_score_loss, mean_absolute_error, roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from backend.services.complete_synthetic_training import (
+from backend.services.synthetic_feature_policy import (
     CATEGORICAL_FEATURES,
-    NUMERIC_FEATURES,
+    CANONICAL_PROMOTION_NUMERIC_FEATURES,
+    LEGACY_NUMERIC_FEATURES,
+    POLICY_ID,
 )
 
 
@@ -32,9 +34,9 @@ DEFAULT_OUTPUT_PATH = Path(
     "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json"
 )
 DIRECT_RESPONSE_PROXY = "mri_percent_change_from_baseline"
-GUARDED_NUMERIC_FEATURES = [
-    feature for feature in NUMERIC_FEATURES if feature != DIRECT_RESPONSE_PROXY
-]
+NUMERIC_FEATURES = list(LEGACY_NUMERIC_FEATURES)
+GUARDED_NUMERIC_FEATURES = list(CANONICAL_PROMOTION_NUMERIC_FEATURES)
+CATEGORICAL_FEATURES = list(CATEGORICAL_FEATURES)
 SEED = 42
 
 CLAIM_BOUNDARY = (
@@ -155,6 +157,7 @@ def build_synthetic_model_perturbation_retrain_eval(
             "patient_overlap_between_train_and_test": 0,
         },
         "feature_policies": {
+            "canonical_promotion_policy_id": POLICY_ID,
             "existing_full_feature_policy": {
                 "numeric_features": NUMERIC_FEATURES,
                 "metrics": full_clean,
@@ -168,6 +171,7 @@ def build_synthetic_model_perturbation_retrain_eval(
                 "numeric_features": GUARDED_NUMERIC_FEATURES,
                 "metrics": guarded_clean,
                 "direct_response_proxy_present": False,
+                "canonical_for_promotion_evaluation": True,
                 "delta_vs_full": _metric_deltas(full_clean, guarded_clean),
             },
         },

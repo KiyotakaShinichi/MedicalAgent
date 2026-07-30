@@ -1,0 +1,52 @@
+{
+  "schema_version": "provider_usage_capture_readiness_v1",
+  "generated_at": "2026-07-30T05:45:55.888624+00:00",
+  "status": "ready_for_nonpatient_provider_capture",
+  "checks": [
+    {
+      "check_id": "provider_usage_fixture_parsed",
+      "passed": true
+    },
+    {
+      "check_id": "provider_usage_fixture_recorded",
+      "passed": true
+    },
+    {
+      "check_id": "telemetry_retains_no_content",
+      "passed": true
+    },
+    {
+      "check_id": "cost_report_has_reconciliation_fields",
+      "passed": true
+    },
+    {
+      "check_id": "live_provider_wrappers_call_usage_extractor",
+      "passed": true
+    },
+    {
+      "check_id": "reconciliation_keeps_estimates_separate",
+      "passed": true
+    }
+  ],
+  "passed_count": 6,
+  "check_count": 6,
+  "provider_credentials_configured": false,
+  "configured_provider_names": [],
+  "provider_call_performed_by_this_artifact": false,
+  "synthetic_fixture_call_count": 1,
+  "real_provider_observations_collected": 0,
+  "paired_request_count": 0,
+  "required_paired_request_count": 30,
+  "required_actual_usage_coverage_rate": 0.8,
+  "reconciliation_completed": false,
+  "capture_protocol": [
+    "Configure one supported provider credential outside source control.",
+    "Run 30 or more non-patient test prompts through the normal API path.",
+    "Do not log prompt or response content in telemetry artifacts.",
+    "Refresh the cost/latency report, then rerun provider reconciliation.",
+    "Report provider counts separately from local token estimates."
+  ],
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This artifact proves local telemetry plumbing with a synthetic usage fixture. It does not perform a provider call, spend quota, establish billing truth, complete the 30-call reconciliation, validate clinical behavior, or establish production healthcare readiness."
+}

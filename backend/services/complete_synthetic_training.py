@@ -33,35 +33,23 @@ from sklearn.svm import SVC, SVR
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
+from backend.services.synthetic_feature_policy import (
+    CATEGORICAL_FEATURES as POLICY_CATEGORICAL_FEATURES,
+    CANONICAL_PROMOTION_NUMERIC_FEATURES,
+    LEGACY_NUMERIC_FEATURES,
+    POLICY_ID as PROMOTION_FEATURE_POLICY_ID,
+)
 
 DEFAULT_ML_CSV_PATH = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
 DEFAULT_OUTPUT_DIR = "Data/complete_synthetic_training"
 RESPONSE_REGRESSION_TARGET = "response_score_percent"
 
-NUMERIC_FEATURES = [
-    "cycle",
-    "age",
-    "pre_wbc",
-    "pre_anc",
-    "pre_hemoglobin",
-    "pre_platelets",
-    "nadir_wbc",
-    "nadir_anc",
-    "nadir_hemoglobin",
-    "nadir_platelets",
-    "recovery_wbc",
-    "recovery_hemoglobin",
-    "recovery_platelets",
-    "mri_tumor_size_cm",
-    "mri_percent_change_from_baseline",
-    "max_symptom_severity",
-    "symptom_count",
-    "intervention_count",
-    "dose_delayed",
-    "dose_reduced",
-]
-
-CATEGORICAL_FEATURES = ["stage", "molecular_subtype", "regimen"]
+# Backward-compatible aliases for serialized legacy artifacts. New promotion
+# experiments must use ``PROMOTION_NUMERIC_FEATURES`` and declare
+# ``PROMOTION_FEATURE_POLICY_ID``.
+NUMERIC_FEATURES = list(LEGACY_NUMERIC_FEATURES)
+PROMOTION_NUMERIC_FEATURES = list(CANONICAL_PROMOTION_NUMERIC_FEATURES)
+CATEGORICAL_FEATURES = list(POLICY_CATEGORICAL_FEATURES)
 ROW_LEVEL_TARGETS = {
     "toxicity_risk_binary",
     "support_intervention_needed",

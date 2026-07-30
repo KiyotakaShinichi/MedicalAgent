@@ -1,0 +1,138 @@
+name: nlcare-synthetic-staging
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: nlcare_synthetic
+      POSTGRES_USER: nlcare_synthetic
+      POSTGRES_PASSWORD: local-synthetic-only
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - staging_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nlcare_synthetic -d nlcare_synthetic"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "127.0.0.1:56379:6379"
+    volumes:
+      - staging_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    environment:
+      APP_ENV: synthetic_staging
+      NLCARE_SYNTHETIC_ONLY: "true"
+      DATABASE_URL: postgresql+psycopg2://nlcare_synthetic:local-synthetic-only@postgres:5432/nlcare_synthetic
+      REDIS_URL: redis://redis:6379/0
+      N8N_WEBHOOK_DISPATCH_ENABLED: "false"
+      N8N_WEBHOOK_BASE_URL: http://n8n:5678/webhook/nlcare
+      N8N_WEBHOOK_SIGNING_SECRET: local-synthetic-signing-secret-change-me
+      NLCARE_MANAGED_VECTOR_SHADOW_ENABLED: "false"
+      NLCARE_MANAGED_VECTOR_ALLOW_NETWORK: "false"
+      PINECONE_API_KEY: ""
+      AZURE_SEARCH_API_KEY: ""
+    ports:
+      - "127.0.0.1:8017:8017"
+    volumes:
+      - ./Data:/app/Data
+      - ./KnowledgeBase:/app/KnowledgeBase:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8017/health', timeout=3).read()"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+
+  worker:
+    build: .
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    environment:
+      APP_ENV: synthetic_staging
+      NLCARE_SYNTHETIC_ONLY: "true"
+      DATABASE_URL: postgresql+psycopg2://nlcare_synthetic:local-synthetic-only@postgres:5432/nlcare_synthetic
+      REDIS_URL: redis://redis:6379/0
+      N8N_WEBHOOK_DISPATCH_ENABLED: "false"
+      N8N_WEBHOOK_BASE_URL: http://n8n:5678/webhook/nlcare
+      N8N_WEBHOOK_SIGNING_SECRET: local-synthetic-signing-secret-change-me
+      NLCARE_MANAGED_VECTOR_SHADOW_ENABLED: "false"
+      NLCARE_MANAGED_VECTOR_ALLOW_NETWORK: "false"
+    volumes:
+      - ./Data:/app/Data
+      - ./KnowledgeBase:/app/KnowledgeBase:ro
+    command: ["python", "scripts/run_task_worker.py", "--poll-seconds", "5"]
+
+  frontend:
+    image: node:20-alpine
+    depends_on:
+      backend:
+        condition: service_healthy
+    working_dir: /app
+    environment:
+      VITE_API_BASE_URL: http://127.0.0.1:8017
+    volumes:
+      - ./frontend-react:/app
+      - staging_node_modules:/app/node_modules
+    ports:
+      - "127.0.0.1:5173:5173"
+    command: ["sh", "-c", "npm ci && npm run dev -- --host 0.0.0.0"]
+
+  n8n:
+    image: n8nio/n8n:1.99.1
+    environment:
+      N8N_HOST: 0.0.0.0
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      N8N_SECURE_COOKIE: "false"
+      N8N_ENCRYPTION_KEY: local-synthetic-only-change-before-shared-use
+      N8N_WEBHOOK_SIGNING_SECRET: local-synthetic-signing-secret-change-me
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      NODE_FUNCTION_ALLOW_BUILTIN: crypto
+      GENERIC_TIMEZONE: Asia/Manila
+      TZ: Asia/Manila
+    ports:
+      - "127.0.0.1:5678:5678"
+    volumes:
+      - staging_n8n:/home/node/.n8n
+      - ./infra/n8n:/workflows:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5678/healthz >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+
+volumes:
+  staging_postgres:
+  staging_redis:
+  staging_node_modules:
+  staging_n8n:

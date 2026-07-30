@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_staging_resilience_dossier_v1",
-  "generated_at": "2026-07-30T04:02:31.503554+00:00",
+  "generated_at": "2026-07-30T05:50:15.055308+00:00",
   "status": "strong_local_only_external_blocked",
   "local_checks": [
     {
@@ -32,10 +32,15 @@
       "check_id": "compose_static_validation",
       "passed": true,
       "evidence_scope": "static_only"
+    },
+    {
+      "check_id": "unified_disposable_staging_static_validation",
+      "passed": true,
+      "evidence_scope": "static_only"
     }
   ],
-  "local_passed_count": 6,
-  "local_check_count": 6,
+  "local_passed_count": 7,
+  "local_check_count": 7,
   "external_or_managed_blockers": [
     {
       "id": "container_runtime_drill",
@@ -73,7 +78,7 @@
     "automation_channel_drill": {
       "path": "Data/evals/ops/latest_automation_channel_drill.json",
       "status": "strong",
-      "generated_at": "2026-07-30T03:59:29.500200+00:00"
+      "generated_at": "2026-07-30T05:47:24.445537+00:00"
     },
     "deployment_recovery_drill": {
       "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
@@ -83,7 +88,7 @@
     "data_platform_reliability": {
       "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
       "status": "strong_offline_drill",
-      "generated_at": "2026-07-30T03:52:26.937112+00:00"
+      "generated_at": "2026-07-30T05:41:27.652950+00:00"
     },
     "container_recovery_smoke": {
       "path": "Data/evals/ops/latest_container_recovery_smoke.json",
@@ -93,17 +98,22 @@
     "managed_vector_shadow_sync": {
       "path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
       "status": "ready_for_opt_in_shadow_sync",
-      "generated_at": "2026-07-30T03:52:29.046940+00:00"
+      "generated_at": "2026-07-30T05:41:36.162377+00:00"
     },
     "managed_vector_shadow_comparison": {
       "path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
       "status": "ready_for_managed_shadow_run",
-      "generated_at": "2026-07-30T03:52:38.148984+00:00"
+      "generated_at": "2026-07-30T05:41:48.741400+00:00"
     },
     "automation_staging_readiness": {
       "path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
       "status": "ready_for_synthetic_runtime",
-      "generated_at": "2026-07-30T03:59:34.894831+00:00"
+      "generated_at": "2026-07-30T05:47:29.765114+00:00"
+    },
+    "disposable_staging_readiness": {
+      "path": "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
+      "status": "ready_for_disposable_synthetic_runtime",
+      "generated_at": "2026-07-30T05:50:13.445357+00:00"
     }
   },
   "staging_runtime_completed": false,

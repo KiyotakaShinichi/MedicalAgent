@@ -1,0 +1,79 @@
+{
+  "schema_version": "synthetic_feature_policy_v1",
+  "generated_at": "2026-07-30T05:47:49.751629+00:00",
+  "status": "canonical_for_synthetic_promotion_evaluation",
+  "policy_id": "synthetic_proxy_removed_promotion_v1",
+  "clinical_validation": false,
+  "production_ready": false,
+  "canonical_scope": [
+    "synthetic model promotion comparisons",
+    "synthetic perturbation and retraining evaluations",
+    "new synthetic champion-candidate training"
+  ],
+  "legacy_scope": {
+    "feature_policy": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "mri_percent_change_from_baseline",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced"
+    ],
+    "allowed_use": "backward-compatible monitor-only artifact replay",
+    "promotion_eligible": false
+  },
+  "canonical_promotion_policy": {
+    "numeric_features": [
+      "cycle",
+      "age",
+      "pre_wbc",
+      "pre_anc",
+      "pre_hemoglobin",
+      "pre_platelets",
+      "nadir_wbc",
+      "nadir_anc",
+      "nadir_hemoglobin",
+      "nadir_platelets",
+      "recovery_wbc",
+      "recovery_hemoglobin",
+      "recovery_platelets",
+      "mri_tumor_size_cm",
+      "max_symptom_severity",
+      "symptom_count",
+      "intervention_count",
+      "dose_delayed",
+      "dose_reduced"
+    ],
+    "categorical_features": [
+      "stage",
+      "molecular_subtype",
+      "regimen"
+    ],
+    "removed_features": [
+      "mri_percent_change_from_baseline"
+    ],
+    "direct_or_near_direct_target_proxies": {
+      "response_score_percent": [
+        "mri_percent_change_from_baseline"
+      ]
+    },
+    "promotion_eligible": true,
+    "promotion_boundary": "synthetic engineering promotion only"
+  },
+  "migration_rule": "Existing serialized models remain readable but cannot be promoted. A newly trained candidate must declare this policy_id and pass the leakage, shortcut, calibration, subgroup, perturbation, and cross-generator gates before synthetic-only promotion.",
+  "claim_boundary": "This policy governs simulator-built engineering experiments only. Removing a direct target proxy improves evidence hygiene but does not establish clinical validity, real-patient generalization, treatment utility, patient benefit, or production healthcare readiness."
+}

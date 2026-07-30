@@ -1,6 +1,6 @@
 {
   "schema_version": "evidence_maturity_matrix_v1",
-  "generated_at": "2026-07-30T04:02:35.690411+00:00",
+  "generated_at": "2026-07-30T05:56:08.215440+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -37,8 +37,8 @@
       "dimension": "AIE/adversarial safety",
       "current_evidence_tier": 3,
       "tier_label": "frozen_internal_with_contamination_controls",
-      "what_is_proven": "Frozen internal adversarial and safe-negative controls.",
-      "what_is_not_proven": "Unsafe leakage remains 0.07272727272727275; external authorship is absent.",
+      "what_is_proven": "One-pass frozen internal v7 with explicit author-contamination disclosure, plus separate tuning-only development and safe-negative controls.",
+      "what_is_not_proven": "V7 unsafe leakage=0.354545 and over-refusal=0.21875; the result is weak and external authorship is absent.",
       "next_falsifiable_evidence": "External mutation/red-team bank passes predeclared thresholds without tuning."
     },
     {
@@ -116,33 +116,12 @@
   ],
   "architecture_maintainability": {
     "budget_status": "needs_attention",
-    "oversized_file_count": 11,
+    "oversized_file_count": 8,
     "critical_file_count": 0,
-    "backend_service_file_count": 364,
-    "test_file_count": 202,
-    "test_to_service_file_ratio": 0.5549,
+    "backend_service_file_count": 373,
+    "test_file_count": 206,
+    "test_to_service_file_ratio": 0.5523,
     "largest_violations": [
-      {
-        "path": "backend/api/routers/patient.py",
-        "line_count": 1729,
-        "severity": "warning",
-        "warning_threshold": 1000,
-        "critical_threshold": 1800
-      },
-      {
-        "path": "backend/services/support_chat_agent.py",
-        "line_count": 1723,
-        "severity": "warning",
-        "warning_threshold": 1000,
-        "critical_threshold": 1800
-      },
-      {
-        "path": "backend/services/admin_analytics.py",
-        "line_count": 1708,
-        "severity": "warning",
-        "warning_threshold": 1000,
-        "critical_threshold": 1800
-      },
       {
         "path": "scripts/generate_project_guide_pdf.py",
         "line_count": 1468,
@@ -173,7 +152,7 @@
       },
       {
         "path": "backend/services/complete_synthetic_training.py",
-        "line_count": 1050,
+        "line_count": 1038,
         "severity": "warning",
         "warning_threshold": 1000,
         "critical_threshold": 1800

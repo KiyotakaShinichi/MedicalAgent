@@ -36,6 +36,9 @@ SOURCES = {
     "automation_staging_readiness": Path(
         "Data/evals/ops/latest_synthetic_automation_staging_readiness.json"
     ),
+    "disposable_staging_readiness": Path(
+        "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json"
+    ),
 }
 
 CLAIM_BOUNDARY = (
@@ -99,6 +102,19 @@ def build_synthetic_staging_resilience_dossier(
             "static_only",
         ),
     ]
+    if "disposable_staging_readiness" in artifacts:
+        checks.append(
+            _check(
+                "unified_disposable_staging_static_validation",
+                artifacts["disposable_staging_readiness"].get("status")
+                == "ready_for_disposable_synthetic_runtime"
+                and artifacts["disposable_staging_readiness"].get(
+                    "runtime_started"
+                )
+                is False,
+                "static_only",
+            )
+        )
     local_passed = sum(check["passed"] for check in checks)
     blockers = [
         {

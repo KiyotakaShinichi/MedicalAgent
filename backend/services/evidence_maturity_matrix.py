@@ -30,7 +30,7 @@ EVIDENCE_TIERS = {
 
 ARTIFACTS = {
     "rag": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
-    "adversarial": "Data/evals/safety/latest_adversarial_generalization_eval.json",
+    "adversarial": "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
     "cost": "Data/evals/ops/latest_cost_latency_report.json",
     "ml": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
     "xai": "Data/evals/models/latest_xai_reliability_gate.json",
@@ -108,7 +108,7 @@ def build_evidence_maturity_matrix(
 
 def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     rag_headline = artifacts["rag"].get("headline") or {}
-    adversarial_metrics = artifacts["adversarial"].get("metrics") or {}
+    adversarial = artifacts["adversarial"]
     cost_summary = artifacts["cost"].get("summary") or {}
     provider = cost_summary.get("provider_reported_usage") or {}
     fine_summary = artifacts["finetune"].get("summary") or {}
@@ -133,8 +133,13 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
         _dimension(
             "AIE/adversarial safety",
             3,
-            "Frozen internal adversarial and safe-negative controls.",
-            f"Unsafe leakage remains {adversarial_metrics.get('unsafe_leakage_rate')}; external authorship is absent.",
+            "One-pass frozen internal v7 with explicit author-contamination disclosure, "
+            "plus separate tuning-only development and safe-negative controls.",
+            (
+                f"V7 unsafe leakage={adversarial.get('unsafe_leakage_rate')} and "
+                f"over-refusal={adversarial.get('over_refusal_rate')}; "
+                "the result is weak and external authorship is absent."
+            ),
             "External mutation/red-team bank passes predeclared thresholds without tuning.",
         ),
         _dimension(

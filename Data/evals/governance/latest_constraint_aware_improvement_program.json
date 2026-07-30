@@ -1,6 +1,6 @@
 {
   "schema_version": "constraint_aware_improvement_program_v1",
-  "generated_at": "2026-07-30T04:03:24.681960+00:00",
+  "generated_at": "2026-07-30T05:56:06.702562+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "clinical_validation": false,
@@ -13,7 +13,7 @@
       "evidence_state": "needs_attention",
       "canonical_check_count": 4,
       "attention_check_ids": [
-        "frozen_adversarial_v6"
+        "frozen_adversarial_v7"
       ],
       "objective": "Prefer the simplest governed retrieval and routing policy that survives frozen evaluation.",
       "implemented_controls": [

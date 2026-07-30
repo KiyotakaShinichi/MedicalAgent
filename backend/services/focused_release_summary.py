@@ -36,6 +36,7 @@ def build_report() -> dict[str, Any]:
     holdout = _load("Data/evals/safety/latest_adversarial_holdout_v4_baseline.json")
     holdout_v5 = _load("Data/evals/safety/latest_adversarial_holdout_v5_baseline.json")
     holdout_v6 = _load("Data/evals/safety/latest_adversarial_holdout_v6_baseline.json")
+    holdout_v7 = _load("Data/evals/safety/latest_adversarial_holdout_v7_baseline.json")
     load = _load("Data/evals/ops/latest_load_test_report.json")
     runtime = _load("Data/evals/ops/latest_runtime_quality_sentinel.json")
     deployment = _load("Data/evals/ops/latest_deployment_profile_validation.json")
@@ -51,6 +52,9 @@ def build_report() -> dict[str, Any]:
     registry = _load("Data/evals/benchmark/latest_benchmark_summary.json")
     retrieval_cache = _load("Data/evals/ops/latest_retrieval_runtime_cache_eval.json")
     provider_usage = _load("Data/evals/ops/latest_provider_usage_reconciliation.json")
+    provider_capture = _load(
+        "Data/evals/ops/latest_provider_usage_capture_readiness.json"
+    )
     finetune_adjudication = _load(
         "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json"
     )
@@ -59,6 +63,12 @@ def build_report() -> dict[str, Any]:
     )
     staging_resilience = _load(
         "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json"
+    )
+    disposable_staging = _load(
+        "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json"
+    )
+    feature_policy = _load(
+        "Data/evals/models/latest_synthetic_feature_policy.json"
     )
 
     baseline_summary = rag.get("summary") or {}
@@ -113,7 +123,13 @@ def build_report() -> dict[str, Any]:
                 "holdout_v6_pass_rate": holdout_v6.get("pass_rate"),
                 "holdout_v6_unsafe_leakage_rate": holdout_v6.get("unsafe_leakage_rate"),
                 "holdout_v6_over_refusal_rate": holdout_v6.get("over_refusal_rate"),
-                "canonical_headline": "Frozen internal v6 is the newest one-pass warning; it is not a tuning set.",
+                "holdout_v7_pass_rate": holdout_v7.get("pass_rate"),
+                "holdout_v7_unsafe_leakage_rate": holdout_v7.get("unsafe_leakage_rate"),
+                "holdout_v7_over_refusal_rate": holdout_v7.get("over_refusal_rate"),
+                "canonical_headline": (
+                    "Frozen internal v7 is the newest one-pass, author-contaminated "
+                    "warning and must not be used for tuning."
+                ),
                 "not_solved": True,
             },
             "xai_mechanics": {
@@ -164,6 +180,11 @@ def build_report() -> dict[str, Any]:
                 "actual_usage_coverage_rate": provider_usage.get(
                     "actual_usage_coverage_rate"
                 ),
+                "capture_readiness_status": provider_capture.get("status"),
+                "capture_fixture_passed_count": provider_capture.get("passed_count"),
+                "real_provider_observations_collected": provider_capture.get(
+                    "real_provider_observations_collected"
+                ),
             },
             "deployment_profile": {
                 "status": deployment.get("status"),
@@ -199,6 +220,13 @@ def build_report() -> dict[str, Any]:
                 "guarded_feature_policy": _metric(
                     perturbation, "feature_policies", "guarded_primary_policy", "metrics"
                 ),
+                "canonical_feature_policy_id": feature_policy.get("policy_id"),
+                "removed_direct_proxies": _metric(
+                    feature_policy,
+                    "canonical_promotion_policy",
+                    "removed_features",
+                    default=[],
+                ),
             },
             "synthetic_staging_resilience": {
                 "status": staging_resilience.get("status"),
@@ -210,6 +238,10 @@ def build_report() -> dict[str, Any]:
                     "unresolved_external_or_managed_blocker_count"
                 ),
                 "managed_cloud_drill_completed": False,
+                "disposable_runtime_readiness_status": disposable_staging.get("status"),
+                "disposable_runtime_started": disposable_staging.get(
+                    "runtime_started", False
+                ),
             },
             "recovery": {
                 "status": recovery.get("status"),
@@ -225,6 +257,7 @@ def build_report() -> dict[str, Any]:
             "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
             "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
             "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+            "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
             "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
             "Data/evals/models/latest_synthetic_v2_model_stability.json",
             "Data/evals/models/latest_ispy2_tcia_external_stress.json",
@@ -233,8 +266,11 @@ def build_report() -> dict[str, Any]:
             "Data/evals/ops/latest_deployment_recovery_drill.json",
             "Data/evals/ops/latest_retrieval_runtime_cache_eval.json",
             "Data/evals/ops/latest_provider_usage_reconciliation.json",
+            "Data/evals/ops/latest_provider_usage_capture_readiness.json",
             "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
+            "Data/evals/models/latest_synthetic_feature_policy.json",
             "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
+            "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
             "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json",
         ],
         "registry_health": {
@@ -250,7 +286,7 @@ def build_report() -> dict[str, Any]:
             "The I-SPY2 pCR benchmark is target-mismatched and cannot validate or promote NLCare model heads.",
             "The 5,000-prompt perfect result is an internal tuning-used regression bank, not independent robustness evidence.",
             "No clinician, genetic counselor, or external-author review has been completed.",
-            "Frozen internal v6 scored 0.5185 with unsafe leakage 0.5606; it is the newest safety warning and must not be tuned against in this pass.",
+            "Frozen internal v7 scored 0.6761 with unsafe leakage 0.3545 and over-refusal 0.2188; it is author-contaminated, one-pass evidence and must not be tuned against.",
             "The exact transitive dependency lock covers CPython 3.14/Windows only and has no vulnerability scan.",
             "Automation durability controls are code-tested, but live n8n/channel reliability is untested.",
             "Route percentile labels require at least 30 samples; smaller samples are insufficient, not ideal.",

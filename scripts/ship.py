@@ -5,6 +5,8 @@ stops on the first failed command and returns that command's exit code.
 """
 from __future__ import annotations
 
+import argparse
+import hashlib
 import os
 import json
 import subprocess
@@ -19,6 +21,19 @@ ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "frontend-react"
 SHIP_MANIFEST = ROOT / "Data" / "evals" / "ops" / "latest_ship_run.json"
 DEFAULT_STEP_TIMEOUT_SECONDS = 900
+FAST_MANIFEST = ROOT / "Data" / "evals" / "ops" / "latest_ship_fast_run.json"
+EVIDENCE_MANIFEST = (
+    ROOT / "Data" / "evals" / "ops" / "latest_ship_evidence_run.json"
+)
+FAST_STEP_NAMES = {
+    "Backend breast-monitoring integration tests",
+    "Backend progressive-loading and notification reliability tests",
+    "Cloud, data-platform, and managed-vector contract tests",
+    "Frontend Vitest unit tests",
+    "Frontend lint",
+    "Frontend production build",
+}
+_FILE_DIGEST_CACHE: dict[tuple[str, int, int], bytes] = {}
 
 
 @dataclass(frozen=True)
@@ -47,7 +62,9 @@ def _effective_timeout(step: Step) -> int:
     return DEFAULT_STEP_TIMEOUT_SECONDS
 
 
-def _run(step: Step) -> dict[str, object]:
+def _run(
+    step: Step, *, dependency_fingerprint: str | None = None
+) -> dict[str, object]:
     env = os.environ.copy()
     env.setdefault("PYTHONUNBUFFERED", "1")
     if step.env:
@@ -73,6 +90,7 @@ def _run(step: Step) -> dict[str, object]:
         "timeout_seconds": timeout_seconds,
         "cwd": str(step.cwd.relative_to(ROOT) if step.cwd != ROOT else "."),
         "command": step.command,
+        "dependency_fingerprint": dependency_fingerprint,
     }
 
 
@@ -82,15 +100,26 @@ def _write_manifest(
     step_results: list[dict[str, object]],
     failed_step: str | None = None,
     failure_kind: str | None = None,
+    tier: str = "release",
+    resume_requested: bool = False,
+    selected_step_count: int | None = None,
+    output_path: Path | None = None,
 ) -> None:
-    SHIP_MANIFEST.parent.mkdir(parents=True, exist_ok=True)
+    target = output_path or SHIP_MANIFEST
+    target.parent.mkdir(parents=True, exist_ok=True)
     payload = {
-        "schema_version": "nlcare_ship_run_v1",
+        "schema_version": "nlcare_ship_run_v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
+        "tier": tier,
+        "resume_requested": resume_requested,
         "clinical_validation": False,
         "healthcare_production_ready": False,
         "completed_step_count": len(step_results),
+        "selected_step_count": selected_step_count or len(step_results),
+        "cached_step_count": sum(
+            result.get("status") == "cached_pass" for result in step_results
+        ),
         "failed_step": failed_step,
         "failure_kind": failure_kind,
         "steps": step_results,
@@ -100,10 +129,10 @@ def _write_manifest(
             "production healthcare readiness."
         ),
     }
-    SHIP_MANIFEST.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
-def main() -> int:
+def _build_steps() -> list[Step]:
     steps = [
         Step(
             name="Backend breast-monitoring integration tests",
@@ -175,9 +204,13 @@ def main() -> int:
                 "tests/test_rag_vector_runtime_cache.py",
                 "tests/test_retrieval_runtime_cache_eval.py",
                 "tests/test_provider_usage_reconciliation.py",
+                "tests/test_provider_usage_capture_readiness.py",
                 "tests/test_finetune_contamination_adjudication.py",
+                "tests/test_synthetic_feature_policy.py",
                 "tests/test_synthetic_model_perturbation_retrain_eval.py",
+                "tests/test_disposable_synthetic_staging_readiness.py",
                 "tests/test_synthetic_staging_resilience_dossier.py",
+                "tests/test_adversarial_holdout_v7.py",
                 "-q",
             ],
         ),
@@ -332,6 +365,13 @@ def main() -> int:
             command=[sys.executable, "scripts/run_provider_usage_reconciliation.py"],
         ),
         Step(
+            name="Provider-usage capture readiness",
+            command=[
+                sys.executable,
+                "scripts/run_provider_usage_capture_readiness.py",
+            ],
+        ),
+        Step(
             name="Paired RAG statistical comparison",
             command=[sys.executable, "scripts/run_rag_paired_statistical_comparison.py"],
         ),
@@ -359,12 +399,23 @@ def main() -> int:
             ],
         ),
         Step(
+            name="Canonical proxy-removed synthetic feature policy",
+            command=[sys.executable, "scripts/run_synthetic_feature_policy.py"],
+        ),
+        Step(
             name="Synthetic ML perturbation and retraining stress",
             command=[
                 sys.executable,
                 "scripts/run_synthetic_model_perturbation_retrain_eval.py",
             ],
             timeout_seconds=900,
+        ),
+        Step(
+            name="Disposable synthetic staging readiness",
+            command=[
+                sys.executable,
+                "scripts/run_disposable_synthetic_staging_readiness.py",
+            ],
         ),
         Step(
             name="Synthetic staging resilience dossier",
@@ -418,10 +469,205 @@ def main() -> int:
             command=[sys.executable, "scripts/run_release_gate.py"],
         ),
     ]
+    return steps
+
+
+def _manifest_path_for_tier(tier: str) -> Path:
+    if tier == "fast":
+        return FAST_MANIFEST
+    if tier == "evidence":
+        return EVIDENCE_MANIFEST
+    return SHIP_MANIFEST
+
+
+def _is_evidence_step(step: Step) -> bool:
+    return any(
+        part.replace("\\", "/").startswith("scripts/")
+        and part.endswith(".py")
+        for part in step.command
+    )
+
+
+def _select_steps(steps: list[Step], tier: str) -> list[Step]:
+    if tier == "release":
+        return steps
+    if tier == "fast":
+        return [step for step in steps if step.name in FAST_STEP_NAMES]
+    if tier == "evidence":
+        return [step for step in steps if _is_evidence_step(step)]
+    raise ValueError(f"unsupported ship tier: {tier}")
+
+
+def _candidate_dependency_paths(step: Step) -> list[Path]:
+    paths: list[Path] = [Path(__file__).resolve()]
+    if step.cwd == FRONTEND:
+        paths.extend(
+            [
+                FRONTEND / "src",
+                FRONTEND / "tests",
+                FRONTEND / "package.json",
+                FRONTEND / "package-lock.json",
+                FRONTEND / "vite.config.ts",
+                FRONTEND / "vitest.config.ts",
+                FRONTEND / "playwright.config.ts",
+                FRONTEND / "tsconfig.json",
+            ]
+        )
+        return paths
+
+    paths.extend([ROOT / "backend", ROOT / "config"])
+    for part in step.command:
+        normalized = part.replace("\\", "/")
+        if normalized.endswith(".py"):
+            candidate = ROOT / normalized
+            if candidate.exists():
+                paths.append(candidate)
+    if "-m" in step.command and "pytest" in step.command:
+        paths.append(ROOT / "tests" / "conftest.py")
+    return paths
+
+
+def _iter_dependency_files(paths: list[Path]):
+    seen: set[Path] = set()
+    excluded = {
+        ".git",
+        "__pycache__",
+        "node_modules",
+        "dist",
+        "build",
+        ".pytest_cache",
+    }
+    for path in paths:
+        if path.is_file():
+            resolved = path.resolve()
+            if resolved not in seen:
+                seen.add(resolved)
+                yield resolved
+            continue
+        if not path.exists():
+            continue
+        for candidate in sorted(path.rglob("*")):
+            if not candidate.is_file():
+                continue
+            if excluded.intersection(candidate.parts):
+                continue
+            resolved = candidate.resolve()
+            if resolved not in seen:
+                seen.add(resolved)
+                yield resolved
+
+
+def _file_digest(path: Path) -> bytes:
+    stat = path.stat()
+    key = (str(path), stat.st_mtime_ns, stat.st_size)
+    cached = _FILE_DIGEST_CACHE.get(key)
+    if cached is not None:
+        return cached
+    digest = hashlib.sha256(path.read_bytes()).digest()
+    _FILE_DIGEST_CACHE[key] = digest
+    return digest
+
+
+def _dependency_fingerprint(step: Step) -> str:
+    digest = hashlib.sha256()
+    digest.update(json.dumps(step.command, sort_keys=True).encode("utf-8"))
+    digest.update(str(step.cwd.resolve()).encode("utf-8"))
+    digest.update(json.dumps(step.env or {}, sort_keys=True).encode("utf-8"))
+    for path in _iter_dependency_files(_candidate_dependency_paths(step)):
+        try:
+            relative = path.relative_to(ROOT)
+        except ValueError:
+            relative = path
+        digest.update(str(relative).replace("\\", "/").encode("utf-8"))
+        digest.update(_file_digest(path))
+    return digest.hexdigest()
+
+
+def _load_manifest(path: Path) -> dict[str, object] | None:
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _cached_result(
+    previous: dict[str, object] | None,
+    step: Step,
+    fingerprint: str,
+) -> dict[str, object] | None:
+    if not previous:
+        return None
+    rows = previous.get("steps")
+    if not isinstance(rows, list):
+        return None
+    for row in rows:
+        if not isinstance(row, dict) or row.get("name") != step.name:
+            continue
+        if row.get("status") not in {"passed", "cached_pass"}:
+            return None
+        if row.get("dependency_fingerprint") != fingerprint:
+            return None
+        return {
+            "name": step.name,
+            "status": "cached_pass",
+            "duration_seconds": 0.0,
+            "timeout_seconds": _effective_timeout(step),
+            "cwd": str(
+                step.cwd.relative_to(ROOT) if step.cwd != ROOT else "."
+            ),
+            "command": step.command,
+            "dependency_fingerprint": fingerprint,
+            "reused_from": previous.get("generated_at"),
+        }
+    return None
+
+
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--tier",
+        choices=("fast", "evidence", "release"),
+        default="release",
+        help="fast=core tests/build, evidence=artifact refresh, release=all gates",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Reuse only prior passed steps with identical dependency fingerprints.",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List selected steps without running them.",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parse_args(argv)
+    steps = _select_steps(_build_steps(), args.tier)
+    manifest_path = _manifest_path_for_tier(args.tier)
+    if args.list:
+        for index, step in enumerate(steps, start=1):
+            print(f"{index:02d}. {step.name}")
+        return 0
+
+    previous = _load_manifest(manifest_path) if args.resume else None
     step_results: list[dict[str, object]] = []
     for step in steps:
+        fingerprint = _dependency_fingerprint(step)
+        cached = _cached_result(previous, step, fingerprint)
+        if cached is not None:
+            print(f"\n[ship] cached: {step.name}", flush=True)
+            step_results.append(cached)
+            continue
         try:
-            step_results.append(_run(step))
+            step_results.append(
+                _run(step, dependency_fingerprint=fingerprint)
+            )
         except subprocess.TimeoutExpired:
             timeout_seconds = _effective_timeout(step)
             step_results.append(
@@ -432,6 +678,7 @@ def main() -> int:
                     "timeout_seconds": timeout_seconds,
                     "cwd": str(step.cwd.relative_to(ROOT) if step.cwd != ROOT else "."),
                     "command": step.command,
+                    "dependency_fingerprint": fingerprint,
                 }
             )
             _write_manifest(
@@ -439,6 +686,10 @@ def main() -> int:
                 step_results=step_results,
                 failed_step=step.name,
                 failure_kind="timeout",
+                tier=args.tier,
+                resume_requested=args.resume,
+                selected_step_count=len(steps),
+                output_path=manifest_path,
             )
             print(
                 f"\n[ship] FAILED: {step.name} timed out after {timeout_seconds}s",
@@ -456,6 +707,7 @@ def main() -> int:
                     "cwd": str(step.cwd.relative_to(ROOT) if step.cwd != ROOT else "."),
                     "command": step.command,
                     "exit_code": int(exc.returncode or 1),
+                    "dependency_fingerprint": fingerprint,
                 }
             )
             _write_manifest(
@@ -463,11 +715,26 @@ def main() -> int:
                 step_results=step_results,
                 failed_step=step.name,
                 failure_kind="nonzero_exit",
+                tier=args.tier,
+                resume_requested=args.resume,
+                selected_step_count=len(steps),
+                output_path=manifest_path,
             )
             print(f"\n[ship] FAILED: {step.name} exited {exc.returncode}", file=sys.stderr, flush=True)
             return int(exc.returncode or 1)
-    _write_manifest(status="passed", step_results=step_results)
-    print("\n[ship] PASSED: all gates green", flush=True)
+    _write_manifest(
+        status="passed",
+        step_results=step_results,
+        tier=args.tier,
+        resume_requested=args.resume,
+        selected_step_count=len(steps),
+        output_path=manifest_path,
+    )
+    print(
+        f"\n[ship] PASSED: {args.tier} tier green "
+        f"({sum(row['status'] == 'cached_pass' for row in step_results)} cached)",
+        flush=True,
+    )
     return 0
 
 

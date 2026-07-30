@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_model_perturbation_retrain_eval_v1",
-  "generated_at": "2026-07-30T04:02:28.638557+00:00",
+  "generated_at": "2026-07-30T05:50:10.522746+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "production_ready": false,
@@ -14,6 +14,7 @@
     "patient_overlap_between_train_and_test": 0
   },
   "feature_policies": {
+    "canonical_promotion_policy_id": "synthetic_proxy_removed_promotion_v1",
     "existing_full_feature_policy": {
       "numeric_features": [
         "cycle",
@@ -105,6 +106,7 @@
         "bootstrap_resamples": 300
       },
       "direct_response_proxy_present": false,
+      "canonical_for_promotion_evaluation": true,
       "delta_vs_full": {
         "classification_auroc": -0.143499,
         "classification_brier": 0.113572,

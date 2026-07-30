@@ -11,13 +11,37 @@ python scripts\run_release_gate.py
 python scripts\ship.py
 ```
 
-`python scripts\ship.py` is the cross-platform ship gate. It runs:
+`python scripts\ship.py` is the cross-platform release gate. It supports:
+
+```powershell
+python scripts\ship.py --tier fast
+python scripts\ship.py --tier evidence
+python scripts\ship.py --tier release
+python scripts\ship.py --tier release --resume
+python scripts\ship.py --list
+```
+
+- `fast` runs the core backend contract tests plus frontend unit, lint, and
+  production-build checks.
+- `evidence` refreshes the repeatable evaluation artifacts.
+- `release` runs every selected test, frontend, evidence, and release-gate
+  step. This remains the default.
+- `--resume` reuses only previously passed steps whose command, environment,
+  and relevant source/config/test dependency fingerprint is unchanged.
+
+Each tier writes its own manifest under `Data/evals/ops/`. The frozen
+adversarial v7 holdout is intentionally excluded because it is a one-pass
+measurement, not a repeatable regression suite.
+
+The release tier includes:
 
 - backend breast-monitoring integration tests
+- focused safety, RAG, ML/MLE, automation, infrastructure, and governance tests
 - frontend Vitest
 - frontend Playwright smoke tests
 - frontend lint
 - frontend production build
+- repeatable evidence refreshes
 - release artifact gate
 
 On systems with `make`, `make ship` delegates to the same release discipline.

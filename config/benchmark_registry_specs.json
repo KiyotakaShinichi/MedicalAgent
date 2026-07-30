@@ -3999,5 +3999,53 @@
       "unresolved_external_blockers": ["unresolved_external_or_managed_blocker_count"],
       "managed_cloud_drill_completed": ["managed_cloud_drill_completed"]
     }
+  },
+  {
+    "id": "synthetic_feature_policy",
+    "title": "Canonical proxy-removed synthetic feature policy",
+    "path": "Data/evals/models/latest_synthetic_feature_policy.json",
+    "tier": "supporting",
+    "metrics": {
+      "status": ["status"],
+      "policy_id": ["policy_id"],
+      "removed_features": ["canonical_promotion_policy", "removed_features"],
+      "clinical_validation": ["clinical_validation"]
+    }
+  },
+  {
+    "id": "provider_usage_capture_readiness",
+    "title": "Provider token-usage capture readiness",
+    "path": "Data/evals/ops/latest_provider_usage_capture_readiness.json",
+    "tier": "supporting",
+    "metrics": {
+      "status": ["status"],
+      "passed_count": ["passed_count"],
+      "real_provider_observations_collected": ["real_provider_observations_collected"],
+      "reconciliation_completed": ["reconciliation_completed"]
+    }
+  },
+  {
+    "id": "disposable_synthetic_staging_readiness",
+    "title": "Disposable loopback-only synthetic staging readiness",
+    "path": "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
+    "tier": "supporting",
+    "metrics": {
+      "status": ["status"],
+      "passed_count": ["passed_count"],
+      "runtime_started": ["runtime_started"],
+      "healthcare_production_ready": ["healthcare_production_ready"]
+    }
+  },
+  {
+    "id": "adversarial_holdout_v7_baseline",
+    "title": "One-pass internal author-contaminated adversarial holdout v7",
+    "path": "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
+    "tier": "informational",
+    "metrics": {
+      "status": ["status"],
+      "pass_rate": ["pass_rate"],
+      "unsafe_leakage_rate": ["unsafe_leakage_rate"],
+      "over_refusal_rate": ["over_refusal_rate"]
+    }
   }
 ]

@@ -2512,3 +2512,61 @@ artifacts:
       Consolidated local outbox, key-rotation, loopback, restore, and data
       replay evidence. Managed infrastructure and organizational blockers
       remain explicit.
+
+  - path: Data/evals/models/latest_synthetic_feature_policy.json
+    required: false
+    max_age_days: 30
+    accepted_status: [canonical_for_synthetic_promotion_evaluation]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [production_ready], op: "==", value: false}
+      - {path: [policy_id], op: "==", value: synthetic_proxy_removed_promotion_v1}
+      - {path: [canonical_promotion_policy, promotion_eligible], op: "==", value: true}
+      - {path: [legacy_scope, promotion_eligible], op: "==", value: false}
+    note: >
+      Canonical feature contract for future synthetic-only promotion
+      comparisons. Removing a direct response-score proxy improves evaluation
+      hygiene but does not establish real-patient or clinical validity.
+
+  - path: Data/evals/ops/latest_provider_usage_capture_readiness.json
+    required: false
+    max_age_days: 30
+    accepted_status: [ready_for_nonpatient_provider_capture]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [provider_call_performed_by_this_artifact], op: "==", value: false}
+      - {path: [real_provider_observations_collected], op: "==", value: 0}
+      - {path: [reconciliation_completed], op: "==", value: false}
+    note: >
+      Local telemetry plumbing is exercised with a content-free synthetic
+      usage fixture. Real provider observations and billing reconciliation
+      remain explicitly incomplete.
+
+  - path: Data/evals/ops/latest_disposable_synthetic_staging_readiness.json
+    required: false
+    max_age_days: 30
+    accepted_status: [ready_for_disposable_synthetic_runtime]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [runtime_started], op: "==", value: false}
+      - {path: [real_external_delivery_completed], op: "==", value: false}
+      - {path: [patient_data_processed], op: "==", value: false}
+    note: >
+      Static and compose-syntax evidence for a loopback-only disposable
+      synthetic environment. Docker runtime health, restore, workflow import,
+      and message receipt remain unproven on this host.
+
+  - path: Data/evals/safety/latest_adversarial_holdout_v7_baseline.json
+    required: false
+    max_age_days: 90
+    accepted_status: [acceptable_internal_only, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: false}
+      - {path: [internal_vs_external], op: "==", value: internal_frozen_author_contaminated_holdout}
+    note: >
+      One-pass internally authored and author-contaminated safety holdout.
+      It is a generalization warning, never external or clinical evidence, and
+      is intentionally excluded from the repeatable ship runner.
