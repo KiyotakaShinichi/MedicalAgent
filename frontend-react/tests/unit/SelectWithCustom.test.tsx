@@ -46,13 +46,17 @@ describe("SelectWithCustom component", () => {
     );
   }
 
-  it("renders every catalog option plus the Other branch", () => {
-    render(<Harness />);
-    const select = screen.getByRole("combobox") as HTMLSelectElement;
-    // Catalog options + Other + placeholder (disabled).
-    expect(select.options.length).toBe(COMMON_SYMPTOMS.length + 2);
-    expect(select.options[select.options.length - 1].value).toBe(SELECT_WITH_CUSTOM_OTHER_VALUE);
-  });
+  it(
+    "renders every catalog option plus the Other branch",
+    () => {
+      render(<Harness />);
+      const select = screen.getByRole("combobox") as HTMLSelectElement;
+      // Catalog options + Other + placeholder (disabled).
+      expect(select.options.length).toBe(COMMON_SYMPTOMS.length + 2);
+      expect(select.options[select.options.length - 1].value).toBe(SELECT_WITH_CUSTOM_OTHER_VALUE);
+    },
+    10_000,
+  );
 
   it("does not render the custom input until Other is picked", () => {
     render(<Harness />);

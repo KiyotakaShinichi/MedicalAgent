@@ -1,6 +1,6 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-07-30T05:56:11.264334+00:00",
+  "generated_at": "2026-07-30T10:23:50.014966+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -79,7 +79,7 @@
     "retrieval_runtime_cache": {
       "status": "improved_local_regression",
       "local_regression_improvement_observed": true,
-      "retrieval_p95_delta_ms": -1722.07,
+      "retrieval_p95_delta_ms": -1653.82,
       "dense_unique_query_latency_measured": false,
       "production_ready": false
     },
@@ -123,12 +123,46 @@
     "synthetic_ml_perturbation": {
       "status": "needs_attention",
       "promotion_decision": "HOLD_SYNTHETIC_ONLY",
-      "stress_failure_count": 2,
+      "stress_failure_count": 4,
       "guarded_feature_policy": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
         "classification_auroc": 0.854343,
+        "classification_accuracy": 0.773333,
+        "classification_balanced_accuracy": 0.760655,
         "classification_brier": 0.159178,
+        "classification_ece_10_bin": 0.100669,
         "regression_mae": 15.504482,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.773333,
+            "balanced_accuracy": 0.760655,
+            "brier": 0.159178
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.807407,
+            "balanced_accuracy": 0.796399,
+            "brier": 0.149235
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.858407,
+            "balanced_accuracy": 0.844877,
+            "brier": 0.130359
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.893333,
+            "balanced_accuracy": 0.878788,
+            "brier": 0.099202
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
             0.795343,
@@ -156,7 +190,7 @@
       "unresolved_external_or_managed_blockers": 5,
       "managed_cloud_drill_completed": false,
       "disposable_runtime_readiness_status": "ready_for_disposable_synthetic_runtime",
-      "disposable_runtime_started": false
+      "disposable_runtime_started": true
     },
     "recovery": {
       "status": "strong_local_only",

@@ -1604,6 +1604,36 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
+    def test_treatment_boundary_carries_into_referential_followup(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SAFETY-P003", name="Context Safety Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            first = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SAFETY-P003",
+                message="Should I stop my treatment?",
+            )
+            self.assertEqual(first["agent_pipeline"]["intent"], "treatment_decision_boundary")
+
+            second = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SAFETY-P003",
+                message="what if just tonight?",
+            )
+
+            self.assertEqual(second["agent_pipeline"]["intent"], "treatment_decision_boundary")
+            self.assertTrue(second["agent_pipeline"]["safety"].get("context_reused"))
+            self.assertIn(
+                second["agent_pipeline"]["safety"].get("safety_source"),
+                {"contextual_boundary_carryover", "contextual_composition"},
+            )
+            self.assertEqual(db.query(SymptomReport).count(), 0)
+        finally:
+            db.close()
+            db.bind.dispose()
+
     def test_existing_record_wording_does_not_claim_patient_authorship(self):
         original = "You've logged nausea severity 6/10 today and recent labs are in your record."
         neutral = support_chat_agent._enforce_record_provenance(original, [])

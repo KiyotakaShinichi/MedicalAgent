@@ -31,7 +31,10 @@ services:
       retries: 10
 
   backend:
-    build: .
+    build:
+      context: .
+      args:
+        REQUIREMENTS_FILE: requirements-serving.txt
     depends_on:
       postgres:
         condition: service_healthy
@@ -53,7 +56,17 @@ services:
       AZURE_SEARCH_API_KEY: ""
     ports:
       - "127.0.0.1:8017:8017"
+    command:
+      - sh
+      - -c
+      - >-
+        python scripts/validate_deployment_env.py &&
+        alembic upgrade head &&
+        exec uvicorn backend.api.main:app --host 0.0.0.0 --port 8017
     volumes:
+      - ./backend:/app/backend:ro
+      - ./scripts:/app/scripts:ro
+      - ./config:/app/config:ro
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase:ro
     healthcheck:
@@ -64,7 +77,8 @@ services:
       start_period: 45s
 
   worker:
-    build: .
+    image: nlcare-synthetic-staging-backend:latest
+    working_dir: /app
     depends_on:
       backend:
         condition: service_healthy
@@ -72,6 +86,7 @@ services:
       - .env.example
     environment:
       APP_ENV: synthetic_staging
+      PYTHONPATH: /app
       NLCARE_SYNTHETIC_ONLY: "true"
       DATABASE_URL: postgresql+psycopg2://nlcare_synthetic:local-synthetic-only@postgres:5432/nlcare_synthetic
       REDIS_URL: redis://redis:6379/0
@@ -81,9 +96,14 @@ services:
       NLCARE_MANAGED_VECTOR_SHADOW_ENABLED: "false"
       NLCARE_MANAGED_VECTOR_ALLOW_NETWORK: "false"
     volumes:
+      - ./backend:/app/backend:ro
+      - ./scripts:/app/scripts:ro
+      - ./config:/app/config:ro
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase:ro
     command: ["python", "scripts/run_task_worker.py", "--poll-seconds", "5"]
+    healthcheck:
+      disable: true
 
   frontend:
     image: node:20-alpine
@@ -110,6 +130,8 @@ services:
       N8N_ENCRYPTION_KEY: local-synthetic-only-change-before-shared-use
       N8N_WEBHOOK_SIGNING_SECRET: local-synthetic-signing-secret-change-me
       N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_RUNNERS_ENABLED: "true"
       NODE_FUNCTION_ALLOW_BUILTIN: crypto
       GENERIC_TIMEZONE: Asia/Manila
       TZ: Asia/Manila

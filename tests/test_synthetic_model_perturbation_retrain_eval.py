@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from backend.services.synthetic_model_perturbation_retrain_eval import (
+    _expected_calibration_error,
     _patient_split,
     perturb_features,
     perturb_training_labels,
@@ -52,3 +53,24 @@ def test_label_noise_is_patient_consistent():
     ]
     assert changed["patient_id"].nunique() == 2
     assert changed.groupby("patient_id").size().eq(2).all()
+
+
+def test_severe_modality_dropout_is_stronger_and_preserves_targets():
+    frame = _frame()
+    moderate = perturb_features(frame, scenario="modality_dropout", seed=42)
+    severe = perturb_features(frame, scenario="severe_modality_dropout", seed=42)
+    assert severe.isna().sum().sum() > moderate.isna().sum().sum()
+    assert np.array_equal(
+        frame["treatment_success_binary"],
+        severe["treatment_success_binary"],
+    )
+    assert np.array_equal(
+        frame["response_score_percent"],
+        severe["response_score_percent"],
+    )
+
+
+def test_expected_calibration_error_is_zero_for_perfect_probabilities():
+    labels = np.array([0, 0, 1, 1])
+    probabilities = np.array([0.0, 0.0, 1.0, 1.0])
+    assert _expected_calibration_error(labels, probabilities) == 0.0

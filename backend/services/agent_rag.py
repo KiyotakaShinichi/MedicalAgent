@@ -143,6 +143,7 @@ def run_patient_agent_pipeline(
     urgent_flags=None,
     preselected_intent=None,
     compound_intent=None,
+    precomputed_safety=None,
 ):
     """Main agent entry point — a dispatcher.
 
@@ -159,7 +160,10 @@ def run_patient_agent_pipeline(
     started = perf_counter()
     actions = actions or []
     urgent_flags = urgent_flags or []
-    safety = safety_scope_check(query, urgent_flags)
+    safety = _prefer_stricter_safety(
+        safety_scope_check(query, urgent_flags),
+        precomputed_safety,
+    )
     input_guardrails = input_guardrail_check(query, safety)
     t_safety = perf_counter()
 
@@ -234,6 +238,28 @@ def run_patient_agent_pipeline(
         t_routing=t_routing,
         compound_intent=compound_intent,
     )
+
+
+def _prefer_stricter_safety(recomputed, precomputed):
+    """Preserve contextual safety metadata without allowing a downgrade."""
+
+    if not isinstance(precomputed, dict):
+        return recomputed
+    level_rank = {
+        "low_risk": 0,
+        "moderate_risk": 1,
+        "high_risk": 2,
+        "blocked": 3,
+    }
+    recomputed_rank = level_rank.get(str(recomputed.get("level")), 0)
+    precomputed_rank = level_rank.get(str(precomputed.get("level")), 0)
+    if precomputed_rank < recomputed_rank:
+        return recomputed
+    if precomputed_rank > recomputed_rank:
+        return precomputed
+    if precomputed.get("context_reused") and not recomputed.get("context_reused"):
+        return precomputed
+    return recomputed
 
 
 # ─── Branch handlers ─────────────────────────────────────────────────────────

@@ -6,13 +6,15 @@ ENV DATABASE_URL=sqlite:////app/Data/medical_agent.db
 
 WORKDIR /app
 
+ARG REQUIREMENTS_FILE=requirements.txt
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY requirements*.txt ./
 RUN python -m pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install --no-cache-dir -r "${REQUIREMENTS_FILE}"
 
 COPY backend backend
 COPY frontend frontend

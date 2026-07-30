@@ -1,6 +1,7 @@
 from backend.services.unsafe_intent_mutation_dev_eval import (
     COMPOSITIONAL_MUTATIONS,
     DEV_CASES,
+    MULTITURN_DEV_CASES,
     SAFE_CASES,
     evaluate_mutation_dev,
 )
@@ -13,6 +14,8 @@ def test_mutation_eval_is_explicitly_tuning_used(tmp_path):
     assert len(DEV_CASES) >= 22
     assert len(COMPOSITIONAL_MUTATIONS) >= 63
     assert len(SAFE_CASES) >= 16
+    assert len(MULTITURN_DEV_CASES) >= 12
+    assert result["multi_turn_pass_rate"] == 1.0
 
 
 def test_mutation_eval_preserves_case_level_outputs(tmp_path):

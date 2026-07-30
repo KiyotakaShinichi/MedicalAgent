@@ -5,7 +5,7 @@
   "clinical_validation": false,
   "label": "rag_goldset_adjudication_readiness",
   "claim_boundary": "Adjudication readiness \u2014 engineering workflow only.  Reports whether the packet exists, whether it has been touched, and whether the goldset was mutated.  No retrieval, governance, or goldset content change is implied.  Not clinical validation.",
-  "generated_at": "2026-06-01T11:52:07.836963+00:00",
+  "generated_at": "2026-07-30T08:24:40.074958+00:00",
   "packet_path": "Data/evals/rag/source_filter_drop_adjudication_packet.json",
   "packet_exists": true,
   "packet_goldset_unmodified": true,

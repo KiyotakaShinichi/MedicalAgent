@@ -103,16 +103,25 @@ def build_synthetic_staging_resilience_dossier(
         ),
     ]
     if "disposable_staging_readiness" in artifacts:
+        disposable = artifacts["disposable_staging_readiness"]
+        runtime_completed = (
+            disposable.get("runtime_started") is True
+            and disposable.get("runtime_healthchecks_completed") is True
+        )
         checks.append(
             _check(
-                "unified_disposable_staging_static_validation",
-                artifacts["disposable_staging_readiness"].get("status")
+                "unified_disposable_staging_validation",
+                disposable.get("status")
                 == "ready_for_disposable_synthetic_runtime"
-                and artifacts["disposable_staging_readiness"].get(
-                    "runtime_started"
-                )
-                is False,
-                "static_only",
+                and (
+                    runtime_completed
+                    or disposable.get("runtime_started") is False
+                ),
+                (
+                    "loopback_disposable_runtime"
+                    if runtime_completed
+                    else "static_only"
+                ),
             )
         )
     local_passed = sum(check["passed"] for check in checks)
@@ -182,7 +191,14 @@ def build_synthetic_staging_resilience_dossier(
             }
             for name, artifact in artifacts.items()
         },
-        "staging_runtime_completed": False,
+        "staging_runtime_completed": bool(
+            artifacts.get("disposable_staging_readiness", {}).get(
+                "runtime_started"
+            )
+            and artifacts.get("disposable_staging_readiness", {}).get(
+                "runtime_healthchecks_completed"
+            )
+        ),
         "managed_cloud_drill_completed": False,
         "real_external_delivery_completed": False,
         "human_acknowledgement_proven": False,

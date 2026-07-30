@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_model_perturbation_retrain_eval_v1",
-  "generated_at": "2026-07-30T05:50:10.522746+00:00",
+  "generated_at": "2026-07-30T10:20:45.539750+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "production_ready": false,
@@ -39,10 +39,44 @@
         "dose_reduced"
       ],
       "metrics": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
         "classification_auroc": 0.997842,
+        "classification_accuracy": 0.986667,
+        "classification_balanced_accuracy": 0.985075,
         "classification_brier": 0.045606,
+        "classification_ece_10_bin": 0.147016,
         "regression_mae": 2.463846,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.986667,
+            "balanced_accuracy": 0.985075,
+            "brier": 0.045606
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.992593,
+            "balanced_accuracy": 0.991525,
+            "brier": 0.031091
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "brier": 0.015304
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "brier": 0.003944
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
             0.991724,
@@ -85,10 +119,44 @@
         "dose_reduced"
       ],
       "metrics": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
         "classification_auroc": 0.854343,
+        "classification_accuracy": 0.773333,
+        "classification_balanced_accuracy": 0.760655,
         "classification_brier": 0.159178,
+        "classification_ece_10_bin": 0.100669,
         "regression_mae": 15.504482,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.773333,
+            "balanced_accuracy": 0.760655,
+            "brier": 0.159178
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.807407,
+            "balanced_accuracy": 0.796399,
+            "brier": 0.149235
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.858407,
+            "balanced_accuracy": 0.844877,
+            "brier": 0.130359
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.893333,
+            "balanced_accuracy": 0.878788,
+            "brier": 0.099202
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
             0.795343,
@@ -114,14 +182,191 @@
       }
     }
   },
+  "proxy_removed_simple_baselines": {
+    "train_only_constant": {
+      "model_family": "train_only_constant",
+      "patient_count": 150,
+      "classification_auroc": 0.5,
+      "classification_accuracy": 0.553333,
+      "classification_balanced_accuracy": 0.5,
+      "classification_brier": 0.247156,
+      "classification_ece_10_bin": 0.0,
+      "regression_mae": 15.19638,
+      "classification_abstention_curve": [
+        {
+          "coverage": 1.0,
+          "n_retained": 150,
+          "accuracy": 0.553333,
+          "balanced_accuracy": 0.5,
+          "brier": 0.247156
+        }
+      ],
+      "training_only_statistics": {
+        "positive_rate": 0.553333,
+        "mean_response_score": 28.177367
+      }
+    },
+    "logistic_ridge": {
+      "model_family": "linear",
+      "patient_count": 150,
+      "classification_auroc": 0.819637,
+      "classification_accuracy": 0.786667,
+      "classification_balanced_accuracy": 0.772703,
+      "classification_brier": 0.168189,
+      "classification_ece_10_bin": 0.132704,
+      "regression_mae": 19.712223,
+      "classification_abstention_curve": [
+        {
+          "coverage": 1.0,
+          "n_retained": 150,
+          "accuracy": 0.786667,
+          "balanced_accuracy": 0.772703,
+          "brier": 0.168189
+        },
+        {
+          "coverage": 0.9,
+          "n_retained": 135,
+          "accuracy": 0.814815,
+          "balanced_accuracy": 0.804463,
+          "brier": 0.158843
+        },
+        {
+          "coverage": 0.75,
+          "n_retained": 113,
+          "accuracy": 0.80531,
+          "balanced_accuracy": 0.794136,
+          "brier": 0.149021
+        },
+        {
+          "coverage": 0.5,
+          "n_retained": 75,
+          "accuracy": 0.84,
+          "balanced_accuracy": 0.828571,
+          "brier": 0.123089
+        }
+      ],
+      "bootstrap_95_ci": {
+        "classification_auroc": [
+          0.736971,
+          0.880358
+        ],
+        "classification_brier": [
+          0.144515,
+          0.195559
+        ],
+        "regression_mae": [
+          16.839677,
+          22.686015
+        ]
+      },
+      "bootstrap_resamples": 300
+    },
+    "gradient_boosting_huber": {
+      "model_family": "gradient_boosting",
+      "patient_count": 150,
+      "classification_auroc": 0.854343,
+      "classification_accuracy": 0.773333,
+      "classification_balanced_accuracy": 0.760655,
+      "classification_brier": 0.159178,
+      "classification_ece_10_bin": 0.100669,
+      "regression_mae": 15.504482,
+      "classification_abstention_curve": [
+        {
+          "coverage": 1.0,
+          "n_retained": 150,
+          "accuracy": 0.773333,
+          "balanced_accuracy": 0.760655,
+          "brier": 0.159178
+        },
+        {
+          "coverage": 0.9,
+          "n_retained": 135,
+          "accuracy": 0.807407,
+          "balanced_accuracy": 0.796399,
+          "brier": 0.149235
+        },
+        {
+          "coverage": 0.75,
+          "n_retained": 113,
+          "accuracy": 0.858407,
+          "balanced_accuracy": 0.844877,
+          "brier": 0.130359
+        },
+        {
+          "coverage": 0.5,
+          "n_retained": 75,
+          "accuracy": 0.893333,
+          "balanced_accuracy": 0.878788,
+          "brier": 0.099202
+        }
+      ],
+      "bootstrap_95_ci": {
+        "classification_auroc": [
+          0.795343,
+          0.907432
+        ],
+        "classification_brier": [
+          0.138892,
+          0.181353
+        ],
+        "regression_mae": [
+          13.220327,
+          17.986475
+        ]
+      },
+      "bootstrap_resamples": 300
+    },
+    "gradient_boosting_delta_vs_logistic_ridge": {
+      "classification_auroc": 0.034706,
+      "classification_brier": -0.009011,
+      "regression_mae": -4.207741
+    },
+    "complex_model_lift_predeclared_threshold_met": true,
+    "complexity_decision": "retain_complex_model_for_synthetic_comparison_only",
+    "decision_rule": "Complex model requires AUROC delta >=0.02, no Brier regression, and regression MAE improvement >=1.0 on the same patient split."
+  },
   "perturbation_scenarios": [
     {
       "scenario": "measurement_noise",
       "retrained_on_perturbation": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
         "classification_auroc": 0.858659,
+        "classification_accuracy": 0.806667,
+        "classification_balanced_accuracy": 0.792214,
         "classification_brier": 0.15726,
+        "classification_ece_10_bin": 0.120943,
         "regression_mae": 15.030242,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.806667,
+            "balanced_accuracy": 0.792214,
+            "brier": 0.15726
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.807407,
+            "balanced_accuracy": 0.791667,
+            "brier": 0.148057
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.876106,
+            "balanced_accuracy": 0.857143,
+            "brier": 0.127364
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.88,
+            "balanced_accuracy": 0.871429,
+            "brier": 0.105326
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
             0.792213,
@@ -139,10 +384,44 @@
         "bootstrap_resamples": 300
       },
       "clean_model_on_perturbed_test": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
         "classification_auroc": 0.854163,
+        "classification_accuracy": 0.786667,
+        "classification_balanced_accuracy": 0.774141,
         "classification_brier": 0.158567,
+        "classification_ece_10_bin": 0.097995,
         "regression_mae": 16.111931,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.786667,
+            "balanced_accuracy": 0.774141,
+            "brier": 0.158567
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.814815,
+            "balanced_accuracy": 0.800842,
+            "brier": 0.148886
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.849558,
+            "balanced_accuracy": 0.836812,
+            "brier": 0.132359
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.88,
+            "balanced_accuracy": 0.867647,
+            "brier": 0.104011
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
             0.792614,
@@ -168,10 +447,44 @@
     {
       "scenario": "modality_dropout",
       "retrained_on_perturbation": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
         "classification_auroc": 0.802374,
+        "classification_accuracy": 0.766667,
+        "classification_balanced_accuracy": 0.750315,
         "classification_brier": 0.179988,
-        "regression_mae": 19.873251,
+        "classification_ece_10_bin": 0.109551,
+        "regression_mae": 20.020498,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.766667,
+            "balanced_accuracy": 0.750315,
+            "brier": 0.179988
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.777778,
+            "balanced_accuracy": 0.761298,
+            "brier": 0.172578
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.79646,
+            "balanced_accuracy": 0.777989,
+            "brier": 0.159142
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.853333,
+            "balanced_accuracy": 0.838235,
+            "brier": 0.125856
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
             0.719754,
@@ -182,29 +495,63 @@
             0.20037
           ],
           "regression_mae": [
-            16.874467,
-            23.130401
+            17.048446,
+            23.232526
           ]
         },
         "bootstrap_resamples": 300
       },
       "clean_model_on_perturbed_test": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
-        "classification_auroc": 0.754001,
-        "classification_brier": 0.186734,
-        "regression_mae": 20.021767,
+        "classification_auroc": 0.754361,
+        "classification_accuracy": 0.7,
+        "classification_balanced_accuracy": 0.675688,
+        "classification_brier": 0.18678,
+        "classification_ece_10_bin": 0.086045,
+        "regression_mae": 20.016651,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.7,
+            "balanced_accuracy": 0.675688,
+            "brier": 0.18678
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.725926,
+            "balanced_accuracy": 0.712478,
+            "brier": 0.179941
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.761062,
+            "balanced_accuracy": 0.747484,
+            "brier": 0.167714
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.826667,
+            "balanced_accuracy": 0.814286,
+            "brier": 0.135646
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
-            0.667443,
-            0.824986
+            0.667715,
+            0.825667
           ],
           "classification_brier": [
-            0.164362,
-            0.209052
+            0.164377,
+            0.209109
           ],
           "regression_mae": [
-            17.126975,
-            23.256722
+            17.122196,
+            23.251605
           ]
         },
         "bootstrap_resamples": 300
@@ -212,45 +559,231 @@
       "retrained_delta_vs_guarded_clean": {
         "classification_auroc": -0.051969,
         "classification_brier": 0.02081,
-        "regression_mae": 4.368769
+        "regression_mae": 4.516016
       }
     },
     {
-      "scenario": "combined_noise",
+      "scenario": "severe_modality_dropout",
       "retrained_on_perturbation": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
-        "classification_auroc": 0.81586,
-        "classification_brier": 0.17758,
-        "regression_mae": 19.00221,
+        "classification_auroc": 0.770545,
+        "classification_accuracy": 0.68,
+        "classification_balanced_accuracy": 0.650423,
+        "classification_brier": 0.192918,
+        "classification_ece_10_bin": 0.09581,
+        "regression_mae": 24.387226,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.68,
+            "balanced_accuracy": 0.650423,
+            "brier": 0.192918
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.688889,
+            "balanced_accuracy": 0.661498,
+            "brier": 0.187525
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.787611,
+            "balanced_accuracy": 0.742537,
+            "brier": 0.169073
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.84,
+            "balanced_accuracy": 0.811217,
+            "brier": 0.139398
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
-            0.735899,
-            0.876518
+            0.696875,
+            0.841811
           ],
           "classification_brier": [
-            0.156868,
-            0.200653
+            0.169991,
+            0.216049
           ],
           "regression_mae": [
-            15.763861,
-            22.370152
+            20.505174,
+            28.772482
           ]
         },
         "bootstrap_resamples": 300
       },
       "clean_model_on_perturbed_test": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
-        "classification_auroc": 0.813523,
-        "classification_brier": 0.174201,
-        "regression_mae": 19.667707,
+        "classification_auroc": 0.741234,
+        "classification_accuracy": 0.673333,
+        "classification_balanced_accuracy": 0.64296,
+        "classification_brier": 0.19479,
+        "classification_ece_10_bin": 0.075563,
+        "regression_mae": 24.640669,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.673333,
+            "balanced_accuracy": 0.64296,
+            "brier": 0.19479
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.696296,
+            "balanced_accuracy": 0.671785,
+            "brier": 0.188959
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.743363,
+            "balanced_accuracy": 0.717426,
+            "brier": 0.175859
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.84,
+            "balanced_accuracy": 0.8125,
+            "brier": 0.139433
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
-            0.73762,
-            0.874874
+            0.662808,
+            0.814753
           ],
           "classification_brier": [
-            0.154112,
-            0.196668
+            0.175579,
+            0.215085
+          ],
+          "regression_mae": [
+            21.161978,
+            28.612652
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "retrained_delta_vs_guarded_clean": {
+        "classification_auroc": -0.083798,
+        "classification_brier": 0.03374,
+        "regression_mae": 8.882744
+      }
+    },
+    {
+      "scenario": "combined_noise",
+      "retrained_on_perturbation": {
+        "model_family": "gradient_boosting",
+        "patient_count": 150,
+        "classification_auroc": 0.814961,
+        "classification_accuracy": 0.74,
+        "classification_balanced_accuracy": 0.719025,
+        "classification_brier": 0.178246,
+        "classification_ece_10_bin": 0.083916,
+        "regression_mae": 18.791021,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.74,
+            "balanced_accuracy": 0.719025,
+            "brier": 0.178246
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.748148,
+            "balanced_accuracy": 0.723333,
+            "brier": 0.170583
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.814159,
+            "balanced_accuracy": 0.778553,
+            "brier": 0.153597
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.84,
+            "balanced_accuracy": 0.82604,
+            "brier": 0.127195
+          }
+        ],
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.736618,
+            0.878377
+          ],
+          "classification_brier": [
+            0.156756,
+            0.201081
+          ],
+          "regression_mae": [
+            15.583888,
+            22.208592
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "clean_model_on_perturbed_test": {
+        "model_family": "gradient_boosting",
+        "patient_count": 150,
+        "classification_auroc": 0.812444,
+        "classification_accuracy": 0.74,
+        "classification_balanced_accuracy": 0.721903,
+        "classification_brier": 0.174238,
+        "classification_ece_10_bin": 0.077633,
+        "regression_mae": 19.667707,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.74,
+            "balanced_accuracy": 0.721903,
+            "brier": 0.174238
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.755556,
+            "balanced_accuracy": 0.739947,
+            "brier": 0.16647
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.814159,
+            "balanced_accuracy": 0.795857,
+            "brier": 0.148181
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.853333,
+            "balanced_accuracy": 0.822581,
+            "brier": 0.119728
+          }
+        ],
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.735942,
+            0.874112
+          ],
+          "classification_brier": [
+            0.154208,
+            0.196748
           ],
           "regression_mae": [
             16.50487,
@@ -260,18 +793,52 @@
         "bootstrap_resamples": 300
       },
       "retrained_delta_vs_guarded_clean": {
-        "classification_auroc": -0.038483,
-        "classification_brier": 0.018402,
-        "regression_mae": 3.497728
+        "classification_auroc": -0.039382,
+        "classification_brier": 0.019068,
+        "regression_mae": 3.286539
       }
     },
     {
       "scenario": "five_percent_training_label_noise",
       "retrained_on_perturbation": {
+        "model_family": "gradient_boosting",
         "patient_count": 150,
         "classification_auroc": 0.84679,
+        "classification_accuracy": 0.746667,
+        "classification_balanced_accuracy": 0.739435,
         "classification_brier": 0.165078,
+        "classification_ece_10_bin": 0.09648,
         "regression_mae": 15.504482,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.746667,
+            "balanced_accuracy": 0.739435,
+            "brier": 0.165078
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.792593,
+            "balanced_accuracy": 0.785088,
+            "brier": 0.155128
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.840708,
+            "balanced_accuracy": 0.831571,
+            "brier": 0.137199
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.906667,
+            "balanced_accuracy": 0.897059,
+            "brier": 0.099987
+          }
+        ],
         "bootstrap_95_ci": {
           "classification_auroc": [
             0.777433,
@@ -294,14 +861,176 @@
         "classification_brier": 0.0059,
         "regression_mae": 0.0
       }
+    },
+    {
+      "scenario": "ten_percent_training_label_noise",
+      "retrained_on_perturbation": {
+        "model_family": "gradient_boosting",
+        "patient_count": 150,
+        "classification_auroc": 0.809387,
+        "classification_accuracy": 0.74,
+        "classification_balanced_accuracy": 0.726218,
+        "classification_brier": 0.181901,
+        "classification_ece_10_bin": 0.100853,
+        "regression_mae": 15.504482,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.74,
+            "balanced_accuracy": 0.726218,
+            "brier": 0.181901
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.77037,
+            "balanced_accuracy": 0.758506,
+            "brier": 0.174282
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.787611,
+            "balanced_accuracy": 0.780917,
+            "brier": 0.161702
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.84,
+            "balanced_accuracy": 0.832143,
+            "brier": 0.133003
+          }
+        ],
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.743253,
+            0.867389
+          ],
+          "classification_brier": [
+            0.164511,
+            0.200385
+          ],
+          "regression_mae": [
+            13.220327,
+            17.986475
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "clean_model_on_perturbed_test": null,
+      "retrained_delta_vs_guarded_clean": {
+        "classification_auroc": -0.044956,
+        "classification_brier": 0.022723,
+        "regression_mae": 0.0
+      }
+    },
+    {
+      "scenario": "twenty_percent_training_label_noise",
+      "retrained_on_perturbation": {
+        "model_family": "gradient_boosting",
+        "patient_count": 150,
+        "classification_auroc": 0.780076,
+        "classification_accuracy": 0.7,
+        "classification_balanced_accuracy": 0.705898,
+        "classification_brier": 0.205817,
+        "classification_ece_10_bin": 0.146728,
+        "regression_mae": 15.504482,
+        "classification_abstention_curve": [
+          {
+            "coverage": 1.0,
+            "n_retained": 150,
+            "accuracy": 0.7,
+            "balanced_accuracy": 0.705898,
+            "brier": 0.205817
+          },
+          {
+            "coverage": 0.9,
+            "n_retained": 135,
+            "accuracy": 0.718519,
+            "balanced_accuracy": 0.72033,
+            "brier": 0.201189
+          },
+          {
+            "coverage": 0.75,
+            "n_retained": 113,
+            "accuracy": 0.734513,
+            "balanced_accuracy": 0.732915,
+            "brier": 0.193386
+          },
+          {
+            "coverage": 0.5,
+            "n_retained": 75,
+            "accuracy": 0.813333,
+            "balanced_accuracy": 0.806671,
+            "brier": 0.167742
+          }
+        ],
+        "bootstrap_95_ci": {
+          "classification_auroc": [
+            0.690936,
+            0.852905
+          ],
+          "classification_brier": [
+            0.189525,
+            0.222305
+          ],
+          "regression_mae": [
+            13.220327,
+            17.986475
+          ]
+        },
+        "bootstrap_resamples": 300
+      },
+      "clean_model_on_perturbed_test": null,
+      "retrained_delta_vs_guarded_clean": {
+        "classification_auroc": -0.074267,
+        "classification_brier": 0.046639,
+        "regression_mae": 0.0
+      }
     }
   ],
   "generator_version_sensitivity": {
     "default_generator_internal": {
+      "model_family": "gradient_boosting",
       "patient_count": 150,
       "classification_auroc": 0.854343,
+      "classification_accuracy": 0.773333,
+      "classification_balanced_accuracy": 0.760655,
       "classification_brier": 0.159178,
+      "classification_ece_10_bin": 0.100669,
       "regression_mae": 15.504482,
+      "classification_abstention_curve": [
+        {
+          "coverage": 1.0,
+          "n_retained": 150,
+          "accuracy": 0.773333,
+          "balanced_accuracy": 0.760655,
+          "brier": 0.159178
+        },
+        {
+          "coverage": 0.9,
+          "n_retained": 135,
+          "accuracy": 0.807407,
+          "balanced_accuracy": 0.796399,
+          "brier": 0.149235
+        },
+        {
+          "coverage": 0.75,
+          "n_retained": 113,
+          "accuracy": 0.858407,
+          "balanced_accuracy": 0.844877,
+          "brier": 0.130359
+        },
+        {
+          "coverage": 0.5,
+          "n_retained": 75,
+          "accuracy": 0.893333,
+          "balanced_accuracy": 0.878788,
+          "brier": 0.099202
+        }
+      ],
       "bootstrap_95_ci": {
         "classification_auroc": [
           0.795343,
@@ -319,10 +1048,44 @@
       "bootstrap_resamples": 300
     },
     "realism_v2_generator_internal": {
+      "model_family": "gradient_boosting",
       "patient_count": 60,
       "classification_auroc": 0.697964,
+      "classification_accuracy": 0.666667,
+      "classification_balanced_accuracy": 0.651584,
       "classification_brier": 0.213998,
+      "classification_ece_10_bin": 0.082829,
       "regression_mae": 20.564898,
+      "classification_abstention_curve": [
+        {
+          "coverage": 1.0,
+          "n_retained": 60,
+          "accuracy": 0.666667,
+          "balanced_accuracy": 0.651584,
+          "brier": 0.213998
+        },
+        {
+          "coverage": 0.9,
+          "n_retained": 54,
+          "accuracy": 0.666667,
+          "balanced_accuracy": 0.654167,
+          "brier": 0.21058
+        },
+        {
+          "coverage": 0.75,
+          "n_retained": 45,
+          "accuracy": 0.688889,
+          "balanced_accuracy": 0.675,
+          "brier": 0.203351
+        },
+        {
+          "coverage": 0.5,
+          "n_retained": 30,
+          "accuracy": 0.733333,
+          "balanced_accuracy": 0.69378,
+          "brier": 0.190691
+        }
+      ],
       "bootstrap_95_ci": {
         "classification_auroc": [
           0.561045,
@@ -340,10 +1103,44 @@
       "bootstrap_resamples": 300
     },
     "train_default_test_realism_v2": {
+      "model_family": "gradient_boosting",
       "patient_count": 60,
       "classification_auroc": 0.71267,
+      "classification_accuracy": 0.65,
+      "classification_balanced_accuracy": 0.668552,
       "classification_brier": 0.240837,
+      "classification_ece_10_bin": 0.199711,
       "regression_mae": 25.356348,
+      "classification_abstention_curve": [
+        {
+          "coverage": 1.0,
+          "n_retained": 60,
+          "accuracy": 0.65,
+          "balanced_accuracy": 0.668552,
+          "brier": 0.240837
+        },
+        {
+          "coverage": 0.9,
+          "n_retained": 54,
+          "accuracy": 0.648148,
+          "balanced_accuracy": 0.666667,
+          "brier": 0.241007
+        },
+        {
+          "coverage": 0.75,
+          "n_retained": 45,
+          "accuracy": 0.6,
+          "balanced_accuracy": 0.613095,
+          "brier": 0.252863
+        },
+        {
+          "coverage": 0.5,
+          "n_retained": 30,
+          "accuracy": 0.666667,
+          "balanced_accuracy": 0.65625,
+          "brier": 0.23565
+        }
+      ],
       "bootstrap_95_ci": {
         "classification_auroc": [
           0.572522,
@@ -361,10 +1158,44 @@
       "bootstrap_resamples": 300
     },
     "train_realism_v2_test_default": {
+      "model_family": "gradient_boosting",
       "patient_count": 150,
       "classification_auroc": 0.671642,
+      "classification_accuracy": 0.646667,
+      "classification_balanced_accuracy": 0.620302,
       "classification_brier": 0.225564,
+      "classification_ece_10_bin": 0.081022,
       "regression_mae": 24.085815,
+      "classification_abstention_curve": [
+        {
+          "coverage": 1.0,
+          "n_retained": 150,
+          "accuracy": 0.646667,
+          "balanced_accuracy": 0.620302,
+          "brier": 0.225564
+        },
+        {
+          "coverage": 0.9,
+          "n_retained": 135,
+          "accuracy": 0.651852,
+          "balanced_accuracy": 0.623333,
+          "brier": 0.223901
+        },
+        {
+          "coverage": 0.75,
+          "n_retained": 113,
+          "accuracy": 0.681416,
+          "balanced_accuracy": 0.644071,
+          "brier": 0.217267
+        },
+        {
+          "coverage": 0.5,
+          "n_retained": 75,
+          "accuracy": 0.746667,
+          "balanced_accuracy": 0.694444,
+          "brier": 0.201863
+        }
+      ],
       "bootstrap_95_ci": {
         "classification_auroc": [
           0.574113,
@@ -398,7 +1229,23 @@
       "metric_deltas": {
         "classification_auroc": -0.051969,
         "classification_brier": 0.02081,
-        "regression_mae": 4.368769
+        "regression_mae": 4.516016
+      }
+    },
+    {
+      "scenario": "severe_modality_dropout",
+      "metric_deltas": {
+        "classification_auroc": -0.083798,
+        "classification_brier": 0.03374,
+        "regression_mae": 8.882744
+      }
+    },
+    {
+      "scenario": "twenty_percent_training_label_noise",
+      "metric_deltas": {
+        "classification_auroc": -0.074267,
+        "classification_brier": 0.046639,
+        "regression_mae": 0.0
       }
     },
     {
@@ -416,7 +1263,8 @@
     "Both generator versions share project assumptions and target semantics.",
     "Noise distributions are engineering stressors, not estimates of clinical measurement error.",
     "Cross-generator transfer is not external validation.",
-    "Gradient boosting is a controlled benchmark, not a promoted clinical model."
+    "Gradient boosting is a controlled benchmark, not a promoted clinical model.",
+    "Abstention curves rank internal synthetic rows by model confidence and do not establish safe clinical abstention."
   ],
   "claim_boundary": "All rows and labels in this evaluation are simulator-built. Perturbation robustness measures engineering sensitivity to synthetic assumptions; it does not establish clinical realism, external validity, treatment utility, patient benefit, or production healthcare readiness."
 }

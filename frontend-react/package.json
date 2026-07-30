@@ -23,6 +23,7 @@
     "recharts": "^3.8.1"
   },
   "devDependencies": {
+    "@emnapi/runtime": "^1.11.3",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.60.0",
     "@tailwindcss/vite": "^4.3.0",

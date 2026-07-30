@@ -1,6 +1,6 @@
 {
   "schema_version": "software_supply_chain_evidence_v1",
-  "generated_at": "2026-07-30T05:43:25.931840+00:00",
+  "generated_at": "2026-07-30T10:10:40.724290+00:00",
   "status": "acceptable",
   "lockfiles": {
     "python": {
@@ -12,8 +12,8 @@
     "frontend": {
       "path": "frontend-react/package-lock.json",
       "exists": true,
-      "sha256": "8b8c4e4000fdc8d4eebfbb94c6cf8414faaf866c8c56416d4ddff091c756e5b4",
-      "component_count": 403
+      "sha256": "0a0e2302dfe86db10d394762f58d1140014330ca8306b8c6a07a6e6bb578d2b1",
+      "component_count": 407
     }
   },
   "sbom": {
@@ -21,7 +21,7 @@
     "spec_version": "1.5",
     "python_path": "Data/evals/ops/sbom/python.cdx.json",
     "frontend_path": "Data/evals/ops/sbom/frontend.cdx.json",
-    "component_count": 504
+    "component_count": 508
   },
   "secret_scan": {
     "executed": true,

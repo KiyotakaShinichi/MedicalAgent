@@ -39,6 +39,8 @@ ARTIFACTS = {
     "automation": "Data/evals/ops/latest_automation_reliability_dossier.json",
     "cloud": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
     "deployment": "Data/evals/ops/latest_deployment_readiness.json",
+    "synthetic_staging": "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
+    "ml_perturbation": "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
     "medical_review": "Data/evals/medical/latest_medical_advisor_review_packet.json",
     "external_review": "Data/evals/governance/latest_external_review_readiness.json",
     "data_platform": "Data/lakehouse/manifests/latest_pipeline_run.json",
@@ -116,6 +118,8 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     automation = artifacts["automation"]
     cloud = artifacts["cloud"]
     deployment = artifacts["deployment"]
+    synthetic_staging = artifacts["synthetic_staging"]
+    ml_perturbation = artifacts["ml_perturbation"]
     ship = artifacts["ship"]
     data_platform = artifacts["data_platform"]
     return [
@@ -153,9 +157,14 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
             "MLE/statistics",
             2,
             "Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, "
-            "paired tests, calibration and synthetic perturbation sensitivity.",
+            "paired tests, calibration, train-only constant and linear baselines, "
+            "coverage-performance curves, and synthetic perturbation sensitivity.",
             "All outcomes and uncertainty remain simulator-bounded; transportability is unproven.",
-            "Independent external cohort with task-aligned outcomes or retain synthetic engineering-only positioning.",
+            (
+                "Resolve documented synthetic stress failures "
+                f"(current count={len(ml_perturbation.get('stress_failures') or [])}) "
+                "and use a task-aligned external cohort, or retain synthetic engineering-only positioning."
+            ),
         ),
         _dimension(
             "XAI",
@@ -182,16 +191,31 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
         _dimension(
             "Automation",
             2,
-            f"Local redacted outbox/retry/dead-letter/idempotency contracts status={automation.get('status')}.",
+            (
+                f"Local redacted outbox/retry/dead-letter/idempotency contracts status={automation.get('status')}; "
+                "a loopback n8n import and synthetic MailHog receipt are executable."
+            ),
             "External delivery is disabled by default and no live clinician acknowledgement workflow is proven.",
-            "Synthetic staging receipts, recovery SLOs, duplicate suppression, and operator drill; real use still requires governance.",
+            "Independent operator drill and approved external sandbox receipt; real use still requires governance.",
         ),
         _dimension(
             "Infrastructure/deployment",
-            1,
-            f"Compile-checked reference cloud architecture status={cloud.get('status')}.",
-            f"Deployment readiness={deployment.get('status')}; no authenticated what-if, deployment, restore, or cloud load evidence.",
-            "Disposable non-patient staging deployment with restore, failover, load, secret rotation, and cost evidence.",
+            (
+                2
+                if synthetic_staging.get("runtime_healthchecks_completed") is True
+                and synthetic_staging.get("postgres_restore_drill_completed") is True
+                else 1
+            ),
+            (
+                f"Reference cloud architecture status={cloud.get('status')}; disposable loopback runtime="
+                f"{synthetic_staging.get('runtime_healthchecks_completed')} and Postgres restore="
+                f"{synthetic_staging.get('postgres_restore_drill_completed')}."
+            ),
+            (
+                f"Deployment readiness={deployment.get('status')}; local containers do not prove authenticated "
+                "cloud deployment, managed failover, external traffic, secret rotation, or cloud cost."
+            ),
+            "Managed non-patient staging with authenticated deployment, failover, restore, load, secret rotation, and cost evidence.",
         ),
         _dimension(
             "Data engineering",

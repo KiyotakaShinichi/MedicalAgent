@@ -24,7 +24,9 @@ from backend.services.security_guardrails import (
     detect_multilingual_medical_danger,
     normalize_security_text,
 )
-from backend.services.unsafe_intent_semantic_classifier import classify_unsafe_intent
+from backend.services.unsafe_intent_context import (
+    classify_unsafe_intent_with_context,
+)
 
 
 # ─── Vocabulary tables ───────────────────────────────────────────────────────
@@ -233,7 +235,11 @@ URGENT_TERMS: tuple[str, ...] = (
 # ─── Public API ──────────────────────────────────────────────────────────────
 
 
-def safety_scope_check(query: str, urgent_flags: Sequence[str] | None = None) -> dict[str, Any]:
+def safety_scope_check(
+    query: str,
+    urgent_flags: Sequence[str] | None = None,
+    previous_user_messages: Sequence[str] | None = None,
+) -> dict[str, Any]:
     """Classify a query into a safety scope and return the policy envelope.
 
     Precedence (highest-risk first):
@@ -286,7 +292,10 @@ def safety_scope_check(query: str, urgent_flags: Sequence[str] | None = None) ->
             "message": "Diagnosis/outcome confirmation wording detected; assistant must not confirm disease state.",
             "safety_source": "deterministic",
         }
-    semantic = classify_unsafe_intent(query)
+    semantic = classify_unsafe_intent_with_context(
+        query,
+        tuple(previous_user_messages or ()),
+    )
     if (
         semantic.get("is_unsafe")
         and not semantic.get("borderline")
@@ -301,6 +310,8 @@ def safety_scope_check(query: str, urgent_flags: Sequence[str] | None = None) ->
             "unsafe_intent_family": semantic.get("unsafe_intent_family"),
             "unsafe_intent_confidence": semantic.get("unsafe_intent_confidence"),
             "over_refusal_risk_flag": semantic.get("over_refusal_risk_flag"),
+            "context_reused": semantic.get("context_reused", False),
+            "context_turn_count": semantic.get("context_turn_count", 0),
         }
     return {
         "level": "low_risk",

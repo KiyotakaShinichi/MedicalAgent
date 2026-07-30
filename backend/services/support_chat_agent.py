@@ -46,6 +46,12 @@ def handle_patient_chat(db, patient_id, message):
     if not normalized:
         raise ValueError("Message cannot be empty")
 
+    prior_state = state_snapshot(patient_id)
+    prior_user_messages = [
+        str(row.get("message") or "")
+        for row in prior_state.get("recent_messages") or []
+        if row.get("role") == "user"
+    ][-3:]
     safety_followup = _resolve_safety_location_followup(db, patient_id, normalized)
     immediate_danger = _is_immediate_danger_statement(normalized)
     remember_turn(patient_id, "user", normalized)
@@ -56,13 +62,21 @@ def handle_patient_chat(db, patient_id, message):
     if safety_followup:
         urgent_flags.append("safety_location_followup")
     urgent_flags = sorted(set(urgent_flags))
-    routing_safety = safety_scope_check(normalized, urgent_flags)
+    routing_safety = safety_scope_check(
+        normalized,
+        urgent_flags,
+        previous_user_messages=prior_user_messages,
+    )
     try:
         from backend.services.emotional_distress_detection import detect_emotional_distress
         emotional_distress = detect_emotional_distress(normalized, safety=routing_safety)
         if emotional_distress.response_mode == "crisis_support":
             urgent_flags.append("emotional_crisis")
-            routing_safety = safety_scope_check(normalized, urgent_flags)
+            routing_safety = safety_scope_check(
+                normalized,
+                urgent_flags,
+                previous_user_messages=prior_user_messages,
+            )
             emotional_distress = detect_emotional_distress(normalized, safety=routing_safety)
     except Exception:  # noqa: BLE001 - affective detection must never block chat
         emotional_distress = None
@@ -279,7 +293,11 @@ def handle_patient_chat(db, patient_id, message):
     # safety scope check.  Recompute so the bypass path and the RAG pipeline
     # both see the elevated safety level (e.g. very_low_wbc → high_risk).
     if urgent_flags:
-        routing_safety = safety_scope_check(normalized, urgent_flags)
+        routing_safety = safety_scope_check(
+            normalized,
+            urgent_flags,
+            previous_user_messages=prior_user_messages,
+        )
 
     # Queue the review alert only after every extractor has had a chance to
     # add safety flags. This covers explicit danger language as well as urgent
@@ -407,6 +425,7 @@ def handle_patient_chat(db, patient_id, message):
             urgent_flags=urgent_flags,
             preselected_intent=routing_intent,
             compound_intent=compound_intent,
+            precomputed_safety=routing_safety,
         )
     agent_result["emotional_distress"] = emotional_distress.to_dict() if emotional_distress is not None else None
     agent_result["reply"] = _apply_emotional_distress_mode(agent_result["reply"], emotional_distress)

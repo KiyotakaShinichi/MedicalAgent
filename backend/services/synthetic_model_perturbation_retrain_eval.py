@@ -12,7 +12,14 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import brier_score_loss, mean_absolute_error, roc_auc_score
+from sklearn.linear_model import LogisticRegression, Ridge
+from sklearn.metrics import (
+    accuracy_score,
+    balanced_accuracy_score,
+    brier_score_loss,
+    mean_absolute_error,
+    roc_auc_score,
+)
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -64,8 +71,27 @@ def build_synthetic_model_perturbation_retrain_eval(
     guarded_clean = _fit_and_score(
         train, test, numeric_features=GUARDED_NUMERIC_FEATURES, seed=seed
     )
+    linear_clean = _fit_and_score(
+        train,
+        test,
+        numeric_features=GUARDED_NUMERIC_FEATURES,
+        seed=seed,
+        model_family="linear",
+    )
+    train_only_constant = _train_only_constant_baseline(train, test, seed=seed)
+    complex_vs_linear = _metric_deltas(linear_clean, guarded_clean)
+    complex_model_lift = bool(
+        (complex_vs_linear.get("classification_auroc") or 0.0) >= 0.02
+        and (complex_vs_linear.get("classification_brier") or 0.0) <= 0.0
+        and (complex_vs_linear.get("regression_mae") or 0.0) <= -1.0
+    )
     scenarios = []
-    for name in ("measurement_noise", "modality_dropout", "combined_noise"):
+    for name in (
+        "measurement_noise",
+        "modality_dropout",
+        "severe_modality_dropout",
+        "combined_noise",
+    ):
         perturbed_train = perturb_features(train, scenario=name, seed=seed)
         perturbed_test = perturb_features(test, scenario=name, seed=seed + 1)
         retrained = _fit_and_score(
@@ -91,23 +117,32 @@ def build_synthetic_model_perturbation_retrain_eval(
             }
         )
 
-    label_noisy_train = perturb_training_labels(train, seed=seed, fraction=0.05)
-    label_noise = _fit_and_score(
-        label_noisy_train,
-        test,
-        numeric_features=GUARDED_NUMERIC_FEATURES,
-        seed=seed,
-    )
-    scenarios.append(
-        {
-            "scenario": "five_percent_training_label_noise",
-            "retrained_on_perturbation": label_noise,
-            "clean_model_on_perturbed_test": None,
-            "retrained_delta_vs_guarded_clean": _metric_deltas(
-                guarded_clean, label_noise
-            ),
-        }
-    )
+    for fraction, label in (
+        (0.05, "five_percent_training_label_noise"),
+        (0.10, "ten_percent_training_label_noise"),
+        (0.20, "twenty_percent_training_label_noise"),
+    ):
+        label_noisy_train = perturb_training_labels(
+            train,
+            seed=seed,
+            fraction=fraction,
+        )
+        label_noise = _fit_and_score(
+            label_noisy_train,
+            test,
+            numeric_features=GUARDED_NUMERIC_FEATURES,
+            seed=seed,
+        )
+        scenarios.append(
+            {
+                "scenario": label,
+                "retrained_on_perturbation": label_noise,
+                "clean_model_on_perturbed_test": None,
+                "retrained_delta_vs_guarded_clean": _metric_deltas(
+                    guarded_clean, label_noise
+                ),
+            }
+        )
 
     default_to_realism = _fit_and_score(
         train,
@@ -175,6 +210,22 @@ def build_synthetic_model_perturbation_retrain_eval(
                 "delta_vs_full": _metric_deltas(full_clean, guarded_clean),
             },
         },
+        "proxy_removed_simple_baselines": {
+            "train_only_constant": train_only_constant,
+            "logistic_ridge": linear_clean,
+            "gradient_boosting_huber": guarded_clean,
+            "gradient_boosting_delta_vs_logistic_ridge": complex_vs_linear,
+            "complex_model_lift_predeclared_threshold_met": complex_model_lift,
+            "complexity_decision": (
+                "retain_complex_model_for_synthetic_comparison_only"
+                if complex_model_lift
+                else "prefer_simple_baseline_for_parsimony"
+            ),
+            "decision_rule": (
+                "Complex model requires AUROC delta >=0.02, no Brier regression, "
+                "and regression MAE improvement >=1.0 on the same patient split."
+            ),
+        },
         "perturbation_scenarios": scenarios,
         "generator_version_sensitivity": generator_sensitivity,
         "stress_failures": stress_failures,
@@ -185,6 +236,7 @@ def build_synthetic_model_perturbation_retrain_eval(
             "Noise distributions are engineering stressors, not estimates of clinical measurement error.",
             "Cross-generator transfer is not external validation.",
             "Gradient boosting is a controlled benchmark, not a promoted clinical model.",
+            "Abstention curves rank internal synthetic rows by model confidence and do not establish safe clinical abstention.",
         ],
         "claim_boundary": CLAIM_BOUNDARY,
     }
@@ -207,7 +259,12 @@ def perturb_features(
     scenario: str,
     seed: int,
 ) -> pd.DataFrame:
-    if scenario not in {"measurement_noise", "modality_dropout", "combined_noise"}:
+    if scenario not in {
+        "measurement_noise",
+        "modality_dropout",
+        "severe_modality_dropout",
+        "combined_noise",
+    }:
         raise ValueError(f"unsupported perturbation scenario: {scenario}")
     output = frame.copy()
     rng = np.random.default_rng(seed)
@@ -224,12 +281,17 @@ def perturb_features(
             if scale:
                 noise = rng.normal(0.0, scale, size=len(output))
                 output[feature] = values + noise
-    if scenario in {"modality_dropout", "combined_noise"}:
+    if scenario in {
+        "modality_dropout",
+        "severe_modality_dropout",
+        "combined_noise",
+    }:
         patient_ids = output["patient_id"].drop_duplicates().to_numpy()
+        dropout_fraction = 0.50 if scenario == "severe_modality_dropout" else 0.25
         selected = set(
             rng.choice(
                 patient_ids,
-                size=max(1, round(len(patient_ids) * 0.25)),
+                size=max(1, round(len(patient_ids) * dropout_fraction)),
                 replace=False,
             ).tolist()
         )
@@ -242,6 +304,9 @@ def perturb_features(
             "pre_platelets",
             "max_symptom_severity",
             "symptom_count",
+            "intervention_count",
+            "dose_delayed",
+            "dose_reduced",
         ):
             if feature in output.columns:
                 output.loc[mask, feature] = np.nan
@@ -301,6 +366,7 @@ def _fit_and_score(
     *,
     numeric_features: list[str],
     seed: int,
+    model_family: str = "gradient_boosting",
 ) -> dict[str, Any]:
     features = [
         feature
@@ -309,16 +375,30 @@ def _fit_and_score(
     ]
     numeric = [feature for feature in features if feature in numeric_features]
     categorical = [feature for feature in features if feature in CATEGORICAL_FEATURES]
+    if model_family == "gradient_boosting":
+        classifier_model = GradientBoostingClassifier(random_state=seed)
+        regressor_model = GradientBoostingRegressor(
+            random_state=seed,
+            loss="huber",
+        )
+    elif model_family == "linear":
+        classifier_model = LogisticRegression(
+            max_iter=2_000,
+            random_state=seed,
+        )
+        regressor_model = Ridge(alpha=1.0)
+    else:
+        raise ValueError(f"unsupported model_family: {model_family}")
     classifier = Pipeline(
         [
             ("preprocessor", _preprocessor(numeric, categorical)),
-            ("model", GradientBoostingClassifier(random_state=seed)),
+            ("model", classifier_model),
         ]
     )
     regressor = Pipeline(
         [
             ("preprocessor", _preprocessor(numeric, categorical)),
-            ("model", GradientBoostingRegressor(random_state=seed, loss="huber")),
+            ("model", regressor_model),
         ]
     )
     classifier.fit(train[features], train["treatment_success_binary"].astype(int))
@@ -346,14 +426,34 @@ def _fit_and_score(
         else None
     )
     intervals = _bootstrap_metric_intervals(patient, seed=seed)
+    predicted_labels = (patient["probability"] >= 0.5).astype(int)
     return {
+        "model_family": model_family,
         "patient_count": len(patient),
         "classification_auroc": round(auc, 6) if auc is not None else None,
+        "classification_accuracy": round(
+            float(accuracy_score(patient["label"], predicted_labels)),
+            6,
+        ),
+        "classification_balanced_accuracy": round(
+            float(balanced_accuracy_score(patient["label"], predicted_labels)),
+            6,
+        ),
         "classification_brier": round(
             float(brier_score_loss(patient["label"], patient["probability"])), 6
         ),
+        "classification_ece_10_bin": round(
+            _expected_calibration_error(
+                patient["label"].to_numpy(),
+                patient["probability"].to_numpy(),
+            ),
+            6,
+        ),
         "regression_mae": round(
             float(mean_absolute_error(patient["response"], patient["prediction"])), 6
+        ),
+        "classification_abstention_curve": _classification_abstention_curve(
+            patient
         ),
         "bootstrap_95_ci": intervals,
         "bootstrap_resamples": 300,
@@ -404,6 +504,167 @@ def _metric_deltas(before: dict[str, Any], after: dict[str, Any]) -> dict[str, A
             else None
         )
     return output
+
+
+def _train_only_constant_baseline(
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    *,
+    seed: int,
+) -> dict[str, Any]:
+    del seed  # The baseline is intentionally deterministic.
+    train_patient = (
+        train.groupby("patient_id", as_index=False)
+        .agg(
+            label=("treatment_success_binary", "max"),
+            response=("response_score_percent", "mean"),
+        )
+    )
+    test_patient = (
+        test.groupby("patient_id", as_index=False)
+        .agg(
+            label=("treatment_success_binary", "max"),
+            response=("response_score_percent", "mean"),
+        )
+    )
+    probability = float(train_patient["label"].mean())
+    response = float(train_patient["response"].mean())
+    probabilities = np.full(len(test_patient), probability, dtype=float)
+    predictions = np.full(len(test_patient), response, dtype=float)
+    predicted_labels = (probabilities >= 0.5).astype(int)
+    return {
+        "model_family": "train_only_constant",
+        "patient_count": len(test_patient),
+        "classification_auroc": 0.5 if test_patient["label"].nunique() > 1 else None,
+        "classification_accuracy": round(
+            float(accuracy_score(test_patient["label"], predicted_labels)),
+            6,
+        ),
+        "classification_balanced_accuracy": round(
+            float(
+                balanced_accuracy_score(
+                    test_patient["label"],
+                    predicted_labels,
+                )
+            ),
+            6,
+        ),
+        "classification_brier": round(
+            float(brier_score_loss(test_patient["label"], probabilities)),
+            6,
+        ),
+        "classification_ece_10_bin": round(
+            _expected_calibration_error(
+                test_patient["label"].to_numpy(),
+                probabilities,
+            ),
+            6,
+        ),
+        "regression_mae": round(
+            float(mean_absolute_error(test_patient["response"], predictions)),
+            6,
+        ),
+        "classification_abstention_curve": [
+            {
+                "coverage": 1.0,
+                "n_retained": len(test_patient),
+                "accuracy": round(
+                    float(
+                        accuracy_score(
+                            test_patient["label"],
+                            predicted_labels,
+                        )
+                    ),
+                    6,
+                ),
+                "balanced_accuracy": round(
+                    float(
+                        balanced_accuracy_score(
+                            test_patient["label"],
+                            predicted_labels,
+                        )
+                    ),
+                    6,
+                ),
+                "brier": round(
+                    float(
+                        brier_score_loss(
+                            test_patient["label"],
+                            probabilities,
+                        )
+                    ),
+                    6,
+                ),
+            }
+        ],
+        "training_only_statistics": {
+            "positive_rate": round(probability, 6),
+            "mean_response_score": round(response, 6),
+        },
+    }
+
+
+def _expected_calibration_error(
+    labels: np.ndarray,
+    probabilities: np.ndarray,
+    *,
+    bins: int = 10,
+) -> float:
+    if len(labels) == 0:
+        return 0.0
+    edges = np.linspace(0.0, 1.0, bins + 1)
+    total = float(len(labels))
+    error = 0.0
+    for index in range(bins):
+        lower = edges[index]
+        upper = edges[index + 1]
+        if index == bins - 1:
+            mask = (probabilities >= lower) & (probabilities <= upper)
+        else:
+            mask = (probabilities >= lower) & (probabilities < upper)
+        if not np.any(mask):
+            continue
+        observed = float(np.mean(labels[mask]))
+        predicted = float(np.mean(probabilities[mask]))
+        error += float(np.sum(mask)) / total * abs(observed - predicted)
+    return float(error)
+
+
+def _classification_abstention_curve(
+    patient: pd.DataFrame,
+) -> list[dict[str, Any]]:
+    ranked = patient.assign(
+        confidence=(patient["probability"] - 0.5).abs()
+    ).sort_values(["confidence", "patient_id"], ascending=[False, True])
+    curve: list[dict[str, Any]] = []
+    for coverage in (1.0, 0.9, 0.75, 0.5):
+        retained_n = max(1, int(np.ceil(len(ranked) * coverage)))
+        retained = ranked.head(retained_n)
+        predicted = (retained["probability"] >= 0.5).astype(int)
+        curve.append(
+            {
+                "coverage": coverage,
+                "n_retained": retained_n,
+                "accuracy": round(
+                    float(accuracy_score(retained["label"], predicted)),
+                    6,
+                ),
+                "balanced_accuracy": round(
+                    float(balanced_accuracy_score(retained["label"], predicted)),
+                    6,
+                ),
+                "brier": round(
+                    float(
+                        brier_score_loss(
+                            retained["label"],
+                            retained["probability"],
+                        )
+                    ),
+                    6,
+                ),
+            }
+        )
+    return curve
 
 
 def _stress_failures(

@@ -16,6 +16,13 @@ ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = ROOT / "config" / "finetune_candidate.json"
 DATASET_PATH = ROOT / "Data" / "finetune" / "prepared" / "dataset_train.jsonl"
 OUTPUT_PATH = ROOT / "Data" / "evals" / "models" / "latest_finetune_runtime_preflight.json"
+ADJUDICATION_PATH = (
+    ROOT
+    / "Data"
+    / "evals"
+    / "models"
+    / "latest_finetune_contamination_adjudication_readiness.json"
+)
 DEPENDENCIES = ("torch", "transformers", "peft", "accelerate")
 
 
@@ -58,6 +65,7 @@ def build_finetune_runtime_preflight(
     *,
     execute_runtime_probe: bool = True,
     timeout_seconds: int = 15,
+    adjudication_path: Path = ADJUDICATION_PATH,
 ) -> dict[str, Any]:
     candidate = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     dependency_presence = {name: importlib.util.find_spec(name) is not None for name in DEPENDENCIES}
@@ -66,10 +74,23 @@ def build_finetune_runtime_preflight(
         "healthy": False,
     }
     explicit_enable = os.getenv("NLCARE_FINETUNE_EXPERIMENT_ENABLED", "").lower() in {"1", "true", "yes"}
+    adjudication = _read_json(adjudication_path)
+    adjudication_complete = bool(
+        adjudication.get("completed") is True
+        and int(adjudication.get("unresolved_count") or 0) == 0
+        and int(adjudication.get("critical_unresolved_count") or 0) == 0
+    )
     config_ready = all(
         candidate.get(key) for key in ("model_id", "revision", "tokenizer_revision", "license", "official_model_card")
     ) and candidate.get("license_review", "").startswith("recorded_")
-    ready = bool(config_ready and all(dependency_presence.values()) and runtime["healthy"] and DATASET_PATH.exists() and explicit_enable)
+    ready = bool(
+        config_ready
+        and all(dependency_presence.values())
+        and runtime["healthy"]
+        and DATASET_PATH.exists()
+        and explicit_enable
+        and adjudication_complete
+    )
     report = {
         "schema_version": "finetune_runtime_preflight_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -84,10 +105,21 @@ def build_finetune_runtime_preflight(
         "dependency_presence": dependency_presence,
         "runtime_probe": runtime,
         "explicit_experiment_enable": explicit_enable,
+        "contamination_adjudication": {
+            "path": str(adjudication_path),
+            "status": adjudication.get("status") or "missing",
+            "completed": adjudication.get("completed") is True,
+            "unresolved_count": int(adjudication.get("unresolved_count") or 0),
+            "critical_unresolved_count": int(
+                adjudication.get("critical_unresolved_count") or 0
+            ),
+            "cleared_for_runtime": adjudication_complete,
+        },
         "ready_for_offline_experiment": ready,
         "next_step": (
-            "Repair or provision an isolated supported training runtime, install pinned PEFT dependencies, "
-            "then run baseline and candidate generations on the internal behavior eval."
+            "Complete contamination adjudication, repair or provision an isolated supported training "
+            "runtime, install pinned PEFT dependencies, then run baseline and candidate generations "
+            "on the internal behavior eval."
         ),
         "claim_boundary": (
             "This is a runtime and lineage preflight only. No adapter was trained, no behavior improvement "
@@ -97,6 +129,16 @@ def build_finetune_runtime_preflight(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     return report
+
+
+def _read_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload if isinstance(payload, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
 
 
 __all__ = ["build_finetune_runtime_preflight"]

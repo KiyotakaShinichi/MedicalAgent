@@ -1,6 +1,6 @@
 {
   "schema_version": "service_health_snapshot_v2",
-  "generated_at": "2026-07-30T05:50:52.703184+00:00",
+  "generated_at": "2026-07-30T10:23:44.828143+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -11,7 +11,7 @@
   "metrics": {
     "live_rag_case_count": 21,
     "live_rag_latency_p50_ms": 3810.25,
-    "normal_rag_latency_p95_ms": 264.22,
+    "normal_rag_latency_p95_ms": 394.35,
     "normal_rag_percentile_credible": true,
     "routes_with_insufficient_samples": 0,
     "retrieval_case_failure_rate": 0.0952,
@@ -33,7 +33,7 @@
     "deployment_profile_status": "development_profile",
     "release_decision": "PROCEED_WITH_WARNINGS",
     "release_gate_status": "needs_attention",
-    "stale_artifact_count": 122,
+    "stale_artifact_count": 121,
     "failed_benchmark_count": 0
   },
   "attention_items": [

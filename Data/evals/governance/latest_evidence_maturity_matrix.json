@@ -1,6 +1,6 @@
 {
   "schema_version": "evidence_maturity_matrix_v1",
-  "generated_at": "2026-07-30T05:56:08.215440+00:00",
+  "generated_at": "2026-07-30T10:23:01.917433+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -17,8 +17,8 @@
     },
     "tier_counts": {
       "0": 0,
-      "1": 3,
-      "2": 6,
+      "1": 2,
+      "2": 7,
       "3": 2,
       "4": 0,
       "5": 0
@@ -53,9 +53,9 @@
       "dimension": "MLE/statistics",
       "current_evidence_tier": 2,
       "tier_label": "internal_self_test",
-      "what_is_proven": "Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, paired tests, calibration and synthetic perturbation sensitivity.",
+      "what_is_proven": "Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, paired tests, calibration, train-only constant and linear baselines, coverage-performance curves, and synthetic perturbation sensitivity.",
       "what_is_not_proven": "All outcomes and uncertainty remain simulator-bounded; transportability is unproven.",
-      "next_falsifiable_evidence": "Independent external cohort with task-aligned outcomes or retain synthetic engineering-only positioning."
+      "next_falsifiable_evidence": "Resolve documented synthetic stress failures (current count=4) and use a task-aligned external cohort, or retain synthetic engineering-only positioning."
     },
     {
       "dimension": "XAI",
@@ -85,17 +85,17 @@
       "dimension": "Automation",
       "current_evidence_tier": 2,
       "tier_label": "internal_self_test",
-      "what_is_proven": "Local redacted outbox/retry/dead-letter/idempotency contracts status=strong.",
+      "what_is_proven": "Local redacted outbox/retry/dead-letter/idempotency contracts status=strong; a loopback n8n import and synthetic MailHog receipt are executable.",
       "what_is_not_proven": "External delivery is disabled by default and no live clinician acknowledgement workflow is proven.",
-      "next_falsifiable_evidence": "Synthetic staging receipts, recovery SLOs, duplicate suppression, and operator drill; real use still requires governance."
+      "next_falsifiable_evidence": "Independent operator drill and approved external sandbox receipt; real use still requires governance."
     },
     {
       "dimension": "Infrastructure/deployment",
-      "current_evidence_tier": 1,
-      "tier_label": "scaffold_or_contract_only",
-      "what_is_proven": "Compile-checked reference cloud architecture status=compiled_reference_architecture.",
-      "what_is_not_proven": "Deployment readiness=needs_attention; no authenticated what-if, deployment, restore, or cloud load evidence.",
-      "next_falsifiable_evidence": "Disposable non-patient staging deployment with restore, failover, load, secret rotation, and cost evidence."
+      "current_evidence_tier": 2,
+      "tier_label": "internal_self_test",
+      "what_is_proven": "Reference cloud architecture status=compiled_reference_architecture; disposable loopback runtime=True and Postgres restore=True.",
+      "what_is_not_proven": "Deployment readiness=needs_attention; local containers do not prove authenticated cloud deployment, managed failover, external traffic, secret rotation, or cloud cost.",
+      "next_falsifiable_evidence": "Managed non-patient staging with authenticated deployment, failover, restore, load, secret rotation, and cost evidence."
     },
     {
       "dimension": "Data engineering",
@@ -118,9 +118,9 @@
     "budget_status": "needs_attention",
     "oversized_file_count": 8,
     "critical_file_count": 0,
-    "backend_service_file_count": 373,
-    "test_file_count": 206,
-    "test_to_service_file_ratio": 0.5523,
+    "backend_service_file_count": 374,
+    "test_file_count": 208,
+    "test_to_service_file_ratio": 0.5561,
     "largest_violations": [
       {
         "path": "scripts/generate_project_guide_pdf.py",

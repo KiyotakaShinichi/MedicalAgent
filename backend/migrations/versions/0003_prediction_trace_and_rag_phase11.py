@@ -40,7 +40,27 @@ def _existing_columns(table: str) -> set[str]:
     return {column["name"] for column in inspector.get_columns(table)}
 
 
+def _existing_indexes(table: str) -> set[str]:
+    inspector = sa.inspect(op.get_bind())
+    if table not in inspector.get_table_names():
+        return set()
+    return {
+        str(index["name"])
+        for index in inspector.get_indexes(table)
+        if index.get("name")
+    }
+
+
 def upgrade() -> None:
+    bind = op.get_bind()
+    if bind.dialect.name == "postgresql":
+        op.alter_column(
+            "alembic_version",
+            "version_num",
+            existing_type=sa.String(length=32),
+            type_=sa.String(length=128),
+            existing_nullable=False,
+        )
     tables = _table_names()
     if PREDICTION_TRACE_TABLE not in tables:
         op.create_table(
@@ -87,10 +107,11 @@ def upgrade() -> None:
             for name, column in new_columns:
                 if name not in existing:
                     batch_op.add_column(column)
-        try:
+        if (
+            "ix_rag_evaluation_logs_rag_mode"
+            not in _existing_indexes(RAG_TABLE)
+        ):
             op.create_index("ix_rag_evaluation_logs_rag_mode", RAG_TABLE, ["rag_mode"])
-        except Exception:
-            pass
 
 
 def downgrade() -> None:

@@ -2550,13 +2550,14 @@ artifacts:
     metric_thresholds:
       - {path: [clinical_validation], op: "==", value: false}
       - {path: [healthcare_production_ready], op: "==", value: false}
-      - {path: [runtime_started], op: "==", value: false}
       - {path: [real_external_delivery_completed], op: "==", value: false}
       - {path: [patient_data_processed], op: "==", value: false}
+      - {path: [managed_vector_network_call_completed], op: "==", value: false}
     note: >
-      Static and compose-syntax evidence for a loopback-only disposable
-      synthetic environment. Docker runtime health, restore, workflow import,
-      and message receipt remain unproven on this host.
+      Static readiness may be supplemented by a fingerprint-matched,
+      time-bounded loopback runtime drill. Even when those local checks pass,
+      patient data, external delivery, managed-vector network access,
+      clinical validation, and healthcare-production claims remain blocked.
 
   - path: Data/evals/safety/latest_adversarial_holdout_v7_baseline.json
     required: false

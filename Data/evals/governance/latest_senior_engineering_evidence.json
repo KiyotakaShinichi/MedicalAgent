@@ -1,8 +1,8 @@
 {
   "schema_version": "nlcare_senior_engineering_evidence_v1",
-  "generated_at": "2026-07-30T05:56:05.765766+00:00",
-  "status": "strong_internal_engineering_evidence",
-  "evidence_maturity": "advanced_internal_candidate",
+  "generated_at": "2026-07-30T10:23:39.176997+00:00",
+  "status": "provisional_pending_current_ship",
+  "evidence_maturity": "provisional_internal_candidate",
   "senior_title_awarded_by_artifact": false,
   "independent_reproduction_completed": false,
   "external_reviewer_completed": false,
@@ -23,7 +23,7 @@
     },
     {
       "check_id": "ship_manifest_passed_with_timeouts",
-      "passed": true,
+      "passed": false,
       "mandatory": false,
       "description": "The recorded release run completed with bounded step timeouts."
     },
@@ -53,7 +53,7 @@
     }
   ],
   "architecture_fitness_pass_rate": 1.0,
-  "all_architecture_checks_pass_rate": 1.0,
+  "all_architecture_checks_pass_rate": 0.857143,
   "evidence_triangles": [
     {
       "domain": "agent_execution",
@@ -72,7 +72,7 @@
       "artifact": {
         "path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
         "exists": true,
-        "sha256": "58baebaf25d36ec657884d7658e8acd83e9cf432b42349de38aa863673deb339",
+        "sha256": "52aba29c66416b77e66546c04da62253442aae0ebe54c665ae6e61376e3b0b60",
         "size_bytes": 8005
       },
       "artifact_status": "strong",
@@ -96,7 +96,7 @@
       "artifact": {
         "path": "Data/evals/governance/latest_cross_domain_assurance_eval.json",
         "exists": true,
-        "sha256": "1f091c8c3babdd185a3aadab5928037c884c4c821c6a3783e55dbdad006c822a",
+        "sha256": "b678084c6ead1b19d930d8eaf3fc3f01d321175cd746e5460349c2b9079264fa",
         "size_bytes": 4051
       },
       "artifact_status": "strong_internal_assurance",
@@ -144,7 +144,7 @@
       "artifact": {
         "path": "Data/evals/rag/latest_rag_degradation_resilience.json",
         "exists": true,
-        "sha256": "c67e10f892eefacc9829d4fb468cede100e8a30b34e13ee99f3056606540e930",
+        "sha256": "d14c0fbe356cae31140603cbd6be0514a3f938e1a924ce3c89fb0e47b77167ee",
         "size_bytes": 1520
       },
       "artifact_status": "strong_offline_drill",
@@ -168,7 +168,7 @@
       "artifact": {
         "path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
         "exists": true,
-        "sha256": "1ad21a591ff885ec43618f1574e1f4890b85731787e63d184297158b80c71bc4",
+        "sha256": "b723fe2c93b9bdc635e15bd5642e92a1aaddd0a56aa34de33e685aa2f5d5a430",
         "size_bytes": 11274
       },
       "artifact_status": "needs_attention",
@@ -192,7 +192,7 @@
       "artifact": {
         "path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
         "exists": true,
-        "sha256": "cc6663529c77c16a46bac621edd13813583d6e842d00c08d633ccd20ae933a61",
+        "sha256": "159a7ab5eadc6142dd6c46252ae8b1cc1766fc9982e8f8dfa0e632c97dbc947b",
         "size_bytes": 6545
       },
       "artifact_status": "strong",
@@ -216,7 +216,7 @@
       "artifact": {
         "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
         "exists": true,
-        "sha256": "13fb60d349b5bacb571b8ec30e1034fc832ede8ba685dbd93ee4d1c750015b55",
+        "sha256": "8642080dc948376368a6fc1d8ccf725a1722414f5f0eda28b0b61be84643eb37",
         "size_bytes": 2831
       },
       "artifact_status": "strong_offline_drill",
@@ -240,7 +240,7 @@
       "artifact": {
         "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
         "exists": true,
-        "sha256": "161094a7f6bb34b55ddb1a8d95a7aa9c8c174a8bf9a9ec7c40544c7499cf7565",
+        "sha256": "8aedb6335da708d88b8cb447679aa31c5269a5ce981d6eaa69cbc4f5c0391db6",
         "size_bytes": 8283
       },
       "artifact_status": "compiled_reference_architecture",
@@ -252,8 +252,8 @@
     {
       "path": "Data/evals/ops/latest_ship_run.json",
       "exists": true,
-      "sha256": "8010ae5d80490daa20b9aa4aab1e8ce9e490c9ad8c13eeeb30a8c232dbd0e501",
-      "size_bytes": 27826,
+      "sha256": "b47bd5ae706cff178ee2807323e8b2b7d637926403acd6f2cd36ca4068a9d80e",
+      "size_bytes": 28077,
       "status": "passed",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -261,8 +261,8 @@
     {
       "path": "Data/evals/governance/latest_release_decision_surface.json",
       "exists": true,
-      "sha256": "7f08dadb8f8b8c49119a4f67d6c6de116054a0b00df55e73e284b7ac53f1e6ff",
-      "size_bytes": 15929,
+      "sha256": "fa758cb1f99641d53a8f426e70d7b93c4abcb1c7fb2a271265bec5885fb00689",
+      "size_bytes": 15926,
       "status": "needs_attention",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -270,8 +270,8 @@
     {
       "path": "Data/evals/governance/latest_focused_release_summary.json",
       "exists": true,
-      "sha256": "9d38f7e79a86a6e11f00136ea0ed71166006b7f796be1e33044c111f672dee16",
-      "size_bytes": 10450,
+      "sha256": "bbb985c4c9e18e3e94e4863ff0fef608b76d7daa873dafa0ffb4be809d223632",
+      "size_bytes": 11497,
       "status": "needs_attention",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -297,7 +297,7 @@
     {
       "path": "Data/evals/ops/latest_dependency_security_scan.json",
       "exists": true,
-      "sha256": "1ab0a9dc061b05afc44fa6235b69691d5006591059d7ff1ca5ef423a1678812a",
+      "sha256": "ed2f204187f1b42ca7a1446df8d72e23911abfbffcc048841c94d405ae74f5f5",
       "size_bytes": 3916,
       "status": "acceptable",
       "clinical_validation": null,
@@ -306,7 +306,7 @@
     {
       "path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
       "exists": true,
-      "sha256": "4b0b8a8bdbb4c0afb83fa81ee5402794800277f6d12b184de18b9836446d1050",
+      "sha256": "a133fe9ff8e6ad61d4fa44a1babc547eca78d249d6e23067d413c6233f678b2e",
       "size_bytes": 2106,
       "status": "acceptable",
       "clinical_validation": false,
@@ -345,7 +345,7 @@
           "-q"
         ],
         "cwd": ".",
-        "duration_seconds": 133.734,
+        "duration_seconds": 156.167,
         "timeout_seconds": 900
       },
       {
@@ -362,7 +362,7 @@
           "-q"
         ],
         "cwd": ".",
-        "duration_seconds": 110.291,
+        "duration_seconds": 44.712,
         "timeout_seconds": 900
       },
       {
@@ -423,7 +423,7 @@
           "-q"
         ],
         "cwd": ".",
-        "duration_seconds": 140.79,
+        "duration_seconds": 182.664,
         "timeout_seconds": 900
       },
       {
@@ -434,7 +434,7 @@
           "test"
         ],
         "cwd": "frontend-react",
-        "duration_seconds": 90.131,
+        "duration_seconds": 0.0,
         "timeout_seconds": 900
       },
       {
@@ -447,7 +447,7 @@
           "tests/e2e/smoke.spec.ts"
         ],
         "cwd": "frontend-react",
-        "duration_seconds": 292.493,
+        "duration_seconds": 0.0,
         "timeout_seconds": 900
       },
       {
@@ -458,7 +458,7 @@
           "lint"
         ],
         "cwd": "frontend-react",
-        "duration_seconds": 70.14,
+        "duration_seconds": 0.0,
         "timeout_seconds": 900
       },
       {
@@ -469,7 +469,7 @@
           "build"
         ],
         "cwd": "frontend-react",
-        "duration_seconds": 57.717,
+        "duration_seconds": 0.0,
         "timeout_seconds": 900
       },
       {
@@ -480,7 +480,7 @@
           "--skip-index"
         ],
         "cwd": ".",
-        "duration_seconds": 8.276,
+        "duration_seconds": 16.998,
         "timeout_seconds": 900
       },
       {
@@ -490,7 +490,7 @@
           "scripts/run_data_platform_pipeline.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.56,
+        "duration_seconds": 1.556,
         "timeout_seconds": 900
       },
       {
@@ -500,7 +500,7 @@
           "scripts/run_vector_store_contract_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.198,
+        "duration_seconds": 1.77,
         "timeout_seconds": 900
       },
       {
@@ -510,7 +510,7 @@
           "scripts/run_data_platform_reliability_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.713,
+        "duration_seconds": 3.826,
         "timeout_seconds": 900
       },
       {
@@ -520,7 +520,7 @@
           "scripts/run_azure_search_index_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.341,
+        "duration_seconds": 2.7,
         "timeout_seconds": 900
       },
       {
@@ -530,7 +530,7 @@
           "scripts/run_managed_vector_shadow_sync.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.974,
+        "duration_seconds": 3.667,
         "timeout_seconds": 900
       },
       {
@@ -540,7 +540,7 @@
           "scripts/run_managed_vector_shadow_comparison.py"
         ],
         "cwd": ".",
-        "duration_seconds": 11.545,
+        "duration_seconds": 9.922,
         "timeout_seconds": 900
       },
       {
@@ -550,7 +550,7 @@
           "scripts/run_cloud_infrastructure_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 16.802,
+        "duration_seconds": 20.884,
         "timeout_seconds": 900
       },
       {
@@ -560,7 +560,7 @@
           "scripts/run_patient_enrichment_background_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 13.24,
+        "duration_seconds": 22.182,
         "timeout_seconds": 900
       },
       {
@@ -570,7 +570,7 @@
           "scripts/run_high_risk_conversation_alert_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 7.795,
+        "duration_seconds": 9.943,
         "timeout_seconds": 900
       },
       {
@@ -580,7 +580,7 @@
           "scripts/run_ml_logic_safety_alignment.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.689,
+        "duration_seconds": 2.066,
         "timeout_seconds": 900
       },
       {
@@ -590,7 +590,7 @@
           "scripts/run_synthetic_prediction_statistical_audit.py"
         ],
         "cwd": ".",
-        "duration_seconds": 6.384,
+        "duration_seconds": 7.533,
         "timeout_seconds": 900
       },
       {
@@ -600,7 +600,7 @@
           "scripts/run_patient_xai_readability_dossier.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.064,
+        "duration_seconds": 1.562,
         "timeout_seconds": 900
       },
       {
@@ -610,7 +610,7 @@
           "scripts/run_oidc_browser_pkce_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.624,
+        "duration_seconds": 2.172,
         "timeout_seconds": 900
       },
       {
@@ -620,7 +620,7 @@
           "scripts/validate_deployment_env.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.131,
+        "duration_seconds": 2.333,
         "timeout_seconds": 900
       },
       {
@@ -630,7 +630,7 @@
           "scripts/run_dependency_security_scan.py"
         ],
         "cwd": ".",
-        "duration_seconds": 37.01,
+        "duration_seconds": 41.341,
         "timeout_seconds": 900
       },
       {
@@ -640,7 +640,7 @@
           "scripts/run_software_supply_chain_evidence.py"
         ],
         "cwd": ".",
-        "duration_seconds": 4.978,
+        "duration_seconds": 36.716,
         "timeout_seconds": 900
       },
       {
@@ -650,7 +650,7 @@
           "scripts/run_unsafe_intent_mutation_dev_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.617,
+        "duration_seconds": 3.037,
         "timeout_seconds": 900
       },
       {
@@ -660,7 +660,7 @@
           "scripts/run_adversarial_v6_tuning_regression.py"
         ],
         "cwd": ".",
-        "duration_seconds": 7.743,
+        "duration_seconds": 13.994,
         "timeout_seconds": 900
       },
       {
@@ -670,7 +670,7 @@
           "scripts/run_adversarial_v6_retrospective.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.298,
+        "duration_seconds": 0.579,
         "timeout_seconds": 900
       },
       {
@@ -680,7 +680,7 @@
           "scripts/run_xai_rank_stability_audit.py"
         ],
         "cwd": ".",
-        "duration_seconds": 7.802,
+        "duration_seconds": 14.179,
         "timeout_seconds": 900
       },
       {
@@ -690,7 +690,7 @@
           "scripts/run_xai_retraining_stability_audit.py"
         ],
         "cwd": ".",
-        "duration_seconds": 38.163,
+        "duration_seconds": 82.805,
         "timeout_seconds": 900
       },
       {
@@ -700,7 +700,7 @@
           "scripts/run_xai_fidelity_audit.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.859,
+        "duration_seconds": 3.39,
         "timeout_seconds": 900
       },
       {
@@ -710,7 +710,7 @@
           "scripts/run_xai_reliability_gate.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.602,
+        "duration_seconds": 2.494,
         "timeout_seconds": 900
       },
       {
@@ -720,7 +720,7 @@
           "scripts/run_agent_execution_policy_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 13.715,
+        "duration_seconds": 25.201,
         "timeout_seconds": 900
       },
       {
@@ -730,7 +730,7 @@
           "scripts/run_rag_degradation_resilience_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 8.689,
+        "duration_seconds": 17.161,
         "timeout_seconds": 900
       },
       {
@@ -740,7 +740,7 @@
           "scripts/run_credible_route_latency_sample.py"
         ],
         "cwd": ".",
-        "duration_seconds": 42.77,
+        "duration_seconds": 73.971,
         "timeout_seconds": 900
       },
       {
@@ -750,7 +750,7 @@
           "scripts/run_route_latency_budget.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.518,
+        "duration_seconds": 1.784,
         "timeout_seconds": 900
       },
       {
@@ -760,7 +760,7 @@
           "scripts/run_cost_latency_report.py"
         ],
         "cwd": ".",
-        "duration_seconds": 3.906,
+        "duration_seconds": 8.143,
         "timeout_seconds": 900
       },
       {
@@ -770,7 +770,7 @@
           "scripts/run_retrieval_runtime_cache_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.102,
+        "duration_seconds": 1.446,
         "timeout_seconds": 900
       },
       {
@@ -780,7 +780,7 @@
           "scripts/run_provider_usage_reconciliation.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.424,
+        "duration_seconds": 2.561,
         "timeout_seconds": 900
       },
       {
@@ -790,7 +790,7 @@
           "scripts/run_provider_usage_capture_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.206,
+        "duration_seconds": 2.605,
         "timeout_seconds": 900
       },
       {
@@ -800,7 +800,7 @@
           "scripts/run_rag_paired_statistical_comparison.py"
         ],
         "cwd": ".",
-        "duration_seconds": 82.354,
+        "duration_seconds": 73.244,
         "timeout_seconds": 900
       },
       {
@@ -810,7 +810,7 @@
           "scripts/run_automation_channel_drill.py"
         ],
         "cwd": ".",
-        "duration_seconds": 3.62,
+        "duration_seconds": 2.981,
         "timeout_seconds": 900
       },
       {
@@ -820,7 +820,7 @@
           "scripts/run_synthetic_automation_staging_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 4.265,
+        "duration_seconds": 6.932,
         "timeout_seconds": 900
       },
       {
@@ -830,7 +830,7 @@
           "scripts/run_finetune_promotion_gate.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.324,
+        "duration_seconds": 1.716,
         "timeout_seconds": 900
       },
       {
@@ -840,7 +840,7 @@
           "scripts/run_finetune_semantic_contamination.py"
         ],
         "cwd": ".",
-        "duration_seconds": 12.754,
+        "duration_seconds": 14.249,
         "timeout_seconds": 900
       },
       {
@@ -850,7 +850,7 @@
           "scripts/run_finetune_contamination_adjudication.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.056,
+        "duration_seconds": 1.026,
         "timeout_seconds": 900
       },
       {
@@ -860,7 +860,7 @@
           "scripts/run_synthetic_feature_policy.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.67,
+        "duration_seconds": 1.117,
         "timeout_seconds": 900
       },
       {
@@ -870,7 +870,7 @@
           "scripts/run_synthetic_model_perturbation_retrain_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 140.496,
+        "duration_seconds": 178.393,
         "timeout_seconds": 900
       },
       {
@@ -880,7 +880,7 @@
           "scripts/run_disposable_synthetic_staging_readiness.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.513,
+        "duration_seconds": 6.106,
         "timeout_seconds": 900
       },
       {
@@ -890,7 +890,7 @@
           "scripts/run_synthetic_staging_resilience_dossier.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.803,
+        "duration_seconds": 2.233,
         "timeout_seconds": 900
       },
       {
@@ -900,7 +900,7 @@
           "scripts/run_finetune_hardening_assurance.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.75,
+        "duration_seconds": 1.733,
         "timeout_seconds": 900
       },
       {
@@ -910,7 +910,7 @@
           "scripts/run_evidence_maturity_matrix.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.048,
+        "duration_seconds": 4.436,
         "timeout_seconds": 900
       },
       {
@@ -920,7 +920,7 @@
           "scripts/run_credibility_gap_registry.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.96,
+        "duration_seconds": 2.135,
         "timeout_seconds": 900
       },
       {
@@ -930,7 +930,7 @@
           "scripts/run_cross_domain_assurance_eval.py"
         ],
         "cwd": ".",
-        "duration_seconds": 17.7,
+        "duration_seconds": 25.82,
         "timeout_seconds": 900
       },
       {
@@ -940,7 +940,7 @@
           "scripts/run_senior_engineering_evidence.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.297,
+        "duration_seconds": 4.662,
         "timeout_seconds": 900
       },
       {
@@ -950,7 +950,7 @@
           "scripts/run_release_decision_surface.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.572,
+        "duration_seconds": 3.397,
         "timeout_seconds": 900
       },
       {
@@ -960,7 +960,7 @@
           "scripts/run_constraint_aware_improvement_program.py"
         ],
         "cwd": ".",
-        "duration_seconds": 1.069,
+        "duration_seconds": 2.704,
         "timeout_seconds": 900
       },
       {
@@ -970,7 +970,7 @@
           "scripts/generate_benchmark_report.py"
         ],
         "cwd": ".",
-        "duration_seconds": 4.339,
+        "duration_seconds": 15.085,
         "timeout_seconds": 900
       },
       {
@@ -980,7 +980,7 @@
           "scripts/run_ops_health_snapshot.py"
         ],
         "cwd": ".",
-        "duration_seconds": 0.836,
+        "duration_seconds": 1.958,
         "timeout_seconds": 900
       },
       {
@@ -990,7 +990,7 @@
           "scripts/run_focused_release_summary.py"
         ],
         "cwd": ".",
-        "duration_seconds": 4.074,
+        "duration_seconds": 16.042,
         "timeout_seconds": 900
       },
       {
@@ -1000,7 +1000,7 @@
           "scripts/run_release_gate.py"
         ],
         "cwd": ".",
-        "duration_seconds": 2.207,
+        "duration_seconds": 5.024,
         "timeout_seconds": 900
       }
     ],
@@ -1012,9 +1012,9 @@
     },
     "repository_state": {
       "git_available": true,
-      "commit": "df8a740a3f05645b5965f988577414efe44a3131",
+      "commit": "00e8285c6f80ae87db08b644ddfffd2f731fd78d",
       "worktree_dirty": true,
-      "dirty_path_count": 111,
+      "dirty_path_count": 98,
       "note": "Hashes in this dossier bind the evaluated working tree even when it is not a clean commit."
     }
   },

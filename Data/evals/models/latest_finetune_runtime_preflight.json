@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_runtime_preflight_v1",
-  "generated_at": "2026-07-22T08:20:48.366750+00:00",
+  "generated_at": "2026-07-30T08:20:44.103690+00:00",
   "status": "blocked_runtime",
   "clinical_validation": false,
   "model_trained": false,
@@ -42,7 +42,15 @@
     "healthy": false
   },
   "explicit_experiment_enable": false,
+  "contamination_adjudication": {
+    "path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\evals\\models\\latest_finetune_contamination_adjudication_readiness.json",
+    "status": "ready_for_human_adjudication",
+    "completed": false,
+    "unresolved_count": 150,
+    "critical_unresolved_count": 7,
+    "cleared_for_runtime": false
+  },
   "ready_for_offline_experiment": false,
-  "next_step": "Repair or provision an isolated supported training runtime, install pinned PEFT dependencies, then run baseline and candidate generations on the internal behavior eval.",
+  "next_step": "Complete contamination adjudication, repair or provision an isolated supported training runtime, install pinned PEFT dependencies, then run baseline and candidate generations on the internal behavior eval.",
   "claim_boundary": "This is a runtime and lineage preflight only. No adapter was trained, no behavior improvement was demonstrated, and no clinical or patient-facing use is allowed."
 }
