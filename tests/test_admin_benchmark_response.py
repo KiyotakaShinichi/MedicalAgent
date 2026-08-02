@@ -33,3 +33,13 @@ def test_unknown_benchmark_artifact_returns_missing_envelope() -> None:
     assert payload["status"] == "missing"
     assert payload["can_rerun"] is False
     assert payload["errors"]
+
+
+def test_research_paper_query_telemetry_is_exposed_with_query_rows() -> None:
+    payload = get_normalized_benchmark_artifact("research_paper_query_telemetry")
+
+    assert REQUIRED_KEYS.issubset(payload)
+    assert payload["artifact_path"] == "Data/evals/rag/latest_research_paper_query_telemetry.json"
+    if payload["status"] != "missing":
+        assert payload["metrics"]["query_count"] >= 1
+        assert isinstance(payload["rows"], list)

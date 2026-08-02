@@ -218,6 +218,17 @@ def _build_source_row(
     }
     ingested_at = _parse_ts(head.get("ingested_at"))
     staleness_status, staleness_days = _staleness(ingested_at, now, ttl_days)
+    tier_allowed_use = tuple(tier_meta["allowed_use"])
+    declared_values = tuple(head.get("allowed_use") or [])
+    declared_allowed_use = tuple(
+        use
+        for use in declared_values
+        if use in ALLOWED_USE_VOCABULARY and use in tier_allowed_use
+    )
+    allowed_use = declared_allowed_use if declared_values else tier_allowed_use
+    retracted = bool(head.get("retracted"))
+    if retracted:
+        allowed_use = tuple()
 
     return {
         "source_id": source_id,
@@ -228,7 +239,8 @@ def _build_source_row(
         "tier": tier_meta["tier"],
         "tier_rank": tier_meta["rank"],
         "tier_description": tier_meta["description"],
-        "allowed_use": list(tier_meta["allowed_use"]),
+        "allowed_use": list(allowed_use),
+        "allowed_use_source": "source_manifest" if declared_values else "tier_default",
         "ingested_at": head.get("ingested_at"),
         "staleness_status": staleness_status,
         "staleness_days": staleness_days,
@@ -239,6 +251,17 @@ def _build_source_row(
             for c in chunks
             for modality in (c.get("modality") or [])
         }),
+        "pmcid": head.get("pmcid"),
+        "pmid": head.get("pmid"),
+        "doi": head.get("doi"),
+        "publication_date": head.get("publication_date"),
+        "journal": head.get("journal"),
+        "license": head.get("license"),
+        "retracted": retracted,
+        "patient_facing_suitability": head.get("patient_facing_suitability"),
+        "evidence_role": head.get("evidence_role"),
+        "not_allowed_for": list(head.get("not_allowed_for") or []),
+        "selection_rationale": head.get("selection_rationale"),
     }
 
 
@@ -271,6 +294,16 @@ def _detect_governance_issues(
 ) -> list[dict[str, Any]]:
     """Surface obvious mapping gaps a reviewer should fix."""
     issues: list[dict[str, Any]] = []
+    retracted_sources = [s for s in sources if s.get("retracted")]
+    if retracted_sources:
+        issues.append({
+            "severity": "high",
+            "code": "retracted_source",
+            "message": (
+                f"{len(retracted_sources)} source(s) are marked retracted and carry no allowed use."
+            ),
+            "examples": [s["source_id"] for s in retracted_sources[:5]],
+        })
     t5_sources = [s for s in sources if s["tier"] == "T5"]
     if t5_sources:
         issues.append({

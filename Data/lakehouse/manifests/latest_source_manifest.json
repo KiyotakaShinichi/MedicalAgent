@@ -1,9 +1,9 @@
 {
   "schema_version": "nlcare_bronze_source_manifest_v1",
-  "generated_at": "2026-08-02T13:35:38.008917+00:00",
+  "generated_at": "2026-08-02T16:09:21.664195+00:00",
   "clinical_validation": false,
   "patient_data_allowed": false,
-  "source_count": 48,
+  "source_count": 60,
   "sources": [
     {
       "source_path": "KnowledgeBase/raw/curated_medical_kb/00_safety_boundaries/diagnosis_treatment_and_supplement_boundaries.md",
@@ -302,12 +302,68 @@
       "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/5127a47ac7ac74ed7c8368dcedcec475dc490935646bf6fd942d8da30cbd8125.json"
     },
     {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC10163167_anxiety-and-depression-in-adult-cancer-patients-esmo-clinical-practice-guideline.txt",
+      "content_hash": "5ec4fd01a815b31047af42e3c9ddcef59f1e1dd21f486e94f71e511f90b86153",
+      "size_bytes": 92191,
+      "source_mtime_ns": 1785679803729542400,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/5ec4fd01a815b31047af42e3c9ddcef59f1e1dd21f486e94f71e511f90b86153.txt"
+    },
+    {
       "source_path": "KnowledgeBase/raw/research_papers/PMC10898895_occurrence-and-risk-factors-of-chemotherapy-induced-neutropenia-in-breast-cancer.txt",
       "content_hash": "e526055d4a105f69ffbc024972463bea2ab4daa9ad1919e9dab33361ed23204b",
       "size_bytes": 57658,
       "source_mtime_ns": 1777952368520230600,
       "extension": ".txt",
       "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/e526055d4a105f69ffbc024972463bea2ab4daa9ad1919e9dab33361ed23204b.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC11211959_remote-monitoring-app-for-endocrine-therapy-adherence-among-patients-with-early-stage-brea.txt",
+      "content_hash": "e07c06fe24cc9cf90d8613f21112ff1c5670c40674c66fc0e9674583c79b1f54",
+      "size_bytes": 57898,
+      "source_mtime_ns": 1785679810988832200,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/e07c06fe24cc9cf90d8613f21112ff1c5670c40674c66fc0e9674583c79b1f54.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC11400212_essential-components-of-an-electronic-patient-reported-symptom-monitoring-and-management-s.txt",
+      "content_hash": "5bd1f2ec1d860fcdfbb1d9a23c625653f6570e1012d5cbc4ba81ffd442c4c243",
+      "size_bytes": 102662,
+      "source_mtime_ns": 1785679975050137200,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/5bd1f2ec1d860fcdfbb1d9a23c625653f6570e1012d5cbc4ba81ffd442c4c243.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC12053558_web-based-cancer-symptom-self-management-system-a-randomized-clinical-trial.txt",
+      "content_hash": "c17ee31e27f3d6e51803cb91b5c1b9e3fb016242588ce19012baa4f97f1761c7",
+      "size_bytes": 106286,
+      "source_mtime_ns": 1785680011542787100,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/c17ee31e27f3d6e51803cb91b5c1b9e3fb016242588ce19012baa4f97f1761c7.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC12232703_herb-drug-interactions-in-oncology.txt",
+      "content_hash": "faeba4a443ab683933c1275ad9df010770e14e4682ba4938961625e24bcc99a5",
+      "size_bytes": 271687,
+      "source_mtime_ns": 1785680004886864600,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/faeba4a443ab683933c1275ad9df010770e14e4682ba4938961625e24bcc99a5.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC12452844_use-of-pro-ctcae-in-oncology-clinical-trials.txt",
+      "content_hash": "eb966c36248874bb48f812dff2dadf5feb19c2f6fb2ac0e2003652395ec63818",
+      "size_bytes": 20397,
+      "source_mtime_ns": 1785679996081973800,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/eb966c36248874bb48f812dff2dadf5feb19c2f6fb2ac0e2003652395ec63818.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC2752999_standards-options-and-recommendations-for-serum-tumour-markers-in-breast-cancer.txt",
+      "content_hash": "0c7a4b2636a3055b8c98fd079de042de7cfea1f31f5a0b500e16b00ab9d154eb",
+      "size_bytes": 25683,
+      "source_mtime_ns": 1785679989836322400,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/0c7a4b2636a3055b8c98fd079de042de7cfea1f31f5a0b500e16b00ab9d154eb.txt"
     },
     {
       "source_path": "KnowledgeBase/raw/research_papers/PMC2846279_prophylaxis-of-chemotherapy-induced-febrile-neutropenia-with-g-csf.txt",
@@ -342,6 +398,14 @@
       "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/614bff88142d27679cf7267bb0de6348b071c5c15ec4d33a1ebda47e3c593f37.txt"
     },
     {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC4544753_acmg-and-amp-standards-and-guidelines-for-the-interpretation-of-sequence-variants.txt",
+      "content_hash": "1fc03593e78135a86af0c3721935167646b11bedad41ce4f3209d6518dcab462",
+      "size_bytes": 122303,
+      "source_mtime_ns": 1785679792681802000,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/1fc03593e78135a86af0c3721935167646b11bedad41ce4f3209d6518dcab462.txt"
+    },
+    {
       "source_path": "KnowledgeBase/raw/research_papers/PMC4998558_prognostic-value-of-chemotherapy-induced-neutropenia-at-first-cycle-in-invasive-breast-can.txt",
       "content_hash": "c265e6f98b28f6bfcee2195c9f3ae579a87f21bb8ea296d57ccdc8d1a59ea449",
       "size_bytes": 36857,
@@ -366,6 +430,14 @@
       "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/2f0bf600b3a0a2a6378b259dbf4d432f2b870757520e03fcf7c9853e7fc40c20.txt"
     },
     {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC6361332_online-tool-for-monitoring-adverse-events-during-cancer-treatment-erapid-field-testing.txt",
+      "content_hash": "f28d3bd702832cf916784a77f8f8dd1cc3f182c4923408b1bce2f3cfbbca5793",
+      "size_bytes": 47586,
+      "source_mtime_ns": 1785679822062327100,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/f28d3bd702832cf916784a77f8f8dd1cc3f182c4923408b1bce2f3cfbbca5793.txt"
+    },
+    {
       "source_path": "KnowledgeBase/raw/research_papers/PMC6702160_early-treatment-response-prediction-using-dce-mri-tumor-heterogeneity-changes.txt",
       "content_hash": "fa490e8d56594b61d6b3bb580240278bc8c147e8fa25e5dc68df5482e3603dd4",
       "size_bytes": 54444,
@@ -374,12 +446,36 @@
       "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/fa490e8d56594b61d6b3bb580240278bc8c147e8fa25e5dc68df5482e3603dd4.txt"
     },
     {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC6868829_communication-and-handling-of-symptomatic-adverse-events-during-adjuvant-breast-cancer-che.txt",
+      "content_hash": "22fd3d8f90ccea3b2764a22e5a8bb562483021a7d1cc4e81dd40744c8ddec05d",
+      "size_bytes": 37981,
+      "source_mtime_ns": 1785679814720451900,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/22fd3d8f90ccea3b2764a22e5a8bb562483021a7d1cc4e81dd40744c8ddec05d.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC7055088_variants-of-uncertain-significance-in-the-era-of-high-throughput-genome-sequencing.txt",
+      "content_hash": "9df2544394c980e552312eb30429037894e51e98624e5acf3f53970d4d6a014d",
+      "size_bytes": 146916,
+      "source_mtime_ns": 1785679986115392800,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/9df2544394c980e552312eb30429037894e51e98624e5acf3f53970d4d6a014d.txt"
+    },
+    {
+      "source_path": "KnowledgeBase/raw/research_papers/PMC9158111_variants-of-uncertain-significance-and-reclassification-in-hereditary-cancer-testing.txt",
+      "content_hash": "1d976ab686f52009bde4552b461f8a80cfe2c7e7009d9fc50fc2d679b6f987ab",
+      "size_bytes": 67039,
+      "source_mtime_ns": 1785679982062658300,
+      "extension": ".txt",
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/1d976ab686f52009bde4552b461f8a80cfe2c7e7009d9fc50fc2d679b6f987ab.txt"
+    },
+    {
       "source_path": "KnowledgeBase/raw/research_papers/research_papers_manifest.json",
-      "content_hash": "09bf81ee9d7abd198be4daf066594b76068809c266df3c04ce7fd86a6ba51669",
-      "size_bytes": 8919,
-      "source_mtime_ns": 1777953328608286400,
+      "content_hash": "87e89ba00f46d120a0d86c085556a8d14475603e55f6c8887a98e176de012653",
+      "size_bytes": 43104,
+      "source_mtime_ns": 1785680011547791400,
       "extension": ".json",
-      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/09bf81ee9d7abd198be4daf066594b76068809c266df3c04ce7fd86a6ba51669.json"
+      "bronze_uri": "Data/lakehouse/bronze/knowledge_sources/87e89ba00f46d120a0d86c085556a8d14475603e55f6c8887a98e176de012653.json"
     },
     {
       "source_path": "KnowledgeBase/raw/research_papers/supplements_cancer_treatment_safety_nci_msk_nccih.md",
@@ -393,11 +489,11 @@
   "dependencies": {
     "chunk_artifact": {
       "path": "Data/rag_knowledge_base_chunks.json",
-      "content_hash": "ec849acdaeaffc67543f351ec15648642ac749a46f48e2751be4cb78e46961b5"
+      "content_hash": "39fbb1af21e8388c5a8f75381f4a3758f1a0013a5334ee07d69c1a82b3891bfa"
     },
     "governance_artifact": {
       "path": "Data/evals/rag/latest_kb_source_governance.json",
-      "content_hash": "d17d180c612ee01e9b50b35c9577972da8bb1b86ce16a992b0541995556fd3f9"
+      "content_hash": "f406936ac3b66262b5b834b9b743abddb51c5658dc663a3438a9696484fdd2af"
     },
     "data_contract": {
       "path": "config/data_contracts.json",

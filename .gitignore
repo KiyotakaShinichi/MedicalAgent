@@ -35,3 +35,4 @@ medical_agent.db
 *.sqlite3
 *_dev_server.log
 *_dev_server.err.log
+logs/*.log

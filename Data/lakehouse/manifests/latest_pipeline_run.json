@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_data_platform_pipeline_v1",
-  "generated_at": "2026-08-02T13:35:38.046199+00:00",
+  "generated_at": "2026-08-02T16:09:21.823480+00:00",
   "status": "strong",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -47,15 +47,27 @@
       "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/hereditary_breast_ovarian_cancer_and_brca.md",
       "KnowledgeBase/raw/curated_medical_kb/09_genetic_counseling/tumor_marker_trend_limitations_reference.md",
       "KnowledgeBase/raw/curated_medical_kb/research_papers_manifest.json",
+      "KnowledgeBase/raw/research_papers/PMC10163167_anxiety-and-depression-in-adult-cancer-patients-esmo-clinical-practice-guideline.txt",
       "KnowledgeBase/raw/research_papers/PMC10898895_occurrence-and-risk-factors-of-chemotherapy-induced-neutropenia-in-breast-cancer.txt",
+      "KnowledgeBase/raw/research_papers/PMC11211959_remote-monitoring-app-for-endocrine-therapy-adherence-among-patients-with-early-stage-brea.txt",
+      "KnowledgeBase/raw/research_papers/PMC11400212_essential-components-of-an-electronic-patient-reported-symptom-monitoring-and-management-s.txt",
+      "KnowledgeBase/raw/research_papers/PMC12053558_web-based-cancer-symptom-self-management-system-a-randomized-clinical-trial.txt",
+      "KnowledgeBase/raw/research_papers/PMC12232703_herb-drug-interactions-in-oncology.txt",
+      "KnowledgeBase/raw/research_papers/PMC12452844_use-of-pro-ctcae-in-oncology-clinical-trials.txt",
+      "KnowledgeBase/raw/research_papers/PMC2752999_standards-options-and-recommendations-for-serum-tumour-markers-in-breast-cancer.txt",
       "KnowledgeBase/raw/research_papers/PMC2846279_prophylaxis-of-chemotherapy-induced-febrile-neutropenia-with-g-csf.txt",
       "KnowledgeBase/raw/research_papers/PMC3609956_the-role-of-mri-in-assessing-residual-disease-and-pcr-after-neoadjuvant-chemotherapy.txt",
       "KnowledgeBase/raw/research_papers/PMC3940691_risk-of-hematological-toxicities-in-a-swog-breast-cancer-chemotherapy-trial.txt",
       "KnowledgeBase/raw/research_papers/PMC3987093_patterns-of-chemotherapy-associated-toxicity-and-supportive-care-in-oncology-practice.txt",
+      "KnowledgeBase/raw/research_papers/PMC4544753_acmg-and-amp-standards-and-guidelines-for-the-interpretation-of-sequence-variants.txt",
       "KnowledgeBase/raw/research_papers/PMC4998558_prognostic-value-of-chemotherapy-induced-neutropenia-at-first-cycle-in-invasive-breast-can.txt",
       "KnowledgeBase/raw/research_papers/PMC5500247_dce-mri-texture-features-for-early-breast-cancer-therapy-response-prediction.txt",
       "KnowledgeBase/raw/research_papers/PMC6180804_primary-febrile-neutropenia-prophylaxis-for-fec-d-chemotherapy-in-breast-cancer.txt",
+      "KnowledgeBase/raw/research_papers/PMC6361332_online-tool-for-monitoring-adverse-events-during-cancer-treatment-erapid-field-testing.txt",
       "KnowledgeBase/raw/research_papers/PMC6702160_early-treatment-response-prediction-using-dce-mri-tumor-heterogeneity-changes.txt",
+      "KnowledgeBase/raw/research_papers/PMC6868829_communication-and-handling-of-symptomatic-adverse-events-during-adjuvant-breast-cancer-che.txt",
+      "KnowledgeBase/raw/research_papers/PMC7055088_variants-of-uncertain-significance-in-the-era-of-high-throughput-genome-sequencing.txt",
+      "KnowledgeBase/raw/research_papers/PMC9158111_variants-of-uncertain-significance-and-reclassification-in-hereditary-cancer-testing.txt",
       "KnowledgeBase/raw/research_papers/research_papers_manifest.json",
       "KnowledgeBase/raw/research_papers/supplements_cancer_treatment_safety_nci_msk_nccih.md"
     ],
@@ -70,17 +82,17 @@
   },
   "layers": {
     "bronze": {
-      "record_count": 48,
+      "record_count": 60,
       "manifest": "Data/lakehouse/manifests/latest_source_manifest.json",
       "content_addressed": true
     },
     "silver": {
-      "record_count": 240,
+      "record_count": 766,
       "path": "Data/lakehouse/silver/knowledge_chunks.jsonl",
       "schema": "knowledge_chunk_silver_v1"
     },
     "gold": {
-      "record_count": 240,
+      "record_count": 766,
       "path": "Data/lakehouse/gold/vector_records.jsonl",
       "schema": "vector_record_gold_v1",
       "embedding_generated": false,
@@ -93,9 +105,9 @@
   },
   "quality": {
     "hard_failures": 0,
-    "source_count": 48,
-    "silver_record_count": 240,
-    "gold_record_count": 240,
+    "source_count": 60,
+    "silver_record_count": 766,
+    "gold_record_count": 766,
     "quarantined_record_count": 0,
     "duplicate_source_content_count": 0,
     "duplicate_chunk_id_count": 0,
@@ -106,7 +118,7 @@
   },
   "lineage": {
     "path": "Data/lakehouse/lineage/latest_lineage.json",
-    "kb_fingerprint": "12645d2933b7c8703a9776311e9d084592a09aeccb4ec399b75f891f233373d1",
+    "kb_fingerprint": "587dc5c9349f40a63ef60d2a8e9161559d5c68042dd7dded3f43e4d9aca16b9a",
     "complete": true
   },
   "contracts": {

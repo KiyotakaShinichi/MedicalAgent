@@ -33,7 +33,7 @@ from backend.services.rag_baseline_comparison import (
 ROOT_DIR = Path(__file__).resolve().parents[2]
 KB_PATH = ROOT_DIR / "Data/rag_knowledge_base_chunks.json"
 MANIFEST_PATH = ROOT_DIR / "KnowledgeBase/raw/research_papers/research_papers_manifest.json"
-CASES_PATH = ROOT_DIR / "Data/evals/rag/research_paper_grounding_cases.jsonl"
+CASES_PATH = ROOT_DIR / "Data/evals/rag/research_paper_grounding_cases_v2.jsonl"
 AUDIT_PATH = ROOT_DIR / "Data/evals/rag/latest_research_paper_kb_audit.json"
 EVAL_PATH = ROOT_DIR / "Data/evals/rag/latest_research_paper_retrieval_eval.json"
 FAILURES_PATH = ROOT_DIR / "Data/evals/rag/latest_research_paper_retrieval_failures.json"
@@ -120,7 +120,7 @@ def run_research_paper_kb_eval(
         status = "needs_attention"
 
     payload = {
-        "schema_version": "research_paper_retrieval_eval_v1",
+        "schema_version": "research_paper_retrieval_eval_v2",
         "generated_at": _now(),
         "status": status,
         "clinical_validation": False,
@@ -155,7 +155,8 @@ def run_research_paper_kb_eval(
             "Cases were authored from the same local papers being evaluated.",
             "This measures retrieval attribution and provenance, not whether a medical claim is clinically correct.",
             "No generated patient answer, clinician review, or external author is part of this suite.",
-            "The corpus is concentrated in MRI-response and chemotherapy/neutropenia topics.",
+            "The corpus is broader than v1 but remains internally selected and is not a systematic literature review.",
+            "Research sources can support education and review routing only; they cannot authorize patient-specific medical decisions.",
         ],
         "claim_boundary": (
             "Internal KB-derived engineering regression only. It is not clinical validation, "
@@ -212,8 +213,27 @@ def build_research_paper_kb_audit(
             "source_file_present": bool(rows),
             "publication_date_present": bool(item.get("publication_date") or item.get("published_at")),
             "doi_present": bool(item.get("doi")),
+            "pmid_present": bool(item.get("pmid")),
+            "license_present": bool(item.get("license")),
+            "allowed_use_present": bool(item.get("allowed_use")),
+            "patient_facing_suitability_present": bool(item.get("patient_facing_suitability")),
+            "not_allowed_for_present": bool(item.get("not_allowed_for")),
+            "retracted": bool(item.get("retracted")),
+            "download_status": item.get("status"),
             "runtime_required_metadata_complete": all(
-                all(row.get(key) is not None for key in ("pmcid", "source_url", "source_path", "section"))
+                all(
+                    row.get(key) is not None
+                    for key in (
+                        "pmcid",
+                        "source_url",
+                        "source_path",
+                        "section",
+                        "doi",
+                        "publication_date",
+                        "license",
+                        "patient_facing_suitability",
+                    )
+                )
                 for row in rows
             ) if rows else False,
         })
@@ -224,11 +244,35 @@ def build_research_paper_kb_audit(
         if case.get("expected_pmcid")
     }
     topic_counts = Counter(str(item.get("topic") or "unknown") for item in items)
+    status_counts = Counter(str(item.get("status") or "unknown") for item in items)
     status = "acceptable_narrow_internal_corpus"
-    if false_identity_rows or covered != manifest_pmcids or duplicate_manifest_pmcids:
+    if (
+        false_identity_rows
+        or covered != manifest_pmcids
+        or duplicate_manifest_pmcids
+        or any(row["retracted"] for row in source_rows)
+        or any(row["download_status"] not in {"downloaded", "exists"} for row in source_rows)
+        or any(not row["runtime_required_metadata_complete"] for row in source_rows)
+    ):
         status = "needs_attention"
+    metadata_fields = (
+        "publication_date_present",
+        "doi_present",
+        "pmid_present",
+        "license_present",
+        "allowed_use_present",
+        "patient_facing_suitability_present",
+        "not_allowed_for_present",
+    )
+    known_gaps = [
+        "The source set was selected internally and has not been reviewed by a clinician or medical librarian.",
+        "The expanded query suite is derived from the same corpus and is not an independent holdout.",
+        "Paper inclusion does not make the system a systematic review or establish clinical correctness.",
+    ]
+    if any(not row["runtime_required_metadata_complete"] for row in source_rows):
+        known_gaps.append("One or more runtime chunks are missing required bibliographic or use-boundary metadata.")
     return {
-        "schema_version": "research_paper_kb_audit_v1",
+        "schema_version": "research_paper_kb_audit_v2",
         "generated_at": _now(),
         "status": status,
         "clinical_validation": False,
@@ -250,6 +294,21 @@ def build_research_paper_kb_audit(
             "doi_completeness": round(
                 sum(row["doi_present"] for row in source_rows) / max(len(source_rows), 1), 4
             ),
+            "pmid_completeness": round(
+                sum(row["pmid_present"] for row in source_rows) / max(len(source_rows), 1), 4
+            ),
+            "license_completeness": round(
+                sum(row["license_present"] for row in source_rows) / max(len(source_rows), 1), 4
+            ),
+            "use_boundary_completeness": round(
+                sum(
+                    all(row[field] for field in metadata_fields[4:])
+                    for row in source_rows
+                ) / max(len(source_rows), 1),
+                4,
+            ),
+            "retracted_source_count": sum(row["retracted"] for row in source_rows),
+            "manifest_status_distribution": dict(status_counts),
             "topic_distribution": dict(topic_counts),
         },
         "sources": source_rows,
@@ -261,12 +320,7 @@ def build_research_paper_kb_audit(
             }
             for row in false_identity_rows[:10]
         ],
-        "known_gaps": [
-            "Publication dates and DOI metadata are not populated in the current manifest.",
-            "Nine papers are too narrow for broad breast-cancer education coverage.",
-            "The source set is topic-concentrated and was selected internally.",
-            "Source inclusion has not been reviewed by a clinician or medical librarian.",
-        ],
+        "known_gaps": known_gaps,
         "claim_boundary": (
             "This audit checks local source identity and metadata coverage only. It does not certify "
             "clinical authority, systematic-review quality, completeness, or current medical guidance."
@@ -486,7 +540,20 @@ def _row_pmcid(row: dict[str, Any]) -> str | None:
 
 
 def _provenance_complete(row: dict[str, Any]) -> bool:
-    return all(row.get(key) is not None for key in ("pmcid", "source_url", "source_path", "title", "section"))
+    return all(
+        row.get(key) is not None
+        for key in (
+            "pmcid",
+            "source_url",
+            "source_path",
+            "title",
+            "section",
+            "doi",
+            "publication_date",
+            "license",
+            "patient_facing_suitability",
+        )
+    )
 
 
 def _load_cases(path: Path) -> list[dict[str, Any]]:

@@ -1,6 +1,7 @@
 import pytest
 
 from backend.services.cross_domain_assurance_eval import (
+    _partition_scale_replay_is_consistent,
     build_cross_domain_assurance_eval,
 )
 
@@ -60,3 +61,20 @@ def test_cross_domain_assurance_blocks_confirmation_tampering_and_replay(
     assert "confirmation_payload_mismatch" in substitution["evidence"]["issues"]
     assert replay["passed"] is True
     assert "confirmation_replayed" in replay["evidence"]["issues"]
+
+
+def test_partition_scale_assurance_tracks_the_current_corpus_size():
+    report = {
+        "gold_record_count": 766,
+        "partition_scale_replay": {
+            "deterministic": True,
+            "base_record_count": 766,
+            "scale_multiplier": 100,
+            "replayed_record_count": 76600,
+            "unique_record_ids": 76600,
+        },
+    }
+    assert _partition_scale_replay_is_consistent(report) is True
+
+    report["partition_scale_replay"]["replayed_record_count"] = 24000
+    assert _partition_scale_replay_is_consistent(report) is False

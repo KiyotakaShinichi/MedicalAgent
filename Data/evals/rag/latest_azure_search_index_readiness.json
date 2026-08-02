@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_azure_search_index_readiness_v1",
-  "generated_at": "2026-08-02T13:35:43.963525+00:00",
+  "generated_at": "2026-08-02T16:09:31.395517+00:00",
   "status": "ready_for_opt_in_provisioning",
   "clinical_validation": false,
   "healthcare_production_ready": false,

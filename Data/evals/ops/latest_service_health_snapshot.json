@@ -1,6 +1,6 @@
 {
   "schema_version": "service_health_snapshot_v2",
-  "generated_at": "2026-08-02T13:44:29.615066+00:00",
+  "generated_at": "2026-08-02T16:22:46.895774+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -11,7 +11,7 @@
   "metrics": {
     "live_rag_case_count": 21,
     "live_rag_latency_p50_ms": 3810.25,
-    "normal_rag_latency_p95_ms": 165.44,
+    "normal_rag_latency_p95_ms": 358.34,
     "normal_rag_percentile_credible": true,
     "routes_with_insufficient_samples": 0,
     "retrieval_case_failure_rate": 0.0952,

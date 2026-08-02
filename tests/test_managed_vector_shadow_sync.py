@@ -58,8 +58,15 @@ def _write_gold(tmp_path: Path, rows: list[dict]) -> Path:
 
 def test_default_sync_is_validated_readiness_without_network():
     report = build_managed_vector_shadow_sync(root_dir=ROOT_DIR)
+    expected_record_count = sum(
+        bool(line.strip())
+        for line in (
+            ROOT_DIR / "Data/lakehouse/gold/vector_records.jsonl"
+        ).read_text(encoding="utf-8").splitlines()
+    )
     assert report["status"] == "ready_for_opt_in_shadow_sync"
-    assert report["record_count"] == 240
+    assert report["record_count"] == expected_record_count
+    assert expected_record_count > 0
     assert report["validation_passed"] is True
     assert report["network_request_performed"] is False
     assert report["sync_completed"] is False

@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_staging_resilience_dossier_v1",
-  "generated_at": "2026-08-02T13:43:24.004630+00:00",
+  "generated_at": "2026-08-02T16:21:38.951637+00:00",
   "status": "strong_local_only_external_blocked",
   "local_checks": [
     {
@@ -78,7 +78,7 @@
     "automation_channel_drill": {
       "path": "Data/evals/ops/latest_automation_channel_drill.json",
       "status": "strong",
-      "generated_at": "2026-08-02T13:40:34.122582+00:00"
+      "generated_at": "2026-08-02T16:17:29.138920+00:00"
     },
     "deployment_recovery_drill": {
       "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
@@ -88,7 +88,7 @@
     "data_platform_reliability": {
       "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
       "status": "strong_offline_drill",
-      "generated_at": "2026-08-02T13:35:41.913931+00:00"
+      "generated_at": "2026-08-02T16:09:28.335951+00:00"
     },
     "container_recovery_smoke": {
       "path": "Data/evals/ops/latest_container_recovery_smoke.json",
@@ -98,22 +98,22 @@
     "managed_vector_shadow_sync": {
       "path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
       "status": "ready_for_opt_in_shadow_sync",
-      "generated_at": "2026-08-02T13:35:45.646546+00:00"
+      "generated_at": "2026-08-02T16:09:34.422136+00:00"
     },
     "managed_vector_shadow_comparison": {
       "path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
       "status": "ready_for_managed_shadow_run",
-      "generated_at": "2026-08-02T13:35:51.622074+00:00"
+      "generated_at": "2026-08-02T16:09:42.247199+00:00"
     },
     "automation_staging_readiness": {
       "path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
       "status": "ready_for_synthetic_runtime",
-      "generated_at": "2026-08-02T13:40:37.425318+00:00"
+      "generated_at": "2026-08-02T16:17:32.934349+00:00"
     },
     "disposable_staging_readiness": {
       "path": "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
       "status": "ready_for_disposable_synthetic_runtime",
-      "generated_at": "2026-08-02T13:43:21.009651+00:00"
+      "generated_at": "2026-08-02T16:21:37.647221+00:00"
     }
   },
   "staging_runtime_completed": false,

@@ -204,9 +204,7 @@ def build_cross_domain_assurance_eval(
                 data,
                 data.get("failed") == 0
                 and data.get("patient_data_processed") is False
-                and data.get("partition_scale_replay", {}).get("deterministic") is True
-                and data.get("partition_scale_replay", {}).get("replayed_record_count")
-                == 24000,
+                and _partition_scale_replay_is_consistent(data),
             )
         )
 
@@ -307,6 +305,24 @@ def _warning_visibility(root: Path) -> dict[str, Any]:
         "synthetic_ml_boundary_visible": "all ml results remain synthetic-only"
         in joined,
     }
+
+
+def _partition_scale_replay_is_consistent(report: dict[str, Any]) -> bool:
+    replay = report.get("partition_scale_replay") or {}
+    base_count = replay.get("base_record_count")
+    multiplier = replay.get("scale_multiplier")
+    replayed_count = replay.get("replayed_record_count")
+    unique_count = replay.get("unique_record_ids")
+    return bool(
+        replay.get("deterministic") is True
+        and isinstance(base_count, int)
+        and base_count > 0
+        and base_count == report.get("gold_record_count")
+        and isinstance(multiplier, int)
+        and multiplier > 0
+        and replayed_count == base_count * multiplier
+        and unique_count == replayed_count
+    )
 
 
 def _report_scenario(

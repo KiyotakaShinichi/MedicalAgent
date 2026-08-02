@@ -1,6 +1,6 @@
 {
   "schema_version": "release_decision_surface_v3",
-  "generated_at": "2026-08-02T13:45:50.886099+00:00",
+  "generated_at": "2026-08-02T16:22:44.130262+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "hard_blocker_count": 0,
@@ -18,7 +18,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "passed",
-      "generated_at": "2026-08-02T13:44:43.215915+00:00",
+      "generated_at": "2026-08-02T16:22:29.227614+00:00",
       "age_days": 0.0,
       "stale": false,
       "key_metrics": {}
@@ -34,7 +34,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-06T06:47:17.440388+00:00",
-      "age_days": 27.29,
+      "age_days": 27.4,
       "stale": false,
       "key_metrics": {}
     },
@@ -49,7 +49,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-21T15:13:23.607586+00:00",
-      "age_days": 11.94,
+      "age_days": 12.05,
       "stale": false,
       "key_metrics": {}
     },
@@ -64,7 +64,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-17T06:27:38.556411+00:00",
-      "age_days": 16.3,
+      "age_days": 16.41,
       "stale": false,
       "key_metrics": {}
     },
@@ -79,7 +79,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "informational",
       "generated_at": "2026-08-02T12:53:38.673863+00:00",
-      "age_days": 0.04,
+      "age_days": 0.15,
       "stale": false,
       "key_metrics": {}
     },
@@ -94,7 +94,7 @@
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-07-30T05:13:05.212399+00:00",
-      "age_days": 3.36,
+      "age_days": 3.47,
       "stale": false,
       "key_metrics": {}
     },
@@ -109,7 +109,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-28T14:43:01.240454+00:00",
-      "age_days": 4.96,
+      "age_days": 5.07,
       "stale": false,
       "key_metrics": {
         "improvement_proven_vs_bm25": false,
@@ -128,7 +128,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-22T04:13:27.466200+00:00",
-      "age_days": 11.4,
+      "age_days": 11.51,
       "stale": false,
       "key_metrics": {
         "pass_rate": 0.9048,
@@ -147,13 +147,13 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
-      "generated_at": "2026-08-02T13:38:38.362791+00:00",
+      "generated_at": "2026-08-02T16:13:03.863713+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
         "production_ready": false,
         "insufficient_sample_count": 0,
-        "highest_observed_p95_ms": 165.44
+        "highest_observed_p95_ms": 358.34
       }
     },
     {
@@ -166,7 +166,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
-      "generated_at": "2026-08-02T13:36:58.810490+00:00",
+      "generated_at": "2026-08-02T16:10:57.507032+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -186,7 +186,7 @@
       "decision": "attention",
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
-      "generated_at": "2026-08-02T13:43:14.337402+00:00",
+      "generated_at": "2026-08-02T16:21:34.753014+00:00",
       "age_days": 0.0,
       "stale": false,
       "key_metrics": {
@@ -246,7 +246,7 @@
       "decision": "attention",
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
-      "generated_at": "2026-08-02T13:37:48.373426+00:00",
+      "generated_at": "2026-08-02T16:12:01.604527+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -265,7 +265,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-08-02T13:35:38.046199+00:00",
+      "generated_at": "2026-08-02T16:09:21.823480+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -283,7 +283,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong_offline_drill",
-      "generated_at": "2026-08-02T13:35:41.913931+00:00",
+      "generated_at": "2026-08-02T16:09:28.335951+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -302,7 +302,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "compiled_reference_architecture",
-      "generated_at": "2026-08-02T13:36:03.142324+00:00",
+      "generated_at": "2026-08-02T16:09:55.082308+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -322,7 +322,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-19T01:30:59.933113+00:00",
-      "age_days": 14.51,
+      "age_days": 14.62,
       "stale": false,
       "key_metrics": {
         "control_pass_rate": 1.0,
@@ -340,7 +340,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-08-02T13:40:34.122582+00:00",
+      "generated_at": "2026-08-02T16:17:29.138920+00:00",
       "age_days": 0.0,
       "stale": false,
       "key_metrics": {
@@ -360,7 +360,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-08-02T13:36:26.571966+00:00",
+      "generated_at": "2026-08-02T16:10:27.694903+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -388,7 +388,7 @@
       "evidence_state": "scaffolded",
       "observed_status": "blocked_runtime",
       "generated_at": "2026-07-30T08:20:44.103690+00:00",
-      "age_days": 3.23,
+      "age_days": 3.33,
       "stale": false,
       "key_metrics": {
         "model_trained": false,
@@ -407,7 +407,7 @@
       "evidence_state": "external_blocked",
       "observed_status": "ready_to_request_review",
       "generated_at": "2026-06-01T17:33:21.375512+00:00",
-      "age_days": 61.84,
+      "age_days": 61.95,
       "stale": false,
       "key_metrics": {
         "completed": null,

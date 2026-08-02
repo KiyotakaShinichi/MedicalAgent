@@ -449,6 +449,15 @@ is **7.22/10**; the expected post-A-tier estimate is **8.0/10**.
 
 ## Held-out / external-author RAG evaluation (PREPARED, NOT COMPLETED)
 
+The local research-paper corpus contains 21 provenance-tracked PMC papers
+covering monitoring methods, PRO/ePRO workflows, genetics/VUS boundaries,
+tumor-marker limitations, distress, supplements, MRI, and hematologic toxicity.
+The 44-case internal retrieval suite reports full-stack Recall@10 `1.0000`, but
+superiority over BM25 remains unproven (`p=1.0`). A separate 30-query live-pipeline
+telemetry artifact exposes per-query latency and estimated versus
+provider-reported tokens without retaining generated replies. These are internal
+engineering measurements, not clinical evidence or a systematic review.
+
 The internal frozen retrieval goldset (74 cases) has shaped retrieval
 configuration choices, alias maps, and threshold defaults. Its result
 is **in-sample** and `improvement_proven_vs_bm25` is `false` (the full

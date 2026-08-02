@@ -394,6 +394,11 @@ def _build_steps() -> list[Step]:
             timeout_seconds=600,
         ),
         Step(
+            name="Research-paper per-query token and latency telemetry",
+            command=[sys.executable, "scripts/run_research_paper_query_telemetry.py"],
+            timeout_seconds=600,
+        ),
+        Step(
             name="Claim-conditioned citation selector offline evaluation",
             command=[
                 sys.executable,

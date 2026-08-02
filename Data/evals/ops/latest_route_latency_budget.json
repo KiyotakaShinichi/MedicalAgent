@@ -1,6 +1,6 @@
 {
   "schema_version": "route_latency_budget_v1",
-  "generated_at": "2026-08-02T13:38:38.362791+00:00",
+  "generated_at": "2026-08-02T16:13:03.863713+00:00",
   "status": "acceptable",
   "minimum_samples_for_percentile_credibility": 30,
   "production_ready": false,
@@ -11,7 +11,7 @@
     "credible_percentile_route_count": 5,
     "needs_attention_count": 0,
     "insufficient_sample_count": 0,
-    "highest_observed_p95_ms": 165.44,
+    "highest_observed_p95_ms": 358.34,
     "production_ready": false
   },
   "routes": [
@@ -21,9 +21,9 @@
       "acceptable_p95_ms": 1500,
       "needs_attention_p95_ms": 3000,
       "sample_count": 30,
-      "current_p50_ms": 23.16,
-      "current_p95_ms": 94.92,
-      "current_p99_ms": 215.27,
+      "current_p50_ms": 21.32,
+      "current_p95_ms": 45.8,
+      "current_p99_ms": 165.38,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -35,7 +35,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 94.92,
+      "observed_p95_ms": 45.8,
       "status": "ideal"
     },
     {
@@ -44,9 +44,9 @@
       "acceptable_p95_ms": 2000,
       "needs_attention_p95_ms": 4000,
       "sample_count": 30,
-      "current_p50_ms": 38.74,
-      "current_p95_ms": 51.27,
-      "current_p99_ms": 56.03,
+      "current_p50_ms": 64.44,
+      "current_p95_ms": 89.5,
+      "current_p99_ms": 91.61,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -58,7 +58,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 1,
       "production_ready": false,
-      "observed_p95_ms": 51.27,
+      "observed_p95_ms": 89.5,
       "status": "ideal"
     },
     {
@@ -67,9 +67,9 @@
       "acceptable_p95_ms": 8000,
       "needs_attention_p95_ms": 15000,
       "sample_count": 30,
-      "current_p50_ms": 86.7,
-      "current_p95_ms": 165.44,
-      "current_p99_ms": 166.68,
+      "current_p50_ms": 229.13,
+      "current_p95_ms": 358.34,
+      "current_p99_ms": 368.08,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -81,7 +81,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 165.44,
+      "observed_p95_ms": 358.34,
       "status": "ideal"
     },
     {
@@ -111,9 +111,9 @@
       "acceptable_p95_ms": 3000,
       "needs_attention_p95_ms": 6000,
       "sample_count": 30,
-      "current_p50_ms": 73.4,
-      "current_p95_ms": 125.0,
-      "current_p99_ms": 156.66,
+      "current_p50_ms": 125.03,
+      "current_p95_ms": 161.57,
+      "current_p99_ms": 161.58,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -126,7 +126,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 125.0,
+      "observed_p95_ms": 161.57,
       "status": "ideal"
     },
     {
@@ -156,9 +156,9 @@
       "acceptable_p95_ms": 5000,
       "needs_attention_p95_ms": 10000,
       "sample_count": 30,
-      "current_p50_ms": 36.63,
-      "current_p95_ms": 45.6,
-      "current_p99_ms": 47.16,
+      "current_p50_ms": 57.06,
+      "current_p95_ms": 73.09,
+      "current_p99_ms": 196.0,
       "measurement_status": "credible_local_sample",
       "percentile_credible": true,
       "minimum_credible_percentile_samples": 30,
@@ -170,7 +170,7 @@
       "route_integrity_rate": 1.0,
       "unique_query_count": 30,
       "production_ready": false,
-      "observed_p95_ms": 45.6,
+      "observed_p95_ms": 73.09,
       "status": "ideal"
     }
   ],

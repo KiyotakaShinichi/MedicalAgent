@@ -1,6 +1,6 @@
 {
   "schema_version": "cost_latency_observability_v3",
-  "generated_at": "2026-08-02T13:38:44.627071+00:00",
+  "generated_at": "2026-08-02T16:13:09.136882+00:00",
   "status": "strong",
   "summary": {
     "request_count": 500,
@@ -279,239 +279,239 @@
         },
         "total_ms": {
           "samples": 30,
-          "p50_ms": 23.27,
-          "p95_ms": 74.95,
-          "max_ms": 215.27,
+          "p50_ms": 21.37,
+          "p95_ms": 39.33,
+          "max_ms": 165.38,
           "percentile_credibility": "directional_internal_sample"
         },
         "post_generation_validation_ms": {
           "samples": 30,
-          "p50_ms": 0.85,
-          "p95_ms": 1.4,
-          "max_ms": 1.52,
+          "p50_ms": 0.92,
+          "p95_ms": 1.25,
+          "max_ms": 1.84,
           "percentile_credibility": "directional_internal_sample"
         },
         "source_governance_ms": {
           "samples": 30,
           "p50_ms": 0.01,
-          "p95_ms": 0.03,
-          "max_ms": 0.03,
+          "p95_ms": 0.02,
+          "max_ms": 0.02,
           "percentile_credibility": "directional_internal_sample"
         }
       },
       "cached_educational_answer": {
         "safety_gate_ms": {
           "samples": 1,
-          "p50_ms": 11.65,
-          "p95_ms": 11.65,
-          "max_ms": 11.65,
+          "p50_ms": 12.33,
+          "p95_ms": 12.33,
+          "max_ms": 12.33,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "intent_routing_ms": {
           "samples": 1,
-          "p50_ms": 0.14,
-          "p95_ms": 0.14,
-          "max_ms": 0.14,
+          "p50_ms": 0.12,
+          "p95_ms": 0.12,
+          "max_ms": 0.12,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "retrieval_ms": {
           "samples": 1,
-          "p50_ms": 30.73,
-          "p95_ms": 30.73,
-          "max_ms": 30.73,
+          "p50_ms": 67.42,
+          "p95_ms": 67.42,
+          "max_ms": 67.42,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "rerank_ms": {
           "samples": 1,
-          "p50_ms": 0.16,
-          "p95_ms": 0.16,
-          "max_ms": 0.16,
+          "p50_ms": 0.17,
+          "p95_ms": 0.17,
+          "max_ms": 0.17,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "generation_ms": {
           "samples": 1,
-          "p50_ms": 0.39,
-          "p95_ms": 0.39,
-          "max_ms": 0.39,
+          "p50_ms": 0.5,
+          "p95_ms": 0.5,
+          "max_ms": 0.5,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "total_ms": {
           "samples": 31,
-          "p50_ms": 38.94,
-          "p95_ms": 53.65,
-          "max_ms": 71.28,
+          "p50_ms": 64.94,
+          "p95_ms": 90.56,
+          "max_ms": 120.7,
           "percentile_credibility": "directional_internal_sample"
         },
         "pre_generation_governance_ms": {
           "samples": 1,
-          "p50_ms": 0.37,
-          "p95_ms": 0.37,
-          "max_ms": 0.37,
+          "p50_ms": 0.42,
+          "p95_ms": 0.42,
+          "max_ms": 0.42,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "compression_ms": {
           "samples": 1,
-          "p50_ms": 0.01,
-          "p95_ms": 0.01,
-          "max_ms": 0.01,
+          "p50_ms": 0.02,
+          "p95_ms": 0.02,
+          "max_ms": 0.02,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "post_generation_validation_ms": {
           "samples": 31,
-          "p50_ms": 0.83,
-          "p95_ms": 1.27,
-          "max_ms": 1.43,
+          "p50_ms": 1.26,
+          "p95_ms": 1.98,
+          "max_ms": 2.14,
           "percentile_credibility": "directional_internal_sample"
         },
         "source_governance_ms": {
           "samples": 31,
-          "p50_ms": 1.06,
-          "p95_ms": 1.58,
-          "max_ms": 1.65,
+          "p50_ms": 1.39,
+          "p95_ms": 2.69,
+          "max_ms": 2.98,
           "percentile_credibility": "directional_internal_sample"
         }
       },
       "normal_rag": {
         "safety_gate_ms": {
           "samples": 30,
-          "p50_ms": 15.87,
-          "p95_ms": 27.75,
-          "max_ms": 32.26,
+          "p50_ms": 24.81,
+          "p95_ms": 40.39,
+          "max_ms": 46.19,
           "percentile_credibility": "directional_internal_sample"
         },
         "intent_routing_ms": {
           "samples": 30,
-          "p50_ms": 0.16,
-          "p95_ms": 0.48,
-          "max_ms": 1.18,
+          "p50_ms": 0.22,
+          "p95_ms": 0.91,
+          "max_ms": 1.23,
           "percentile_credibility": "directional_internal_sample"
         },
         "retrieval_ms": {
           "samples": 30,
-          "p50_ms": 28.18,
-          "p95_ms": 47.24,
-          "max_ms": 79.17,
+          "p50_ms": 114.79,
+          "p95_ms": 190.57,
+          "max_ms": 206.09,
           "percentile_credibility": "directional_internal_sample"
         },
         "rerank_ms": {
           "samples": 30,
-          "p50_ms": 0.2,
-          "p95_ms": 0.49,
-          "max_ms": 0.61,
+          "p50_ms": 0.28,
+          "p95_ms": 0.76,
+          "max_ms": 0.82,
           "percentile_credibility": "directional_internal_sample"
         },
         "generation_ms": {
           "samples": 30,
-          "p50_ms": 0.57,
-          "p95_ms": 1.18,
-          "max_ms": 1.29,
+          "p50_ms": 0.67,
+          "p95_ms": 1.1,
+          "max_ms": 1.11,
           "percentile_credibility": "directional_internal_sample"
         },
         "total_ms": {
           "samples": 30,
-          "p50_ms": 86.89,
-          "p95_ms": 161.09,
-          "max_ms": 166.68,
+          "p50_ms": 230.47,
+          "p95_ms": 354.06,
+          "max_ms": 368.08,
           "percentile_credibility": "directional_internal_sample"
         },
         "pre_generation_governance_ms": {
           "samples": 30,
-          "p50_ms": 0.47,
-          "p95_ms": 0.92,
-          "max_ms": 1.07,
+          "p50_ms": 0.66,
+          "p95_ms": 1.45,
+          "max_ms": 2.55,
           "percentile_credibility": "directional_internal_sample"
         },
         "compression_ms": {
           "samples": 30,
-          "p50_ms": 0.01,
-          "p95_ms": 0.02,
-          "max_ms": 0.02,
+          "p50_ms": 0.02,
+          "p95_ms": 0.04,
+          "max_ms": 0.05,
           "percentile_credibility": "directional_internal_sample"
         },
         "post_generation_validation_ms": {
           "samples": 30,
-          "p50_ms": 0.81,
-          "p95_ms": 1.88,
-          "max_ms": 6.49,
+          "p50_ms": 1.25,
+          "p95_ms": 2.42,
+          "max_ms": 2.71,
           "percentile_credibility": "directional_internal_sample"
         },
         "source_governance_ms": {
           "samples": 30,
-          "p50_ms": 0.92,
-          "p95_ms": 1.47,
-          "max_ms": 1.57,
+          "p50_ms": 1.4,
+          "p95_ms": 2.57,
+          "max_ms": 3.0,
           "percentile_credibility": "directional_internal_sample"
         }
       },
       "low_confidence_safe_default": {
         "safety_gate_ms": {
           "samples": 27,
-          "p50_ms": 18.8,
-          "p95_ms": 39.76,
-          "max_ms": 44.61,
+          "p50_ms": 16.58,
+          "p95_ms": 37.51,
+          "max_ms": 41.26,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "intent_routing_ms": {
           "samples": 27,
           "p50_ms": 0.06,
-          "p95_ms": 0.11,
-          "max_ms": 0.23,
+          "p95_ms": 0.08,
+          "max_ms": 0.1,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "retrieval_ms": {
           "samples": 27,
-          "p50_ms": 27.8,
-          "p95_ms": 53.47,
-          "max_ms": 86.79,
+          "p50_ms": 70.45,
+          "p95_ms": 89.37,
+          "max_ms": 91.01,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "rerank_ms": {
           "samples": 27,
           "p50_ms": 0.09,
-          "p95_ms": 0.16,
-          "max_ms": 0.29,
+          "p95_ms": 0.12,
+          "max_ms": 0.12,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "generation_ms": {
           "samples": 27,
-          "p50_ms": 0.18,
-          "p95_ms": 1.11,
-          "max_ms": 1.6,
+          "p50_ms": 0.19,
+          "p95_ms": 0.27,
+          "max_ms": 0.37,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "total_ms": {
           "samples": 30,
-          "p50_ms": 74.48,
-          "p95_ms": 120.17,
-          "max_ms": 156.66,
+          "p50_ms": 125.7,
+          "p95_ms": 160.09,
+          "max_ms": 161.58,
           "percentile_credibility": "directional_internal_sample"
         },
         "pre_generation_governance_ms": {
           "samples": 27,
-          "p50_ms": 0.36,
-          "p95_ms": 1.16,
-          "max_ms": 2.5,
+          "p50_ms": 0.53,
+          "p95_ms": 0.68,
+          "max_ms": 0.84,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "compression_ms": {
           "samples": 27,
           "p50_ms": 0.01,
           "p95_ms": 0.01,
-          "max_ms": 0.02,
+          "max_ms": 0.01,
           "percentile_credibility": "insufficient_n_for_tail_claim"
         },
         "post_generation_validation_ms": {
           "samples": 30,
-          "p50_ms": 0.62,
-          "p95_ms": 1.98,
-          "max_ms": 2.77,
+          "p50_ms": 0.57,
+          "p95_ms": 0.88,
+          "max_ms": 1.04,
           "percentile_credibility": "directional_internal_sample"
         },
         "source_governance_ms": {
           "samples": 30,
-          "p50_ms": 0.98,
-          "p95_ms": 2.61,
-          "max_ms": 4.07,
+          "p50_ms": 0.97,
+          "p95_ms": 1.28,
+          "max_ms": 1.53,
           "percentile_credibility": "directional_internal_sample"
         }
       },
@@ -553,23 +553,23 @@
         },
         "total_ms": {
           "samples": 30,
-          "p50_ms": 36.9,
-          "p95_ms": 45.54,
-          "max_ms": 47.16,
+          "p50_ms": 57.8,
+          "p95_ms": 71.88,
+          "max_ms": 196.0,
           "percentile_credibility": "directional_internal_sample"
         },
         "post_generation_validation_ms": {
           "samples": 30,
-          "p50_ms": 0.09,
-          "p95_ms": 0.15,
-          "max_ms": 0.2,
+          "p50_ms": 0.12,
+          "p95_ms": 0.21,
+          "max_ms": 0.24,
           "percentile_credibility": "directional_internal_sample"
         },
         "source_governance_ms": {
           "samples": 30,
           "p50_ms": 0.01,
           "p95_ms": 0.02,
-          "max_ms": 0.02,
+          "max_ms": 0.03,
           "percentile_credibility": "directional_internal_sample"
         }
       }

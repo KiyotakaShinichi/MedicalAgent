@@ -1,25 +1,25 @@
 {
   "schema_version": "kb_source_governance_v1",
-  "generated_at": "2026-08-02T13:39:29.219493+00:00",
+  "generated_at": "2026-08-02T16:13:59.940519+00:00",
   "status": "strong",
   "kb_chunks_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\rag_knowledge_base_chunks.json",
-  "source_count": 46,
-  "chunk_count": 240,
+  "source_count": 58,
+  "chunk_count": 766,
   "tier_distribution": {
     "T1": 5,
-    "T2": 10,
+    "T2": 22,
     "T3": 29,
     "T4": 2
   },
   "allowed_use_distribution": {
     "patient_safety": 3,
-    "education": 44,
+    "education": 56,
     "clinician_only": 5,
-    "monitoring_context": 12,
+    "monitoring_context": 24,
     "portal_help": 2
   },
   "staleness_distribution": {
-    "current": 46
+    "current": 58
   },
   "tier_map": {
     "clinical_safety_policy": {
@@ -101,7 +101,8 @@
         "education",
         "clinician_only"
       ],
-      "ingested_at": "2026-08-02T13:35:35.350236+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.518195+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -112,7 +113,18 @@
         "clinical",
         "supplements",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "28cfcee61ce1e4a4",
@@ -128,7 +140,8 @@
         "education",
         "clinician_only"
       ],
-      "ingested_at": "2026-08-02T13:35:35.352561+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.520176+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -139,7 +152,18 @@
         "agent",
         "clinical",
         "safety"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "9dbd1c506f6e0962",
@@ -155,7 +179,8 @@
         "clinician_only",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.402519+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.567128+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -165,7 +190,18 @@
       "modalities": [
         "clinical",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "401289a2a636f30a",
@@ -181,7 +217,8 @@
         "education",
         "clinician_only"
       ],
-      "ingested_at": "2026-08-02T13:35:35.407811+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.570276+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -192,7 +229,18 @@
         "clinical",
         "safety",
         "supportive_care"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "c76e439a49d82a90",
@@ -208,7 +256,8 @@
         "clinician_only",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.441979+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.600865+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -219,7 +268,297 @@
         "clinical",
         "labs",
         "tumor_markers"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
+    },
+    {
+      "source_id": "e3dbdcb2cc01c637",
+      "title": "Herb-drug interactions in oncology",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12232703/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC12232703_herb-drug-interactions-in-oncology.txt",
+      "trust_level": "systematic_review",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Peer-reviewed systematic review / meta-analysis.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:17.951132+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 142,
+      "topics": [
+        "oncology_supplement_interaction_boundary"
+      ],
+      "modalities": [
+        "medications",
+        "pharmacist review",
+        "supplements"
+      ],
+      "pmcid": "PMC12232703",
+      "pmid": "40624553",
+      "doi": "10.1186/s13020-025-01156-4",
+      "publication_date": "2025 Jul 7",
+      "journal": "Chin Med",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "review_routing_only",
+      "evidence_role": "claim_boundary",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Supports routing supplement-interaction questions to oncology or pharmacy review without declaring products safe or unsafe."
+    },
+    {
+      "source_id": "fac6debc6ea2bf0e",
+      "title": "Variants of uncertain significance in the era of high-throughput genome sequencing",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7055088/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC7055088_variants-of-uncertain-significance-in-the-era-of-high-throughput-genome-sequencing.txt",
+      "trust_level": "systematic_review",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Peer-reviewed systematic review / meta-analysis.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.327599+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 64,
+      "topics": [
+        "vus_breast_ovarian_cancer_context"
+      ],
+      "modalities": [
+        "breast and ovarian cancer",
+        "genetics"
+      ],
+      "pmcid": "PMC7055088",
+      "pmid": "32127026",
+      "doi": "10.1186/s13046-020-01554-6",
+      "publication_date": "2020 Mar 4",
+      "journal": "J Exp Clin Cancer Res",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "review_routing_only",
+      "evidence_role": "uncertainty_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Breast and ovarian cancer context for why uncertain variants require qualified review."
+    },
+    {
+      "source_id": "bc9603074d87c01a",
+      "title": "ACMG and AMP standards and guidelines for the interpretation of sequence variants",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4544753/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC4544753_acmg-and-amp-standards-and-guidelines-for-the-interpretation-of-sequence-variants.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.166916+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 60,
+      "topics": [
+        "genetic_variant_interpretation_boundary"
+      ],
+      "modalities": [
+        "genetics",
+        "laboratory interpretation"
+      ],
+      "pmcid": "PMC4544753",
+      "pmid": "25741868",
+      "doi": "10.1038/gim.2015.30",
+      "publication_date": "2015 May",
+      "journal": "Genet Med",
+      "license": "none",
+      "retracted": false,
+      "patient_facing_suitability": "review_routing_only",
+      "evidence_role": "claim_boundary",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Defines professional variant-classification concepts used to keep automated VUS interpretation out of scope."
+    },
+    {
+      "source_id": "f0a6d9e8951e231a",
+      "title": "Web-based cancer symptom self-management system: a randomized clinical trial",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12053558/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC12053558_web-based-cancer-symptom-self-management-system-a-randomized-clinical-trial.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:17.800526+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 55,
+      "topics": [
+        "electronic_symptom_monitoring"
+      ],
+      "modalities": [
+        "clinical workflow",
+        "patient-reported outcomes",
+        "symptoms"
+      ],
+      "pmcid": "PMC12053558",
+      "pmid": "40323601",
+      "doi": "10.1001/jamanetworkopen.2025.8353",
+      "publication_date": "2025 May 1",
+      "journal": "JAMA Netw Open",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "workflow_design_evidence",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Recent randomized evidence for EHR-integrated symptom reporting and self-management workflow design."
+    },
+    {
+      "source_id": "76992c5151ce9cb2",
+      "title": "Essential components of an electronic patient-reported symptom monitoring and management system",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11400212/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC11400212_essential-components-of-an-electronic-patient-reported-symptom-monitoring-and-management-s.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:17.727377+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 49,
+      "topics": [
+        "electronic_symptom_monitoring"
+      ],
+      "modalities": [
+        "clinical workflow",
+        "patient-reported outcomes",
+        "symptoms"
+      ],
+      "pmcid": "PMC11400212",
+      "pmid": "39269704",
+      "doi": "10.1001/jamanetworkopen.2024.33153",
+      "publication_date": "2024 Sep 3",
+      "journal": "JAMA Netw Open",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "workflow_design_evidence",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Randomized trial relevant to symptom-reporting and care-team follow-up workflow design."
+    },
+    {
+      "source_id": "a237152d7f94368d",
+      "title": "Variants of uncertain significance and reclassification in hereditary cancer testing",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9158111/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC9158111_variants-of-uncertain-significance-and-reclassification-in-hereditary-cancer-testing.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.363211+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 44,
+      "topics": [
+        "vus_reclassification"
+      ],
+      "modalities": [
+        "genetics",
+        "hereditary cancer"
+      ],
+      "pmcid": "PMC9158111",
+      "pmid": "35641994",
+      "doi": "10.1186/s12920-022-01270-4",
+      "publication_date": "2022 May 31",
+      "journal": "BMC Med Genomics",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "review_routing_only",
+      "evidence_role": "claim_boundary",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Supports education about uncertainty and reclassification without treating a VUS as pathogenic."
     },
     {
       "source_id": "7cd1e3e1103a156a",
@@ -234,7 +573,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.515193+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.073206+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 27,
@@ -243,7 +583,74 @@
       ],
       "modalities": [
         "MRI"
-      ]
+      ],
+      "pmcid": "PMC3609956",
+      "pmid": "23359240",
+      "doi": "10.1007/s13244-013-0219-y",
+      "publication_date": "2013 Apr",
+      "journal": "Insights Imaging",
+      "license": "CC BY-NC",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
+    },
+    {
+      "source_id": "dddb6e87a9d09d30",
+      "title": "Anxiety and depression in adult cancer patients: ESMO clinical practice guideline",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10163167/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC10163167_anxiety-and-depression-in-adult-cancer-patients-esmo-clinical-practice-guideline.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:17.631678+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 26,
+      "topics": [
+        "oncology_distress_review_routing"
+      ],
+      "modalities": [
+        "clinical workflow",
+        "emotional distress",
+        "patient-reported symptoms"
+      ],
+      "pmcid": "PMC10163167",
+      "pmid": "37087199",
+      "doi": "10.1016/j.esmoop.2023.101155",
+      "publication_date": "2023 Apr",
+      "journal": "ESMO Open",
+      "license": "CC BY-NC-ND",
+      "retracted": false,
+      "patient_facing_suitability": "review_routing_only",
+      "evidence_role": "review_routing_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Supports cautious distress-screening and referral workflow concepts, not automated psychiatric diagnosis."
     },
     {
       "source_id": "513e4b58992b3ee6",
@@ -258,7 +665,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.462352+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:17.656309+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 26,
@@ -268,7 +676,27 @@
       "modalities": [
         "CBC",
         "clinical"
-      ]
+      ],
+      "pmcid": "PMC10898895",
+      "pmid": "38414951",
+      "doi": "10.3332/ecancer.2023.1618",
+      "publication_date": "2023",
+      "journal": "Ecancermedicalscience",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
       "source_id": "2524619e8115a75d",
@@ -283,7 +711,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.600777+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.215986+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 23,
@@ -293,7 +722,27 @@
       "modalities": [
         "DCE-MRI",
         "MRI"
-      ]
+      ],
+      "pmcid": "PMC5500247",
+      "pmid": "28691102",
+      "doi": "10.18383/j.tom.2016.00241",
+      "publication_date": "2017 Mar",
+      "journal": "Tomography",
+      "license": "CC BY-NC-ND",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
       "source_id": "2a9f2ed73f0b189c",
@@ -308,7 +757,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.639879+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.269396+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 23,
@@ -318,7 +768,168 @@
       "modalities": [
         "DCE-MRI",
         "MRI"
-      ]
+      ],
+      "pmcid": "PMC6702160",
+      "pmid": "31431633",
+      "doi": "10.1038/s41598-019-48465-x",
+      "publication_date": "2019 Aug 20",
+      "journal": "Sci Rep",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
+    },
+    {
+      "source_id": "ebea135f41f717e3",
+      "title": "Communication and handling of symptomatic adverse events during adjuvant breast cancer chemotherapy",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6868829/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC6868829_communication-and-handling-of-symptomatic-adverse-events-during-adjuvant-breast-cancer-che.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.283689+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 21,
+      "topics": [
+        "breast_cancer_epro_communication"
+      ],
+      "modalities": [
+        "care-team communication",
+        "patient-reported outcomes",
+        "symptoms"
+      ],
+      "pmcid": "PMC6868829",
+      "pmid": "31832240",
+      "doi": "10.1186/s40900-019-0171-1",
+      "publication_date": "2019",
+      "journal": "Res Involv Engagem",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "workflow_design_evidence",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Breast-cancer-specific evidence about communication around patient-reported adverse events."
+    },
+    {
+      "source_id": "678551662f8b9f94",
+      "title": "Remote monitoring app for endocrine therapy adherence among patients with early-stage breast cancer",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11211959/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC11211959_remote-monitoring-app-for-endocrine-therapy-adherence-among-patients-with-early-stage-brea.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:17.676252+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 20,
+      "topics": [
+        "endocrine_monitoring_negative_result"
+      ],
+      "modalities": [
+        "digital monitoring",
+        "medication adherence",
+        "symptoms"
+      ],
+      "pmcid": "PMC11211959",
+      "pmid": "38935379",
+      "doi": "10.1001/jamanetworkopen.2024.17873",
+      "publication_date": "2024 Jun 3",
+      "journal": "JAMA Netw Open",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "clinician_context_only",
+      "evidence_role": "negative_result",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "A useful negative result: the monitored intervention did not improve its primary adherence outcome."
+    },
+    {
+      "source_id": "403a553744b33c3b",
+      "title": "Online tool for monitoring adverse events during cancer treatment: eRAPID field testing",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6361332/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC6361332_online-tool-for-monitoring-adverse-events-during-cancer-treatment-erapid-field-testing.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.251474+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 20,
+      "topics": [
+        "breast_cancer_remote_symptom_monitoring"
+      ],
+      "modalities": [
+        "clinical workflow",
+        "patient-reported outcomes",
+        "symptoms"
+      ],
+      "pmcid": "PMC6361332",
+      "pmid": "30782751",
+      "doi": "10.1136/bmjopen-2018-025185",
+      "publication_date": "2019 Feb 1",
+      "journal": "BMJ Open",
+      "license": "CC BY-NC",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "workflow_feasibility",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Breast-service field evidence for symptom capture and review workflow feasibility."
     },
     {
       "source_id": "5ff309c8a4b83b94",
@@ -333,7 +944,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.489469+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.051796+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 19,
@@ -343,7 +955,27 @@
       "modalities": [
         "CBC",
         "clinical"
-      ]
+      ],
+      "pmcid": "PMC2846279",
+      "pmid": "20191292",
+      "doi": "10.1007/s00520-010-0816-y",
+      "publication_date": "2010 May",
+      "journal": "Support Care Cancer",
+      "license": "CC BY-NC",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
       "source_id": "b6cee03f078d056a",
@@ -358,7 +990,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.538012+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.093239+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 19,
@@ -368,7 +1001,27 @@
       "modalities": [
         "CBC",
         "clinical"
-      ]
+      ],
+      "pmcid": "PMC3940691",
+      "pmid": "23999597",
+      "doi": "10.1038/tpj.2013.32",
+      "publication_date": "2014 Jun",
+      "journal": "Pharmacogenomics J",
+      "license": "none",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
       "source_id": "ecb3652df9db271c",
@@ -383,7 +1036,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.621407+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.235788+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 17,
@@ -393,7 +1047,74 @@
       "modalities": [
         "CBC",
         "clinical"
-      ]
+      ],
+      "pmcid": "PMC6180804",
+      "pmid": "30241156",
+      "doi": "10.1200/JGO.2016.008540",
+      "publication_date": "2018 Sep",
+      "journal": "J Glob Oncol",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
+    },
+    {
+      "source_id": "ea950047d9b0a729",
+      "title": "Standards, options and recommendations for serum tumour markers in breast cancer",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2752999/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC2752999_standards-options-and-recommendations-for-serum-tumour-markers-in-breast-cancer.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.019315+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 16,
+      "topics": [
+        "tumor_marker_limitations"
+      ],
+      "modalities": [
+        "CA 15-3",
+        "CEA",
+        "tumor markers"
+      ],
+      "pmcid": "PMC2752999",
+      "pmid": "12915901",
+      "doi": "10.1038/sj.bjc.6601082",
+      "publication_date": "2003 Aug",
+      "journal": "Br J Cancer",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "review_routing_only",
+      "evidence_role": "claim_boundary",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Useful for explaining why serum markers are context and cannot independently establish diagnosis or recurrence."
     },
     {
       "source_id": "890d72c72f9459a3",
@@ -408,7 +1129,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.555245+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.117312+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 16,
@@ -419,7 +1141,27 @@
         "CBC",
         "clinical",
         "symptoms"
-      ]
+      ],
+      "pmcid": "PMC3987093",
+      "pmid": "24706592",
+      "doi": "10.1002/cam4.200",
+      "publication_date": "2014 Apr",
+      "journal": "Cancer Med",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
       "source_id": "f1814d41c026b232",
@@ -434,7 +1176,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.576066+00:00",
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.191979+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 15,
@@ -444,7 +1187,74 @@
       "modalities": [
         "CBC",
         "clinical"
-      ]
+      ],
+      "pmcid": "PMC4998558",
+      "pmid": "27043697",
+      "doi": "10.1097/MD.0000000000003240",
+      "publication_date": "2016 Mar",
+      "journal": "Medicine (Baltimore)",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
+    },
+    {
+      "source_id": "a9a0fe0778d04773",
+      "title": "Use of PRO-CTCAE in oncology clinical trials",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452844/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC12452844_use-of-pro-ctcae-in-oncology-clinical-trials.txt",
+      "trust_level": "systematic_review",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Peer-reviewed systematic review / meta-analysis.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-02T16:09:18.003345+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 9,
+      "topics": [
+        "patient_reported_outcome_measurement"
+      ],
+      "modalities": [
+        "PRO-CTCAE",
+        "patient-reported outcomes",
+        "symptoms"
+      ],
+      "pmcid": "PMC12452844",
+      "pmid": "40989554",
+      "doi": "10.1016/j.conctc.2025.101547",
+      "publication_date": "2025 Oct",
+      "journal": "Contemp Clin Trials Commun",
+      "license": "CC BY-NC-ND",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "measurement_vocabulary",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Documents patient-reported symptom measurement vocabulary without turning self-report into clinician toxicity grading."
     },
     {
       "source_id": "16cecf5419e1fe71",
@@ -459,7 +1269,8 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-08-02T13:35:35.647224+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:18.372153+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -470,7 +1281,18 @@
         "CBC",
         "symptoms",
         "treatment"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "4a6fee1c39db19c8",
@@ -484,7 +1306,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.365173+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.530929+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 3,
@@ -494,7 +1317,18 @@
       "modalities": [
         "medications",
         "treatment"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "2c9cf580eb45af0e",
@@ -508,7 +1342,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.414305+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.576210+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 3,
@@ -519,7 +1354,18 @@
         "clinical",
         "medications",
         "supplements"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "32883832328b402b",
@@ -533,7 +1379,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.357279+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.522674+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -542,7 +1389,18 @@
       ],
       "modalities": [
         "clinical"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "a34c987d0620a854",
@@ -556,7 +1414,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.362456+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.526786+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -567,7 +1426,18 @@
         "medications",
         "symptoms",
         "treatment"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "fbbde2102f3166e7",
@@ -581,7 +1451,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.367443+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.533533+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -592,7 +1463,18 @@
         "biomarkers",
         "medications",
         "treatment"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "3ca1dfefbd3147b0",
@@ -606,7 +1488,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.383255+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.548555+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -617,7 +1500,18 @@
         "CBC",
         "clinical",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "36b7a3ffdb9205a4",
@@ -631,7 +1525,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.391608+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.555249+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -641,7 +1536,18 @@
       "modalities": [
         "CBC",
         "clinical"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "6649c1bba1cd7799",
@@ -655,7 +1561,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.411696+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.573592+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -666,7 +1573,18 @@
         "clinical",
         "medications",
         "supplements"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "3e33718d58d0a5ba",
@@ -680,7 +1598,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.424793+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.583872+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -692,7 +1611,18 @@
         "labs",
         "pathology",
         "tumor_markers"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "ef3bcc511aad3c2c",
@@ -706,7 +1636,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.430605+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.590428+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -717,7 +1648,18 @@
         "clinical",
         "family_history",
         "genetics"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "4787d2a42440789f",
@@ -731,7 +1673,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.432799+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.593111+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -744,7 +1687,18 @@
         "labs",
         "pathology",
         "tumor_markers"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "dd8482fb188651cd",
@@ -758,7 +1712,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.439468+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.598575+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -768,7 +1723,18 @@
       "modalities": [
         "clinical",
         "genetics"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "afa6a907e158ceca",
@@ -782,7 +1748,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.359963+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.524729+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -791,7 +1758,18 @@
       ],
       "modalities": [
         "clinical"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "d585ebd25c605f1b",
@@ -805,7 +1783,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.369301+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.535761+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -816,7 +1795,18 @@
         "biomarkers",
         "medications",
         "treatment"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "a8f363cc9206a9ff",
@@ -830,7 +1820,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.373422+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.537802+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -841,7 +1832,18 @@
         "medications",
         "symptoms",
         "treatment"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "b0cb4d4e4bed10a7",
@@ -855,7 +1857,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.376313+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.539727+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -866,7 +1869,18 @@
         "clinical",
         "medications",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "24de6c8ad0379f43",
@@ -880,7 +1894,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.378211+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.541779+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -890,7 +1905,18 @@
       "modalities": [
         "clinical",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "9a6347c207d53299",
@@ -904,7 +1930,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.380707+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.545521+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -915,7 +1942,18 @@
         "CBC",
         "clinical",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "d50090fd5d38a39d",
@@ -929,7 +1967,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.385256+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.550786+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -940,7 +1979,18 @@
         "CBC",
         "clinical",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "0185db088c803c80",
@@ -954,7 +2004,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.389498+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.553054+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -964,7 +2015,18 @@
       "modalities": [
         "CBC",
         "clinical"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "287d2107cfeeb34a",
@@ -978,7 +2040,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.393823+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.557287+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -990,7 +2053,18 @@
         "ascites",
         "clinical",
         "imaging"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "a734a844daed9ef7",
@@ -1004,7 +2078,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.396359+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.559330+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1016,7 +2091,18 @@
         "MRI",
         "imaging",
         "ultrasound"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "863a192faefa2336",
@@ -1030,7 +2116,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.398449+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.562657+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1042,7 +2129,18 @@
         "MRI",
         "imaging",
         "ultrasound"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "892b23b4ab3dd9cd",
@@ -1056,7 +2154,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.400341+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.564866+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1067,7 +2166,18 @@
         "biomarkers",
         "clinical",
         "pathology"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "2475b0c866dc591d",
@@ -1081,7 +2191,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.405980+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.568805+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1092,7 +2203,18 @@
         "clinical",
         "supportive_care",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "7dd4faa09221551a",
@@ -1106,7 +2228,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.409701+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.571898+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1116,7 +2239,18 @@
       "modalities": [
         "clinical",
         "symptoms"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "664fb49bb1343408",
@@ -1130,7 +2264,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.426675+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.585986+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1141,7 +2276,18 @@
         "clinical",
         "family_history",
         "genetics"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "67199f1396d24d3e",
@@ -1155,7 +2301,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.428385+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.587977+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1165,7 +2312,18 @@
       "modalities": [
         "clinical",
         "genetics"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "29f0f5dda9789b7e",
@@ -1179,7 +2337,8 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-08-02T13:35:35.435483+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.596184+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1190,7 +2349,18 @@
         "clinical",
         "genetics",
         "tumor_sequencing"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "c35c9264029ff9c9",
@@ -1204,7 +2374,8 @@
       "allowed_use": [
         "portal_help"
       ],
-      "ingested_at": "2026-08-02T13:35:35.416492+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.579797+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1214,7 +2385,18 @@
       "modalities": [
         "clinical",
         "portal"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     },
     {
       "source_id": "479e2ce02e7d9e05",
@@ -1228,7 +2410,8 @@
       "allowed_use": [
         "portal_help"
       ],
-      "ingested_at": "2026-08-02T13:35:35.422678+00:00",
+      "allowed_use_source": "tier_default",
+      "ingested_at": "2026-08-02T16:09:17.581679+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1238,7 +2421,18 @@
       "modalities": [
         "clinical",
         "portal"
-      ]
+      ],
+      "pmcid": null,
+      "pmid": null,
+      "doi": null,
+      "publication_date": null,
+      "journal": null,
+      "license": null,
+      "retracted": false,
+      "patient_facing_suitability": null,
+      "evidence_role": null,
+      "not_allowed_for": [],
+      "selection_rationale": null
     }
   ],
   "governance_issues": [],

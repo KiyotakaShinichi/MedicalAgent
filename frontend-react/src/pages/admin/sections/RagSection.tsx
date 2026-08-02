@@ -52,6 +52,10 @@ export function RagSection({ analytics }: Props) {
     () => getNormalizedBenchmarkArtifact("route_latency_budget"),
     [],
   );
+  const { data: researchPaperTelemetry, status: researchPaperTelemetryStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("research_paper_query_telemetry"),
+    [],
+  );
   const { data: traceReplay, status: traceReplayStatus } = useApi(() => getRagTraceReplay(8), []);
   const [runningLiveRag, setRunningLiveRag] = useState(false);
   const rag = analytics?.rag_evaluation;
@@ -85,6 +89,11 @@ export function RagSection({ analytics }: Props) {
           value={rag?.precision_at_3 != null ? `${(rag.precision_at_3 * 100).toFixed(1)}%` : null}
         />
       </div>
+
+      <ResearchPaperQueryTelemetryCard
+        status={researchPaperTelemetryStatus}
+        artifact={researchPaperTelemetry}
+      />
 
       <Card>
         <CardHeader><SectionTitle>Cost & Latency</SectionTitle></CardHeader>
@@ -258,6 +267,81 @@ export function RagSection({ analytics }: Props) {
 
       <RagTraceReplayCard status={traceReplayStatus} artifact={traceReplay} />
     </div>
+  );
+}
+
+function ResearchPaperQueryTelemetryCard({
+  status,
+  artifact,
+}: {
+  status: "idle" | "loading" | "success" | "error";
+  artifact: unknown;
+}) {
+  const record = asRecord(artifact);
+  const rows = Array.isArray(record?.rows)
+    ? record.rows.map(asRecord).filter(Boolean) as Record<string, unknown>[]
+    : [];
+  const metrics = asRecord(record?.metrics);
+  const artifactStatus = readString(record, ["status"]);
+  const providerCoverage = metrics?.provider_usage_coverage_rate;
+
+  return (
+    <Card>
+      <CardHeader>
+        <SectionTitle>Research-Paper Query Telemetry</SectionTitle>
+        <div className="flex items-center gap-2">
+          <Badge variant={providerCoverage === 1 ? "green" : "amber"}>
+            {providerCoverage === 1 ? "provider usage" : "token estimates"}
+          </Badge>
+          {artifactStatus && <Badge variant={artifactStatus === "acceptable_internal_measurement" ? "green" : "amber"}>{artifactStatus}</Badge>}
+        </div>
+      </CardHeader>
+      {status === "loading" ? <LoadingPane /> :
+       status === "error" ? <ErrorPane message="Could not load research-paper query telemetry" /> :
+       rows.length === 0 ? <EmptyPane label="No query telemetry yet - run scripts/run_research_paper_query_telemetry.py" /> : (
+        <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <MetricCard label="Queries" value={formatMetric(metrics?.query_count, "number")} />
+            <MetricCard label="Route pass" value={formatMetric(metrics?.route_contract_pass_rate, "percent")} />
+            <MetricCard label="Latency P50" value={formatMetric(metrics?.latency_p50_ms, "milliseconds")} />
+            <MetricCard label="Latency P95" value={formatMetric(metrics?.latency_p95_ms, "milliseconds")} />
+            <MetricCard label="Cold start" value={formatMetric(metrics?.cold_start_latency_ms, "milliseconds")} />
+            <MetricCard label="Warm P95" value={formatMetric(metrics?.warm_latency_p95_ms, "milliseconds")} />
+            <MetricCard label="Est. tokens" value={formatMetric(metrics?.estimated_pipeline_total_tokens, "number")} />
+            <MetricCard label="Provider tokens" value={formatMetric(metrics?.provider_reported_total_tokens, "number")} />
+            <MetricCard label="Usage coverage" value={formatMetric(metrics?.provider_usage_coverage_rate, "percent")} />
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                  {["Query", "Category", "Intent", "Route", "Latency", "Est. tokens", "Provider tokens", "Basis"].map((heading) => (
+                    <th key={heading} className="text-left py-2 pr-3 font-medium" style={{ color: "var(--text-faint)" }}>{heading}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.slice(0, 12).map((row) => (
+                  <tr key={String(row.id)} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td className="py-2 pr-3 max-w-[320px] truncate" title={String(row.query ?? "")}>{String(row.query ?? "-")}</td>
+                    <td className="py-2 pr-3">{String(row.category ?? "-")}</td>
+                    <td className="py-2 pr-3">{String(row.observed_intent ?? "-")}</td>
+                    <td className="py-2 pr-3"><Badge variant={row.route_matches_contract === true ? "green" : "amber"}>{row.route_matches_contract === true ? "pass" : "review"}</Badge></td>
+                    <td className="py-2 pr-3 tabular-nums">{formatMaybeMs(row.latency_ms)}</td>
+                    <td className="py-2 pr-3 tabular-nums">{String(row.estimated_total_tokens ?? "-")}</td>
+                    <td className="py-2 pr-3 tabular-nums">{String(row.provider_reported_total_tokens ?? "-")}</td>
+                    <td className="py-2 pr-3">{String(row.token_measurement_basis ?? "-")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs" style={{ color: "var(--text-faint)" }}>
+            Fixed internal synthetic queries. Provider tokens appear only when the provider returns usage; otherwise values are clearly labeled estimates. Clinical validation: false.
+          </p>
+        </div>
+       )}
+    </Card>
   );
 }
 

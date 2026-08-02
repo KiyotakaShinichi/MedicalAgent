@@ -53,6 +53,17 @@ def ingest_knowledge_base(
                 "care_stage": metadata["care_stage"],
                 "confidence": metadata["confidence"],
                 "pmcid": metadata["pmcid"],
+                "pmid": metadata["pmid"],
+                "doi": metadata["doi"],
+                "publication_date": metadata["publication_date"],
+                "journal": metadata["journal"],
+                "license": metadata["license"],
+                "retracted": metadata["retracted"],
+                "allowed_use": metadata["allowed_use"],
+                "patient_facing_suitability": metadata["patient_facing_suitability"],
+                "evidence_role": metadata["evidence_role"],
+                "not_allowed_for": metadata["not_allowed_for"],
+                "selection_rationale": metadata["selection_rationale"],
                 "section": chunk["section"],
                 "section_rank": _section_rank(chunk["section"]),
                 "tags": tags,
@@ -116,6 +127,17 @@ def load_ingested_chunks(path="Data/rag_knowledge_base_chunks.json"):
             "chunk_index": chunk.get("chunk_index"),
             "confidence": chunk.get("confidence"),
             "pmcid": chunk.get("pmcid"),
+            "pmid": chunk.get("pmid"),
+            "doi": chunk.get("doi"),
+            "publication_date": chunk.get("publication_date"),
+            "journal": chunk.get("journal"),
+            "license": chunk.get("license"),
+            "retracted": bool(chunk.get("retracted")),
+            "allowed_use": chunk.get("allowed_use") or [],
+            "patient_facing_suitability": chunk.get("patient_facing_suitability"),
+            "evidence_role": chunk.get("evidence_role"),
+            "not_allowed_for": chunk.get("not_allowed_for") or [],
+            "selection_rationale": chunk.get("selection_rationale"),
             "ingested_at": chunk.get("ingested_at"),
             "text": chunk.get("text"),
             "trust_level": chunk.get("trust_level") or "local_source",
@@ -145,6 +167,8 @@ def _copy_chunks(chunks):
         cloned = dict(chunk)
         cloned["tags"] = list(chunk.get("tags") or [])
         cloned["modality"] = list(chunk.get("modality") or [])
+        cloned["allowed_use"] = list(chunk.get("allowed_use") or [])
+        cloned["not_allowed_for"] = list(chunk.get("not_allowed_for") or [])
         output.append(cloned)
     return output
 
@@ -188,6 +212,17 @@ def _source_metadata(path, text, source_manifest=None):
         "care_stage": care_stage,
         "confidence": confidence,
         "pmcid": pmcid,
+        "pmid": manifest_entry.get("pmid"),
+        "doi": manifest_entry.get("doi"),
+        "publication_date": manifest_entry.get("publication_date"),
+        "journal": manifest_entry.get("journal"),
+        "license": manifest_entry.get("license"),
+        "retracted": bool(manifest_entry.get("retracted")),
+        "allowed_use": list(manifest_entry.get("allowed_use") or []),
+        "patient_facing_suitability": manifest_entry.get("patient_facing_suitability"),
+        "evidence_role": manifest_entry.get("evidence_role"),
+        "not_allowed_for": list(manifest_entry.get("not_allowed_for") or []),
+        "selection_rationale": manifest_entry.get("selection_rationale"),
         "tags": tags,
     }
 
@@ -217,14 +252,21 @@ def _chunk_text(text, chunk_chars, overlap_chars):
 
 def _chunk_text_by_section(text, chunk_chars, overlap_chars):
     sections = _sectionize_text(text)
+    has_named_content_section = any(
+        section_name not in {"front_matter", "references"}
+        for section_name, _ in sections
+    )
     chunks = []
     for section_name, section_text in sections:
-        if section_name in {"front_matter", "references"}:
+        if section_name == "references":
             continue
+        if section_name == "front_matter" and has_named_content_section:
+            continue
+        effective_section = "body" if section_name == "front_matter" else section_name
         for chunk_text in _chunk_text(section_text, chunk_chars, overlap_chars):
             chunks.append({
-                "section": section_name,
-                "text": f"[{section_name}] {chunk_text}",
+                "section": effective_section,
+                "text": f"[{effective_section}] {chunk_text}",
             })
     return chunks
 

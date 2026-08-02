@@ -1,33 +1,33 @@
 {
   "schema_version": "nlcare_data_lineage_v1",
-  "generated_at": "2026-08-02T13:35:38.013410+00:00",
+  "generated_at": "2026-08-02T16:09:21.678138+00:00",
   "clinical_validation": false,
   "nodes": [
     {
       "id": "knowledge_sources",
       "layer": "source",
-      "record_count": 48,
-      "fingerprint": "8facc37d366ef5ebb2c40045ff9bbd4e3feeb40dd1e9178959686ad68bd28037"
+      "record_count": 60,
+      "fingerprint": "2bebe45ecd723ea93c6b27fab4682b8ab87467f0d7a35be617e2b4cc81c784ac"
     },
     {
       "id": "knowledge_bronze",
       "layer": "bronze",
-      "record_count": 48,
+      "record_count": 60,
       "path": "Data/lakehouse/manifests/latest_source_manifest.json"
     },
     {
       "id": "knowledge_silver",
       "layer": "silver",
-      "record_count": 240,
+      "record_count": 766,
       "path": "Data/lakehouse/silver/knowledge_chunks.jsonl",
-      "fingerprint": "12645d2933b7c8703a9776311e9d084592a09aeccb4ec399b75f891f233373d1"
+      "fingerprint": "587dc5c9349f40a63ef60d2a8e9161559d5c68042dd7dded3f43e4d9aca16b9a"
     },
     {
       "id": "vector_gold",
       "layer": "gold",
-      "record_count": 240,
+      "record_count": 766,
       "path": "Data/lakehouse/gold/vector_records.jsonl",
-      "fingerprint": "000b16d286b7e130e2753cf66fe316c9692ace0f1bac3602c57de02781e2d8d6"
+      "fingerprint": "c6a20a5df4254841effa41a6bd55cdf06f19f2a081380a6522651a66e38aadf1"
     }
   ],
   "edges": [

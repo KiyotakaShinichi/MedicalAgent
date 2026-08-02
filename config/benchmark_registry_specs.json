@@ -4047,5 +4047,23 @@
       "unsafe_leakage_rate": ["unsafe_leakage_rate"],
       "over_refusal_rate": ["over_refusal_rate"]
     }
+  },
+  {
+    "id": "research_paper_query_telemetry",
+    "title": "Research-paper query latency and token telemetry",
+    "path": "Data/evals/rag/latest_research_paper_query_telemetry.json",
+    "tier": "supporting",
+    "metrics": {
+      "status": ["status"],
+      "query_count": ["query_count"],
+      "route_contract_pass_rate": ["summary", "route_contract_pass_rate"],
+      "latency_p50_ms": ["summary", "latency_p50_ms"],
+      "latency_p95_ms": ["summary", "latency_p95_ms"],
+      "cold_start_latency_ms": ["summary", "cold_start_latency_ms"],
+      "warm_latency_p95_ms": ["summary", "warm_latency_p95_ms"],
+      "estimated_pipeline_total_tokens": ["summary", "estimated_pipeline_total_tokens"],
+      "provider_reported_total_tokens": ["summary", "provider_reported_total_tokens"],
+      "provider_usage_coverage_rate": ["summary", "provider_usage_coverage_rate"]
+    }
   }
 ]

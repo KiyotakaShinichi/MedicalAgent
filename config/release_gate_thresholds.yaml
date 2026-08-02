@@ -2599,7 +2599,7 @@ artifacts:
       - {path: [summary, duplicate_manifest_pmcid_count], op: "==", value: 0}
       - {path: [summary, manifest_to_chunk_coverage], op: ">=", value: 1.0}
     note: >
-      Local provenance and metadata audit for the nine internally selected
+      Local provenance and metadata audit for the 21 internally selected
       open-access PMC papers. It does not establish broad literature coverage,
       systematic-review quality, clinical authority, or independent review.
 
@@ -2632,3 +2632,32 @@ artifacts:
       Case-level paper retrieval, section, provenance, source-tier, and
       no-evidence false-attribution failures. Informational and intentionally
       permitted to remain non-empty.
+
+  - path: Data/evals/rag/latest_research_paper_query_telemetry.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable_internal_measurement, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [independent_holdout], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: false}
+      - {path: [synthetic_queries_only], op: "==", value: true}
+      - {path: [response_content_retained], op: "==", value: false}
+      - {path: [query_count], op: ">=", value: 30}
+    note: >
+      Per-query route, latency, cache, citation, and token telemetry over a fixed
+      internally authored synthetic query suite. Estimated token counts remain
+      separate from provider-reported usage. This is not real traffic, clinical
+      validation, or a production latency/cost claim.
+
+  - path: Data/evals/rag/latest_research_paper_query_telemetry_failures.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable_internal_measurement, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+    note: >
+      Informational case-level route failures from the fixed research-paper
+      query suite. Non-empty failures remain visible and do not authorize
+      tuning on the suite during this pass.

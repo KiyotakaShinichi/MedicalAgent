@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_vector_store_contract_eval_v1",
-  "generated_at": "2026-08-02T13:35:40.143930+00:00",
+  "generated_at": "2026-08-02T16:09:24.892508+00:00",
   "status": "strong_contract_only",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -9,7 +9,7 @@
   "managed_network_request_performed": false,
   "managed_vector_comparison_completed": false,
   "retrieval_improvement_proven": false,
-  "gold_record_count": 240,
+  "gold_record_count": 766,
   "gold_record_validation_failures": [],
   "n_cases": 6,
   "passed": 6,

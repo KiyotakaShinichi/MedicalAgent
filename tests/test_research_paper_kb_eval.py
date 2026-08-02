@@ -14,13 +14,13 @@ from backend.services.research_paper_kb_eval import (
 def test_case_bank_is_internal_non_tuning_and_covers_each_manifest_paper():
     cases = _load_cases(CASES_PATH)
     expected = {case["expected_pmcid"] for case in cases if case["expected_pmcid"]}
-    assert len(cases) == 32
-    assert len(expected) == 9
+    assert len(cases) == 44
+    assert len(expected) == 21
     assert all(case["was_used_for_tuning"] is False for case in cases)
     assert {case["category"] for case in cases} == {
         "exact_title",
         "topic_paraphrase",
-        "section_anchor",
+        "negative_result",
         "no_research_evidence",
     }
     assert any("taglish" in case["style"] for case in cases)
@@ -78,6 +78,10 @@ def test_case_scoring_requires_paper_identity_section_and_provenance():
             "title": "Fixture",
             "section": "methods",
             "source_tier": "T2",
+            "doi": "10.0000/fixture",
+            "publication_date": "2026 Jan",
+            "license": "CC BY",
+            "patient_facing_suitability": "education_with_boundary",
         }
     ]
     result = _score_case(case, rows, 4.2, source_tier_filtered=True)
@@ -147,3 +151,11 @@ def test_case_bank_is_valid_jsonl_with_unique_ids():
     ]
     ids = [row["case_id"] for row in rows]
     assert len(ids) == len(set(ids))
+
+
+def test_expanded_case_bank_is_frozen_and_not_an_independent_holdout():
+    rows = _load_cases(CASES_PATH)
+    assert CASES_PATH.name == "research_paper_grounding_cases_v2.jsonl"
+    assert all(row["was_used_for_tuning"] is False for row in rows)
+    assert any(row["style"] == "taglish" for row in rows)
+    assert sum(row["expected_pmcid"] is None for row in rows) == 8

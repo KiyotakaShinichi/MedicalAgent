@@ -81,6 +81,18 @@ def test_research_paper_kb_eval_is_a_bounded_evidence_step():
     assert step in ship._select_steps(steps, "evidence")
 
 
+def test_research_paper_query_telemetry_is_a_bounded_evidence_step():
+    steps = ship._build_steps()
+    step = next(
+        item
+        for item in steps
+        if item.name == "Research-paper per-query token and latency telemetry"
+    )
+    assert step.command[-1] == "scripts/run_research_paper_query_telemetry.py"
+    assert ship._effective_timeout(step) <= 600
+    assert step in ship._select_steps(steps, "evidence")
+
+
 def test_oversized_backend_contract_suite_is_split_into_bounded_steps():
     steps = ship._build_steps()
     names = {
