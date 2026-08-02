@@ -64,6 +64,33 @@ def test_ship_tiers_keep_fast_and_evidence_surfaces_distinct():
     assert all(step.name in ship.FAST_STEP_NAMES for step in fast)
     assert all(ship._is_evidence_step(step) for step in evidence)
     assert "Frontend Playwright smoke" not in {step.name for step in fast}
+    fast_names = {step.name for step in fast}
+    assert "Cloud, data-platform, and managed-vector contract tests" in fast_names
+    assert "Assurance, XAI, automation, and safety contract tests" in fast_names
+
+
+def test_research_paper_kb_eval_is_a_bounded_evidence_step():
+    steps = ship._build_steps()
+    step = next(
+        item
+        for item in steps
+        if item.name == "Research-paper KB provenance and retrieval evaluation"
+    )
+    assert step.command[-1] == "scripts/run_research_paper_kb_eval.py"
+    assert ship._effective_timeout(step) <= 600
+    assert step in ship._select_steps(steps, "evidence")
+
+
+def test_oversized_backend_contract_suite_is_split_into_bounded_steps():
+    steps = ship._build_steps()
+    names = {
+        "Cloud, data-platform, and managed-vector contract tests",
+        "Assurance, XAI, automation, and safety contract tests",
+    }
+    backend_contract_steps = [step for step in steps if step.name in names]
+    assert len(backend_contract_steps) == 2
+    assert all(ship._effective_timeout(step) <= 900 for step in backend_contract_steps)
+    assert all(len(step.command) < 40 for step in backend_contract_steps)
 
 
 def test_dependency_fingerprint_changes_with_relevant_source(

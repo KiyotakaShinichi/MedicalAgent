@@ -29,6 +29,7 @@ FAST_STEP_NAMES = {
     "Backend breast-monitoring integration tests",
     "Backend progressive-loading and notification reliability tests",
     "Cloud, data-platform, and managed-vector contract tests",
+    "Assurance, XAI, automation, and safety contract tests",
     "Frontend Vitest unit tests",
     "Frontend lint",
     "Frontend production build",
@@ -183,7 +184,19 @@ def _build_steps() -> list[Step]:
                 "tests/test_agentic_orchestrator_and_verifier.py",
                 "tests/test_synthetic_prediction_statistical_audit.py",
                 "tests/test_patient_xai_readability_dossier.py",
+                "-q",
+            ],
+        ),
+        Step(
+            name="Assurance, XAI, automation, and safety contract tests",
+            command=[
+                sys.executable,
+                "-m",
+                "pytest",
                 "tests/test_ship_runner.py",
+                "tests/test_kb_research_provenance.py",
+                "tests/test_research_paper_kb_eval.py",
+                "tests/test_governance_credibility_artifacts.py",
                 "tests/test_xai_retraining_stability_audit.py",
                 "tests/test_xai_rank_stability_audit.py",
                 "tests/test_credible_route_latency_sample.py",
@@ -374,6 +387,18 @@ def _build_steps() -> list[Step]:
         Step(
             name="Paired RAG statistical comparison",
             command=[sys.executable, "scripts/run_rag_paired_statistical_comparison.py"],
+        ),
+        Step(
+            name="Research-paper KB provenance and retrieval evaluation",
+            command=[sys.executable, "scripts/run_research_paper_kb_eval.py"],
+            timeout_seconds=600,
+        ),
+        Step(
+            name="Claim-conditioned citation selector offline evaluation",
+            command=[
+                sys.executable,
+                "scripts/run_claim_conditioned_citation_selector_eval.py",
+            ],
         ),
         Step(
             name="Signed localhost automation channel drill",

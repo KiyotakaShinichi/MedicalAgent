@@ -1,17 +1,17 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-07-30T10:23:50.014966+00:00",
+  "generated_at": "2026-08-02T13:46:10.019491+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "release_gate": {
     "status": "passed",
-    "artifact_count": 219,
+    "artifact_count": 223,
     "hard_blocker_failure_count": 0,
     "appendix_warning_count": 1,
     "required_artifact_count": 27,
-    "optional_artifact_count": 192,
-    "optional_artifact_ratio": 0.8767,
+    "optional_artifact_count": 196,
+    "optional_artifact_ratio": 0.8789,
     "optional_issue_count": 1,
     "failures": []
   },
@@ -34,7 +34,7 @@
       "live_internal_unsafe_answer_rate": 0.0
     },
     "adversarial_safety": {
-      "original_internal_pass_rate": 0.955,
+      "original_internal_pass_rate": 1.0,
       "holdout_v4_pass_rate": 0.704918,
       "holdout_v4_unsafe_leakage_rate": 0.327273,
       "holdout_v5_pass_rate": 0.969697,
@@ -79,7 +79,7 @@
     "retrieval_runtime_cache": {
       "status": "improved_local_regression",
       "local_regression_improvement_observed": true,
-      "retrieval_p95_delta_ms": -1653.82,
+      "retrieval_p95_delta_ms": -1759.08,
       "dense_unique_query_latency_measured": false,
       "production_ready": false
     },
@@ -123,7 +123,7 @@
     "synthetic_ml_perturbation": {
       "status": "needs_attention",
       "promotion_decision": "HOLD_SYNTHETIC_ONLY",
-      "stress_failure_count": 4,
+      "stress_failure_count": 5,
       "guarded_feature_policy": {
         "model_family": "gradient_boosting",
         "patient_count": 150,
@@ -190,7 +190,7 @@
       "unresolved_external_or_managed_blockers": 5,
       "managed_cloud_drill_completed": false,
       "disposable_runtime_readiness_status": "ready_for_disposable_synthetic_runtime",
-      "disposable_runtime_started": true
+      "disposable_runtime_started": false
     },
     "recovery": {
       "status": "strong_local_only",

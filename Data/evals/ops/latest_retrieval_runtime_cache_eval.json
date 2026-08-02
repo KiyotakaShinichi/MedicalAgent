@@ -1,6 +1,6 @@
 {
   "schema_version": "retrieval_runtime_cache_eval_v1",
-  "generated_at": "2026-07-30T10:15:46.090357+00:00",
+  "generated_at": "2026-08-02T13:38:46.286065+00:00",
   "status": "improved_local_regression",
   "optimization": {
     "index_file_cache": true,
@@ -33,11 +33,11 @@
   },
   "current": {
     "sample_count": 30,
-    "retrieval_p50_ms": 84.48,
-    "retrieval_p95_ms": 152.5,
-    "total_p50_ms": 263.36,
-    "total_p95_ms": 394.16,
-    "source_generated_at": "2026-07-30T10:15:28.307693+00:00",
+    "retrieval_p50_ms": 28.18,
+    "retrieval_p95_ms": 47.24,
+    "total_p50_ms": 86.89,
+    "total_p95_ms": 161.09,
+    "source_generated_at": "2026-08-02T13:38:36.362965+00:00",
     "workload": {
       "database": "in_memory_sqlite",
       "agent_mode": "fast",
@@ -49,27 +49,27 @@
   "comparison": {
     "retrieval_p50_ms": {
       "baseline_ms": 1215.88,
-      "current_ms": 84.48,
-      "delta_ms": -1131.4,
-      "relative_change": -0.9305
+      "current_ms": 28.18,
+      "delta_ms": -1187.7,
+      "relative_change": -0.9768
     },
     "retrieval_p95_ms": {
       "baseline_ms": 1806.32,
-      "current_ms": 152.5,
-      "delta_ms": -1653.82,
-      "relative_change": -0.9156
+      "current_ms": 47.24,
+      "delta_ms": -1759.08,
+      "relative_change": -0.9738
     },
     "total_p50_ms": {
       "baseline_ms": 1405.04,
-      "current_ms": 263.36,
-      "delta_ms": -1141.68,
-      "relative_change": -0.8126
+      "current_ms": 86.89,
+      "delta_ms": -1318.15,
+      "relative_change": -0.9382
     },
     "total_p95_ms": {
       "baseline_ms": 2082.15,
-      "current_ms": 394.16,
-      "delta_ms": -1687.99,
-      "relative_change": -0.8107
+      "current_ms": 161.09,
+      "delta_ms": -1921.06,
+      "relative_change": -0.9226
     }
   },
   "sample_contract_met": true,

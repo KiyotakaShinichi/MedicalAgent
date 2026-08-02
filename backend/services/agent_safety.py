@@ -313,6 +313,23 @@ def safety_scope_check(
             "context_reused": semantic.get("context_reused", False),
             "context_turn_count": semantic.get("context_turn_count", 0),
         }
+    if (
+        semantic.get("family") == "none"
+        and semantic.get("safety_source") == "safe_boundary_request"
+    ):
+        return {
+            "level": "low_risk",
+            "scope": "education_or_tracking",
+            "cache_allowed": True,
+            "message": (
+                "Explicit prevention, consent, redaction, or non-executing "
+                "education request."
+            ),
+            "safety_source": "safe_boundary_request",
+            "safe_boundary_request": True,
+            "context_reused": semantic.get("context_reused", False),
+            "context_turn_count": semantic.get("context_turn_count", 0),
+        }
     return {
         "level": "low_risk",
         "scope": "education_or_tracking",

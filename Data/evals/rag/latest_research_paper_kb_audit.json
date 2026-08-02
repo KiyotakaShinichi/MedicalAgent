@@ -1,0 +1,191 @@
+{
+  "schema_version": "research_paper_kb_audit_v1",
+  "generated_at": "2026-08-02T13:39:29.237317+00:00",
+  "status": "acceptable_narrow_internal_corpus",
+  "clinical_validation": false,
+  "independent_literature_review": false,
+  "summary": {
+    "manifest_paper_count": 9,
+    "manifest_pmcid_count": 9,
+    "covered_manifest_pmcid_count": 9,
+    "manifest_to_chunk_coverage": 1.0,
+    "owned_research_chunk_count": 185,
+    "false_pmcid_identity_chunk_count": 0,
+    "duplicate_manifest_pmcid_count": 0,
+    "case_expected_paper_coverage": 1.0,
+    "publication_date_completeness": 0.0,
+    "doi_completeness": 0.0,
+    "topic_distribution": {
+      "mri_response_monitoring": 1,
+      "mri_response_prediction": 1,
+      "mri_radiomics_response": 1,
+      "cbc_toxicity_monitoring": 3,
+      "febrile_neutropenia_supportive_care": 2,
+      "chemotherapy_toxicity_supportive_care": 1
+    }
+  },
+  "sources": [
+    {
+      "pmcid": "PMC3609956",
+      "title": "The role of MRI in assessing residual disease and pCR after neoadjuvant chemotherapy",
+      "chunk_count": 27,
+      "sections": {
+        "abstract": 1,
+        "methods": 1,
+        "results": 13,
+        "conclusions": 1,
+        "introduction": 2,
+        "materials and methods": 2,
+        "discussion": 7
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    },
+    {
+      "pmcid": "PMC6702160",
+      "title": "Early treatment response prediction using DCE-MRI tumor heterogeneity changes",
+      "chunk_count": 23,
+      "sections": {
+        "abstract": 1,
+        "introduction": 2,
+        "methods": 9,
+        "results": 6,
+        "discussion": 5
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    },
+    {
+      "pmcid": "PMC5500247",
+      "title": "DCE-MRI texture features for early breast cancer therapy response prediction",
+      "chunk_count": 23,
+      "sections": {
+        "abstract": 1,
+        "introduction": 3,
+        "materials and methods": 10,
+        "results": 4,
+        "discussion": 5
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    },
+    {
+      "pmcid": "PMC10898895",
+      "title": "Occurrence and risk factors of chemotherapy-induced neutropenia in breast cancer",
+      "chunk_count": 26,
+      "sections": {
+        "background": 1,
+        "methods": 5,
+        "results": 8,
+        "conclusions": 1,
+        "introduction": 3,
+        "discussion": 7,
+        "conclusion": 1
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    },
+    {
+      "pmcid": "PMC6180804",
+      "title": "Primary febrile neutropenia prophylaxis for FEC-D chemotherapy in breast cancer",
+      "chunk_count": 17,
+      "sections": {
+        "abstract": 1,
+        "methods": 4,
+        "results": 5,
+        "conclusion": 1,
+        "introduction": 2,
+        "discussion": 4
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    },
+    {
+      "pmcid": "PMC3987093",
+      "title": "Patterns of chemotherapy-associated toxicity and supportive care in oncology practice",
+      "chunk_count": 16,
+      "sections": {
+        "abstract": 1,
+        "introduction": 5,
+        "results": 6,
+        "discussion": 4
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    },
+    {
+      "pmcid": "PMC4998558",
+      "title": "Prognostic value of chemotherapy-induced neutropenia at first cycle in invasive breast cancer",
+      "chunk_count": 15,
+      "sections": {
+        "abstract": 1,
+        "introduction": 1,
+        "methods": 3,
+        "results": 4,
+        "discussion": 6
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    },
+    {
+      "pmcid": "PMC2846279",
+      "title": "Prophylaxis of chemotherapy-induced febrile neutropenia with G-CSF",
+      "chunk_count": 19,
+      "sections": {
+        "abstract": 1,
+        "introduction": 18
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    },
+    {
+      "pmcid": "PMC3940691",
+      "title": "Risk of hematological toxicities in a SWOG breast cancer chemotherapy trial",
+      "chunk_count": 19,
+      "sections": {
+        "abstract": 1,
+        "introduction": 2,
+        "patients and methods": 4,
+        "results": 4,
+        "discussion": 8
+      },
+      "landing_url_https": true,
+      "source_file_present": true,
+      "publication_date_present": false,
+      "doi_present": false,
+      "runtime_required_metadata_complete": true
+    }
+  ],
+  "false_identity_examples": [],
+  "known_gaps": [
+    "Publication dates and DOI metadata are not populated in the current manifest.",
+    "Nine papers are too narrow for broad breast-cancer education coverage.",
+    "The source set is topic-concentrated and was selected internally.",
+    "Source inclusion has not been reviewed by a clinician or medical librarian."
+  ],
+  "claim_boundary": "This audit checks local source identity and metadata coverage only. It does not certify clinical authority, systematic-review quality, completeness, or current medical guidance."
+}

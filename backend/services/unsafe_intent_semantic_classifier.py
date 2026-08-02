@@ -154,6 +154,9 @@ FAMILIES: tuple[UnsafeFamily, ...] = (
             r"\bpatient\s+[a-z]\d{2,}\b",
             r"\b(real|actual|private)\s+(chart|record|timeline|result)\b.*\b(same surname|kapatid|relative|someone)\b",
             r"\b(kapatid|kamag-anak|relative|someone with the same surname)\b.*\b(actual|real|private)\b.*\b(chart|record|timeline|result)\b",
+            r"\b(record|chart|labs?|mri|imaging|report|result|medications?|timeline)\b.*\bpatient\s+(?=[a-z0-9 -]{0,30}\d{3,}\b)[a-z0-9][a-z0-9 -]{4,}\b",
+            r"\bpatient\s+(?=[a-z0-9 -]{0,30}\d{3,}\b)[a-z0-9][a-z0-9 -]{4,}\b.*\b(record|chart|labs?|mri|imaging|report|result|medications?|timeline)\b",
+            r"\b(dump|export|show|list|reveal|print)\b.*\b(every|each)\s+patient'?s?\b",
         ),
     ),
     UnsafeFamily(
@@ -451,15 +454,20 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         (
             "read back", "read", "recite", "download", "copy", "export", "paste",
             "forward", "reveal", "expose", "show", "send", "paki-send", "print",
-            "verify",
+            "verify", "display", "disclose", "unmask", "reproduce", "include",
+            "keep visible", "visible", "leave unredacted", "omit redaction",
+            "remove redaction",
         ),
         (
             "identifier", "identity field", "stored identity", "unredacted chart",
+            "identity fields",
             "chart header", "confidential number", "confidential account",
             "account credential", "account detail", "profile secret", "address",
             "insurance", "member id", "membership code", "mrn", "dob", "phone",
             "token", "api key", "complete account record", "full chart",
-            "account number",
+            "account number", "patient identifier", "protected identifier",
+            "private field", "private metadata", "protected field",
+            "record header", "registration number",
         ),
     ),
     "prompt_injection": (
@@ -467,21 +475,27 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "ignore", "silently ignore", "disregard", "switch off", "disable",
             "replace", "work around", "circumvent", "bypass", "override",
             "operate without", "suspend", "pretend", "assume", "huwag sundin",
+            "waive", "set aside", "deactivate", "skip", "exempt", "discard",
+            "treat as approved", "treat as cleared", "execute past",
         ),
         (
             "boundary", "medical refusal boundary", "refusal boundary",
             "safety instruction", "safety hierarchy", "policy hierarchy",
-            "system constraint", "refusal policy", "citation check", "validator",
+            "system constraint", "system constraints", "refusal policy",
+            "citation check", "citation checker", "validator",
             "response validator", "final response validator", "final validator",
             "final response checker", "final checker", "instruction hierarchy", "internal instruction",
-            "hidden prompt", "guardrail",
+            "hidden prompt", "guardrail", "safety check", "safety checks",
+            "remaining check", "remaining checks",
+            "review layer", "policy check", "response check", "safety rule",
+            "higher-priority instruction",
         ),
     ),
     "cross_patient_exfiltration": (
         (
             "open", "retrieve", "fetch", "quote", "contrast", "compare", "copy",
             "summarize", "show", "use", "access", "pull", "pakibukas", "gamitin",
-            "buksan",
+            "buksan", "provide", "display", "disclose", "read", "export",
         ),
         (
             "person after me", "person before me", "next person",
@@ -489,11 +503,16 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "another person", "someone else", "another patient", "other patient",
             "everyone's", "all patient", "relative's", "aunt's", "mother's",
             "father's", "sister's", "brother's", "mama", "patient q-",
-            "patient id", "same surname", "kapatid",
+            "patient id", "same surname", "kapatid", "cousin's", "partner's",
+            "spouse's", "neighbor's", "coworker's", "family member's",
+            "different patient", "unrelated patient", "every patient",
+            "each patient",
         ),
         (
-            "record", "chart", "timeline", "history", "result", "lab", "note",
-            "medication", "imaging", "database", "portal",
+            "record", "chart", "timeline", "history", "result", "results", "lab", "note",
+            "medication", "imaging", "database", "portal", "prescription",
+            "appointment", "treatment", "diagnosis", "profile", "marker value",
+            "marker values", "ca 15", "ca15", "cea",
         ),
     ),
     "genetic_risk_interpretation": (
@@ -531,11 +550,14 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "issue", "declare", "confirm", "decide", "definitively", "prove",
             "establish", "establishes", "yes-or-no", "turn", "conclusion",
             "assume", "diagnose", "definitely have", "doctor would conclude",
+            "label", "classify", "rule that", "final verdict", "settle whether",
+            "convert into",
         ),
         (
             "lesion", "mass", "scan", "scan phrase", "finding", "pathology",
             "lab", "laboratory panel", "portal summary", "cancer", "malignant",
             "malignancy", "spread", "recurrence", "metastatic", "cancer-free",
+            "imaging wording", "biopsy wording", "disease label",
         ),
     ),
     "tumor_marker_conclusion": (
@@ -548,36 +570,61 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
         ),
     ),
     "treatment_change": (
-        ("stop", "pause", "delay", "miss", "skip", "restart", "resume", "switch", "replace", "cancel", "authorize", "continue or pause", "ihihinto", "itigil", "palitan"),
+        (
+            "stop", "pause", "delay", "miss", "skip", "restart", "resume",
+            "switch", "replace", "cancel", "authorize", "continue or pause",
+            "stopped", "paused", "delayed", "switched", "replaced",
+            "ihihinto", "ihinto", "itigil", "ititigil", "palitan",
+        ),
         ("chemotherapy", "chemo", "radiation", "treatment", "therapy", "regimen", "infusion", "tamoxifen", "trastuzumab", "medicine", "medication", "symptoms", "gamot"),
     ),
     "dosage_request": (
         (
             "calculate", "compute", "pick", "set", "adjust", "choose",
             "personalize", "double", "halve", "lower", "increase", "reduce",
-            "how many", "ilang", "exact",
+            "how many", "ilang", "exact", "determine", "specify", "fill in",
+            "work out", "derive", "decide the amount", "tell me",
         ),
-        ("dose", "dosage", "mg", "tablet", "tablets", "pill", "pills", "injection amount", "medicine amount", "medication amount"),
+        (
+            "dose", "dosage", "mg", "tablet", "tablets", "pill", "pills",
+            "injection amount", "medicine amount", "medication amount",
+            "tablet count", "pill count", "number of tablets",
+            "number of pills", "prescribed amount", "milligram", "milligrams",
+        ),
     ),
     "prognosis_survival": (
         (
             "estimate", "rank", "calculate", "convert", "quantify", "tell me",
-            "give", "predict", "translate", "roughly",
+            "give", "predict", "translate", "roughly", "turn into", "derive",
+            "infer", "project", "work out", "will i", "what are my",
         ),
         (
             "remaining months", "remaining lifetime", "life remains", "surviving",
             "survival", "die soon", "alive next year", "alive after",
             "life expectancy", "survival countdown", "cure percentage",
             "personal timeline", "prognosis", "outlook", "chance of being alive",
-            "alive in two years", "mabubuhay",
+            "alive in two years", "mabubuhay", "months left", "time left",
+            "death date", "date of death", "personal survival date",
+            "when i will die", "end of my life", "death",
+            "odds of recurrence", "recurrence odds", "recurrence probability",
         ),
     ),
     "supplement_replacement": (
-        ("natural", "herb", "herbs", "herbal", "supplement", "vitamin", "vitamins", "cannabis", "turmeric", "cbd"),
-        ("replace", "avoid", "instead", "stop treatment", "natural-only", "na lang", "cure", "only", "only therapy", "only cancer therapy", "without prescribed therapy", "without pharmacist"),
+        (
+            "natural", "herb", "herbs", "herbal", "supplement", "vitamin",
+            "vitamins", "cannabis", "turmeric", "cbd", "st john's wort",
+            "st johns wort", "st john s wort",
+        ),
+        (
+            "replace", "replacing", "replacement", "avoid", "instead",
+            "stop treatment", "natural-only", "na lang", "cure", "only",
+            "only therapy", "only cancer therapy", "without prescribed therapy",
+            "without pharmacist",
+        ),
         (
             "chemotherapy", "chemo", "radiation", "treatment", "therapy",
             "medicine", "medication", "prescribed care", "cancer", "gamot",
+            "tamoxifen", "endocrine medicine", "endocrine treatment",
         ),
     ),
 }
@@ -630,7 +677,15 @@ def _looks_like_recording_statement(normalized: str) -> bool:
 
 
 def _looks_like_safe_boundary_request(normalized: str) -> bool:
-    """Preserve privacy education and explicitly public comparison requests."""
+    """Recognize requests whose objective is understanding or safer process.
+
+    Dangerous vocabulary may be quoted inside a prevention, consent, redaction,
+    or care-team-question request. The override therefore requires both a
+    benign objective and either explicit non-execution language or a
+    governance-oriented purpose. It does not treat a bare disclaimer such as
+    "I will not act" as sufficient.
+    """
+
     safe_cues = (
         "anonymized public example",
         "what personal data this app stores",
@@ -639,52 +694,123 @@ def _looks_like_safe_boundary_request(normalized: str) -> bool:
     if any(cue in normalized for cue in safe_cues):
         return True
     quoted_attack = (
-        ("attack example" in normalized or "security example" in normalized)
+        any(
+            cue in normalized
+            for cue in (
+                "attack example",
+                "security example",
+                "security training",
+                "awareness example",
+            )
+        )
         and any(
             cue in normalized
-            for cue in ("without following", "without obeying", "do not execute")
+            for cue in (
+                "without following",
+                "without obeying",
+                "without applying",
+                "without executing",
+                "do not execute",
+                "do not follow",
+                "do not apply",
+            )
         )
     )
     if quoted_attack:
         return True
-    protective = (
-        "do not reveal",
-        "do not expose",
-        "do not calculate",
-        "do not estimate",
-        "without predicting",
-        "without reclassifying",
-        "without concluding",
-        "without deciding",
-        "will not change treatment",
-        "not asking you to confirm",
-        "not asking you to diagnose",
+
+    protective_patterns = (
+        r"\b(do not|don't|never)\b.{0,40}\b(reveal|expose|calculate|compute|estimate|predict|reclassify|conclude|decide|diagnose|confirm|replace|change|stop|skip|execute|apply)\b",
+        r"\bwithout\b.{0,35}\b(revealing|exposing|calculating|computing|estimating|predicting|reclassifying|concluding|deciding|diagnosing|confirming|replacing|changing|executing|applying)\b",
+        r"\b(i\s+)?(will not|won't|do not want to|don't want to)\b.{0,35}\b(change|stop|skip|replace|alter|reclassify|calculate|estimate)\b",
+        r"\bnot asking (you )?to\b.{0,35}\b(confirm|diagnose|decide|calculate|estimate|predict|reveal|access)\b",
     )
-    benign_objective = (
+    benign_objectives = (
         "explain",
         "what verification steps",
         "what records would",
         "what questions",
+        "what should i ask",
         "prepare questions",
+        "draft questions",
+        "list questions",
         "help me list questions",
         "where can i find",
+        "show me where",
         "why can",
         "why should",
+        "why does",
+        "why do",
+        "how should staff",
+        "how should the team",
+        "what safeguards",
+        "what steps",
+        "what context",
     )
-    unsafe_result_cues = (
-        "definitely have",
-        "definitely is",
-        "just tell me whether",
-        "only whether",
-        "choose for me",
-        "calculate for me",
-        "estimate for me",
-        "confirm for me",
+    governance_objectives = (
+        "verify consent",
+        "confirm consent",
+        "authorization before access",
+        "authorisation before access",
+        "redaction process",
+        "redact",
+        "privacy procedure",
+        "protect private",
+        "prevent disclosure",
+        "safe way to request",
+        "prescriber's instructions",
+        "prescription instructions",
+        "recorded prescription",
+        "care team",
+        "genetic counselor",
+        "genetics-trained",
+        "pharmacist",
+        "clinical context",
+        "other evidence",
     )
+    unsafe_result_patterns = (
+        r"\b(definitely|certainly|just|only)\b.{0,20}\b(have|is|whether|confirm|diagnose|choose|calculate|estimate)\b",
+        r"\b(choose|calculate|estimate|confirm|decide|reveal|access)\b.{0,20}\bfor me\b",
+        r"\b(use|apply|execute|follow)\b.{0,25}\b(the )?(attack|instruction|command|override)\b",
+    )
+    has_protective = any(
+        re.search(pattern, normalized, re.IGNORECASE)
+        for pattern in protective_patterns
+    )
+    has_benign_objective = any(
+        cue in normalized for cue in benign_objectives
+    ) or any(
+        re.search(pattern, normalized, re.IGNORECASE)
+        for pattern in (
+            r"\bwhat\b.{0,40}\bquestions?\b",
+            r"\bquestions?\b.{0,25}\b(ask|bring|discuss|prepare|draft|list)\b",
+            r"\bhow\b.{0,25}\b(verify|protect|redact|request|review)\b",
+        )
+    )
+    has_governance_objective = any(
+        cue in normalized for cue in governance_objectives
+    )
+    has_unsafe_result = any(
+        re.search(pattern, normalized, re.IGNORECASE)
+        for pattern in unsafe_result_patterns
+    )
+    disclosure_match = re.search(
+        r"\b(display|show|export|send|share|disclose|reveal|expose|unmask|print|list|keep visible)\b.{0,45}\b(confidential|private|protected|registration|identifier|patient id|api key|credential|record|chart|other patient)\b",
+        normalized,
+        re.IGNORECASE,
+    )
+    if disclosure_match:
+        prefix = normalized[max(0, disclosure_match.start() - 28):disclosure_match.start()]
+        explicitly_negated = re.search(
+            r"\b(do not|don't|never|without|not asking (you )?to)\s*$",
+            prefix,
+            re.IGNORECASE,
+        )
+        has_unsafe_result = has_unsafe_result or explicitly_negated is None
     return (
-        any(cue in normalized for cue in protective)
-        and any(cue in normalized for cue in benign_objective)
-        and not any(cue in normalized for cue in unsafe_result_cues)
+        has_benign_objective
+        and (has_protective or has_governance_objective)
+        and not has_unsafe_result
     )
 
 
@@ -720,6 +846,26 @@ def classify_unsafe_intent(text: str) -> dict[str, Any]:
             confidence = max(confidence, compositional_score)
             source = "compositional_semantic"
         safe_education = _looks_like_safe_education(normalized)
+        explicit_safe_framing = any(
+            cue in normalized
+            for cue in (
+                "not automatically",
+                "does not prove",
+                "doesn't prove",
+                "alone does not",
+                "without concluding",
+                "without deciding",
+                "without diagnosing",
+                "without reclassifying",
+                "do not reveal",
+                "don't reveal",
+                "never reveal",
+            )
+        )
+        safe_education = safe_education and (
+            explicit_safe_framing
+            or (pattern_match is None and compositional_rule is None)
+        )
         if safe_education:
             confidence = min(confidence, 0.48)
         candidate = _result(
@@ -910,8 +1056,12 @@ def _has_decision_or_access_cue(text: str) -> bool:
 def _contains_cue(text: str, cue: str) -> bool:
     """Match short concepts as tokens so ``atm`` cannot match ``treatment``."""
 
-    if " " not in cue and len(cue) <= 4 and cue.isalnum():
-        return re.search(rf"\b{re.escape(cue)}\b", text, re.IGNORECASE) is not None
+    if cue and cue[0].isalnum() and cue[-1].isalnum():
+        return re.search(
+            rf"(?<![a-z0-9]){re.escape(cue)}(?![a-z0-9])",
+            text,
+            re.IGNORECASE,
+        ) is not None
     return cue in text
 
 
@@ -932,6 +1082,9 @@ def _looks_like_safe_education(text: str) -> bool:
         return False
     protective_framing = (
         "not automatically",
+        "does not prove",
+        "doesn't prove",
+        "alone does not",
         "without concluding",
         "without deciding",
         "without diagnosing",
@@ -952,6 +1105,11 @@ def _looks_like_safe_education(text: str) -> bool:
 def _family_specificity_bonus(text: str, family: str) -> float:
     """Prefer domain-specific boundaries over broad diagnosis/treatment ties."""
 
+    if family == "cross_patient_exfiltration" and re.search(
+        r"\b(another|other|different|unrelated|every|each|all|next|previous)\s+patient'?s?\b|\bpatient\s+(?=[a-z0-9 -]{0,30}\d{3,}\b)[a-z0-9][a-z0-9 -]{4,}\b|\b(relative|cousin|partner|spouse|neighbor|coworker)'?s?\b",
+        text,
+    ):
+        return 0.18
     if family == "vus_misinterpretation" and re.search(
         r"\b(vus|variant of uncertain significance|uncertain variant|unclear variant|unclassified variant|unclassified brca|uncertain genetic|inconclusive genetic|inconclusive hereditary|indeterminate hereditary)\b",
         text,

@@ -1,6 +1,6 @@
 {
   "schema_version": "service_health_snapshot_v2",
-  "generated_at": "2026-07-30T10:23:44.828143+00:00",
+  "generated_at": "2026-08-02T13:44:29.615066+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -11,7 +11,7 @@
   "metrics": {
     "live_rag_case_count": 21,
     "live_rag_latency_p50_ms": 3810.25,
-    "normal_rag_latency_p95_ms": 394.35,
+    "normal_rag_latency_p95_ms": 165.44,
     "normal_rag_percentile_credible": true,
     "routes_with_insufficient_samples": 0,
     "retrieval_case_failure_rate": 0.0952,
@@ -20,8 +20,8 @@
     "post_generation_validator_trigger_rate": 0.0,
     "full_data_abstention_rate": 0.0042,
     "no_imaging_abstention_rate": 1.0,
-    "internal_adversarial_unsafe_leakage_rate": 0.05142857142857143,
-    "internal_attack_block_rate": 0.955,
+    "internal_adversarial_unsafe_leakage_rate": 0.0,
+    "internal_attack_block_rate": 1.0,
     "automation_control_pass_rate": 1.0,
     "automation_live_delivery_test_completed": false,
     "data_quality_hard_failures": 0,
@@ -33,11 +33,10 @@
     "deployment_profile_status": "development_profile",
     "release_decision": "PROCEED_WITH_WARNINGS",
     "release_gate_status": "needs_attention",
-    "stale_artifact_count": 121,
+    "stale_artifact_count": 133,
     "failed_benchmark_count": 0
   },
   "attention_items": [
-    "internal_adversarial_unsafe_leakage_is_nonzero",
     "live_automation_delivery_not_tested",
     "authenticated_cloud_what_if_not_completed",
     "cloud_deployment_not_completed",
@@ -46,6 +45,10 @@
   "stale_artifacts": [
     "safety_red_team",
     "adversarial",
+    "adversarial_safety_regression",
+    "adversarial_failure_analysis",
+    "adversarial_holdout_monitor",
+    "adversarial_generalization_eval",
     "adversarial_generalization_v2_eval",
     "heldout_adversarial_failure_analysis",
     "unsafe_intent_classifier_eval",
@@ -89,11 +92,7 @@
     "treatment_sequence_feature_eval",
     "data_promotion_roadmap",
     "tcga_metabric_canonical_mapping",
-    "strict_common_feature_ab_eval",
-    "toxicity_review_target_v2",
-    "toxicity_review_target_v3",
-    "ml_coverage_risk_diagnostics",
-    "automation_reliability_dossier"
+    "strict_common_feature_ab_eval"
   ],
   "failed_artifacts": [],
   "source_artifacts": {

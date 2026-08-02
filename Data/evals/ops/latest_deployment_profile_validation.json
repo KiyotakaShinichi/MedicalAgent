@@ -1,6 +1,6 @@
 {
   "schema_version": "deployment_profile_validation_v2",
-  "generated_at": "2026-07-30T10:09:56.282918+00:00",
+  "generated_at": "2026-08-02T13:36:26.568845+00:00",
   "status": "development_profile",
   "profile": "development",
   "strict_profile": false,

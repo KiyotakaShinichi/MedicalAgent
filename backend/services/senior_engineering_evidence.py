@@ -160,10 +160,16 @@ def build_senior_engineering_evidence(
             "Compiled infrastructure is not represented as a live deployment.",
         ),
         _check(
-            "release_surface_preserves_warning_state",
-            release.get("engineering_release_decision") == "PROCEED_WITH_WARNINGS"
-            and int(release.get("warning_count") or 0) >= 1,
-            "The canonical release decision cannot silently become a clean proceed.",
+            "release_surface_never_false_clean",
+            release.get("engineering_release_decision") in {
+                "BLOCK",
+                "PROCEED_WITH_WARNINGS",
+            }
+            and (
+                int(release.get("hard_blocker_count") or 0) >= 1
+                or int(release.get("warning_count") or 0) >= 1
+            ),
+            "The canonical release decision preserves blockers or warnings instead of silently becoming clean.",
         ),
     ]
     mandatory_checks = [

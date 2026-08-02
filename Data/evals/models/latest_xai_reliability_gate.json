@@ -1,6 +1,6 @@
 {
   "schema_version": "xai_reliability_gate_v1",
-  "generated_at": "2026-07-30T10:13:28.473787+00:00",
+  "generated_at": "2026-08-02T13:37:48.373426+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "causal_interpretation_allowed": false,

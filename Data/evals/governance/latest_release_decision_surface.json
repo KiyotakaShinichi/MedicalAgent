@@ -1,13 +1,28 @@
 {
   "schema_version": "release_decision_surface_v3",
-  "generated_at": "2026-07-30T10:23:41.464898+00:00",
+  "generated_at": "2026-08-02T13:45:50.886099+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "hard_blocker_count": 0,
-  "warning_count": 1,
+  "warning_count": 3,
   "primary_check_count": 20,
   "primary_surface_cap": 20,
   "checks": [
+    {
+      "id": "full_ship_manifest",
+      "tier": "hard_blocker",
+      "domain": "swe",
+      "owner": "SWE/release",
+      "path": "Data/evals/ops/latest_ship_run.json",
+      "max_age_days": 14,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "passed",
+      "generated_at": "2026-08-02T13:44:43.215915+00:00",
+      "age_days": 0.0,
+      "stale": false,
+      "key_metrics": {}
+    },
     {
       "id": "critical_safety_regression",
       "tier": "hard_blocker",
@@ -19,7 +34,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-06T06:47:17.440388+00:00",
-      "age_days": 24.15,
+      "age_days": 27.29,
       "stale": false,
       "key_metrics": {}
     },
@@ -34,7 +49,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-21T15:13:23.607586+00:00",
-      "age_days": 8.8,
+      "age_days": 11.94,
       "stale": false,
       "key_metrics": {}
     },
@@ -49,7 +64,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-17T06:27:38.556411+00:00",
-      "age_days": 13.16,
+      "age_days": 16.3,
       "stale": false,
       "key_metrics": {}
     },
@@ -63,8 +78,8 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "informational",
-      "generated_at": "2026-07-19T01:45:30.008544+00:00",
-      "age_days": 11.36,
+      "generated_at": "2026-08-02T12:53:38.673863+00:00",
+      "age_days": 0.04,
       "stale": false,
       "key_metrics": {}
     },
@@ -79,7 +94,7 @@
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-07-30T05:13:05.212399+00:00",
-      "age_days": 0.22,
+      "age_days": 3.36,
       "stale": false,
       "key_metrics": {}
     },
@@ -94,7 +109,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-28T14:43:01.240454+00:00",
-      "age_days": 1.82,
+      "age_days": 4.96,
       "stale": false,
       "key_metrics": {
         "improvement_proven_vs_bm25": false,
@@ -113,7 +128,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-22T04:13:27.466200+00:00",
-      "age_days": 8.26,
+      "age_days": 11.4,
       "stale": false,
       "key_metrics": {
         "pass_rate": 0.9048,
@@ -132,13 +147,13 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
-      "generated_at": "2026-07-30T10:15:33.463590+00:00",
+      "generated_at": "2026-08-02T13:38:38.362791+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
         "production_ready": false,
         "insufficient_sample_count": 0,
-        "highest_observed_p95_ms": 394.35
+        "highest_observed_p95_ms": 165.44
       }
     },
     {
@@ -151,7 +166,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
-      "generated_at": "2026-07-30T10:10:39.487498+00:00",
+      "generated_at": "2026-08-02T13:36:58.810490+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -162,37 +177,81 @@
       }
     },
     {
-      "id": "simple_baseline_superiority",
+      "id": "synthetic_perturbation_stress",
       "tier": "warning",
       "domain": "mle",
       "owner": "MLE",
-      "path": "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
-      "max_age_days": 90,
-      "decision": "pass",
-      "evidence_state": "verified_internal",
-      "observed_status": "acceptable",
-      "generated_at": "2026-07-22T01:29:19.050963+00:00",
-      "age_days": 8.37,
+      "path": "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
+      "max_age_days": 30,
+      "decision": "attention",
+      "evidence_state": "needs_attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-08-02T13:43:14.337402+00:00",
+      "age_days": 0.0,
       "stale": false,
-      "key_metrics": {}
+      "key_metrics": {
+        "promotion_decision": "HOLD_SYNTHETIC_ONLY",
+        "stress_failures": [
+          {
+            "scenario": "modality_dropout",
+            "metric_deltas": {
+              "classification_auroc": -0.051969,
+              "classification_brier": 0.02081,
+              "regression_mae": 4.516016
+            }
+          },
+          {
+            "scenario": "severe_modality_dropout",
+            "metric_deltas": {
+              "classification_auroc": -0.083798,
+              "classification_brier": 0.03374,
+              "regression_mae": 8.882744
+            }
+          },
+          {
+            "scenario": "mnar_severity_dependent_dropout",
+            "metric_deltas": {
+              "classification_auroc": -0.076965,
+              "classification_brier": 0.038863,
+              "regression_mae": 11.579305
+            }
+          },
+          {
+            "scenario": "twenty_percent_training_label_noise",
+            "metric_deltas": {
+              "classification_auroc": -0.074267,
+              "classification_brier": 0.046639,
+              "regression_mae": 0.0
+            }
+          },
+          {
+            "scenario": "train_default_test_realism_v2",
+            "metric_deltas": {
+              "classification_auroc": -0.141673,
+              "classification_brier": 0.081659,
+              "regression_mae": 9.851866
+            }
+          }
+        ],
+        "clinical_validation": false
+      }
     },
     {
-      "id": "xai_retraining_stability",
+      "id": "xai_reliability_gate",
       "tier": "warning",
       "domain": "mle",
       "owner": "MLE/XAI",
-      "path": "Data/evals/models/latest_xai_retraining_stability.json",
-      "max_age_days": 90,
-      "decision": "pass",
-      "evidence_state": "verified_internal",
-      "observed_status": "acceptable",
-      "generated_at": "2026-07-30T10:13:15.707231+00:00",
+      "path": "Data/evals/models/latest_xai_reliability_gate.json",
+      "max_age_days": 30,
+      "decision": "attention",
+      "evidence_state": "needs_attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-08-02T13:37:48.373426+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
-        "seed_count": 12,
-        "model_retraining_stability_evaluated": true,
-        "local_patient_explanation_stability_evaluated": true,
+        "status": "needs_attention",
+        "exact_rank_claim_allowed": null,
         "clinical_validation": false
       }
     },
@@ -206,7 +265,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-30T10:08:06.159571+00:00",
+      "generated_at": "2026-08-02T13:35:38.046199+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -224,7 +283,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong_offline_drill",
-      "generated_at": "2026-07-30T10:08:14.205424+00:00",
+      "generated_at": "2026-08-02T13:35:41.913931+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -243,7 +302,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "compiled_reference_architecture",
-      "generated_at": "2026-07-30T10:08:58.654022+00:00",
+      "generated_at": "2026-08-02T13:36:03.142324+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -263,7 +322,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-19T01:30:59.933113+00:00",
-      "age_days": 11.37,
+      "age_days": 14.51,
       "stale": false,
       "key_metrics": {
         "control_pass_rate": 1.0,
@@ -281,7 +340,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-30T10:17:13.781269+00:00",
+      "generated_at": "2026-08-02T13:40:34.122582+00:00",
       "age_days": 0.0,
       "stale": false,
       "key_metrics": {
@@ -301,7 +360,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong",
-      "generated_at": "2026-07-30T10:09:56.313601+00:00",
+      "generated_at": "2026-08-02T13:36:26.571966+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -329,31 +388,12 @@
       "evidence_state": "scaffolded",
       "observed_status": "blocked_runtime",
       "generated_at": "2026-07-30T08:20:44.103690+00:00",
-      "age_days": 0.09,
+      "age_days": 3.23,
       "stale": false,
       "key_metrics": {
         "model_trained": false,
         "ready_for_offline_experiment": false,
         "explicit_experiment_enable": false
-      }
-    },
-    {
-      "id": "oidc_browser_pkce",
-      "tier": "informational",
-      "domain": "deployment",
-      "owner": "deployment",
-      "path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
-      "max_age_days": 30,
-      "decision": "informational",
-      "evidence_state": "scaffolded",
-      "observed_status": "blocked_configuration",
-      "generated_at": "2026-07-30T10:09:51.975804+00:00",
-      "age_days": 0.01,
-      "stale": false,
-      "key_metrics": {
-        "browser_login_completed": false,
-        "production_auth_ready": false,
-        "clinical_validation": false
       }
     },
     {
@@ -367,7 +407,7 @@
       "evidence_state": "external_blocked",
       "observed_status": "ready_to_request_review",
       "generated_at": "2026-06-01T17:33:21.375512+00:00",
-      "age_days": 58.7,
+      "age_days": 61.84,
       "stale": false,
       "key_metrics": {
         "completed": null,
@@ -388,10 +428,10 @@
     },
     {
       "domain": "mle",
-      "state": "verified_internal_only",
+      "state": "needs_attention",
       "check_count": 3,
-      "verified_internal_count": 3,
-      "needs_attention_count": 0,
+      "verified_internal_count": 1,
+      "needs_attention_count": 2,
       "scaffolded_count": 0,
       "external_blocked_count": 0,
       "stale_count": 0
@@ -399,8 +439,8 @@
     {
       "domain": "swe",
       "state": "verified_internal_only",
-      "check_count": 3,
-      "verified_internal_count": 3,
+      "check_count": 4,
+      "verified_internal_count": 4,
       "needs_attention_count": 0,
       "scaffolded_count": 0,
       "external_blocked_count": 0,
@@ -449,10 +489,10 @@
     {
       "domain": "deployment",
       "state": "verified_internal_only",
-      "check_count": 2,
+      "check_count": 1,
       "verified_internal_count": 1,
       "needs_attention_count": 0,
-      "scaffolded_count": 1,
+      "scaffolded_count": 0,
       "external_blocked_count": 0,
       "stale_count": 0
     },
@@ -469,9 +509,9 @@
   ],
   "domain_count": 9,
   "evidence_state_counts": {
-    "verified_internal": 16,
-    "needs_attention": 1,
-    "scaffolded": 2,
+    "verified_internal": 15,
+    "needs_attention": 3,
+    "scaffolded": 1,
     "external_blocked": 1
   },
   "headline_limitations": [

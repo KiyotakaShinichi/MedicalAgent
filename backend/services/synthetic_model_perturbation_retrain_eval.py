@@ -90,6 +90,7 @@ def build_synthetic_model_perturbation_retrain_eval(
         "measurement_noise",
         "modality_dropout",
         "severe_modality_dropout",
+        "mnar_severity_dependent_dropout",
         "combined_noise",
     ):
         perturbed_train = perturb_features(train, scenario=name, seed=seed)
@@ -263,6 +264,7 @@ def perturb_features(
         "measurement_noise",
         "modality_dropout",
         "severe_modality_dropout",
+        "mnar_severity_dependent_dropout",
         "combined_noise",
     }:
         raise ValueError(f"unsupported perturbation scenario: {scenario}")
@@ -307,6 +309,34 @@ def perturb_features(
             "intervention_count",
             "dose_delayed",
             "dose_reduced",
+        ):
+            if feature in output.columns:
+                output.loc[mask, feature] = np.nan
+    if scenario == "mnar_severity_dependent_dropout":
+        severity = pd.to_numeric(
+            output.get("max_symptom_severity", pd.Series(0.0, index=output.index)),
+            errors="coerce",
+        ).fillna(0.0)
+        severity_scale = severity / max(float(severity.max() or 1.0), 1.0)
+        low_wbc = pd.to_numeric(
+            output.get("pre_wbc", pd.Series(np.nan, index=output.index)),
+            errors="coerce",
+        )
+        low_wbc_signal = (
+            low_wbc < low_wbc.median(skipna=True)
+        ).fillna(False).astype(float)
+        missing_probability = np.clip(
+            0.10 + (0.55 * severity_scale) + (0.20 * low_wbc_signal),
+            0.0,
+            0.90,
+        )
+        mask = rng.random(len(output)) < missing_probability.to_numpy()
+        for feature in (
+            "mri_tumor_size_cm",
+            "pre_wbc",
+            "pre_anc",
+            "pre_hemoglobin",
+            "pre_platelets",
         ):
             if feature in output.columns:
                 output.loc[mask, feature] = np.nan

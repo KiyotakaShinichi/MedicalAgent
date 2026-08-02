@@ -1,0 +1,123 @@
+{
+  "schema_version": "claim_conditioned_citation_selector_eval_v1",
+  "generated_at": "2026-08-02T13:40:32.050863+00:00",
+  "status": "acceptable_internal_candidate",
+  "internal_vs_external": "internal_authored_tuning_used",
+  "was_used_for_tuning": true,
+  "case_count": 5,
+  "baseline_top3_citation_precision": 0.3333,
+  "selector_citation_precision": 1.0,
+  "citation_precision_delta": 0.6667,
+  "baseline_claim_support_rate": 1.0,
+  "selector_claim_support_rate": 1.0,
+  "disallowed_source_selection_count": 0,
+  "refusal_citation_strip_passed": true,
+  "paired_internal_improvement": true,
+  "promotion_decision": "offline_shadow_candidate_only",
+  "live_patient_route_changed": false,
+  "support_proxy_is_entailment": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "cases": [
+    {
+      "case_id": "her2",
+      "refusal_route": false,
+      "expected_source_ids": [
+        "her2-source"
+      ],
+      "baseline_ids": [
+        "her2-distractor-a",
+        "her2-distractor-b",
+        "her2-source"
+      ],
+      "selected_ids": [
+        "her2-source"
+      ],
+      "baseline_precision": 0.3333,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claims": []
+    },
+    {
+      "case_id": "cbc",
+      "refusal_route": false,
+      "expected_source_ids": [
+        "cbc-source"
+      ],
+      "baseline_ids": [
+        "cbc-distractor-a",
+        "cbc-distractor-b",
+        "cbc-source"
+      ],
+      "selected_ids": [
+        "cbc-source"
+      ],
+      "baseline_precision": 0.3333,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claims": []
+    },
+    {
+      "case_id": "vus",
+      "refusal_route": false,
+      "expected_source_ids": [
+        "vus-source"
+      ],
+      "baseline_ids": [
+        "vus-distractor-a",
+        "vus-distractor-b",
+        "vus-source"
+      ],
+      "selected_ids": [
+        "vus-source"
+      ],
+      "baseline_precision": 0.3333,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claims": []
+    },
+    {
+      "case_id": "marker",
+      "refusal_route": false,
+      "expected_source_ids": [
+        "marker-source"
+      ],
+      "baseline_ids": [
+        "marker-distractor-a",
+        "marker-distractor-b",
+        "marker-source"
+      ],
+      "selected_ids": [
+        "marker-source"
+      ],
+      "baseline_precision": 0.3333,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claims": []
+    },
+    {
+      "case_id": "refusal",
+      "refusal_route": true,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "dose-protocol"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 0.0,
+      "selector_support": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claims": []
+    }
+  ],
+  "claim_boundary": "Internal engineering comparison only. Cases were authored with the selector and are tuning-used. This is not held-out evidence, not semantic entailment, not clinical validation, and not a reason to enable the selector on patient-facing routes without generated-answer shadow evaluation."
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "constraint_aware_improvement_program_v1",
-  "generated_at": "2026-07-30T10:23:43.167193+00:00",
+  "generated_at": "2026-08-02T13:45:58.944415+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "clinical_validation": false,
@@ -33,9 +33,12 @@
     },
     {
       "domain": "mle",
-      "evidence_state": "verified_internal_only",
+      "evidence_state": "needs_attention",
       "canonical_check_count": 3,
-      "attention_check_ids": [],
+      "attention_check_ids": [
+        "synthetic_perturbation_stress",
+        "xai_reliability_gate"
+      ],
       "objective": "Make synthetic ML statistically defensible as engineering evidence while preventing clinical interpretation.",
       "implemented_controls": [
         "patient-level temporal splitting and leakage audits",
@@ -55,7 +58,7 @@
     {
       "domain": "swe",
       "evidence_state": "verified_internal_only",
-      "canonical_check_count": 3,
+      "canonical_check_count": 4,
       "attention_check_ids": [],
       "objective": "Make the system reproducible, reviewable, secure by default, and boring to operate in controlled demos.",
       "implemented_controls": [
@@ -158,7 +161,7 @@
     {
       "domain": "deployment",
       "evidence_state": "verified_internal_only",
-      "canonical_check_count": 2,
+      "canonical_check_count": 1,
       "attention_check_ids": [],
       "objective": "Support controlled non-clinical deployment profiles without implying healthcare production readiness.",
       "implemented_controls": [
@@ -189,6 +192,18 @@
         "stage latency and marginal quality are reported together"
       ],
       "blocked_by_external_evidence": "No-read RAG holdout and external-authored adversarial cases remain incomplete."
+    },
+    {
+      "priority": "P1",
+      "domain": "mle",
+      "action": "Keep saturated metrics out of headline surfaces and expand ambiguous-label sensitivity analyses.",
+      "acceptance_criteria": [
+        "patient overlap and temporal leakage remain zero",
+        "simple baselines are always reported beside nonlinear models",
+        "selective risk versus coverage is reported for every prediction head",
+        "synthetic confidence is never described as patient outcome probability"
+      ],
+      "blocked_by_external_evidence": "Simulator-built labels cannot establish real-patient transfer or clinical calibration."
     },
     {
       "priority": "P2",
@@ -249,18 +264,6 @@
         "all review packets remain labelled unreviewed until actually completed"
       ],
       "blocked_by_external_evidence": "No clinician, nurse, genetic counselor, pharmacist, or patient review has been completed."
-    },
-    {
-      "priority": "P2",
-      "domain": "mle",
-      "action": "Keep saturated metrics out of headline surfaces and expand ambiguous-label sensitivity analyses.",
-      "acceptance_criteria": [
-        "patient overlap and temporal leakage remain zero",
-        "simple baselines are always reported beside nonlinear models",
-        "selective risk versus coverage is reported for every prediction head",
-        "synthetic confidence is never described as patient outcome probability"
-      ],
-      "blocked_by_external_evidence": "Simulator-built labels cannot establish real-patient transfer or clinical calibration."
     },
     {
       "priority": "P2",

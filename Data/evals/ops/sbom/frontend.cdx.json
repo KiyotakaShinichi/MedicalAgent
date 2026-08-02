@@ -4,7 +4,7 @@
   "serialNumber": "urn:uuid:0a0e2302-dfe8-6db1-0d39-4762f58d1140",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-30T10:10:40.724290+00:00",
+    "timestamp": "2026-08-02T13:36:59.427544+00:00",
     "component": {
       "type": "application",
       "name": "nlcare-frontend-runtime",

@@ -1,6 +1,6 @@
 {
   "schema_version": "evidence_maturity_matrix_v1",
-  "generated_at": "2026-07-30T10:23:01.917433+00:00",
+  "generated_at": "2026-08-02T13:45:04.670911+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -17,8 +17,8 @@
     },
     "tier_counts": {
       "0": 0,
-      "1": 2,
-      "2": 7,
+      "1": 3,
+      "2": 6,
       "3": 2,
       "4": 0,
       "5": 0
@@ -29,9 +29,9 @@
       "dimension": "AIE/RAG",
       "current_evidence_tier": 3,
       "tier_label": "frozen_internal_with_contamination_controls",
-      "what_is_proven": "Frozen internal case-level comparisons, paired bootstrap intervals, multiple-comparison correction, source governance, and negative results.",
-      "what_is_not_proven": "Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False.",
-      "next_falsifiable_evidence": "Independent no-read holdout repeats the predeclared comparison."
+      "what_is_proven": "Frozen internal case-level comparisons, paired bootstrap intervals, multiple-comparison correction, source governance, negative results, and an offline claim-conditioned citation candidate status=acceptable_internal_candidate. A separate 32-case corpus-derived research-paper suite measures PMCID identity, section retrieval, provenance, and no-evidence behavior (status=needs_attention).",
+      "what_is_not_proven": "Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False. The citation selector is tuning-used and has not been tested on frozen generated answers. The paper suite is not independent and its boundary-route correctness is 0.8.",
+      "next_falsifiable_evidence": "Resolve the documented paper no-evidence routing gaps without tuning on this bank, then run frozen generated-answer shadow evaluation and an independent no-read holdout."
     },
     {
       "dimension": "AIE/adversarial safety",
@@ -55,7 +55,7 @@
       "tier_label": "internal_self_test",
       "what_is_proven": "Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, paired tests, calibration, train-only constant and linear baselines, coverage-performance curves, and synthetic perturbation sensitivity.",
       "what_is_not_proven": "All outcomes and uncertainty remain simulator-bounded; transportability is unproven.",
-      "next_falsifiable_evidence": "Resolve documented synthetic stress failures (current count=4) and use a task-aligned external cohort, or retain synthetic engineering-only positioning."
+      "next_falsifiable_evidence": "Resolve documented synthetic stress failures (current count=5) and use a task-aligned external cohort, or retain synthetic engineering-only positioning."
     },
     {
       "dimension": "XAI",
@@ -91,9 +91,9 @@
     },
     {
       "dimension": "Infrastructure/deployment",
-      "current_evidence_tier": 2,
-      "tier_label": "internal_self_test",
-      "what_is_proven": "Reference cloud architecture status=compiled_reference_architecture; disposable loopback runtime=True and Postgres restore=True.",
+      "current_evidence_tier": 1,
+      "tier_label": "scaffold_or_contract_only",
+      "what_is_proven": "Reference cloud architecture status=compiled_reference_architecture; disposable loopback runtime=False and Postgres restore=False.",
       "what_is_not_proven": "Deployment readiness=needs_attention; local containers do not prove authenticated cloud deployment, managed failover, external traffic, secret rotation, or cloud cost.",
       "next_falsifiable_evidence": "Managed non-patient staging with authenticated deployment, failover, restore, load, secret rotation, and cost evidence."
     },
@@ -116,11 +116,23 @@
   ],
   "architecture_maintainability": {
     "budget_status": "needs_attention",
-    "oversized_file_count": 8,
+    "oversized_file_count": 9,
     "critical_file_count": 0,
-    "backend_service_file_count": 374,
-    "test_file_count": 208,
-    "test_to_service_file_ratio": 0.5561,
+    "backend_service_file_count": 377,
+    "test_file_count": 212,
+    "test_to_service_file_ratio": 0.5623,
+    "ratchet": {
+      "oversized_file_baseline": 9,
+      "oversized_file_count_within_baseline": true,
+      "critical_file_ceiling": 0,
+      "critical_file_count_within_ceiling": true
+    },
+    "artifact_budget": {
+      "latest_json_artifact_count": 266,
+      "warning_threshold": 200,
+      "status": "needs_consolidation",
+      "target": "Consolidate superseded latest_* artifacts below 200 without deleting audit history."
+    },
     "largest_violations": [
       {
         "path": "scripts/generate_project_guide_pdf.py",
@@ -139,6 +151,13 @@
       {
         "path": "backend/services/mle_readiness.py",
         "line_count": 1251,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "backend/services/unsafe_intent_semantic_classifier.py",
+        "line_count": 1135,
         "severity": "warning",
         "warning_threshold": 1000,
         "critical_threshold": 1800
@@ -191,7 +210,8 @@
   "highest_roi_internal_actions": [
     "Adjudicate fine-tune semantic-similarity flags before any candidate run.",
     "Collect provider-reported token usage on 30+ representative calls.",
-    "Use paired RAG confidence intervals and adjusted p-values in every headline comparison.",
+    "Run the claim-conditioned citation selector on frozen generated answers before any live A/B test.",
+    "Produce a fresh passing full ship manifest after the bounded-suite split.",
     "Keep unstable XAI rank order hidden and expose grouped factors only.",
     "Reduce the largest backend/frontend modules before adding more service files."
   ],

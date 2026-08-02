@@ -78,6 +78,42 @@ def build_negative_results_gallery() -> dict[str, Any]:
             "clinical_validation": False,
         },
         {
+            "title": "Research-paper KB benchmark remains corpus-derived and BM25-competitive",
+            "evidence_artifact": "Data/evals/rag/latest_research_paper_retrieval_eval.json",
+            "metric_value": {
+                "paper_count": 9,
+                "case_count": 32,
+                "bm25_recall_at_10": 1.0,
+                "full_stack_recall_at_10": 0.963,
+                "paired_delta": -0.037,
+                "bootstrap_ci95": [-0.111111, 0.0],
+                "exact_sign_test_p": 1.0,
+                "boundary_route_correctness": 0.6,
+                "improvement_proven_vs_bm25": False,
+            },
+            "why_it_matters": (
+                "The paper suite verifies PMCID identity and provenance, but it was "
+                "authored from the same narrow nine-paper corpus. BM25 retrieves every "
+                "positive case, and two of five no-evidence premises miss the intended "
+                "pre-retrieval boundary route."
+            ),
+            "decision_taken": (
+                "Keep the suite as an untuned internal regression with status "
+                "needs_attention. Do not tune retrieval or safety rules on this run."
+            ),
+            "what_was_not_claimed": [
+                "paper retrieval improvement over BM25",
+                "independent literature generalization",
+                "broad oncology knowledge coverage",
+                "clinical validation",
+            ],
+            "next_action": (
+                "Use a separately authored no-read paper-query set and resolve generalized "
+                "no-evidence routing gaps on a development-only bank."
+            ),
+            "clinical_validation": False,
+        },
+        {
             "title": "Citation context pruner regressed citation precision",
             "evidence_artifact": "Data/evals/rag/latest_rag_baseline_comparison.json",
             "metric_value": {
@@ -633,6 +669,22 @@ def build_eval_contamination_harmonization() -> dict[str, Any]:
             "clinical_validation": False,
         },
         {
+            "path": "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
+            "authorship": "engineering_internal_author_contaminated",
+            "was_used_for_tuning": True,
+            "was_used_for_tuning_at_initial_run": False,
+            "was_used_for_tuning_after_baseline": True,
+            "frozen_status": "one_pass_baseline_then_posthoc_inspected",
+            "contamination_risk": "high_after_posthoc_failure_inspection_2026_07_31",
+            "allowed_claim_strength": (
+                "historical one-pass internal baseline only; not eligible for an "
+                "after score or future holdout claim"
+            ),
+            "release_gate_tier": "informational_warning",
+            "harmonisation_category": "internal_used_for_tuning",
+            "clinical_validation": False,
+        },
+        {
             "path": "Data/evals/rag/latest_rag_stage_oracle_diagnostic.json",
             "authorship": "engineering_internal_diagnostic",
             "was_used_for_tuning": False,
@@ -641,6 +693,32 @@ def build_eval_contamination_harmonization() -> dict[str, Any]:
             "allowed_claim_strength": "stage-wise attribution; not a score claim",
             "release_gate_tier": "informational",
             "harmonisation_category": "informational_only",
+            "clinical_validation": False,
+        },
+        {
+            "path": "Data/evals/rag/research_paper_grounding_cases.jsonl",
+            "authorship": "engineering_internal_kb_derived",
+            "was_used_for_tuning": False,
+            "frozen_status": "internal_regression_2026_08",
+            "contamination_risk": "high_same_corpus_derivation",
+            "allowed_claim_strength": (
+                "internal source-identity and retrieval regression only"
+            ),
+            "release_gate_tier": "informational",
+            "harmonisation_category": "internal_frozen_not_used_for_tuning",
+            "clinical_validation": False,
+        },
+        {
+            "path": "Data/evals/rag/latest_research_paper_retrieval_eval.json",
+            "authorship": "engineering_internal_kb_derived",
+            "was_used_for_tuning": False,
+            "frozen_status": "regenerated_against_internal_regression_bank",
+            "contamination_risk": "high_same_corpus_derivation",
+            "allowed_claim_strength": (
+                "internal PMCID/provenance regression; no independent generalization"
+            ),
+            "release_gate_tier": "informational_warning",
+            "harmonisation_category": "internal_frozen_not_used_for_tuning",
             "clinical_validation": False,
         },
         {

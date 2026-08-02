@@ -236,10 +236,17 @@ def route_intent(
     from backend.services import agent_rag  # local import — avoids cycle at module load
     llm = agent_rag.route_intent_with_local_llm(query, deterministic_intent=deterministic, safety=safety)
     candidate = llm.get("intent")
+    safe_boundary_request = bool(safety.get("safe_boundary_request"))
+    unsafe_boundary_vote = candidate in {
+        "security_boundary",
+        "safety_boundary",
+        "treatment_decision_boundary",
+    }
     confident = (
         llm.get("available")
         and candidate in LLM_ALLOWED_INTENTS
         and float(llm.get("confidence") or 0) >= LLM_CONFIDENCE_FLOOR
+        and not (safe_boundary_request and unsafe_boundary_vote)
     )
     if confident:
         return candidate

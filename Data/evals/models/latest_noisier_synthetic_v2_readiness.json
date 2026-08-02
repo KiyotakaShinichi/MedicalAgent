@@ -5,7 +5,7 @@
   "label": "noisier_synthetic_v2_readiness",
   "clinical_validation": false,
   "claim_boundary": "Readiness scaffold only.  No noisier synthetic v2 data has been generated, no model has been retrained, and no live-agent behaviour has been changed by this artifact.  This is engineering planning infrastructure; it is not clinical validation, real-world readiness, or any kind of model promotion.",
-  "generated_at": "2026-07-19T01:45:30.043219+00:00",
+  "generated_at": "2026-08-02T12:53:38.677528+00:00",
   "why_current_synthetic_data_is_too_clean": "Current temporal_ml_rows.csv has deterministic labels, no missingness, no measurement noise, no date jitter, no reporting bias, and a balanced subgroup distribution.  This saturates every metric in the MLE stack (toxicity AUC ~1.0, patient-temporal CV AUC ~0.9996) and prevents the ML and statistical-rigor dimensions of the 10/10-under-constraints roadmap from moving.",
   "planned_noise_types": [
     {

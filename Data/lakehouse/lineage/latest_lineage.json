@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_data_lineage_v1",
-  "generated_at": "2026-07-30T10:08:06.105774+00:00",
+  "generated_at": "2026-08-02T13:35:38.013410+00:00",
   "clinical_validation": false,
   "nodes": [
     {
@@ -20,14 +20,14 @@
       "layer": "silver",
       "record_count": 240,
       "path": "Data/lakehouse/silver/knowledge_chunks.jsonl",
-      "fingerprint": "e491f6ea213730a718933e83cc3665bb26e03d017836badc42983aba56092298"
+      "fingerprint": "12645d2933b7c8703a9776311e9d084592a09aeccb4ec399b75f891f233373d1"
     },
     {
       "id": "vector_gold",
       "layer": "gold",
       "record_count": 240,
       "path": "Data/lakehouse/gold/vector_records.jsonl",
-      "fingerprint": "305af5758da3ba6cda455814dbebbc88fa2ed286f4227301d75acdd4684ba444"
+      "fingerprint": "000b16d286b7e130e2753cf66fe316c9692ace0f1bac3602c57de02781e2d8d6"
     }
   ],
   "edges": [

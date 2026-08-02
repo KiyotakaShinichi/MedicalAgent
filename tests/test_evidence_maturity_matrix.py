@@ -30,3 +30,10 @@ def test_architecture_budget_surfaces_hotspots_without_claiming_failure(tmp_path
     assert architecture["test_file_count"] > 0
     assert architecture["oversized_file_count"] >= 1
     assert "Do not add a new service" in architecture["policy"]
+    assert architecture["ratchet"]["oversized_file_baseline"] == 9
+    assert architecture["ratchet"]["critical_file_ceiling"] == 0
+    assert architecture["artifact_budget"]["warning_threshold"] == 200
+    assert architecture["artifact_budget"]["status"] in {
+        "within_budget",
+        "needs_consolidation",
+    }

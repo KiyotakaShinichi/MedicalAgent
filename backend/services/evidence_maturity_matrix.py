@@ -30,6 +30,8 @@ EVIDENCE_TIERS = {
 
 ARTIFACTS = {
     "rag": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
+    "citation_selector": "Data/evals/rag/latest_claim_conditioned_citation_selector_eval.json",
+    "research_paper_rag": "Data/evals/rag/latest_research_paper_retrieval_eval.json",
     "adversarial": "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
     "cost": "Data/evals/ops/latest_cost_latency_report.json",
     "ml": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
@@ -97,7 +99,8 @@ def build_evidence_maturity_matrix(
         "highest_roi_internal_actions": [
             "Adjudicate fine-tune semantic-similarity flags before any candidate run.",
             "Collect provider-reported token usage on 30+ representative calls.",
-            "Use paired RAG confidence intervals and adjusted p-values in every headline comparison.",
+            "Run the claim-conditioned citation selector on frozen generated answers before any live A/B test.",
+            "Produce a fresh passing full ship manifest after the bounded-suite split.",
             "Keep unstable XAI rank order hidden and expose grouped factors only.",
             "Reduce the largest backend/frontend modules before adding more service files.",
         ],
@@ -110,6 +113,9 @@ def build_evidence_maturity_matrix(
 
 def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     rag_headline = artifacts["rag"].get("headline") or {}
+    citation_selector = artifacts["citation_selector"]
+    research_paper_rag = artifacts["research_paper_rag"]
+    research_summary = research_paper_rag.get("summary") or {}
     adversarial = artifacts["adversarial"]
     cost_summary = artifacts["cost"].get("summary") or {}
     provider = cost_summary.get("provider_reported_usage") or {}
@@ -127,12 +133,19 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
             "AIE/RAG",
             3,
             "Frozen internal case-level comparisons, paired bootstrap intervals, "
-            "multiple-comparison correction, source governance, and negative results.",
+            "multiple-comparison correction, source governance, negative results, and "
+            f"an offline claim-conditioned citation candidate status={citation_selector.get('status')}. "
+            "A separate 32-case corpus-derived research-paper suite measures PMCID identity, "
+            f"section retrieval, provenance, and no-evidence behavior (status={research_paper_rag.get('status')}).",
             (
                 "Full governed-stack raw Recall@10 superiority over BM25 is not proven; "
-                f"current headline={rag_headline.get('full_stack_improvement_proven_vs_bm25')}."
+                f"current headline={rag_headline.get('full_stack_improvement_proven_vs_bm25')}. "
+                "The citation selector is tuning-used and has not been tested on frozen generated answers. "
+                f"The paper suite is not independent and its boundary-route correctness is "
+                f"{research_summary.get('boundary_route_correctness')}."
             ),
-            "Independent no-read holdout repeats the predeclared comparison.",
+            "Resolve the documented paper no-evidence routing gaps without tuning on this bank, "
+            "then run frozen generated-answer shadow evaluation and an independent no-read holdout.",
         ),
         _dimension(
             "AIE/adversarial safety",
@@ -293,6 +306,10 @@ def _architecture_budget() -> dict[str, Any]:
     rows.sort(key=lambda item: item["line_count"], reverse=True)
     service_count = len(list((ROOT_DIR / "backend" / "services").glob("*.py")))
     test_count = len(list((ROOT_DIR / "tests").glob("test_*.py")))
+    latest_artifact_count = len(
+        list((ROOT_DIR / "Data" / "evals").rglob("latest_*.json"))
+    )
+    oversized_baseline = 9
     return {
         "budget_status": "needs_attention" if rows else "acceptable",
         "oversized_file_count": len(rows),
@@ -300,6 +317,27 @@ def _architecture_budget() -> dict[str, Any]:
         "backend_service_file_count": service_count,
         "test_file_count": test_count,
         "test_to_service_file_ratio": round(test_count / max(service_count, 1), 4),
+        "ratchet": {
+            "oversized_file_baseline": oversized_baseline,
+            "oversized_file_count_within_baseline": len(rows) <= oversized_baseline,
+            "critical_file_ceiling": 0,
+            "critical_file_count_within_ceiling": not any(
+                item["severity"] == "critical" for item in rows
+            ),
+        },
+        "artifact_budget": {
+            "latest_json_artifact_count": latest_artifact_count,
+            "warning_threshold": 200,
+            "status": (
+                "needs_consolidation"
+                if latest_artifact_count > 200
+                else "within_budget"
+            ),
+            "target": (
+                "Consolidate superseded latest_* artifacts below 200 without "
+                "deleting audit history."
+            ),
+        },
         "largest_violations": rows[:20],
         "policy": (
             "Do not add a new service or artifact solely to increase feature count. "

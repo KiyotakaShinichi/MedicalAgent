@@ -346,19 +346,26 @@ def detect_prompt_injection_or_exfiltration(text):
     variants = [normalized] + [normalize_security_text(item) for item in _decoded_variants(text)]
     issues = []
     signals = []
+    semantic = classify_unsafe_intent(text)
+    safe_boundary_request = (
+        semantic.get("family") == "none"
+        and not bool(semantic.get("is_unsafe"))
+        and semantic.get("safety_source") == "safe_boundary_request"
+    )
 
     phrase_groups = [
         ("prompt_injection_or_jailbreak", PROMPT_CONTROL_PHRASES),
         ("prompt_injection_or_jailbreak", TAGALOG_ATTACK_PHRASES),
         ("prompt_injection_or_jailbreak", MULTILINGUAL_ATTACK_PHRASES),
     ]
-    for category, phrases in phrase_groups:
-        matches = []
-        for variant in variants:
-            matches.extend(_phrase_matches(variant, variant.replace(" ", ""), phrases))
-        if matches:
-            issues.append(category)
-            signals.extend({"category": category, "match": match} for match in sorted(set(matches))[:5])
+    if not safe_boundary_request:
+        for category, phrases in phrase_groups:
+            matches = []
+            for variant in variants:
+                matches.extend(_phrase_matches(variant, variant.replace(" ", ""), phrases))
+            if matches:
+                issues.append(category)
+                signals.extend({"category": category, "match": match} for match in sorted(set(matches))[:5])
 
     sql_matches = []
     for pattern in SQL_OR_FILE_PATTERNS:
@@ -388,11 +395,17 @@ def detect_prompt_injection_or_exfiltration(text):
             for match in fs_matches[:5]
         )
 
-    if any(_has_exfiltration_intent(variant) for variant in variants):
+    if (
+        not safe_boundary_request
+        and any(_has_exfiltration_intent(variant) for variant in variants)
+    ):
         issues.append("sensitive_data_exfiltration_attempt")
         signals.append({"category": "sensitive_data_exfiltration_attempt", "match": "verb+protected_target"})
 
-    if any(_asks_for_other_patient(variant) for variant in variants):
+    if (
+        not safe_boundary_request
+        and any(_asks_for_other_patient(variant) for variant in variants)
+    ):
         issues.append("privacy_boundary_request")
         signals.append({"category": "privacy_boundary_request", "match": "other/all patient data"})
 
@@ -404,7 +417,6 @@ def detect_prompt_injection_or_exfiltration(text):
         issues.append("privacy_boundary_request")
         signals.append({"category": "privacy_boundary_request", "match": "patient_id_lookup"})
 
-    semantic = classify_unsafe_intent(text)
     if (
         semantic.get("family") in {"privacy_pii", "prompt_injection", "cross_patient_exfiltration"}
         and float(semantic.get("confidence") or 0.0) >= 0.62
@@ -433,7 +445,9 @@ def detect_prompt_injection_or_exfiltration(text):
         or _is_benign_self_memory_query(normalized)
     )
     obvious_low_risk = not issues and _is_obvious_low_risk_support_or_education(normalized)
-    should_ask_llm = bool(issues) or not obvious_low_risk
+    should_ask_llm = bool(issues) or (
+        not safe_boundary_request and not obvious_low_risk
+    )
     llm_assessment = (
         assess_security_with_local_llm(
             text,

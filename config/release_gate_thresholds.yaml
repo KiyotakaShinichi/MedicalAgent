@@ -2571,3 +2571,64 @@ artifacts:
       One-pass internally authored and author-contaminated safety holdout.
       It is a generalization warning, never external or clinical evidence, and
       is intentionally excluded from the repeatable ship runner.
+
+  - path: Data/evals/rag/latest_claim_conditioned_citation_selector_eval.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable_internal_candidate, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [live_patient_route_changed], op: "==", value: false}
+      - {path: [was_used_for_tuning], op: "==", value: true}
+      - {path: [support_proxy_is_entailment], op: "==", value: false}
+      - {path: [disallowed_source_selection_count], op: "==", value: 0}
+    note: >
+      Internally authored, tuning-used citation-selection evidence. A positive
+      result supports only an offline shadow candidate and cannot establish
+      held-out grounding, semantic entailment, or clinical validity.
+
+  - path: Data/evals/rag/latest_research_paper_kb_audit.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable_narrow_internal_corpus, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [independent_literature_review], op: "==", value: false}
+      - {path: [summary, false_pmcid_identity_chunk_count], op: "==", value: 0}
+      - {path: [summary, duplicate_manifest_pmcid_count], op: "==", value: 0}
+      - {path: [summary, manifest_to_chunk_coverage], op: ">=", value: 1.0}
+    note: >
+      Local provenance and metadata audit for the nine internally selected
+      open-access PMC papers. It does not establish broad literature coverage,
+      systematic-review quality, clinical authority, or independent review.
+
+  - path: Data/evals/rag/latest_research_paper_retrieval_eval.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable_internal_diagnostic, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [independent_holdout], op: "==", value: false}
+      - {path: [derived_from_evaluated_kb], op: "==", value: true}
+      - {path: [was_used_for_tuning], op: "==", value: false}
+      - {path: [live_patient_route_changed], op: "==", value: false}
+      - {path: [summary, full_stack_source_tier_correctness], op: "==", value: 1.0}
+    note: >
+      Internal KB-derived paper-identity regression across BM25, dense,
+      hybrid, rewrite, parent-child, and source-governed retrieval. Scores are
+      not an independent holdout, clinical correctness test, or permission to
+      tune on the case bank during this pass.
+
+  - path: Data/evals/rag/latest_research_paper_retrieval_failures.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable_internal_diagnostic, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [independent_holdout], op: "==", value: false}
+    note: >
+      Case-level paper retrieval, section, provenance, source-tier, and
+      no-evidence false-attribution failures. Informational and intentionally
+      permitted to remain non-empty.

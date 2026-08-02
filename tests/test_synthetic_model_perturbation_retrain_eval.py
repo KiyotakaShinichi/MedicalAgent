@@ -70,6 +70,28 @@ def test_severe_modality_dropout_is_stronger_and_preserves_targets():
     )
 
 
+def test_mnar_dropout_depends_on_observed_severity_and_preserves_targets():
+    frame = pd.concat([_frame()] * 4, ignore_index=True)
+    frame["patient_id"] = [f"mnar-{idx}" for idx in range(len(frame))]
+    frame["max_symptom_severity"] = np.tile(np.arange(8), len(frame) // 8)
+    perturbed = perturb_features(
+        frame,
+        scenario="mnar_severity_dependent_dropout",
+        seed=17,
+    )
+    high = frame["max_symptom_severity"] >= frame["max_symptom_severity"].median()
+    missing = perturbed["mri_tumor_size_cm"].isna()
+    assert missing[high].mean() >= missing[~high].mean()
+    assert np.array_equal(
+        frame["treatment_success_binary"],
+        perturbed["treatment_success_binary"],
+    )
+    assert np.array_equal(
+        frame["response_score_percent"],
+        perturbed["response_score_percent"],
+    )
+
+
 def test_expected_calibration_error_is_zero_for_perfect_probabilities():
     labels = np.array([0, 0, 1, 1])
     probabilities = np.array([0.0, 0.0, 1.0, 1.0])

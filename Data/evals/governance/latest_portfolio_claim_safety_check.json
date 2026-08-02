@@ -4,7 +4,7 @@
   "label": "portfolio_claim_safety_check",
   "clinical_validation": false,
   "claim_boundary": "This artifact is wording guidance only.  It is not clinical validation, not clinician sign-off, not IRB approval, and not proof of patient benefit.  The samples below are templates the project owner can adapt while staying inside the project's hard constraints (synthetic-only, no clinician, no IRB, no real patient data).",
-  "generated_at": "2026-07-19T01:45:30.008544+00:00",
+  "generated_at": "2026-08-02T12:53:38.673863+00:00",
   "banned_affirmative_phrases": [
     "clinically validated",
     "production healthcare ready",

@@ -105,12 +105,18 @@ def load_ingested_chunks(path="Data/rag_knowledge_base_chunks.json"):
             "title": chunk.get("title") or "Untitled source",
             "source_name": chunk.get("source_name") or "Local KB",
             "source_url": chunk.get("source_url") or chunk.get("source_path") or "KnowledgeBase/raw",
+            "source_path": chunk.get("source_path"),
+            "source_type": chunk.get("source_type"),
             "tags": chunk.get("tags") or [],
             "topic": chunk.get("topic"),
             "modality": chunk.get("modality") or [],
             "care_stage": chunk.get("care_stage"),
             "section": chunk.get("section"),
+            "section_rank": chunk.get("section_rank"),
+            "chunk_index": chunk.get("chunk_index"),
             "confidence": chunk.get("confidence"),
+            "pmcid": chunk.get("pmcid"),
+            "ingested_at": chunk.get("ingested_at"),
             "text": chunk.get("text"),
             "trust_level": chunk.get("trust_level") or "local_source",
         })
@@ -376,12 +382,19 @@ def _section_rank(section):
     return ranks.get(section, 50)
 
 
-def _extract_pmcid(path, text):
+def _extract_pmcid(path, _text):
+    """Return a source identity only when the source file owns that identity.
+
+    Curated summaries often link to several PMC papers.  Treating the first
+    embedded link as the summary's PMCID collapses two distinct sources and
+    makes citation provenance look stronger than it is.  Research downloads
+    receive their PMCID from the source manifest or their filename; linked
+    identifiers inside arbitrary document text are references, not identity.
+    """
     match = re.search(r"PMC\d{5,}", path.name, flags=re.IGNORECASE)
     if match:
         return match.group(0).upper()
-    match = re.search(r"\bPMC\d{5,}\b", text[:3000], flags=re.IGNORECASE)
-    return match.group(0).upper() if match else None
+    return None
 
 
 def _load_source_manifest(source_dir):

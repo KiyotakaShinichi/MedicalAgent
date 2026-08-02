@@ -1,6 +1,6 @@
 {
   "schema_version": "provider_usage_capture_readiness_v1",
-  "generated_at": "2026-07-30T10:15:54.636432+00:00",
+  "generated_at": "2026-08-02T13:38:48.892125+00:00",
   "status": "ready_for_nonpatient_provider_capture",
   "checks": [
     {

@@ -11,6 +11,7 @@ from typing import Any
 DEFAULT_OUTPUT_PATH = Path("Data/evals/governance/latest_release_decision_surface.json")
 
 CHECKS: tuple[dict[str, Any], ...] = (
+    {"id": "full_ship_manifest", "tier": "hard_blocker", "domain": "swe", "owner": "SWE/release", "path": "Data/evals/ops/latest_ship_run.json", "status_path": ("status",), "accepted": {"passed"}, "max_age_days": 14},
     {"id": "critical_safety_regression", "tier": "hard_blocker", "domain": "aie", "owner": "AI safety", "path": "Data/evals/safety/latest_safety_benchmark.json", "status_path": ("summary", "status"), "accepted": {"passed"}, "max_age_days": 30},
     {"id": "medical_claim_boundary", "tier": "hard_blocker", "domain": "medical", "owner": "medical safety", "path": "Data/evals/safety/latest_medical_claim_boundary_eval.json", "status_path": ("status",), "accepted": {"strong", "acceptable"}, "max_age_days": 30},
     {"id": "training_leakage", "tier": "hard_blocker", "domain": "mle", "owner": "MLE", "path": "Data/evals/models/latest_leakage_audit.json", "status_path": ("status",), "accepted": {"passed", "strong", "acceptable"}, "max_age_days": 30},
@@ -20,8 +21,8 @@ CHECKS: tuple[dict[str, Any], ...] = (
     {"id": "live_rag_grounding", "tier": "warning", "domain": "aie", "owner": "RAG", "path": "Data/evals/rag/latest_live_rag_eval.json", "status_path": ("status",), "accepted": {"strong", "acceptable"}, "max_age_days": 30},
     {"id": "route_latency", "tier": "warning", "domain": "swe", "owner": "SWE/ops", "path": "Data/evals/ops/latest_route_latency_budget.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}, "max_age_days": 30},
     {"id": "dependency_security", "tier": "warning", "domain": "swe", "owner": "SWE/security", "path": "Data/evals/ops/latest_dependency_security_scan.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}, "max_age_days": 30},
-    {"id": "simple_baseline_superiority", "tier": "warning", "domain": "mle", "owner": "MLE", "path": "Data/evals/models/latest_synthetic_simple_baseline_audit.json", "status_path": ("status",), "accepted": {"acceptable"}, "max_age_days": 90},
-    {"id": "xai_retraining_stability", "tier": "warning", "domain": "mle", "owner": "MLE/XAI", "path": "Data/evals/models/latest_xai_retraining_stability.json", "status_path": ("status",), "accepted": {"acceptable"}, "max_age_days": 90},
+    {"id": "synthetic_perturbation_stress", "tier": "warning", "domain": "mle", "owner": "MLE", "path": "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json", "status_path": ("status",), "accepted": {"acceptable_synthetic_only"}, "max_age_days": 30},
+    {"id": "xai_reliability_gate", "tier": "warning", "domain": "mle", "owner": "MLE/XAI", "path": "Data/evals/models/latest_xai_reliability_gate.json", "status_path": ("status",), "accepted": {"acceptable"}, "max_age_days": 30},
     {"id": "data_pipeline", "tier": "warning", "domain": "data_engineering", "owner": "data engineering", "path": "Data/lakehouse/manifests/latest_pipeline_run.json", "status_path": ("status",), "accepted": {"strong"}, "max_age_days": 30},
     {"id": "data_reliability", "tier": "warning", "domain": "data_engineering", "owner": "data engineering", "path": "Data/evals/ops/latest_data_platform_reliability_eval.json", "status_path": ("status",), "accepted": {"strong_offline_drill"}, "max_age_days": 30},
     {"id": "cloud_infrastructure", "tier": "warning", "domain": "infrastructure", "owner": "infrastructure", "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json", "status_path": ("status",), "accepted": {"compiled_reference_architecture"}, "max_age_days": 30},
@@ -29,7 +30,6 @@ CHECKS: tuple[dict[str, Any], ...] = (
     {"id": "automation_channel_drill", "tier": "warning", "domain": "automation", "owner": "automation", "path": "Data/evals/ops/latest_automation_channel_drill.json", "status_path": ("status",), "accepted": {"strong"}, "max_age_days": 30},
     {"id": "deployment_profile", "tier": "warning", "domain": "deployment", "owner": "deployment", "path": "Data/evals/ops/latest_deployment_profile_matrix.json", "status_path": ("status",), "accepted": {"strong"}, "max_age_days": 30},
     {"id": "finetune_runtime", "tier": "informational", "domain": "fine_tuning", "owner": "fine-tuning", "path": "Data/evals/models/latest_finetune_runtime_preflight.json", "status_path": ("status",), "accepted": set(), "max_age_days": 90},
-    {"id": "oidc_browser_pkce", "tier": "informational", "domain": "deployment", "owner": "deployment", "path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json", "status_path": ("status",), "accepted": set(), "max_age_days": 30},
     {"id": "external_review_execution", "tier": "informational", "domain": "medical", "owner": "external review", "path": "Data/evals/governance/latest_external_review_execution_readiness.json", "status_path": ("status",), "accepted": set(), "max_age_days": 90},
 )
 
@@ -239,6 +239,16 @@ def _key_metrics(check_id: str, artifact: dict[str, Any]) -> dict[str, Any]:
             "seed_count",
             "model_retraining_stability_evaluated",
             "local_patient_explanation_stability_evaluated",
+            "clinical_validation",
+        ),
+        "xai_reliability_gate": (
+            "status",
+            "exact_rank_claim_allowed",
+            "clinical_validation",
+        ),
+        "synthetic_perturbation_stress": (
+            "promotion_decision",
+            "stress_failures",
             "clinical_validation",
         ),
         "synthetic_causal_v3": ("seed_count", "model_promotion_decision", "realism_claim", "clinical_validation"),

@@ -48,6 +48,11 @@ seven slots every eval artifact belongs to.
   `internal_used_for_tuning` post-2026-05-20 hardening. The honest
   number is the held-out v1 result, which is
   `internal_frozen_not_used_for_tuning` and explicitly informational.
+- The adversarial v7 result remains the historical one-pass baseline.
+  Its failure text was inspected during the 2026-07-31 hardening pass,
+  so it is now `internal_used_for_tuning` for all future interpretation.
+  It must not be rerun as an "after" holdout or cited as independent
+  post-hardening evidence.
 - A reader who quotes any synthetic ML metric as "model performance"
   is overclaiming: every synthetic artifact is `synthetic_generated`,
   and the audit footnote is required next to the number.

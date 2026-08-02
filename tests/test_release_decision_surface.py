@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 
 from backend.services import release_decision_surface as surface
 
@@ -62,6 +63,24 @@ def test_primary_surface_is_capped_at_twenty_checks():
         "automation",
         "deployment",
     }
+
+
+def test_failed_full_ship_manifest_is_a_hard_blocker(tmp_path, monkeypatch):
+    ship_path = tmp_path / "ship.json"
+    ship_path.write_text(
+        json.dumps({"status": "failed", "generated_at": datetime.now(timezone.utc).isoformat()}),
+        encoding="utf-8",
+    )
+    checks = tuple(
+        {**check, "path": str(ship_path)} if check["id"] == "full_ship_manifest" else check
+        for check in surface.CHECKS
+    )
+    monkeypatch.setattr(surface, "CHECKS", checks)
+    result = surface.build_release_decision_surface(tmp_path / "surface.json")
+    row = next(row for row in result["checks"] if row["id"] == "full_ship_manifest")
+    assert result["engineering_release_decision"] == "BLOCK"
+    assert row["tier"] == "hard_blocker"
+    assert row["decision"] == "attention"
 
 
 def test_stale_warning_is_not_reported_as_verified(tmp_path, monkeypatch):

@@ -7,12 +7,12 @@ Constraint-aware engineering plan only. Completion means stronger internal engin
 | Priority | Domain | Evidence state | Next internal action |
 | --- | --- | --- | --- |
 | P1 | aie | needs_attention | Increase independent route sample counts and preserve BM25 as the explicit simple baseline. |
+| P1 | mle | needs_attention | Keep saturated metrics out of headline surfaces and expand ambiguous-label sensitivity analyses. |
 | P2 | automation | verified_internal_only | Exercise one synthetic test-recipient channel and record receipt latency without claiming clinical coverage. |
 | P2 | data_engineering | verified_internal_only | Add partition-scale benchmarks before introducing Databricks or Data Factory. |
 | P2 | deployment | verified_internal_only | Add a shared encrypted PKCE transaction store, reviewed token exchange, and provider logout before any live browser login claim. |
 | P2 | infrastructure | verified_internal_only | Run an authenticated what-if in a disposable non-patient development subscription. |
 | P2 | medical | external_evidence_incomplete | Run non-clinical comprehension and overtrust testing with synthetic scenarios. |
-| P2 | mle | verified_internal_only | Keep saturated metrics out of headline surfaces and expand ambiguous-label sensitivity analyses. |
 | P2 | swe | verified_internal_only | Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence. |
 
 ## Domain Acceptance Criteria

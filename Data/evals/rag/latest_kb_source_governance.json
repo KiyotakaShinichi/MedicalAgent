@@ -1,25 +1,25 @@
 {
   "schema_version": "kb_source_governance_v1",
-  "generated_at": "2026-07-17T06:25:06.177113+00:00",
+  "generated_at": "2026-08-02T13:39:29.219493+00:00",
   "status": "strong",
-  "kb_chunks_path": "Data/rag_knowledge_base_chunks.json",
-  "source_count": 44,
-  "chunk_count": 242,
+  "kb_chunks_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\rag_knowledge_base_chunks.json",
+  "source_count": 46,
+  "chunk_count": 240,
   "tier_distribution": {
-    "T1": 4,
-    "T2": 9,
+    "T1": 5,
+    "T2": 10,
     "T3": 29,
     "T4": 2
   },
   "allowed_use_distribution": {
     "patient_safety": 3,
-    "education": 42,
-    "clinician_only": 4,
-    "monitoring_context": 10,
+    "education": 44,
+    "clinician_only": 5,
+    "monitoring_context": 12,
     "portal_help": 2
   },
   "staleness_distribution": {
-    "current": 44
+    "current": 46
   },
   "tier_map": {
     "clinical_safety_policy": {
@@ -101,9 +101,9 @@
         "education",
         "clinician_only"
       ],
-      "ingested_at": "2026-05-18T03:11:52.352237+00:00",
+      "ingested_at": "2026-08-02T13:35:35.350236+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "clinical_safety_boundaries"
@@ -128,9 +128,9 @@
         "education",
         "clinician_only"
       ],
-      "ingested_at": "2026-05-18T03:11:52.395837+00:00",
+      "ingested_at": "2026-08-02T13:35:35.352561+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "medical_claim_boundaries"
@@ -155,9 +155,9 @@
         "clinician_only",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.658130+00:00",
+      "ingested_at": "2026-08-02T13:35:35.402519+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "integrative_supportive_care"
@@ -181,9 +181,9 @@
         "education",
         "clinician_only"
       ],
-      "ingested_at": "2026-05-18T03:11:52.701300+00:00",
+      "ingested_at": "2026-08-02T13:35:35.407811+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "pregnancy_pediatric_fertility_boundary"
@@ -192,6 +192,57 @@
         "clinical",
         "safety",
         "supportive_care"
+      ]
+    },
+    {
+      "source_id": "c76e439a49d82a90",
+      "title": "Tumor Marker Trend Limitations Reference",
+      "source_url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-fact-sheet",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\tumor_marker_trend_limitations_reference.md",
+      "trust_level": "clinical_guideline_summary",
+      "tier": "T1",
+      "tier_rank": 1,
+      "tier_description": "Summary of a published clinical guideline (NCCN, ASCO, ESMO equivalent).",
+      "allowed_use": [
+        "education",
+        "clinician_only",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-08-02T13:35:35.441979+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "tumor_marker_limitations"
+      ],
+      "modalities": [
+        "clinical",
+        "labs",
+        "tumor_markers"
+      ]
+    },
+    {
+      "source_id": "7cd1e3e1103a156a",
+      "title": "The role of MRI in assessing residual disease and pCR after neoadjuvant chemotherapy",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3609956/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC3609956_the-role-of-mri-in-assessing-residual-disease-and-pcr-after-neoadjuvant-chemotherapy.txt",
+      "trust_level": "systematic_review",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Peer-reviewed systematic review / meta-analysis.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "ingested_at": "2026-08-02T13:35:35.515193+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 27,
+      "topics": [
+        "mri_response_monitoring"
+      ],
+      "modalities": [
+        "MRI"
       ]
     },
     {
@@ -207,9 +258,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.806574+00:00",
+      "ingested_at": "2026-08-02T13:35:35.462352+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 26,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -232,9 +283,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.911842+00:00",
+      "ingested_at": "2026-08-02T13:35:35.600777+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 23,
       "topics": [
         "mri_radiomics_response"
@@ -257,9 +308,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.943863+00:00",
+      "ingested_at": "2026-08-02T13:35:35.639879+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 23,
       "topics": [
         "mri_response_prediction"
@@ -282,9 +333,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.828700+00:00",
+      "ingested_at": "2026-08-02T13:35:35.489469+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 19,
       "topics": [
         "febrile_neutropenia_supportive_care"
@@ -307,9 +358,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.866650+00:00",
+      "ingested_at": "2026-08-02T13:35:35.538012+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 19,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -332,9 +383,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.927151+00:00",
+      "ingested_at": "2026-08-02T13:35:35.621407+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 17,
       "topics": [
         "febrile_neutropenia_supportive_care"
@@ -357,9 +408,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.880643+00:00",
+      "ingested_at": "2026-08-02T13:35:35.555245+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 16,
       "topics": [
         "chemotherapy_toxicity_supportive_care"
@@ -383,9 +434,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.893127+00:00",
+      "ingested_at": "2026-08-02T13:35:35.576066+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 15,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -408,9 +459,9 @@
         "education",
         "monitoring_context"
       ],
-      "ingested_at": "2026-05-18T03:11:52.950327+00:00",
+      "ingested_at": "2026-08-02T13:35:35.647224+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -419,33 +470,6 @@
         "CBC",
         "symptoms",
         "treatment"
-      ]
-    },
-    {
-      "source_id": "7cd1e3e1103a156a",
-      "title": "MRI, CT, Ultrasound, and Imaging Response Terms Reference",
-      "source_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
-      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\05_imaging\\mri_ct_ultrasound_terms_reference.md",
-      "trust_level": "patient_education",
-      "tier": "T3",
-      "tier_rank": 3,
-      "tier_description": "Patient-education content from a recognised oncology organisation.",
-      "allowed_use": [
-        "education"
-      ],
-      "ingested_at": "2026-05-18T03:11:52.634860+00:00",
-      "staleness_status": "current",
-      "staleness_days": 60,
-      "chunk_count": 28,
-      "topics": [
-        "imaging_report_monitoring",
-        "mri_response_monitoring"
-      ],
-      "modalities": [
-        "CT",
-        "MRI",
-        "imaging",
-        "ultrasound"
       ]
     },
     {
@@ -460,9 +484,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.444376+00:00",
+      "ingested_at": "2026-08-02T13:35:35.365173+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 3,
       "topics": [
         "treatment_drug_education"
@@ -484,9 +508,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.707988+00:00",
+      "ingested_at": "2026-08-02T13:35:35.414305+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 3,
       "topics": [
         "supplement_interaction_safety"
@@ -495,34 +519,6 @@
         "clinical",
         "medications",
         "supplements"
-      ]
-    },
-    {
-      "source_id": "5598e2371d2713c4",
-      "title": "Breast Cancer Biomarkers and Tumor Marker Safety",
-      "source_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
-      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\biomarkers_and_tumor_markers.md",
-      "trust_level": "patient_education",
-      "tier": "T3",
-      "tier_rank": 3,
-      "tier_description": "Patient-education content from a recognised oncology organisation.",
-      "allowed_use": [
-        "education"
-      ],
-      "ingested_at": "2026-05-18T03:11:52.714430+00:00",
-      "staleness_status": "current",
-      "staleness_days": 60,
-      "chunk_count": 3,
-      "topics": [
-        "biomarkers_and_tumor_markers",
-        "tumor_marker_limitations"
-      ],
-      "modalities": [
-        "biomarkers",
-        "clinical",
-        "labs",
-        "pathology",
-        "tumor_markers"
       ]
     },
     {
@@ -537,9 +533,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.400183+00:00",
+      "ingested_at": "2026-08-02T13:35:35.357279+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "breast_cancer_basics"
@@ -560,9 +556,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.440547+00:00",
+      "ingested_at": "2026-08-02T13:35:35.362456+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "treatment_drug_education"
@@ -585,9 +581,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.480656+00:00",
+      "ingested_at": "2026-08-02T13:35:35.367443+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "systemic_treatment_education"
@@ -610,9 +606,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.622086+00:00",
+      "ingested_at": "2026-08-02T13:35:35.383255+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "treatment_safety"
@@ -635,9 +631,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.628107+00:00",
+      "ingested_at": "2026-08-02T13:35:35.391608+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "cbc_toxicity_monitoring"
@@ -645,32 +641,6 @@
       "modalities": [
         "CBC",
         "clinical"
-      ]
-    },
-    {
-      "source_id": "a734a844daed9ef7",
-      "title": "Imaging Report Monitoring: MRI, CT, Ultrasound, and Response Language",
-      "source_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
-      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\05_imaging\\imaging_report_monitoring.md",
-      "trust_level": "patient_education",
-      "tier": "T3",
-      "tier_rank": 3,
-      "tier_description": "Patient-education content from a recognised oncology organisation.",
-      "allowed_use": [
-        "education"
-      ],
-      "ingested_at": "2026-05-18T03:11:52.632751+00:00",
-      "staleness_status": "current",
-      "staleness_days": 60,
-      "chunk_count": 2,
-      "topics": [
-        "imaging_response_monitoring"
-      ],
-      "modalities": [
-        "CT",
-        "MRI",
-        "imaging",
-        "ultrasound"
       ]
     },
     {
@@ -685,9 +655,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.705706+00:00",
+      "ingested_at": "2026-08-02T13:35:35.411696+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "supplement_interaction_safety"
@@ -696,6 +666,32 @@
         "clinical",
         "medications",
         "supplements"
+      ]
+    },
+    {
+      "source_id": "3e33718d58d0a5ba",
+      "title": "Breast Cancer Biomarkers and Tumor Marker Safety",
+      "source_url": "https://www.cancer.gov/types/breast/diagnosis/breast-cancer-biomarker-tests",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\biomarkers_and_tumor_markers.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-08-02T13:35:35.424793+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 2,
+      "topics": [
+        "biomarkers_and_tumor_markers"
+      ],
+      "modalities": [
+        "biomarkers",
+        "labs",
+        "pathology",
+        "tumor_markers"
       ]
     },
     {
@@ -710,9 +706,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.762189+00:00",
+      "ingested_at": "2026-08-02T13:35:35.430605+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "genetic_counseling_readiness"
@@ -735,9 +731,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.764471+00:00",
+      "ingested_at": "2026-08-02T13:35:35.432799+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "genetics_biomarkers_tumor_markers"
@@ -748,31 +744,6 @@
         "labs",
         "pathology",
         "tumor_markers"
-      ]
-    },
-    {
-      "source_id": "29f0f5dda9789b7e",
-      "title": "Germline Testing, Somatic Testing, VUS, and Multigene Panels",
-      "source_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/genetic-testing-fact-sheet",
-      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\germline_somatic_vus_multigene_panels.md",
-      "trust_level": "patient_education",
-      "tier": "T3",
-      "tier_rank": 3,
-      "tier_description": "Patient-education content from a recognised oncology organisation.",
-      "allowed_use": [
-        "education"
-      ],
-      "ingested_at": "2026-05-18T03:11:52.766655+00:00",
-      "staleness_status": "current",
-      "staleness_days": 60,
-      "chunk_count": 2,
-      "topics": [
-        "genetic_testing_terms"
-      ],
-      "modalities": [
-        "clinical",
-        "genetics",
-        "tumor_sequencing"
       ]
     },
     {
@@ -787,9 +758,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.769019+00:00",
+      "ingested_at": "2026-08-02T13:35:35.439468+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 2,
       "topics": [
         "hereditary_breast_ovarian_cancer"
@@ -811,9 +782,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.404410+00:00",
+      "ingested_at": "2026-08-02T13:35:35.359963+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "breast_cancer_basics"
@@ -834,9 +805,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.521950+00:00",
+      "ingested_at": "2026-08-02T13:35:35.369301+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "targeted_therapy_education"
@@ -859,9 +830,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.545711+00:00",
+      "ingested_at": "2026-08-02T13:35:35.373422+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "treatment_drug_education"
@@ -884,9 +855,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.570136+00:00",
+      "ingested_at": "2026-08-02T13:35:35.376313+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "supportive_medication_education"
@@ -909,9 +880,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.595107+00:00",
+      "ingested_at": "2026-08-02T13:35:35.378211+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "treatment_side_effects"
@@ -933,9 +904,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.619837+00:00",
+      "ingested_at": "2026-08-02T13:35:35.380707+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "treatment_safety"
@@ -958,9 +929,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.624128+00:00",
+      "ingested_at": "2026-08-02T13:35:35.385256+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "treatment_side_effects_red_flags"
@@ -983,9 +954,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.625729+00:00",
+      "ingested_at": "2026-08-02T13:35:35.389498+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "cbc_lab_monitoring"
@@ -1007,9 +978,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.630369+00:00",
+      "ingested_at": "2026-08-02T13:35:35.393823+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "ct_report_monitoring"
@@ -1019,6 +990,58 @@
         "ascites",
         "clinical",
         "imaging"
+      ]
+    },
+    {
+      "source_id": "a734a844daed9ef7",
+      "title": "Imaging Report Monitoring: MRI, CT, Ultrasound, and Response Language",
+      "source_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\05_imaging\\imaging_report_monitoring.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-08-02T13:35:35.396359+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "imaging_response_monitoring"
+      ],
+      "modalities": [
+        "CT",
+        "MRI",
+        "imaging",
+        "ultrasound"
+      ]
+    },
+    {
+      "source_id": "863a192faefa2336",
+      "title": "MRI, CT, Ultrasound, and Imaging Response Terms Reference",
+      "source_url": "https://www.cancerimagingarchive.net/collection/qin-breast/",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\05_imaging\\mri_ct_ultrasound_terms_reference.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-08-02T13:35:35.398449+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "imaging_report_monitoring"
+      ],
+      "modalities": [
+        "CT",
+        "MRI",
+        "imaging",
+        "ultrasound"
       ]
     },
     {
@@ -1033,9 +1056,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.656397+00:00",
+      "ingested_at": "2026-08-02T13:35:35.400341+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "pathology_biomarker_education"
@@ -1058,9 +1081,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.681307+00:00",
+      "ingested_at": "2026-08-02T13:35:35.405980+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "supportive_survivorship_care"
@@ -1083,9 +1106,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.703269+00:00",
+      "ingested_at": "2026-08-02T13:35:35.409701+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "integrative_supportive_survivorship"
@@ -1107,9 +1130,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.736963+00:00",
+      "ingested_at": "2026-08-02T13:35:35.426675+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "genetic_counseling_readiness"
@@ -1132,9 +1155,9 @@
       "allowed_use": [
         "education"
       ],
-      "ingested_at": "2026-05-18T03:11:52.759685+00:00",
+      "ingested_at": "2026-08-02T13:35:35.428385+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "hereditary_breast_cancer_genes"
@@ -1145,8 +1168,33 @@
       ]
     },
     {
+      "source_id": "29f0f5dda9789b7e",
+      "title": "Germline Testing, Somatic Testing, VUS, and Multigene Panels",
+      "source_url": "https://www.cancer.gov/about-cancer/causes-prevention/genetics/genetic-testing-fact-sheet",
+      "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\09_genetic_counseling\\germline_somatic_vus_multigene_panels.md",
+      "trust_level": "patient_education",
+      "tier": "T3",
+      "tier_rank": 3,
+      "tier_description": "Patient-education content from a recognised oncology organisation.",
+      "allowed_use": [
+        "education"
+      ],
+      "ingested_at": "2026-08-02T13:35:35.435483+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 1,
+      "topics": [
+        "genetic_testing_terms"
+      ],
+      "modalities": [
+        "clinical",
+        "genetics",
+        "tumor_sequencing"
+      ]
+    },
+    {
       "source_id": "c35c9264029ff9c9",
-      "title": "OncoTrack Portal Help and Data Entry",
+      "title": "NLCare Portal Help and Data Entry",
       "source_url": "README.md",
       "source_path": "KnowledgeBase\\raw\\curated_medical_kb\\08_portal_help\\onctrack_portal_help_and_data_entry.md",
       "trust_level": "local_source",
@@ -1156,9 +1204,9 @@
       "allowed_use": [
         "portal_help"
       ],
-      "ingested_at": "2026-05-18T03:11:52.710426+00:00",
+      "ingested_at": "2026-08-02T13:35:35.416492+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "portal_help"
@@ -1180,9 +1228,9 @@
       "allowed_use": [
         "portal_help"
       ],
-      "ingested_at": "2026-05-18T03:11:52.712163+00:00",
+      "ingested_at": "2026-08-02T13:35:35.422678+00:00",
       "staleness_status": "current",
-      "staleness_days": 60,
+      "staleness_days": 0,
       "chunk_count": 1,
       "topics": [
         "portal_help"
