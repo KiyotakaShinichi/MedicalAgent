@@ -1,6 +1,6 @@
 {
-  "schema_version": "deployment_profile_validation_v2",
-  "generated_at": "2026-08-09T12:02:08.839085+00:00",
+  "schema_version": "deployment_profile_validation_v3",
+  "generated_at": "2026-08-09T15:32:38.760616+00:00",
   "status": "development_profile",
   "profile": "development",
   "strict_profile": false,
@@ -11,9 +11,16 @@
   "oidc_enabled": false,
   "oidc_config_valid": false,
   "oidc_config_issue_count": 0,
+  "browser_oidc_config_valid": false,
+  "browser_oidc_issue_count": 4,
+  "synthetic_only": true,
+  "data_classification": "synthetic",
+  "uploads_enabled": false,
+  "upload_policy_valid": true,
+  "local_storage_bearer_marker_count": 0,
   "external_dispatch_enabled": false,
   "deployment_capability": "local_or_controlled_demo_only",
-  "n_checks": 12,
+  "n_checks": 17,
   "n_failed": 0,
   "checks": [
     {
@@ -60,6 +67,31 @@
       "name": "non_demo_identity_provider_integrated",
       "ok": true,
       "reason": "strict profiles require the feature-flagged OIDC issuer, audience, HTTPS JWKS URL, and RS256 validation"
+    },
+    {
+      "name": "browser_oidc_pkce_configured",
+      "ok": true,
+      "reason": "strict profiles require HTTPS browser authorization/token endpoints, client ID, redirect URI, and openid scope"
+    },
+    {
+      "name": "bearer_tokens_not_persisted_in_local_storage",
+      "ok": true,
+      "reason": "browser bearer tokens must not be persisted in localStorage"
+    },
+    {
+      "name": "synthetic_only_runtime_lock",
+      "ok": true,
+      "reason": "restricted staging/production-shaped profiles must enforce synthetic-only operation"
+    },
+    {
+      "name": "synthetic_data_classification",
+      "ok": true,
+      "reason": "strict profiles must label the accepted data class as synthetic"
+    },
+    {
+      "name": "upload_quarantine_policy",
+      "ok": true,
+      "reason": "strict-profile uploads must be disabled or use a configured external fail-closed scanner"
     },
     {
       "name": "external_dispatch_uses_https",

@@ -39,6 +39,9 @@ SOURCES = {
     "disposable_staging_readiness": Path(
         "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json"
     ),
+    "runtime_recovery": Path(
+        "Data/evals/ops/latest_synthetic_staging_runtime_recovery.json"
+    ),
 }
 
 CLAIM_BOUNDARY = (
@@ -125,6 +128,16 @@ def build_synthetic_staging_resilience_dossier(
             )
         )
     local_passed = sum(check["passed"] for check in checks)
+    runtime_recovery = artifacts.get("runtime_recovery") or {}
+    checks.append(
+        _check(
+            "leased_worker_and_postgres_runtime_recovery",
+            runtime_recovery.get("completed") is True
+            and runtime_recovery.get("patient_data_processed") is False,
+            "loopback_disposable_runtime",
+        )
+    )
+    local_passed = sum(check["passed"] for check in checks)
     blockers = [
         {
             "id": "container_runtime_drill",
@@ -134,11 +147,15 @@ def build_synthetic_staging_resilience_dossier(
         },
         {
             "id": "managed_postgres_restore",
-            "resolved": artifacts["deployment_recovery_drill"].get(
-                "postgres_restore_tested"
-            )
-            is True,
-            "current_status": "not_tested",
+            "resolved": False,
+            "current_status": (
+                "container_postgres_restore_passed_managed_restore_not_tested"
+                if (runtime_recovery.get("postgres_restore") or {}).get(
+                    "normalized_content_match"
+                )
+                is True
+                else "not_tested"
+            ),
         },
         {
             "id": "managed_vector_sync_and_comparison",

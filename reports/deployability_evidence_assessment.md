@@ -32,11 +32,11 @@ tests or synthetic artifacts alone.
 | SWE/testing | Modular services, typed frontend, ship tiers, fault tests, release artifacts | Large modules, selected CI subsets, non-hermetic dependency environment | Solid prototype engineering |
 | Automation | Leases, heartbeat, retries, dead letters, signed delivery receipts; Compose now launches the leased worker | External channel and human acknowledgement SLO not proven | Ready for synthetic staging drills, not clinical escalation |
 | Data engineering | Contracts, hashes, quarantine, lineage, replay drills | Local latest-file operation, no deployed orchestrator/catalog/SLA | Good local evidence, not an operated data platform |
-| Infrastructure | Production-shaped Compose and conservative Azure reference | No disposable cloud deployment proof, mutable images, no restore drill on managed services | Architecture-ready, runtime-unproven |
-| Security | RBAC/CORS/headers/OIDC validator and dependency scans | Demo auth/session storage and upload trust boundary | Blocks public network deployment |
+| Infrastructure | Loopback disposable stack, non-root distroless backend, leased worker, Postgres restore, inactive n8n import, and MailHog receipt drill | No disposable cloud deployment, managed restore, secret rotation, or public ingress proof | Strong local synthetic runtime evidence only |
+| Security | Hashed demo sessions, browser session-only bearer storage, OIDC/PKCE strict-profile contract, upload quarantine policy, dependency and container scans | Live IdP flow unproven; uploads disabled without an external scanner; container has 15 unfixed high findings | Blocks public network deployment |
 | Privacy | Structured redaction and patient-scoped APIs | No complete PHI lifecycle, retention/deletion/export, encryption/key/backup proof | Blocks real data |
 | Observability/cost | Request IDs, traces, route latency, token estimates and cache metrics | Process-local telemetry and no provider/billing reconciliation | Useful local diagnostics |
-| Deployment | Health/readiness checks, Compose profiles, release gate | Identity, privacy, upload controls, DR, real SLOs, external owners | Local demo near-ready; patient deployment not close |
+| Deployment | Health/readiness plus dependency-import probes, synthetic-only API boundary, runtime recovery drills, and release warnings | Public image security, managed-service DR, real SLOs, external owners, and institutional controls | Loopback synthetic staging verified; patient deployment not close |
 
 ## Implemented in This Pass
 
@@ -70,6 +70,48 @@ test rejects either profile if it returns to `run_task_worker.py`. This closes
 the specific deployment-wiring defect; it does not prove external delivery or
 human acknowledgement.
 
+### Restricted synthetic staging boundary
+
+- Demo bearer tokens are stored only as SHA-256 digests and raw browser tokens
+  use `sessionStorage`, not persistent `localStorage`.
+- Staging/production-shaped profiles require OIDC authorization-code flow with
+  PKCE configuration. This is a configuration/startup contract; a live identity
+  provider login and logout have not been demonstrated.
+- Mutating API requests in synthetic-only runtime require an explicit synthetic
+  data-classification header and synthetic patient namespace.
+- Uploads are disabled by default in strict profiles. When enabled, strict
+  base64 decoding, magic-byte/type alignment, quarantine-first promotion, and
+  an external scanner are mandatory; scanner errors fail closed.
+- `latest_restricted_synthetic_staging_assurance.json` is a required hard
+  blocker in the engineering release decision surface.
+
+### Executed disposable runtime drill
+
+The loopback Compose profile was built and exercised with seven services:
+backend, frontend, leased worker, Postgres, Redis, n8n, and MailHog. The current
+runtime artifact records all services running, backend dependency imports
+working, all network probes passing, a Postgres dump/restore drill, an inactive
+n8n workflow import, and a MailHog-only synthetic delivery receipt. It also
+records `patient_data_processed=false` and `real_external_delivery=false`.
+
+The backend image now uses a multi-stage non-root distroless runtime with a
+shell-free Python entrypoint. A runtime import probe was added after the drill
+found that a Compose `PYTHONPATH` override could make the shallow health route
+green while the worker failed to import SQLAlchemy.
+
+### Container and dependency evidence
+
+- Python and npm dependency scans currently report zero known high/critical
+  dependency findings; npm audit reports zero vulnerabilities.
+- Trivy scanned the exact current backend image. Moving from Debian 12/Python
+  3.11 distroless to Debian 13/Python 3.13 reduced severe findings from 2
+  critical plus 40 high to 0 critical plus 15 high. None of the remaining 15
+  currently has a published fixed version in the scanner feed.
+- The canonical decision is `BLOCK_PUBLIC_DEPLOYMENT`. The negative result is a
+  visible release warning and is linked into the software supply-chain evidence.
+- The scan is point-in-time engineering evidence, not a penetration test or
+  security certification.
+
 ## Current Gate State
 
 At the first post-change check, the new fail-closed artifact passed while the
@@ -83,31 +125,35 @@ the release gate:
 - `latest_rag_benchmark.json`
 - `latest_rag_intent_aware_eval.json`
 
-The final full ship workflow passed all 70 selected steps. The current release
-gate reports 229 artifacts, 28 decision artifacts, zero hard failures, and one
-warning. The decision surface returns `PROCEED_WITH_WARNINGS` with zero
-blockers. The remaining release-gate warning is non-zero unsafe leakage in an
-internal adversarial-generalization evaluation; it is visible and has not been
-waived. The repository secret scan now reports zero findings.
+The previous full ship workflow passed all 70 selected steps. The current fast
+ship tier also passes: 80 breast-monitoring tests, 27 progressive-loading and
+notification tests, 103 cloud/data/vector/security tests, 166 assurance/XAI/
+automation/safety tests, 57 frontend tests, lint, production build, 68
+fail-closed RAG tests, and 25 restricted-staging tests. The release gate reports
+231 artifacts, 29 decision artifacts, zero hard failures, and one appendix
+warning. The compact decision surface returns `PROCEED_WITH_WARNINGS` with four
+visible warnings: frozen adversarial v7, synthetic perturbation stress, XAI
+reliability, and container security. The appendix warning is non-zero unsafe
+leakage in an internal adversarial-generalization evaluation; it has not been
+waived. The repository secret scan reports zero findings.
 
 ## Priority Roadmap
 
-### P0: required before restricted synthetic staging
+### P0: required before any public or managed synthetic staging
 
-1. Remove or cryptographically hash stored bearer sessions; complete browser
-   OIDC authorization-code/PKCE and make ambiguous environment configuration
-   refuse startup.
-2. Disable uploads in staging until magic-byte validation, strict base64,
-   quarantine, scanner fail-closed behavior, encrypted object storage, and
-   cross-patient authorization tests exist.
-3. Add a synthetic-data-only deployment guard at API and persistence boundaries,
-   not just a banner.
-4. Run Postgres/Redis multi-worker lease, kill/recover, duplicate-delivery, and
-   idempotency tests against the actual Compose profile.
-5. Produce backup, restore, rollback, dependency-outage, and secret-rotation
-   evidence in disposable staging.
-6. Resolve or formally accept dependency vulnerabilities with owner, expiry,
-   compensating controls, and upgrade evidence; run an actual container scan.
+1. Track the 15 currently-unfixed high image findings against refreshed Debian
+   and Trivy feeds, rebuild/rescan the exact digest, and keep public deployment
+   blocked until the explicit image policy is satisfied.
+2. Complete a real browser OIDC authorization-code/PKCE login, refresh, logout,
+   revocation, and role-mapping drill against a disposable identity tenant.
+3. Keep uploads disabled until a real external malware scanner, encrypted object
+   store, deletion/retention policy, and cross-patient authorization drill exist.
+4. Add multi-worker kill/recover, duplicate-delivery, lease-expiry, Redis outage,
+   and idempotency tests to the executable Compose runtime drill.
+5. Add rollback, dependency-outage, secret-rotation, and encrypted backup/restore
+   evidence in a disposable managed environment.
+6. Add an immutable image digest/signature, generated image SBOM, provenance,
+   and admission policy rather than deploying a mutable `latest` tag.
 
 ### P1: strongest internal evidence improvements
 
@@ -141,8 +187,11 @@ waived. The repository secret scan now reports zero findings.
 
 - **Local synthetic demo:** deployable for portfolio demonstration; the fresh
   canonical ship run passes.
-- **Restricted synthetic staging:** materially closer after this pass, but still
-  blocked by identity, upload, privacy guard, managed recovery, and runtime proof.
+- **Restricted loopback synthetic staging:** executable engineering drill passes;
+  it is suitable for local portfolio/reviewer use with synthetic data only.
+- **Public or managed synthetic staging:** still blocked by container findings,
+  unexecuted live OIDC, disabled uploads, secret/DR gaps, and absent cloud runtime
+  proof.
 - **Patient-facing healthcare deployment:** not close and must remain blocked.
 
 The most credible portfolio story is not that NLCare is production healthcare

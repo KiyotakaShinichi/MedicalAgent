@@ -1,13 +1,20 @@
-import base64
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 import re
+import uuid
 
-from backend.config import UPLOAD_DIR, ensure_runtime_dirs
+from backend.config import UPLOAD_DIR, UPLOAD_QUARANTINE_DIR, ensure_runtime_dirs
 from backend.models import MRIFileRegistry, PatientUpload
 from backend.services.breast_cancer_journey import infer_journey_phase
 from backend.services.medical_report_parser import parse_report
+from backend.services.upload_security import (
+    UploadSecurityPolicy,
+    decode_upload_payload,
+    inspect_quarantined_upload,
+    load_upload_security_policy,
+)
 
 
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
@@ -28,9 +35,22 @@ IMAGING_UPLOAD_TYPES = {
 }
 
 
-def save_patient_upload(db, patient_id, upload_type, file_name, content_type, content_base64, notes=None, scan_date=None):
+def save_patient_upload(
+    db,
+    patient_id,
+    upload_type,
+    file_name,
+    content_type,
+    content_base64,
+    notes=None,
+    scan_date=None,
+    security_policy: UploadSecurityPolicy | None = None,
+):
     ensure_runtime_dirs()
-    decoded = _decode_base64_payload(content_base64)
+    policy = security_policy or load_upload_security_policy()
+    if not policy.enabled:
+        raise ValueError("Uploads are disabled for this deployment profile")
+    decoded = decode_upload_payload(content_base64)
     if len(decoded) > MAX_UPLOAD_BYTES:
         raise ValueError("Upload is too large for the demo endpoint")
 
@@ -39,31 +59,58 @@ def save_patient_upload(db, patient_id, upload_type, file_name, content_type, co
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
     patient_dir = UPLOAD_DIR / _safe_segment(patient_id) / safe_type
     patient_dir.mkdir(parents=True, exist_ok=True)
-    output_path = patient_dir / f"{timestamp}_{safe_name}"
-    output_path.write_bytes(decoded)
+    UPLOAD_QUARANTINE_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = patient_dir / f"{timestamp}_{uuid.uuid4().hex[:12]}_{safe_name}"
+    quarantine_path = UPLOAD_QUARANTINE_DIR / f"{uuid.uuid4().hex}.pending"
+    quarantine_path.write_bytes(decoded)
+    try:
+        inspection = inspect_quarantined_upload(
+            quarantine_path,
+            file_name=safe_name,
+            declared_content_type=content_type,
+            policy=policy,
+        )
+        os.replace(quarantine_path, output_path)
+    except Exception:
+        blocked = quarantine_path.with_suffix(".blocked")
+        if quarantine_path.exists():
+            os.replace(quarantine_path, blocked)
+        raise
+
+    security_manifest_path = output_path.with_name(output_path.name + ".security.json")
+    security_manifest_path.write_text(
+        json.dumps(inspection.to_dict(), indent=2),
+        encoding="utf-8",
+    )
 
     upload = PatientUpload(
         patient_id=patient_id,
         upload_type=safe_type,
         original_filename=file_name,
-        content_type=content_type,
+        content_type=inspection.detected_content_type,
         local_path=str(output_path),
         notes=notes,
     )
-    db.add(upload)
+    try:
+        db.add(upload)
 
-    if safe_type in IMAGING_UPLOAD_TYPES:
-        db.add(MRIFileRegistry(
-            patient_id=patient_id,
-            scan_date=scan_date,
-            modality=_infer_upload_modality(safe_type, file_name, notes),
-            series_description=file_name,
-            local_path=str(output_path),
-            notes=notes or "Uploaded from patient portal.",
-        ))
+        if safe_type in IMAGING_UPLOAD_TYPES:
+            db.add(MRIFileRegistry(
+                patient_id=patient_id,
+                scan_date=scan_date,
+                modality=_infer_upload_modality(safe_type, file_name, notes),
+                series_description=file_name,
+                local_path=str(output_path),
+                notes=notes or "Uploaded from patient portal.",
+            ))
 
-    db.commit()
-    db.refresh(upload)
+        db.commit()
+        db.refresh(upload)
+    except Exception:
+        db.rollback()
+        output_path.unlink(missing_ok=True)
+        security_manifest_path.unlink(missing_ok=True)
+        raise
     return upload_to_dict(upload)
 
 
@@ -88,6 +135,7 @@ def upload_to_dict(row):
         "content_type": row.content_type,
         "content_url": f"/me/uploads/{row.id}/content",
         "notes": row.notes,
+        "upload_security": _load_upload_security_manifest(row.local_path),
         "parsed_report": parsed_report,
         "journey_phase": infer_journey_phase({
             "upload_type": row.upload_type,
@@ -96,12 +144,6 @@ def upload_to_dict(row):
         }),
         "created_at": str(row.created_at),
     }
-
-
-def _decode_base64_payload(payload):
-    if "," in payload:
-        payload = payload.split(",", 1)[1]
-    return base64.b64decode(payload, validate=False)
 
 
 def _safe_segment(value):
@@ -178,3 +220,17 @@ def _extract_text_for_parser(local_path, content_type, file_name):
             except Exception:
                 continue
     return ""
+
+
+def _load_upload_security_manifest(local_path):
+    path = Path(str(local_path) + ".security.json")
+    if not path.is_file():
+        return {
+            "scanner_status": "legacy_unverified",
+            "synthetic_only": True,
+        }
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload if isinstance(payload, dict) else {"scanner_status": "invalid_manifest"}
+    except (OSError, json.JSONDecodeError):
+        return {"scanner_status": "invalid_manifest", "synthetic_only": True}

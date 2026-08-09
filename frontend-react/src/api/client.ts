@@ -49,9 +49,9 @@ const inFlightGetRequests = new Map<string, Promise<unknown>>();
 
 function getToken(): string | null {
   return (
-    localStorage.getItem("patientPortalAccessToken") ||
-    localStorage.getItem("clinicianAccessToken") ||
-    localStorage.getItem("adminAccessToken")
+    sessionStorage.getItem("patientPortalAccessToken") ||
+    sessionStorage.getItem("clinicianAccessToken") ||
+    sessionStorage.getItem("adminAccessToken")
   );
 }
 
@@ -70,6 +70,7 @@ async function request<T>(
     method,
     headers: {
       "Content-Type": "application/json",
+      "X-NLCare-Data-Class": "synthetic",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),

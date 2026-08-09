@@ -25,6 +25,7 @@ import json
 import os
 import re
 import threading
+from importlib import metadata as importlib_metadata
 from datetime import datetime, timezone
 from pathlib import Path
 from time import perf_counter
@@ -55,7 +56,7 @@ except ImportError:
 # -- Constants -----------------------------------------------------------------
 _DENSE_ENCODER_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 _ENCODER_CACHE: dict = {}
-_INDEX_FILE_CACHE: dict[str, tuple[tuple[int, int], dict]] = {}
+_INDEX_FILE_CACHE: dict[str, tuple[tuple[int, int, int, int], dict]] = {}
 _INDEX_CACHE_LOCK = threading.RLock()
 _CACHE_METRICS = {
     "index_file_hits": 0,
@@ -79,7 +80,10 @@ _PREWARM_STATE: dict[str, object] = {
 DENSE_HYBRID_SCHEMA_VERSION = "local_dense_faiss_hybrid_index_v2"
 SPARSE_BM25_SCHEMA_VERSION = "local_sparse_tfidf_bm25_index_v2"
 
-DEFAULT_RAG_INDEX_PATH = "Data/rag_index/local_hybrid_rag_index.joblib"
+DEFAULT_RAG_INDEX_PATH = os.getenv(
+    "NLCARE_RAG_INDEX_PATH",
+    "Data/rag_index/local_hybrid_rag_index.joblib",
+)
 
 # Backward-compat alias resolved at import time
 RAG_INDEX_SCHEMA_VERSION = DENSE_HYBRID_SCHEMA_VERSION if _DENSE_AVAILABLE else SPARSE_BM25_SCHEMA_VERSION
@@ -181,7 +185,10 @@ def build_rag_vector_index(corpus, index_path=DEFAULT_RAG_INDEX_PATH, knowledge_
     }
     path = Path(index_path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(payload, path)
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    joblib.dump(payload, temporary_path)
+    temporary_path.replace(path)
+    _write_index_manifest(path, payload)
     _seed_index_file_cache(path, payload)
     return index_summary(payload, path)
 
@@ -288,10 +295,19 @@ def load_rag_vector_index(index_path=DEFAULT_RAG_INDEX_PATH):
     path = Path(index_path)
     if not path.exists():
         return None
+    manifest = _read_index_manifest(path)
+    if not _manifest_matches_runtime(path, manifest):
+        return None
     cache_key = str(path.resolve())
     try:
         stat = path.stat()
-        signature = (stat.st_mtime_ns, stat.st_size)
+        manifest_stat = _manifest_path(path).stat()
+        signature = (
+            stat.st_mtime_ns,
+            stat.st_size,
+            manifest_stat.st_mtime_ns,
+            manifest_stat.st_size,
+        )
     except OSError:
         return None
     with _INDEX_CACHE_LOCK:
@@ -401,17 +417,46 @@ def prewarm_rag_vector_runtime(
 
 def rag_runtime_readiness() -> dict[str, object]:
     with _INDEX_CACHE_LOCK:
-        return dict(_PREWARM_STATE)
+        state = dict(_PREWARM_STATE)
+    dense_required = os.getenv("NLCARE_RAG_REQUIRE_DENSE", "false").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    dense_active = state.get("backend") == "local_dense_faiss_hybrid_index"
+    state.update(
+        {
+            "dense_backend_required": dense_required,
+            "dense_backend_active": dense_active,
+            "meets_deployment_requirement": bool(
+                state.get("status") == "ready"
+                and (dense_active or not dense_required)
+            ),
+            "active_mode": (
+                "dense_faiss_plus_bm25_rrf"
+                if dense_active
+                else "sparse_tfidf_bm25_fallback"
+            ),
+        }
+    )
+    return state
 
 
 def _seed_index_file_cache(path: Path, payload: dict) -> None:
     try:
         stat = path.stat()
+        manifest_stat = _manifest_path(path).stat()
     except OSError:
         return
     with _INDEX_CACHE_LOCK:
         _INDEX_FILE_CACHE[str(path.resolve())] = (
-            (stat.st_mtime_ns, stat.st_size),
+            (
+                stat.st_mtime_ns,
+                stat.st_size,
+                manifest_stat.st_mtime_ns,
+                manifest_stat.st_size,
+            ),
             payload,
         )
 
@@ -621,6 +666,73 @@ def _document_text_from_payload(payload):
         payload.get("section") or "",
         payload.get("text") or "",
     ])
+
+
+# -- Persisted-index compatibility -------------------------------------------
+
+def _manifest_path(index_path: Path) -> Path:
+    return index_path.with_suffix(index_path.suffix + ".manifest.json")
+
+
+def _runtime_dependency_manifest() -> dict[str, str | None]:
+    packages = ["scikit-learn", "numpy", "joblib"]
+    if _DENSE_AVAILABLE:
+        packages.extend(["sentence-transformers", "faiss-cpu"])
+    versions: dict[str, str | None] = {}
+    for package in packages:
+        try:
+            versions[package] = importlib_metadata.version(package)
+        except importlib_metadata.PackageNotFoundError:
+            versions[package] = None
+    return versions
+
+
+def _write_index_manifest(index_path: Path, payload: dict) -> None:
+    manifest_path = _manifest_path(index_path)
+    manifest = {
+        "schema_version": "rag_index_runtime_manifest_v1",
+        "index_schema_version": payload.get("schema_version"),
+        "knowledge_fingerprint": payload.get("knowledge_fingerprint"),
+        "retrieval_backend": (payload.get("metadata") or {}).get(
+            "retrieval_backend"
+        ),
+        "runtime_dependencies": _runtime_dependency_manifest(),
+        "index_sha256": hashlib.sha256(index_path.read_bytes()).hexdigest(),
+        "clinical_validation": False,
+    }
+    temporary_path = manifest_path.with_suffix(manifest_path.suffix + ".tmp")
+    temporary_path.write_text(
+        json.dumps(manifest, indent=2),
+        encoding="utf-8",
+    )
+    temporary_path.replace(manifest_path)
+
+
+def _read_index_manifest(index_path: Path) -> dict | None:
+    try:
+        payload = json.loads(_manifest_path(index_path).read_text(encoding="utf-8"))
+    except (OSError, ValueError, json.JSONDecodeError):
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _manifest_matches_runtime(index_path: Path, manifest: dict | None) -> bool:
+    if not manifest:
+        return False
+    if manifest.get("index_schema_version") != _current_schema_version():
+        return False
+    if manifest.get("retrieval_backend") != _current_backend_name():
+        return False
+    if manifest.get("runtime_dependencies") != _runtime_dependency_manifest():
+        return False
+    expected_hash = str(manifest.get("index_sha256") or "")
+    if not expected_hash:
+        return False
+    try:
+        actual_hash = hashlib.sha256(index_path.read_bytes()).hexdigest()
+    except OSError:
+        return False
+    return actual_hash == expected_hash
 
 
 # -- Index freshness -----------------------------------------------------------

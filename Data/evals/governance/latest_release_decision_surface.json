@@ -1,10 +1,10 @@
 {
   "schema_version": "release_decision_surface_v3",
-  "generated_at": "2026-08-09T12:16:19.113664+00:00",
+  "generated_at": "2026-08-09T15:53:28.248221+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "hard_blocker_count": 0,
-  "warning_count": 4,
+  "warning_count": 3,
   "primary_check_count": 20,
   "primary_surface_cap": 20,
   "checks": [
@@ -19,7 +19,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-08-09T12:13:01.139943+00:00",
-      "age_days": 0.0,
+      "age_days": 0.15,
       "stale": false,
       "key_metrics": {}
     },
@@ -34,7 +34,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-08-09T12:12:21.257138+00:00",
-      "age_days": 0.0,
+      "age_days": 0.15,
       "stale": false,
       "key_metrics": {}
     },
@@ -49,7 +49,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-21T15:13:23.607586+00:00",
-      "age_days": 18.88,
+      "age_days": 19.03,
       "stale": false,
       "key_metrics": {}
     },
@@ -64,7 +64,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "passed",
       "generated_at": "2026-07-17T06:27:38.556411+00:00",
-      "age_days": 23.24,
+      "age_days": 23.39,
       "stale": false,
       "key_metrics": {}
     },
@@ -78,7 +78,22 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "passed",
-      "generated_at": "2026-08-09T12:16:15.444083+00:00",
+      "generated_at": "2026-08-09T15:53:02.777604+00:00",
+      "age_days": 0.0,
+      "stale": false,
+      "key_metrics": {}
+    },
+    {
+      "id": "restricted_synthetic_staging_boundary",
+      "tier": "hard_blocker",
+      "domain": "deployment",
+      "owner": "deployment/security",
+      "path": "Data/evals/ops/latest_restricted_synthetic_staging_assurance.json",
+      "max_age_days": 30,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "passed",
+      "generated_at": "2026-08-09T15:53:16.447531+00:00",
       "age_days": 0.0,
       "stale": false,
       "key_metrics": {}
@@ -94,7 +109,7 @@
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-07-30T05:13:05.212399+00:00",
-      "age_days": 10.29,
+      "age_days": 10.44,
       "stale": false,
       "key_metrics": {}
     },
@@ -109,7 +124,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-07-28T14:43:01.240454+00:00",
-      "age_days": 11.9,
+      "age_days": 12.05,
       "stale": false,
       "key_metrics": {
         "improvement_proven_vs_bm25": false,
@@ -128,7 +143,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-07-22T04:13:27.466200+00:00",
-      "age_days": 18.34,
+      "age_days": 18.49,
       "stale": false,
       "key_metrics": {
         "pass_rate": 0.9048,
@@ -148,7 +163,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "acceptable",
       "generated_at": "2026-08-09T12:04:47.939607+00:00",
-      "age_days": 0.01,
+      "age_days": 0.16,
       "stale": false,
       "key_metrics": {
         "production_ready": false,
@@ -163,17 +178,17 @@
       "owner": "SWE/security",
       "path": "Data/evals/ops/latest_dependency_security_scan.json",
       "max_age_days": 30,
-      "decision": "attention",
-      "evidence_state": "needs_attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-08-09T12:02:38.955379+00:00",
-      "age_days": 0.01,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "acceptable",
+      "generated_at": "2026-08-09T12:59:46.231913+00:00",
+      "age_days": 0.12,
       "stale": false,
       "key_metrics": {
         "unavailable_tool_count": 0,
-        "high_or_critical_count": 3,
-        "known_vulnerability_count": 12,
-        "vulnerable_package_count": 9
+        "high_or_critical_count": 0,
+        "known_vulnerability_count": 0,
+        "vulnerable_package_count": 0
       }
     },
     {
@@ -187,7 +202,7 @@
       "evidence_state": "needs_attention",
       "observed_status": "needs_attention",
       "generated_at": "2026-08-09T12:12:04.392265+00:00",
-      "age_days": 0.0,
+      "age_days": 0.15,
       "stale": false,
       "key_metrics": {
         "promotion_decision": "HOLD_SYNTHETIC_ONLY",
@@ -243,14 +258,14 @@
       "owner": "MLE/XAI",
       "path": "Data/evals/models/latest_xai_reliability_gate.json",
       "max_age_days": 30,
-      "decision": "attention",
-      "evidence_state": "needs_attention",
-      "observed_status": "needs_attention",
-      "generated_at": "2026-08-09T12:03:37.357277+00:00",
-      "age_days": 0.01,
+      "decision": "pass",
+      "evidence_state": "verified_internal",
+      "observed_status": "acceptable",
+      "generated_at": "2026-08-09T15:53:27.921036+00:00",
+      "age_days": 0.0,
       "stale": false,
       "key_metrics": {
-        "status": "needs_attention",
+        "status": "acceptable",
         "exact_rank_claim_allowed": null,
         "clinical_validation": false
       }
@@ -266,7 +281,7 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-08-09T12:01:08.447765+00:00",
-      "age_days": 0.01,
+      "age_days": 0.16,
       "stale": false,
       "key_metrics": {
         "patient_data_processed": false,
@@ -283,7 +298,7 @@
       "decision": "pass",
       "evidence_state": "verified_internal",
       "observed_status": "strong_offline_drill",
-      "generated_at": "2026-08-09T12:01:12.845751+00:00",
+      "generated_at": "2026-08-09T15:39:05.870301+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
@@ -293,41 +308,42 @@
       }
     },
     {
-      "id": "cloud_infrastructure",
+      "id": "container_security",
       "tier": "warning",
       "domain": "infrastructure",
-      "owner": "infrastructure",
-      "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
+      "owner": "SWE/security",
+      "path": "Data/evals/ops/latest_container_security_scan.json",
       "max_age_days": 30,
-      "decision": "pass",
-      "evidence_state": "verified_internal",
-      "observed_status": "compiled_reference_architecture",
-      "generated_at": "2026-08-09T12:01:42.331491+00:00",
+      "decision": "attention",
+      "evidence_state": "needs_attention",
+      "observed_status": "needs_attention",
+      "generated_at": "2026-08-09T15:34:17.265109+00:00",
       "age_days": 0.01,
       "stale": false,
       "key_metrics": {
-        "bicep_compile_completed": true,
-        "what_if_completed": false,
-        "cloud_deployment_completed": false
+        "deployment_decision": "BLOCK_PUBLIC_DEPLOYMENT",
+        "clinical_validation": false,
+        "healthcare_production_ready": false
       }
     },
     {
-      "id": "durable_automation_worker",
+      "id": "synthetic_staging_resilience",
       "tier": "warning",
       "domain": "automation",
-      "owner": "automation",
-      "path": "Data/evals/ops/latest_durable_automation_worker_eval.json",
+      "owner": "automation/infra",
+      "path": "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json",
       "max_age_days": 30,
       "decision": "pass",
       "evidence_state": "verified_internal",
-      "observed_status": "acceptable",
-      "generated_at": "2026-07-19T01:30:59.933113+00:00",
-      "age_days": 21.45,
+      "observed_status": "strong_local_only_external_blocked",
+      "generated_at": "2026-08-09T15:53:27.306765+00:00",
+      "age_days": 0.0,
       "stale": false,
       "key_metrics": {
-        "control_pass_rate": 1.0,
-        "live_n8n_delivery_enabled": false,
-        "live_delivery_test_completed": false
+        "local_passed_count": 8,
+        "local_check_count": 8,
+        "managed_cloud_drill_completed": false,
+        "human_acknowledgement_proven": false
       }
     },
     {
@@ -341,40 +357,13 @@
       "evidence_state": "verified_internal",
       "observed_status": "strong",
       "generated_at": "2026-08-09T12:09:36.631831+00:00",
-      "age_days": 0.0,
+      "age_days": 0.16,
       "stale": false,
       "key_metrics": {
         "attempt_count": 30,
         "pass_rate": 1.0,
         "external_delivery_performed": false,
         "delivery_receipt_is_human_acknowledgement": false
-      }
-    },
-    {
-      "id": "deployment_profile",
-      "tier": "warning",
-      "domain": "deployment",
-      "owner": "deployment",
-      "path": "Data/evals/ops/latest_deployment_profile_matrix.json",
-      "max_age_days": 30,
-      "decision": "pass",
-      "evidence_state": "verified_internal",
-      "observed_status": "strong",
-      "generated_at": "2026-08-09T12:02:08.850756+00:00",
-      "age_days": 0.01,
-      "stale": false,
-      "key_metrics": {
-        "active_profile": {
-          "profile": "development",
-          "status": "development_profile",
-          "strict_profile": false,
-          "deployment_capability": "local_or_controlled_demo_only",
-          "n_failed": 0
-        },
-        "matrix_passed": true,
-        "cloud_deployment_completed": false,
-        "live_oidc_integration_completed": false,
-        "deployment_capability": "configuration_matrix_validated_local_runtime_only"
       }
     },
     {
@@ -388,7 +377,7 @@
       "evidence_state": "scaffolded",
       "observed_status": "blocked_runtime",
       "generated_at": "2026-07-30T08:20:44.103690+00:00",
-      "age_days": 10.16,
+      "age_days": 10.31,
       "stale": false,
       "key_metrics": {
         "model_trained": false,
@@ -407,7 +396,7 @@
       "evidence_state": "external_blocked",
       "observed_status": "ready_to_request_review",
       "generated_at": "2026-06-01T17:33:21.375512+00:00",
-      "age_days": 68.78,
+      "age_days": 68.93,
       "stale": false,
       "key_metrics": {
         "completed": null,
@@ -430,18 +419,18 @@
       "domain": "mle",
       "state": "needs_attention",
       "check_count": 3,
-      "verified_internal_count": 1,
-      "needs_attention_count": 2,
+      "verified_internal_count": 2,
+      "needs_attention_count": 1,
       "scaffolded_count": 0,
       "external_blocked_count": 0,
       "stale_count": 0
     },
     {
       "domain": "swe",
-      "state": "needs_attention",
+      "state": "verified_internal_only",
       "check_count": 3,
-      "verified_internal_count": 2,
-      "needs_attention_count": 1,
+      "verified_internal_count": 3,
+      "needs_attention_count": 0,
       "scaffolded_count": 0,
       "external_blocked_count": 0,
       "stale_count": 0
@@ -458,10 +447,10 @@
     },
     {
       "domain": "infrastructure",
-      "state": "verified_internal_only",
+      "state": "needs_attention",
       "check_count": 1,
-      "verified_internal_count": 1,
-      "needs_attention_count": 0,
+      "verified_internal_count": 0,
+      "needs_attention_count": 1,
       "scaffolded_count": 0,
       "external_blocked_count": 0,
       "stale_count": 0
@@ -509,8 +498,8 @@
   ],
   "domain_count": 9,
   "evidence_state_counts": {
-    "verified_internal": 14,
-    "needs_attention": 4,
+    "verified_internal": 15,
+    "needs_attention": 3,
     "scaffolded": 1,
     "external_blocked": 1
   },
@@ -522,7 +511,8 @@
     "Fine-tuning is scaffolded only; no adapter or candidate generations exist.",
     "OIDC bearer-token verification exists, but no live provider, browser PKCE flow, or provider logout has been demonstrated.",
     "Automation delivery evidence is not human acknowledgement or emergency coverage.",
-    "Latency and dependency reproducibility do not establish production readiness."
+    "Latency and dependency reproducibility do not establish production readiness.",
+    "The backend container remains blocked for public deployment while any high- or critical-severity findings remain, including findings without an upstream fix."
   ],
   "detailed_registry_remains_authoritative": true,
   "clinical_validation": false,

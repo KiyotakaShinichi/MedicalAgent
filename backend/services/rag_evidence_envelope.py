@@ -11,6 +11,7 @@ it does not establish factual correctness or clinical validation.
 from __future__ import annotations
 
 import hashlib
+import os
 import threading
 from collections import Counter
 from dataclasses import dataclass, field
@@ -213,6 +214,8 @@ def build_evidence_envelope(
 
     claim_validation = result.get("claim_validation") if isinstance(result.get("claim_validation"), Mapping) else {}
     claims, mappings = _claim_references(claim_validation)
+    if evidence_required and _high_risk_semantic_validation_required(claims):
+        errors = _dedupe_codes([*errors, "high_risk_semantic_validation_required"])
     citation_status = str(claim_validation.get("citation_status") or "missing")
     claim_count = _safe_int(claim_validation.get("claim_count"))
     supported_count = _safe_int(claim_validation.get("supported_count"))
@@ -901,6 +904,30 @@ def _claim_references(claim_validation: Mapping[str, Any]):
             "status": str(verdict.get("status") or "unknown"),
         })
     return claims, mappings
+
+
+def _high_risk_semantic_validation_required(claims: Sequence[Mapping[str, Any]]) -> bool:
+    """Fail closed on high-risk factual claims when strict semantic validation is absent."""
+    profile = str(os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or "development").lower()
+    configured = os.environ.get("NLCARE_HIGH_RISK_SEMANTIC_VALIDATION_REQUIRED")
+    enabled = (
+        profile in {"staging", "production", "prod"}
+        if configured is None
+        else str(configured).strip().lower() in {"1", "true", "yes", "on"}
+    )
+    if not enabled:
+        return False
+    high_risk_types = {
+        "treatment_or_dose",
+        "prognosis_or_outcome",
+        "genetic",
+        "tumor_marker",
+    }
+    relevant = [claim for claim in claims if str(claim.get("claim_type")) in high_risk_types]
+    return bool(relevant) and any(
+        claim.get("validation_method") != "nli_entailment"
+        for claim in relevant
+    )
 
 
 def _claim_support_status(*, evidence_required, claim_count, supported_count, weak_count, unsupported_count, mode):

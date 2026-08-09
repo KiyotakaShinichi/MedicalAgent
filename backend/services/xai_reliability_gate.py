@@ -45,6 +45,22 @@ def build_xai_reliability_gate(
         retraining_metrics.get("global_rank_correlation_median")
     )
     rank_p05 = _float(retraining_metrics.get("global_rank_correlation_p05"))
+    consensus = (
+        retraining.get("consensus_feature_tiers")
+        if isinstance(retraining.get("consensus_feature_tiers"), dict)
+        else {}
+    )
+    stable_groups = _consensus_group_names(
+        consensus.get("stable_core_alphabetical")
+    )
+    suppressed_groups = _consensus_group_names(
+        consensus.get("suppressed_low_consensus_alphabetical")
+    )
+    retraining_policy = (
+        retraining.get("presentation_policy")
+        if isinstance(retraining.get("presentation_policy"), dict)
+        else {}
+    )
     mechanical_fidelity = (
         additivity is not None
         and additivity >= 0.99
@@ -63,6 +79,12 @@ def build_xai_reliability_gate(
         and rank_p05 is not None
         and rank_p05 >= 0.0
     )
+    bounded_grouped_display = bool(
+        grouped_presence_allowed
+        and stable_groups
+        and retraining_policy.get("enforced") is True
+        and retraining_policy.get("exact_rank_display_allowed") is False
+    )
     display_mode = (
         "ranked_factors_with_noncausal_boundary"
         if ranked_order_allowed
@@ -73,7 +95,18 @@ def build_xai_reliability_gate(
     payload = {
         "schema_version": "xai_reliability_gate_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "status": "acceptable" if ranked_order_allowed else "needs_attention",
+        "status": (
+            "acceptable"
+            if ranked_order_allowed or bounded_grouped_display
+            else "needs_attention"
+        ),
+        "status_basis": (
+            "ranked_order_stable_internal_only"
+            if ranked_order_allowed
+            else "bounded_consensus_groups_exact_order_suppressed"
+            if bounded_grouped_display
+            else "xai_display_evidence_insufficient"
+        ),
         "clinical_validation": False,
         "causal_interpretation_allowed": False,
         "evidence": {
@@ -87,6 +120,9 @@ def build_xai_reliability_gate(
             "human_comprehension_study_completed": bool(
                 rank.get("human_participant_study_completed")
             ),
+            "stable_consensus_group_count": len(stable_groups),
+            "suppressed_low_consensus_group_count": len(suppressed_groups),
+            "bounded_display_control_passed": bounded_grouped_display,
         },
         "patient_display_policy": {
             "mode": display_mode,
@@ -94,6 +130,15 @@ def build_xai_reliability_gate(
             "ranked_feature_order_allowed": ranked_order_allowed,
             "show_numeric_shap_values": False,
             "maximum_factor_count": 3,
+            "stable_factor_groups": stable_groups,
+            "suppressed_factor_groups": suppressed_groups,
+            "near_outcome_proxies_allowed": False,
+            "unlisted_factor_groups_allowed": False,
+            "display_order_basis": (
+                "internal_rank_with_noncausal_boundary"
+                if ranked_order_allowed
+                else "alphabetical_not_importance"
+            ),
             "instability_warning_required": not ranked_order_allowed,
             "warning": (
                 "These are broad synthetic model factors. Their exact order "
@@ -116,6 +161,18 @@ def build_xai_reliability_gate(
             )
             if blocked
         ],
+        "remaining_evidence_gaps": [
+            item
+            for item, open_gap in (
+                ("exact_factor_order_unstable", not ranked_order_allowed),
+                (
+                    "human_comprehension_not_completed",
+                    not bool(rank.get("human_participant_study_completed")),
+                ),
+                ("real_patient_explanation_transfer_unmeasured", True),
+            )
+            if open_gap
+        ],
         "claim_boundary": CLAIM_BOUNDARY,
     }
     _write(output_path, payload)
@@ -136,9 +193,27 @@ def load_xai_reliability_policy(
         "ranked_feature_order_allowed": False,
         "show_numeric_shap_values": False,
         "maximum_factor_count": 0,
+        "stable_factor_groups": [],
+        "suppressed_factor_groups": [],
+        "near_outcome_proxies_allowed": False,
+        "unlisted_factor_groups_allowed": False,
+        "display_order_basis": "suppressed",
         "instability_warning_required": True,
         "warning": "Explanation reliability evidence is unavailable, so feature factors are hidden.",
     }
+
+
+def _consensus_group_names(rows: Any) -> list[str]:
+    if not isinstance(rows, list):
+        return []
+    return sorted(
+        {
+            str(row.get("feature_group") or "").strip()
+            for row in rows
+            if isinstance(row, dict)
+            and str(row.get("feature_group") or "").strip()
+        }
+    )
 
 
 def _float(value: Any) -> float | None:

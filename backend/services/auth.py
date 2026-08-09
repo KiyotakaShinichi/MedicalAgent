@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+import hashlib
 import os
 import secrets
 
@@ -7,6 +8,7 @@ from backend.models import AccessSession, Patient, UserAccount
 
 
 VALID_ROLES = {"patient", "clinician", "admin"}
+SESSION_DIGEST_PREFIX = "sha256$"
 DEMO_ROLE_CREDENTIALS = {
     "admin": {
         "aliases": {"admin", "admin@demo.local", "demo-admin"},
@@ -39,8 +41,9 @@ def create_demo_session(db, role: str, patient_id: str | None = None):
             raise ValueError("patient not found")
 
     _ensure_demo_account(db, normalized_role, patient_id)
+    raw_token = secrets.token_urlsafe(32)
     session = AccessSession(
-        token=secrets.token_urlsafe(32),
+        token=_session_digest(raw_token),
         role=normalized_role,
         patient_id=patient_id if normalized_role == "patient" else None,
         expires_at=datetime.now(timezone.utc) + timedelta(hours=12),
@@ -50,7 +53,7 @@ def create_demo_session(db, role: str, patient_id: str | None = None):
     db.refresh(session)
 
     return {
-        "access_token": session.token,
+        "access_token": raw_token,
         "token_type": "bearer",
         "role": session.role,
         "patient_id": session.patient_id,
@@ -98,7 +101,7 @@ def get_context_from_authorization(db, authorization_header: str | None):
         raise PermissionError("Missing bearer token")
 
     token = authorization_header.split(" ", 1)[1].strip()
-    session = db.query(AccessSession).filter(AccessSession.token == token).first()
+    session = db.query(AccessSession).filter(AccessSession.token == _session_digest(token)).first()
     if session is None:
         from backend.services.oidc_auth import OIDCAuthError, authenticate_oidc_token
 
@@ -129,7 +132,7 @@ def revoke_session(db, token: str) -> bool:
     server-side meaning without pretending this prototype has a full identity
     provider or healthcare-grade session management.
     """
-    session = db.query(AccessSession).filter(AccessSession.token == token).first()
+    session = db.query(AccessSession).filter(AccessSession.token == _session_digest(token)).first()
     if session is None:
         return False
     db.delete(session)
@@ -140,6 +143,9 @@ def revoke_session(db, token: str) -> bool:
 def require_patient_context(context: AccessContext):
     if context.role != "patient" or not context.patient_id:
         raise PermissionError("Patient session required")
+    from backend.services.synthetic_data_boundary import assert_synthetic_patient_id
+
+    assert_synthetic_patient_id(context.patient_id)
     return context
 
 
@@ -177,3 +183,8 @@ def _patient_from_demo_username(db, normalized_username):
         if patient.id.lower() == normalized_username:
             return patient
     return None
+
+
+def _session_digest(token: str) -> str:
+    """Return a lookup-safe digest so raw bearer tokens are never persisted."""
+    return SESSION_DIGEST_PREFIX + hashlib.sha256(token.encode("utf-8")).hexdigest()

@@ -26,7 +26,19 @@ def test_gate_suppresses_rank_claim_when_retraining_order_is_unstable(tmp_path):
                 "global_top_k_jaccard_p05": 0.6,
                 "global_rank_correlation_median": -0.2,
                 "global_rank_correlation_p05": -1.0,
-            }
+            },
+            "consensus_feature_tiers": {
+                "stable_core_alphabetical": [
+                    {"feature_group": "cycle", "top_k_inclusion_rate": 1.0}
+                ],
+                "suppressed_low_consensus_alphabetical": [
+                    {"feature_group": "age", "top_k_inclusion_rate": 0.2}
+                ],
+            },
+            "presentation_policy": {
+                "enforced": True,
+                "exact_rank_display_allowed": False,
+            },
         },
     )
     result = build_xai_reliability_gate(
@@ -41,6 +53,10 @@ def test_gate_suppresses_rank_claim_when_retraining_order_is_unstable(tmp_path):
     assert policy["show_grouped_factors"] is True
     assert policy["ranked_feature_order_allowed"] is False
     assert policy["show_numeric_shap_values"] is False
+    assert policy["stable_factor_groups"] == ["cycle"]
+    assert policy["display_order_basis"] == "alphabetical_not_importance"
+    assert result["status"] == "acceptable"
+    assert result["status_basis"] == "bounded_consensus_groups_exact_order_suppressed"
     assert result["causal_interpretation_allowed"] is False
 
 
@@ -49,3 +65,4 @@ def test_missing_artifact_policy_fails_closed(tmp_path):
     assert policy["mode"] == "suppress_feature_factors"
     assert policy["show_grouped_factors"] is False
     assert policy["ranked_feature_order_allowed"] is False
+    assert policy["stable_factor_groups"] == []

@@ -36,7 +36,12 @@ def test_valid_production_shaped_profile_passes_runtime_configuration_checks():
     })
     assert report["status"] == "blocked"
     failed = {item["name"] for item in report["failed_checks"]}
-    assert failed == {"non_demo_identity_provider_integrated"}
+    assert {
+        "non_demo_identity_provider_integrated",
+        "browser_oidc_pkce_configured",
+        "synthetic_only_runtime_lock",
+        "synthetic_data_classification",
+    } <= failed
     assert report["deployment_capability"] == "strict_profile_blocked"
     assert report["healthcare_production_ready"] is False
 
@@ -53,9 +58,21 @@ def test_production_shaped_profile_accepts_complete_oidc_configuration_only_as_e
         "NLCARE_OIDC_AUDIENCE": "nlcare-api",
         "NLCARE_OIDC_JWKS_URL": "https://identity.example/.well-known/jwks.json",
         "NLCARE_OIDC_ALGORITHMS": "RS256",
+        "NLCARE_OIDC_AUTHORIZATION_ENDPOINT": "https://identity.example/authorize",
+        "NLCARE_OIDC_TOKEN_ENDPOINT": "https://identity.example/token",
+        "NLCARE_OIDC_CLIENT_ID": "nlcare-browser",
+        "NLCARE_OIDC_REDIRECT_URI": "https://nlcare.example/auth/callback",
+        "NLCARE_OIDC_SCOPES": "openid profile",
+        "NLCARE_SYNTHETIC_ONLY": "true",
+        "NLCARE_DATA_CLASSIFICATION": "synthetic",
+        "NLCARE_UPLOADS_ENABLED": "false",
+        "NLCARE_UPLOAD_SCANNER_MODE": "disabled",
     })
     assert report["status"] == "strong"
     assert report["oidc_config_valid"] is True
+    assert report["browser_oidc_config_valid"] is True
+    assert report["synthetic_only"] is True
+    assert report["uploads_enabled"] is False
     assert report["deployment_capability"] == "strict_profile_configured_not_healthcare_ready"
     assert report["healthcare_production_ready"] is False
 

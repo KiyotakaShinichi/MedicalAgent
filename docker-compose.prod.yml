@@ -47,6 +47,19 @@ services:
       NLCARE_OIDC_ALGORITHMS: ${NLCARE_OIDC_ALGORITHMS:-RS256}
       NLCARE_OIDC_ROLE_CLAIM: ${NLCARE_OIDC_ROLE_CLAIM:-roles}
       NLCARE_OIDC_PATIENT_ID_CLAIM: ${NLCARE_OIDC_PATIENT_ID_CLAIM:-patient_id}
+      NLCARE_OIDC_AUTHORIZATION_ENDPOINT: ${NLCARE_OIDC_AUTHORIZATION_ENDPOINT:-}
+      NLCARE_OIDC_TOKEN_ENDPOINT: ${NLCARE_OIDC_TOKEN_ENDPOINT:-}
+      NLCARE_OIDC_CLIENT_ID: ${NLCARE_OIDC_CLIENT_ID:-}
+      NLCARE_OIDC_REDIRECT_URI: ${NLCARE_OIDC_REDIRECT_URI:-}
+      NLCARE_OIDC_SCOPES: ${NLCARE_OIDC_SCOPES:-openid profile}
+      NLCARE_SYNTHETIC_ONLY: "true"
+      NLCARE_DATA_CLASSIFICATION: synthetic
+      NLCARE_UPLOADS_ENABLED: ${NLCARE_UPLOADS_ENABLED:-false}
+      NLCARE_UPLOAD_SCANNER_MODE: ${NLCARE_UPLOAD_SCANNER_MODE:-disabled}
+      NLCARE_UPLOAD_SCANNER_COMMAND: ${NLCARE_UPLOAD_SCANNER_COMMAND:-}
+      NLCARE_HIGH_RISK_SEMANTIC_VALIDATION_REQUIRED: "true"
+      NLCARE_RAG_REQUIRE_DENSE: "true"
+      NLCARE_RAG_INDEX_PATH: /app/Data/rag_index/production_dense_hybrid.joblib
       GROQ_API_KEY: ${GROQ_API_KEY:-}
       GROQ_ANSWER_MODEL: ${GROQ_ANSWER_MODEL:-openai/gpt-oss-120b}
       GROQ_ROUTER_MODEL: ${GROQ_ROUTER_MODEL:-llama-3.3-70b-versatile}
@@ -57,7 +70,7 @@ services:
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8017/ready', timeout=3).read()"]
+      test: ["CMD", "/usr/bin/python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8017/ready', timeout=3).read()"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -86,10 +99,19 @@ services:
       NLCARE_OIDC_ALGORITHMS: ${NLCARE_OIDC_ALGORITHMS:-RS256}
       NLCARE_OIDC_ROLE_CLAIM: ${NLCARE_OIDC_ROLE_CLAIM:-roles}
       NLCARE_OIDC_PATIENT_ID_CLAIM: ${NLCARE_OIDC_PATIENT_ID_CLAIM:-patient_id}
+      NLCARE_OIDC_AUTHORIZATION_ENDPOINT: ${NLCARE_OIDC_AUTHORIZATION_ENDPOINT:-}
+      NLCARE_OIDC_TOKEN_ENDPOINT: ${NLCARE_OIDC_TOKEN_ENDPOINT:-}
+      NLCARE_OIDC_CLIENT_ID: ${NLCARE_OIDC_CLIENT_ID:-}
+      NLCARE_OIDC_REDIRECT_URI: ${NLCARE_OIDC_REDIRECT_URI:-}
+      NLCARE_OIDC_SCOPES: ${NLCARE_OIDC_SCOPES:-openid profile}
+      NLCARE_SYNTHETIC_ONLY: "true"
+      NLCARE_DATA_CLASSIFICATION: synthetic
+      NLCARE_UPLOADS_ENABLED: "false"
+      NLCARE_UPLOAD_SCANNER_MODE: disabled
     volumes:
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase
-    command: ["python", "scripts/run_automation_worker.py", "--poll-seconds", "5", "--lease-seconds", "120"]
+    command: ["scripts/run_automation_worker.py", "--poll-seconds", "5", "--lease-seconds", "120"]
     init: true
     restart: unless-stopped
 

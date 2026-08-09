@@ -1,7 +1,8 @@
 {
   "schema_version": "xai_reliability_gate_v1",
-  "generated_at": "2026-08-09T12:03:37.357277+00:00",
-  "status": "needs_attention",
+  "generated_at": "2026-08-09T15:53:27.921036+00:00",
+  "status": "acceptable",
+  "status_basis": "bounded_consensus_groups_exact_order_suppressed",
   "clinical_validation": false,
   "causal_interpretation_allowed": false,
   "evidence": {
@@ -12,7 +13,10 @@
     "global_rank_correlation_median": -0.27381,
     "global_rank_correlation_p05": -1.0,
     "rank_stability_internal_only": true,
-    "human_comprehension_study_completed": false
+    "human_comprehension_study_completed": false,
+    "stable_consensus_group_count": 7,
+    "suppressed_low_consensus_group_count": 9,
+    "bounded_display_control_passed": true
   },
   "patient_display_policy": {
     "mode": "grouped_factors_without_rank_claim",
@@ -20,12 +24,40 @@
     "ranked_feature_order_allowed": false,
     "show_numeric_shap_values": false,
     "maximum_factor_count": 3,
+    "stable_factor_groups": [
+      "cycle",
+      "mri_tumor_size_cm",
+      "nadir_hemoglobin",
+      "pre_hemoglobin",
+      "pre_wbc",
+      "recovery_hemoglobin",
+      "stage"
+    ],
+    "suppressed_factor_groups": [
+      "age",
+      "dose_delayed",
+      "intervention_count",
+      "max_symptom_severity",
+      "nadir_anc",
+      "nadir_platelets",
+      "nadir_wbc",
+      "recovery_platelets",
+      "recovery_wbc"
+    ],
+    "near_outcome_proxies_allowed": false,
+    "unlisted_factor_groups_allowed": false,
+    "display_order_basis": "alphabetical_not_importance",
     "instability_warning_required": true,
     "warning": "These are broad synthetic model factors. Their exact order was not stable across retraining and must not be interpreted as causation or medical importance."
   },
   "promotion_blockers": [
     "exact_factor_order_unstable",
     "human_comprehension_not_completed"
+  ],
+  "remaining_evidence_gaps": [
+    "exact_factor_order_unstable",
+    "human_comprehension_not_completed",
+    "real_patient_explanation_transfer_unmeasured"
   ],
   "claim_boundary": "This gate controls how synthetic model explanations are displayed. It does not establish causality, clinical explainability, clinical validity, or reliable explanation behavior on real patients."
 }

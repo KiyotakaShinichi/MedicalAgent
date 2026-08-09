@@ -16,6 +16,7 @@ CHECKS: tuple[dict[str, Any], ...] = (
     {"id": "medical_claim_boundary", "tier": "hard_blocker", "domain": "medical", "owner": "medical safety", "path": "Data/evals/safety/latest_medical_claim_boundary_eval.json", "status_path": ("status",), "accepted": {"strong", "acceptable"}, "max_age_days": 30},
     {"id": "training_leakage", "tier": "hard_blocker", "domain": "mle", "owner": "MLE", "path": "Data/evals/models/latest_leakage_audit.json", "status_path": ("status",), "accepted": {"passed", "strong", "acceptable"}, "max_age_days": 30},
     {"id": "fail_closed_rag_release", "tier": "hard_blocker", "domain": "aie", "owner": "RAG safety", "path": "Data/evals/safety/latest_fail_closed_rag_assurance.json", "status_path": ("status",), "accepted": {"passed"}, "max_age_days": 30},
+    {"id": "restricted_synthetic_staging_boundary", "tier": "hard_blocker", "domain": "deployment", "owner": "deployment/security", "path": "Data/evals/ops/latest_restricted_synthetic_staging_assurance.json", "status_path": ("status",), "accepted": {"passed"}, "max_age_days": 30},
     {"id": "frozen_adversarial_v7", "tier": "warning", "domain": "aie", "owner": "AI safety", "path": "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json", "status_path": ("status",), "accepted": {"acceptable_internal_only"}, "max_age_days": 90},
     {"id": "rag_governance_tradeoff", "tier": "warning", "domain": "aie", "owner": "RAG", "path": "Data/evals/rag/latest_rag_governance_tradeoff.json", "status_path": ("status",), "accepted": {"acceptable"}, "max_age_days": 30},
     {"id": "live_rag_grounding", "tier": "warning", "domain": "aie", "owner": "RAG", "path": "Data/evals/rag/latest_live_rag_eval.json", "status_path": ("status",), "accepted": {"strong", "acceptable"}, "max_age_days": 30},
@@ -25,10 +26,9 @@ CHECKS: tuple[dict[str, Any], ...] = (
     {"id": "xai_reliability_gate", "tier": "warning", "domain": "mle", "owner": "MLE/XAI", "path": "Data/evals/models/latest_xai_reliability_gate.json", "status_path": ("status",), "accepted": {"acceptable"}, "max_age_days": 30},
     {"id": "data_pipeline", "tier": "warning", "domain": "data_engineering", "owner": "data engineering", "path": "Data/lakehouse/manifests/latest_pipeline_run.json", "status_path": ("status",), "accepted": {"strong"}, "max_age_days": 30},
     {"id": "data_reliability", "tier": "warning", "domain": "data_engineering", "owner": "data engineering", "path": "Data/evals/ops/latest_data_platform_reliability_eval.json", "status_path": ("status",), "accepted": {"strong_offline_drill"}, "max_age_days": 30},
-    {"id": "cloud_infrastructure", "tier": "warning", "domain": "infrastructure", "owner": "infrastructure", "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json", "status_path": ("status",), "accepted": {"compiled_reference_architecture"}, "max_age_days": 30},
-    {"id": "durable_automation_worker", "tier": "warning", "domain": "automation", "owner": "automation", "path": "Data/evals/ops/latest_durable_automation_worker_eval.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}, "max_age_days": 30},
+    {"id": "container_security", "tier": "warning", "domain": "infrastructure", "owner": "SWE/security", "path": "Data/evals/ops/latest_container_security_scan.json", "status_path": ("status",), "accepted": {"acceptable"}, "max_age_days": 30},
+    {"id": "synthetic_staging_resilience", "tier": "warning", "domain": "automation", "owner": "automation/infra", "path": "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json", "status_path": ("status",), "accepted": {"strong_local_only_external_blocked"}, "max_age_days": 30},
     {"id": "automation_channel_drill", "tier": "warning", "domain": "automation", "owner": "automation", "path": "Data/evals/ops/latest_automation_channel_drill.json", "status_path": ("status",), "accepted": {"strong"}, "max_age_days": 30},
-    {"id": "deployment_profile", "tier": "warning", "domain": "deployment", "owner": "deployment", "path": "Data/evals/ops/latest_deployment_profile_matrix.json", "status_path": ("status",), "accepted": {"strong"}, "max_age_days": 30},
     {"id": "finetune_runtime", "tier": "informational", "domain": "fine_tuning", "owner": "fine-tuning", "path": "Data/evals/models/latest_finetune_runtime_preflight.json", "status_path": ("status",), "accepted": set(), "max_age_days": 90},
     {"id": "external_review_execution", "tier": "informational", "domain": "medical", "owner": "external review", "path": "Data/evals/governance/latest_external_review_execution_readiness.json", "status_path": ("status",), "accepted": set(), "max_age_days": 90},
 )
@@ -253,7 +253,12 @@ def _key_metrics(check_id: str, artifact: dict[str, Any]) -> dict[str, Any]:
         ),
         "synthetic_causal_v3": ("seed_count", "model_promotion_decision", "realism_claim", "clinical_validation"),
         "structured_claim_shadow": ("pass_rate", "live_patient_agent_enabled", "clinical_validation"),
-        "durable_automation_worker": ("control_pass_rate", "live_n8n_delivery_enabled", "live_delivery_test_completed"),
+        "synthetic_staging_resilience": (
+            "local_passed_count",
+            "local_check_count",
+            "managed_cloud_drill_completed",
+            "human_acknowledgement_proven",
+        ),
         "automation_fault_injection": ("scenario_count", "passed_count", "external_delivery_performed", "clinical_validation"),
         "automation_channel_drill": (
             "attempt_count",
@@ -264,7 +269,11 @@ def _key_metrics(check_id: str, artifact: dict[str, Any]) -> dict[str, Any]:
         "deployment_profile": ("active_profile", "matrix_passed", "cloud_deployment_completed", "live_oidc_integration_completed", "deployment_capability"),
         "data_pipeline": ("patient_data_processed", "external_cloud_write_performed"),
         "data_reliability": ("passed", "failed", "external_cloud_write_performed"),
-        "cloud_infrastructure": ("bicep_compile_completed", "what_if_completed", "cloud_deployment_completed"),
+        "container_security": (
+            "deployment_decision",
+            "clinical_validation",
+            "healthcare_production_ready",
+        ),
         "benchmark_freshness": ("critical_status", "issue_count", "benchmark_count"),
         "finetune_governance": ("model_trained", "readiness_state", "training_ready", "promotion_ready"),
         "finetune_promotion": ("decision", "promotion_scope", "behavior_improvement_statistically_proven"),
@@ -285,6 +294,7 @@ def _headline_limitations() -> list[str]:
         "OIDC bearer-token verification exists, but no live provider, browser PKCE flow, or provider logout has been demonstrated.",
         "Automation delivery evidence is not human acknowledgement or emergency coverage.",
         "Latency and dependency reproducibility do not establish production readiness.",
+        "The backend container remains blocked for public deployment while any high- or critical-severity findings remain, including findings without an upstream fix.",
     ]
 
 

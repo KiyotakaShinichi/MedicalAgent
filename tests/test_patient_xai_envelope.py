@@ -31,6 +31,9 @@ def test_xai_envelope_discloses_missingness_uncertainty_and_noncausality():
             "ranked_feature_order_allowed": True,
             "show_numeric_shap_values": True,
             "maximum_factor_count": 3,
+            "stable_factor_groups": ["cbc_available"],
+            "unlisted_factor_groups_allowed": False,
+            "display_order_basis": "internal_rank_with_noncausal_boundary",
             "warning": "Internal synthetic stability only.",
         },
     )
@@ -56,6 +59,9 @@ def test_xai_envelope_surfaces_abstention():
             "ranked_feature_order_allowed": False,
             "show_numeric_shap_values": False,
             "maximum_factor_count": 0,
+            "stable_factor_groups": [],
+            "unlisted_factor_groups_allowed": False,
+            "display_order_basis": "suppressed",
             "warning": "Unavailable.",
         },
     )
@@ -79,8 +85,49 @@ def test_xai_envelope_removes_numeric_rank_claim_for_unstable_policy():
             "ranked_feature_order_allowed": False,
             "show_numeric_shap_values": False,
             "maximum_factor_count": 3,
+            "stable_factor_groups": ["cbc"],
+            "unlisted_factor_groups_allowed": False,
+            "display_order_basis": "alphabetical_not_importance",
             "warning": "Order unstable.",
         },
     )
     assert payload["top_model_factors"][0]["relative_contribution"] is None
     assert payload["top_model_factors"][0]["rank_interpretation_allowed"] is False
+
+
+def test_xai_envelope_only_shows_stable_grouped_factors_without_rank_claim():
+    payload = build_patient_xai_envelope(
+        prediction={"hybrid_mle_signal": {"hybrid_score": 55}},
+        explanation={
+            "positive_contributions": [
+                {"feature": "stage_IIA", "contribution": 0.4, "meaning": "stage"},
+                {"feature": "age", "contribution": 0.8, "meaning": "age"},
+                {
+                    "feature": "mri_percent_change_from_baseline",
+                    "contribution": 4.0,
+                    "meaning": "near-outcome proxy",
+                },
+            ],
+            "negative_contributions": [
+                {"feature": "cycle", "contribution": -0.2, "meaning": "cycle"},
+            ],
+        },
+        hybrid_prediction={"classification": {"evidence": {"abstain": False}}},
+        data_availability=None,
+        reliability_policy={
+            "mode": "grouped_factors_without_rank_claim",
+            "show_grouped_factors": True,
+            "ranked_feature_order_allowed": False,
+            "show_numeric_shap_values": False,
+            "maximum_factor_count": 3,
+            "stable_factor_groups": ["cycle", "stage"],
+            "unlisted_factor_groups_allowed": False,
+            "display_order_basis": "alphabetical_not_importance",
+            "warning": "Synthetic-only.",
+        },
+    )
+    factors = payload["top_model_factors"]
+    assert [item["feature"] for item in factors] == ["cycle", "stage"]
+    assert all(item["relative_contribution"] is None for item in factors)
+    assert all(item["rank_interpretation_allowed"] is False for item in factors)
+    assert all(item["stability_tier"] == "stable_core" for item in factors)

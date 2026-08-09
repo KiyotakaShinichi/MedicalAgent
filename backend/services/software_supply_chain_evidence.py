@@ -16,6 +16,7 @@ from scripts.ci_secret_scan import scan_secret_findings
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = Path("Data/evals/ops/latest_software_supply_chain_evidence.json")
 DEFAULT_SBOM_DIR = Path("Data/evals/ops/sbom")
+DEFAULT_CONTAINER_SCAN = Path("Data/evals/ops/latest_container_security_scan.json")
 _PYTHON_PIN = re.compile(r"^([A-Za-z0-9_.-]+)==([^\s;]+)")
 
 
@@ -26,12 +27,14 @@ def build_software_supply_chain_evidence(
     frontend_lock: str | Path = "frontend-react/package-lock.json",
     output_path: str | Path = DEFAULT_OUTPUT,
     sbom_dir: str | Path = DEFAULT_SBOM_DIR,
+    container_scan_path: str | Path = DEFAULT_CONTAINER_SCAN,
 ) -> dict[str, Any]:
     repo = Path(root).resolve()
     python_path = _resolve(repo, python_lock)
     frontend_path = _resolve(repo, frontend_lock)
     output = _resolve(repo, output_path)
     sbom_root = _resolve(repo, sbom_dir)
+    container_scan = _load_container_scan(_resolve(repo, container_scan_path))
 
     python_components = _python_components(python_path)
     frontend_components = _frontend_components(frontend_path)
@@ -73,11 +76,25 @@ def build_software_supply_chain_evidence(
         "executed": False,
         "reason": "image build and scan are separate deployment actions",
     }
+    if (container_scan.get("scanner") or {}).get("executed"):
+        scanners["trivy"] = {
+            "available": True,
+            "executed": True,
+            "reason": "canonical container scan artifact was executed",
+        }
+
+    container_attention = bool((container_scan.get("scanner") or {}).get("executed")) and (
+        container_scan.get("status") != "acceptable"
+    )
 
     payload = {
         "schema_version": "software_supply_chain_evidence_v1",
         "generated_at": generated_at,
-        "status": "acceptable" if not secret_findings else "needs_attention",
+        "status": (
+            "acceptable"
+            if not secret_findings and not container_attention
+            else "needs_attention"
+        ),
         "lockfiles": {
             "python": _lock_summary(repo, python_path, python_components),
             "frontend": _lock_summary(repo, frontend_path, frontend_components),
@@ -96,9 +113,28 @@ def build_software_supply_chain_evidence(
             "secret_values_included": False,
         },
         "container_scan": {
-            "executed": False,
+            "executed": bool((container_scan.get("scanner") or {}).get("executed")),
             "tools": scanners,
-            "gap": "No container vulnerability result is claimed until an image is built and scanned.",
+            "status": container_scan.get("status"),
+            "image": (container_scan.get("image") or {}).get("reference"),
+            "image_identity_matches_current_image": (
+                container_scan.get("image") or {}
+            ).get("identity_matches_current_image"),
+            "high_or_critical_count": (
+                container_scan.get("summary") or {}
+            ).get("high_or_critical_count"),
+            "fixable_high_or_critical_count": (
+                container_scan.get("summary") or {}
+            ).get("fixable_high_or_critical_count"),
+            "deployment_decision": container_scan.get("deployment_decision"),
+            "artifact_path": str(
+                _resolve(repo, container_scan_path).relative_to(repo)
+            ).replace("\\", "/"),
+            "gap": (
+                "Container findings remain an explicit deployment blocker."
+                if container_scan.get("status") not in {"acceptable"}
+                else "Point-in-time scan passed its current engineering policy."
+            ),
         },
         "dependency_vulnerability_artifact": "Data/evals/ops/latest_dependency_security_scan.json",
         "clinical_validation": False,
@@ -190,6 +226,14 @@ def _sha256(path: Path) -> str:
 def _resolve(root: Path, value: str | Path) -> Path:
     path = Path(value)
     return path if path.is_absolute() else root / path
+
+
+def _load_container_scan(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, json.JSONDecodeError):
+        return {}
+    return value if isinstance(value, dict) else {}
 
 
 __all__ = ["build_software_supply_chain_evidence"]

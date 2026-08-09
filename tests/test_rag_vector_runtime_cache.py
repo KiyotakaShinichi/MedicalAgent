@@ -11,13 +11,16 @@ def _payload():
         "knowledge_fingerprint": "cache-test",
         "documents": [],
         "document_count": 0,
-        "metadata": {},
+        "metadata": {
+            "retrieval_backend": vector_index._current_backend_name(),
+        },
     }
 
 
 def test_index_file_is_deserialized_once_until_file_changes(tmp_path, monkeypatch):
     path = tmp_path / "index.joblib"
     joblib.dump(_payload(), path)
+    vector_index._write_index_manifest(path, _payload())
     vector_index.clear_rag_runtime_cache()
 
     real_load = joblib.load
@@ -37,9 +40,36 @@ def test_index_file_is_deserialized_once_until_file_changes(tmp_path, monkeypatc
 
     changed = {**_payload(), "knowledge_fingerprint": "changed"}
     joblib.dump(changed, path)
+    vector_index._write_index_manifest(path, changed)
     third = vector_index.load_rag_vector_index(path)
     assert third["knowledge_fingerprint"] == "changed"
     assert len(calls) == 2
+
+
+def test_index_is_rejected_before_deserialization_when_manifest_is_missing(
+    tmp_path,
+    monkeypatch,
+):
+    path = tmp_path / "legacy.joblib"
+    joblib.dump(_payload(), path)
+    calls = []
+    monkeypatch.setattr(
+        vector_index.joblib,
+        "load",
+        lambda target: calls.append(target) or _payload(),
+    )
+
+    assert vector_index.load_rag_vector_index(path) is None
+    assert calls == []
+
+
+def test_index_is_rejected_when_content_hash_does_not_match(tmp_path):
+    path = tmp_path / "tampered.joblib"
+    joblib.dump(_payload(), path)
+    vector_index._write_index_manifest(path, _payload())
+    path.write_bytes(path.read_bytes() + b"tamper")
+
+    assert vector_index.load_rag_vector_index(path) is None
 
 
 def test_bm25_runtime_object_is_reused(monkeypatch):

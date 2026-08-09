@@ -50,7 +50,7 @@ services:
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8017/health', timeout=3).read()"]
+      test: ["CMD", "/usr/bin/python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8017/health', timeout=3).read()"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -71,7 +71,7 @@ services:
     volumes:
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase
-    command: ["python", "scripts/run_automation_worker.py", "--poll-seconds", "5", "--lease-seconds", "120"]
+    command: ["scripts/run_automation_worker.py", "--poll-seconds", "5", "--lease-seconds", "120"]
 
   frontend:
     image: node:20-alpine

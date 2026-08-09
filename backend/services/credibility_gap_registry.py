@@ -25,6 +25,9 @@ def build_credibility_gap_registry(
     doc_path: str | Path = DEFAULT_DOC_PATH,
 ) -> dict[str, Any]:
     cost = _read("Data/evals/ops/latest_cost_latency_report.json")
+    provider_probe = _read(
+        "Data/evals/rag/latest_research_paper_query_telemetry.json"
+    )
     finetune = _read("Data/evals/models/latest_finetune_hardening_assurance.json")
     finetune_semantic = _read(
         "Data/evals/models/latest_finetune_semantic_contamination.json"
@@ -39,11 +42,21 @@ def build_credibility_gap_registry(
 
     cost_summary = cost.get("summary") or {}
     provider_usage = cost_summary.get("provider_reported_usage") or {}
+    provider_probe_summary = provider_probe.get("summary") or {}
     latency = cost_summary.get("overall_latency_ms") or {}
     local_probe = cost.get("local_probe_stage_latency") or {}
     finetune_summary = finetune.get("summary") or {}
     semantic_summary = finetune_semantic.get("summary") or {}
     automation_summary = automation.get("summary") or {}
+    controlled_provider_probe_passed = bool(
+        provider_probe.get("provider_calls_allowed") is True
+        and provider_probe.get("response_content_retained") is False
+        and int(provider_probe.get("query_count") or 0) >= 30
+        and float(
+            provider_probe_summary.get("provider_usage_coverage_rate") or 0.0
+        )
+        >= 0.8
+    )
 
     gaps = [
         _gap(
@@ -51,20 +64,55 @@ def build_credibility_gap_registry(
             "AIE/observability",
             "medium",
             _state(
-                float(provider_usage.get("coverage_rate") or 0.0) >= 0.8
-                and int(latency.get("sample_count") or 0) >= 30
+                (
+                    float(provider_usage.get("coverage_rate") or 0.0) >= 0.8
+                    and int(latency.get("sample_count") or 0) >= 30
+                )
+                or controlled_provider_probe_passed
             ),
             True,
             False,
-            ["Data/evals/ops/latest_cost_latency_report.json"],
+            [
+                "Data/evals/ops/latest_cost_latency_report.json",
+                "Data/evals/rag/latest_research_paper_query_telemetry.json",
+            ],
             {
-                "coverage_rate": provider_usage.get("coverage_rate"),
-                "latency_sample_count": latency.get("sample_count"),
+                "historical_log_coverage_rate": provider_usage.get(
+                    "coverage_rate"
+                ),
+                "historical_latency_sample_count": latency.get(
+                    "sample_count"
+                ),
+                "controlled_probe_completed": controlled_provider_probe_passed,
+                "controlled_probe_query_count": provider_probe.get(
+                    "query_count"
+                ),
+                "controlled_probe_provider_usage_coverage_rate": (
+                    provider_probe_summary.get("provider_usage_coverage_rate")
+                ),
+                "controlled_probe_provider_reported_total_tokens": (
+                    provider_probe_summary.get("provider_reported_total_tokens")
+                ),
+                "controlled_probe_warm_latency_p95_ms": (
+                    provider_probe_summary.get("warm_latency_p95_ms")
+                ),
+                "controlled_probe_cold_start_latency_ms": (
+                    provider_probe_summary.get("cold_start_latency_ms")
+                ),
+                "controlled_probe_scope": (
+                    "internal synthetic research-query suite; no response text retained"
+                ),
             },
-            "Capture provider-reported usage on at least 80% of 30+ representative requests.",
-            "python scripts/run_cost_latency_report.py",
+            (
+                "Capture provider-reported usage on at least 80% of 30+ "
+                "controlled representative synthetic requests; staged traffic remains separate."
+            ),
+            "python scripts/run_research_paper_query_telemetry.py --allow-provider",
             "AI platform owner",
-            "Token totals are partly estimated; do not present them as provider billing truth.",
+            (
+                "Provider usage is measured on a controlled synthetic suite only; "
+                "historical rows remain partly estimated and totals are not audited billing truth."
+            ),
         ),
         _gap(
             "tail_latency_evidence",
@@ -323,11 +371,7 @@ def build_credibility_gap_registry(
             ),
         },
         "gaps": gaps,
-        "next_three_controllable_actions": [
-            "Capture 30+ instrumented provider calls and refresh token/latency telemetry.",
-            "Provision the pinned offline PEFT runtime and generate matched baseline/candidate outputs with manifests.",
-            "Run semantic fine-tune contamination review and frozen adversarial regression without tuning on holdouts.",
-        ],
+        "next_three_controllable_actions": _next_controllable_actions(gaps),
         "claim_boundary": CLAIM_BOUNDARY,
     }
     _write(output_path, payload)
@@ -367,6 +411,36 @@ def _gap(
 
 def _state(passed: bool) -> str:
     return "complete_internal" if passed else "open"
+
+
+def _next_controllable_actions(gaps: list[dict[str, Any]]) -> list[str]:
+    actions = {
+        "provider_token_usage_coverage": (
+            "Capture controlled provider usage and keep staged-traffic telemetry separate."
+        ),
+        "fine_tune_runtime_and_candidate": (
+            "Provision the pinned offline PEFT runtime and generate matched baseline/candidate outputs with manifests."
+        ),
+        "fine_tune_semantic_contamination": (
+            "Complete reviewer adjudication of semantic contamination flags before any adapter comparison."
+        ),
+        "rag_improvement_over_bm25": (
+            "Complete the external no-read RAG holdout; retain governance-first positioning until then."
+        ),
+        "frozen_adversarial_generalization": (
+            "Use a separate development mutation bank for hardening; do not tune on the frozen bank."
+        ),
+        "live_cloud_and_delivery_evidence": (
+            "Run repeatable synthetic-staging worker recovery, restore, and delivery-receipt drills."
+        ),
+    }
+    return [
+        actions[item["id"]]
+        for item in gaps
+        if item.get("controllable_now")
+        and item.get("current_status") != "complete_internal"
+        and item.get("id") in actions
+    ][:3]
 
 
 def _rag_improvement_proven(payload: dict[str, Any]) -> bool:

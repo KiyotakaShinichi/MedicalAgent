@@ -231,6 +231,10 @@ def collect_disposable_synthetic_runtime_observations(
     runtime_started = REQUIRED_SERVICES <= running_services
     probes = {
         "backend_health": _http_probe("http://127.0.0.1:8017/health"),
+        "backend_dependency_import": _backend_dependency_import_probe(
+            command,
+            repo,
+        ),
         "frontend_http": _http_probe("http://127.0.0.1:5173/"),
         "n8n_health": _http_probe("http://127.0.0.1:5678/healthz"),
         "mailhog_api": _http_probe("http://127.0.0.1:8025/api/v2/messages"),
@@ -398,6 +402,29 @@ def _tcp_probe(host: str, port: int) -> bool:
             return True
     except OSError:
         return False
+
+
+def _backend_dependency_import_probe(
+    compose_command: list[str],
+    repo: Path,
+) -> bool:
+    result = _run(
+        [
+            *compose_command,
+            "exec",
+            "-T",
+            "backend",
+            "/usr/bin/python3",
+            "-c",
+            "import fastapi, sqlalchemy; print('runtime-imports-ok')",
+        ],
+        cwd=repo,
+        timeout=30,
+    )
+    return (
+        result.get("exit_code") == 0
+        and "runtime-imports-ok" in result.get("stdout", "")
+    )
 
 
 def _postgres_restore_drill(

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:0a0e2302-dfe8-6db1-0d39-4762f58d1140",
+  "serialNumber": "urn:uuid:3b72c0da-0b51-0a47-de35-148aa90df0a1",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-09T12:16:15.664942+00:00",
+    "timestamp": "2026-08-09T14:49:30.500372+00:00",
     "component": {
       "type": "application",
       "name": "nlcare-frontend-runtime",
@@ -13,7 +13,7 @@
     "properties": [
       {
         "name": "nlcare:lock_sha256",
-        "value": "0a0e2302dfe86db10d394762f58d1140014330ca8306b8c6a07a6e6bb578d2b1"
+        "value": "3b72c0da0b510a47de35148aa90df0a1b83a42ae8bc75982518082607fb68fa0"
       }
     ]
   },
@@ -533,12 +533,6 @@
       "name": "@reduxjs/toolkit",
       "version": "2.11.2",
       "purl": "pkg:npm/%40reduxjs/toolkit@2.11.2"
-    },
-    {
-      "type": "library",
-      "name": "@remix-run/router",
-      "version": "1.23.2",
-      "purl": "pkg:npm/%40remix-run/router@1.23.2"
     },
     {
       "type": "library",
@@ -1233,8 +1227,8 @@
     {
       "type": "library",
       "name": "brace-expansion",
-      "version": "5.0.8",
-      "purl": "pkg:npm/brace-expansion@5.0.8"
+      "version": "5.0.9",
+      "purl": "pkg:npm/brace-expansion@5.0.9"
     },
     {
       "type": "library",
@@ -1277,6 +1271,12 @@
       "name": "convert-source-map",
       "version": "2.0.0",
       "purl": "pkg:npm/convert-source-map@2.0.0"
+    },
+    {
+      "type": "library",
+      "name": "cookie",
+      "version": "1.1.1",
+      "purl": "pkg:npm/cookie@1.1.1"
     },
     {
       "type": "library",
@@ -1935,8 +1935,8 @@
     {
       "type": "library",
       "name": "nanoid",
-      "version": "3.3.12",
-      "purl": "pkg:npm/nanoid@3.3.12"
+      "version": "3.3.18",
+      "purl": "pkg:npm/nanoid@3.3.18"
     },
     {
       "type": "library",
@@ -2025,8 +2025,8 @@
     {
       "type": "library",
       "name": "postcss",
-      "version": "8.5.18",
-      "purl": "pkg:npm/postcss@8.5.18"
+      "version": "8.5.26",
+      "purl": "pkg:npm/postcss@8.5.26"
     },
     {
       "type": "library",
@@ -2079,14 +2079,14 @@
     {
       "type": "library",
       "name": "react-router",
-      "version": "6.30.3",
-      "purl": "pkg:npm/react-router@6.30.3"
+      "version": "7.18.2",
+      "purl": "pkg:npm/react-router@7.18.2"
     },
     {
       "type": "library",
       "name": "react-router-dom",
-      "version": "6.30.3",
-      "purl": "pkg:npm/react-router-dom@6.30.3"
+      "version": "7.18.2",
+      "purl": "pkg:npm/react-router-dom@7.18.2"
     },
     {
       "type": "library",
@@ -2159,6 +2159,12 @@
       "name": "semver",
       "version": "7.8.0",
       "purl": "pkg:npm/semver@7.8.0"
+    },
+    {
+      "type": "library",
+      "name": "set-cookie-parser",
+      "version": "2.7.2",
+      "purl": "pkg:npm/set-cookie-parser@2.7.2"
     },
     {
       "type": "library",
@@ -2325,8 +2331,8 @@
     {
       "type": "library",
       "name": "undici",
-      "version": "7.28.0",
-      "purl": "pkg:npm/undici@7.28.0"
+      "version": "7.29.0",
+      "purl": "pkg:npm/undici@7.29.0"
     },
     {
       "type": "library",

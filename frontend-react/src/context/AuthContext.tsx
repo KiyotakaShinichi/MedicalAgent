@@ -8,17 +8,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const setSession = useCallback(
     (token: string, role: Role, patientId: string | null) => {
-      Object.values(TOKEN_KEYS).forEach((k) => localStorage.removeItem(k));
-      localStorage.setItem(TOKEN_KEYS[role], token);
-      if (patientId) localStorage.setItem("currentPatientId", patientId);
+      Object.values(TOKEN_KEYS).forEach((k) => sessionStorage.removeItem(k));
+      sessionStorage.setItem(TOKEN_KEYS[role], token);
+      if (patientId) sessionStorage.setItem("currentPatientId", patientId);
       setState({ token, role, patientId });
     },
     []
   );
 
   const clearSession = useCallback(() => {
-    Object.values(TOKEN_KEYS).forEach((k) => localStorage.removeItem(k));
-    localStorage.removeItem("currentPatientId");
+    Object.values(TOKEN_KEYS).forEach((k) => sessionStorage.removeItem(k));
+    sessionStorage.removeItem("currentPatientId");
     setState({ token: null, role: null, patientId: null });
   }, []);
 

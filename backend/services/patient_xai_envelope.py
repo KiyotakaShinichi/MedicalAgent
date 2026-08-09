@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from backend.services.xai_rank_stability_audit import (
+    GROUP_PREFIXES,
+    NEAR_OUTCOME_PROXIES,
+)
+
 
 XAI_ENVELOPE_VERSION = "patient_xai_envelope_v1_2026_07"
 
@@ -127,7 +132,14 @@ def _top_factors(
     )
     if limit <= 0:
         return []
-    factors: list[dict[str, Any]] = []
+    allowed = {
+        str(value)
+        for value in reliability_policy.get("stable_factor_groups") or []
+        if str(value).strip()
+    }
+    if not allowed or reliability_policy.get("unlisted_factor_groups_allowed"):
+        return []
+    grouped: dict[str, dict[str, Any]] = {}
     for direction, key in (
         ("toward_synthetic_positive_class", "positive_contributions"),
         ("away_from_synthetic_positive_class", "negative_contributions"),
@@ -135,23 +147,70 @@ def _top_factors(
         for item in ((explanation or {}).get(key) or []):
             if not isinstance(item, dict):
                 continue
-            factors.append({
-                "feature": item.get("feature"),
+            feature = str(item.get("feature") or "").strip()
+            group = _display_group(feature)
+            if not group or group not in allowed:
+                continue
+            try:
+                raw_value = float(
+                    item.get("shap_value", item.get("contribution")) or 0.0
+                )
+            except (TypeError, ValueError):
+                raw_value = 0.0
+            bucket = grouped.setdefault(
+                group,
+                {
+                    "signed_contribution": 0.0,
+                    "meaning": item.get("meaning"),
+                },
+            )
+            bucket["signed_contribution"] += raw_value
+
+    ordered = list(grouped.items())
+    if reliability_policy.get("ranked_feature_order_allowed"):
+        ordered.sort(
+            key=lambda pair: abs(pair[1]["signed_contribution"]),
+            reverse=True,
+        )
+    else:
+        ordered.sort(key=lambda pair: pair[0])
+    factors: list[dict[str, Any]] = []
+    for group, bucket in ordered[:limit]:
+        signed = float(bucket["signed_contribution"])
+        factors.append(
+            {
+                "feature": group,
                 "relative_contribution": (
-                    item.get("shap_value", item.get("contribution"))
+                    signed
                     if reliability_policy.get("show_numeric_shap_values")
                     else None
                 ),
-                "direction": direction,
-                "meaning": item.get("meaning"),
+                "direction": (
+                    "toward_synthetic_positive_class"
+                    if signed >= 0
+                    else "away_from_synthetic_positive_class"
+                ),
+                "meaning": bucket.get("meaning"),
+                "stability_tier": "stable_core",
+                "display_order_basis": reliability_policy.get(
+                    "display_order_basis"
+                ),
                 "clinical_causality": False,
                 "rank_interpretation_allowed": bool(
                     reliability_policy.get("ranked_feature_order_allowed")
                 ),
-            })
-            if len(factors) >= limit:
-                return factors
+            }
+        )
     return factors
+
+
+def _display_group(feature: str) -> str | None:
+    if not feature or feature in NEAR_OUTCOME_PROXIES:
+        return None
+    for prefix, group in GROUP_PREFIXES.items():
+        if feature.startswith(prefix):
+            return group
+    return feature
 
 
 __all__ = ["XAI_ENVELOPE_VERSION", "build_patient_xai_envelope"]

@@ -1,0 +1,304 @@
+{
+  "schema_version": "container_security_scan_v1",
+  "generated_at": "2026-08-09T15:34:17.265109+00:00",
+  "status": "needs_attention",
+  "scanner": {
+    "name": "trivy",
+    "version": "Version: 0.73.0",
+    "executed": true,
+    "raw_schema_version": 2
+  },
+  "image": {
+    "reference": "nlcare-synthetic-staging-backend:latest",
+    "artifact_type": "container_image",
+    "scanned_image_id": "sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86",
+    "current_image_id": "sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86",
+    "identity_matches_current_image": true,
+    "configured_user": "nonroot:nonroot",
+    "runs_as_nonroot": true,
+    "distroless_runtime_declared": true,
+    "repo_digests": [
+      "nlcare-synthetic-staging-backend@sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86"
+    ],
+    "oci_labels": {
+      "ai.nlcare.clinical-validation": "false",
+      "ai.nlcare.deployment-scope": "restricted-synthetic-staging-only",
+      "org.opencontainers.image.created": "2026-08-09T15:31:54Z",
+      "org.opencontainers.image.description": "Restricted synthetic-only engineering runtime; not for clinical use",
+      "org.opencontainers.image.revision": "8f709ef",
+      "org.opencontainers.image.source": "https://github.com/KiyotakaShinichi/MedicalAgent",
+      "org.opencontainers.image.title": "NLCare synthetic-staging backend"
+    }
+  },
+  "supply_chain": {
+    "dockerfile_available": true,
+    "dockerfile_path": "Dockerfile",
+    "dockerfile_sha256": "a72599d4d6df892546aee4e8ff0d2925df398452b1f448795dd985c5fe042b8a",
+    "base_images": [
+      "python:3.13-slim-trixie@sha256:9662417aace5ae7b8e2609cce472b72a8958e134ba372808abe9cc1a0c0125e6",
+      "gcr.io/distroless/python3-debian13:nonroot@sha256:1c680cdb442a9e7a89f64fd1706367c62302ea1f9ab80fdebdb72ae9fcded46f"
+    ],
+    "all_base_images_digest_pinned": true,
+    "mutable_tag_only_base_count": 0
+  },
+  "sbom": {
+    "available": true,
+    "format": "CycloneDX",
+    "spec_version": "1.7",
+    "component_count": 99,
+    "serial_number": "urn:uuid:5b764ff6-750b-43ab-be10-90c00a0d1d08",
+    "path": "Data/evals/ops/nlcare_backend_sbom.cdx.json",
+    "sha256": "1ea20773b595188691747437e2bcd2ba83594d646a8686e5dead9be5d421eae5"
+  },
+  "summary": {
+    "total_finding_count": 108,
+    "severity_counts": {
+      "unknown": 3,
+      "low": 48,
+      "medium": 42,
+      "high": 15,
+      "critical": 0
+    },
+    "high_or_critical_count": 15,
+    "fixable_high_or_critical_count": 0,
+    "unfixed_high_or_critical_count": 15,
+    "public_deployment_blocked": true,
+    "base_images_digest_pinned": true,
+    "sbom_available": true
+  },
+  "top_findings": [
+    {
+      "vulnerability_id": "CVE-2025-69720",
+      "severity": "HIGH",
+      "package": "libncursesw6",
+      "installed_version": "6.5+20250216-2",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-69720"
+    },
+    {
+      "vulnerability_id": "CVE-2025-69720",
+      "severity": "HIGH",
+      "package": "libtinfo6",
+      "installed_version": "6.5+20250216-2",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-69720"
+    },
+    {
+      "vulnerability_id": "CVE-2026-11940",
+      "severity": "HIGH",
+      "package": "libpython3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-11940"
+    },
+    {
+      "vulnerability_id": "CVE-2026-11940",
+      "severity": "HIGH",
+      "package": "libpython3.13-stdlib",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-11940"
+    },
+    {
+      "vulnerability_id": "CVE-2026-11940",
+      "severity": "HIGH",
+      "package": "python3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-11940"
+    },
+    {
+      "vulnerability_id": "CVE-2026-11940",
+      "severity": "HIGH",
+      "package": "python3.13-venv",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-11940"
+    },
+    {
+      "vulnerability_id": "CVE-2026-15308",
+      "severity": "HIGH",
+      "package": "libpython3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-15308"
+    },
+    {
+      "vulnerability_id": "CVE-2026-15308",
+      "severity": "HIGH",
+      "package": "libpython3.13-stdlib",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-15308"
+    },
+    {
+      "vulnerability_id": "CVE-2026-15308",
+      "severity": "HIGH",
+      "package": "python3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-15308"
+    },
+    {
+      "vulnerability_id": "CVE-2026-15308",
+      "severity": "HIGH",
+      "package": "python3.13-venv",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-15308"
+    },
+    {
+      "vulnerability_id": "CVE-2026-53615",
+      "severity": "HIGH",
+      "package": "libuuid1",
+      "installed_version": "2.41-5",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-53615"
+    },
+    {
+      "vulnerability_id": "CVE-2026-7210",
+      "severity": "HIGH",
+      "package": "libpython3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-7210"
+    },
+    {
+      "vulnerability_id": "CVE-2026-7210",
+      "severity": "HIGH",
+      "package": "libpython3.13-stdlib",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-7210"
+    },
+    {
+      "vulnerability_id": "CVE-2026-7210",
+      "severity": "HIGH",
+      "package": "python3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-7210"
+    },
+    {
+      "vulnerability_id": "CVE-2026-7210",
+      "severity": "HIGH",
+      "package": "python3.13-venv",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "affected",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2026-7210"
+    },
+    {
+      "vulnerability_id": "CVE-2025-12781",
+      "severity": "MEDIUM",
+      "package": "libpython3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-12781"
+    },
+    {
+      "vulnerability_id": "CVE-2025-12781",
+      "severity": "MEDIUM",
+      "package": "libpython3.13-stdlib",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-12781"
+    },
+    {
+      "vulnerability_id": "CVE-2025-12781",
+      "severity": "MEDIUM",
+      "package": "python3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-12781"
+    },
+    {
+      "vulnerability_id": "CVE-2025-12781",
+      "severity": "MEDIUM",
+      "package": "python3.13-venv",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-12781"
+    },
+    {
+      "vulnerability_id": "CVE-2025-15366",
+      "severity": "MEDIUM",
+      "package": "libpython3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-15366"
+    },
+    {
+      "vulnerability_id": "CVE-2025-15366",
+      "severity": "MEDIUM",
+      "package": "libpython3.13-stdlib",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-15366"
+    },
+    {
+      "vulnerability_id": "CVE-2025-15366",
+      "severity": "MEDIUM",
+      "package": "python3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-15366"
+    },
+    {
+      "vulnerability_id": "CVE-2025-15366",
+      "severity": "MEDIUM",
+      "package": "python3.13-venv",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-15366"
+    },
+    {
+      "vulnerability_id": "CVE-2025-15367",
+      "severity": "MEDIUM",
+      "package": "libpython3.13-minimal",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-15367"
+    },
+    {
+      "vulnerability_id": "CVE-2025-15367",
+      "severity": "MEDIUM",
+      "package": "libpython3.13-stdlib",
+      "installed_version": "3.13.5-2+deb13u4",
+      "fixed_version": null,
+      "status": "will_not_fix",
+      "primary_url": "https://avd.aquasec.com/nvd/cve-2025-15367"
+    }
+  ],
+  "deployment_decision": "BLOCK_PUBLIC_DEPLOYMENT",
+  "scope": "restricted_synthetic_staging_container",
+  "patient_data_processed": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This is a point-in-time container vulnerability scan for a synthetic-only engineering image. It is not a penetration test, security certification, clinical validation, compliance proof, or production healthcare readiness.",
+  "raw_artifact_path": "Data/evals/ops/nlcare_backend_container_scan.json",
+  "raw_artifact_sha256": "2ce9d70dca89c5349e2eed51a5a10af6ad6e195fbb46f16f9934c2069f2c2c2c"
+}

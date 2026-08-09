@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:fe75c4f9-b9af-8a83-e8c4-a0ce5b7b43d5",
+  "serialNumber": "urn:uuid:b67f6cf7-0035-f261-4855-32f4d115401f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-09T12:16:15.664942+00:00",
+    "timestamp": "2026-08-09T14:49:30.500372+00:00",
     "component": {
       "type": "application",
       "name": "nlcare-python-runtime",
@@ -13,7 +13,7 @@
     "properties": [
       {
         "name": "nlcare:lock_sha256",
-        "value": "fe75c4f9b9af8a83e8c4a0ce5b7b43d5fc5993da336b17b261c8a9d680cd17df"
+        "value": "b67f6cf70035f261485532f4d115401f4c65b59d28c115630fe94a3cbfec2b4b"
       }
     ]
   },
@@ -87,8 +87,8 @@
     {
       "type": "library",
       "name": "cryptography",
-      "version": "48.0.1",
-      "purl": "pkg:pypi/cryptography@48.0.1"
+      "version": "50.0.0",
+      "purl": "pkg:pypi/cryptography@50.0.0"
     },
     {
       "type": "library",
@@ -399,8 +399,8 @@
     {
       "type": "library",
       "name": "pypdf",
-      "version": "6.14.2",
-      "purl": "pkg:pypi/pypdf@6.14.2"
+      "version": "6.15.0",
+      "purl": "pkg:pypi/pypdf@6.15.0"
     },
     {
       "type": "library",

@@ -94,7 +94,8 @@ def test_runner_retains_no_generated_response(monkeypatch, tmp_path):
     assert report["query_count"] == 1
     assert report["response_content_retained"] is False
     assert report["internal_vs_external_authored"] == "internal"
-    assert report["was_used_for_tuning"] is False
+    assert report["was_used_for_tuning"] is True
+    assert "development evidence" in report["tuning_note"]
     assert len(report["query_suite_sha256"]) == 64
     assert report["environment"]["fast_mode"] is True
     assert report["summary"]["cold_start_excluded_from_warm_metrics"] is True

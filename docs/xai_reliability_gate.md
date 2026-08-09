@@ -1,6 +1,6 @@
 # XAI Reliability Gate
 
-- Status: `needs_attention`
+- Status: `acceptable`
 - Patient display mode: `grouped_factors_without_rank_claim`
 - Ranked order allowed: `False`
 - Grouped factors allowed: `True`

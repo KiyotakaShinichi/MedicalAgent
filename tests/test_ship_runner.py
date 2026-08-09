@@ -68,11 +68,19 @@ def test_ship_tiers_keep_fast_and_evidence_surfaces_distinct():
     assert "Cloud, data-platform, and managed-vector contract tests" in fast_names
     assert "Assurance, XAI, automation, and safety contract tests" in fast_names
     assert "Fail-closed RAG release assurance" in fast_names
+    assert "Restricted synthetic staging assurance" in fast_names
 
 
 def test_fail_closed_rag_assurance_precedes_release_decision_surface():
     names = [step.name for step in ship._build_steps()]
     assert names.index("Fail-closed RAG release assurance") < names.index(
+        "Canonical release decision surface"
+    )
+
+
+def test_restricted_staging_assurance_precedes_release_decision_surface():
+    names = [step.name for step in ship._build_steps()]
+    assert names.index("Restricted synthetic staging assurance") < names.index(
         "Canonical release decision surface"
     )
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "deployment_profile_matrix_v1",
-  "generated_at": "2026-08-09T12:02:08.850756+00:00",
+  "generated_at": "2026-08-09T15:32:38.795690+00:00",
   "status": "strong",
   "active_profile": {
     "profile": "development",
@@ -11,7 +11,7 @@
   },
   "production_shaped_static_validation": {
     "status": "strong",
-    "n_checks": 12,
+    "n_checks": 17,
     "n_failed": 0,
     "oidc_config_valid": true,
     "uses_non_resolving_example_endpoints": true,
@@ -21,7 +21,7 @@
   },
   "unsafe_profile_fail_closed": {
     "status": "blocked",
-    "n_failed": 10,
+    "n_failed": 14,
     "failed_check_names": [
       "database_backend",
       "database_password_not_placeholder",
@@ -30,6 +30,10 @@
       "production_cors_uses_https",
       "redis_configured",
       "non_demo_identity_provider_integrated",
+      "browser_oidc_pkce_configured",
+      "synthetic_only_runtime_lock",
+      "synthetic_data_classification",
+      "upload_quarantine_policy",
       "external_dispatch_uses_https",
       "external_dispatch_secret_strong",
       "external_dispatch_test_recipient_only"

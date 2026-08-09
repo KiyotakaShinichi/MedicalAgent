@@ -1,16 +1,16 @@
 {
   "schema_version": "credibility_gap_registry_v1",
-  "generated_at": "2026-08-09T12:12:32.952454+00:00",
+  "generated_at": "2026-08-09T15:53:27.672786+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "summary": {
     "gap_count": 11,
-    "internally_closed_count": 1,
-    "open_or_external_count": 10,
+    "internally_closed_count": 2,
+    "open_or_external_count": 9,
     "self_controllable_count": 7,
     "cannot_be_self_certified_count": 4,
-    "internal_evidence_closure_rate": 0.0909,
+    "internal_evidence_closure_rate": 0.1818,
     "score_interpretation": "Evidence-completion bookkeeping only; not a quality, safety, or clinical-readiness score."
   },
   "gaps": [
@@ -18,20 +18,28 @@
       "id": "provider_token_usage_coverage",
       "domain": "AIE/observability",
       "severity": "medium",
-      "current_status": "open",
+      "current_status": "complete_internal",
       "controllable_now": true,
       "cannot_be_self_certified": false,
       "evidence_artifacts": [
-        "Data/evals/ops/latest_cost_latency_report.json"
+        "Data/evals/ops/latest_cost_latency_report.json",
+        "Data/evals/rag/latest_research_paper_query_telemetry.json"
       ],
       "evidence_snapshot": {
-        "coverage_rate": 0.0,
-        "latency_sample_count": 500
+        "historical_log_coverage_rate": 0.0,
+        "historical_latency_sample_count": 500,
+        "controlled_probe_completed": true,
+        "controlled_probe_query_count": 30,
+        "controlled_probe_provider_usage_coverage_rate": 0.9333,
+        "controlled_probe_provider_reported_total_tokens": 16910,
+        "controlled_probe_warm_latency_p95_ms": 4213.87,
+        "controlled_probe_cold_start_latency_ms": 263825.07,
+        "controlled_probe_scope": "internal synthetic research-query suite; no response text retained"
       },
-      "completion_criteria": "Capture provider-reported usage on at least 80% of 30+ representative requests.",
-      "verification_command": "python scripts/run_cost_latency_report.py",
+      "completion_criteria": "Capture provider-reported usage on at least 80% of 30+ controlled representative synthetic requests; staged traffic remains separate.",
+      "verification_command": "python scripts/run_research_paper_query_telemetry.py --allow-provider",
       "owner": "AI platform owner",
-      "honest_claim_until_closed": "Token totals are partly estimated; do not present them as provider billing truth."
+      "honest_claim_until_closed": "Provider usage is measured on a controlled synthetic suite only; historical rows remain partly estimated and totals are not audited billing truth."
     },
     {
       "id": "tail_latency_evidence",
@@ -261,9 +269,9 @@
     }
   ],
   "next_three_controllable_actions": [
-    "Capture 30+ instrumented provider calls and refresh token/latency telemetry.",
     "Provision the pinned offline PEFT runtime and generate matched baseline/candidate outputs with manifests.",
-    "Run semantic fine-tune contamination review and frozen adversarial regression without tuning on holdouts."
+    "Complete reviewer adjudication of semantic contamination flags before any adapter comparison.",
+    "Complete the external no-read RAG holdout; retain governance-first positioning until then."
   ],
   "claim_boundary": "This registry tracks engineering evidence gaps. Closing an internal gap does not establish clinical validation, patient benefit, clinician approval, IRB approval, production healthcare readiness, or generalisation to real patients."
 }

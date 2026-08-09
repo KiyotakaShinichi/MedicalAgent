@@ -28,6 +28,7 @@ EVIDENCE_MANIFEST = (
 FAST_STEP_NAMES = {
     "Backend breast-monitoring integration tests",
     "Fail-closed RAG release assurance",
+    "Restricted synthetic staging assurance",
     "Backend progressive-loading and notification reliability tests",
     "Cloud, data-platform, and managed-vector contract tests",
     "Assurance, XAI, automation, and safety contract tests",
@@ -177,6 +178,8 @@ def _build_steps() -> list[Step]:
                 "tests/test_constraint_aware_improvement_program.py",
                 "tests/test_oidc_pkce.py",
                 "tests/test_dependency_security_scan.py",
+                "tests/test_container_security_scan.py",
+                "tests/test_container_runtime_hardening.py",
                 "tests/test_software_supply_chain_evidence.py",
                 "tests/test_synthetic_automation_staging_readiness.py",
                 "tests/test_rag_degradation_resilience_eval.py",
@@ -227,6 +230,8 @@ def _build_steps() -> list[Step]:
                 "tests/test_adversarial_holdout_v7.py",
                 "tests/test_fail_closed_rag_assurance.py",
                 "tests/test_deployment_worker_wiring.py",
+                "tests/test_restricted_synthetic_staging_hardening.py",
+                "tests/test_restricted_synthetic_staging_assurance.py",
                 "-q",
             ],
         ),
@@ -333,6 +338,10 @@ def _build_steps() -> list[Step]:
         Step(
             name="Dependency security scan",
             command=[sys.executable, "scripts/run_dependency_security_scan.py"],
+        ),
+        Step(
+            name="Container security evidence",
+            command=[sys.executable, "scripts/run_container_security_scan.py"],
         ),
         Step(
             name="Lock-derived SBOM and repository secret scan",
@@ -478,6 +487,14 @@ def _build_steps() -> list[Step]:
         Step(
             name="Fail-closed RAG release assurance",
             command=[sys.executable, "scripts/run_fail_closed_rag_assurance.py"],
+            timeout_seconds=240,
+        ),
+        Step(
+            name="Restricted synthetic staging assurance",
+            command=[
+                sys.executable,
+                "scripts/run_restricted_synthetic_staging_assurance.py",
+            ],
             timeout_seconds=240,
         ),
         Step(

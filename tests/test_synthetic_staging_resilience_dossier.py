@@ -58,6 +58,14 @@ def test_local_strength_does_not_become_cloud_claim(tmp_path):
         "automation_staging_readiness": _write(
             tmp_path / "staging.json", {"status": "ready_for_synthetic_runtime"}
         ),
+        "runtime_recovery": _write(
+            tmp_path / "runtime-recovery.json",
+            {
+                "completed": True,
+                "patient_data_processed": False,
+                "postgres_restore": {"normalized_content_match": True},
+            },
+        ),
     }
     result = build_synthetic_staging_resilience_dossier(sources)
     assert result["status"] == "strong_local_only_external_blocked"

@@ -8,6 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 LEGACY_NESTED_ROOT = PROJECT_ROOT / "MedicalAgent"
 DATA_DIR = PROJECT_ROOT / "Data"
 UPLOAD_DIR = DATA_DIR / "uploads"
+UPLOAD_QUARANTINE_DIR = DATA_DIR / "uploads_quarantine"
 
 
 def load_environment():
@@ -70,3 +71,4 @@ def get_ollama_config():
 def ensure_runtime_dirs():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    UPLOAD_QUARANTINE_DIR.mkdir(parents=True, exist_ok=True)

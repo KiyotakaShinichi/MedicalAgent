@@ -2727,3 +2727,39 @@ artifacts:
       Read-only audit of eight apparent paraphrase failures that may be safe
       negative-label conflicts. The original metric remains unchanged until
       independent human adjudication is completed.
+
+  - path: Data/evals/ops/latest_restricted_synthetic_staging_assurance.json
+    required: true
+    max_age_days: 30
+    accepted_status: [passed]
+    metric_thresholds:
+      - {path: [summary, passed_tests], op: ">=", value: 20}
+      - {path: [summary, failed_tests], op: "==", value: 0}
+      - {path: [dependency_security, high_or_critical_count], op: "==", value: 0}
+      - {path: [dependency_security, unaccepted_known_vulnerability_count], op: "==", value: 0}
+      - {path: [controls, raw_bearer_tokens_persisted], op: "==", value: false}
+      - {path: [controls, synthetic_data_boundary_at_api], op: "==", value: true}
+      - {path: [controls, quarantine_before_promotion], op: "==", value: true}
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [patient_data_processed], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+    note: >
+      Stop-the-line engineering assurance for restricted synthetic staging.
+      It verifies identity-token storage, browser PKCE configuration, explicit
+      synthetic-data labeling, upload quarantine/scanning, dependency state,
+      and leased-worker wiring. It is not a security certification, privacy
+      compliance proof, clinical validation, or healthcare-production approval.
+
+  - path: Data/evals/ops/latest_container_security_scan.json
+    required: false
+    max_age_days: 30
+    accepted_status: [acceptable, needs_attention, blocked, stale_image_mismatch, tool_unavailable]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [patient_data_processed], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+    note: >
+      Point-in-time Trivy evidence for the synthetic staging backend. Critical,
+      fixable high-severity, stale-image, root-runtime, or unavailable-scanner
+      states block any public-deployment claim. This is not a penetration test,
+      security certification, compliance proof, or clinical validation.

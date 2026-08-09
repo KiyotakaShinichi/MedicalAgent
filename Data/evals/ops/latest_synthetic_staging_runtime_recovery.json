@@ -1,0 +1,75 @@
+{
+  "schema_version": "synthetic_staging_runtime_recovery_v1",
+  "generated_at": "2026-08-09T15:35:14.734876+00:00",
+  "status": "strong_local_runtime_only",
+  "completed": true,
+  "scope": "loopback_disposable_synthetic_staging",
+  "checks": [
+    {
+      "check_id": "worker_lease_simulated_expired",
+      "passed": true
+    },
+    {
+      "check_id": "expired_lease_recovered",
+      "passed": true
+    },
+    {
+      "check_id": "recovered_job_completed",
+      "passed": true
+    },
+    {
+      "check_id": "worker_lease_cleared",
+      "passed": true
+    },
+    {
+      "check_id": "idempotent_replay_suppressed_duplicate",
+      "passed": true
+    },
+    {
+      "check_id": "postgres_restore_table_count_match",
+      "passed": true
+    },
+    {
+      "check_id": "postgres_restore_content_hash_match",
+      "passed": true
+    }
+  ],
+  "passed_count": 7,
+  "check_count": 7,
+  "worker_recovery": {
+    "task_id": 3,
+    "terminal_status": "completed",
+    "attempts": 2,
+    "recovery_count": 1,
+    "lease_cleared": true,
+    "idempotent_replay_reused_task": true,
+    "replay_task_id": 3,
+    "delivery_receipt_is_human_acknowledgement": false
+  },
+  "postgres_restore": {
+    "source_database": "nlcare_synthetic",
+    "temporary_restore_database": "nlcare_restore_9f3e324348",
+    "source_table_count": 36,
+    "restored_table_count": 36,
+    "normalized_logical_dump_sha256_source": "990b5afd392736536df079cb8f9b79155b9aba931a5e6decfbe10d682143c98d",
+    "normalized_logical_dump_sha256_restored": "990b5afd392736536df079cb8f9b79155b9aba931a5e6decfbe10d682143c98d",
+    "normalized_content_match": true,
+    "managed_postgres": false,
+    "patient_data_processed": false
+  },
+  "cleanup": {
+    "temporary_restore_database_dropped": true,
+    "task_cleanup_completed": true,
+    "deleted_task_count": 1
+  },
+  "worker_running_after_drill": true,
+  "error": null,
+  "duration_seconds": 43.152,
+  "real_external_delivery_completed": false,
+  "clinician_acknowledgement_proven": false,
+  "managed_cloud_failover_proven": false,
+  "patient_data_processed": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This drill uses the loopback disposable stack, synthetic engineering jobs, and a temporary PostgreSQL restore database. It does not prove managed-cloud failover, external delivery, clinician acknowledgement, clinical validation, or production healthcare readiness."
+}

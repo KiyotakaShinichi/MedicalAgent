@@ -112,6 +112,37 @@ def test_failed_fail_closed_rag_assurance_blocks_engineering_release(
     assert row["decision"] == "attention"
 
 
+def test_failed_restricted_staging_assurance_blocks_engineering_release(
+    tmp_path, monkeypatch
+):
+    assurance_path = tmp_path / "staging-assurance.json"
+    assurance_path.write_text(
+        json.dumps(
+            {
+                "status": "failed",
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+            }
+        ),
+        encoding="utf-8",
+    )
+    checks = tuple(
+        {**check, "path": str(assurance_path)}
+        if check["id"] == "restricted_synthetic_staging_boundary"
+        else check
+        for check in surface.CHECKS
+    )
+    monkeypatch.setattr(surface, "CHECKS", checks)
+    result = surface.build_release_decision_surface(tmp_path / "surface.json")
+    row = next(
+        row
+        for row in result["checks"]
+        if row["id"] == "restricted_synthetic_staging_boundary"
+    )
+    assert result["engineering_release_decision"] == "BLOCK"
+    assert row["tier"] == "hard_blocker"
+    assert row["decision"] == "attention"
+
+
 def test_stale_warning_is_not_reported_as_verified(tmp_path, monkeypatch):
     warning = tmp_path / "warning.json"
     warning.write_text(
@@ -134,3 +165,32 @@ def test_stale_warning_is_not_reported_as_verified(tmp_path, monkeypatch):
     assert row["decision"] == "attention"
     assert row["evidence_state"] == "stale"
     assert row["stale"] is True
+
+
+def test_container_findings_are_visible_as_release_warning(tmp_path, monkeypatch):
+    artifact = tmp_path / "container.json"
+    artifact.write_text(
+        json.dumps({
+            "status": "blocked",
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "deployment_decision": "BLOCK_PUBLIC_DEPLOYMENT",
+            "summary": {"high_or_critical_count": 2},
+            "clinical_validation": False,
+            "healthcare_production_ready": False,
+        }),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(surface, "CHECKS", ({
+        "id": "container_security",
+        "tier": "warning",
+        "domain": "infrastructure",
+        "owner": "security",
+        "path": str(artifact),
+        "status_path": ("status",),
+        "accepted": {"acceptable"},
+        "max_age_days": 30,
+    },))
+
+    result = surface.build_release_decision_surface(tmp_path / "surface.json")
+    assert result["engineering_release_decision"] == "PROCEED_WITH_WARNINGS"
+    assert result["checks"][0]["observed_status"] == "blocked"

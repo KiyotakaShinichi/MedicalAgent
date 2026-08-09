@@ -26,6 +26,8 @@ def _check(name: str, ok: bool, reason: str) -> dict[str, object]:
 def build_report(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     import os
     from backend.services.oidc_auth import OIDCAuthError, load_oidc_config, validate_oidc_config
+    from backend.services.oidc_pkce import load_browser_oidc_config, validate_browser_oidc_config
+    from backend.services.upload_security import UploadSecurityPolicy, validate_upload_security_policy
 
     env = dict(os.environ if environment is None else environment)
     profile = (env.get("ENVIRONMENT") or env.get("APP_ENV") or "development").strip().lower()
@@ -37,6 +39,11 @@ def build_report(environment: Mapping[str, str] | None = None) -> dict[str, obje
     dispatch_enabled = _bool(env.get("N8N_WEBHOOK_DISPATCH_ENABLED"))
     dispatch_url = env.get("N8N_WEBHOOK_BASE_URL", "")
     dispatch_secret = env.get("N8N_WEBHOOK_SIGNING_SECRET", "")
+    synthetic_only = _bool(env.get("NLCARE_SYNTHETIC_ONLY"))
+    data_classification = str(env.get("NLCARE_DATA_CLASSIFICATION") or "").strip().lower()
+    uploads_enabled = _bool(env.get("NLCARE_UPLOADS_ENABLED"))
+    upload_scanner_mode = str(env.get("NLCARE_UPLOAD_SCANNER_MODE") or "disabled").strip().lower()
+    upload_scanner_command = str(env.get("NLCARE_UPLOAD_SCANNER_COMMAND") or "").strip()
     parsed = urlparse(database_url.replace("postgresql+psycopg2", "postgresql")) if database_url else None
     password = parsed.password if parsed else None
     try:
@@ -46,6 +53,28 @@ def build_report(environment: Mapping[str, str] | None = None) -> dict[str, obje
     except OIDCAuthError:
         oidc_enabled = _bool(env.get("NLCARE_OIDC_ENABLED"))
         oidc_issues = ["OIDC configuration could not be parsed"]
+    browser_oidc_issues = validate_browser_oidc_config(load_browser_oidc_config(env), strict=strict)
+    try:
+        validate_upload_security_policy(
+            UploadSecurityPolicy(
+                enabled=uploads_enabled,
+                strict_profile=strict,
+                scanner_mode=upload_scanner_mode,
+                scanner_command=upload_scanner_command,
+                scanner_timeout_seconds=20,
+            )
+        )
+        upload_policy_valid = True
+    except ValueError:
+        upload_policy_valid = False
+    frontend_sources = "\n".join(
+        path.read_text(encoding="utf-8", errors="ignore")
+        for path in Path("frontend-react/src").rglob("*.ts*")
+    )
+    local_storage_bearer_markers = [
+        marker for marker in ("localStorage.getItem(\"patientPortalAccessToken\")", "localStorage.setItem(TOKEN_KEYS")
+        if marker in frontend_sources
+    ]
 
     checks = [
         _check(
@@ -94,6 +123,31 @@ def build_report(environment: Mapping[str, str] | None = None) -> dict[str, obje
             "strict profiles require the feature-flagged OIDC issuer, audience, HTTPS JWKS URL, and RS256 validation",
         ),
         _check(
+            "browser_oidc_pkce_configured",
+            (not strict) or not browser_oidc_issues,
+            "strict profiles require HTTPS browser authorization/token endpoints, client ID, redirect URI, and openid scope",
+        ),
+        _check(
+            "bearer_tokens_not_persisted_in_local_storage",
+            not local_storage_bearer_markers,
+            "browser bearer tokens must not be persisted in localStorage",
+        ),
+        _check(
+            "synthetic_only_runtime_lock",
+            (not strict) or synthetic_only,
+            "restricted staging/production-shaped profiles must enforce synthetic-only operation",
+        ),
+        _check(
+            "synthetic_data_classification",
+            (not strict) or data_classification == "synthetic",
+            "strict profiles must label the accepted data class as synthetic",
+        ),
+        _check(
+            "upload_quarantine_policy",
+            (not strict) or (not uploads_enabled) or upload_policy_valid,
+            "strict-profile uploads must be disabled or use a configured external fail-closed scanner",
+        ),
+        _check(
             "external_dispatch_uses_https",
             (not dispatch_enabled) or dispatch_url.startswith("https://"),
             "enabled n8n dispatch must use an HTTPS webhook endpoint",
@@ -113,7 +167,7 @@ def build_report(environment: Mapping[str, str] | None = None) -> dict[str, obje
     failed = [check for check in checks if not check["ok"]]
     status = "development_profile" if not strict else ("strong" if not failed else "blocked")
     return {
-        "schema_version": "deployment_profile_validation_v2",
+        "schema_version": "deployment_profile_validation_v3",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
         "profile": profile,
@@ -125,6 +179,13 @@ def build_report(environment: Mapping[str, str] | None = None) -> dict[str, obje
         "oidc_enabled": oidc_enabled,
         "oidc_config_valid": bool(oidc_enabled and not oidc_issues),
         "oidc_config_issue_count": len(oidc_issues),
+        "browser_oidc_config_valid": not browser_oidc_issues,
+        "browser_oidc_issue_count": len(browser_oidc_issues),
+        "synthetic_only": synthetic_only,
+        "data_classification": data_classification or "unset",
+        "uploads_enabled": uploads_enabled,
+        "upload_policy_valid": upload_policy_valid,
+        "local_storage_bearer_marker_count": len(local_storage_bearer_markers),
         "external_dispatch_enabled": dispatch_enabled,
         "deployment_capability": (
             "local_or_controlled_demo_only"
@@ -239,6 +300,15 @@ def _production_shaped_environment() -> dict[str, str]:
         "NLCARE_OIDC_AUDIENCE": "nlcare-api",
         "NLCARE_OIDC_JWKS_URL": "https://identity.nlcare.invalid/.well-known/jwks.json",
         "NLCARE_OIDC_ALGORITHMS": "RS256",
+        "NLCARE_OIDC_AUTHORIZATION_ENDPOINT": "https://identity.nlcare.invalid/authorize",
+        "NLCARE_OIDC_TOKEN_ENDPOINT": "https://identity.nlcare.invalid/token",
+        "NLCARE_OIDC_CLIENT_ID": "nlcare-browser",
+        "NLCARE_OIDC_REDIRECT_URI": "https://app.nlcare.invalid/auth/callback",
+        "NLCARE_OIDC_SCOPES": "openid profile",
+        "NLCARE_SYNTHETIC_ONLY": "true",
+        "NLCARE_DATA_CLASSIFICATION": "synthetic",
+        "NLCARE_UPLOADS_ENABLED": "false",
+        "NLCARE_UPLOAD_SCANNER_MODE": "disabled",
         "N8N_WEBHOOK_DISPATCH_ENABLED": "false",
     }
 
@@ -250,6 +320,10 @@ def _unsafe_production_environment() -> dict[str, str]:
         "ALLOW_DEMO_AUTH": "true",
         "NLCARE_CORS_ORIGINS": "*",
         "NLCARE_OIDC_ENABLED": "false",
+        "NLCARE_SYNTHETIC_ONLY": "false",
+        "NLCARE_DATA_CLASSIFICATION": "unknown",
+        "NLCARE_UPLOADS_ENABLED": "true",
+        "NLCARE_UPLOAD_SCANNER_MODE": "builtin",
         "N8N_WEBHOOK_DISPATCH_ENABLED": "true",
         "N8N_WEBHOOK_BASE_URL": "http://127.0.0.1:5678/webhook/nlcare",
         "N8N_WEBHOOK_SIGNING_SECRET": "change_me",

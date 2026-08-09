@@ -10,7 +10,7 @@ import os
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -29,6 +29,7 @@ from backend.api.routers.admin_eval import build_admin_eval_router
 from backend.api.routers.automation import router as automation_router
 from backend.services.request_context import reset_request_id, set_request_id
 from backend.services.api_protection import EngineeringApiProtectionMiddleware
+from backend.services.synthetic_data_boundary import SyntheticDataBoundaryMiddleware
 from backend.services.llm_telemetry import reset_llm_telemetry, start_llm_telemetry
 
 
@@ -95,10 +96,12 @@ app.add_middleware(
         "X-Request-ID",
         "X-NLCare-Receipt-Signature",
         "X-NLCare-Timestamp",
+        "X-NLCare-Data-Class",
     ],
     expose_headers=["X-Request-ID", "X-Analytics-Cache"],
 )
 app.add_middleware(EngineeringApiProtectionMiddleware)
+app.add_middleware(SyntheticDataBoundaryMiddleware)
 
 
 @app.middleware("http")
@@ -174,7 +177,7 @@ def healthcheck(db: Session = Depends(get_db)):
 
 
 @app.get("/ready")
-def readinesscheck(db: Session = Depends(get_db)):
+def readinesscheck(response: Response, db: Session = Depends(get_db)):
     """Runtime readiness probe for engineering deployments.
 
     This checks database reachability and reports deployment posture. It does
@@ -190,14 +193,17 @@ def readinesscheck(db: Session = Depends(get_db)):
     from backend.services.rag_vector_index import rag_runtime_readiness
 
     retrieval_runtime = rag_runtime_readiness()
+    retrieval_ready = bool(retrieval_runtime.get("meets_deployment_requirement"))
+    if not retrieval_ready:
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     return {
-        "status": "ready",
+        "status": "ready" if retrieval_ready else "not_ready",
         "service": "nlcare_monitoring_prototype",
         "database": "ok",
         "environment": environment,
         "demo_auth_allowed": demo_auth_allowed,
         "retrieval_runtime": retrieval_runtime,
-        "retrieval_ready": retrieval_runtime.get("status") == "ready",
+        "retrieval_ready": retrieval_ready,
         "clinical_validation": False,
         "healthcare_production_ready": False,
         "claim_boundary": (

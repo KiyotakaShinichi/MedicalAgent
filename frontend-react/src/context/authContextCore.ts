@@ -20,12 +20,12 @@ export const TOKEN_KEYS: Record<Role, string> = {
 
 export function loadSession(): AuthState {
   for (const [role, key] of Object.entries(TOKEN_KEYS)) {
-    const token = localStorage.getItem(key);
+    const token = sessionStorage.getItem(key);
     if (token) {
       return {
         token,
         role: role as Role,
-        patientId: localStorage.getItem("currentPatientId"),
+        patientId: sessionStorage.getItem("currentPatientId"),
       };
     }
   }

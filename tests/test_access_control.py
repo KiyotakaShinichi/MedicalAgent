@@ -13,6 +13,7 @@ seeded with demo credentials via the same auth service used in production.
 """
 
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -278,7 +279,23 @@ class TestHealthEndpoint(unittest.TestCase):
         self.assertEqual(resp.headers.get("x-api-protection-scope"), "process_local_engineering_control")
 
     def test_ready_unauthenticated_with_boundary(self):
-        resp = client.get("/ready")
+        from backend.services import rag_vector_index
+
+        ready_state = {
+            "status": "ready",
+            "backend": "local_sparse_tfidf_bm25_index",
+            "document_count": 1,
+            "startup_warmup_ms": 1.0,
+            "error_type": None,
+            "clinical_validation": False,
+            "healthcare_production_ready": False,
+        }
+        with patch.dict(
+            rag_vector_index._PREWARM_STATE,
+            ready_state,
+            clear=True,
+        ), patch.dict("os.environ", {"NLCARE_RAG_REQUIRE_DENSE": "false"}):
+            resp = client.get("/ready")
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(data["status"], "ready")
