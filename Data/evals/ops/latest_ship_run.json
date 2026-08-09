@@ -1,21 +1,21 @@
 {
   "schema_version": "nlcare_ship_run_v2",
-  "generated_at": "2026-08-02T16:22:29.227614+00:00",
+  "generated_at": "2026-08-09T12:13:01.139943+00:00",
   "status": "passed",
   "tier": "release",
   "resume_requested": true,
   "clinical_validation": false,
   "healthcare_production_ready": false,
-  "completed_step_count": 64,
-  "selected_step_count": 64,
-  "cached_step_count": 2,
+  "completed_step_count": 70,
+  "selected_step_count": 70,
+  "cached_step_count": 0,
   "failed_step": null,
   "failure_kind": null,
   "steps": [
     {
       "name": "Backend breast-monitoring integration tests",
-      "status": "cached_pass",
-      "duration_seconds": 0.0,
+      "status": "passed",
+      "duration_seconds": 87.466,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -25,13 +25,12 @@
         "tests/test_breast_monitoring.py",
         "-q"
       ],
-      "dependency_fingerprint": "bac06808ca29a558647f24ed403811d25add513ea9e1d77d6c244d050505714e",
-      "reused_from": "2026-08-02T15:50:43.719113+00:00"
+      "dependency_fingerprint": "e09b67fc1ed7bb09c7fead2348ef4964059ae1c7f632a2cf93ad2729b0cc1e7f"
     },
     {
       "name": "Backend progressive-loading and notification reliability tests",
-      "status": "cached_pass",
-      "duration_seconds": 0.0,
+      "status": "passed",
+      "duration_seconds": 24.549,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -45,13 +44,12 @@
         "tests/test_n8n_automation_templates.py",
         "-q"
       ],
-      "dependency_fingerprint": "a553c25f437cd4487ebc7ef1f182bf5f9968e8144f829a6bd710a76eab07ad05",
-      "reused_from": "2026-08-02T15:50:43.719113+00:00"
+      "dependency_fingerprint": "4b7c45cef0719641cc90b3a02de8fc5ab035abcdbbc99a356a7f1419dfe6ff34"
     },
     {
       "name": "Cloud, data-platform, and managed-vector contract tests",
       "status": "passed",
-      "duration_seconds": 121.58,
+      "duration_seconds": 66.421,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -81,12 +79,12 @@
         "tests/test_patient_xai_readability_dossier.py",
         "-q"
       ],
-      "dependency_fingerprint": "2622476c167ee0f0df8c1073e7c6e8e88a76e147fad9c7b809cb73cd1d915a21"
+      "dependency_fingerprint": "0f54bf98c567f1afa8d24eac48524c4d0f61b6ad6caf97efd364f19b86ce9b90"
     },
     {
       "name": "Assurance, XAI, automation, and safety contract tests",
       "status": "passed",
-      "duration_seconds": 590.147,
+      "duration_seconds": 125.49,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -124,14 +122,35 @@
         "tests/test_disposable_synthetic_staging_readiness.py",
         "tests/test_synthetic_staging_resilience_dossier.py",
         "tests/test_adversarial_holdout_v7.py",
+        "tests/test_fail_closed_rag_assurance.py",
+        "tests/test_deployment_worker_wiring.py",
         "-q"
       ],
-      "dependency_fingerprint": "8144f10a8928cfd851266bafaf5dc8ec97e02244c157f4cafcb7e7abd2e9472c"
+      "dependency_fingerprint": "db56a2a6e975405450c832228617a563eac2a67f1a7707f837d4d5d157d21795"
+    },
+    {
+      "name": "Research abstention and scale-evaluation contract tests",
+      "status": "passed",
+      "duration_seconds": 5.671,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_rag_runtime_prewarm.py",
+        "tests/test_research_evidence_answerability.py",
+        "tests/test_prototype_independent_prompt_bank_v2.py",
+        "tests/test_real_pipeline_scale_eval.py",
+        "tests/test_adversarial_generalization_label_audit.py",
+        "-q"
+      ],
+      "dependency_fingerprint": "da96fba93980eee11bc2ea994dc8a6801ff4abe4b120c6b89f88d23ad7e339c8"
     },
     {
       "name": "Frontend Vitest unit tests",
       "status": "passed",
-      "duration_seconds": 64.474,
+      "duration_seconds": 20.853,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -139,12 +158,12 @@
         "run",
         "test"
       ],
-      "dependency_fingerprint": "53aa80f3ef9ca0e61c15358909def0ffc30035bf5a49ef15e3164f342845cd66"
+      "dependency_fingerprint": "e0f3c36885e1935bd6c1da4877d0bb22512d4226bce1e2682916e7168bba5a0e"
     },
     {
       "name": "Frontend Playwright smoke",
       "status": "passed",
-      "duration_seconds": 168.783,
+      "duration_seconds": 152.52,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -154,12 +173,12 @@
         "--",
         "tests/e2e/smoke.spec.ts"
       ],
-      "dependency_fingerprint": "966ff2854eecd46f821901eae67898f962005e109c24dae8d76a7d60bc52571d"
+      "dependency_fingerprint": "8856c0dcc34bc002f60e347c660b73f2d8c16dec1bfc1d9d445348b9af723bfd"
     },
     {
       "name": "Frontend lint",
       "status": "passed",
-      "duration_seconds": 37.232,
+      "duration_seconds": 33.227,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -167,12 +186,12 @@
         "run",
         "lint"
       ],
-      "dependency_fingerprint": "a0ee4790496b95e4181554f164a2abca960075f9af65539c89ca3640c89a03c2"
+      "dependency_fingerprint": "cec844092ebade0924371a0ba97903142181bdafc7a19dce8092b3488e782583"
     },
     {
       "name": "Frontend production build",
       "status": "passed",
-      "duration_seconds": 26.218,
+      "duration_seconds": 24.604,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -180,12 +199,12 @@
         "run",
         "build"
       ],
-      "dependency_fingerprint": "82aa354e5f8a4ea569a9749662dcab06226706bd2fe81025df29ab5780e6169c"
+      "dependency_fingerprint": "bf105a25b6b419dec12c5c48c09e336fba0a54327cdbef681e56c28b16acb117"
     },
     {
       "name": "Reproducible knowledge-base chunk materialization",
       "status": "passed",
-      "duration_seconds": 8.131,
+      "duration_seconds": 3.508,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -193,667 +212,727 @@
         "scripts/ingest_knowledge_base.py",
         "--skip-index"
       ],
-      "dependency_fingerprint": "36664ea6d2e0c26412585c25ecb8b7c1a72c2d93559b59a97ab0d68641eae286"
+      "dependency_fingerprint": "acdde8542ee85913cd99e49a1f6a0718ea1c9f4dc6796b60c61286e59e2e191a"
     },
     {
       "name": "Non-patient data-platform pipeline",
       "status": "passed",
-      "duration_seconds": 1.777,
+      "duration_seconds": 0.904,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_data_platform_pipeline.py"
       ],
-      "dependency_fingerprint": "a9d7c55a9cd6e798ce247eb87c855dfdf358f5d22eba871cefe690e19588f5e7"
+      "dependency_fingerprint": "ac5ff6d67197a85e77f060ec6ae3d9546d0fe0e5b0c8d5b9c835a0a8849e6d7a"
     },
     {
       "name": "Managed-vector contract evaluation",
       "status": "passed",
-      "duration_seconds": 1.98,
+      "duration_seconds": 0.788,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_vector_store_contract_eval.py"
       ],
-      "dependency_fingerprint": "c3841101efa327bb9d907324f9077c334ac7182be54b410020081495522c80ac"
+      "dependency_fingerprint": "9e58bff82ed6499493be62e405731c63386da02ac909b08d4391185710224f92"
     },
     {
       "name": "Data-platform reliability drills",
       "status": "passed",
-      "duration_seconds": 2.419,
+      "duration_seconds": 2.169,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_data_platform_reliability_eval.py"
       ],
-      "dependency_fingerprint": "a97bfdc7e961bbcb556476da24385d84e05cb565fc451c1b1605a0d387ba653d"
+      "dependency_fingerprint": "6fccb05a86a520d97e52f2c2787682b1f4d0e5b0bbaaab4c73a582ad75b99392"
     },
     {
       "name": "Azure AI Search index readiness",
       "status": "passed",
-      "duration_seconds": 1.646,
+      "duration_seconds": 1.381,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_azure_search_index_readiness.py"
       ],
-      "dependency_fingerprint": "dd2582fc79c22e05d3fed205b24bf705a7a70742ec93af3cd5a19ca163f68b43"
+      "dependency_fingerprint": "9129acfe744ed85dd312cf5dfa58eae67d0f019a1a772595b19d2422b4eb2947"
     },
     {
       "name": "Managed-vector shadow sync readiness",
       "status": "passed",
-      "duration_seconds": 1.968,
+      "duration_seconds": 1.837,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_managed_vector_shadow_sync.py"
       ],
-      "dependency_fingerprint": "9ca9ef4d67ff81d9531287443c4815d815e54728785a736410ac4d110e9c8d3a"
+      "dependency_fingerprint": "69753e4190dc97698a0dfd4515750f0d2ff98e1fc6acc88c38c8a7b2356fc4b5"
     },
     {
       "name": "Managed-vector frozen shadow comparison readiness",
       "status": "passed",
-      "duration_seconds": 7.348,
+      "duration_seconds": 6.056,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_managed_vector_shadow_comparison.py"
       ],
-      "dependency_fingerprint": "8d7973b239d047dd4027506eff21ff18b7a1a0478eb4e69431e58edb65b8a98d"
+      "dependency_fingerprint": "ecd711f824231057dfd4a4d0a98486ffd8097dcbdd65cb3cb46a04ec2a117adc"
     },
     {
       "name": "Azure compiled reference-infrastructure readiness",
       "status": "passed",
-      "duration_seconds": 10.927,
+      "duration_seconds": 16.409,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_cloud_infrastructure_readiness.py"
       ],
-      "dependency_fingerprint": "0d641303417b8c07400d2ce9a72065354db6bbbd901017fdfd346bdbba4da3ac"
+      "dependency_fingerprint": "822d9b569815d76cf42923050bb323c609bd8f9b76d52cd1d5a0da86c44943e5"
     },
     {
       "name": "Patient enrichment background eval",
       "status": "passed",
-      "duration_seconds": 8.601,
+      "duration_seconds": 8.015,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_patient_enrichment_background_eval.py"
       ],
-      "dependency_fingerprint": "a23689d90a6724203939eb6fd76d7b99672e43a569aa2865bab52348832fafc7"
+      "dependency_fingerprint": "50d138cb809d59df7cb8c250c2cb2d75e4fbcf2a22a1b2175aaf3c735925e29a"
     },
     {
       "name": "High-risk conversation alert eval",
       "status": "passed",
-      "duration_seconds": 6.506,
+      "duration_seconds": 5.872,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_high_risk_conversation_alert_eval.py"
       ],
-      "dependency_fingerprint": "390a70a012f6fe6f5185a4c198e505ee6720893f654627b4f75e5adf70729ad4"
+      "dependency_fingerprint": "faa80c61b6be11efe690d0f59cc1c5f3b5ec2e871404338cbc9db4aac7aebf6a"
     },
     {
       "name": "ML logic/safety alignment audit",
       "status": "passed",
-      "duration_seconds": 0.405,
+      "duration_seconds": 0.203,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_ml_logic_safety_alignment.py"
       ],
-      "dependency_fingerprint": "3e7b25fd592ca70fdf0eb65719e11097db440af1cdcea2943e3884d7c7f87201"
+      "dependency_fingerprint": "ff6af14e1cd15ff9fac8e300ba6b95a60d0b952b2af48b89d78be9585c6fdd7a"
     },
     {
       "name": "Synthetic statistical sensitivity audit",
       "status": "passed",
-      "duration_seconds": 7.673,
+      "duration_seconds": 4.833,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_synthetic_prediction_statistical_audit.py"
       ],
-      "dependency_fingerprint": "58fdf467132d971bb7bb7ddc7099f87b99a6543b37386d453ce033156b9bf077"
+      "dependency_fingerprint": "3d62cf2571c1c5cd0fa75856b8736fecd325acc852dbf1d53656f884536227c5"
     },
     {
       "name": "Patient XAI implementation-readability audit",
       "status": "passed",
-      "duration_seconds": 0.868,
+      "duration_seconds": 0.471,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_patient_xai_readability_dossier.py"
       ],
-      "dependency_fingerprint": "d7b4beca93be8501bf33cb9d24f77a5610b0d8d81a8a70ca51e9d27db330a81f"
+      "dependency_fingerprint": "519110d806012a9cc98b043bd534625a92fca8a9dc7814a384052064b6f93816"
     },
     {
       "name": "OIDC browser PKCE readiness",
       "status": "passed",
-      "duration_seconds": 0.976,
+      "duration_seconds": 0.74,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_oidc_browser_pkce_readiness.py"
       ],
-      "dependency_fingerprint": "9467f915d99759791f69f8451320ca9fd2548642bd87e86dcafb390fbe1d2fc1"
+      "dependency_fingerprint": "b370a43cb82a461bc3d5cc7ee2d1b97c4f128076959add1a04e6c753c658795d"
     },
     {
       "name": "Deployment profile and fail-closed matrix",
       "status": "passed",
-      "duration_seconds": 1.203,
+      "duration_seconds": 1.374,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/validate_deployment_env.py"
       ],
-      "dependency_fingerprint": "baeefe92aa3563a63377f25ba5e4ae885daed26ab2b4f3491b5e9f6c39dbb270"
+      "dependency_fingerprint": "297f71be597489655d40f3d8d780033ee9942d7797b5c8b41d6098b157b9256a"
     },
     {
       "name": "Dependency security scan",
       "status": "passed",
-      "duration_seconds": 28.542,
+      "duration_seconds": 28.586,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_dependency_security_scan.py"
       ],
-      "dependency_fingerprint": "76917dc92a5f70c4f0490981aa38477afe56ec1088c3db1da56e91e0c6e8d601"
+      "dependency_fingerprint": "b75457e2d5724cf6366db4ac8fb19e425a7f2f865e66d3614eaa7eca20acbad4"
     },
     {
       "name": "Lock-derived SBOM and repository secret scan",
       "status": "passed",
-      "duration_seconds": 3.971,
+      "duration_seconds": 4.773,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_software_supply_chain_evidence.py"
       ],
-      "dependency_fingerprint": "910c431cbb92e0b8ec5e8ce494d05d7aa3e6332759af2580580c0af230454229"
+      "dependency_fingerprint": "0e2d5b3b348c38bf46a00c1f391b60c855f54e546a5e43ba005c6fb21770fa02"
     },
     {
       "name": "Development unsafe-intent mutation regression",
       "status": "passed",
-      "duration_seconds": 6.592,
+      "duration_seconds": 3.84,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_unsafe_intent_mutation_dev_eval.py"
       ],
-      "dependency_fingerprint": "3a743b6b7fd6504d9ddd092342a1d33fabda6a0c8616d0b17a76c6b7138138b1"
+      "dependency_fingerprint": "c4f005a652d2b30d15510dcb2f3a2be697e45feac919125bf65ac04f8a30a0f8"
     },
     {
       "name": "Tuning-informed adversarial v6 regression",
       "status": "passed",
-      "duration_seconds": 12.124,
+      "duration_seconds": 6.794,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_adversarial_v6_tuning_regression.py"
       ],
-      "dependency_fingerprint": "6ea6d22653ba49da934e1221921517a783916ec859be09d7dc78e644a625ab3e"
+      "dependency_fingerprint": "611a520beb6b9f6d6e7df1a5a7dd2461485e121a8a363c0822cc3afbf2c19219"
     },
     {
       "name": "Adversarial v6 contamination retrospective",
       "status": "passed",
-      "duration_seconds": 0.216,
+      "duration_seconds": 0.185,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_adversarial_v6_retrospective.py"
       ],
-      "dependency_fingerprint": "a8b603ad31eb7aa097101870f5c6e9261934aa2aa42171b288c6610d3fd3a744"
+      "dependency_fingerprint": "2c449b5d787f51084d4e3f1e8191e89171cc4791a4509a507121522e58aa2269"
     },
     {
       "name": "Synthetic XAI rank-stability audit",
       "status": "passed",
-      "duration_seconds": 6.609,
+      "duration_seconds": 6.882,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_xai_rank_stability_audit.py"
       ],
-      "dependency_fingerprint": "67a1fc851df1ed154e7b5a1728e31879e5dae1a7fecdf54f90179cd7aaec7797"
+      "dependency_fingerprint": "2b75efb23ae91b64485a4bb6d33b9533d16799df7a6d596b36719f1731886b29"
     },
     {
       "name": "Synthetic XAI retraining-stability audit",
       "status": "passed",
-      "duration_seconds": 26.25,
+      "duration_seconds": 29.947,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_xai_retraining_stability_audit.py"
       ],
-      "dependency_fingerprint": "f2957978219d3284300e905a0d0082b86083a307425b16c5bb522ecc6a1153e7"
+      "dependency_fingerprint": "400a189c82db359ee808b75b463785105f65477ab86aef207fd528ebd6924436"
     },
     {
       "name": "Synthetic XAI mechanical fidelity audit",
       "status": "passed",
-      "duration_seconds": 1.012,
+      "duration_seconds": 1.006,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_xai_fidelity_audit.py"
       ],
-      "dependency_fingerprint": "a2361b896f07d727d33a666c918eb1e9b1e39ab070b04547f8651ef5980fd248"
+      "dependency_fingerprint": "352e14fa2d4a1711c27640e9568a1e1ec4056525e1bba6a2628cce7da51a3aad"
     },
     {
       "name": "Fail-closed synthetic XAI presentation policy",
       "status": "passed",
-      "duration_seconds": 1.206,
+      "duration_seconds": 0.522,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_xai_reliability_gate.py"
       ],
-      "dependency_fingerprint": "4588a1fe4d2f969291f1eee3e4c39c9002e45c5bc34b4b448de26c1a57033d27"
+      "dependency_fingerprint": "e1874db1f025a1abf1fd1d48a5df920acd9d97fa2cb2470d9cf8020430779881"
     },
     {
       "name": "Bounded agent execution-policy eval",
       "status": "passed",
-      "duration_seconds": 15.942,
+      "duration_seconds": 18.005,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_agent_execution_policy_eval.py"
       ],
-      "dependency_fingerprint": "e774eb40506180b3626046700968f9401d9fe99995eae9bd94796d6095ca3054"
+      "dependency_fingerprint": "3cc0818038959cbf03a953364892a5147be72056f61865befe7527fef0bfcb4b"
     },
     {
       "name": "Local RAG degradation resilience drill",
       "status": "passed",
-      "duration_seconds": 7.746,
+      "duration_seconds": 9.545,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_rag_degradation_resilience_eval.py"
       ],
-      "dependency_fingerprint": "ecfe02282997361a05c7a8d7797cde951131753f41a877dbedba6deb2c1fa6c2"
+      "dependency_fingerprint": "ade208041863f8081dadbe44b7755fecc93d42458041f220a792eddcd16233b2"
     },
     {
       "name": "Credible local route-latency sample",
       "status": "passed",
-      "duration_seconds": 34.425,
+      "duration_seconds": 40.025,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_credible_route_latency_sample.py"
       ],
-      "dependency_fingerprint": "c9f68bf2c4a294eb7d2e239f04e7c00e6595405983a53cf5626856903be50839"
+      "dependency_fingerprint": "b3da2bf2ae72ebad80ad1d5d2e4f1adeed03ddf741fa2593a8f3e5e682477b24"
     },
     {
       "name": "Route-latency budget refresh",
       "status": "passed",
-      "duration_seconds": 0.898,
+      "duration_seconds": 0.339,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_route_latency_budget.py"
       ],
-      "dependency_fingerprint": "39f639c15eb5fc78f86600d40c120b5edc6cd811a08ecd7e666b54e4ba50622d"
+      "dependency_fingerprint": "366ac0c542d1e32b493f2fbc8a280501e4e832e4a7324b1cb363eaef6004db02"
     },
     {
       "name": "Token, cost, and stage-latency observability refresh",
       "status": "passed",
-      "duration_seconds": 4.656,
+      "duration_seconds": 4.904,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_cost_latency_report.py"
       ],
-      "dependency_fingerprint": "99710c6c88ac37e8d396ba310fd1154cc8413e4cd4880720991fa95201cf20e9"
+      "dependency_fingerprint": "2c9436d91f8b41eaaaa87d7f1aa976493cd98a6022ae627191779e24c8a4521c"
     },
     {
       "name": "Retrieval runtime-cache regression evidence",
       "status": "passed",
-      "duration_seconds": 0.412,
+      "duration_seconds": 0.223,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_retrieval_runtime_cache_eval.py"
       ],
-      "dependency_fingerprint": "52ca42571064fb868a74f10c2f0846480da36f9115cf40adfd37ef47fccb37d1"
+      "dependency_fingerprint": "8a79c2d366025ad7464a8ab8a8f6df048353456b5b7cf734ddad7aa40dbf8076"
     },
     {
       "name": "Provider-token reconciliation",
       "status": "passed",
-      "duration_seconds": 0.748,
+      "duration_seconds": 0.742,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_provider_usage_reconciliation.py"
       ],
-      "dependency_fingerprint": "694ef6bacc00b1f21937b33e4218a807546b86cae56a0c11f7e2b92001d56c78"
+      "dependency_fingerprint": "a653a8ee824e8b4ad8110c9a36d963d9f12b7ffcdf6eaf68b33ec916454e2978"
     },
     {
       "name": "Provider-usage capture readiness",
       "status": "passed",
-      "duration_seconds": 0.947,
+      "duration_seconds": 1.062,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_provider_usage_capture_readiness.py"
       ],
-      "dependency_fingerprint": "1c12b4fa03507a2f710226dc39e9bf76143097dee8b4462e84e8e5b74a5e85c9"
+      "dependency_fingerprint": "619c99380fdca736b109295a0e9118e300c85dc2f1bee0444ac938bae4e1cf16"
     },
     {
       "name": "Paired RAG statistical comparison",
       "status": "passed",
-      "duration_seconds": 39.308,
+      "duration_seconds": 47.106,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_rag_paired_statistical_comparison.py"
       ],
-      "dependency_fingerprint": "7c21dffc824eaf2c2bc5ebabb2250bac9260b38148934c05fdb12364c8ac88ca"
+      "dependency_fingerprint": "fb92e004b9dd94e572da6f04b98e1deb13b6098138735822907e41fc5f9dbf87"
     },
     {
       "name": "Research-paper KB provenance and retrieval evaluation",
       "status": "passed",
-      "duration_seconds": 161.194,
+      "duration_seconds": 177.218,
       "timeout_seconds": 600,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_research_paper_kb_eval.py"
       ],
-      "dependency_fingerprint": "27068cc705b7915360a9650af689431ca2bca14323c1cc987f1cd856d17fa6bb"
+      "dependency_fingerprint": "943260e5077d2462ff0f86a3037474f685d88e3fc264fa32c31f6df0cd910aea"
     },
     {
       "name": "Research-paper per-query token and latency telemetry",
       "status": "passed",
-      "duration_seconds": 44.897,
+      "duration_seconds": 47.095,
       "timeout_seconds": 600,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_research_paper_query_telemetry.py"
       ],
-      "dependency_fingerprint": "96b29a5b5b08ad72886a23db479339b4314dad3a790e15f1031cca3b05b933f0"
+      "dependency_fingerprint": "edce797be4fba52e1466702632e6e29882ed60878ddf01a5f4812cfef632bc9b"
     },
     {
       "name": "Claim-conditioned citation selector offline evaluation",
       "status": "passed",
-      "duration_seconds": 0.627,
+      "duration_seconds": 0.288,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_claim_conditioned_citation_selector_eval.py"
       ],
-      "dependency_fingerprint": "520401e4a19bafc1c32cce8eeb84d85e1cbbd3eee9efe8eb45f62a7300996e3d"
+      "dependency_fingerprint": "3c15ae2a47ee8d3b248b713b2acab400d496a8b9d7f0785d064089eb70f8b0c1"
     },
     {
       "name": "Signed localhost automation channel drill",
       "status": "passed",
-      "duration_seconds": 3.407,
+      "duration_seconds": 1.669,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_automation_channel_drill.py"
       ],
-      "dependency_fingerprint": "6fe8a672e04875d8723652ce98605e32a8d7075066232bd2e4b463236005bc05"
+      "dependency_fingerprint": "ae6b2f5641240110355a42eb20d3528df42e2fa67f68ad587dcaa97480483fe3"
     },
     {
       "name": "Synthetic n8n and MailHog staging readiness",
       "status": "passed",
-      "duration_seconds": 2.329,
+      "duration_seconds": 2.148,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_synthetic_automation_staging_readiness.py"
       ],
-      "dependency_fingerprint": "b6b983c7e4c77a7ff857f45c25f3536a06da5516233503d1d27f3fa0641b17dc"
+      "dependency_fingerprint": "2a4882fb4af976459408caf5a631708f75ca17dcba8229dd613278267bd38609"
     },
     {
       "name": "Fine-tune promotion evidence gate",
       "status": "passed",
-      "duration_seconds": 0.839,
+      "duration_seconds": 0.78,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_finetune_promotion_gate.py"
       ],
-      "dependency_fingerprint": "0cc7b31f2506cba62e76696beb4d7345b66404e279bae7c85af107a3c0b4a3e6"
+      "dependency_fingerprint": "814b83053b4333ee1fb15908b367589bc84a8dc3b208b870ff038bdd7a27173e"
     },
     {
       "name": "Fine-tune semantic contamination screen",
       "status": "passed",
-      "duration_seconds": 19.698,
+      "duration_seconds": 8.718,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_finetune_semantic_contamination.py"
       ],
-      "dependency_fingerprint": "58c9e9a5debee9eeb7b9ef44dd8aa7388469871470bbc5d7aefa504bd02190fb"
+      "dependency_fingerprint": "1f0f20f2715bfc206ec59ea1127b4f651d8daa8b71ac4277a60896e632d72f04"
     },
     {
       "name": "Fine-tune contamination adjudication readiness",
       "status": "passed",
-      "duration_seconds": 1.016,
+      "duration_seconds": 0.279,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_finetune_contamination_adjudication.py"
       ],
-      "dependency_fingerprint": "bf2a0365567263f2cc86102c382b2c5f2dc6bf734c79177fcd223f36b5e16fed"
+      "dependency_fingerprint": "79d0ba99d7bf2597d695bd256bf0e7226a6dbf6c1c80e9629c0824a8ea4366ae"
     },
     {
       "name": "Canonical proxy-removed synthetic feature policy",
       "status": "passed",
-      "duration_seconds": 1.302,
+      "duration_seconds": 0.372,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_synthetic_feature_policy.py"
       ],
-      "dependency_fingerprint": "86b8a7061909d282b433f741341f86c7ed159e3fa5c680bbfa99626cd006ea14"
+      "dependency_fingerprint": "15fcd8d4e5e7c9341c4122744a30b6b719bcadad3a2897c7e26dde375471d179"
     },
     {
       "name": "Synthetic ML perturbation and retraining stress",
       "status": "passed",
-      "duration_seconds": 212.862,
+      "duration_seconds": 130.765,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_synthetic_model_perturbation_retrain_eval.py"
       ],
-      "dependency_fingerprint": "bc6411c9dca1592c2f3b45dfec008081d9d6f2d8ac9534561496791382b2e814"
+      "dependency_fingerprint": "09354546928ce270a7f57e8b93adcdd03570b945429656e2f944dcbaf4daaa78"
     },
     {
       "name": "Disposable synthetic staging readiness",
       "status": "passed",
-      "duration_seconds": 1.547,
+      "duration_seconds": 1.458,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_disposable_synthetic_staging_readiness.py"
       ],
-      "dependency_fingerprint": "46eef320f52a30801472512c0bbcc4acb62f57d8ba5ad5ab24ec90d85148d9dd"
+      "dependency_fingerprint": "75b398faa33e9258fff9c6f17a1803e2f9cacaf32d222d8c09d36865fcbf4762"
     },
     {
       "name": "Synthetic staging resilience dossier",
       "status": "passed",
-      "duration_seconds": 0.587,
+      "duration_seconds": 0.489,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_synthetic_staging_resilience_dossier.py"
       ],
-      "dependency_fingerprint": "0a4784da6fe27e65991f6e00ae069e55c09f69343af8b97936755396f0aa53f1"
+      "dependency_fingerprint": "0dd5405f39a5d4d08a59750f4d63c7962fd01165a686e3e56d41c7e28f5d6784"
     },
     {
       "name": "Fine-tune hardening assurance",
       "status": "passed",
-      "duration_seconds": 0.392,
+      "duration_seconds": 0.328,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_finetune_hardening_assurance.py"
       ],
-      "dependency_fingerprint": "5643375b3bb2c85501d2f479e40e7b21ae553b13b5df938efed6e43ce90432b7"
+      "dependency_fingerprint": "49fc8233ce7c5790d31b1b6fe617728597e714e0675f3c58ae9dd1a3d5b70102"
+    },
+    {
+      "name": "Fail-closed RAG release assurance",
+      "status": "passed",
+      "duration_seconds": 8.313,
+      "timeout_seconds": 240,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_fail_closed_rag_assurance.py"
+      ],
+      "dependency_fingerprint": "e94c10a9ed08af649be25cafee564dbc62fdf2238ba716cd0375fc247212aa3d"
+    },
+    {
+      "name": "Required safety benchmark refresh",
+      "status": "passed",
+      "duration_seconds": 3.136,
+      "timeout_seconds": 300,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_safety_benchmark.py"
+      ],
+      "dependency_fingerprint": "2469a7fd8523c62e42764be4e817df2aa00348c987f518374e684abf06ddfb84"
+    },
+    {
+      "name": "Required adversarial benchmark refresh",
+      "status": "passed",
+      "duration_seconds": 4.178,
+      "timeout_seconds": 300,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_adversarial_benchmark.py"
+      ],
+      "dependency_fingerprint": "905bc3cf2ae4605b0a238a3162912421e887f90eaa5bb466c1ae07fc88da2f1e"
+    },
+    {
+      "name": "Required RAG benchmark refresh",
+      "status": "passed",
+      "duration_seconds": 3.645,
+      "timeout_seconds": 600,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_rag_benchmark.py"
+      ],
+      "dependency_fingerprint": "529ff97819b29d82ec21af0ea83923aa6c92ac352200119938d2eea776fb591f"
+    },
+    {
+      "name": "Required intent-aware RAG benchmark refresh",
+      "status": "passed",
+      "duration_seconds": 0.2,
+      "timeout_seconds": 600,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_rag_intent_aware_eval.py"
+      ],
+      "dependency_fingerprint": "4095884c9baa45f7cd80b57a3044cd04d64d57728ebfb6b0e9db684f19aa67be"
     },
     {
       "name": "Cross-domain evidence maturity matrix",
       "status": "passed",
-      "duration_seconds": 2.899,
+      "duration_seconds": 1.277,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_evidence_maturity_matrix.py"
       ],
-      "dependency_fingerprint": "3ab594b980a364998df3948d289ff1c8353b59d7dc387ffe070bed564bb8ddf2"
+      "dependency_fingerprint": "d96ba2416d3870d975c8a0f6ea6b186e5b8a6cb6bad40490ff9fbef867416a51"
     },
     {
       "name": "Canonical credibility-gap registry",
       "status": "passed",
-      "duration_seconds": 0.98,
+      "duration_seconds": 0.273,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_credibility_gap_registry.py"
       ],
-      "dependency_fingerprint": "7ec024f33971c23c195e46257bd92476d6d8e36577436436cea9f89fecdbdeea"
+      "dependency_fingerprint": "664ce0c4facc41afe2c2bedb3bde83ed4792d3e47d2c7872a0c87d601b34ab08"
     },
     {
       "name": "Cross-domain composed assurance drill",
       "status": "passed",
-      "duration_seconds": 19.573,
+      "duration_seconds": 10.642,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_cross_domain_assurance_eval.py"
       ],
-      "dependency_fingerprint": "36e3386fccc7093e4842956f4c46d37d3adbaf77623b8ea8678b5d76f8182b8f"
+      "dependency_fingerprint": "eeaf3ab18d6adf4a46abac9b3e6d22024804db9e0f12df8be1151cf08155264b"
     },
     {
       "name": "Senior engineering evidence dossier",
       "status": "passed",
-      "duration_seconds": 1.556,
+      "duration_seconds": 1.072,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_senior_engineering_evidence.py"
       ],
-      "dependency_fingerprint": "372acad0df8c8aa03620098ff8d86682e973e6533df10733ad0e24915fd9a6e9"
+      "dependency_fingerprint": "1e39b9afb78a9e910f9295cde310dcdc592ce96e600c647bd5b9f3f81cf1d0d2"
     },
     {
       "name": "Canonical release decision surface",
       "status": "passed",
-      "duration_seconds": 0.528,
+      "duration_seconds": 0.396,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_release_decision_surface.py"
       ],
-      "dependency_fingerprint": "51ebb5fb7554e282768489e9d567bcbdb8f951bbbb2133db70fda5be6b382213"
+      "dependency_fingerprint": "d51a1af88ce160c3ffe40ded5ec37338ef26bd6868bfa82024dc26a9ff071dfe"
     },
     {
       "name": "Constraint-aware cross-domain improvement program",
       "status": "passed",
-      "duration_seconds": 0.421,
+      "duration_seconds": 0.303,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_constraint_aware_improvement_program.py"
       ],
-      "dependency_fingerprint": "d587516536aad95c4b82f47183c1a9e8a76437c79aceb3025e142a37f48abad1"
+      "dependency_fingerprint": "8cd7772a898c109663864d1776bcd2d865493d3e600228bedecc5aa20b07e373"
     },
     {
       "name": "Consolidated benchmark registry",
       "status": "passed",
-      "duration_seconds": 7.095,
+      "duration_seconds": 2.651,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/generate_benchmark_report.py"
       ],
-      "dependency_fingerprint": "defda3aca2e7be7d319bef75d443ecbc584e77d99f1af1777d4f4c6fad80bb33"
+      "dependency_fingerprint": "0e780539ded03234e34e5cf525d3313ac571d3ecb49a5254387634e0ccd9a72b"
     },
     {
       "name": "Evidence-backed service health snapshot",
       "status": "passed",
-      "duration_seconds": 0.663,
+      "duration_seconds": 0.421,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_ops_health_snapshot.py"
       ],
-      "dependency_fingerprint": "905402121544217662dc2e18e9517cad45b20b0bd244b80356dbfc44da699896"
+      "dependency_fingerprint": "46978070c25d26bdf033ed228af2cc140b9225775c093c07c07459d8c0878434"
     },
     {
       "name": "Focused release summary",
       "status": "passed",
-      "duration_seconds": 6.386,
+      "duration_seconds": 5.649,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_focused_release_summary.py"
       ],
-      "dependency_fingerprint": "053ef072c7fc2de8dcbe35e211f30d366d60f90792c253746a4fa72f31ae4175"
+      "dependency_fingerprint": "19408f3567d3e7923394a2edea91fba409fa26798bc29bfc553a1633488c0b22"
     },
     {
       "name": "Release artifact gate",
       "status": "passed",
-      "duration_seconds": 2.121,
+      "duration_seconds": 2.276,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_release_gate.py"
       ],
-      "dependency_fingerprint": "e767c2b582e9a1d78f61cca2301813a7aaacb40cf82c8b2963507733d95014c1"
+      "dependency_fingerprint": "db14f7dc19088cea145ae1a65a0e5644e87d0268a32bc916130ad0dd6d0cad81"
     }
   ],
   "claim_boundary": "This manifest records local engineering gate execution only. A passing ship run does not establish clinical validation, real-world safety, compliance, or production healthcare readiness."

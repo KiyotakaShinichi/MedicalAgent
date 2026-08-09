@@ -100,6 +100,7 @@ from backend.services.lab_reference_context import build_cbc_reference_context
 from backend.services.multimodal_fusion import build_multimodal_assessment
 from backend.services.patient_timeline_summary import build_patient_timeline_risk_summary
 from backend.services.support_chat_agent import handle_patient_chat
+from backend.services.rag_evidence_envelope import enforce_transport_release
 from backend.services.timeline_intelligence import answer_timeline_question, build_timeline_intelligence
 from backend.services.data_availability import build_data_availability
 from backend.services.patient_report_enrichment_jobs import (
@@ -582,6 +583,7 @@ def chat_with_patient_agent(
     try:
         validate_chat_message(payload.message)
         result = handle_patient_chat(db, patient_id, payload.message)
+        result = enforce_transport_release(result, query=payload.message)
         if result.get("saved_actions"):
             _invalidate_report_cache(patient_id)
     except ValueError as exc:
@@ -611,6 +613,7 @@ def chat_with_my_patient_agent(
     try:
         validate_chat_message(payload.message)
         result = handle_patient_chat(db, context.patient_id, payload.message)
+        result = enforce_transport_release(result, query=payload.message)
         if result.get("saved_actions"):
             _invalidate_report_cache(context.patient_id)
     except ValueError as exc:
@@ -687,6 +690,10 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str, *, persis
         "mode": "post_guardrail_display_stream",
         "reason": "Patient-facing medical replies are chunked only after safety/output checks pass.",
     })
+    yield _sse_event("streaming_authorization", {
+        "status": "blocked_pending_validation",
+        "evidence_content_emitted": False,
+    })
     yield _sse_event("pipeline_stage", {"stage": "safety_gate", "label": "Checking safety gate…"})
 
     yield _sse_event("pipeline_stage", {"stage": "intent_routing", "label": "Routing intent..."})
@@ -713,6 +720,21 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str, *, persis
         yield _sse_event("done", {})
         return
 
+    # Final transport boundary: no answer token is emitted before the exact
+    # reply/envelope pair has been re-authorized.
+    result = enforce_transport_release(result, query=message)
+    agent_pipeline = result.get("agent_pipeline") or {}
+    release_authorization = (
+        result.get("release_authorization")
+        or agent_pipeline.get("release_authorization")
+        or {}
+    )
+    yield _sse_event("streaming_authorization", {
+        "status": "authorized_safe_payload",
+        "disposition": release_authorization.get("disposition"),
+        "evidence_content_emitted": False,
+    })
+
     yield _sse_event("pipeline_stage", {"stage": "intent_routing", "label": "Routing intent…"})
     yield _sse_event("pipeline_stage", {"stage": "retrieval", "label": "Retrieving context…"})
     yield _sse_event("pipeline_stage", {"stage": "generation", "label": "Generating response…"})
@@ -735,6 +757,11 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str, *, persis
         "cache_status": (result.get("cache") or agent_pipeline.get("cache") or {}).get("status"),
         "saved_actions": result.get("saved_actions") or [],
         "assistant_message_id": result.get("assistant_message_id"),
+        "evidence_disposition": (
+            result.get("release_authorization")
+            or agent_pipeline.get("release_authorization")
+            or {}
+        ).get("disposition"),
     }
     yield _sse_event("answer", answer_payload)
     yield _sse_event("done", {})

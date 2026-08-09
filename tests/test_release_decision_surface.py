@@ -83,6 +83,35 @@ def test_failed_full_ship_manifest_is_a_hard_blocker(tmp_path, monkeypatch):
     assert row["decision"] == "attention"
 
 
+def test_failed_fail_closed_rag_assurance_blocks_engineering_release(
+    tmp_path, monkeypatch
+):
+    assurance_path = tmp_path / "assurance.json"
+    assurance_path.write_text(
+        json.dumps(
+            {
+                "status": "failed",
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+            }
+        ),
+        encoding="utf-8",
+    )
+    checks = tuple(
+        {**check, "path": str(assurance_path)}
+        if check["id"] == "fail_closed_rag_release"
+        else check
+        for check in surface.CHECKS
+    )
+    monkeypatch.setattr(surface, "CHECKS", checks)
+    result = surface.build_release_decision_surface(tmp_path / "surface.json")
+    row = next(
+        row for row in result["checks"] if row["id"] == "fail_closed_rag_release"
+    )
+    assert result["engineering_release_decision"] == "BLOCK"
+    assert row["tier"] == "hard_blocker"
+    assert row["decision"] == "attention"
+
+
 def test_stale_warning_is_not_reported_as_verified(tmp_path, monkeypatch):
     warning = tmp_path / "warning.json"
     warning.write_text(

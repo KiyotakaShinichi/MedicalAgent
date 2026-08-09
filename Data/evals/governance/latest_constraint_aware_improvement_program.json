@@ -1,8 +1,8 @@
 {
   "schema_version": "constraint_aware_improvement_program_v1",
-  "generated_at": "2026-08-02T16:22:44.463090+00:00",
-  "status": "needs_attention",
-  "engineering_release_decision": "PROCEED_WITH_WARNINGS",
+  "generated_at": "2026-08-09T12:12:47.453488+00:00",
+  "status": "blocked",
+  "engineering_release_decision": "BLOCK",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "real_patient_data_used": false,
@@ -11,7 +11,7 @@
     {
       "domain": "aie",
       "evidence_state": "needs_attention",
-      "canonical_check_count": 4,
+      "canonical_check_count": 5,
       "attention_check_ids": [
         "frozen_adversarial_v7"
       ],
@@ -57,9 +57,12 @@
     },
     {
       "domain": "swe",
-      "evidence_state": "verified_internal_only",
-      "canonical_check_count": 4,
-      "attention_check_ids": [],
+      "evidence_state": "blocked",
+      "canonical_check_count": 3,
+      "attention_check_ids": [
+        "full_ship_manifest",
+        "dependency_security"
+      ],
       "objective": "Make the system reproducible, reviewable, secure by default, and boring to operate in controlled demos.",
       "implemented_controls": [
         "modular FastAPI and typed React surfaces",
@@ -182,6 +185,18 @@
   ],
   "ranked_priorities": [
     {
+      "priority": "P0",
+      "domain": "swe",
+      "action": "Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence.",
+      "acceptance_criteria": [
+        "full ship workflow passes from a clean checkout",
+        "hard blockers cannot be diluted by informational artifacts",
+        "canonical evidence is refreshed after its dependencies",
+        "dependency and container scans expose unavailable tools as gaps"
+      ],
+      "blocked_by_external_evidence": "No production traffic, penetration test, SOC 2, HITRUST, or healthcare security review exists."
+    },
+    {
       "priority": "P1",
       "domain": "aie",
       "action": "Increase independent route sample counts and preserve BM25 as the explicit simple baseline.",
@@ -264,18 +279,6 @@
         "all review packets remain labelled unreviewed until actually completed"
       ],
       "blocked_by_external_evidence": "No clinician, nurse, genetic counselor, pharmacist, or patient review has been completed."
-    },
-    {
-      "priority": "P2",
-      "domain": "swe",
-      "action": "Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence.",
-      "acceptance_criteria": [
-        "full ship workflow passes from a clean checkout",
-        "hard blockers cannot be diluted by informational artifacts",
-        "canonical evidence is refreshed after its dependencies",
-        "dependency and container scans expose unavailable tools as gaps"
-      ],
-      "blocked_by_external_evidence": "No production traffic, penetration test, SOC 2, HITRUST, or healthcare security review exists."
     }
   ],
   "implemented_in_this_pass": [

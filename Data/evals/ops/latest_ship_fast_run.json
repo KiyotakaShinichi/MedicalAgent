@@ -1,0 +1,184 @@
+{
+  "schema_version": "nlcare_ship_run_v2",
+  "generated_at": "2026-08-09T12:24:26.191377+00:00",
+  "status": "passed",
+  "tier": "fast",
+  "resume_requested": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "completed_step_count": 8,
+  "selected_step_count": 8,
+  "cached_step_count": 0,
+  "failed_step": null,
+  "failure_kind": null,
+  "steps": [
+    {
+      "name": "Backend breast-monitoring integration tests",
+      "status": "passed",
+      "duration_seconds": 58.999,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_breast_monitoring.py",
+        "-q"
+      ],
+      "dependency_fingerprint": "e09b67fc1ed7bb09c7fead2348ef4964059ae1c7f632a2cf93ad2729b0cc1e7f"
+    },
+    {
+      "name": "Backend progressive-loading and notification reliability tests",
+      "status": "passed",
+      "duration_seconds": 26.87,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_patient_progressive_report.py",
+        "tests/test_patient_report_enrichment_jobs.py",
+        "tests/test_high_risk_conversation_alerts.py",
+        "tests/test_n8n_webhook_dispatcher.py",
+        "tests/test_n8n_automation_templates.py",
+        "-q"
+      ],
+      "dependency_fingerprint": "4b7c45cef0719641cc90b3a02de8fc5ab035abcdbbc99a356a7f1419dfe6ff34"
+    },
+    {
+      "name": "Cloud, data-platform, and managed-vector contract tests",
+      "status": "passed",
+      "duration_seconds": 74.945,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_managed_vector_store.py",
+        "tests/test_data_platform_pipeline.py",
+        "tests/test_cloud_infrastructure_readiness.py",
+        "tests/test_vector_store_contract_eval.py",
+        "tests/test_azure_search_index_admin.py",
+        "tests/test_managed_vector_shadow_sync.py",
+        "tests/test_managed_vector_shadow_comparison.py",
+        "tests/test_data_platform_reliability_eval.py",
+        "tests/test_ops_health_snapshot.py",
+        "tests/test_release_decision_surface.py",
+        "tests/test_constraint_aware_improvement_program.py",
+        "tests/test_oidc_pkce.py",
+        "tests/test_dependency_security_scan.py",
+        "tests/test_software_supply_chain_evidence.py",
+        "tests/test_synthetic_automation_staging_readiness.py",
+        "tests/test_rag_degradation_resilience_eval.py",
+        "tests/test_agent_execution_policy_eval.py",
+        "tests/test_agent_execution_policy.py",
+        "tests/test_agentic_orchestrator_and_verifier.py",
+        "tests/test_synthetic_prediction_statistical_audit.py",
+        "tests/test_patient_xai_readability_dossier.py",
+        "-q"
+      ],
+      "dependency_fingerprint": "0f54bf98c567f1afa8d24eac48524c4d0f61b6ad6caf97efd364f19b86ce9b90"
+    },
+    {
+      "name": "Assurance, XAI, automation, and safety contract tests",
+      "status": "passed",
+      "duration_seconds": 159.757,
+      "timeout_seconds": 900,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_ship_runner.py",
+        "tests/test_kb_research_provenance.py",
+        "tests/test_research_paper_kb_eval.py",
+        "tests/test_governance_credibility_artifacts.py",
+        "tests/test_xai_retraining_stability_audit.py",
+        "tests/test_xai_rank_stability_audit.py",
+        "tests/test_credible_route_latency_sample.py",
+        "tests/test_automation_channel_drill.py",
+        "tests/test_adversarial_v6_tuning_regression.py",
+        "tests/test_unsafe_intent_mutation_dev_eval.py",
+        "tests/test_cross_domain_assurance_eval.py",
+        "tests/test_senior_engineering_evidence.py",
+        "tests/test_llm_usage_telemetry.py",
+        "tests/test_finetune_promotion.py",
+        "tests/test_finetune_semantic_contamination.py",
+        "tests/test_finetune_hardening_assurance.py",
+        "tests/test_rag_paired_statistical_comparison.py",
+        "tests/test_xai_reliability_gate.py",
+        "tests/test_patient_xai_envelope.py",
+        "tests/test_evidence_maturity_matrix.py",
+        "tests/test_credibility_gap_registry.py",
+        "tests/test_rag_vector_runtime_cache.py",
+        "tests/test_retrieval_runtime_cache_eval.py",
+        "tests/test_provider_usage_reconciliation.py",
+        "tests/test_provider_usage_capture_readiness.py",
+        "tests/test_finetune_contamination_adjudication.py",
+        "tests/test_synthetic_feature_policy.py",
+        "tests/test_synthetic_model_perturbation_retrain_eval.py",
+        "tests/test_disposable_synthetic_staging_readiness.py",
+        "tests/test_synthetic_staging_resilience_dossier.py",
+        "tests/test_adversarial_holdout_v7.py",
+        "tests/test_fail_closed_rag_assurance.py",
+        "tests/test_deployment_worker_wiring.py",
+        "-q"
+      ],
+      "dependency_fingerprint": "db56a2a6e975405450c832228617a563eac2a67f1a7707f837d4d5d157d21795"
+    },
+    {
+      "name": "Frontend Vitest unit tests",
+      "status": "passed",
+      "duration_seconds": 33.109,
+      "timeout_seconds": 900,
+      "cwd": "frontend-react",
+      "command": [
+        "npm.cmd",
+        "run",
+        "test"
+      ],
+      "dependency_fingerprint": "e0f3c36885e1935bd6c1da4877d0bb22512d4226bce1e2682916e7168bba5a0e"
+    },
+    {
+      "name": "Frontend lint",
+      "status": "passed",
+      "duration_seconds": 34.286,
+      "timeout_seconds": 900,
+      "cwd": "frontend-react",
+      "command": [
+        "npm.cmd",
+        "run",
+        "lint"
+      ],
+      "dependency_fingerprint": "cec844092ebade0924371a0ba97903142181bdafc7a19dce8092b3488e782583"
+    },
+    {
+      "name": "Frontend production build",
+      "status": "passed",
+      "duration_seconds": 26.954,
+      "timeout_seconds": 900,
+      "cwd": "frontend-react",
+      "command": [
+        "npm.cmd",
+        "run",
+        "build"
+      ],
+      "dependency_fingerprint": "bf105a25b6b419dec12c5c48c09e336fba0a54327cdbef681e56c28b16acb117"
+    },
+    {
+      "name": "Fail-closed RAG release assurance",
+      "status": "passed",
+      "duration_seconds": 16.003,
+      "timeout_seconds": 240,
+      "cwd": ".",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "scripts/run_fail_closed_rag_assurance.py"
+      ],
+      "dependency_fingerprint": "e94c10a9ed08af649be25cafee564dbc62fdf2238ba716cd0375fc247212aa3d"
+    }
+  ],
+  "claim_boundary": "This manifest records local engineering gate execution only. A passing ship run does not establish clinical validation, real-world safety, compliance, or production healthcare readiness."
+}

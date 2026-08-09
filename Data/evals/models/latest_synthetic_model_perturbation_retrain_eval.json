@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_model_perturbation_retrain_eval_v1",
-  "generated_at": "2026-08-02T16:21:34.753014+00:00",
+  "generated_at": "2026-08-09T12:12:04.392265+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "production_ready": false,

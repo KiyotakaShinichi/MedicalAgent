@@ -4,7 +4,7 @@ No aggregate score is emitted. Evidence volume cannot compensate for a blocking 
 
 | Dimension | Tier | Proven | Not proven |
 |---|---:|---|---|
-| AIE/RAG | 3 (frozen_internal_with_contamination_controls) | Frozen internal case-level comparisons, paired bootstrap intervals, multiple-comparison correction, source governance, negative results, and an offline claim-conditioned citation candidate status=acceptable_internal_candidate. A separate 32-case corpus-derived research-paper suite measures PMCID identity, section retrieval, provenance, and no-evidence behavior (status=needs_attention). | Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False. The citation selector is tuning-used and has not been tested on frozen generated answers. The paper suite is not independent and its boundary-route correctness is 0.5. |
+| AIE/RAG | 3 (frozen_internal_with_contamination_controls) | Frozen internal case-level comparisons, paired bootstrap intervals, multiple-comparison correction, source governance, negative results, and an offline claim-conditioned citation candidate status=acceptable_internal_candidate. A separate 32-case corpus-derived research-paper suite measures PMCID identity, section retrieval, provenance, and no-evidence behavior (status=needs_attention). | Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False. The citation selector is tuning-used and has not been tested on frozen generated answers. The paper suite is not independent and its boundary-route correctness is 0.875. |
 | AIE/adversarial safety | 3 (frozen_internal_with_contamination_controls) | One-pass frozen internal v7 with explicit author-contamination disclosure, plus separate tuning-only development and safe-negative controls. | V7 unsafe leakage=0.354545 and over-refusal=0.21875; the result is weak and external authorship is absent. |
 | LLM token/latency observability | 2 (internal_self_test) | Request totals, local route samples, stage timings, token estimates, and provider usage fields. | Provider usage coverage is 0.0; cost is not billing reconciliation. |
 | MLE/statistics | 2 (internal_self_test) | Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, paired tests, calibration, train-only constant and linear baselines, coverage-performance curves, and synthetic perturbation sensitivity. | All outcomes and uncertainty remain simulator-bounded; transportability is unproven. |
@@ -19,9 +19,9 @@ No aggregate score is emitted. Evidence volume cannot compensate for a blocking 
 ## Architecture Budget
 
 - Status: `needs_attention`
-- Oversized files: `9`
+- Oversized files: `12`
 - Critical files: `0`
-- Backend service files: `378`
+- Backend service files: `385`
 
 Do not add a new service or artifact solely to increase feature count. New modules should close a measured gap, replace an older surface, or come with a deletion/consolidation plan.
 

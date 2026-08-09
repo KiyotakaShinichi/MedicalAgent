@@ -27,6 +27,7 @@ EVIDENCE_MANIFEST = (
 )
 FAST_STEP_NAMES = {
     "Backend breast-monitoring integration tests",
+    "Fail-closed RAG release assurance",
     "Backend progressive-loading and notification reliability tests",
     "Cloud, data-platform, and managed-vector contract tests",
     "Assurance, XAI, automation, and safety contract tests",
@@ -224,6 +225,22 @@ def _build_steps() -> list[Step]:
                 "tests/test_disposable_synthetic_staging_readiness.py",
                 "tests/test_synthetic_staging_resilience_dossier.py",
                 "tests/test_adversarial_holdout_v7.py",
+                "tests/test_fail_closed_rag_assurance.py",
+                "tests/test_deployment_worker_wiring.py",
+                "-q",
+            ],
+        ),
+        Step(
+            name="Research abstention and scale-evaluation contract tests",
+            command=[
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/test_rag_runtime_prewarm.py",
+                "tests/test_research_evidence_answerability.py",
+                "tests/test_prototype_independent_prompt_bank_v2.py",
+                "tests/test_real_pipeline_scale_eval.py",
+                "tests/test_adversarial_generalization_label_audit.py",
                 "-q",
             ],
         ),
@@ -457,6 +474,31 @@ def _build_steps() -> list[Step]:
         Step(
             name="Fine-tune hardening assurance",
             command=[sys.executable, "scripts/run_finetune_hardening_assurance.py"],
+        ),
+        Step(
+            name="Fail-closed RAG release assurance",
+            command=[sys.executable, "scripts/run_fail_closed_rag_assurance.py"],
+            timeout_seconds=240,
+        ),
+        Step(
+            name="Required safety benchmark refresh",
+            command=[sys.executable, "scripts/run_safety_benchmark.py"],
+            timeout_seconds=300,
+        ),
+        Step(
+            name="Required adversarial benchmark refresh",
+            command=[sys.executable, "scripts/run_adversarial_benchmark.py"],
+            timeout_seconds=300,
+        ),
+        Step(
+            name="Required RAG benchmark refresh",
+            command=[sys.executable, "scripts/run_rag_benchmark.py"],
+            timeout_seconds=600,
+        ),
+        Step(
+            name="Required intent-aware RAG benchmark refresh",
+            command=[sys.executable, "scripts/run_rag_intent_aware_eval.py"],
+            timeout_seconds=600,
         ),
         Step(
             name="Cross-domain evidence maturity matrix",

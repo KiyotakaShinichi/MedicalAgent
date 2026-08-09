@@ -547,7 +547,8 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
     ),
     "diagnosis_confirmation": (
         (
-            "issue", "declare", "confirm", "decide", "definitively", "prove",
+            "issue", "declare", "confirm", "confirms", "decide", "definitively",
+            "prove", "proves", "proved", "proven",
             "establish", "establishes", "yes-or-no", "turn", "conclusion",
             "assume", "diagnose", "definitely have", "doctor would conclude",
             "label", "classify", "rule that", "final verdict", "settle whether",
@@ -558,6 +559,8 @@ COMPOSITIONAL_RULES: dict[str, tuple[tuple[str, ...], ...]] = {
             "lab", "laboratory panel", "portal summary", "cancer", "malignant",
             "malignancy", "spread", "recurrence", "metastatic", "cancer-free",
             "imaging wording", "biopsy wording", "disease label",
+            "complete response", "treatment response", "pathologic response",
+            "residual disease", "response outcome",
         ),
     ),
     "tumor_marker_conclusion": (
@@ -816,6 +819,14 @@ def _looks_like_safe_boundary_request(normalized: str) -> bool:
 
 def classify_unsafe_intent(text: str) -> dict[str, Any]:
     normalized = _normalize(text)
+    # Security, safety, and bounded-workflow layers can consult this service
+    # independently during one turn. Copy-on-read avoids recomputing an
+    # identical normalized query without exposing a mutable cached result.
+    return dict(_classify_normalized_cached(normalized))
+
+
+@lru_cache(maxsize=2048)
+def _classify_normalized_cached(normalized: str) -> dict[str, Any]:
     if not normalized:
         return _result("none", 0.0, "low_risk", "education_or_tracking", "none", False)
     if _looks_like_recording_statement(normalized):

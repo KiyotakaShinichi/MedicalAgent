@@ -1,6 +1,6 @@
 {
   "schema_version": "service_health_snapshot_v2",
-  "generated_at": "2026-08-02T16:22:46.895774+00:00",
+  "generated_at": "2026-08-09T12:12:51.647565+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -11,7 +11,7 @@
   "metrics": {
     "live_rag_case_count": 21,
     "live_rag_latency_p50_ms": 3810.25,
-    "normal_rag_latency_p95_ms": 358.34,
+    "normal_rag_latency_p95_ms": 280.14,
     "normal_rag_percentile_credible": true,
     "routes_with_insufficient_samples": 0,
     "retrieval_case_failure_rate": 0.0952,
@@ -31,9 +31,9 @@
     "cloud_deployment_completed": false,
     "strict_deployment_profile": false,
     "deployment_profile_status": "development_profile",
-    "release_decision": "PROCEED_WITH_WARNINGS",
+    "release_decision": "BLOCK",
     "release_gate_status": "needs_attention",
-    "stale_artifact_count": 133,
+    "stale_artifact_count": 129,
     "failed_benchmark_count": 0
   },
   "attention_items": [
@@ -43,8 +43,6 @@
     "strict_deployment_profile_not_active"
   ],
   "stale_artifacts": [
-    "safety_red_team",
-    "adversarial",
     "adversarial_safety_regression",
     "adversarial_failure_analysis",
     "adversarial_holdout_monitor",
@@ -53,7 +51,6 @@
     "heldout_adversarial_failure_analysis",
     "unsafe_intent_classifier_eval",
     "multilingual_refusal",
-    "rag_regression",
     "rag_governance_tradeoff",
     "rag_gold",
     "tool_action_benchmark",
@@ -92,7 +89,10 @@
     "treatment_sequence_feature_eval",
     "data_promotion_roadmap",
     "tcga_metabric_canonical_mapping",
-    "strict_common_feature_ab_eval"
+    "strict_common_feature_ab_eval",
+    "toxicity_review_target_v2",
+    "toxicity_review_target_v3",
+    "ml_coverage_risk_diagnostics"
   ],
   "failed_artifacts": [],
   "source_artifacts": {

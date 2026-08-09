@@ -1,6 +1,6 @@
 {
   "schema_version": "research_paper_retrieval_failures_v1",
-  "generated_at": "2026-08-02T16:16:33.638771+00:00",
+  "generated_at": "2026-08-09T12:08:40.997577+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "independent_holdout": false,
@@ -37,7 +37,7 @@
       "matched_relevant_chunk_count": 9,
       "provenance_complete_relevant_chunk_count": 9,
       "source_tier_correct": true,
-      "latency_ms": 196.476,
+      "latency_ms": 414.517,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -73,7 +73,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 195.81,
+      "latency_ms": 374.857,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -109,7 +109,7 @@
       "matched_relevant_chunk_count": 5,
       "provenance_complete_relevant_chunk_count": 5,
       "source_tier_correct": true,
-      "latency_ms": 192.775,
+      "latency_ms": 352.387,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -145,7 +145,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 188.53,
+      "latency_ms": 335.124,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -181,7 +181,7 @@
       "matched_relevant_chunk_count": 7,
       "provenance_complete_relevant_chunk_count": 7,
       "source_tier_correct": true,
-      "latency_ms": 192.174,
+      "latency_ms": 336.92,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -217,7 +217,7 @@
       "matched_relevant_chunk_count": 7,
       "provenance_complete_relevant_chunk_count": 7,
       "source_tier_correct": true,
-      "latency_ms": 194.678,
+      "latency_ms": 331.758,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -253,7 +253,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 188.323,
+      "latency_ms": 341.72,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -289,7 +289,7 @@
       "matched_relevant_chunk_count": 7,
       "provenance_complete_relevant_chunk_count": 7,
       "source_tier_correct": true,
-      "latency_ms": 191.473,
+      "latency_ms": 318.908,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -325,7 +325,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 188.752,
+      "latency_ms": 345.324,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -361,7 +361,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 229.731,
+      "latency_ms": 342.444,
       "failure_reasons": [
         "expected_paper_missing_at_10",
         "expected_section_missing_at_10"
@@ -398,7 +398,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 274.689,
+      "latency_ms": 332.361,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -434,7 +434,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 379.046,
+      "latency_ms": 310.454,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -470,7 +470,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 410.709,
+      "latency_ms": 321.254,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -506,7 +506,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 279.889,
+      "latency_ms": 336.18,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -542,7 +542,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 342.697,
+      "latency_ms": 336.563,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -578,7 +578,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 322.744,
+      "latency_ms": 321.759,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -614,7 +614,7 @@
       "matched_relevant_chunk_count": 9,
       "provenance_complete_relevant_chunk_count": 9,
       "source_tier_correct": true,
-      "latency_ms": 113.458,
+      "latency_ms": 141.693,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -650,7 +650,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 113.264,
+      "latency_ms": 118.842,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -686,7 +686,7 @@
       "matched_relevant_chunk_count": 8,
       "provenance_complete_relevant_chunk_count": 8,
       "source_tier_correct": true,
-      "latency_ms": 107.261,
+      "latency_ms": 118.477,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -722,7 +722,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 105.663,
+      "latency_ms": 125.687,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -758,7 +758,7 @@
       "matched_relevant_chunk_count": 7,
       "provenance_complete_relevant_chunk_count": 7,
       "source_tier_correct": true,
-      "latency_ms": 107.407,
+      "latency_ms": 136.139,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -794,7 +794,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 101.015,
+      "latency_ms": 160.127,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -830,7 +830,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 102.186,
+      "latency_ms": 164.888,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -866,7 +866,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 102.348,
+      "latency_ms": 142.267,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -902,7 +902,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 101.088,
+      "latency_ms": 128.19,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -938,7 +938,7 @@
       "matched_relevant_chunk_count": 8,
       "provenance_complete_relevant_chunk_count": 8,
       "source_tier_correct": true,
-      "latency_ms": 105.297,
+      "latency_ms": 130.923,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -974,7 +974,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 128.979,
+      "latency_ms": 153.227,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1010,7 +1010,7 @@
       "matched_relevant_chunk_count": 9,
       "provenance_complete_relevant_chunk_count": 9,
       "source_tier_correct": true,
-      "latency_ms": 118.316,
+      "latency_ms": 190.323,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1046,7 +1046,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 137.605,
+      "latency_ms": 146.52,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1082,7 +1082,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 235.508,
+      "latency_ms": 129.735,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1118,7 +1118,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 189.652,
+      "latency_ms": 138.187,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1154,7 +1154,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 167.438,
+      "latency_ms": 123.92,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1190,7 +1190,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 172.612,
+      "latency_ms": 162.424,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1226,7 +1226,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 177.685,
+      "latency_ms": 172.03,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1262,7 +1262,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 291.429,
+      "latency_ms": 143.486,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1298,7 +1298,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 201.574,
+      "latency_ms": 122.332,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1334,7 +1334,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 152.575,
+      "latency_ms": 121.141,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1370,7 +1370,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 107.261,
+      "latency_ms": 118.477,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1406,7 +1406,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 105.663,
+      "latency_ms": 125.687,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1442,7 +1442,7 @@
       "matched_relevant_chunk_count": 6,
       "provenance_complete_relevant_chunk_count": 6,
       "source_tier_correct": true,
-      "latency_ms": 107.407,
+      "latency_ms": 136.139,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1478,7 +1478,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 101.015,
+      "latency_ms": 160.127,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1514,7 +1514,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 102.186,
+      "latency_ms": 164.888,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1550,7 +1550,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 102.348,
+      "latency_ms": 142.267,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1586,7 +1586,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 101.088,
+      "latency_ms": 128.19,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1622,7 +1622,7 @@
       "matched_relevant_chunk_count": 8,
       "provenance_complete_relevant_chunk_count": 8,
       "source_tier_correct": true,
-      "latency_ms": 105.297,
+      "latency_ms": 130.923,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1658,7 +1658,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 128.979,
+      "latency_ms": 153.227,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1694,7 +1694,7 @@
       "matched_relevant_chunk_count": 7,
       "provenance_complete_relevant_chunk_count": 7,
       "source_tier_correct": true,
-      "latency_ms": 118.316,
+      "latency_ms": 190.323,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1730,7 +1730,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 137.605,
+      "latency_ms": 146.52,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -1766,7 +1766,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 235.508,
+      "latency_ms": 129.735,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1802,7 +1802,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 189.652,
+      "latency_ms": 138.187,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1838,7 +1838,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 167.438,
+      "latency_ms": 123.92,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1874,7 +1874,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 172.612,
+      "latency_ms": 162.424,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1910,7 +1910,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 177.685,
+      "latency_ms": 172.03,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1946,7 +1946,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 291.429,
+      "latency_ms": 143.486,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -1982,7 +1982,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 201.574,
+      "latency_ms": 122.332,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2018,7 +2018,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 152.575,
+      "latency_ms": 121.141,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2054,7 +2054,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 104.849,
+      "latency_ms": 142.979,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2090,7 +2090,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 98.098,
+      "latency_ms": 180.154,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2126,7 +2126,7 @@
       "matched_relevant_chunk_count": 6,
       "provenance_complete_relevant_chunk_count": 6,
       "source_tier_correct": true,
-      "latency_ms": 97.96,
+      "latency_ms": 168.058,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2162,7 +2162,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 102.179,
+      "latency_ms": 145.532,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2198,7 +2198,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 95.179,
+      "latency_ms": 125.912,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2234,7 +2234,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 100.67,
+      "latency_ms": 122.779,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2270,7 +2270,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 107.659,
+      "latency_ms": 113.826,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2306,7 +2306,7 @@
       "matched_relevant_chunk_count": 8,
       "provenance_complete_relevant_chunk_count": 8,
       "source_tier_correct": true,
-      "latency_ms": 108.656,
+      "latency_ms": 127.88,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2342,7 +2342,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 104.942,
+      "latency_ms": 197.306,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2378,7 +2378,7 @@
       "matched_relevant_chunk_count": 7,
       "provenance_complete_relevant_chunk_count": 7,
       "source_tier_correct": true,
-      "latency_ms": 103.478,
+      "latency_ms": 163.293,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2414,7 +2414,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 117.311,
+      "latency_ms": 122.104,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2450,7 +2450,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 123.8,
+      "latency_ms": 138.16,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2486,7 +2486,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 129.056,
+      "latency_ms": 130.803,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2522,7 +2522,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 119.005,
+      "latency_ms": 174.733,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2558,7 +2558,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 117.306,
+      "latency_ms": 151.524,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2594,7 +2594,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 85.844,
+      "latency_ms": 99.901,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2630,7 +2630,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 117.165,
+      "latency_ms": 133.027,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2666,7 +2666,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 90.486,
+      "latency_ms": 114.436,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2702,7 +2702,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 110.839,
+      "latency_ms": 148.338,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -2738,7 +2738,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 105.027,
+      "latency_ms": 143.24,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2774,7 +2774,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 98.272,
+      "latency_ms": 180.466,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2810,7 +2810,7 @@
       "matched_relevant_chunk_count": 6,
       "provenance_complete_relevant_chunk_count": 6,
       "source_tier_correct": true,
-      "latency_ms": 98.251,
+      "latency_ms": 168.561,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2846,7 +2846,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 102.347,
+      "latency_ms": 145.854,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2882,7 +2882,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 95.366,
+      "latency_ms": 126.416,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2918,7 +2918,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 100.814,
+      "latency_ms": 123.171,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2954,7 +2954,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 107.812,
+      "latency_ms": 114.246,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -2990,7 +2990,7 @@
       "matched_relevant_chunk_count": 8,
       "provenance_complete_relevant_chunk_count": 8,
       "source_tier_correct": true,
-      "latency_ms": 108.977,
+      "latency_ms": 128.661,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3026,7 +3026,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 105.186,
+      "latency_ms": 197.598,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3062,7 +3062,7 @@
       "matched_relevant_chunk_count": 7,
       "provenance_complete_relevant_chunk_count": 7,
       "source_tier_correct": true,
-      "latency_ms": 103.954,
+      "latency_ms": 163.893,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3098,7 +3098,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 117.556,
+      "latency_ms": 122.406,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3134,7 +3134,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 124.192,
+      "latency_ms": 138.647,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3170,7 +3170,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 129.457,
+      "latency_ms": 131.269,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3206,7 +3206,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 119.294,
+      "latency_ms": 175.101,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3242,7 +3242,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 117.747,
+      "latency_ms": 152.068,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3278,7 +3278,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 86.154,
+      "latency_ms": 100.324,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3314,7 +3314,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 117.432,
+      "latency_ms": 133.414,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3350,7 +3350,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 90.942,
+      "latency_ms": 115.149,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3386,7 +3386,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 111.417,
+      "latency_ms": 149.022,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3422,7 +3422,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 105.006,
+      "latency_ms": 143.643,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3458,7 +3458,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 98.266,
+      "latency_ms": 180.876,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3494,7 +3494,7 @@
       "matched_relevant_chunk_count": 6,
       "provenance_complete_relevant_chunk_count": 6,
       "source_tier_correct": true,
-      "latency_ms": 98.25,
+      "latency_ms": 169.101,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3530,7 +3530,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 102.341,
+      "latency_ms": 146.274,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3566,7 +3566,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 95.357,
+      "latency_ms": 126.404,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3602,7 +3602,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 100.797,
+      "latency_ms": 123.14,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3638,7 +3638,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 107.789,
+      "latency_ms": 114.315,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3674,7 +3674,7 @@
       "matched_relevant_chunk_count": 8,
       "provenance_complete_relevant_chunk_count": 8,
       "source_tier_correct": true,
-      "latency_ms": 108.981,
+      "latency_ms": 129.183,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3710,7 +3710,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 105.077,
+      "latency_ms": 197.697,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3746,7 +3746,7 @@
       "matched_relevant_chunk_count": 9,
       "provenance_complete_relevant_chunk_count": 9,
       "source_tier_correct": true,
-      "latency_ms": 103.793,
+      "latency_ms": 163.917,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3782,7 +3782,7 @@
       "matched_relevant_chunk_count": 10,
       "provenance_complete_relevant_chunk_count": 10,
       "source_tier_correct": true,
-      "latency_ms": 117.48,
+      "latency_ms": 122.582,
       "failure_reasons": [
         "expected_section_missing_at_10"
       ]
@@ -3818,7 +3818,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 124.287,
+      "latency_ms": 138.843,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3854,7 +3854,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 129.679,
+      "latency_ms": 131.577,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3890,7 +3890,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 119.423,
+      "latency_ms": 175.282,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3926,7 +3926,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 117.872,
+      "latency_ms": 152.7,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3962,7 +3962,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 86.263,
+      "latency_ms": 100.831,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -3998,7 +3998,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 117.503,
+      "latency_ms": 133.566,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -4034,7 +4034,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 90.994,
+      "latency_ms": 115.26,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]
@@ -4070,7 +4070,7 @@
       "matched_relevant_chunk_count": 0,
       "provenance_complete_relevant_chunk_count": 0,
       "source_tier_correct": true,
-      "latency_ms": 111.301,
+      "latency_ms": 149.429,
       "failure_reasons": [
         "research_paper_returned_for_no_evidence_boundary"
       ]

@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_hardening_assurance_v1",
-  "generated_at": "2026-08-02T16:21:40.000435+00:00",
+  "generated_at": "2026-08-09T12:12:09.155897+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "model_trained": false,

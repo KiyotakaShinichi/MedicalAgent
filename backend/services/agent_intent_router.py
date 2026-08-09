@@ -73,6 +73,22 @@ EDUCATION_TERMS: tuple[str, ...] = (
     "survivorship", "survivorship care",
 )
 
+RESEARCH_EDUCATION_TERMS: tuple[str, ...] = (
+    "paper", "papers", "research", "study", "studies", "trial", "trials",
+    "primary outcome", "adherence outcome", "randomized", "randomised",
+    "pro-ctcae", "publication", "literature",
+)
+
+EDUCATIONAL_QUESTION_CUES: tuple[str, ...] = (
+    "what is", "what are", "what does", "what do", "why is", "why are",
+    "how is", "how are", "used for", "difference between", "in general",
+)
+
+PERSONAL_TIMELINE_CUES: tuple[str, ...] = (
+    "my ", "today", "latest", "logged", "recorded", "in my record",
+    "portal record", "this cycle", "last cycle",
+)
+
 
 # Intents the LLM router is *not* allowed to override the deterministic
 # branch on.  These are safety- or determinism-critical: refusing to
@@ -207,10 +223,18 @@ def route_intent(
         deterministic = "conversation"
     elif any(term in lower for term in MEMORY_TERMS):
         deterministic = "patient_memory"
-    elif any(term in lower for term in EMOTIONAL_TERMS):
+    elif _has_emotional_distress(lower):
         deterministic = "emotional_support"
     elif any(term in lower for term in PORTAL_TERMS):
         deterministic = "portal_help"
+    elif any(term in lower for term in RESEARCH_EDUCATION_TERMS):
+        deterministic = "education"
+    elif (
+        any(term in lower for term in EDUCATIONAL_QUESTION_CUES)
+        and any(term in lower for term in EDUCATION_TERMS)
+        and not any(term in lower for term in PERSONAL_TIMELINE_CUES)
+    ):
+        deterministic = "education"
     elif any(term in lower for term in TIMELINE_TERMS):
         deterministic = "patient_timeline_monitoring"
     elif any(term in lower for term in EDUCATION_TERMS):
@@ -253,9 +277,17 @@ def route_intent(
     return deterministic
 
 
+def _has_emotional_distress(query: str) -> bool:
+    if any(term in query for term in EMOTIONAL_TERMS):
+        return True
+    from backend.services.emotional_distress_detection import detect_emotional_distress
+
+    return bool(detect_emotional_distress(query).detected)
+
+
 __all__ = [
     "MEMORY_TERMS", "EMOTIONAL_TERMS", "PORTAL_TERMS",
-    "TIMELINE_TERMS", "EDUCATION_TERMS",
+    "TIMELINE_TERMS", "EDUCATION_TERMS", "RESEARCH_EDUCATION_TERMS",
     "GREETINGS", "IDENTITY_PATTERNS", "SOCIAL_CHECKIN_PATTERNS",
     "LLM_ALLOWED_INTENTS", "LLM_OVERRIDE_BLOCKED", "LLM_CONFIDENCE_FLOOR",
     "route_intent",

@@ -67,6 +67,31 @@ def test_ship_tiers_keep_fast_and_evidence_surfaces_distinct():
     fast_names = {step.name for step in fast}
     assert "Cloud, data-platform, and managed-vector contract tests" in fast_names
     assert "Assurance, XAI, automation, and safety contract tests" in fast_names
+    assert "Fail-closed RAG release assurance" in fast_names
+
+
+def test_fail_closed_rag_assurance_precedes_release_decision_surface():
+    names = [step.name for step in ship._build_steps()]
+    assert names.index("Fail-closed RAG release assurance") < names.index(
+        "Canonical release decision surface"
+    )
+
+
+def test_required_freshness_artifacts_are_regenerated_before_release_gate():
+    steps = ship._build_steps()
+    names = [step.name for step in steps]
+    gate_index = names.index("Release artifact gate")
+    expected = {
+        "Required safety benchmark refresh": "scripts/run_safety_benchmark.py",
+        "Required adversarial benchmark refresh": "scripts/run_adversarial_benchmark.py",
+        "Required RAG benchmark refresh": "scripts/run_rag_benchmark.py",
+        "Required intent-aware RAG benchmark refresh": "scripts/run_rag_intent_aware_eval.py",
+    }
+    for name, script in expected.items():
+        assert names.index(name) < gate_index
+        step = next(item for item in steps if item.name == name)
+        assert step.command[-1] == script
+        assert ship._is_evidence_step(step)
 
 
 def test_research_paper_kb_eval_is_a_bounded_evidence_step():

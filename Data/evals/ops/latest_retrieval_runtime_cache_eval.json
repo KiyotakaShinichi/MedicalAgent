@@ -1,6 +1,6 @@
 {
   "schema_version": "retrieval_runtime_cache_eval_v1",
-  "generated_at": "2026-08-02T16:13:10.882872+00:00",
+  "generated_at": "2026-08-09T12:04:54.601566+00:00",
   "status": "improved_local_regression",
   "optimization": {
     "index_file_cache": true,
@@ -33,11 +33,11 @@
   },
   "current": {
     "sample_count": 30,
-    "retrieval_p50_ms": 114.79,
-    "retrieval_p95_ms": 190.57,
-    "total_p50_ms": 230.47,
-    "total_p95_ms": 354.06,
-    "source_generated_at": "2026-08-02T16:13:01.206897+00:00",
+    "retrieval_p50_ms": 113.23,
+    "retrieval_p95_ms": 141.46,
+    "total_p50_ms": 222.37,
+    "total_p95_ms": 275.89,
+    "source_generated_at": "2026-08-09T12:04:46.332979+00:00",
     "workload": {
       "database": "in_memory_sqlite",
       "agent_mode": "fast",
@@ -49,27 +49,27 @@
   "comparison": {
     "retrieval_p50_ms": {
       "baseline_ms": 1215.88,
-      "current_ms": 114.79,
-      "delta_ms": -1101.09,
-      "relative_change": -0.9056
+      "current_ms": 113.23,
+      "delta_ms": -1102.65,
+      "relative_change": -0.9069
     },
     "retrieval_p95_ms": {
       "baseline_ms": 1806.32,
-      "current_ms": 190.57,
-      "delta_ms": -1615.75,
-      "relative_change": -0.8945
+      "current_ms": 141.46,
+      "delta_ms": -1664.86,
+      "relative_change": -0.9217
     },
     "total_p50_ms": {
       "baseline_ms": 1405.04,
-      "current_ms": 230.47,
-      "delta_ms": -1174.57,
-      "relative_change": -0.836
+      "current_ms": 222.37,
+      "delta_ms": -1182.67,
+      "relative_change": -0.8417
     },
     "total_p95_ms": {
       "baseline_ms": 2082.15,
-      "current_ms": 354.06,
-      "delta_ms": -1728.09,
-      "relative_change": -0.83
+      "current_ms": 275.89,
+      "delta_ms": -1806.26,
+      "relative_change": -0.8675
     }
   },
   "sample_contract_met": true,

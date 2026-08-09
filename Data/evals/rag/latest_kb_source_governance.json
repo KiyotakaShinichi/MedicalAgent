@@ -1,6 +1,6 @@
 {
   "schema_version": "kb_source_governance_v1",
-  "generated_at": "2026-08-02T16:13:59.940519+00:00",
+  "generated_at": "2026-08-09T12:05:51.298747+00:00",
   "status": "strong",
   "kb_chunks_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\rag_knowledge_base_chunks.json",
   "source_count": 58,
@@ -102,7 +102,7 @@
         "clinician_only"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.518195+00:00",
+      "ingested_at": "2026-08-09T12:01:06.426817+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -141,7 +141,7 @@
         "clinician_only"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.520176+00:00",
+      "ingested_at": "2026-08-09T12:01:06.428204+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -180,7 +180,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.567128+00:00",
+      "ingested_at": "2026-08-09T12:01:06.452580+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -218,7 +218,7 @@
         "clinician_only"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.570276+00:00",
+      "ingested_at": "2026-08-09T12:01:06.455015+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -257,7 +257,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.600865+00:00",
+      "ingested_at": "2026-08-09T12:01:06.470746+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -295,7 +295,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:17.951132+00:00",
+      "ingested_at": "2026-08-09T12:01:06.622060+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 142,
@@ -342,7 +342,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.327599+00:00",
+      "ingested_at": "2026-08-09T12:01:06.847501+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 64,
@@ -388,7 +388,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.166916+00:00",
+      "ingested_at": "2026-08-09T12:01:06.745860+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 60,
@@ -434,7 +434,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:17.800526+00:00",
+      "ingested_at": "2026-08-09T12:01:06.564721+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 55,
@@ -481,7 +481,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:17.727377+00:00",
+      "ingested_at": "2026-08-09T12:01:06.539427+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 49,
@@ -528,7 +528,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.363211+00:00",
+      "ingested_at": "2026-08-09T12:01:06.867179+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 44,
@@ -574,7 +574,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.073206+00:00",
+      "ingested_at": "2026-08-09T12:01:06.695925+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 27,
@@ -619,7 +619,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:17.631678+00:00",
+      "ingested_at": "2026-08-09T12:01:06.487648+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 26,
@@ -666,7 +666,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:17.656309+00:00",
+      "ingested_at": "2026-08-09T12:01:06.503689+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 26,
@@ -712,7 +712,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.215986+00:00",
+      "ingested_at": "2026-08-09T12:01:06.776521+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 23,
@@ -758,7 +758,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.269396+00:00",
+      "ingested_at": "2026-08-09T12:01:06.811723+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 23,
@@ -804,7 +804,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.283689+00:00",
+      "ingested_at": "2026-08-09T12:01:06.821953+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 21,
@@ -851,7 +851,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:17.676252+00:00",
+      "ingested_at": "2026-08-09T12:01:06.517946+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 20,
@@ -898,7 +898,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.251474+00:00",
+      "ingested_at": "2026-08-09T12:01:06.798614+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 20,
@@ -945,7 +945,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.051796+00:00",
+      "ingested_at": "2026-08-09T12:01:06.679454+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 19,
@@ -991,7 +991,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.093239+00:00",
+      "ingested_at": "2026-08-09T12:01:06.709850+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 19,
@@ -1037,7 +1037,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.235788+00:00",
+      "ingested_at": "2026-08-09T12:01:06.788142+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 17,
@@ -1083,7 +1083,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.019315+00:00",
+      "ingested_at": "2026-08-09T12:01:06.660075+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 16,
@@ -1130,7 +1130,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.117312+00:00",
+      "ingested_at": "2026-08-09T12:01:06.721151+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 16,
@@ -1177,7 +1177,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.191979+00:00",
+      "ingested_at": "2026-08-09T12:01:06.762067+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 15,
@@ -1223,7 +1223,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-02T16:09:18.003345+00:00",
+      "ingested_at": "2026-08-09T12:01:06.650251+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 9,
@@ -1270,7 +1270,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:18.372153+00:00",
+      "ingested_at": "2026-08-09T12:01:06.874089+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1307,7 +1307,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.530929+00:00",
+      "ingested_at": "2026-08-09T12:01:06.433166+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 3,
@@ -1343,7 +1343,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.576210+00:00",
+      "ingested_at": "2026-08-09T12:01:06.458907+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 3,
@@ -1380,7 +1380,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.522674+00:00",
+      "ingested_at": "2026-08-09T12:01:06.429492+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1415,7 +1415,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.526786+00:00",
+      "ingested_at": "2026-08-09T12:01:06.431519+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1452,7 +1452,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.533533+00:00",
+      "ingested_at": "2026-08-09T12:01:06.434557+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1489,7 +1489,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.548555+00:00",
+      "ingested_at": "2026-08-09T12:01:06.443796+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1526,7 +1526,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.555249+00:00",
+      "ingested_at": "2026-08-09T12:01:06.447181+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1562,7 +1562,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.573592+00:00",
+      "ingested_at": "2026-08-09T12:01:06.457233+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1599,7 +1599,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.583872+00:00",
+      "ingested_at": "2026-08-09T12:01:06.462393+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1637,7 +1637,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.590428+00:00",
+      "ingested_at": "2026-08-09T12:01:06.465686+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1674,7 +1674,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.593111+00:00",
+      "ingested_at": "2026-08-09T12:01:06.466870+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1713,7 +1713,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.598575+00:00",
+      "ingested_at": "2026-08-09T12:01:06.469491+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1749,7 +1749,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.524729+00:00",
+      "ingested_at": "2026-08-09T12:01:06.430579+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1784,7 +1784,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.535761+00:00",
+      "ingested_at": "2026-08-09T12:01:06.436214+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1821,7 +1821,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.537802+00:00",
+      "ingested_at": "2026-08-09T12:01:06.437870+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1858,7 +1858,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.539727+00:00",
+      "ingested_at": "2026-08-09T12:01:06.439278+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1895,7 +1895,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.541779+00:00",
+      "ingested_at": "2026-08-09T12:01:06.440631+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1931,7 +1931,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.545521+00:00",
+      "ingested_at": "2026-08-09T12:01:06.442024+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1968,7 +1968,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.550786+00:00",
+      "ingested_at": "2026-08-09T12:01:06.445079+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2005,7 +2005,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.553054+00:00",
+      "ingested_at": "2026-08-09T12:01:06.446111+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2041,7 +2041,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.557287+00:00",
+      "ingested_at": "2026-08-09T12:01:06.448347+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2079,7 +2079,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.559330+00:00",
+      "ingested_at": "2026-08-09T12:01:06.449457+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2117,7 +2117,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.562657+00:00",
+      "ingested_at": "2026-08-09T12:01:06.450399+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2155,7 +2155,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.564866+00:00",
+      "ingested_at": "2026-08-09T12:01:06.451310+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2192,7 +2192,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.568805+00:00",
+      "ingested_at": "2026-08-09T12:01:06.453979+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2229,7 +2229,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.571898+00:00",
+      "ingested_at": "2026-08-09T12:01:06.456063+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2265,7 +2265,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.585986+00:00",
+      "ingested_at": "2026-08-09T12:01:06.463517+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2302,7 +2302,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.587977+00:00",
+      "ingested_at": "2026-08-09T12:01:06.464528+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2338,7 +2338,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.596184+00:00",
+      "ingested_at": "2026-08-09T12:01:06.467963+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2375,7 +2375,7 @@
         "portal_help"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.579797+00:00",
+      "ingested_at": "2026-08-09T12:01:06.460344+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2411,7 +2411,7 @@
         "portal_help"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-02T16:09:17.581679+00:00",
+      "ingested_at": "2026-08-09T12:01:06.461340+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,

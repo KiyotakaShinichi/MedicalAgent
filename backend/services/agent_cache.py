@@ -32,13 +32,21 @@ from backend.services.local_llm import (
     configured_llm_providers,
     decide_cache_with_local_llm,
 )
+from backend.services.rag_evidence_envelope import (
+    EVIDENCE_ENVELOPE_VERSION,
+    EVIDENCE_POLICY_VERSION,
+    SAFETY_POLICY_VERSION,
+    VALIDATOR_POLICY_VERSION,
+    record_rag_cache_rejection,
+    validate_cached_response,
+)
 
 
 # ─── Constants ───────────────────────────────────────────────────────────────
 
 
 AGENT_CACHE_TTL_DAYS: int = 30
-AGENT_CACHE_SCHEMA_VERSION: str = "agent_response_cache_v4"
+AGENT_CACHE_SCHEMA_VERSION: str = "agent_response_cache_v5"
 SEMANTIC_CACHE_MIN_SIMILARITY: float = 0.86
 
 
@@ -153,6 +161,7 @@ def exact_cache_check(
     safety_level: str | None = None,
     knowledge_fingerprint: str | None = None,
     now=None,
+    rejection_events: list[dict[str, Any]] | None = None,
 ):
     """Exact-match cache lookup keyed by SHA-256 of the normalized query.
 
@@ -172,9 +181,16 @@ def exact_cache_check(
         return None
     freshness = _cache_row_freshness(row, knowledge_fingerprint, now=now)
     if freshness["status"] != "fresh":
+        _record_cache_rejection(rejection_events, "exact", freshness["reasons"])
         return None
     response = _json_loads(row.response_json)
     if response is None:
+        _record_cache_rejection(rejection_events, "exact", ["corrupted_cache_entry"])
+        return None
+    cache_policy = _cache_row_policy(row)
+    eligible, reason = validate_cached_response(response, policy=cache_policy)
+    if not eligible:
+        _record_cache_rejection(rejection_events, "exact", [reason])
         return None
     _mark_cache_hit(db, row, now=now)
     return {
@@ -183,7 +199,7 @@ def exact_cache_check(
         "response": response,
         "expires_at": _datetime_to_iso(row.expires_at),
         "knowledge_fingerprint": row.knowledge_fingerprint,
-        "policy": _cache_row_policy(row),
+        "policy": cache_policy,
     }
 
 
@@ -194,6 +210,7 @@ def semantic_cache_check(
     min_similarity: float = SEMANTIC_CACHE_MIN_SIMILARITY,
     knowledge_fingerprint: str | None = None,
     now=None,
+    rejection_events: list[dict[str, Any]] | None = None,
 ):
     """Jaccard-similarity lookup over cached rows matching ``intent`` +
     ``low_risk`` + the current KB fingerprint.  Returns the best fresh
@@ -215,6 +232,7 @@ def semantic_cache_check(
     for row in rows:
         freshness = _cache_row_freshness(row, knowledge_fingerprint, now=now)
         if freshness["status"] != "fresh":
+            _record_cache_rejection(rejection_events, "semantic", freshness["reasons"])
             continue
         row_tokens = set((row.semantic_key or "").split())
         if not row_tokens:
@@ -227,6 +245,12 @@ def semantic_cache_check(
     row = best[1]
     response = _json_loads(row.response_json)
     if response is None:
+        _record_cache_rejection(rejection_events, "semantic", ["corrupted_cache_entry"])
+        return None
+    cache_policy = _cache_row_policy(row)
+    eligible, reason = validate_cached_response(response, policy=cache_policy)
+    if not eligible:
+        _record_cache_rejection(rejection_events, "semantic", [reason])
         return None
     _mark_cache_hit(db, row, now=now)
     response["semantic_cache_similarity"] = round(best[0], 3)
@@ -236,7 +260,7 @@ def semantic_cache_check(
         "response": response,
         "expires_at": _datetime_to_iso(row.expires_at),
         "knowledge_fingerprint": row.knowledge_fingerprint,
-        "policy": _cache_row_policy(row),
+        "policy": cache_policy,
     }
 
 
@@ -262,6 +286,10 @@ def store_cache(
 
     now = now or datetime.now(timezone.utc)
     knowledge_fingerprint = knowledge_fingerprint or knowledge_base_fingerprint()
+    policy_snapshot = _cache_policy_snapshot(knowledge_fingerprint)
+    eligible, reason = validate_cached_response(response, policy=policy_snapshot)
+    if not eligible:
+        raise ValueError(f"cache_write_rejected:{reason}")
     query_hash = _query_hash(rewritten["normalized_query"])
     row = db.query(AgentResponseCache).filter(AgentResponseCache.query_hash == query_hash).first()
     if row is None:
@@ -279,7 +307,7 @@ def store_cache(
     row.source_ids_json = json.dumps([item["id"] for item in response.get("citations") or []])
     row.knowledge_fingerprint = knowledge_fingerprint
     row.cache_schema_version = AGENT_CACHE_SCHEMA_VERSION
-    row.cache_policy_json = json.dumps(_cache_policy_snapshot(knowledge_fingerprint), default=str)
+    row.cache_policy_json = json.dumps(policy_snapshot, default=str)
     row.expires_at = now + timedelta(days=AGENT_CACHE_TTL_DAYS)
     row.updated_at = now
     db.commit()
@@ -297,6 +325,15 @@ def _cache_response_payload(response: Mapping[str, Any]) -> dict[str, Any]:
         "generated_at":      response.get("generated_at"),
         "safety_note":       response.get("safety_note"),
         "validation":        response.get("validation"),
+        "rag_mode":          response.get("rag_mode"),
+        "tier_filter":       response.get("tier_filter"),
+        "claim_validation":  response.get("claim_validation"),
+        "evidence_grade":    response.get("evidence_grade"),
+        "retrieval_confidence": response.get("retrieval_confidence"),
+        "post_gen_validator": response.get("post_gen_validator"),
+        "guardrails":        response.get("guardrails"),
+        "evidence_envelope": response.get("evidence_envelope"),
+        "release_authorization": response.get("release_authorization"),
     }
 
 
@@ -306,9 +343,20 @@ def _cache_policy_snapshot(knowledge_fingerprint: str | None) -> dict[str, Any]:
         "ttl_days":                AGENT_CACHE_TTL_DAYS,
         "semantic_min_similarity": SEMANTIC_CACHE_MIN_SIMILARITY,
         "knowledge_fingerprint":   knowledge_fingerprint,
+        "evidence_envelope_version": EVIDENCE_ENVELOPE_VERSION,
+        "evidence_policy_version": EVIDENCE_POLICY_VERSION,
+        "safety_policy_version": SAFETY_POLICY_VERSION,
+        "validator_version": VALIDATOR_POLICY_VERSION,
         "reuse_scope":             "low_risk_non_patient_specific_agent_answers",
         "llm_cache_adjudication":  configured_llm_providers(),
-        "invalidates_on":          ["ttl_expiry", "knowledge_base_fingerprint_change", "safety_policy_rejection"],
+        "invalidates_on":          [
+            "ttl_expiry",
+            "knowledge_base_fingerprint_change",
+            "evidence_envelope_version_change",
+            "release_policy_change",
+            "safety_policy_change",
+            "validator_version_change",
+        ],
     }
 
 
@@ -329,6 +377,16 @@ def _cache_row_freshness(row, knowledge_fingerprint: str | None, now=None) -> di
         reasons.append("missing_expiry")
     elif expires_at <= now:
         reasons.append("expired")
+    policy = _json_loads(row.cache_policy_json) or {}
+    expected_policy = _cache_policy_snapshot(knowledge_fingerprint)
+    for key in (
+        "evidence_envelope_version",
+        "evidence_policy_version",
+        "safety_policy_version",
+        "validator_version",
+    ):
+        if policy.get(key) != expected_policy.get(key):
+            reasons.append(f"{key}_changed")
     return {
         "status": "fresh" if not reasons else "stale",
         "reasons": reasons,
@@ -354,6 +412,23 @@ def _mark_cache_hit(db, row, now=None) -> None:
     row.updated_at = now
     db.commit()
     db.refresh(row)
+
+
+def _record_cache_rejection(
+    sink: list[dict[str, Any]] | None,
+    lookup: str,
+    reasons: list[str] | tuple[str, ...],
+) -> None:
+    """Append PHI-free cache rejection metadata when a caller requests it."""
+    record_rag_cache_rejection()
+    if sink is None:
+        return
+    sink.append({
+        "event": "rag_cache_rejected",
+        "lookup": lookup,
+        "reasons": [str(reason)[:160] for reason in reasons],
+        "raw_query_logged": False,
+    })
 
 
 __all__ = [

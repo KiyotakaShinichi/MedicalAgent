@@ -1,6 +1,6 @@
 {
   "schema_version": "evidence_maturity_matrix_v1",
-  "generated_at": "2026-08-02T16:21:43.565840+00:00",
+  "generated_at": "2026-08-09T12:12:32.209522+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -30,7 +30,7 @@
       "current_evidence_tier": 3,
       "tier_label": "frozen_internal_with_contamination_controls",
       "what_is_proven": "Frozen internal case-level comparisons, paired bootstrap intervals, multiple-comparison correction, source governance, negative results, and an offline claim-conditioned citation candidate status=acceptable_internal_candidate. A separate 32-case corpus-derived research-paper suite measures PMCID identity, section retrieval, provenance, and no-evidence behavior (status=needs_attention).",
-      "what_is_not_proven": "Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False. The citation selector is tuning-used and has not been tested on frozen generated answers. The paper suite is not independent and its boundary-route correctness is 0.5.",
+      "what_is_not_proven": "Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False. The citation selector is tuning-used and has not been tested on frozen generated answers. The paper suite is not independent and its boundary-route correctness is 0.875.",
       "next_falsifiable_evidence": "Resolve the documented paper no-evidence routing gaps without tuning on this bank, then run frozen generated-answer shadow evaluation and an independent no-read holdout."
     },
     {
@@ -116,19 +116,19 @@
   ],
   "architecture_maintainability": {
     "budget_status": "needs_attention",
-    "oversized_file_count": 9,
+    "oversized_file_count": 12,
     "critical_file_count": 0,
-    "backend_service_file_count": 378,
-    "test_file_count": 214,
-    "test_to_service_file_ratio": 0.5661,
+    "backend_service_file_count": 385,
+    "test_file_count": 222,
+    "test_to_service_file_ratio": 0.5766,
     "ratchet": {
       "oversized_file_baseline": 9,
-      "oversized_file_count_within_baseline": true,
+      "oversized_file_count_within_baseline": false,
       "critical_file_ceiling": 0,
       "critical_file_count_within_ceiling": true
     },
     "artifact_budget": {
-      "latest_json_artifact_count": 268,
+      "latest_json_artifact_count": 274,
       "warning_threshold": 200,
       "status": "needs_consolidation",
       "target": "Consolidate superseded latest_* artifacts below 200 without deleting audit history."
@@ -157,7 +157,7 @@
       },
       {
         "path": "backend/services/unsafe_intent_semantic_classifier.py",
-        "line_count": 1135,
+        "line_count": 1146,
         "severity": "warning",
         "warning_threshold": 1000,
         "critical_threshold": 1800
@@ -170,8 +170,29 @@
         "critical_threshold": 1200
       },
       {
+        "path": "backend/services/rag_evidence_envelope.py",
+        "line_count": 1058,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
         "path": "backend/services/complete_synthetic_training.py",
         "line_count": 1038,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "backend/services/support_chat_agent.py",
+        "line_count": 1038,
+        "severity": "warning",
+        "warning_threshold": 1000,
+        "critical_threshold": 1800
+      },
+      {
+        "path": "backend/services/agent_rag.py",
+        "line_count": 1037,
         "severity": "warning",
         "warning_threshold": 1000,
         "critical_threshold": 1800

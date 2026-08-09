@@ -4,6 +4,11 @@
 
 NLCare is a safety-first, non-diagnostic engineering prototype for organizing synthetic breast-cancer monitoring records into patient and clinician-review workflows. It combines source-governed RAG, bounded support-agent tools, synthetic temporal ML signals, explicit abstention and claim boundaries, traceability, and prepared review queues. No clinician review has been completed, and none of its outputs are clinical evidence.
 
+Patient-facing RAG responses use a typed, fail-closed evidence envelope: missing,
+unknown, malformed, or incomplete retrieval/claim/citation validation cannot
+release an evidence-dependent answer. See
+[fail-closed RAG evidence-envelope hardening](docs/rag_fail_closed_evidence_envelope.md).
+
 The patient portal uses records-first progressive loading and prepares synthetic model enrichment in a bounded process-local background job, so a slow or failed engineering bundle does not blank the underlying records. High-priority support-chat language can create an auditable local review item with idempotency, bounded retries, append-only delivery attempts, dead-letter state, signed redacted n8n events, and signed channel receipts. External delivery is disabled by default and is locked to a synthetic test recipient when enabled; workflow acceptance or channel delivery never proves that a clinician saw or acted on an alert. See [patient progressive loading and review alerts](docs/patient_progressive_loading_and_review_alerts.md).
 
 ## Canonical engineering verdict (July 2026)

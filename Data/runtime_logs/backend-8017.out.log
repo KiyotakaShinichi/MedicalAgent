@@ -1,0 +1,13 @@
+INFO:     127.0.0.1:55510 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55510 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51143 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51156 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54425 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4833 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4843 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54067 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54085 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54100 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:13502 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:13511 - "GET /ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:13518 - "GET /ready HTTP/1.1" 200 OK

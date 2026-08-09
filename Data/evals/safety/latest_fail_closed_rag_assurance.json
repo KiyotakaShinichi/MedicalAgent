@@ -1,0 +1,71 @@
+{
+  "schema_version": "fail_closed_rag_assurance_v1",
+  "generated_at": "2026-08-09T12:24:26.076109+00:00",
+  "status": "passed",
+  "invariant": "No valid evidence envelope -> no evidence-dependent medical answer.",
+  "summary": {
+    "passed_tests": 68,
+    "failed_tests": 0,
+    "error_tests": 0,
+    "minimum_required_cases": 30,
+    "pytest_exit_code": 0,
+    "timed_out": false,
+    "duration_seconds": 15.087
+  },
+  "contract": {
+    "envelope_version": "rag_evidence_envelope_v1",
+    "release_policy_version": "rag_release_policy_v1",
+    "safety_policy_version": "medical_safety_policy_v1",
+    "validator_policy_version": "claim_citation_validator_v1",
+    "closed_dispositions": [
+      "ALLOW",
+      "ABSTAIN_INSUFFICIENT_EVIDENCE",
+      "ABSTAIN_VALIDATION_FAILURE",
+      "ABSTAIN_CONFLICTING_EVIDENCE",
+      "ABSTAIN_UNSUPPORTED_CLAIMS",
+      "BLOCK_MEDICAL_BOUNDARY",
+      "BLOCK_SAFETY",
+      "INTERNAL_ERROR"
+    ],
+    "only_allow_releases_evidence": true
+  },
+  "coverage": {
+    "protected_response_paths": [
+      "patient_json_chat",
+      "clinician_json_chat",
+      "patient_sse_chat",
+      "support_chat_persistence",
+      "exact_cache_hit",
+      "semantic_cache_hit",
+      "live_agent_pipeline",
+      "evaluation_pipeline"
+    ],
+    "all_known_response_paths_enforced": true,
+    "cache_revalidation_required": true,
+    "streaming_is_buffered_until_authorized": true,
+    "taglish_abstention_parity_tested": true,
+    "validator_fault_injection_tested": true
+  },
+  "provenance": {
+    "test_command": [
+      "C:\\Python314\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_rag_fail_closed_evidence_envelope.py",
+      "-q"
+    ],
+    "source_sha256": {
+      "backend/services/rag_evidence_envelope.py": "b0073ebf283db6cc7f0ab2482a750b2a4c7b71822f244d9a83eb8c55c1e8ae34",
+      "backend/services/agent_post_gen.py": "027da68566f0c22990791b9d5b1a173e1515660951df1a714aad4d7484cbc68e",
+      "backend/services/agent_rag.py": "f066ffd5c45144257bcae05baac7f29ffbbe9f9851c3c936becec90cccd2a3b0",
+      "backend/services/agent_cache.py": "ae211bd2ddcd83648a4f5fc7e4de72f249231411bd2d0a6a04872e33875884ba",
+      "backend/services/support_chat_agent.py": "311e31213b7a44955517ba9bca06f57031bc45efcff3602df4809ef3c0e76128",
+      "backend/api/routers/patient_interactions.py": "eca8349ce415b679299a777c36fd5ac0c1bf4d3100a52554f7d5b7d5844fd93f",
+      "tests/test_rag_fail_closed_evidence_envelope.py": "350aa0365b8dc610031ff01f3ba84e23e0591ecefee2b5d8f3b93d34441930e2"
+    },
+    "raw_patient_content_retained": false
+  },
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "This is repeatable engineering evidence for availability and release integrity. It does not prove medical correctness, clinical validation, real-world safety, or production healthcare readiness."
+}

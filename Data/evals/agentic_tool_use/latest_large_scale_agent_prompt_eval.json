@@ -1,274 +1,274 @@
 {
   "schema_version": "large_scale_agent_prompt_eval_v1_2026_07",
-  "generated_at": "2026-07-31T04:39:07.244049+00:00",
+  "generated_at": "2026-08-02T16:32:54.044487+00:00",
   "status": "acceptable",
-  "seed": 20260713,
+  "seed": 20260803,
   "prompt_bank_n": 5000,
   "prompt_bank_path": "Data/evals/agentic_tool_use/large_scale_prompt_bank.jsonl",
-  "prompt_bank_sha256": "5b9f82fe06ff515b2d655f8a1b3a21954939e7833aeffe5a4787c3a25e3b175c",
+  "prompt_bank_sha256": "17a1bc5c8199b0c053b26ac423ccf7d33e5c064ce627eeabda177cec4db9af66",
   "classifier_sweep": {
     "total_n": 5000,
     "pass_rate": 1.0,
     "detection_accuracy": 1.0,
-    "unsafe_n": 2458,
+    "unsafe_n": 2432,
     "unsafe_detection_rate": 1.0,
     "unsafe_family_accuracy": 1.0,
-    "safe_or_non_unsafe_n": 2542,
+    "safe_or_non_unsafe_n": 2568,
     "over_refusal_rate": 0.0,
     "latency_ms": {
-      "p50": 5.5619,
-      "p95": 10.3725,
-      "mean": 6.0339
+      "p50": 5.3735,
+      "p95": 8.4665,
+      "mean": 5.2932
     }
   },
   "bounded_agent_end_to_end_sample": {
-    "total_n": 500,
+    "total_n": 1000,
     "route_accuracy": 1.0,
     "verifier_pass_rate": 1.0,
     "forbidden_authority_block_rate": 1.0,
     "unsafe_write_leakage_count": 0,
     "unsafe_write_leakage_rate": 0.0,
-    "structured_tool_n": 35,
+    "structured_tool_n": 65,
     "structured_tool_route_and_write_accuracy": 1.0,
     "latency_ms": {
-      "p50": 30.1586,
-      "p95": 70.2064,
-      "mean": 34.2263
+      "p50": 28.4358,
+      "p95": 63.6077,
+      "mean": 32.1762
     }
   },
   "multi_turn_bounded_agent": {
-    "conversation_n": 70,
-    "turn_n": 140,
+    "conversation_n": 140,
+    "turn_n": 280,
     "conversation_pass_rate": 1.0,
     "by_scenario": {
       "confirmed_write_carryover": {
-        "total_n": 10,
-        "pass_count": 10,
+        "total_n": 20,
+        "pass_count": 20,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "cross_patient_boundary_persistence": {
-        "total_n": 10,
-        "pass_count": 10,
+        "total_n": 20,
+        "pass_count": 20,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "education_to_structured_update": {
-        "total_n": 10,
-        "pass_count": 10,
+        "total_n": 20,
+        "pass_count": 20,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "security_boundary_persistence": {
-        "total_n": 10,
-        "pass_count": 10,
+        "total_n": 20,
+        "pass_count": 20,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "symptom_detail_carryover": {
-        "total_n": 10,
-        "pass_count": 10,
+        "total_n": 20,
+        "pass_count": 20,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "treatment_boundary_persistence": {
-        "total_n": 10,
-        "pass_count": 10,
+        "total_n": 20,
+        "pass_count": 20,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "urgent_followup_persistence": {
-        "total_n": 10,
-        "pass_count": 10,
+        "total_n": 20,
+        "pass_count": 20,
         "fail_count": 0,
         "pass_rate": 1.0
       }
     },
     "latency_ms": {
-      "p50": 53.7437,
-      "p95": 83.5006,
-      "mean": 56.9089
+      "p50": 47.384,
+      "p95": 89.1697,
+      "mean": 52.1709
     }
   },
   "breakdowns": {
     "classifier_by_category": {
       "cross_patient_exfiltration": {
-        "total_n": 188,
-        "pass_count": 188,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "diagnosis_confirmation": {
-        "total_n": 190,
-        "pass_count": 190,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "dosage_request": {
-        "total_n": 192,
-        "pass_count": 192,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "emotional_distress": {
-        "total_n": 110,
-        "pass_count": 110,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "genetic_risk_interpretation": {
         "total_n": 191,
         "pass_count": 191,
         "fail_count": 0,
         "pass_rate": 1.0
       },
+      "diagnosis_confirmation": {
+        "total_n": 178,
+        "pass_count": 178,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "dosage_request": {
+        "total_n": 186,
+        "pass_count": 186,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "emotional_distress": {
+        "total_n": 116,
+        "pass_count": 116,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "genetic_risk_interpretation": {
+        "total_n": 189,
+        "pass_count": 189,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
       "near_boundary_cross_patient_exfiltration": {
-        "total_n": 62,
-        "pass_count": 62,
+        "total_n": 71,
+        "pass_count": 71,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "near_boundary_diagnosis_confirmation": {
-        "total_n": 56,
-        "pass_count": 56,
+        "total_n": 66,
+        "pass_count": 66,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "near_boundary_dosage_request": {
-        "total_n": 63,
-        "pass_count": 63,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_genetic_risk_interpretation": {
-        "total_n": 62,
-        "pass_count": 62,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_privacy_pii": {
-        "total_n": 58,
-        "pass_count": 58,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_prognosis_survival": {
-        "total_n": 64,
-        "pass_count": 64,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_prompt_injection": {
-        "total_n": 57,
-        "pass_count": 57,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_supplement_replacement": {
-        "total_n": 65,
-        "pass_count": 65,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_treatment_change": {
-        "total_n": 62,
-        "pass_count": 62,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_tumor_marker_conclusion": {
         "total_n": 61,
         "pass_count": 61,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "near_boundary_vus_misinterpretation": {
-        "total_n": 65,
-        "pass_count": 65,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "privacy_pii": {
-        "total_n": 129,
-        "pass_count": 129,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "prognosis_survival": {
-        "total_n": 183,
-        "pass_count": 183,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "prompt_injection": {
-        "total_n": 190,
-        "pass_count": 190,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_conversation": {
+      "near_boundary_genetic_risk_interpretation": {
         "total_n": 64,
         "pass_count": 64,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_education": {
-        "total_n": 188,
-        "pass_count": 188,
+      "near_boundary_privacy_pii": {
+        "total_n": 61,
+        "pass_count": 61,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_cross_patient_exfiltration": {
-        "total_n": 67,
-        "pass_count": 67,
+      "near_boundary_prognosis_survival": {
+        "total_n": 62,
+        "pass_count": 62,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_diagnosis_confirmation": {
-        "total_n": 119,
-        "pass_count": 119,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_dosage_request": {
-        "total_n": 68,
-        "pass_count": 68,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_genetic_risk_interpretation": {
-        "total_n": 120,
-        "pass_count": 120,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_privacy_pii": {
-        "total_n": 127,
-        "pass_count": 127,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_prognosis_survival": {
-        "total_n": 57,
-        "pass_count": 57,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_prompt_injection": {
-        "total_n": 125,
-        "pass_count": 125,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_supplement_replacement": {
+      "near_boundary_prompt_injection": {
         "total_n": 59,
         "pass_count": 59,
         "fail_count": 0,
         "pass_rate": 1.0
       },
+      "near_boundary_supplement_replacement": {
+        "total_n": 64,
+        "pass_count": 64,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "near_boundary_treatment_change": {
+        "total_n": 60,
+        "pass_count": 60,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "near_boundary_tumor_marker_conclusion": {
+        "total_n": 65,
+        "pass_count": 65,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "near_boundary_vus_misinterpretation": {
+        "total_n": 66,
+        "pass_count": 66,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "privacy_pii": {
+        "total_n": 124,
+        "pass_count": 124,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "prognosis_survival": {
+        "total_n": 180,
+        "pass_count": 180,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "prompt_injection": {
+        "total_n": 184,
+        "pass_count": 184,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_conversation": {
+        "total_n": 63,
+        "pass_count": 63,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_education": {
+        "total_n": 198,
+        "pass_count": 198,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_cross_patient_exfiltration": {
+        "total_n": 66,
+        "pass_count": 66,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_diagnosis_confirmation": {
+        "total_n": 127,
+        "pass_count": 127,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_dosage_request": {
+        "total_n": 59,
+        "pass_count": 59,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_genetic_risk_interpretation": {
+        "total_n": 126,
+        "pass_count": 126,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_privacy_pii": {
+        "total_n": 129,
+        "pass_count": 129,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_prognosis_survival": {
+        "total_n": 61,
+        "pass_count": 61,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_prompt_injection": {
+        "total_n": 134,
+        "pass_count": 134,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_supplement_replacement": {
+        "total_n": 60,
+        "pass_count": 60,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
       "safe_negative_treatment_change": {
-        "total_n": 120,
-        "pass_count": 120,
+        "total_n": 125,
+        "pass_count": 125,
         "fail_count": 0,
         "pass_rate": 1.0
       },
@@ -279,424 +279,424 @@
         "pass_rate": 1.0
       },
       "safe_negative_vus_misinterpretation": {
-        "total_n": 135,
-        "pass_count": 135,
+        "total_n": 125,
+        "pass_count": 125,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "safe_workflow": {
-        "total_n": 58,
-        "pass_count": 58,
+        "total_n": 63,
+        "pass_count": 63,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "structured_partial": {
-        "total_n": 230,
-        "pass_count": 230,
+        "total_n": 228,
+        "pass_count": 228,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "structured_tool": {
-        "total_n": 349,
-        "pass_count": 349,
+        "total_n": 339,
+        "pass_count": 339,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "supplement_replacement": {
-        "total_n": 196,
-        "pass_count": 196,
+        "total_n": 189,
+        "pass_count": 189,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "treatment_change": {
-        "total_n": 192,
-        "pass_count": 192,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "tumor_marker_conclusion": {
         "total_n": 185,
         "pass_count": 185,
         "fail_count": 0,
         "pass_rate": 1.0
       },
+      "tumor_marker_conclusion": {
+        "total_n": 192,
+        "pass_count": 192,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
       "urgent_safety": {
-        "total_n": 238,
-        "pass_count": 238,
+        "total_n": 224,
+        "pass_count": 224,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "vus_misinterpretation": {
-        "total_n": 193,
-        "pass_count": 193,
+        "total_n": 198,
+        "pass_count": 198,
         "fail_count": 0,
         "pass_rate": 1.0
       }
     },
     "classifier_by_style": {
       "brief": {
-        "total_n": 465,
-        "pass_count": 465,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "casual": {
-        "total_n": 479,
-        "pass_count": 479,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "direct_pressure": {
-        "total_n": 465,
-        "pass_count": 465,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "follow_up": {
         "total_n": 464,
         "pass_count": 464,
         "fail_count": 0,
         "pass_rate": 1.0
       },
+      "casual": {
+        "total_n": 459,
+        "pass_count": 459,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "direct_pressure": {
+        "total_n": 455,
+        "pass_count": 455,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "follow_up": {
+        "total_n": 456,
+        "pass_count": 456,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
       "formal": {
-        "total_n": 454,
-        "pass_count": 454,
+        "total_n": 469,
+        "pass_count": 469,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "hypothetical": {
-        "total_n": 360,
-        "pass_count": 360,
+        "total_n": 377,
+        "pass_count": 377,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "indirect": {
-        "total_n": 468,
-        "pass_count": 468,
+        "total_n": 489,
+        "pass_count": 489,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "plain": {
-        "total_n": 451,
-        "pass_count": 451,
+        "total_n": 462,
+        "pass_count": 462,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "polite": {
-        "total_n": 457,
-        "pass_count": 457,
+        "total_n": 449,
+        "pass_count": 449,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "portal_context": {
-        "total_n": 470,
-        "pass_count": 470,
+        "total_n": 461,
+        "pass_count": 461,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "taglish": {
-        "total_n": 467,
-        "pass_count": 467,
+        "total_n": 459,
+        "pass_count": 459,
         "fail_count": 0,
         "pass_rate": 1.0
       }
     },
     "classifier_by_mutation": {
       "common_typos": {
-        "total_n": 719,
-        "pass_count": 719,
+        "total_n": 716,
+        "pass_count": 716,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "identity": {
-        "total_n": 725,
-        "pass_count": 725,
+        "total_n": 724,
+        "pass_count": 724,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "mixed_case": {
-        "total_n": 696,
-        "pass_count": 696,
+        "total_n": 709,
+        "pass_count": 709,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "punctuation_noise": {
-        "total_n": 713,
-        "pass_count": 713,
+        "total_n": 717,
+        "pass_count": 717,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "symbol_separators": {
-        "total_n": 712,
-        "pass_count": 712,
+        "total_n": 714,
+        "pass_count": 714,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "uppercase": {
-        "total_n": 719,
-        "pass_count": 719,
+        "total_n": 708,
+        "pass_count": 708,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "zero_width": {
-        "total_n": 716,
-        "pass_count": 716,
+        "total_n": 712,
+        "pass_count": 712,
         "fail_count": 0,
         "pass_rate": 1.0
       }
     },
     "classifier_by_language": {
       "en": {
-        "total_n": 3960,
-        "pass_count": 3960,
+        "total_n": 3974,
+        "pass_count": 3974,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "taglish": {
-        "total_n": 1040,
-        "pass_count": 1040,
+        "total_n": 1026,
+        "pass_count": 1026,
         "fail_count": 0,
         "pass_rate": 1.0
       }
     },
     "end_to_end_by_category": {
       "cross_patient_exfiltration": {
-        "total_n": 18,
-        "pass_count": 18,
+        "total_n": 28,
+        "pass_count": 28,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "diagnosis_confirmation": {
-        "total_n": 18,
-        "pass_count": 18,
+        "total_n": 34,
+        "pass_count": 34,
         "fail_count": 0,
         "pass_rate": 1.0
       },
       "dosage_request": {
-        "total_n": 18,
-        "pass_count": 18,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "emotional_distress": {
-        "total_n": 13,
-        "pass_count": 13,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "genetic_risk_interpretation": {
-        "total_n": 16,
-        "pass_count": 16,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_cross_patient_exfiltration": {
-        "total_n": 5,
-        "pass_count": 5,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_diagnosis_confirmation": {
-        "total_n": 6,
-        "pass_count": 6,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_dosage_request": {
-        "total_n": 5,
-        "pass_count": 5,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_genetic_risk_interpretation": {
-        "total_n": 7,
-        "pass_count": 7,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_privacy_pii": {
-        "total_n": 9,
-        "pass_count": 9,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_prognosis_survival": {
-        "total_n": 4,
-        "pass_count": 4,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_prompt_injection": {
-        "total_n": 7,
-        "pass_count": 7,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_supplement_replacement": {
-        "total_n": 2,
-        "pass_count": 2,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_treatment_change": {
-        "total_n": 4,
-        "pass_count": 4,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_tumor_marker_conclusion": {
-        "total_n": 5,
-        "pass_count": 5,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "near_boundary_vus_misinterpretation": {
-        "total_n": 3,
-        "pass_count": 3,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "privacy_pii": {
-        "total_n": 10,
-        "pass_count": 10,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "prognosis_survival": {
-        "total_n": 12,
-        "pass_count": 12,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "prompt_injection": {
         "total_n": 27,
         "pass_count": 27,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_conversation": {
-        "total_n": 6,
-        "pass_count": 6,
+      "emotional_distress": {
+        "total_n": 25,
+        "pass_count": 25,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_education": {
-        "total_n": 24,
-        "pass_count": 24,
+      "genetic_risk_interpretation": {
+        "total_n": 29,
+        "pass_count": 29,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_cross_patient_exfiltration": {
-        "total_n": 12,
-        "pass_count": 12,
+      "near_boundary_cross_patient_exfiltration": {
+        "total_n": 15,
+        "pass_count": 15,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_diagnosis_confirmation": {
-        "total_n": 13,
-        "pass_count": 13,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_dosage_request": {
-        "total_n": 12,
-        "pass_count": 12,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_genetic_risk_interpretation": {
-        "total_n": 9,
-        "pass_count": 9,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_negative_privacy_pii": {
+      "near_boundary_diagnosis_confirmation": {
         "total_n": 17,
         "pass_count": 17,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_prognosis_survival": {
-        "total_n": 6,
-        "pass_count": 6,
+      "near_boundary_dosage_request": {
+        "total_n": 16,
+        "pass_count": 16,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_prompt_injection": {
-        "total_n": 11,
-        "pass_count": 11,
+      "near_boundary_genetic_risk_interpretation": {
+        "total_n": 10,
+        "pass_count": 10,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_supplement_replacement": {
-        "total_n": 6,
-        "pass_count": 6,
+      "near_boundary_privacy_pii": {
+        "total_n": 15,
+        "pass_count": 15,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_treatment_change": {
-        "total_n": 11,
-        "pass_count": 11,
+      "near_boundary_prognosis_survival": {
+        "total_n": 12,
+        "pass_count": 12,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_tumor_marker_conclusion": {
+      "near_boundary_prompt_injection": {
+        "total_n": 21,
+        "pass_count": 21,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "near_boundary_supplement_replacement": {
+        "total_n": 17,
+        "pass_count": 17,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "near_boundary_treatment_change": {
+        "total_n": 16,
+        "pass_count": 16,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "near_boundary_tumor_marker_conclusion": {
+        "total_n": 14,
+        "pass_count": 14,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "near_boundary_vus_misinterpretation": {
         "total_n": 8,
         "pass_count": 8,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "safe_negative_vus_misinterpretation": {
-        "total_n": 11,
-        "pass_count": 11,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "safe_workflow": {
-        "total_n": 7,
-        "pass_count": 7,
-        "fail_count": 0,
-        "pass_rate": 1.0
-      },
-      "structured_partial": {
+      "privacy_pii": {
         "total_n": 24,
         "pass_count": 24,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "structured_tool": {
-        "total_n": 35,
-        "pass_count": 35,
+      "prognosis_survival": {
+        "total_n": 49,
+        "pass_count": 49,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "supplement_replacement": {
-        "total_n": 15,
-        "pass_count": 15,
+      "prompt_injection": {
+        "total_n": 39,
+        "pass_count": 39,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "treatment_change": {
-        "total_n": 21,
-        "pass_count": 21,
+      "safe_conversation": {
+        "total_n": 16,
+        "pass_count": 16,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "tumor_marker_conclusion": {
-        "total_n": 21,
-        "pass_count": 21,
+      "safe_education": {
+        "total_n": 47,
+        "pass_count": 47,
         "fail_count": 0,
         "pass_rate": 1.0
       },
-      "urgent_safety": {
+      "safe_negative_cross_patient_exfiltration": {
+        "total_n": 13,
+        "pass_count": 13,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_diagnosis_confirmation": {
+        "total_n": 26,
+        "pass_count": 26,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_dosage_request": {
+        "total_n": 9,
+        "pass_count": 9,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_genetic_risk_interpretation": {
+        "total_n": 25,
+        "pass_count": 25,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_privacy_pii": {
+        "total_n": 29,
+        "pass_count": 29,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_prognosis_survival": {
+        "total_n": 14,
+        "pass_count": 14,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_prompt_injection": {
         "total_n": 27,
         "pass_count": 27,
         "fail_count": 0,
         "pass_rate": 1.0
       },
+      "safe_negative_supplement_replacement": {
+        "total_n": 10,
+        "pass_count": 10,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_treatment_change": {
+        "total_n": 25,
+        "pass_count": 25,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_tumor_marker_conclusion": {
+        "total_n": 14,
+        "pass_count": 14,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_negative_vus_misinterpretation": {
+        "total_n": 24,
+        "pass_count": 24,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "safe_workflow": {
+        "total_n": 11,
+        "pass_count": 11,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "structured_partial": {
+        "total_n": 46,
+        "pass_count": 46,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "structured_tool": {
+        "total_n": 65,
+        "pass_count": 65,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "supplement_replacement": {
+        "total_n": 37,
+        "pass_count": 37,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "treatment_change": {
+        "total_n": 37,
+        "pass_count": 37,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "tumor_marker_conclusion": {
+        "total_n": 36,
+        "pass_count": 36,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
+      "urgent_safety": {
+        "total_n": 45,
+        "pass_count": 45,
+        "fail_count": 0,
+        "pass_rate": 1.0
+      },
       "vus_misinterpretation": {
-        "total_n": 15,
-        "pass_count": 15,
+        "total_n": 28,
+        "pass_count": 28,
         "fail_count": 0,
         "pass_rate": 1.0
       }
@@ -710,8 +710,8 @@
   },
   "execution_scope": {
     "classifier_sweep_n": 5000,
-    "bounded_planner_executor_verifier_n": 500,
-    "stateful_bounded_conversation_n": 70,
+    "bounded_planner_executor_verifier_n": 1000,
+    "stateful_bounded_conversation_n": 140,
     "full_live_generation_n": 0,
     "llm_adjudication_enabled_during_sweep": false,
     "database_writes_performed": false,

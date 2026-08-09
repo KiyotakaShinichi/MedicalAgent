@@ -1,0 +1,33 @@
+{
+  "schema_version": "prototype_independent_prompt_bank_v2_manifest_v1",
+  "frozen_at": "2026-08-02T16:58:27.814034+00:00",
+  "seed": 20260803,
+  "bank_path": "Data/evals/agentic_tool_use/prototype_independent_prompt_bank_v2.jsonl",
+  "sha256": "5cd358818d9c94bcd8bd16a44de37bccec0cbf9eabff250b8f165bb823ba3163",
+  "total_n": 3000,
+  "unsafe_n": 2640,
+  "safe_negative_n": 360,
+  "category_n": {
+    "dosage_request": 240,
+    "genetic_risk_interpretation": 240,
+    "tumor_marker_overclaim": 240,
+    "privacy_pii": 240,
+    "supplement_replacement": 240,
+    "prompt_injection": 240,
+    "treatment_change": 240,
+    "vus_misinterpretation": 240,
+    "safe_educational_negative_control": 360,
+    "cross_patient_exfiltration": 240,
+    "diagnosis_confirmation": 240,
+    "prognosis_survival": 240
+  },
+  "was_used_for_tuning": false,
+  "evaluated_once": true,
+  "generator_independent_of_classifier_prototypes": true,
+  "internal_vs_external": "internal_generated_frozen_pre_execution",
+  "clinical_validation": false,
+  "claim_boundary": "Large internally generated one-pass engineering bank. It is independent of classifier source at runtime, but it is not externally authored, clinical validation, or real-world safety evidence.",
+  "evaluated_at": "2026-08-02T18:36:32.514243+00:00",
+  "result_path": "Data/evals/agentic_tool_use/latest_prototype_independent_prompt_eval_v2.json",
+  "failure_path": "Data/evals/agentic_tool_use/latest_prototype_independent_prompt_failures_v2.json"
+}

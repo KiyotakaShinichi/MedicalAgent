@@ -18,6 +18,7 @@ breaking-rename diff.
 """
 from __future__ import annotations
 
+import re
 from typing import Any, Sequence
 
 from backend.services.security_guardrails import (
@@ -231,6 +232,30 @@ URGENT_TERMS: tuple[str, ...] = (
     "nilalagnat",
 )
 
+RESEARCH_AUTHORITY_OVERCLAIM_PATTERN = re.compile(
+    r"\b(papers?|research|stud(?:y|ies)|trials?|literature|evidence)\b"
+    r".{0,100}\b(prove|proves|proved|confirm|confirms|validate|validates|guarantee|establish)\b"
+    r".{0,100}\b(this|our|the)\s+(app|prototype|agent|assistant|system|platform|portal)\b"
+    r"|\b(this|our|the)\s+(app|prototype|agent|assistant|system|platform|portal)\b"
+    r".{0,100}\b(prove|proves|proved|confirm|confirms|validate|validates|guarantee|establish)\b"
+    r".{0,100}\b(safe|clinical|real patients?|patient care|benefit|ready)\b",
+    re.IGNORECASE,
+)
+
+PERSONAL_SUPPLEMENT_SAFETY_PATTERN = re.compile(
+    r"\b(safe|safely|okay|ok|pwede|puwede|ligtas)\b.{0,55}"
+    r"\b(herb|herbal|supplement|vitamin|turmeric|cannabis|cbd|natural product)\b"
+    r"|\b(herb|herbal|supplement|vitamin|turmeric|cannabis|cbd|natural product)\b"
+    r".{0,55}\b(safe|safely|okay|ok|pwede|puwede|ligtas)\b",
+    re.IGNORECASE,
+)
+
+ACTIVE_TREATMENT_CUE_PATTERN = re.compile(
+    r"\b(during|while|habang|with|kasabay|on)\b.{0,35}"
+    r"\b(chemo|chemotherapy|radiation|treatment|therapy|tamoxifen|trastuzumab|paclitaxel)\b",
+    re.IGNORECASE,
+)
+
 
 # ─── Public API ──────────────────────────────────────────────────────────────
 
@@ -283,6 +308,33 @@ def safety_scope_check(
             "cache_allowed": False,
             "message": "Treatment decision wording detected; assistant must not recommend medication or treatment changes.",
             "safety_source": "deterministic",
+        }
+    if RESEARCH_AUTHORITY_OVERCLAIM_PATTERN.search(haystack):
+        return {
+            "level": "high_risk",
+            "scope": "diagnosis_or_outcome_claim",
+            "cache_allowed": False,
+            "message": (
+                "Research evidence cannot validate this local prototype or establish "
+                "real-patient safety, benefit, or clinical authority."
+            ),
+            "safety_source": "deterministic_research_authority_boundary",
+            "unsafe_intent_family": "research_authority_overclaim",
+        }
+    if (
+        PERSONAL_SUPPLEMENT_SAFETY_PATTERN.search(haystack)
+        and ACTIVE_TREATMENT_CUE_PATTERN.search(haystack)
+    ):
+        return {
+            "level": "high_risk",
+            "scope": "treatment_decision_request",
+            "cache_allowed": False,
+            "message": (
+                "Patient-specific supplement safety during active treatment requires "
+                "oncology clinician or pharmacist review."
+            ),
+            "safety_source": "deterministic_supplement_review_boundary",
+            "unsafe_intent_family": "supplement_safety_review",
         }
     if any(term in haystack for term in DIAGNOSTIC_TERMS):
         return {

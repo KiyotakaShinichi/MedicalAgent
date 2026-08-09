@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "9b8595836470a7eae965b1ab2f489a4fe0c1a4bc",
+    "git_commit": "c2c02ffaed37c8e24211aecb8086fc053b4a571f",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -12,19 +12,19 @@
       "safety_cases": "5832:1778734598:c6c93e3f07f9",
       "synthetic_realism_candidate": "378534:1778813480:a29f2214fadd"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:7933155:1785687378:c0c3116dacd8",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:7933155:1786277306:f71c5fc7474f",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-08-02T16:22:45.248168+00:00"
+    "generated_at": "2026-08-09T12:12:49.733424+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-08-02T16:22:45.248168+00:00",
+    "generated_at": "2026-08-09T12:12:49.733424+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-08-03T16:22:45.248168+00:00",
+    "expires_at": "2026-08-10T12:12:49.733424+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-08-02T16:22:46.082052+00:00",
+  "generated_at": "2026-08-09T12:12:50.607118+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -34,10 +34,10 @@
       "id": "safety_red_team",
       "title": "Safety red-team",
       "tier": "critical",
-      "status": "stale",
+      "status": "passed",
       "source_status": "passed",
-      "freshness": "stale",
-      "generated_at": "2026-07-06T06:47:17.440388+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-08-09T12:12:21.257138+00:00",
       "source_path": "Data/evals/safety/latest_safety_benchmark.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -55,10 +55,10 @@
       "id": "adversarial",
       "title": "Adversarial prompt/jailbreak",
       "tier": "critical",
-      "status": "stale",
+      "status": "passed",
       "source_status": "passed",
-      "freshness": "stale",
-      "generated_at": "2026-07-06T06:47:17.441037+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-08-09T12:12:25.641584+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_eval.json",
       "metrics": {
         "attack_block_rate": 1.0,
@@ -227,10 +227,10 @@
       "id": "rag_regression",
       "title": "RAG regression",
       "tier": "critical",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-06T06:47:19.897370+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-08-09T12:12:29.969090+00:00",
       "source_path": "Data/evals/rag/latest_rag_benchmark.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -1059,7 +1059,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:10:23.153898+00:00",
+      "generated_at": "2026-08-09T12:02:04.398572+00:00",
       "source_path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
       "metrics": {
         "status": "strong",
@@ -1401,7 +1401,7 @@
       "status": "stale",
       "source_status": "unideal",
       "freshness": "stale",
-      "generated_at": "2026-07-30T05:10:34.435430+00:00",
+      "generated_at": "2026-08-03T04:40:59.345885+00:00",
       "source_path": "Data/mle_monitoring/latest_mle_readiness.json",
       "metrics": {
         "hard_gate_status": "passed",
@@ -1663,7 +1663,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:59.940519+00:00",
+      "generated_at": "2026-08-09T12:05:51.298747+00:00",
       "source_path": "Data/evals/rag/latest_kb_source_governance.json",
       "metrics": {
         "status": "strong",
@@ -1708,10 +1708,10 @@
       "id": "rag_intent_aware_eval",
       "title": "Intent-aware RAG benchmark",
       "tier": "critical",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-06T06:47:09.502177+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-08-09T12:12:30.697250+00:00",
       "source_path": "Data/evals/rag/latest_rag_intent_aware_eval.json",
       "metrics": {
         "status": "strong",
@@ -1721,7 +1721,7 @@
         "source_tier_correctness": 1.0,
         "refusal_correctness": 1.0,
         "unsafe_answer_rate": 0.0,
-        "latency_p50_ms": 0.02
+        "latency_p50_ms": 0.0
       },
       "limitations": [],
       "claim_boundary": "Engineering benchmark over a curated case set. Improvements describe how the RAG layer behaves on these cases \u00e2\u20ac\u201d not clinical correctness on real patient queries."
@@ -2019,7 +2019,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:07:15.271429+00:00",
+      "generated_at": "2026-08-09T11:59:21.835008+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -2036,7 +2036,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:07:13.711891+00:00",
+      "generated_at": "2026-08-09T11:59:20.344158+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -2053,7 +2053,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:07:15.332478+00:00",
+      "generated_at": "2026-08-09T11:59:21.880014+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2249,11 +2249,11 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:22:19.226857+00:00",
+      "generated_at": "2026-08-09T11:49:46.659829+00:00",
       "source_path": "Data/evals/ops/latest_service_health_snapshot.json",
       "metrics": {
         "status": "needs_attention",
-        "stale_artifact_count": 133,
+        "stale_artifact_count": 134,
         "failed_benchmark_count": 0
       },
       "limitations": [],
@@ -2324,7 +2324,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:09.136882+00:00",
+      "generated_at": "2026-08-09T12:04:53.423991+00:00",
       "source_path": "Data/evals/ops/latest_cost_latency_report.json",
       "metrics": {
         "status": "strong",
@@ -2339,8 +2339,8 @@
         "estimated_total_cost_usd": 0.0,
         "cache_hit_rate": 0.19,
         "local_probe_stage_sample_count": 708,
-        "normal_rag_probe_p95_ms": 354.06,
-        "normal_rag_retrieval_p95_ms": 190.57
+        "normal_rag_probe_p95_ms": 275.89,
+        "normal_rag_retrieval_p95_ms": 141.46
       },
       "limitations": [],
       "claim_boundary": "Cost and latency observability is engineering telemetry only. It does not establish clinical safety, clinical validation, or real-world patient benefit."
@@ -2372,13 +2372,13 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:03.863713+00:00",
+      "generated_at": "2026-08-09T12:04:47.939607+00:00",
       "source_path": "Data/evals/ops/latest_route_latency_budget.json",
       "metrics": {
         "status": "acceptable",
         "route_count": 7,
         "needs_attention_count": 0,
-        "highest_observed_p95_ms": 358.34
+        "highest_observed_p95_ms": 404.28
       },
       "limitations": [],
       "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs. A p95 is not treated as credible until the route has at least 30 local samples. Repeated sparse/fast-mode local workloads are regression evidence only."
@@ -2390,7 +2390,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:01.211945+00:00",
+      "generated_at": "2026-08-09T12:04:46.338571+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile_phase2.json",
       "metrics": {
         "status": "acceptable",
@@ -2407,7 +2407,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:01.211945+00:00",
+      "generated_at": "2026-08-09T12:04:46.338571+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile.json",
       "metrics": {
         "status": "acceptable"
@@ -2484,7 +2484,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:55.093200+00:00",
+      "generated_at": "2026-08-09T12:05:46.858228+00:00",
       "source_path": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
       "metrics": {
         "status": "acceptable",
@@ -2738,7 +2738,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:10:16.991402+00:00",
+      "generated_at": "2026-08-09T12:01:59.808402+00:00",
       "source_path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
       "metrics": {
         "status": "needs_attention",
@@ -2768,7 +2768,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:11:30.595273+00:00",
+      "generated_at": "2026-08-09T12:03:03.898500+00:00",
       "source_path": "Data/evals/models/latest_xai_rank_stability.json",
       "metrics": {
         "status": "acceptable",
@@ -2787,7 +2787,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:11:56.217879+00:00",
+      "generated_at": "2026-08-09T12:03:33.313157+00:00",
       "source_path": "Data/evals/models/latest_xai_retraining_stability.json",
       "metrics": {
         "status": "acceptable",
@@ -2807,7 +2807,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:12:01.604527+00:00",
+      "generated_at": "2026-08-09T12:03:37.357277+00:00",
       "source_path": "Data/evals/models/latest_xai_reliability_gate.json",
       "metrics": {
         "status": "needs_attention",
@@ -2828,7 +2828,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:12:18.942061+00:00",
+      "generated_at": "2026-08-09T12:03:55.825276+00:00",
       "source_path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
       "metrics": {
         "status": "strong",
@@ -2846,7 +2846,7 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:12:26.855896+00:00",
+      "generated_at": "2026-08-09T12:04:06.413182+00:00",
       "source_path": "Data/evals/rag/latest_rag_degradation_resilience.json",
       "metrics": {
         "status": "strong_offline_drill",
@@ -2881,7 +2881,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:17:29.138920+00:00",
+      "generated_at": "2026-08-09T12:09:36.631831+00:00",
       "source_path": "Data/evals/ops/latest_automation_channel_drill.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -2899,7 +2899,7 @@
       "status": "ready_for_synthetic_runtime",
       "source_status": "ready_for_synthetic_runtime",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:17:32.934349+00:00",
+      "generated_at": "2026-08-09T12:09:39.682471+00:00",
       "source_path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
       "metrics": {
         "status": "ready_for_synthetic_runtime",
@@ -2914,15 +2914,15 @@
       "id": "software_supply_chain",
       "title": "Lock-derived SBOM and secret-scan evidence",
       "tier": "supporting",
-      "status": "acceptable",
-      "source_status": "acceptable",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:10:58.081289+00:00",
+      "generated_at": "2026-08-09T12:02:39.564307+00:00",
       "source_path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
       "metrics": {
-        "status": "acceptable",
+        "status": "needs_attention",
         "component_count": 508,
-        "secret_findings": 0,
+        "secret_findings": 1,
         "container_scan_executed": false
       },
       "limitations": [],
@@ -2952,7 +2952,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:17:54.705844+00:00",
+      "generated_at": "2026-08-09T12:09:50.972287+00:00",
       "source_path": "Data/evals/models/latest_finetune_semantic_contamination.json",
       "metrics": {
         "status": "needs_attention",
@@ -2982,7 +2982,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:21:40.000435+00:00",
+      "generated_at": "2026-08-09T12:12:09.155897+00:00",
       "source_path": "Data/evals/models/latest_finetune_hardening_assurance.json",
       "metrics": {
         "status": "needs_attention",
@@ -3006,7 +3006,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:21:43.565840+00:00",
+      "generated_at": "2026-08-09T12:12:32.209522+00:00",
       "source_path": "Data/evals/governance/latest_evidence_maturity_matrix.json",
       "metrics": {
         "status": "needs_attention",
@@ -3020,9 +3020,9 @@
           "5": 0
         },
         "architecture_budget_status": "needs_attention",
-        "oversized_file_count": 9,
+        "oversized_file_count": 12,
         "critical_file_count": 0,
-        "backend_service_file_count": 378,
+        "backend_service_file_count": 385,
         "clinical_validation": false,
         "healthcare_production_ready": false
       },
@@ -3036,7 +3036,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:21:45.440177+00:00",
+      "generated_at": "2026-08-09T12:12:32.952454+00:00",
       "source_path": "Data/evals/governance/latest_credibility_gap_registry.json",
       "metrics": {
         "status": "needs_attention",
@@ -3058,7 +3058,7 @@
       "status": "blocked_configuration",
       "source_status": "blocked_configuration",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:10:25.207459+00:00",
+      "generated_at": "2026-08-09T12:02:06.413083+00:00",
       "source_path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
       "metrics": {
         "status": "blocked_configuration",
@@ -3075,7 +3075,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:09:21.823480+00:00",
+      "generated_at": "2026-08-09T12:01:08.447765+00:00",
       "source_path": "Data/lakehouse/manifests/latest_pipeline_run.json",
       "metrics": {
         "status": "strong",
@@ -3096,7 +3096,7 @@
       "status": "strong_contract_only",
       "source_status": "strong_contract_only",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:09:24.892508+00:00",
+      "generated_at": "2026-08-09T12:01:09.943646+00:00",
       "source_path": "Data/evals/rag/latest_vector_store_contract_eval.json",
       "metrics": {
         "status": "strong_contract_only",
@@ -3115,7 +3115,7 @@
       "status": "compiled_reference_architecture",
       "source_status": "compiled_reference_architecture",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:09:55.082308+00:00",
+      "generated_at": "2026-08-09T12:01:42.331491+00:00",
       "source_path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
       "metrics": {
         "status": "compiled_reference_architecture",
@@ -3134,7 +3134,7 @@
       "status": "ready_for_opt_in_provisioning",
       "source_status": "ready_for_opt_in_provisioning",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:09:31.395517+00:00",
+      "generated_at": "2026-08-09T12:01:15.247458+00:00",
       "source_path": "Data/evals/rag/latest_azure_search_index_readiness.json",
       "metrics": {
         "status": "ready_for_opt_in_provisioning",
@@ -3153,7 +3153,7 @@
       "status": "ready_for_opt_in_shadow_sync",
       "source_status": "ready_for_opt_in_shadow_sync",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:09:34.422136+00:00",
+      "generated_at": "2026-08-09T12:01:18.355352+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
       "metrics": {
         "status": "ready_for_opt_in_shadow_sync",
@@ -3173,7 +3173,7 @@
       "status": "ready_for_managed_shadow_run",
       "source_status": "ready_for_managed_shadow_run",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:09:42.247199+00:00",
+      "generated_at": "2026-08-09T12:01:24.807966+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
       "metrics": {
         "status": "ready_for_managed_shadow_run",
@@ -3192,7 +3192,7 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:09:28.335951+00:00",
+      "generated_at": "2026-08-09T12:01:12.845751+00:00",
       "source_path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
       "metrics": {
         "status": "strong_offline_drill",
@@ -3208,13 +3208,13 @@
       "id": "constraint_aware_improvement_program",
       "title": "Constraint-aware cross-domain improvement program",
       "tier": "supporting",
-      "status": "needs_attention",
-      "source_status": "needs_attention",
+      "status": "blocked",
+      "source_status": "blocked",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:22:44.463090+00:00",
+      "generated_at": "2026-08-09T12:12:47.453488+00:00",
       "source_path": "Data/evals/governance/latest_constraint_aware_improvement_program.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "blocked",
         "domain_count": 8,
         "clinical_validation": false,
         "healthcare_production_ready": false
@@ -3229,11 +3229,11 @@
       "status": "improved_local_regression",
       "source_status": "improved_local_regression",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:10.882872+00:00",
+      "generated_at": "2026-08-09T12:04:54.601566+00:00",
       "source_path": "Data/evals/ops/latest_retrieval_runtime_cache_eval.json",
       "metrics": {
         "status": "improved_local_regression",
-        "retrieval_p95_delta_ms": -1615.75,
+        "retrieval_p95_delta_ms": -1664.86,
         "sample_contract_met": true,
         "production_ready": false
       },
@@ -3247,7 +3247,7 @@
       "status": "blocked_configuration",
       "source_status": "blocked_configuration",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:12.495236+00:00",
+      "generated_at": "2026-08-09T12:04:56.173427+00:00",
       "source_path": "Data/evals/ops/latest_provider_usage_reconciliation.json",
       "metrics": {
         "status": "blocked_configuration",
@@ -3265,7 +3265,7 @@
       "status": "ready_for_human_adjudication",
       "source_status": "ready_for_human_adjudication",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:17:58.109663+00:00",
+      "generated_at": "2026-08-09T12:09:52.003146+00:00",
       "source_path": "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
       "metrics": {
         "status": "ready_for_human_adjudication",
@@ -3283,7 +3283,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:21:34.753014+00:00",
+      "generated_at": "2026-08-09T12:12:04.392265+00:00",
       "source_path": "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
       "metrics": {
         "status": "needs_attention",
@@ -3348,7 +3348,7 @@
       "status": "strong_local_only_external_blocked",
       "source_status": "strong_local_only_external_blocked",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:21:38.951637+00:00",
+      "generated_at": "2026-08-09T12:12:08.044090+00:00",
       "source_path": "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json",
       "metrics": {
         "status": "strong_local_only_external_blocked",
@@ -3366,7 +3366,7 @@
       "status": "canonical_for_synthetic_promotion_evaluation",
       "source_status": "canonical_for_synthetic_promotion_evaluation",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:18:01.101465+00:00",
+      "generated_at": "2026-08-09T12:09:53.155865+00:00",
       "source_path": "Data/evals/models/latest_synthetic_feature_policy.json",
       "metrics": {
         "status": "canonical_for_synthetic_promotion_evaluation",
@@ -3386,7 +3386,7 @@
       "status": "ready_for_nonpatient_provider_capture",
       "source_status": "ready_for_nonpatient_provider_capture",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:13:14.561879+00:00",
+      "generated_at": "2026-08-09T12:04:58.504892+00:00",
       "source_path": "Data/evals/ops/latest_provider_usage_capture_readiness.json",
       "metrics": {
         "status": "ready_for_nonpatient_provider_capture",
@@ -3404,7 +3404,7 @@
       "status": "ready_for_disposable_synthetic_runtime",
       "source_status": "ready_for_disposable_synthetic_runtime",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:21:37.647221+00:00",
+      "generated_at": "2026-08-09T12:12:06.793867+00:00",
       "source_path": "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
       "metrics": {
         "status": "ready_for_disposable_synthetic_runtime",
@@ -3437,20 +3437,20 @@
       "id": "research_paper_query_telemetry",
       "title": "Research-paper query latency and token telemetry",
       "tier": "supporting",
-      "status": "needs_attention",
-      "source_status": "needs_attention",
+      "status": "acceptable_internal_measurement",
+      "source_status": "acceptable_internal_measurement",
       "freshness": "fresh",
-      "generated_at": "2026-08-02T16:17:19.625228+00:00",
+      "generated_at": "2026-08-09T12:09:29.508682+00:00",
       "source_path": "Data/evals/rag/latest_research_paper_query_telemetry.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "acceptable_internal_measurement",
         "query_count": 30,
-        "route_contract_pass_rate": 0.8,
-        "latency_p50_ms": 236.17,
-        "latency_p95_ms": 956.09,
-        "cold_start_latency_ms": 26646.26,
-        "warm_latency_p95_ms": 492.85,
-        "estimated_pipeline_total_tokens": 9650,
+        "route_contract_pass_rate": 1.0,
+        "latency_p50_ms": 270.69,
+        "latency_p95_ms": 430.52,
+        "cold_start_latency_ms": 30497.91,
+        "warm_latency_p95_ms": 408.64,
+        "estimated_pipeline_total_tokens": 10434,
         "provider_reported_total_tokens": 0,
         "provider_usage_coverage_rate": 0.0
       },
@@ -3464,18 +3464,6 @@
     }
   ],
   "issues": [
-    {
-      "benchmark_id": "safety_red_team",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "adversarial",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
     {
       "benchmark_id": "adversarial_safety_regression",
       "severity": "medium",
@@ -3520,12 +3508,6 @@
     },
     {
       "benchmark_id": "multilingual_refusal",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "rag_regression",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -3993,12 +3975,6 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "rag_intent_aware_eval",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
       "benchmark_id": "live_rag_eval",
       "severity": "medium",
       "status": "stale",
@@ -4257,6 +4233,12 @@
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
+      "benchmark_id": "software_supply_chain",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
       "benchmark_id": "finetune_runtime_preflight",
       "severity": "medium",
       "status": "stale",
@@ -4287,12 +4269,6 @@
       "message": "Benchmark needs review before using it as supporting evidence."
     },
     {
-      "benchmark_id": "constraint_aware_improvement_program",
-      "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
-    },
-    {
       "benchmark_id": "synthetic_model_perturbation_retrain",
       "severity": "medium",
       "status": "needs_attention",
@@ -4303,12 +4279,6 @@
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
-    },
-    {
-      "benchmark_id": "research_paper_query_telemetry",
-      "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
     }
   ],
   "next_actions": [

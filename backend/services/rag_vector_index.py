@@ -27,6 +27,7 @@ import re
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
+from time import perf_counter
 
 import joblib
 import numpy as np
@@ -65,6 +66,15 @@ _CACHE_METRICS = {
     "tfidf_query_hits": 0,
 }
 _QUERY_CACHE_LIMIT = 256
+_PREWARM_STATE: dict[str, object] = {
+    "status": "not_started",
+    "backend": None,
+    "document_count": 0,
+    "startup_warmup_ms": None,
+    "error_type": None,
+    "clinical_validation": False,
+    "healthcare_production_ready": False,
+}
 
 DENSE_HYBRID_SCHEMA_VERSION = "local_dense_faiss_hybrid_index_v2"
 SPARSE_BM25_SCHEMA_VERSION = "local_sparse_tfidf_bm25_index_v2"
@@ -328,6 +338,70 @@ def rag_runtime_cache_stats() -> dict[str, int]:
             **_CACHE_METRICS,
             "cached_index_count": len(_INDEX_FILE_CACHE),
         }
+
+
+def prewarm_rag_vector_runtime(
+    corpus,
+    *,
+    index_path=DEFAULT_RAG_INDEX_PATH,
+    knowledge_fingerprint=None,
+) -> dict[str, object]:
+    """Load the persisted index, encoder, and query-time runtime objects.
+
+    The fixed warmup query is synthetic and its retrieval result is discarded.
+    Failures are reported in readiness state instead of crashing application
+    startup; the normal retrieval path can still attempt its own fallback.
+    """
+    started = perf_counter()
+    with _INDEX_CACHE_LOCK:
+        _PREWARM_STATE.update({
+            "status": "warming",
+            "backend": None,
+            "document_count": 0,
+            "startup_warmup_ms": None,
+            "error_type": None,
+        })
+    try:
+        index = load_or_build_rag_vector_index(
+            corpus=corpus,
+            index_path=index_path,
+            knowledge_fingerprint=knowledge_fingerprint,
+        )
+        search_hybrid_index(
+            "breast cancer monitoring education",
+            corpus=corpus,
+            intent="education",
+            index_path=index_path,
+            knowledge_fingerprint=knowledge_fingerprint,
+            candidate_limit=1,
+        )
+        state = {
+            "status": "ready",
+            "backend": (index.get("metadata") or {}).get("retrieval_backend"),
+            "document_count": int(index.get("document_count") or 0),
+            "startup_warmup_ms": round((perf_counter() - started) * 1000.0, 2),
+            "error_type": None,
+            "clinical_validation": False,
+            "healthcare_production_ready": False,
+        }
+    except Exception as exc:  # noqa: BLE001 - readiness must stay observable
+        state = {
+            "status": "degraded",
+            "backend": None,
+            "document_count": 0,
+            "startup_warmup_ms": round((perf_counter() - started) * 1000.0, 2),
+            "error_type": exc.__class__.__name__,
+            "clinical_validation": False,
+            "healthcare_production_ready": False,
+        }
+    with _INDEX_CACHE_LOCK:
+        _PREWARM_STATE.update(state)
+        return dict(_PREWARM_STATE)
+
+
+def rag_runtime_readiness() -> dict[str, object]:
+    with _INDEX_CACHE_LOCK:
+        return dict(_PREWARM_STATE)
 
 
 def _seed_index_file_cache(path: Path, payload: dict) -> None:

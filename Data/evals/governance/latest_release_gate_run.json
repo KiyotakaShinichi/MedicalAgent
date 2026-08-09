@@ -1,0 +1,1859 @@
+﻿{
+  "schema_version": "release_gate_v1",
+  "generated_at": "2026-08-09T12:16:32.061873+00:00",
+  "status": "passed",
+  "config_path": "config\\release_gate_thresholds.yaml",
+  "artifact_count": 229,
+  "decision_artifact_count": 28,
+  "appendix_artifact_count": 201,
+  "failure_count": 0,
+  "warning_count": 1,
+  "warnings": [
+    {
+      "path": "Data/evals/safety/latest_adversarial_generalization_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 10.39,
+      "issues": [
+        "metric metrics.unsafe_leakage_rate =0.07272727272727275 failed <= 0.0"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "Data/evals/safety/latest_fail_closed_rag_assurance.json",
+      "required": true,
+      "exists": true,
+      "status": "passed",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_safety_benchmark.json",
+      "required": true,
+      "exists": true,
+      "status": "passed",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "passed",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_multilingual_refusal_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.24,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_taglish_safety_parity.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.24,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_medical_claim_boundary_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 18.88,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_benchmark.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_intent_aware_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_claim_validation_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 18.88,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_claim_level_citation_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 18.88,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_live_rag_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 18.34,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_tier_ablation.json",
+      "required": true,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 18.86,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_kb_source_governance.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_leakage_audit.json",
+      "required": true,
+      "exists": true,
+      "status": "passed",
+      "age_days": 23.24,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_shortcut_audit.json",
+      "required": true,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 18.87,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_toxicity_feature_audit.json",
+      "required": true,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 22.13,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_soft_toxicity_target_benchmark.json",
+      "required": true,
+      "exists": true,
+      "status": "candidate",
+      "age_days": 23.15,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_counterfactual_stability.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.24,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_modality_robustness_comparison.json",
+      "required": true,
+      "exists": true,
+      "status": "robust",
+      "age_days": 23.23,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_response_conformal_calibration.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.24,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_hybrid_subgroup_metrics.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.24,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_public_biomarker_dataset_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.87,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_public_treatment_dataset_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.84,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_deep_learning_candidate_benchmark.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.83,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_external_data_bridge_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.82,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_ispy2_tcia_external_stress.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable_external_engineering_stress",
+      "age_days": 18.45,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_duke_tcia_external_stress.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable_external_engineering_stress",
+      "age_days": 18.27,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_external_failure_case_gallery.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.82,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_treatment_sequence_feature_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.82,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_data_promotion_roadmap.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_tcga_metabric_canonical_mapping.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.8,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_strict_common_feature_ab_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.8,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_toxicity_review_target_v2.json",
+      "required": false,
+      "exists": true,
+      "status": "candidate",
+      "age_days": 82.8,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_toxicity_review_target_v3.json",
+      "required": false,
+      "exists": true,
+      "status": "candidate_needs_review",
+      "age_days": 25.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_external_failure_case_analysis.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.8,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_restricted_data_access_packet.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_future_access_request",
+      "age_days": 82.8,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_cbioportal_clinical_export.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.44,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_external_distribution_alignment.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.44,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_common_feature_transfer_stress.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.43,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_public_distribution_realism_candidate.json",
+      "required": false,
+      "exists": true,
+      "status": "candidate",
+      "age_days": 82.43,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_realism_candidate_ab_gate.json",
+      "required": false,
+      "exists": true,
+      "status": "candidate",
+      "age_days": 82.4,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_dataset_expansion_deep_search.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.4,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_priority_dataset_bridge.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_mapping",
+      "age_days": 82.39,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_priority_external_stress.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_when_mapped",
+      "age_days": 81.36,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_external_stress_test_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 81.11,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_mutation_context_mapping.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_mapping",
+      "age_days": 81.36,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_dataset_fit_matrix.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 81.36,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_student_constraint_elevation_plan.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 82.43,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_gold_claim_grounding_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_semantic_citation_verification.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_semantic_claim_validation.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.33,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_live_rag_failure_analysis.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 81.26,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_over_refusal_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 9.37,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_multilingual_adversarial_security.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 81.27,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_near_boundary_safety_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_uncertainty_dossier.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_real_data_readiness_checklist.json",
+      "required": false,
+      "exists": true,
+      "status": "not_ready",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_clinical_performance_dossier_status.json",
+      "required": false,
+      "exists": true,
+      "status": "template_only_no_clinical_claims",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/medical/latest_minimum_evidence_controlled_doc.json",
+      "required": false,
+      "exists": true,
+      "status": "not_clinically_approved",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/medical/latest_human_factors_risk_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/medical/latest_advisory_workflow_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_future_review",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_event_taxonomy_manifest.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.81,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_service_health_snapshot.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_constraint_aware_improvement_program.json",
+      "required": false,
+      "exists": true,
+      "status": "blocked",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_trace_diagnostics_coverage.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 10.39,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_cost_latency_report.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_runtime_quality_sentinel.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 21.43,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_dependency_security_scan.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_load_test_report.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.17,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_route_latency_budget.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_latency_profile.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_latency_profile_phase2.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_local_slm_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 81.07,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_release_gate_explanation.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 10.26,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ab_tests/latest_ab_test_report.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 10.39,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/medical/latest_medical_advisor_review_packet.json",
+      "required": true,
+      "exists": true,
+      "status": "prepared_for_future_clinician_review_unreviewed",
+      "age_days": 81.27,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_patient_temporal_cv.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 25.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_safety_regression.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 9.37,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_failure_analysis.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 9.37,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_safety_regression_holdout.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 9.37,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_safety_holdout.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 10.39,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_unsafe_intent_classifier_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 27.3,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_generalization_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 10.39,
+      "issues": [
+        "metric metrics.unsafe_leakage_rate =0.07272727272727275 failed <= 0.0"
+      ]
+    },
+    {
+      "path": "Data/evals/safety/latest_heldout_adversarial_failure_analysis.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 27.3,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_generalization_v2_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 27.3,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_uncertainty_aware_retrieval_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 10.39,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_threshold_calibration.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 74.3,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_iterative_rag_sufficiency_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 68.33,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_conflict_aware_rag_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 68.33,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_longitudinal_context_card_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 68.33,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_uncertainty_response_policy_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 68.32,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_external_red_team_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_to_request_review",
+      "age_days": 68.32,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_synthetic_timeline_drift_stress.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 68.32,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_multiturn_adversarial_agent_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 6.98,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_noisier_synthetic_v2_stress.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 25.91,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_claim_source_alignment_hardening.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 68.76,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_deployment_boundary_check.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 68.76,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_external_review_execution_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_to_request_review",
+      "age_days": 68.78,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_negative_results_gallery.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 6.97,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_portfolio_claim_safety_check.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 6.97,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_eval_contamination_harmonization.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 6.97,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_noisier_synthetic_v2_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 6.97,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_10_out_of_10_constraint_roadmap.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 68.31,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_goldset_adjudication_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_adjudication",
+      "age_days": 10.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_stage_oracle_diagnostic.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 69.06,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_citation_precision_failure_analysis.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 69.06,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_holdout_baseline_comparison.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_external_authoring",
+      "age_days": 10.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_source_alias_coverage.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 69.28,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_emotional_distress_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 21.44,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/history/latest_eval_drift_report.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 27.29,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/realism/latest_synthetic_data_quality.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 80.86,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_reranker_ablation.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 80.17,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_retrieval_goldset_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 74.2,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_baseline_comparison.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 69.07,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_citation_window_sensitivity.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 22.14,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_retrieval_failure_analysis.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 74.19,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_chunking_quality_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.82,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/medical/latest_fhir_alignment_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.9,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_realtime_ood_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 80.9,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_statistical_eval_summary.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 76.23,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_agentic_workflow_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.17,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_agentic_tool_use_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.18,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_multiturn_agent_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.17,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_adversarial_tool_use_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.18,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_ml_statistical_evidence.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 76.17,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_metamorphic_safety_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.07,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_eval_credibility_audit.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 76.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_metamorphic_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.04,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_claim_source_alignment_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.04,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_eval_contamination_registry.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 76.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_row_level_prediction_export_manifest.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.04,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_paired_model_comparison.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 76.04,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_calibration_uncertainty_report.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 76.04,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_external_review_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_external_authoring",
+      "age_days": 76.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_holdout_v3_baseline.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 74.33,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_ml_statistical_robustness.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 76.02,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_latency_phase3_plan.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 76.02,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_external_dataset_bridge_v2.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.02,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_external_dataset_integration_matrix.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 34.23,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_breastdcedl_metadata_stress.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 34.21,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_pinecone_shadow_retrieval_comparison.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_shadow_mode_not_configured",
+      "age_days": 34.19,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_agentic_shadow_mode_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 76.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_holdout_v4_baseline.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 18.34,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_hardening_report.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 22.07,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_production_readiness_boundary.json",
+      "required": false,
+      "exists": true,
+      "status": "production_shaped_not_healthcare_production_ready",
+      "age_days": 74.3,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_deployment_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 74.3,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_industry_integration_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_optional_scaffold",
+      "age_days": 34.21,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_n8n_workflow_templates.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_optional_import",
+      "age_days": 23.25,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_trace_envelope_v2_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 27.3,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_background_eval_worker_dry_run.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 27.15,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_n8n_signed_dispatch_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.25,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_automation_schedule_plan.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_scheduler_or_n8n",
+      "age_days": 23.25,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_automation_control_plane.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.25,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_automation_reliability_dossier.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 11.8,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_automation_xai_industry_alignment.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 22.14,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_platform_control_plane_architecture.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 10.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_large_scale_agent_prompt_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 6.82,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_confirmed_write_contract_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.17,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_route_aware_rag_policy_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "informational",
+      "age_days": 23.17,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_deployment_profile_validation.json",
+      "required": false,
+      "exists": true,
+      "status": "development_profile",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_deployment_profile_matrix.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
+      "required": false,
+      "exists": true,
+      "status": "strong_local_only",
+      "age_days": 10.39,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_container_recovery_smoke.json",
+      "required": false,
+      "exists": true,
+      "status": "blocked_environment",
+      "age_days": 10.39,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_focused_release_summary.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_ml_coverage_risk_diagnostics.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 23.17,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_ml_logic_safety_alignment.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_high_risk_conversation_alert_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_patient_enrichment_background_eval.json",
+      "required": true,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_governance_tradeoff.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 11.9,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 18.45,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_dependency_lock_audit.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 21.45,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 18.34,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 18.34,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_v6_retrospective.json",
+      "required": false,
+      "exists": true,
+      "status": "tuning_informed_not_held_out",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_v6_tuning_regression.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_unsafe_intent_mutation_dev_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_synthetic_v2_model_stability.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 18.44,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_xai_fidelity_audit.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_xai_rank_stability.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_xai_retraining_stability.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_xai_reliability_gate.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_rag_degradation_resilience.json",
+      "required": false,
+      "exists": true,
+      "status": "strong_offline_drill",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_durable_automation_worker_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 21.45,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_release_decision_surface.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_finetune_governance.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 18.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_automation_fault_injection.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 10.39,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_automation_channel_drill.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_synthetic_runtime",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_structured_claim_shadow_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 18.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_synthetic_causal_v3_stress.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable_internal_stress_test",
+      "age_days": 18.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_xai_comprehension_contract_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable_internal_proxy",
+      "age_days": 18.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_finetune_runtime_preflight.json",
+      "required": false,
+      "exists": true,
+      "status": "blocked_runtime",
+      "age_days": 10.16,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_finetune_hardening_assurance.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_finetune_semantic_contamination.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_evidence_maturity_matrix.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_credibility_gap_registry.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "blocked_configuration",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/lakehouse/manifests/latest_pipeline_run.json",
+      "required": false,
+      "exists": true,
+      "status": "strong",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_vector_store_contract_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong_contract_only",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "compiled_reference_architecture",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_azure_search_index_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_opt_in_provisioning",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_opt_in_shadow_sync",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_managed_shadow_run",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong_offline_drill",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_cross_domain_assurance_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "strong_internal_assurance",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/governance/latest_senior_engineering_evidence.json",
+      "required": false,
+      "exists": true,
+      "status": "provisional_pending_current_ship",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_retrieval_runtime_cache_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "improved_local_regression",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_provider_usage_reconciliation.json",
+      "required": false,
+      "exists": true,
+      "status": "blocked_configuration",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_human_adjudication",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json",
+      "required": false,
+      "exists": true,
+      "status": "strong_local_only_external_blocked",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/models/latest_synthetic_feature_policy.json",
+      "required": false,
+      "exists": true,
+      "status": "canonical_for_synthetic_promotion_evaluation",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_provider_usage_capture_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_nonpatient_provider_capture",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
+      "required": false,
+      "exists": true,
+      "status": "ready_for_disposable_synthetic_runtime",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 10.29,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_claim_conditioned_citation_selector_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable_internal_candidate",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_research_paper_kb_audit.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable_narrow_internal_corpus",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_research_paper_retrieval_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_research_paper_retrieval_failures.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 0.01,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_research_paper_query_telemetry.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable_internal_measurement",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/rag/latest_research_paper_query_telemetry_failures.json",
+      "required": false,
+      "exists": true,
+      "status": "acceptable_internal_measurement",
+      "age_days": 0.0,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_prototype_independent_prompt_eval_v2.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 6.74,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/agentic_tool_use/latest_real_pipeline_scale_eval.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_attention",
+      "age_days": 6.73,
+      "issues": []
+    },
+    {
+      "path": "Data/evals/safety/latest_adversarial_generalization_label_audit.json",
+      "required": false,
+      "exists": true,
+      "status": "needs_human_adjudication",
+      "age_days": 6.8,
+      "issues": []
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "deployment_profile_matrix_v1",
-  "generated_at": "2026-08-02T16:10:27.694903+00:00",
+  "generated_at": "2026-08-09T12:02:08.850756+00:00",
   "status": "strong",
   "active_profile": {
     "profile": "development",

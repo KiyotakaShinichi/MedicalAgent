@@ -238,10 +238,12 @@ def apply_intent_aware_rag_layer(
     the Phase 11 "insufficient evidence is a first-class outcome"
     promise.
 
-    Wrapped in try/except: this layer must never crash chat — on any
-    exception we set ``evidence_grade.grade = "missing"`` with a reason
-    and return.
+    Wrapped in try/except: this layer must never release the candidate on
+    failure.  Any exception records a typed governance error, clears
+    citations, and substitutes a bounded validation-unavailable response.
+    The centralized evidence-envelope policy still makes the final decision.
     """
+    stage = "select_mode"
     try:
         from backend.services.rag_claim_validator import validate_claims
         from backend.services.rag_evidence_grading import grade_evidence
@@ -257,12 +259,15 @@ def apply_intent_aware_rag_layer(
         if mode is None:
             return
 
+        stage = "source_tier_filter"
         chunks_for_filter = result.get("retrieval_context") or retrieved or []
         filter_result = filter_chunks_by_mode(chunks_for_filter, mode)
+        stage = "claim_validation"
         claim_validation = validate_claims(
             result.get("reply") or "",
             filter_result.kept_chunks,
         )
+        stage = "evidence_grading"
         grade = grade_evidence(
             mode=mode,
             filter_result=filter_result,
@@ -275,6 +280,7 @@ def apply_intent_aware_rag_layer(
         result["tier_filter"] = filter_result.to_dict()
         result["claim_validation"] = claim_validation.to_dict()
         result["evidence_grade"] = grade.to_dict()
+        stage = "retrieval_uncertainty"
         retrieval_confidence = classify_retrieval_uncertainty(
             chunks=filter_result.kept_chunks,
             claim_envelope=claim_validation.to_dict(),
@@ -282,6 +288,17 @@ def apply_intent_aware_rag_layer(
             intent=result.get("intent") or mode.mode,
         )
         result["retrieval_confidence"] = retrieval_confidence.to_dict()
+
+        research_answerability = result.get("research_evidence_answerability") or {}
+        if research_answerability.get("requires_abstention"):
+            result["reply"] = research_answerability.get("safe_reply") or mode.insufficient_evidence_default
+            result["citations"] = []
+            result["research_evidence_substitution"] = {
+                "status": research_answerability.get("status"),
+                "reason": research_answerability.get("reason"),
+                "support_check_is_medical_entailment": False,
+            }
+            return
 
         # Substitute the mode's insufficient-evidence default when
         # grading collapses OR the answerability router says we must
@@ -320,10 +337,22 @@ def apply_intent_aware_rag_layer(
                     else f"retrieval_confidence_{confidence_status}"
                 ),
             }
-    except Exception as exc:  # noqa: BLE001 — the layer must never crash chat
+    except Exception as exc:  # noqa: BLE001 — fail closed at this boundary
+        result["reply"] = (
+            "I couldn't complete the evidence checks needed for a safe answer right now. "
+            "Please try again later or ask your oncology care team."
+        )
+        result["citations"] = []
+        result["rag_governance_error"] = {
+            "status": "failed",
+            "stage": stage,
+            "code": f"rag_governance_{stage}_exception",
+            "exception_type": type(exc).__name__,
+            "raw_query_logged": False,
+        }
         result["evidence_grade"] = {
             "grade": "missing",
-            "reasoning": f"intent_aware_rag_layer_skipped: {exc!s}",
+            "reasoning": f"intent_aware_rag_layer_failed_closed:{stage}",
         }
 
 

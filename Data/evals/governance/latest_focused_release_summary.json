@@ -1,18 +1,18 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-08-02T16:22:49.402635+00:00",
+  "generated_at": "2026-08-09T12:13:17.134773+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "release_gate": {
     "status": "passed",
-    "artifact_count": 225,
+    "artifact_count": 229,
     "hard_blocker_failure_count": 0,
-    "appendix_warning_count": 1,
-    "required_artifact_count": 27,
-    "optional_artifact_count": 198,
-    "optional_artifact_ratio": 0.88,
-    "optional_issue_count": 1,
+    "appendix_warning_count": 2,
+    "required_artifact_count": 28,
+    "optional_artifact_count": 201,
+    "optional_artifact_ratio": 0.8777,
+    "optional_issue_count": 2,
     "failures": []
   },
   "core_evidence": {
@@ -79,7 +79,7 @@
     "retrieval_runtime_cache": {
       "status": "improved_local_regression",
       "local_regression_improvement_observed": true,
-      "retrieval_p95_delta_ms": -1615.75,
+      "retrieval_p95_delta_ms": -1664.86,
       "dense_unique_query_latency_measured": false,
       "production_ready": false
     },

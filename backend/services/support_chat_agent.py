@@ -11,11 +11,20 @@ from backend.models import (
 )
 from backend.processing.radiology_analysis import detect_possible_metastatic_indicators
 from backend.services.agent_rag import run_patient_agent_pipeline, route_intent, safety_scope_check
+from backend.services.agent_input_gate import input_guardrail_check
+from backend.services.agent_output_gate import output_guardrail_check
+from backend.services.agent_post_gen import apply_post_gen_validator
 from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_imaging_report_payload, validate_symptom_payload
 from backend.services.local_llm import select_support_tools_with_local_llm
 from backend.services.support_chat_context import _recent_patient_context
 from backend.services.security_guardrails import detect_multilingual_medical_danger, normalize_security_text
+from backend.services.rag_evidence_envelope import (
+    build_fail_closed_error_result,
+    enforce_evidence_release,
+    enforce_transport_release,
+    parse_evidence_envelope,
+)
 from backend.services.conversation_state import (
     clear_pending_action,
     get_pending_action,
@@ -434,6 +443,13 @@ def handle_patient_chat(db, patient_id, message):
     response = _ensure_complete_safety_reply(response, routing_safety)
     response = _append_alert_notice(response, actions)
     agent_result["reply"] = response
+    agent_result = _authorize_final_support_response(
+        agent_result,
+        query=normalized,
+        routing_safety=routing_safety,
+        deterministic_tool_confirmation=_has_tool_action(actions),
+    )
+    response = agent_result["reply"]
     assistant_record = ChatMessage(
         patient_id=patient_id,
         role="assistant",
@@ -453,6 +469,8 @@ def handle_patient_chat(db, patient_id, message):
                 "rag_evaluation": agent_result.get("rag_evaluation"),
                 "emotional_distress": agent_result.get("emotional_distress"),
                 "agentic_shadow": agentic_shadow,
+                "evidence_envelope": agent_result.get("evidence_envelope"),
+                "release_authorization": agent_result.get("release_authorization"),
             },
         }),
     )
@@ -497,6 +515,8 @@ def handle_patient_chat(db, patient_id, message):
         "tool_plan": tool_plan,
         "conversation_state": state_snapshot(patient_id),
         "urgent_flags": urgent_flags,
+        "evidence_envelope": agent_result.get("evidence_envelope"),
+        "release_authorization": agent_result.get("release_authorization"),
         "agent_pipeline": {
             "intent": agent_result.get("intent"),
             "safety": agent_result.get("safety"),
@@ -509,10 +529,81 @@ def handle_patient_chat(db, patient_id, message):
             "compound_intent": _compound_intent_payload(compound_intent, llm_compound_verdict),
             "emotional_distress": agent_result.get("emotional_distress"),
             "agentic_shadow": agentic_shadow,
+            "evidence_envelope": agent_result.get("evidence_envelope"),
+            "release_authorization": agent_result.get("release_authorization"),
         },
         "assistant_message_id": assistant_record.id,
         "safety_note": "This assistant logs and summarizes information only. It does not diagnose or give treatment instructions.",
     }
+
+
+def _authorize_final_support_response(
+    agent_result,
+    *,
+    query,
+    routing_safety,
+    deterministic_tool_confirmation=False,
+):
+    """Authorize the exact reply that the support API persists and sends.
+
+    Evidence-dependent answers cannot be re-authorized after the outer support
+    layer mutates their text because claim/citation validation applied to the
+    original candidate. Deterministic support replies are rechecked from
+    scratch because they do not depend on retrieved medical evidence.
+    """
+
+    if not isinstance(agent_result, dict):
+        return build_fail_closed_error_result(
+            query=query,
+            error_code="support_result_malformed",
+        )
+    existing_envelope, _ = parse_evidence_envelope(agent_result.get("evidence_envelope"))
+    if existing_envelope is not None and existing_envelope.evidence_required:
+        return enforce_transport_release(agent_result, query=query)
+
+    try:
+        input_guardrails = input_guardrail_check(query, routing_safety or {})
+        validation = agent_result.get("validation")
+        if not isinstance(validation, dict) or validation.get("status") != "passed":
+            agent_result["validation"] = {
+                "status": "passed",
+                "issues": [],
+                "citation_count": 0,
+                "validation_scope": "deterministic_non_evidence_support",
+            }
+        output_candidate = agent_result
+        if deterministic_tool_confirmation:
+            # The confirmation text reports a completed record action; it is
+            # not a medical answer to the prior turn that supplied the data.
+            # It still passes post-generation validation below.
+            output_candidate = dict(agent_result)
+            output_candidate["safety"] = {
+                **(agent_result.get("safety") or {}),
+                "level": "deterministic_tool_confirmation",
+            }
+        output_guardrails = output_guardrail_check(output_candidate)
+        output_guardrails, _ = apply_post_gen_validator(agent_result, output_guardrails)
+        agent_result["guardrails"] = {
+            "input": input_guardrails,
+            "output": output_guardrails,
+        }
+        errors = []
+        if (output_guardrails or {}).get("status") != "passed":
+            errors.append("support_output_guardrail_failed")
+        enforce_evidence_release(
+            agent_result,
+            query=query,
+            input_guardrails=input_guardrails,
+            validation_errors=errors,
+            evidence_required=False,
+        )
+        return enforce_transport_release(agent_result, query=query)
+    except Exception as exc:  # noqa: BLE001 - alternate entry point must deny
+        return build_fail_closed_error_result(
+            query=query,
+            error_code=f"support_final_authorization_exception:{type(exc).__name__}",
+            result=agent_result,
+        )
 
 
 def _apply_emotional_distress_mode(reply, emotional_distress):

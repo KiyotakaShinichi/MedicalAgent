@@ -89,7 +89,7 @@ services:
     volumes:
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase
-    command: ["python", "scripts/run_task_worker.py", "--poll-seconds", "5"]
+    command: ["python", "scripts/run_automation_worker.py", "--poll-seconds", "5", "--lease-seconds", "120"]
     init: true
     restart: unless-stopped
 

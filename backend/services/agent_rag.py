@@ -27,6 +27,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from time import perf_counter
+from types import SimpleNamespace
 
 # ─── Consolidated re-export shim ─────────────────────────────────────────────
 #
@@ -121,6 +122,12 @@ from backend.services.agent_retrieval import (  # noqa: F401
 )
 from backend.services.agent_safety import safety_scope_check  # noqa: F401
 from backend.services.agent_trace import _trace  # noqa: F401
+from backend.services.rag_evidence_envelope import (
+    EvidenceDisposition,
+    build_fail_closed_error_result,
+    enforce_evidence_release,
+    enforce_transport_release,
+)
 
 # ``route_intent_with_local_llm`` is consulted by ``agent_intent_router.route_intent``
 # via an attribute lookup on THIS module (``agent_rag``).  The indirection
@@ -134,6 +141,39 @@ from backend.services.local_llm import route_intent_with_local_llm  # noqa: F401
 
 
 def run_patient_agent_pipeline(
+    db,
+    patient_id,
+    query,
+    patient_context,
+    fallback_response,
+    actions=None,
+    urgent_flags=None,
+    preselected_intent=None,
+    compound_intent=None,
+    precomputed_safety=None,
+):
+    """Run the patient agent with a final deny-on-exception boundary."""
+    try:
+        return _run_patient_agent_pipeline_impl(
+            db=db,
+            patient_id=patient_id,
+            query=query,
+            patient_context=patient_context,
+            fallback_response=fallback_response,
+            actions=actions,
+            urgent_flags=urgent_flags,
+            preselected_intent=preselected_intent,
+            compound_intent=compound_intent,
+            precomputed_safety=precomputed_safety,
+        )
+    except Exception as exc:  # noqa: BLE001 - no pipeline exception may leak a candidate
+        return build_fail_closed_error_result(
+            query=query,
+            error_code=f"patient_agent_pipeline_exception:{type(exc).__name__}",
+        )
+
+
+def _run_patient_agent_pipeline_impl(
     db,
     patient_id,
     query,
@@ -185,7 +225,16 @@ def run_patient_agent_pipeline(
     knowledge_fingerprint = knowledge_base_fingerprint()
     cache_policy = _cache_policy_snapshot(knowledge_fingerprint)
 
-    cache_hit = _lookup_cache(db, cacheable, rewritten, intent, safety, knowledge_fingerprint)
+    cache_rejection_events = []
+    cache_hit = _lookup_cache(
+        db,
+        cacheable,
+        rewritten,
+        intent,
+        safety,
+        knowledge_fingerprint,
+        cache_rejection_events=cache_rejection_events,
+    )
     if cache_hit:
         return _run_cache_hit_branch(
             db=db,
@@ -198,6 +247,7 @@ def run_patient_agent_pipeline(
             cache_policy=cache_policy,
             input_guardrails=input_guardrails,
             started=started,
+            cache_rejection_events=cache_rejection_events,
             compound_intent=compound_intent,
         )
 
@@ -215,6 +265,7 @@ def run_patient_agent_pipeline(
             cache_policy=cache_policy,
             input_guardrails=input_guardrails,
             started=started,
+            cache_rejection_events=cache_rejection_events,
             compound_intent=compound_intent,
         )
 
@@ -236,6 +287,7 @@ def run_patient_agent_pipeline(
         started=started,
         t_safety=t_safety,
         t_routing=t_routing,
+        cache_rejection_events=cache_rejection_events,
         compound_intent=compound_intent,
     )
 
@@ -318,7 +370,15 @@ def _run_input_guardrail_block_branch(
     )
 
 
-def _lookup_cache(db, cacheable, rewritten, intent, safety, knowledge_fingerprint):
+def _lookup_cache(
+    db,
+    cacheable,
+    rewritten,
+    intent,
+    safety,
+    knowledge_fingerprint,
+    cache_rejection_events=None,
+):
     """Return the exact-cache hit envelope, falling back to semantic.
     None when the request isn't cacheable or no fresh row matches."""
     if not cacheable:
@@ -329,10 +389,15 @@ def _lookup_cache(db, cacheable, rewritten, intent, safety, knowledge_fingerprin
         intent=intent,
         safety_level=safety.get("level"),
         knowledge_fingerprint=knowledge_fingerprint,
+        rejection_events=cache_rejection_events,
     )
     if hit is None:
         hit = semantic_cache_check(
-            db, rewritten["semantic_key"], intent, knowledge_fingerprint=knowledge_fingerprint,
+            db,
+            rewritten["semantic_key"],
+            intent,
+            knowledge_fingerprint=knowledge_fingerprint,
+            rejection_events=cache_rejection_events,
         )
     return hit
 
@@ -340,6 +405,7 @@ def _lookup_cache(db, cacheable, rewritten, intent, safety, knowledge_fingerprin
 def _run_cache_hit_branch(
     *, db, patient_id, query, rewritten, intent, safety,
     cache_hit, cache_policy, input_guardrails, started,
+    cache_rejection_events=None,
     compound_intent=None,
 ):
     """Branch 2: exact or semantic cache hit.  Reuses the stored
@@ -355,6 +421,7 @@ def _run_cache_hit_branch(
             "policy": cache_hit.get("policy"),
         },
         "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "cache_hit", cache_policy=cache_policy),
+        "cache_rejection_events": list(cache_rejection_events or []),
     }
     return _finalize_result(
         db=db,
@@ -375,6 +442,7 @@ def _run_direct_support_branch(
     *, db, patient_id, query, rewritten, intent, safety,
     fallback_response, actions, patient_context,
     cache_policy, input_guardrails, started,
+    cache_rejection_events=None,
     compound_intent=None,
 ):
     """Branch 3: direct-support lane — return ``fallback_response``
@@ -399,6 +467,7 @@ def _run_direct_support_branch(
             "policy": cache_policy,
         },
         "pipeline_trace": _trace(safety, intent, rewritten, [], [], [], "direct_support", cache_policy=cache_policy),
+        "cache_rejection_events": list(cache_rejection_events or []),
     }
     return _finalize_result(
         db=db,
@@ -420,6 +489,7 @@ def _run_rag_generation_branch(
     fallback_response, actions, urgent_flags, patient_context,
     cacheable, knowledge_fingerprint, cache_policy,
     input_guardrails, started, t_safety, t_routing,
+    cache_rejection_events=None,
     compound_intent=None,
 ):
     """Branch 4: full RAG path — retrieve, rerank, compress, generate,
@@ -451,6 +521,13 @@ def _run_rag_generation_branch(
     t_retrieval = perf_counter()
     if execution_policy.apply_reranker:
         reranked = rerank_context(governed_expanded, rewritten, intent, safety)
+        reranker_telemetry = (
+            (reranked[0].get("rerank_telemetry") or {})
+            if reranked and isinstance(reranked[0], dict)
+            else {}
+        )
+        if reranker_telemetry.get("enabled") is True and reranker_telemetry.get("available") is False:
+            raise RuntimeError("configured_reranker_unavailable")
     else:
         reranked = [
             {
@@ -463,26 +540,58 @@ def _run_rag_generation_branch(
     t_rerank_only = perf_counter()
     compressed = contextual_compression(reranked)
     t_rerank = perf_counter()
-    generated = generate_answer(
-        query=query,
-        fallback_response=fallback_response,
-        safety=safety,
-        intent=intent,
-        compressed_context=compressed,
-        actions=actions,
-        patient_context=patient_context,
+    from backend.services.research_evidence_answerability import (
+        assess_research_evidence_answerability,
     )
+
+    research_answerability = assess_research_evidence_answerability(
+        query=query,
+        chunks=compressed,
+        intent=intent,
+        safety=safety,
+    )
+    if research_answerability.requires_abstention:
+        generated = {
+            "reply": research_answerability.safe_reply,
+            "citations": [],
+            "intent": intent,
+            "safety": safety,
+            "retrieval_context": compressed,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "safety_note": (
+                "Engineering evidence abstention: related retrieval is not treated as claim support."
+            ),
+        }
+    else:
+        generated = generate_answer(
+            query=query,
+            fallback_response=fallback_response,
+            safety=safety,
+            intent=intent,
+            compressed_context=compressed,
+            actions=actions,
+            patient_context=patient_context,
+        )
     validated = validate_answer_and_citations(generated, compressed, safety)
+    if not isinstance(validated, dict) or not isinstance(validated.get("validation"), dict):
+        raise ValueError("malformed_generation_or_validation_output")
+    if not str(validated.get("reply") or "").strip():
+        raise ValueError("empty_or_truncated_generation_output")
+    validated["research_evidence_answerability"] = research_answerability.to_dict()
     t_generation = perf_counter()
 
-    if cacheable and validated["validation"]["status"] == "passed":
-        cache_row = store_cache(db, rewritten, intent, safety, validated, knowledge_fingerprint=knowledge_fingerprint)
+    cache_write = None
+    if cacheable and validated["validation"].get("status") == "passed":
+        cache_write = {
+            "rewritten": rewritten,
+            "intent": intent,
+            "safety": safety,
+            "knowledge_fingerprint": knowledge_fingerprint,
+        }
         cache_status = {
-            "status": "stored",
-            "cache_id": cache_row.id,
+            "status": "pending_release_authorization",
             "cacheable": True,
-            "expires_at": _datetime_to_iso(cache_row.expires_at),
-            "knowledge_fingerprint": cache_row.knowledge_fingerprint,
+            "knowledge_fingerprint": knowledge_fingerprint,
             "policy": cache_policy,
         }
     else:
@@ -510,6 +619,7 @@ def _run_rag_generation_branch(
             "initial_retrieval": initial_filter_trace,
             "after_parent_child": expanded_filter_trace,
         },
+        "cache_rejection_events": list(cache_rejection_events or []),
         "pipeline_trace": {
             **_trace(safety, intent, rewritten, retrieved, reranked, compressed, "generated", cache_policy=cache_policy),
             "stage_ms": stage_ms,
@@ -532,6 +642,7 @@ def _run_rag_generation_branch(
         input_guardrails=input_guardrails,
         started=started,
         compound_intent=compound_intent,
+        cache_write=cache_write,
     )
 
 
@@ -571,6 +682,7 @@ def _finalize_result(
     input_guardrails,
     started,
     compound_intent=None,
+    cache_write=None,
 ):
     """Orchestrate the post-generation pipeline:
 
@@ -586,11 +698,41 @@ def _finalize_result(
     Each step lives in a named helper so the failure surface is explicit
     and the call site reads top-to-bottom.
     """
+    validation_errors = []
     post_generation_started = perf_counter()
-    output_guardrails = output_guardrail_check(result)
-    output_guardrails, pgv_decision = _apply_post_gen_validator(result, output_guardrails)
+    try:
+        output_guardrails = output_guardrail_check(result)
+    except Exception as exc:  # noqa: BLE001 - output validation must fail closed
+        validation_errors.append(f"output_guardrail_exception:{type(exc).__name__}")
+        output_guardrails = {"status": "failed", "issues": ["output_guardrail_exception"]}
+    try:
+        output_guardrails, pgv_decision = _apply_post_gen_validator(result, output_guardrails)
+    except Exception as exc:  # noqa: BLE001 - safety validator unavailability denies release
+        validation_errors.append(f"post_gen_validator_exception:{type(exc).__name__}")
+        pgv_decision = SimpleNamespace(decision="unavailable")
+        result["post_gen_validator"] = {
+            "decision": "unavailable",
+            "error_code": "post_gen_validator_exception",
+            "exception_type": type(exc).__name__,
+            "raw_response_logged": False,
+        }
     post_generation_finished = perf_counter()
-    _apply_intent_aware_rag_layer(result, retrieved, input_guardrails, pgv_decision)
+    try:
+        _apply_intent_aware_rag_layer(result, retrieved, input_guardrails, pgv_decision)
+    except Exception as exc:  # noqa: BLE001 - defense in depth around the layer itself
+        validation_errors.append(f"rag_governance_exception:{type(exc).__name__}")
+        result["rag_governance_error"] = {
+            "status": "failed",
+            "stage": "intent_aware_rag_layer",
+            "code": "rag_governance_boundary_exception",
+            "exception_type": type(exc).__name__,
+            "raw_query_logged": False,
+        }
+        result["citations"] = []
+    if isinstance(result.get("rag_governance_error"), dict):
+        validation_errors.append(
+            str(result["rag_governance_error"].get("code") or "rag_governance_failure")
+        )
     governance_finished = perf_counter()
     pipeline_trace = result.setdefault("pipeline_trace", {})
     stage_ms = pipeline_trace.setdefault("stage_ms", {})
@@ -605,21 +747,33 @@ def _finalize_result(
     latency_ms = round((governance_finished - started) * 1000, 2)
     from backend.services.llm_telemetry import snapshot_llm_telemetry
 
-    llm_telemetry = snapshot_llm_telemetry()
+    try:
+        llm_telemetry = snapshot_llm_telemetry()
+    except Exception as exc:  # noqa: BLE001 - evidence answers require auditable completion
+        llm_telemetry = {}
+        validation_errors.append(f"telemetry_snapshot_exception:{type(exc).__name__}")
     if llm_telemetry.get("call_count"):
         result["llm_telemetry"] = llm_telemetry
 
-    rag_evaluation = evaluate_rag_response(
-        query=query,
-        rewritten=rewritten,
-        result=result,
-        retrieved=retrieved,
-        reranked=reranked,
-        compressed=compressed,
-        input_guardrails=input_guardrails,
-        output_guardrails=output_guardrails,
-        latency_ms=latency_ms,
-    )
+    try:
+        rag_evaluation = evaluate_rag_response(
+            query=query,
+            rewritten=rewritten,
+            result=result,
+            retrieved=retrieved,
+            reranked=reranked,
+            compressed=compressed,
+            input_guardrails=input_guardrails,
+            output_guardrails=output_guardrails,
+            latency_ms=latency_ms,
+        )
+    except Exception as exc:  # noqa: BLE001 - do not translate evaluation failure into success
+        validation_errors.append(f"rag_evaluation_exception:{type(exc).__name__}")
+        rag_evaluation = {
+            "status": "failed_closed",
+            "reason": "rag_evaluation_exception",
+            "clinical_validation": False,
+        }
     result["guardrails"] = {
         "input":  input_guardrails,
         "output": output_guardrails,
@@ -627,23 +781,103 @@ def _finalize_result(
     result["rag_evaluation"] = rag_evaluation
     if compound_intent is not None:
         result["compound_intent"] = compound_intent
-    _attach_turn_trace(
+    enforce_evidence_release(
+        result,
+        query=query,
+        retrieved=compressed or retrieved,
+        input_guardrails=input_guardrails,
+        validation_errors=validation_errors,
+    )
+    trace_ok = _attach_turn_trace(
         result=result,
         patient_id=patient_id,
         input_guardrails=input_guardrails,
         output_guardrails=output_guardrails,
         latency_ms=latency_ms,
     )
-    _store_rag_evaluation_log(
-        db=db,
-        patient_id=patient_id,
-        query=query,
-        result=result,
-        rag_evaluation=rag_evaluation,
-        retrieved=retrieved,
-        compressed=compressed,
-    )
-    return result
+    evidence_required = bool((result.get("evidence_envelope") or {}).get("evidence_required"))
+    if evidence_required and not trace_ok:
+        validation_errors.append("trace_validation_or_persistence_failure")
+        enforce_evidence_release(
+            result,
+            query=query,
+            retrieved=compressed or retrieved,
+            input_guardrails=input_guardrails,
+            validation_errors=validation_errors,
+        )
+    try:
+        _store_rag_evaluation_log(
+            db=db,
+            patient_id=patient_id,
+            query=query,
+            result=result,
+            rag_evaluation=rag_evaluation,
+            retrieved=retrieved,
+            compressed=compressed,
+        )
+    except Exception as exc:  # noqa: BLE001 - logging failure cannot authorize evidence output
+        try:
+            db.rollback()
+        except Exception:  # noqa: BLE001
+            pass
+        if evidence_required:
+            validation_errors.append(f"rag_evaluation_log_exception:{type(exc).__name__}")
+            enforce_evidence_release(
+                result,
+                query=query,
+                retrieved=compressed or retrieved,
+                input_guardrails=input_guardrails,
+                validation_errors=validation_errors,
+            )
+        else:
+            result.setdefault("evidence_envelope_events", []).append({
+                "event": "non_evidence_observability_failure",
+                "error_code": "rag_evaluation_log_exception",
+                "raw_query_logged": False,
+            })
+
+    disposition = str((result.get("evidence_envelope") or {}).get("final_disposition") or "")
+    if cache_write and disposition == EvidenceDisposition.ALLOW.value:
+        try:
+            cache_row = store_cache(
+                db,
+                cache_write["rewritten"],
+                cache_write["intent"],
+                cache_write["safety"],
+                result,
+                knowledge_fingerprint=cache_write["knowledge_fingerprint"],
+            )
+            result["cache"] = {
+                "status": "stored",
+                "cache_id": cache_row.id,
+                "cacheable": True,
+                "expires_at": _datetime_to_iso(cache_row.expires_at),
+                "knowledge_fingerprint": cache_row.knowledge_fingerprint,
+                "policy": _cache_policy_snapshot(cache_row.knowledge_fingerprint),
+            }
+        except Exception as exc:  # noqa: BLE001 - a cache write is not evidence authorization
+            try:
+                db.rollback()
+            except Exception:  # noqa: BLE001
+                pass
+            result["cache"] = {
+                "status": "not_stored_cache_error",
+                "cacheable": False,
+                "reason": f"cache_write_exception:{type(exc).__name__}",
+            }
+            result.setdefault("cache_rejection_events", []).append({
+                "event": "rag_cache_rejected",
+                "lookup": "write",
+                "reasons": [f"cache_write_exception:{type(exc).__name__}"],
+                "raw_query_logged": False,
+            })
+    elif cache_write:
+        result["cache"] = {
+            "status": "not_stored_release_denied",
+            "cacheable": False,
+            "reason": disposition or "missing_release_disposition",
+        }
+    return enforce_transport_release(result, query=query)
 
 
 def _attach_turn_trace(result, patient_id, input_guardrails, output_guardrails, latency_ms):
@@ -725,13 +959,20 @@ def _attach_turn_trace(result, patient_id, input_guardrails, output_guardrails, 
                 "clinical_validation": False,
             }
         )
+        return bool(ok and ok_v2)
     except Exception as exc:  # noqa: BLE001 - diagnostics must never break chat
-        result["turn_trace"] = {"schema_version": "1.0", "diagnostics_error": str(exc)[:200]}
+        result["turn_trace"] = {
+            "schema_version": "1.0",
+            "diagnostics_error": "trace_construction_failed",
+            "exception_type": type(exc).__name__,
+        }
         result["turn_trace_v2"] = {
             "schema_version": "2.0",
-            "diagnostics_error": str(exc)[:200],
+            "diagnostics_error": "trace_construction_failed",
+            "exception_type": type(exc).__name__,
             "clinical_validation": False,
         }
+        return False
 
 
 def _trace_model_label(llm_telemetry):

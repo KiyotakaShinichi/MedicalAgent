@@ -1,6 +1,6 @@
 {
   "schema_version": "disposable_synthetic_staging_readiness_v1",
-  "generated_at": "2026-08-02T16:21:37.647221+00:00",
+  "generated_at": "2026-08-09T12:12:06.793867+00:00",
   "status": "ready_for_disposable_synthetic_runtime",
   "compose_path": "docker-compose.synthetic-staging.yml",
   "compose_sha256": "5a7fb9c0395ce56d91a393255d1ce88126f8eb5f6caa79a1056144a724954b0b",

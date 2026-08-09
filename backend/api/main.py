@@ -5,6 +5,7 @@ This file wires together routers, middleware, static file mounts, and the
 health-check / redirect routes. All business logic lives in routers/.
 """
 
+import asyncio
 import os
 from contextlib import asynccontextmanager
 from uuid import uuid4
@@ -36,7 +37,27 @@ from backend.services.llm_telemetry import reset_llm_telemetry, start_llm_teleme
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     warm_patient_report_enrichment_cache()
+    prewarm_task = None
+    environment = (os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or "development").strip().lower()
+    prewarm_enabled = os.environ.get("NLCARE_RAG_PREWARM", "true").strip().lower() in {
+        "1", "true", "yes", "on",
+    }
+    if prewarm_enabled and environment != "test" and not os.environ.get("PYTEST_CURRENT_TEST"):
+        from backend.services.agent_kb_corpus import get_rag_corpus, knowledge_base_fingerprint
+        from backend.services.rag_vector_index import prewarm_rag_vector_runtime
+
+        corpus = get_rag_corpus()
+        fingerprint = knowledge_base_fingerprint()
+        prewarm_task = asyncio.create_task(
+            asyncio.to_thread(
+                prewarm_rag_vector_runtime,
+                corpus,
+                knowledge_fingerprint=fingerprint,
+            )
+        )
     yield
+    if prewarm_task is not None and not prewarm_task.done():
+        prewarm_task.cancel()
 
 
 app = FastAPI(
@@ -166,12 +187,17 @@ def readinesscheck(db: Session = Depends(get_db)):
     from backend.services.auth import is_demo_auth_allowed
 
     demo_auth_allowed = is_demo_auth_allowed()
+    from backend.services.rag_vector_index import rag_runtime_readiness
+
+    retrieval_runtime = rag_runtime_readiness()
     return {
         "status": "ready",
         "service": "nlcare_monitoring_prototype",
         "database": "ok",
         "environment": environment,
         "demo_auth_allowed": demo_auth_allowed,
+        "retrieval_runtime": retrieval_runtime,
+        "retrieval_ready": retrieval_runtime.get("status") == "ready",
         "clinical_validation": False,
         "healthcare_production_ready": False,
         "claim_boundary": (

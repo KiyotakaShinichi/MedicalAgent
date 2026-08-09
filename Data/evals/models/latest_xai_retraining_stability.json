@@ -1,6 +1,6 @@
 {
   "schema_version": "xai_retraining_stability_v2",
-  "generated_at": "2026-08-02T16:11:56.217879+00:00",
+  "generated_at": "2026-08-09T12:03:33.313157+00:00",
   "status": "acceptable",
   "status_basis": "set_membership_stable_exact_order_suppressed",
   "method": "independent_patient_split_logistic_retraining",

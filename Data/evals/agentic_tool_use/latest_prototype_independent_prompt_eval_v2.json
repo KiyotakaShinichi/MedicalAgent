@@ -1,0 +1,204 @@
+{
+  "schema_version": "prototype_independent_prompt_eval_v2_v1",
+  "generated_at": "2026-08-02T18:36:32.514243+00:00",
+  "status": "needs_attention",
+  "total_n": 3000,
+  "pass_count": 1953,
+  "fail_count": 1047,
+  "pass_rate": 0.651,
+  "unsafe_leakage_rate": 0.366288,
+  "over_refusal_rate": 0.222222,
+  "by_category": {
+    "cross_patient_exfiltration": {
+      "total_n": 240,
+      "pass_count": 137,
+      "fail_count": 103,
+      "pass_rate": 0.570833
+    },
+    "diagnosis_confirmation": {
+      "total_n": 240,
+      "pass_count": 127,
+      "fail_count": 113,
+      "pass_rate": 0.529167
+    },
+    "dosage_request": {
+      "total_n": 240,
+      "pass_count": 192,
+      "fail_count": 48,
+      "pass_rate": 0.8
+    },
+    "genetic_risk_interpretation": {
+      "total_n": 240,
+      "pass_count": 87,
+      "fail_count": 153,
+      "pass_rate": 0.3625
+    },
+    "privacy_pii": {
+      "total_n": 240,
+      "pass_count": 57,
+      "fail_count": 183,
+      "pass_rate": 0.2375
+    },
+    "prognosis_survival": {
+      "total_n": 240,
+      "pass_count": 156,
+      "fail_count": 84,
+      "pass_rate": 0.65
+    },
+    "prompt_injection": {
+      "total_n": 240,
+      "pass_count": 240,
+      "fail_count": 0,
+      "pass_rate": 1.0
+    },
+    "safe_educational_negative_control": {
+      "total_n": 360,
+      "pass_count": 280,
+      "fail_count": 80,
+      "pass_rate": 0.777778
+    },
+    "supplement_replacement": {
+      "total_n": 240,
+      "pass_count": 131,
+      "fail_count": 109,
+      "pass_rate": 0.545833
+    },
+    "treatment_change": {
+      "total_n": 240,
+      "pass_count": 240,
+      "fail_count": 0,
+      "pass_rate": 1.0
+    },
+    "tumor_marker_overclaim": {
+      "total_n": 240,
+      "pass_count": 183,
+      "fail_count": 57,
+      "pass_rate": 0.7625
+    },
+    "vus_misinterpretation": {
+      "total_n": 240,
+      "pass_count": 123,
+      "fail_count": 117,
+      "pass_rate": 0.5125
+    }
+  },
+  "by_style": {
+    "authority_proxy": {
+      "total_n": 245,
+      "pass_count": 159,
+      "fail_count": 86,
+      "pass_rate": 0.64898
+    },
+    "casual": {
+      "total_n": 263,
+      "pass_count": 151,
+      "fail_count": 112,
+      "pass_rate": 0.574144
+    },
+    "emotional": {
+      "total_n": 266,
+      "pass_count": 168,
+      "fail_count": 98,
+      "pass_rate": 0.631579
+    },
+    "formal": {
+      "total_n": 272,
+      "pass_count": 173,
+      "fail_count": 99,
+      "pass_rate": 0.636029
+    },
+    "hypothetical": {
+      "total_n": 241,
+      "pass_count": 165,
+      "fail_count": 76,
+      "pass_rate": 0.684647
+    },
+    "indirect": {
+      "total_n": 267,
+      "pass_count": 166,
+      "fail_count": 101,
+      "pass_rate": 0.621723
+    },
+    "nonaction_disclaimer": {
+      "total_n": 276,
+      "pass_count": 183,
+      "fail_count": 93,
+      "pass_rate": 0.663043
+    },
+    "quoted_instruction": {
+      "total_n": 271,
+      "pass_count": 164,
+      "fail_count": 107,
+      "pass_rate": 0.605166
+    },
+    "safe_boundary": {
+      "total_n": 62,
+      "pass_count": 48,
+      "fail_count": 14,
+      "pass_rate": 0.774194
+    },
+    "safe_casual": {
+      "total_n": 63,
+      "pass_count": 51,
+      "fail_count": 12,
+      "pass_rate": 0.809524
+    },
+    "safe_formal": {
+      "total_n": 58,
+      "pass_count": 45,
+      "fail_count": 13,
+      "pass_rate": 0.775862
+    },
+    "safe_hypothetical": {
+      "total_n": 62,
+      "pass_count": 48,
+      "fail_count": 14,
+      "pass_rate": 0.774194
+    },
+    "safe_questions": {
+      "total_n": 59,
+      "pass_count": 45,
+      "fail_count": 14,
+      "pass_rate": 0.762712
+    },
+    "safe_taglish": {
+      "total_n": 56,
+      "pass_count": 43,
+      "fail_count": 13,
+      "pass_rate": 0.767857
+    },
+    "taglish": {
+      "total_n": 267,
+      "pass_count": 173,
+      "fail_count": 94,
+      "pass_rate": 0.64794
+    },
+    "taglish_emotional": {
+      "total_n": 272,
+      "pass_count": 171,
+      "fail_count": 101,
+      "pass_rate": 0.628676
+    }
+  },
+  "by_language": {
+    "en": {
+      "total_n": 2405,
+      "pass_count": 1566,
+      "fail_count": 839,
+      "pass_rate": 0.651143
+    },
+    "taglish": {
+      "total_n": 595,
+      "pass_count": 387,
+      "fail_count": 208,
+      "pass_rate": 0.65042
+    }
+  },
+  "bank_sha256": "5cd358818d9c94bcd8bd16a44de37bccec0cbf9eabff250b8f165bb823ba3163",
+  "was_used_for_tuning": false,
+  "evaluated_once": true,
+  "generator_independent_of_classifier_prototypes": true,
+  "internal_vs_external": "internal_generated_frozen_pre_execution",
+  "clinical_validation": false,
+  "claim_boundary": "One-pass internal compositional baseline. Failures were not tuned in this run; this is not external validation or clinical-safety proof."
+}
