@@ -31,4 +31,15 @@ Provider usage coverage must be at least 80% with at least 30 paired requests be
 
 The source-governed stack remains the operating policy because it preserves source-tier and refusal correctness. It is not presented as the raw retrieval, latency, or unit-cost winner. Promotion remains blocked while grounding floors fail or provider cost evidence is incomplete.
 
+The claim-conditioned citation selector was also evaluated on a frozen
+answer-level internal holdout built from pre-existing outputs. It regressed
+citation precision from `0.0909` to `0.0429`, reduced the support proxy, and
+increased unsupported context. It therefore remains offline and is not tuned
+on that fixture. This is a useful negative result, not a feature claim.
+
+The normal-API provider probe is fail-closed. Without an explicit execution
+flag, a paid-probe opt-in, and provider credentials, it records
+`blocked_configuration` and no cost. An unexecuted probe reports cost as
+unknown rather than `$0`.
+
 This is synthetic/internal engineering governance. It is not clinical validation, audited billing, a production SLO, or evidence of patient benefit.

@@ -36,6 +36,14 @@ export function RagSection({ analytics }: Props) {
     () => getNormalizedBenchmarkArtifact("ai_trinity_tradeoff"),
     [],
   );
+  const { data: citationSelectorHoldout, status: citationSelectorHoldoutStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("claim_conditioned_citation_selector_holdout"),
+    [],
+  );
+  const { data: providerApiCapture, status: providerApiCaptureStatus } = useApi(
+    () => getNormalizedBenchmarkArtifact("provider_api_path_capture"),
+    [],
+  );
   const { data: runtimeQuality, status: runtimeQualityStatus } = useApi(
     () => getNormalizedBenchmarkArtifact("runtime_quality_sentinel"),
     [],
@@ -100,6 +108,37 @@ export function RagSection({ analytics }: Props) {
       />
 
       <AiTrinityCard status={aiTrinityStatus} artifact={aiTrinity} />
+
+      <div className="grid lg:grid-cols-2 gap-4">
+        <ArtifactSummaryCard
+          title="Citation Selector Frozen Holdout"
+          status={citationSelectorHoldoutStatus}
+          artifact={citationSelectorHoldout}
+          metrics={[
+            ["Cases", ["metrics", "case_count"], "number"],
+            ["Baseline citation", ["metrics", "baseline_citation_precision"], "percent"],
+            ["Selector citation", ["metrics", "selector_citation_precision"], "percent"],
+            ["Citation delta", ["metrics", "citation_precision_delta"], "percent"],
+            ["Strict lift proven", ["metrics", "strict_improvement_proven"], "boolean"],
+            ["Live route changed", ["metrics", "live_patient_route_changed"], "boolean"],
+          ]}
+          emptyLabel="No frozen selector holdout yet - run scripts/run_claim_conditioned_citation_selector_holdout.py"
+        />
+        <ArtifactSummaryCard
+          title="Provider Usage: Normal API Path"
+          status={providerApiCaptureStatus}
+          artifact={providerApiCapture}
+          metrics={[
+            ["Requests", ["metrics", "request_count"], "number"],
+            ["Usage coverage", ["metrics", "provider_usage_coverage_rate"], "percent"],
+            ["Provider tokens", ["metrics", "provider_reported_total_tokens"], "number"],
+            ["Estimated cost", ["metrics", "estimated_cost_usd"], "currency"],
+            ["Completed", ["metrics", "completed"], "boolean"],
+            ["Patient data", ["metrics", "patient_data_processed"], "boolean"],
+          ]}
+          emptyLabel="No provider-path probe artifact yet - run scripts/run_provider_api_path_capture.py"
+        />
+      </div>
 
       <Card>
         <CardHeader><SectionTitle>Cost & Latency</SectionTitle></CardHeader>

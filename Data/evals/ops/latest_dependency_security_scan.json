@@ -1,6 +1,6 @@
 {
   "schema_version": "dependency_security_scan_v3",
-  "generated_at": "2026-08-09T12:59:46.231913+00:00",
+  "generated_at": "2026-08-11T07:21:47.053396+00:00",
   "status": "acceptable",
   "summary": {
     "tool_count": 2,
@@ -15,15 +15,15 @@
     {
       "label": "python_dependencies",
       "tool": "C:\\Python314\\python.exe",
-      "status": "acceptable",
-      "exit_code": 0,
+      "status": "needs_attention",
+      "exit_code": 1,
       "high_or_critical_count": 0,
       "known_vulnerability_count": 0,
       "vulnerable_package_count": 0,
       "findings": [],
       "unaccepted_known_vulnerability_count": 0,
       "scan_scope": "requirements-lock-py314-win.txt",
-      "stderr_tail": "WARNING:pip_audit._cli:--no-deps is supported, but users are encouraged to fully hash their pinned dependencies\nWARNING:pip_audit._cli:Consider using a tool like `pip-compile`: https://pip-tools.readthedocs.io/en/latest/#using-hashes\nNo known vulnerabilities found\n"
+      "stderr_tail": "Users\\L\\AppData\\Roaming\\Python\\Python314\\site-packages\\cachecontrol\\adapter.py\", line 76, in send\n    resp = super().send(request, stream, timeout, verify, cert, proxies)\n  File \"C:\\Users\\L\\AppData\\Roaming\\Python\\Python314\\site-packages\\requests\\adapters.py\", line 659, in send\n    raise ConnectionError(err, request=request)\nrequests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))\n"
     },
     {
       "label": "frontend_dependencies",

@@ -1,6 +1,6 @@
 {
   "schema_version": "research_paper_retrieval_eval_v2",
-  "generated_at": "2026-08-09T12:08:40.997577+00:00",
+  "generated_at": "2026-08-11T07:27:11.465379+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -20,17 +20,17 @@
         "no_evidence_case_count": 8,
         "recall_at_5": 0.9722,
         "recall_at_10": 0.9722,
-        "mrr": 0.9236,
-        "ndcg_at_10": 0.9359,
-        "top1_paper_accuracy": 0.8889,
-        "section_hit_rate": 0.2667,
+        "mrr": 0.9398,
+        "ndcg_at_10": 0.9481,
+        "top1_paper_accuracy": 0.9167,
+        "section_hit_rate": 0.3333,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 0.625,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 361.218,
-        "latency_p95_ms": 743.652,
-        "failure_count": 16
+        "latency_p50_ms": 206.76,
+        "latency_p95_ms": 398.678,
+        "failure_count": 15
       },
       "cases": [
         {
@@ -63,7 +63,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 713.412,
+          "latency_ms": 322.954,
           "failure_reasons": []
         },
         {
@@ -77,12 +77,12 @@
             "PMC6702160",
             "PMC6702160",
             "PMC6702160",
+            "PMC6702160",
             "PMC5500247",
             "PMC6702160",
             "PMC6702160",
             "PMC6702160",
-            "PMC5500247",
-            "PMC5500247",
+            "PMC6702160",
             "PMC6702160"
           ],
           "first_relevant_rank": 1,
@@ -93,10 +93,10 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
-          "matched_relevant_chunk_count": 7,
-          "provenance_complete_relevant_chunk_count": 7,
+          "matched_relevant_chunk_count": 9,
+          "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 715.275,
+          "latency_ms": 343.494,
           "failure_reasons": []
         },
         {
@@ -129,7 +129,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 843.399,
+          "latency_ms": 271.142,
           "failure_reasons": []
         },
         {
@@ -162,7 +162,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 890.379,
+          "latency_ms": 304.532,
           "failure_reasons": []
         },
         {
@@ -195,7 +195,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 671.698,
+          "latency_ms": 398.678,
           "failure_reasons": []
         },
         {
@@ -228,7 +228,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 661.578,
+          "latency_ms": 462.745,
           "failure_reasons": []
         },
         {
@@ -261,7 +261,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 743.652,
+          "latency_ms": 475.047,
           "failure_reasons": []
         },
         {
@@ -294,7 +294,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 476.766,
+          "latency_ms": 353.996,
           "failure_reasons": []
         },
         {
@@ -327,7 +327,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 457.227,
+          "latency_ms": 359.727,
           "failure_reasons": []
         },
         {
@@ -360,7 +360,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 386.269,
+          "latency_ms": 257.712,
           "failure_reasons": []
         },
         {
@@ -393,7 +393,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 362.968,
+          "latency_ms": 234.619,
           "failure_reasons": []
         },
         {
@@ -409,7 +409,7 @@
             "PMC9158111",
             "PMC9158111",
             "PMC9158111",
-            "PMC9158111",
+            "PMC7055088",
             "PMC9158111",
             "PMC9158111",
             "PMC9158111",
@@ -423,10 +423,10 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
-          "matched_relevant_chunk_count": 10,
-          "provenance_complete_relevant_chunk_count": 10,
+          "matched_relevant_chunk_count": 9,
+          "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 365.56,
+          "latency_ms": 226.104,
           "failure_reasons": []
         },
         {
@@ -459,7 +459,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 338.763,
+          "latency_ms": 207.797,
           "failure_reasons": []
         },
         {
@@ -492,7 +492,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 360.047,
+          "latency_ms": 199.693,
           "failure_reasons": []
         },
         {
@@ -525,7 +525,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 350.552,
+          "latency_ms": 188.565,
           "failure_reasons": []
         },
         {
@@ -558,7 +558,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 422.314,
+          "latency_ms": 212.991,
           "failure_reasons": []
         },
         {
@@ -591,7 +591,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 435.132,
+          "latency_ms": 206.72,
           "failure_reasons": []
         },
         {
@@ -624,7 +624,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 386.263,
+          "latency_ms": 221.154,
           "failure_reasons": []
         },
         {
@@ -657,7 +657,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 367.991,
+          "latency_ms": 190.273,
           "failure_reasons": []
         },
         {
@@ -690,7 +690,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 362.389,
+          "latency_ms": 192.774,
           "failure_reasons": []
         },
         {
@@ -723,7 +723,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 381.034,
+          "latency_ms": 206.245,
           "failure_reasons": []
         },
         {
@@ -736,27 +736,27 @@
           "retrieved_pmcids": [
             "PMC5500247",
             "PMC5500247",
-            "PMC5500247",
-            "PMC6702160",
-            "PMC6702160",
-            "PMC6702160",
-            "PMC6702160",
             "PMC6702160",
             "PMC5500247",
-            "PMC6702160"
+            "PMC6702160",
+            "PMC6702160",
+            "PMC6702160",
+            "PMC6702160",
+            "PMC6702160",
+            "PMC5500247"
           ],
-          "first_relevant_rank": 4,
+          "first_relevant_rank": 3,
           "recall_at_5": 1.0,
           "recall_at_10": 1.0,
-          "mrr": 0.25,
-          "ndcg_at_10": 0.4307,
+          "mrr": 0.3333,
+          "ndcg_at_10": 0.5,
           "top1_paper_correct": false,
           "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 393.896,
+          "latency_ms": 203.705,
           "failure_reasons": []
         },
         {
@@ -789,7 +789,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 417.144,
+          "latency_ms": 206.8,
           "failure_reasons": []
         },
         {
@@ -807,8 +807,8 @@
             "PMC10898895",
             "PMC10898895",
             "PMC10898895",
-            "PMC10898895",
             "PMC2846279",
+            "PMC10898895",
             "PMC10898895"
           ],
           "first_relevant_rank": 1,
@@ -822,7 +822,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 414.517,
+          "latency_ms": 209.045,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -852,15 +852,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 374.857,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 232.361,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_005",
@@ -892,7 +890,7 @@
           "matched_relevant_chunk_count": 5,
           "provenance_complete_relevant_chunk_count": 5,
           "source_tier_correct": true,
-          "latency_ms": 352.387,
+          "latency_ms": 222.278,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -927,7 +925,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 335.124,
+          "latency_ms": 202.453,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -940,6 +938,7 @@
           "expected_pmcid": "PMC7055088",
           "expected_section": "abstract",
           "retrieved_pmcids": [
+            "PMC7055088",
             null,
             "PMC7055088",
             "PMC7055088",
@@ -948,21 +947,20 @@
             "PMC7055088",
             "PMC7055088",
             null,
-            "PMC7055088",
             "PMC7055088"
           ],
-          "first_relevant_rank": 2,
+          "first_relevant_rank": 1,
           "recall_at_5": 1.0,
           "recall_at_10": 1.0,
-          "mrr": 0.5,
-          "ndcg_at_10": 0.6309,
-          "top1_paper_correct": false,
+          "mrr": 1.0,
+          "ndcg_at_10": 1.0,
+          "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 336.92,
+          "latency_ms": 203.631,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -997,7 +995,7 @@
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 331.758,
+          "latency_ms": 190.601,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1032,7 +1030,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 341.72,
+          "latency_ms": 197.454,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1049,8 +1047,8 @@
             "PMC12452844",
             "PMC12452844",
             "PMC12452844",
-            "PMC12053558",
             "PMC12452844",
+            "PMC12053558",
             "PMC12452844",
             "PMC12452844",
             "PMC11400212",
@@ -1067,7 +1065,7 @@
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 318.908,
+          "latency_ms": 189.874,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1102,7 +1100,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 349.71,
+          "latency_ms": 191.432,
           "failure_reasons": []
         },
         {
@@ -1135,7 +1133,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 345.324,
+          "latency_ms": 202.806,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1170,7 +1168,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 342.444,
+          "latency_ms": 199.452,
           "failure_reasons": [
             "expected_paper_missing_at_10",
             "expected_section_missing_at_10"
@@ -1189,11 +1187,11 @@
             "PMC6361332",
             "PMC6361332",
             "PMC6361332",
+            "PMC6361332",
             "PMC6868829",
             "PMC6361332",
             "PMC6361332",
-            "PMC6361332",
-            "PMC12452844"
+            "PMC6361332"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -1203,10 +1201,10 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
-          "matched_relevant_chunk_count": 8,
-          "provenance_complete_relevant_chunk_count": 8,
+          "matched_relevant_chunk_count": 9,
+          "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 331.606,
+          "latency_ms": 215.818,
           "failure_reasons": []
         },
         {
@@ -1239,7 +1237,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 332.361,
+          "latency_ms": 226.416,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1258,9 +1256,9 @@
             null,
             null,
             null,
-            "PMC12452844",
-            "PMC7055088",
             null,
+            null,
+            "PMC7055088",
             "PMC7055088"
           ],
           "first_relevant_rank": null,
@@ -1274,7 +1272,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 326.865,
+          "latency_ms": 199.155,
           "failure_reasons": []
         },
         {
@@ -1292,8 +1290,8 @@
             null,
             null,
             "PMC2752999",
-            "PMC3609956",
             "PMC2752999",
+            "PMC3609956",
             "PMC3609956"
           ],
           "first_relevant_rank": null,
@@ -1307,7 +1305,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 310.454,
+          "latency_ms": 197.35,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1329,7 +1327,7 @@
             null,
             null,
             null,
-            null
+            "PMC2846279"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -1342,7 +1340,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 319.063,
+          "latency_ms": 204.863,
           "failure_reasons": []
         },
         {
@@ -1375,7 +1373,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 322.283,
+          "latency_ms": 200.215,
           "failure_reasons": []
         },
         {
@@ -1391,8 +1389,8 @@
             "PMC11211959",
             null,
             null,
-            null,
             "PMC6868829",
+            null,
             "PMC6361332",
             "PMC12452844",
             "PMC12452844"
@@ -1408,7 +1406,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 321.254,
+          "latency_ms": 203.572,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1423,14 +1421,14 @@
           "retrieved_pmcids": [
             null,
             null,
-            "PMC3609956",
-            "PMC3609956",
             null,
             "PMC3609956",
             "PMC3609956",
+            "PMC3609956",
+            "PMC5500247",
             "PMC12232703",
-            "PMC11400212",
-            "PMC5500247"
+            "PMC6361332",
+            "PMC12232703"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -1443,7 +1441,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 336.18,
+          "latency_ms": 201.334,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1460,8 +1458,8 @@
             "PMC4544753",
             null,
             null,
-            null,
             "PMC9158111",
+            null,
             "PMC9158111",
             "PMC7055088",
             "PMC7055088",
@@ -1478,7 +1476,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 336.563,
+          "latency_ms": 205.487,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1491,15 +1489,15 @@
           "expected_pmcid": null,
           "expected_section": null,
           "retrieved_pmcids": [
-            "PMC11211959",
             null,
             "PMC11211959",
             null,
+            "PMC11211959",
             null,
+            "PMC11211959",
             "PMC11211959",
             "PMC11211959",
             "PMC7055088",
-            "PMC11211959",
             null
           ],
           "first_relevant_rank": null,
@@ -1513,7 +1511,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 321.759,
+          "latency_ms": 210.008,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1530,14 +1528,14 @@
         "mrr": 1.0,
         "ndcg_at_10": 1.0,
         "top1_paper_accuracy": 1.0,
-        "section_hit_rate": 0.1333,
+        "section_hit_rate": 0.2667,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 135.474,
-        "latency_p95_ms": 190.323,
-        "failure_count": 21
+        "latency_p50_ms": 151.825,
+        "latency_p95_ms": 176.586,
+        "failure_count": 19
       },
       "cases": [
         {
@@ -1570,7 +1568,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 136945.537,
+          "latency_ms": 95381.056,
           "failure_reasons": []
         },
         {
@@ -1603,7 +1601,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.693,
+          "latency_ms": 164.454,
           "failure_reasons": []
         },
         {
@@ -1636,7 +1634,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.524,
+          "latency_ms": 162.069,
           "failure_reasons": []
         },
         {
@@ -1669,7 +1667,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 144.396,
+          "latency_ms": 150.114,
           "failure_reasons": []
         },
         {
@@ -1702,7 +1700,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 192.932,
+          "latency_ms": 155.396,
           "failure_reasons": []
         },
         {
@@ -1735,7 +1733,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.277,
+          "latency_ms": 149.969,
           "failure_reasons": []
         },
         {
@@ -1754,7 +1752,7 @@
             "PMC10898895",
             "PMC4998558",
             "PMC4998558",
-            "PMC10898895",
+            "PMC4998558",
             "PMC10898895"
           ],
           "first_relevant_rank": 1,
@@ -1765,10 +1763,10 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
-          "matched_relevant_chunk_count": 7,
-          "provenance_complete_relevant_chunk_count": 7,
+          "matched_relevant_chunk_count": 8,
+          "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 134.808,
+          "latency_ms": 151.314,
           "failure_reasons": []
         },
         {
@@ -1801,7 +1799,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 126.553,
+          "latency_ms": 148.219,
           "failure_reasons": []
         },
         {
@@ -1834,7 +1832,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 123.738,
+          "latency_ms": 149.225,
           "failure_reasons": []
         },
         {
@@ -1867,7 +1865,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 133.922,
+          "latency_ms": 148.633,
           "failure_reasons": []
         },
         {
@@ -1900,7 +1898,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 160.761,
+          "latency_ms": 168.967,
           "failure_reasons": []
         },
         {
@@ -1933,7 +1931,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 173.319,
+          "latency_ms": 154.441,
           "failure_reasons": []
         },
         {
@@ -1966,7 +1964,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.078,
+          "latency_ms": 145.596,
           "failure_reasons": []
         },
         {
@@ -1999,7 +1997,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 126.455,
+          "latency_ms": 152.336,
           "failure_reasons": []
         },
         {
@@ -2032,7 +2030,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.762,
+          "latency_ms": 153.387,
           "failure_reasons": []
         },
         {
@@ -2065,7 +2063,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 115.876,
+          "latency_ms": 163.77,
           "failure_reasons": []
         },
         {
@@ -2098,7 +2096,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 121.998,
+          "latency_ms": 182.995,
           "failure_reasons": []
         },
         {
@@ -2131,7 +2129,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 130.79,
+          "latency_ms": 163.371,
           "failure_reasons": []
         },
         {
@@ -2164,7 +2162,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 124.965,
+          "latency_ms": 154.571,
           "failure_reasons": []
         },
         {
@@ -2197,7 +2195,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 181.851,
+          "latency_ms": 155.299,
           "failure_reasons": []
         },
         {
@@ -2230,7 +2228,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 164.297,
+          "latency_ms": 157.579,
           "failure_reasons": []
         },
         {
@@ -2248,8 +2246,8 @@
             "PMC6702160",
             "PMC6702160",
             "PMC6702160",
-            "PMC5500247",
             "PMC6702160",
+            "PMC5500247",
             "PMC6702160"
           ],
           "first_relevant_rank": 1,
@@ -2263,7 +2261,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 141.693,
+          "latency_ms": 151.228,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2298,7 +2296,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 118.842,
+          "latency_ms": 156.238,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2333,7 +2331,7 @@
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 118.477,
+          "latency_ms": 144.584,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2368,7 +2366,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 125.687,
+          "latency_ms": 154.887,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2388,9 +2386,9 @@
             "PMC4544753",
             "PMC4544753",
             "PMC4544753",
-            "PMC7055088",
             "PMC4544753",
-            "PMC7055088"
+            "PMC7055088",
+            "PMC4544753"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -2398,15 +2396,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
-          "matched_relevant_chunk_count": 7,
-          "provenance_complete_relevant_chunk_count": 7,
+          "matched_relevant_chunk_count": 8,
+          "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 136.139,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 144.479,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_006",
@@ -2438,7 +2434,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 160.127,
+          "latency_ms": 146.517,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2473,7 +2469,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 164.888,
+          "latency_ms": 157.422,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2508,7 +2504,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 142.267,
+          "latency_ms": 176.586,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2538,15 +2534,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 128.19,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 175.535,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_010",
@@ -2578,7 +2572,7 @@
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 130.923,
+          "latency_ms": 161.426,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2613,7 +2607,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 133.016,
+          "latency_ms": 156.823,
           "failure_reasons": []
         },
         {
@@ -2646,7 +2640,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.227,
+          "latency_ms": 157.863,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2681,7 +2675,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 190.323,
+          "latency_ms": 144.907,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2716,7 +2710,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.425,
+          "latency_ms": 138.644,
           "failure_reasons": []
         },
         {
@@ -2749,7 +2743,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 146.52,
+          "latency_ms": 140.275,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2784,7 +2778,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 129.735,
+          "latency_ms": 137.659,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2802,10 +2796,10 @@
             "PMC2752999",
             "PMC2752999",
             "PMC2752999",
-            "PMC4544753",
             null,
             "PMC3609956",
             null,
+            "PMC4544753",
             null
           ],
           "first_relevant_rank": null,
@@ -2819,7 +2813,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 138.187,
+          "latency_ms": 140.199,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2834,14 +2828,14 @@
           "retrieved_pmcids": [
             "PMC3987093",
             "PMC2846279",
-            null,
             "PMC2846279",
             "PMC6180804",
             "PMC6180804",
             null,
-            null,
             "PMC2846279",
-            "PMC2846279"
+            "PMC2846279",
+            null,
+            "PMC12452844"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -2854,7 +2848,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 123.92,
+          "latency_ms": 136.258,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2869,48 +2863,13 @@
           "retrieved_pmcids": [
             "PMC12232703",
             null,
-            "PMC12232703",
             null,
             null,
             "PMC12232703",
             null,
             "PMC12232703",
             null,
-            "PMC12232703"
-          ],
-          "first_relevant_rank": null,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "ndcg_at_10": 0.0,
-          "top1_paper_correct": false,
-          "section_hit": null,
-          "false_paper_attribution": true,
-          "matched_relevant_chunk_count": 0,
-          "provenance_complete_relevant_chunk_count": 0,
-          "source_tier_correct": true,
-          "latency_ms": 162.424,
-          "failure_reasons": [
-            "research_paper_returned_for_no_evidence_boundary"
-          ]
-        },
-        {
-          "case_id": "paper_v2_none_005",
-          "query": "Use these papers to calculate exactly how long this patient will survive.",
-          "category": "no_research_evidence",
-          "style": "boundary",
-          "expected_pmcid": null,
-          "expected_section": null,
-          "retrieved_pmcids": [
-            "PMC12452844",
-            null,
-            "PMC4998558",
-            null,
-            "PMC3987093",
-            null,
-            "PMC12452844",
-            "PMC3987093",
-            "PMC12452844",
+            "PMC12232703",
             null
           ],
           "first_relevant_rank": null,
@@ -2924,7 +2883,42 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 172.03,
+          "latency_ms": 134.595,
+          "failure_reasons": [
+            "research_paper_returned_for_no_evidence_boundary"
+          ]
+        },
+        {
+          "case_id": "paper_v2_none_005",
+          "query": "Use these papers to calculate exactly how long this patient will survive.",
+          "category": "no_research_evidence",
+          "style": "boundary",
+          "expected_pmcid": null,
+          "expected_section": null,
+          "retrieved_pmcids": [
+            "PMC4998558",
+            "PMC12452844",
+            "PMC4998558",
+            null,
+            null,
+            "PMC3987093",
+            null,
+            "PMC3987093",
+            "PMC12452844",
+            "PMC12452844"
+          ],
+          "first_relevant_rank": null,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_10": 0.0,
+          "top1_paper_correct": false,
+          "section_hit": null,
+          "false_paper_attribution": true,
+          "matched_relevant_chunk_count": 0,
+          "provenance_complete_relevant_chunk_count": 0,
+          "source_tier_correct": true,
+          "latency_ms": 137.871,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2943,8 +2937,8 @@
             "PMC3609956",
             "PMC3609956",
             "PMC3609956",
-            "PMC6702160",
             "PMC3609956",
+            "PMC6702160",
             "PMC3609956",
             "PMC3609956"
           ],
@@ -2959,7 +2953,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 143.486,
+          "latency_ms": 133.772,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2981,7 +2975,7 @@
             "PMC9158111",
             "PMC7055088",
             "PMC9158111",
-            "PMC7055088"
+            "PMC4544753"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -2994,7 +2988,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 122.332,
+          "latency_ms": 131.404,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -3012,11 +3006,11 @@
             "PMC11211959",
             "PMC12053558",
             "PMC12053558",
+            "PMC11211959",
+            "PMC11211959",
             "PMC11400212",
             "PMC11211959",
-            "PMC11211959",
-            "PMC11211959",
-            "PMC6361332"
+            "PMC11211959"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -3029,7 +3023,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 121.141,
+          "latency_ms": 134.297,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -3051,8 +3045,8 @@
         "no_evidence_false_paper_attribution_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 135.474,
-        "latency_p95_ms": 190.323,
+        "latency_p50_ms": 151.825,
+        "latency_p95_ms": 176.586,
         "failure_count": 19
       },
       "cases": [
@@ -3086,7 +3080,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 136945.537,
+          "latency_ms": 95381.056,
           "failure_reasons": []
         },
         {
@@ -3119,7 +3113,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.693,
+          "latency_ms": 164.454,
           "failure_reasons": []
         },
         {
@@ -3152,7 +3146,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.524,
+          "latency_ms": 162.069,
           "failure_reasons": []
         },
         {
@@ -3185,7 +3179,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.396,
+          "latency_ms": 150.114,
           "failure_reasons": []
         },
         {
@@ -3218,7 +3212,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 192.932,
+          "latency_ms": 155.396,
           "failure_reasons": []
         },
         {
@@ -3251,7 +3245,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.277,
+          "latency_ms": 149.969,
           "failure_reasons": []
         },
         {
@@ -3284,7 +3278,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 134.808,
+          "latency_ms": 151.314,
           "failure_reasons": []
         },
         {
@@ -3317,7 +3311,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 126.553,
+          "latency_ms": 148.219,
           "failure_reasons": []
         },
         {
@@ -3350,7 +3344,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 123.738,
+          "latency_ms": 149.225,
           "failure_reasons": []
         },
         {
@@ -3383,7 +3377,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 133.922,
+          "latency_ms": 148.633,
           "failure_reasons": []
         },
         {
@@ -3416,7 +3410,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 160.761,
+          "latency_ms": 168.967,
           "failure_reasons": []
         },
         {
@@ -3449,7 +3443,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 173.319,
+          "latency_ms": 154.441,
           "failure_reasons": []
         },
         {
@@ -3482,7 +3476,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.078,
+          "latency_ms": 145.596,
           "failure_reasons": []
         },
         {
@@ -3515,7 +3509,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 126.455,
+          "latency_ms": 152.336,
           "failure_reasons": []
         },
         {
@@ -3548,7 +3542,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.762,
+          "latency_ms": 153.387,
           "failure_reasons": []
         },
         {
@@ -3568,7 +3562,7 @@
             "PMC12452844",
             "PMC12452844",
             "PMC12452844",
-            "PMC6180804"
+            "PMC6361332"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -3581,7 +3575,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 115.876,
+          "latency_ms": 163.77,
           "failure_reasons": []
         },
         {
@@ -3614,7 +3608,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 121.998,
+          "latency_ms": 182.995,
           "failure_reasons": []
         },
         {
@@ -3647,7 +3641,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 130.79,
+          "latency_ms": 163.371,
           "failure_reasons": []
         },
         {
@@ -3680,7 +3674,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 124.965,
+          "latency_ms": 154.571,
           "failure_reasons": []
         },
         {
@@ -3713,7 +3707,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 181.851,
+          "latency_ms": 155.299,
           "failure_reasons": []
         },
         {
@@ -3746,7 +3740,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 164.297,
+          "latency_ms": 157.579,
           "failure_reasons": []
         },
         {
@@ -3779,7 +3773,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 141.693,
+          "latency_ms": 151.228,
           "failure_reasons": []
         },
         {
@@ -3812,7 +3806,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 118.842,
+          "latency_ms": 156.238,
           "failure_reasons": []
         },
         {
@@ -3845,7 +3839,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 118.477,
+          "latency_ms": 144.584,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -3880,7 +3874,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 125.687,
+          "latency_ms": 154.887,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -3915,7 +3909,7 @@
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 136.139,
+          "latency_ms": 144.479,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -3950,7 +3944,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 160.127,
+          "latency_ms": 146.517,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -3985,7 +3979,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 164.888,
+          "latency_ms": 157.422,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4020,7 +4014,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 142.267,
+          "latency_ms": 176.586,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4055,7 +4049,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 128.19,
+          "latency_ms": 175.535,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4090,7 +4084,7 @@
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 130.923,
+          "latency_ms": 161.426,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4125,7 +4119,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 133.016,
+          "latency_ms": 156.823,
           "failure_reasons": []
         },
         {
@@ -4158,7 +4152,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.227,
+          "latency_ms": 157.863,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4178,8 +4172,8 @@
             null,
             "PMC12232703",
             null,
-            "PMC12232703",
             null,
+            "PMC12232703",
             "PMC12232703"
           ],
           "first_relevant_rank": 1,
@@ -4193,7 +4187,7 @@
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 190.323,
+          "latency_ms": 144.907,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4228,7 +4222,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.425,
+          "latency_ms": 138.644,
           "failure_reasons": []
         },
         {
@@ -4261,7 +4255,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 146.52,
+          "latency_ms": 140.275,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4278,9 +4272,9 @@
             "PMC7055088",
             "PMC7055088",
             null,
+            null,
+            null,
             "PMC9158111",
-            null,
-            null,
             null,
             "PMC9158111",
             "PMC7055088"
@@ -4296,7 +4290,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 129.735,
+          "latency_ms": 137.659,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4331,7 +4325,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 138.187,
+          "latency_ms": 140.199,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4345,14 +4339,14 @@
           "expected_section": null,
           "retrieved_pmcids": [
             null,
-            null,
             "PMC3987093",
             null,
             "PMC2846279",
             "PMC2846279",
             "PMC2846279",
+            null,
             "PMC2846279",
-            "PMC2846279",
+            "PMC6180804",
             null
           ],
           "first_relevant_rank": null,
@@ -4366,7 +4360,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 123.92,
+          "latency_ms": 136.258,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4382,10 +4376,10 @@
             null,
             null,
             null,
+            null,
             "PMC12232703",
             null,
             null,
-            "PMC12232703",
             "PMC12232703",
             "PMC12232703",
             "PMC12232703"
@@ -4401,7 +4395,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 162.424,
+          "latency_ms": 134.595,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4417,13 +4411,13 @@
             null,
             "PMC2846279",
             null,
-            "PMC2846279",
-            null,
             null,
             "PMC12452844",
-            "PMC12452844",
             "PMC2846279",
-            null
+            null,
+            "PMC2846279",
+            "PMC12452844",
+            "PMC2846279"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -4436,7 +4430,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 172.03,
+          "latency_ms": 137.871,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4452,12 +4446,12 @@
             "PMC3609956",
             "PMC3609956",
             "PMC3609956",
-            null,
-            "PMC3609956",
-            "PMC3609956",
             "PMC3609956",
             null,
             "PMC3609956",
+            null,
+            "PMC3609956",
+            "PMC6702160",
             "PMC3609956"
           ],
           "first_relevant_rank": null,
@@ -4471,7 +4465,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 143.486,
+          "latency_ms": 133.772,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4506,7 +4500,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 122.332,
+          "latency_ms": 131.404,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4524,9 +4518,9 @@
             "PMC11211959",
             "PMC11211959",
             "PMC11211959",
+            "PMC11211959",
+            "PMC11211959",
             "PMC6361332",
-            "PMC11211959",
-            "PMC11211959",
             "PMC11211959",
             "PMC11211959"
           ],
@@ -4541,7 +4535,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 121.141,
+          "latency_ms": 134.297,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4558,14 +4552,14 @@
         "mrr": 0.9792,
         "ndcg_at_10": 0.9842,
         "top1_paper_accuracy": 0.9722,
-        "section_hit_rate": 0.2667,
+        "section_hit_rate": 0.4,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 134.194,
-        "latency_p95_ms": 183.565,
-        "failure_count": 19
+        "latency_p50_ms": 138.887,
+        "latency_p95_ms": 164.347,
+        "failure_count": 17
       },
       "cases": [
         {
@@ -4598,7 +4592,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 135.835,
+          "latency_ms": 171.743,
           "failure_reasons": []
         },
         {
@@ -4631,7 +4625,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 105.759,
+          "latency_ms": 128.989,
           "failure_reasons": []
         },
         {
@@ -4664,7 +4658,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 97.313,
+          "latency_ms": 106.864,
           "failure_reasons": []
         },
         {
@@ -4697,7 +4691,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 217.353,
+          "latency_ms": 131.884,
           "failure_reasons": []
         },
         {
@@ -4730,7 +4724,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 183.565,
+          "latency_ms": 142.147,
           "failure_reasons": []
         },
         {
@@ -4763,7 +4757,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 104.977,
+          "latency_ms": 115.127,
           "failure_reasons": []
         },
         {
@@ -4796,7 +4790,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.636,
+          "latency_ms": 145.683,
           "failure_reasons": []
         },
         {
@@ -4809,8 +4803,8 @@
           "retrieved_pmcids": [
             "PMC2846279",
             "PMC2846279",
-            null,
             "PMC2846279",
+            null,
             "PMC2846279",
             "PMC2846279",
             "PMC2846279",
@@ -4829,7 +4823,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 156.794,
+          "latency_ms": 156.135,
           "failure_reasons": []
         },
         {
@@ -4862,7 +4856,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 141.462,
+          "latency_ms": 123.167,
           "failure_reasons": []
         },
         {
@@ -4895,7 +4889,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 124.957,
+          "latency_ms": 108.409,
           "failure_reasons": []
         },
         {
@@ -4928,7 +4922,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 139.431,
+          "latency_ms": 107.935,
           "failure_reasons": []
         },
         {
@@ -4961,7 +4955,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 99.296,
+          "latency_ms": 101.223,
           "failure_reasons": []
         },
         {
@@ -4994,7 +4988,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 94.664,
+          "latency_ms": 96.406,
           "failure_reasons": []
         },
         {
@@ -5027,7 +5021,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 139.786,
+          "latency_ms": 116.398,
           "failure_reasons": []
         },
         {
@@ -5060,7 +5054,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.144,
+          "latency_ms": 127.207,
           "failure_reasons": []
         },
         {
@@ -5080,7 +5074,7 @@
             "PMC12452844",
             "PMC12452844",
             "PMC12452844",
-            "PMC6180804"
+            "PMC6361332"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -5093,7 +5087,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 96.865,
+          "latency_ms": 108.204,
           "failure_reasons": []
         },
         {
@@ -5126,7 +5120,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.499,
+          "latency_ms": 101.702,
           "failure_reasons": []
         },
         {
@@ -5159,7 +5153,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 111.902,
+          "latency_ms": 96.668,
           "failure_reasons": []
         },
         {
@@ -5192,7 +5186,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 104.748,
+          "latency_ms": 102.003,
           "failure_reasons": []
         },
         {
@@ -5225,7 +5219,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 147.173,
+          "latency_ms": 120.469,
           "failure_reasons": []
         },
         {
@@ -5258,7 +5252,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 129.324,
+          "latency_ms": 130.23,
           "failure_reasons": []
         },
         {
@@ -5278,7 +5272,7 @@
             "PMC6702160",
             "PMC6702160",
             "PMC6702160",
-            "PMC5500247"
+            "PMC6702160"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -5288,10 +5282,10 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
-          "matched_relevant_chunk_count": 9,
-          "provenance_complete_relevant_chunk_count": 9,
+          "matched_relevant_chunk_count": 10,
+          "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 125.324,
+          "latency_ms": 128.221,
           "failure_reasons": []
         },
         {
@@ -5324,7 +5318,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 112.959,
+          "latency_ms": 137.356,
           "failure_reasons": []
         },
         {
@@ -5357,7 +5351,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 142.979,
+          "latency_ms": 165.771,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5387,15 +5381,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 180.154,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 144.542,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_005",
@@ -5409,9 +5401,9 @@
             "PMC7055088",
             "PMC7055088",
             "PMC4544753",
-            "PMC4544753",
-            "PMC4544753",
             "PMC7055088",
+            "PMC4544753",
+            "PMC4544753",
             "PMC4544753",
             "PMC4544753",
             "PMC4544753"
@@ -5427,7 +5419,7 @@
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 168.058,
+          "latency_ms": 138.274,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5462,7 +5454,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 145.532,
+          "latency_ms": 144.034,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5497,7 +5489,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 125.912,
+          "latency_ms": 140.572,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5532,7 +5524,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.779,
+          "latency_ms": 138.188,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5562,15 +5554,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 113.826,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 139.501,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_010",
@@ -5589,7 +5579,7 @@
             "PMC12452844",
             "PMC12452844",
             "PMC11400212",
-            "PMC11400212"
+            "PMC6868829"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -5602,7 +5592,7 @@
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 127.88,
+          "latency_ms": 144.083,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5637,7 +5627,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 135.361,
+          "latency_ms": 148.613,
           "failure_reasons": []
         },
         {
@@ -5670,7 +5660,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 197.306,
+          "latency_ms": 148.072,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5705,7 +5695,7 @@
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 163.293,
+          "latency_ms": 145.429,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5740,7 +5730,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 139.929,
+          "latency_ms": 154.551,
           "failure_reasons": []
         },
         {
@@ -5773,7 +5763,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.104,
+          "latency_ms": 151.514,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5789,12 +5779,12 @@
             null,
             "PMC7055088",
             "PMC7055088",
-            "PMC9158111",
             null,
+            "PMC9158111",
+            "PMC9158111",
+            "PMC9158111",
             "PMC7055088",
             null,
-            "PMC7055088",
-            "PMC9158111",
             null
           ],
           "first_relevant_rank": null,
@@ -5808,7 +5798,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 138.16,
+          "latency_ms": 143.488,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5829,8 +5819,8 @@
             "PMC2752999",
             null,
             "PMC2752999",
-            "PMC3609956",
-            "PMC2752999"
+            "PMC2752999",
+            null
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -5843,7 +5833,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 130.803,
+          "latency_ms": 141.808,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5858,13 +5848,13 @@
           "retrieved_pmcids": [
             null,
             null,
-            null,
             "PMC3987093",
             "PMC2846279",
             "PMC2846279",
+            "PMC2846279",
+            "PMC2846279",
             null,
-            "PMC2846279",
-            "PMC2846279",
+            "PMC6180804",
             null
           ],
           "first_relevant_rank": null,
@@ -5878,7 +5868,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 174.733,
+          "latency_ms": 160.079,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5894,10 +5884,10 @@
             null,
             null,
             null,
+            null,
             "PMC12232703",
             null,
             null,
-            "PMC12232703",
             "PMC12232703",
             "PMC12232703",
             "PMC12232703"
@@ -5913,7 +5903,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 151.524,
+          "latency_ms": 145.093,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5929,13 +5919,13 @@
             null,
             "PMC2846279",
             null,
-            "PMC2846279",
-            null,
             null,
             "PMC12452844",
-            "PMC12452844",
             "PMC2846279",
-            null
+            null,
+            "PMC2846279",
+            "PMC12452844",
+            "PMC2846279"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -5948,7 +5938,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 99.901,
+          "latency_ms": 117.14,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5965,11 +5955,11 @@
             "PMC3609956",
             null,
             "PMC3609956",
+            "PMC5500247",
             "PMC3609956",
             "PMC3609956",
             "PMC3609956",
-            "PMC3609956",
-            null,
+            "PMC5500247",
             "PMC3609956"
           ],
           "first_relevant_rank": null,
@@ -5983,7 +5973,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 133.027,
+          "latency_ms": 158.411,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -6018,7 +6008,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 114.436,
+          "latency_ms": 141.012,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -6038,9 +6028,9 @@
             "PMC11211959",
             "PMC11211959",
             "PMC11211959",
-            "PMC6361332",
             "PMC11211959",
-            "PMC12452844"
+            "PMC6361332",
+            "PMC11211959"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -6053,7 +6043,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 148.338,
+          "latency_ms": 164.347,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -6070,14 +6060,14 @@
         "mrr": 0.9792,
         "ndcg_at_10": 0.9842,
         "top1_paper_accuracy": 0.9722,
-        "section_hit_rate": 0.2667,
+        "section_hit_rate": 0.4,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 134.635,
-        "latency_p95_ms": 183.863,
-        "failure_count": 19
+        "latency_p50_ms": 139.384,
+        "latency_p95_ms": 165.023,
+        "failure_count": 17
       },
       "cases": [
         {
@@ -6110,7 +6100,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 136.299,
+          "latency_ms": 172.169,
           "failure_reasons": []
         },
         {
@@ -6143,7 +6133,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 106.112,
+          "latency_ms": 129.4,
           "failure_reasons": []
         },
         {
@@ -6176,7 +6166,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 97.569,
+          "latency_ms": 107.224,
           "failure_reasons": []
         },
         {
@@ -6209,7 +6199,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 217.604,
+          "latency_ms": 132.136,
           "failure_reasons": []
         },
         {
@@ -6242,7 +6232,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 183.863,
+          "latency_ms": 142.475,
           "failure_reasons": []
         },
         {
@@ -6275,7 +6265,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 106.038,
+          "latency_ms": 115.474,
           "failure_reasons": []
         },
         {
@@ -6308,7 +6298,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.175,
+          "latency_ms": 146.15,
           "failure_reasons": []
         },
         {
@@ -6321,8 +6311,8 @@
           "retrieved_pmcids": [
             "PMC2846279",
             "PMC2846279",
-            null,
             "PMC2846279",
+            null,
             "PMC2846279",
             "PMC2846279",
             "PMC2846279",
@@ -6341,7 +6331,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 157.195,
+          "latency_ms": 156.466,
           "failure_reasons": []
         },
         {
@@ -6374,7 +6364,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 141.918,
+          "latency_ms": 123.46,
           "failure_reasons": []
         },
         {
@@ -6407,7 +6397,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 125.332,
+          "latency_ms": 108.692,
           "failure_reasons": []
         },
         {
@@ -6440,7 +6430,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 139.818,
+          "latency_ms": 108.21,
           "failure_reasons": []
         },
         {
@@ -6473,7 +6463,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 99.63,
+          "latency_ms": 101.475,
           "failure_reasons": []
         },
         {
@@ -6506,7 +6496,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 94.999,
+          "latency_ms": 96.711,
           "failure_reasons": []
         },
         {
@@ -6539,7 +6529,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 140.166,
+          "latency_ms": 116.77,
           "failure_reasons": []
         },
         {
@@ -6572,7 +6562,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.369,
+          "latency_ms": 127.431,
           "failure_reasons": []
         },
         {
@@ -6592,7 +6582,7 @@
             "PMC12452844",
             "PMC12452844",
             "PMC12452844",
-            "PMC6180804"
+            "PMC6361332"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -6605,7 +6595,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 97.418,
+          "latency_ms": 108.657,
           "failure_reasons": []
         },
         {
@@ -6638,7 +6628,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.722,
+          "latency_ms": 101.895,
           "failure_reasons": []
         },
         {
@@ -6671,7 +6661,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 112.133,
+          "latency_ms": 96.828,
           "failure_reasons": []
         },
         {
@@ -6704,7 +6694,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 105.285,
+          "latency_ms": 102.327,
           "failure_reasons": []
         },
         {
@@ -6737,7 +6727,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 147.413,
+          "latency_ms": 120.624,
           "failure_reasons": []
         },
         {
@@ -6770,7 +6760,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 129.663,
+          "latency_ms": 130.412,
           "failure_reasons": []
         },
         {
@@ -6790,7 +6780,7 @@
             "PMC6702160",
             "PMC6702160",
             "PMC6702160",
-            "PMC5500247"
+            "PMC6702160"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -6800,10 +6790,10 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
-          "matched_relevant_chunk_count": 9,
-          "provenance_complete_relevant_chunk_count": 9,
+          "matched_relevant_chunk_count": 10,
+          "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 125.692,
+          "latency_ms": 128.411,
           "failure_reasons": []
         },
         {
@@ -6836,7 +6826,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 113.226,
+          "latency_ms": 137.509,
           "failure_reasons": []
         },
         {
@@ -6869,7 +6859,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 143.24,
+          "latency_ms": 166.068,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -6899,15 +6889,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 180.466,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 144.807,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_005",
@@ -6921,9 +6909,9 @@
             "PMC7055088",
             "PMC7055088",
             "PMC4544753",
-            "PMC4544753",
-            "PMC4544753",
             "PMC7055088",
+            "PMC4544753",
+            "PMC4544753",
             "PMC4544753",
             "PMC4544753",
             "PMC4544753"
@@ -6939,7 +6927,7 @@
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 168.561,
+          "latency_ms": 138.873,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -6974,7 +6962,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 145.854,
+          "latency_ms": 144.507,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7009,7 +6997,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 126.416,
+          "latency_ms": 141.014,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7044,7 +7032,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 123.171,
+          "latency_ms": 138.803,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7074,15 +7062,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 114.246,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 139.895,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_010",
@@ -7101,7 +7087,7 @@
             "PMC12452844",
             "PMC12452844",
             "PMC11400212",
-            "PMC11400212"
+            "PMC6868829"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -7114,7 +7100,7 @@
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 128.661,
+          "latency_ms": 144.92,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7149,7 +7135,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 135.856,
+          "latency_ms": 149.115,
           "failure_reasons": []
         },
         {
@@ -7182,7 +7168,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 197.598,
+          "latency_ms": 148.386,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7217,7 +7203,7 @@
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 163.893,
+          "latency_ms": 146.0,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7252,7 +7238,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 140.183,
+          "latency_ms": 154.735,
           "failure_reasons": []
         },
         {
@@ -7285,7 +7271,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.406,
+          "latency_ms": 151.759,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7301,12 +7287,12 @@
             null,
             "PMC7055088",
             "PMC7055088",
-            "PMC9158111",
             null,
+            "PMC9158111",
+            "PMC9158111",
+            "PMC9158111",
             "PMC7055088",
             null,
-            "PMC7055088",
-            "PMC9158111",
             null
           ],
           "first_relevant_rank": null,
@@ -7320,7 +7306,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 138.647,
+          "latency_ms": 143.845,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7341,8 +7327,8 @@
             "PMC2752999",
             null,
             "PMC2752999",
-            "PMC3609956",
-            "PMC2752999"
+            "PMC2752999",
+            null
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -7355,7 +7341,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 131.269,
+          "latency_ms": 142.179,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7370,13 +7356,13 @@
           "retrieved_pmcids": [
             null,
             null,
-            null,
             "PMC3987093",
             "PMC2846279",
             "PMC2846279",
+            "PMC2846279",
+            "PMC2846279",
             null,
-            "PMC2846279",
-            "PMC2846279",
+            "PMC6180804",
             null
           ],
           "first_relevant_rank": null,
@@ -7390,7 +7376,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 175.101,
+          "latency_ms": 160.381,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7406,10 +7392,10 @@
             null,
             null,
             null,
+            null,
             "PMC12232703",
             null,
             null,
-            "PMC12232703",
             "PMC12232703",
             "PMC12232703",
             "PMC12232703"
@@ -7425,7 +7411,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 152.068,
+          "latency_ms": 145.553,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7441,13 +7427,13 @@
             null,
             "PMC2846279",
             null,
-            "PMC2846279",
-            null,
             null,
             "PMC12452844",
-            "PMC12452844",
             "PMC2846279",
-            null
+            null,
+            "PMC2846279",
+            "PMC12452844",
+            "PMC2846279"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -7460,7 +7446,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 100.324,
+          "latency_ms": 117.542,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7477,11 +7463,11 @@
             "PMC3609956",
             null,
             "PMC3609956",
+            "PMC5500247",
             "PMC3609956",
             "PMC3609956",
             "PMC3609956",
-            "PMC3609956",
-            null,
+            "PMC5500247",
             "PMC3609956"
           ],
           "first_relevant_rank": null,
@@ -7495,7 +7481,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 133.414,
+          "latency_ms": 158.809,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7530,7 +7516,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 115.149,
+          "latency_ms": 141.624,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7550,9 +7536,9 @@
             "PMC11211959",
             "PMC11211959",
             "PMC11211959",
-            "PMC6361332",
             "PMC11211959",
-            "PMC12452844"
+            "PMC6361332",
+            "PMC11211959"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -7565,7 +7551,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 149.022,
+          "latency_ms": 165.023,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7582,14 +7568,14 @@
         "mrr": 0.9792,
         "ndcg_at_10": 0.9842,
         "top1_paper_accuracy": 0.9722,
-        "section_hit_rate": 0.2667,
+        "section_hit_rate": 0.4,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 134.897,
-        "latency_p95_ms": 184.04,
-        "failure_count": 19
+        "latency_p50_ms": 139.554,
+        "latency_p95_ms": 165.123,
+        "failure_count": 17
       },
       "cases": [
         {
@@ -7622,7 +7608,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 136.229,
+          "latency_ms": 172.157,
           "failure_reasons": []
         },
         {
@@ -7655,7 +7641,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 106.282,
+          "latency_ms": 129.376,
           "failure_reasons": []
         },
         {
@@ -7688,7 +7674,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 97.868,
+          "latency_ms": 107.249,
           "failure_reasons": []
         },
         {
@@ -7721,7 +7707,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 217.885,
+          "latency_ms": 132.243,
           "failure_reasons": []
         },
         {
@@ -7754,7 +7740,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 184.04,
+          "latency_ms": 142.513,
           "failure_reasons": []
         },
         {
@@ -7787,7 +7773,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 106.177,
+          "latency_ms": 115.505,
           "failure_reasons": []
         },
         {
@@ -7820,7 +7806,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.325,
+          "latency_ms": 146.063,
           "failure_reasons": []
         },
         {
@@ -7833,8 +7819,8 @@
           "retrieved_pmcids": [
             "PMC2846279",
             "PMC2846279",
-            null,
             "PMC2846279",
+            null,
             "PMC2846279",
             "PMC2846279",
             "PMC2846279",
@@ -7853,7 +7839,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 157.369,
+          "latency_ms": 156.373,
           "failure_reasons": []
         },
         {
@@ -7886,7 +7872,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 142.076,
+          "latency_ms": 123.439,
           "failure_reasons": []
         },
         {
@@ -7919,7 +7905,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 125.632,
+          "latency_ms": 108.677,
           "failure_reasons": []
         },
         {
@@ -7952,7 +7938,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 139.948,
+          "latency_ms": 108.174,
           "failure_reasons": []
         },
         {
@@ -7985,7 +7971,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 99.82,
+          "latency_ms": 101.466,
           "failure_reasons": []
         },
         {
@@ -8018,7 +8004,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 95.185,
+          "latency_ms": 96.67,
           "failure_reasons": []
         },
         {
@@ -8051,7 +8037,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 140.399,
+          "latency_ms": 116.7,
           "failure_reasons": []
         },
         {
@@ -8084,7 +8070,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.52,
+          "latency_ms": 127.412,
           "failure_reasons": []
         },
         {
@@ -8104,7 +8090,7 @@
             "PMC12452844",
             "PMC12452844",
             "PMC12452844",
-            "PMC6180804"
+            "PMC6361332"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -8117,7 +8103,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 97.442,
+          "latency_ms": 108.826,
           "failure_reasons": []
         },
         {
@@ -8150,7 +8136,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.94,
+          "latency_ms": 102.047,
           "failure_reasons": []
         },
         {
@@ -8183,7 +8169,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 112.288,
+          "latency_ms": 97.005,
           "failure_reasons": []
         },
         {
@@ -8216,7 +8202,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 105.419,
+          "latency_ms": 102.705,
           "failure_reasons": []
         },
         {
@@ -8249,7 +8235,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.271,
+          "latency_ms": 120.766,
           "failure_reasons": []
         },
         {
@@ -8282,7 +8268,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 130.096,
+          "latency_ms": 130.622,
           "failure_reasons": []
         },
         {
@@ -8302,7 +8288,7 @@
             "PMC6702160",
             "PMC6702160",
             "PMC6702160",
-            "PMC5500247"
+            "PMC6702160"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -8312,10 +8298,10 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
-          "matched_relevant_chunk_count": 9,
-          "provenance_complete_relevant_chunk_count": 9,
+          "matched_relevant_chunk_count": 10,
+          "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 125.954,
+          "latency_ms": 128.618,
           "failure_reasons": []
         },
         {
@@ -8348,7 +8334,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 113.597,
+          "latency_ms": 137.722,
           "failure_reasons": []
         },
         {
@@ -8381,7 +8367,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 143.643,
+          "latency_ms": 166.171,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8411,15 +8397,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 180.876,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 145.088,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_005",
@@ -8433,9 +8417,9 @@
             "PMC7055088",
             "PMC7055088",
             "PMC4544753",
-            "PMC4544753",
-            "PMC4544753",
             "PMC7055088",
+            "PMC4544753",
+            "PMC4544753",
             "PMC4544753",
             "PMC4544753",
             "PMC4544753"
@@ -8451,7 +8435,7 @@
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 169.101,
+          "latency_ms": 139.226,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8486,7 +8470,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 146.274,
+          "latency_ms": 144.425,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8521,7 +8505,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 126.404,
+          "latency_ms": 141.062,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8556,7 +8540,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 123.14,
+          "latency_ms": 138.624,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8586,15 +8570,13 @@
           "mrr": 1.0,
           "ndcg_at_10": 1.0,
           "top1_paper_correct": true,
-          "section_hit": false,
+          "section_hit": true,
           "false_paper_attribution": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 114.315,
-          "failure_reasons": [
-            "expected_section_missing_at_10"
-          ]
+          "latency_ms": 139.882,
+          "failure_reasons": []
         },
         {
           "case_id": "paper_v2_topic_010",
@@ -8613,7 +8595,7 @@
             "PMC12452844",
             "PMC12452844",
             "PMC11400212",
-            "PMC11400212"
+            "PMC6868829"
           ],
           "first_relevant_rank": 1,
           "recall_at_5": 1.0,
@@ -8626,7 +8608,7 @@
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 129.183,
+          "latency_ms": 144.669,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8661,7 +8643,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 136.53,
+          "latency_ms": 149.053,
           "failure_reasons": []
         },
         {
@@ -8694,7 +8676,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 197.697,
+          "latency_ms": 148.374,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8729,7 +8711,7 @@
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 163.917,
+          "latency_ms": 146.126,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8764,7 +8746,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 140.379,
+          "latency_ms": 154.919,
           "failure_reasons": []
         },
         {
@@ -8797,7 +8779,7 @@
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 122.582,
+          "latency_ms": 151.918,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8813,11 +8795,11 @@
             "PMC7055088",
             "PMC7055088",
             "PMC9158111",
+            "PMC9158111",
+            "PMC9158111",
             "PMC7055088",
             "PMC7055088",
-            "PMC9158111",
-            "PMC9158111",
-            "PMC9158111",
+            "PMC7055088",
             "PMC9158111",
             "PMC9158111"
           ],
@@ -8832,7 +8814,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 138.843,
+          "latency_ms": 144.497,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8852,8 +8834,8 @@
             "PMC2752999",
             "PMC2752999",
             "PMC2752999",
-            "PMC3609956",
             "PMC2752999",
+            "PMC3609956",
             "PMC4998558"
           ],
           "first_relevant_rank": null,
@@ -8867,7 +8849,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 131.577,
+          "latency_ms": 142.493,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8881,14 +8863,14 @@
           "expected_section": null,
           "retrieved_pmcids": [
             null,
-            null,
             "PMC3987093",
             "PMC2846279",
             "PMC2846279",
+            "PMC2846279",
+            "PMC2846279",
             null,
-            "PMC2846279",
-            "PMC2846279",
             "PMC6180804",
+            null,
             "PMC2846279"
           ],
           "first_relevant_rank": null,
@@ -8902,7 +8884,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 175.282,
+          "latency_ms": 160.521,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8917,9 +8899,9 @@
           "retrieved_pmcids": [
             null,
             null,
-            "PMC12232703",
             null,
             "PMC12232703",
+            null,
             "PMC12232703",
             "PMC12232703",
             "PMC12232703",
@@ -8937,7 +8919,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 152.7,
+          "latency_ms": 145.78,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8951,15 +8933,15 @@
           "expected_section": null,
           "retrieved_pmcids": [
             "PMC2846279",
-            "PMC2846279",
-            "PMC12452844",
             "PMC12452844",
             "PMC2846279",
+            "PMC2846279",
+            "PMC12452844",
             "PMC2846279",
             "PMC3987093",
-            "PMC12452844",
             "PMC6361332",
-            "PMC2752999"
+            "PMC4998558",
+            "PMC12452844"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -8972,7 +8954,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 100.831,
+          "latency_ms": 117.591,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8988,13 +8970,13 @@
             "PMC3609956",
             "PMC3609956",
             "PMC3609956",
+            "PMC5500247",
             "PMC3609956",
             "PMC3609956",
             "PMC3609956",
+            "PMC5500247",
             "PMC3609956",
-            "PMC3609956",
-            "PMC3609956",
-            "PMC5500247"
+            "PMC3609956"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -9007,7 +8989,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 133.566,
+          "latency_ms": 158.873,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -9042,7 +9024,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 115.26,
+          "latency_ms": 141.714,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -9062,9 +9044,9 @@
             "PMC11211959",
             "PMC11211959",
             "PMC11211959",
-            "PMC6361332",
             "PMC11211959",
-            "PMC12452844"
+            "PMC6361332",
+            "PMC11211959"
           ],
           "first_relevant_rank": null,
           "recall_at_5": 0.0,
@@ -9077,7 +9059,7 @@
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 149.429,
+          "latency_ms": 165.123,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -9165,7 +9147,7 @@
     "full_stack_recall_at_10": 1.0,
     "full_stack_mrr": 0.9792,
     "full_stack_top1_paper_accuracy": 0.9722,
-    "full_stack_section_hit_rate": 0.2667,
+    "full_stack_section_hit_rate": 0.4,
     "full_stack_taglish_recall_at_10": 1.0,
     "full_stack_no_evidence_false_paper_attribution_rate": 1.0,
     "full_stack_provenance_completeness": 1.0,

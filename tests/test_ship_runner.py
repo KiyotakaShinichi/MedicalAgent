@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from scripts import ship
+from scripts.run_post_ship_evidence_reconciliation import RECONCILIATION_SCRIPTS
 
 
 def test_ship_step_uses_bounded_timeout(monkeypatch):
@@ -124,6 +125,37 @@ def test_research_paper_query_telemetry_is_a_bounded_evidence_step():
     assert step.command[-1] == "scripts/run_research_paper_query_telemetry.py"
     assert ship._effective_timeout(step) <= 600
     assert step in ship._select_steps(steps, "evidence")
+
+
+def test_ai_trinity_inputs_refresh_before_tradeoff_and_release_gate():
+    steps = ship._build_steps()
+    names = [step.name for step in steps]
+    trinity_index = names.index("Accuracy-latency-unit-cost tradeoff refresh")
+    gate_index = names.index("Release artifact gate")
+
+    for prerequisite in (
+        "Token, cost, and stage-latency observability refresh",
+        "Guarded normal-API provider usage probe",
+        "Provider-token reconciliation",
+        "Frozen claim-conditioned selector holdout",
+    ):
+        assert names.index(prerequisite) < trinity_index
+    assert trinity_index < gate_index
+
+
+def test_post_success_reconciliation_refreshes_ship_dependent_evidence():
+    steps = ship._build_post_success_reconciliation_steps()
+    assert len(steps) == 1
+    assert steps[0].name == "Post-ship evidence reconciliation"
+    assert steps[0].command[-1] == "scripts/run_post_ship_evidence_reconciliation.py"
+    assert ship._effective_timeout(steps[0]) == 300
+    assert all(ship._is_evidence_step(step) for step in steps)
+
+    assert RECONCILIATION_SCRIPTS[0].endswith("run_evidence_maturity_matrix.py")
+    assert RECONCILIATION_SCRIPTS.index(
+        "scripts/run_focused_release_summary.py"
+    ) < RECONCILIATION_SCRIPTS.index("scripts/run_senior_engineering_evidence.py")
+    assert RECONCILIATION_SCRIPTS[-1].endswith("run_release_gate.py")
 
 
 def test_oversized_backend_contract_suite_is_split_into_bounded_steps():

@@ -14,6 +14,7 @@ DEFAULT_SOURCE_PATH = Path("Data/evals/ops/latest_cost_latency_report.json")
 DEFAULT_OUTPUT_PATH = Path(
     "Data/evals/ops/latest_provider_usage_reconciliation.json"
 )
+DEFAULT_PROBE_PATH = Path("Data/evals/ops/latest_provider_api_path_capture.json")
 MIN_PAIRED_REQUESTS = 30
 MIN_ACTUAL_COVERAGE = 0.8
 
@@ -27,12 +28,20 @@ CLAIM_BOUNDARY = (
 def build_provider_usage_reconciliation(
     source_path: str | Path = DEFAULT_SOURCE_PATH,
     *,
+    probe_path: str | Path = DEFAULT_PROBE_PATH,
     env: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     payload = _read_json(source_path)
-    requests = [
+    cost_requests = [
         row for row in payload.get("requests") or [] if isinstance(row, dict)
     ]
+    probe = _read_json(probe_path)
+    probe_requests = (
+        [row for row in probe.get("requests") or [] if isinstance(row, dict)]
+        if probe.get("normal_api_path") is True
+        else []
+    )
+    requests = _deduplicate_requests(cost_requests + probe_requests)
     paired = []
     for row in requests:
         actual = _positive(row.get("provider_reported_total_tokens"))
@@ -80,6 +89,8 @@ def build_provider_usage_reconciliation(
         "completed": completed,
         "reason": reason,
         "source_artifact": str(source_path).replace("\\", "/"),
+        "normal_api_probe_artifact": str(probe_path).replace("\\", "/"),
+        "normal_api_probe_request_count": len(probe_requests),
         "provider_configured": configured,
         "request_count": len(requests),
         "requests_with_provider_reported_usage": actual_count,
@@ -115,9 +126,12 @@ def write_provider_usage_reconciliation(
     output_path: str | Path = DEFAULT_OUTPUT_PATH,
     *,
     source_path: str | Path = DEFAULT_SOURCE_PATH,
+    probe_path: str | Path = DEFAULT_PROBE_PATH,
     env: dict[str, str] | None = None,
 ) -> dict[str, Any]:
-    payload = build_provider_usage_reconciliation(source_path, env=env)
+    payload = build_provider_usage_reconciliation(
+        source_path, probe_path=probe_path, env=env
+    )
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
@@ -149,6 +163,19 @@ def _read_json(path: str | Path) -> dict[str, Any]:
         return payload if isinstance(payload, dict) else {}
     except (OSError, json.JSONDecodeError):
         return {}
+
+
+def _deduplicate_requests(requests: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Prefer the latest occurrence without conflating rows lacking an ID."""
+    unique: dict[str, dict[str, Any]] = {}
+    anonymous: list[dict[str, Any]] = []
+    for row in requests:
+        request_id = str(row.get("request_id") or "").strip()
+        if request_id:
+            unique[request_id] = row
+        else:
+            anonymous.append(row)
+    return list(unique.values()) + anonymous
 
 
 __all__ = [

@@ -2494,6 +2494,37 @@ artifacts:
       Separates provider-reported usage from character estimates. Missing
       provider observations remain an explicit operational blocker.
 
+  - path: Data/evals/ops/latest_provider_api_path_capture.json
+    required: false
+    max_age_days: 30
+    accepted_status: [completed_controlled_probe, insufficient_provider_capture, ready_for_explicit_execution, blocked_configuration, execution_failed]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [content_retained], op: "==", value: false}
+      - {path: [patient_data_processed], op: "==", value: false}
+      - {path: [automatic_paid_provider_probe], op: "==", value: false}
+      - {path: [audited_billing], op: "==", value: false}
+    note: >
+      Explicitly gated synthetic traffic through the normal chat API. No paid
+      request is automatic, prompts and replies are not persisted, and missing
+      provider evidence remains unknown rather than zero cost.
+
+  - path: Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json
+    required: false
+    max_age_days: 30
+    accepted_status: [eligible_for_live_shadow_only, noninferior_internal_holdout, needs_attention]
+    metric_thresholds:
+      - {path: [clinical_validation], op: "==", value: false}
+      - {path: [healthcare_production_ready], op: "==", value: false}
+      - {path: [was_used_for_selector_tuning], op: "==", value: false}
+      - {path: [live_patient_route_changed], op: "==", value: false}
+      - {path: [support_proxy_is_entailment], op: "==", value: false}
+    note: >
+      Frozen answer-level internal comparison over outputs that predate the
+      selector. The current negative result keeps the selector offline and is
+      not independent external or clinical evidence.
+
   - path: Data/evals/models/latest_finetune_contamination_adjudication_readiness.json
     required: false
     max_age_days: 30

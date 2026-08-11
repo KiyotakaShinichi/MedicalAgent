@@ -106,15 +106,17 @@ test.describe("role-aware smoke flows", () => {
     await expect(page.getByText(/Patients needing review/i)).toBeVisible();
   });
 
-  test("admin login routes to MLE dashboard", async ({ page }) => {
-    await signIn(page, "admin", "admin-demo", /\/admin/);
-    await expect(page).toHaveURL(/\/admin/);
+  test("admin login routes to the assurance workspace and can open MLE dashboard", async ({ page }) => {
+    await signIn(page, "admin", "admin-demo", /\/workspace/);
+    await expect(page.getByRole("heading", { name: /AI Assurance Workspace/i })).toBeVisible();
+    await expect(page.getByText(/NLCare Synthetic Assurance Lab/i).first()).toBeVisible();
+    await page.goto("/admin");
     await expect(page.getByRole("heading", { name: /Admin \/ MLE Dashboard/i })).toBeVisible();
     await expect(page.getByText(/RAG|MLE|Guardrails/i).first()).toBeVisible();
   });
 
   test("admin system health section loads", async ({ page }) => {
-    await signIn(page, "admin", "admin-demo", /\/admin/);
+    await signIn(page, "admin", "admin-demo", /\/workspace/);
     await page.goto("/admin/health");
     await expect(page.getByRole("heading", { name: /Admin \/ MLE Dashboard/i })).toBeVisible();
     await expect(page.getByText(/System Health/i).first()).toBeVisible({ timeout: 30_000 });
@@ -122,7 +124,7 @@ test.describe("role-aware smoke flows", () => {
   });
 
   test("admin RAG hardening cards render", async ({ page }) => {
-    await signIn(page, "admin", "admin-demo", /\/admin/);
+    await signIn(page, "admin", "admin-demo", /\/workspace/);
     await page.goto("/admin/rag");
     await expect(page.getByRole("heading", { name: /Live-Agent RAG Eval/i })).toBeVisible({ timeout: 90_000 });
     await expect(page.getByRole("heading", { name: /Claim-Level Citation Eval/i })).toBeVisible();
@@ -287,7 +289,7 @@ test.describe("role-aware smoke flows", () => {
   });
 
   test("admin safety eval card carries n-size, clinical_validation:false, and the warn-tinted needs_attention path", async ({ page }) => {
-    await signIn(page, "admin", "admin-demo", /\/admin/);
+    await signIn(page, "admin", "admin-demo", /\/workspace/);
     await page.goto("/admin/safety");
     // The eval integrity strip must show its credibility keys — these are the
     // honest accounting bits a reviewer needs without opening the artifact.

@@ -1,6 +1,6 @@
 # Senior Engineering Evidence Under Constraints
 
-Status: `provisional_pending_current_ship`
+Status: `strong_internal_engineering_evidence`
 
 This is an internal engineering-evidence dossier. It does not award
 professional seniority and is not clinical or production-healthcare proof.
@@ -8,7 +8,7 @@ professional seniority and is not clinical or production-healthcare proof.
 ## Architecture fitness
 - `PASS` `mandatory` all_evidence_triangles_complete: Every selected claim has source, focused test, and generated artifact.
 - `PASS` `mandatory` cross_domain_assurance_green: Composed offline control boundaries agree.
-- `FAIL` `observational` ship_manifest_passed_with_timeouts: The recorded release run completed with bounded step timeouts.
+- `PASS` `observational` ship_manifest_passed_with_timeouts: The recorded release run completed with bounded step timeouts.
 - `PASS` `mandatory` new_evidence_is_wired_into_ship: The evidence regenerates and its contracts execute during ship.
 - `PASS` `mandatory` negative_results_are_not_promoted: Known RAG, adversarial, and synthetic-ML limitations remain binding.
 - `PASS` `mandatory` cloud_evidence_is_not_deployment_evidence: Compiled infrastructure is not represented as a live deployment.

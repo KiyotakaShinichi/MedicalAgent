@@ -1,6 +1,6 @@
 {
   "schema_version": "research_paper_kb_audit_v2",
-  "generated_at": "2026-08-09T12:05:51.377807+00:00",
+  "generated_at": "2026-08-11T07:25:11.742475+00:00",
   "status": "acceptable_narrow_internal_corpus",
   "clinical_validation": false,
   "independent_literature_review": false,
@@ -9,7 +9,7 @@
     "manifest_pmcid_count": 21,
     "covered_manifest_pmcid_count": 21,
     "manifest_to_chunk_coverage": 1.0,
-    "owned_research_chunk_count": 711,
+    "owned_research_chunk_count": 775,
     "false_pmcid_identity_chunk_count": 0,
     "duplicate_manifest_pmcid_count": 0,
     "case_expected_paper_coverage": 1.0,
@@ -47,14 +47,14 @@
     {
       "pmcid": "PMC3609956",
       "title": "The role of MRI in assessing residual disease and pCR after neoadjuvant chemotherapy",
-      "chunk_count": 27,
+      "chunk_count": 29,
       "sections": {
         "abstract": 1,
-        "methods": 1,
-        "results": 13,
-        "conclusions": 1,
+        "methods": 8,
+        "results": 2,
+        "conclusion": 1,
         "introduction": 2,
-        "materials and methods": 2,
+        "body": 8,
         "discussion": 7
       },
       "landing_url_https": true,
@@ -73,11 +73,11 @@
     {
       "pmcid": "PMC6702160",
       "title": "Early treatment response prediction using DCE-MRI tumor heterogeneity changes",
-      "chunk_count": 23,
+      "chunk_count": 24,
       "sections": {
         "abstract": 1,
         "introduction": 2,
-        "methods": 9,
+        "methods": 10,
         "results": 6,
         "discussion": 5
       },
@@ -97,13 +97,14 @@
     {
       "pmcid": "PMC5500247",
       "title": "DCE-MRI texture features for early breast cancer therapy response prediction",
-      "chunk_count": 23,
+      "chunk_count": 34,
       "sections": {
         "abstract": 1,
         "introduction": 3,
-        "materials and methods": 10,
+        "methods": 10,
         "results": 4,
-        "discussion": 5
+        "discussion": 5,
+        "body": 11
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -123,13 +124,12 @@
       "title": "Occurrence and risk factors of chemotherapy-induced neutropenia in breast cancer",
       "chunk_count": 26,
       "sections": {
-        "background": 1,
-        "methods": 5,
-        "results": 8,
-        "conclusions": 1,
-        "introduction": 3,
-        "discussion": 7,
-        "conclusion": 1
+        "introduction": 4,
+        "methods": 3,
+        "results": 4,
+        "conclusion": 2,
+        "body": 6,
+        "discussion": 7
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -147,13 +147,14 @@
     {
       "pmcid": "PMC6180804",
       "title": "Primary febrile neutropenia prophylaxis for FEC-D chemotherapy in breast cancer",
-      "chunk_count": 17,
+      "chunk_count": 18,
       "sections": {
         "abstract": 1,
-        "methods": 4,
-        "results": 5,
+        "methods": 2,
+        "results": 4,
         "conclusion": 1,
         "introduction": 2,
+        "body": 4,
         "discussion": 4
       },
       "landing_url_https": true,
@@ -172,10 +173,11 @@
     {
       "pmcid": "PMC3987093",
       "title": "Patterns of chemotherapy-associated toxicity and supportive care in oncology practice",
-      "chunk_count": 16,
+      "chunk_count": 17,
       "sections": {
         "abstract": 1,
-        "introduction": 5,
+        "introduction": 2,
+        "methods": 4,
         "results": 6,
         "discussion": 4
       },
@@ -195,11 +197,12 @@
     {
       "pmcid": "PMC4998558",
       "title": "Prognostic value of chemotherapy-induced neutropenia at first cycle in invasive breast cancer",
-      "chunk_count": 15,
+      "chunk_count": 17,
       "sections": {
         "abstract": 1,
         "introduction": 1,
         "methods": 3,
+        "body": 2,
         "results": 4,
         "discussion": 6
       },
@@ -219,10 +222,11 @@
     {
       "pmcid": "PMC2846279",
       "title": "Prophylaxis of chemotherapy-induced febrile neutropenia with G-CSF",
-      "chunk_count": 19,
+      "chunk_count": 20,
       "sections": {
         "abstract": 1,
-        "introduction": 18
+        "introduction": 5,
+        "body": 14
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -244,7 +248,7 @@
       "sections": {
         "abstract": 1,
         "introduction": 2,
-        "patients and methods": 4,
+        "methods": 4,
         "results": 4,
         "discussion": 8
       },
@@ -264,13 +268,15 @@
     {
       "pmcid": "PMC11400212",
       "title": "Essential components of an electronic patient-reported symptom monitoring and management system",
-      "chunk_count": 49,
+      "chunk_count": 56,
       "sections": {
-        "results": 16,
+        "abstract": 1,
+        "results": 22,
         "introduction": 8,
-        "methods": 20,
+        "methods": 10,
+        "body": 10,
         "discussion": 4,
-        "conclusions": 1
+        "conclusion": 1
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -292,8 +298,8 @@
       "sections": {
         "abstract": 2,
         "introduction": 1,
-        "methods": 38,
-        "results": 19
+        "methods": 55,
+        "results": 2
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -311,14 +317,14 @@
     {
       "pmcid": "PMC9158111",
       "title": "Variants of uncertain significance and reclassification in hereditary cancer testing",
-      "chunk_count": 44,
+      "chunk_count": 45,
       "sections": {
-        "background": 1,
+        "introduction": 7,
         "methods": 23,
         "results": 1,
         "conclusion": 6,
-        "introduction": 6,
-        "discussion": 7
+        "discussion": 7,
+        "body": 1
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -336,10 +342,11 @@
     {
       "pmcid": "PMC7055088",
       "title": "Variants of uncertain significance in the era of high-throughput genome sequencing",
-      "chunk_count": 64,
+      "chunk_count": 67,
       "sections": {
-        "background": 62,
-        "conclusions": 2
+        "introduction": 62,
+        "conclusion": 2,
+        "body": 3
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -377,9 +384,13 @@
     {
       "pmcid": "PMC10163167",
       "title": "Anxiety and depression in adult cancer patients: ESMO clinical practice guideline",
-      "chunk_count": 26,
+      "chunk_count": 35,
       "sections": {
-        "introduction": 26
+        "abstract": 1,
+        "introduction": 1,
+        "body": 28,
+        "conclusion": 3,
+        "methods": 2
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -417,14 +428,14 @@
     {
       "pmcid": "PMC11211959",
       "title": "Remote monitoring app for endocrine therapy adherence among patients with early-stage breast cancer",
-      "chunk_count": 20,
+      "chunk_count": 22,
       "sections": {
-        "abstract": 1,
-        "results": 5,
+        "abstract": 2,
+        "results": 6,
         "introduction": 2,
         "methods": 7,
         "discussion": 4,
-        "conclusions": 1
+        "conclusion": 1
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -444,13 +455,11 @@
       "title": "Communication and handling of symptomatic adverse events during adjuvant breast cancer chemotherapy",
       "chunk_count": 21,
       "sections": {
-        "background": 1,
+        "introduction": 3,
         "methods": 4,
         "results": 7,
-        "conclusions": 2,
-        "introduction": 2,
-        "discussion": 4,
-        "conclusion": 1
+        "conclusion": 3,
+        "discussion": 4
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -468,10 +477,11 @@
     {
       "pmcid": "PMC12232703",
       "title": "Herb-drug interactions in oncology",
-      "chunk_count": 142,
+      "chunk_count": 156,
       "sections": {
         "introduction": 140,
-        "conclusion": 2
+        "conclusion": 2,
+        "body": 14
       },
       "landing_url_https": true,
       "source_file_present": true,
@@ -493,7 +503,7 @@
       "sections": {
         "abstract": 1,
         "results": 7,
-        "conclusions": 1,
+        "conclusion": 1,
         "introduction": 2,
         "methods": 4,
         "discussion": 5
@@ -514,13 +524,15 @@
     {
       "pmcid": "PMC12053558",
       "title": "Web-based cancer symptom self-management system: a randomized clinical trial",
-      "chunk_count": 55,
+      "chunk_count": 64,
       "sections": {
-        "results": 19,
+        "abstract": 1,
+        "results": 24,
         "introduction": 8,
         "methods": 20,
         "discussion": 7,
-        "conclusions": 1
+        "conclusion": 1,
+        "body": 3
       },
       "landing_url_https": true,
       "source_file_present": true,

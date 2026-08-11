@@ -1,9 +1,9 @@
 {
   "schema_version": "deployment_profile_matrix_v1",
-  "generated_at": "2026-08-11T03:20:36.285767+00:00",
+  "generated_at": "2026-08-11T07:20:52.967316+00:00",
   "status": "strong",
   "active_profile": {
-    "profile": "synthetic_staging",
+    "profile": "development",
     "status": "development_profile",
     "strict_profile": false,
     "deployment_capability": "local_or_controlled_demo_only",

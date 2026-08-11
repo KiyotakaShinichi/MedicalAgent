@@ -29,6 +29,8 @@ ARTIFACTS = {
     "saas": "Data/evals/ops/latest_saas_foundation_readiness.json",
     "eval_run": "Data/evals/governance/latest_nlcare_eval_run.json",
     "ai_trinity": "Data/evals/governance/latest_ai_trinity_tradeoff.json",
+    "citation_selector": "Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json",
+    "provider_probe": "Data/evals/ops/latest_provider_api_path_capture.json",
 }
 BOUNDARY = (
     "NLCare remains synthetic-only, non-diagnostic, not clinically validated, and not production healthcare ready. "
@@ -284,6 +286,8 @@ def _final(data: dict[str, dict[str, Any]]) -> str:
     review = data["review"]
     saas = data["saas"]
     trinity = data["ai_trinity"]
+    selector = data["citation_selector"]
+    provider_probe = data["provider_probe"]
     lines = _header("NLCare Next-Generation Engineering Evidence Report")
     sections = [
         ("1. Executive summary", "NLCare is a strong portfolio-grade healthcare AI engineering prototype with unusually explicit safety, retrieval, MLE, security, and governance evidence. Its strongest new contribution is a reproducible evidence program that preserves negative results. It remains far from a clinical product."),
@@ -299,15 +303,15 @@ def _final(data: dict[str, dict[str, Any]]) -> str:
         ("11. Failure attribution", f"Largest unique case-stage bucket: `{_get(data['failure'], 'engineering_decision.largest_observed_bucket')}`."),
         ("12. Corpus-poisoning results", f"Status: `{data['poison'].get('status', 'NOT_RUN')}`. Generation-context poison rate: `{data['poison'].get('generation_context_poison_rate', _get(data['poison'], 'metrics.generation_context_poison_rate'))}`."),
         ("13. Tenant-isolation results", f"Status: `{data['tenant'].get('status', 'NOT_RUN')}`. No result is a penetration-test claim."),
-        ("14. Runtime performance and AI Trinity", f"Planner load status: `{data['load'].get('status', 'NOT_RUN')}`. AI Trinity decision: `{trinity.get('decision', 'NOT_RUN')}` with accuracy `{_get(trinity, 'summary.accuracy_status')}`, latency `{_get(trinity, 'summary.latency_status')}`, and unit cost `{_get(trinity, 'summary.unit_cost_status')}`. Missing provider telemetry is not treated as zero cost. These are internal measurements, not a production SLO."),
+        ("14. Runtime performance and AI Trinity", f"Planner load status: `{data['load'].get('status', 'NOT_RUN')}`. AI Trinity decision: `{trinity.get('decision', 'NOT_RUN')}` with accuracy `{_get(trinity, 'summary.accuracy_status')}`, latency `{_get(trinity, 'summary.latency_status')}`, and unit cost `{_get(trinity, 'summary.unit_cost_status')}`. Normal-API provider probe: `{provider_probe.get('status', 'NOT_RUN')}` with coverage `{provider_probe.get('provider_usage_coverage_rate', 'NOT_RUN')}`. Missing provider telemetry is not treated as zero cost. These are internal measurements, not a production SLO."),
         ("15. Chaos/reliability results", f"Automation fault status: `{data['automation'].get('status', 'NOT_RUN')}`; RAG degradation status: `{data['rag_resilience'].get('status', 'NOT_RUN')}`."),
         ("16. Human-review status", f"Feedback ingestion status: `{review.get('status', 'BLOCKED_EXTERNAL')}`; accepted rows: `{review.get('accepted_feedback_row_count', 0)}`. No clinician sign-off is implied."),
         ("17. Deployment status", f"Synthetic SaaS foundation: `{saas.get('status', 'NOT_RUN')}`. Managed deployment completed: `{saas.get('managed_cloud_deployment_completed', False)}`."),
         ("18. Test/release evidence", "The final verification section must be read with the latest ship and release-gate artifacts. A green engineering gate does not establish clinical readiness."),
-        ("19. Negative results", "Full-stack raw retrieval superiority remains unproven, the prior citation pruner regressed precision, v7 generalization was weak, provider token coverage is incomplete, and external review is absent."),
+        ("19. Negative results", f"Full-stack raw retrieval superiority remains unproven, the prior citation pruner regressed precision, and the frozen claim-conditioned selector changed citation precision from `{selector.get('baseline_top3_citation_precision', 'NOT_RUN')}` to `{selector.get('selector_citation_precision', 'NOT_RUN')}` with promotion `{selector.get('promotion_decision', 'NOT_RUN')}`. V7 generalization was weak, provider token coverage is incomplete, and external review is absent."),
         ("20. Remaining weaknesses", "Independent evaluation, clinician/genetics review, real-data validity, managed outage/restore drills, provider cost telemetry, and human-factors testing remain the main credibility gaps."),
         ("21. External blockers", "External authors/reviewers, managed cloud credentials, real traffic, restricted datasets, institutional governance, and any future IRB pathway are outside this repository pass."),
-        ("22. Promotion decisions", "Promote the dataset-integrity gate, operation authorization, context-integrity sanitizer, tenant relation checks, and controlled security regressions. Promote section-aware retrieval only if the artifact's predeclared conditions pass. Do not promote clinical authority, dense serving by appearance, or the negative citation pruner."),
+        ("22. Promotion decisions", "Promote the dataset-integrity gate, operation authorization, context-integrity sanitizer, tenant relation checks, and controlled security regressions. Promote section-aware retrieval only if the artifact's predeclared conditions pass. Do not promote clinical authority, dense serving by appearance, the negative citation pruner, or the negative claim-conditioned selector."),
         ("23. Next highest-value task", "Complete one independently authored no-read RAG/adversarial evaluation and one qualified reviewer packet. Inside the repo, next run the same fixed suites in managed synthetic staging with traceable provider usage and backup/restore drills."),
     ]
     for title, body in sections:

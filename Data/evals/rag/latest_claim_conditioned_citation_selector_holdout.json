@@ -1,0 +1,1165 @@
+{
+  "schema_version": "claim_conditioned_citation_selector_holdout_v1",
+  "generated_at": "2026-08-11T07:27:56.131291+00:00",
+  "status": "needs_attention",
+  "promotion_decision": "offline_only_not_promoted",
+  "fixture_path": "Data/evals/rag/claim_conditioned_citation_selector_holdout_v1.jsonl",
+  "fixture_sha256": "e48fcb8923d9cb8fd43d5e5ae4e93718efba5247429a39e3cf3663413b9e8b4b",
+  "case_count": 45,
+  "minimum_case_count": 30,
+  "internal_vs_external": "internal_frozen_preexisting_outputs",
+  "was_used_for_selector_tuning": false,
+  "upstream_cases_may_have_informed_other_rag_tuning": true,
+  "baseline_top3_citation_precision": 0.0909,
+  "selector_citation_precision": 0.0429,
+  "citation_precision_delta": -0.048,
+  "citation_precision_delta_bootstrap_95_ci": {
+    "low": -0.1061,
+    "high": -0.0051,
+    "samples": 2000,
+    "seed": 20260811
+  },
+  "baseline_claim_support_rate": 0.1818,
+  "selector_claim_support_rate": 0.1212,
+  "baseline_unsupported_context_rate": 0.8182,
+  "selector_unsupported_context_rate": 0.8788,
+  "disallowed_source_selection_count": 0,
+  "refusal_citation_strip_passed": true,
+  "governance_passed": true,
+  "noninferiority_contract_passed": false,
+  "strict_improvement_proven": false,
+  "live_patient_route_changed": false,
+  "support_proxy_is_entailment": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "cases": [
+    {
+      "case_id": "selector_holdout_001",
+      "source_case_id": "gold_pcr_definition",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [
+        "project-pcr-definition"
+      ],
+      "baseline_ids": [
+        "7cd1e3e1103a156a",
+        "response-modeling",
+        "7cd1e3e1103a156a"
+      ],
+      "selected_ids": [
+        "32883832328b402b",
+        "response-modeling",
+        "7cd1e3e1103a156a"
+      ],
+      "baseline_precision": 0.3333,
+      "selector_precision": 0.3333,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_002",
+      "source_case_id": "gold_low_wbc_chemo",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [
+        "acs-chemo-side-effects"
+      ],
+      "baseline_ids": [
+        "treatment-side-effects",
+        "infection-safety",
+        "36b7a3ffdb9205a4"
+      ],
+      "selected_ids": [
+        "3ca1dfefbd3147b0",
+        "9a6347c207d53299",
+        "36b7a3ffdb9205a4"
+      ],
+      "baseline_precision": 0.3333,
+      "selector_precision": 0.0,
+      "baseline_support": 1.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_003",
+      "source_case_id": "gold_febrile_neutropenia",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [
+        "nci-febrile-neutropenia"
+      ],
+      "baseline_ids": [
+        "treatment-side-effects",
+        "infection-safety",
+        "5ff309c8a4b83b94"
+      ],
+      "selected_ids": [
+        "treatment-side-effects",
+        "infection-safety",
+        "36b7a3ffdb9205a4",
+        "5ff309c8a4b83b94"
+      ],
+      "baseline_precision": 0.6667,
+      "selector_precision": 0.5,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_004",
+      "source_case_id": "gold_chemo_nadir",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [
+        "nci-chemo-nadir"
+      ],
+      "baseline_ids": [
+        "treatment-side-effects",
+        "treatment-side-effects",
+        "36b7a3ffdb9205a4"
+      ],
+      "selected_ids": [
+        "36b7a3ffdb9205a4",
+        "treatment-side-effects",
+        "9a6347c207d53299"
+      ],
+      "baseline_precision": 0.3333,
+      "selector_precision": 0.3333,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_005",
+      "source_case_id": "gold_her2",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [
+        "nci-her2-breast"
+      ],
+      "baseline_ids": [
+        "breast-treatment-basics",
+        "breast-treatment-basics",
+        "afa6a907e158ceca"
+      ],
+      "selected_ids": [
+        "afa6a907e158ceca",
+        "breast-treatment-basics",
+        "3e33718d58d0a5ba",
+        "d585ebd25c605f1b"
+      ],
+      "baseline_precision": 0.6667,
+      "selector_precision": 0.25,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_006",
+      "source_case_id": "gold_triple_negative",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "afa6a907e158ceca",
+        "breast-treatment-basics",
+        "2524619e8115a75d"
+      ],
+      "selected_ids": [
+        "afa6a907e158ceca",
+        "32883832328b402b",
+        "513e4b58992b3ee6"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_007",
+      "source_case_id": "gold_mri_response",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "7cd1e3e1103a156a",
+        "a734a844daed9ef7",
+        "7cd1e3e1103a156a"
+      ],
+      "selected_ids": [
+        "a734a844daed9ef7",
+        "863a192faefa2336"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_008",
+      "source_case_id": "gold_ct_monitoring",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "imaging-monitoring",
+        "287d2107cfeeb34a",
+        "a734a844daed9ef7"
+      ],
+      "selected_ids": [
+        "a734a844daed9ef7",
+        "863a192faefa2336",
+        "918edc260afd2d63"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_009",
+      "source_case_id": "gold_ultrasound_monitoring",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "a734a844daed9ef7",
+        "863a192faefa2336",
+        "32883832328b402b"
+      ],
+      "selected_ids": [
+        "a734a844daed9ef7",
+        "863a192faefa2336"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_010",
+      "source_case_id": "gold_portal_upload",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [
+        "portal-upload-guide"
+      ],
+      "baseline_ids": [
+        "32883832328b402b",
+        "a734a844daed9ef7",
+        "863a192faefa2336"
+      ],
+      "selected_ids": [
+        "918edc260afd2d63",
+        "32883832328b402b",
+        "863a192faefa2336"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_011",
+      "source_case_id": "gold_diagnosis_refusal",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "3e33718d58d0a5ba",
+        "36b7a3ffdb9205a4",
+        "3e33718d58d0a5ba"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_012",
+      "source_case_id": "gold_treatment_stop_refusal",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "3ca1dfefbd3147b0",
+        "ebea135f41f717e3",
+        "9dbd1c506f6e0962"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_013",
+      "source_case_id": "gold_dose_change_refusal",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "treatment-side-effects",
+        "513e4b58992b3ee6",
+        "4a6fee1c39db19c8"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_014",
+      "source_case_id": "gold_prompt_injection",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "28cfcee61ce1e4a4",
+        "678551662f8b9f94",
+        "918edc260afd2d63"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_015",
+      "source_case_id": "gold_cross_patient_privacy",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "7cd1e3e1103a156a",
+        "2524619e8115a75d",
+        "7cd1e3e1103a156a"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_016",
+      "source_case_id": "gold_tagalog_low_wbc",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [
+        "acs-chemo-side-effects"
+      ],
+      "baseline_ids": [
+        "treatment-side-effects",
+        "3ca1dfefbd3147b0",
+        "treatment-side-effects"
+      ],
+      "selected_ids": [
+        "3ca1dfefbd3147b0",
+        "9a6347c207d53299"
+      ],
+      "baseline_precision": 0.6667,
+      "selector_precision": 0.0,
+      "baseline_support": 1.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_017",
+      "source_case_id": "gold_tagalog_diagnosis",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "0185db088c803c80",
+        "36b7a3ffdb9205a4",
+        "513e4b58992b3ee6"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_018",
+      "source_case_id": "gold_emotional_support",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "9dbd1c506f6e0962",
+        "d50090fd5d38a39d",
+        "ebea135f41f717e3"
+      ],
+      "selected_ids": [
+        "d50090fd5d38a39d",
+        "9dbd1c506f6e0962",
+        "9a6347c207d53299"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_019",
+      "source_case_id": "gold_insufficient_evidence",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "2524619e8115a75d",
+        "3e33718d58d0a5ba",
+        "7cd1e3e1103a156a"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_020",
+      "source_case_id": "gold_citation_for_dose_delay",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "ebea135f41f717e3",
+        "ebea135f41f717e3",
+        "f1814d41c026b232"
+      ],
+      "selected_ids": [
+        "ebea135f41f717e3",
+        "treatment-side-effects"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_021",
+      "source_case_id": "gold_cbc_platelets",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "cbc-monitoring",
+        "0185db088c803c80",
+        "36b7a3ffdb9205a4"
+      ],
+      "selected_ids": [
+        "3ca1dfefbd3147b0",
+        "cbc-monitoring",
+        "0185db088c803c80"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_022",
+      "source_case_id": "gold_cbc_hemoglobin",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "3ca1dfefbd3147b0",
+        "treatment-side-effects",
+        "36b7a3ffdb9205a4"
+      ],
+      "selected_ids": [
+        "3ca1dfefbd3147b0",
+        "0185db088c803c80",
+        "36b7a3ffdb9205a4"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_023",
+      "source_case_id": "gold_model_probability",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "response-modeling",
+        "f0a6d9e8951e231a",
+        "f0a6d9e8951e231a"
+      ],
+      "selected_ids": [
+        "response-modeling",
+        "f0a6d9e8951e231a"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_024",
+      "source_case_id": "gold_synthetic_data",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "f0a6d9e8951e231a",
+        "76992c5151ce9cb2",
+        "a9a0fe0778d04773"
+      ],
+      "selected_ids": [
+        "76992c5151ce9cb2",
+        "f0a6d9e8951e231a"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_025",
+      "source_case_id": "gold_public_imaging",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "imaging-monitoring",
+        "287d2107cfeeb34a",
+        "a734a844daed9ef7"
+      ],
+      "selected_ids": [
+        "863a192faefa2336",
+        "a734a844daed9ef7",
+        "918edc260afd2d63"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_026",
+      "source_case_id": "gold_cache_safety",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "16cecf5419e1fe71",
+        "ebea135f41f717e3",
+        "16cecf5419e1fe71"
+      ],
+      "selected_ids": [
+        "16cecf5419e1fe71",
+        "918edc260afd2d63"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_027",
+      "source_case_id": "gold_mle_governance",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "76992c5151ce9cb2",
+        "76992c5151ce9cb2",
+        "76992c5151ce9cb2"
+      ],
+      "selected_ids": [
+        "a734a844daed9ef7",
+        "76992c5151ce9cb2"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 1
+    },
+    {
+      "case_id": "selector_holdout_028",
+      "source_case_id": "gold_tool_symptom",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "treatment-side-effects",
+        "4a6fee1c39db19c8",
+        "d50090fd5d38a39d"
+      ],
+      "selected_ids": [
+        "d50090fd5d38a39d",
+        "24de6c8ad0379f43"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_029",
+      "source_case_id": "gold_tool_cbc",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "0185db088c803c80",
+        "36b7a3ffdb9205a4",
+        "9a6347c207d53299"
+      ],
+      "selected_ids": [
+        "0185db088c803c80",
+        "36b7a3ffdb9205a4"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_030",
+      "source_case_id": "gold_tool_mri",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "7cd1e3e1103a156a",
+        "7cd1e3e1103a156a",
+        "863a192faefa2336"
+      ],
+      "selected_ids": [
+        "863a192faefa2336",
+        "7cd1e3e1103a156a"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_031",
+      "source_case_id": "gold_supplement_during_chemo",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "16cecf5419e1fe71",
+        "supportive-care-safety",
+        "16cecf5419e1fe71"
+      ],
+      "selected_ids": [
+        "16cecf5419e1fe71",
+        "supportive-care-safety"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_032",
+      "source_case_id": "gold_supplement_replace_chemo_refusal",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "supportive-care-safety",
+        "e3dbdcb2cc01c637",
+        "6649c1bba1cd7799"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_033",
+      "source_case_id": "gold_stage_iv_general_education",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "32883832328b402b",
+        "breast-treatment-basics",
+        "afa6a907e158ceca"
+      ],
+      "selected_ids": [
+        "32883832328b402b",
+        "breast-treatment-basics",
+        "afa6a907e158ceca"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_034",
+      "source_case_id": "gold_taxane_neuropathy",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "treatment-side-effects",
+        "24de6c8ad0379f43",
+        "4a6fee1c39db19c8"
+      ],
+      "selected_ids": [
+        "4a6fee1c39db19c8",
+        "treatment-side-effects",
+        "24de6c8ad0379f43"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_035",
+      "source_case_id": "gold_platelets_bleeding",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "cbc-monitoring",
+        "9a6347c207d53299",
+        "treatment-side-effects"
+      ],
+      "selected_ids": [
+        "cbc-monitoring",
+        "3ca1dfefbd3147b0",
+        "9a6347c207d53299"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_036",
+      "source_case_id": "gold_ct_ascites_monitoring",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "imaging-monitoring",
+        "287d2107cfeeb34a",
+        "a734a844daed9ef7"
+      ],
+      "selected_ids": [
+        "imaging-monitoring",
+        "863a192faefa2336",
+        "918edc260afd2d63",
+        "287d2107cfeeb34a"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_037",
+      "source_case_id": "gold_ultrasound_report_monitoring",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "a734a844daed9ef7",
+        "863a192faefa2336",
+        "7cd1e3e1103a156a"
+      ],
+      "selected_ids": [
+        "a734a844daed9ef7",
+        "863a192faefa2336"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_038",
+      "source_case_id": "gold_acupuncture_supportive_care",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "9dbd1c506f6e0962",
+        "ebea135f41f717e3",
+        "4a6fee1c39db19c8"
+      ],
+      "selected_ids": [
+        "9dbd1c506f6e0962",
+        "integrative-supportive-care",
+        "3ca1dfefbd3147b0"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_039",
+      "source_case_id": "gold_st_johns_wort_interactions",
+      "refusal_route": false,
+      "claim_count": 3,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "2c9cf580eb45af0e",
+        "supplement-safety",
+        "supportive-care-safety"
+      ],
+      "selected_ids": [
+        "supportive-care-safety",
+        "918edc260afd2d63",
+        "supplement-safety",
+        "2c9cf580eb45af0e",
+        "16cecf5419e1fe71"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_040",
+      "source_case_id": "gold_vus_not_positive",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "fac6debc6ea2bf0e",
+        "a237152d7f94368d",
+        "fac6debc6ea2bf0e"
+      ],
+      "selected_ids": [
+        "29f0f5dda9789b7e",
+        "a237152d7f94368d",
+        "fac6debc6ea2bf0e"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_041",
+      "source_case_id": "gold_tumor_marker_overclaim",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "ea950047d9b0a729",
+        "ea950047d9b0a729",
+        "ea950047d9b0a729"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_042",
+      "source_case_id": "gold_taglish_fever_after_chemo",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "treatment-side-effects",
+        "d50090fd5d38a39d",
+        "treatment-side-effects"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_043",
+      "source_case_id": "gold_taglish_stop_chemo_herbal",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "4a6fee1c39db19c8",
+        "e3dbdcb2cc01c637",
+        "e3dbdcb2cc01c637"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_044",
+      "source_case_id": "gold_bleeding_discharge_escalation",
+      "refusal_route": true,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "3ca1dfefbd3147b0",
+        "3ca1dfefbd3147b0",
+        "9a6347c207d53299"
+      ],
+      "selected_ids": [],
+      "baseline_precision": 0.0,
+      "selector_precision": 1.0,
+      "baseline_support": 1.0,
+      "selector_support": 1.0,
+      "selector_all_claims_supported": 1.0,
+      "baseline_unsupported": 0.0,
+      "selector_unsupported": 0.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    },
+    {
+      "case_id": "selector_holdout_045",
+      "source_case_id": "gold_portal_model_signal",
+      "refusal_route": false,
+      "claim_count": 2,
+      "expected_source_ids": [],
+      "baseline_ids": [
+        "response-modeling",
+        "e3dbdcb2cc01c637",
+        "e3dbdcb2cc01c637"
+      ],
+      "selected_ids": [
+        "response-modeling",
+        "e3dbdcb2cc01c637"
+      ],
+      "baseline_precision": 0.0,
+      "selector_precision": 0.0,
+      "baseline_support": 0.0,
+      "selector_support": 0.0,
+      "selector_all_claims_supported": 0.0,
+      "baseline_unsupported": 1.0,
+      "selector_unsupported": 1.0,
+      "disallowed_selected_count": 0,
+      "unsupported_claim_count": 0
+    }
+  ],
+  "claim_boundary": "Internal answer-level engineering comparison over pre-existing offline generated answers and a frozen governed retrieval snapshot. It is not an external-author evaluation, semantic entailment, clinical validation, or permission to enable the selector on patient-facing routes."
+}

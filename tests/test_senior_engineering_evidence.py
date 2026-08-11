@@ -2,6 +2,7 @@ import pytest
 
 from backend.services.senior_engineering_evidence import (
     EVIDENCE_TRIANGLES,
+    _ship_manifest_passed_with_timeouts,
     build_senior_engineering_evidence,
 )
 
@@ -65,3 +66,24 @@ def test_senior_evidence_preserves_negative_findings(senior_evidence_report):
     assert negative["cloud_deployment_completed"] is False
     assert negative["independent_review_completed"] is False
     assert negative["frozen_adversarial_v6_pass_rate"] < 1.0
+
+
+def test_resumed_cached_ship_steps_count_as_completed_evidence():
+    ship = {
+        "status": "passed",
+        "steps": [
+            {"status": "cached_pass", "timeout_seconds": 900},
+            {"status": "passed", "timeout_seconds": 300},
+        ],
+    }
+
+    assert _ship_manifest_passed_with_timeouts(ship) is True
+
+
+def test_nonpassing_or_unbounded_ship_step_is_rejected():
+    assert _ship_manifest_passed_with_timeouts(
+        {"status": "passed", "steps": [{"status": "failed", "timeout_seconds": 900}]}
+    ) is False
+    assert _ship_manifest_passed_with_timeouts(
+        {"status": "passed", "steps": [{"status": "passed", "timeout_seconds": 0}]}
+    ) is False

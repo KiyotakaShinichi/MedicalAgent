@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_feature_policy_v1",
-  "generated_at": "2026-08-09T12:09:53.155865+00:00",
+  "generated_at": "2026-08-11T07:28:12.734322+00:00",
   "status": "canonical_for_synthetic_promotion_evaluation",
   "policy_id": "synthetic_proxy_removed_promotion_v1",
   "clinical_validation": false,

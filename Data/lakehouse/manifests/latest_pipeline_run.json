@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_data_platform_pipeline_v1",
-  "generated_at": "2026-08-09T12:01:08.447765+00:00",
+  "generated_at": "2026-08-11T07:20:12.401177+00:00",
   "status": "strong",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -87,12 +87,12 @@
       "content_addressed": true
     },
     "silver": {
-      "record_count": 766,
+      "record_count": 831,
       "path": "Data/lakehouse/silver/knowledge_chunks.jsonl",
       "schema": "knowledge_chunk_silver_v1"
     },
     "gold": {
-      "record_count": 766,
+      "record_count": 831,
       "path": "Data/lakehouse/gold/vector_records.jsonl",
       "schema": "vector_record_gold_v1",
       "embedding_generated": false,
@@ -106,8 +106,8 @@
   "quality": {
     "hard_failures": 0,
     "source_count": 60,
-    "silver_record_count": 766,
-    "gold_record_count": 766,
+    "silver_record_count": 831,
+    "gold_record_count": 831,
     "quarantined_record_count": 0,
     "duplicate_source_content_count": 0,
     "duplicate_chunk_id_count": 0,
@@ -118,7 +118,7 @@
   },
   "lineage": {
     "path": "Data/lakehouse/lineage/latest_lineage.json",
-    "kb_fingerprint": "d35a91d74d69912e01f8037019fc4f75cf4fe11d4eb09444602eaff61fa555a2",
+    "kb_fingerprint": "6062006ed583ba062358d824ae77669408d6a3518eed1d2ee51a91de24f16cc4",
     "complete": true
   },
   "contracts": {

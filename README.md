@@ -56,6 +56,8 @@ See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple s
 ## Scale / cost optimization
 - The **AI Trinity** policy manages Accuracy, Latency, and Unit Cost as a non-compensatory gate: safety/source-governance and grounding floors must pass before faster or cheaper candidates can be promoted.
 - `python scripts/run_ai_trinity_tradeoff.py` exports `Data/evals/governance/latest_ai_trinity_tradeoff.json`, including the fixed-goldset candidate table, latency budgets, provider-usage completeness, planning-only route scenarios, Pareto diagnostics, and an explicit promotion decision.
+- A frozen 45-answer citation-selector holdout produced a negative result: citation precision fell from `0.0909` to `0.0429`; the selector remains offline and is not promoted or tuned on that fixture.
+- `python scripts/run_provider_api_path_capture.py` emits readiness without spending quota. Actual normal-API provider capture requires `--execute`, an explicit paid-probe opt-in, and provider credentials; missing usage remains unknown rather than zero cost.
 - Missing provider telemetry is reported as `blocked_evidence`, never as a measured `$0` unit cost. Character-derived tokens and pricing scenarios remain capacity-planning estimates.
 - Cost and latency telemetry is tracked as engineering observability, not clinical evidence.
 - `python scripts/run_cost_latency_report.py` exports `Data/evals/ops/latest_cost_latency_report.json` with provider-reported token usage when available, separately labelled estimates, pricing assumptions, cache behavior, sample-aware latency percentiles, and stage timing.

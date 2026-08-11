@@ -304,10 +304,10 @@ finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,sta
 finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,stale,needs_attention,stale,Data/evals/models/latest_finetune_governance.json,contamination_status,acceptable
 finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,stale,needs_attention,stale,Data/evals/models/latest_finetune_governance.json,promotion_decision,HOLD
 finetune_behavior_governance,Behavior-only fine-tuning governance,supporting,stale,needs_attention,stale,Data/evals/models/latest_finetune_governance.json,promotion_scope,offline_shadow_only
-mle_readiness,MLE readiness gate,critical,stale,unideal,stale,Data/mle_monitoring/latest_mle_readiness.json,hard_gate_status,passed
-mle_readiness,MLE readiness gate,critical,stale,unideal,stale,Data/mle_monitoring/latest_mle_readiness.json,release_recommendation,candidate_only_fix_calibration_or_slice_gaps_before_strong_claims
-mle_readiness,MLE readiness gate,critical,stale,unideal,stale,Data/mle_monitoring/latest_mle_readiness.json,safety_regression,unideal
-mle_readiness,MLE readiness gate,critical,stale,unideal,stale,Data/mle_monitoring/latest_mle_readiness.json,monitoring,acceptable
+mle_readiness,MLE readiness gate,critical,unideal,unideal,fresh,Data/mle_monitoring/latest_mle_readiness.json,hard_gate_status,passed
+mle_readiness,MLE readiness gate,critical,unideal,unideal,fresh,Data/mle_monitoring/latest_mle_readiness.json,release_recommendation,candidate_only_fix_calibration_or_slice_gaps_before_strong_claims
+mle_readiness,MLE readiness gate,critical,unideal,unideal,fresh,Data/mle_monitoring/latest_mle_readiness.json,safety_regression,unideal
+mle_readiness,MLE readiness gate,critical,unideal,unideal,fresh,Data/mle_monitoring/latest_mle_readiness.json,monitoring,acceptable
 mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,stale,acceptable,stale,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,hard_gate_status,passed
 mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,stale,acceptable,stale,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,release_recommendation,acceptable_for_poc_demo_with_limitations
 mle_readiness_realism_candidate,MLE readiness - realism candidate,supporting,stale,acceptable,stale,Data/mle_monitoring/latest_mle_readiness_realism_candidate.json,safety_regression,strong
@@ -372,7 +372,7 @@ failure_mode_registry,Consolidated failure-mode registry,supporting,stale,needs_
 failure_mode_registry,Consolidated failure-mode registry,supporting,stale,needs_attention,stale,Data/evals/safety/latest_failure_mode_registry.json,entries_with_unresolved_gap,15
 kb_source_governance,KB source governance (tier + allowed_use + staleness),supporting,strong,strong,fresh,Data/evals/rag/latest_kb_source_governance.json,status,strong
 kb_source_governance,KB source governance (tier + allowed_use + staleness),supporting,strong,strong,fresh,Data/evals/rag/latest_kb_source_governance.json,source_count,58
-kb_source_governance,KB source governance (tier + allowed_use + staleness),supporting,strong,strong,fresh,Data/evals/rag/latest_kb_source_governance.json,chunk_count,766
+kb_source_governance,KB source governance (tier + allowed_use + staleness),supporting,strong,strong,fresh,Data/evals/rag/latest_kb_source_governance.json,chunk_count,831
 kb_source_governance,KB source governance (tier + allowed_use + staleness),supporting,strong,strong,fresh,Data/evals/rag/latest_kb_source_governance.json,governance_issue_count,[]
 toxicity_feature_audit,Toxicity classifier feature-importance audit + no-proxy baseline,critical,stale,acceptable,stale,Data/evals/models/latest_toxicity_feature_audit.json,status,acceptable
 toxicity_feature_audit,Toxicity classifier feature-importance audit + no-proxy baseline,critical,stale,acceptable,stale,Data/evals/models/latest_toxicity_feature_audit.json,dominant_features,['intervention_count']
@@ -477,9 +477,9 @@ medical_safety_contract,Medical safety contract,critical,stale,strong,stale,Data
 system_health,System health,supporting,stale,needs_attention,stale,Data/evals/system/latest_system_health.json,status,needs_attention
 system_health,System health,supporting,stale,needs_attention,stale,Data/evals/system/latest_system_health.json,issue_count,"[{'area': 'artifact', 'severity': 'info', 'message': 'rag_eval is stale.'}, {'area': 'artifact', 'severity': 'info', 'message': 'safety_red_team is stale.'}]"
 event_taxonomy_manifest,Structured event taxonomy,supporting,stale,strong,stale,Data/evals/ops/latest_event_taxonomy_manifest.json,status,strong
-service_health_snapshot,PoC service health snapshot,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_service_health_snapshot.json,status,needs_attention
-service_health_snapshot,PoC service health snapshot,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_service_health_snapshot.json,stale_artifact_count,134
-service_health_snapshot,PoC service health snapshot,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_service_health_snapshot.json,failed_benchmark_count,0
+service_health_snapshot,PoC service health snapshot,supporting,stale,needs_attention,stale,Data/evals/ops/latest_service_health_snapshot.json,status,needs_attention
+service_health_snapshot,PoC service health snapshot,supporting,stale,needs_attention,stale,Data/evals/ops/latest_service_health_snapshot.json,stale_artifact_count,129
+service_health_snapshot,PoC service health snapshot,supporting,stale,needs_attention,stale,Data/evals/ops/latest_service_health_snapshot.json,failed_benchmark_count,0
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,status,strong_local_only
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,passed,True
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,content_hash_match,True
@@ -487,10 +487,10 @@ deployment_recovery_drill,Local synthetic backup and restore drill,supporting,st
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,postgres_restore_tested,False
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,multi_instance_restore_tested,False
 deployment_recovery_drill,Local synthetic backup and restore drill,supporting,stale,strong_local_only,stale,Data/evals/ops/latest_deployment_recovery_drill.json,healthcare_production_ready,False
-container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,stale,blocked_environment,stale,Data/evals/ops/latest_container_recovery_smoke.json,status,blocked_environment
-container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,stale,blocked_environment,stale,Data/evals/ops/latest_container_recovery_smoke.json,completed,False
-container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,stale,blocked_environment,stale,Data/evals/ops/latest_container_recovery_smoke.json,docker_available,False
-container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,stale,blocked_environment,stale,Data/evals/ops/latest_container_recovery_smoke.json,healthcare_production_ready,False
+container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,acceptable_local_container_smoke,acceptable_local_container_smoke,fresh,Data/evals/ops/latest_container_recovery_smoke.json,status,acceptable_local_container_smoke
+container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,acceptable_local_container_smoke,acceptable_local_container_smoke,fresh,Data/evals/ops/latest_container_recovery_smoke.json,completed,True
+container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,acceptable_local_container_smoke,acceptable_local_container_smoke,fresh,Data/evals/ops/latest_container_recovery_smoke.json,docker_available,True
+container_recovery_smoke,Disposable Postgres/Redis migration and recovery smoke,supporting,acceptable_local_container_smoke,acceptable_local_container_smoke,fresh,Data/evals/ops/latest_container_recovery_smoke.json,healthcare_production_ready,False
 trace_diagnostics_coverage,Per-turn trace diagnostics coverage,supporting,stale,needs_attention,stale,Data/evals/ops/latest_trace_diagnostics_coverage.json,status,needs_attention
 trace_diagnostics_coverage,Per-turn trace diagnostics coverage,supporting,stale,needs_attention,stale,Data/evals/ops/latest_trace_diagnostics_coverage.json,rows_checked,100
 trace_diagnostics_coverage,Per-turn trace diagnostics coverage,supporting,stale,needs_attention,stale,Data/evals/ops/latest_trace_diagnostics_coverage.json,rows_with_trace_diagnostics,50
@@ -499,17 +499,45 @@ trace_diagnostics_coverage,Per-turn trace diagnostics coverage,supporting,stale,
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,status,strong
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,request_count,500
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,latency_p50_ms,839.23
-cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,latency_p95_ms,3588.73
+cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,latency_p95_ms,3742.44
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,latency_sample_count,500
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,latency_percentile_credibility,stable_internal_sample
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,provider_reported_total_tokens,0
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,provider_usage_coverage_rate,0.0
-cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,estimated_pipeline_total_tokens,128535
+cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,estimated_pipeline_total_tokens,128469
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,estimated_total_cost_usd,0.0
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,cache_hit_rate,0.19
 cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,local_probe_stage_sample_count,708
-cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,normal_rag_probe_p95_ms,275.89
-cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,normal_rag_retrieval_p95_ms,141.46
+cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,normal_rag_probe_p95_ms,237.74
+cost_latency_report,Cost and latency observability,supporting,strong,strong,fresh,Data/evals/ops/latest_cost_latency_report.json,normal_rag_retrieval_p95_ms,144.75
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,decision,HOLD_ACCURACY_GROUNDING
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,promotion_allowed,False
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,accuracy_status,needs_attention
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,latency_status,pass
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,unit_cost_status,blocked_evidence
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,accuracy_grounding_score,0.71598
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,retrieval_p95_ms,307.365
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,cost_per_safe_supported_answer_usd,
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,provider_usage_coverage_rate,0.0
+ai_trinity_tradeoff,"AI Trinity: accuracy, latency, and unit cost",supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_ai_trinity_tradeoff.json,improvement_proven_vs_bm25,False
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,status,needs_attention
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,promotion_decision,offline_only_not_promoted
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,case_count,45
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,baseline_citation_precision,0.0909
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,selector_citation_precision,0.0429
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,citation_precision_delta,-0.048
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,baseline_claim_support_rate,0.1818
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,selector_claim_support_rate,0.1212
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,strict_improvement_proven,False
+claim_conditioned_citation_selector_holdout,Claim-conditioned citation selector frozen holdout,supporting,needs_attention,needs_attention,fresh,Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json,live_patient_route_changed,False
+provider_api_path_capture,Controlled normal-API provider usage capture,informational,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_api_path_capture.json,status,blocked_configuration
+provider_api_path_capture,Controlled normal-API provider usage capture,informational,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_api_path_capture.json,completed,False
+provider_api_path_capture,Controlled normal-API provider usage capture,informational,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_api_path_capture.json,request_count,0
+provider_api_path_capture,Controlled normal-API provider usage capture,informational,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_api_path_capture.json,provider_usage_coverage_rate,0.0
+provider_api_path_capture,Controlled normal-API provider usage capture,informational,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_api_path_capture.json,provider_reported_total_tokens,0
+provider_api_path_capture,Controlled normal-API provider usage capture,informational,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_api_path_capture.json,estimated_cost_usd,
+provider_api_path_capture,Controlled normal-API provider usage capture,informational,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_api_path_capture.json,content_retained,False
+provider_api_path_capture,Controlled normal-API provider usage capture,informational,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_api_path_capture.json,patient_data_processed,False
 runtime_quality_sentinel,Runtime quality sentinel,supporting,stale,needs_attention,stale,Data/evals/ops/latest_runtime_quality_sentinel.json,status,needs_attention
 runtime_quality_sentinel,Runtime quality sentinel,supporting,stale,needs_attention,stale,Data/evals/ops/latest_runtime_quality_sentinel.json,alert_count,1
 runtime_quality_sentinel,Runtime quality sentinel,supporting,stale,needs_attention,stale,Data/evals/ops/latest_runtime_quality_sentinel.json,unsafe_answer_rate,0.0
@@ -519,7 +547,7 @@ runtime_quality_sentinel,Runtime quality sentinel,supporting,stale,needs_attenti
 route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,status,acceptable
 route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,route_count,7
 route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,needs_attention_count,0
-route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,highest_observed_p95_ms,404.28
+route_latency_budget,Route latency budget,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_route_latency_budget.json,highest_observed_p95_ms,243.11
 latency_profile_phase2,Latency profile phase 2,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_latency_profile_phase2.json,status,acceptable
 latency_profile_phase2,Latency profile phase 2,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_latency_profile_phase2.json,normal_rag_previous_p95_ms,
 latency_profile_phase2,Latency profile phase 2,supporting,acceptable,acceptable,fresh,Data/evals/ops/latest_latency_profile_phase2.json,load_smoke_previous_p95_ms,
@@ -613,13 +641,13 @@ xai_retraining_stability,Synthetic XAI retraining stability,supporting,acceptabl
 xai_retraining_stability,Synthetic XAI retraining stability,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_retraining_stability.json,global_rank_correlation_p05,-1.0
 xai_retraining_stability,Synthetic XAI retraining stability,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_retraining_stability.json,local_top_k_jaccard_median,0.777778
 xai_retraining_stability,Synthetic XAI retraining stability,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_retraining_stability.json,clinical_validation,False
-xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_reliability_gate.json,status,needs_attention
-xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_reliability_gate.json,display_mode,grouped_factors_without_rank_claim
-xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_reliability_gate.json,show_grouped_factors,True
-xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_reliability_gate.json,ranked_feature_order_allowed,False
-xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_reliability_gate.json,show_numeric_shap_values,False
-xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_reliability_gate.json,clinical_validation,False
-xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_xai_reliability_gate.json,causal_interpretation_allowed,False
+xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_reliability_gate.json,status,acceptable
+xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_reliability_gate.json,display_mode,grouped_factors_without_rank_claim
+xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_reliability_gate.json,show_grouped_factors,True
+xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_reliability_gate.json,ranked_feature_order_allowed,False
+xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_reliability_gate.json,show_numeric_shap_values,False
+xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_reliability_gate.json,clinical_validation,False
+xai_reliability_gate,Fail-closed synthetic XAI presentation policy,supporting,acceptable,acceptable,fresh,Data/evals/models/latest_xai_reliability_gate.json,causal_interpretation_allowed,False
 agent_execution_policy,Bounded agent execution policy,supporting,strong,strong,fresh,Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json,status,strong
 agent_execution_policy,Bounded agent execution policy,supporting,strong,strong,fresh,Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json,pass_rate,1.0
 agent_execution_policy,Bounded agent execution policy,supporting,strong,strong,fresh,Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json,live_patient_write,False
@@ -628,9 +656,9 @@ rag_degradation_resilience,Local RAG degradation resilience,supporting,strong_of
 rag_degradation_resilience,Local RAG degradation resilience,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/rag/latest_rag_degradation_resilience.json,pass_rate,1.0
 rag_degradation_resilience,Local RAG degradation resilience,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/rag/latest_rag_degradation_resilience.json,managed_network_request,False
 rag_degradation_resilience,Local RAG degradation resilience,supporting,strong_offline_drill,strong_offline_drill,fresh,Data/evals/rag/latest_rag_degradation_resilience.json,production_recovery_proven,False
-automation_fault_injection,Automation queue and webhook fault injection,supporting,stale,strong,stale,Data/evals/ops/latest_automation_fault_injection.json,pass_rate,1.0
-automation_fault_injection,Automation queue and webhook fault injection,supporting,stale,strong,stale,Data/evals/ops/latest_automation_fault_injection.json,scenario_count,8
-automation_fault_injection,Automation queue and webhook fault injection,supporting,stale,strong,stale,Data/evals/ops/latest_automation_fault_injection.json,external_delivery,False
+automation_fault_injection,Automation queue and webhook fault injection,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_fault_injection.json,pass_rate,1.0
+automation_fault_injection,Automation queue and webhook fault injection,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_fault_injection.json,scenario_count,8
+automation_fault_injection,Automation queue and webhook fault injection,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_fault_injection.json,external_delivery,False
 automation_channel_drill,Signed localhost automation channel drill,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_channel_drill.json,pass_rate,1.0
 automation_channel_drill,Signed localhost automation channel drill,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_channel_drill.json,attempt_count,30
 automation_channel_drill,Signed localhost automation channel drill,supporting,strong,strong,fresh,Data/evals/ops/latest_automation_channel_drill.json,external_delivery,False
@@ -640,9 +668,9 @@ synthetic_automation_staging,Synthetic n8n and MailHog staging readiness,support
 synthetic_automation_staging,Synthetic n8n and MailHog staging readiness,supporting,ready_for_synthetic_runtime,ready_for_synthetic_runtime,fresh,Data/evals/ops/latest_synthetic_automation_staging_readiness.json,external_delivery,False
 synthetic_automation_staging,Synthetic n8n and MailHog staging readiness,supporting,ready_for_synthetic_runtime,ready_for_synthetic_runtime,fresh,Data/evals/ops/latest_synthetic_automation_staging_readiness.json,human_acknowledgement,False
 software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,status,needs_attention
-software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,component_count,508
-software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,secret_findings,1
-software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,container_scan_executed,False
+software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,component_count,509
+software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,secret_findings,0
+software_supply_chain,Lock-derived SBOM and secret-scan evidence,supporting,needs_attention,needs_attention,fresh,Data/evals/ops/latest_software_supply_chain_evidence.json,container_scan_executed,True
 finetune_runtime_preflight,Behavior-adapter runtime preflight,supporting,stale,blocked_runtime,stale,Data/evals/models/latest_finetune_runtime_preflight.json,status,blocked_runtime
 finetune_runtime_preflight,Behavior-adapter runtime preflight,supporting,stale,blocked_runtime,stale,Data/evals/models/latest_finetune_runtime_preflight.json,model_trained,False
 finetune_runtime_preflight,Behavior-adapter runtime preflight,supporting,stale,blocked_runtime,stale,Data/evals/models/latest_finetune_runtime_preflight.json,ready,False
@@ -669,11 +697,11 @@ finetune_hardening_assurance,Fine-tune hardening assurance,supporting,needs_atte
 finetune_hardening_assurance,Fine-tune hardening assurance,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_finetune_hardening_assurance.json,clinical_validation,False
 evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,status,needs_attention
 evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,aggregate_score_emitted,False
-evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,tier_counts,"{'0': 0, '1': 3, '2': 6, '3': 2, '4': 0, '5': 0}"
+evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,tier_counts,"{'0': 0, '1': 2, '2': 7, '3': 2, '4': 0, '5': 0}"
 evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,architecture_budget_status,needs_attention
-evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,oversized_file_count,12
+evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,oversized_file_count,13
 evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,critical_file_count,0
-evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,backend_service_file_count,385
+evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,backend_service_file_count,413
 evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,clinical_validation,False
 evidence_maturity_matrix,Cross-domain evidence maturity matrix,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_evidence_maturity_matrix.json,healthcare_production_ready,False
 credibility_gap_registry,Canonical credibility-gap registry,supporting,needs_attention,needs_attention,fresh,Data/evals/governance/latest_credibility_gap_registry.json,status,needs_attention
@@ -689,14 +717,14 @@ oidc_browser_pkce_readiness,OIDC browser PKCE readiness,supporting,blocked_confi
 oidc_browser_pkce_readiness,OIDC browser PKCE readiness,supporting,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_oidc_browser_pkce_readiness.json,production_ready,False
 data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,status,strong
 data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,source_count,60
-data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,silver_records,766
-data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,gold_records,766
+data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,silver_records,831
+data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,gold_records,831
 data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,quarantined,0
 data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,metadata_complete,True
 data_platform_pipeline,Incremental non-patient data-platform pipeline,supporting,strong,strong,fresh,Data/lakehouse/manifests/latest_pipeline_run.json,external_cloud_write,False
 managed_vector_contract,Managed vector-store offline contract,supporting,strong_contract_only,strong_contract_only,fresh,Data/evals/rag/latest_vector_store_contract_eval.json,status,strong_contract_only
 managed_vector_contract,Managed vector-store offline contract,supporting,strong_contract_only,strong_contract_only,fresh,Data/evals/rag/latest_vector_store_contract_eval.json,pass_rate,1.0
-managed_vector_contract,Managed vector-store offline contract,supporting,strong_contract_only,strong_contract_only,fresh,Data/evals/rag/latest_vector_store_contract_eval.json,gold_records,766
+managed_vector_contract,Managed vector-store offline contract,supporting,strong_contract_only,strong_contract_only,fresh,Data/evals/rag/latest_vector_store_contract_eval.json,gold_records,831
 managed_vector_contract,Managed vector-store offline contract,supporting,strong_contract_only,strong_contract_only,fresh,Data/evals/rag/latest_vector_store_contract_eval.json,network_request,False
 managed_vector_contract,Managed vector-store offline contract,supporting,strong_contract_only,strong_contract_only,fresh,Data/evals/rag/latest_vector_store_contract_eval.json,comparison_completed,False
 azure_reference_infrastructure,Compiled Azure reference-infrastructure readiness,supporting,compiled_reference_architecture,compiled_reference_architecture,fresh,Data/evals/ops/latest_cloud_infrastructure_readiness.json,status,compiled_reference_architecture
@@ -710,7 +738,7 @@ azure_search_index_readiness,Azure AI Search shadow-index readiness,supporting,r
 azure_search_index_readiness,Azure AI Search shadow-index readiness,supporting,ready_for_opt_in_provisioning,ready_for_opt_in_provisioning,fresh,Data/evals/rag/latest_azure_search_index_readiness.json,index_applied,False
 azure_search_index_readiness,Azure AI Search shadow-index readiness,supporting,ready_for_opt_in_provisioning,ready_for_opt_in_provisioning,fresh,Data/evals/rag/latest_azure_search_index_readiness.json,network_request,False
 managed_vector_shadow_sync,Governed managed-vector shadow sync,supporting,ready_for_opt_in_shadow_sync,ready_for_opt_in_shadow_sync,fresh,Data/evals/rag/latest_managed_vector_shadow_sync.json,status,ready_for_opt_in_shadow_sync
-managed_vector_shadow_sync,Governed managed-vector shadow sync,supporting,ready_for_opt_in_shadow_sync,ready_for_opt_in_shadow_sync,fresh,Data/evals/rag/latest_managed_vector_shadow_sync.json,record_count,766
+managed_vector_shadow_sync,Governed managed-vector shadow sync,supporting,ready_for_opt_in_shadow_sync,ready_for_opt_in_shadow_sync,fresh,Data/evals/rag/latest_managed_vector_shadow_sync.json,record_count,831
 managed_vector_shadow_sync,Governed managed-vector shadow sync,supporting,ready_for_opt_in_shadow_sync,ready_for_opt_in_shadow_sync,fresh,Data/evals/rag/latest_managed_vector_shadow_sync.json,validation_passed,True
 managed_vector_shadow_sync,Governed managed-vector shadow sync,supporting,ready_for_opt_in_shadow_sync,ready_for_opt_in_shadow_sync,fresh,Data/evals/rag/latest_managed_vector_shadow_sync.json,sync_completed,False
 managed_vector_shadow_sync,Governed managed-vector shadow sync,supporting,ready_for_opt_in_shadow_sync,ready_for_opt_in_shadow_sync,fresh,Data/evals/rag/latest_managed_vector_shadow_sync.json,indexed_count,0
@@ -730,7 +758,7 @@ constraint_aware_improvement_program,Constraint-aware cross-domain improvement p
 constraint_aware_improvement_program,Constraint-aware cross-domain improvement program,supporting,blocked,blocked,fresh,Data/evals/governance/latest_constraint_aware_improvement_program.json,clinical_validation,False
 constraint_aware_improvement_program,Constraint-aware cross-domain improvement program,supporting,blocked,blocked,fresh,Data/evals/governance/latest_constraint_aware_improvement_program.json,healthcare_production_ready,False
 retrieval_runtime_cache_eval,Fixed-baseline local retrieval runtime-cache evidence,supporting,improved_local_regression,improved_local_regression,fresh,Data/evals/ops/latest_retrieval_runtime_cache_eval.json,status,improved_local_regression
-retrieval_runtime_cache_eval,Fixed-baseline local retrieval runtime-cache evidence,supporting,improved_local_regression,improved_local_regression,fresh,Data/evals/ops/latest_retrieval_runtime_cache_eval.json,retrieval_p95_delta_ms,-1664.86
+retrieval_runtime_cache_eval,Fixed-baseline local retrieval runtime-cache evidence,supporting,improved_local_regression,improved_local_regression,fresh,Data/evals/ops/latest_retrieval_runtime_cache_eval.json,retrieval_p95_delta_ms,-1661.57
 retrieval_runtime_cache_eval,Fixed-baseline local retrieval runtime-cache evidence,supporting,improved_local_regression,improved_local_regression,fresh,Data/evals/ops/latest_retrieval_runtime_cache_eval.json,sample_contract_met,True
 retrieval_runtime_cache_eval,Fixed-baseline local retrieval runtime-cache evidence,supporting,improved_local_regression,improved_local_regression,fresh,Data/evals/ops/latest_retrieval_runtime_cache_eval.json,production_ready,False
 provider_usage_reconciliation,Provider token-usage reconciliation,supporting,blocked_configuration,blocked_configuration,fresh,Data/evals/ops/latest_provider_usage_reconciliation.json,status,blocked_configuration
@@ -746,8 +774,8 @@ synthetic_model_perturbation_retrain,Synthetic model perturbation and retraining
 synthetic_model_perturbation_retrain,Synthetic model perturbation and retraining stress,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json,promotion_decision,HOLD_SYNTHETIC_ONLY
 synthetic_model_perturbation_retrain,Synthetic model perturbation and retraining stress,supporting,needs_attention,needs_attention,fresh,Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json,clinical_validation,False
 synthetic_staging_resilience,Synthetic staging resilience dossier,supporting,strong_local_only_external_blocked,strong_local_only_external_blocked,fresh,Data/evals/ops/latest_synthetic_staging_resilience_dossier.json,status,strong_local_only_external_blocked
-synthetic_staging_resilience,Synthetic staging resilience dossier,supporting,strong_local_only_external_blocked,strong_local_only_external_blocked,fresh,Data/evals/ops/latest_synthetic_staging_resilience_dossier.json,local_passed_count,7
-synthetic_staging_resilience,Synthetic staging resilience dossier,supporting,strong_local_only_external_blocked,strong_local_only_external_blocked,fresh,Data/evals/ops/latest_synthetic_staging_resilience_dossier.json,unresolved_external_blockers,5
+synthetic_staging_resilience,Synthetic staging resilience dossier,supporting,strong_local_only_external_blocked,strong_local_only_external_blocked,fresh,Data/evals/ops/latest_synthetic_staging_resilience_dossier.json,local_passed_count,8
+synthetic_staging_resilience,Synthetic staging resilience dossier,supporting,strong_local_only_external_blocked,strong_local_only_external_blocked,fresh,Data/evals/ops/latest_synthetic_staging_resilience_dossier.json,unresolved_external_blockers,4
 synthetic_staging_resilience,Synthetic staging resilience dossier,supporting,strong_local_only_external_blocked,strong_local_only_external_blocked,fresh,Data/evals/ops/latest_synthetic_staging_resilience_dossier.json,managed_cloud_drill_completed,False
 synthetic_feature_policy,Canonical proxy-removed synthetic feature policy,supporting,canonical_for_synthetic_promotion_evaluation,canonical_for_synthetic_promotion_evaluation,fresh,Data/evals/models/latest_synthetic_feature_policy.json,status,canonical_for_synthetic_promotion_evaluation
 synthetic_feature_policy,Canonical proxy-removed synthetic feature policy,supporting,canonical_for_synthetic_promotion_evaluation,canonical_for_synthetic_promotion_evaluation,fresh,Data/evals/models/latest_synthetic_feature_policy.json,policy_id,synthetic_proxy_removed_promotion_v1
@@ -759,7 +787,7 @@ provider_usage_capture_readiness,Provider token-usage capture readiness,supporti
 provider_usage_capture_readiness,Provider token-usage capture readiness,supporting,ready_for_nonpatient_provider_capture,ready_for_nonpatient_provider_capture,fresh,Data/evals/ops/latest_provider_usage_capture_readiness.json,reconciliation_completed,False
 disposable_synthetic_staging_readiness,Disposable loopback-only synthetic staging readiness,supporting,ready_for_disposable_synthetic_runtime,ready_for_disposable_synthetic_runtime,fresh,Data/evals/ops/latest_disposable_synthetic_staging_readiness.json,status,ready_for_disposable_synthetic_runtime
 disposable_synthetic_staging_readiness,Disposable loopback-only synthetic staging readiness,supporting,ready_for_disposable_synthetic_runtime,ready_for_disposable_synthetic_runtime,fresh,Data/evals/ops/latest_disposable_synthetic_staging_readiness.json,passed_count,8
-disposable_synthetic_staging_readiness,Disposable loopback-only synthetic staging readiness,supporting,ready_for_disposable_synthetic_runtime,ready_for_disposable_synthetic_runtime,fresh,Data/evals/ops/latest_disposable_synthetic_staging_readiness.json,runtime_started,False
+disposable_synthetic_staging_readiness,Disposable loopback-only synthetic staging readiness,supporting,ready_for_disposable_synthetic_runtime,ready_for_disposable_synthetic_runtime,fresh,Data/evals/ops/latest_disposable_synthetic_staging_readiness.json,runtime_started,True
 disposable_synthetic_staging_readiness,Disposable loopback-only synthetic staging readiness,supporting,ready_for_disposable_synthetic_runtime,ready_for_disposable_synthetic_runtime,fresh,Data/evals/ops/latest_disposable_synthetic_staging_readiness.json,healthcare_production_ready,False
 adversarial_holdout_v7_baseline,One-pass internal author-contaminated adversarial holdout v7,informational,stale,needs_attention,stale,Data/evals/safety/latest_adversarial_holdout_v7_baseline.json,status,needs_attention
 adversarial_holdout_v7_baseline,One-pass internal author-contaminated adversarial holdout v7,informational,stale,needs_attention,stale,Data/evals/safety/latest_adversarial_holdout_v7_baseline.json,pass_rate,0.676056
@@ -768,10 +796,10 @@ adversarial_holdout_v7_baseline,One-pass internal author-contaminated adversaria
 research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,status,acceptable_internal_measurement
 research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,query_count,30
 research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,route_contract_pass_rate,1.0
-research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,latency_p50_ms,270.69
-research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,latency_p95_ms,430.52
-research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,cold_start_latency_ms,30497.91
-research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,warm_latency_p95_ms,408.64
-research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,estimated_pipeline_total_tokens,10434
+research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,latency_p50_ms,216.38
+research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,latency_p95_ms,301.39
+research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,cold_start_latency_ms,25691.83
+research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,warm_latency_p95_ms,290.21
+research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,estimated_pipeline_total_tokens,10567
 research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,provider_reported_total_tokens,0
 research_paper_query_telemetry,Research-paper query latency and token telemetry,supporting,acceptable_internal_measurement,acceptable_internal_measurement,fresh,Data/evals/rag/latest_research_paper_query_telemetry.json,provider_usage_coverage_rate,0.0

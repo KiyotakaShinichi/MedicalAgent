@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_bronze_source_manifest_v1",
-  "generated_at": "2026-08-09T12:01:08.332098+00:00",
+  "generated_at": "2026-08-11T07:20:12.347750+00:00",
   "clinical_validation": false,
   "patient_data_allowed": false,
   "source_count": 60,
@@ -489,11 +489,11 @@
   "dependencies": {
     "chunk_artifact": {
       "path": "Data/rag_knowledge_base_chunks.json",
-      "content_hash": "512a6f7479ac9a1fb7e5652d9e3aa229760dacb93038e7cb647621ec0a3be201"
+      "content_hash": "0a3a89a97fe08d3c6db2b335c9e78649a72f437641d5de0f4fe14b1e11a4c2f3"
     },
     "governance_artifact": {
       "path": "Data/evals/rag/latest_kb_source_governance.json",
-      "content_hash": "fbedc6fcafa9094901dfc0860ac2984194ff9bf460ca16ab905a3d0a50084b4d"
+      "content_hash": "527b169534986c5f42aecc47e0cce8c1c2b1b13c59d53478e23b266c1ffecee9"
     },
     "data_contract": {
       "path": "config/data_contracts.json",

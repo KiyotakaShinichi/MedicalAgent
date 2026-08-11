@@ -42,6 +42,10 @@ def test_current_source_governed_stack_retained_but_not_promoted() -> None:
     assert current["promotion_eligible"] is False
     assert payload["current_policy"]["dense_or_complex_retrieval_promoted"] is False
     assert payload["summary"]["improvement_proven_vs_bm25"] is False
+    selector = payload["axes"]["accuracy"]["claim_conditioned_selector_holdout"]
+    assert selector["strict_improvement_proven"] is False
+    assert selector["live_patient_route_changed"] is False
+    assert payload["current_policy"]["claim_conditioned_selector_promoted"] is False
 
 
 def test_planning_cost_scenarios_never_become_observed_cost_evidence() -> None:

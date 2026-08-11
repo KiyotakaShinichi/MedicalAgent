@@ -47,3 +47,30 @@ def test_configured_without_observations_stays_incomplete(tmp_path):
     )
     assert result["status"] == "configured_no_observations"
     assert result["completed"] is False
+
+
+def test_normal_api_probe_rows_can_supply_paired_usage(tmp_path):
+    source = tmp_path / "cost.json"
+    _write(source, [])
+    probe = tmp_path / "probe.json"
+    rows = [
+        {
+            "request_id": f"probe-{index}",
+            "route": "/me/chat",
+            "provider_reported_total_tokens": 100,
+            "estimated_total_tokens": 90,
+        }
+        for index in range(30)
+    ]
+    probe.write_text(
+        json.dumps({"normal_api_path": True, "requests": rows}),
+        encoding="utf-8",
+    )
+    result = build_provider_usage_reconciliation(
+        source, probe_path=probe, env={}
+    )
+    assert result["completed"] is True
+    assert result["status"] == "reconciled"
+    assert result["paired_request_count"] == 30
+    assert result["actual_usage_coverage_rate"] == 1.0
+    assert result["normal_api_probe_request_count"] == 30

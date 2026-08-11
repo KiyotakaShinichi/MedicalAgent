@@ -1,6 +1,6 @@
 # NLCare Tenant-Isolation Security
 
-Generated from repository artifacts at `2026-08-11T04:48:02.119946+00:00`.
+Generated from repository artifacts at `2026-08-11T06:52:48.687832+00:00`.
 
 > NLCare remains synthetic-only, non-diagnostic, not clinically validated, and not production healthcare ready. Internal tests are engineering evidence, not evidence of patient benefit or medical effectiveness.
 

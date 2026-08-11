@@ -1,6 +1,6 @@
 # NLCare Next-Generation Engineering Evidence Report
 
-Generated from repository artifacts at `2026-08-11T04:48:02.120763+00:00`.
+Generated from repository artifacts at `2026-08-11T06:52:48.687921+00:00`.
 
 > NLCare remains synthetic-only, non-diagnostic, not clinically validated, and not production healthcare ready. Internal tests are engineering evidence, not evidence of patient benefit or medical effectiveness.
 
@@ -58,7 +58,7 @@ Status: `passed`. No result is a penetration-test claim.
 
 ## 14. Runtime performance and AI Trinity
 
-Planner load status: `acceptable_internal_stress`. AI Trinity decision: `HOLD_ACCURACY_GROUNDING` with accuracy `needs_attention`, latency `pass`, and unit cost `blocked_evidence`. Missing provider telemetry is not treated as zero cost. These are internal measurements, not a production SLO.
+Planner load status: `acceptable_internal_stress`. AI Trinity decision: `HOLD_ACCURACY_GROUNDING` with accuracy `needs_attention`, latency `pass`, and unit cost `blocked_evidence`. Normal-API provider probe: `blocked_configuration` with coverage `0.0`. Missing provider telemetry is not treated as zero cost. These are internal measurements, not a production SLO.
 
 ## 15. Chaos/reliability results
 
@@ -78,7 +78,7 @@ The final verification section must be read with the latest ship and release-gat
 
 ## 19. Negative results
 
-Full-stack raw retrieval superiority remains unproven, the prior citation pruner regressed precision, v7 generalization was weak, provider token coverage is incomplete, and external review is absent.
+Full-stack raw retrieval superiority remains unproven, the prior citation pruner regressed precision, and the frozen claim-conditioned selector changed citation precision from `0.0909` to `0.0429` with promotion `offline_only_not_promoted`. V7 generalization was weak, provider token coverage is incomplete, and external review is absent.
 
 ## 20. Remaining weaknesses
 
@@ -90,7 +90,7 @@ External authors/reviewers, managed cloud credentials, real traffic, restricted 
 
 ## 22. Promotion decisions
 
-Promote the dataset-integrity gate, operation authorization, context-integrity sanitizer, tenant relation checks, and controlled security regressions. Promote section-aware retrieval only if the artifact's predeclared conditions pass. Do not promote clinical authority, dense serving by appearance, or the negative citation pruner.
+Promote the dataset-integrity gate, operation authorization, context-integrity sanitizer, tenant relation checks, and controlled security regressions. Promote section-aware retrieval only if the artifact's predeclared conditions pass. Do not promote clinical authority, dense serving by appearance, the negative citation pruner, or the negative claim-conditioned selector.
 
 ## 23. Next highest-value task
 

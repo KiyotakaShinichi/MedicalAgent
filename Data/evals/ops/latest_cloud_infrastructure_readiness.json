@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_cloud_infrastructure_readiness_v2",
-  "generated_at": "2026-08-11T04:32:53.163499+00:00",
+  "generated_at": "2026-08-11T07:20:33.539228+00:00",
   "status": "compiled_reference_architecture",
   "clinical_validation": false,
   "healthcare_production_ready": false,

@@ -1,6 +1,6 @@
 {
   "schema_version": "ai_trinity_tradeoff_v1",
-  "generated_at": "2026-08-11T04:16:46.929629+00:00",
+  "generated_at": "2026-08-11T07:27:56.970638+00:00",
   "status": "needs_attention",
   "decision": "HOLD_ACCURACY_GROUNDING",
   "promotion_allowed": false,
@@ -16,7 +16,9 @@
     "rag_baseline": "Data/evals/rag/latest_rag_baseline_comparison.json",
     "cost_latency": "Data/evals/ops/latest_cost_latency_report.json",
     "provider_reconciliation": "Data/evals/ops/latest_provider_usage_reconciliation.json",
-    "route_latency": "Data/evals/ops/latest_route_latency_budget.json"
+    "provider_api_path_capture": "Data/evals/ops/latest_provider_api_path_capture.json",
+    "route_latency": "Data/evals/ops/latest_route_latency_budget.json",
+    "citation_selector_holdout": "Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json"
   },
   "axes": {
     "accuracy": {
@@ -29,13 +31,23 @@
       "claim_support_rate": 0.8378,
       "unsupported_context_rate": 0.1622,
       "source_tier_correctness": 1.0,
-      "refusal_correctness": 1.0
+      "refusal_correctness": 1.0,
+      "claim_conditioned_selector_holdout": {
+        "status": "needs_attention",
+        "promotion_decision": "offline_only_not_promoted",
+        "case_count": 45,
+        "baseline_citation_precision": 0.0909,
+        "selector_citation_precision": 0.0429,
+        "citation_precision_delta": -0.048,
+        "strict_improvement_proven": false,
+        "live_patient_route_changed": false
+      }
     },
     "latency": {
       "status": "pass",
       "retrieval_p95_ms": 307.365,
       "retrieval_budget_ms": 500.0,
-      "normal_route_highest_p95_ms": 404.28,
+      "normal_route_highest_p95_ms": 243.11,
       "normal_route_budget_ms": 8000.0,
       "retrieval_budget_pass": true,
       "normal_route_budget_pass": true,
@@ -50,7 +62,8 @@
       "cost_per_safe_supported_answer_usd": null,
       "planning_budget_usd": 0.002,
       "missing_cost_is_zero": false,
-      "audited_billing": false
+      "audited_billing": false,
+      "cost_basis": "missing_provider_quality_linked_cost_evidence"
     }
   },
   "summary": {
@@ -59,6 +72,7 @@
     "unit_cost_status": "blocked_evidence",
     "provider_usage_coverage_rate": 0.0,
     "provider_paired_request_count": 0,
+    "provider_probe_status": "blocked_configuration",
     "current_accuracy_grounding_score": 0.71598,
     "current_retrieval_p95_ms": 307.365,
     "current_cost_per_safe_supported_answer_usd": null,
@@ -290,8 +304,8 @@
   "planning_only_route_cost_scenarios": [
     {
       "route": "full_api_path",
-      "p50_latency_ms_estimate": 932.59,
-      "planning_cost_per_safe_answer_usd": 8.13e-05,
+      "p50_latency_ms_estimate": 839.23,
+      "planning_cost_per_safe_answer_usd": 8.67e-05,
       "within_planning_budget": true,
       "accuracy_measured_on_same_requests": false,
       "provider_billing_observed": false,
@@ -300,8 +314,8 @@
     },
     {
       "route": "cached_path",
-      "p50_latency_ms_estimate": 202.87,
-      "planning_cost_per_safe_answer_usd": 6e-07,
+      "p50_latency_ms_estimate": 186.06,
+      "planning_cost_per_safe_answer_usd": 4.5e-07,
       "within_planning_budget": true,
       "accuracy_measured_on_same_requests": false,
       "provider_billing_observed": false,
@@ -310,8 +324,8 @@
     },
     {
       "route": "local_slm_routing_plus_api_answer",
-      "p50_latency_ms_estimate": 937.98,
-      "planning_cost_per_safe_answer_usd": 7.59e-05,
+      "p50_latency_ms_estimate": 852.09,
+      "planning_cost_per_safe_answer_usd": 8.265e-05,
       "within_planning_budget": true,
       "accuracy_measured_on_same_requests": false,
       "provider_billing_observed": false,
@@ -320,8 +334,8 @@
     },
     {
       "route": "local_slm_query_rewrite_plus_api_answer",
-      "p50_latency_ms_estimate": 1005.96,
-      "planning_cost_per_safe_answer_usd": 7.47e-05,
+      "p50_latency_ms_estimate": 917.27,
+      "planning_cost_per_safe_answer_usd": 8.175e-05,
       "within_planning_budget": true,
       "accuracy_measured_on_same_requests": false,
       "provider_billing_observed": false,
@@ -330,7 +344,7 @@
     },
     {
       "route": "deterministic_only_refusal_path",
-      "p50_latency_ms_estimate": 42.98,
+      "p50_latency_ms_estimate": 40.18,
       "planning_cost_per_safe_answer_usd": 0.0,
       "within_planning_budget": true,
       "accuracy_measured_on_same_requests": false,
@@ -343,11 +357,14 @@
     "decision": "retain_source_governed_stack_for_governance",
     "reason": "The current source-governed stack preserves source-tier and refusal correctness, but it is not promoted as an accuracy, latency, or cost winner.",
     "dense_or_complex_retrieval_promoted": false,
-    "cost_optimization_promoted": false
+    "cost_optimization_promoted": false,
+    "claim_conditioned_selector_promoted": false,
+    "claim_conditioned_selector_reason": "Frozen answer-level holdout regressed citation precision and support; the selector remains offline only."
   },
   "next_actions": [
     "Raise citation precision and reduce unsupported context on development cases without weakening source governance.",
     "Capture at least 30 paired provider-usage requests with at least 80% coverage on non-patient synthetic traffic.",
+    "Keep the claim-conditioned citation selector offline because its frozen holdout result is negative; do not tune on that fixture.",
     "Recompute cost per safe, source-governed, claim-supported answer from provider-token-derived pricing rather than treating missing telemetry as zero.",
     "Re-run the same frozen candidate matrix after quality changes and reject any option that buys speed or cost by crossing a safety floor."
   ],

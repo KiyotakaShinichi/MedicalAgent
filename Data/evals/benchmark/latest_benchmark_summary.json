@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "c2c02ffaed37c8e24211aecb8086fc053b4a571f",
+    "git_commit": "1c2a2f8fa0a6ffd0a1214f5544ada3ee4fa1cf5a",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -12,19 +12,19 @@
       "safety_cases": "5832:1778734598:c6c93e3f07f9",
       "synthetic_realism_candidate": "378534:1778813480:a29f2214fadd"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:7933155:1786277306:f71c5fc7474f",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:8468003:1786433217:19e92db1afa3",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-08-09T12:12:49.733424+00:00"
+    "generated_at": "2026-08-11T07:30:56.597808+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-08-09T12:12:49.733424+00:00",
+    "generated_at": "2026-08-11T07:30:56.597808+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-08-10T12:12:49.733424+00:00",
+    "expires_at": "2026-08-12T07:30:56.597808+00:00",
     "status": "fresh"
   },
   "schema_version": "benchmark_registry_v2",
-  "generated_at": "2026-08-09T12:12:50.607118+00:00",
+  "generated_at": "2026-08-11T07:30:57.113865+00:00",
   "status": "needs_attention",
   "critical_status": "stale",
   "supporting_status": "stale",
@@ -37,7 +37,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:21.257138+00:00",
+      "generated_at": "2026-08-11T07:30:28.319915+00:00",
       "source_path": "Data/evals/safety/latest_safety_benchmark.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -58,7 +58,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:25.641584+00:00",
+      "generated_at": "2026-08-11T07:30:31.598852+00:00",
       "source_path": "Data/evals/safety/latest_adversarial_eval.json",
       "metrics": {
         "attack_block_rate": 1.0,
@@ -230,7 +230,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:29.969090+00:00",
+      "generated_at": "2026-08-11T07:30:35.552557+00:00",
       "source_path": "Data/evals/rag/latest_rag_benchmark.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -1059,7 +1059,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:02:04.398572+00:00",
+      "generated_at": "2026-08-11T07:20:49.228259+00:00",
       "source_path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
       "metrics": {
         "status": "strong",
@@ -1398,10 +1398,10 @@
       "id": "mle_readiness",
       "title": "MLE readiness gate",
       "tier": "critical",
-      "status": "stale",
+      "status": "unideal",
       "source_status": "unideal",
-      "freshness": "stale",
-      "generated_at": "2026-08-03T04:40:59.345885+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-08-11T02:39:45.625329+00:00",
       "source_path": "Data/mle_monitoring/latest_mle_readiness.json",
       "metrics": {
         "hard_gate_status": "passed",
@@ -1663,12 +1663,12 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:05:51.298747+00:00",
+      "generated_at": "2026-08-11T07:25:11.682912+00:00",
       "source_path": "Data/evals/rag/latest_kb_source_governance.json",
       "metrics": {
         "status": "strong",
         "source_count": 58,
-        "chunk_count": 766,
+        "chunk_count": 831,
         "governance_issue_count": []
       },
       "limitations": [],
@@ -1711,7 +1711,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:30.697250+00:00",
+      "generated_at": "2026-08-11T07:30:36.467386+00:00",
       "source_path": "Data/evals/rag/latest_rag_intent_aware_eval.json",
       "metrics": {
         "status": "strong",
@@ -2019,7 +2019,7 @@
       "status": "mild_degradation",
       "source_status": "mild_degradation",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T11:59:21.835008+00:00",
+      "generated_at": "2026-08-11T06:56:03.340485+00:00",
       "source_path": "Data/mle_monitoring/noise_eval_report.json",
       "metrics": {
         "max_auroc_drop": 0.0643,
@@ -2036,7 +2036,7 @@
       "status": "stable",
       "source_status": "stable",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T11:59:20.344158+00:00",
+      "generated_at": "2026-08-11T06:56:02.793816+00:00",
       "source_path": "Data/mle_monitoring/temporal_eval_report.json",
       "metrics": {
         "temporal_auroc": 0.9783,
@@ -2053,7 +2053,7 @@
       "status": "passed",
       "source_status": "passed",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T11:59:21.880014+00:00",
+      "generated_at": "2026-08-11T06:56:03.401305+00:00",
       "source_path": "Data/mle_monitoring/calibration_eval_report.json",
       "metrics": {
         "best_method": "isotonic_regression",
@@ -2246,14 +2246,14 @@
       "id": "service_health_snapshot",
       "title": "PoC service health snapshot",
       "tier": "supporting",
-      "status": "needs_attention",
+      "status": "stale",
       "source_status": "needs_attention",
-      "freshness": "fresh",
-      "generated_at": "2026-08-09T11:49:46.659829+00:00",
+      "freshness": "stale",
+      "generated_at": "2026-08-09T12:12:51.647565+00:00",
       "source_path": "Data/evals/ops/latest_service_health_snapshot.json",
       "metrics": {
         "status": "needs_attention",
-        "stale_artifact_count": 134,
+        "stale_artifact_count": 129,
         "failed_benchmark_count": 0
       },
       "limitations": [],
@@ -2284,19 +2284,19 @@
       "id": "container_recovery_smoke",
       "title": "Disposable Postgres/Redis migration and recovery smoke",
       "tier": "supporting",
-      "status": "stale",
-      "source_status": "blocked_environment",
-      "freshness": "stale",
-      "generated_at": "2026-07-30T02:59:07.886871+00:00",
+      "status": "acceptable_local_container_smoke",
+      "source_status": "acceptable_local_container_smoke",
+      "freshness": "fresh",
+      "generated_at": "2026-08-11T06:22:10.324491+00:00",
       "source_path": "Data/evals/ops/latest_container_recovery_smoke.json",
       "metrics": {
-        "status": "blocked_environment",
-        "completed": false,
-        "docker_available": false,
+        "status": "acceptable_local_container_smoke",
+        "completed": true,
+        "docker_available": true,
         "healthcare_production_ready": false
       },
       "limitations": [],
-      "claim_boundary": "Local infrastructure smoke only; not production or healthcare readiness evidence."
+      "claim_boundary": "Disposable local Postgres/Redis migration and recovery smoke only; not production, compliance, or healthcare readiness evidence."
     },
     {
       "id": "trace_diagnostics_coverage",
@@ -2324,26 +2324,96 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:04:53.423991+00:00",
+      "generated_at": "2026-08-11T07:24:28.753012+00:00",
       "source_path": "Data/evals/ops/latest_cost_latency_report.json",
       "metrics": {
         "status": "strong",
         "request_count": 500,
         "latency_p50_ms": 839.23,
-        "latency_p95_ms": 3588.73,
+        "latency_p95_ms": 3742.44,
         "latency_sample_count": 500,
         "latency_percentile_credibility": "stable_internal_sample",
         "provider_reported_total_tokens": 0,
         "provider_usage_coverage_rate": 0.0,
-        "estimated_pipeline_total_tokens": 128535,
+        "estimated_pipeline_total_tokens": 128469,
         "estimated_total_cost_usd": 0.0,
         "cache_hit_rate": 0.19,
         "local_probe_stage_sample_count": 708,
-        "normal_rag_probe_p95_ms": 275.89,
-        "normal_rag_retrieval_p95_ms": 141.46
+        "normal_rag_probe_p95_ms": 237.74,
+        "normal_rag_retrieval_p95_ms": 144.75
       },
       "limitations": [],
       "claim_boundary": "Cost and latency observability is engineering telemetry only. It does not establish clinical safety, clinical validation, or real-world patient benefit."
+    },
+    {
+      "id": "ai_trinity_tradeoff",
+      "title": "AI Trinity: accuracy, latency, and unit cost",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-08-11T07:27:56.970638+00:00",
+      "source_path": "Data/evals/governance/latest_ai_trinity_tradeoff.json",
+      "metrics": {
+        "decision": "HOLD_ACCURACY_GROUNDING",
+        "promotion_allowed": false,
+        "accuracy_status": "needs_attention",
+        "latency_status": "pass",
+        "unit_cost_status": "blocked_evidence",
+        "accuracy_grounding_score": 0.71598,
+        "retrieval_p95_ms": 307.365,
+        "cost_per_safe_supported_answer_usd": null,
+        "provider_usage_coverage_rate": 0.0,
+        "improvement_proven_vs_bm25": false
+      },
+      "limitations": [],
+      "claim_boundary": "The AI Trinity is internal engineering governance over Accuracy, Latency, and Unit Cost. Missing provider usage is not treated as zero cost. Passing does not establish clinical validation, patient benefit, audited billing, a production SLO, or production healthcare readiness."
+    },
+    {
+      "id": "claim_conditioned_citation_selector_holdout",
+      "title": "Claim-conditioned citation selector frozen holdout",
+      "tier": "supporting",
+      "status": "needs_attention",
+      "source_status": "needs_attention",
+      "freshness": "fresh",
+      "generated_at": "2026-08-11T07:27:56.131291+00:00",
+      "source_path": "Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json",
+      "metrics": {
+        "status": "needs_attention",
+        "promotion_decision": "offline_only_not_promoted",
+        "case_count": 45,
+        "baseline_citation_precision": 0.0909,
+        "selector_citation_precision": 0.0429,
+        "citation_precision_delta": -0.048,
+        "baseline_claim_support_rate": 0.1818,
+        "selector_claim_support_rate": 0.1212,
+        "strict_improvement_proven": false,
+        "live_patient_route_changed": false
+      },
+      "limitations": [],
+      "claim_boundary": "Internal answer-level engineering comparison over pre-existing offline generated answers and a frozen governed retrieval snapshot. It is not an external-author evaluation, semantic entailment, clinical validation, or permission to enable the selector on patient-facing routes."
+    },
+    {
+      "id": "provider_api_path_capture",
+      "title": "Controlled normal-API provider usage capture",
+      "tier": "informational",
+      "status": "blocked_configuration",
+      "source_status": "blocked_configuration",
+      "freshness": "fresh",
+      "generated_at": "2026-08-11T07:24:31.376719+00:00",
+      "source_path": "Data/evals/ops/latest_provider_api_path_capture.json",
+      "metrics": {
+        "status": "blocked_configuration",
+        "completed": false,
+        "request_count": 0,
+        "provider_usage_coverage_rate": 0.0,
+        "provider_reported_total_tokens": 0,
+        "estimated_cost_usd": null,
+        "content_retained": false,
+        "patient_data_processed": false
+      },
+      "limitations": [],
+      "claim_boundary": "This is a controlled synthetic, non-patient operational probe. Provider-reported usage remains unaudited telemetry, not billing truth. The probe is not clinical validation, a production SLO, or production healthcare evidence."
     },
     {
       "id": "runtime_quality_sentinel",
@@ -2372,13 +2442,13 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:04:47.939607+00:00",
+      "generated_at": "2026-08-11T07:24:24.066004+00:00",
       "source_path": "Data/evals/ops/latest_route_latency_budget.json",
       "metrics": {
         "status": "acceptable",
         "route_count": 7,
         "needs_attention_count": 0,
-        "highest_observed_p95_ms": 404.28
+        "highest_observed_p95_ms": 243.11
       },
       "limitations": [],
       "claim_boundary": "Route latency budgets are prototype engineering targets, not production SLOs. A p95 is not treated as credible until the route has at least 30 local samples. Repeated sparse/fast-mode local workloads are regression evidence only."
@@ -2390,7 +2460,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:04:46.338571+00:00",
+      "generated_at": "2026-08-11T07:24:22.601122+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile_phase2.json",
       "metrics": {
         "status": "acceptable",
@@ -2407,7 +2477,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:04:46.338571+00:00",
+      "generated_at": "2026-08-11T07:24:22.601122+00:00",
       "source_path": "Data/evals/ops/latest_latency_profile.json",
       "metrics": {
         "status": "acceptable"
@@ -2484,7 +2554,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:05:46.858228+00:00",
+      "generated_at": "2026-08-11T07:25:08.862074+00:00",
       "source_path": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
       "metrics": {
         "status": "acceptable",
@@ -2738,7 +2808,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:01:59.808402+00:00",
+      "generated_at": "2026-08-11T07:20:47.005860+00:00",
       "source_path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
       "metrics": {
         "status": "needs_attention",
@@ -2768,7 +2838,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:03:03.898500+00:00",
+      "generated_at": "2026-08-11T07:22:25.133410+00:00",
       "source_path": "Data/evals/models/latest_xai_rank_stability.json",
       "metrics": {
         "status": "acceptable",
@@ -2787,7 +2857,7 @@
       "status": "acceptable",
       "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:03:33.313157+00:00",
+      "generated_at": "2026-08-11T07:22:44.147497+00:00",
       "source_path": "Data/evals/models/latest_xai_retraining_stability.json",
       "metrics": {
         "status": "acceptable",
@@ -2804,13 +2874,13 @@
       "id": "xai_reliability_gate",
       "title": "Fail-closed synthetic XAI presentation policy",
       "tier": "supporting",
-      "status": "needs_attention",
-      "source_status": "needs_attention",
+      "status": "acceptable",
+      "source_status": "acceptable",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:03:37.357277+00:00",
+      "generated_at": "2026-08-11T07:22:46.990100+00:00",
       "source_path": "Data/evals/models/latest_xai_reliability_gate.json",
       "metrics": {
-        "status": "needs_attention",
+        "status": "acceptable",
         "display_mode": "grouped_factors_without_rank_claim",
         "show_grouped_factors": true,
         "ranked_feature_order_allowed": false,
@@ -2828,7 +2898,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:03:55.825276+00:00",
+      "generated_at": "2026-08-11T07:23:45.870100+00:00",
       "source_path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
       "metrics": {
         "status": "strong",
@@ -2846,7 +2916,7 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:04:06.413182+00:00",
+      "generated_at": "2026-08-11T07:23:51.161516+00:00",
       "source_path": "Data/evals/rag/latest_rag_degradation_resilience.json",
       "metrics": {
         "status": "strong_offline_drill",
@@ -2861,10 +2931,10 @@
       "id": "automation_fault_injection",
       "title": "Automation queue and webhook fault injection",
       "tier": "supporting",
-      "status": "stale",
+      "status": "strong",
       "source_status": "strong",
-      "freshness": "stale",
-      "generated_at": "2026-07-30T02:58:52.375330+00:00",
+      "freshness": "fresh",
+      "generated_at": "2026-08-11T02:30:39.631729+00:00",
       "source_path": "Data/evals/ops/latest_automation_fault_injection.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -2881,7 +2951,7 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:09:36.631831+00:00",
+      "generated_at": "2026-08-11T07:27:58.979709+00:00",
       "source_path": "Data/evals/ops/latest_automation_channel_drill.json",
       "metrics": {
         "pass_rate": 1.0,
@@ -2899,7 +2969,7 @@
       "status": "ready_for_synthetic_runtime",
       "source_status": "ready_for_synthetic_runtime",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:09:39.682471+00:00",
+      "generated_at": "2026-08-11T07:28:01.475311+00:00",
       "source_path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
       "metrics": {
         "status": "ready_for_synthetic_runtime",
@@ -2917,13 +2987,13 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:02:39.564307+00:00",
+      "generated_at": "2026-08-11T07:21:55.758006+00:00",
       "source_path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
       "metrics": {
         "status": "needs_attention",
-        "component_count": 508,
-        "secret_findings": 1,
-        "container_scan_executed": false
+        "component_count": 509,
+        "secret_findings": 0,
+        "container_scan_executed": true
       },
       "limitations": [],
       "claim_boundary": "Lock-derived SBOMs and a repository secret scan are software-engineering evidence only. They are not a security certification, compliance proof, clinical validation, or production healthcare readiness."
@@ -2952,7 +3022,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:09:50.972287+00:00",
+      "generated_at": "2026-08-11T07:28:10.476799+00:00",
       "source_path": "Data/evals/models/latest_finetune_semantic_contamination.json",
       "metrics": {
         "status": "needs_attention",
@@ -2982,7 +3052,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:09.155897+00:00",
+      "generated_at": "2026-08-11T07:30:10.967351+00:00",
       "source_path": "Data/evals/models/latest_finetune_hardening_assurance.json",
       "metrics": {
         "status": "needs_attention",
@@ -3006,23 +3076,23 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:32.209522+00:00",
+      "generated_at": "2026-08-11T07:30:38.832803+00:00",
       "source_path": "Data/evals/governance/latest_evidence_maturity_matrix.json",
       "metrics": {
         "status": "needs_attention",
         "aggregate_score_emitted": false,
         "tier_counts": {
           "0": 0,
-          "1": 3,
-          "2": 6,
+          "1": 2,
+          "2": 7,
           "3": 2,
           "4": 0,
           "5": 0
         },
         "architecture_budget_status": "needs_attention",
-        "oversized_file_count": 12,
+        "oversized_file_count": 13,
         "critical_file_count": 0,
-        "backend_service_file_count": 385,
+        "backend_service_file_count": 413,
         "clinical_validation": false,
         "healthcare_production_ready": false
       },
@@ -3036,7 +3106,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:32.952454+00:00",
+      "generated_at": "2026-08-11T07:30:40.495456+00:00",
       "source_path": "Data/evals/governance/latest_credibility_gap_registry.json",
       "metrics": {
         "status": "needs_attention",
@@ -3058,7 +3128,7 @@
       "status": "blocked_configuration",
       "source_status": "blocked_configuration",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:02:06.413083+00:00",
+      "generated_at": "2026-08-11T07:20:51.484177+00:00",
       "source_path": "Data/evals/ops/latest_oidc_browser_pkce_readiness.json",
       "metrics": {
         "status": "blocked_configuration",
@@ -3075,13 +3145,13 @@
       "status": "strong",
       "source_status": "strong",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:01:08.447765+00:00",
+      "generated_at": "2026-08-11T07:20:12.401177+00:00",
       "source_path": "Data/lakehouse/manifests/latest_pipeline_run.json",
       "metrics": {
         "status": "strong",
         "source_count": 60,
-        "silver_records": 766,
-        "gold_records": 766,
+        "silver_records": 831,
+        "gold_records": 831,
         "quarantined": 0,
         "metadata_complete": true,
         "external_cloud_write": false
@@ -3096,12 +3166,12 @@
       "status": "strong_contract_only",
       "source_status": "strong_contract_only",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:01:09.943646+00:00",
+      "generated_at": "2026-08-11T07:20:13.448440+00:00",
       "source_path": "Data/evals/rag/latest_vector_store_contract_eval.json",
       "metrics": {
         "status": "strong_contract_only",
         "pass_rate": 1.0,
-        "gold_records": 766,
+        "gold_records": 831,
         "network_request": false,
         "comparison_completed": false
       },
@@ -3115,7 +3185,7 @@
       "status": "compiled_reference_architecture",
       "source_status": "compiled_reference_architecture",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:01:42.331491+00:00",
+      "generated_at": "2026-08-11T07:20:33.539228+00:00",
       "source_path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
       "metrics": {
         "status": "compiled_reference_architecture",
@@ -3134,7 +3204,7 @@
       "status": "ready_for_opt_in_provisioning",
       "source_status": "ready_for_opt_in_provisioning",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:01:15.247458+00:00",
+      "generated_at": "2026-08-11T07:20:16.971571+00:00",
       "source_path": "Data/evals/rag/latest_azure_search_index_readiness.json",
       "metrics": {
         "status": "ready_for_opt_in_provisioning",
@@ -3153,11 +3223,11 @@
       "status": "ready_for_opt_in_shadow_sync",
       "source_status": "ready_for_opt_in_shadow_sync",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:01:18.355352+00:00",
+      "generated_at": "2026-08-11T07:20:19.051319+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
       "metrics": {
         "status": "ready_for_opt_in_shadow_sync",
-        "record_count": 766,
+        "record_count": 831,
         "validation_passed": true,
         "sync_completed": false,
         "indexed_count": 0,
@@ -3173,7 +3243,7 @@
       "status": "ready_for_managed_shadow_run",
       "source_status": "ready_for_managed_shadow_run",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:01:24.807966+00:00",
+      "generated_at": "2026-08-11T07:20:23.656607+00:00",
       "source_path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
       "metrics": {
         "status": "ready_for_managed_shadow_run",
@@ -3192,7 +3262,7 @@
       "status": "strong_offline_drill",
       "source_status": "strong_offline_drill",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:01:12.845751+00:00",
+      "generated_at": "2026-08-11T07:20:15.493437+00:00",
       "source_path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
       "metrics": {
         "status": "strong_offline_drill",
@@ -3211,7 +3281,7 @@
       "status": "blocked",
       "source_status": "blocked",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:47.453488+00:00",
+      "generated_at": "2026-08-11T07:30:55.477212+00:00",
       "source_path": "Data/evals/governance/latest_constraint_aware_improvement_program.json",
       "metrics": {
         "status": "blocked",
@@ -3229,11 +3299,11 @@
       "status": "improved_local_regression",
       "source_status": "improved_local_regression",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:04:54.601566+00:00",
+      "generated_at": "2026-08-11T07:24:30.118476+00:00",
       "source_path": "Data/evals/ops/latest_retrieval_runtime_cache_eval.json",
       "metrics": {
         "status": "improved_local_regression",
-        "retrieval_p95_delta_ms": -1664.86,
+        "retrieval_p95_delta_ms": -1661.57,
         "sample_contract_met": true,
         "production_ready": false
       },
@@ -3247,7 +3317,7 @@
       "status": "blocked_configuration",
       "source_status": "blocked_configuration",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:04:56.173427+00:00",
+      "generated_at": "2026-08-11T07:24:32.722955+00:00",
       "source_path": "Data/evals/ops/latest_provider_usage_reconciliation.json",
       "metrics": {
         "status": "blocked_configuration",
@@ -3265,7 +3335,7 @@
       "status": "ready_for_human_adjudication",
       "source_status": "ready_for_human_adjudication",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:09:52.003146+00:00",
+      "generated_at": "2026-08-11T07:28:11.788883+00:00",
       "source_path": "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
       "metrics": {
         "status": "ready_for_human_adjudication",
@@ -3283,7 +3353,7 @@
       "status": "needs_attention",
       "source_status": "needs_attention",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:04.392265+00:00",
+      "generated_at": "2026-08-11T07:30:07.309845+00:00",
       "source_path": "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json",
       "metrics": {
         "status": "needs_attention",
@@ -3348,12 +3418,12 @@
       "status": "strong_local_only_external_blocked",
       "source_status": "strong_local_only_external_blocked",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:08.044090+00:00",
+      "generated_at": "2026-08-11T07:30:09.925504+00:00",
       "source_path": "Data/evals/ops/latest_synthetic_staging_resilience_dossier.json",
       "metrics": {
         "status": "strong_local_only_external_blocked",
-        "local_passed_count": 7,
-        "unresolved_external_blockers": 5,
+        "local_passed_count": 8,
+        "unresolved_external_blockers": 4,
         "managed_cloud_drill_completed": false
       },
       "limitations": [],
@@ -3366,7 +3436,7 @@
       "status": "canonical_for_synthetic_promotion_evaluation",
       "source_status": "canonical_for_synthetic_promotion_evaluation",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:09:53.155865+00:00",
+      "generated_at": "2026-08-11T07:28:12.734322+00:00",
       "source_path": "Data/evals/models/latest_synthetic_feature_policy.json",
       "metrics": {
         "status": "canonical_for_synthetic_promotion_evaluation",
@@ -3386,7 +3456,7 @@
       "status": "ready_for_nonpatient_provider_capture",
       "source_status": "ready_for_nonpatient_provider_capture",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:04:58.504892+00:00",
+      "generated_at": "2026-08-11T07:24:34.205216+00:00",
       "source_path": "Data/evals/ops/latest_provider_usage_capture_readiness.json",
       "metrics": {
         "status": "ready_for_nonpatient_provider_capture",
@@ -3404,12 +3474,12 @@
       "status": "ready_for_disposable_synthetic_runtime",
       "source_status": "ready_for_disposable_synthetic_runtime",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:12:06.793867+00:00",
+      "generated_at": "2026-08-11T07:30:08.982316+00:00",
       "source_path": "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
       "metrics": {
         "status": "ready_for_disposable_synthetic_runtime",
         "passed_count": 8,
-        "runtime_started": false,
+        "runtime_started": true,
         "healthcare_production_ready": false
       },
       "limitations": [],
@@ -3440,17 +3510,17 @@
       "status": "acceptable_internal_measurement",
       "source_status": "acceptable_internal_measurement",
       "freshness": "fresh",
-      "generated_at": "2026-08-09T12:09:29.508682+00:00",
+      "generated_at": "2026-08-11T07:27:48.652790+00:00",
       "source_path": "Data/evals/rag/latest_research_paper_query_telemetry.json",
       "metrics": {
         "status": "acceptable_internal_measurement",
         "query_count": 30,
         "route_contract_pass_rate": 1.0,
-        "latency_p50_ms": 270.69,
-        "latency_p95_ms": 430.52,
-        "cold_start_latency_ms": 30497.91,
-        "warm_latency_p95_ms": 408.64,
-        "estimated_pipeline_total_tokens": 10434,
+        "latency_p50_ms": 216.38,
+        "latency_p95_ms": 301.39,
+        "cold_start_latency_ms": 25691.83,
+        "warm_latency_p95_ms": 290.21,
+        "estimated_pipeline_total_tokens": 10567,
         "provider_reported_total_tokens": 0,
         "provider_usage_coverage_rate": 0.0
       },
@@ -3886,9 +3956,9 @@
     },
     {
       "benchmark_id": "mle_readiness",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+      "severity": "high",
+      "status": "unideal",
+      "message": "MLE readiness has one or more unideal categories; inspect category_statuses before promotion."
     },
     {
       "benchmark_id": "mle_readiness_realism_candidate",
@@ -4097,17 +4167,11 @@
     {
       "benchmark_id": "service_health_snapshot",
       "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
-    },
-    {
-      "benchmark_id": "deployment_recovery_drill",
-      "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
-      "benchmark_id": "container_recovery_smoke",
+      "benchmark_id": "deployment_recovery_drill",
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
@@ -4117,6 +4181,18 @@
       "severity": "medium",
       "status": "stale",
       "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
+    },
+    {
+      "benchmark_id": "ai_trinity_tradeoff",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
+    },
+    {
+      "benchmark_id": "claim_conditioned_citation_selector_holdout",
+      "severity": "medium",
+      "status": "needs_attention",
+      "message": "Benchmark needs review before using it as supporting evidence."
     },
     {
       "benchmark_id": "runtime_quality_sentinel",
@@ -4219,18 +4295,6 @@
       "severity": "medium",
       "status": "needs_attention",
       "message": "Benchmark needs review before using it as supporting evidence."
-    },
-    {
-      "benchmark_id": "xai_reliability_gate",
-      "severity": "medium",
-      "status": "needs_attention",
-      "message": "Benchmark needs review before using it as supporting evidence."
-    },
-    {
-      "benchmark_id": "automation_fault_injection",
-      "severity": "medium",
-      "status": "stale",
-      "message": "Artifact is older than the freshness TTL; rerun this benchmark before quoting it."
     },
     {
       "benchmark_id": "software_supply_chain",

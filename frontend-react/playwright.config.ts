@@ -20,7 +20,7 @@ export default defineConfig({
       timeout: 300_000,
     },
     {
-      command: "npm run dev -- --host 127.0.0.1 --port 5273",
+      command: "npm run dev -- --host 127.0.0.1 --port 5273 --strictPort --force",
       env: {
         VITE_API_BASE: "http://127.0.0.1:8117",
       },

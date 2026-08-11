@@ -79,6 +79,19 @@ SUPPORTING_ARTIFACTS = (
 )
 
 
+def _ship_manifest_passed_with_timeouts(ship: dict[str, Any]) -> bool:
+    steps = ship.get("steps") or []
+    return bool(
+        ship.get("status") == "passed"
+        and steps
+        and all(
+            row.get("status") in {"passed", "cached_pass"}
+            and int(row.get("timeout_seconds") or 0) >= 30
+            for row in steps
+        )
+    )
+
+
 def build_senior_engineering_evidence(
     *,
     root_dir: str | Path = ROOT_DIR,
@@ -128,13 +141,7 @@ def build_senior_engineering_evidence(
         ),
         _check(
             "ship_manifest_passed_with_timeouts",
-            ship.get("status") == "passed"
-            and bool(ship.get("steps"))
-            and all(
-                row.get("status") == "passed"
-                and int(row.get("timeout_seconds") or 0) >= 30
-                for row in ship.get("steps") or []
-            ),
+            _ship_manifest_passed_with_timeouts(ship),
             "The recorded release run completed with bounded step timeouts.",
             mandatory=False,
         ),

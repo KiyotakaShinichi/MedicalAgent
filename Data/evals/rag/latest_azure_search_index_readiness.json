@@ -1,7 +1,7 @@
 {
   "schema_version": "nlcare_azure_search_index_readiness_v1",
-  "generated_at": "2026-08-11T04:32:53.283064+00:00",
-  "status": "applied_shadow_index",
+  "generated_at": "2026-08-11T07:20:16.971571+00:00",
+  "status": "ready_for_opt_in_provisioning",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "patient_data_allowed": false,
@@ -19,16 +19,12 @@
     "required_filter_fields_filterable": true,
     "vector_profile_declared": true
   },
-  "configured": true,
-  "network_allowed": true,
-  "network_request_performed": true,
-  "index_apply_completed": true,
+  "configured": false,
+  "network_allowed": false,
+  "network_request_performed": false,
+  "index_apply_completed": false,
   "idempotent_method": "PUT create-or-update",
-  "apply_result_summary": {
-    "name": "fixture-index",
-    "field_count": 20,
-    "etag_present": true
-  },
+  "apply_result_summary": null,
   "promotion_boundary": {
     "live_patient_route_changed": false,
     "shadow_only": true,

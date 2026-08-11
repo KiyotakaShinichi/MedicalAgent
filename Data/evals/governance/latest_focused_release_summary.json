@@ -1,18 +1,18 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-08-09T12:13:17.134773+00:00",
+  "generated_at": "2026-08-11T07:44:19.048785+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "release_gate": {
     "status": "passed",
-    "artifact_count": 229,
+    "artifact_count": 245,
     "hard_blocker_failure_count": 0,
-    "appendix_warning_count": 2,
-    "required_artifact_count": 28,
-    "optional_artifact_count": 201,
-    "optional_artifact_ratio": 0.8777,
-    "optional_issue_count": 2,
+    "appendix_warning_count": 1,
+    "required_artifact_count": 33,
+    "optional_artifact_count": 212,
+    "optional_artifact_ratio": 0.8653,
+    "optional_issue_count": 1,
     "failures": []
   },
   "core_evidence": {
@@ -79,7 +79,7 @@
     "retrieval_runtime_cache": {
       "status": "improved_local_regression",
       "local_regression_improvement_observed": true,
-      "retrieval_p95_delta_ms": -1664.86,
+      "retrieval_p95_delta_ms": -1661.57,
       "dense_unique_query_latency_measured": false,
       "production_ready": false
     },
@@ -186,11 +186,11 @@
     },
     "synthetic_staging_resilience": {
       "status": "strong_local_only_external_blocked",
-      "local_checks": "7/7",
-      "unresolved_external_or_managed_blockers": 5,
+      "local_checks": "8/8",
+      "unresolved_external_or_managed_blockers": 4,
       "managed_cloud_drill_completed": false,
       "disposable_runtime_readiness_status": "ready_for_disposable_synthetic_runtime",
-      "disposable_runtime_started": false
+      "disposable_runtime_started": true
     },
     "recovery": {
       "status": "strong_local_only",

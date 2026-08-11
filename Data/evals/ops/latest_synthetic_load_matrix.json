@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_bounded_planner_load_matrix_v1",
-  "generated_at": "2026-08-11T02:31:31.717914+00:00",
+  "generated_at": "2026-08-11T06:24:23.804007+00:00",
   "status": "acceptable_internal_stress",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -9,16 +9,16 @@
     {
       "concurrency": 1,
       "request_count": 100,
-      "throughput_rps": 153.677,
-      "duration_ms": 650.716,
+      "throughput_rps": 11.832,
+      "duration_ms": 8451.593,
       "error_rate": 0.0,
       "exception_count": 0,
       "forbidden_tool_exposure_count": 0,
       "latency_ms": {
-        "p50": 6.137,
-        "p95": 8.843,
-        "p99": 11.493,
-        "max": 12.799
+        "p50": 69.098,
+        "p95": 181.846,
+        "p99": 277.021,
+        "max": 327.356
       },
       "route_counts": {
         "conversation": 12,
@@ -34,16 +34,16 @@
     {
       "concurrency": 10,
       "request_count": 100,
-      "throughput_rps": 173.876,
-      "duration_ms": 575.121,
+      "throughput_rps": 30.786,
+      "duration_ms": 3248.199,
       "error_rate": 0.0,
       "exception_count": 0,
       "forbidden_tool_exposure_count": 0,
       "latency_ms": {
-        "p50": 5.604,
-        "p95": 63.415,
-        "p99": 162.593,
-        "max": 178.808
+        "p50": 172.556,
+        "p95": 614.037,
+        "p99": 1017.797,
+        "max": 1082.774
       },
       "route_counts": {
         "conversation": 12,
@@ -59,16 +59,16 @@
     {
       "concurrency": 25,
       "request_count": 100,
-      "throughput_rps": 185.186,
-      "duration_ms": 539.996,
+      "throughput_rps": 44.604,
+      "duration_ms": 2241.936,
       "error_rate": 0.0,
       "exception_count": 0,
       "forbidden_tool_exposure_count": 0,
       "latency_ms": {
-        "p50": 5.392,
-        "p95": 6.251,
-        "p99": 6.576,
-        "max": 6.871
+        "p50": 41.717,
+        "p95": 244.601,
+        "p99": 416.096,
+        "max": 629.396
       },
       "route_counts": {
         "conversation": 12,
@@ -84,16 +84,16 @@
     {
       "concurrency": 50,
       "request_count": 100,
-      "throughput_rps": 164.824,
-      "duration_ms": 606.707,
+      "throughput_rps": 48.104,
+      "duration_ms": 2078.811,
       "error_rate": 0.0,
       "exception_count": 0,
       "forbidden_tool_exposure_count": 0,
       "latency_ms": {
-        "p50": 6.105,
-        "p95": 7.704,
-        "p99": 12.026,
-        "max": 19.633
+        "p50": 25.712,
+        "p95": 234.067,
+        "p99": 320.4,
+        "max": 699.012
       },
       "route_counts": {
         "conversation": 12,
@@ -109,16 +109,16 @@
     {
       "concurrency": 100,
       "request_count": 200,
-      "throughput_rps": 139.252,
-      "duration_ms": 1436.241,
+      "throughput_rps": 15.808,
+      "duration_ms": 12651.467,
       "error_rate": 0.0,
       "exception_count": 0,
       "forbidden_tool_exposure_count": 0,
       "latency_ms": {
-        "p50": 6.844,
-        "p95": 12.706,
-        "p99": 59.229,
-        "max": 92.2
+        "p50": 345.692,
+        "p95": 2639.216,
+        "p99": 4638.863,
+        "max": 5712.495
       },
       "route_counts": {
         "conversation": 25,
@@ -135,7 +135,7 @@
   "prewarm": {
     "enabled": true,
     "query_count": 8,
-    "duration_ms": 224.796,
+    "duration_ms": 2988.334,
     "exception_count": 0,
     "purpose": "Separate local model/classifier initialization from timed concurrency levels."
   },
@@ -146,7 +146,7 @@
     "patient_record_mutations_executed": false
   },
   "environment": {
-    "pid": 11280,
+    "pid": 31012,
     "cpu_count": 8,
     "provider_calls_enabled": false,
     "database_used": false,

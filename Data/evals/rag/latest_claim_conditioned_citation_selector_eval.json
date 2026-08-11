@@ -1,6 +1,6 @@
 {
   "schema_version": "claim_conditioned_citation_selector_eval_v1",
-  "generated_at": "2026-08-09T12:09:34.205149+00:00",
+  "generated_at": "2026-08-11T07:27:51.856228+00:00",
   "status": "acceptable_internal_candidate",
   "internal_vs_external": "internal_authored_tuning_used",
   "was_used_for_tuning": true,

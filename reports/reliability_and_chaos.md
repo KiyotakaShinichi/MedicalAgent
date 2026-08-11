@@ -1,6 +1,6 @@
 # NLCare Reliability and Chaos Evidence
 
-Generated from repository artifacts at `2026-08-11T04:48:02.120343+00:00`.
+Generated from repository artifacts at `2026-08-11T06:52:48.687888+00:00`.
 
 > NLCare remains synthetic-only, non-diagnostic, not clinically validated, and not production healthcare ready. Internal tests are engineering evidence, not evidence of patient benefit or medical effectiveness.
 

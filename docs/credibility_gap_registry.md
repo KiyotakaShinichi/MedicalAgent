@@ -2,7 +2,7 @@
 
 This registry prevents green internal tests from being mistaken for external or clinical evidence.
 
-- Open or external gaps: `9`
+- Open or external gaps: `10`
 - Cannot be self-certified: `4`
 
 ## Gaps
@@ -10,7 +10,7 @@ This registry prevents green internal tests from being mistaken for external or 
 ### provider_token_usage_coverage
 
 - Domain: `AIE/observability`
-- Status: `complete_internal`
+- Status: `open`
 - Severity: `medium`
 - Owner: `AI platform owner`
 - Completion: Capture provider-reported usage on at least 80% of 30+ controlled representative synthetic requests; staged traffic remains separate.

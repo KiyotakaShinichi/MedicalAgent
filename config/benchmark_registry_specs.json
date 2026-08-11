@@ -2851,6 +2851,40 @@
     }
   },
   {
+    "id": "claim_conditioned_citation_selector_holdout",
+    "title": "Claim-conditioned citation selector frozen holdout",
+    "path": "Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json",
+    "tier": "supporting",
+    "metrics": {
+      "status": ["status"],
+      "promotion_decision": ["promotion_decision"],
+      "case_count": ["case_count"],
+      "baseline_citation_precision": ["baseline_top3_citation_precision"],
+      "selector_citation_precision": ["selector_citation_precision"],
+      "citation_precision_delta": ["citation_precision_delta"],
+      "baseline_claim_support_rate": ["baseline_claim_support_rate"],
+      "selector_claim_support_rate": ["selector_claim_support_rate"],
+      "strict_improvement_proven": ["strict_improvement_proven"],
+      "live_patient_route_changed": ["live_patient_route_changed"]
+    }
+  },
+  {
+    "id": "provider_api_path_capture",
+    "title": "Controlled normal-API provider usage capture",
+    "path": "Data/evals/ops/latest_provider_api_path_capture.json",
+    "tier": "informational",
+    "metrics": {
+      "status": ["status"],
+      "completed": ["completed"],
+      "request_count": ["request_count"],
+      "provider_usage_coverage_rate": ["provider_usage_coverage_rate"],
+      "provider_reported_total_tokens": ["provider_reported_total_tokens"],
+      "estimated_cost_usd": ["estimated_cost_usd"],
+      "content_retained": ["content_retained"],
+      "patient_data_processed": ["patient_data_processed"]
+    }
+  },
+  {
     "id": "runtime_quality_sentinel",
     "title": "Runtime quality sentinel",
     "path": "Data/evals/ops/latest_runtime_quality_sentinel.json",

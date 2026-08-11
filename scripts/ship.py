@@ -422,6 +422,10 @@ def _build_steps() -> list[Step]:
             command=[sys.executable, "scripts/run_retrieval_runtime_cache_eval.py"],
         ),
         Step(
+            name="Guarded normal-API provider usage probe",
+            command=[sys.executable, "scripts/run_provider_api_path_capture.py"],
+        ),
+        Step(
             name="Provider-token reconciliation",
             command=[sys.executable, "scripts/run_provider_usage_reconciliation.py"],
         ),
@@ -452,6 +456,17 @@ def _build_steps() -> list[Step]:
                 sys.executable,
                 "scripts/run_claim_conditioned_citation_selector_eval.py",
             ],
+        ),
+        Step(
+            name="Frozen claim-conditioned selector holdout",
+            command=[
+                sys.executable,
+                "scripts/run_claim_conditioned_citation_selector_holdout.py",
+            ],
+        ),
+        Step(
+            name="Accuracy-latency-unit-cost tradeoff refresh",
+            command=[sys.executable, "scripts/run_ai_trinity_tradeoff.py"],
         ),
         Step(
             name="Signed localhost automation channel drill",
@@ -581,6 +596,19 @@ def _build_steps() -> list[Step]:
         ),
     ]
     return steps
+
+
+def _build_post_success_reconciliation_steps() -> list[Step]:
+    return [
+        Step(
+            name="Post-ship evidence reconciliation",
+            command=[
+                sys.executable,
+                "scripts/run_post_ship_evidence_reconciliation.py",
+            ],
+            timeout_seconds=300,
+        ),
+    ]
 
 
 def _manifest_path_for_tier(tier: str) -> Path:
@@ -841,6 +869,90 @@ def main(argv: list[str] | None = None) -> int:
         selected_step_count=len(steps),
         output_path=manifest_path,
     )
+
+    reconciliation_steps = (
+        _build_post_success_reconciliation_steps()
+        if args.tier == "release"
+        else []
+    )
+    for step in reconciliation_steps:
+        fingerprint = _dependency_fingerprint(step)
+        try:
+            step_results.append(
+                _run(step, dependency_fingerprint=fingerprint)
+            )
+        except subprocess.TimeoutExpired:
+            timeout_seconds = _effective_timeout(step)
+            step_results.append(
+                {
+                    "name": step.name,
+                    "status": "timed_out",
+                    "duration_seconds": timeout_seconds,
+                    "timeout_seconds": timeout_seconds,
+                    "cwd": str(
+                        step.cwd.relative_to(ROOT) if step.cwd != ROOT else "."
+                    ),
+                    "command": step.command,
+                    "dependency_fingerprint": fingerprint,
+                }
+            )
+            _write_manifest(
+                status="failed",
+                step_results=step_results,
+                failed_step=step.name,
+                failure_kind="post_success_reconciliation_timeout",
+                tier=args.tier,
+                resume_requested=args.resume,
+                selected_step_count=len(steps) + len(reconciliation_steps),
+                output_path=manifest_path,
+            )
+            print(
+                f"\n[ship] FAILED: {step.name} timed out after {timeout_seconds}s",
+                file=sys.stderr,
+                flush=True,
+            )
+            return 124
+        except subprocess.CalledProcessError as exc:
+            step_results.append(
+                {
+                    "name": step.name,
+                    "status": "failed",
+                    "duration_seconds": None,
+                    "timeout_seconds": _effective_timeout(step),
+                    "cwd": str(
+                        step.cwd.relative_to(ROOT) if step.cwd != ROOT else "."
+                    ),
+                    "command": step.command,
+                    "exit_code": int(exc.returncode or 1),
+                    "dependency_fingerprint": fingerprint,
+                }
+            )
+            _write_manifest(
+                status="failed",
+                step_results=step_results,
+                failed_step=step.name,
+                failure_kind="post_success_reconciliation_nonzero_exit",
+                tier=args.tier,
+                resume_requested=args.resume,
+                selected_step_count=len(steps) + len(reconciliation_steps),
+                output_path=manifest_path,
+            )
+            print(
+                f"\n[ship] FAILED: {step.name} exited {exc.returncode}",
+                file=sys.stderr,
+                flush=True,
+            )
+            return int(exc.returncode or 1)
+
+    if reconciliation_steps:
+        _write_manifest(
+            status="passed",
+            step_results=step_results,
+            tier=args.tier,
+            resume_requested=args.resume,
+            selected_step_count=len(steps) + len(reconciliation_steps),
+            output_path=manifest_path,
+        )
     print(
         f"\n[ship] PASSED: {args.tier} tier green "
         f"({sum(row['status'] == 'cached_pass' for row in step_results)} cached)",

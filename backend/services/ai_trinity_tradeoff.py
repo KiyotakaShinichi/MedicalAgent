@@ -14,7 +14,9 @@ DEFAULT_OUTPUT_PATH = ROOT / "Data/evals/governance/latest_ai_trinity_tradeoff.j
 DEFAULT_RAG_PATH = ROOT / "Data/evals/rag/latest_rag_baseline_comparison.json"
 DEFAULT_COST_PATH = ROOT / "Data/evals/ops/latest_cost_latency_report.json"
 DEFAULT_PROVIDER_PATH = ROOT / "Data/evals/ops/latest_provider_usage_reconciliation.json"
+DEFAULT_PROVIDER_PROBE_PATH = ROOT / "Data/evals/ops/latest_provider_api_path_capture.json"
 DEFAULT_LATENCY_PATH = ROOT / "Data/evals/ops/latest_route_latency_budget.json"
+DEFAULT_SELECTOR_HOLDOUT_PATH = ROOT / "Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json"
 
 CURRENT_OPERATING_CONFIGURATION = (
     "hybrid_rrf_query_rewrite_parent_child_source_tier"
@@ -33,13 +35,17 @@ def build_ai_trinity_tradeoff(
     rag_path: str | Path = DEFAULT_RAG_PATH,
     cost_path: str | Path = DEFAULT_COST_PATH,
     provider_path: str | Path = DEFAULT_PROVIDER_PATH,
+    provider_probe_path: str | Path = DEFAULT_PROVIDER_PROBE_PATH,
     latency_path: str | Path = DEFAULT_LATENCY_PATH,
+    selector_holdout_path: str | Path = DEFAULT_SELECTOR_HOLDOUT_PATH,
 ) -> dict[str, Any]:
     policy = _read_json(policy_path)
     rag = _read_json(rag_path)
     cost = _read_json(cost_path)
     provider = _read_json(provider_path)
+    provider_probe = _read_json(provider_probe_path)
     latency = _read_json(latency_path)
+    selector_holdout = _read_json(selector_holdout_path)
 
     configurations = rag.get("configurations") or {}
     summaries = {
@@ -58,10 +64,10 @@ def build_ai_trinity_tradeoff(
         ),
         None,
     )
-    provider_summary = _provider_evidence(provider, cost, policy)
+    provider_summary = _provider_evidence(provider, provider_probe, cost, policy)
     latency_axis = _latency_axis(current, latency, policy)
-    accuracy_axis = _accuracy_axis(current)
-    unit_cost_axis = _unit_cost_axis(provider_summary, cost, policy)
+    accuracy_axis = _accuracy_axis(current, selector_holdout)
+    unit_cost_axis = _unit_cost_axis(provider_summary, cost, provider_probe, policy)
     axes = {
         "accuracy": accuracy_axis,
         "latency": latency_axis,
@@ -83,7 +89,9 @@ def build_ai_trinity_tradeoff(
             "rag_baseline": _relative(rag_path),
             "cost_latency": _relative(cost_path),
             "provider_reconciliation": _relative(provider_path),
+            "provider_api_path_capture": _relative(provider_probe_path),
             "route_latency": _relative(latency_path),
+            "citation_selector_holdout": _relative(selector_holdout_path),
         },
         "axes": axes,
         "summary": {
@@ -92,6 +100,7 @@ def build_ai_trinity_tradeoff(
             "unit_cost_status": unit_cost_axis["status"],
             "provider_usage_coverage_rate": provider_summary["coverage_rate"],
             "provider_paired_request_count": provider_summary["paired_request_count"],
+            "provider_probe_status": provider_summary["probe_status"],
             "current_accuracy_grounding_score": (
                 current.get("accuracy_grounding_score") if current else None
             ),
@@ -119,10 +128,16 @@ def build_ai_trinity_tradeoff(
             ),
             "dense_or_complex_retrieval_promoted": False,
             "cost_optimization_promoted": False,
+            "claim_conditioned_selector_promoted": False,
+            "claim_conditioned_selector_reason": (
+                "Frozen answer-level holdout regressed citation precision and support; "
+                "the selector remains offline only."
+            ),
         },
         "next_actions": [
             "Raise citation precision and reduce unsupported context on development cases without weakening source governance.",
             "Capture at least 30 paired provider-usage requests with at least 80% coverage on non-patient synthetic traffic.",
+            "Keep the claim-conditioned citation selector offline because its frozen holdout result is negative; do not tune on that fixture.",
             "Recompute cost per safe, source-governed, claim-supported answer from provider-token-derived pricing rather than treating missing telemetry as zero.",
             "Re-run the same frozen candidate matrix after quality changes and reject any option that buys speed or cost by crossing a safety floor.",
         ],
@@ -295,7 +310,10 @@ def _dominates(left: dict[str, Any], right: dict[str, Any]) -> bool:
 
 
 def _provider_evidence(
-    provider: dict[str, Any], cost: dict[str, Any], policy: dict[str, Any]
+    provider: dict[str, Any],
+    probe: dict[str, Any],
+    cost: dict[str, Any],
+    policy: dict[str, Any],
 ) -> dict[str, Any]:
     requirements = policy.get("unit_cost_evidence") or {}
     coverage = _number(provider.get("actual_usage_coverage_rate")) or 0.0
@@ -307,6 +325,8 @@ def _provider_evidence(
     )
     return {
         "status": provider.get("status") or "missing",
+        "probe_status": probe.get("status") or "missing",
+        "probe_completed": probe.get("completed") is True,
         "coverage_rate": coverage,
         "paired_request_count": paired,
         "evidence_complete": complete,
@@ -315,7 +335,10 @@ def _provider_evidence(
     }
 
 
-def _accuracy_axis(current: dict[str, Any] | None) -> dict[str, Any]:
+def _accuracy_axis(
+    current: dict[str, Any] | None,
+    selector_holdout: dict[str, Any],
+) -> dict[str, Any]:
     if not current:
         return {"status": "missing", "reason": "Current retrieval configuration is absent."}
     passed = current["governance_floor_pass"] and current["accuracy_floor_pass"]
@@ -330,6 +353,26 @@ def _accuracy_axis(current: dict[str, Any] | None) -> dict[str, Any]:
         "unsupported_context_rate": current["unsupported_context_rate"],
         "source_tier_correctness": current["source_tier_correctness"],
         "refusal_correctness": current["refusal_correctness"],
+        "claim_conditioned_selector_holdout": {
+            "status": selector_holdout.get("status") or "missing",
+            "promotion_decision": selector_holdout.get("promotion_decision") or "missing",
+            "case_count": selector_holdout.get("case_count"),
+            "baseline_citation_precision": selector_holdout.get(
+                "baseline_top3_citation_precision"
+            ),
+            "selector_citation_precision": selector_holdout.get(
+                "selector_citation_precision"
+            ),
+            "citation_precision_delta": selector_holdout.get(
+                "citation_precision_delta"
+            ),
+            "strict_improvement_proven": bool(
+                selector_holdout.get("strict_improvement_proven", False)
+            ),
+            "live_patient_route_changed": bool(
+                selector_holdout.get("live_patient_route_changed", False)
+            ),
+        },
     }
 
 
@@ -363,10 +406,17 @@ def _latency_axis(
 
 
 def _unit_cost_axis(
-    provider: dict[str, Any], cost: dict[str, Any], policy: dict[str, Any]
+    provider: dict[str, Any],
+    cost: dict[str, Any],
+    probe: dict[str, Any],
+    policy: dict[str, Any],
 ) -> dict[str, Any]:
     requirements = policy.get("unit_cost_evidence") or {}
     requests = [row for row in cost.get("requests") or [] if isinstance(row, dict)]
+    if probe.get("normal_api_path") is True:
+        requests.extend(
+            row for row in probe.get("requests") or [] if isinstance(row, dict)
+        )
     eligible = [
         row
         for row in requests
@@ -401,6 +451,11 @@ def _unit_cost_axis(
         "planning_budget_usd": budget,
         "missing_cost_is_zero": False,
         "audited_billing": False,
+        "cost_basis": (
+            "provider_tokens_times_non_audited_pricing_assumptions"
+            if unit_cost is not None
+            else "missing_provider_quality_linked_cost_evidence"
+        ),
     }
 
 

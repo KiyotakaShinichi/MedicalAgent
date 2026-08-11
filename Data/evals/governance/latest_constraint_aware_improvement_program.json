@@ -1,8 +1,8 @@
 {
   "schema_version": "constraint_aware_improvement_program_v1",
-  "generated_at": "2026-08-09T12:12:47.453488+00:00",
-  "status": "blocked",
-  "engineering_release_decision": "BLOCK",
+  "generated_at": "2026-08-11T07:44:04.038222+00:00",
+  "status": "needs_attention",
+  "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "real_patient_data_used": false,
@@ -11,9 +11,10 @@
     {
       "domain": "aie",
       "evidence_state": "needs_attention",
-      "canonical_check_count": 5,
+      "canonical_check_count": 6,
       "attention_check_ids": [
-        "frozen_adversarial_v7"
+        "frozen_adversarial_v7",
+        "ai_trinity_tradeoff"
       ],
       "objective": "Prefer the simplest governed retrieval and routing policy that survives frozen evaluation.",
       "implemented_controls": [
@@ -36,8 +37,7 @@
       "evidence_state": "needs_attention",
       "canonical_check_count": 3,
       "attention_check_ids": [
-        "synthetic_perturbation_stress",
-        "xai_reliability_gate"
+        "synthetic_perturbation_stress"
       ],
       "objective": "Make synthetic ML statistically defensible as engineering evidence while preventing clinical interpretation.",
       "implemented_controls": [
@@ -57,12 +57,9 @@
     },
     {
       "domain": "swe",
-      "evidence_state": "blocked",
-      "canonical_check_count": 3,
-      "attention_check_ids": [
-        "full_ship_manifest",
-        "dependency_security"
-      ],
+      "evidence_state": "verified_internal_only",
+      "canonical_check_count": 2,
+      "attention_check_ids": [],
       "objective": "Make the system reproducible, reviewable, secure by default, and boring to operate in controlled demos.",
       "implemented_controls": [
         "modular FastAPI and typed React surfaces",
@@ -101,9 +98,11 @@
     },
     {
       "domain": "infrastructure",
-      "evidence_state": "verified_internal_only",
+      "evidence_state": "needs_attention",
       "canonical_check_count": 1,
-      "attention_check_ids": [],
+      "attention_check_ids": [
+        "container_security"
+      ],
       "objective": "Keep infrastructure reproducible, private by default, cost-bounded, and disposable.",
       "implemented_controls": [
         "compile-checked Bicep with cost-bearing resources default off",
@@ -185,18 +184,6 @@
   ],
   "ranked_priorities": [
     {
-      "priority": "P0",
-      "domain": "swe",
-      "action": "Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence.",
-      "acceptance_criteria": [
-        "full ship workflow passes from a clean checkout",
-        "hard blockers cannot be diluted by informational artifacts",
-        "canonical evidence is refreshed after its dependencies",
-        "dependency and container scans expose unavailable tools as gaps"
-      ],
-      "blocked_by_external_evidence": "No production traffic, penetration test, SOC 2, HITRUST, or healthcare security review exists."
-    },
-    {
       "priority": "P1",
       "domain": "aie",
       "action": "Increase independent route sample counts and preserve BM25 as the explicit simple baseline.",
@@ -207,6 +194,18 @@
         "stage latency and marginal quality are reported together"
       ],
       "blocked_by_external_evidence": "No-read RAG holdout and external-authored adversarial cases remain incomplete."
+    },
+    {
+      "priority": "P1",
+      "domain": "infrastructure",
+      "action": "Run an authenticated what-if in a disposable non-patient development subscription.",
+      "acceptance_criteria": [
+        "Bicep compilation has zero diagnostics",
+        "public network and cost-bearing resources remain opt-in",
+        "no secrets are committed",
+        "deployment evidence distinguishes compile, what-if, deploy, restore, and teardown"
+      ],
+      "blocked_by_external_evidence": "No cloud deployment, private-connectivity exercise, restore drill, or cost measurement exists."
     },
     {
       "priority": "P1",
@@ -258,18 +257,6 @@
     },
     {
       "priority": "P2",
-      "domain": "infrastructure",
-      "action": "Run an authenticated what-if in a disposable non-patient development subscription.",
-      "acceptance_criteria": [
-        "Bicep compilation has zero diagnostics",
-        "public network and cost-bearing resources remain opt-in",
-        "no secrets are committed",
-        "deployment evidence distinguishes compile, what-if, deploy, restore, and teardown"
-      ],
-      "blocked_by_external_evidence": "No cloud deployment, private-connectivity exercise, restore drill, or cost measurement exists."
-    },
-    {
-      "priority": "P2",
       "domain": "medical",
       "action": "Run non-clinical comprehension and overtrust testing with synthetic scenarios.",
       "acceptance_criteria": [
@@ -279,6 +266,18 @@
         "all review packets remain labelled unreviewed until actually completed"
       ],
       "blocked_by_external_evidence": "No clinician, nurse, genetic counselor, pharmacist, or patient review has been completed."
+    },
+    {
+      "priority": "P2",
+      "domain": "swe",
+      "action": "Reduce stale artifact volume and add a Linux reproducibility lane with SBOM and container scan evidence.",
+      "acceptance_criteria": [
+        "full ship workflow passes from a clean checkout",
+        "hard blockers cannot be diluted by informational artifacts",
+        "canonical evidence is refreshed after its dependencies",
+        "dependency and container scans expose unavailable tools as gaps"
+      ],
+      "blocked_by_external_evidence": "No production traffic, penetration test, SOC 2, HITRUST, or healthcare security review exists."
     }
   ],
   "implemented_in_this_pass": [

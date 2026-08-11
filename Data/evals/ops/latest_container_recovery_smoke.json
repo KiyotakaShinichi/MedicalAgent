@@ -1,11 +1,37 @@
 {
   "schema_version": "container_recovery_smoke_v1",
-  "generated_at": "2026-07-30T02:59:07.886871+00:00",
-  "status": "blocked_environment",
-  "completed": false,
-  "docker_available": false,
-  "block_reason": "Docker daemon unavailable; no migration or recovery claim is made.",
+  "generated_at": "2026-08-11T06:22:10.324491+00:00",
+  "status": "acceptable_local_container_smoke",
+  "completed": true,
+  "docker_available": true,
+  "docker_server_version": "29.2.1",
+  "compose_file": "docker-compose.recovery-smoke.yml",
+  "compose_project": "nlcare-recovery-smoke",
+  "allocated_loopback_ports": {
+    "postgres": 30872,
+    "redis": 30873
+  },
+  "checks": {
+    "source_database": {
+      "migration_version": "0012_saas_control_plane",
+      "marker": "synthetic-recovery-marker",
+      "public_table_count": 46
+    },
+    "restored_database": {
+      "migration_version": "0012_saas_control_plane",
+      "marker": "synthetic-recovery-marker",
+      "public_table_count": 46
+    },
+    "postgres_restore_match": true,
+    "redis_before_restart": "synthetic-redis-marker",
+    "redis_after_restart": "synthetic-redis-marker",
+    "redis_persistence_match": true,
+    "isolated_resources_removed": true
+  },
+  "error": null,
+  "contains_real_patient_data": false,
   "clinical_validation": false,
   "healthcare_production_ready": false,
-  "claim_boundary": "Local infrastructure smoke only; not production or healthcare readiness evidence."
+  "production_traffic_tested": false,
+  "claim_boundary": "Disposable local Postgres/Redis migration and recovery smoke only; not production, compliance, or healthcare readiness evidence."
 }
