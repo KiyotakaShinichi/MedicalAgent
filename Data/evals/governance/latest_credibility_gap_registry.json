@@ -1,6 +1,6 @@
 {
   "schema_version": "credibility_gap_registry_v1",
-  "generated_at": "2026-08-11T07:44:03.854221+00:00",
+  "generated_at": "2026-08-11T10:07:04.717380+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -32,8 +32,8 @@
         "controlled_probe_query_count": 30,
         "controlled_probe_provider_usage_coverage_rate": 0.0,
         "controlled_probe_provider_reported_total_tokens": 0,
-        "controlled_probe_warm_latency_p95_ms": 290.21,
-        "controlled_probe_cold_start_latency_ms": 25691.83,
+        "controlled_probe_warm_latency_p95_ms": 712.34,
+        "controlled_probe_cold_start_latency_ms": 33204.7,
         "controlled_probe_scope": "internal synthetic research-query suite; no response text retained"
       },
       "completion_criteria": "Capture provider-reported usage on at least 80% of 30+ controlled representative synthetic requests; staged traffic remains separate.",

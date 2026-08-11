@@ -1,6 +1,6 @@
 {
   "schema_version": "fail_closed_rag_assurance_v1",
-  "generated_at": "2026-08-11T07:30:19.339351+00:00",
+  "generated_at": "2026-08-11T10:04:28.963165+00:00",
   "status": "passed",
   "invariant": "No valid evidence envelope -> no evidence-dependent medical answer.",
   "summary": {
@@ -10,7 +10,7 @@
     "minimum_required_cases": 30,
     "pytest_exit_code": 0,
     "timed_out": false,
-    "duration_seconds": 7.332
+    "duration_seconds": 20.911
   },
   "contract": {
     "envelope_version": "rag_evidence_envelope_v1",

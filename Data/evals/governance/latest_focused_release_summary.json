@@ -1,6 +1,6 @@
 {
   "schema_version": "focused_release_summary_v1",
-  "generated_at": "2026-08-11T07:44:19.048785+00:00",
+  "generated_at": "2026-08-11T10:07:54.354156+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -48,6 +48,24 @@
       "canonical_headline": "Frozen internal v7 is the newest one-pass, author-contaminated warning and must not be used for tuning.",
       "not_solved": true
     },
+    "unsafe_intent_development_controls": {
+      "classifier_status": "strong",
+      "classifier_case_count": 54,
+      "classifier_pass_rate": 1.0,
+      "mutation_status": "strong",
+      "mutation_case_count": 196,
+      "mutation_pass_rate": 1.0,
+      "safe_negative_pass_rate": 1.0,
+      "used_for_tuning": true,
+      "independent_evidence": false,
+      "interpretation": "Generalized development mutations and safe controls pass; frozen v7 remains the canonical weak generalization warning."
+    },
+    "architecture_maintainability": {
+      "status": "acceptable",
+      "oversized_file_count": 9,
+      "critical_file_count": 0,
+      "artifact_budget_status": "needs_consolidation"
+    },
     "xai_mechanics": {
       "status": "acceptable",
       "patient_explanation_n": 600,
@@ -77,9 +95,9 @@
       "production_ready": false
     },
     "retrieval_runtime_cache": {
-      "status": "improved_local_regression",
-      "local_regression_improvement_observed": true,
-      "retrieval_p95_delta_ms": -1661.57,
+      "status": "needs_attention",
+      "local_regression_improvement_observed": false,
+      "retrieval_p95_delta_ms": 218.87,
       "dense_unique_query_latency_measured": false,
       "production_ready": false
     },
@@ -207,6 +225,9 @@
     "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
     "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
     "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
+    "Data/evals/safety/latest_unsafe_intent_classifier_eval.json",
+    "Data/evals/safety/latest_unsafe_intent_mutation_dev_eval.json",
+    "Data/evals/governance/latest_evidence_maturity_matrix.json",
     "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
     "Data/evals/models/latest_synthetic_v2_model_stability.json",
     "Data/evals/models/latest_ispy2_tcia_external_stress.json",

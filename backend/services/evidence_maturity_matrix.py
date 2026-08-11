@@ -31,12 +31,14 @@ EVIDENCE_TIERS = {
 ARTIFACTS = {
     "rag": "Data/evals/rag/latest_rag_paired_statistical_comparison.json",
     "citation_selector": "Data/evals/rag/latest_claim_conditioned_citation_selector_eval.json",
+    "citation_selector_holdout": "Data/evals/rag/latest_claim_conditioned_citation_selector_holdout.json",
     "research_paper_rag": "Data/evals/rag/latest_research_paper_retrieval_eval.json",
     "adversarial": "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
     "cost": "Data/evals/ops/latest_cost_latency_report.json",
     "ml": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
     "xai": "Data/evals/models/latest_xai_reliability_gate.json",
     "finetune": "Data/evals/models/latest_finetune_hardening_assurance.json",
+    "finetune_adjudication": "Data/evals/models/latest_finetune_contamination_adjudication_readiness.json",
     "ship": "Data/evals/ops/latest_ship_run.json",
     "automation": "Data/evals/ops/latest_automation_reliability_dossier.json",
     "cloud": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
@@ -99,10 +101,10 @@ def build_evidence_maturity_matrix(
         "highest_roi_internal_actions": [
             "Adjudicate fine-tune semantic-similarity flags before any candidate run.",
             "Collect provider-reported token usage on 30+ representative calls.",
-            "Run the claim-conditioned citation selector on frozen generated answers before any live A/B test.",
-            "Produce a fresh passing full ship manifest after the bounded-suite split.",
+            "Keep the claim-conditioned citation selector offline after its negative frozen holdout; improve upstream evidence selection on a separate development bank.",
+            "Use non-frozen mutation cases to address the remaining research-paper boundary escape, then rerun the internal bank with tuning disclosure.",
             "Keep unstable XAI rank order hidden and expose grouped factors only.",
-            "Reduce the largest backend/frontend modules before adding more service files.",
+            "Hold the oversized-file ratchet at nine or lower and continue replacing concentrated ownership surfaces before adding feature breadth.",
         ],
         "claim_boundary": CLAIM_BOUNDARY,
     }
@@ -114,12 +116,14 @@ def build_evidence_maturity_matrix(
 def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     rag_headline = artifacts["rag"].get("headline") or {}
     citation_selector = artifacts["citation_selector"]
+    citation_selector_holdout = artifacts["citation_selector_holdout"]
     research_paper_rag = artifacts["research_paper_rag"]
     research_summary = research_paper_rag.get("summary") or {}
     adversarial = artifacts["adversarial"]
     cost_summary = artifacts["cost"].get("summary") or {}
     provider = cost_summary.get("provider_reported_usage") or {}
     fine_summary = artifacts["finetune"].get("summary") or {}
+    finetune_adjudication = artifacts["finetune_adjudication"]
     xai_policy = artifacts["xai"].get("patient_display_policy") or {}
     automation = artifacts["automation"]
     cloud = artifacts["cloud"]
@@ -135,17 +139,19 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
             "Frozen internal case-level comparisons, paired bootstrap intervals, "
             "multiple-comparison correction, source governance, negative results, and "
             f"an offline claim-conditioned citation candidate status={citation_selector.get('status')}. "
-            "A separate 32-case corpus-derived research-paper suite measures PMCID identity, "
+            f"Its frozen generated-answer holdout decision={citation_selector_holdout.get('promotion_decision')}. "
+            "A separate 44-case corpus-derived research-paper suite measures PMCID identity, "
             f"section retrieval, provenance, and no-evidence behavior (status={research_paper_rag.get('status')}).",
             (
                 "Full governed-stack raw Recall@10 superiority over BM25 is not proven; "
                 f"current headline={rag_headline.get('full_stack_improvement_proven_vs_bm25')}. "
-                "The citation selector is tuning-used and has not been tested on frozen generated answers. "
+                "The citation selector regressed citation precision/support on its frozen generated-answer holdout and remains offline. "
                 f"The paper suite is not independent and its boundary-route correctness is "
-                f"{research_summary.get('boundary_route_correctness')}."
+                f"{research_summary.get('boundary_route_correctness')}; its boundary-gated escape rate is "
+                f"{research_summary.get('boundary_gated_no_evidence_escape_rate')}."
             ),
-            "Resolve the documented paper no-evidence routing gaps without tuning on this bank, "
-            "then run frozen generated-answer shadow evaluation and an independent no-read holdout.",
+            "Improve upstream evidence selection on a separate development bank, preserve the negative selector result, "
+            "and complete an independent no-read holdout.",
         ),
         _dimension(
             "AIE/adversarial safety",
@@ -171,7 +177,8 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
             2,
             "Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, "
             "paired tests, calibration, train-only constant and linear baselines, "
-            "coverage-performance curves, and synthetic perturbation sensitivity.",
+            "coverage-performance curves, synthetic perturbation sensitivity, and repeated patient-split sensitivity "
+            f"across {(ml_perturbation.get('repeated_patient_split_stability') or {}).get('split_count')} fixed seeds.",
             "All outcomes and uncertainty remain simulator-bounded; transportability is unproven.",
             (
                 "Resolve documented synthetic stress failures "
@@ -191,15 +198,16 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
             1,
             "Behavior-only synthetic dataset, immutable revision contracts, promotion tripwires, "
             "and semantic-similarity screening.",
-            f"Promotion={artifacts['finetune'].get('promotion_decision')}; blockers={fine_summary.get('blocking_gap_count')}.",
-            "Pinned runtime, matched generations, lineage, memorization audit, adjudicated contamination flags, and paired lift.",
+            f"Promotion={artifacts['finetune'].get('promotion_decision')}; blockers={fine_summary.get('blocking_gap_count')}; "
+            f"human adjudication unresolved={finetune_adjudication.get('unresolved_count')} with critical dual-review required.",
+            "Pinned runtime, matched generations, lineage, memorization audit, dual-reviewed contamination flags, and paired lift.",
         ),
         _dimension(
             "SWE/release discipline",
             2,
             f"Integrated ship manifest status={ship.get('status')} with repeatable tests and release gates.",
-            "Evidence is owner-run; architecture has large modules and no independent clean-clone reproduction.",
-            "Independent clean-clone reproduction and reduction of architecture-budget violations.",
+            "Evidence is owner-run; nine oversized modules remain even though the declared ratchet is met, and no independent clean-clone reproduction exists.",
+            "Independent clean-clone reproduction and continued module reduction without expanding the service/artifact surface.",
         ),
         _dimension(
             "Automation",
@@ -310,10 +318,12 @@ def _architecture_budget() -> dict[str, Any]:
         list((ROOT_DIR / "Data" / "evals").rglob("latest_*.json"))
     )
     oversized_baseline = 9
+    critical_count = sum(item["severity"] == "critical" for item in rows)
+    within_ratchet = len(rows) <= oversized_baseline and critical_count == 0
     return {
-        "budget_status": "needs_attention" if rows else "acceptable",
+        "budget_status": "acceptable" if within_ratchet else "needs_attention",
         "oversized_file_count": len(rows),
-        "critical_file_count": sum(item["severity"] == "critical" for item in rows),
+        "critical_file_count": critical_count,
         "backend_service_file_count": service_count,
         "test_file_count": test_count,
         "test_to_service_file_ratio": round(test_count / max(service_count, 1), 4),

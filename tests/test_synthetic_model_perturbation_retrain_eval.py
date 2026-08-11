@@ -4,6 +4,8 @@ import pandas as pd
 from backend.services.synthetic_model_perturbation_retrain_eval import (
     _expected_calibration_error,
     _patient_split,
+    _metric_distribution,
+    _repeated_patient_split_stability,
     perturb_features,
     perturb_training_labels,
 )
@@ -96,3 +98,21 @@ def test_expected_calibration_error_is_zero_for_perfect_probabilities():
     labels = np.array([0, 0, 1, 1])
     probabilities = np.array([0.0, 0.0, 1.0, 1.0])
     assert _expected_calibration_error(labels, probabilities) == 0.0
+
+
+def test_metric_distribution_reports_empirical_spread_not_external_ci():
+    result = _metric_distribution([0.5, 0.7, 0.9])
+    assert result["count"] == 3
+    assert result["mean"] == 0.7
+    assert result["min"] == 0.5
+    assert result["max"] == 0.9
+    assert len(result["empirical_10_90_range"]) == 2
+
+
+def test_repeated_patient_split_stability_preserves_group_isolation():
+    frame = _frame()
+    result = _repeated_patient_split_stability(frame, frame, seeds=(3, 7))
+    assert result["split_count"] == 2
+    assert result["patient_overlap_count_max"] == 0
+    assert result["seed_policy"] == "predeclared_fixed_seed_set"
+    assert "not confidence intervals" in result["interpretation"]

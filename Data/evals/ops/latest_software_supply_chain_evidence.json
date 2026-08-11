@@ -1,6 +1,6 @@
 {
   "schema_version": "software_supply_chain_evidence_v1",
-  "generated_at": "2026-08-11T07:21:55.758006+00:00",
+  "generated_at": "2026-08-11T09:47:04.082641+00:00",
   "status": "needs_attention",
   "lockfiles": {
     "python": {
@@ -53,9 +53,9 @@
         "reason": "image build and scan are separate deployment actions"
       }
     },
-    "status": "stale_image_mismatch",
+    "status": "needs_attention",
     "image": "nlcare-synthetic-staging-backend:latest",
-    "image_identity_matches_current_image": false,
+    "image_identity_matches_current_image": true,
     "high_or_critical_count": 15,
     "fixable_high_or_critical_count": 0,
     "deployment_decision": "BLOCK_PUBLIC_DEPLOYMENT",

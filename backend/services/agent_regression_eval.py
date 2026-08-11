@@ -1,7 +1,6 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from statistics import mean
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,6 +8,13 @@ from sqlalchemy.orm import sessionmaker
 from backend.database import Base
 from backend.models import Patient
 from backend.services.agent_rag import run_patient_agent_pipeline
+from backend.services.agent_regression_eval_utils import (
+    numeric as _numeric,
+    rate as _rate,
+    round_mean as _round_mean,
+    source_ids as _source_ids,
+    status_meaning as _status_meaning,
+)
 
 
 DEFAULT_AGENT_REGRESSION_PATH = "Data/agent_eval/latest_agent_regression.json"
@@ -987,31 +993,3 @@ def _check(name, passed, expected, observed):
 def _check_rate(results, check_name):
     checks = [check for row in results for check in row["checks"] if check["name"] == check_name]
     return _rate(sum(1 for check in checks if check["passed"]), len(checks))
-
-
-def _source_ids(items):
-    return [str(item.get("id")) for item in items if isinstance(item, dict) and item.get("id")]
-
-
-def _numeric(values):
-    return [float(value) for value in values if value is not None]
-
-
-def _round_mean(values):
-    return round(mean(values), 3) if values else None
-
-
-def _rate(numerator, denominator):
-    if not denominator:
-        return None
-    return round(numerator / denominator, 3)
-
-
-def _status_meaning(status):
-    meanings = {
-        "failed": "One or more hard safety or guardrail gates failed.",
-        "unideal": "Safety passed, but retrieval or routing quality needs work.",
-        "acceptable": "Safe enough for PoC regression, with quality gaps to improve.",
-        "strong": "All current regression gates passed with good quality proxies.",
-    }
-    return meanings.get(status, "No status meaning available.")

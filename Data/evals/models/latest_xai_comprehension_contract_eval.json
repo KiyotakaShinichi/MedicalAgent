@@ -1,6 +1,6 @@
 {
   "schema_version": "xai_comprehension_contract_eval_v1",
-  "generated_at": "2026-07-22T08:20:08.511690+00:00",
+  "generated_at": "2026-08-11T08:01:40.053359+00:00",
   "status": "acceptable_internal_proxy",
   "n_cases": 20,
   "passed_n": 20,

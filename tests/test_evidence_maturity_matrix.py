@@ -18,6 +18,14 @@ def test_matrix_refuses_misleading_aggregate_score(tmp_path):
     )
     assert (tmp_path / "matrix.json").exists()
     assert (tmp_path / "matrix.md").exists()
+    rag = next(row for row in result["dimensions"] if row["dimension"] == "AIE/RAG")
+    assert "frozen generated-answer holdout" in rag["what_is_proven"]
+    assert "remains offline" in rag["what_is_not_proven"]
+
+    finetune = next(
+        row for row in result["dimensions"] if row["dimension"] == "Fine-tuning"
+    )
+    assert "dual-review" in finetune["what_is_not_proven"]
 
 
 def test_architecture_budget_surfaces_hotspots_without_claiming_failure(tmp_path):
@@ -31,6 +39,8 @@ def test_architecture_budget_surfaces_hotspots_without_claiming_failure(tmp_path
     assert architecture["oversized_file_count"] >= 1
     assert "Do not add a new service" in architecture["policy"]
     assert architecture["ratchet"]["oversized_file_baseline"] == 9
+    assert architecture["oversized_file_count"] <= 9
+    assert architecture["budget_status"] == "acceptable"
     assert architecture["ratchet"]["critical_file_ceiling"] == 0
     assert architecture["artifact_budget"]["warning_threshold"] == 200
     assert architecture["artifact_budget"]["status"] in {

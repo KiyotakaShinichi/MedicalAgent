@@ -1,12 +1,14 @@
 {
-  "schema_version": "finetune_contamination_adjudication_readiness_v1",
-  "generated_at": "2026-08-11T07:28:11.788883+00:00",
+  "schema_version": "finetune_contamination_adjudication_readiness_v2",
+  "generated_at": "2026-08-11T10:00:16.320301+00:00",
   "status": "ready_for_human_adjudication",
   "completed": false,
   "source_artifact": "Data/evals/models/latest_finetune_semantic_contamination.json",
   "packet_path": "Data/finetune/evaluations/semantic_contamination_adjudication_packet.json",
   "candidate_count": 150,
   "reviewed_count": 0,
+  "secondary_reviewed_count": 0,
+  "fully_adjudicated_count": 0,
   "unresolved_count": 150,
   "critical_unresolved_count": 7,
   "counts_by_channel": {
@@ -14,6 +16,11 @@
     "user": 1
   },
   "validation_issues": [],
+  "integrity": {
+    "source_artifact_sha256": "cd42312702067e15f3d8f7b4ec0774e7330656be331fb7062a782bb7ed8a7088",
+    "candidate_snapshot_sha256": "03f24320bce1aa8ce8338d1ce8d56f48b0d7264f09e3553881de8dd56c4f6b56",
+    "candidate_count": 150
+  },
   "adapter_promotion_allowed": false,
   "external_no_read_evaluation_completed": false,
   "clinical_validation": false,

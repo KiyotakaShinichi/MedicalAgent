@@ -1,6 +1,6 @@
 {
   "schema_version": "restricted_synthetic_staging_assurance_v1",
-  "generated_at": "2026-08-11T07:30:25.727489+00:00",
+  "generated_at": "2026-08-11T10:04:38.888116+00:00",
   "status": "passed",
   "invariant": "Restricted staging accepts synthetic data only, stores no raw bearer token, and releases no unscanned upload.",
   "summary": {
@@ -10,7 +10,7 @@
     "minimum_required_tests": 20,
     "pytest_exit_code": 0,
     "timed_out": false,
-    "duration_seconds": 5.771
+    "duration_seconds": 8.85
   },
   "controls": {
     "browser_oidc_authorization_code_pkce_required": true,

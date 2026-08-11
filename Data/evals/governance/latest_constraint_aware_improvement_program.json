@@ -1,6 +1,6 @@
 {
   "schema_version": "constraint_aware_improvement_program_v1",
-  "generated_at": "2026-08-11T07:44:04.038222+00:00",
+  "generated_at": "2026-08-11T10:07:06.237168+00:00",
   "status": "needs_attention",
   "engineering_release_decision": "PROCEED_WITH_WARNINGS",
   "clinical_validation": false,

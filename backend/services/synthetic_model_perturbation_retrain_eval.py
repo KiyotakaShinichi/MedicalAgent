@@ -45,6 +45,7 @@ NUMERIC_FEATURES = list(LEGACY_NUMERIC_FEATURES)
 GUARDED_NUMERIC_FEATURES = list(CANONICAL_PROMOTION_NUMERIC_FEATURES)
 CATEGORICAL_FEATURES = list(CATEGORICAL_FEATURES)
 SEED = 42
+REPEATED_SPLIT_SEEDS = (11, 23, 42, 73, 101)
 
 CLAIM_BOUNDARY = (
     "All rows and labels in this evaluation are simulator-built. Perturbation "
@@ -175,6 +176,11 @@ def build_synthetic_model_perturbation_retrain_eval(
             realism_internal, realism_to_default
         ),
     }
+    repeated_split_stability = _repeated_patient_split_stability(
+        source,
+        realism,
+        seeds=REPEATED_SPLIT_SEEDS,
+    )
 
     stress_failures = _stress_failures(scenarios, generator_sensitivity)
     return {
@@ -229,6 +235,7 @@ def build_synthetic_model_perturbation_retrain_eval(
         },
         "perturbation_scenarios": scenarios,
         "generator_version_sensitivity": generator_sensitivity,
+        "repeated_patient_split_stability": repeated_split_stability,
         "stress_failures": stress_failures,
         "promotion_decision": "HOLD_SYNTHETIC_ONLY",
         "model_use_boundary": "monitor_only_engineering_signal",
@@ -397,6 +404,7 @@ def _fit_and_score(
     numeric_features: list[str],
     seed: int,
     model_family: str = "gradient_boosting",
+    include_bootstrap_intervals: bool = True,
 ) -> dict[str, Any]:
     features = [
         feature
@@ -455,7 +463,11 @@ def _fit_and_score(
         if patient["label"].nunique() > 1
         else None
     )
-    intervals = _bootstrap_metric_intervals(patient, seed=seed)
+    intervals = (
+        _bootstrap_metric_intervals(patient, seed=seed)
+        if include_bootstrap_intervals
+        else None
+    )
     predicted_labels = (patient["probability"] >= 0.5).astype(int)
     return {
         "model_family": model_family,
@@ -486,7 +498,123 @@ def _fit_and_score(
             patient
         ),
         "bootstrap_95_ci": intervals,
-        "bootstrap_resamples": 300,
+        "bootstrap_resamples": 300 if include_bootstrap_intervals else 0,
+    }
+
+
+def _repeated_patient_split_stability(
+    source: pd.DataFrame,
+    realism: pd.DataFrame,
+    *,
+    seeds: tuple[int, ...] = REPEATED_SPLIT_SEEDS,
+) -> dict[str, Any]:
+    """Measure split sensitivity without treating repeated splits as external data."""
+    rows = []
+    for split_seed in seeds:
+        train, test = _patient_split(source, seed=split_seed)
+        _, realism_test = _patient_split(realism, seed=split_seed)
+        guarded = _fit_and_score(
+            train,
+            test,
+            numeric_features=GUARDED_NUMERIC_FEATURES,
+            seed=split_seed,
+            include_bootstrap_intervals=False,
+        )
+        linear = _fit_and_score(
+            train,
+            test,
+            numeric_features=GUARDED_NUMERIC_FEATURES,
+            seed=split_seed,
+            model_family="linear",
+            include_bootstrap_intervals=False,
+        )
+        cross_generator = _fit_and_score(
+            train,
+            realism_test,
+            numeric_features=GUARDED_NUMERIC_FEATURES,
+            seed=split_seed,
+            include_bootstrap_intervals=False,
+        )
+        delta = _metric_deltas(linear, guarded)
+        threshold_met = bool(
+            (delta.get("classification_auroc") or 0.0) >= 0.02
+            and (delta.get("classification_brier") or 0.0) <= 0.0
+            and (delta.get("regression_mae") or 0.0) <= -1.0
+        )
+        rows.append(
+            {
+                "seed": split_seed,
+                "train_patient_count": int(train["patient_id"].nunique()),
+                "test_patient_count": int(test["patient_id"].nunique()),
+                "patient_overlap_count": len(
+                    set(train["patient_id"]) & set(test["patient_id"])
+                ),
+                "guarded_primary": guarded,
+                "logistic_ridge": linear,
+                "guarded_minus_linear": delta,
+                "complex_lift_threshold_met": threshold_met,
+                "train_default_test_realism_v2": cross_generator,
+            }
+        )
+    metrics = ("classification_auroc", "classification_brier", "regression_mae")
+    return {
+        "seed_policy": "predeclared_fixed_seed_set",
+        "seeds": list(seeds),
+        "split_count": len(rows),
+        "patient_overlap_count_max": max(
+            (row["patient_overlap_count"] for row in rows),
+            default=0,
+        ),
+        "guarded_primary_distributions": {
+            metric: _metric_distribution(
+                row["guarded_primary"].get(metric) for row in rows
+            )
+            for metric in metrics
+        },
+        "guarded_minus_linear_delta_distributions": {
+            metric: _metric_distribution(
+                row["guarded_minus_linear"].get(metric) for row in rows
+            )
+            for metric in metrics
+        },
+        "cross_generator_distributions": {
+            metric: _metric_distribution(
+                row["train_default_test_realism_v2"].get(metric) for row in rows
+            )
+            for metric in metrics
+        },
+        "complex_lift_threshold_pass_rate": round(
+            sum(row["complex_lift_threshold_met"] for row in rows)
+            / max(len(rows), 1),
+            6,
+        ),
+        "rows": rows,
+        "interpretation": (
+            "Repeated patient-grouped splits measure sensitivity to the selected "
+            "synthetic partition. Their empirical ranges are not confidence "
+            "intervals for real patients or evidence of transportability."
+        ),
+    }
+
+
+def _metric_distribution(values: Any) -> dict[str, Any]:
+    clean = np.asarray(
+        [float(value) for value in values if value is not None],
+        dtype=float,
+    )
+    if not len(clean):
+        return {"count": 0, "mean": None, "std": None, "min": None, "max": None}
+    return {
+        "count": int(len(clean)),
+        "mean": round(float(clean.mean()), 6),
+        "std": round(float(clean.std(ddof=1)), 6) if len(clean) > 1 else 0.0,
+        "min": round(float(clean.min()), 6),
+        "median": round(float(np.median(clean)), 6),
+        "max": round(float(clean.max()), 6),
+        "empirical_10_90_range": [
+            round(float(np.percentile(clean, 10)), 6),
+            round(float(np.percentile(clean, 90)), 6),
+        ],
     }
 
 

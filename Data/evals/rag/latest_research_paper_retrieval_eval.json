@@ -1,6 +1,6 @@
 {
   "schema_version": "research_paper_retrieval_eval_v2",
-  "generated_at": "2026-08-11T07:27:11.465379+00:00",
+  "generated_at": "2026-08-11T09:58:27.766638+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -26,10 +26,11 @@
         "section_hit_rate": 0.3333,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 0.625,
+        "no_evidence_raw_research_context_exposure_rate": 0.625,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 206.76,
-        "latency_p95_ms": 398.678,
+        "latency_p50_ms": 235.735,
+        "latency_p95_ms": 549.03,
         "failure_count": 15
       },
       "cases": [
@@ -60,10 +61,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 322.954,
+          "latency_ms": 527.985,
           "failure_reasons": []
         },
         {
@@ -93,10 +96,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 343.494,
+          "latency_ms": 447.299,
           "failure_reasons": []
         },
         {
@@ -126,10 +131,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 271.142,
+          "latency_ms": 594.61,
           "failure_reasons": []
         },
         {
@@ -159,10 +166,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 304.532,
+          "latency_ms": 498.856,
           "failure_reasons": []
         },
         {
@@ -192,10 +201,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 398.678,
+          "latency_ms": 503.688,
           "failure_reasons": []
         },
         {
@@ -225,10 +236,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 462.745,
+          "latency_ms": 543.732,
           "failure_reasons": []
         },
         {
@@ -258,10 +271,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 475.047,
+          "latency_ms": 467.722,
           "failure_reasons": []
         },
         {
@@ -291,10 +306,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 353.996,
+          "latency_ms": 472.105,
           "failure_reasons": []
         },
         {
@@ -324,10 +341,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 359.727,
+          "latency_ms": 292.747,
           "failure_reasons": []
         },
         {
@@ -357,10 +376,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 257.712,
+          "latency_ms": 253.054,
           "failure_reasons": []
         },
         {
@@ -390,10 +411,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 234.619,
+          "latency_ms": 254.808,
           "failure_reasons": []
         },
         {
@@ -423,10 +446,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 226.104,
+          "latency_ms": 199.673,
           "failure_reasons": []
         },
         {
@@ -456,10 +481,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 207.797,
+          "latency_ms": 349.543,
           "failure_reasons": []
         },
         {
@@ -489,10 +516,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 199.693,
+          "latency_ms": 330.749,
           "failure_reasons": []
         },
         {
@@ -522,10 +551,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 188.565,
+          "latency_ms": 263.789,
           "failure_reasons": []
         },
         {
@@ -555,10 +586,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 212.991,
+          "latency_ms": 191.675,
           "failure_reasons": []
         },
         {
@@ -588,10 +621,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 206.72,
+          "latency_ms": 196.614,
           "failure_reasons": []
         },
         {
@@ -621,10 +656,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 221.154,
+          "latency_ms": 186.914,
           "failure_reasons": []
         },
         {
@@ -654,10 +691,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 190.273,
+          "latency_ms": 236.647,
           "failure_reasons": []
         },
         {
@@ -687,10 +726,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 192.774,
+          "latency_ms": 230.037,
           "failure_reasons": []
         },
         {
@@ -720,10 +761,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 206.245,
+          "latency_ms": 187.371,
           "failure_reasons": []
         },
         {
@@ -753,10 +796,12 @@
           "top1_paper_correct": false,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 203.705,
+          "latency_ms": 205.808,
           "failure_reasons": []
         },
         {
@@ -786,10 +831,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 206.8,
+          "latency_ms": 234.822,
           "failure_reasons": []
         },
         {
@@ -819,10 +866,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 209.045,
+          "latency_ms": 186.906,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -854,10 +903,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 232.361,
+          "latency_ms": 181.975,
           "failure_reasons": []
         },
         {
@@ -887,10 +938,12 @@
           "top1_paper_correct": false,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 5,
           "provenance_complete_relevant_chunk_count": 5,
           "source_tier_correct": true,
-          "latency_ms": 222.278,
+          "latency_ms": 201.158,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -922,10 +975,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 202.453,
+          "latency_ms": 246.307,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -957,10 +1012,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 203.631,
+          "latency_ms": 194.157,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -992,10 +1049,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 190.601,
+          "latency_ms": 280.293,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1027,10 +1086,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 197.454,
+          "latency_ms": 549.03,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1062,10 +1123,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 189.874,
+          "latency_ms": 503.703,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1097,10 +1160,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 191.432,
+          "latency_ms": 612.77,
           "failure_reasons": []
         },
         {
@@ -1130,10 +1195,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 202.806,
+          "latency_ms": 485.04,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1165,10 +1232,12 @@
           "top1_paper_correct": false,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 199.452,
+          "latency_ms": 345.736,
           "failure_reasons": [
             "expected_paper_missing_at_10",
             "expected_section_missing_at_10"
@@ -1201,10 +1270,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 215.818,
+          "latency_ms": 199.515,
           "failure_reasons": []
         },
         {
@@ -1234,10 +1305,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 226.416,
+          "latency_ms": 193.625,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -1269,10 +1342,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 199.155,
+          "latency_ms": 184.431,
           "failure_reasons": []
         },
         {
@@ -1302,10 +1377,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 197.35,
+          "latency_ms": 182.353,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1337,10 +1414,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 204.863,
+          "latency_ms": 181.394,
           "failure_reasons": []
         },
         {
@@ -1370,10 +1449,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 200.215,
+          "latency_ms": 191.722,
           "failure_reasons": []
         },
         {
@@ -1403,10 +1484,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 203.572,
+          "latency_ms": 179.599,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1438,10 +1521,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 201.334,
+          "latency_ms": 218.505,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1473,10 +1558,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 205.487,
+          "latency_ms": 233.654,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1508,10 +1595,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 210.008,
+          "latency_ms": 202.404,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -1531,10 +1620,11 @@
         "section_hit_rate": 0.2667,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
+        "no_evidence_raw_research_context_exposure_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 151.825,
-        "latency_p95_ms": 176.586,
+        "latency_p50_ms": 193.83,
+        "latency_p95_ms": 219.689,
         "failure_count": 19
       },
       "cases": [
@@ -1565,10 +1655,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 95381.056,
+          "latency_ms": 155500.276,
           "failure_reasons": []
         },
         {
@@ -1598,10 +1690,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 164.454,
+          "latency_ms": 174.003,
           "failure_reasons": []
         },
         {
@@ -1631,10 +1725,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 162.069,
+          "latency_ms": 182.664,
           "failure_reasons": []
         },
         {
@@ -1664,10 +1760,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 150.114,
+          "latency_ms": 178.64,
           "failure_reasons": []
         },
         {
@@ -1697,10 +1795,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 155.396,
+          "latency_ms": 181.966,
           "failure_reasons": []
         },
         {
@@ -1730,10 +1830,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 149.969,
+          "latency_ms": 184.165,
           "failure_reasons": []
         },
         {
@@ -1763,10 +1865,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 151.314,
+          "latency_ms": 193.492,
           "failure_reasons": []
         },
         {
@@ -1796,10 +1900,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.219,
+          "latency_ms": 196.648,
           "failure_reasons": []
         },
         {
@@ -1829,10 +1935,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 149.225,
+          "latency_ms": 197.771,
           "failure_reasons": []
         },
         {
@@ -1862,10 +1970,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.633,
+          "latency_ms": 193.943,
           "failure_reasons": []
         },
         {
@@ -1895,10 +2005,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 168.967,
+          "latency_ms": 197.656,
           "failure_reasons": []
         },
         {
@@ -1928,10 +2040,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.441,
+          "latency_ms": 216.017,
           "failure_reasons": []
         },
         {
@@ -1961,10 +2075,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 145.596,
+          "latency_ms": 202.007,
           "failure_reasons": []
         },
         {
@@ -1994,10 +2110,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 152.336,
+          "latency_ms": 203.092,
           "failure_reasons": []
         },
         {
@@ -2027,10 +2145,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.387,
+          "latency_ms": 219.689,
           "failure_reasons": []
         },
         {
@@ -2060,10 +2180,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 163.77,
+          "latency_ms": 197.105,
           "failure_reasons": []
         },
         {
@@ -2093,10 +2215,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 182.995,
+          "latency_ms": 207.326,
           "failure_reasons": []
         },
         {
@@ -2126,10 +2250,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 163.371,
+          "latency_ms": 193.717,
           "failure_reasons": []
         },
         {
@@ -2159,10 +2285,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.571,
+          "latency_ms": 182.476,
           "failure_reasons": []
         },
         {
@@ -2192,10 +2320,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 155.299,
+          "latency_ms": 196.386,
           "failure_reasons": []
         },
         {
@@ -2225,10 +2355,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 157.579,
+          "latency_ms": 189.785,
           "failure_reasons": []
         },
         {
@@ -2258,10 +2390,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 151.228,
+          "latency_ms": 192.156,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2293,10 +2427,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 156.238,
+          "latency_ms": 216.781,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2328,10 +2464,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 144.584,
+          "latency_ms": 221.498,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2363,10 +2501,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.887,
+          "latency_ms": 212.714,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2398,10 +2538,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 144.479,
+          "latency_ms": 200.813,
           "failure_reasons": []
         },
         {
@@ -2431,10 +2573,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 146.517,
+          "latency_ms": 204.636,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2466,10 +2610,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 157.422,
+          "latency_ms": 191.837,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2501,10 +2647,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 176.586,
+          "latency_ms": 187.843,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2536,10 +2684,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 175.535,
+          "latency_ms": 193.407,
           "failure_reasons": []
         },
         {
@@ -2569,10 +2719,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 161.426,
+          "latency_ms": 193.024,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2604,10 +2756,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 156.823,
+          "latency_ms": 198.316,
           "failure_reasons": []
         },
         {
@@ -2637,10 +2791,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 157.863,
+          "latency_ms": 205.755,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2672,10 +2828,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 144.907,
+          "latency_ms": 211.518,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2707,10 +2865,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 138.644,
+          "latency_ms": 200.221,
           "failure_reasons": []
         },
         {
@@ -2740,10 +2900,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 140.275,
+          "latency_ms": 190.344,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -2775,10 +2937,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 137.659,
+          "latency_ms": 187.92,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2810,10 +2974,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 140.199,
+          "latency_ms": 189.55,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2845,10 +3011,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 136.258,
+          "latency_ms": 188.124,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2880,10 +3048,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 134.595,
+          "latency_ms": 181.247,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2915,10 +3085,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 137.871,
+          "latency_ms": 176.667,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2950,10 +3122,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 133.772,
+          "latency_ms": 203.878,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -2985,10 +3159,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 131.404,
+          "latency_ms": 188.616,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -3020,10 +3196,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 134.297,
+          "latency_ms": 190.488,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -3043,10 +3221,11 @@
         "section_hit_rate": 0.2667,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
+        "no_evidence_raw_research_context_exposure_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 151.825,
-        "latency_p95_ms": 176.586,
+        "latency_p50_ms": 193.83,
+        "latency_p95_ms": 219.689,
         "failure_count": 19
       },
       "cases": [
@@ -3077,10 +3256,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 95381.056,
+          "latency_ms": 155500.276,
           "failure_reasons": []
         },
         {
@@ -3110,10 +3291,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 164.454,
+          "latency_ms": 174.003,
           "failure_reasons": []
         },
         {
@@ -3143,10 +3326,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 162.069,
+          "latency_ms": 182.664,
           "failure_reasons": []
         },
         {
@@ -3176,10 +3361,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 150.114,
+          "latency_ms": 178.64,
           "failure_reasons": []
         },
         {
@@ -3209,10 +3396,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 155.396,
+          "latency_ms": 181.966,
           "failure_reasons": []
         },
         {
@@ -3242,10 +3431,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 149.969,
+          "latency_ms": 184.165,
           "failure_reasons": []
         },
         {
@@ -3275,10 +3466,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 151.314,
+          "latency_ms": 193.492,
           "failure_reasons": []
         },
         {
@@ -3308,10 +3501,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.219,
+          "latency_ms": 196.648,
           "failure_reasons": []
         },
         {
@@ -3341,10 +3536,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 149.225,
+          "latency_ms": 197.771,
           "failure_reasons": []
         },
         {
@@ -3374,10 +3571,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.633,
+          "latency_ms": 193.943,
           "failure_reasons": []
         },
         {
@@ -3407,10 +3606,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 168.967,
+          "latency_ms": 197.656,
           "failure_reasons": []
         },
         {
@@ -3440,10 +3641,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.441,
+          "latency_ms": 216.017,
           "failure_reasons": []
         },
         {
@@ -3473,10 +3676,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 145.596,
+          "latency_ms": 202.007,
           "failure_reasons": []
         },
         {
@@ -3506,10 +3711,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 152.336,
+          "latency_ms": 203.092,
           "failure_reasons": []
         },
         {
@@ -3539,10 +3746,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 153.387,
+          "latency_ms": 219.689,
           "failure_reasons": []
         },
         {
@@ -3572,10 +3781,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 163.77,
+          "latency_ms": 197.105,
           "failure_reasons": []
         },
         {
@@ -3605,10 +3816,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 182.995,
+          "latency_ms": 207.326,
           "failure_reasons": []
         },
         {
@@ -3638,10 +3851,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 163.371,
+          "latency_ms": 193.717,
           "failure_reasons": []
         },
         {
@@ -3671,10 +3886,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.571,
+          "latency_ms": 182.476,
           "failure_reasons": []
         },
         {
@@ -3704,10 +3921,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 155.299,
+          "latency_ms": 196.386,
           "failure_reasons": []
         },
         {
@@ -3737,10 +3956,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 157.579,
+          "latency_ms": 189.785,
           "failure_reasons": []
         },
         {
@@ -3770,10 +3991,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 151.228,
+          "latency_ms": 192.156,
           "failure_reasons": []
         },
         {
@@ -3803,10 +4026,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 156.238,
+          "latency_ms": 216.781,
           "failure_reasons": []
         },
         {
@@ -3836,10 +4061,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.584,
+          "latency_ms": 221.498,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -3871,10 +4098,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.887,
+          "latency_ms": 212.714,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -3906,10 +4135,12 @@
           "top1_paper_correct": false,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 144.479,
+          "latency_ms": 200.813,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -3941,10 +4172,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 146.517,
+          "latency_ms": 204.636,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -3976,10 +4209,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 157.422,
+          "latency_ms": 191.837,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4011,10 +4246,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 176.586,
+          "latency_ms": 187.843,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4046,10 +4283,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 175.535,
+          "latency_ms": 193.407,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4081,10 +4320,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 161.426,
+          "latency_ms": 193.024,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4116,10 +4357,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 156.823,
+          "latency_ms": 198.316,
           "failure_reasons": []
         },
         {
@@ -4149,10 +4392,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 157.863,
+          "latency_ms": 205.755,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4184,10 +4429,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 144.907,
+          "latency_ms": 211.518,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4219,10 +4466,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 138.644,
+          "latency_ms": 200.221,
           "failure_reasons": []
         },
         {
@@ -4252,10 +4501,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 140.275,
+          "latency_ms": 190.344,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -4287,10 +4538,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 137.659,
+          "latency_ms": 187.92,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4322,10 +4575,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 140.199,
+          "latency_ms": 189.55,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4357,10 +4612,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 136.258,
+          "latency_ms": 188.124,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4392,10 +4649,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 134.595,
+          "latency_ms": 181.247,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4427,10 +4686,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 137.871,
+          "latency_ms": 176.667,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4462,10 +4723,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 133.772,
+          "latency_ms": 203.878,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4497,10 +4760,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 131.404,
+          "latency_ms": 188.616,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4532,10 +4797,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 134.297,
+          "latency_ms": 190.488,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -4555,10 +4822,11 @@
         "section_hit_rate": 0.4,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
+        "no_evidence_raw_research_context_exposure_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 138.887,
-        "latency_p95_ms": 164.347,
+        "latency_p50_ms": 172.129,
+        "latency_p95_ms": 191.771,
         "failure_count": 17
       },
       "cases": [
@@ -4589,10 +4857,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 171.743,
+          "latency_ms": 205.119,
           "failure_reasons": []
         },
         {
@@ -4622,10 +4892,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 128.989,
+          "latency_ms": 167.003,
           "failure_reasons": []
         },
         {
@@ -4655,10 +4927,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 106.864,
+          "latency_ms": 143.176,
           "failure_reasons": []
         },
         {
@@ -4688,10 +4962,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 131.884,
+          "latency_ms": 173.75,
           "failure_reasons": []
         },
         {
@@ -4721,10 +4997,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 142.147,
+          "latency_ms": 188.064,
           "failure_reasons": []
         },
         {
@@ -4754,10 +5032,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 115.127,
+          "latency_ms": 143.101,
           "failure_reasons": []
         },
         {
@@ -4787,10 +5067,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 145.683,
+          "latency_ms": 177.668,
           "failure_reasons": []
         },
         {
@@ -4820,10 +5102,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 156.135,
+          "latency_ms": 184.415,
           "failure_reasons": []
         },
         {
@@ -4853,10 +5137,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 123.167,
+          "latency_ms": 146.772,
           "failure_reasons": []
         },
         {
@@ -4886,10 +5172,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 108.409,
+          "latency_ms": 121.449,
           "failure_reasons": []
         },
         {
@@ -4919,10 +5207,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 107.935,
+          "latency_ms": 132.489,
           "failure_reasons": []
         },
         {
@@ -4952,10 +5242,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 101.223,
+          "latency_ms": 130.501,
           "failure_reasons": []
         },
         {
@@ -4985,10 +5277,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 96.406,
+          "latency_ms": 128.712,
           "failure_reasons": []
         },
         {
@@ -5018,10 +5312,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 116.398,
+          "latency_ms": 162.934,
           "failure_reasons": []
         },
         {
@@ -5051,10 +5347,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 127.207,
+          "latency_ms": 150.788,
           "failure_reasons": []
         },
         {
@@ -5084,10 +5382,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 108.204,
+          "latency_ms": 130.645,
           "failure_reasons": []
         },
         {
@@ -5117,10 +5417,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 101.702,
+          "latency_ms": 138.325,
           "failure_reasons": []
         },
         {
@@ -5150,10 +5452,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 96.668,
+          "latency_ms": 117.498,
           "failure_reasons": []
         },
         {
@@ -5183,10 +5487,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 102.003,
+          "latency_ms": 110.134,
           "failure_reasons": []
         },
         {
@@ -5216,10 +5522,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 120.469,
+          "latency_ms": 149.119,
           "failure_reasons": []
         },
         {
@@ -5249,10 +5557,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 130.23,
+          "latency_ms": 164.117,
           "failure_reasons": []
         },
         {
@@ -5282,10 +5592,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 128.221,
+          "latency_ms": 174.584,
           "failure_reasons": []
         },
         {
@@ -5315,10 +5627,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 137.356,
+          "latency_ms": 178.636,
           "failure_reasons": []
         },
         {
@@ -5348,10 +5662,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 165.771,
+          "latency_ms": 192.774,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5383,10 +5699,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.542,
+          "latency_ms": 185.906,
           "failure_reasons": []
         },
         {
@@ -5416,10 +5734,12 @@
           "top1_paper_correct": false,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 138.274,
+          "latency_ms": 183.255,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5451,10 +5771,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.034,
+          "latency_ms": 191.771,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5486,10 +5808,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 140.572,
+          "latency_ms": 181.095,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5521,10 +5845,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 138.188,
+          "latency_ms": 182.816,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5556,10 +5882,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 139.501,
+          "latency_ms": 165.846,
           "failure_reasons": []
         },
         {
@@ -5589,10 +5917,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 144.083,
+          "latency_ms": 170.654,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5624,10 +5954,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.613,
+          "latency_ms": 174.418,
           "failure_reasons": []
         },
         {
@@ -5657,10 +5989,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.072,
+          "latency_ms": 173.604,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5692,10 +6026,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 145.429,
+          "latency_ms": 174.103,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5727,10 +6063,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.551,
+          "latency_ms": 182.775,
           "failure_reasons": []
         },
         {
@@ -5760,10 +6098,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 151.514,
+          "latency_ms": 180.777,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -5795,10 +6135,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 143.488,
+          "latency_ms": 175.834,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5830,10 +6172,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 141.808,
+          "latency_ms": 173.621,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5865,10 +6209,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 160.079,
+          "latency_ms": 178.278,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5900,10 +6246,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 145.093,
+          "latency_ms": 173.662,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5935,10 +6283,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 117.14,
+          "latency_ms": 141.895,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -5970,10 +6320,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 158.411,
+          "latency_ms": 158.162,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -6005,10 +6357,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 141.012,
+          "latency_ms": 137.698,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -6040,10 +6394,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 164.347,
+          "latency_ms": 165.582,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -6063,10 +6419,11 @@
         "section_hit_rate": 0.4,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
+        "no_evidence_raw_research_context_exposure_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 139.384,
-        "latency_p95_ms": 165.023,
+        "latency_p50_ms": 172.603,
+        "latency_p95_ms": 192.157,
         "failure_count": 17
       },
       "cases": [
@@ -6097,10 +6454,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 172.169,
+          "latency_ms": 205.845,
           "failure_reasons": []
         },
         {
@@ -6130,10 +6489,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 129.4,
+          "latency_ms": 167.935,
           "failure_reasons": []
         },
         {
@@ -6163,10 +6524,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 107.224,
+          "latency_ms": 143.616,
           "failure_reasons": []
         },
         {
@@ -6196,10 +6559,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 132.136,
+          "latency_ms": 174.26,
           "failure_reasons": []
         },
         {
@@ -6229,10 +6594,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 142.475,
+          "latency_ms": 188.373,
           "failure_reasons": []
         },
         {
@@ -6262,10 +6629,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 115.474,
+          "latency_ms": 143.414,
           "failure_reasons": []
         },
         {
@@ -6295,10 +6664,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 146.15,
+          "latency_ms": 177.944,
           "failure_reasons": []
         },
         {
@@ -6328,10 +6699,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 156.466,
+          "latency_ms": 184.64,
           "failure_reasons": []
         },
         {
@@ -6361,10 +6734,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 123.46,
+          "latency_ms": 147.153,
           "failure_reasons": []
         },
         {
@@ -6394,10 +6769,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 108.692,
+          "latency_ms": 121.734,
           "failure_reasons": []
         },
         {
@@ -6427,10 +6804,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 108.21,
+          "latency_ms": 132.764,
           "failure_reasons": []
         },
         {
@@ -6460,10 +6839,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 101.475,
+          "latency_ms": 130.823,
           "failure_reasons": []
         },
         {
@@ -6493,10 +6874,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 96.711,
+          "latency_ms": 129.077,
           "failure_reasons": []
         },
         {
@@ -6526,10 +6909,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 116.77,
+          "latency_ms": 163.572,
           "failure_reasons": []
         },
         {
@@ -6559,10 +6944,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 127.431,
+          "latency_ms": 151.366,
           "failure_reasons": []
         },
         {
@@ -6592,10 +6979,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 108.657,
+          "latency_ms": 131.16,
           "failure_reasons": []
         },
         {
@@ -6625,10 +7014,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 101.895,
+          "latency_ms": 138.611,
           "failure_reasons": []
         },
         {
@@ -6658,10 +7049,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 96.828,
+          "latency_ms": 117.758,
           "failure_reasons": []
         },
         {
@@ -6691,10 +7084,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 102.327,
+          "latency_ms": 111.212,
           "failure_reasons": []
         },
         {
@@ -6724,10 +7119,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 120.624,
+          "latency_ms": 149.488,
           "failure_reasons": []
         },
         {
@@ -6757,10 +7154,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 130.412,
+          "latency_ms": 165.036,
           "failure_reasons": []
         },
         {
@@ -6790,10 +7189,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 128.411,
+          "latency_ms": 174.979,
           "failure_reasons": []
         },
         {
@@ -6823,10 +7224,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 137.509,
+          "latency_ms": 179.197,
           "failure_reasons": []
         },
         {
@@ -6856,10 +7259,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 166.068,
+          "latency_ms": 193.18,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -6891,10 +7296,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.807,
+          "latency_ms": 186.642,
           "failure_reasons": []
         },
         {
@@ -6924,10 +7331,12 @@
           "top1_paper_correct": false,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 138.873,
+          "latency_ms": 183.988,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -6959,10 +7368,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.507,
+          "latency_ms": 192.157,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -6994,10 +7405,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 141.014,
+          "latency_ms": 181.577,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7029,10 +7442,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 138.803,
+          "latency_ms": 183.231,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7064,10 +7479,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 139.895,
+          "latency_ms": 166.214,
           "failure_reasons": []
         },
         {
@@ -7097,10 +7514,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 144.92,
+          "latency_ms": 171.335,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7132,10 +7551,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 149.115,
+          "latency_ms": 174.828,
           "failure_reasons": []
         },
         {
@@ -7165,10 +7586,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.386,
+          "latency_ms": 173.872,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7200,10 +7623,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 7,
           "provenance_complete_relevant_chunk_count": 7,
           "source_tier_correct": true,
-          "latency_ms": 146.0,
+          "latency_ms": 174.937,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7235,10 +7660,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.735,
+          "latency_ms": 183.137,
           "failure_reasons": []
         },
         {
@@ -7268,10 +7695,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 151.759,
+          "latency_ms": 181.129,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -7303,10 +7732,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 143.845,
+          "latency_ms": 176.488,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7338,10 +7769,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 142.179,
+          "latency_ms": 174.246,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7373,10 +7806,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 160.381,
+          "latency_ms": 178.853,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7408,10 +7843,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 145.553,
+          "latency_ms": 174.568,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7443,10 +7880,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 117.542,
+          "latency_ms": 142.383,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7478,10 +7917,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 158.809,
+          "latency_ms": 158.599,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7513,10 +7954,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 141.624,
+          "latency_ms": 138.593,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7548,10 +7991,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 165.023,
+          "latency_ms": 166.289,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -7571,10 +8016,11 @@
         "section_hit_rate": 0.4,
         "taglish_recall_at_10": 1.0,
         "no_evidence_false_paper_attribution_rate": 1.0,
+        "no_evidence_raw_research_context_exposure_rate": 1.0,
         "provenance_completeness": 1.0,
         "source_tier_correctness": 1.0,
-        "latency_p50_ms": 139.554,
-        "latency_p95_ms": 165.123,
+        "latency_p50_ms": 172.797,
+        "latency_p95_ms": 192.278,
         "failure_count": 17
       },
       "cases": [
@@ -7605,10 +8051,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 172.157,
+          "latency_ms": 205.496,
           "failure_reasons": []
         },
         {
@@ -7638,10 +8086,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 129.376,
+          "latency_ms": 167.435,
           "failure_reasons": []
         },
         {
@@ -7671,10 +8121,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 107.249,
+          "latency_ms": 143.594,
           "failure_reasons": []
         },
         {
@@ -7704,10 +8156,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 132.243,
+          "latency_ms": 174.088,
           "failure_reasons": []
         },
         {
@@ -7737,10 +8191,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 142.513,
+          "latency_ms": 188.403,
           "failure_reasons": []
         },
         {
@@ -7770,10 +8226,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 115.505,
+          "latency_ms": 143.562,
           "failure_reasons": []
         },
         {
@@ -7803,10 +8261,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 146.063,
+          "latency_ms": 178.038,
           "failure_reasons": []
         },
         {
@@ -7836,10 +8296,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 156.373,
+          "latency_ms": 184.736,
           "failure_reasons": []
         },
         {
@@ -7869,10 +8331,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 123.439,
+          "latency_ms": 147.357,
           "failure_reasons": []
         },
         {
@@ -7902,10 +8366,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 108.677,
+          "latency_ms": 121.903,
           "failure_reasons": []
         },
         {
@@ -7935,10 +8401,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 108.174,
+          "latency_ms": 132.974,
           "failure_reasons": []
         },
         {
@@ -7968,10 +8436,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 101.466,
+          "latency_ms": 131.165,
           "failure_reasons": []
         },
         {
@@ -8001,10 +8471,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 96.67,
+          "latency_ms": 129.167,
           "failure_reasons": []
         },
         {
@@ -8034,10 +8506,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 116.7,
+          "latency_ms": 163.425,
           "failure_reasons": []
         },
         {
@@ -8067,10 +8541,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 127.412,
+          "latency_ms": 151.174,
           "failure_reasons": []
         },
         {
@@ -8100,10 +8576,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 108.826,
+          "latency_ms": 131.306,
           "failure_reasons": []
         },
         {
@@ -8133,10 +8611,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 102.047,
+          "latency_ms": 138.768,
           "failure_reasons": []
         },
         {
@@ -8166,10 +8646,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 97.005,
+          "latency_ms": 117.901,
           "failure_reasons": []
         },
         {
@@ -8199,10 +8681,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 102.705,
+          "latency_ms": 110.79,
           "failure_reasons": []
         },
         {
@@ -8232,10 +8716,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 120.766,
+          "latency_ms": 149.506,
           "failure_reasons": []
         },
         {
@@ -8265,10 +8751,12 @@
           "top1_paper_correct": true,
           "section_hit": null,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 130.622,
+          "latency_ms": 164.629,
           "failure_reasons": []
         },
         {
@@ -8298,10 +8786,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 128.618,
+          "latency_ms": 174.977,
           "failure_reasons": []
         },
         {
@@ -8331,10 +8821,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 137.722,
+          "latency_ms": 179.082,
           "failure_reasons": []
         },
         {
@@ -8364,10 +8856,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 166.171,
+          "latency_ms": 193.182,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8399,10 +8893,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 145.088,
+          "latency_ms": 186.383,
           "failure_reasons": []
         },
         {
@@ -8432,10 +8928,12 @@
           "top1_paper_correct": false,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 6,
           "provenance_complete_relevant_chunk_count": 6,
           "source_tier_correct": true,
-          "latency_ms": 139.226,
+          "latency_ms": 183.801,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8467,10 +8965,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 144.425,
+          "latency_ms": 192.278,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8502,10 +9002,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 141.062,
+          "latency_ms": 181.598,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8537,10 +9039,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 138.624,
+          "latency_ms": 183.451,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8572,10 +9076,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 139.882,
+          "latency_ms": 166.2,
           "failure_reasons": []
         },
         {
@@ -8605,10 +9111,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 8,
           "provenance_complete_relevant_chunk_count": 8,
           "source_tier_correct": true,
-          "latency_ms": 144.669,
+          "latency_ms": 171.532,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8640,10 +9148,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 149.053,
+          "latency_ms": 174.931,
           "failure_reasons": []
         },
         {
@@ -8673,10 +9183,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 148.374,
+          "latency_ms": 174.061,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8708,10 +9220,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 9,
           "provenance_complete_relevant_chunk_count": 9,
           "source_tier_correct": true,
-          "latency_ms": 146.126,
+          "latency_ms": 174.766,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8743,10 +9257,12 @@
           "top1_paper_correct": true,
           "section_hit": true,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 154.919,
+          "latency_ms": 183.119,
           "failure_reasons": []
         },
         {
@@ -8776,10 +9292,12 @@
           "top1_paper_correct": true,
           "section_hit": false,
           "false_paper_attribution": false,
+          "raw_research_context_exposure": false,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 10,
           "provenance_complete_relevant_chunk_count": 10,
           "source_tier_correct": true,
-          "latency_ms": 151.918,
+          "latency_ms": 181.2,
           "failure_reasons": [
             "expected_section_missing_at_10"
           ]
@@ -8811,10 +9329,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 144.497,
+          "latency_ms": 176.354,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8846,10 +9366,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 142.493,
+          "latency_ms": 174.528,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8881,10 +9403,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 160.521,
+          "latency_ms": 178.826,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8916,10 +9440,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 145.78,
+          "latency_ms": 174.279,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8951,10 +9477,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 117.591,
+          "latency_ms": 142.554,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -8986,10 +9514,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 158.873,
+          "latency_ms": 158.609,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -9021,10 +9551,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 141.714,
+          "latency_ms": 138.476,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -9056,10 +9588,12 @@
           "top1_paper_correct": false,
           "section_hit": null,
           "false_paper_attribution": true,
+          "raw_research_context_exposure": true,
+          "answer_attribution_evaluated": false,
           "matched_relevant_chunk_count": 0,
           "provenance_complete_relevant_chunk_count": 0,
           "source_tier_correct": true,
-          "latency_ms": 165.123,
+          "latency_ms": 166.311,
           "failure_reasons": [
             "research_paper_returned_for_no_evidence_boundary"
           ]
@@ -9131,6 +9665,65 @@
     ],
     "note": "Routing proxy only; generated refusal quality remains covered by live-agent safety evals."
   },
+  "no_evidence_handling": {
+    "case_count": 8,
+    "raw_research_context_exposure_rate": 1.0,
+    "boundary_gated_escape_rate": 0.125,
+    "escaped_case_count": 1,
+    "false_answer_attribution_rate": null,
+    "false_answer_attribution_measured": false,
+    "cases": [
+      {
+        "case_id": "paper_v2_none_001",
+        "raw_research_context_exposed": true,
+        "pre_retrieval_boundary_blocked": true,
+        "research_context_escaped_boundary": false
+      },
+      {
+        "case_id": "paper_v2_none_002",
+        "raw_research_context_exposed": true,
+        "pre_retrieval_boundary_blocked": true,
+        "research_context_escaped_boundary": false
+      },
+      {
+        "case_id": "paper_v2_none_003",
+        "raw_research_context_exposed": true,
+        "pre_retrieval_boundary_blocked": false,
+        "research_context_escaped_boundary": true
+      },
+      {
+        "case_id": "paper_v2_none_004",
+        "raw_research_context_exposed": true,
+        "pre_retrieval_boundary_blocked": true,
+        "research_context_escaped_boundary": false
+      },
+      {
+        "case_id": "paper_v2_none_005",
+        "raw_research_context_exposed": true,
+        "pre_retrieval_boundary_blocked": true,
+        "research_context_escaped_boundary": false
+      },
+      {
+        "case_id": "paper_v2_none_006",
+        "raw_research_context_exposed": true,
+        "pre_retrieval_boundary_blocked": true,
+        "research_context_escaped_boundary": false
+      },
+      {
+        "case_id": "paper_v2_none_007",
+        "raw_research_context_exposed": true,
+        "pre_retrieval_boundary_blocked": true,
+        "research_context_escaped_boundary": false
+      },
+      {
+        "case_id": "paper_v2_none_008",
+        "raw_research_context_exposed": true,
+        "pre_retrieval_boundary_blocked": true,
+        "research_context_escaped_boundary": false
+      }
+    ],
+    "interpretation": "Raw retriever exposure is a diagnostic risk surface. It becomes an end-to-end routing failure only when the pre-retrieval boundary does not block the case. Generated-answer attribution is not measured."
+  },
   "paired_full_stack_vs_bm25": {
     "paired_case_count": 36,
     "recall_at_10_delta": 0.0278,
@@ -9150,6 +9743,9 @@
     "full_stack_section_hit_rate": 0.4,
     "full_stack_taglish_recall_at_10": 1.0,
     "full_stack_no_evidence_false_paper_attribution_rate": 1.0,
+    "full_stack_no_evidence_raw_research_context_exposure_rate": 1.0,
+    "boundary_gated_no_evidence_escape_rate": 0.125,
+    "no_evidence_false_answer_attribution_rate": null,
     "full_stack_provenance_completeness": 1.0,
     "full_stack_source_tier_correctness": 1.0,
     "boundary_route_correctness": 0.875,
@@ -9159,6 +9755,7 @@
     "Cases were authored from the same local papers being evaluated.",
     "This measures retrieval attribution and provenance, not whether a medical claim is clinically correct.",
     "No generated patient answer, clinician review, or external author is part of this suite.",
+    "Raw retrieval exposure is not answer attribution. The boundary-gated escape rate is the end-to-end routing proxy; false answer attribution is not measured here.",
     "The corpus is broader than v1 but remains internally selected and is not a systematic literature review.",
     "Research sources can support education and review routing only; they cannot authorize patient-specific medical decisions."
   ],

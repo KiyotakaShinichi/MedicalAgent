@@ -17,3 +17,17 @@ def test_focused_release_summary_exposes_confirmed_write_gate():
     write = report["core_evidence"]["confirmed_write_contract"]
     assert write["case_count"] >= 50
     assert write["pass_rate"] == 1.0
+
+
+def test_focused_release_summary_separates_development_from_frozen_evidence():
+    report = build_report()
+    development = report["core_evidence"]["unsafe_intent_development_controls"]
+    architecture = report["core_evidence"]["architecture_maintainability"]
+
+    assert development["classifier_pass_rate"] == 1.0
+    assert development["mutation_pass_rate"] == 1.0
+    assert development["safe_negative_pass_rate"] == 1.0
+    assert development["used_for_tuning"] is True
+    assert development["independent_evidence"] is False
+    assert architecture["oversized_file_count"] <= 9
+    assert architecture["critical_file_count"] == 0

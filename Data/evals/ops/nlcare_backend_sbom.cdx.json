@@ -2,10 +2,10 @@
   "$schema": "http://cyclonedx.org/schema/bom-1.7.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:5b764ff6-750b-43ab-be10-90c00a0d1d08",
+  "serialNumber": "urn:uuid:640fd2c4-9bcd-4f6a-9e0e-1de77cd17db2",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-09T15:34:15+00:00",
+    "timestamp": "2026-08-11T09:21:40+00:00",
     "tools": {
       "components": [
         {
@@ -20,18 +20,18 @@
       ]
     },
     "component": {
-      "bom-ref": "pkg:oci/nlcare-synthetic-staging-backend@sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fnlcare-synthetic-staging-backend",
+      "bom-ref": "pkg:oci/nlcare-synthetic-staging-backend@sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fnlcare-synthetic-staging-backend",
       "type": "container",
       "name": "nlcare-synthetic-staging-backend:latest",
-      "purl": "pkg:oci/nlcare-synthetic-staging-backend@sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fnlcare-synthetic-staging-backend",
+      "purl": "pkg:oci/nlcare-synthetic-staging-backend@sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fnlcare-synthetic-staging-backend",
       "properties": [
         {
           "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:004a7b794727d9fc2fc59a16210aa96c084e188cb1a8df97e2474070141533b2"
+          "value": "sha256:08020a88991598890110b2e2f72e36ffbc76c245e43a0600e1f40f65b1aed1d3"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:08020a88991598890110b2e2f72e36ffbc76c245e43a0600e1f40f65b1aed1d3"
+          "value": "sha256:0cba850ec99d1ddf44fe5fa7bc2aa4b2ff5f49a289950e88e46a67eb76cfbf8c"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
@@ -59,11 +59,19 @@
         },
         {
           "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:3662c8a381b3428dc02e76236d3ad9cce98ebc3d2f475cce9f3e425cca1a4fb6"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
           "value": "sha256:38253f8df53ddff4e80c63ab44f5f224500b27ff2094bef5a22b191f364b9565"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
           "value": "sha256:3a7299f559d987305122c7669fc3643095eb0955f8ff4a38c9430d54d0b4452e"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:420325ffa467d2e4d1d3afec16c2b91e9586774f7ad6f7b9ac13ee28f2ca86cc"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
@@ -91,10 +99,6 @@
         },
         {
           "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:54f84251ea4bbc7555ed71d2d3a5041e4706a9e0655dddbd44e636c5febccbeb"
-        },
-        {
-          "name": "aquasecurity:trivy:DiffID",
           "value": "sha256:5a1ca664d31c99d0a37a2692a753fb2656019fba31e883f8cbf64003d179b131"
         },
         {
@@ -107,19 +111,11 @@
         },
         {
           "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:5fd80bdbfa43b162adeefc4da938f1d71203c446480a2f498f463773d296fc67"
-        },
-        {
-          "name": "aquasecurity:trivy:DiffID",
           "value": "sha256:621c35e751a51a9a9dc3e80aa0b7fe8be2a93402ea6ccd307d30852cd7776cda"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
           "value": "sha256:647f7f2bf45564fda1f6378e23f2e0b5ee5d661c124c693d32c66e5bf92fea1f"
-        },
-        {
-          "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:66c8dfa7ed0c2e5c8dbdc8dcd4d39cefe21c8eeac1632bbf9af13c626009cefc"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
@@ -132,6 +128,10 @@
         {
           "name": "aquasecurity:trivy:DiffID",
           "value": "sha256:6f1cdceb6a3146f0ccb986521156bef8a422cdbb0863396f7f751f575ba308f4"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:6fa8a8d5eee14d25bcc90f3bf7436e2e92488778cc5c8bc2fe702c5039bd9de9"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
@@ -160,6 +160,10 @@
         {
           "name": "aquasecurity:trivy:DiffID",
           "value": "sha256:8f572811b4f6eeaf14430667c78dc9473efc5cf31e6883fa9858c22e84b5a524"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:92ab91475a83d3c94d43a3c8ee07fece064141d7b0684b37ddf52167fd9f9817"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
@@ -223,11 +227,11 @@
         },
         {
           "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:c8b007d0206e4b10ed4d3b3d99dfeab47c2648e82011989fd78a5731baf33fc3"
+          "value": "sha256:c6e25d8589a02b879d8e4269feecaee46d619a53b1f6f690217438bc1bcb49cf"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:caaef4f1a25ec0cad9c8f1be1b4c47214cc98aaf4a4e260619a5fc7cd65a2a7b"
+          "value": "sha256:c8b007d0206e4b10ed4d3b3d99dfeab47c2648e82011989fd78a5731baf33fc3"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
@@ -243,11 +247,7 @@
         },
         {
           "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:edd59e84527b4e156cdff5154eb9ee9b599c9af55297a7be8b4f91903d6ac0ae"
-        },
-        {
-          "name": "aquasecurity:trivy:DiffID",
-          "value": "sha256:f783709160fa7d00c4300e44b48e5c718ef0076fa62e92d8f62c70b2237d5475"
+          "value": "sha256:f1c00328b6bb081f2cce6205854e5d6689f9e692acaee47470725f7c548cf4c2"
         },
         {
           "name": "aquasecurity:trivy:DiffID",
@@ -255,7 +255,7 @@
         },
         {
           "name": "aquasecurity:trivy:ImageID",
-          "value": "sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86"
+          "value": "sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981"
         },
         {
           "name": "aquasecurity:trivy:Labels:ai.nlcare.clinical-validation",
@@ -279,7 +279,7 @@
         },
         {
           "name": "aquasecurity:trivy:Labels:org.opencontainers.image.created",
-          "value": "2026-08-09T15:31:54Z"
+          "value": "unknown"
         },
         {
           "name": "aquasecurity:trivy:Labels:org.opencontainers.image.description",
@@ -287,7 +287,7 @@
         },
         {
           "name": "aquasecurity:trivy:Labels:org.opencontainers.image.revision",
-          "value": "8f709ef"
+          "value": "uncommitted"
         },
         {
           "name": "aquasecurity:trivy:Labels:org.opencontainers.image.source",
@@ -303,7 +303,7 @@
         },
         {
           "name": "aquasecurity:trivy:RepoDigest",
-          "value": "nlcare-synthetic-staging-backend@sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86"
+          "value": "nlcare-synthetic-staging-backend@sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981"
         },
         {
           "name": "aquasecurity:trivy:RepoTag",
@@ -315,14 +315,14 @@
         },
         {
           "name": "aquasecurity:trivy:Size",
-          "value": "660301312"
+          "value": "661035520"
         }
       ]
     }
   },
   "components": [
     {
-      "bom-ref": "09333bde-8f64-4190-b527-de7677abd227",
+      "bom-ref": "c406d9a7-b445-493a-980b-8c7a2b74d968",
       "type": "operating-system",
       "name": "debian",
       "version": "13.6",
@@ -4912,7 +4912,7 @@
   ],
   "dependencies": [
     {
-      "ref": "09333bde-8f64-4190-b527-de7677abd227",
+      "ref": "c406d9a7-b445-493a-980b-8c7a2b74d968",
       "dependsOn": [
         "pkg:deb/debian/base-files@13.8%2Bdeb13u6?arch=amd64&distro=debian-13.6",
         "pkg:deb/debian/gcc-14-base@14.2.0-19?arch=amd64&distro=debian-13.6",
@@ -5102,9 +5102,9 @@
       "dependsOn": []
     },
     {
-      "ref": "pkg:oci/nlcare-synthetic-staging-backend@sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fnlcare-synthetic-staging-backend",
+      "ref": "pkg:oci/nlcare-synthetic-staging-backend@sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fnlcare-synthetic-staging-backend",
       "dependsOn": [
-        "09333bde-8f64-4190-b527-de7677abd227",
+        "c406d9a7-b445-493a-980b-8c7a2b74d968",
         "pkg:pypi/alembic@1.19.1",
         "pkg:pypi/annotated-doc@0.0.5",
         "pkg:pypi/annotated-types@0.8.0",

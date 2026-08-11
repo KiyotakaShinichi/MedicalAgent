@@ -5,6 +5,7 @@ from backend.services.research_paper_kb_eval import (
     CASES_PATH,
     CONFIG_IDS,
     _load_cases,
+    _evaluate_no_evidence_handling,
     _paired_recall_comparison,
     _score_case,
     build_research_paper_kb_audit,
@@ -108,7 +109,35 @@ def test_no_evidence_case_counts_research_return_as_false_attribution():
         source_tier_filtered=True,
     )
     assert result["false_paper_attribution"] is True
+    assert result["raw_research_context_exposure"] is True
+    assert result["answer_attribution_evaluated"] is False
     assert "research_paper_returned_for_no_evidence_boundary" in result["failure_reasons"]
+
+
+def test_no_evidence_handling_separates_raw_exposure_from_boundary_escape():
+    rows = [
+        {
+            "case_id": "blocked",
+            "expected_pmcid": None,
+            "raw_research_context_exposure": True,
+        },
+        {
+            "case_id": "escaped",
+            "expected_pmcid": None,
+            "raw_research_context_exposure": True,
+        },
+    ]
+    boundary = {
+        "cases": [
+            {"case_id": "blocked", "correct": True},
+            {"case_id": "escaped", "correct": False},
+        ]
+    }
+    report = _evaluate_no_evidence_handling(rows, boundary)
+    assert report["raw_research_context_exposure_rate"] == 1.0
+    assert report["boundary_gated_escape_rate"] == 0.5
+    assert report["false_answer_attribution_rate"] is None
+    assert report["false_answer_attribution_measured"] is False
 
 
 def test_paired_comparison_reports_uncertainty_instead_of_just_delta():

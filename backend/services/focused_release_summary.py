@@ -70,6 +70,15 @@ def build_report() -> dict[str, Any]:
     feature_policy = _load(
         "Data/evals/models/latest_synthetic_feature_policy.json"
     )
+    unsafe_classifier = _load(
+        "Data/evals/safety/latest_unsafe_intent_classifier_eval.json"
+    )
+    mutation_development = _load(
+        "Data/evals/safety/latest_unsafe_intent_mutation_dev_eval.json"
+    )
+    evidence_maturity = _load(
+        "Data/evals/governance/latest_evidence_maturity_matrix.json"
+    )
 
     baseline_summary = rag.get("summary") or {}
     required_count = sum(1 for row in gate["artifacts"] if row["required"])
@@ -131,6 +140,46 @@ def build_report() -> dict[str, Any]:
                     "warning and must not be used for tuning."
                 ),
                 "not_solved": True,
+            },
+            "unsafe_intent_development_controls": {
+                "classifier_status": unsafe_classifier.get("status"),
+                "classifier_case_count": unsafe_classifier.get("total_n"),
+                "classifier_pass_rate": unsafe_classifier.get("pass_rate"),
+                "mutation_status": mutation_development.get("status"),
+                "mutation_case_count": mutation_development.get("total_n"),
+                "mutation_pass_rate": mutation_development.get("pass_rate"),
+                "safe_negative_pass_rate": mutation_development.get(
+                    "safe_negative_pass_rate"
+                ),
+                "used_for_tuning": True,
+                "independent_evidence": False,
+                "interpretation": (
+                    "Generalized development mutations and safe controls pass; "
+                    "frozen v7 remains the canonical weak generalization warning."
+                ),
+            },
+            "architecture_maintainability": {
+                "status": _metric(
+                    evidence_maturity,
+                    "architecture_maintainability",
+                    "budget_status",
+                ),
+                "oversized_file_count": _metric(
+                    evidence_maturity,
+                    "architecture_maintainability",
+                    "oversized_file_count",
+                ),
+                "critical_file_count": _metric(
+                    evidence_maturity,
+                    "architecture_maintainability",
+                    "critical_file_count",
+                ),
+                "artifact_budget_status": _metric(
+                    evidence_maturity,
+                    "architecture_maintainability",
+                    "artifact_budget",
+                    "status",
+                ),
             },
             "xai_mechanics": {
                 "status": xai.get("status"),
@@ -258,6 +307,9 @@ def build_report() -> dict[str, Any]:
             "Data/evals/safety/latest_adversarial_holdout_v5_baseline.json",
             "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
             "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
+            "Data/evals/safety/latest_unsafe_intent_classifier_eval.json",
+            "Data/evals/safety/latest_unsafe_intent_mutation_dev_eval.json",
+            "Data/evals/governance/latest_evidence_maturity_matrix.json",
             "Data/evals/models/latest_synthetic_simple_baseline_audit.json",
             "Data/evals/models/latest_synthetic_v2_model_stability.json",
             "Data/evals/models/latest_ispy2_tcia_external_stress.json",

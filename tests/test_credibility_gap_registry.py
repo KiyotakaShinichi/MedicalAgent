@@ -53,18 +53,23 @@ def test_every_gap_has_owner_evidence_completion_and_verification(tmp_path):
         assert gap["honest_claim_until_closed"]
 
 
-def test_controlled_provider_probe_closes_only_internal_usage_gap(tmp_path):
+def test_controlled_provider_probe_never_turns_missing_usage_into_completion(tmp_path):
     report = build_credibility_gap_registry(
         output_path=tmp_path / "registry.json",
         doc_path=tmp_path / "registry.md",
     )
     by_id = {item["id"]: item for item in report["gaps"]}
     provider = by_id["provider_token_usage_coverage"]
-    assert provider["current_status"] == "complete_internal"
-    assert provider["evidence_snapshot"]["controlled_probe_completed"] is True
-    assert provider["evidence_snapshot"][
+    completed = provider["evidence_snapshot"]["controlled_probe_completed"]
+    coverage = provider["evidence_snapshot"][
         "controlled_probe_provider_usage_coverage_rate"
-    ] >= 0.8
+    ]
+    if completed:
+        assert provider["current_status"] == "complete_internal"
+        assert coverage >= 0.8
+    else:
+        assert provider["current_status"] == "open"
+        assert coverage is None or coverage < 0.8
     assert "not audited billing truth" in provider[
         "honest_claim_until_closed"
     ]

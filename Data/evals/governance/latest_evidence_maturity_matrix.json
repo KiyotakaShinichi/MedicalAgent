@@ -1,6 +1,6 @@
 {
   "schema_version": "evidence_maturity_matrix_v1",
-  "generated_at": "2026-08-11T07:43:59.058264+00:00",
+  "generated_at": "2026-08-11T10:06:45.127841+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -29,9 +29,9 @@
       "dimension": "AIE/RAG",
       "current_evidence_tier": 3,
       "tier_label": "frozen_internal_with_contamination_controls",
-      "what_is_proven": "Frozen internal case-level comparisons, paired bootstrap intervals, multiple-comparison correction, source governance, negative results, and an offline claim-conditioned citation candidate status=acceptable_internal_candidate. A separate 32-case corpus-derived research-paper suite measures PMCID identity, section retrieval, provenance, and no-evidence behavior (status=needs_attention).",
-      "what_is_not_proven": "Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False. The citation selector is tuning-used and has not been tested on frozen generated answers. The paper suite is not independent and its boundary-route correctness is 0.875.",
-      "next_falsifiable_evidence": "Resolve the documented paper no-evidence routing gaps without tuning on this bank, then run frozen generated-answer shadow evaluation and an independent no-read holdout."
+      "what_is_proven": "Frozen internal case-level comparisons, paired bootstrap intervals, multiple-comparison correction, source governance, negative results, and an offline claim-conditioned citation candidate status=acceptable_internal_candidate. Its frozen generated-answer holdout decision=offline_only_not_promoted. A separate 44-case corpus-derived research-paper suite measures PMCID identity, section retrieval, provenance, and no-evidence behavior (status=needs_attention).",
+      "what_is_not_proven": "Full governed-stack raw Recall@10 superiority over BM25 is not proven; current headline=False. The citation selector regressed citation precision/support on its frozen generated-answer holdout and remains offline. The paper suite is not independent and its boundary-route correctness is 0.875; its boundary-gated escape rate is 0.125.",
+      "next_falsifiable_evidence": "Improve upstream evidence selection on a separate development bank, preserve the negative selector result, and complete an independent no-read holdout."
     },
     {
       "dimension": "AIE/adversarial safety",
@@ -53,7 +53,7 @@
       "dimension": "MLE/statistics",
       "current_evidence_tier": 2,
       "tier_label": "internal_self_test",
-      "what_is_proven": "Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, paired tests, calibration, train-only constant and linear baselines, coverage-performance curves, and synthetic perturbation sensitivity.",
+      "what_is_proven": "Patient-level temporal splits, leakage/shortcut audits, bootstrap uncertainty, paired tests, calibration, train-only constant and linear baselines, coverage-performance curves, synthetic perturbation sensitivity, and repeated patient-split sensitivity across 5 fixed seeds.",
       "what_is_not_proven": "All outcomes and uncertainty remain simulator-bounded; transportability is unproven.",
       "next_falsifiable_evidence": "Resolve documented synthetic stress failures (current count=5) and use a task-aligned external cohort, or retain synthetic engineering-only positioning."
     },
@@ -70,16 +70,16 @@
       "current_evidence_tier": 1,
       "tier_label": "scaffold_or_contract_only",
       "what_is_proven": "Behavior-only synthetic dataset, immutable revision contracts, promotion tripwires, and semantic-similarity screening.",
-      "what_is_not_proven": "Promotion=HOLD; blockers=6.",
-      "next_falsifiable_evidence": "Pinned runtime, matched generations, lineage, memorization audit, adjudicated contamination flags, and paired lift."
+      "what_is_not_proven": "Promotion=HOLD; blockers=6; human adjudication unresolved=150 with critical dual-review required.",
+      "next_falsifiable_evidence": "Pinned runtime, matched generations, lineage, memorization audit, dual-reviewed contamination flags, and paired lift."
     },
     {
       "dimension": "SWE/release discipline",
       "current_evidence_tier": 2,
       "tier_label": "internal_self_test",
       "what_is_proven": "Integrated ship manifest status=passed with repeatable tests and release gates.",
-      "what_is_not_proven": "Evidence is owner-run; architecture has large modules and no independent clean-clone reproduction.",
-      "next_falsifiable_evidence": "Independent clean-clone reproduction and reduction of architecture-budget violations."
+      "what_is_not_proven": "Evidence is owner-run; nine oversized modules remain even though the declared ratchet is met, and no independent clean-clone reproduction exists.",
+      "next_falsifiable_evidence": "Independent clean-clone reproduction and continued module reduction without expanding the service/artifact surface."
     },
     {
       "dimension": "Automation",
@@ -115,15 +115,15 @@
     }
   ],
   "architecture_maintainability": {
-    "budget_status": "needs_attention",
-    "oversized_file_count": 13,
+    "budget_status": "acceptable",
+    "oversized_file_count": 9,
     "critical_file_count": 0,
-    "backend_service_file_count": 413,
+    "backend_service_file_count": 417,
     "test_file_count": 249,
-    "test_to_service_file_ratio": 0.6029,
+    "test_to_service_file_ratio": 0.5971,
     "ratchet": {
       "oversized_file_baseline": 9,
-      "oversized_file_count_within_baseline": false,
+      "oversized_file_count_within_baseline": true,
       "critical_file_ceiling": 0,
       "critical_file_count_within_ceiling": true
     },
@@ -151,13 +151,6 @@
       {
         "path": "backend/services/mle_readiness.py",
         "line_count": 1251,
-        "severity": "warning",
-        "warning_threshold": 1000,
-        "critical_threshold": 1800
-      },
-      {
-        "path": "backend/services/unsafe_intent_semantic_classifier.py",
-        "line_count": 1146,
         "severity": "warning",
         "warning_threshold": 1000,
         "critical_threshold": 1800
@@ -198,29 +191,8 @@
         "critical_threshold": 1800
       },
       {
-        "path": "backend/services/complete_synthetic_dataset.py",
-        "line_count": 1032,
-        "severity": "warning",
-        "warning_threshold": 1000,
-        "critical_threshold": 1800
-      },
-      {
-        "path": "backend/services/agent_regression_eval.py",
-        "line_count": 1017,
-        "severity": "warning",
-        "warning_threshold": 1000,
-        "critical_threshold": 1800
-      },
-      {
         "path": "frontend-react/src/api/client.ts",
         "line_count": 941,
-        "severity": "warning",
-        "warning_threshold": 800,
-        "critical_threshold": 1200
-      },
-      {
-        "path": "frontend-react/src/pages/admin/sections/RagSection.tsx",
-        "line_count": 835,
         "severity": "warning",
         "warning_threshold": 800,
         "critical_threshold": 1200
@@ -238,10 +210,10 @@
   "highest_roi_internal_actions": [
     "Adjudicate fine-tune semantic-similarity flags before any candidate run.",
     "Collect provider-reported token usage on 30+ representative calls.",
-    "Run the claim-conditioned citation selector on frozen generated answers before any live A/B test.",
-    "Produce a fresh passing full ship manifest after the bounded-suite split.",
+    "Keep the claim-conditioned citation selector offline after its negative frozen holdout; improve upstream evidence selection on a separate development bank.",
+    "Use non-frozen mutation cases to address the remaining research-paper boundary escape, then rerun the internal bank with tuning disclosure.",
     "Keep unstable XAI rank order hidden and expose grouped factors only.",
-    "Reduce the largest backend/frontend modules before adding more service files."
+    "Hold the oversized-file ratchet at nine or lower and continue replacing concentrated ownership surfaces before adding feature breadth."
   ],
   "claim_boundary": "This matrix rates evidence provenance, not product quality or clinical readiness. Internal engineering evidence cannot be averaged into clinical validation, real-world safety, patient benefit, or production healthcare readiness."
 }

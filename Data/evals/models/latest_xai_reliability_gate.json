@@ -1,6 +1,6 @@
 {
   "schema_version": "xai_reliability_gate_v1",
-  "generated_at": "2026-08-11T07:22:46.990100+00:00",
+  "generated_at": "2026-08-11T09:49:59.137586+00:00",
   "status": "acceptable",
   "status_basis": "bounded_consensus_groups_exact_order_suppressed",
   "clinical_validation": false,

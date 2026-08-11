@@ -102,6 +102,7 @@ def run_research_paper_kb_eval(
     boundary = _evaluate_boundary_routes(cases)
     bm25_rows = configurations["bm25_only"]["cases"]
     full_rows = configurations[FULL_STACK_ID]["cases"]
+    no_evidence_handling = _evaluate_no_evidence_handling(full_rows, boundary)
     paired = _paired_recall_comparison(bm25_rows, full_rows)
     full = configurations[FULL_STACK_ID]["summary"]
     improvement_proven = bool(
@@ -114,7 +115,7 @@ def run_research_paper_kb_eval(
     if (
         audit["status"] == "needs_attention"
         or full["recall_at_10"] < 0.8
-        or full["no_evidence_false_paper_attribution_rate"] > 0.0
+        or no_evidence_handling["boundary_gated_escape_rate"] > 0.0
         or boundary["correctness"] < 1.0
     ):
         status = "needs_attention"
@@ -135,6 +136,7 @@ def run_research_paper_kb_eval(
         "paper_count": audit["summary"]["manifest_paper_count"],
         "configurations": configurations,
         "pre_retrieval_boundary": boundary,
+        "no_evidence_handling": no_evidence_handling,
         "paired_full_stack_vs_bm25": paired,
         "summary": {
             "full_stack_recall_at_5": full["recall_at_5"],
@@ -146,6 +148,13 @@ def run_research_paper_kb_eval(
             "full_stack_no_evidence_false_paper_attribution_rate": full[
                 "no_evidence_false_paper_attribution_rate"
             ],
+            "full_stack_no_evidence_raw_research_context_exposure_rate": full[
+                "no_evidence_raw_research_context_exposure_rate"
+            ],
+            "boundary_gated_no_evidence_escape_rate": no_evidence_handling[
+                "boundary_gated_escape_rate"
+            ],
+            "no_evidence_false_answer_attribution_rate": None,
             "full_stack_provenance_completeness": full["provenance_completeness"],
             "full_stack_source_tier_correctness": full["source_tier_correctness"],
             "boundary_route_correctness": boundary["correctness"],
@@ -155,6 +164,7 @@ def run_research_paper_kb_eval(
             "Cases were authored from the same local papers being evaluated.",
             "This measures retrieval attribution and provenance, not whether a medical claim is clinically correct.",
             "No generated patient answer, clinician review, or external author is part of this suite.",
+            "Raw retrieval exposure is not answer attribution. The boundary-gated escape rate is the end-to-end routing proxy; false answer attribution is not measured here.",
             "The corpus is broader than v1 but remains internally selected and is not a systematic literature review.",
             "Research sources can support education and review routing only; they cannot authorize patient-specific medical decisions.",
         ],
@@ -381,6 +391,9 @@ def _evaluate_configuration(
         "no_evidence_false_paper_attribution_rate": _mean(
             row["false_paper_attribution"] for row in no_evidence
         ),
+        "no_evidence_raw_research_context_exposure_rate": _mean(
+            row["raw_research_context_exposure"] for row in no_evidence
+        ),
         "provenance_completeness": round(
             provenance_numerator / max(provenance_denominator, 1), 4
         ),
@@ -413,7 +426,10 @@ def _score_case(
     )
     provenance_complete_count = sum(_provenance_complete(row) for row in matched)
     manifest_research_in_top5 = [pmcid for pmcid in retrieved_pmcids[:5] if pmcid]
-    false_attribution = not expected and bool(manifest_research_in_top5)
+    raw_research_context_exposure = not expected and bool(manifest_research_in_top5)
+    # Kept for artifact compatibility. No answer is generated in this suite, so
+    # this legacy field means raw top-5 research-context exposure, not citation.
+    false_attribution = raw_research_context_exposure
     source_tier_correct = True
     if source_tier_filtered:
         source_tier_correct = all(
@@ -448,6 +464,8 @@ def _score_case(
         "top1_paper_correct": bool(first_rank == 1),
         "section_hit": section_hit if expected_section else None,
         "false_paper_attribution": false_attribution,
+        "raw_research_context_exposure": raw_research_context_exposure,
+        "answer_attribution_evaluated": False,
         "matched_relevant_chunk_count": len(matched),
         "provenance_complete_relevant_chunk_count": provenance_complete_count,
         "source_tier_correct": source_tier_correct,
@@ -477,6 +495,54 @@ def _evaluate_boundary_routes(cases: list[dict[str, Any]]) -> dict[str, Any]:
         "failure_count": sum(not row["correct"] for row in rows),
         "cases": rows,
         "note": "Routing proxy only; generated refusal quality remains covered by live-agent safety evals.",
+    }
+
+
+def _evaluate_no_evidence_handling(
+    full_stack_rows: list[dict[str, Any]],
+    boundary: dict[str, Any],
+) -> dict[str, Any]:
+    """Separate raw retriever exposure from context that escapes the live gate."""
+    boundary_by_id = {
+        str(row.get("case_id")): bool(row.get("correct"))
+        for row in boundary.get("cases") or []
+        if isinstance(row, dict)
+    }
+    rows = []
+    for row in full_stack_rows:
+        if row.get("expected_pmcid"):
+            continue
+        case_id = str(row.get("case_id") or "")
+        exposed = bool(row.get("raw_research_context_exposure"))
+        boundary_blocked = boundary_by_id.get(case_id, False)
+        escaped = exposed and not boundary_blocked
+        rows.append(
+            {
+                "case_id": case_id,
+                "raw_research_context_exposed": exposed,
+                "pre_retrieval_boundary_blocked": boundary_blocked,
+                "research_context_escaped_boundary": escaped,
+            }
+        )
+    return {
+        "case_count": len(rows),
+        "raw_research_context_exposure_rate": _mean(
+            row["raw_research_context_exposed"] for row in rows
+        ),
+        "boundary_gated_escape_rate": _mean(
+            row["research_context_escaped_boundary"] for row in rows
+        ),
+        "escaped_case_count": sum(
+            row["research_context_escaped_boundary"] for row in rows
+        ),
+        "false_answer_attribution_rate": None,
+        "false_answer_attribution_measured": False,
+        "cases": rows,
+        "interpretation": (
+            "Raw retriever exposure is a diagnostic risk surface. It becomes an "
+            "end-to-end routing failure only when the pre-retrieval boundary does "
+            "not block the case. Generated-answer attribution is not measured."
+        ),
     }
 
 

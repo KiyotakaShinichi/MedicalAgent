@@ -1,6 +1,6 @@
 {
   "reproducibility": {
-    "git_commit": "e11d39f0f8371ea595ac87d2cb608aef37696ffc",
+    "git_commit": "8ea0322bf37f972c4530e1a3e5b50e0a6be6b6fa",
     "git_dirty": true,
     "python_version": "3.14.3",
     "platform": "Windows-AMD64",
@@ -9,19 +9,19 @@
       "synthetic_model_metrics": "75232:1778239851:8bb858cfb041",
       "claim_boundary": "7346:1784017460:eccb073d9a1e"
     },
-    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:2750051:1784272258:8bb4c5e82263",
+    "knowledge_base_fingerprint": "local_hybrid_rag_index.joblib:8468003:1786433217:19e92db1afa3",
     "model_registry_fingerprint": "complete_synthetic_model_metrics.json:75232:1778239851:8bb858cfb041",
     "seed": null,
-    "generated_at": "2026-07-21T15:13:23.068323+00:00"
+    "generated_at": "2026-08-11T08:01:40.299992+00:00"
   },
   "artifact_freshness": {
-    "generated_at": "2026-07-21T15:13:23.068323+00:00",
+    "generated_at": "2026-08-11T08:01:40.299992+00:00",
     "ttl_seconds": 86400,
-    "expires_at": "2026-07-22T15:13:23.068323+00:00",
+    "expires_at": "2026-08-12T08:01:40.299992+00:00",
     "status": "fresh"
   },
   "schema_version": "medical_claim_boundary_eval_v1",
-  "generated_at": "2026-07-21T15:13:23.607586+00:00",
+  "generated_at": "2026-08-11T08:01:40.738327+00:00",
   "status": "strong",
   "summary": {
     "case_count": 8,

@@ -1,7 +1,7 @@
 {
   "schema_version": "container_security_scan_v1",
-  "generated_at": "2026-08-11T07:21:54.656418+00:00",
-  "status": "stale_image_mismatch",
+  "generated_at": "2026-08-11T09:47:01.123012+00:00",
+  "status": "needs_attention",
   "scanner": {
     "name": "trivy",
     "version": "Version: 0.73.0",
@@ -11,9 +11,9 @@
   "image": {
     "reference": "nlcare-synthetic-staging-backend:latest",
     "artifact_type": "container_image",
-    "scanned_image_id": "sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86",
+    "scanned_image_id": "sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981",
     "current_image_id": "sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981",
-    "identity_matches_current_image": false,
+    "identity_matches_current_image": true,
     "configured_user": "nonroot:nonroot",
     "runs_as_nonroot": true,
     "distroless_runtime_declared": true,
@@ -46,14 +46,14 @@
     "format": "CycloneDX",
     "spec_version": "1.7",
     "component_count": 99,
-    "serial_number": "urn:uuid:5b764ff6-750b-43ab-be10-90c00a0d1d08",
+    "serial_number": "urn:uuid:640fd2c4-9bcd-4f6a-9e0e-1de77cd17db2",
     "path": "Data/evals/ops/nlcare_backend_sbom.cdx.json",
-    "sha256": "1ea20773b595188691747437e2bcd2ba83594d646a8686e5dead9be5d421eae5"
+    "sha256": "d1e50a2787c117132e6954284d9ca3eb51f00759341e85791a8221b759df1b8b"
   },
   "summary": {
-    "total_finding_count": 108,
+    "total_finding_count": 113,
     "severity_counts": {
-      "unknown": 3,
+      "unknown": 8,
       "low": 48,
       "medium": 42,
       "high": 15,
@@ -300,5 +300,5 @@
   "healthcare_production_ready": false,
   "claim_boundary": "This is a point-in-time container vulnerability scan for a synthetic-only engineering image. It is not a penetration test, security certification, clinical validation, compliance proof, or production healthcare readiness.",
   "raw_artifact_path": "Data/evals/ops/nlcare_backend_container_scan.json",
-  "raw_artifact_sha256": "2ce9d70dca89c5349e2eed51a5a10af6ad6e195fbb46f16f9934c2069f2c2c2c"
+  "raw_artifact_sha256": "b8f500d4416d59c388758fe779c2bc6372519f238dc976b51d15a264555ffccf"
 }

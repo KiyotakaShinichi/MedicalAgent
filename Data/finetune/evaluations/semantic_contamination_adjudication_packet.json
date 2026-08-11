@@ -1,6 +1,6 @@
 {
-  "schema_version": "finetune_contamination_adjudication_packet_v1",
-  "generated_at": "2026-08-11T07:28:11.788765+00:00",
+  "schema_version": "finetune_contamination_adjudication_packet_v2",
+  "generated_at": "2026-08-11T10:00:16.309762+00:00",
   "source_artifact": "Data/evals/models/latest_finetune_semantic_contamination.json",
   "allowed_decisions": [
     "ambiguous",
@@ -8,11 +8,19 @@
     "not_contaminated"
   ],
   "review_contract": {
+    "reviewer_id_required": true,
     "reviewer_role_required": true,
     "reviewed_at_required": true,
     "reviewer_notes_required": true,
+    "critical_pairs_require_two_independent_reviewers": true,
+    "critical_pair_disagreement_blocks_completion": true,
     "text_is_not_copied_into_packet": true,
     "source_rows_must_be_inspected_locally": true
+  },
+  "integrity": {
+    "source_artifact_sha256": "cd42312702067e15f3d8f7b4ec0774e7330656be331fb7062a782bb7ed8a7088",
+    "candidate_snapshot_sha256": "03f24320bce1aa8ce8338d1ce8d56f48b0d7264f09e3553881de8dd56c4f6b56",
+    "candidate_count": 150
   },
   "candidates": [
     {
@@ -29,9 +37,15 @@
       "text_content_retained": false,
       "priority": 1,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "d5eaa4188ec3d97fffd3",
@@ -47,9 +61,15 @@
       "text_content_retained": false,
       "priority": 1,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "f25039ed43996b5826c8",
@@ -65,9 +85,15 @@
       "text_content_retained": false,
       "priority": 1,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "cc7d8c505164ee32a328",
@@ -83,9 +109,15 @@
       "text_content_retained": false,
       "priority": 1,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "7fdd182cd001bdc9eafe",
@@ -101,9 +133,15 @@
       "text_content_retained": false,
       "priority": 1,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "e6fb394bccabf366d252",
@@ -119,9 +157,15 @@
       "text_content_retained": false,
       "priority": 1,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c13846f707beec6402df",
@@ -137,9 +181,15 @@
       "text_content_retained": false,
       "priority": 1,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "853fd2ae34c7d7092a92",
@@ -155,9 +205,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "996f9c5b5a8c75f37736",
@@ -173,9 +229,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "9595a2dcfa000147b9f2",
@@ -191,9 +253,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "31ed21c4267d71c9ecb4",
@@ -209,9 +277,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "d92bf42120a4cf9d7e64",
@@ -227,9 +301,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "2fcdce256fd83b5d2a02",
@@ -245,9 +325,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "71277b7d9a07d8b59927",
@@ -263,9 +349,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "87b15ebba0c93d74e138",
@@ -281,9 +373,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "031dcd739bd098e9ad3d",
@@ -299,9 +397,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c400bfa363f009b99e8c",
@@ -317,9 +421,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "1262fda189792e6232ab",
@@ -335,9 +445,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "863443f7179babc40fd5",
@@ -353,9 +469,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "a94513461f0c6f0c33a0",
@@ -371,9 +493,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "0a4e3c7af10ed18652ee",
@@ -389,9 +517,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "27b9be6ef585a97fb417",
@@ -407,9 +541,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "ad5d186f826239058885",
@@ -425,9 +565,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "7aeab89b6e88ac3f4617",
@@ -443,9 +589,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "86e2b3f95faeb6ada41c",
@@ -461,9 +613,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "1c3fe1b90f4143e6ccac",
@@ -479,9 +637,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "cb8a8ccdb6b020ed39ec",
@@ -497,9 +661,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "bb96621ff48fab5492a2",
@@ -515,9 +685,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "95b922eda47f47eb1a41",
@@ -533,9 +709,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c41efba07db8fe05dc10",
@@ -551,9 +733,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "374cefe0ac04b0e674f0",
@@ -569,9 +757,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "9f3f3d4febc2acd62905",
@@ -587,9 +781,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "2fe0cf5853fd69157733",
@@ -605,9 +805,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "84a959088d686920f26e",
@@ -623,9 +829,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "62003b2d1aab3e0a3cf0",
@@ -641,9 +853,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "d023664050c7bb6b0464",
@@ -659,9 +877,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "17280e652459f459efa3",
@@ -677,9 +901,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "b2aae2236e41e467e1b2",
@@ -695,9 +925,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "0fe13ce4f08ceaf5bc0c",
@@ -713,9 +949,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "bc297c40d090e77d4b54",
@@ -731,9 +973,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "25498c822013c68eb31c",
@@ -749,9 +997,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "1ebc7a63c21b67084d1b",
@@ -767,9 +1021,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "f94d145079919353d730",
@@ -785,9 +1045,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "373eb54be14004105168",
@@ -803,9 +1069,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c62580c65aa6fac76411",
@@ -821,9 +1093,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "ac5ac220dee51fc7a178",
@@ -839,9 +1117,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "e870edd9b680c52567e6",
@@ -857,9 +1141,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "e54bc63b7b8994ca27bd",
@@ -875,9 +1165,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "7715ea6c6f4a59105362",
@@ -893,9 +1189,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "14199c9a09cd3c9b585e",
@@ -911,9 +1213,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "96409e8e0c24ffadb1f6",
@@ -929,9 +1237,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "b9e4289d630b906c7bd8",
@@ -947,9 +1261,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "9990b29acff95a979403",
@@ -965,9 +1285,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "45815e8f7d5993bedef3",
@@ -983,9 +1309,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "bbf7908f598281ee9076",
@@ -1001,9 +1333,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "cca0c4189aafa9749d30",
@@ -1019,9 +1357,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "948e44f13efd63bd120f",
@@ -1037,9 +1381,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "337e12557a2bbbe649e9",
@@ -1055,9 +1405,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "334ac67c3947d8e9cc12",
@@ -1073,9 +1429,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "ca1be83680917a8308d9",
@@ -1091,9 +1453,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "97bbda91052897741287",
@@ -1109,9 +1477,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "a9448f7b6935cb96f4d8",
@@ -1127,9 +1501,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c3124f98424344c9a468",
@@ -1145,9 +1525,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "19b5d9d481684ffb8815",
@@ -1163,9 +1549,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "47a5431f1d655020a55d",
@@ -1181,9 +1573,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "ffca0a33a49c2af44843",
@@ -1199,9 +1597,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c56c9c1a803b0cb320d7",
@@ -1217,9 +1621,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "6dae3ca8fb06290f727b",
@@ -1235,9 +1645,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "898a8ed9013e97d0a4ce",
@@ -1253,9 +1669,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "1a89df3963112a2e2e4d",
@@ -1271,9 +1693,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "34c594a956e82cf65905",
@@ -1289,9 +1717,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c072ce98c6b3f40a0de2",
@@ -1307,9 +1741,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "6cf501aab07ea3512ef6",
@@ -1325,9 +1765,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c9c21226c44deacbb080",
@@ -1343,9 +1789,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "52ebea041e682661528c",
@@ -1361,9 +1813,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "4a938824469b781ebdc3",
@@ -1379,9 +1837,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c224b85ce80d61e469d6",
@@ -1397,9 +1861,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "773a123dcad6369082a8",
@@ -1415,9 +1885,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "e05224cd56425edec0db",
@@ -1433,9 +1909,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c3782ce22e526aa6f8b6",
@@ -1451,9 +1933,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "ad03ed0ec5577fdb76ad",
@@ -1469,9 +1957,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "8ba47a17fc3f14935d59",
@@ -1487,9 +1981,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "fa3f8d1d1fb39e011325",
@@ -1505,9 +2005,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "2aa47cc4b9a2e3047f75",
@@ -1523,9 +2029,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "5899e8a04a898c3a2f1c",
@@ -1541,9 +2053,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "d8ff8d5c51f7518326c3",
@@ -1559,9 +2077,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "6fdb29f375aeeb6e4e71",
@@ -1577,9 +2101,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "338ed23f9786f76201ac",
@@ -1595,9 +2125,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "aa885c2a15da061b072e",
@@ -1613,9 +2149,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "18d79816dc20b48bc030",
@@ -1631,9 +2173,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "2b18c34c432f1512dfc8",
@@ -1649,9 +2197,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "9b0241c5b974e9a23f08",
@@ -1667,9 +2221,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "eb2a4999b703ed9a24ba",
@@ -1685,9 +2245,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "935f7b1c9fafa8a7945b",
@@ -1703,9 +2269,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "e2921e810d0c6eb005b4",
@@ -1721,9 +2293,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "90080db6d75d0de6a417",
@@ -1739,9 +2317,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "ea733bf39ad349751b64",
@@ -1757,9 +2341,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "d57b3ca632a45e39db5b",
@@ -1775,9 +2365,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "6a12dd2f5f6235fbf01e",
@@ -1793,9 +2389,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "570670ca4f85aaeda92e",
@@ -1811,9 +2413,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "307bfd8283c996866879",
@@ -1829,9 +2437,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "62a80c57172ef0f8c681",
@@ -1847,9 +2461,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "80d4dab84ed4650d34dd",
@@ -1865,9 +2485,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "4871429eeab7267983f2",
@@ -1883,9 +2509,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "fad93d1cc428b18bf4e7",
@@ -1901,9 +2533,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "85bfe6e034daa10712d5",
@@ -1919,9 +2557,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "1e96d98cae676ac26d99",
@@ -1937,9 +2581,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "b784204547ffc4387a95",
@@ -1955,9 +2605,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "a522b41638f01abd822b",
@@ -1973,9 +2629,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "2e7fb377e1afab3345e9",
@@ -1991,9 +2653,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "6d094cddeccdc8a616c9",
@@ -2009,9 +2677,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "85fa9e62bda64d6916d5",
@@ -2027,9 +2701,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "b2baebe3bb5022a72e5e",
@@ -2045,9 +2725,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "ed74e7e71b12f0e35fbd",
@@ -2063,9 +2749,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "0d783892eb84bbf16fc3",
@@ -2081,9 +2773,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "19465a31350fa46198a2",
@@ -2099,9 +2797,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "be7c45232da63b842e91",
@@ -2117,9 +2821,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "3aea0cc1da0ad4d58f38",
@@ -2135,9 +2845,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "23766db115dd70249ce2",
@@ -2153,9 +2869,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "9124c8fcb65094287c99",
@@ -2171,9 +2893,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "cb6402ad9724370a3659",
@@ -2189,9 +2917,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "6df85a697957d2ac28f0",
@@ -2207,9 +2941,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "2ba51408f96dc4ed491c",
@@ -2225,9 +2965,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "6a2ba5ad0a0b56d52b7c",
@@ -2243,9 +2989,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "95ee818f67d9814333b2",
@@ -2261,9 +3013,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "288cb1af8e09c6b4acfe",
@@ -2279,9 +3037,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "0b84ead429da892c08d2",
@@ -2297,9 +3061,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "13bfefde73c1d3e43db4",
@@ -2315,9 +3085,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "f97e95d02d0e0be72f96",
@@ -2333,9 +3109,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "187dc8c81eb570ca11a1",
@@ -2351,9 +3133,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "25945f8698a9885692b4",
@@ -2369,9 +3157,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "f302a9054a4795bb1392",
@@ -2387,9 +3181,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "14801a0b53a69f057450",
@@ -2405,9 +3205,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "1f23eebaf2cdf16911ea",
@@ -2423,9 +3229,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "07393fedf827a13f928a",
@@ -2441,9 +3253,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "0943d5133f0c2b075e16",
@@ -2459,9 +3277,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "0a1ed99ac5e7ec646c0f",
@@ -2477,9 +3301,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "80ecd2610b00af25f7fa",
@@ -2495,9 +3325,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "2a25f4412e80871a8399",
@@ -2513,9 +3349,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "a56d225fda216baf017c",
@@ -2531,9 +3373,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "6577f896bdf295ca8a34",
@@ -2549,9 +3397,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "bb28de500dd85b764d51",
@@ -2567,9 +3421,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "c2437253a574e59064bd",
@@ -2585,9 +3445,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "71b06fdab241d1633a2f",
@@ -2603,9 +3469,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "b340492f427906cf0896",
@@ -2621,9 +3493,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "d3e80fdc11ea36d44290",
@@ -2639,9 +3517,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "cfccf6d8b34860a33a8b",
@@ -2657,9 +3541,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "cc0440b999ec45f8547e",
@@ -2675,9 +3565,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "28351ac17aa1a5f1d64e",
@@ -2693,9 +3589,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     },
     {
       "pair_id": "80094c7847557ede8350",
@@ -2711,9 +3613,15 @@
       "text_content_retained": false,
       "priority": 2,
       "decision": null,
+      "reviewer_id": null,
       "reviewer_role": null,
       "reviewed_at": null,
-      "reviewer_notes": null
+      "reviewer_notes": null,
+      "secondary_decision": null,
+      "secondary_reviewer_id": null,
+      "secondary_reviewer_role": null,
+      "secondary_reviewed_at": null,
+      "secondary_reviewer_notes": null
     }
   ],
   "clinical_validation": false,

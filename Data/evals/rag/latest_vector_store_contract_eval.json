@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_vector_store_contract_eval_v1",
-  "generated_at": "2026-08-11T07:20:13.448440+00:00",
+  "generated_at": "2026-08-11T09:42:33.244350+00:00",
   "status": "strong_contract_only",
   "clinical_validation": false,
   "healthcare_production_ready": false,

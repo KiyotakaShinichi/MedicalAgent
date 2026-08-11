@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_managed_vector_shadow_comparison_v1",
-  "generated_at": "2026-08-11T07:20:23.656607+00:00",
+  "generated_at": "2026-08-11T09:43:11.385263+00:00",
   "status": "ready_for_managed_shadow_run",
   "clinical_validation": false,
   "healthcare_production_ready": false,

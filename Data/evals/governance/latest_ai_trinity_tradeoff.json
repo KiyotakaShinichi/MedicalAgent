@@ -1,6 +1,6 @@
 {
   "schema_version": "ai_trinity_tradeoff_v1",
-  "generated_at": "2026-08-11T07:27:56.970638+00:00",
+  "generated_at": "2026-08-11T09:59:35.969402+00:00",
   "status": "needs_attention",
   "decision": "HOLD_ACCURACY_GROUNDING",
   "promotion_allowed": false,
@@ -47,7 +47,7 @@
       "status": "pass",
       "retrieval_p95_ms": 307.365,
       "retrieval_budget_ms": 500.0,
-      "normal_route_highest_p95_ms": 243.11,
+      "normal_route_highest_p95_ms": 3575.45,
       "normal_route_budget_ms": 8000.0,
       "retrieval_budget_pass": true,
       "normal_route_budget_pass": true,

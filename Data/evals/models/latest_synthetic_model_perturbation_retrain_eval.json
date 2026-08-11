@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_model_perturbation_retrain_eval_v1",
-  "generated_at": "2026-08-11T07:30:07.309845+00:00",
+  "generated_at": "2026-08-11T10:03:52.502069+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "production_ready": false,
@@ -1340,6 +1340,826 @@
       "classification_brier": 0.011566,
       "regression_mae": 3.520917
     }
+  },
+  "repeated_patient_split_stability": {
+    "seed_policy": "predeclared_fixed_seed_set",
+    "seeds": [
+      11,
+      23,
+      42,
+      73,
+      101
+    ],
+    "split_count": 5,
+    "patient_overlap_count_max": 0,
+    "guarded_primary_distributions": {
+      "classification_auroc": {
+        "count": 5,
+        "mean": 0.845208,
+        "std": 0.014326,
+        "min": 0.824492,
+        "median": 0.854343,
+        "max": 0.856141,
+        "empirical_10_90_range": [
+          0.829024,
+          0.855781
+        ]
+      },
+      "classification_brier": {
+        "count": 5,
+        "mean": 0.161366,
+        "std": 0.003278,
+        "min": 0.158085,
+        "median": 0.160144,
+        "max": 0.166046,
+        "empirical_10_90_range": [
+          0.158522,
+          0.164978
+        ]
+      },
+      "regression_mae": {
+        "count": 5,
+        "mean": 15.138935,
+        "std": 1.514829,
+        "min": 13.160454,
+        "median": 15.504482,
+        "max": 17.189758,
+        "empirical_10_90_range": [
+          13.606732,
+          16.539389
+        ]
+      }
+    },
+    "guarded_minus_linear_delta_distributions": {
+      "classification_auroc": {
+        "count": 5,
+        "mean": 0.043877,
+        "std": 0.010285,
+        "min": 0.034526,
+        "median": 0.042618,
+        "max": 0.058982,
+        "empirical_10_90_range": [
+          0.034598,
+          0.05481
+        ]
+      },
+      "classification_brier": {
+        "count": 5,
+        "mean": -0.013922,
+        "std": 0.003197,
+        "min": -0.017386,
+        "median": -0.013604,
+        "max": -0.009011,
+        "empirical_10_90_range": [
+          -0.016853,
+          -0.010829
+        ]
+      },
+      "regression_mae": {
+        "count": 5,
+        "mean": -5.106085,
+        "std": 0.703164,
+        "min": -6.027167,
+        "median": -5.187983,
+        "max": -4.207741,
+        "empirical_10_90_range": [
+          -5.795329,
+          -4.388629
+        ]
+      }
+    },
+    "cross_generator_distributions": {
+      "classification_auroc": {
+        "count": 5,
+        "mean": 0.731222,
+        "std": 0.054467,
+        "min": 0.664027,
+        "median": 0.71267,
+        "max": 0.789593,
+        "empirical_10_90_range": [
+          0.680317,
+          0.787783
+        ]
+      },
+      "classification_brier": {
+        "count": 5,
+        "mean": 0.238872,
+        "std": 0.014215,
+        "min": 0.223313,
+        "median": 0.240837,
+        "max": 0.254189,
+        "empirical_10_90_range": [
+          0.224083,
+          0.252826
+        ]
+      },
+      "regression_mae": {
+        "count": 5,
+        "mean": 24.424305,
+        "std": 1.034658,
+        "min": 22.742012,
+        "median": 24.516045,
+        "max": 25.356348,
+        "empirical_10_90_range": [
+          23.377393,
+          25.28447
+        ]
+      }
+    },
+    "complex_lift_threshold_pass_rate": 1.0,
+    "rows": [
+      {
+        "seed": 11,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "patient_overlap_count": 0,
+        "guarded_primary": {
+          "model_family": "gradient_boosting",
+          "patient_count": 150,
+          "classification_auroc": 0.835821,
+          "classification_accuracy": 0.793333,
+          "classification_balanced_accuracy": 0.77585,
+          "classification_brier": 0.160144,
+          "classification_ece_10_bin": 0.088529,
+          "regression_mae": 13.160454,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.793333,
+              "balanced_accuracy": 0.77585,
+              "brier": 0.160144
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.822222,
+              "balanced_accuracy": 0.803333,
+              "brier": 0.150034
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.823009,
+              "balanced_accuracy": 0.79831,
+              "brier": 0.137302
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.88,
+              "balanced_accuracy": 0.863636,
+              "brier": 0.101404
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "logistic_ridge": {
+          "model_family": "linear",
+          "patient_count": 150,
+          "classification_auroc": 0.793203,
+          "classification_accuracy": 0.733333,
+          "classification_balanced_accuracy": 0.711563,
+          "classification_brier": 0.173701,
+          "classification_ece_10_bin": 0.071648,
+          "regression_mae": 18.348437,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.733333,
+              "balanced_accuracy": 0.711563,
+              "brier": 0.173701
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.777778,
+              "balanced_accuracy": 0.755538,
+              "brier": 0.164421
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.80531,
+              "balanced_accuracy": 0.78,
+              "brier": 0.149887
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.826667,
+              "balanced_accuracy": 0.808824,
+              "brier": 0.132146
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "guarded_minus_linear": {
+          "classification_auroc": 0.042618,
+          "classification_brier": -0.013557,
+          "regression_mae": -5.187983
+        },
+        "complex_lift_threshold_met": true,
+        "train_default_test_realism_v2": {
+          "model_family": "gradient_boosting",
+          "patient_count": 60,
+          "classification_auroc": 0.664027,
+          "classification_accuracy": 0.6,
+          "classification_balanced_accuracy": 0.624434,
+          "classification_brier": 0.254189,
+          "classification_ece_10_bin": 0.195603,
+          "regression_mae": 24.330464,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 60,
+              "accuracy": 0.6,
+              "balanced_accuracy": 0.624434,
+              "brier": 0.254189
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 54,
+              "accuracy": 0.574074,
+              "balanced_accuracy": 0.600982,
+              "brier": 0.256317
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 45,
+              "accuracy": 0.577778,
+              "balanced_accuracy": 0.6,
+              "brier": 0.256226
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 30,
+              "accuracy": 0.666667,
+              "balanced_accuracy": 0.666667,
+              "brier": 0.234815
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        }
+      },
+      {
+        "seed": 23,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "patient_overlap_count": 0,
+        "guarded_primary": {
+          "model_family": "gradient_boosting",
+          "patient_count": 150,
+          "classification_auroc": 0.856141,
+          "classification_accuracy": 0.76,
+          "classification_balanced_accuracy": 0.754361,
+          "classification_brier": 0.163376,
+          "classification_ece_10_bin": 0.089116,
+          "regression_mae": 15.563835,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.76,
+              "balanced_accuracy": 0.754361,
+              "brier": 0.163376
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.792593,
+              "balanced_accuracy": 0.785459,
+              "brier": 0.153853
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.840708,
+              "balanced_accuracy": 0.838417,
+              "brier": 0.136493
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.906667,
+              "balanced_accuracy": 0.907102,
+              "brier": 0.097358
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "logistic_ridge": {
+          "model_family": "linear",
+          "patient_count": 150,
+          "classification_auroc": 0.797159,
+          "classification_accuracy": 0.693333,
+          "classification_balanced_accuracy": 0.691243,
+          "classification_brier": 0.180762,
+          "classification_ece_10_bin": 0.070655,
+          "regression_mae": 20.223797,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.693333,
+              "balanced_accuracy": 0.691243,
+              "brier": 0.180762
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.733333,
+              "balanced_accuracy": 0.730336,
+              "brier": 0.172409
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.769912,
+              "balanced_accuracy": 0.765723,
+              "brier": 0.158956
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.866667,
+              "balanced_accuracy": 0.865932,
+              "brier": 0.116643
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "guarded_minus_linear": {
+          "classification_auroc": 0.058982,
+          "classification_brier": -0.017386,
+          "regression_mae": -4.659962
+        },
+        "complex_lift_threshold_met": true,
+        "train_default_test_realism_v2": {
+          "model_family": "gradient_boosting",
+          "patient_count": 60,
+          "classification_auroc": 0.704751,
+          "classification_accuracy": 0.55,
+          "classification_balanced_accuracy": 0.575792,
+          "classification_brier": 0.250782,
+          "classification_ece_10_bin": 0.22853,
+          "regression_mae": 24.516045,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 60,
+              "accuracy": 0.55,
+              "balanced_accuracy": 0.575792,
+              "brier": 0.250782
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 54,
+              "accuracy": 0.555556,
+              "balanced_accuracy": 0.572414,
+              "brier": 0.250777
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 45,
+              "accuracy": 0.6,
+              "balanced_accuracy": 0.619048,
+              "brier": 0.249476
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 30,
+              "accuracy": 0.666667,
+              "balanced_accuracy": 0.666667,
+              "brier": 0.233274
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        }
+      },
+      {
+        "seed": 42,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "patient_overlap_count": 0,
+        "guarded_primary": {
+          "model_family": "gradient_boosting",
+          "patient_count": 150,
+          "classification_auroc": 0.854343,
+          "classification_accuracy": 0.773333,
+          "classification_balanced_accuracy": 0.760655,
+          "classification_brier": 0.159178,
+          "classification_ece_10_bin": 0.100669,
+          "regression_mae": 15.504482,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.773333,
+              "balanced_accuracy": 0.760655,
+              "brier": 0.159178
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.807407,
+              "balanced_accuracy": 0.796399,
+              "brier": 0.149235
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.858407,
+              "balanced_accuracy": 0.844877,
+              "brier": 0.130359
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.893333,
+              "balanced_accuracy": 0.878788,
+              "brier": 0.099202
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "logistic_ridge": {
+          "model_family": "linear",
+          "patient_count": 150,
+          "classification_auroc": 0.819637,
+          "classification_accuracy": 0.786667,
+          "classification_balanced_accuracy": 0.772703,
+          "classification_brier": 0.168189,
+          "classification_ece_10_bin": 0.132704,
+          "regression_mae": 19.712223,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.786667,
+              "balanced_accuracy": 0.772703,
+              "brier": 0.168189
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.814815,
+              "balanced_accuracy": 0.804463,
+              "brier": 0.158843
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.80531,
+              "balanced_accuracy": 0.794136,
+              "brier": 0.149021
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.84,
+              "balanced_accuracy": 0.828571,
+              "brier": 0.123089
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "guarded_minus_linear": {
+          "classification_auroc": 0.034706,
+          "classification_brier": -0.009011,
+          "regression_mae": -4.207741
+        },
+        "complex_lift_threshold_met": true,
+        "train_default_test_realism_v2": {
+          "model_family": "gradient_boosting",
+          "patient_count": 60,
+          "classification_auroc": 0.71267,
+          "classification_accuracy": 0.65,
+          "classification_balanced_accuracy": 0.668552,
+          "classification_brier": 0.240837,
+          "classification_ece_10_bin": 0.199711,
+          "regression_mae": 25.356348,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 60,
+              "accuracy": 0.65,
+              "balanced_accuracy": 0.668552,
+              "brier": 0.240837
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 54,
+              "accuracy": 0.648148,
+              "balanced_accuracy": 0.666667,
+              "brier": 0.241007
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 45,
+              "accuracy": 0.6,
+              "balanced_accuracy": 0.613095,
+              "brier": 0.252863
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 30,
+              "accuracy": 0.666667,
+              "balanced_accuracy": 0.65625,
+              "brier": 0.23565
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        }
+      },
+      {
+        "seed": 73,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "patient_overlap_count": 0,
+        "guarded_primary": {
+          "model_family": "gradient_boosting",
+          "patient_count": 150,
+          "classification_auroc": 0.824492,
+          "classification_accuracy": 0.74,
+          "classification_balanced_accuracy": 0.72478,
+          "classification_brier": 0.166046,
+          "classification_ece_10_bin": 0.078624,
+          "regression_mae": 14.276148,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.74,
+              "balanced_accuracy": 0.72478,
+              "brier": 0.166046
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.762963,
+              "balanced_accuracy": 0.750442,
+              "brier": 0.156512
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.79646,
+              "balanced_accuracy": 0.784521,
+              "brier": 0.139724
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.893333,
+              "balanced_accuracy": 0.872222,
+              "brier": 0.092064
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "logistic_ridge": {
+          "model_family": "linear",
+          "patient_count": 150,
+          "classification_auroc": 0.789966,
+          "classification_accuracy": 0.72,
+          "classification_balanced_accuracy": 0.708146,
+          "classification_brier": 0.17965,
+          "classification_ece_10_bin": 0.079152,
+          "regression_mae": 19.723719,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.72,
+              "balanced_accuracy": 0.708146,
+              "brier": 0.17965
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.733333,
+              "balanced_accuracy": 0.72426,
+              "brier": 0.172118
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.79646,
+              "balanced_accuracy": 0.786321,
+              "brier": 0.151565
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.853333,
+              "balanced_accuracy": 0.839827,
+              "brier": 0.115099
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "guarded_minus_linear": {
+          "classification_auroc": 0.034526,
+          "classification_brier": -0.013604,
+          "regression_mae": -5.447571
+        },
+        "complex_lift_threshold_met": true,
+        "train_default_test_realism_v2": {
+          "model_family": "gradient_boosting",
+          "patient_count": 60,
+          "classification_auroc": 0.785068,
+          "classification_accuracy": 0.65,
+          "classification_balanced_accuracy": 0.673077,
+          "classification_brier": 0.223313,
+          "classification_ece_10_bin": 0.267216,
+          "regression_mae": 25.176654,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 60,
+              "accuracy": 0.65,
+              "balanced_accuracy": 0.673077,
+              "brier": 0.223313
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 54,
+              "accuracy": 0.648148,
+              "balanced_accuracy": 0.65522,
+              "brier": 0.219746
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 45,
+              "accuracy": 0.644444,
+              "balanced_accuracy": 0.630952,
+              "brier": 0.21769
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 30,
+              "accuracy": 0.7,
+              "balanced_accuracy": 0.648325,
+              "brier": 0.194772
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        }
+      },
+      {
+        "seed": 101,
+        "train_patient_count": 450,
+        "test_patient_count": 150,
+        "patient_overlap_count": 0,
+        "guarded_primary": {
+          "model_family": "gradient_boosting",
+          "patient_count": 150,
+          "classification_auroc": 0.855242,
+          "classification_accuracy": 0.766667,
+          "classification_balanced_accuracy": 0.756069,
+          "classification_brier": 0.158085,
+          "classification_ece_10_bin": 0.089358,
+          "regression_mae": 17.189758,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.766667,
+              "balanced_accuracy": 0.756069,
+              "brier": 0.158085
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.8,
+              "balanced_accuracy": 0.790208,
+              "brier": 0.147903
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.849558,
+              "balanced_accuracy": 0.842213,
+              "brier": 0.129153
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.906667,
+              "balanced_accuracy": 0.896628,
+              "brier": 0.092929
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "logistic_ridge": {
+          "model_family": "linear",
+          "patient_count": 150,
+          "classification_auroc": 0.806689,
+          "classification_accuracy": 0.726667,
+          "classification_balanced_accuracy": 0.718486,
+          "classification_brier": 0.174138,
+          "classification_ece_10_bin": 0.097191,
+          "regression_mae": 23.216925,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 150,
+              "accuracy": 0.726667,
+              "balanced_accuracy": 0.718486,
+              "brier": 0.174138
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 135,
+              "accuracy": 0.755556,
+              "balanced_accuracy": 0.745,
+              "brier": 0.165657
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 113,
+              "accuracy": 0.814159,
+              "balanced_accuracy": 0.806289,
+              "brier": 0.14687
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 75,
+              "accuracy": 0.853333,
+              "balanced_accuracy": 0.852063,
+              "brier": 0.119517
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        },
+        "guarded_minus_linear": {
+          "classification_auroc": 0.048553,
+          "classification_brier": -0.016053,
+          "regression_mae": -6.027167
+        },
+        "complex_lift_threshold_met": true,
+        "train_default_test_realism_v2": {
+          "model_family": "gradient_boosting",
+          "patient_count": 60,
+          "classification_auroc": 0.789593,
+          "classification_accuracy": 0.65,
+          "classification_balanced_accuracy": 0.677602,
+          "classification_brier": 0.225239,
+          "classification_ece_10_bin": 0.207399,
+          "regression_mae": 22.742012,
+          "classification_abstention_curve": [
+            {
+              "coverage": 1.0,
+              "n_retained": 60,
+              "accuracy": 0.65,
+              "balanced_accuracy": 0.677602,
+              "brier": 0.225239
+            },
+            {
+              "coverage": 0.9,
+              "n_retained": 54,
+              "accuracy": 0.666667,
+              "balanced_accuracy": 0.691667,
+              "brier": 0.221841
+            },
+            {
+              "coverage": 0.75,
+              "n_retained": 45,
+              "accuracy": 0.688889,
+              "balanced_accuracy": 0.683794,
+              "brier": 0.215838
+            },
+            {
+              "coverage": 0.5,
+              "n_retained": 30,
+              "accuracy": 0.7,
+              "balanced_accuracy": 0.652778,
+              "brier": 0.212129
+            }
+          ],
+          "bootstrap_95_ci": null,
+          "bootstrap_resamples": 0
+        }
+      }
+    ],
+    "interpretation": "Repeated patient-grouped splits measure sensitivity to the selected synthetic partition. Their empirical ranges are not confidence intervals for real patients or evidence of transportability."
   },
   "stress_failures": [
     {

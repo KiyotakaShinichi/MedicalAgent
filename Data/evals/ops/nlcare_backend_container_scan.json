@@ -3,18 +3,18 @@
   "Trivy": {
     "Version": "0.73.0"
   },
-  "ReportID": "019fe728-fea7-7887-9938-9127f21f6138",
-  "CreatedAt": "2026-08-09T23:34:11.3675589+08:00",
-  "ArtifactID": "sha256:18c55f9295bd57142cd3adee1fc4967fb32c8fa8783947678f0c1b4f47fe5264",
+  "ReportID": "019ff020-a4cc-77da-8328-66afab081386",
+  "CreatedAt": "2026-08-11T17:21:39.0205146+08:00",
+  "ArtifactID": "sha256:6edfbd1a97369d8b526c4ccb0484f926d69d33ab6bce69c0874d1920beafad4e",
   "ArtifactName": "nlcare-synthetic-staging-backend:latest",
   "ArtifactType": "container_image",
   "Metadata": {
-    "Size": 660301312,
+    "Size": 661035520,
     "OS": {
       "Family": "debian",
       "Name": "13.6"
     },
-    "ImageID": "sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86",
+    "ImageID": "sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981",
     "DiffIDs": [
       "sha256:50abe06dfc0957e14cb8332ed242e8b884ef2563a9eb202e5172f243f62792f7",
       "sha256:621c35e751a51a9a9dc3e80aa0b7fe8be2a93402ea6ccd307d30852cd7776cda",
@@ -66,24 +66,24 @@
       "sha256:f8dfe36c6d7ce890f8a8fe4cff0a6f904b44cec9420d03211bd2c005ed19bd41",
       "sha256:8f572811b4f6eeaf14430667c78dc9473efc5cf31e6883fa9858c22e84b5a524",
       "sha256:a58bbf0b2b9b8f0f29811735a3da1bd2a03b27b00828ab9e4ec5777550aa31bd",
-      "sha256:54f84251ea4bbc7555ed71d2d3a5041e4706a9e0655dddbd44e636c5febccbeb",
-      "sha256:caaef4f1a25ec0cad9c8f1be1b4c47214cc98aaf4a4e260619a5fc7cd65a2a7b",
-      "sha256:f783709160fa7d00c4300e44b48e5c718ef0076fa62e92d8f62c70b2237d5475",
-      "sha256:5fd80bdbfa43b162adeefc4da938f1d71203c446480a2f498f463773d296fc67",
-      "sha256:66c8dfa7ed0c2e5c8dbdc8dcd4d39cefe21c8eeac1632bbf9af13c626009cefc",
-      "sha256:004a7b794727d9fc2fc59a16210aa96c084e188cb1a8df97e2474070141533b2",
-      "sha256:edd59e84527b4e156cdff5154eb9ee9b599c9af55297a7be8b4f91903d6ac0ae"
+      "sha256:92ab91475a83d3c94d43a3c8ee07fece064141d7b0684b37ddf52167fd9f9817",
+      "sha256:420325ffa467d2e4d1d3afec16c2b91e9586774f7ad6f7b9ac13ee28f2ca86cc",
+      "sha256:6fa8a8d5eee14d25bcc90f3bf7436e2e92488778cc5c8bc2fe702c5039bd9de9",
+      "sha256:0cba850ec99d1ddf44fe5fa7bc2aa4b2ff5f49a289950e88e46a67eb76cfbf8c",
+      "sha256:c6e25d8589a02b879d8e4269feecaee46d619a53b1f6f690217438bc1bcb49cf",
+      "sha256:f1c00328b6bb081f2cce6205854e5d6689f9e692acaee47470725f7c548cf4c2",
+      "sha256:3662c8a381b3428dc02e76236d3ad9cce98ebc3d2f475cce9f3e425cca1a4fb6"
     ],
     "RepoTags": [
       "nlcare-synthetic-staging-backend:latest"
     ],
     "RepoDigests": [
-      "nlcare-synthetic-staging-backend@sha256:c19eeb9b742b53ad33ae76a14cb55bce805b01b5c13e3849e7715318d2b57d86"
+      "nlcare-synthetic-staging-backend@sha256:0e3ea37a8917a62a4f1797b2925bc88f8ee209db45b419313fa0c554dbc71981"
     ],
     "Reference": "nlcare-synthetic-staging-backend:latest",
     "ImageConfig": {
       "architecture": "amd64",
-      "created": "2026-08-09T15:32:03.48808178Z",
+      "created": "2026-08-11T03:10:40.474466385Z",
       "history": [
         {
           "created": "1970-01-01T00:00:00Z",
@@ -279,19 +279,19 @@
         },
         {
           "created": "2026-08-09T14:05:50Z",
-          "created_by": "ARG SOURCE_REVISION=8f709ef",
+          "created_by": "ARG SOURCE_REVISION=uncommitted",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
           "created": "2026-08-09T14:05:50Z",
-          "created_by": "ARG BUILD_CREATED=2026-08-09T15:31:54Z",
+          "created_by": "ARG BUILD_CREATED=unknown",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
           "created": "2026-08-09T14:05:50Z",
-          "created_by": "LABEL org.opencontainers.image.title=NLCare synthetic-staging backend org.opencontainers.image.description=Restricted synthetic-only engineering runtime; not for clinical use org.opencontainers.image.source=https://github.com/KiyotakaShinichi/MedicalAgent org.opencontainers.image.revision=8f709ef org.opencontainers.image.created=2026-08-09T15:31:54Z ai.nlcare.deployment-scope=restricted-synthetic-staging-only ai.nlcare.clinical-validation=false",
+          "created_by": "LABEL org.opencontainers.image.title=NLCare synthetic-staging backend org.opencontainers.image.description=Restricted synthetic-only engineering runtime; not for clinical use org.opencontainers.image.source=https://github.com/KiyotakaShinichi/MedicalAgent org.opencontainers.image.revision=uncommitted org.opencontainers.image.created=unknown ai.nlcare.deployment-scope=restricted-synthetic-staging-only ai.nlcare.clinical-validation=false",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
@@ -330,66 +330,66 @@
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-08-09T15:32:00Z",
+          "created": "2026-08-11T03:10:36Z",
           "created_by": "COPY --chown=nonroot:nonroot backend backend # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-08-09T15:32:01Z",
+          "created": "2026-08-11T03:10:36Z",
           "created_by": "COPY --chown=nonroot:nonroot frontend frontend # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-08-09T15:32:02Z",
+          "created": "2026-08-11T03:10:38Z",
           "created_by": "COPY --chown=nonroot:nonroot scripts scripts # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-08-09T15:32:02Z",
+          "created": "2026-08-11T03:10:38Z",
           "created_by": "COPY --chown=nonroot:nonroot config config # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-08-09T15:32:02Z",
+          "created": "2026-08-11T03:10:39Z",
           "created_by": "COPY --chown=nonroot:nonroot evals evals # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-08-09T15:32:03Z",
+          "created": "2026-08-11T03:10:39Z",
           "created_by": "COPY --chown=nonroot:nonroot alembic.ini alembic.ini # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-08-09T15:32:03Z",
+          "created": "2026-08-11T03:10:40Z",
           "created_by": "COPY --chown=nonroot:nonroot README.md MODEL_CARD.md DATA_CARD.md ./ # buildkit",
           "comment": "buildkit.dockerfile.v0"
         },
         {
-          "created": "2026-08-09T15:32:03Z",
+          "created": "2026-08-11T03:10:40Z",
           "created_by": "USER nonroot:nonroot",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
-          "created": "2026-08-09T15:32:03Z",
+          "created": "2026-08-11T03:10:40Z",
           "created_by": "EXPOSE [8017/tcp]",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
-          "created": "2026-08-09T15:32:03Z",
+          "created": "2026-08-11T03:10:40Z",
           "created_by": "HEALTHCHECK \u0026{[\"CMD\" \"/usr/bin/python3\" \"-c\" \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8017/health', timeout=3).read()\"] \"30s\" \"5s\" \"20s\" \"0s\" '\\x03'}",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
-          "created": "2026-08-09T15:32:03Z",
+          "created": "2026-08-11T03:10:40Z",
           "created_by": "ENTRYPOINT [\"/usr/bin/python3\"]",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
-          "created": "2026-08-09T15:32:03Z",
+          "created": "2026-08-11T03:10:40Z",
           "created_by": "CMD [\"scripts/container_entrypoint.py\"]",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
@@ -449,13 +449,13 @@
           "sha256:f8dfe36c6d7ce890f8a8fe4cff0a6f904b44cec9420d03211bd2c005ed19bd41",
           "sha256:8f572811b4f6eeaf14430667c78dc9473efc5cf31e6883fa9858c22e84b5a524",
           "sha256:a58bbf0b2b9b8f0f29811735a3da1bd2a03b27b00828ab9e4ec5777550aa31bd",
-          "sha256:54f84251ea4bbc7555ed71d2d3a5041e4706a9e0655dddbd44e636c5febccbeb",
-          "sha256:caaef4f1a25ec0cad9c8f1be1b4c47214cc98aaf4a4e260619a5fc7cd65a2a7b",
-          "sha256:f783709160fa7d00c4300e44b48e5c718ef0076fa62e92d8f62c70b2237d5475",
-          "sha256:5fd80bdbfa43b162adeefc4da938f1d71203c446480a2f498f463773d296fc67",
-          "sha256:66c8dfa7ed0c2e5c8dbdc8dcd4d39cefe21c8eeac1632bbf9af13c626009cefc",
-          "sha256:004a7b794727d9fc2fc59a16210aa96c084e188cb1a8df97e2474070141533b2",
-          "sha256:edd59e84527b4e156cdff5154eb9ee9b599c9af55297a7be8b4f91903d6ac0ae"
+          "sha256:92ab91475a83d3c94d43a3c8ee07fece064141d7b0684b37ddf52167fd9f9817",
+          "sha256:420325ffa467d2e4d1d3afec16c2b91e9586774f7ad6f7b9ac13ee28f2ca86cc",
+          "sha256:6fa8a8d5eee14d25bcc90f3bf7436e2e92488778cc5c8bc2fe702c5039bd9de9",
+          "sha256:0cba850ec99d1ddf44fe5fa7bc2aa4b2ff5f49a289950e88e46a67eb76cfbf8c",
+          "sha256:c6e25d8589a02b879d8e4269feecaee46d619a53b1f6f690217438bc1bcb49cf",
+          "sha256:f1c00328b6bb081f2cce6205854e5d6689f9e692acaee47470725f7c548cf4c2",
+          "sha256:3662c8a381b3428dc02e76236d3ad9cce98ebc3d2f475cce9f3e425cca1a4fb6"
         ]
       },
       "config": {
@@ -492,9 +492,9 @@
           "com.docker.compose.project": "nlcare-synthetic-staging",
           "com.docker.compose.service": "backend",
           "com.docker.compose.version": "5.1.0",
-          "org.opencontainers.image.created": "2026-08-09T15:31:54Z",
+          "org.opencontainers.image.created": "unknown",
           "org.opencontainers.image.description": "Restricted synthetic-only engineering runtime; not for clinical use",
-          "org.opencontainers.image.revision": "8f709ef",
+          "org.opencontainers.image.revision": "uncommitted",
           "org.opencontainers.image.source": "https://github.com/KiyotakaShinichi/MedicalAgent",
           "org.opencontainers.image.title": "NLCare synthetic-staging backend"
         },
@@ -758,39 +758,39 @@
         "DiffID": "sha256:a58bbf0b2b9b8f0f29811735a3da1bd2a03b27b00828ab9e4ec5777550aa31bd"
       },
       {
-        "Size": 14160384,
-        "Digest": "sha256:c55eeda7a0d94cba1dae3eee06627512b0b5dcd7028cd3094ac40280eb90c650",
-        "DiffID": "sha256:54f84251ea4bbc7555ed71d2d3a5041e4706a9e0655dddbd44e636c5febccbeb"
+        "Size": 14846976,
+        "Digest": "sha256:db0381fd7978b3426c4050b6fda139d18005c698a493da9c0830108b7de5e1c1",
+        "DiffID": "sha256:92ab91475a83d3c94d43a3c8ee07fece064141d7b0684b37ddf52167fd9f9817"
       },
       {
         "Size": 235008,
-        "Digest": "sha256:ac80b7c9c2383faddcda0781bfdacd69365faf658dc6f0c26613a5676fc7d6ba",
-        "DiffID": "sha256:caaef4f1a25ec0cad9c8f1be1b4c47214cc98aaf4a4e260619a5fc7cd65a2a7b"
+        "Digest": "sha256:acf2ba9dcca55319e8244365cdab2a1855fec9bef92f661e6dd25711a19061e9",
+        "DiffID": "sha256:420325ffa467d2e4d1d3afec16c2b91e9586774f7ad6f7b9ac13ee28f2ca86cc"
       },
       {
-        "Size": 2606592,
-        "Digest": "sha256:96b821297bc4788b19c1227f61e9dcf7bbfe0de158b1cfd4988e35274f13c005",
-        "DiffID": "sha256:f783709160fa7d00c4300e44b48e5c718ef0076fa62e92d8f62c70b2237d5475"
+        "Size": 2637824,
+        "Digest": "sha256:51688100a827479f160e833db70e07abad272ac22d44e4edd8c8902bce0ed2e3",
+        "DiffID": "sha256:6fa8a8d5eee14d25bcc90f3bf7436e2e92488778cc5c8bc2fe702c5039bd9de9"
       },
       {
-        "Size": 264704,
-        "Digest": "sha256:f23d13dbda978e4d23a026ac6c6c93d035e77827479f05872353feea697e86e2",
-        "DiffID": "sha256:5fd80bdbfa43b162adeefc4da938f1d71203c446480a2f498f463773d296fc67"
+        "Size": 280064,
+        "Digest": "sha256:7c136d7a125cf8514d8b38f034b9099d04ef2351ad0b410a62b855b7a57f1e7a",
+        "DiffID": "sha256:0cba850ec99d1ddf44fe5fa7bc2aa4b2ff5f49a289950e88e46a67eb76cfbf8c"
       },
       {
         "Size": 78848,
-        "Digest": "sha256:b57812813c5a711218a5eae540ad1b52642a956bc285353b7a6e4df1b6bbfa31",
-        "DiffID": "sha256:66c8dfa7ed0c2e5c8dbdc8dcd4d39cefe21c8eeac1632bbf9af13c626009cefc"
+        "Digest": "sha256:25497622f1b26e4b13a6271370912a947e4c3b59d82a8107a14b17ab9a20529e",
+        "DiffID": "sha256:c6e25d8589a02b879d8e4269feecaee46d619a53b1f6f690217438bc1bcb49cf"
       },
       {
         "Size": 3072,
-        "Digest": "sha256:73100eb2de9d54eba372e3def71f2d218978b5f0a382a9987227a414321fb58c",
-        "DiffID": "sha256:004a7b794727d9fc2fc59a16210aa96c084e188cb1a8df97e2474070141533b2"
+        "Digest": "sha256:f962fe812a73505e497e1a4eabda8168cbf49a518f400a63f9ab64688bcd0ce9",
+        "DiffID": "sha256:f1c00328b6bb081f2cce6205854e5d6689f9e692acaee47470725f7c548cf4c2"
       },
       {
-        "Size": 103424,
-        "Digest": "sha256:27dc04c27ed0d9430a533baadbcf815f3d496385a1f52e63660adb57405f16f2",
-        "DiffID": "sha256:edd59e84527b4e156cdff5154eb9ee9b599c9af55297a7be8b4f91903d6ac0ae"
+        "Size": 104448,
+        "Digest": "sha256:e86e402561afd13b4cdd90f0ba5085d7126a97faf5f47102b50ed4c722248a6e",
+        "DiffID": "sha256:3662c8a381b3428dc02e76236d3ad9cce98ebc3d2f475cce9f3e425cca1a4fb6"
       }
     ]
   },
@@ -4055,7 +4055,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:4a01c0b327ddb60044f1ab6392fe04e9b7c1fba701c2cc5533cb8f7c973d66be",
+          "Fingerprint": "sha256:6d9ca6ad896271f65bad79a4b060ec9cd9c2698763613e1690518ec47fd82881",
           "Title": "bzip2: bzip2: Denial of Service in bzip2recover via a specially crafted file",
           "Description": "bzip2 contains an off‑by‑one error in the bzip2recover utility. When processing a specially crafted file, the application performs an out‑of‑bounds write to a global buffer, resulting in memory corruption and a crash (denial of service).\n\nThis issue was fixed in bzip2 patch 35d122a3df8b0cc4082a4d89fdc6ee99f375fe67",
           "Severity": "MEDIUM",
@@ -4104,7 +4104,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c3a0797348bcf258c018ab59fa4d799b864690a4450ddbb446b3e361c3b0086f",
+          "Fingerprint": "sha256:fabf9f421dd9cd38eda5b11f4717a5d601f4ae817852189ff0e342f4a3f70e5c",
           "Title": "glibc: glibc: Out-of-bounds write via TSIG record processing",
           "Description": "The deprecated functions ns_printrrf, ns_printrr and fp_nquery in the GNU C Library version 2.2 and newer fail to enforce the caller-supplied buffer length, and can result in an out-of-bounds write when printing TSIG records.",
           "Severity": "MEDIUM",
@@ -4125,7 +4125,7 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:42952",
+            "https://access.redhat.com/errata/RHSA-2026:42694",
             "https://access.redhat.com/security/cve/CVE-2026-5435",
             "https://bugzilla.redhat.com/2459854",
             "https://bugzilla.redhat.com/2463465",
@@ -4137,7 +4137,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5435",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5928",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-6238",
-            "https://errata.almalinux.org/9/ALSA-2026-42952.html",
+            "https://errata.almalinux.org/10/ALSA-2026-42694.html",
             "https://errata.rockylinux.org/RLSA-2026:42952",
             "https://inbox.sourceware.org/libc-alpha/cover.1777546194.git.fweimer@redhat.com/",
             "https://inbox.sourceware.org/libc-announce/7a655d55-276f-41fe-b550-feb3ebb2ce91@redhat.com/T/#u",
@@ -4172,7 +4172,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:8c528ae50b5c08f1c0acf39f7e0f8d278d15f6600ff00167bfc8973c3d2b0dcb",
+          "Fingerprint": "sha256:2f468b37de41ae767fce4b976f6c5fa701909159fbd9aae79fb1df6f16572cdf",
           "Title": "glibc: glibc: Heap Buffer Overflow in `scanf` with `%mc` format specifier and large width",
           "Description": "Calling the scanf family of functions with a %mc (malloc'd character match) in the GNU C Library version 2.7 to version 2.43 with a format width specifier with an explicit width greater than 1024 could result in a one byte heap buffer overflow.",
           "Severity": "MEDIUM",
@@ -4195,13 +4195,13 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:33226",
+            "https://access.redhat.com/errata/RHSA-2026:33092",
             "https://access.redhat.com/security/cve/CVE-2026-5450",
             "https://bugzilla.redhat.com/2459853",
             "https://bugzilla.redhat.com/show_bug.cgi?id=2459853",
             "https://cert-portal.siemens.com/productcert/html/ssa-082556.html",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5450",
-            "https://errata.almalinux.org/9/ALSA-2026-33226.html",
+            "https://errata.almalinux.org/10/ALSA-2026-33092.html",
             "https://errata.rockylinux.org/RLSA-2026:33226",
             "https://inbox.sourceware.org/libc-announce/b11f0003-6ec1-4bd6-b9de-9e38a4efeca3@redhat.com/T/#u",
             "https://linux.oracle.com/cve/CVE-2026-5450.html",
@@ -4236,7 +4236,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:6f22f205b52d86feb8c63a60c5e4cb1c4c301274f84e9f13548ae276226e7633",
+          "Fingerprint": "sha256:8755d93fbcaa6d1b299516bb2c7b03a535ccc08ee0613bf43a8ff09ebb0ec353",
           "Title": "glibc: glibc: Information disclosure or denial of service via ungetwc function with specific wide character encodings",
           "Description": "Calling the ungetwc function on a FILE stream with wide characters encoded in a character set that has overlaps between its single byte and multi-byte character encodings, in the GNU C Library version 2.43 or earlier, may result in an attempt to read bytes before an allocated buffer, potentially resulting in unintentional disclosure of neighboring data in the heap, or a program crash.\n\nA bug in the wide character pushback implementation (_IO_wdefault_pbackfail in libio/wgenops.c) causes ungetwc() to operate on the regular character buffer (fp-\u003e_IO_read_ptr) instead of the actual wide-stream read pointer (fp-\u003e_wide_data-\u003e_IO_read_ptr). The program crash may happen in cases where fp-\u003e_IO_read_ptr is not initialized and hence points to NULL. The buffer under-read requires a special situation where the input character encoding is such that there are overlaps between single byte representations and multibyte representations in that encoding, resulting in spurious matches. The spurious match case is not possible in the standard Unicode character sets.",
           "Severity": "MEDIUM",
@@ -4258,7 +4258,7 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:42952",
+            "https://access.redhat.com/errata/RHSA-2026:42694",
             "https://access.redhat.com/security/cve/CVE-2026-5928",
             "https://bugzilla.redhat.com/2459854",
             "https://bugzilla.redhat.com/2463465",
@@ -4270,7 +4270,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5435",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5928",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-6238",
-            "https://errata.almalinux.org/9/ALSA-2026-42952.html",
+            "https://errata.almalinux.org/10/ALSA-2026-42694.html",
             "https://errata.rockylinux.org/RLSA-2026:42952",
             "https://linux.oracle.com/cve/CVE-2026-5928.html",
             "https://linux.oracle.com/errata/ELSA-2026-500140.html",
@@ -4303,7 +4303,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:1ba7300686101312e50061b1b7d7fba9275faf5a70e5e426b65131d6034c6702",
+          "Fingerprint": "sha256:464370d3d86de0f2bc4f580a8b8fb4a701be52421884fd4383a6e315219de98f",
           "Title": "glibc: glibc: Application crash or uninitialized memory read via crafted DNS response",
           "Description": "The deprecated functions ns_printrrf, ns_printrr and fp_nquery in the GNU C Library version 2.0.1 to version 2.43 fail to validate the RDATA content against the RDATA length in a DNS response when processing A6, CERT, LOC, TKEY or TSIG records, which may allow an attacker to craft a DNS response, causing a target application to crash or read uninitialized memory.\n\nThese functions are for application debugging only and hence not in the path of code executed by the DNS resolver.  Further, they have been deprecated since version 2.34 and should not be used by any new applications.  Applications should consider porting away from these interfaces since they may be removed in future versions.",
           "Severity": "MEDIUM",
@@ -4324,7 +4324,7 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:42952",
+            "https://access.redhat.com/errata/RHSA-2026:42694",
             "https://access.redhat.com/security/cve/CVE-2026-6238",
             "https://bugzilla.redhat.com/2459854",
             "https://bugzilla.redhat.com/2463465",
@@ -4336,7 +4336,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5435",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5928",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-6238",
-            "https://errata.almalinux.org/9/ALSA-2026-42952.html",
+            "https://errata.almalinux.org/10/ALSA-2026-42694.html",
             "https://errata.rockylinux.org/RLSA-2026:42952",
             "https://inbox.sourceware.org/libc-alpha/cover.1777546194.git.fweimer@redhat.com/",
             "https://inbox.sourceware.org/libc-announce/7a655d55-276f-41fe-b550-feb3ebb2ce91@redhat.com/T/#u",
@@ -4372,7 +4372,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:22e02e8ab835971bcefe8eace15e2a2a5ede6172b2720b74c0080d33ae58a8bb",
+          "Fingerprint": "sha256:73a244550a4af43c9ca3ab369f144f79eedac01f86017091429d557f5e312841",
           "Title": "glibc: glob implementation can cause excessive CPU and memory consumption due to crafted glob expressions",
           "Description": "The glob implementation in the GNU C Library (aka glibc or libc6) allows remote authenticated users to cause a denial of service (CPU and memory consumption) via crafted glob expressions that do not match any pathnames, as demonstrated by glob expressions in STAT commands to an FTP daemon, a different vulnerability than CVE-2010-2632.",
           "Severity": "LOW",
@@ -4429,7 +4429,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:23e55848fb8198b0f8022bb0268b348f3944acf2c3384fd4fbde1d082dfbff52",
+          "Fingerprint": "sha256:44aa3a1e02d92229e1691cf5b341490df92db71abc048ea71b4899daea26e3c5",
           "Title": "glibc: uncontrolled recursion in function check_dst_limits_calc_pos_1 in posix/regexec.c",
           "Description": "In the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(\\227|)(\\\\1\\\\1|t1|\\\\\\2537)+' in grep.",
           "Severity": "LOW",
@@ -4488,7 +4488,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:4aa2d2264d665662bc7d563d078a55a77f2c0d61eac4347450a68fd786f5c80a",
+          "Fingerprint": "sha256:d544f755e74eefa3c97f4917d6269221ebf5c725a8784ff8ab95c280a2dde2ae",
           "Title": "glibc: stack guard protection bypass",
           "Description": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass stack guard protection. The component is: nptl. The attack vector is: Exploit stack buffer overflow vulnerability and use this bypass vulnerability to bypass stack guard. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
           "Severity": "LOW",
@@ -4540,7 +4540,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:b94d4a33e9e0f0d98c974a196936e0cd36ca0d7b0e855683d141ad18262ea053",
+          "Fingerprint": "sha256:0d5069f1851d423aedfdb0535eee6dfa2d1049d2e320a46ba409d4d9f37ead05",
           "Title": "glibc: running ldd on malicious ELF leads to code execution because of wrong size computation",
           "Description": "GNU Libc current is affected by: Re-mapping current loaded library with malicious ELF file. The impact is: In worst case attacker may evaluate privileges. The component is: libld. The attack vector is: Attacker sends 2 ELF files to victim and asks to run ldd on it. ldd execute code. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
           "Severity": "LOW",
@@ -4595,7 +4595,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:613b956b41e835a8f9dfb5ce2b7d04ccadcb41c33bc0cb1ae984c6edf9f13c20",
+          "Fingerprint": "sha256:199d2518d6bd1e36cc93151b28c6c13b47fe9a358c1a3f3aea86b24397cf3eab",
           "Title": "glibc: ASLR bypass using cache of thread stack and heap",
           "Description": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass ASLR using cache of thread stack and heap. The component is: glibc. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
           "Severity": "LOW",
@@ -4654,7 +4654,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:cdb6fdb03d7099f963c50398cd9763433899cd6432c83c1f0d72a0482af90b62",
+          "Fingerprint": "sha256:f1ef58fe670960d0c478c84d027720d1eca0e25c50325fa731e2d11d9ac5821c",
           "Title": "glibc: information disclosure of heap addresses of pthread_created thread",
           "Description": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may guess the heap addresses of pthread_created thread. The component is: glibc. NOTE: the vendor's position is \"ASLR bypass itself is not a vulnerability.",
           "Severity": "LOW",
@@ -4712,7 +4712,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:3e23c7ebde966a0802d8206375944bdc4b96ed7091f394d0e4c4c6ebe633e0af",
+          "Fingerprint": "sha256:8c0e52d34b989a6752ddae1574f4ac429acfe2a5339ff12c495deaba0d03098d",
           "Title": "glibc: uncontrolled recursion in function check_dst_limits_calc_pos_1 in posix/regexec.c",
           "Description": "In the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(|)(\\\\1\\\\1)*' in grep, a different issue than CVE-2018-20796. NOTE: the software maintainer disputes that this is a vulnerability because the behavior occurs only with a crafted pattern",
           "Severity": "LOW",
@@ -4746,6 +4746,73 @@
           ],
           "PublishedDate": "2019-02-26T18:29:00.34Z",
           "LastModifiedDate": "2026-06-17T02:43:19.643Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-6368",
+          "PkgID": "libc-bin@2.41-12+deb13u3",
+          "PkgName": "libc-bin",
+          "PkgIdentifier": {
+            "PURL": "pkg:deb/debian/libc-bin@2.41-12%2Bdeb13u3?arch=amd64\u0026distro=debian-13.6",
+            "UID": "cb72d53f951ba747"
+          },
+          "InstalledVersion": "2.41-12+deb13u3",
+          "Status": "affected",
+          "Layer": {
+            "Digest": "sha256:83aa00fe05914fc8416ed22832d688fe27e0e36b09a312cccff8127649b7ac1f",
+            "DiffID": "sha256:511547ed4268b19d96b7399ea1f1c4c38243fb84ef7e5af6429c296d73ea51d1"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-6368",
+          "DataSource": {
+            "ID": "debian",
+            "Name": "Debian Security Tracker",
+            "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
+          },
+          "Fingerprint": "sha256:134f916577b667b97e3f844c9a0b8edd596da23ea9496c0031021359852c0ba6",
+          "Title": "Calling wordexp with WRDE_APPEND in the GNU C Library version 2.0 to v ...",
+          "Description": "Calling wordexp with WRDE_APPEND in the GNU C Library version 2.0 to version 2.43 can cause the interface to return invalid memory in the we_wordv member, which on subsequent calls to wordfree may abort the process.",
+          "Severity": "UNKNOWN",
+          "CweIDs": [
+            "CWE-908"
+          ],
+          "References": [
+            "https://sourceware.org/bugzilla/show_bug.cgi?id=34090",
+            "https://sourceware.org/git/?p=glibc.git;a=blob;f=advisories/GLIBC-SA-2026-0014;h=1e9a0039f07471ddfe6816e5df04875bec409f92;hb=HEAD"
+          ],
+          "PublishedDate": "2026-08-10T19:17:30.713Z",
+          "LastModifiedDate": "2026-08-10T19:17:30.713Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-6791",
+          "PkgID": "libc-bin@2.41-12+deb13u3",
+          "PkgName": "libc-bin",
+          "PkgIdentifier": {
+            "PURL": "pkg:deb/debian/libc-bin@2.41-12%2Bdeb13u3?arch=amd64\u0026distro=debian-13.6",
+            "UID": "cb72d53f951ba747"
+          },
+          "InstalledVersion": "2.41-12+deb13u3",
+          "Status": "affected",
+          "Layer": {
+            "Digest": "sha256:83aa00fe05914fc8416ed22832d688fe27e0e36b09a312cccff8127649b7ac1f",
+            "DiffID": "sha256:511547ed4268b19d96b7399ea1f1c4c38243fb84ef7e5af6429c296d73ea51d1"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-6791",
+          "DataSource": {
+            "ID": "debian",
+            "Name": "Debian Security Tracker",
+            "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
+          },
+          "Fingerprint": "sha256:e71ee1b44a4771abaced5d0a50d06d7f4407c2ada686933716918bf2a185a7a9",
+          "Title": "When expanding paths that begin with a tilde (~) followed by a usernam ...",
+          "Description": "When expanding paths that begin with a tilde (~) followed by a username, the internal parse_tilde function extracts the username to determine the user's home directory.  The implementation allocates memory for this username directly on the stack using the strndupa macro. Because the size of this allocation was determined by the length of the user-supplied input without any bounds checks, passing an excessively long username e.g. thousands of characters, forces the thread to exhaust its stack space. Thus if an application passes untrusted, attacker-controlled input to the wordexp function, an attacker can trigger a stack clash.",
+          "Severity": "UNKNOWN",
+          "CweIDs": [
+            "CWE-121"
+          ],
+          "References": [
+            "https://sourceware.org/bugzilla/show_bug.cgi?id=34091"
+          ],
+          "PublishedDate": "2026-08-10T19:17:30.877Z",
+          "LastModifiedDate": "2026-08-10T19:17:30.877Z"
         },
         {
           "VulnerabilityID": "CVE-2026-5435",
@@ -4767,7 +4834,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:3af521869ec64dd2f0328ef83c2d830bc753334e5560c182d173849d8ab48e3a",
+          "Fingerprint": "sha256:eb96f29950ade9ffb40cc348feec62b11266943daebc32eaa15a942a379df7df",
           "Title": "glibc: glibc: Out-of-bounds write via TSIG record processing",
           "Description": "The deprecated functions ns_printrrf, ns_printrr and fp_nquery in the GNU C Library version 2.2 and newer fail to enforce the caller-supplied buffer length, and can result in an out-of-bounds write when printing TSIG records.",
           "Severity": "MEDIUM",
@@ -4788,7 +4855,7 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:42952",
+            "https://access.redhat.com/errata/RHSA-2026:42694",
             "https://access.redhat.com/security/cve/CVE-2026-5435",
             "https://bugzilla.redhat.com/2459854",
             "https://bugzilla.redhat.com/2463465",
@@ -4800,7 +4867,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5435",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5928",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-6238",
-            "https://errata.almalinux.org/9/ALSA-2026-42952.html",
+            "https://errata.almalinux.org/10/ALSA-2026-42694.html",
             "https://errata.rockylinux.org/RLSA-2026:42952",
             "https://inbox.sourceware.org/libc-alpha/cover.1777546194.git.fweimer@redhat.com/",
             "https://inbox.sourceware.org/libc-announce/7a655d55-276f-41fe-b550-feb3ebb2ce91@redhat.com/T/#u",
@@ -4835,7 +4902,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:178eb59ecc32ec0da4dc2f77c8f9157cb7d9c8e92cbb5c1ae696335847788d6c",
+          "Fingerprint": "sha256:e6aa3ecdb651e55a19d3ebcf2a981a38f3edfb7fb4e2973c0fc88fcbf6f9eae4",
           "Title": "glibc: glibc: Heap Buffer Overflow in `scanf` with `%mc` format specifier and large width",
           "Description": "Calling the scanf family of functions with a %mc (malloc'd character match) in the GNU C Library version 2.7 to version 2.43 with a format width specifier with an explicit width greater than 1024 could result in a one byte heap buffer overflow.",
           "Severity": "MEDIUM",
@@ -4858,13 +4925,13 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:33226",
+            "https://access.redhat.com/errata/RHSA-2026:33092",
             "https://access.redhat.com/security/cve/CVE-2026-5450",
             "https://bugzilla.redhat.com/2459853",
             "https://bugzilla.redhat.com/show_bug.cgi?id=2459853",
             "https://cert-portal.siemens.com/productcert/html/ssa-082556.html",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5450",
-            "https://errata.almalinux.org/9/ALSA-2026-33226.html",
+            "https://errata.almalinux.org/10/ALSA-2026-33092.html",
             "https://errata.rockylinux.org/RLSA-2026:33226",
             "https://inbox.sourceware.org/libc-announce/b11f0003-6ec1-4bd6-b9de-9e38a4efeca3@redhat.com/T/#u",
             "https://linux.oracle.com/cve/CVE-2026-5450.html",
@@ -4899,7 +4966,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:07012df19a75ed0e717998c961816c7b12c45b4ef72b93616dbef85e3892e848",
+          "Fingerprint": "sha256:0cbf63d94f130c3e14f67a2fd0c05ecc8eae93fd599fc3d0c4cac6507cb7a95f",
           "Title": "glibc: glibc: Information disclosure or denial of service via ungetwc function with specific wide character encodings",
           "Description": "Calling the ungetwc function on a FILE stream with wide characters encoded in a character set that has overlaps between its single byte and multi-byte character encodings, in the GNU C Library version 2.43 or earlier, may result in an attempt to read bytes before an allocated buffer, potentially resulting in unintentional disclosure of neighboring data in the heap, or a program crash.\n\nA bug in the wide character pushback implementation (_IO_wdefault_pbackfail in libio/wgenops.c) causes ungetwc() to operate on the regular character buffer (fp-\u003e_IO_read_ptr) instead of the actual wide-stream read pointer (fp-\u003e_wide_data-\u003e_IO_read_ptr). The program crash may happen in cases where fp-\u003e_IO_read_ptr is not initialized and hence points to NULL. The buffer under-read requires a special situation where the input character encoding is such that there are overlaps between single byte representations and multibyte representations in that encoding, resulting in spurious matches. The spurious match case is not possible in the standard Unicode character sets.",
           "Severity": "MEDIUM",
@@ -4921,7 +4988,7 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:42952",
+            "https://access.redhat.com/errata/RHSA-2026:42694",
             "https://access.redhat.com/security/cve/CVE-2026-5928",
             "https://bugzilla.redhat.com/2459854",
             "https://bugzilla.redhat.com/2463465",
@@ -4933,7 +5000,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5435",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5928",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-6238",
-            "https://errata.almalinux.org/9/ALSA-2026-42952.html",
+            "https://errata.almalinux.org/10/ALSA-2026-42694.html",
             "https://errata.rockylinux.org/RLSA-2026:42952",
             "https://linux.oracle.com/cve/CVE-2026-5928.html",
             "https://linux.oracle.com/errata/ELSA-2026-500140.html",
@@ -4966,7 +5033,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:eff2bd08d39a9b70c7c7b2bd8a1396c3749f927062e22821f11879dcd3338bef",
+          "Fingerprint": "sha256:6a1f5ce204f874ac49d1aa74822c8aa5459c9aba94b2e56f5f3a3e368ba70abf",
           "Title": "glibc: glibc: Application crash or uninitialized memory read via crafted DNS response",
           "Description": "The deprecated functions ns_printrrf, ns_printrr and fp_nquery in the GNU C Library version 2.0.1 to version 2.43 fail to validate the RDATA content against the RDATA length in a DNS response when processing A6, CERT, LOC, TKEY or TSIG records, which may allow an attacker to craft a DNS response, causing a target application to crash or read uninitialized memory.\n\nThese functions are for application debugging only and hence not in the path of code executed by the DNS resolver.  Further, they have been deprecated since version 2.34 and should not be used by any new applications.  Applications should consider porting away from these interfaces since they may be removed in future versions.",
           "Severity": "MEDIUM",
@@ -4987,7 +5054,7 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:42952",
+            "https://access.redhat.com/errata/RHSA-2026:42694",
             "https://access.redhat.com/security/cve/CVE-2026-6238",
             "https://bugzilla.redhat.com/2459854",
             "https://bugzilla.redhat.com/2463465",
@@ -4999,7 +5066,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5435",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-5928",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-6238",
-            "https://errata.almalinux.org/9/ALSA-2026-42952.html",
+            "https://errata.almalinux.org/10/ALSA-2026-42694.html",
             "https://errata.rockylinux.org/RLSA-2026:42952",
             "https://inbox.sourceware.org/libc-alpha/cover.1777546194.git.fweimer@redhat.com/",
             "https://inbox.sourceware.org/libc-announce/7a655d55-276f-41fe-b550-feb3ebb2ce91@redhat.com/T/#u",
@@ -5035,7 +5102,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:1cb5759a010822e6a177d7a95d1c42e1fb79817b4fe652321f7212f5410dbc0e",
+          "Fingerprint": "sha256:afa7e5b6c3feb4dd16759074839bfcee632d829d8748d10cb6b7157bc64ee122",
           "Title": "glibc: glob implementation can cause excessive CPU and memory consumption due to crafted glob expressions",
           "Description": "The glob implementation in the GNU C Library (aka glibc or libc6) allows remote authenticated users to cause a denial of service (CPU and memory consumption) via crafted glob expressions that do not match any pathnames, as demonstrated by glob expressions in STAT commands to an FTP daemon, a different vulnerability than CVE-2010-2632.",
           "Severity": "LOW",
@@ -5092,7 +5159,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:62f21b5a4ef295ec7ce86336dff43f740608af50fc671b503dded61f48b8dc14",
+          "Fingerprint": "sha256:da8d98daa61dcfceb8c7b96c9660969cc0e2d396f9d9c69665f2eaa56e11ab87",
           "Title": "glibc: uncontrolled recursion in function check_dst_limits_calc_pos_1 in posix/regexec.c",
           "Description": "In the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(\\227|)(\\\\1\\\\1|t1|\\\\\\2537)+' in grep.",
           "Severity": "LOW",
@@ -5151,7 +5218,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:cfde0de075ef7505d6a26feb9e587d5e6da52bb447e499832777f540e88179bd",
+          "Fingerprint": "sha256:ebad6183aa40bac6858399d7b8a177afa99beb08e3f50bba8968e12d4816eaa7",
           "Title": "glibc: stack guard protection bypass",
           "Description": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass stack guard protection. The component is: nptl. The attack vector is: Exploit stack buffer overflow vulnerability and use this bypass vulnerability to bypass stack guard. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
           "Severity": "LOW",
@@ -5203,7 +5270,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:6af695ded8c600c67b874f84bf7c4eb3dff8ed354c2875f9228181b5c56fb413",
+          "Fingerprint": "sha256:56a17ba5ec753ef17e5cde6461cdad751348c4d43dce9e29c9fe97723deccbb8",
           "Title": "glibc: running ldd on malicious ELF leads to code execution because of wrong size computation",
           "Description": "GNU Libc current is affected by: Re-mapping current loaded library with malicious ELF file. The impact is: In worst case attacker may evaluate privileges. The component is: libld. The attack vector is: Attacker sends 2 ELF files to victim and asks to run ldd on it. ldd execute code. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
           "Severity": "LOW",
@@ -5258,7 +5325,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:4303882d1cd772e429e9635614825626d5272d664a2072247939e863170f30eb",
+          "Fingerprint": "sha256:874cee53a96b077db341529758180ae4addbd48868ccb6427cf8b26dd664173d",
           "Title": "glibc: ASLR bypass using cache of thread stack and heap",
           "Description": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass ASLR using cache of thread stack and heap. The component is: glibc. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
           "Severity": "LOW",
@@ -5317,7 +5384,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:6b0697d44d3de5f145954595aad2ee07d5050b6cf98de1755260c2972714fee1",
+          "Fingerprint": "sha256:32990393f54e6e7eaec50a905052105eb608276788ddcb119dea89f2afcf6845",
           "Title": "glibc: information disclosure of heap addresses of pthread_created thread",
           "Description": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may guess the heap addresses of pthread_created thread. The component is: glibc. NOTE: the vendor's position is \"ASLR bypass itself is not a vulnerability.",
           "Severity": "LOW",
@@ -5375,7 +5442,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c6f42131a4094f0a655aa700b30b9350be010034172248e85005ccd3515ad98e",
+          "Fingerprint": "sha256:c509f80a83cdde12470c188ac313823d46798bff0fc5fa85c479f7ed17ccc4f4",
           "Title": "glibc: uncontrolled recursion in function check_dst_limits_calc_pos_1 in posix/regexec.c",
           "Description": "In the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(|)(\\\\1\\\\1)*' in grep, a different issue than CVE-2018-20796. NOTE: the software maintainer disputes that this is a vulnerability because the behavior occurs only with a crafted pattern",
           "Severity": "LOW",
@@ -5409,6 +5476,73 @@
           ],
           "PublishedDate": "2019-02-26T18:29:00.34Z",
           "LastModifiedDate": "2026-06-17T02:43:19.643Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-6368",
+          "PkgID": "libc6@2.41-12+deb13u3",
+          "PkgName": "libc6",
+          "PkgIdentifier": {
+            "PURL": "pkg:deb/debian/libc6@2.41-12%2Bdeb13u3?arch=amd64\u0026distro=debian-13.6",
+            "UID": "b2e18d225507f497"
+          },
+          "InstalledVersion": "2.41-12+deb13u3",
+          "Status": "affected",
+          "Layer": {
+            "Digest": "sha256:2d4d7adf627254a81515173c3ba0fee593d821176ce30ea7d5eb2d956bdf8379",
+            "DiffID": "sha256:3a7299f559d987305122c7669fc3643095eb0955f8ff4a38c9430d54d0b4452e"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-6368",
+          "DataSource": {
+            "ID": "debian",
+            "Name": "Debian Security Tracker",
+            "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
+          },
+          "Fingerprint": "sha256:9e32fa7ef6c7e38d699d776af6918d5c9ef3e339ae52e0644bb8d983d8c34563",
+          "Title": "Calling wordexp with WRDE_APPEND in the GNU C Library version 2.0 to v ...",
+          "Description": "Calling wordexp with WRDE_APPEND in the GNU C Library version 2.0 to version 2.43 can cause the interface to return invalid memory in the we_wordv member, which on subsequent calls to wordfree may abort the process.",
+          "Severity": "UNKNOWN",
+          "CweIDs": [
+            "CWE-908"
+          ],
+          "References": [
+            "https://sourceware.org/bugzilla/show_bug.cgi?id=34090",
+            "https://sourceware.org/git/?p=glibc.git;a=blob;f=advisories/GLIBC-SA-2026-0014;h=1e9a0039f07471ddfe6816e5df04875bec409f92;hb=HEAD"
+          ],
+          "PublishedDate": "2026-08-10T19:17:30.713Z",
+          "LastModifiedDate": "2026-08-10T19:17:30.713Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-6791",
+          "PkgID": "libc6@2.41-12+deb13u3",
+          "PkgName": "libc6",
+          "PkgIdentifier": {
+            "PURL": "pkg:deb/debian/libc6@2.41-12%2Bdeb13u3?arch=amd64\u0026distro=debian-13.6",
+            "UID": "b2e18d225507f497"
+          },
+          "InstalledVersion": "2.41-12+deb13u3",
+          "Status": "affected",
+          "Layer": {
+            "Digest": "sha256:2d4d7adf627254a81515173c3ba0fee593d821176ce30ea7d5eb2d956bdf8379",
+            "DiffID": "sha256:3a7299f559d987305122c7669fc3643095eb0955f8ff4a38c9430d54d0b4452e"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-6791",
+          "DataSource": {
+            "ID": "debian",
+            "Name": "Debian Security Tracker",
+            "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
+          },
+          "Fingerprint": "sha256:2591fd60ada6664f88e599cabcddcd73738da7c145a2d03b00e53393da268f60",
+          "Title": "When expanding paths that begin with a tilde (~) followed by a usernam ...",
+          "Description": "When expanding paths that begin with a tilde (~) followed by a username, the internal parse_tilde function extracts the username to determine the user's home directory.  The implementation allocates memory for this username directly on the stack using the strndupa macro. Because the size of this allocation was determined by the length of the user-supplied input without any bounds checks, passing an excessively long username e.g. thousands of characters, forces the thread to exhaust its stack space. Thus if an application passes untrusted, attacker-controlled input to the wordexp function, an attacker can trigger a stack clash.",
+          "Severity": "UNKNOWN",
+          "CweIDs": [
+            "CWE-121"
+          ],
+          "References": [
+            "https://sourceware.org/bugzilla/show_bug.cgi?id=34091"
+          ],
+          "PublishedDate": "2026-08-10T19:17:30.877Z",
+          "LastModifiedDate": "2026-08-10T19:17:30.877Z"
         },
         {
           "VulnerabilityID": "CVE-2025-66382",
@@ -5431,7 +5565,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:a617d0a526762adccab78f4a46bf321a5d9b83e73f9fd7280a329246fe7df205",
+          "Fingerprint": "sha256:abae6074086322fd9edcc056de63ea77d7113a42d54c39210ac53a7625740b3e",
           "Title": "libexpat: libexpat: Denial of service via crafted file processing",
           "Description": "In libexpat through 2.7.3, a crafted file with an approximate size of 2 MiB can lead to dozens of seconds of processing time.",
           "Severity": "MEDIUM",
@@ -5472,6 +5606,40 @@
           "LastModifiedDate": "2026-06-17T09:56:45.24Z"
         },
         {
+          "VulnerabilityID": "CVE-2026-72522",
+          "PkgID": "libexpat1@2.8.2-1~deb13u1",
+          "PkgName": "libexpat1",
+          "PkgIdentifier": {
+            "PURL": "pkg:deb/debian/libexpat1@2.8.2-1~deb13u1?arch=amd64\u0026distro=debian-13.6",
+            "UID": "ee4c097ddd93df0"
+          },
+          "InstalledVersion": "2.8.2-1~deb13u1",
+          "Status": "affected",
+          "Layer": {
+            "Digest": "sha256:b27e7c69e40256136ce88296714c6e1674824c001f651a55336b4430460a7502",
+            "DiffID": "sha256:08020a88991598890110b2e2f72e36ffbc76c245e43a0600e1f40f65b1aed1d3"
+          },
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-72522",
+          "DataSource": {
+            "ID": "debian",
+            "Name": "Debian Security Tracker",
+            "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
+          },
+          "Fingerprint": "sha256:b7832fa646e8a8b52592d2879de706c7c668e62dc446fbbc19e0aaaeb7157bb9",
+          "Title": "libexpat before 2.8.3 has an out-of-bounds read and resultant infinite ...",
+          "Description": "libexpat before 2.8.3 has an out-of-bounds read and resultant infinite loop because low surrogates are treated the same as high surrogates during Unicode processing in the *_toUtf16 functions.",
+          "Severity": "UNKNOWN",
+          "CweIDs": [
+            "CWE-125"
+          ],
+          "References": [
+            "https://bugzilla.mozilla.org/show_bug.cgi?id=2053153",
+            "https://github.com/libexpat/libexpat/pull/1296"
+          ],
+          "PublishedDate": "2026-08-10T04:16:50.91Z",
+          "LastModifiedDate": "2026-08-10T04:16:50.91Z"
+        },
+        {
           "VulnerabilityID": "CVE-2018-5709",
           "PkgID": "libgssapi-krb5-2@1.21.3-5+deb13u1",
           "PkgName": "libgssapi-krb5-2",
@@ -5492,7 +5660,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:cada338551e61282f3e67b41d25c6b991ed1ec06dc07c1a43f4b09e4eb253e4f",
+          "Fingerprint": "sha256:52aede17b188231073abbd82252fd76d57908d3d833d2f0831570af37e961dbc",
           "Title": "krb5: integer overflow in dbentry-\u003en_key_data in kadmin/dbutil/dump.c",
           "Description": "An issue was discovered in MIT Kerberos 5 (aka krb5) through 1.16. There is a variable \"dbentry-\u003en_key_data\" in kadmin/dbutil/dump.c that can store 16-bit data but unknowingly the developer has assigned a \"u4\" variable to it, which is for 32-bit data. An attacker can use this vulnerability to affect other artifacts of the database as we know that a Kerberos database dump file contains trusted data.",
           "Severity": "LOW",
@@ -5547,7 +5715,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:55db4416a4886330867ab493ba8d16fe062cb2cdc2a9088c228593121d28185c",
+          "Fingerprint": "sha256:8f9ba878fa5a5b8ffe8dd93f4e78c0bc38396acfa2ea0f4f997499559e58483b",
           "Title": "krb5: Memory leak at /krb5/src/lib/rpc/pmap_rmt.c",
           "Description": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak in /krb5/src/lib/rpc/pmap_rmt.c.",
           "Severity": "LOW",
@@ -5617,7 +5785,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:edf10b3b1275261032f1288271745d5d9e74290ee9a6a5b8f20cc32c77120f73",
+          "Fingerprint": "sha256:e376d156028e259267ec602c59705ba3b48a7def81fa9526a3434261467ed9b1",
           "Title": "krb5: Memory leak at /krb5/src/lib/gssapi/krb5/k5sealv3.c",
           "Description": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak vulnerability in /krb5/src/lib/gssapi/krb5/k5sealv3.c.",
           "Severity": "LOW",
@@ -5687,7 +5855,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:024735d0678d181332fb57d0e6c9e0a85af39a897e4cc807ed79507ec6cb8a9c",
+          "Fingerprint": "sha256:4a5352105ebe7b263c6cfb06143c06081f3b62ff3fd66b8e1f902ed36bb45854",
           "Title": "krb5: krb5: integer underflow in berval2tl_data() leads to heap out-of-bounds read",
           "Description": "An integer underflow vulnerability was found in MIT krb5 in the berval2tl_data() function in plugins/kdb/ldap/libkdb_ldap/ldap_principal2.c. The function performs an unsigned subtraction (bv_len - 2) without a prior bounds check. When bv_len is 0 or 1, the subtraction wraps to a large value which is then truncated to uint16_t, yielding 0xFFFE (65534) or 0xFFFF (65535). The subsequent malloc succeeds and memcpy reads up to 65534 bytes from a 0-1 byte buffer, resulting in a heap out-of-bounds read.\nThe attack vector involves a malicious or compromised LDAP KDB backend returning a krbExtraData attribute with bv_len \u003c 2, triggering the underflow when the KDC or kadmind reads principal data.",
           "Severity": "LOW",
@@ -5739,7 +5907,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:1b9e0d7cb23b8bcbd277c3601f63132b71f4af3eb4be028885ca28f0586f9ec7",
+          "Fingerprint": "sha256:b00c2ca2883f488dd2cbd886e4afec1afaa01a649c6b2247f271f0489b98455d",
           "Title": "krb5: integer overflow in dbentry-\u003en_key_data in kadmin/dbutil/dump.c",
           "Description": "An issue was discovered in MIT Kerberos 5 (aka krb5) through 1.16. There is a variable \"dbentry-\u003en_key_data\" in kadmin/dbutil/dump.c that can store 16-bit data but unknowingly the developer has assigned a \"u4\" variable to it, which is for 32-bit data. An attacker can use this vulnerability to affect other artifacts of the database as we know that a Kerberos database dump file contains trusted data.",
           "Severity": "LOW",
@@ -5794,7 +5962,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:84fa083b3d1e55ed7dd57a363263c5db787dd5116a787c890b6bd9a2d6e0bf20",
+          "Fingerprint": "sha256:f6cbe1d31c6098f35472c800c7c1ce7ca7608ae08d1c56a737a68f79c730f11a",
           "Title": "krb5: Memory leak at /krb5/src/lib/rpc/pmap_rmt.c",
           "Description": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak in /krb5/src/lib/rpc/pmap_rmt.c.",
           "Severity": "LOW",
@@ -5864,7 +6032,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:011d1be6b15067f1569d706f019b51f664c478a6b6cc52d92c1459eb7ead22e6",
+          "Fingerprint": "sha256:0fcfed3124820fb91019170f8967821ea26aa3a28a86af64330b761fb9859c31",
           "Title": "krb5: Memory leak at /krb5/src/lib/gssapi/krb5/k5sealv3.c",
           "Description": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak vulnerability in /krb5/src/lib/gssapi/krb5/k5sealv3.c.",
           "Severity": "LOW",
@@ -5934,7 +6102,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c6f2d25eda4bd3b4523eb6d84c113f228853ce2ccdd3553c9086059bb7e52014",
+          "Fingerprint": "sha256:428c4ff65e78dc283d229d1dcc6abd3d587b734a92745526cab21f76cc59b5c1",
           "Title": "krb5: krb5: integer underflow in berval2tl_data() leads to heap out-of-bounds read",
           "Description": "An integer underflow vulnerability was found in MIT krb5 in the berval2tl_data() function in plugins/kdb/ldap/libkdb_ldap/ldap_principal2.c. The function performs an unsigned subtraction (bv_len - 2) without a prior bounds check. When bv_len is 0 or 1, the subtraction wraps to a large value which is then truncated to uint16_t, yielding 0xFFFE (65534) or 0xFFFF (65535). The subsequent malloc succeeds and memcpy reads up to 65534 bytes from a 0-1 byte buffer, resulting in a heap out-of-bounds read.\nThe attack vector involves a malicious or compromised LDAP KDB backend returning a krbExtraData attribute with bv_len \u003c 2, triggering the underflow when the KDC or kadmind reads principal data.",
           "Severity": "LOW",
@@ -5986,7 +6154,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:6b9401620eb4a398032dad68ed60a65af1c487955301c10111d4af493ad75ea9",
+          "Fingerprint": "sha256:ef9f8d7953bc51fa886dcacb7bed5fbf7d5391366dda0f56a03a43972180a248",
           "Title": "krb5: integer overflow in dbentry-\u003en_key_data in kadmin/dbutil/dump.c",
           "Description": "An issue was discovered in MIT Kerberos 5 (aka krb5) through 1.16. There is a variable \"dbentry-\u003en_key_data\" in kadmin/dbutil/dump.c that can store 16-bit data but unknowingly the developer has assigned a \"u4\" variable to it, which is for 32-bit data. An attacker can use this vulnerability to affect other artifacts of the database as we know that a Kerberos database dump file contains trusted data.",
           "Severity": "LOW",
@@ -6041,7 +6209,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:ca8d17ee850e2296511190d97699626727b2f68bb10596707f1cd66d586eb277",
+          "Fingerprint": "sha256:b17561f52efd9bc871a36de4c24bc82b42857e14d25231c8a5293b52fb26acc2",
           "Title": "krb5: Memory leak at /krb5/src/lib/rpc/pmap_rmt.c",
           "Description": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak in /krb5/src/lib/rpc/pmap_rmt.c.",
           "Severity": "LOW",
@@ -6111,7 +6279,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:07f3b18ac774a99b06e3b84a47838ebf9f50fdbfa2bd8b8ab8df5886abbf02df",
+          "Fingerprint": "sha256:304ec11272e23aeb673f65a16bc139e788da30bd128d4e883874a643ce0a1b9d",
           "Title": "krb5: Memory leak at /krb5/src/lib/gssapi/krb5/k5sealv3.c",
           "Description": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak vulnerability in /krb5/src/lib/gssapi/krb5/k5sealv3.c.",
           "Severity": "LOW",
@@ -6181,7 +6349,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:d57ec388907c0a805e797e49594f84fa8ea0f2a40322f62c6b54518a105827f7",
+          "Fingerprint": "sha256:d9eb1d8bb3acdfb96074fbcac7373ad28df729e797a2ec68d565a345203b206a",
           "Title": "krb5: krb5: integer underflow in berval2tl_data() leads to heap out-of-bounds read",
           "Description": "An integer underflow vulnerability was found in MIT krb5 in the berval2tl_data() function in plugins/kdb/ldap/libkdb_ldap/ldap_principal2.c. The function performs an unsigned subtraction (bv_len - 2) without a prior bounds check. When bv_len is 0 or 1, the subtraction wraps to a large value which is then truncated to uint16_t, yielding 0xFFFE (65534) or 0xFFFF (65535). The subsequent malloc succeeds and memcpy reads up to 65534 bytes from a 0-1 byte buffer, resulting in a heap out-of-bounds read.\nThe attack vector involves a malicious or compromised LDAP KDB backend returning a krbExtraData attribute with bv_len \u003c 2, triggering the underflow when the KDC or kadmind reads principal data.",
           "Severity": "LOW",
@@ -6233,7 +6401,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:1b59eced694e7b646715d8c3a5da86a1f1af4daad2faf2ebe75d1c06f69f3e0c",
+          "Fingerprint": "sha256:553f71f12e771d792a1c35705567fdb31a6d3c6c6213c0a48b6f2b5aa4559c62",
           "Title": "krb5: integer overflow in dbentry-\u003en_key_data in kadmin/dbutil/dump.c",
           "Description": "An issue was discovered in MIT Kerberos 5 (aka krb5) through 1.16. There is a variable \"dbentry-\u003en_key_data\" in kadmin/dbutil/dump.c that can store 16-bit data but unknowingly the developer has assigned a \"u4\" variable to it, which is for 32-bit data. An attacker can use this vulnerability to affect other artifacts of the database as we know that a Kerberos database dump file contains trusted data.",
           "Severity": "LOW",
@@ -6288,7 +6456,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:5052d7ee524e6c546bfe674a0373572ec2cc03c752ad4a1139385399d7e3e17c",
+          "Fingerprint": "sha256:d602ba722602c18f345dc9e1369ec7d2218855b3fe804ab7947a74f3dfcaf15c",
           "Title": "krb5: Memory leak at /krb5/src/lib/rpc/pmap_rmt.c",
           "Description": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak in /krb5/src/lib/rpc/pmap_rmt.c.",
           "Severity": "LOW",
@@ -6358,7 +6526,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:d9f9424c5e7acd0287c4c5efe0924657110c13584256cdec58f38fb0e3de7e59",
+          "Fingerprint": "sha256:5207d9f0730820f7bd137867e86a327971f27bd291399cf0263e3884dbc54e56",
           "Title": "krb5: Memory leak at /krb5/src/lib/gssapi/krb5/k5sealv3.c",
           "Description": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak vulnerability in /krb5/src/lib/gssapi/krb5/k5sealv3.c.",
           "Severity": "LOW",
@@ -6428,7 +6596,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:adeb63c22ff9ba06347c16fb40e9da556c267a7bf39f6f042adbcea0b7e3daf7",
+          "Fingerprint": "sha256:e7029870c0d3643efb1d96250c1cbd383ab2cf0ff6af738e7e4f2a1d07adc682",
           "Title": "krb5: krb5: integer underflow in berval2tl_data() leads to heap out-of-bounds read",
           "Description": "An integer underflow vulnerability was found in MIT krb5 in the berval2tl_data() function in plugins/kdb/ldap/libkdb_ldap/ldap_principal2.c. The function performs an unsigned subtraction (bv_len - 2) without a prior bounds check. When bv_len is 0 or 1, the subtraction wraps to a large value which is then truncated to uint16_t, yielding 0xFFFE (65534) or 0xFFFF (65535). The subsequent malloc succeeds and memcpy reads up to 65534 bytes from a 0-1 byte buffer, resulting in a heap out-of-bounds read.\nThe attack vector involves a malicious or compromised LDAP KDB backend returning a krbExtraData attribute with bv_len \u003c 2, triggering the underflow when the KDC or kadmind reads principal data.",
           "Severity": "LOW",
@@ -6480,7 +6648,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:bb15abe0bf574597e23be1badcef064a2af16a95baec1ee543d7eeda3363b878",
+          "Fingerprint": "sha256:2f1fc490183b449eeeb170e90ed952e582e82ae6c48711c6d8271b9911ff753a",
           "Title": "ncurses: ncurses: Buffer overflow vulnerability may lead to arbitrary code execution.",
           "Description": "The infocmp command-line tool in ncurses before 6.5-20251213 has a stack-based buffer overflow in analyze_string in progs/infocmp.c.",
           "Severity": "HIGH",
@@ -6492,6 +6660,7 @@
             "alma": 2,
             "azure": 4,
             "cbl-mariner": 4,
+            "julia": 3,
             "nvd": 3,
             "oracle-oval": 2,
             "photon": 3,
@@ -6500,6 +6669,10 @@
             "ubuntu": 1
           },
           "CVSS": {
+            "julia": {
+              "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+              "V3Score": 7.8
+            },
             "nvd": {
               "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
               "V3Score": 7.8
@@ -6519,7 +6692,10 @@
             "https://errata.almalinux.org/10/ALSA-2026-5913.html",
             "https://errata.rockylinux.org/RLSA-2026:5913",
             "https://github.com/Cao-Wuhui/CVE-2025-69720",
+            "https://github.com/advisories/GHSA-9952-mrqj-h4jh",
+            "https://invisible-island.net/archives/ncurses/6.5",
             "https://invisible-island.net/archives/ncurses/6.5/",
+            "https://invisible-island.net/ncurses",
             "https://invisible-island.net/ncurses/",
             "https://linux.oracle.com/cve/CVE-2025-69720.html",
             "https://linux.oracle.com/errata/ELSA-2026-5913.html",
@@ -6553,7 +6729,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:226aa64c7e6efb810796a05be0ef90d1be1c5c78264ed133428a0cdf2147bc5e",
+          "Fingerprint": "sha256:bce48bbc9e636a1042be19f7a6e7904b6fe5dd10ed35d324677a43a8bc6faa59",
           "Title": "gnu-ncurses: ncurses Stack Buffer Overflow",
           "Description": "A vulnerability has been found in GNU ncurses up to 6.5-20250322 and classified as problematic. This vulnerability affects the function postprocess_termcap of the file tinfo/parse_entry.c. The manipulation leads to stack-based buffer overflow. The attack needs to be approached locally. Upgrading to version 6.5-20250329 is able to address this issue. It is recommended to upgrade the affected component.",
           "Severity": "LOW",
@@ -6619,7 +6795,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:a51a94366a4cfbeae6cc7fbc2d6b4616619eca8fb0db98994deef2ac80eb32ef",
+          "Fingerprint": "sha256:1a4a3ed70d30613ca8175192d430b4ba9287ecbfbe0c74359a96eae53f26e7b2",
           "Title": "tarfile.extractall() with the 'data' or 'tar'  filter could be bypasse ...",
           "Description": "tarfile.extractall() with the 'data' or 'tar'\n filter could be bypassed by a crafted archive where a hardlink \nreferences a symlink stored at a deeper name than the hardlink itself.  \nThe extraction fallback validated the symlink at it's archived location \nbut recreated it at the hardlink's shallower\npath, letting a relative\n target the filter judged contained escape the destination directory.  \nThis allowed a malicious tar archive to create a symlink pointing \noutside the destination, enabling out-of-destination file reads or \nwrites. This was an incomplete fix of CVE-2025-4330.",
           "Severity": "HIGH",
@@ -6639,6 +6815,7 @@
             }
           },
           "References": [
+            "https://github.com/python/cpython/commit/0f852b3f07dd8e71e40326a51c02afbf16a42cc5",
             "https://github.com/python/cpython/commit/27dd970bf6b17ebca7c8ed486a40ab043ed7af8f",
             "https://github.com/python/cpython/commit/672825e2f36a57e173959b0d9d409d4560dab8df",
             "https://github.com/python/cpython/commit/771d12dda5140313db0ac550292987975651bbde",
@@ -6651,7 +6828,7 @@
             "https://nvd.nist.gov/vuln/detail/CVE-2026-11940"
           ],
           "PublishedDate": "2026-06-23T17:16:40.847Z",
-          "LastModifiedDate": "2026-08-06T01:16:28.823Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.57Z"
         },
         {
           "VulnerabilityID": "CVE-2026-15308",
@@ -6674,7 +6851,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c475d84ca92fb085f5b2c0abbbf62e8b7f0e7b203cadbafcf4988e3907a71e47",
+          "Fingerprint": "sha256:453b72f48a4229c2921cf87c6cc46a52f7b1898a4204ccbdca778f49fa738473",
           "Title": "python: Python: CPU Denial of Service in HTML parser via repeated unterminated markup declarations",
           "Description": "The incremental HTML parser (html.parser.HTMLParser) allows for CPU\ndenial-of-service through repeated unterminated markup declarations when\nprocessing uncontrolled data.",
           "Severity": "HIGH",
@@ -6706,17 +6883,19 @@
           },
           "References": [
             "http://www.openwall.com/lists/oss-security/2026/07/09/4",
-            "https://access.redhat.com/errata/RHSA-2026:41949",
+            "https://access.redhat.com/errata/RHSA-2026:40856",
             "https://access.redhat.com/security/cve/CVE-2026-15308",
             "https://bugzilla.redhat.com/2498608",
             "https://bugzilla.redhat.com/show_bug.cgi?id=2498608",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-15308",
-            "https://errata.almalinux.org/9/ALSA-2026-41949.html",
+            "https://errata.almalinux.org/10/ALSA-2026-40856.html",
             "https://errata.rockylinux.org/RLSA-2026:39798",
             "https://github.com/python/cpython/commit/07efb08123ba9367a7107325adb9d5626dca1ca9",
+            "https://github.com/python/cpython/commit/1e7956f1a722df9aabc509c30f8fbdc3a2b4fdc7",
             "https://github.com/python/cpython/commit/785df8f743800661961528970f8598edcd291c14",
             "https://github.com/python/cpython/commit/7933f4bf7131aa4140750f9404f5de0aa2969ced",
             "https://github.com/python/cpython/commit/bcf98ddbc40ec9b3ee87da0124a5660b19b7e606",
+            "https://github.com/python/cpython/commit/c2390b9376e35a701ed3acc597b8fc87546c9b00",
             "https://github.com/python/cpython/commit/e9f92ac0b298292e7ff998e52cb8ccacfb27a0bd",
             "https://github.com/python/cpython/issues/153030",
             "https://github.com/python/cpython/pull/153031",
@@ -6727,7 +6906,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-15308"
           ],
           "PublishedDate": "2026-07-09T17:16:58.26Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.267Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.91Z"
         },
         {
           "VulnerabilityID": "CVE-2026-7210",
@@ -6750,7 +6929,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:ddf1d7c175f5065ef7a67e2091e8b441ce77f8de7982e11b964f31f48a4f5101",
+          "Fingerprint": "sha256:cbc36abd5233f3181187ed86cf13cc726f672caa42f660734186ddf5befa4fb0",
           "Title": "python: expat: Python/Expat: Denial of Service via crafted XML document",
           "Description": "`xml.parsers.expat` and `xml.etree.ElementTree` use insufficient entropy for Expat hash-flooding protection, which allows a crafted XML document to trigger hash flooding.\\r\\n\\r\\nFully mitigating this vulnerability requires both updating libexpat to 2.8.0 or later and applying this patch.",
           "Severity": "HIGH",
@@ -6816,7 +6995,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:fda5af48de8902da5565e832e3e75971db9f8a232cd949e9a9c0d2363cc108e4",
+          "Fingerprint": "sha256:c46ce06b1b684d0b5c652118c4b574c4c134b44d3053828f7cd8ac6188dd8311",
           "Title": "cpython: base64.b64decode() always accepts \"+/\" characters, despite setting altchars",
           "Description": "When passing data to the b64decode(), standard_b64decode(), and urlsafe_b64decode() functions in the \"base64\" module the characters \"+/\" will always be accepted, regardless of the value of \"altchars\" parameter, typically used to establish an \"alternative base64 alphabet\" such as the URL safe alphabet. This behavior matches what is recommended in earlier base64 RFCs, but newer RFCs now recommend either dropping characters outside the specified base64 alphabet or raising an error. The old behavior has the possibility of causing data integrity issues.\n\n\n\n\nThis behavior can only be insecure if your application uses an alternate base64 alphabet (without \"+/\"). If your application does not use the \"altchars\" parameter or the urlsafe_b64decode() function, then your application does not use an alternative base64 alphabet.\n\n\n\n\nThe attached patches DOES NOT make the base64-decode behavior raise an error, as this would be a change in behavior and break existing programs. Instead, the patch deprecates the behavior which will be replaced with the newly recommended behavior in a future version of Python. Users are recommended to mitigate by verifying user-controlled inputs match the base64 \nalphabet they are expecting or verify that their application would not be \naffected if the b64decode() functions accepted \"+\" or \"/\" outside of altchars.",
           "Severity": "MEDIUM",
@@ -6873,7 +7052,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:1e65a3f615bfae785d50aa19fd47f49ea5ccd2a87003d47268c987247e116de4",
+          "Fingerprint": "sha256:6cab125d9cf626992f73f23cc9f3779293b5ab07262a4c2d209e5ddd4ac8c813",
           "Title": "cpython: IMAP command injection in user-controlled commands",
           "Description": "The imaplib module, when passed a user-controlled command, can have additional commands injected using newlines. Mitigation rejects commands containing control characters.",
           "Severity": "MEDIUM",
@@ -6893,8 +7072,9 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:4216",
+            "https://access.redhat.com/errata/RHSA-2026:4713",
             "https://access.redhat.com/security/cve/CVE-2025-15366",
+            "https://bugzilla.redhat.com/2431367",
             "https://bugzilla.redhat.com/2431368",
             "https://bugzilla.redhat.com/2431373",
             "https://bugzilla.redhat.com/2432437",
@@ -6906,7 +7086,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-15367",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0865",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1299",
-            "https://errata.almalinux.org/9/ALSA-2026-4216.html",
+            "https://errata.almalinux.org/10/ALSA-2026-4713.html",
             "https://errata.rockylinux.org/RLSA-2026:4168",
             "https://github.com/python/cpython/commit/298182272a740ce2016aee2f54acbd0bba1944c1",
             "https://github.com/python/cpython/commit/6262704b134db2a4ba12e85ecfbd968534f28b45",
@@ -6944,7 +7124,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:247ead5f136fd724582db7d81b74120d46b9748f12fcb550bfe0c83e547d4bff",
+          "Fingerprint": "sha256:e9b7fb96285a4dd872ff527a17d093debd27193153eea2bd7a3df63a362015c6",
           "Title": "cpython: POP3 command injection in user-controlled commands",
           "Description": "The poplib module, when passed a user-controlled command, can have\nadditional commands injected using newlines. Mitigation rejects commands\ncontaining control characters.",
           "Severity": "MEDIUM",
@@ -6964,8 +7144,9 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:4216",
+            "https://access.redhat.com/errata/RHSA-2026:4713",
             "https://access.redhat.com/security/cve/CVE-2025-15367",
+            "https://bugzilla.redhat.com/2431367",
             "https://bugzilla.redhat.com/2431368",
             "https://bugzilla.redhat.com/2431373",
             "https://bugzilla.redhat.com/2432437",
@@ -6977,7 +7158,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-15367",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0865",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1299",
-            "https://errata.almalinux.org/9/ALSA-2026-4216.html",
+            "https://errata.almalinux.org/10/ALSA-2026-4713.html",
             "https://errata.rockylinux.org/RLSA-2026:4168",
             "https://github.com/python/cpython/commit/b234a2b67539f787e191d2ef19a7cbdce32874e7",
             "https://github.com/python/cpython/issues/143923",
@@ -7011,7 +7192,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:7989d487c2271193c26e9f592f7014b755624d341bf8717a97d9fbb7543315c0",
+          "Fingerprint": "sha256:86d9b9dd6ab2febfe11e7e6677a1789779131ff0607d693fdb65d936b78444df",
           "Title": "python: cpython: Python configparser: Configuration injection via crafted multi-line input",
           "Description": "When using the \"configparser\" module to write configuration files\ncontaining multi-line text values with carriage return characters (\\r) the\nresulting file could be injected with unexpected keys and values if the\nattacker controls the written value.",
           "Severity": "MEDIUM",
@@ -7020,6 +7201,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 2,
             "bitnami": 2,
             "redhat": 2
           },
@@ -7036,6 +7218,8 @@
           "References": [
             "https://access.redhat.com/security/cve/CVE-2026-0864",
             "https://github.com/python/cpython/commit/0adb386f6e68eb2e73d32e19f235d012df009528",
+            "https://github.com/python/cpython/commit/12dcbd74d3563016a8cb8c47e4898889f34f74dd",
+            "https://github.com/python/cpython/commit/274de100bbf4345bd0c23ef5b446722e9e636908",
             "https://github.com/python/cpython/commit/5858e42c539dac8394636a6e9b30472b8994851f",
             "https://github.com/python/cpython/commit/71f2e02a52d47417a6fd69f456346cd8aa7aca98",
             "https://github.com/python/cpython/commit/aaf850fd333cd89e9aada03d92aaa788a6cb1bb8",
@@ -7047,7 +7231,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-0864"
           ],
           "PublishedDate": "2026-06-23T18:17:41.243Z",
-          "LastModifiedDate": "2026-08-06T01:16:28.703Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.42Z"
         },
         {
           "VulnerabilityID": "CVE-2026-11972",
@@ -7069,7 +7253,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:91c4b246954d680aa410b12e0f4cbf53839d4f032ef4bef3060ed9d6e3767722",
+          "Fingerprint": "sha256:580c9224923128fb7601d2688630c7bc2d89390925e3292ea925b5bfef07b894",
           "Title": "python: Python tarfile module: Denial of Service via improper EOF handling in streaming mode",
           "Description": "When using the \"tarfile\" module with a file opened in \"streaming mode\" (mode=\"r|\") the tarfile module did not properly handle EOF, making archive parsing take exponentially longer.",
           "Severity": "MEDIUM",
@@ -7080,6 +7264,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 3,
             "bitnami": 3,
             "photon": 3,
             "redhat": 2
@@ -7133,7 +7318,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:8b7878f38fbecfdfc005ec065e2cf6128ab7b3307b022dc18c105277a4f1d704",
+          "Fingerprint": "sha256:1f912ee6f5e80d342c99044f737f8241928c00d272730e07b39fee310829cb6b",
           "Title": "python: Python Tarfile: Unexpected file ownership when extracting hardlinks",
           "Description": "In the Tarfile.extract() function, the filter parameter is not passed properly when extracting hardlinks. An affected system that extracts content from untrusted tar files could end up writing files with an unexpected uid/gid despite the user passing filter='data' to the extract() function.",
           "Severity": "MEDIUM",
@@ -7142,6 +7327,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 1,
             "bitnami": 1,
             "nvd": 2,
             "redhat": 2
@@ -7199,7 +7385,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:4efe15b4ab6a7bef39735d878d415483866e832d771d08d611dee41a008d9e15",
+          "Fingerprint": "sha256:91c0817553e1d27d376969925cb4a564034ed342a13693dff9ebd119429d82b7",
           "Title": "To allow builds of Python to be run from an in-tree layout (rather tha ...",
           "Description": "To allow builds of Python to be run from an in-tree layout (rather than\nan installed file layout), the VPATH variable is defined at build time\nand used to locate certain landmarks - specifically,\nModules/setup.local. When this landmark is found relative to VPATH\nrelative to the executable, Python assumes it is running in a source\ntree and generates a different default sys.path. This code remains in\nrelease builds, so that release-ready builds can be built in-tree.\n\nOn Windows, since builds are written to 'PCbuild/', the value of\nVPATH is set to '..\\..', which results in a landmark of\n'..\\..\\Modules\\setup.local'. This path is outside the install directory\nof Python, and may have different permissions, potentially allowing a\nlow-privilege user to create the landmark and an alternative `Lib`\nfolder that will be discovered by an otherwise restricted install.\n\nSuch a setup occurs with the legacy default install location for all\nusers (in the now superseded EXE installer), due to how Windows allows\nall users to create folders in the root directory of their OS drive.\n\nOur recommended mitigation on Windows is to migrate away from the\nlegacy installer and use the new [Python install\nmanager](https://www.python.org/downloads/latest/pymanager/) to install\nfor the current user. Installs where the directory two levels above the\nPython installation directory have equivalent permissions are unaffected\n(in general, a per-user install cannot be modified at all by other\nusers, removing any escalation of privilege risk, and could be directly\nmodified by a privileged user, making the potential tampering\nirrelevant). Alternative mitigations might include preemptively creating\nand restricting access to a `Modules` directory. Be aware that only 3.13\nand 3.14 will receive updated legacy installers - earlier fixes are only\nprovided as sources.\n\nPlatforms other than Windows allow VPATH to be overridden, but as they\ndon't usually use a separated directory in the build for binaries, are\nunlikely to have a landmark reference outside of the install directory.\n\nThe landmark detection involving VPATH is a fallback for when a more\nspecific landmark - .\\pybuilddir.txt - is absent, and was included for\ncompatibility. Future releases of Python will no longer include the\nfallback, and so builds will need to generate or preserve the\npybuilddir.txt file in order to work in-tree. This landmark file has\nbeen generated on Windows since 3.11, and on other platforms for longer.",
           "Severity": "LOW",
@@ -7207,6 +7393,7 @@
             "CWE-427"
           ],
           "VendorSeverity": {
+            "azure": 2,
             "bitnami": 2,
             "debian": 1
           },
@@ -7220,6 +7407,7 @@
             "http://www.openwall.com/lists/oss-security/2026/06/16/8",
             "https://github.com/python/cpython/commit/03ab7b44788bfd6b8927e16bcdbd025aa08dce06",
             "https://github.com/python/cpython/commit/16c40f944b7bff724a403cf4902763d095bb4b2a",
+            "https://github.com/python/cpython/commit/872038377db2e170e0e140b5f8aaedf636b3fbf5",
             "https://github.com/python/cpython/commit/9e863fab283eddca9c2a8f9d1ee30f4dc243e314",
             "https://github.com/python/cpython/commit/a86de0bc236fbb9452f98998fc8437e9fca35700",
             "https://github.com/python/cpython/commit/b93d6d3399adbd3a5037b6b92fc3587c85ac5d56",
@@ -7229,7 +7417,7 @@
             "https://nvd.nist.gov/vuln/detail/CVE-2026-12003"
           ],
           "PublishedDate": "2026-06-16T17:16:31.667Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.08Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.71Z"
         },
         {
           "VulnerabilityID": "CVE-2026-3479",
@@ -7252,7 +7440,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:4948ad756c5df9617a516f5e6215aa8b0ea5ea2c9229a31e9dc784eaca389337",
+          "Fingerprint": "sha256:758070051d3c3929f9e5c86b83342777bb1eef437200a97cc92f91ce7ce71ff6",
           "Title": "python: Python pkgutil.get_data(): Path Traversal via improper resource argument validation",
           "Description": "DISPUTED: The project has clarified that the documentation was incorrect, and that pkgutil.get_data() has the same security model as open(). The documentation has been updated to clarify this point. There is no vulnerability in the function if following the intended security model.\n\npkgutil.get_data() did not validate the resource argument as documented, allowing path traversals.",
           "Severity": "LOW",
@@ -7306,7 +7494,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:d4218c718dcc3fc549a2e6d62a5cf97071bc2cfd6405fda87ff78cf684f3a47c",
+          "Fingerprint": "sha256:2df6d6add51e50ffa8b881dc1ac4d3cc3ea2122e03911f0dbc05bd305034817f",
           "Title": "python: Python: Performance degradation in XML processing due to quadratic time complexity",
           "Description": "`Element.findall()` and fully-consumed `Element.iterfind()` exhibit `O(n^2)` time complexity when using XPath index predicates (e.g. `[1]`, `[last()]`, `[last()-N]`) on XML documents with many same-tag siblings. `Element.find()` is only affected when the first match is near the end  of the sibling list, such as with `[last()]` or `[last()-N]`;  `.//item[1]` short-circuits after the first match.",
           "Severity": "LOW",
@@ -7314,6 +7502,7 @@
             "CWE-407"
           ],
           "VendorSeverity": {
+            "azure": 1,
             "redhat": 1
           },
           "CVSS": {
@@ -7325,6 +7514,8 @@
           "References": [
             "https://access.redhat.com/security/cve/CVE-2026-6879",
             "https://github.com/python/cpython/commit/02c08e6b747ac43d0d866a4ffa916bedf3423f81",
+            "https://github.com/python/cpython/commit/037965c00a427cba5c05447efadc67c51a492e85",
+            "https://github.com/python/cpython/commit/0583f24ae678993e3f7939f51ad5bcae5ad9dc70",
             "https://github.com/python/cpython/commit/2ffab083782968a4d732738f4f1dff6bbd69d2b0",
             "https://github.com/python/cpython/commit/390337b8ba1658833fdef379e1739c9f9533a8db",
             "https://github.com/python/cpython/commit/96510a3758f4a075f43223afdee3b6ee1a7a7f02",
@@ -7336,7 +7527,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-6879"
           ],
           "PublishedDate": "2026-07-28T15:17:51.377Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.913Z"
+          "LastModifiedDate": "2026-08-11T01:17:24.53Z"
         },
         {
           "VulnerabilityID": "CVE-2026-11940",
@@ -7358,7 +7549,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:4a00aea4fba650779545026e38fed572deab2042320b04a46f461321c81db837",
+          "Fingerprint": "sha256:28ef990c85fa41393ca318671b05bcbddc13dc47210e065e462b66a85973c2ed",
           "Title": "tarfile.extractall() with the 'data' or 'tar'  filter could be bypasse ...",
           "Description": "tarfile.extractall() with the 'data' or 'tar'\n filter could be bypassed by a crafted archive where a hardlink \nreferences a symlink stored at a deeper name than the hardlink itself.  \nThe extraction fallback validated the symlink at it's archived location \nbut recreated it at the hardlink's shallower\npath, letting a relative\n target the filter judged contained escape the destination directory.  \nThis allowed a malicious tar archive to create a symlink pointing \noutside the destination, enabling out-of-destination file reads or \nwrites. This was an incomplete fix of CVE-2025-4330.",
           "Severity": "HIGH",
@@ -7378,6 +7569,7 @@
             }
           },
           "References": [
+            "https://github.com/python/cpython/commit/0f852b3f07dd8e71e40326a51c02afbf16a42cc5",
             "https://github.com/python/cpython/commit/27dd970bf6b17ebca7c8ed486a40ab043ed7af8f",
             "https://github.com/python/cpython/commit/672825e2f36a57e173959b0d9d409d4560dab8df",
             "https://github.com/python/cpython/commit/771d12dda5140313db0ac550292987975651bbde",
@@ -7390,7 +7582,7 @@
             "https://nvd.nist.gov/vuln/detail/CVE-2026-11940"
           ],
           "PublishedDate": "2026-06-23T17:16:40.847Z",
-          "LastModifiedDate": "2026-08-06T01:16:28.823Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.57Z"
         },
         {
           "VulnerabilityID": "CVE-2026-15308",
@@ -7413,7 +7605,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:583a7af95b31111e873fcfad3409f2a4489c3b19903342a7e8c0d986311977fc",
+          "Fingerprint": "sha256:0ed55288d162d9e00075cc2fe86aedab685cfb63d59e42e585c537be442f848c",
           "Title": "python: Python: CPU Denial of Service in HTML parser via repeated unterminated markup declarations",
           "Description": "The incremental HTML parser (html.parser.HTMLParser) allows for CPU\ndenial-of-service through repeated unterminated markup declarations when\nprocessing uncontrolled data.",
           "Severity": "HIGH",
@@ -7445,17 +7637,19 @@
           },
           "References": [
             "http://www.openwall.com/lists/oss-security/2026/07/09/4",
-            "https://access.redhat.com/errata/RHSA-2026:41949",
+            "https://access.redhat.com/errata/RHSA-2026:40856",
             "https://access.redhat.com/security/cve/CVE-2026-15308",
             "https://bugzilla.redhat.com/2498608",
             "https://bugzilla.redhat.com/show_bug.cgi?id=2498608",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-15308",
-            "https://errata.almalinux.org/9/ALSA-2026-41949.html",
+            "https://errata.almalinux.org/10/ALSA-2026-40856.html",
             "https://errata.rockylinux.org/RLSA-2026:39798",
             "https://github.com/python/cpython/commit/07efb08123ba9367a7107325adb9d5626dca1ca9",
+            "https://github.com/python/cpython/commit/1e7956f1a722df9aabc509c30f8fbdc3a2b4fdc7",
             "https://github.com/python/cpython/commit/785df8f743800661961528970f8598edcd291c14",
             "https://github.com/python/cpython/commit/7933f4bf7131aa4140750f9404f5de0aa2969ced",
             "https://github.com/python/cpython/commit/bcf98ddbc40ec9b3ee87da0124a5660b19b7e606",
+            "https://github.com/python/cpython/commit/c2390b9376e35a701ed3acc597b8fc87546c9b00",
             "https://github.com/python/cpython/commit/e9f92ac0b298292e7ff998e52cb8ccacfb27a0bd",
             "https://github.com/python/cpython/issues/153030",
             "https://github.com/python/cpython/pull/153031",
@@ -7466,7 +7660,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-15308"
           ],
           "PublishedDate": "2026-07-09T17:16:58.26Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.267Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.91Z"
         },
         {
           "VulnerabilityID": "CVE-2026-7210",
@@ -7489,7 +7683,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:8f5a71c6559161d399d455cf68f2b933eb447387c89b2f08cfda2fa60959be28",
+          "Fingerprint": "sha256:8055807ba9a7b40140f6153bce2e116911f12f03b0db9a787b0d8bac7f7c40d9",
           "Title": "python: expat: Python/Expat: Denial of Service via crafted XML document",
           "Description": "`xml.parsers.expat` and `xml.etree.ElementTree` use insufficient entropy for Expat hash-flooding protection, which allows a crafted XML document to trigger hash flooding.\\r\\n\\r\\nFully mitigating this vulnerability requires both updating libexpat to 2.8.0 or later and applying this patch.",
           "Severity": "HIGH",
@@ -7555,7 +7749,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:69fb2953b2009a806580576c7c70278e21e0f5e37a2843ea4ef4a8c7e4df3adb",
+          "Fingerprint": "sha256:d2c36de91c0194b63bc4ef0dd7d79041e3d5986a61ac433eee88e144fcb921dd",
           "Title": "cpython: base64.b64decode() always accepts \"+/\" characters, despite setting altchars",
           "Description": "When passing data to the b64decode(), standard_b64decode(), and urlsafe_b64decode() functions in the \"base64\" module the characters \"+/\" will always be accepted, regardless of the value of \"altchars\" parameter, typically used to establish an \"alternative base64 alphabet\" such as the URL safe alphabet. This behavior matches what is recommended in earlier base64 RFCs, but newer RFCs now recommend either dropping characters outside the specified base64 alphabet or raising an error. The old behavior has the possibility of causing data integrity issues.\n\n\n\n\nThis behavior can only be insecure if your application uses an alternate base64 alphabet (without \"+/\"). If your application does not use the \"altchars\" parameter or the urlsafe_b64decode() function, then your application does not use an alternative base64 alphabet.\n\n\n\n\nThe attached patches DOES NOT make the base64-decode behavior raise an error, as this would be a change in behavior and break existing programs. Instead, the patch deprecates the behavior which will be replaced with the newly recommended behavior in a future version of Python. Users are recommended to mitigate by verifying user-controlled inputs match the base64 \nalphabet they are expecting or verify that their application would not be \naffected if the b64decode() functions accepted \"+\" or \"/\" outside of altchars.",
           "Severity": "MEDIUM",
@@ -7612,7 +7806,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:d6221207d73ff0068d3d683350f19e8ffca40c1083695ba27e8653026a74005b",
+          "Fingerprint": "sha256:36645e0af85f491e06cc5ac8537c7ec8413d66914883a0b7af70d6ce713661dc",
           "Title": "cpython: IMAP command injection in user-controlled commands",
           "Description": "The imaplib module, when passed a user-controlled command, can have additional commands injected using newlines. Mitigation rejects commands containing control characters.",
           "Severity": "MEDIUM",
@@ -7632,8 +7826,9 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:4216",
+            "https://access.redhat.com/errata/RHSA-2026:4713",
             "https://access.redhat.com/security/cve/CVE-2025-15366",
+            "https://bugzilla.redhat.com/2431367",
             "https://bugzilla.redhat.com/2431368",
             "https://bugzilla.redhat.com/2431373",
             "https://bugzilla.redhat.com/2432437",
@@ -7645,7 +7840,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-15367",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0865",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1299",
-            "https://errata.almalinux.org/9/ALSA-2026-4216.html",
+            "https://errata.almalinux.org/10/ALSA-2026-4713.html",
             "https://errata.rockylinux.org/RLSA-2026:4168",
             "https://github.com/python/cpython/commit/298182272a740ce2016aee2f54acbd0bba1944c1",
             "https://github.com/python/cpython/commit/6262704b134db2a4ba12e85ecfbd968534f28b45",
@@ -7683,7 +7878,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:b813f9eed151efaa46e7ea72aa27f18ba24d24c4018e9143b823b095d4712b13",
+          "Fingerprint": "sha256:1aa1fb9d6cf9420fbd160d441e424469cbbbc4ee126d278ee00482a5319c6b7b",
           "Title": "cpython: POP3 command injection in user-controlled commands",
           "Description": "The poplib module, when passed a user-controlled command, can have\nadditional commands injected using newlines. Mitigation rejects commands\ncontaining control characters.",
           "Severity": "MEDIUM",
@@ -7703,8 +7898,9 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:4216",
+            "https://access.redhat.com/errata/RHSA-2026:4713",
             "https://access.redhat.com/security/cve/CVE-2025-15367",
+            "https://bugzilla.redhat.com/2431367",
             "https://bugzilla.redhat.com/2431368",
             "https://bugzilla.redhat.com/2431373",
             "https://bugzilla.redhat.com/2432437",
@@ -7716,7 +7912,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-15367",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0865",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1299",
-            "https://errata.almalinux.org/9/ALSA-2026-4216.html",
+            "https://errata.almalinux.org/10/ALSA-2026-4713.html",
             "https://errata.rockylinux.org/RLSA-2026:4168",
             "https://github.com/python/cpython/commit/b234a2b67539f787e191d2ef19a7cbdce32874e7",
             "https://github.com/python/cpython/issues/143923",
@@ -7750,7 +7946,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:09e5068228004eb2796e5568cbe62294b5f549b3a07161e6b31440d90cd67c87",
+          "Fingerprint": "sha256:8369ecebc8e9799d2dc0e0216835ec964ffb9ae187427db3608ea16cda78d2fa",
           "Title": "python: cpython: Python configparser: Configuration injection via crafted multi-line input",
           "Description": "When using the \"configparser\" module to write configuration files\ncontaining multi-line text values with carriage return characters (\\r) the\nresulting file could be injected with unexpected keys and values if the\nattacker controls the written value.",
           "Severity": "MEDIUM",
@@ -7759,6 +7955,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 2,
             "bitnami": 2,
             "redhat": 2
           },
@@ -7775,6 +7972,8 @@
           "References": [
             "https://access.redhat.com/security/cve/CVE-2026-0864",
             "https://github.com/python/cpython/commit/0adb386f6e68eb2e73d32e19f235d012df009528",
+            "https://github.com/python/cpython/commit/12dcbd74d3563016a8cb8c47e4898889f34f74dd",
+            "https://github.com/python/cpython/commit/274de100bbf4345bd0c23ef5b446722e9e636908",
             "https://github.com/python/cpython/commit/5858e42c539dac8394636a6e9b30472b8994851f",
             "https://github.com/python/cpython/commit/71f2e02a52d47417a6fd69f456346cd8aa7aca98",
             "https://github.com/python/cpython/commit/aaf850fd333cd89e9aada03d92aaa788a6cb1bb8",
@@ -7786,7 +7985,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-0864"
           ],
           "PublishedDate": "2026-06-23T18:17:41.243Z",
-          "LastModifiedDate": "2026-08-06T01:16:28.703Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.42Z"
         },
         {
           "VulnerabilityID": "CVE-2026-11972",
@@ -7808,7 +8007,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:3932eff2f5f26da6b2216af0c19de4e768a6652e86f7b106f491a969ae27f8ad",
+          "Fingerprint": "sha256:2c0514c281bf3c8c89396f2d079ad1717b908865e33c0a4744052b69ab699f87",
           "Title": "python: Python tarfile module: Denial of Service via improper EOF handling in streaming mode",
           "Description": "When using the \"tarfile\" module with a file opened in \"streaming mode\" (mode=\"r|\") the tarfile module did not properly handle EOF, making archive parsing take exponentially longer.",
           "Severity": "MEDIUM",
@@ -7819,6 +8018,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 3,
             "bitnami": 3,
             "photon": 3,
             "redhat": 2
@@ -7872,7 +8072,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:0983656dab99dbc524268ab4a74d46b3e775a62b3e8acaffdfe79ece6dbad0fd",
+          "Fingerprint": "sha256:29396f7e4f8e9f10b42b21d9140e75fe460b3e4cd61ef312a9c8b4e5e44187b1",
           "Title": "python: Python Tarfile: Unexpected file ownership when extracting hardlinks",
           "Description": "In the Tarfile.extract() function, the filter parameter is not passed properly when extracting hardlinks. An affected system that extracts content from untrusted tar files could end up writing files with an unexpected uid/gid despite the user passing filter='data' to the extract() function.",
           "Severity": "MEDIUM",
@@ -7881,6 +8081,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 1,
             "bitnami": 1,
             "nvd": 2,
             "redhat": 2
@@ -7938,7 +8139,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:bf05e5ffdd832f310aff309647641d72d8fb742bd802b87ab4be43f7203a7cff",
+          "Fingerprint": "sha256:5b648d37ce1ea6cf8327238affdc13ef3031d06a42702c125b0d6a7bee7af39f",
           "Title": "To allow builds of Python to be run from an in-tree layout (rather tha ...",
           "Description": "To allow builds of Python to be run from an in-tree layout (rather than\nan installed file layout), the VPATH variable is defined at build time\nand used to locate certain landmarks - specifically,\nModules/setup.local. When this landmark is found relative to VPATH\nrelative to the executable, Python assumes it is running in a source\ntree and generates a different default sys.path. This code remains in\nrelease builds, so that release-ready builds can be built in-tree.\n\nOn Windows, since builds are written to 'PCbuild/', the value of\nVPATH is set to '..\\..', which results in a landmark of\n'..\\..\\Modules\\setup.local'. This path is outside the install directory\nof Python, and may have different permissions, potentially allowing a\nlow-privilege user to create the landmark and an alternative `Lib`\nfolder that will be discovered by an otherwise restricted install.\n\nSuch a setup occurs with the legacy default install location for all\nusers (in the now superseded EXE installer), due to how Windows allows\nall users to create folders in the root directory of their OS drive.\n\nOur recommended mitigation on Windows is to migrate away from the\nlegacy installer and use the new [Python install\nmanager](https://www.python.org/downloads/latest/pymanager/) to install\nfor the current user. Installs where the directory two levels above the\nPython installation directory have equivalent permissions are unaffected\n(in general, a per-user install cannot be modified at all by other\nusers, removing any escalation of privilege risk, and could be directly\nmodified by a privileged user, making the potential tampering\nirrelevant). Alternative mitigations might include preemptively creating\nand restricting access to a `Modules` directory. Be aware that only 3.13\nand 3.14 will receive updated legacy installers - earlier fixes are only\nprovided as sources.\n\nPlatforms other than Windows allow VPATH to be overridden, but as they\ndon't usually use a separated directory in the build for binaries, are\nunlikely to have a landmark reference outside of the install directory.\n\nThe landmark detection involving VPATH is a fallback for when a more\nspecific landmark - .\\pybuilddir.txt - is absent, and was included for\ncompatibility. Future releases of Python will no longer include the\nfallback, and so builds will need to generate or preserve the\npybuilddir.txt file in order to work in-tree. This landmark file has\nbeen generated on Windows since 3.11, and on other platforms for longer.",
           "Severity": "LOW",
@@ -7946,6 +8147,7 @@
             "CWE-427"
           ],
           "VendorSeverity": {
+            "azure": 2,
             "bitnami": 2,
             "debian": 1
           },
@@ -7959,6 +8161,7 @@
             "http://www.openwall.com/lists/oss-security/2026/06/16/8",
             "https://github.com/python/cpython/commit/03ab7b44788bfd6b8927e16bcdbd025aa08dce06",
             "https://github.com/python/cpython/commit/16c40f944b7bff724a403cf4902763d095bb4b2a",
+            "https://github.com/python/cpython/commit/872038377db2e170e0e140b5f8aaedf636b3fbf5",
             "https://github.com/python/cpython/commit/9e863fab283eddca9c2a8f9d1ee30f4dc243e314",
             "https://github.com/python/cpython/commit/a86de0bc236fbb9452f98998fc8437e9fca35700",
             "https://github.com/python/cpython/commit/b93d6d3399adbd3a5037b6b92fc3587c85ac5d56",
@@ -7968,7 +8171,7 @@
             "https://nvd.nist.gov/vuln/detail/CVE-2026-12003"
           ],
           "PublishedDate": "2026-06-16T17:16:31.667Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.08Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.71Z"
         },
         {
           "VulnerabilityID": "CVE-2026-3479",
@@ -7991,7 +8194,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:07b3393ee445cc9457f8e845b1cc61de415d109251328f628df63396433b2557",
+          "Fingerprint": "sha256:92a57c5d31619bcd72798076507f01838d4cf864e805f70fadd9dc2a12794d86",
           "Title": "python: Python pkgutil.get_data(): Path Traversal via improper resource argument validation",
           "Description": "DISPUTED: The project has clarified that the documentation was incorrect, and that pkgutil.get_data() has the same security model as open(). The documentation has been updated to clarify this point. There is no vulnerability in the function if following the intended security model.\n\npkgutil.get_data() did not validate the resource argument as documented, allowing path traversals.",
           "Severity": "LOW",
@@ -8045,7 +8248,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:298fc134853b758e5c1781468a08aacc8f7e570a06017f0c44c866b9af81b94a",
+          "Fingerprint": "sha256:b270677b11b8e8c3505357d74503f926aa50e7b6e9f745d770f1ac9f033ca412",
           "Title": "python: Python: Performance degradation in XML processing due to quadratic time complexity",
           "Description": "`Element.findall()` and fully-consumed `Element.iterfind()` exhibit `O(n^2)` time complexity when using XPath index predicates (e.g. `[1]`, `[last()]`, `[last()-N]`) on XML documents with many same-tag siblings. `Element.find()` is only affected when the first match is near the end  of the sibling list, such as with `[last()]` or `[last()-N]`;  `.//item[1]` short-circuits after the first match.",
           "Severity": "LOW",
@@ -8053,6 +8256,7 @@
             "CWE-407"
           ],
           "VendorSeverity": {
+            "azure": 1,
             "redhat": 1
           },
           "CVSS": {
@@ -8064,6 +8268,8 @@
           "References": [
             "https://access.redhat.com/security/cve/CVE-2026-6879",
             "https://github.com/python/cpython/commit/02c08e6b747ac43d0d866a4ffa916bedf3423f81",
+            "https://github.com/python/cpython/commit/037965c00a427cba5c05447efadc67c51a492e85",
+            "https://github.com/python/cpython/commit/0583f24ae678993e3f7939f51ad5bcae5ad9dc70",
             "https://github.com/python/cpython/commit/2ffab083782968a4d732738f4f1dff6bbd69d2b0",
             "https://github.com/python/cpython/commit/390337b8ba1658833fdef379e1739c9f9533a8db",
             "https://github.com/python/cpython/commit/96510a3758f4a075f43223afdee3b6ee1a7a7f02",
@@ -8075,7 +8281,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-6879"
           ],
           "PublishedDate": "2026-07-28T15:17:51.377Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.913Z"
+          "LastModifiedDate": "2026-08-11T01:17:24.53Z"
         },
         {
           "VulnerabilityID": "CVE-2026-11822",
@@ -8097,7 +8303,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:2c95ee94575592b63b853f8954d21192abd9eab58758ba720fc1de342e10047a",
+          "Fingerprint": "sha256:6b018589d5458944925d2dfa70d872a1792348c2bda44ed342f4cb0da2e23562",
           "Title": "SQLite before 3.53.2 contains memory corruption vulnerabilities in the ...",
           "Description": "SQLite before 3.53.2 contains memory corruption vulnerabilities in the FTS5 full-text search extension that allow attackers to cause process crashes, memory exhaustion, or arbitrary code execution by supplying a crafted database with malformed FTS5 page data. Attackers can trigger an out-of-bounds read in fts5LeafSeek() via an attacker-controlled loop bound and a heap buffer overflow write in fts5ChunkIterate() through a crafted continuation page causing an integer underflow, exploitable when an FTS5 MATCH query is executed against the malicious database.",
           "Severity": "MEDIUM",
@@ -8149,7 +8355,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:380bcedce63f6130921f289fd8628082d96caa3029e2fd5220d381e073f96418",
+          "Fingerprint": "sha256:bdd9b3fe4bce6e0f4583e42715cf1b1a65bd601f89099f4c4b581ea1a2770de3",
           "Title": "SQLite before 3.53.2 contains a heap-based buffer overflow vulnerabili ...",
           "Description": "SQLite before 3.53.2 contains a heap-based buffer overflow vulnerability in the FTS5 full-text search extension that allows attackers to cause a crash or execute arbitrary code by supplying a crafted database with malicious continuation page metadata specifying a szLeaf value smaller than 4. Attackers can trigger an integer underflow in fts5ChunkIterate() causing an inflated remaining byte count during FTS5 MATCH query processing, leading to a heap buffer overflow of attacker-controlled data in applications compiled with SQLITE_ENABLE_FTS5.",
           "Severity": "MEDIUM",
@@ -8201,7 +8407,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:23f053e0aa4281cc3baec0bc7191598f721bf71d072d51df706fa3fd65f94284",
+          "Fingerprint": "sha256:12ef4b10fb4e23033e12162fbc7b39dbff6973d6d53854062bf7bec669e71531",
           "Title": "A NULL pointer dereference in the SQLite Session Extension in SQLite 3 ...",
           "Description": "A NULL pointer dereference in the SQLite Session Extension in SQLite 3.53.1 and SQLite trunk builds before check-in e807d4e3798efd53 allows an attacker who can supply a malformed changeset blob to cause a denial of service. The issue occurs when sqlite3changeset_apply_v3() applies a corrupt changeset and reaches sqlite3_value_type() with a NULL sqlite3_value pointer.",
           "Severity": "MEDIUM",
@@ -8241,7 +8447,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:68e4854b9e8be7b8eebbc999d0a5fef3fc1cc766cf9c2275775da3beda45e7c8",
+          "Fingerprint": "sha256:8731ea938761ab944e30d00d7e33d3358e78c8b7653049c5a8ac8c6a11a28bf1",
           "Title": "An issue in SQLite before Fossil check-in 869a51ae84df allows a local  ...",
           "Description": "An issue in SQLite before Fossil check-in 869a51ae84df allows a local attacker to obtain sensitive information via the Session Extension changeset concat/changegroup merge path",
           "Severity": "MEDIUM",
@@ -8282,7 +8488,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:a7d4aa63536b8c82295febfb9816661ab6a9cb15e244557f7d9a5e87c5d64466",
+          "Fingerprint": "sha256:4bf340eaed21d24bc8408dd772fee69b7d3ac652f729c8fa3e7df58aaf4e6915",
           "Title": "sqlite: crafted SQL query allows a malicious user to obtain sensitive information",
           "Description": "A Memory Leak vulnerability exists in SQLite Project SQLite3 3.35.1 and 3.37.0 via maliciously crafted SQL Queries (made via editing the Database File), it is possible to query a record, and leak subsequent bytes of memory that extend beyond the record, which could let a malicious user obtain sensitive information. NOTE: The developer disputes this as a vulnerability stating that If you give SQLite a corrupted database file and submit a query against the database, it might read parts of the database that you did not intend or expect.",
           "Severity": "LOW",
@@ -8345,7 +8551,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:dba69a9a1e757ace5fe6f7e86dde6ff0c2a2625be9fcea1fa77c6a4026cb03f1",
+          "Fingerprint": "sha256:1cfeb3da836b2af4e18761e7c7006e1f840d55907af7be83871bb96a43df150d",
           "Title": "sqlite: SQLite: Information Disclosure via Crafted ZIP File",
           "Description": "An information disclosure issue in the zipfileInflate function in the zipfile extension in SQLite v3.51.1 and earlier allows attackers to obtain heap memory via supplying a crafted ZIP file.",
           "Severity": "LOW",
@@ -8401,7 +8607,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c396b2fd15f822fb0b4ad5be56c19aaf2028287e64c6f092055732eda293f73c",
+          "Fingerprint": "sha256:0052e2aff6d718c0f5af3cc6c486b0f7ae6f1c30884d3eaeaf5da45de98c27cc",
           "Title": "ncurses: ncurses: Buffer overflow vulnerability may lead to arbitrary code execution.",
           "Description": "The infocmp command-line tool in ncurses before 6.5-20251213 has a stack-based buffer overflow in analyze_string in progs/infocmp.c.",
           "Severity": "HIGH",
@@ -8413,6 +8619,7 @@
             "alma": 2,
             "azure": 4,
             "cbl-mariner": 4,
+            "julia": 3,
             "nvd": 3,
             "oracle-oval": 2,
             "photon": 3,
@@ -8421,6 +8628,10 @@
             "ubuntu": 1
           },
           "CVSS": {
+            "julia": {
+              "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+              "V3Score": 7.8
+            },
             "nvd": {
               "V3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
               "V3Score": 7.8
@@ -8440,7 +8651,10 @@
             "https://errata.almalinux.org/10/ALSA-2026-5913.html",
             "https://errata.rockylinux.org/RLSA-2026:5913",
             "https://github.com/Cao-Wuhui/CVE-2025-69720",
+            "https://github.com/advisories/GHSA-9952-mrqj-h4jh",
+            "https://invisible-island.net/archives/ncurses/6.5",
             "https://invisible-island.net/archives/ncurses/6.5/",
+            "https://invisible-island.net/ncurses",
             "https://invisible-island.net/ncurses/",
             "https://linux.oracle.com/cve/CVE-2025-69720.html",
             "https://linux.oracle.com/errata/ELSA-2026-5913.html",
@@ -8474,7 +8688,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c6b5f8b8aa9970bcd87faa1e4ff390ce0e815734b202539f29739d6719ce5364",
+          "Fingerprint": "sha256:3e92521238489e3a3e3bd8b56b9bfc513073727e93bd20ef3ee7aa83373a0f8b",
           "Title": "gnu-ncurses: ncurses Stack Buffer Overflow",
           "Description": "A vulnerability has been found in GNU ncurses up to 6.5-20250322 and classified as problematic. This vulnerability affects the function postprocess_termcap of the file tinfo/parse_entry.c. The manipulation leads to stack-based buffer overflow. The attack needs to be approached locally. Upgrading to version 6.5-20250329 is able to address this issue. It is recommended to upgrade the affected component.",
           "Severity": "LOW",
@@ -8540,7 +8754,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:44102d9926a6a565088608ffc1ab5c434c065c80d23ef19eef24d50b5708e371",
+          "Fingerprint": "sha256:4e29c83f59f5a376d468c01f9335528daf3e8e429fd6fff2cc73c4accf759541",
           "Title": "[Integer Overflow or Wraparound in libblkid/src/partitions/dos.c]",
           "Description": "Package updates are available for Amazon Linux 2023 that fix the following vulnerabilities:\nCVE-2026-53615:\n\tInteger Overflow or Wraparound in libblkid/src/partitions/dos.c\n",
           "Severity": "HIGH",
@@ -8569,7 +8783,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:86c7cac133c2287af66328ab4502071e97c81e91f0832173c53576db35a826db",
+          "Fingerprint": "sha256:81dbdef72bad5856733e8a478bdcd43c3c67b2ca84253fa8e02a9fc16488d19d",
           "Title": "util-linux: util-linux: heap use-after-free in libblkid nested partition probing",
           "Description": "A flaw was found in the libblkid library of util-linux. During nested partition probing, the BSD, Minix, Solaris x86, and UnixWare partition probers cache a raw pointer to a parent partition entry in a dynamically allocated array. When subsequent partition additions cause the array to be reallocated, this pointer becomes stale, leading to a heap use-after-free read. An attacker who can present a crafted block device image (for example, via USB insertion or a loop-mounted disk image) can trigger this flaw without user interaction, as libblkid is invoked automatically by udev/udisks as root on block-device hot-plug events. This could lead to limited information disclosure or denial of service.",
           "Severity": "MEDIUM",
@@ -8622,7 +8836,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:dabd2e68236e63a57b96aeb01294e9b3c9548eb01de456b680fe0daab2aecce0",
+          "Fingerprint": "sha256:e0dd56424acdf5a4c619b9e6b2422065f1f962676cd848f0c764203cb73406c6",
           "Title": "util-linux: TOCTOU in the mount program when setting up loop devices",
           "Description": "util-linux is a random collection of Linux utilities. Prior to version 2.41.4, a TOCTOU (Time-of-Check-Time-of-Use) vulnerability has been identified in the SUID binary /usr/bin/mount from util-linux. The mount binary, when setting up loop devices, validates the source file path with user privileges via fork() + setuid() + realpath(), but subsequently re-canonicalizes and opens it with root privileges (euid=0) without verifying that the path has not been replaced between both operations. Neither O_NOFOLLOW, nor inode comparison, nor post-open fstat() are employed. This allows a local unprivileged user to replace the source file with a symlink pointing to any root-owned file or device during the race window, causing the SUID binary to open and mount it as root. Exploitation requires an /etc/fstab entry with user,loop options whose path points to a directory where the attacker has write permission, and that /usr/bin/mount has the SUID bit set (the default configuration on virtually all Linux distributions). The impact is unauthorized read access to root-protected files and block devices, including backup images, disk volumes, and any file containing a valid filesystem. This issue has been patched in version 2.41.4.",
           "Severity": "MEDIUM",
@@ -8682,7 +8896,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:e01a4869815e000ab0e1d63ffb360625882a8d056abc45eb208e88c0f5c8663f",
+          "Fingerprint": "sha256:4c23c9535e48d2d6c4388cbb8ea5a99e1dc2cfcd5a5be9d14789d112bc2d37f6",
           "Title": "util-linux: util-linux: Access control bypass due to improper hostname canonicalization",
           "Description": "A flaw was found in util-linux. Improper hostname canonicalization in the `login(1)` utility, when invoked with the `-h` option, can modify the supplied remote hostname before setting `PAM_RHOST`. A remote attacker could exploit this by providing a specially crafted hostname, potentially bypassing host-based Pluggable Authentication Modules (PAM) access control rules that rely on fully qualified domain names. This could lead to unauthorized access.",
           "Severity": "MEDIUM",
@@ -8737,7 +8951,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:96980547db292d87fc5360f77b3dd666221f48910f9f8f11c5e9c2f9978ecdca",
+          "Fingerprint": "sha256:488cb3b7d0b6d8c71673d38500954471f6a896ff902cd8297fd335ff9dc407f6",
           "Title": "util-linux: partial disclosure of arbitrary files in chfn and chsh when compiled with libreadline",
           "Description": "A flaw was found in the util-linux chfn and chsh utilities when compiled with Readline support. The Readline library uses an \"INPUTRC\" environment variable to get a path to the library config file. When the library cannot parse the specified file, it prints an error message containing data from the file. This flaw allows an unprivileged user to read root-owned files, potentially leading to privilege escalation. This flaw affects util-linux versions prior to 2.37.4.",
           "Severity": "LOW",
@@ -8805,7 +9019,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:3cc6caa552214aaf211f84631754647d93ca91b54b717878db3363186287b152",
+          "Fingerprint": "sha256:30b74cbb4e731f1807a89d00cfd211524b94a2e3d318026377d495dac5389a8c",
           "Title": "util-linux: util-linux: Heap buffer overread in setpwnam() when processing 256-byte usernames",
           "Description": "A flaw was found in util-linux. This vulnerability allows a heap buffer overread when processing 256-byte usernames, specifically within the `setpwnam()` function, affecting SUID (Set User ID) login-utils utilities writing to the password database.",
           "Severity": "LOW",
@@ -8873,7 +9087,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:e6b4fdc89c7bdc119aa71de8c9c14c26587083eed4bc05d100a21577e7c26b50",
+          "Fingerprint": "sha256:dd2b5be3e263d2e183d7cc2ea5c8a65f5977f21cfd00bd24bffd62f96c1318d4",
           "Title": "[Local Privilege Escalation via TOCTOU in mount(8) hook_owner.c chmod/chown]",
           "Severity": "UNKNOWN"
         },
@@ -8897,7 +9111,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:55b140838d03f30ff0f3882308566321593409e92971bf1c0f4b51ea38544886",
+          "Fingerprint": "sha256:29d270186bdba7b488c4149919ee21c852bfe322f5ce3b5410f52cc6e699c86f",
           "Title": "[Local Privilege Escalation via TOCTOU in mount(8) - Target Path Redirection]",
           "Severity": "UNKNOWN"
         },
@@ -8921,7 +9135,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:937fac06fe4458e563e06c700faf78a16349161430837e05c1e1973268571e9b",
+          "Fingerprint": "sha256:c92fbb5b5ee3efe7e615a4de93833384767cbd73f6c40d5edf09133ad4358b08",
           "Title": "[Local Privilege Escalation via LIBMOUNT_FORCE_MOUNT2 Environment Variable - nosuid/noexec Bypass in SUID mount(8)]",
           "Severity": "UNKNOWN"
         },
@@ -8945,7 +9159,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:35510f38f5b4943037b90f850e817b2a8a9a6bf15f6b833d389fa0eda3cecf2a",
+          "Fingerprint": "sha256:09aaa6f3a5e13c7d48a86a92ae5b5f7cdcaa9d569ad4f4778663c977d7041637",
           "Title": "tarfile.extractall() with the 'data' or 'tar'  filter could be bypasse ...",
           "Description": "tarfile.extractall() with the 'data' or 'tar'\n filter could be bypassed by a crafted archive where a hardlink \nreferences a symlink stored at a deeper name than the hardlink itself.  \nThe extraction fallback validated the symlink at it's archived location \nbut recreated it at the hardlink's shallower\npath, letting a relative\n target the filter judged contained escape the destination directory.  \nThis allowed a malicious tar archive to create a symlink pointing \noutside the destination, enabling out-of-destination file reads or \nwrites. This was an incomplete fix of CVE-2025-4330.",
           "Severity": "HIGH",
@@ -8965,6 +9179,7 @@
             }
           },
           "References": [
+            "https://github.com/python/cpython/commit/0f852b3f07dd8e71e40326a51c02afbf16a42cc5",
             "https://github.com/python/cpython/commit/27dd970bf6b17ebca7c8ed486a40ab043ed7af8f",
             "https://github.com/python/cpython/commit/672825e2f36a57e173959b0d9d409d4560dab8df",
             "https://github.com/python/cpython/commit/771d12dda5140313db0ac550292987975651bbde",
@@ -8977,7 +9192,7 @@
             "https://nvd.nist.gov/vuln/detail/CVE-2026-11940"
           ],
           "PublishedDate": "2026-06-23T17:16:40.847Z",
-          "LastModifiedDate": "2026-08-06T01:16:28.823Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.57Z"
         },
         {
           "VulnerabilityID": "CVE-2026-15308",
@@ -9000,7 +9215,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:04606222d4c64b8c1a5046e9e9ed4afda6f0354ef13de53f9f7ec6c251eb62de",
+          "Fingerprint": "sha256:66790a616c2acf4b1a97234235bfe796744f1653248d7e118c5884c4c0b598e9",
           "Title": "python: Python: CPU Denial of Service in HTML parser via repeated unterminated markup declarations",
           "Description": "The incremental HTML parser (html.parser.HTMLParser) allows for CPU\ndenial-of-service through repeated unterminated markup declarations when\nprocessing uncontrolled data.",
           "Severity": "HIGH",
@@ -9032,17 +9247,19 @@
           },
           "References": [
             "http://www.openwall.com/lists/oss-security/2026/07/09/4",
-            "https://access.redhat.com/errata/RHSA-2026:41949",
+            "https://access.redhat.com/errata/RHSA-2026:40856",
             "https://access.redhat.com/security/cve/CVE-2026-15308",
             "https://bugzilla.redhat.com/2498608",
             "https://bugzilla.redhat.com/show_bug.cgi?id=2498608",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-15308",
-            "https://errata.almalinux.org/9/ALSA-2026-41949.html",
+            "https://errata.almalinux.org/10/ALSA-2026-40856.html",
             "https://errata.rockylinux.org/RLSA-2026:39798",
             "https://github.com/python/cpython/commit/07efb08123ba9367a7107325adb9d5626dca1ca9",
+            "https://github.com/python/cpython/commit/1e7956f1a722df9aabc509c30f8fbdc3a2b4fdc7",
             "https://github.com/python/cpython/commit/785df8f743800661961528970f8598edcd291c14",
             "https://github.com/python/cpython/commit/7933f4bf7131aa4140750f9404f5de0aa2969ced",
             "https://github.com/python/cpython/commit/bcf98ddbc40ec9b3ee87da0124a5660b19b7e606",
+            "https://github.com/python/cpython/commit/c2390b9376e35a701ed3acc597b8fc87546c9b00",
             "https://github.com/python/cpython/commit/e9f92ac0b298292e7ff998e52cb8ccacfb27a0bd",
             "https://github.com/python/cpython/issues/153030",
             "https://github.com/python/cpython/pull/153031",
@@ -9053,7 +9270,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-15308"
           ],
           "PublishedDate": "2026-07-09T17:16:58.26Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.267Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.91Z"
         },
         {
           "VulnerabilityID": "CVE-2026-7210",
@@ -9076,7 +9293,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:caf989538868834bd7c83c9a33744a3d7ae6689f5ed9c8825f0e4e90a88c6080",
+          "Fingerprint": "sha256:0f09084128dc5c56fbba1edf75f03d6b5426b2fcc9d9c9c0a8971eb61f995265",
           "Title": "python: expat: Python/Expat: Denial of Service via crafted XML document",
           "Description": "`xml.parsers.expat` and `xml.etree.ElementTree` use insufficient entropy for Expat hash-flooding protection, which allows a crafted XML document to trigger hash flooding.\\r\\n\\r\\nFully mitigating this vulnerability requires both updating libexpat to 2.8.0 or later and applying this patch.",
           "Severity": "HIGH",
@@ -9142,7 +9359,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:a3ec2e5d9ce1d85bcb8bd834adc164e4e201d8d05c20255544e4162f384f4945",
+          "Fingerprint": "sha256:df0b0cbc42e635383ddc3178e86005495d83e3790166dc46ff2933feb940f3ee",
           "Title": "cpython: base64.b64decode() always accepts \"+/\" characters, despite setting altchars",
           "Description": "When passing data to the b64decode(), standard_b64decode(), and urlsafe_b64decode() functions in the \"base64\" module the characters \"+/\" will always be accepted, regardless of the value of \"altchars\" parameter, typically used to establish an \"alternative base64 alphabet\" such as the URL safe alphabet. This behavior matches what is recommended in earlier base64 RFCs, but newer RFCs now recommend either dropping characters outside the specified base64 alphabet or raising an error. The old behavior has the possibility of causing data integrity issues.\n\n\n\n\nThis behavior can only be insecure if your application uses an alternate base64 alphabet (without \"+/\"). If your application does not use the \"altchars\" parameter or the urlsafe_b64decode() function, then your application does not use an alternative base64 alphabet.\n\n\n\n\nThe attached patches DOES NOT make the base64-decode behavior raise an error, as this would be a change in behavior and break existing programs. Instead, the patch deprecates the behavior which will be replaced with the newly recommended behavior in a future version of Python. Users are recommended to mitigate by verifying user-controlled inputs match the base64 \nalphabet they are expecting or verify that their application would not be \naffected if the b64decode() functions accepted \"+\" or \"/\" outside of altchars.",
           "Severity": "MEDIUM",
@@ -9199,7 +9416,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c7706ea6ded65b2380643c9456affd06924da651d37531219ac4d28c5d0d62a4",
+          "Fingerprint": "sha256:c204a6dff14c8fe308472d6c901e87da8be7f3d26cd7d4ea2a7743b673268fae",
           "Title": "cpython: IMAP command injection in user-controlled commands",
           "Description": "The imaplib module, when passed a user-controlled command, can have additional commands injected using newlines. Mitigation rejects commands containing control characters.",
           "Severity": "MEDIUM",
@@ -9219,8 +9436,9 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:4216",
+            "https://access.redhat.com/errata/RHSA-2026:4713",
             "https://access.redhat.com/security/cve/CVE-2025-15366",
+            "https://bugzilla.redhat.com/2431367",
             "https://bugzilla.redhat.com/2431368",
             "https://bugzilla.redhat.com/2431373",
             "https://bugzilla.redhat.com/2432437",
@@ -9232,7 +9450,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-15367",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0865",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1299",
-            "https://errata.almalinux.org/9/ALSA-2026-4216.html",
+            "https://errata.almalinux.org/10/ALSA-2026-4713.html",
             "https://errata.rockylinux.org/RLSA-2026:4168",
             "https://github.com/python/cpython/commit/298182272a740ce2016aee2f54acbd0bba1944c1",
             "https://github.com/python/cpython/commit/6262704b134db2a4ba12e85ecfbd968534f28b45",
@@ -9270,7 +9488,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:03e907229290c70146107e242317c224c54b262aecef7b873367e33fbff60346",
+          "Fingerprint": "sha256:c23b39606f9438cef1b8395768d2560e0bc649cda7b421ea400cb5dd93e70d04",
           "Title": "cpython: POP3 command injection in user-controlled commands",
           "Description": "The poplib module, when passed a user-controlled command, can have\nadditional commands injected using newlines. Mitigation rejects commands\ncontaining control characters.",
           "Severity": "MEDIUM",
@@ -9290,8 +9508,9 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:4216",
+            "https://access.redhat.com/errata/RHSA-2026:4713",
             "https://access.redhat.com/security/cve/CVE-2025-15367",
+            "https://bugzilla.redhat.com/2431367",
             "https://bugzilla.redhat.com/2431368",
             "https://bugzilla.redhat.com/2431373",
             "https://bugzilla.redhat.com/2432437",
@@ -9303,7 +9522,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-15367",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0865",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1299",
-            "https://errata.almalinux.org/9/ALSA-2026-4216.html",
+            "https://errata.almalinux.org/10/ALSA-2026-4713.html",
             "https://errata.rockylinux.org/RLSA-2026:4168",
             "https://github.com/python/cpython/commit/b234a2b67539f787e191d2ef19a7cbdce32874e7",
             "https://github.com/python/cpython/issues/143923",
@@ -9337,7 +9556,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:5c70fce760618e4f2e8a285671bd60660211231f84bf91dc93bb530db5dce510",
+          "Fingerprint": "sha256:9c264cadffebf45a24df1a663b54c479e1615a59647f1c424abdf0a88d244fec",
           "Title": "python: cpython: Python configparser: Configuration injection via crafted multi-line input",
           "Description": "When using the \"configparser\" module to write configuration files\ncontaining multi-line text values with carriage return characters (\\r) the\nresulting file could be injected with unexpected keys and values if the\nattacker controls the written value.",
           "Severity": "MEDIUM",
@@ -9346,6 +9565,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 2,
             "bitnami": 2,
             "redhat": 2
           },
@@ -9362,6 +9582,8 @@
           "References": [
             "https://access.redhat.com/security/cve/CVE-2026-0864",
             "https://github.com/python/cpython/commit/0adb386f6e68eb2e73d32e19f235d012df009528",
+            "https://github.com/python/cpython/commit/12dcbd74d3563016a8cb8c47e4898889f34f74dd",
+            "https://github.com/python/cpython/commit/274de100bbf4345bd0c23ef5b446722e9e636908",
             "https://github.com/python/cpython/commit/5858e42c539dac8394636a6e9b30472b8994851f",
             "https://github.com/python/cpython/commit/71f2e02a52d47417a6fd69f456346cd8aa7aca98",
             "https://github.com/python/cpython/commit/aaf850fd333cd89e9aada03d92aaa788a6cb1bb8",
@@ -9373,7 +9595,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-0864"
           ],
           "PublishedDate": "2026-06-23T18:17:41.243Z",
-          "LastModifiedDate": "2026-08-06T01:16:28.703Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.42Z"
         },
         {
           "VulnerabilityID": "CVE-2026-11972",
@@ -9395,7 +9617,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:8c727c09366bdc4a4854ad562faa32a50d8115d1647472fd387a811b7aa6b4f1",
+          "Fingerprint": "sha256:752761b01ea4025a67ca133f516907bc2b3ee06e387b9d12241c9a7213a913b7",
           "Title": "python: Python tarfile module: Denial of Service via improper EOF handling in streaming mode",
           "Description": "When using the \"tarfile\" module with a file opened in \"streaming mode\" (mode=\"r|\") the tarfile module did not properly handle EOF, making archive parsing take exponentially longer.",
           "Severity": "MEDIUM",
@@ -9406,6 +9628,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 3,
             "bitnami": 3,
             "photon": 3,
             "redhat": 2
@@ -9459,7 +9682,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c8c4f765620717bfd71a228d9e1b4fb6ef91e21fc5b64bd13e10a98b4f447c5e",
+          "Fingerprint": "sha256:1fe980979a9a1fb3055594375f817fb91f1bc54aab3661b6c1d7c13985b8231e",
           "Title": "python: Python Tarfile: Unexpected file ownership when extracting hardlinks",
           "Description": "In the Tarfile.extract() function, the filter parameter is not passed properly when extracting hardlinks. An affected system that extracts content from untrusted tar files could end up writing files with an unexpected uid/gid despite the user passing filter='data' to the extract() function.",
           "Severity": "MEDIUM",
@@ -9468,6 +9691,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 1,
             "bitnami": 1,
             "nvd": 2,
             "redhat": 2
@@ -9525,7 +9749,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:dbec66214f5d482830d6ad7ba69f300aa0c0a79a95c783012bf8c8313aeb0f43",
+          "Fingerprint": "sha256:00586dd739b171961a91d40128ede95fee4292cde1c0bad10fbde80821708106",
           "Title": "To allow builds of Python to be run from an in-tree layout (rather tha ...",
           "Description": "To allow builds of Python to be run from an in-tree layout (rather than\nan installed file layout), the VPATH variable is defined at build time\nand used to locate certain landmarks - specifically,\nModules/setup.local. When this landmark is found relative to VPATH\nrelative to the executable, Python assumes it is running in a source\ntree and generates a different default sys.path. This code remains in\nrelease builds, so that release-ready builds can be built in-tree.\n\nOn Windows, since builds are written to 'PCbuild/', the value of\nVPATH is set to '..\\..', which results in a landmark of\n'..\\..\\Modules\\setup.local'. This path is outside the install directory\nof Python, and may have different permissions, potentially allowing a\nlow-privilege user to create the landmark and an alternative `Lib`\nfolder that will be discovered by an otherwise restricted install.\n\nSuch a setup occurs with the legacy default install location for all\nusers (in the now superseded EXE installer), due to how Windows allows\nall users to create folders in the root directory of their OS drive.\n\nOur recommended mitigation on Windows is to migrate away from the\nlegacy installer and use the new [Python install\nmanager](https://www.python.org/downloads/latest/pymanager/) to install\nfor the current user. Installs where the directory two levels above the\nPython installation directory have equivalent permissions are unaffected\n(in general, a per-user install cannot be modified at all by other\nusers, removing any escalation of privilege risk, and could be directly\nmodified by a privileged user, making the potential tampering\nirrelevant). Alternative mitigations might include preemptively creating\nand restricting access to a `Modules` directory. Be aware that only 3.13\nand 3.14 will receive updated legacy installers - earlier fixes are only\nprovided as sources.\n\nPlatforms other than Windows allow VPATH to be overridden, but as they\ndon't usually use a separated directory in the build for binaries, are\nunlikely to have a landmark reference outside of the install directory.\n\nThe landmark detection involving VPATH is a fallback for when a more\nspecific landmark - .\\pybuilddir.txt - is absent, and was included for\ncompatibility. Future releases of Python will no longer include the\nfallback, and so builds will need to generate or preserve the\npybuilddir.txt file in order to work in-tree. This landmark file has\nbeen generated on Windows since 3.11, and on other platforms for longer.",
           "Severity": "LOW",
@@ -9533,6 +9757,7 @@
             "CWE-427"
           ],
           "VendorSeverity": {
+            "azure": 2,
             "bitnami": 2,
             "debian": 1
           },
@@ -9546,6 +9771,7 @@
             "http://www.openwall.com/lists/oss-security/2026/06/16/8",
             "https://github.com/python/cpython/commit/03ab7b44788bfd6b8927e16bcdbd025aa08dce06",
             "https://github.com/python/cpython/commit/16c40f944b7bff724a403cf4902763d095bb4b2a",
+            "https://github.com/python/cpython/commit/872038377db2e170e0e140b5f8aaedf636b3fbf5",
             "https://github.com/python/cpython/commit/9e863fab283eddca9c2a8f9d1ee30f4dc243e314",
             "https://github.com/python/cpython/commit/a86de0bc236fbb9452f98998fc8437e9fca35700",
             "https://github.com/python/cpython/commit/b93d6d3399adbd3a5037b6b92fc3587c85ac5d56",
@@ -9555,7 +9781,7 @@
             "https://nvd.nist.gov/vuln/detail/CVE-2026-12003"
           ],
           "PublishedDate": "2026-06-16T17:16:31.667Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.08Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.71Z"
         },
         {
           "VulnerabilityID": "CVE-2026-3479",
@@ -9578,7 +9804,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:1614ed59e1d37f05043b14b80b5d2dfd90e9ae39516566aa8f501b9ed3a1842b",
+          "Fingerprint": "sha256:1842e1939a872bf6bb7b72aa0d59090f37317703572c08ca361ec099d18b8c1d",
           "Title": "python: Python pkgutil.get_data(): Path Traversal via improper resource argument validation",
           "Description": "DISPUTED: The project has clarified that the documentation was incorrect, and that pkgutil.get_data() has the same security model as open(). The documentation has been updated to clarify this point. There is no vulnerability in the function if following the intended security model.\n\npkgutil.get_data() did not validate the resource argument as documented, allowing path traversals.",
           "Severity": "LOW",
@@ -9632,7 +9858,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:f685caf6562cc3758a66cc9f96b16d022b9c96ab6cfb77e04f77b745f97cad89",
+          "Fingerprint": "sha256:5ebdd79d26f8eb3a90b49e877e711c7f76b1461498c5b36ba1857ca4aa8ffe33",
           "Title": "python: Python: Performance degradation in XML processing due to quadratic time complexity",
           "Description": "`Element.findall()` and fully-consumed `Element.iterfind()` exhibit `O(n^2)` time complexity when using XPath index predicates (e.g. `[1]`, `[last()]`, `[last()-N]`) on XML documents with many same-tag siblings. `Element.find()` is only affected when the first match is near the end  of the sibling list, such as with `[last()]` or `[last()-N]`;  `.//item[1]` short-circuits after the first match.",
           "Severity": "LOW",
@@ -9640,6 +9866,7 @@
             "CWE-407"
           ],
           "VendorSeverity": {
+            "azure": 1,
             "redhat": 1
           },
           "CVSS": {
@@ -9651,6 +9878,8 @@
           "References": [
             "https://access.redhat.com/security/cve/CVE-2026-6879",
             "https://github.com/python/cpython/commit/02c08e6b747ac43d0d866a4ffa916bedf3423f81",
+            "https://github.com/python/cpython/commit/037965c00a427cba5c05447efadc67c51a492e85",
+            "https://github.com/python/cpython/commit/0583f24ae678993e3f7939f51ad5bcae5ad9dc70",
             "https://github.com/python/cpython/commit/2ffab083782968a4d732738f4f1dff6bbd69d2b0",
             "https://github.com/python/cpython/commit/390337b8ba1658833fdef379e1739c9f9533a8db",
             "https://github.com/python/cpython/commit/96510a3758f4a075f43223afdee3b6ee1a7a7f02",
@@ -9662,7 +9891,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-6879"
           ],
           "PublishedDate": "2026-07-28T15:17:51.377Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.913Z"
+          "LastModifiedDate": "2026-08-11T01:17:24.53Z"
         },
         {
           "VulnerabilityID": "CVE-2026-11940",
@@ -9684,7 +9913,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:5cc16384eaea1454d2cbd90f3c26330e2fbb0555678adf3169c449bb323478b4",
+          "Fingerprint": "sha256:35136a4b09ea0edd5aa3226677ffb5444ad995c30cfd613cd5a2eb921937c922",
           "Title": "tarfile.extractall() with the 'data' or 'tar'  filter could be bypasse ...",
           "Description": "tarfile.extractall() with the 'data' or 'tar'\n filter could be bypassed by a crafted archive where a hardlink \nreferences a symlink stored at a deeper name than the hardlink itself.  \nThe extraction fallback validated the symlink at it's archived location \nbut recreated it at the hardlink's shallower\npath, letting a relative\n target the filter judged contained escape the destination directory.  \nThis allowed a malicious tar archive to create a symlink pointing \noutside the destination, enabling out-of-destination file reads or \nwrites. This was an incomplete fix of CVE-2025-4330.",
           "Severity": "HIGH",
@@ -9704,6 +9933,7 @@
             }
           },
           "References": [
+            "https://github.com/python/cpython/commit/0f852b3f07dd8e71e40326a51c02afbf16a42cc5",
             "https://github.com/python/cpython/commit/27dd970bf6b17ebca7c8ed486a40ab043ed7af8f",
             "https://github.com/python/cpython/commit/672825e2f36a57e173959b0d9d409d4560dab8df",
             "https://github.com/python/cpython/commit/771d12dda5140313db0ac550292987975651bbde",
@@ -9716,7 +9946,7 @@
             "https://nvd.nist.gov/vuln/detail/CVE-2026-11940"
           ],
           "PublishedDate": "2026-06-23T17:16:40.847Z",
-          "LastModifiedDate": "2026-08-06T01:16:28.823Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.57Z"
         },
         {
           "VulnerabilityID": "CVE-2026-15308",
@@ -9739,7 +9969,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:14ffa88426e8effa89d3218f375f9a21d407b498760b4e0c68835875d608c783",
+          "Fingerprint": "sha256:c46ae619c0df1af65eab2985dbdb5e808cff4ddaa98a2d14f02c5f1bf2e0a6ef",
           "Title": "python: Python: CPU Denial of Service in HTML parser via repeated unterminated markup declarations",
           "Description": "The incremental HTML parser (html.parser.HTMLParser) allows for CPU\ndenial-of-service through repeated unterminated markup declarations when\nprocessing uncontrolled data.",
           "Severity": "HIGH",
@@ -9771,17 +10001,19 @@
           },
           "References": [
             "http://www.openwall.com/lists/oss-security/2026/07/09/4",
-            "https://access.redhat.com/errata/RHSA-2026:41949",
+            "https://access.redhat.com/errata/RHSA-2026:40856",
             "https://access.redhat.com/security/cve/CVE-2026-15308",
             "https://bugzilla.redhat.com/2498608",
             "https://bugzilla.redhat.com/show_bug.cgi?id=2498608",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-15308",
-            "https://errata.almalinux.org/9/ALSA-2026-41949.html",
+            "https://errata.almalinux.org/10/ALSA-2026-40856.html",
             "https://errata.rockylinux.org/RLSA-2026:39798",
             "https://github.com/python/cpython/commit/07efb08123ba9367a7107325adb9d5626dca1ca9",
+            "https://github.com/python/cpython/commit/1e7956f1a722df9aabc509c30f8fbdc3a2b4fdc7",
             "https://github.com/python/cpython/commit/785df8f743800661961528970f8598edcd291c14",
             "https://github.com/python/cpython/commit/7933f4bf7131aa4140750f9404f5de0aa2969ced",
             "https://github.com/python/cpython/commit/bcf98ddbc40ec9b3ee87da0124a5660b19b7e606",
+            "https://github.com/python/cpython/commit/c2390b9376e35a701ed3acc597b8fc87546c9b00",
             "https://github.com/python/cpython/commit/e9f92ac0b298292e7ff998e52cb8ccacfb27a0bd",
             "https://github.com/python/cpython/issues/153030",
             "https://github.com/python/cpython/pull/153031",
@@ -9792,7 +10024,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-15308"
           ],
           "PublishedDate": "2026-07-09T17:16:58.26Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.267Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.91Z"
         },
         {
           "VulnerabilityID": "CVE-2026-7210",
@@ -9815,7 +10047,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:c48f14f32885e23c4ee4cdf365de3e385ac9eb2c079cc6be27021ddb26719f01",
+          "Fingerprint": "sha256:30c18f2c9b5437d2c9ec8bd76e5533574000863909a9cd9d246cf1ee17e16ffe",
           "Title": "python: expat: Python/Expat: Denial of Service via crafted XML document",
           "Description": "`xml.parsers.expat` and `xml.etree.ElementTree` use insufficient entropy for Expat hash-flooding protection, which allows a crafted XML document to trigger hash flooding.\\r\\n\\r\\nFully mitigating this vulnerability requires both updating libexpat to 2.8.0 or later and applying this patch.",
           "Severity": "HIGH",
@@ -9881,7 +10113,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:b6d04e562c58306b635ac0443f553fc06ade315e27135dc404d671af53edcd0a",
+          "Fingerprint": "sha256:090fc45bbccc02565942c1dace54b7c715d9c062dd0277b3cbf371f1e950aa03",
           "Title": "cpython: base64.b64decode() always accepts \"+/\" characters, despite setting altchars",
           "Description": "When passing data to the b64decode(), standard_b64decode(), and urlsafe_b64decode() functions in the \"base64\" module the characters \"+/\" will always be accepted, regardless of the value of \"altchars\" parameter, typically used to establish an \"alternative base64 alphabet\" such as the URL safe alphabet. This behavior matches what is recommended in earlier base64 RFCs, but newer RFCs now recommend either dropping characters outside the specified base64 alphabet or raising an error. The old behavior has the possibility of causing data integrity issues.\n\n\n\n\nThis behavior can only be insecure if your application uses an alternate base64 alphabet (without \"+/\"). If your application does not use the \"altchars\" parameter or the urlsafe_b64decode() function, then your application does not use an alternative base64 alphabet.\n\n\n\n\nThe attached patches DOES NOT make the base64-decode behavior raise an error, as this would be a change in behavior and break existing programs. Instead, the patch deprecates the behavior which will be replaced with the newly recommended behavior in a future version of Python. Users are recommended to mitigate by verifying user-controlled inputs match the base64 \nalphabet they are expecting or verify that their application would not be \naffected if the b64decode() functions accepted \"+\" or \"/\" outside of altchars.",
           "Severity": "MEDIUM",
@@ -9938,7 +10170,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:6912a57f322eb94581ebe3dc7777cc58e485569ff4b52316a454ad3dbe661262",
+          "Fingerprint": "sha256:65c7bc4e278def4125916e2d5aa60c1ac3e2315c72bf18985b0ac4ac0a93b1d0",
           "Title": "cpython: IMAP command injection in user-controlled commands",
           "Description": "The imaplib module, when passed a user-controlled command, can have additional commands injected using newlines. Mitigation rejects commands containing control characters.",
           "Severity": "MEDIUM",
@@ -9958,8 +10190,9 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:4216",
+            "https://access.redhat.com/errata/RHSA-2026:4713",
             "https://access.redhat.com/security/cve/CVE-2025-15366",
+            "https://bugzilla.redhat.com/2431367",
             "https://bugzilla.redhat.com/2431368",
             "https://bugzilla.redhat.com/2431373",
             "https://bugzilla.redhat.com/2432437",
@@ -9971,7 +10204,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-15367",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0865",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1299",
-            "https://errata.almalinux.org/9/ALSA-2026-4216.html",
+            "https://errata.almalinux.org/10/ALSA-2026-4713.html",
             "https://errata.rockylinux.org/RLSA-2026:4168",
             "https://github.com/python/cpython/commit/298182272a740ce2016aee2f54acbd0bba1944c1",
             "https://github.com/python/cpython/commit/6262704b134db2a4ba12e85ecfbd968534f28b45",
@@ -10009,7 +10242,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:cba9d63a80d5f6cece29f41fd081e5ee00120f81be662e94fe6e7a27cf76210b",
+          "Fingerprint": "sha256:fb70e08af2787b03a567879fbc869d8882867b5c66c193b982ce0f8ef6a696f3",
           "Title": "cpython: POP3 command injection in user-controlled commands",
           "Description": "The poplib module, when passed a user-controlled command, can have\nadditional commands injected using newlines. Mitigation rejects commands\ncontaining control characters.",
           "Severity": "MEDIUM",
@@ -10029,8 +10262,9 @@
             }
           },
           "References": [
-            "https://access.redhat.com/errata/RHSA-2026:4216",
+            "https://access.redhat.com/errata/RHSA-2026:4713",
             "https://access.redhat.com/security/cve/CVE-2025-15367",
+            "https://bugzilla.redhat.com/2431367",
             "https://bugzilla.redhat.com/2431368",
             "https://bugzilla.redhat.com/2431373",
             "https://bugzilla.redhat.com/2432437",
@@ -10042,7 +10276,7 @@
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-15367",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-0865",
             "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2026-1299",
-            "https://errata.almalinux.org/9/ALSA-2026-4216.html",
+            "https://errata.almalinux.org/10/ALSA-2026-4713.html",
             "https://errata.rockylinux.org/RLSA-2026:4168",
             "https://github.com/python/cpython/commit/b234a2b67539f787e191d2ef19a7cbdce32874e7",
             "https://github.com/python/cpython/issues/143923",
@@ -10076,7 +10310,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:0d211f867a8ba680cd00550fced50cfc67e869b90d759b3f3736530c56b4fc3c",
+          "Fingerprint": "sha256:c3c4ade0e3dadbfae793eb225f11ad94287754661ae2d6d6fc820fa8f91164d1",
           "Title": "python: cpython: Python configparser: Configuration injection via crafted multi-line input",
           "Description": "When using the \"configparser\" module to write configuration files\ncontaining multi-line text values with carriage return characters (\\r) the\nresulting file could be injected with unexpected keys and values if the\nattacker controls the written value.",
           "Severity": "MEDIUM",
@@ -10085,6 +10319,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 2,
             "bitnami": 2,
             "redhat": 2
           },
@@ -10101,6 +10336,8 @@
           "References": [
             "https://access.redhat.com/security/cve/CVE-2026-0864",
             "https://github.com/python/cpython/commit/0adb386f6e68eb2e73d32e19f235d012df009528",
+            "https://github.com/python/cpython/commit/12dcbd74d3563016a8cb8c47e4898889f34f74dd",
+            "https://github.com/python/cpython/commit/274de100bbf4345bd0c23ef5b446722e9e636908",
             "https://github.com/python/cpython/commit/5858e42c539dac8394636a6e9b30472b8994851f",
             "https://github.com/python/cpython/commit/71f2e02a52d47417a6fd69f456346cd8aa7aca98",
             "https://github.com/python/cpython/commit/aaf850fd333cd89e9aada03d92aaa788a6cb1bb8",
@@ -10112,7 +10349,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-0864"
           ],
           "PublishedDate": "2026-06-23T18:17:41.243Z",
-          "LastModifiedDate": "2026-08-06T01:16:28.703Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.42Z"
         },
         {
           "VulnerabilityID": "CVE-2026-11972",
@@ -10134,7 +10371,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:53065cda16b9cbf2caec58d6b237480115eaaeb6c2cc83669cc71b546eab9f53",
+          "Fingerprint": "sha256:793a0c7973bd1921a0bd96e08bbd33e11a3a9fe5854b8d7a367c47dcfc08357b",
           "Title": "python: Python tarfile module: Denial of Service via improper EOF handling in streaming mode",
           "Description": "When using the \"tarfile\" module with a file opened in \"streaming mode\" (mode=\"r|\") the tarfile module did not properly handle EOF, making archive parsing take exponentially longer.",
           "Severity": "MEDIUM",
@@ -10145,6 +10382,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 3,
             "bitnami": 3,
             "photon": 3,
             "redhat": 2
@@ -10198,7 +10436,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:e82039bf3eca958c72026e9663d2aa073c3eda7e43f2bb5c9cade390b9de1958",
+          "Fingerprint": "sha256:4cdba66fa46e9071e1b87ce9aa970bd6b832606d8bba81d3f5f833cc6e8eb460",
           "Title": "python: Python Tarfile: Unexpected file ownership when extracting hardlinks",
           "Description": "In the Tarfile.extract() function, the filter parameter is not passed properly when extracting hardlinks. An affected system that extracts content from untrusted tar files could end up writing files with an unexpected uid/gid despite the user passing filter='data' to the extract() function.",
           "Severity": "MEDIUM",
@@ -10207,6 +10445,7 @@
           ],
           "VendorSeverity": {
             "amazon": 3,
+            "azure": 1,
             "bitnami": 1,
             "nvd": 2,
             "redhat": 2
@@ -10264,7 +10503,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:3be87fbeed8496f6eb9aa422427fda16add0435d671a5a10a9bf0b5c0121145d",
+          "Fingerprint": "sha256:2d2ebda9224948758bf196c25e86b9cb11e3b9b07941c1187bae5b1ec94c70e7",
           "Title": "To allow builds of Python to be run from an in-tree layout (rather tha ...",
           "Description": "To allow builds of Python to be run from an in-tree layout (rather than\nan installed file layout), the VPATH variable is defined at build time\nand used to locate certain landmarks - specifically,\nModules/setup.local. When this landmark is found relative to VPATH\nrelative to the executable, Python assumes it is running in a source\ntree and generates a different default sys.path. This code remains in\nrelease builds, so that release-ready builds can be built in-tree.\n\nOn Windows, since builds are written to 'PCbuild/', the value of\nVPATH is set to '..\\..', which results in a landmark of\n'..\\..\\Modules\\setup.local'. This path is outside the install directory\nof Python, and may have different permissions, potentially allowing a\nlow-privilege user to create the landmark and an alternative `Lib`\nfolder that will be discovered by an otherwise restricted install.\n\nSuch a setup occurs with the legacy default install location for all\nusers (in the now superseded EXE installer), due to how Windows allows\nall users to create folders in the root directory of their OS drive.\n\nOur recommended mitigation on Windows is to migrate away from the\nlegacy installer and use the new [Python install\nmanager](https://www.python.org/downloads/latest/pymanager/) to install\nfor the current user. Installs where the directory two levels above the\nPython installation directory have equivalent permissions are unaffected\n(in general, a per-user install cannot be modified at all by other\nusers, removing any escalation of privilege risk, and could be directly\nmodified by a privileged user, making the potential tampering\nirrelevant). Alternative mitigations might include preemptively creating\nand restricting access to a `Modules` directory. Be aware that only 3.13\nand 3.14 will receive updated legacy installers - earlier fixes are only\nprovided as sources.\n\nPlatforms other than Windows allow VPATH to be overridden, but as they\ndon't usually use a separated directory in the build for binaries, are\nunlikely to have a landmark reference outside of the install directory.\n\nThe landmark detection involving VPATH is a fallback for when a more\nspecific landmark - .\\pybuilddir.txt - is absent, and was included for\ncompatibility. Future releases of Python will no longer include the\nfallback, and so builds will need to generate or preserve the\npybuilddir.txt file in order to work in-tree. This landmark file has\nbeen generated on Windows since 3.11, and on other platforms for longer.",
           "Severity": "LOW",
@@ -10272,6 +10511,7 @@
             "CWE-427"
           ],
           "VendorSeverity": {
+            "azure": 2,
             "bitnami": 2,
             "debian": 1
           },
@@ -10285,6 +10525,7 @@
             "http://www.openwall.com/lists/oss-security/2026/06/16/8",
             "https://github.com/python/cpython/commit/03ab7b44788bfd6b8927e16bcdbd025aa08dce06",
             "https://github.com/python/cpython/commit/16c40f944b7bff724a403cf4902763d095bb4b2a",
+            "https://github.com/python/cpython/commit/872038377db2e170e0e140b5f8aaedf636b3fbf5",
             "https://github.com/python/cpython/commit/9e863fab283eddca9c2a8f9d1ee30f4dc243e314",
             "https://github.com/python/cpython/commit/a86de0bc236fbb9452f98998fc8437e9fca35700",
             "https://github.com/python/cpython/commit/b93d6d3399adbd3a5037b6b92fc3587c85ac5d56",
@@ -10294,7 +10535,7 @@
             "https://nvd.nist.gov/vuln/detail/CVE-2026-12003"
           ],
           "PublishedDate": "2026-06-16T17:16:31.667Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.08Z"
+          "LastModifiedDate": "2026-08-11T01:17:19.71Z"
         },
         {
           "VulnerabilityID": "CVE-2026-3479",
@@ -10317,7 +10558,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:2d0006604eb43c24d6fdaeb9ee4026b26b8026e54e37bbeb00816704271cbf17",
+          "Fingerprint": "sha256:1ba0733da3524ba53ee7b574d71bec41f2fdd82468ca8c50c18041d9fcd8a11e",
           "Title": "python: Python pkgutil.get_data(): Path Traversal via improper resource argument validation",
           "Description": "DISPUTED: The project has clarified that the documentation was incorrect, and that pkgutil.get_data() has the same security model as open(). The documentation has been updated to clarify this point. There is no vulnerability in the function if following the intended security model.\n\npkgutil.get_data() did not validate the resource argument as documented, allowing path traversals.",
           "Severity": "LOW",
@@ -10371,7 +10612,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:b099ab4b430e504e1444277c112218ab65698ca37508529f65236deca9ca47be",
+          "Fingerprint": "sha256:f93726233ad8e97ce7f028ba151b86c431acdcfb0d8549c2dd286c6d327c562e",
           "Title": "python: Python: Performance degradation in XML processing due to quadratic time complexity",
           "Description": "`Element.findall()` and fully-consumed `Element.iterfind()` exhibit `O(n^2)` time complexity when using XPath index predicates (e.g. `[1]`, `[last()]`, `[last()-N]`) on XML documents with many same-tag siblings. `Element.find()` is only affected when the first match is near the end  of the sibling list, such as with `[last()]` or `[last()-N]`;  `.//item[1]` short-circuits after the first match.",
           "Severity": "LOW",
@@ -10379,6 +10620,7 @@
             "CWE-407"
           ],
           "VendorSeverity": {
+            "azure": 1,
             "redhat": 1
           },
           "CVSS": {
@@ -10390,6 +10632,8 @@
           "References": [
             "https://access.redhat.com/security/cve/CVE-2026-6879",
             "https://github.com/python/cpython/commit/02c08e6b747ac43d0d866a4ffa916bedf3423f81",
+            "https://github.com/python/cpython/commit/037965c00a427cba5c05447efadc67c51a492e85",
+            "https://github.com/python/cpython/commit/0583f24ae678993e3f7939f51ad5bcae5ad9dc70",
             "https://github.com/python/cpython/commit/2ffab083782968a4d732738f4f1dff6bbd69d2b0",
             "https://github.com/python/cpython/commit/390337b8ba1658833fdef379e1739c9f9533a8db",
             "https://github.com/python/cpython/commit/96510a3758f4a075f43223afdee3b6ee1a7a7f02",
@@ -10401,7 +10645,7 @@
             "https://www.cve.org/CVERecord?id=CVE-2026-6879"
           ],
           "PublishedDate": "2026-07-28T15:17:51.377Z",
-          "LastModifiedDate": "2026-08-06T01:16:29.913Z"
+          "LastModifiedDate": "2026-08-11T01:17:24.53Z"
         },
         {
           "VulnerabilityID": "CVE-2026-27171",
@@ -10424,7 +10668,7 @@
             "Name": "Debian Security Tracker",
             "URL": "https://salsa.debian.org/security-tracker-team/security-tracker"
           },
-          "Fingerprint": "sha256:61c86aae7d3d7d95e81e0fb8c382f389803b17359c329404bab43f595e29c657",
+          "Fingerprint": "sha256:9c648fe39b50f45a4fc7f036f6a5d03cb78fe56f0c8c6008c937117058ee06cc",
           "Title": "zlib: zlib: Denial of Service via infinite loop in CRC32 combine functions",
           "Description": "zlib before 1.3.2 allows CPU consumption via crc32_combine64 and crc32_combine_gen64 because x2nmodp can do right shifts within a loop that has no termination condition.",
           "Severity": "MEDIUM",

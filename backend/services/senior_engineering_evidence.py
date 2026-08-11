@@ -71,7 +71,7 @@ SUPPORTING_ARTIFACTS = (
     "Data/evals/governance/latest_release_decision_surface.json",
     "Data/evals/governance/latest_focused_release_summary.json",
     "Data/evals/rag/latest_rag_baseline_comparison.json",
-    "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json",
+    "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json",
     "Data/evals/ops/latest_dependency_security_scan.json",
     "Data/evals/ops/latest_software_supply_chain_evidence.json",
     "Data/evals/ops/latest_deployment_recovery_drill.json",
@@ -115,7 +115,7 @@ def build_senior_engineering_evidence(
     )
     rag = _read_json(root / "Data/evals/rag/latest_rag_baseline_comparison.json")
     adversarial = _read_json(
-        root / "Data/evals/safety/latest_adversarial_holdout_v6_baseline.json"
+        root / "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json"
     )
     ml = _read_json(
         root / "Data/evals/models/latest_synthetic_prediction_statistical_audit.json"
@@ -220,8 +220,8 @@ def build_senior_engineering_evidence(
         "rag_bm25_recall_at_10": rag.get("summary", {}).get(
             "bm25_recall_at_10"
         ),
-        "frozen_adversarial_v6_pass_rate": adversarial.get("pass_rate"),
-        "frozen_adversarial_v6_unsafe_leakage_rate": adversarial.get(
+        "frozen_adversarial_v7_pass_rate": adversarial.get("pass_rate"),
+        "frozen_adversarial_v7_unsafe_leakage_rate": adversarial.get(
             "unsafe_leakage_rate"
         ),
         "synthetic_ml_promotion_decision": ml.get("promotion_decision"),

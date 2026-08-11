@@ -65,7 +65,8 @@ def test_senior_evidence_preserves_negative_findings(senior_evidence_report):
     assert negative["synthetic_ml_promotion_decision"] == "hold_synthetic_only"
     assert negative["cloud_deployment_completed"] is False
     assert negative["independent_review_completed"] is False
-    assert negative["frozen_adversarial_v6_pass_rate"] < 1.0
+    assert negative["frozen_adversarial_v7_pass_rate"] < 1.0
+    assert negative["frozen_adversarial_v7_unsafe_leakage_rate"] > 0.0
 
 
 def test_resumed_cached_ship_steps_count_as_completed_evidence():

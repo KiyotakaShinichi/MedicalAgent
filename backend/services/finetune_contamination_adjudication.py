@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -47,34 +48,52 @@ def build_finetune_contamination_adjudication(
                 **row,
                 "priority": 1 if row.get("severity") == "critical" else 2,
                 "decision": previous.get("decision"),
+                "reviewer_id": previous.get("reviewer_id"),
                 "reviewer_role": previous.get("reviewer_role"),
                 "reviewed_at": previous.get("reviewed_at"),
                 "reviewer_notes": previous.get("reviewer_notes"),
+                "secondary_decision": previous.get("secondary_decision"),
+                "secondary_reviewer_id": previous.get("secondary_reviewer_id"),
+                "secondary_reviewer_role": previous.get("secondary_reviewer_role"),
+                "secondary_reviewed_at": previous.get("secondary_reviewed_at"),
+                "secondary_reviewer_notes": previous.get("secondary_reviewer_notes"),
             }
         )
     candidates.sort(key=lambda row: (row["priority"], -float(row["max_similarity"])))
     issues = validate_adjudication_candidates(candidates)
     reviewed = sum(row.get("decision") in ALLOWED_DECISIONS for row in candidates)
-    unresolved = len(candidates) - reviewed
+    fully_adjudicated = sum(_candidate_fully_adjudicated(row) for row in candidates)
+    secondary_reviewed = sum(
+        row.get("secondary_decision") in ALLOWED_DECISIONS for row in candidates
+    )
+    unresolved = len(candidates) - fully_adjudicated
     completed = bool(candidates) and unresolved == 0 and not issues
     packet = {
-        "schema_version": "finetune_contamination_adjudication_packet_v1",
+        "schema_version": "finetune_contamination_adjudication_packet_v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source_artifact": str(source_path).replace("\\", "/"),
         "allowed_decisions": sorted(ALLOWED_DECISIONS),
         "review_contract": {
+            "reviewer_id_required": True,
             "reviewer_role_required": True,
             "reviewed_at_required": True,
             "reviewer_notes_required": True,
+            "critical_pairs_require_two_independent_reviewers": True,
+            "critical_pair_disagreement_blocks_completion": True,
             "text_is_not_copied_into_packet": True,
             "source_rows_must_be_inspected_locally": True,
+        },
+        "integrity": {
+            "source_artifact_sha256": _sha256_file(source_path),
+            "candidate_snapshot_sha256": _candidate_snapshot_sha256(candidates),
+            "candidate_count": len(candidates),
         },
         "candidates": candidates,
         "clinical_validation": False,
         "claim_boundary": CLAIM_BOUNDARY,
     }
     readiness = {
-        "schema_version": "finetune_contamination_adjudication_readiness_v1",
+        "schema_version": "finetune_contamination_adjudication_readiness_v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": "completed_internal_review" if completed else "ready_for_human_adjudication",
         "completed": completed,
@@ -82,14 +101,17 @@ def build_finetune_contamination_adjudication(
         "packet_path": str(packet_path).replace("\\", "/"),
         "candidate_count": len(candidates),
         "reviewed_count": reviewed,
+        "secondary_reviewed_count": secondary_reviewed,
+        "fully_adjudicated_count": fully_adjudicated,
         "unresolved_count": unresolved,
         "critical_unresolved_count": sum(
             row.get("severity") == "critical"
-            and row.get("decision") not in ALLOWED_DECISIONS
+            and not _candidate_fully_adjudicated(row)
             for row in candidates
         ),
         "counts_by_channel": dict(Counter(row.get("channel") for row in candidates)),
         "validation_issues": issues,
+        "integrity": packet["integrity"],
         "adapter_promotion_allowed": False,
         "external_no_read_evaluation_completed": False,
         "clinical_validation": False,
@@ -127,10 +149,85 @@ def validate_adjudication_candidates(
             continue
         if decision not in ALLOWED_DECISIONS:
             issues.append(f"invalid_decision:{pair_id}")
-        for field in ("reviewer_role", "reviewed_at", "reviewer_notes"):
+        for field in ("reviewer_id", "reviewer_role", "reviewed_at", "reviewer_notes"):
             if not str(row.get(field) or "").strip():
                 issues.append(f"missing_{field}:{pair_id}")
+        if row.get("severity") != "critical":
+            continue
+        secondary_decision = row.get("secondary_decision")
+        if secondary_decision not in ALLOWED_DECISIONS:
+            issues.append(f"missing_or_invalid_secondary_decision:{pair_id}")
+            continue
+        for field in (
+            "secondary_reviewer_id",
+            "secondary_reviewer_role",
+            "secondary_reviewed_at",
+            "secondary_reviewer_notes",
+        ):
+            if not str(row.get(field) or "").strip():
+                issues.append(f"missing_{field}:{pair_id}")
+        primary_id = str(row.get("reviewer_id") or "").strip()
+        secondary_id = str(row.get("secondary_reviewer_id") or "").strip()
+        if primary_id and primary_id == secondary_id:
+            issues.append(f"critical_reviewers_not_independent:{pair_id}")
+        if decision != secondary_decision:
+            issues.append(f"critical_reviewer_disagreement:{pair_id}")
     return issues
+
+
+def _candidate_fully_adjudicated(row: dict[str, Any]) -> bool:
+    if row.get("decision") not in ALLOWED_DECISIONS:
+        return False
+    if any(
+        not str(row.get(field) or "").strip()
+        for field in ("reviewer_id", "reviewer_role", "reviewed_at", "reviewer_notes")
+    ):
+        return False
+    if row.get("severity") != "critical":
+        return True
+    return bool(
+        row.get("secondary_decision") in ALLOWED_DECISIONS
+        and row.get("secondary_decision") == row.get("decision")
+        and str(row.get("secondary_reviewer_id") or "").strip()
+        and str(row.get("secondary_reviewer_id") or "").strip()
+        != str(row.get("reviewer_id") or "").strip()
+        and str(row.get("secondary_reviewer_role") or "").strip()
+        and str(row.get("secondary_reviewed_at") or "").strip()
+        and str(row.get("secondary_reviewer_notes") or "").strip()
+    )
+
+
+def _sha256_file(path: str | Path) -> str | None:
+    file = Path(path)
+    return hashlib.sha256(file.read_bytes()).hexdigest() if file.exists() else None
+
+
+def _candidate_snapshot_sha256(candidates: list[dict[str, Any]]) -> str:
+    immutable_rows = [
+        {
+            key: row.get(key)
+            for key in (
+                "pair_id",
+                "channel",
+                "train_id",
+                "train_source",
+                "evaluation_id",
+                "evaluation_source",
+                "word_tfidf_cosine",
+                "character_tfidf_cosine",
+                "max_similarity",
+                "severity",
+                "priority",
+            )
+        }
+        for row in candidates
+    ]
+    encoded = json.dumps(
+        immutable_rows,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _read_json(path: str | Path) -> dict[str, Any]:
