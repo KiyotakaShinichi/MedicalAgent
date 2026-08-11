@@ -19,8 +19,8 @@ def build_timeline_intelligence(report):
         "tumor_board_brief": _tumor_board_brief(report, assessment),
         "supported_questions": [
             "What changed in the last 14 days?",
-            "Has toxicity increased since cycle 2?",
-            "Is imaging response improving while CBC toxicity worsens?",
+            "Have CBC review signals changed since cycle 2?",
+            "Do the imaging measurements and CBC review signals point in different directions?",
             "Summarize this patient for tumor board review.",
         ],
     }
@@ -40,7 +40,7 @@ def answer_timeline_question(report, question):
     if "toxicity" in lower or "cycle 2" in lower or "cbc" in lower:
         trend = intelligence["toxicity_trend"]
         return _answer(
-            f"CBC toxicity trend is {trend['status']}. {trend['message']}",
+            f"CBC record-change status is {trend['status']}. {trend['message']}",
             intelligence,
         )
 
@@ -48,7 +48,7 @@ def answer_timeline_question(report, question):
         response = intelligence["response_trend"]
         discordance = intelligence["discordance"]
         return _answer(
-            f"Response trend: {response['message']} Discordance check: {discordance['message']}",
+            f"Synthetic imaging/model grouping: {response['message']} Record-direction check: {discordance['message']}",
             intelligence,
         )
 
@@ -56,7 +56,7 @@ def answer_timeline_question(report, question):
         return _answer(intelligence["tumor_board_brief"], intelligence)
 
     return _answer(
-        "I can summarize recent changes, CBC toxicity trend, MRI/response trend, discordance, or tumor-board style brief.",
+        "I can summarize recent entries, CBC review-signal changes, imaging measurements, cross-record differences, or a clinician-review brief.",
         intelligence,
     )
 
@@ -86,13 +86,13 @@ def _toxicity_trend(labs, risks):
 
     if late_min_wbc < early_min_wbc * 0.8 or late_min_platelets < early_min_platelets * 0.8:
         status = "worsening"
-        message = "Later cycles show lower CBC nadirs than earlier cycles."
+        message = "Later represented cycles contain lower CBC nadirs than earlier represented cycles."
     elif urgent_cbc:
         status = "clinician_review"
         message = f"{len(urgent_cbc)} urgent CBC/clinical rule flag(s) are present."
     else:
-        status = "stable_or_recovering"
-        message = "CBC toxicity does not appear worse in later represented cycles."
+        status = "no_additional_rule_match"
+        message = "No additional fixed CBC worsening rule matched in later represented cycles; this is not reassurance."
 
     return {
         "status": status,
@@ -109,7 +109,9 @@ def _response_trend(mri_signal, report):
     message = mri_signal.get("message") or "No MRI/model response trend is available."
     status = mri_signal.get("status") or "unknown"
     if outcome:
-        message = f"{message} Final recorded outcome: {outcome.get('response_category')} / {outcome.get('cancer_status')}."
+        message = (
+            f"{message} A simulator outcome field is present but is not interpreted as a patient result."
+        )
     return {
         "status": status,
         "message": message,
@@ -124,16 +126,16 @@ def _discordance(mri_signal, clinical_signal):
     if favorable_response and clinical_review:
         return {
             "status": "response_toxicity_discordance",
-            "message": "Response signal is favorable, but CBC/symptom monitoring flags still need review.",
+            "message": "The higher simulator grouping and CBC/symptom review flags point in different directions.",
         }
     if not favorable_response and clinical_review:
         return {
             "status": "aligned_concern",
-            "message": "Response and clinical monitoring signals both need closer review.",
+            "message": "The lower simulator grouping and fixed clinical review signals both support care-team review.",
         }
     return {
         "status": "no_major_discordance",
-        "message": "No major response-versus-toxicity discordance is visible in the current summary.",
+        "message": "No major cross-record direction conflict is visible in the current engineering summary.",
     }
 
 

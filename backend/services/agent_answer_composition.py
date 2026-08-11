@@ -368,7 +368,12 @@ def validate_answer_and_citations(
 
     # Refusal intents strip citations on purpose (see generate_answer).
     # Don't penalize that here.
-    if compressed_context and not citations and intent not in REFUSAL_INTENTS:
+    if (
+        compressed_context
+        and not citations
+        and intent not in REFUSAL_INTENTS
+        and not generated.get("deliberate_evidence_abstention")
+    ):
         issues.append("retrieved_context_without_citations")
     if any(term in reply.lower() for term in _UNSAFE_TREATMENT_TERMS):
         issues.append("treatment_directive_detected")
@@ -383,6 +388,7 @@ def validate_answer_and_citations(
         retrieved_context=compressed_context,
         safety=safety,
         intent=intent,
+        deliberate_evidence_abstention=bool(generated.get("deliberate_evidence_abstention")),
     )
     issues.extend(issue for issue in verifier.get("issues") or [] if issue not in issues)
 

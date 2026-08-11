@@ -32,6 +32,7 @@ FAST_STEP_NAMES = {
     "Backend progressive-loading and notification reliability tests",
     "Cloud, data-platform, and managed-vector contract tests",
     "Assurance, XAI, automation, and safety contract tests",
+    "SaaS control-plane and worker contract tests",
     "Frontend Vitest unit tests",
     "Frontend lint",
     "Frontend production build",
@@ -236,6 +237,22 @@ def _build_steps() -> list[Step]:
             ],
         ),
         Step(
+            name="SaaS control-plane and worker contract tests",
+            command=[
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/test_saas_control_plane.py",
+                "tests/test_saas_workers.py",
+                "tests/test_saas_foundation_readiness.py",
+                "tests/test_saas_platform_api.py",
+                "tests/test_api_security_hardening.py",
+                "tests/test_synthetic_demo_bootstrap.py",
+                "tests/test_multimodal_evidence_abstention.py",
+                "-q",
+            ],
+        ),
+        Step(
             name="Research abstention and scale-evaluation contract tests",
             command=[
                 sys.executable,
@@ -245,6 +262,7 @@ def _build_steps() -> list[Step]:
                 "tests/test_research_evidence_answerability.py",
                 "tests/test_prototype_independent_prompt_bank_v2.py",
                 "tests/test_real_pipeline_scale_eval.py",
+                "tests/test_mixed_query_scale_eval.py",
                 "tests/test_adversarial_generalization_label_audit.py",
                 "-q",
             ],
@@ -326,6 +344,10 @@ def _build_steps() -> list[Step]:
                 sys.executable,
                 "scripts/run_patient_xai_readability_dossier.py",
             ],
+        ),
+        Step(
+            name="Restricted synthetic SaaS foundation readiness",
+            command=[sys.executable, "scripts/run_saas_foundation_readiness.py"],
         ),
         Step(
             name="OIDC browser PKCE readiness",

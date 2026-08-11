@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_azure_search_index_readiness_v1",
-  "generated_at": "2026-08-09T15:39:04.938458+00:00",
+  "generated_at": "2026-08-11T04:32:53.283064+00:00",
   "status": "applied_shadow_index",
   "clinical_validation": false,
   "healthcare_production_ready": false,

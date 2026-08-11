@@ -10,7 +10,6 @@ from backend.services.app_logging import build_app_monitoring_summary
 from backend.services.agent_feedback import build_agent_feedback_summary
 from backend.services.agent_regression_eval import load_latest_agent_regression_report
 from backend.services.clinician_feedback import clinical_feedback_summary
-from backend.services.mle_readiness import build_mle_readiness_summary
 from backend.services.mri_derived_features import (
     build_mri_derived_feature_summary as build_mri_derived_feature_summary_service,
 )
@@ -48,6 +47,7 @@ DEFAULT_SYNTHETIC_MRI_REPORTS_CSV = _prefer_existing(
     "Data/complete_synthetic_breast_journeys/mri_reports.csv",
 )
 DEFAULT_BREASTDCEDL_METRICS_PATH = "Data/breastdcedl_spy1_baseline_metrics.json"
+DEFAULT_MLE_READINESS_PATH = "Data/mle_monitoring/latest_mle_readiness.json"
 
 
 def build_admin_analytics(db):
@@ -62,7 +62,11 @@ def build_admin_analytics(db):
     rag_summary = _frontend_rag_summary(build_rag_evaluation_summary(db))
     regression_report = load_latest_agent_regression_report()
     guardrails = _frontend_guardrail_summary(rag_summary, regression_report)
-    readiness = build_mle_readiness_summary(db=db)
+    readiness = _load_json(DEFAULT_MLE_READINESS_PATH) or {
+        "status": "unavailable",
+        "message": "No precomputed MLE readiness artifact is available.",
+        "clinical_validation": False,
+    }
     return {
         "roles": {
             "patient": "Personal portal, uploads, symptom/CBC/medication logging, support agent.",

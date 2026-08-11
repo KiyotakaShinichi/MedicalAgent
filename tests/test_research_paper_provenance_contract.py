@@ -109,3 +109,18 @@ def test_article_without_named_sections_is_not_discarded_as_front_matter():
     assert chunks
     assert all(chunk["section"] == "body" for chunk in chunks)
     assert all("Example citation" not in chunk["text"] for chunk in chunks)
+
+
+def test_guideline_highlights_and_extended_headings_are_sectioned():
+    text = (
+        "Article title\n\nHighlights\n\nA short evidence summary.\n\n"
+        "Introduction\n\nBackground prose.\n\nRisk factors\n\nRisk-factor prose.\n\n"
+        "Methodology\n\nMethod prose.\n\nRecommendations\n\nRecommendation prose.\n\n"
+        "References\n\n1. Example citation"
+    )
+
+    chunks = _chunk_text_by_section(text, chunk_chars=500, overlap_chars=50)
+
+    assert {chunk["section"] for chunk in chunks} >= {"abstract", "introduction", "body", "methods", "conclusion"}
+    assert any(chunk["section_heading"] == "Highlights" for chunk in chunks)
+    assert all("Example citation" not in chunk["text"] for chunk in chunks)

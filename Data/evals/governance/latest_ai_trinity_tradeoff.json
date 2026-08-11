@@ -1,0 +1,359 @@
+{
+  "schema_version": "ai_trinity_tradeoff_v1",
+  "generated_at": "2026-08-11T04:16:46.929629+00:00",
+  "status": "needs_attention",
+  "decision": "HOLD_ACCURACY_GROUNDING",
+  "promotion_allowed": false,
+  "current_operating_configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+  "decision_order": [
+    "safety_and_source_governance",
+    "accuracy_and_grounding",
+    "latency",
+    "unit_cost"
+  ],
+  "policy_path": "config/ai_trinity_policy.json",
+  "source_artifacts": {
+    "rag_baseline": "Data/evals/rag/latest_rag_baseline_comparison.json",
+    "cost_latency": "Data/evals/ops/latest_cost_latency_report.json",
+    "provider_reconciliation": "Data/evals/ops/latest_provider_usage_reconciliation.json",
+    "route_latency": "Data/evals/ops/latest_route_latency_budget.json"
+  },
+  "axes": {
+    "accuracy": {
+      "status": "needs_attention",
+      "accuracy_grounding_score": 0.71598,
+      "governance_floor_pass": true,
+      "accuracy_floor_pass": false,
+      "recall_at_10": 0.7838,
+      "citation_precision": 0.5243,
+      "claim_support_rate": 0.8378,
+      "unsupported_context_rate": 0.1622,
+      "source_tier_correctness": 1.0,
+      "refusal_correctness": 1.0
+    },
+    "latency": {
+      "status": "pass",
+      "retrieval_p95_ms": 307.365,
+      "retrieval_budget_ms": 500.0,
+      "normal_route_highest_p95_ms": 404.28,
+      "normal_route_budget_ms": 8000.0,
+      "retrieval_budget_pass": true,
+      "normal_route_budget_pass": true,
+      "production_slo": false
+    },
+    "unit_cost": {
+      "status": "blocked_evidence",
+      "provider_usage_coverage_rate": 0.0,
+      "paired_request_count": 0,
+      "evidence_complete": false,
+      "safe_supported_request_count": 0,
+      "cost_per_safe_supported_answer_usd": null,
+      "planning_budget_usd": 0.002,
+      "missing_cost_is_zero": false,
+      "audited_billing": false
+    }
+  },
+  "summary": {
+    "accuracy_status": "needs_attention",
+    "latency_status": "pass",
+    "unit_cost_status": "blocked_evidence",
+    "provider_usage_coverage_rate": 0.0,
+    "provider_paired_request_count": 0,
+    "current_accuracy_grounding_score": 0.71598,
+    "current_retrieval_p95_ms": 307.365,
+    "current_cost_per_safe_supported_answer_usd": null,
+    "retrieval_candidate_count": 7,
+    "fully_promotion_eligible_candidate_count": 0,
+    "improvement_proven_vs_bm25": false
+  },
+  "scenarios": [
+    {
+      "configuration": "bm25_only",
+      "accuracy_grounding_score": 0.72441,
+      "recall_at_10": 0.8041,
+      "mrr": 0.7086,
+      "ndcg_at_10": 0.6557,
+      "citation_precision": 0.4135,
+      "claim_support_rate": 0.9054,
+      "unsupported_context_rate": 0.0946,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 0.4595,
+      "latency_p50_ms": 44.512,
+      "latency_p95_ms": 74.411,
+      "relative_local_compute_index": 1.0,
+      "governance_floor_pass": false,
+      "accuracy_floor_pass": false,
+      "latency_budget_pass": true,
+      "unit_cost_evidence_complete": false,
+      "unit_cost_usd": null,
+      "promotion_eligible": false,
+      "promotion_blockers": [
+        "safety_or_source_governance_floor",
+        "accuracy_or_grounding_floor",
+        "provider_unit_cost_evidence"
+      ],
+      "dominated_by": [],
+      "two_axis_pareto_frontier": true,
+      "governance_eligible_pareto_frontier": false
+    },
+    {
+      "configuration": "faiss_dense_only",
+      "accuracy_grounding_score": 0.7257,
+      "recall_at_10": 0.8108,
+      "mrr": 0.7161,
+      "ndcg_at_10": 0.6553,
+      "citation_precision": 0.4351,
+      "claim_support_rate": 0.8784,
+      "unsupported_context_rate": 0.1216,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 0.5811,
+      "latency_p50_ms": 268.578,
+      "latency_p95_ms": 334.613,
+      "relative_local_compute_index": 6.0338,
+      "governance_floor_pass": false,
+      "accuracy_floor_pass": false,
+      "latency_budget_pass": true,
+      "unit_cost_evidence_complete": false,
+      "unit_cost_usd": null,
+      "promotion_eligible": false,
+      "promotion_blockers": [
+        "safety_or_source_governance_floor",
+        "accuracy_or_grounding_floor",
+        "provider_unit_cost_evidence"
+      ],
+      "dominated_by": [
+        "hybrid_rrf",
+        "hybrid_rrf_query_rewrite",
+        "hybrid_rrf_query_rewrite_parent_child"
+      ],
+      "two_axis_pareto_frontier": false,
+      "governance_eligible_pareto_frontier": false
+    },
+    {
+      "configuration": "hybrid_rrf",
+      "accuracy_grounding_score": 0.76086,
+      "recall_at_10": 0.8716,
+      "mrr": 0.6996,
+      "ndcg_at_10": 0.6622,
+      "citation_precision": 0.473,
+      "claim_support_rate": 0.9459,
+      "unsupported_context_rate": 0.0541,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 0.6081,
+      "latency_p50_ms": 268.578,
+      "latency_p95_ms": 334.613,
+      "relative_local_compute_index": 6.0338,
+      "governance_floor_pass": false,
+      "accuracy_floor_pass": false,
+      "latency_budget_pass": true,
+      "unit_cost_evidence_complete": false,
+      "unit_cost_usd": null,
+      "promotion_eligible": false,
+      "promotion_blockers": [
+        "safety_or_source_governance_floor",
+        "accuracy_or_grounding_floor",
+        "provider_unit_cost_evidence"
+      ],
+      "dominated_by": [
+        "hybrid_rrf_query_rewrite",
+        "hybrid_rrf_query_rewrite_parent_child"
+      ],
+      "two_axis_pareto_frontier": false,
+      "governance_eligible_pareto_frontier": false
+    },
+    {
+      "configuration": "hybrid_rrf_query_rewrite",
+      "accuracy_grounding_score": 0.7815,
+      "recall_at_10": 0.8851,
+      "mrr": 0.7262,
+      "ndcg_at_10": 0.6868,
+      "citation_precision": 0.5054,
+      "claim_support_rate": 0.9595,
+      "unsupported_context_rate": 0.0405,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 0.6216,
+      "latency_p50_ms": 268.331,
+      "latency_p95_ms": 306.788,
+      "relative_local_compute_index": 6.0283,
+      "governance_floor_pass": false,
+      "accuracy_floor_pass": false,
+      "latency_budget_pass": true,
+      "unit_cost_evidence_complete": false,
+      "unit_cost_usd": null,
+      "promotion_eligible": false,
+      "promotion_blockers": [
+        "safety_or_source_governance_floor",
+        "accuracy_or_grounding_floor",
+        "provider_unit_cost_evidence"
+      ],
+      "dominated_by": [],
+      "two_axis_pareto_frontier": true,
+      "governance_eligible_pareto_frontier": false
+    },
+    {
+      "configuration": "hybrid_rrf_query_rewrite_parent_child",
+      "accuracy_grounding_score": 0.7815,
+      "recall_at_10": 0.8851,
+      "mrr": 0.7262,
+      "ndcg_at_10": 0.6868,
+      "citation_precision": 0.5054,
+      "claim_support_rate": 0.9595,
+      "unsupported_context_rate": 0.0405,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 0.6216,
+      "latency_p50_ms": 268.446,
+      "latency_p95_ms": 306.9,
+      "relative_local_compute_index": 6.0309,
+      "governance_floor_pass": false,
+      "accuracy_floor_pass": false,
+      "latency_budget_pass": true,
+      "unit_cost_evidence_complete": false,
+      "unit_cost_usd": null,
+      "promotion_eligible": false,
+      "promotion_blockers": [
+        "safety_or_source_governance_floor",
+        "accuracy_or_grounding_floor",
+        "provider_unit_cost_evidence"
+      ],
+      "dominated_by": [
+        "hybrid_rrf_query_rewrite"
+      ],
+      "two_axis_pareto_frontier": false,
+      "governance_eligible_pareto_frontier": false
+    },
+    {
+      "configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
+      "accuracy_grounding_score": 0.71598,
+      "recall_at_10": 0.7838,
+      "mrr": 0.6892,
+      "ndcg_at_10": 0.6453,
+      "citation_precision": 0.5243,
+      "claim_support_rate": 0.8378,
+      "unsupported_context_rate": 0.1622,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 1.0,
+      "latency_p50_ms": 268.953,
+      "latency_p95_ms": 307.365,
+      "relative_local_compute_index": 6.0423,
+      "governance_floor_pass": true,
+      "accuracy_floor_pass": false,
+      "latency_budget_pass": true,
+      "unit_cost_evidence_complete": false,
+      "unit_cost_usd": null,
+      "promotion_eligible": false,
+      "promotion_blockers": [
+        "accuracy_or_grounding_floor",
+        "provider_unit_cost_evidence"
+      ],
+      "dominated_by": [
+        "bm25_only",
+        "hybrid_rrf_query_rewrite",
+        "hybrid_rrf_query_rewrite_parent_child"
+      ],
+      "two_axis_pareto_frontier": false,
+      "governance_eligible_pareto_frontier": true
+    },
+    {
+      "configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier_pruned",
+      "accuracy_grounding_score": 0.69516,
+      "recall_at_10": 0.7838,
+      "mrr": 0.6622,
+      "ndcg_at_10": 0.6393,
+      "citation_precision": 0.4275,
+      "claim_support_rate": 0.8378,
+      "unsupported_context_rate": 0.1622,
+      "refusal_correctness": 1.0,
+      "source_tier_correctness": 1.0,
+      "latency_p50_ms": 274.591,
+      "latency_p95_ms": 310.54,
+      "relative_local_compute_index": 6.1689,
+      "governance_floor_pass": true,
+      "accuracy_floor_pass": false,
+      "latency_budget_pass": true,
+      "unit_cost_evidence_complete": false,
+      "unit_cost_usd": null,
+      "promotion_eligible": false,
+      "promotion_blockers": [
+        "accuracy_or_grounding_floor",
+        "provider_unit_cost_evidence"
+      ],
+      "dominated_by": [
+        "bm25_only",
+        "hybrid_rrf_query_rewrite",
+        "hybrid_rrf_query_rewrite_parent_child",
+        "hybrid_rrf_query_rewrite_parent_child_source_tier"
+      ],
+      "two_axis_pareto_frontier": false,
+      "governance_eligible_pareto_frontier": false
+    }
+  ],
+  "planning_only_route_cost_scenarios": [
+    {
+      "route": "full_api_path",
+      "p50_latency_ms_estimate": 932.59,
+      "planning_cost_per_safe_answer_usd": 8.13e-05,
+      "within_planning_budget": true,
+      "accuracy_measured_on_same_requests": false,
+      "provider_billing_observed": false,
+      "promotion_eligible": false,
+      "basis": "engineering estimate from current token/latency telemetry; not provider billing truth"
+    },
+    {
+      "route": "cached_path",
+      "p50_latency_ms_estimate": 202.87,
+      "planning_cost_per_safe_answer_usd": 6e-07,
+      "within_planning_budget": true,
+      "accuracy_measured_on_same_requests": false,
+      "provider_billing_observed": false,
+      "promotion_eligible": false,
+      "basis": "engineering estimate from current token/latency telemetry; not provider billing truth"
+    },
+    {
+      "route": "local_slm_routing_plus_api_answer",
+      "p50_latency_ms_estimate": 937.98,
+      "planning_cost_per_safe_answer_usd": 7.59e-05,
+      "within_planning_budget": true,
+      "accuracy_measured_on_same_requests": false,
+      "provider_billing_observed": false,
+      "promotion_eligible": false,
+      "basis": "engineering estimate from current token/latency telemetry; not provider billing truth"
+    },
+    {
+      "route": "local_slm_query_rewrite_plus_api_answer",
+      "p50_latency_ms_estimate": 1005.96,
+      "planning_cost_per_safe_answer_usd": 7.47e-05,
+      "within_planning_budget": true,
+      "accuracy_measured_on_same_requests": false,
+      "provider_billing_observed": false,
+      "promotion_eligible": false,
+      "basis": "engineering estimate from current token/latency telemetry; not provider billing truth"
+    },
+    {
+      "route": "deterministic_only_refusal_path",
+      "p50_latency_ms_estimate": 42.98,
+      "planning_cost_per_safe_answer_usd": 0.0,
+      "within_planning_budget": true,
+      "accuracy_measured_on_same_requests": false,
+      "provider_billing_observed": false,
+      "promotion_eligible": false,
+      "basis": "engineering estimate from current token/latency telemetry; not provider billing truth"
+    }
+  ],
+  "current_policy": {
+    "decision": "retain_source_governed_stack_for_governance",
+    "reason": "The current source-governed stack preserves source-tier and refusal correctness, but it is not promoted as an accuracy, latency, or cost winner.",
+    "dense_or_complex_retrieval_promoted": false,
+    "cost_optimization_promoted": false
+  },
+  "next_actions": [
+    "Raise citation precision and reduce unsupported context on development cases without weakening source governance.",
+    "Capture at least 30 paired provider-usage requests with at least 80% coverage on non-patient synthetic traffic.",
+    "Recompute cost per safe, source-governed, claim-supported answer from provider-token-derived pricing rather than treating missing telemetry as zero.",
+    "Re-run the same frozen candidate matrix after quality changes and reject any option that buys speed or cost by crossing a safety floor."
+  ],
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "audited_billing": false,
+  "production_slo": false,
+  "claim_boundary": "The AI Trinity is internal engineering governance over Accuracy, Latency, and Unit Cost. Missing provider usage is not treated as zero cost. Passing does not establish clinical validation, patient benefit, audited billing, a production SLO, or production healthcare readiness."
+}

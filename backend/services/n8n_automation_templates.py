@@ -137,6 +137,18 @@ def _templates() -> list[dict[str, Any]]:
             ),
         },
         {
+            "id": "saas_workspace_event",
+            "title": "Synthetic SaaS Workspace Event",
+            "allowed_use": "Deliver redacted tenant, project, evaluation-job, and usage lifecycle events.",
+            "not_allowed_use": "Do not include patient data, raw prompts, clinical conclusions, or billing claims.",
+            "workflow": _workflow(
+                name="NLCare Synthetic SaaS Workspace Event",
+                trigger_path="nlcare/saas-workspace-event",
+                action_summary="Route a signed, redacted control-plane event to internal engineering automation.",
+                required_fields=["organization_id", "event_type", "aggregate_type", "aggregate_id"],
+            ),
+        },
+        {
             "id": "trace_quality_digest",
             "title": "Trace Quality Digest",
             "allowed_use": "Notify maintainers when trace coverage or trace-envelope validation needs attention.",

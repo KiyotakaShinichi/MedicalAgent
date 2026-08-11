@@ -178,8 +178,10 @@ MODES: dict[str, RagModeConfig] = {
         allowed_use=("portal_help",),
         allow_citations=True,
         insufficient_evidence_default=(
-            "I don't have portal help text for that question yet. The "
-            "support team can help — use the contact info in the footer."
+            "Use the left navigation to open Overview, Labs, Signals, Timeline, "
+            "Family & Genetics, or Support. In Support, select the plus button "
+            "beside the message box to open a structured record form. If the "
+            "control you need is not visible, refresh the page and sign in again."
         ),
         # Portal help cannot make medical claims at all; enforce the full
         # banned-claim list.

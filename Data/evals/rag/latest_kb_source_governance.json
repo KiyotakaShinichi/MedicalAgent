@@ -1,10 +1,10 @@
 {
   "schema_version": "kb_source_governance_v1",
-  "generated_at": "2026-08-09T12:05:51.298747+00:00",
+  "generated_at": "2026-08-11T02:13:10.304631+00:00",
   "status": "strong",
-  "kb_chunks_path": "C:\\Users\\L\\Downloads\\MedicalAgent\\Data\\rag_knowledge_base_chunks.json",
+  "kb_chunks_path": "Data/rag_knowledge_base_chunks.json",
   "source_count": 58,
-  "chunk_count": 766,
+  "chunk_count": 831,
   "tier_distribution": {
     "T1": 5,
     "T2": 22,
@@ -102,7 +102,7 @@
         "clinician_only"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.426817+00:00",
+      "ingested_at": "2026-08-11T02:03:33.539619+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -141,7 +141,7 @@
         "clinician_only"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.428204+00:00",
+      "ingested_at": "2026-08-11T02:03:33.590334+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -180,7 +180,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.452580+00:00",
+      "ingested_at": "2026-08-11T02:03:34.736670+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -218,7 +218,7 @@
         "clinician_only"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.455015+00:00",
+      "ingested_at": "2026-08-11T02:03:34.838941+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -257,7 +257,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.470746+00:00",
+      "ingested_at": "2026-08-11T02:03:35.732992+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -295,10 +295,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.622060+00:00",
+      "ingested_at": "2026-08-11T02:03:36.953244+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 142,
+      "chunk_count": 156,
       "topics": [
         "oncology_supplement_interaction_boundary"
       ],
@@ -342,10 +342,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.847501+00:00",
+      "ingested_at": "2026-08-11T02:03:40.649961+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 64,
+      "chunk_count": 67,
       "topics": [
         "vus_breast_ovarian_cancer_context"
       ],
@@ -375,6 +375,53 @@
       "selection_rationale": "Breast and ovarian cancer context for why uncertain variants require qualified review."
     },
     {
+      "source_id": "f0a6d9e8951e231a",
+      "title": "Web-based cancer symptom self-management system: a randomized clinical trial",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12053558/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC12053558_web-based-cancer-symptom-self-management-system-a-randomized-clinical-trial.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-11T02:03:36.653594+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 64,
+      "topics": [
+        "electronic_symptom_monitoring"
+      ],
+      "modalities": [
+        "clinical workflow",
+        "patient-reported outcomes",
+        "symptoms"
+      ],
+      "pmcid": "PMC12053558",
+      "pmid": "40323601",
+      "doi": "10.1001/jamanetworkopen.2025.8353",
+      "publication_date": "2025 May 1",
+      "journal": "JAMA Netw Open",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "workflow_design_evidence",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Recent randomized evidence for EHR-integrated symptom reporting and self-management workflow design."
+    },
+    {
       "source_id": "bc9603074d87c01a",
       "title": "ACMG and AMP standards and guidelines for the interpretation of sequence variants",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4544753/",
@@ -388,7 +435,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.745860+00:00",
+      "ingested_at": "2026-08-11T02:03:38.645964+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 60,
@@ -421,53 +468,6 @@
       "selection_rationale": "Defines professional variant-classification concepts used to keep automated VUS interpretation out of scope."
     },
     {
-      "source_id": "f0a6d9e8951e231a",
-      "title": "Web-based cancer symptom self-management system: a randomized clinical trial",
-      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12053558/",
-      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC12053558_web-based-cancer-symptom-self-management-system-a-randomized-clinical-trial.txt",
-      "trust_level": "research_paper",
-      "tier": "T2",
-      "tier_rank": 2,
-      "tier_description": "Individual peer-reviewed primary research paper.",
-      "allowed_use": [
-        "education",
-        "monitoring_context"
-      ],
-      "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.564721+00:00",
-      "staleness_status": "current",
-      "staleness_days": 0,
-      "chunk_count": 55,
-      "topics": [
-        "electronic_symptom_monitoring"
-      ],
-      "modalities": [
-        "clinical workflow",
-        "patient-reported outcomes",
-        "symptoms"
-      ],
-      "pmcid": "PMC12053558",
-      "pmid": "40323601",
-      "doi": "10.1001/jamanetworkopen.2025.8353",
-      "publication_date": "2025 May 1",
-      "journal": "JAMA Netw Open",
-      "license": "CC BY",
-      "retracted": false,
-      "patient_facing_suitability": "education_with_boundary",
-      "evidence_role": "workflow_design_evidence",
-      "not_allowed_for": [
-        "diagnosis",
-        "treatment_selection_or_change",
-        "dose_change",
-        "prognosis_or_survival_estimate",
-        "patient_specific_genetic_risk",
-        "vus_reclassification",
-        "tumor_marker_conclusion",
-        "supplement_safety_clearance"
-      ],
-      "selection_rationale": "Recent randomized evidence for EHR-integrated symptom reporting and self-management workflow design."
-    },
-    {
       "source_id": "76992c5151ce9cb2",
       "title": "Essential components of an electronic patient-reported symptom monitoring and management system",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11400212/",
@@ -481,10 +481,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.539427+00:00",
+      "ingested_at": "2026-08-11T02:03:36.403476+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 49,
+      "chunk_count": 56,
       "topics": [
         "electronic_symptom_monitoring"
       ],
@@ -528,10 +528,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.867179+00:00",
+      "ingested_at": "2026-08-11T02:03:40.837239+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 44,
+      "chunk_count": 45,
       "topics": [
         "vus_reclassification"
       ],
@@ -561,51 +561,6 @@
       "selection_rationale": "Supports education about uncertainty and reclassification without treating a VUS as pathogenic."
     },
     {
-      "source_id": "7cd1e3e1103a156a",
-      "title": "The role of MRI in assessing residual disease and pCR after neoadjuvant chemotherapy",
-      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3609956/",
-      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC3609956_the-role-of-mri-in-assessing-residual-disease-and-pcr-after-neoadjuvant-chemotherapy.txt",
-      "trust_level": "systematic_review",
-      "tier": "T2",
-      "tier_rank": 2,
-      "tier_description": "Peer-reviewed systematic review / meta-analysis.",
-      "allowed_use": [
-        "education",
-        "monitoring_context"
-      ],
-      "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.695925+00:00",
-      "staleness_status": "current",
-      "staleness_days": 0,
-      "chunk_count": 27,
-      "topics": [
-        "mri_response_monitoring"
-      ],
-      "modalities": [
-        "MRI"
-      ],
-      "pmcid": "PMC3609956",
-      "pmid": "23359240",
-      "doi": "10.1007/s13244-013-0219-y",
-      "publication_date": "2013 Apr",
-      "journal": "Insights Imaging",
-      "license": "CC BY-NC",
-      "retracted": false,
-      "patient_facing_suitability": "education_with_boundary",
-      "evidence_role": "monitoring_context",
-      "not_allowed_for": [
-        "diagnosis",
-        "treatment_selection_or_change",
-        "dose_change",
-        "prognosis_or_survival_estimate",
-        "patient_specific_genetic_risk",
-        "vus_reclassification",
-        "tumor_marker_conclusion",
-        "supplement_safety_clearance"
-      ],
-      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
-    },
-    {
       "source_id": "dddb6e87a9d09d30",
       "title": "Anxiety and depression in adult cancer patients: ESMO clinical practice guideline",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10163167/",
@@ -619,10 +574,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.487648+00:00",
+      "ingested_at": "2026-08-11T02:03:35.852441+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 26,
+      "chunk_count": 35,
       "topics": [
         "oncology_distress_review_routing"
       ],
@@ -653,6 +608,97 @@
       "selection_rationale": "Supports cautious distress-screening and referral workflow concepts, not automated psychiatric diagnosis."
     },
     {
+      "source_id": "2524619e8115a75d",
+      "title": "DCE-MRI texture features for early breast cancer therapy response prediction",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5500247/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC5500247_dce-mri-texture-features-for-early-breast-cancer-therapy-response-prediction.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-11T02:03:39.279976+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 34,
+      "topics": [
+        "mri_radiomics_response"
+      ],
+      "modalities": [
+        "DCE-MRI",
+        "MRI"
+      ],
+      "pmcid": "PMC5500247",
+      "pmid": "28691102",
+      "doi": "10.18383/j.tom.2016.00241",
+      "publication_date": "2017 Mar",
+      "journal": "Tomography",
+      "license": "CC BY-NC-ND",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
+    },
+    {
+      "source_id": "7cd1e3e1103a156a",
+      "title": "The role of MRI in assessing residual disease and pCR after neoadjuvant chemotherapy",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3609956/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC3609956_the-role-of-mri-in-assessing-residual-disease-and-pcr-after-neoadjuvant-chemotherapy.txt",
+      "trust_level": "systematic_review",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Peer-reviewed systematic review / meta-analysis.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-11T02:03:37.797943+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 29,
+      "topics": [
+        "mri_response_monitoring"
+      ],
+      "modalities": [
+        "MRI"
+      ],
+      "pmcid": "PMC3609956",
+      "pmid": "23359240",
+      "doi": "10.1007/s13244-013-0219-y",
+      "publication_date": "2013 Apr",
+      "journal": "Insights Imaging",
+      "license": "CC BY-NC",
+      "retracted": false,
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
+    },
+    {
       "source_id": "513e4b58992b3ee6",
       "title": "Occurrence and risk factors of chemotherapy-induced neutropenia in breast cancer",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10898895/",
@@ -666,7 +712,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.503689+00:00",
+      "ingested_at": "2026-08-11T02:03:36.042201+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 26,
@@ -699,52 +745,6 @@
       "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
-      "source_id": "2524619e8115a75d",
-      "title": "DCE-MRI texture features for early breast cancer therapy response prediction",
-      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5500247/",
-      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC5500247_dce-mri-texture-features-for-early-breast-cancer-therapy-response-prediction.txt",
-      "trust_level": "research_paper",
-      "tier": "T2",
-      "tier_rank": 2,
-      "tier_description": "Individual peer-reviewed primary research paper.",
-      "allowed_use": [
-        "education",
-        "monitoring_context"
-      ],
-      "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.776521+00:00",
-      "staleness_status": "current",
-      "staleness_days": 0,
-      "chunk_count": 23,
-      "topics": [
-        "mri_radiomics_response"
-      ],
-      "modalities": [
-        "DCE-MRI",
-        "MRI"
-      ],
-      "pmcid": "PMC5500247",
-      "pmid": "28691102",
-      "doi": "10.18383/j.tom.2016.00241",
-      "publication_date": "2017 Mar",
-      "journal": "Tomography",
-      "license": "CC BY-NC-ND",
-      "retracted": false,
-      "patient_facing_suitability": "education_with_boundary",
-      "evidence_role": "monitoring_context",
-      "not_allowed_for": [
-        "diagnosis",
-        "treatment_selection_or_change",
-        "dose_change",
-        "prognosis_or_survival_estimate",
-        "patient_specific_genetic_risk",
-        "vus_reclassification",
-        "tumor_marker_conclusion",
-        "supplement_safety_clearance"
-      ],
-      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
-    },
-    {
       "source_id": "2a9f2ed73f0b189c",
       "title": "Early treatment response prediction using DCE-MRI tumor heterogeneity changes",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6702160/",
@@ -758,10 +758,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.811723+00:00",
+      "ingested_at": "2026-08-11T02:03:40.104320+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 23,
+      "chunk_count": 24,
       "topics": [
         "mri_response_prediction"
       ],
@@ -791,6 +791,53 @@
       "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
+      "source_id": "678551662f8b9f94",
+      "title": "Remote monitoring app for endocrine therapy adherence among patients with early-stage breast cancer",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11211959/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC11211959_remote-monitoring-app-for-endocrine-therapy-adherence-among-patients-with-early-stage-brea.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-11T02:03:36.229960+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 22,
+      "topics": [
+        "endocrine_monitoring_negative_result"
+      ],
+      "modalities": [
+        "digital monitoring",
+        "medication adherence",
+        "symptoms"
+      ],
+      "pmcid": "PMC11211959",
+      "pmid": "38935379",
+      "doi": "10.1001/jamanetworkopen.2024.17873",
+      "publication_date": "2024 Jun 3",
+      "journal": "JAMA Netw Open",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "clinician_context_only",
+      "evidence_role": "negative_result",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "A useful negative result: the monitored intervention did not improve its primary adherence outcome."
+    },
+    {
       "source_id": "ebea135f41f717e3",
       "title": "Communication and handling of symptomatic adverse events during adjuvant breast cancer chemotherapy",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6868829/",
@@ -804,7 +851,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.821953+00:00",
+      "ingested_at": "2026-08-11T02:03:40.351834+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 21,
@@ -838,10 +885,10 @@
       "selection_rationale": "Breast-cancer-specific evidence about communication around patient-reported adverse events."
     },
     {
-      "source_id": "678551662f8b9f94",
-      "title": "Remote monitoring app for endocrine therapy adherence among patients with early-stage breast cancer",
-      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11211959/",
-      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC11211959_remote-monitoring-app-for-endocrine-therapy-adherence-among-patients-with-early-stage-brea.txt",
+      "source_id": "5ff309c8a4b83b94",
+      "title": "Prophylaxis of chemotherapy-induced febrile neutropenia with G-CSF",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2846279/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC2846279_prophylaxis-of-chemotherapy-induced-febrile-neutropenia-with-g-csf.txt",
       "trust_level": "research_paper",
       "tier": "T2",
       "tier_rank": 2,
@@ -851,27 +898,26 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.517946+00:00",
+      "ingested_at": "2026-08-11T02:03:37.569102+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 20,
       "topics": [
-        "endocrine_monitoring_negative_result"
+        "febrile_neutropenia_supportive_care"
       ],
       "modalities": [
-        "digital monitoring",
-        "medication adherence",
-        "symptoms"
+        "CBC",
+        "clinical"
       ],
-      "pmcid": "PMC11211959",
-      "pmid": "38935379",
-      "doi": "10.1001/jamanetworkopen.2024.17873",
-      "publication_date": "2024 Jun 3",
-      "journal": "JAMA Netw Open",
-      "license": "CC BY",
+      "pmcid": "PMC2846279",
+      "pmid": "20191292",
+      "doi": "10.1007/s00520-010-0816-y",
+      "publication_date": "2010 May",
+      "journal": "Support Care Cancer",
+      "license": "CC BY-NC",
       "retracted": false,
-      "patient_facing_suitability": "clinician_context_only",
-      "evidence_role": "negative_result",
+      "patient_facing_suitability": "education_with_boundary",
+      "evidence_role": "monitoring_context",
       "not_allowed_for": [
         "diagnosis",
         "treatment_selection_or_change",
@@ -882,7 +928,7 @@
         "tumor_marker_conclusion",
         "supplement_safety_clearance"
       ],
-      "selection_rationale": "A useful negative result: the monitored intervention did not improve its primary adherence outcome."
+      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
       "source_id": "403a553744b33c3b",
@@ -898,7 +944,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.798614+00:00",
+      "ingested_at": "2026-08-11T02:03:39.891188+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 20,
@@ -932,52 +978,6 @@
       "selection_rationale": "Breast-service field evidence for symptom capture and review workflow feasibility."
     },
     {
-      "source_id": "5ff309c8a4b83b94",
-      "title": "Prophylaxis of chemotherapy-induced febrile neutropenia with G-CSF",
-      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2846279/",
-      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC2846279_prophylaxis-of-chemotherapy-induced-febrile-neutropenia-with-g-csf.txt",
-      "trust_level": "research_paper",
-      "tier": "T2",
-      "tier_rank": 2,
-      "tier_description": "Individual peer-reviewed primary research paper.",
-      "allowed_use": [
-        "education",
-        "monitoring_context"
-      ],
-      "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.679454+00:00",
-      "staleness_status": "current",
-      "staleness_days": 0,
-      "chunk_count": 19,
-      "topics": [
-        "febrile_neutropenia_supportive_care"
-      ],
-      "modalities": [
-        "CBC",
-        "clinical"
-      ],
-      "pmcid": "PMC2846279",
-      "pmid": "20191292",
-      "doi": "10.1007/s00520-010-0816-y",
-      "publication_date": "2010 May",
-      "journal": "Support Care Cancer",
-      "license": "CC BY-NC",
-      "retracted": false,
-      "patient_facing_suitability": "education_with_boundary",
-      "evidence_role": "monitoring_context",
-      "not_allowed_for": [
-        "diagnosis",
-        "treatment_selection_or_change",
-        "dose_change",
-        "prognosis_or_survival_estimate",
-        "patient_specific_genetic_risk",
-        "vus_reclassification",
-        "tumor_marker_conclusion",
-        "supplement_safety_clearance"
-      ],
-      "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
-    },
-    {
       "source_id": "b6cee03f078d056a",
       "title": "Risk of hematological toxicities in a SWOG breast cancer chemotherapy trial",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3940691/",
@@ -991,7 +991,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.709850+00:00",
+      "ingested_at": "2026-08-11T02:03:37.999996+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 19,
@@ -1037,10 +1037,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.788142+00:00",
+      "ingested_at": "2026-08-11T02:03:39.715669+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 17,
+      "chunk_count": 18,
       "topics": [
         "febrile_neutropenia_supportive_care"
       ],
@@ -1070,53 +1070,6 @@
       "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
-      "source_id": "ea950047d9b0a729",
-      "title": "Standards, options and recommendations for serum tumour markers in breast cancer",
-      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2752999/",
-      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC2752999_standards-options-and-recommendations-for-serum-tumour-markers-in-breast-cancer.txt",
-      "trust_level": "research_paper",
-      "tier": "T2",
-      "tier_rank": 2,
-      "tier_description": "Individual peer-reviewed primary research paper.",
-      "allowed_use": [
-        "education",
-        "monitoring_context"
-      ],
-      "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.660075+00:00",
-      "staleness_status": "current",
-      "staleness_days": 0,
-      "chunk_count": 16,
-      "topics": [
-        "tumor_marker_limitations"
-      ],
-      "modalities": [
-        "CA 15-3",
-        "CEA",
-        "tumor markers"
-      ],
-      "pmcid": "PMC2752999",
-      "pmid": "12915901",
-      "doi": "10.1038/sj.bjc.6601082",
-      "publication_date": "2003 Aug",
-      "journal": "Br J Cancer",
-      "license": "CC BY",
-      "retracted": false,
-      "patient_facing_suitability": "review_routing_only",
-      "evidence_role": "claim_boundary",
-      "not_allowed_for": [
-        "diagnosis",
-        "treatment_selection_or_change",
-        "dose_change",
-        "prognosis_or_survival_estimate",
-        "patient_specific_genetic_risk",
-        "vus_reclassification",
-        "tumor_marker_conclusion",
-        "supplement_safety_clearance"
-      ],
-      "selection_rationale": "Useful for explaining why serum markers are context and cannot independently establish diagnosis or recurrence."
-    },
-    {
       "source_id": "890d72c72f9459a3",
       "title": "Patterns of chemotherapy-associated toxicity and supportive care in oncology practice",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3987093/",
@@ -1130,10 +1083,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.721151+00:00",
+      "ingested_at": "2026-08-11T02:03:38.287517+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 16,
+      "chunk_count": 17,
       "topics": [
         "chemotherapy_toxicity_supportive_care"
       ],
@@ -1177,10 +1130,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.762067+00:00",
+      "ingested_at": "2026-08-11T02:03:38.940146+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 15,
+      "chunk_count": 17,
       "topics": [
         "cbc_toxicity_monitoring"
       ],
@@ -1210,6 +1163,53 @@
       "selection_rationale": "Retained from the original internally selected open-access monitoring corpus."
     },
     {
+      "source_id": "ea950047d9b0a729",
+      "title": "Standards, options and recommendations for serum tumour markers in breast cancer",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2752999/",
+      "source_path": "KnowledgeBase\\raw\\research_papers\\PMC2752999_standards-options-and-recommendations-for-serum-tumour-markers-in-breast-cancer.txt",
+      "trust_level": "research_paper",
+      "tier": "T2",
+      "tier_rank": 2,
+      "tier_description": "Individual peer-reviewed primary research paper.",
+      "allowed_use": [
+        "education",
+        "monitoring_context"
+      ],
+      "allowed_use_source": "source_manifest",
+      "ingested_at": "2026-08-11T02:03:37.292062+00:00",
+      "staleness_status": "current",
+      "staleness_days": 0,
+      "chunk_count": 16,
+      "topics": [
+        "tumor_marker_limitations"
+      ],
+      "modalities": [
+        "CA 15-3",
+        "CEA",
+        "tumor markers"
+      ],
+      "pmcid": "PMC2752999",
+      "pmid": "12915901",
+      "doi": "10.1038/sj.bjc.6601082",
+      "publication_date": "2003 Aug",
+      "journal": "Br J Cancer",
+      "license": "CC BY",
+      "retracted": false,
+      "patient_facing_suitability": "review_routing_only",
+      "evidence_role": "claim_boundary",
+      "not_allowed_for": [
+        "diagnosis",
+        "treatment_selection_or_change",
+        "dose_change",
+        "prognosis_or_survival_estimate",
+        "patient_specific_genetic_risk",
+        "vus_reclassification",
+        "tumor_marker_conclusion",
+        "supplement_safety_clearance"
+      ],
+      "selection_rationale": "Useful for explaining why serum markers are context and cannot independently establish diagnosis or recurrence."
+    },
+    {
       "source_id": "a9a0fe0778d04773",
       "title": "Use of PRO-CTCAE in oncology clinical trials",
       "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452844/",
@@ -1223,7 +1223,7 @@
         "monitoring_context"
       ],
       "allowed_use_source": "source_manifest",
-      "ingested_at": "2026-08-09T12:01:06.650251+00:00",
+      "ingested_at": "2026-08-11T02:03:37.137252+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 9,
@@ -1270,10 +1270,10 @@
         "monitoring_context"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.874089+00:00",
+      "ingested_at": "2026-08-11T02:03:40.945178+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
-      "chunk_count": 2,
+      "chunk_count": 3,
       "topics": [
         "cbc_toxicity_monitoring"
       ],
@@ -1307,7 +1307,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.433166+00:00",
+      "ingested_at": "2026-08-11T02:03:33.782377+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 3,
@@ -1343,7 +1343,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.458907+00:00",
+      "ingested_at": "2026-08-11T02:03:35.026114+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 3,
@@ -1380,7 +1380,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.429492+00:00",
+      "ingested_at": "2026-08-11T02:03:33.649180+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1415,7 +1415,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.431519+00:00",
+      "ingested_at": "2026-08-11T02:03:33.733878+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1452,7 +1452,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.434557+00:00",
+      "ingested_at": "2026-08-11T02:03:33.829433+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1489,7 +1489,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.443796+00:00",
+      "ingested_at": "2026-08-11T02:03:34.163409+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1526,7 +1526,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.447181+00:00",
+      "ingested_at": "2026-08-11T02:03:34.361612+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1562,7 +1562,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.457233+00:00",
+      "ingested_at": "2026-08-11T02:03:34.965114+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1599,7 +1599,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.462393+00:00",
+      "ingested_at": "2026-08-11T02:03:35.182524+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1637,7 +1637,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.465686+00:00",
+      "ingested_at": "2026-08-11T02:03:35.365077+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1674,7 +1674,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.466870+00:00",
+      "ingested_at": "2026-08-11T02:03:35.467610+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1713,7 +1713,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.469491+00:00",
+      "ingested_at": "2026-08-11T02:03:35.661847+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 2,
@@ -1749,7 +1749,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.430579+00:00",
+      "ingested_at": "2026-08-11T02:03:33.693134+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1784,7 +1784,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.436214+00:00",
+      "ingested_at": "2026-08-11T02:03:33.874696+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1821,7 +1821,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.437870+00:00",
+      "ingested_at": "2026-08-11T02:03:33.929789+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1858,7 +1858,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.439278+00:00",
+      "ingested_at": "2026-08-11T02:03:33.989342+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1895,7 +1895,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.440631+00:00",
+      "ingested_at": "2026-08-11T02:03:34.038179+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1931,7 +1931,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.442024+00:00",
+      "ingested_at": "2026-08-11T02:03:34.103885+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -1968,7 +1968,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.445079+00:00",
+      "ingested_at": "2026-08-11T02:03:34.222072+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2005,7 +2005,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.446111+00:00",
+      "ingested_at": "2026-08-11T02:03:34.290403+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2041,7 +2041,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.448347+00:00",
+      "ingested_at": "2026-08-11T02:03:34.446133+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2079,7 +2079,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.449457+00:00",
+      "ingested_at": "2026-08-11T02:03:34.512001+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2117,7 +2117,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.450399+00:00",
+      "ingested_at": "2026-08-11T02:03:34.593995+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2155,7 +2155,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.451310+00:00",
+      "ingested_at": "2026-08-11T02:03:34.666790+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2192,7 +2192,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.453979+00:00",
+      "ingested_at": "2026-08-11T02:03:34.796925+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2229,7 +2229,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.456063+00:00",
+      "ingested_at": "2026-08-11T02:03:34.893906+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2265,7 +2265,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.463517+00:00",
+      "ingested_at": "2026-08-11T02:03:35.234949+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2302,7 +2302,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.464528+00:00",
+      "ingested_at": "2026-08-11T02:03:35.283773+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2338,7 +2338,7 @@
         "education"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.467963+00:00",
+      "ingested_at": "2026-08-11T02:03:35.567310+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2375,7 +2375,7 @@
         "portal_help"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.460344+00:00",
+      "ingested_at": "2026-08-11T02:03:35.074738+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,
@@ -2411,7 +2411,7 @@
         "portal_help"
       ],
       "allowed_use_source": "tier_default",
-      "ingested_at": "2026-08-09T12:01:06.461340+00:00",
+      "ingested_at": "2026-08-11T02:03:35.114054+00:00",
       "staleness_status": "current",
       "staleness_days": 0,
       "chunk_count": 1,

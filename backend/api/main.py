@@ -27,6 +27,7 @@ from backend.api.routers.admin import router as admin_router
 from backend.api.routers.model import router as model_router
 from backend.api.routers.admin_eval import build_admin_eval_router
 from backend.api.routers.automation import router as automation_router
+from backend.api.routers.platform import router as platform_router
 from backend.services.request_context import reset_request_id, set_request_id
 from backend.services.api_protection import EngineeringApiProtectionMiddleware
 from backend.services.synthetic_data_boundary import SyntheticDataBoundaryMiddleware
@@ -97,6 +98,8 @@ app.add_middleware(
         "X-NLCare-Receipt-Signature",
         "X-NLCare-Timestamp",
         "X-NLCare-Data-Class",
+        "X-NLCare-Organization-ID",
+        "Idempotency-Key",
     ],
     expose_headers=["X-Request-ID", "X-Analytics-Cache"],
 )
@@ -135,6 +138,7 @@ app.include_router(admin_router)
 app.include_router(model_router)
 app.include_router(build_admin_eval_router(get_admin_access_context, get_db))
 app.include_router(automation_router)
+app.include_router(platform_router)
 
 
 # ─── Core routes ──────────────────────────────────────────────────────────────

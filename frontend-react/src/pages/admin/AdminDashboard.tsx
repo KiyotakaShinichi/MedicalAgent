@@ -8,6 +8,7 @@ import {
   Image,
   LayoutDashboard,
   Activity,
+  Building2,
   ShieldCheck,
   Star,
 } from "lucide-react";
@@ -30,6 +31,7 @@ import { SystemHealthSection } from "./sections/SystemHealthSection";
 import { ClinicalBoundaryBanner } from "../../components/ui/ClinicalBoundaryBanner";
 
 const NAV = [
+  { to: "/workspace", label: "SaaS Workspace", icon: Building2 },
   { to: "/admin", label: "Overview", icon: LayoutDashboard },
   { to: "/admin/rag", label: "RAG / Cost", icon: Database },
   { to: "/admin/guardrails", label: "Guardrails", icon: ShieldCheck },

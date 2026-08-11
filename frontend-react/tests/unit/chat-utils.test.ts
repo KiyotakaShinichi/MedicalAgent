@@ -104,14 +104,16 @@ describe("parseCitations", () => {
     expect(parseCitations({ id: "x" })).toEqual([]);
   });
 
-  it("keeps strings verbatim and pulls .id from objects", () => {
+  it("keeps strings and prefers human-readable citation labels", () => {
     const out = parseCitations([
       "kb_source_1",
       { id: "kb_source_2" },
+      { id: "kb_source_3", source_name: "Source three" },
+      { id: "kb_source_4", source_name: "Fallback source", title: "Paper title" },
       { id: 42 },
       {},
       "",
     ]);
-    expect(out).toEqual(["kb_source_1", "kb_source_2", "42"]);
+    expect(out).toEqual(["kb_source_1", "kb_source_2", "Source three", "Paper title", "42"]);
   });
 });

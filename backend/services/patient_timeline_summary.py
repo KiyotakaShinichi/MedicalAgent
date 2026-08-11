@@ -51,13 +51,15 @@ def build_patient_timeline_risk_summary(report):
 
 
 def _headline(overall_status, score):
+    if overall_status == "insufficient_evidence":
+        return "Monitoring index unavailable because the record is incomplete."
     if overall_status == "needs_clinician_review":
         return f"Review recommended based on monitoring signals{_score_text(score)}."
     if overall_status == "watch_closely":
-        return f"Mixed signals; continue close monitoring{_score_text(score)}."
+        return f"Mixed record pattern; care-team review is appropriate{_score_text(score)}."
     if overall_status == "favorable_response_signal":
-        return f"Available signals look favorable{_score_text(score)}."
-    return f"No major combined warning pattern is shown{_score_text(score)}."
+        return f"Higher simulator grouping with no major fixed review-rule match{_score_text(score)}."
+    return f"No major combined portal review-rule match is shown{_score_text(score)}."
 
 
 def _score_text(score):
@@ -69,14 +71,16 @@ def _patient_summary(overall_status, score, mri_signal, clinical_signal, symptom
     clinical_text = clinical_signal.get("message") or "No CBC risk signal is available yet."
     symptom_text = symptom_signal.get("message") or "No symptom signal is available yet."
     probability_text = (
-        f" The demo model response probability is {round(response_probability * 100, 1)}%."
+        " A synthetic class-confidence value is available, but it is not a personal outcome probability."
         if response_probability is not None else ""
     )
 
-    if overall_status == "needs_clinician_review":
+    if overall_status == "insufficient_evidence":
+        opener = "The portal does not have enough recorded evidence to generate a monitoring index."
+    elif overall_status == "needs_clinician_review":
         opener = "The portal sees some items that should be reviewed with the oncology team."
     elif overall_status == "watch_closely":
-        opener = "The portal sees a mixed picture, so the safest interpretation is continued monitoring."
+        opener = "The portal sees a mixed record pattern that should be discussed with the care team."
     else:
         opener = "The portal does not see a major combined warning pattern in the available data."
 
@@ -87,7 +91,7 @@ def _key_points(latest_labs, treatments, mri_signal, response_probability, outco
     points = []
 
     if response_probability is not None:
-        points.append(f"Demo response model probability: {round(response_probability * 100, 1)}%.")
+        points.append("A synthetic class-confidence value is available; it is not shown as treatment likelihood.")
     elif mri_signal.get("message"):
         points.append(mri_signal["message"])
 
@@ -107,10 +111,7 @@ def _key_points(latest_labs, treatments, mri_signal, response_probability, outco
         )
 
     if outcome:
-        points.append(
-            f"Recorded synthetic outcome: {outcome.get('response_category')} / "
-            f"{outcome.get('cancer_status')}."
-        )
+        points.append("A simulator outcome field exists and is not interpreted as a patient result.")
 
     return points[:5]
 

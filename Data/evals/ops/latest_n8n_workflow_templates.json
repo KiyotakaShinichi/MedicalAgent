@@ -1,12 +1,12 @@
 {
   "schema_version": "n8n_workflow_templates_v1",
-  "generated_at": "2026-07-17T06:15:45.251330+00:00",
+  "generated_at": "2026-08-09T16:28:57.568799+00:00",
   "status": "ready_for_optional_import",
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "phi_allowed": false,
   "live_patient_route_enabled": false,
-  "template_count": 10,
+  "template_count": 11,
   "templates": [
     {
       "id": "release_gate_alert",
@@ -35,6 +35,13 @@
       "allowed_use": "Trigger internal eval refresh jobs for synthetic/non-live artifacts.",
       "not_allowed_use": "Do not trigger clinical actions or use raw patient chat payloads.",
       "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\eval_refresh_trigger.json"
+    },
+    {
+      "id": "saas_workspace_event",
+      "title": "Synthetic SaaS Workspace Event",
+      "allowed_use": "Deliver redacted tenant, project, evaluation-job, and usage lifecycle events.",
+      "not_allowed_use": "Do not include patient data, raw prompts, clinical conclusions, or billing claims.",
+      "template_path": "Data\\evals\\ops\\n8n_workflow_templates\\saas_workspace_event.json"
     },
     {
       "id": "trace_quality_digest",

@@ -1,0 +1,4879 @@
+{
+  "schema_version": "mixed_query_scale_failures_v1",
+  "generated_at": "2026-08-10T07:50:50.427771+00:00",
+  "status": "needs_attention",
+  "failure_count": 323,
+  "failures": [
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00002",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1545.549,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00014",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1082.66,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00015",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 3,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.3333,
+      "source_tier_correct": true,
+      "latency_ms": 1093.366,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00018",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 639.671,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00020",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 778.929,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00023",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1034.001,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00025",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 711.203,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00030",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 817.765,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00031",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1257.708,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00035",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 946.402,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00039",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 674.156,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00040",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 741.827,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00041",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 727.613,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00042",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 889.306,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00044",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 695.288,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00045",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 811.103,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00047",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1038.887,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00054",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 926.636,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00056",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1240.5,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00064",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 540.871,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00066",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 995.254,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00067",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 771.582,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00072",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1177.993,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00073",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1514.917,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00074",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1727.572,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00078",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 660.286,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00080",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1008.146,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00081",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1298.423,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00096",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 257.482,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00106",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 289.493,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00110",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 279.571,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00114",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 733.021,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00115",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 552.762,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00119",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 290.418,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00124",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 316.614,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00126",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 585.868,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00129",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 550.954,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00130",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 405.421,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00132",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 502.874,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00135",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 388.53,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00136",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 2,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.5,
+      "source_tier_correct": true,
+      "latency_ms": 376.336,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00137",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 634.107,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00144",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 275.669,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00149",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 355.017,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00150",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 250.022,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00154",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 272.355,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00156",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 339.593,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00159",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 295.867,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00160",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 320.223,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00166",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 355.713,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00168",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 255.374,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00171",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC5500247",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 369.606,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00173",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 3,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.3333,
+      "source_tier_correct": true,
+      "latency_ms": 476.486,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00179",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 487.182,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00190",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 337.235,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00196",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 405.228,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00197",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 306.06,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00202",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 272.359,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00208",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 400.013,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00209",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 347.561,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00210",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 307.928,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00216",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 226.71,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00217",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 241.317,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00229",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 285.885,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00231",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 278.167,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00234",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 296.962,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00239",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 457.051,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00241",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 226.106,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00245",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 339.231,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00250",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1195.207,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00251",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 799.713,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00252",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1062.716,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00258",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 591.494,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00259",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 780.568,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00260",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 395.614,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00261",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 357.289,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00263",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC5500247",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 458.474,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00268",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 345.476,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00269",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 305.057,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00270",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 4,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.25,
+      "source_tier_correct": true,
+      "latency_ms": 259.188,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00275",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 735.042,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00280",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 311.6,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00285",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 282.903,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00288",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 296.808,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00289",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 522.113,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00292",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 375.959,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00296",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 364.474,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00300",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 498.281,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00301",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 2,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.5,
+      "source_tier_correct": true,
+      "latency_ms": 445.833,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00304",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 304.723,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00306",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 4,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.25,
+      "source_tier_correct": true,
+      "latency_ms": 273.019,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00310",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 246.938,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00314",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 328.858,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00315",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 289.032,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00319",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 477.89,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00320",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 410.562,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00322",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 319.279,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00337",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 260.749,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00338",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 254.204,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00340",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 357.095,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00343",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 289.614,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00347",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 561.367,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00349",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 334.921,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00350",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 337.258,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00351",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 298.058,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00352",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 293.728,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00353",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 251.902,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00358",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 600.923,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00360",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 595.153,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00363",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1011.847,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00364",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 808.487,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00365",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1250.344,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00366",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1067.84,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00370",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 462.532,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00371",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 353.633,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00376",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 245.551,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00377",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 321.047,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00380",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 278.616,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00383",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 316.052,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00384",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 284.129,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00386",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 360.683,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00392",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 367.621,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00393",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 407.79,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00394",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 2,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.5,
+      "source_tier_correct": true,
+      "latency_ms": 339.503,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00397",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 272.126,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00402",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 439.82,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00405",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 239.514,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00409",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1232.888,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00411",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 934.279,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00414",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 368.367,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00415",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 327.67,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00416",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 247.015,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00417",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 226.36,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00418",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 235.736,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00420",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 269.021,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00424",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 470.636,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00426",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 428.009,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00427",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 277.581,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00428",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 244.603,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00434",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 263.164,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00438",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 253.401,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00443",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 400.371,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00448",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 299.191,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00449",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 279.674,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00453",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 265.945,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00455",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 388.636,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00457",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 326.92,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00458",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 270.144,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00461",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 6,
+      "recall_at_5": 0.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.1667,
+      "source_tier_correct": true,
+      "latency_ms": 249.116,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00464",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 388.899,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00467",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 351.842,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00470",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 286.006,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00472",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 250.938,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00474",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 338.641,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00476",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 284.451,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00478",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 280.581,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00482",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 299.107,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00484",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 334.265,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00489",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 316.972,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00491",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 287.875,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00494",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 273.769,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00496",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 249.614,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00498",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 269.913,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00499",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC5500247",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 251.844,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00500",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 228.016,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00508",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 790.407,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00509",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 380.332,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00510",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 336.278,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00512",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 304.119,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00513",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 292.991,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00515",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 415.89,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00516",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 208.626,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00517",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 199.658,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00518",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 225.416,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00519",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 240.18,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00525",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 251.314,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00529",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 278.286,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00530",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 352.468,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00532",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 283.132,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00534",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 389.564,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00535",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 547.48,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00540",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 336.392,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00544",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 408.053,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00547",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 451.058,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00548",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 377.647,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00559",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 368.309,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00563",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 310.393,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00572",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 327.454,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00573",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 304.867,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00574",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 282.002,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00580",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 425.001,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00581",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 304.633,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00583",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 253.412,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00584",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 284.716,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00586",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 291.76,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00587",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 283.77,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00592",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 373.0,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00593",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 317.234,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00596",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 302.053,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00604",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 421.371,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00606",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 540.772,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00607",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 585.361,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00611",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 253.949,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00612",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 268.021,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00613",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 298.592,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00615",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 275.768,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00616",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 260.305,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00619",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 256.876,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00625",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 4,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.25,
+      "source_tier_correct": true,
+      "latency_ms": 363.198,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00627",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 464.755,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00636",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 762.437,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00638",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 428.559,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00642",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 281.764,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00643",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC5500247",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 264.41,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00644",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 293.092,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00653",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 319.246,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00654",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 444.046,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00656",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 604.811,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00659",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 835.727,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00663",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 4,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.25,
+      "source_tier_correct": true,
+      "latency_ms": 282.351,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00665",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 247.52,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00668",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 766.307,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00669",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1967.95,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00671",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1655.724,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00677",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 658.279,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00678",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 874.032,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00682",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1432.642,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00684",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 503.811,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00686",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 2,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.5,
+      "source_tier_correct": true,
+      "latency_ms": 894.523,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00687",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 635.371,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00688",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1001.134,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00692",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 1080.777,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00694",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 320.728,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00697",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 309.131,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00715",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 357.591,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00722",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 287.245,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00734",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 242.713,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00746",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 369.841,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00747",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 289.9,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00751",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 362.658,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00758",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 268.627,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00761",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 253.731,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00762",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 264.553,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00769",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 281.989,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00773",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 232.521,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00774",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 205.465,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00776",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 237.59,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00782",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 271.987,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00783",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 292.936,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00787",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 263.397,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00788",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 249.001,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00792",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 312.482,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00794",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 4,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.25,
+      "source_tier_correct": true,
+      "latency_ms": 220.765,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00801",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 247.527,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00802",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 237.134,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00803",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 243.89,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00806",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 216.651,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00807",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 267.929,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00808",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 4,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.25,
+      "source_tier_correct": true,
+      "latency_ms": 218.478,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00809",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 225.988,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00815",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 235.543,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00819",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 231.143,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00821",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 256.915,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00827",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 225.351,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00828",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 224.99,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00830",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 299.642,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00835",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 248.362,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00839",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 213.721,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00840",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 238.682,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00842",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 2,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.5,
+      "source_tier_correct": true,
+      "latency_ms": 218.841,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00843",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 200.583,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00848",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 234.126,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00851",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 240.431,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00853",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 222.43,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00855",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 247.41,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00857",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 254.996,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00864",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 219.328,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00867",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 256.725,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00870",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 273.603,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00878",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 293.656,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00879",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 256.207,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00885",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 258.558,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00887",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 214.656,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00897",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6702160",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 239.422,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00898",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 198.859,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00901",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 194.227,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00902",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 195.354,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00904",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 218.266,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00905",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 249.112,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00908",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC6868829",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 216.474,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00913",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 296.464,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00917",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 238.524,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00919",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 6,
+      "recall_at_5": 0.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.1667,
+      "source_tier_correct": true,
+      "latency_ms": 236.98,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00922",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 292.004,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00927",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 208.001,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00930",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 223.519,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00932",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 244.113,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00933",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 254.999,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00937",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 273.419,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00939",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 243.885,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00943",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 250.368,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00944",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 244.641,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00945",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 263.866,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00953",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 369.91,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00956",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC2752999",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 257.346,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00959",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC7055088",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 267.94,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00964",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 248.498,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00967",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 273.736,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00972",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12232703",
+      "first_relevant_rank": 2,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.5,
+      "source_tier_correct": true,
+      "latency_ms": 239.044,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00974",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC4544753",
+      "first_relevant_rank": 2,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.5,
+      "source_tier_correct": true,
+      "latency_ms": 240.734,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00975",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 245.4,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00978",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12452844",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 249.8,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00987",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 243.465,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00988",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC11400212",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 292.751,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00990",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 345.506,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00994",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10898895",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 291.158,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00995",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC9158111",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 266.328,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00996",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC12053558",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 294.547,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "research_retrieval",
+      "case_id": "mixed_scale_00998",
+      "category": "topic_paraphrase",
+      "expected_pmcid": "PMC10163167",
+      "first_relevant_rank": 1,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "source_tier_correct": true,
+      "latency_ms": 302.736,
+      "failure_reasons": [
+        "expected_section_missing_at_10"
+      ]
+    },
+    {
+      "layer": "real_stateful_support",
+      "case_id": "mixed_scale_00353",
+      "traffic_family": "research_kb",
+      "category": "topic_paraphrase",
+      "observed_intent": "education",
+      "response_character_count": 135,
+      "response_content_retained": false,
+      "citation_count": 0,
+      "helpful_safe_next_step_present": null,
+      "unsafe_authority_leakage": false,
+      "estimated_total_tokens": 330,
+      "provider_reported_total_tokens": 0,
+      "latency_ms": 1107.14,
+      "pipeline_error_type": null,
+      "passed": false,
+      "failure_reasons": [
+        "education_answer_without_citations"
+      ],
+      "failure_response_preview": "I couldn't find enough verified source support to answer that safely. I can help you organize the question for your oncology care team."
+    },
+    {
+      "layer": "real_stateful_support",
+      "case_id": "mixed_scale_00088",
+      "traffic_family": "research_kb",
+      "category": "exact_title",
+      "observed_intent": "education",
+      "response_character_count": 135,
+      "response_content_retained": false,
+      "citation_count": 0,
+      "helpful_safe_next_step_present": null,
+      "unsafe_authority_leakage": false,
+      "estimated_total_tokens": 552,
+      "provider_reported_total_tokens": 0,
+      "latency_ms": 1267.3,
+      "pipeline_error_type": null,
+      "passed": false,
+      "failure_reasons": [
+        "education_answer_without_citations"
+      ],
+      "failure_response_preview": "I couldn't find enough verified source support to answer that safely. I can help you organize the question for your oncology care team."
+    },
+    {
+      "layer": "real_stateful_support",
+      "case_id": "mixed_scale_00842",
+      "traffic_family": "research_kb",
+      "category": "topic_paraphrase",
+      "observed_intent": "education",
+      "response_character_count": 135,
+      "response_content_retained": false,
+      "citation_count": 0,
+      "helpful_safe_next_step_present": null,
+      "unsafe_authority_leakage": false,
+      "estimated_total_tokens": 473,
+      "provider_reported_total_tokens": 0,
+      "latency_ms": 743.51,
+      "pipeline_error_type": null,
+      "passed": false,
+      "failure_reasons": [
+        "education_answer_without_citations"
+      ],
+      "failure_response_preview": "I couldn't find enough verified source support to answer that safely. I can help you organize the question for your oncology care team."
+    },
+    {
+      "layer": "real_stateful_support",
+      "case_id": "mixed_scale_00018",
+      "traffic_family": "research_kb",
+      "category": "topic_paraphrase",
+      "observed_intent": "education",
+      "response_character_count": 135,
+      "response_content_retained": false,
+      "citation_count": 0,
+      "helpful_safe_next_step_present": null,
+      "unsafe_authority_leakage": false,
+      "estimated_total_tokens": 606,
+      "provider_reported_total_tokens": 0,
+      "latency_ms": 1208.79,
+      "pipeline_error_type": null,
+      "passed": false,
+      "failure_reasons": [
+        "education_answer_without_citations"
+      ],
+      "failure_response_preview": "I couldn't find enough verified source support to answer that safely. I can help you organize the question for your oncology care team."
+    }
+  ],
+  "clinical_validation": false,
+  "claim_boundary": "Internally generated synthetic-query engineering stress evidence only. It is not clinical validation, not an independent holdout, and not medical correctness, real-world safety, patient-benefit, or production healthcare readiness evidence."
+}

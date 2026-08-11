@@ -23,7 +23,9 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
   const { clearSession, role, patientId } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => typeof window === "undefined" || window.matchMedia("(min-width: 761px)").matches,
+  );
 
   async function handleLogout() {
     try {
@@ -84,7 +86,7 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
           {sidebarOpen && (
             <div>
               <strong>{roleLabel}</strong>
-              <span>Demo secure session</span>
+              <span>Synthetic demo session</span>
             </div>
           )}
         </div>
@@ -131,7 +133,7 @@ export function AppShell({ children, navItems, title, subtitle }: AppShellProps)
           <div className="app-topbar-actions">
             <span className="app-safety-pill">
               <ShieldCheck size={13} aria-hidden="true" />
-              PoC — not for clinical use
+              PoC - not for clinical use
             </span>
           </div>
         </header>

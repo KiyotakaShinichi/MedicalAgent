@@ -30,6 +30,10 @@ import type {
   GeneticCounselingReadiness,
   HighRiskConversationAlertsResponse,
   HighRiskConversationAlert,
+  SaaSPlatformSession,
+  SaaSWorkspaceOverview,
+  SaaSProject,
+  SaaSPlatformJob,
 } from "../types/api";
 
 /**
@@ -47,6 +51,25 @@ export const API_BASE: string =
 const BASE = API_BASE;
 const inFlightGetRequests = new Map<string, Promise<unknown>>();
 
+async function responseError(response: Response): Promise<Error> {
+  const raw = await response.text().catch(() => "");
+  if (raw) {
+    try {
+      const payload = JSON.parse(raw) as { detail?: unknown; message?: unknown };
+      const message =
+        typeof payload.detail === "string"
+          ? payload.detail
+          : typeof payload.message === "string"
+            ? payload.message
+            : null;
+      if (message) return new Error(message);
+    } catch {
+      return new Error(`Request failed (${response.status}): ${raw}`);
+    }
+  }
+  return new Error(`Request failed (${response.status})`);
+}
+
 function getToken(): string | null {
   return (
     sessionStorage.getItem("patientPortalAccessToken") ||
@@ -58,7 +81,8 @@ function getToken(): string | null {
 async function request<T>(
   method: string,
   path: string,
-  body?: unknown
+  body?: unknown,
+  extraHeaders: Record<string, string> = {},
 ): Promise<T> {
   const token = getToken();
   const cacheKey = method === "GET" && body === undefined ? `${token ?? "anon"}:${path}` : null;
@@ -72,13 +96,13 @@ async function request<T>(
       "Content-Type": "application/json",
       "X-NLCare-Data-Class": "synthetic",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...extraHeaders,
     },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   })
     .then(async (res) => {
       if (!res.ok) {
-        const text = await res.text().catch(() => res.statusText);
-        throw new Error(`${res.status}: ${text}`);
+        throw await responseError(res);
       }
       return res.json() as Promise<T>;
     })
@@ -93,6 +117,54 @@ async function request<T>(
 const get = <T>(path: string) => request<T>("GET", path);
 const post = <T>(path: string, body?: unknown) => request<T>("POST", path, body);
 const del = <T>(path: string) => request<T>("DELETE", path);
+
+// Synthetic AI assurance SaaS control plane
+export const getPlatformSession = () =>
+  get<SaaSPlatformSession>("/platform/session");
+
+export const createPlatformOrganization = (payload: { name: string; slug?: string }) =>
+  post<import("../types/api").SaaSOrganization>("/platform/organizations", payload);
+
+export const getWorkspaceOverview = (organizationId: string) =>
+  request<SaaSWorkspaceOverview>(
+    "GET",
+    `/platform/organizations/${organizationId}/overview`,
+    undefined,
+    { "X-NLCare-Organization-ID": organizationId },
+  );
+
+export const createWorkspaceProject = (
+  organizationId: string,
+  payload: { name: string; slug?: string; description?: string },
+) => request<SaaSProject>(
+  "POST",
+  `/platform/organizations/${organizationId}/projects`,
+  payload,
+  { "X-NLCare-Organization-ID": organizationId },
+);
+
+export const createWorkspaceJob = (
+  organizationId: string,
+  projectId: string,
+  payload: { job_type: string; environment_id?: string; payload?: Record<string, unknown> },
+  idempotencyKey: string,
+) => request<{ job: SaaSPlatformJob; idempotent_reuse: boolean }>(
+  "POST",
+  `/platform/organizations/${organizationId}/projects/${projectId}/jobs`,
+  payload,
+  {
+    "X-NLCare-Organization-ID": organizationId,
+    "Idempotency-Key": idempotencyKey,
+  },
+);
+
+export const cancelWorkspaceJob = (organizationId: string, jobId: string) =>
+  request<{ job: SaaSPlatformJob }>(
+    "DELETE",
+    `/platform/organizations/${organizationId}/jobs/${jobId}`,
+    undefined,
+    { "X-NLCare-Organization-ID": organizationId },
+  );
 
 // Auth
 export const login = (username: string, password: string) =>
@@ -110,12 +182,14 @@ export const logout = () =>
 export async function getAuthenticatedObjectUrl(path: string): Promise<string> {
   const token = getToken();
   const res = await fetch(`${BASE}${path}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    headers: {
+      "X-NLCare-Data-Class": "synthetic",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     cache: "no-store",
   });
   if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`${res.status}: ${text}`);
+    throw await responseError(res);
   }
   return URL.createObjectURL(await res.blob());
 }
@@ -155,13 +229,13 @@ async function streamChat(
     headers: {
       "Content-Type": "application/json",
       Accept: "text/event-stream",
+      "X-NLCare-Data-Class": "synthetic",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ message }),
   });
   if (!res.ok || !res.body) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`${res.status}: ${text}`);
+    throw await responseError(res);
   }
 
   const reader = res.body.getReader();

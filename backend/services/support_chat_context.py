@@ -81,6 +81,35 @@ def _recent_patient_context(db, patient_id):
         outcome=outcome,
         synthetic_prediction=synthetic_prediction,
     )
+    from backend.processing.radiology_analysis import summarize_report
+    from backend.services.record_change_explanation import build_record_change_explanation
+
+    record_change_explanation = build_record_change_explanation(
+        lab_history=[
+            {
+                "date": row.date,
+                "wbc": row.wbc,
+                "hemoglobin": row.hemoglobin,
+                "platelets": row.platelets,
+            }
+            for row in lab_rows
+        ],
+        symptoms=[
+            {"date": row.date, "symptom": row.symptom, "severity": row.severity}
+            for row in symptoms
+        ],
+        imaging_reports=[
+            summarize_report({
+                "date": row.date,
+                "modality": row.modality,
+                "report_type": row.report_type,
+                "body_site": row.body_site,
+                "findings": row.findings,
+                "impression": row.impression,
+            })
+            for row in imaging_reports
+        ],
+    )
 
     return {
         "latest_lab": {
@@ -137,6 +166,7 @@ def _recent_patient_context(db, patient_id):
         "synthetic_model_prediction": synthetic_prediction,
         "synthetic_model_explanation": synthetic_xai,
         "timeline_context": timeline_context,
+        "record_change_explanation": record_change_explanation,
     }
 
 
@@ -173,9 +203,12 @@ def _timeline_context(lab_rows, symptoms, treatments, imaging_reports, intervent
     probability = None
     if synthetic_prediction:
         probability = synthetic_prediction.get("logistic_regression_probability") or synthetic_prediction.get("gradient_boosting_probability")
-    probability_text = f"Demo response probability {round(float(probability) * 100, 1)}%. " if probability is not None else ""
+    probability_text = (
+        "A synthetic model grouping is available, but it is not a treatment-response probability. "
+        if probability is not None else ""
+    )
     outcome_text = (
-        f"Recorded outcome {outcome.response_category} / {outcome.cancer_status}. "
+        "A simulator outcome field exists in the record and is not interpreted as a patient result. "
         if outcome else ""
     )
     tumor_board = (
@@ -217,6 +250,7 @@ def _chat_toxicity_summary(lab_rows, symptoms):
             f"late minimum platelets {round(late_min_platelets, 1)}, high symptom reports {len(high_symptoms)}."
         )
     return (
-        f"CBC toxicity does not look worse in the latest represented window: "
-        f"late minimum WBC {round(late_min_wbc, 2)}, late minimum platelets {round(late_min_platelets, 1)}."
+        "No additional CBC/symptom review rule matched in the latest represented window: "
+        f"late minimum WBC {round(late_min_wbc, 2)}, late minimum platelets {round(late_min_platelets, 1)}. "
+        "This is not reassurance about health or treatment effect."
     )

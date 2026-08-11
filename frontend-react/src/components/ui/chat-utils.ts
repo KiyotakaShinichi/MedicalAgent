@@ -41,7 +41,12 @@ export function parseSavedActions(raw?: unknown): SavedAction[] {
 export function parseCitations(raw: unknown): string[] {
   if (!Array.isArray(raw)) return [];
   return raw
-    .map((c) => (typeof c === "string" ? c : String(((c as { id?: unknown }).id) ?? "")))
+    .map((c) => {
+      if (typeof c === "string") return c;
+      if (!c || typeof c !== "object") return "";
+      const citation = c as { title?: unknown; source_name?: unknown; id?: unknown };
+      return String(citation.title ?? citation.source_name ?? citation.id ?? "").trim();
+    })
     .filter((s) => Boolean(s));
 }
 

@@ -554,6 +554,7 @@ def _run_rag_generation_branch(
         generated = {
             "reply": research_answerability.safe_reply,
             "citations": [],
+            "deliberate_evidence_abstention": True,
             "intent": intent,
             "safety": safety,
             "retrieval_context": compressed,

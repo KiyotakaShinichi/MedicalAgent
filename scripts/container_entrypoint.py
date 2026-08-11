@@ -19,6 +19,13 @@ def main() -> int:
         [sys.executable, "-m", "alembic", "upgrade", "head"],
         check=True,
     )
+    if os.environ.get("NLCARE_BOOTSTRAP_SYNTHETIC_DEMO", "").strip().lower() in {
+        "1", "true", "yes", "on",
+    }:
+        subprocess.run(
+            [sys.executable, "-m", "scripts.bootstrap_synthetic_demo"],
+            check=True,
+        )
     os.execv(
         sys.executable,
         [

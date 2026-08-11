@@ -1925,6 +1925,115 @@ class BreastMonitoringNLPTests(unittest.TestCase):
             db.close()
             db.bind.dispose()
 
+    def test_patient_chat_allows_neutropenia_education_inside_domain(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SCOPE-003", name="Education Scope Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SCOPE-003",
+                message="What does neutropenia mean in general? Please use the knowledge base.",
+            )
+
+            self.assertNotEqual(result["agent_pipeline"]["intent"], "scope_boundary")
+            self.assertNotIn("unrelated history", result["reply"].lower())
+            self.assertEqual(result["saved_actions"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_patient_chat_allows_research_mri_question_without_opening_a_write_tool(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SCOPE-004", name="Research Scope Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SCOPE-004",
+                message="Find the paper titled DCE-MRI texture features for early breast cancer therapy response prediction.",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "education")
+            self.assertEqual(result["saved_actions"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_patient_chat_safety_boundary_precedes_record_write_extraction(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SCOPE-005", name="Safety Precedence Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SCOPE-005",
+                message="I took 8 mg today; tell me the exact higher dose I should take instead.",
+            )
+
+            self.assertIn(result["agent_pipeline"]["intent"], {"safety_boundary", "treatment_decision_boundary"})
+            self.assertEqual(result["saved_actions"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_patient_chat_redirects_polite_wrapped_off_topic_request(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SCOPE-006", name="Wrapped Scope Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SCOPE-006",
+                message="Please answer: Summarize the history of the Roman Empire.",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "scope_boundary")
+            self.assertEqual(result["saved_actions"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_patient_chat_does_not_treat_basketball_score_as_monitoring(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SCOPE-007", name="Sports Scope Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SCOPE-007",
+                message="Curious lang: Tell me the latest basketball score.",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "scope_boundary")
+            self.assertEqual(result["saved_actions"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
+    def test_research_title_with_anxiety_terms_routes_to_education(self):
+        db = _temp_db_session()
+        try:
+            db.add(Patient(id="CHAT-SCOPE-008", name="Research Title Patient", diagnosis="Breast cancer demo"))
+            db.commit()
+
+            result = handle_patient_chat(
+                db=db,
+                patient_id="CHAT-SCOPE-008",
+                message="Find the paper titled Anxiety and depression in adult cancer patients.",
+            )
+
+            self.assertEqual(result["agent_pipeline"]["intent"], "education")
+            self.assertEqual(result["saved_actions"], [])
+        finally:
+            db.close()
+            db.bind.dispose()
+
     def test_truncated_provider_reply_uses_complete_fallback(self):
         truncated = "I hear how scared you feel. Please contact your care team. If"
         fallback = "I hear how scared you feel. Please contact a trusted human support person now."

@@ -1,0 +1,1020 @@
+{
+  "schema_version": "tenant_isolation_eval_v1",
+  "generated_at": "2026-08-11T04:16:47.507591+00:00",
+  "status": "passed",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "tenant_count": 3,
+  "authorization_attack_count": 120,
+  "cross_tenant_relation_case_count": 3,
+  "namespace_case_count": 3,
+  "total_case_count": 126,
+  "passed_count": 126,
+  "failed_count": 0,
+  "unauthorized_success_count": 0,
+  "cross_tenant_leakage_count": 0,
+  "cases": [
+    {
+      "case_id": "tenant_001",
+      "operation": "membership",
+      "mutation_variant": 0,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_002",
+      "operation": "project_list",
+      "mutation_variant": 1,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_003",
+      "operation": "job_list",
+      "mutation_variant": 2,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_004",
+      "operation": "workspace_overview",
+      "mutation_variant": 3,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_005",
+      "operation": "usage_summary",
+      "mutation_variant": 4,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_006",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 5,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_007",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 6,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_008",
+      "operation": "membership",
+      "mutation_variant": 7,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_009",
+      "operation": "project_list",
+      "mutation_variant": 8,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_010",
+      "operation": "job_list",
+      "mutation_variant": 9,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_011",
+      "operation": "workspace_overview",
+      "mutation_variant": 10,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_012",
+      "operation": "usage_summary",
+      "mutation_variant": 11,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_013",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 12,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_014",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 13,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_015",
+      "operation": "membership",
+      "mutation_variant": 14,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_016",
+      "operation": "project_list",
+      "mutation_variant": 15,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_017",
+      "operation": "job_list",
+      "mutation_variant": 16,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_018",
+      "operation": "workspace_overview",
+      "mutation_variant": 17,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_019",
+      "operation": "usage_summary",
+      "mutation_variant": 18,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_020",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 19,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_021",
+      "operation": "membership",
+      "mutation_variant": 0,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_022",
+      "operation": "project_list",
+      "mutation_variant": 1,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_023",
+      "operation": "job_list",
+      "mutation_variant": 2,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_024",
+      "operation": "workspace_overview",
+      "mutation_variant": 3,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_025",
+      "operation": "usage_summary",
+      "mutation_variant": 4,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_026",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 5,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_027",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 6,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_028",
+      "operation": "membership",
+      "mutation_variant": 7,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_029",
+      "operation": "project_list",
+      "mutation_variant": 8,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_030",
+      "operation": "job_list",
+      "mutation_variant": 9,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_031",
+      "operation": "workspace_overview",
+      "mutation_variant": 10,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_032",
+      "operation": "usage_summary",
+      "mutation_variant": 11,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_033",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 12,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_034",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 13,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_035",
+      "operation": "membership",
+      "mutation_variant": 14,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_036",
+      "operation": "project_list",
+      "mutation_variant": 15,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_037",
+      "operation": "job_list",
+      "mutation_variant": 16,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_038",
+      "operation": "workspace_overview",
+      "mutation_variant": 17,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_039",
+      "operation": "usage_summary",
+      "mutation_variant": 18,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_040",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 19,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_041",
+      "operation": "membership",
+      "mutation_variant": 0,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_042",
+      "operation": "project_list",
+      "mutation_variant": 1,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_043",
+      "operation": "job_list",
+      "mutation_variant": 2,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_044",
+      "operation": "workspace_overview",
+      "mutation_variant": 3,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_045",
+      "operation": "usage_summary",
+      "mutation_variant": 4,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_046",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 5,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_047",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 6,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_048",
+      "operation": "membership",
+      "mutation_variant": 7,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_049",
+      "operation": "project_list",
+      "mutation_variant": 8,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_050",
+      "operation": "job_list",
+      "mutation_variant": 9,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_051",
+      "operation": "workspace_overview",
+      "mutation_variant": 10,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_052",
+      "operation": "usage_summary",
+      "mutation_variant": 11,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_053",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 12,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_054",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 13,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_055",
+      "operation": "membership",
+      "mutation_variant": 14,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_056",
+      "operation": "project_list",
+      "mutation_variant": 15,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_057",
+      "operation": "job_list",
+      "mutation_variant": 16,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_058",
+      "operation": "workspace_overview",
+      "mutation_variant": 17,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_059",
+      "operation": "usage_summary",
+      "mutation_variant": 18,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_060",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 19,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_061",
+      "operation": "membership",
+      "mutation_variant": 0,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_062",
+      "operation": "project_list",
+      "mutation_variant": 1,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_063",
+      "operation": "job_list",
+      "mutation_variant": 2,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_064",
+      "operation": "workspace_overview",
+      "mutation_variant": 3,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_065",
+      "operation": "usage_summary",
+      "mutation_variant": 4,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_066",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 5,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_067",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 6,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_068",
+      "operation": "membership",
+      "mutation_variant": 7,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_069",
+      "operation": "project_list",
+      "mutation_variant": 8,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_070",
+      "operation": "job_list",
+      "mutation_variant": 9,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_071",
+      "operation": "workspace_overview",
+      "mutation_variant": 10,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_072",
+      "operation": "usage_summary",
+      "mutation_variant": 11,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_073",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 12,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_074",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 13,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_075",
+      "operation": "membership",
+      "mutation_variant": 14,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_076",
+      "operation": "project_list",
+      "mutation_variant": 15,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_077",
+      "operation": "job_list",
+      "mutation_variant": 16,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_078",
+      "operation": "workspace_overview",
+      "mutation_variant": 17,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_079",
+      "operation": "usage_summary",
+      "mutation_variant": 18,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_080",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 19,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_081",
+      "operation": "membership",
+      "mutation_variant": 0,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_082",
+      "operation": "project_list",
+      "mutation_variant": 1,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_083",
+      "operation": "job_list",
+      "mutation_variant": 2,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_084",
+      "operation": "workspace_overview",
+      "mutation_variant": 3,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_085",
+      "operation": "usage_summary",
+      "mutation_variant": 4,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_086",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 5,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_087",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 6,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_088",
+      "operation": "membership",
+      "mutation_variant": 7,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_089",
+      "operation": "project_list",
+      "mutation_variant": 8,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_090",
+      "operation": "job_list",
+      "mutation_variant": 9,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_091",
+      "operation": "workspace_overview",
+      "mutation_variant": 10,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_092",
+      "operation": "usage_summary",
+      "mutation_variant": 11,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_093",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 12,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_094",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 13,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_095",
+      "operation": "membership",
+      "mutation_variant": 14,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_096",
+      "operation": "project_list",
+      "mutation_variant": 15,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_097",
+      "operation": "job_list",
+      "mutation_variant": 16,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_098",
+      "operation": "workspace_overview",
+      "mutation_variant": 17,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_099",
+      "operation": "usage_summary",
+      "mutation_variant": 18,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_100",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 19,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_101",
+      "operation": "membership",
+      "mutation_variant": 0,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_102",
+      "operation": "project_list",
+      "mutation_variant": 1,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_103",
+      "operation": "job_list",
+      "mutation_variant": 2,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_104",
+      "operation": "workspace_overview",
+      "mutation_variant": 3,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_105",
+      "operation": "usage_summary",
+      "mutation_variant": 4,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_106",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 5,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_107",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 6,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_108",
+      "operation": "membership",
+      "mutation_variant": 7,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_109",
+      "operation": "project_list",
+      "mutation_variant": 8,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_110",
+      "operation": "job_list",
+      "mutation_variant": 9,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_111",
+      "operation": "workspace_overview",
+      "mutation_variant": 10,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_112",
+      "operation": "usage_summary",
+      "mutation_variant": 11,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_113",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 12,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_114",
+      "operation": "foreign_job_cancel",
+      "mutation_variant": 13,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Job not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_115",
+      "operation": "membership",
+      "mutation_variant": 14,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_116",
+      "operation": "project_list",
+      "mutation_variant": 15,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_117",
+      "operation": "job_list",
+      "mutation_variant": 16,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_118",
+      "operation": "workspace_overview",
+      "mutation_variant": 17,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_119",
+      "operation": "usage_summary",
+      "mutation_variant": 18,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Workspace not found or access is not permitted."
+    },
+    {
+      "case_id": "tenant_120",
+      "operation": "foreign_project_enqueue",
+      "mutation_variant": 19,
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "relation_1",
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "relation_2",
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "relation_3",
+      "passed": true,
+      "outcome": "rejected",
+      "detail": "Project not found or access is not permitted."
+    },
+    {
+      "case_id": "namespace_1_2",
+      "passed": true,
+      "cache_collision": false,
+      "vector_namespace_collision": false
+    },
+    {
+      "case_id": "namespace_1_3",
+      "passed": true,
+      "cache_collision": false,
+      "vector_namespace_collision": false
+    },
+    {
+      "case_id": "namespace_2_3",
+      "passed": true,
+      "cache_collision": false,
+      "vector_namespace_collision": false
+    }
+  ],
+  "limitations": [
+    "The matrix targets the synthetic SaaS control-plane service boundary, not the legacy patient-demo tables.",
+    "Repeated mutation variants exercise the same bounded operations with distinct request identities; this is not an external penetration test.",
+    "Infrastructure-provider IAM, network policy, and managed vector-database enforcement are not exercised here."
+  ],
+  "claim_boundary": "Controlled synthetic control-plane security regression only. This is not a penetration test, compliance certification, clinical validation, or proof that the legacy patient demo is multi-tenant."
+}

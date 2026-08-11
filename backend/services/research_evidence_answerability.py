@@ -159,6 +159,12 @@ def assess_research_evidence_answerability(
     matched = query_tokens & context_tokens
     coverage = len(matched) / max(len(query_tokens), 1)
 
+    # A bibliographic lookup is not a request to prove an arbitrary medical
+    # claim. When the query identifies a paper by title or source identifier,
+    # downstream claim and citation validators still limit the answer to the
+    # retrieved passage.
+    identified_paper = _identified_paper_lookup(query_normalized, research_chunks)
+
     if authority_overreach:
         return _verdict(
             status="related_paper_only" if research_chunks else "no_supporting_research_evidence",
@@ -182,6 +188,20 @@ def assess_research_evidence_answerability(
             research_chunks=research_chunks,
             paper_ids=paper_ids,
             safe_reply=ABSTENTION_REPLY,
+        )
+    if explicit_research_request and identified_paper:
+        return _verdict(
+            status="identified_paper_summary_candidate",
+            applies=True,
+            requires_abstention=False,
+            reason=(
+                "the query identifies a governed research source; downstream claim and citation "
+                "validation still limit the answer to the retrieved passage"
+            ),
+            query_tokens=query_tokens,
+            matched=matched,
+            research_chunks=research_chunks,
+            paper_ids=paper_ids,
         )
     if explicit_research_request and (len(matched) < 2 or coverage < 0.45):
         return _verdict(
@@ -256,6 +276,50 @@ def _context_tokens(chunks: Sequence[Mapping[str, Any]]) -> set[str]:
         ).lower()
         output.update(_claim_tokens(combined))
     return output
+
+
+def _identified_paper_lookup(
+    query_normalized: str,
+    chunks: Sequence[Mapping[str, Any]],
+) -> bool:
+    lookup_cues = (
+        "paper titled",
+        "paper title",
+        "study titled",
+        "article titled",
+        "publication titled",
+        "paper called",
+        "find the paper",
+        "find the study",
+    )
+    has_lookup_cue = any(cue in query_normalized for cue in lookup_cues)
+    query_tokens = _lookup_tokens(query_normalized)
+    for chunk in chunks:
+        identifiers = {
+            str(chunk.get(key) or "").strip().lower()
+            for key in ("pmcid", "pmid", "doi")
+            if str(chunk.get(key) or "").strip()
+        }
+        if identifiers and identifiers & query_tokens:
+            return True
+        if not has_lookup_cue:
+            continue
+        title_tokens = _lookup_tokens(
+            str(chunk.get("title") or chunk.get("source_name") or "").lower()
+        )
+        if len(title_tokens) < 3:
+            continue
+        if len(title_tokens & query_tokens) / len(title_tokens) >= 0.9:
+            return True
+    return False
+
+
+def _lookup_tokens(text: str) -> set[str]:
+    return {
+        normalized
+        for token in TOKEN_RE.findall(text)
+        if len(normalized := token.strip("./+-")) >= 2
+    }
 
 
 def _is_research_chunk(chunk: Mapping[str, Any]) -> bool:

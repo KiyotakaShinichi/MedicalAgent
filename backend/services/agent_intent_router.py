@@ -223,12 +223,14 @@ def route_intent(
         deterministic = "conversation"
     elif any(term in lower for term in MEMORY_TERMS):
         deterministic = "patient_memory"
-    elif _has_emotional_distress(lower):
+    elif _has_emotional_distress(lower) and not _is_explicit_research_request(lower):
         deterministic = "emotional_support"
     elif any(term in lower for term in PORTAL_TERMS):
         deterministic = "portal_help"
     elif any(term in lower for term in RESEARCH_EDUCATION_TERMS):
         deterministic = "education"
+    elif _has_emotional_distress(lower):
+        deterministic = "emotional_support"
     elif (
         any(term in lower for term in EDUCATIONAL_QUESTION_CUES)
         and any(term in lower for term in EDUCATION_TERMS)
@@ -283,6 +285,12 @@ def _has_emotional_distress(query: str) -> bool:
     from backend.services.emotional_distress_detection import detect_emotional_distress
 
     return bool(detect_emotional_distress(query).detected)
+
+
+def _is_explicit_research_request(query: str) -> bool:
+    """Keep research titles from being mistaken for personal distress."""
+
+    return any(term in query for term in RESEARCH_EDUCATION_TERMS)
 
 
 __all__ = [

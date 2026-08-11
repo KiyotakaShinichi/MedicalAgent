@@ -61,6 +61,17 @@ test.describe("role-aware smoke flows", () => {
     await expect(chatComposer(page)).toBeEnabled({ timeout: 90_000 });
   });
 
+  test("second patient account logs in and abstains on an empty record", async ({ page }) => {
+    await signIn(page, "P002", "patient-demo", /\/patient/);
+    await expect(page.getByText(/Patient P002/i)).toBeVisible();
+    await expect(page.getByText(/Not available/i).first()).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByText(/0\/6/i).first()).toBeVisible();
+    await expect(
+      page.getByText(/absence of flags cannot be interpreted as reassuring/i),
+    ).toBeVisible();
+    await expect(page.getByText(/score 50\/100/i)).toHaveCount(0);
+  });
+
   test("patient support chat saves a symptom and refreshes patient state", async ({ page }) => {
     await signIn(page, "P001", "patient-demo", /\/patient/);
     await page.getByRole("link", { name: /support/i }).click();

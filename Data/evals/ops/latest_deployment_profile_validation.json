@@ -1,8 +1,8 @@
 {
   "schema_version": "deployment_profile_validation_v3",
-  "generated_at": "2026-08-09T15:32:38.760616+00:00",
+  "generated_at": "2026-08-11T03:20:35.733704+00:00",
   "status": "development_profile",
-  "profile": "development",
+  "profile": "synthetic_staging",
   "strict_profile": false,
   "clinical_validation": false,
   "healthcare_production_ready": false,

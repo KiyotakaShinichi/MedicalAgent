@@ -36,6 +36,7 @@ export function ModelSignalPanel({ report }: Props) {
   const expl = report.synthetic_model_explanation;
   const xai = report.xai_explanation_envelope;
   const mma = report.multimodal_assessment;
+  const recordChange = report.record_change_explanation;
 
   // Show the card even with no signal so the patient surface stays consistent
   // and the calibration footer ("synthetic engineering signal, not a clinical
@@ -57,6 +58,30 @@ export function ModelSignalPanel({ report }: Props) {
       <SafetyBanner tone="warning" compact className="mb-4">
         Synthetic engineering signal · Not a clinical prediction · For clinician review.
       </SafetyBanner>
+
+      {recordChange && (
+        <div className="model-explanation-envelope mb-4" aria-label="Confirmed record change summary">
+          <div className="model-explanation-envelope__header">
+            <Info size={14} aria-hidden="true" />
+            <strong>What changed in confirmed records</strong>
+          </div>
+          <p><strong>{recordChange.headline}.</strong> {recordChange.patient_summary}</p>
+          {recordChange.observations.length > 0 && (
+            <ul>
+              {recordChange.observations.map((item) => (
+                <li key={`${item.evidence_type}-${item.latest_date}`}>{item.summary}</li>
+              ))}
+            </ul>
+          )}
+          {recordChange.missing_or_not_comparable.length > 0 && (
+            <p><strong>Not comparable yet:</strong> {recordChange.missing_or_not_comparable.join(" ")}</p>
+          )}
+          <p><strong>Comparison basis:</strong> {recordChange.comparison_basis}</p>
+          <p className="model-explanation-envelope__next">
+            <strong>Safe next step:</strong> {recordChange.safe_next_steps[0]}
+          </p>
+        </div>
+      )}
 
       <details className="model-number-guide mb-4">
         <summary><Info size={12} aria-hidden="true" /> What the model numbers mean</summary>

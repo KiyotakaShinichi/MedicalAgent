@@ -308,14 +308,19 @@ KNOWLEDGE_SNIPPETS: list[dict] = [
     {
         "id": "portal-upload-guide",
         "parent_id": "portal-help",
-        "title": "What patients can upload",
+        "title": "Patient portal records and navigation",
         "source_name": "Project patient portal guide",
         "source_url": "README.md",
-        "tags": ["upload", "portal", "cbc", "mri", "symptoms", "medications", "labs"],
+        "tags": [
+            "upload", "portal", "cbc", "mri", "symptoms", "medications", "labs",
+            "review lab entries", "labs section", "navigation", "support menu",
+        ],
         "builtin": True,
         "text": (
-            "The patient portal is designed to store CBC/lab values, MRI or imaging files, imaging report text, medications, treatments, "
-            "and symptoms so changes can be summarized over time."
+            "Use the left navigation in the patient portal to open Labs and review saved CBC or lab entries. "
+            "Overview shows the record summary, Signals shows monitoring context, and Timeline lists recorded events. "
+            "In Support, select the plus button beside the message box to open structured forms for symptoms, "
+            "labs, imaging report text, medications, and treatment notes. A form is saved only after the patient confirms it."
         ),
     },
 ]

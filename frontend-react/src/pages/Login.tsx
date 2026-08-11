@@ -48,9 +48,9 @@ const DEMOS = [
 ];
 
 const platformSignals = [
-  { label: "Guardrailed RAG", value: "33/33 eval pass" },
-  { label: "Safety regression", value: "1.0 attack block rate" },
-  { label: "Human oversight", value: "approve/edit/reject" },
+  { label: "Source governance", value: "tier-aware retrieval" },
+  { label: "Safety evaluation", value: "known gaps remain visible" },
+  { label: "Human oversight", value: "review workflow" },
 ];
 
 export default function LoginPage() {
@@ -70,7 +70,7 @@ export default function LoginPage() {
       setSession(res.access_token, res.role as Role, res.patient_id);
       if (res.role === "patient") navigate("/patient");
       else if (res.role === "clinician") navigate("/clinician");
-      else navigate("/admin");
+      else navigate("/workspace");
     } catch (err: unknown) {
       setError((err as Error).message || "Login failed");
     } finally {
@@ -100,7 +100,7 @@ export default function LoginPage() {
             </div>
 
             <div className="login-copy">
-              <p className="login-eyebrow">Safety-first oncology monitoring POC</p>
+              <p className="login-eyebrow">Safety-governed oncology monitoring POC</p>
               <h2>One role-aware gateway for patients, clinicians, and MLE review.</h2>
               <p>
                 Explore a breast cancer monitoring workflow with patient-scoped records,
@@ -132,7 +132,7 @@ export default function LoginPage() {
         <div className="login-panel">
           <div className="login-panel-header">
             <div>
-              <p className="login-eyebrow">Secure demo access</p>
+              <p className="login-eyebrow">Synthetic demo access</p>
               <h2>Sign in</h2>
             </div>
             <span className="login-lock">

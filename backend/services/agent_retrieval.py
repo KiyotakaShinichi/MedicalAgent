@@ -30,6 +30,7 @@ from typing import Any, Mapping
 from backend.services.agent_query_rewriting import tokenize
 from backend.services.cross_encoder_reranker import rerank_with_cross_encoder
 from backend.services.rag_vector_index import search_hybrid_index
+from backend.services.rag_context_integrity import sanitize_retrieved_context
 
 
 # ─── Module-level constants + state ──────────────────────────────────────────
@@ -114,10 +115,36 @@ def section_boost(snippet: Mapping[str, Any]) -> float:
     return 0.0
 
 
+def title_match_boost(query_tokens: set[str], snippet: Mapping[str, Any]) -> float:
+    """Boost explicit paper-title and source-identifier lookups.
+
+    This is metadata-based and case-agnostic: it never checks eval IDs or an
+    expected source. Strong boosts require most title tokens to appear in the
+    user's query, so ordinary topic questions keep the existing hybrid rank.
+    """
+    title_tokens = set(tokenize(str(snippet.get("title") or snippet.get("source_name") or "")))
+    identifier_tokens = set(tokenize(" ".join(
+        str(snippet.get(key) or "") for key in ("pmcid", "pmid", "doi")
+    )))
+    if identifier_tokens and query_tokens & identifier_tokens:
+        return 2.0
+    if len(title_tokens) < 3:
+        return 0.0
+    coverage = len(query_tokens & title_tokens) / len(title_tokens)
+    if coverage >= 0.95:
+        return 2.0
+    if coverage >= 0.80:
+        return 1.2
+    if coverage >= 0.60 and len(query_tokens & title_tokens) >= 3:
+        return 0.5
+    return 0.0
+
+
 # Underscore aliases for back-compat with agent_rag's inline references.
 _intent_boost = intent_boost
 _domain_boost = domain_boost
 _section_boost = section_boost
+_title_match_boost = title_match_boost
 
 
 # ─── Cross-encoder reranker ──────────────────────────────────────────────────
@@ -198,9 +225,10 @@ def hybrid_retrieval(rewritten: Mapping[str, Any], intent: str) -> list[dict[str
             ib = intent_boost(intent, item)
             db = domain_boost(query_tokens, item)
             sb = section_boost(item)
+            tb = title_match_boost(query_tokens, item)
             is_curated = item.get("builtin") or item.get("source_name") in CURATED_SOURCES
             curated_boost = 1.0 if is_curated else 0.0
-            score = float(item.get("retrieval_score", 0)) + ib + db + sb + curated_boost
+            score = float(item.get("retrieval_score", 0)) + ib + db + sb + tb + curated_boost
             rows.append({
                 **item,
                 "retrieval_score": round(score, 4),
@@ -217,6 +245,7 @@ def hybrid_retrieval(rewritten: Mapping[str, Any], intent: str) -> list[dict[str
                     "agent_intent_boost":  round(ib, 4),
                     "agent_domain_boost":  round(db, 4),
                     "agent_section_boost": round(sb, 4),
+                    "agent_title_match_boost": round(tb, 4),
                     "agent_curated_boost": round(curated_boost, 4),
                 },
             })
@@ -240,7 +269,14 @@ def hybrid_retrieval(rewritten: Mapping[str, Any], intent: str) -> list[dict[str
         metadata_terms.update(tokenize(snippet.get("topic") or ""))
         metadata_terms.update(tokenize(" ".join(snippet.get("modality", []) or [])))
         semantic = len(query_tokens & metadata_terms) / max(len(metadata_terms), 1)
-        score = lexical + semantic + intent_boost(intent, snippet) + domain_boost(query_tokens, snippet) + section_boost(snippet)
+        score = (
+            lexical
+            + semantic
+            + intent_boost(intent, snippet)
+            + domain_boost(query_tokens, snippet)
+            + section_boost(snippet)
+            + title_match_boost(query_tokens, snippet)
+        )
         if score > 0:
             rows.append({
                 **snippet,
@@ -289,16 +325,19 @@ def rerank_context(
         safety_boost = 0.4 if safety.get("level") == "high_risk" and "urgent" in tags else 0
         is_curated = item.get("builtin") or item.get("source_name") in CURATED_SOURCES
         source_boost = 1.0 if is_curated else 0.05
+        title_boost = title_match_boost(query_tokens, item)
         final_score = (
             float(item.get("retrieval_score", 0))
             + coverage * 0.18
             + safety_boost
             + source_boost
+            + title_boost
         )
         reranked.append({
             **item,
             "rerank_score":        round(final_score, 4),
             "reranker_backend":    "heuristic_metadata_safety_reranker",
+            "title_match_boost":   round(title_boost, 4),
         })
     heuristic_rows = sorted(reranked, key=lambda row: row["rerank_score"], reverse=True)
     top_rows, telemetry = rerank_with_cross_encoder(
@@ -320,9 +359,10 @@ def contextual_compression(reranked: list[Mapping[str, Any]]) -> list[dict[str, 
     """Cap the post-rerank chunk list at MAX_CONTEXT_CHARS across at
     most 3 chunks.  Carries parent_id forward so the tier filter can
     resolve each chunk against the KB governance index."""
+    integrity = sanitize_retrieved_context(reranked)
     compressed: list[dict[str, Any]] = []
     total = 0
-    for item in reranked:
+    for item in integrity.kept_chunks:
         text = item["text"]
         if total + len(text) > MAX_CONTEXT_CHARS and compressed:
             continue
@@ -367,6 +407,7 @@ __all__ = [
     "intent_boost", "_intent_boost",
     "domain_boost", "_domain_boost",
     "section_boost", "_section_boost",
+    "title_match_boost", "_title_match_boost",
     "hybrid_retrieval",
     "expand_parent_child_windows",
     "rerank_context",

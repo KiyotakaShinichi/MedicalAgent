@@ -19,6 +19,7 @@ from backend.services.agent_safety import safety_scope_check
 from backend.services.agent_text_normalization import normalize_agent_text
 from backend.services.emotional_distress_detection import detect_emotional_distress
 from backend.services.security_guardrails import detect_prompt_injection_or_exfiltration
+from backend.services.route_authorization_guard import authorize_patient_route
 from backend.services.unsafe_intent_semantic_classifier import classify_unsafe_intent
 
 
@@ -82,6 +83,7 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
     raw_text = (message or "").strip()
     text = normalize_agent_text(raw_text)
     security = detect_prompt_injection_or_exfiltration(raw_text)
+    route_authorization = authorize_patient_route(raw_text)
     safety = safety_scope_check(text)
     unsafe = classify_unsafe_intent(text)
     distress = detect_emotional_distress(text, safety=safety)
@@ -96,7 +98,12 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
     final_action = "answer_normally"
     rationale = "No specialized workflow was required."
 
-    if _security_block_is_authoritative(security, unsafe, text) or _looks_cross_patient_record_request(text):
+    if not route_authorization.allowed:
+        route = route_authorization.route
+        review_route = "security_boundary"
+        final_action = "safe_refusal"
+        rationale = route_authorization.reason
+    elif _security_block_is_authoritative(security, unsafe, text) or _looks_cross_patient_record_request(text):
         route = "security_refusal"
         review_route = "security_boundary"
         final_action = "safe_refusal"
@@ -212,6 +219,7 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
             "safety_source": safety.get("safety_source") or safety.get("semantic_family") or "deterministic",
             "unsafe_intent_family": unsafe.get("family"),
             "unsafe_intent_confidence": unsafe.get("confidence"),
+            "route_authorization": route_authorization.to_dict(),
             "emotional_distress_mode": distress.response_mode,
             "patient_context_available": bool(patient_context),
             "boundary_context_reused": boundary_context_reused,

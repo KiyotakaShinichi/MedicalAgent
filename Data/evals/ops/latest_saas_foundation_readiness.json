@@ -1,0 +1,111 @@
+{
+  "schema_version": "nlcare_saas_foundation_readiness_v1",
+  "generated_at": "2026-08-11T02:31:37.563567+00:00",
+  "status": "ready_for_restricted_synthetic_saas_alpha",
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "real_patient_data_allowed": false,
+  "billing_enabled": false,
+  "billing_authoritative": false,
+  "managed_cloud_deployment_completed": false,
+  "live_oidc_provider_verified": false,
+  "external_review_completed": false,
+  "row_level_tenancy_applied_to_legacy_patient_demo": false,
+  "control_count": 15,
+  "passed_control_count": 15,
+  "controls": [
+    {
+      "id": "tenant_schema_defined",
+      "passed": true,
+      "evidence": "backend/models.py"
+    },
+    {
+      "id": "membership_schema_defined",
+      "passed": true,
+      "evidence": "backend/models.py"
+    },
+    {
+      "id": "append_only_usage_ledger_defined",
+      "passed": true,
+      "evidence": "backend/models.py"
+    },
+    {
+      "id": "tenant_scope_enforced",
+      "passed": true,
+      "evidence": "backend/services/saas_control_plane.py"
+    },
+    {
+      "id": "idempotency_contract_defined",
+      "passed": true,
+      "evidence": "backend/services/saas_control_plane.py"
+    },
+    {
+      "id": "leased_job_worker_defined",
+      "passed": true,
+      "evidence": "backend/services/saas_job_worker.py"
+    },
+    {
+      "id": "job_dead_letter_defined",
+      "passed": true,
+      "evidence": "backend/services/saas_job_worker.py"
+    },
+    {
+      "id": "leased_outbox_defined",
+      "passed": true,
+      "evidence": "backend/services/saas_outbox_dispatcher.py"
+    },
+    {
+      "id": "signed_automation_route_allowlisted",
+      "passed": true,
+      "evidence": "backend/services/n8n_webhook_dispatcher.py"
+    },
+    {
+      "id": "shared_rate_limit_defined",
+      "passed": true,
+      "evidence": "backend/services/api_protection.py"
+    },
+    {
+      "id": "platform_api_idempotency_required",
+      "passed": true,
+      "evidence": "backend/api/routers/platform.py"
+    },
+    {
+      "id": "workspace_boundary_visible",
+      "passed": true,
+      "evidence": "frontend-react/src/pages/workspace/WorkspaceDashboard.tsx"
+    },
+    {
+      "id": "saas_migration_complete",
+      "passed": true,
+      "evidence": "backend/migrations/versions/0012_saas_control_plane.py"
+    },
+    {
+      "id": "synthetic_compose_saas_workers",
+      "passed": true,
+      "evidence": "docker-compose.synthetic-staging.yml"
+    },
+    {
+      "id": "production_shaped_compose_saas_workers",
+      "passed": true,
+      "evidence": "docker-compose.prod.yml"
+    }
+  ],
+  "implemented_scope": [
+    "organization and membership-scoped control-plane data",
+    "project and synthetic environment isolation",
+    "engineering entitlements and non-billing usage ledger",
+    "idempotent durable evaluation jobs with leases, retries, recovery, and dead letters",
+    "transactional redacted outbox with leased signed n8n delivery",
+    "shared Redis rate-limit option with strict-profile fail-closed behavior",
+    "role-gated operational workspace for projects, jobs, usage, and governance boundaries"
+  ],
+  "deployment_blockers": [
+    "connect and verify a real OIDC identity provider",
+    "exercise Postgres migrations and tenant isolation in a managed staging environment",
+    "run multi-worker concurrency, backup/restore, and disaster-recovery drills",
+    "configure secrets, TLS, gateway/WAF controls, monitoring, and incident ownership",
+    "complete independent security review and external-author evaluation",
+    "keep the patient portal synthetic demo isolated unless a separate regulated program exists"
+  ],
+  "claim_boundary": "This is engineering evidence for a restricted synthetic SaaS alpha foundation. It is not clinical validation, a security or compliance certification, billing proof, managed-cloud deployment evidence, or production healthcare readiness."
+}

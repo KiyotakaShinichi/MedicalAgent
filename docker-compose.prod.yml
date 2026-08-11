@@ -40,6 +40,7 @@ services:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-medical_agent}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD before starting the production-shaped profile}@postgres:5432/${POSTGRES_DB:-medical_agent}
       NLCARE_CORS_ORIGINS: ${NLCARE_CORS_ORIGINS:-http://127.0.0.1:8080}
       REDIS_URL: redis://redis:6379/0
+      NLCARE_SHARED_RATE_LIMIT_ENABLED: "true"
       NLCARE_OIDC_ENABLED: ${NLCARE_OIDC_ENABLED:-false}
       NLCARE_OIDC_ISSUER: ${NLCARE_OIDC_ISSUER:-}
       NLCARE_OIDC_AUDIENCE: ${NLCARE_OIDC_AUDIENCE:-}
@@ -91,6 +92,7 @@ services:
       ALLOW_DEMO_AUTH: "false"
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-medical_agent}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD before starting the production-shaped profile}@postgres:5432/${POSTGRES_DB:-medical_agent}
       REDIS_URL: redis://redis:6379/0
+      NLCARE_SHARED_RATE_LIMIT_ENABLED: "true"
       NLCARE_CORS_ORIGINS: ${NLCARE_CORS_ORIGINS:-http://127.0.0.1:8080}
       NLCARE_OIDC_ENABLED: ${NLCARE_OIDC_ENABLED:-false}
       NLCARE_OIDC_ISSUER: ${NLCARE_OIDC_ISSUER:-}
@@ -112,6 +114,55 @@ services:
       - ./Data:/app/Data
       - ./KnowledgeBase:/app/KnowledgeBase
     command: ["scripts/run_automation_worker.py", "--poll-seconds", "5", "--lease-seconds", "120"]
+    init: true
+    restart: unless-stopped
+
+  saas-worker:
+    build: .
+    depends_on:
+      backend:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-staging}
+      APP_ENV: ${APP_ENV:-staging}
+      ALLOW_DEMO_AUTH: "false"
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-medical_agent}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD before starting the production-shaped profile}@postgres:5432/${POSTGRES_DB:-medical_agent}
+      REDIS_URL: redis://redis:6379/0
+      NLCARE_SYNTHETIC_ONLY: "true"
+      NLCARE_DATA_CLASSIFICATION: synthetic
+      NLCARE_SAAS_JOB_EXECUTION_ENABLED: ${NLCARE_SAAS_JOB_EXECUTION_ENABLED:-false}
+      N8N_WEBHOOK_DISPATCH_ENABLED: ${N8N_WEBHOOK_DISPATCH_ENABLED:-false}
+    volumes:
+      - ./Data:/app/Data
+      - ./KnowledgeBase:/app/KnowledgeBase
+    command: ["scripts/run_saas_job_worker.py", "--poll-seconds", "3"]
+    init: true
+    restart: unless-stopped
+
+  saas-outbox-worker:
+    build: .
+    depends_on:
+      backend:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-staging}
+      APP_ENV: ${APP_ENV:-staging}
+      ALLOW_DEMO_AUTH: "false"
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-medical_agent}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD before starting the production-shaped profile}@postgres:5432/${POSTGRES_DB:-medical_agent}
+      REDIS_URL: redis://redis:6379/0
+      NLCARE_SYNTHETIC_ONLY: "true"
+      NLCARE_DATA_CLASSIFICATION: synthetic
+      N8N_WEBHOOK_DISPATCH_ENABLED: ${N8N_WEBHOOK_DISPATCH_ENABLED:-false}
+      N8N_WEBHOOK_BASE_URL: ${N8N_WEBHOOK_BASE_URL:-}
+      N8N_WEBHOOK_SIGNING_SECRET: ${N8N_WEBHOOK_SIGNING_SECRET:-}
+      N8N_WEBHOOK_SIGNING_KEY_ID: ${N8N_WEBHOOK_SIGNING_KEY_ID:-current}
+    volumes:
+      - ./Data:/app/Data
+    command: ["scripts/run_saas_outbox_worker.py", "--poll-seconds", "3"]
     init: true
     restart: unless-stopped
 

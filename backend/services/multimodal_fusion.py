@@ -57,13 +57,13 @@ def _mri_response_signal(patient_id, report, predictions_csv_path, shap_explanat
         explanation = load_patient_shap_explanation(patient_id, shap_explanations_json_path)
         if probability >= 0.66:
             status = "favorable_response_signal"
-            message = "MRI model signal leans toward complete treatment response."
+            message = "The MRI-derived fields group with the higher simulator response-pattern class."
         elif probability <= 0.40:
             status = "lower_response_signal"
-            message = "MRI model signal leans away from complete treatment response."
+            message = "The MRI-derived fields group with the lower simulator response-pattern class."
         else:
             status = "indeterminate_response_signal"
-            message = "MRI model signal is uncertain."
+            message = "The MRI-derived synthetic grouping is uncertain."
 
         return {
             "status": status,
@@ -82,11 +82,11 @@ def _mri_response_signal(patient_id, report, predictions_csv_path, shap_explanat
         hybrid_score = float(hybrid_signal.get("hybrid_score", 50))
         status = hybrid_signal.get("status") or _status_from_score(hybrid_score)
         if status == "favorable_response_signal":
-            message = "Hybrid synthetic MLE signal leans toward favorable treatment response."
+            message = "The available fields group with the higher synthetic monitoring-pattern class."
         elif "lower" in status:
-            message = "Hybrid synthetic MLE signal leans toward lower response or closer review."
+            message = "The available fields group with the lower synthetic monitoring-pattern class."
         else:
-            message = "Hybrid synthetic MLE signal is mixed or uncertain."
+            message = "The synthetic monitoring-pattern grouping is mixed or uncertain."
 
         return {
             "status": status,
@@ -107,13 +107,13 @@ def _mri_response_signal(patient_id, report, predictions_csv_path, shap_explanat
         explanation = report.get("synthetic_model_explanation")
         if synthetic_probability >= 0.66:
             status = "favorable_response_signal"
-            message = "Synthetic longitudinal model leans toward favorable treatment response."
+            message = "The longitudinal fields group with the higher simulator monitoring-pattern class."
         elif synthetic_probability <= 0.40:
             status = "lower_response_signal"
-            message = "Synthetic longitudinal model leans away from favorable treatment response."
+            message = "The longitudinal fields group with the lower simulator monitoring-pattern class."
         else:
             status = "indeterminate_response_signal"
-            message = "Synthetic longitudinal model signal is uncertain."
+            message = "The longitudinal synthetic grouping is uncertain."
 
         return {
             "status": status,
@@ -213,6 +213,7 @@ def _clinical_monitoring_signal(report):
     risks = report.get("risks") or []
     urgent = [risk for risk in risks if risk.get("severity") == "urgent_review"]
     watch = [risk for risk in risks if risk.get("severity") == "watch"]
+    has_labs = bool(report.get("latest_labs") or report.get("lab_history"))
 
     if urgent:
         status = "needs_review"
@@ -220,6 +221,9 @@ def _clinical_monitoring_signal(report):
     elif watch:
         status = "watch_closely"
         message = f"{len(watch)} watch-level clinical risk flag(s) are present."
+    elif not has_labs:
+        status = "unavailable"
+        message = "No CBC trend is available, so the absence of flags cannot be interpreted as reassuring."
     else:
         status = "stable_or_no_flags"
         message = "No urgent CBC/treatment/radiology risk flags are present."
@@ -230,6 +234,8 @@ def _clinical_monitoring_signal(report):
         "risk_count": len(risks),
         "urgent_count": len(urgent),
         "watch_count": len(watch),
+        "has_labs": has_labs,
+        "evidence_available": has_labs or bool(risks),
         "has_synthetic_labs": bool(report.get("has_synthetic_labs")),
         "lab_sources": report.get("lab_sources", []),
     }
@@ -273,6 +279,35 @@ def _treatment_monitoring_score(mri_signal, clinical_signal, symptom_signal):
 
 def _treatment_monitoring_score_breakdown(mri_signal, clinical_signal, symptom_signal):
     base = mri_signal.get("response_signal_score")
+    max_severity = symptom_signal.get("max_severity")
+    available_modalities = [
+        name
+        for name, available in (
+            ("imaging_or_model", base is not None),
+            ("cbc_or_review_flags", bool(clinical_signal.get("evidence_available"))),
+            ("symptoms", max_severity is not None),
+        )
+        if available
+    ]
+    if not available_modalities:
+        return {
+            "base_signal": None,
+            "urgent_review_flags": 0,
+            "urgent_flag_deduction": 0.0,
+            "watch_flags": 0,
+            "watch_flag_deduction": 0.0,
+            "peak_recorded_symptom_severity": None,
+            "symptom_deduction": 0.0,
+            "synthetic_lab_provenance_deduction": 0,
+            "total_deduction": 0.0,
+            "final_score": None,
+            "evidence_sufficiency": "insufficient",
+            "available_modalities": [],
+            "abstained": True,
+            "abstain_reason": "No imaging/model, CBC/review-flag, or symptom evidence is available.",
+            "formula": None,
+            "claim_boundary": "No synthetic monitoring index is generated when evidence is insufficient.",
+        }
     if base is None:
         base = 50
 
@@ -281,7 +316,6 @@ def _treatment_monitoring_score_breakdown(mri_signal, clinical_signal, symptom_s
     urgent_deduction = min(35, urgent_count * 12)
     watch_deduction = min(20, watch_count * 5)
 
-    max_severity = symptom_signal.get("max_severity")
     symptom_deduction = 0
     if max_severity is not None:
         symptom_deduction = min(12, int(max_severity) * 1.2)
@@ -301,25 +335,42 @@ def _treatment_monitoring_score_breakdown(mri_signal, clinical_signal, symptom_s
         "synthetic_lab_provenance_deduction": synthetic_lab_deduction,
         "total_deduction": round(float(total_deduction), 1),
         "final_score": final_score,
+        "evidence_sufficiency": "sufficient_for_synthetic_index",
+        "available_modalities": available_modalities,
+        "abstained": False,
+        "abstain_reason": None,
         "formula": "clamp(base signal - capped review-flag deductions - symptom deduction - synthetic-lab provenance deduction, 0, 100)",
         "claim_boundary": "Record-based synthetic engineering index; not cancer status, treatment success, prognosis, or a treatment recommendation.",
     }
 
 
 def _score_interpretation(score):
+    if score is None:
+        return {
+            "scale": "not_displayed",
+            "meaning": "No monitoring index was generated because the recorded evidence is insufficient.",
+            "bands": {},
+            "caveat": "Missing data must not be converted into a neutral or reassuring score.",
+        }
     return {
         "scale": "0-100",
-        "meaning": "Higher means stronger available evidence of favorable response with fewer monitoring concerns.",
+        "meaning": "Higher combines a higher simulator grouping with fewer fixed portal review-rule matches.",
         "bands": {
-            "70-100": "favorable/on-track signal",
-            "45-69": "mixed or watch closely",
-            "0-44": "lower response signal or clinical concerns",
+            "70-100": "higher synthetic grouping / fewer fixed review matches",
+            "45-69": "mixed record pattern",
+            "0-44": "lower synthetic grouping / more fixed review matches",
         },
-        "caveat": "Score is an exploratory PoC signal, not a clinical treatment recommendation.",
+        "caveat": "Legacy engineering index only; not health status, treatment effectiveness, prognosis, or medical advice.",
     }
 
 
 def _overall_status(score, mri_signal, clinical_signal, symptom_signal):
+    if score is None:
+        return {
+            "status": "insufficient_evidence",
+            "message": "There is not enough recorded evidence to generate a monitoring index.",
+            "recommended_action": "Add available records and bring any current concerns to the care team for review.",
+        }
     if clinical_signal["status"] == "needs_review" or symptom_signal["status"] == "needs_review":
         return {
             "status": "needs_clinician_review",
@@ -329,19 +380,19 @@ def _overall_status(score, mri_signal, clinical_signal, symptom_signal):
     if score < 45 or clinical_signal["status"] == "watch_closely" or symptom_signal["status"] == "watch_closely":
         return {
             "status": "watch_closely",
-            "message": "Combined signals suggest closer monitoring is reasonable.",
-            "recommended_action": "Continue monitoring trends and review at the next clinical touchpoint.",
+            "message": "The available record contains one or more fixed review-rule matches.",
+            "recommended_action": "Discuss the listed record items with the care team; do not alter treatment from this index.",
         }
     if score >= 70 and mri_signal["status"] == "favorable_response_signal":
         return {
             "status": "favorable_response_signal",
-            "message": "Available signals lean toward favorable treatment response with no major clinical warning flags.",
-            "recommended_action": "Continue routine monitoring and clinician-directed care.",
+            "message": "The simulator grouping is higher and no major fixed portal review rule matched.",
+            "recommended_action": "Continue clinician-directed care and treat this only as an engineering summary.",
         }
     return {
         "status": "on_track_or_no_major_flags",
-        "message": "No major combined warning pattern is present in the available data.",
-        "recommended_action": "Continue routine monitoring and clinician-directed care.",
+        "message": "No major combined portal review rule matched in the available data.",
+        "recommended_action": "Continue clinician-directed care; absence of a rule match is not reassurance.",
     }
 
 

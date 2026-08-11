@@ -61,6 +61,7 @@ def output_guardrail_check(result: Mapping[str, Any]) -> dict[str, Any]:
     validation = result.get("validation") or {}
     issues = list(validation.get("issues") or [])
     intent = result.get("intent")
+    rag_mode = result.get("rag_mode")
     lower_reply = reply.lower()
 
     if any(term in lower_reply for term in UNSAFE_OUTPUT_TERMS):
@@ -70,10 +71,13 @@ def output_guardrail_check(result: Mapping[str, Any]) -> dict[str, Any]:
     # generate_answer); the missing-citations check would otherwise
     # fire on every safety_boundary / treatment_decision_boundary reply
     # that surfaces background education context for display.
+    non_evidence_portal_help = intent == "portal_help" and rag_mode == "portal_help_rag"
     if (
         intent not in REFUSAL_INTENTS
+        and not non_evidence_portal_help
         and (result.get("retrieval_context") or [])
         and not (result.get("citations") or [])
+        and not result.get("deliberate_evidence_abstention")
     ):
         issues.append("missing_citations")
 

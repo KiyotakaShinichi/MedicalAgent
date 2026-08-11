@@ -1,6 +1,6 @@
 {
   "schema_version": "restricted_synthetic_staging_assurance_v1",
-  "generated_at": "2026-08-09T15:53:16.447531+00:00",
+  "generated_at": "2026-08-11T04:47:06.936348+00:00",
   "status": "passed",
   "invariant": "Restricted staging accepts synthetic data only, stores no raw bearer token, and releases no unscanned upload.",
   "summary": {
@@ -10,7 +10,7 @@
     "minimum_required_tests": 20,
     "pytest_exit_code": 0,
     "timed_out": false,
-    "duration_seconds": 12.664
+    "duration_seconds": 15.223
   },
   "controls": {
     "browser_oidc_authorization_code_pkce_required": true,
@@ -46,20 +46,20 @@
       "-q"
     ],
     "source_sha256": {
-      "backend/services/auth.py": "d924a12d250894e74d6867d98d623b34d6f8e94efffcdccf595df465c7d9d364",
+      "backend/services/auth.py": "1508ce88f4d4f046c3a8e156043ddc30655e8add2e38ea94bb024733e55d4c13",
       "backend/services/oidc_pkce.py": "457578f1c524778adfb7c0e827cf95deb49d0688848ff9e49ba1611355f5d2a9",
       "backend/services/deployment_profile_validation.py": "df4ed02bf81cc44f65900fe0ed1e556961a7602d706748d5867ffa7ea1d4d6cf",
       "backend/services/synthetic_data_boundary.py": "735ca972eb9c0e1826f76880fe26e5606ea1c1ed82597741c450be8a83a61544",
       "backend/services/upload_security.py": "211fbb220e6cb02b34d897d55a0adc96de34497afb16318da597fa726d236e94",
       "backend/services/patient_uploads.py": "e1b362b46885dfaaad24b5aba64a5d771ba8a12a8523787e6bae62caf839f395",
-      "backend/api/main.py": "c70ad5de2459f254fac454529596c16060a9bd0c5c991e71b26381cfb5a96af5",
+      "backend/api/main.py": "6cff6f27377dfa2907d2f9b61e8a5e2b9ee55deb1303d6c0373d23386e3364d5",
       "Dockerfile": "a72599d4d6df892546aee4e8ff0d2925df398452b1f448795dd985c5fe042b8a",
-      "scripts/container_entrypoint.py": "1ead2db753625090ad5278c4b1610efe4e939ce60581441e155f9826696492f3",
-      "frontend-react/src/api/client.ts": "e39ec13fb37a770bf6049229e4ab7e8eacaecfe9efa0724a5ff64718e4b5dbc0",
+      "scripts/container_entrypoint.py": "08747f92612b225241ccbca4b27cd9e7856c52fc78c4e3679814f752eb17722d",
+      "frontend-react/src/api/client.ts": "e87dc8a63ef30a6f350b6b9ac2e61f9dbb8e8516d1bfc1ed36c483c634700074",
       "frontend-react/src/context/AuthContext.tsx": "fb89e31895fb4893daa1a4e1fc8f4cf05a87e18e6a82f77b55ad717a3d364118",
       "frontend-react/src/context/authContextCore.ts": "00758ab9e3a48171bf3083c8a04c7cb06b8a0eefd8d1b9f845f0b0d544a6747c",
-      "docker-compose.prod.yml": "c117f47ca62d8f1bcd3d9f6518569fb7798238fd12393917f40c1a09742eeeda",
-      "docker-compose.synthetic-staging.yml": "2837f368ff12bb12fad052ee08af4878437f6c909370dc91dcecb502b43b7244",
+      "docker-compose.prod.yml": "3bdd0c80dab9c1cbb213c2c01e07e65c0b19e97478a4e1eaafbb8c3191e6cfee",
+      "docker-compose.synthetic-staging.yml": "100e1387528c340e6a60cc957495704c150304cbf4fcf0139398f219bea17dd2",
       "tests/test_restricted_synthetic_staging_hardening.py": "ed582093194ee114691f4a66a9fe1782b4b377157f889bc1e44fad7ad01e531b",
       "tests/test_deployment_profile_validation.py": "4c81b156c7539e40ef3d821b879762071f34cc826a7e096e5ff8d8d8bbd6df62",
       "tests/test_container_runtime_hardening.py": "4f96ee4e581b8346a2f7ba92b18a505b99505f7eba8645b6461aca489eaf3dd2"

@@ -27,6 +27,7 @@ class AccessContext:
     patient_id: str | None
     token: str
     auth_source: str = "demo_session"
+    subject: str | None = None
 
 
 def create_demo_session(db, role: str, patient_id: str | None = None):
@@ -114,6 +115,7 @@ def get_context_from_authorization(db, authorization_header: str | None):
             patient_id=identity.patient_id,
             token=token,
             auth_source="oidc",
+            subject=identity.subject,
         )
 
     expires_at = session.expires_at
@@ -122,7 +124,13 @@ def get_context_from_authorization(db, authorization_header: str | None):
     if expires_at < datetime.now(timezone.utc):
         raise PermissionError("Expired bearer token")
 
-    return AccessContext(role=session.role, patient_id=session.patient_id, token=token, auth_source="demo_session")
+    return AccessContext(
+        role=session.role,
+        patient_id=session.patient_id,
+        token=token,
+        auth_source="demo_session",
+        subject=f"demo:{session.role}:{session.patient_id or 'global'}",
+    )
 
 
 def revoke_session(db, token: str) -> bool:

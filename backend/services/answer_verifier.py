@@ -41,6 +41,7 @@ def verify_patient_support_answer(
     retrieved_context: list[dict[str, Any]] | None = None,
     safety: dict[str, Any] | None = None,
     intent: str | None = None,
+    deliberate_evidence_abstention: bool = False,
 ) -> dict[str, Any]:
     reply = reply or ""
     lower = reply.lower()
@@ -57,6 +58,7 @@ def verify_patient_support_answer(
         retrieved_context
         and not citations
         and intent not in REFUSAL_INTENTS_FOR_VERIFIER
+        and not deliberate_evidence_abstention
     ):
         issues.append("retrieved_context_without_citations")
     if (safety or {}).get("level") == "high_risk":

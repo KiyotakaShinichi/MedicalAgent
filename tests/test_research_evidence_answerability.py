@@ -3,6 +3,8 @@ from __future__ import annotations
 from backend.services import agent_rag
 from backend.services.agent_intent_router import route_intent
 from backend.services.agent_safety import safety_scope_check
+from backend.services.rag_claim_validator import _claim_type
+from backend.services.rag_evidence_envelope import _high_risk_semantic_validation_required
 from backend.services.research_evidence_answerability import (
     assess_research_evidence_answerability,
 )
@@ -65,6 +67,34 @@ def test_unrelated_research_context_abstains_instead_of_citing_any_paper():
     assert verdict.requires_abstention is True
 
 
+def test_exact_paper_title_lookup_can_reach_downstream_grounding_checks():
+    title = "Use of PRO-CTCAE in oncology clinical trials"
+    verdict = assess_research_evidence_answerability(
+        query=f"Find the paper titled {title}. What does the source actually support?",
+        chunks=[_paper(
+            "PRO-CTCAE was evaluated for patient self-reporting across oncology trial designs.",
+            title=title,
+        )],
+        intent="education",
+        safety={"level": "low_risk", "scope": "education_or_tracking"},
+    )
+    assert verdict.status == "identified_paper_summary_candidate"
+    assert verdict.requires_abstention is False
+
+
+def test_title_lookup_does_not_allow_an_unrelated_retrieved_paper():
+    verdict = assess_research_evidence_answerability(
+        query="Find the paper titled Patient-reported symptom measurement. What does it support?",
+        chunks=[_paper(
+            "This paper describes MRI texture extraction.",
+            title="DCE-MRI texture extraction methods",
+        )],
+        intent="education",
+        safety={"level": "low_risk", "scope": "education_or_tracking"},
+    )
+    assert verdict.requires_abstention is True
+
+
 def test_high_risk_requests_stay_owned_by_the_safety_boundary():
     verdict = assess_research_evidence_answerability(
         query="Use a paper to choose my treatment dose.",
@@ -124,3 +154,29 @@ def test_safe_research_limitations_remain_low_risk():
         "What limitations do supplement interaction studies discuss in general?"
     )
     assert verdict["level"] == "low_risk"
+
+
+def test_descriptive_treatment_study_context_is_not_mislabeled_as_advice(monkeypatch):
+    sentence = (
+        "The questionnaire was used during chemotherapy and radiation and "
+        "after completion of treatment to monitor symptoms."
+    )
+    assert _claim_type(sentence) == "treatment_context"
+
+    monkeypatch.setenv("ENVIRONMENT", "staging")
+    assert _high_risk_semantic_validation_required([
+        {"claim_type": "treatment_context", "validation_method": "heuristic_overlap"}
+    ]) is False
+
+
+def test_treatment_action_and_effectiveness_claims_remain_high_risk(monkeypatch):
+    monkeypatch.setenv("ENVIRONMENT", "staging")
+    for sentence in (
+        "You should stop treatment now.",
+        "The treatment is effective.",
+        "This shows a response to treatment.",
+    ):
+        assert _claim_type(sentence) == "treatment_or_dose"
+        assert _high_risk_semantic_validation_required([
+            {"claim_type": _claim_type(sentence), "validation_method": "heuristic_overlap"}
+        ]) is True

@@ -24,6 +24,11 @@ n8n workflow templates are internal automation scaffolds only. They may notify m
   - Allowed: Trigger internal eval refresh jobs for synthetic/non-live artifacts.
   - Not allowed: Do not trigger clinical actions or use raw patient chat payloads.
 
+- **Synthetic SaaS Workspace Event** (`saas_workspace_event`)
+  - Path: `Data\evals\ops\n8n_workflow_templates\saas_workspace_event.json`
+  - Allowed: Deliver redacted tenant, project, evaluation-job, and usage lifecycle events.
+  - Not allowed: Do not include patient data, raw prompts, clinical conclusions, or billing claims.
+
 - **Trace Quality Digest** (`trace_quality_digest`)
   - Path: `Data\evals\ops\n8n_workflow_templates\trace_quality_digest.json`
   - Allowed: Notify maintainers when trace coverage or trace-envelope validation needs attention.

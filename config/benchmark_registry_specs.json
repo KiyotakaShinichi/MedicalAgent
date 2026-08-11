@@ -2833,6 +2833,24 @@
     }
   },
   {
+    "id": "ai_trinity_tradeoff",
+    "title": "AI Trinity: accuracy, latency, and unit cost",
+    "path": "Data/evals/governance/latest_ai_trinity_tradeoff.json",
+    "tier": "supporting",
+    "metrics": {
+      "decision": ["decision"],
+      "promotion_allowed": ["promotion_allowed"],
+      "accuracy_status": ["summary", "accuracy_status"],
+      "latency_status": ["summary", "latency_status"],
+      "unit_cost_status": ["summary", "unit_cost_status"],
+      "accuracy_grounding_score": ["summary", "current_accuracy_grounding_score"],
+      "retrieval_p95_ms": ["summary", "current_retrieval_p95_ms"],
+      "cost_per_safe_supported_answer_usd": ["summary", "current_cost_per_safe_supported_answer_usd"],
+      "provider_usage_coverage_rate": ["summary", "provider_usage_coverage_rate"],
+      "improvement_proven_vs_bm25": ["summary", "improvement_proven_vs_bm25"]
+    }
+  },
+  {
     "id": "runtime_quality_sentinel",
     "title": "Runtime quality sentinel",
     "path": "Data/evals/ops/latest_runtime_quality_sentinel.json",

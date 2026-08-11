@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 
 from backend.models import (
@@ -266,18 +268,27 @@ def get_chat_messages(db, patient_id, limit=20):
         .all()
     )
 
-    return [
-        {
+    messages = []
+    for row in reversed(rows):
+        citations = []
+        try:
+            stored = json.loads(row.saved_actions_json or "{}")
+            pipeline = stored.get("agent_pipeline") if isinstance(stored, dict) else None
+            if isinstance(pipeline, dict) and isinstance(pipeline.get("citations"), list):
+                citations = [item for item in pipeline["citations"] if isinstance(item, (dict, str))]
+        except (TypeError, ValueError, json.JSONDecodeError):
+            citations = []
+        messages.append({
             "id": row.id,
             "patient_id": row.patient_id,
             "role": row.role,
             "message": row.message,
             "intent": row.intent,
             "saved_actions_json": row.saved_actions_json,
+            "citations": citations,
             "created_at": str(row.created_at),
-        }
-        for row in reversed(rows)
-    ]
+        })
+    return messages
 
 
 def get_patient_uploads(db, patient_id, limit=20):

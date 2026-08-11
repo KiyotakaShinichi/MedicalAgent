@@ -100,7 +100,11 @@ class TierAwareGroqDispatch(unittest.TestCase):
 
     def setUp(self) -> None:
         local_llm.set_fast_mode_override(None)
+        local_llm.reset_provider_circuit()
         os.environ.pop("ONCOTRACK_FAST_MODE", None)
+
+    def tearDown(self) -> None:
+        local_llm.reset_provider_circuit()
 
     def test_router_tier_uses_router_model(self) -> None:
         captured: dict = {}
@@ -171,6 +175,61 @@ class TierAwareGroqDispatch(unittest.TestCase):
             fake_groq_cls.return_value.chat.completions.create.side_effect = fake_create
             local_llm._groq_json(system="s", prompt="p", tier="router")
             self.assertEqual(captured["model"], config_snapshot["router_model"])
+
+
+class ProviderCircuitBreaker(unittest.TestCase):
+    def setUp(self) -> None:
+        local_llm.reset_provider_circuit()
+        self._env = {
+            key: os.environ.get(key)
+            for key in (
+                "NLCARE_LLM_CIRCUIT_FAILURE_THRESHOLD",
+                "NLCARE_LLM_CIRCUIT_COOLDOWN_SECONDS",
+                "NLCARE_LLM_AUTH_CIRCUIT_COOLDOWN_SECONDS",
+            )
+        }
+
+    def tearDown(self) -> None:
+        local_llm.reset_provider_circuit()
+        for key, value in self._env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+    def test_authentication_failure_opens_immediately(self) -> None:
+        status = local_llm.record_provider_failure("groq", "AuthenticationError")
+        self.assertTrue(status["open"])
+        self.assertEqual(status["consecutive_failures"], 1)
+        self.assertEqual(status["last_error_type"], "AuthenticationError")
+
+    def test_transient_failures_open_only_after_threshold(self) -> None:
+        os.environ["NLCARE_LLM_CIRCUIT_FAILURE_THRESHOLD"] = "2"
+        first = local_llm.record_provider_failure("groq", "TimeoutError")
+        second = local_llm.record_provider_failure("groq", "TimeoutError")
+        self.assertFalse(first["open"])
+        self.assertTrue(second["open"])
+
+    def test_success_resets_provider_circuit(self) -> None:
+        local_llm.record_provider_failure("groq", "AuthenticationError")
+        local_llm.record_provider_success("groq")
+        status = local_llm.provider_circuit_status("groq")
+        self.assertFalse(status["open"])
+        self.assertEqual(status["consecutive_failures"], 0)
+
+    def test_open_circuit_short_circuits_groq_without_network(self) -> None:
+        local_llm.record_provider_failure("groq", "AuthenticationError")
+        with patch("backend.services.local_llm.get_groq_config", return_value={
+            "api_key": "invalid-test-key",
+            "router_model": "router",
+            "answer_model": "answer",
+            "timeout_seconds": 1,
+        }):
+            with patch("groq.Groq") as groq_client:
+                result = local_llm._groq_json(system="s", prompt="p")
+        self.assertFalse(result["available"])
+        self.assertEqual(result["reason"], "provider_circuit_open")
+        groq_client.assert_not_called()
 
 
 if __name__ == "__main__":

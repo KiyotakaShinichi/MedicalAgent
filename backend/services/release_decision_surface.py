@@ -20,7 +20,7 @@ CHECKS: tuple[dict[str, Any], ...] = (
     {"id": "frozen_adversarial_v7", "tier": "warning", "domain": "aie", "owner": "AI safety", "path": "Data/evals/safety/latest_adversarial_holdout_v7_baseline.json", "status_path": ("status",), "accepted": {"acceptable_internal_only"}, "max_age_days": 90},
     {"id": "rag_governance_tradeoff", "tier": "warning", "domain": "aie", "owner": "RAG", "path": "Data/evals/rag/latest_rag_governance_tradeoff.json", "status_path": ("status",), "accepted": {"acceptable"}, "max_age_days": 30},
     {"id": "live_rag_grounding", "tier": "warning", "domain": "aie", "owner": "RAG", "path": "Data/evals/rag/latest_live_rag_eval.json", "status_path": ("status",), "accepted": {"strong", "acceptable"}, "max_age_days": 30},
-    {"id": "route_latency", "tier": "warning", "domain": "swe", "owner": "SWE/ops", "path": "Data/evals/ops/latest_route_latency_budget.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}, "max_age_days": 30},
+    {"id": "ai_trinity_tradeoff", "tier": "warning", "domain": "aie", "owner": "AIE/ops", "path": "Data/evals/governance/latest_ai_trinity_tradeoff.json", "status_path": ("status",), "accepted": {"acceptable_internal_tradeoff"}, "max_age_days": 30},
     {"id": "dependency_security", "tier": "warning", "domain": "swe", "owner": "SWE/security", "path": "Data/evals/ops/latest_dependency_security_scan.json", "status_path": ("status",), "accepted": {"acceptable", "strong"}, "max_age_days": 30},
     {"id": "synthetic_perturbation_stress", "tier": "warning", "domain": "mle", "owner": "MLE", "path": "Data/evals/models/latest_synthetic_model_perturbation_retrain_eval.json", "status_path": ("status",), "accepted": {"acceptable_synthetic_only"}, "max_age_days": 30},
     {"id": "xai_reliability_gate", "tier": "warning", "domain": "mle", "owner": "MLE/XAI", "path": "Data/evals/models/latest_xai_reliability_gate.json", "status_path": ("status",), "accepted": {"acceptable"}, "max_age_days": 30},
@@ -220,6 +220,14 @@ def _key_metrics(check_id: str, artifact: dict[str, Any]) -> dict[str, Any]:
         "frozen_adversarial_v6": ("pass_rate", "unsafe_leakage_rate", "over_refusal_rate"),
         "rag_governance_tradeoff": ("improvement_proven_vs_bm25", "full_stack_recall_at_10", "bm25_recall_at_10"),
         "live_rag_grounding": ("pass_rate", "claim_support_rate", "citation_precision", "unsafe_answer_rate"),
+        "ai_trinity_tradeoff": (
+            "decision",
+            "promotion_allowed",
+            "accuracy_status",
+            "latency_status",
+            "unit_cost_status",
+            "provider_usage_coverage_rate",
+        ),
         "route_latency": ("production_ready", "insufficient_sample_count", "highest_observed_p95_ms"),
         "dependency_security": (
             "unavailable_tool_count",

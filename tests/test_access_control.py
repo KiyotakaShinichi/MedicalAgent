@@ -15,6 +15,7 @@ seeded with demo credentials via the same auth service used in production.
 import unittest
 from unittest.mock import patch
 from pathlib import Path
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -46,7 +47,9 @@ def _seed():
     try:
         if not db.query(Patient).filter(Patient.id == "P001").first():
             db.add(Patient(id="P001", name="Demo Patient 1"))
-            db.commit()
+        if not db.query(Patient).filter(Patient.id == "P002").first():
+            db.add(Patient(id="P002", name="Demo Patient 2"))
+        db.commit()
     finally:
         db.close()
 
@@ -62,8 +65,24 @@ def override_get_db():
         db.close()
 
 
-app.dependency_overrides[get_db] = override_get_db
 client = TestClient(app, raise_server_exceptions=False)
+
+
+@pytest.fixture(autouse=True)
+def _isolate_access_control_database(monkeypatch):
+    """Keep this module independent from database overrides in other suites."""
+    previous = app.dependency_overrides.get(get_db)
+    monkeypatch.setenv("ALLOW_DEMO_AUTH", "true")
+    monkeypatch.setenv("ENVIRONMENT", "development")
+    monkeypatch.setenv("NLCARE_SHARED_RATE_LIMIT_ENABLED", "false")
+    app.dependency_overrides[get_db] = override_get_db
+    try:
+        yield
+    finally:
+        if previous is None:
+            app.dependency_overrides.pop(get_db, None)
+        else:
+            app.dependency_overrides[get_db] = previous
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -90,6 +109,12 @@ class TestAuthEndpoints(unittest.TestCase):
         self.assertEqual(data["role"], "patient")
         self.assertIsNotNone(data.get("access_token"))
         self.assertEqual(data.get("patient_id"), "P001")
+
+    def test_credential_login_second_scoped_patient(self):
+        resp = client.post("/auth/demo-credential-login", json={"username": "P002", "password": "patient-demo"})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["role"], "patient")
+        self.assertEqual(resp.json()["patient_id"], "P002")
 
     def test_credential_login_clinician(self):
         resp = client.post("/auth/demo-credential-login", json={"username": "clinician", "password": "clinician-demo"})

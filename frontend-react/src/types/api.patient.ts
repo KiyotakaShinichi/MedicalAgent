@@ -155,6 +155,35 @@ export interface PatientXaiEnvelope {
   claim_boundary: string;
 }
 
+export interface RecordChangeObservation {
+  evidence_type: "cbc" | "symptoms" | "imaging_report_measurement" | string;
+  previous_date: string | null;
+  latest_date: string | null;
+  summary: string;
+  review_direction: string;
+  calculation: string;
+}
+
+export interface RecordChangeExplanation {
+  schema_version: string;
+  status:
+    | "insufficient_comparison_history"
+    | "no_clear_record_change"
+    | "mixed_or_uncertain_record_change"
+    | "fewer_logged_review_concerns"
+    | "more_logged_review_concerns"
+    | string;
+  headline: string;
+  patient_summary: string;
+  observations: RecordChangeObservation[];
+  missing_or_not_comparable: string[];
+  safe_next_steps: string[];
+  comparison_basis: string;
+  treatment_effectiveness_conclusion_allowed: false;
+  clinical_validation: false;
+  claim_boundary: string;
+}
+
 export interface AiSummary {
   patient_explanation: string | string[];
   clinical_summary: string | string[];
@@ -388,6 +417,7 @@ export interface PatientReport {
   synthetic_model_prediction: SyntheticModelPrediction | null;
   synthetic_model_explanation: SyntheticModelExplanation | null;
   xai_explanation_envelope?: PatientXaiEnvelope | null;
+  record_change_explanation?: RecordChangeExplanation | null;
   ai_summary: AiSummary | null;
   timeline: TimelineEvent[];
   treatment_effects: TreatmentEffect[];

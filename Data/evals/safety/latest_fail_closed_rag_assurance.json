@@ -1,6 +1,6 @@
 {
   "schema_version": "fail_closed_rag_assurance_v1",
-  "generated_at": "2026-08-09T15:53:02.777604+00:00",
+  "generated_at": "2026-08-11T04:46:50.893565+00:00",
   "status": "passed",
   "invariant": "No valid evidence envelope -> no evidence-dependent medical answer.",
   "summary": {
@@ -10,7 +10,7 @@
     "minimum_required_cases": 30,
     "pytest_exit_code": 0,
     "timed_out": false,
-    "duration_seconds": 16.066
+    "duration_seconds": 11.904
   },
   "contract": {
     "envelope_version": "rag_evidence_envelope_v1",
@@ -57,9 +57,9 @@
     "source_sha256": {
       "backend/services/rag_evidence_envelope.py": "345d7f54cc323ac1f8597b48936bae7358e58cafb35a78bb563d3803c7e97942",
       "backend/services/agent_post_gen.py": "027da68566f0c22990791b9d5b1a173e1515660951df1a714aad4d7484cbc68e",
-      "backend/services/agent_rag.py": "f066ffd5c45144257bcae05baac7f29ffbbe9f9851c3c936becec90cccd2a3b0",
+      "backend/services/agent_rag.py": "3ac3ae1dd2243ffbec9f334fcd7c67f726c6fb3132b5611456c9e9b648ef5bdd",
       "backend/services/agent_cache.py": "ae211bd2ddcd83648a4f5fc7e4de72f249231411bd2d0a6a04872e33875884ba",
-      "backend/services/support_chat_agent.py": "311e31213b7a44955517ba9bca06f57031bc45efcff3602df4809ef3c0e76128",
+      "backend/services/support_chat_agent.py": "97464ccb288c709fa1ce42fa56f8376f8d1210be311e8aa8696c7aaf001cc377",
       "backend/api/routers/patient_interactions.py": "eca8349ce415b679299a777c36fd5ac0c1bf4d3100a52554f7d5b7d5844fd93f",
       "tests/test_rag_fail_closed_evidence_envelope.py": "350aa0365b8dc610031ff01f3ba84e23e0591ecefee2b5d8f3b93d34441930e2"
     },

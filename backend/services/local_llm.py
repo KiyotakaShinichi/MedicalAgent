@@ -1,4 +1,7 @@
 import json
+import os
+from threading import Lock
+from time import monotonic
 import urllib.error
 import urllib.request
 
@@ -12,6 +15,71 @@ from backend.services.llm_telemetry import (
     provider_usage,
     record_llm_call,
 )
+
+
+_PROVIDER_CIRCUIT_LOCK = Lock()
+_PROVIDER_CIRCUITS: dict[str, dict[str, object]] = {}
+
+
+def provider_circuit_status(provider: str | None = None) -> dict[str, object]:
+    """Return an observable process-local provider circuit snapshot."""
+    now = monotonic()
+    with _PROVIDER_CIRCUIT_LOCK:
+        names = [provider] if provider else sorted(_PROVIDER_CIRCUITS)
+        snapshots: dict[str, dict[str, object]] = {}
+        for name in names:
+            state = _PROVIDER_CIRCUITS.setdefault(str(name), {
+                "consecutive_failures": 0,
+                "opened_until": 0.0,
+                "last_error_type": None,
+            })
+            remaining = max(0.0, float(state.get("opened_until") or 0.0) - now)
+            snapshots[str(name)] = {
+                "open": remaining > 0,
+                "consecutive_failures": int(state.get("consecutive_failures") or 0),
+                "cooldown_remaining_seconds": round(remaining, 3),
+                "last_error_type": state.get("last_error_type"),
+            }
+        if provider:
+            return snapshots[str(provider)]
+        return {"providers": snapshots}
+
+
+def record_provider_failure(provider: str, error_type: str) -> dict[str, object]:
+    now = monotonic()
+    threshold = max(1, int(os.getenv("NLCARE_LLM_CIRCUIT_FAILURE_THRESHOLD", "2")))
+    cooldown = max(1.0, float(os.getenv("NLCARE_LLM_CIRCUIT_COOLDOWN_SECONDS", "30")))
+    auth_cooldown = max(cooldown, float(os.getenv("NLCARE_LLM_AUTH_CIRCUIT_COOLDOWN_SECONDS", "300")))
+    normalized_error = str(error_type or "ProviderError")
+    with _PROVIDER_CIRCUIT_LOCK:
+        state = _PROVIDER_CIRCUITS.setdefault(provider, {
+            "consecutive_failures": 0,
+            "opened_until": 0.0,
+            "last_error_type": None,
+        })
+        state["consecutive_failures"] = int(state.get("consecutive_failures") or 0) + 1
+        state["last_error_type"] = normalized_error
+        authentication_failure = normalized_error in {"AuthenticationError", "PermissionDeniedError"}
+        if authentication_failure or int(state["consecutive_failures"]) >= threshold:
+            state["opened_until"] = now + (auth_cooldown if authentication_failure else cooldown)
+    return provider_circuit_status(provider)
+
+
+def record_provider_success(provider: str) -> None:
+    with _PROVIDER_CIRCUIT_LOCK:
+        _PROVIDER_CIRCUITS[provider] = {
+            "consecutive_failures": 0,
+            "opened_until": 0.0,
+            "last_error_type": None,
+        }
+
+
+def reset_provider_circuit(provider: str | None = None) -> None:
+    with _PROVIDER_CIRCUIT_LOCK:
+        if provider is None:
+            _PROVIDER_CIRCUITS.clear()
+        else:
+            _PROVIDER_CIRCUITS.pop(provider, None)
 
 
 def local_llm_available():
@@ -52,6 +120,7 @@ def describe_llm_adjudication():
         "answer_model": groq.get("answer_model") if groq.get("api_key") else None,
         "router_model": groq.get("router_model") if groq.get("api_key") else None,
         "providers": providers,
+        "provider_circuits": provider_circuit_status(),
         "fallback": "deterministic_guardrails_and_routing",
         "purpose": (
             "Optional JSON adjudication for security, medical safety, intent routing, and cache policy. "
@@ -322,6 +391,14 @@ def _groq_json(system, prompt, tier="router"):
         model = config.get("router_model") or config.get("model")
     if not api_key:
         return {"available": False, "reason": "GROQ_API_KEY is not configured."}
+    circuit = provider_circuit_status("groq")
+    if circuit.get("open"):
+        return {
+            "available": False,
+            "reason": "provider_circuit_open",
+            "provider": "groq",
+            "circuit": circuit,
+        }
 
     try:
         from groq import Groq
@@ -344,6 +421,7 @@ def _groq_json(system, prompt, tier="router"):
         )
         raw = (completion.choices[0].message.content or "").strip()
     except Exception as exc:
+        circuit = record_provider_failure("groq", exc.__class__.__name__)
         record_llm_call(
             provider="groq",
             model=model,
@@ -353,8 +431,13 @@ def _groq_json(system, prompt, tier="router"):
             success=False,
             error_type=exc.__class__.__name__,
         )
-        return {"available": False, "reason": f"groq_unavailable:{exc}"}
+        return {
+            "available": False,
+            "reason": f"groq_unavailable:{exc.__class__.__name__}",
+            "circuit": circuit,
+        }
 
+    record_provider_success("groq")
     record_llm_call(
         provider="groq",
         model=model,
@@ -372,6 +455,14 @@ def _ollama_json(system, prompt):
     model = config.get("model")
     if not model:
         return {"available": False, "reason": "OLLAMA_MODEL or LOCAL_LLM_MODEL is not configured."}
+    circuit = provider_circuit_status("ollama")
+    if circuit.get("open"):
+        return {
+            "available": False,
+            "reason": "provider_circuit_open",
+            "provider": "ollama",
+            "circuit": circuit,
+        }
 
     url = (config.get("base_url") or "http://127.0.0.1:11434").rstrip("/") + "/api/generate"
     payload = {
@@ -393,6 +484,7 @@ def _ollama_json(system, prompt):
         with urllib.request.urlopen(request, timeout=float(config.get("timeout_seconds") or 3)) as response:
             body = json.loads(response.read().decode("utf-8"))
     except (OSError, urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        circuit = record_provider_failure("ollama", exc.__class__.__name__)
         record_llm_call(
             provider="ollama",
             model=model,
@@ -402,8 +494,13 @@ def _ollama_json(system, prompt):
             success=False,
             error_type=exc.__class__.__name__,
         )
-        return {"available": False, "reason": f"ollama_unavailable:{exc}"}
+        return {
+            "available": False,
+            "reason": f"ollama_unavailable:{exc.__class__.__name__}",
+            "circuit": circuit,
+        }
 
+    record_provider_success("ollama")
     raw = body.get("response") or "{}"
     ollama_usage = {
         "input_tokens": body.get("prompt_eval_count") or 0,

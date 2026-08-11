@@ -335,6 +335,13 @@ def _attach_derived_report_sections(report: dict, patient: Patient, db: Session)
     report["monitoring_score"] = (
         report["multimodal_assessment"] or {}
     ).get("treatment_monitoring_score")
+    from backend.services.record_change_explanation import build_record_change_explanation
+
+    report["record_change_explanation"] = build_record_change_explanation(
+        lab_history=report.get("lab_history") or [],
+        symptoms=report.get("symptoms") or [],
+        imaging_reports=(report.get("radiology_summary") or {}).get("reports") or [],
+    )
     report["patient_timeline_summary"] = build_patient_timeline_risk_summary(report)
     report["timeline_intelligence"] = build_timeline_intelligence(report)
     report["data_availability"] = build_data_availability(report)

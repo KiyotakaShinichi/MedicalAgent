@@ -1,0 +1,24 @@
+{
+  "schema_version": "human_review_feedback_ingestion_v1",
+  "generated_at": "2026-08-11T04:16:58.681103+00:00",
+  "status": "BLOCKED_EXTERNAL",
+  "clinical_validation": false,
+  "external_review_completed": false,
+  "candidate_file_count": 0,
+  "accepted_feedback_row_count": 0,
+  "rejected_feedback_row_count": 0,
+  "files": [],
+  "accepted_feedback": [],
+  "validation_issues": [],
+  "issue_summary": {
+    "by_severity": {
+      "blocker": 0,
+      "high": 0,
+      "low": 0,
+      "medium": 0
+    },
+    "required_fix_count": 0
+  },
+  "next_step": "Send the prepared packets to eligible independent reviewers and store returned CSV files in Data/evals/external_review/.",
+  "claim_boundary": "Independent review of selected scenarios does not establish clinical validation, clinical effectiveness, regulatory approval, or production healthcare readiness. No review is counted from a template or incomplete row."
+}

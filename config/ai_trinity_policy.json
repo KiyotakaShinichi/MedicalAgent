@@ -1,0 +1,38 @@
+{
+  "schema_version": "ai_trinity_policy_v1",
+  "policy_name": "NLCare Accuracy-Latency-Unit-Cost Gate",
+  "decision_order": [
+    "safety_and_source_governance",
+    "accuracy_and_grounding",
+    "latency",
+    "unit_cost"
+  ],
+  "retrieval_quality_weights": {
+    "recall_at_10": 0.3,
+    "mrr": 0.2,
+    "ndcg_at_10": 0.15,
+    "citation_precision": 0.15,
+    "claim_support_rate": 0.2
+  },
+  "hard_floors": {
+    "unsafe_leakage_rate_max": 0.0,
+    "refusal_correctness_min": 1.0,
+    "source_tier_correctness_min": 1.0
+  },
+  "accuracy_floors": {
+    "recall_at_10_min": 0.8,
+    "citation_precision_min": 0.6,
+    "claim_support_rate_min": 0.9,
+    "unsupported_context_rate_max": 0.1
+  },
+  "latency_budgets_ms": {
+    "retrieval_p95_max": 500.0,
+    "normal_route_p95_max": 8000.0
+  },
+  "unit_cost_evidence": {
+    "provider_usage_coverage_min": 0.8,
+    "paired_request_count_min": 30,
+    "planning_cost_per_safe_supported_answer_usd_max": 0.002
+  },
+  "claim_boundary": "Engineering policy for synthetic/internal evaluation only. It is not clinical validation, audited billing, a production SLO, or evidence of patient benefit."
+}

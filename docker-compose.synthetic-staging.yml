@@ -43,9 +43,11 @@ services:
     env_file:
       - .env.example
     environment:
+      ENVIRONMENT: synthetic_staging
       APP_ENV: synthetic_staging
       NLCARE_SYNTHETIC_ONLY: "true"
       NLCARE_DATA_CLASSIFICATION: synthetic
+      NLCARE_BOOTSTRAP_SYNTHETIC_DEMO: "true"
       NLCARE_UPLOADS_ENABLED: "false"
       NLCARE_UPLOAD_SCANNER_MODE: disabled
       NLCARE_HIGH_RISK_SEMANTIC_VALIDATION_REQUIRED: "true"
@@ -53,6 +55,7 @@ services:
       NLCARE_RAG_INDEX_PATH: /app/Data/rag_index/synthetic_staging_sparse.joblib
       DATABASE_URL: postgresql+psycopg2://nlcare_synthetic:local-synthetic-only@postgres:5432/nlcare_synthetic
       REDIS_URL: redis://redis:6379/0
+      NLCARE_SHARED_RATE_LIMIT_ENABLED: "true"
       N8N_WEBHOOK_DISPATCH_ENABLED: "false"
       N8N_WEBHOOK_BASE_URL: http://n8n:5678/webhook/nlcare
       N8N_WEBHOOK_SIGNING_SECRET: local-synthetic-signing-secret-change-me
@@ -85,6 +88,7 @@ services:
     env_file:
       - .env.example
     environment:
+      ENVIRONMENT: synthetic_staging
       APP_ENV: synthetic_staging
       NLCARE_SYNTHETIC_ONLY: "true"
       NLCARE_DATA_CLASSIFICATION: synthetic
@@ -92,6 +96,7 @@ services:
       NLCARE_UPLOAD_SCANNER_MODE: disabled
       DATABASE_URL: postgresql+psycopg2://nlcare_synthetic:local-synthetic-only@postgres:5432/nlcare_synthetic
       REDIS_URL: redis://redis:6379/0
+      NLCARE_SHARED_RATE_LIMIT_ENABLED: "true"
       N8N_WEBHOOK_DISPATCH_ENABLED: "false"
       N8N_WEBHOOK_BASE_URL: http://n8n:5678/webhook/nlcare
       N8N_WEBHOOK_SIGNING_SECRET: local-synthetic-signing-secret-change-me
@@ -107,6 +112,60 @@ services:
     healthcheck:
       disable: true
 
+  saas-worker:
+    image: nlcare-synthetic-staging-backend:latest
+    working_dir: /app
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    environment:
+      ENVIRONMENT: synthetic_staging
+      APP_ENV: synthetic_staging
+      NLCARE_SYNTHETIC_ONLY: "true"
+      NLCARE_DATA_CLASSIFICATION: synthetic
+      DATABASE_URL: postgresql+psycopg2://nlcare_synthetic:local-synthetic-only@postgres:5432/nlcare_synthetic
+      REDIS_URL: redis://redis:6379/0
+      NLCARE_SAAS_JOB_EXECUTION_ENABLED: "false"
+      N8N_WEBHOOK_DISPATCH_ENABLED: "false"
+    volumes:
+      - ./backend:/app/backend:ro
+      - ./scripts:/app/scripts:ro
+      - ./config:/app/config:ro
+      - ./Data:/app/Data
+      - ./KnowledgeBase:/app/KnowledgeBase:ro
+    command: ["scripts/run_saas_job_worker.py", "--poll-seconds", "3"]
+    healthcheck:
+      disable: true
+
+  saas-outbox-worker:
+    image: nlcare-synthetic-staging-backend:latest
+    working_dir: /app
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    environment:
+      ENVIRONMENT: synthetic_staging
+      APP_ENV: synthetic_staging
+      NLCARE_SYNTHETIC_ONLY: "true"
+      NLCARE_DATA_CLASSIFICATION: synthetic
+      DATABASE_URL: postgresql+psycopg2://nlcare_synthetic:local-synthetic-only@postgres:5432/nlcare_synthetic
+      REDIS_URL: redis://redis:6379/0
+      N8N_WEBHOOK_DISPATCH_ENABLED: "false"
+      N8N_WEBHOOK_BASE_URL: http://n8n:5678/webhook/nlcare
+      N8N_WEBHOOK_SIGNING_SECRET: local-synthetic-signing-secret-change-me
+    volumes:
+      - ./backend:/app/backend:ro
+      - ./scripts:/app/scripts:ro
+      - ./config:/app/config:ro
+      - ./Data:/app/Data
+    command: ["scripts/run_saas_outbox_worker.py", "--poll-seconds", "3"]
+    healthcheck:
+      disable: true
+
   frontend:
     image: node:20-alpine
     depends_on:
@@ -114,7 +173,7 @@ services:
         condition: service_healthy
     working_dir: /app
     environment:
-      VITE_API_BASE_URL: http://127.0.0.1:8017
+      VITE_API_BASE: http://127.0.0.1:8017
     volumes:
       - ./frontend-react:/app
       - staging_node_modules:/app/node_modules

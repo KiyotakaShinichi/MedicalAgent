@@ -31,6 +31,7 @@ ALLOWED_WORKFLOW_IDS = frozenset(
         "dependency_security_alert",
         "deployment_health_alert",
         "high_risk_review_alert",
+        "saas_workspace_event",
     }
 )
 

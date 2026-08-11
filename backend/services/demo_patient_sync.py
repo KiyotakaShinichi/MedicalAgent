@@ -30,6 +30,9 @@ def sync_demo_patient_journey(db, patient_id=DEMO_PATIENT_ID):
             diagnosis="Breast cancer - doctor-confirmed",
         )
         db.add(patient)
+        # PostgreSQL enforces the profile foreign key during the same flush.
+        # Persist the parent first so this seed path behaves consistently with SQLite.
+        db.flush()
     else:
         patient.name = f"Patient {patient_id}"
         patient.diagnosis = "Breast cancer - doctor-confirmed"

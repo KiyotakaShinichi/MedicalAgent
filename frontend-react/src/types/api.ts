@@ -2,3 +2,4 @@
 export * from "./api.patient";
 export * from "./api.admin";
 export * from "./api.platform";
+export * from "./api.saas";

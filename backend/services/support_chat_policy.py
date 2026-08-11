@@ -102,12 +102,16 @@ DOMAIN_SCOPE_TERMS = {
     "breast", "cancer", "oncology", "oncologist", "chemo", "chemotherapy",
     "radiation", "treatment", "cycle", "symptom", "nausea", "fatigue",
     "fever", "pain", "neuropathy", "mouth sores", "lab", "labs", "cbc",
-    "wbc", "hemoglobin", "platelet", "platelets", "anc", "mri", "ct",
+    "wbc", "hemoglobin", "platelet", "platelets", "anc", "neutrophil",
+    "neutrophils", "neutropenia", "febrile neutropenia", "mri", "ct",
     "ultrasound", "imaging", "scan", "pathology", "biomarker", "her2",
     "er", "pr", "brca", "vus", "genetic", "tumor marker", "medication",
-    "medicine", "dose", "record", "timeline", "monitoring", "score",
+    "medicine", "dose", "record", "timeline", "monitoring", "monitoring score",
+    "response score", "risk score",
     "index", "review queue", "care team", "doctor", "clinician", "portal",
     "nlcare", "upload", "report", "result", "my data", "my record",
+    "patient-reported outcome", "patient reported outcome", "pro-ctcae",
+    "clinical trial", "oncology research", "cancer research",
 }
 
 GENERAL_SUPPORT_PATTERNS = (

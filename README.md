@@ -11,11 +11,17 @@ release an evidence-dependent answer. See
 
 The patient portal uses records-first progressive loading and prepares synthetic model enrichment in a bounded process-local background job, so a slow or failed engineering bundle does not blank the underlying records. High-priority support-chat language can create an auditable local review item with idempotency, bounded retries, append-only delivery attempts, dead-letter state, signed redacted n8n events, and signed channel receipts. External delivery is disabled by default and is locked to a synthetic test recipient when enabled; workflow acceptance or channel delivery never proves that a clinician saw or acted on an alert. See [patient progressive loading and review alerts](docs/patient_progressive_loading_and_review_alerts.md).
 
+## Restricted synthetic SaaS foundation
+
+NLCare now includes a separate tenant-aware control plane for organizations, memberships, projects, synthetic environments, engineering entitlements, non-billing usage events, evaluation jobs, a transactional redacted outbox, and audit events. Evaluation and outbox workers use idempotency keys, leases, recovery, bounded retries, and dead-letter states; strict multi-process profiles can use Redis-backed shared rate limiting. The admin workspace exposes projects, jobs, usage ceilings, and governance boundaries. The patient portal remains an isolated synthetic demo, not a multi-tenant clinical service. See [SaaS product boundary and roadmap](docs/saas_product_boundary_and_roadmap.md).
+
+This is readiness for a restricted synthetic SaaS alpha foundation only. Live OIDC verification, managed-cloud deployment, audited billing, independent security review, external evaluation, real-patient-data handling, and healthcare production readiness remain incomplete.
+
 ## Canonical engineering verdict (July 2026)
 
 The reviewer headline is `Data/evals/governance/latest_focused_release_summary.json`, not the largest or greenest metric in the repository.
 
-- Release gate: passed, with 27 decision artifacts and 188 supporting/informational artifacts. One optional warning remains. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
+- Release gate: passed, with 33 decision artifacts and 209 supporting/informational artifacts before the AI Trinity addition. One optional warning remained. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
 - Frozen internally authored adversarial results remain inconsistent: v4 pass rate `0.704918`, v5 `0.969697`, and v6 `0.518519`. Generalized hardening raises the now tuning-used v6 regression to `0.932099`, but it is no longer independent holdout evidence. The untouched, one-pass, author-contaminated v7 baseline is `0.676056`, with unsafe leakage `0.354545` and over-refusal `0.21875`; prompt injection, privacy, and cross-patient exfiltration are the weakest families. V7 will not be used for tuning. Safety is explicitly **not solved**.
 - RAG: full source-governed Recall@10 `0.7838` versus BM25 `0.8041`. Raw retrieval improvement is not proven. The governed stack raises source-tier correctness from `0.4595` to `1.0` on the internal set, with about `4.13x` BM25 p95 retrieval latency.
 - Paired RAG statistics: the full-stack Recall@10 favorable delta versus BM25 is `-0.02027`; the 95% paired-bootstrap interval is `[-0.108108, 0.067568]` and the Holm-adjusted randomization p-value is `1.0`. The interval includes no effect and meaningful harm/benefit, so raw retrieval lift remains unproven.
@@ -48,11 +54,14 @@ See [RAG governance trade-off](docs/evals/rag_governance_tradeoff.md), [simple s
 - The unreviewed clinical advisor packet is prepared for future review only; it is not reviewed or approved.
 
 ## Scale / cost optimization
+- The **AI Trinity** policy manages Accuracy, Latency, and Unit Cost as a non-compensatory gate: safety/source-governance and grounding floors must pass before faster or cheaper candidates can be promoted.
+- `python scripts/run_ai_trinity_tradeoff.py` exports `Data/evals/governance/latest_ai_trinity_tradeoff.json`, including the fixed-goldset candidate table, latency budgets, provider-usage completeness, planning-only route scenarios, Pareto diagnostics, and an explicit promotion decision.
+- Missing provider telemetry is reported as `blocked_evidence`, never as a measured `$0` unit cost. Character-derived tokens and pricing scenarios remain capacity-planning estimates.
 - Cost and latency telemetry is tracked as engineering observability, not clinical evidence.
 - `python scripts/run_cost_latency_report.py` exports `Data/evals/ops/latest_cost_latency_report.json` with provider-reported token usage when available, separately labelled estimates, pricing assumptions, cache behavior, sample-aware latency percentiles, and stage timing.
 - `python scripts/run_rag_paired_statistical_comparison.py` adds paired bootstrap intervals, sign-flip randomization tests, practical-effect thresholds, and Holm correction to the fixed internal RAG baseline comparison.
 - The report compares full API-style answering, validated cached answers, local-SLM-assisted routing/rewrite, and deterministic-only refusal paths.
-- Current default local/deterministic runs may show `$0` provider cost; route comparison uses explicit token-price assumptions for capacity planning, not audited billing.
+- Local deterministic routes can have no provider charge, but absent provider usage on an API-capable route is unknown rather than free. Route comparison uses explicit token-price assumptions for capacity planning, not audited billing.
 - Admin RAG dashboard now includes a Cost / Latency Observability card so reviewers can see p50/p95-style behavior and cache economics.
 - Fine-tune promotion is offline/shadow-only and now requires matched paired cases, exact significance testing, immutable generation lineage, train-output memorization checks, per-behavior floors, zero safety regression, and bounded output-length growth.
 - `python scripts/run_finetune_semantic_contamination.py` creates a privacy-minimized paraphrase-overlap review queue. Similarity screening is a proxy and never proves contamination is absent.

@@ -115,21 +115,27 @@ def _is_out_of_domain_request(message, *, actions, safety, emotional_distress):
     normalized = normalize_security_text(message)
     if not normalized:
         return False
-    if any(re.search(pattern, normalized, flags=re.IGNORECASE) for pattern in GENERAL_SUPPORT_PATTERNS):
+    scope_candidate = re.sub(
+        r"^(?:(?:please answer|random question|quick one|curious lang)\s*:?[ ]*)+",
+        "",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    if any(re.search(pattern, scope_candidate, flags=re.IGNORECASE) for pattern in GENERAL_SUPPORT_PATTERNS):
         return False
     if any(
-        (term in normalized if " " in term else re.search(rf"\b{re.escape(term)}\b", normalized))
+        (term in scope_candidate if " " in term else re.search(rf"\b{re.escape(term)}\b", scope_candidate))
         for term in DOMAIN_SCOPE_TERMS
     ):
         return False
-    if any(re.search(pattern, normalized, flags=re.IGNORECASE) for pattern in OUT_OF_DOMAIN_PATTERNS):
+    if any(re.search(pattern, scope_candidate, flags=re.IGNORECASE) for pattern in OUT_OF_DOMAIN_PATTERNS):
         return True
 
     # Questions with enough semantic content but no portal/oncology anchor are
     # treated as general-purpose requests. Very short follow-ups remain allowed
     # so "why?" and "what does that mean?" can use conversation context.
-    words = re.findall(r"[a-z0-9']+", normalized)
-    question_like = bool(re.match(r"^(?:who|what|when|where|which|how|why|tell|explain|write|make|calculate|solve)\b", normalized))
+    words = re.findall(r"[a-z0-9']+", scope_candidate)
+    question_like = bool(re.match(r"^(?:who|what|when|where|which|how|why|tell|explain|write|make|calculate|solve|summarize|recommend|translate|debug|give)\b", scope_candidate))
     return question_like and len(words) >= 3
 
 

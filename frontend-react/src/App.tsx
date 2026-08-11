@@ -9,6 +9,7 @@ import LoginPage from "./pages/Login";
 const PatientDashboard = lazy(() => import("./pages/patient/PatientDashboard"));
 const ClinicianDashboard = lazy(() => import("./pages/clinician/ClinicianDashboard"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const WorkspaceDashboard = lazy(() => import("./pages/workspace/WorkspaceDashboard"));
 
 function RouteLoader() {
   return (
@@ -43,6 +44,17 @@ export default function App() {
                 <RouteGuard role="clinician">
                   <ErrorBoundary surface="the clinician workspace">
                     <ClinicianDashboard />
+                  </ErrorBoundary>
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path="/workspace/*"
+              element={
+                <RouteGuard role="admin">
+                  <ErrorBoundary surface="the AI assurance workspace">
+                    <WorkspaceDashboard />
                   </ErrorBoundary>
                 </RouteGuard>
               }

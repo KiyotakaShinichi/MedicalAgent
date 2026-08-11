@@ -65,6 +65,7 @@ def ingest_knowledge_base(
                 "not_allowed_for": metadata["not_allowed_for"],
                 "selection_rationale": metadata["selection_rationale"],
                 "section": chunk["section"],
+                "section_heading": chunk.get("section_heading") or chunk["section"],
                 "section_rank": _section_rank(chunk["section"]),
                 "tags": tags,
                 "chunk_index": index,
@@ -123,6 +124,7 @@ def load_ingested_chunks(path="Data/rag_knowledge_base_chunks.json"):
             "modality": chunk.get("modality") or [],
             "care_stage": chunk.get("care_stage"),
             "section": chunk.get("section"),
+            "section_heading": chunk.get("section_heading") or chunk.get("section"),
             "section_rank": chunk.get("section_rank"),
             "chunk_index": chunk.get("chunk_index"),
             "confidence": chunk.get("confidence"),
@@ -254,10 +256,10 @@ def _chunk_text_by_section(text, chunk_chars, overlap_chars):
     sections = _sectionize_text(text)
     has_named_content_section = any(
         section_name not in {"front_matter", "references"}
-        for section_name, _ in sections
+        for section_name, _, _ in sections
     )
     chunks = []
-    for section_name, section_text in sections:
+    for section_name, section_heading, section_text in sections:
         if section_name == "references":
             continue
         if section_name == "front_matter" and has_named_content_section:
@@ -266,6 +268,7 @@ def _chunk_text_by_section(text, chunk_chars, overlap_chars):
         for chunk_text in _chunk_text(section_text, chunk_chars, overlap_chars):
             chunks.append({
                 "section": effective_section,
+                "section_heading": section_heading,
                 "text": f"[{effective_section}] {chunk_text}",
             })
     return chunks
@@ -274,37 +277,94 @@ def _chunk_text_by_section(text, chunk_chars, overlap_chars):
 def _sectionize_text(text):
     if not text:
         return []
-    section_names = [
-        "abstract",
-        "introduction",
-        "background",
-        "methods",
-        "materials and methods",
-        "patients and methods",
-        "results",
-        "discussion",
-        "conclusion",
-        "conclusions",
-        "clinical implications",
-        "references",
-    ]
-    pattern = re.compile(
-        r"(?im)^\s*(abstract|introduction|background|methods|materials and methods|patients and methods|results|discussion|conclusions?|clinical implications|references)\s*$"
-    )
-    matches = list(pattern.finditer(text))
-    if not matches:
-        return [("body", text)]
     sections = []
-    if matches[0].start() > 0:
-        sections.append(("front_matter", text[:matches[0].start()].strip()))
-    for index, match in enumerate(matches):
-        section = match.group(1).lower()
-        start = match.end()
-        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
-        section_text = text[start:end].strip()
-        if section_text:
-            sections.append((section, section_text))
-    return [(name, body) for name, body in sections if body]
+    active_section = "front_matter"
+    active_heading = "front_matter"
+    active_lines = []
+    structural_heading_seen = False
+
+    def flush():
+        body = "\n".join(active_lines).strip()
+        if body:
+            sections.append((active_section, active_heading, body))
+
+    for line in text.splitlines():
+        heading = _recognized_section_heading(line, structural_heading_seen=structural_heading_seen)
+        if heading is None:
+            active_lines.append(line)
+            continue
+        flush()
+        active_lines = []
+        active_section, active_heading = heading
+        structural_heading_seen = True
+
+    flush()
+    named = [row for row in sections if row[0] not in {"front_matter", "references"}]
+    if not named:
+        body = "\n".join(
+            body for section_name, _, body in sections
+            if body and section_name != "references"
+        ).strip() or text
+        return [("body", "body", body)]
+    return sections
+
+
+def _recognized_section_heading(line, *, structural_heading_seen=False):
+    raw = str(line or "").strip().strip("#").strip()
+    if not raw or len(raw) > 120:
+        return None
+    normalized = re.sub(r"^\s*(?:\d+(?:\.\d+)*|[IVXLC]+)[.)]?\s+", "", raw, flags=re.IGNORECASE)
+    normalized = normalized.rstrip(":").strip()
+    lower = re.sub(r"\s+", " ", normalized.lower())
+    direct = {
+        "abstract": "abstract",
+        "highlights": "abstract",
+        "summary": "abstract",
+        "plain language summary": "abstract",
+        "key points": "abstract",
+        "introduction": "introduction",
+        "background": "introduction",
+        "methods": "methods",
+        "methodology": "methods",
+        "materials and methods": "methods",
+        "patients and methods": "methods",
+        "study design": "methods",
+        "statistical analysis": "methods",
+        "results": "results",
+        "findings": "results",
+        "outcomes": "results",
+        "discussion": "discussion",
+        "limitations": "discussion",
+        "strengths and limitations": "discussion",
+        "conclusion": "conclusion",
+        "conclusions": "conclusion",
+        "recommendations": "conclusion",
+        "clinical implications": "conclusion",
+        "references": "references",
+        "bibliography": "references",
+    }
+    if lower in direct:
+        return direct[lower], normalized
+    if not structural_heading_seen:
+        return None
+    thematic_prefixes = (
+        "incidence and prevalence",
+        "prevalence",
+        "anxiety",
+        "depression",
+        "risk factors",
+        "classification and diagnosis",
+        "screening",
+        "assessment",
+        "management",
+        "treatment",
+        "implementation",
+        "follow-up",
+        "future directions",
+    )
+    if any(lower == prefix or lower.startswith(prefix + " ") for prefix in thematic_prefixes):
+        return "body", normalized
+    return None
 
 
 def _split_long_text(text, chunk_chars, overlap_chars):

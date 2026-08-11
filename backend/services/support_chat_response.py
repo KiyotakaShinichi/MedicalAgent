@@ -15,6 +15,11 @@ from backend.config import get_groq_api_key, get_groq_model, get_llm_adjudicatio
 from backend.services.llm_telemetry import LLMCallTimer, provider_usage, record_llm_call
 from backend.services.support_chat_policy import CHAT_SYSTEM_PROMPT
 from backend.services.support_chat_safety import _looks_truncated_reply
+from backend.services.local_llm import (
+    provider_circuit_status,
+    record_provider_failure,
+    record_provider_success,
+)
 
 def _build_response(message, actions, urgent_flags, patient_context):
     if not actions and not urgent_flags and _is_conversational_prompt(message):
@@ -57,6 +62,14 @@ def _build_response(message, actions, urgent_flags, patient_context):
             elif action["type"] == "saved_imaging_report":
                 labels.append(f"{action['modality']} report from {action['date']}")
         parts.append("I saved this to your patient record: " + "; ".join(labels) + ".")
+        change = patient_context.get("record_change_explanation") or {}
+        if change.get("patient_summary"):
+            summary = str(change["patient_summary"])
+            parts.append(
+                "After this confirmed update, "
+                + summary[:1].lower()
+                + summary[1:]
+            )
     if failed:
         parts.extend(action["message"] for action in failed if action.get("message"))
     if not saved and not failed and not pending_confirmations and not cancellations and not duplicates:
@@ -189,6 +202,8 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
     api_key = get_groq_api_key()
     if not api_key:
         return fallback_response
+    if provider_circuit_status("groq").get("open"):
+        return fallback_response
 
     user_prompt = {
         "patient_message": message,
@@ -225,6 +240,7 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
         if getattr(choice, "finish_reason", None) not in {None, "stop"}:
             return fallback_response
     except Exception as exc:
+        record_provider_failure("groq", exc.__class__.__name__)
         record_llm_call(
             provider="groq",
             model=model,
@@ -236,6 +252,7 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
         )
         return fallback_response
 
+    record_provider_success("groq")
     if not reply or _looks_truncated_reply(reply):
         return fallback_response
     if urgent_flags and "emergency" not in reply.lower() and "oncology" not in reply.lower():
@@ -293,30 +310,14 @@ def _contextual_reply(message, context):
             return "I do not see timeline events in the last represented 14-day window. This may mean the record is missing recent updates."
 
     if any(term in lower for term in status_terms):
-        prediction = context.get("synthetic_model_prediction") or {}
-        outcome = context.get("treatment_outcome")
-        latest_lab = context.get("latest_lab")
-        recent_imaging = context.get("recent_imaging") or []
-        probability = prediction.get("logistic_regression_probability")
-        if probability is None:
-            probability = prediction.get("random_forest_probability")
-        if probability is not None:
-            percent = round(float(probability) * 100, 1)
-            lab_text = (
-                f"WBC {latest_lab.get('wbc')}, hemoglobin {latest_lab.get('hemoglobin')}, platelets {latest_lab.get('platelets')}"
-                if latest_lab else "not available"
-            )
-            return (
-                f"Based on the demo model, your synthetic treatment-response score is {percent}%. "
-                "This is a simulator-trained tracking signal, not a clinical prediction. "
-                f"Latest CBC: {lab_text}. "
-                f"Latest imaging note: {recent_imaging[0].get('impression') if recent_imaging else 'not available'}."
-            )
-        if outcome:
-            return (
-                f"Your record lists final response as {outcome.get('response_category')} with status {outcome.get('cancer_status')}. "
-                "Use this as a portal summary only and confirm meaning with your oncology team."
-            )
+        change = context.get("record_change_explanation") or {}
+        observations = change.get("observations") or []
+        detail = " ".join(str(item.get("summary") or "") for item in observations[:3]).strip()
+        summary = change.get("patient_summary") or (
+            "The portal does not have enough comparable dated records to summarize a change. "
+            "This does not show whether treatment is working."
+        )
+        return f"{summary} {detail}".strip()
 
     if any(term in lower for term in explain_terms):
         xai = context.get("synthetic_model_explanation") or {}
@@ -326,8 +327,8 @@ def _contextual_reply(message, context):
             toward = ", ".join(item["feature"] for item in positives[:3]) or "none"
             away = ", ".join(item["feature"] for item in negatives[:3]) or "none"
             return (
-                f"The demo explanation says features pushing toward response include: {toward}. "
-                f"Features pushing away include: {away}. "
+                f"The demo explanation says features pushing toward the higher synthetic class include: {toward}. "
+                f"Features pushing toward the lower synthetic class include: {away}. "
                 "These explain model behavior on synthetic data, not medical causality."
             )
 

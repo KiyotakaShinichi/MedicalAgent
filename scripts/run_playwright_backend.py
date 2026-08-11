@@ -28,6 +28,9 @@ def main() -> int:
     env["DATABASE_URL"] = DATABASE_URL
     env["NLCARE_CORS_ORIGINS"] = FRONTEND_ORIGIN
     env["ENVIRONMENT"] = "test"
+    env["NLCARE_SYNTHETIC_ONLY"] = "true"
+    env["NLCARE_DATA_CLASSIFICATION"] = "synthetic"
+    env["NLCARE_BOOTSTRAP_SYNTHETIC_DEMO"] = "true"
     env["ONCOTRACK_FAST_MODE"] = "1"
     env["RAG_FORCE_SPARSE"] = "true"
 
@@ -42,12 +45,21 @@ def main() -> int:
         env=env,
         check=True,
     )
+    subprocess.run(
+        [sys.executable, "-m", "scripts.bootstrap_synthetic_demo"],
+        cwd=ROOT,
+        env=env,
+        check=True,
+    )
 
     os.environ.update(
         {
             "DATABASE_URL": DATABASE_URL,
             "NLCARE_CORS_ORIGINS": FRONTEND_ORIGIN,
             "ENVIRONMENT": "test",
+            "NLCARE_SYNTHETIC_ONLY": "true",
+            "NLCARE_DATA_CLASSIFICATION": "synthetic",
+            "NLCARE_BOOTSTRAP_SYNTHETIC_DEMO": "true",
             "ONCOTRACK_FAST_MODE": "1",
             "RAG_FORCE_SPARSE": "true",
         }

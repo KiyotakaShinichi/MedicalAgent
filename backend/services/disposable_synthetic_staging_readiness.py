@@ -28,6 +28,8 @@ REQUIRED_SERVICES = {
     "redis",
     "backend",
     "worker",
+    "saas-worker",
+    "saas-outbox-worker",
     "frontend",
     "n8n",
     "mailhog",
@@ -81,7 +83,7 @@ def build_disposable_synthetic_staging_readiness(
                     .get("NLCARE_SYNTHETIC_ONLY", "")
                 ).lower()
                 == "true"
-                for service in ("backend", "worker")
+                for service in ("backend", "worker", "saas-worker", "saas-outbox-worker")
             ),
         ),
         _check(
@@ -93,7 +95,7 @@ def build_disposable_synthetic_staging_readiness(
                     .get("N8N_WEBHOOK_DISPATCH_ENABLED", "")
                 ).lower()
                 == "false"
-                for service in ("backend", "worker")
+                for service in ("backend", "worker", "saas-worker", "saas-outbox-worker")
             ),
         ),
         _check(

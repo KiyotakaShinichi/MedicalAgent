@@ -311,8 +311,21 @@ def _evaluate_sentence(sentence: str, chunk_records: list[dict[str, object]], me
 
 def _claim_type(sentence: str) -> str:
     lower = sentence.lower()
-    if any(term in lower for term in ("dose", "dosage", "mg", "should stop", "should start", "treatment")):
+    if (
+        any(term in lower for term in ("dose", "dosage", "should stop", "should start"))
+        or re.search(r"\bmg\b", lower)
+    ):
         return "treatment_or_dose"
+    if "treatment" in lower:
+        high_risk_treatment_patterns = (
+            r"\b(?:start|stop|change|switch|delay|skip|continue)\s+(?:the\s+|your\s+)?treatment\b",
+            r"\btreatment\s+(?:is|was|will be|works?|worked|working|effective|ineffective|best|recommended)\b",
+            r"\b(?:responding|response)\s+to\s+treatment\b",
+            r"\btreatment\s+(?:response|recommendation|decision|choice|plan)\b",
+        )
+        if any(re.search(pattern, lower) for pattern in high_risk_treatment_patterns):
+            return "treatment_or_dose"
+        return "treatment_context"
     if any(term in lower for term in ("survival", "prognosis", "life expectancy", "recurrence")):
         return "prognosis_or_outcome"
     if any(term in lower for term in ("brca", "vus", "variant", "genetic", "germline")):

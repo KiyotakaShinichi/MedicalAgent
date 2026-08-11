@@ -28,7 +28,13 @@ from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from backend.services.complete_synthetic_training import CATEGORICAL_FEATURES, NUMERIC_FEATURES
+from backend.services.synthetic_feature_policy import (
+    CATEGORICAL_FEATURES as POLICY_CATEGORICAL_FEATURES,
+    LEGACY_NUMERIC_FEATURES,
+)
+
+NUMERIC_FEATURES = list(LEGACY_NUMERIC_FEATURES)
+CATEGORICAL_FEATURES = list(POLICY_CATEGORICAL_FEATURES)
 
 DEFAULT_TEMPORAL_EVAL_PATH = "Data/mle_monitoring/temporal_eval_report.json"
 DEFAULT_ML_CSV_PATH = (

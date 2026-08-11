@@ -22,6 +22,7 @@ sequential number — never reuse a number even after deprecation.
 | 0007 | [Slim clinical-boundary strip · full text always in DOM](0007-slim-clinical-boundary-strip.md) | accepted |
 | 0008 | [Composer "+" attachment popover replaces 8-chip tray](0008-composer-attachment-popover.md) | accepted |
 | 0009 | [Source-alias normalisation for the frozen retrieval goldset](0009-source-alias-normalization.md) | accepted |
+| 0010 | [Separate SaaS control plane from the synthetic patient demo](0010-saas-control-plane-boundary.md) | accepted |
 
 ## When to write a new ADR
 
