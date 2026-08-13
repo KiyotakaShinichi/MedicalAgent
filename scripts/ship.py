@@ -247,6 +247,7 @@ def _build_steps() -> list[Step]:
                 "tests/test_saas_foundation_readiness.py",
                 "tests/test_saas_platform_api.py",
                 "tests/test_api_security_hardening.py",
+                "tests/test_model_route_authorization.py",
                 "tests/test_synthetic_demo_bootstrap.py",
                 "tests/test_multimodal_evidence_abstention.py",
                 "-q",
@@ -290,6 +291,20 @@ def _build_steps() -> list[Step]:
         Step(
             name="Reproducible knowledge-base chunk materialization",
             command=[sys.executable, "scripts/ingest_knowledge_base.py", "--skip-index"],
+        ),
+        Step(
+            name="Fingerprint-matched local RAG index rebuild",
+            command=[sys.executable, "scripts/build_rag_index.py"],
+            timeout_seconds=600,
+        ),
+        Step(
+            name="Frozen RAG baseline comparison refresh",
+            command=[sys.executable, "scripts/run_rag_baseline_comparison.py"],
+            timeout_seconds=900,
+        ),
+        Step(
+            name="Canonical RAG governance tradeoff refresh",
+            command=[sys.executable, "scripts/run_rag_governance_tradeoff.py"],
         ),
         Step(
             name="Non-patient data-platform pipeline",

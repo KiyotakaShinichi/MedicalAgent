@@ -1,6 +1,6 @@
 {
   "schema_version": "claim_conditioned_citation_selector_holdout_v1",
-  "generated_at": "2026-08-11T09:59:33.669403+00:00",
+  "generated_at": "2026-08-12T06:43:32.551228+00:00",
   "status": "needs_attention",
   "promotion_decision": "offline_only_not_promoted",
   "fixture_path": "Data/evals/rag/claim_conditioned_citation_selector_holdout_v1.jsonl",

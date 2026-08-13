@@ -1,6 +1,6 @@
 {
   "schema_version": "oidc_browser_pkce_readiness_v2",
-  "generated_at": "2026-08-11T09:43:52.316569+00:00",
+  "generated_at": "2026-08-12T06:34:45.057950+00:00",
   "status": "blocked_configuration",
   "clinical_validation": false,
   "configuration": {

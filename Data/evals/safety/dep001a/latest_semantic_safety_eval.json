@@ -1,0 +1,498 @@
+{
+  "schema_version": "dep001a_semantic_safety_eval_v1",
+  "generated_at": "2026-08-13T12:25:05.230514+00:00",
+  "status": "candidate_ready_for_runtime_integration",
+  "model_version": "dep001a-multilingual-minilm-linear-v10",
+  "dataset_version": "dep001a-safety-corpus-v10",
+  "architecture": "paraphrase-multilingual-MiniLM-L12-v2 embeddings with calibrated logistic unsafe and urgent heads",
+  "multi_turn_policy": "turns scored independently; maximum calibrated risk is preserved as structured state",
+  "development": {
+    "n": 4600,
+    "unsafe_recall": 0.9986,
+    "unsafe_precision": 0.9732,
+    "unsafe_f1": 0.9857,
+    "urgent_recall": 1.0,
+    "over_refusal": 0.0419,
+    "safe_acceptance": 0.9581,
+    "english_unsafe_recall": 1.0,
+    "taglish_unsafe_recall": 0.9957,
+    "en_taglish_gap": 0.0043,
+    "multi_turn_recall": 1.0,
+    "unsafe_brier": 0.015561,
+    "urgent_brier": 0.00587,
+    "unsafe_ece": 0.011625,
+    "urgent_ece": 0.005952,
+    "category_accuracy": 0.9665,
+    "by_language": {
+      "en": {
+        "unsafe_recall": 1.0,
+        "urgent_recall": 1.0,
+        "over_refusal": 0.009328358208955223,
+        "n": 1541
+      },
+      "filipino_heavy_taglish": {
+        "unsafe_recall": 0.9957,
+        "urgent_recall": 1.0,
+        "over_refusal": 0.08143939393939394,
+        "n": 1518
+      },
+      "taglish": {
+        "unsafe_recall": 1.0,
+        "urgent_recall": 1.0,
+        "over_refusal": 0.03544776119402985,
+        "n": 1541
+      }
+    },
+    "by_category": {
+      "ambiguous": {
+        "route_recall_or_safe_acceptance": 0.95,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "authority_impersonation": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "contraindication_interactions": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "emergency_symptoms": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.985,
+        "n": 200
+      },
+      "hypothetical_unsafe_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "indirect_euphemistic_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "medication_dose_request": {
+        "route_recall_or_safe_acceptance": 0.985,
+        "category_accuracy": 0.985,
+        "n": 200
+      },
+      "multi_turn_escalation": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "rag_conditioned_unsafe_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "refusal_bypass_attempt": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "role_play_unsafe_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "safe_clinical_education_direct": {
+        "route_recall_or_safe_acceptance": 0.975,
+        "category_accuracy": 0.955,
+        "n": 200
+      },
+      "safe_conversation": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "safe_educational": {
+        "route_recall_or_safe_acceptance": 0.9,
+        "category_accuracy": 0.705,
+        "n": 200
+      },
+      "safe_emotional_support": {
+        "route_recall_or_safe_acceptance": 0.85,
+        "category_accuracy": 0.825,
+        "n": 200
+      },
+      "safe_informational": {
+        "route_recall_or_safe_acceptance": 0.99,
+        "category_accuracy": 0.885,
+        "n": 200
+      },
+      "safe_out_of_scope": {
+        "route_recall_or_safe_acceptance": 0.995,
+        "category_accuracy": 0.975,
+        "n": 200
+      },
+      "safe_research_lookup": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.99,
+        "n": 200
+      },
+      "safe_symptom_logging": {
+        "route_recall_or_safe_acceptance": 0.955,
+        "category_accuracy": 0.925,
+        "n": 200
+      },
+      "treatment_modification": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "unsafe_actionable_medical_request": {
+        "route_recall_or_safe_acceptance": 0.995,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "urgent_deterioration": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      },
+      "urgent_natural_language": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 200
+      }
+    },
+    "failure_n": 71,
+    "unsafe_routing_miss_n": 4,
+    "unsafe_released_outputs": null
+  },
+  "validation": {
+    "n": 1150,
+    "unsafe_recall": 0.9957,
+    "unsafe_precision": 0.9748,
+    "unsafe_f1": 0.9852,
+    "urgent_recall": 0.98,
+    "over_refusal": 0.04,
+    "safe_acceptance": 0.96,
+    "english_unsafe_recall": 0.9874,
+    "taglish_unsafe_recall": 1.0,
+    "en_taglish_gap": 0.0126,
+    "multi_turn_recall": 1.0,
+    "unsafe_brier": 0.014011,
+    "urgent_brier": 0.015676,
+    "unsafe_ece": 0.014407,
+    "urgent_ece": 0.026109,
+    "category_accuracy": 0.9374,
+    "by_language": {
+      "en": {
+        "unsafe_recall": 0.9874,
+        "urgent_recall": 1.0,
+        "over_refusal": 0.0,
+        "n": 391
+      },
+      "filipino_heavy_taglish": {
+        "unsafe_recall": 1.0,
+        "urgent_recall": 0.9792,
+        "over_refusal": 0.109375,
+        "n": 368
+      },
+      "taglish": {
+        "unsafe_recall": 1.0,
+        "urgent_recall": 0.9608,
+        "over_refusal": 0.014705882352941176,
+        "n": 391
+      }
+    },
+    "by_category": {
+      "ambiguous": {
+        "route_recall_or_safe_acceptance": 0.96,
+        "category_accuracy": 0.96,
+        "n": 50
+      },
+      "authority_impersonation": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.98,
+        "n": 50
+      },
+      "contraindication_interactions": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.98,
+        "n": 50
+      },
+      "emergency_symptoms": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 50
+      },
+      "hypothetical_unsafe_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 50
+      },
+      "indirect_euphemistic_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.98,
+        "n": 50
+      },
+      "medication_dose_request": {
+        "route_recall_or_safe_acceptance": 0.98,
+        "category_accuracy": 0.98,
+        "n": 50
+      },
+      "multi_turn_escalation": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.76,
+        "n": 50
+      },
+      "rag_conditioned_unsafe_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 50
+      },
+      "refusal_bypass_attempt": {
+        "route_recall_or_safe_acceptance": 0.96,
+        "category_accuracy": 0.96,
+        "n": 50
+      },
+      "role_play_unsafe_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 1.0,
+        "n": 50
+      },
+      "safe_clinical_education_direct": {
+        "route_recall_or_safe_acceptance": 0.92,
+        "category_accuracy": 0.96,
+        "n": 50
+      },
+      "safe_conversation": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.94,
+        "n": 50
+      },
+      "safe_educational": {
+        "route_recall_or_safe_acceptance": 0.98,
+        "category_accuracy": 0.62,
+        "n": 50
+      },
+      "safe_emotional_support": {
+        "route_recall_or_safe_acceptance": 0.9,
+        "category_accuracy": 0.92,
+        "n": 50
+      },
+      "safe_informational": {
+        "route_recall_or_safe_acceptance": 0.98,
+        "category_accuracy": 0.9,
+        "n": 50
+      },
+      "safe_out_of_scope": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.9,
+        "n": 50
+      },
+      "safe_research_lookup": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.92,
+        "n": 50
+      },
+      "safe_symptom_logging": {
+        "route_recall_or_safe_acceptance": 0.9,
+        "category_accuracy": 0.98,
+        "n": 50
+      },
+      "treatment_modification": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.92,
+        "n": 50
+      },
+      "unsafe_actionable_medical_request": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.98,
+        "n": 50
+      },
+      "urgent_deterioration": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.96,
+        "n": 50
+      },
+      "urgent_natural_language": {
+        "route_recall_or_safe_acceptance": 1.0,
+        "category_accuracy": 0.96,
+        "n": 50
+      }
+    },
+    "failure_n": 22,
+    "unsafe_routing_miss_n": 3,
+    "unsafe_released_outputs": null
+  },
+  "baseline": {
+    "architecture": "word_and_character_tfidf_logistic_regression",
+    "purpose": "lexical_baseline_only",
+    "unsafe_recall": 1.0,
+    "over_refusal": 0.0,
+    "brier": 0.003772
+  },
+  "calibration": {
+    "method": "platt_scaling_on_disjoint_development_calibration_split",
+    "unsafe_reliability_diagram": [
+      {
+        "bin_low": 0.0,
+        "bin_high": 0.1,
+        "n": 405,
+        "mean_confidence": 0.006432,
+        "observed_rate": 0.0
+      },
+      {
+        "bin_low": 0.1,
+        "bin_high": 0.2,
+        "n": 13,
+        "mean_confidence": 0.142033,
+        "observed_rate": 0.153846
+      },
+      {
+        "bin_low": 0.2,
+        "bin_high": 0.3,
+        "n": 14,
+        "mean_confidence": 0.244402,
+        "observed_rate": 0.285714
+      },
+      {
+        "bin_low": 0.3,
+        "bin_high": 0.4,
+        "n": 4,
+        "mean_confidence": 0.347159,
+        "observed_rate": 0.0
+      },
+      {
+        "bin_low": 0.4,
+        "bin_high": 0.5,
+        "n": 9,
+        "mean_confidence": 0.432302,
+        "observed_rate": 0.444444
+      },
+      {
+        "bin_low": 0.5,
+        "bin_high": 0.6,
+        "n": 3,
+        "mean_confidence": 0.511406,
+        "observed_rate": 0.333333
+      },
+      {
+        "bin_low": 0.6,
+        "bin_high": 0.7,
+        "n": 14,
+        "mean_confidence": 0.6297,
+        "observed_rate": 0.428571
+      },
+      {
+        "bin_low": 0.7,
+        "bin_high": 0.8,
+        "n": 13,
+        "mean_confidence": 0.742138,
+        "observed_rate": 0.615385
+      },
+      {
+        "bin_low": 0.8,
+        "bin_high": 0.9,
+        "n": 15,
+        "mean_confidence": 0.851748,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.9,
+        "bin_high": 1.0,
+        "n": 660,
+        "mean_confidence": 0.993164,
+        "observed_rate": 1.0
+      }
+    ],
+    "urgent_reliability_diagram": [
+      {
+        "bin_low": 0.0,
+        "bin_high": 0.1,
+        "n": 1004,
+        "mean_confidence": 0.000674,
+        "observed_rate": 0.00498
+      },
+      {
+        "bin_low": 0.1,
+        "bin_high": 0.2,
+        "n": 6,
+        "mean_confidence": 0.137163,
+        "observed_rate": 0.833333
+      },
+      {
+        "bin_low": 0.2,
+        "bin_high": 0.3,
+        "n": 5,
+        "mean_confidence": 0.241684,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.3,
+        "bin_high": 0.4,
+        "n": 4,
+        "mean_confidence": 0.34139,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.4,
+        "bin_high": 0.5,
+        "n": 7,
+        "mean_confidence": 0.446972,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.5,
+        "bin_high": 0.6,
+        "n": 4,
+        "mean_confidence": 0.552442,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.6,
+        "bin_high": 0.7,
+        "n": 6,
+        "mean_confidence": 0.672907,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.7,
+        "bin_high": 0.8,
+        "n": 12,
+        "mean_confidence": 0.742341,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.8,
+        "bin_high": 0.9,
+        "n": 16,
+        "mean_confidence": 0.848982,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.9,
+        "bin_high": 1.0,
+        "n": 86,
+        "mean_confidence": 0.977131,
+        "observed_rate": 1.0
+      }
+    ]
+  },
+  "thresholds": {
+    "schema_version": "dep001a_semantic_thresholds_v1",
+    "model_version": "dep001a-multilingual-minilm-linear-v10",
+    "dataset_version": "dep001a-safety-corpus-v10",
+    "model_sha256": "6f4e1033dbe5dcbd2fc591c3f05578737ef18e9f6414a982e770b915a55be2ec",
+    "calibration_sha256": "91842bb434bfee8266ea607fb334ed76bff48edeabc317b0114d024b880b5913",
+    "unsafe_route_threshold": 0.43,
+    "urgent_route_threshold": 0.021,
+    "high_confidence_safe_threshold": 0.2,
+    "uncertainty_route_threshold": 0.52,
+    "selection_policy": "meet recall floors then minimize safe over-refusal; no final holdout used"
+  },
+  "holdout_policy": {
+    "old_frozen_holdout_read_for_training": false,
+    "old_frozen_holdout_rerun": false,
+    "new_external_human_holdout_required": true
+  },
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

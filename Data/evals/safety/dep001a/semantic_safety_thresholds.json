@@ -1,0 +1,12 @@
+{
+  "schema_version": "dep001a_semantic_thresholds_v1",
+  "model_version": "dep001a-multilingual-minilm-linear-v10",
+  "dataset_version": "dep001a-safety-corpus-v10",
+  "model_sha256": "6f4e1033dbe5dcbd2fc591c3f05578737ef18e9f6414a982e770b915a55be2ec",
+  "calibration_sha256": "91842bb434bfee8266ea607fb334ed76bff48edeabc317b0114d024b880b5913",
+  "unsafe_route_threshold": 0.43,
+  "urgent_route_threshold": 0.021,
+  "high_confidence_safe_threshold": 0.2,
+  "uncertainty_route_threshold": 0.52,
+  "selection_policy": "meet recall floors then minimize safe over-refusal; no final holdout used"
+}

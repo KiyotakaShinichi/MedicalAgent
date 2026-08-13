@@ -5,10 +5,11 @@ import json
 from backend.services.adversarial_v6_retrospective import build_retrospective, write_retrospective
 
 
-def test_retrospective_declares_contamination_without_rerunning_bank():
+def test_retrospective_declares_rerun_as_tuning_informed_not_held_out():
     result = build_retrospective()
     assert result["was_used_for_tuning"] is True
-    assert result["frozen_bank_was_rerun"] is False
+    assert result["frozen_bank_was_rerun"] is True
+    assert result["rerun_classification"] == "tuning_informed_regression"
     assert result["internal_vs_external"].startswith("internal_")
     assert result["clinical_validation"] is False
     assert result["failed_n"] > 0

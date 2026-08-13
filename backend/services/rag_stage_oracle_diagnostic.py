@@ -232,11 +232,18 @@ def _diagnose_case(
     cited_top_5 = _rows_hit_any_group(top_5, expected_groups)
     cited_top_10 = _rows_hit_any_group(top_10, expected_groups)
 
-    # Oracle upper bound: if we could rerank perfectly within the
-    # filtered top-50, do we get an expected source into the top-10?
+    # Oracle upper bound: fraction of distinct expected-source groups that a
+    # perfect reranker could place inside top-10 from the filtered pool. This
+    # uses the same fractional-recall denominator as the baseline comparison;
+    # a binary case hit rate is not comparable when a case expects many sources.
     oracle_top_10 = source_filter_kept  # by definition: an expected source
-    # exists somewhere in the filtered set ⇒ an oracle reranker can place
-    # it inside the top-10 of that set.
+    matched_filtered_groups = _matched_expected_groups(filtered, expected_groups)
+    if expected_groups:
+        oracle_recall_at_10 = min(
+            len(matched_filtered_groups), EVAL_CONTEXT_K
+        ) / len(expected_groups)
+    else:
+        oracle_recall_at_10 = 1.0
 
     final_failure_stage = _classify_final_stage(
         corpus_has_expected=corpus_has_expected,
@@ -279,7 +286,9 @@ def _diagnose_case(
         "source_filter_dropped_expected": source_filter_dropped,
         "cited_top_5_has_expected": cited_top_5,
         "cited_top_10_has_expected": cited_top_10,
-        "best_possible_recall_at_10_if_oracle_reranked": 1.0 if oracle_top_10 else (0.0 if expected_groups else 1.0),
+        "best_possible_recall_at_10_if_oracle_reranked": round(
+            oracle_recall_at_10, 4
+        ),
         "final_failure_stage": final_failure_stage,
     }
 

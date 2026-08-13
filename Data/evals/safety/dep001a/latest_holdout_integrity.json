@@ -1,0 +1,12 @@
+{
+  "schema_version": "dep001a_holdout_integrity_v1",
+  "generated_at": "2026-08-13T12:20:09.042047+00:00",
+  "status": "passed",
+  "sealed_bank_sha256_matches_manifest": true,
+  "development_exact_overlap_n": 0,
+  "validation_exact_overlap_n": 0,
+  "holdout_text_exposed": false,
+  "holdout_case_details_emitted": false,
+  "training_imports_this_module": false,
+  "clinical_validation": false
+}

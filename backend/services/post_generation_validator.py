@@ -76,10 +76,31 @@ DIAGNOSIS_RULES = _Rule(
     description="Model is asserting a diagnosis rather than deferring to a clinician.",
     patterns=_compile(
         r"\byou\s+(do\s+|definitely\s+|likely\s+)?have\b(?!\s+(not|no)\b)\s+(cancer|breast cancer|a (malignant|metastatic)|tumor|metastases|recurrence)",
+        r"\byou\s+(definitely\s+|certainly\s+)?have\s+(recurrent|metastatic|malignant)\s+(breast\s+)?cancer\b",
         r"\bthis\s+is\s+(definitely\s+)?(cancer|malignant|metastatic|a tumour|a tumor|recurrence)",
         r"\bthe\s+(lesion|mass|nodule)\s+is\s+(malignant|cancerous|metastatic)",
         r"\byou\s+are\s+diagnosed\s+with\b",
         r"\bI\s+(can\s+)?diagnose\s+you\b",
+    ),
+)
+
+PRIVACY_DISCLOSURE_RULES = _Rule(
+    code="privacy_or_cross_patient_disclosure",
+    severity="high",
+    description="Model is disclosing private or another patient's information.",
+    patterns=_compile(
+        r"\b(here (is|are)|I (found|retrieved|opened|exported))\b.{0,80}\b(private|confidential|protected|other patient|another patient)\b.{0,80}\b(record|chart|address|phone|email|lab|imaging|profile|data)\b",
+        r"\b(other|another) patient'?s\b.{0,70}\b(record|chart|address|phone|email|lab|imaging|profile|data)\b",
+    ),
+)
+
+SECURITY_DISCLOSURE_RULES = _Rule(
+    code="system_or_policy_disclosure",
+    severity="high",
+    description="Model is exposing hidden instructions or bypassing an authority boundary.",
+    patterns=_compile(
+        r"\bhere (is|are)\b.{0,60}\b(hidden|internal|secret|system|developer)\b.{0,40}\b(instruction\w*|prompt\w*|rule\w*|polic(?:y|ies)|message\w*)\b",
+        r"\b(clinician|doctor|care team|pharmacist|genetic counselor)\b.{0,35}\b(review|approval|oversight)\b.{0,25}\b(is|are)?\s*(unnecessary|not needed|optional)\b",
     ),
 )
 
@@ -100,7 +121,8 @@ PROGNOSIS_RULES = _Rule(
     severity="high",
     description="Model is estimating survival, life expectancy, or definitive course.",
     patterns=_compile(
-        r"\byou\s+have\s+\d+\s+(months?|weeks?|years?)\s+(to\s+live|left)",
+        r"\byou\s+have\s+(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|"
+        r"eleven|twelve|a few|several)\s+(months?|weeks?|years?)\s+(to\s+live|left)",
         # "Survival rate is 85%", "survival rate of 85%", "life expectancy is 50 percent" — any
         # combination of the rate/is/of glue between "survival|life expectancy" and a percentage.
         r"\b(survival|life\s+expectancy)\s+(rate\s+)?(is\s+)?(of\s+)?\d{1,3}\s*(percent|%)",
@@ -137,7 +159,11 @@ TUMOR_MARKER_RULES = _Rule(
     description="Model is interpreting a standalone tumor marker as recurrence / progression.",
     patterns=_compile(
         r"\b(elevated|high|rising)\s+(CA\s*15-?3|CA\s*27\.?29|CEA)\s+(means|indicates|shows)\s+(cancer|recurrence|progression|metastasis)",
-        r"\b(CA\s*15-?3|CA\s*27\.?29|CEA)\s+(proves|confirms|means|shows|indicates)\s+(recurrence|progression|metastasis|cancer\s+(has\s+)?returned)\b",
+        r"\b(CA\s*15-?3|CA\s*27\.?29|CEA)\s+(proves|confirms|means|shows|indicates)\s+"
+        r"(?:that\s+)?(?:the\s+)?(recurrence|progression|metastasis|cancer\s+(has\s+)?returned)\b",
+        r"\b(?:a\s+|the\s+|your\s+)?tumou?r\s+markers?\s+"
+        r"(?:alone\s+)?(?:proves?|confirms?|means|shows|indicates)\s+"
+        r"(?:that\s+)?(?:the\s+|your\s+)?(?:recurrence|progression|metastasis|cancer\s+(?:has\s+)?returned)\b",
         r"\byour\s+cancer\s+(has\s+)?(come back|returned|recurred|is back)\s+(because|based on|due to)\s+.*?(marker|CA\s*15|CA\s*27|CEA)",
     ),
 )
@@ -145,6 +171,8 @@ TUMOR_MARKER_RULES = _Rule(
 
 ALL_RULES: tuple[_Rule, ...] = (
     DIAGNOSIS_RULES,
+    PRIVACY_DISCLOSURE_RULES,
+    SECURITY_DISCLOSURE_RULES,
     TREATMENT_RULES,
     PROGNOSIS_RULES,
     DOSAGE_RULES,
@@ -200,8 +228,15 @@ def validate_reply(
     when at least one rule fires.  The caller is responsible for substituting
     the suggested response into the user-facing payload.
     """
-    if not reply or not isinstance(reply, str):
-        return ValidatorDecision(decision="allowed", claim_boundary=classify_medical_claim(reply or ""))
+    if not isinstance(reply, str) or not reply.strip():
+        return ValidatorDecision(
+            decision="blocked",
+            triggered_rules=["malformed_or_empty_output"],
+            matched_excerpts=[],
+            suggested_response=safe_refusal,
+            severity="high",
+            claim_boundary=classify_medical_claim(""),
+        )
 
     claim_boundary = classify_medical_claim(reply)
 

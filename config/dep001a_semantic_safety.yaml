@@ -1,0 +1,15 @@
+schema_version: dep001a_semantic_safety_config_v1
+dataset_version: dep001a-safety-corpus-v10
+model_version: dep001a-multilingual-minilm-linear-v10
+base_encoder: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+random_seed: 17031
+development_cases_per_class: 200
+validation_cases_per_class: 50
+calibration_fraction: 0.20
+artifact_max_age_days: 180
+languages: [en, taglish, filipino_heavy_taglish]
+clinical_validation: false
+healthcare_production_ready: false
+claim_boundary: >
+  Engineering safety-routing classifier only. It does not diagnose, grade
+  symptoms, recommend treatment, or establish clinical safety.

@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECONCILIATION_SCRIPTS = (
     "scripts/run_evidence_maturity_matrix.py",
+    "scripts/run_rag_governance_tradeoff.py",
     "scripts/run_release_decision_surface.py",
     "scripts/run_focused_release_summary.py",
     "scripts/run_senior_engineering_evidence.py",

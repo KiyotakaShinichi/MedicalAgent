@@ -103,6 +103,30 @@ def test_required_freshness_artifacts_are_regenerated_before_release_gate():
         assert ship._is_evidence_step(step)
 
 
+def test_kb_index_baseline_and_tradeoff_refresh_before_release_decision():
+    steps = ship._build_steps()
+    names = [step.name for step in steps]
+    ordered = (
+        "Reproducible knowledge-base chunk materialization",
+        "Fingerprint-matched local RAG index rebuild",
+        "Frozen RAG baseline comparison refresh",
+        "Canonical RAG governance tradeoff refresh",
+        "Canonical release decision surface",
+    )
+    positions = [names.index(name) for name in ordered]
+    assert positions == sorted(positions)
+    for name in ordered[:-1]:
+        step = next(item for item in steps if item.name == name)
+        assert step in ship._select_steps(steps, "evidence")
+
+
+def test_post_ship_reconciliation_refreshes_rag_tradeoff_before_release_surface():
+    assert "scripts/run_rag_governance_tradeoff.py" in RECONCILIATION_SCRIPTS
+    assert RECONCILIATION_SCRIPTS.index(
+        "scripts/run_rag_governance_tradeoff.py"
+    ) < RECONCILIATION_SCRIPTS.index("scripts/run_release_decision_surface.py")
+
+
 def test_research_paper_kb_eval_is_a_bounded_evidence_step():
     steps = ship._build_steps()
     step = next(

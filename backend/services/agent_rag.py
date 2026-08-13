@@ -25,6 +25,7 @@ admin scripts — six places at last count.
 """
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import datetime, timezone
 from time import perf_counter
 from types import SimpleNamespace
@@ -197,6 +198,8 @@ def _run_patient_agent_pipeline_impl(
 
     Every branch finalizes through ``_finalize_result``.
     """
+    if not isinstance(patient_context, Mapping):
+        raise ValueError("malformed_patient_context")
     started = perf_counter()
     actions = actions or []
     urgent_flags = urgent_flags or []

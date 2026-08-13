@@ -1,6 +1,6 @@
 {
   "schema_version": "synthetic_staging_resilience_dossier_v1",
-  "generated_at": "2026-08-11T10:04:00.629257+00:00",
+  "generated_at": "2026-08-12T06:48:06.198452+00:00",
   "status": "strong_local_only_external_blocked",
   "local_checks": [
     {
@@ -36,7 +36,7 @@
     {
       "check_id": "unified_disposable_staging_validation",
       "passed": true,
-      "evidence_scope": "loopback_disposable_runtime"
+      "evidence_scope": "static_only"
     },
     {
       "check_id": "leased_worker_and_postgres_runtime_recovery",
@@ -83,7 +83,7 @@
     "automation_channel_drill": {
       "path": "Data/evals/ops/latest_automation_channel_drill.json",
       "status": "strong",
-      "generated_at": "2026-08-11T09:59:40.409848+00:00"
+      "generated_at": "2026-08-12T06:43:35.959360+00:00"
     },
     "deployment_recovery_drill": {
       "path": "Data/evals/ops/latest_deployment_recovery_drill.json",
@@ -93,7 +93,7 @@
     "data_platform_reliability": {
       "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
       "status": "strong_offline_drill",
-      "generated_at": "2026-08-11T09:42:38.209900+00:00"
+      "generated_at": "2026-08-12T06:33:58.845431+00:00"
     },
     "container_recovery_smoke": {
       "path": "Data/evals/ops/latest_container_recovery_smoke.json",
@@ -103,22 +103,22 @@
     "managed_vector_shadow_sync": {
       "path": "Data/evals/rag/latest_managed_vector_shadow_sync.json",
       "status": "ready_for_opt_in_shadow_sync",
-      "generated_at": "2026-08-11T09:42:52.992453+00:00"
+      "generated_at": "2026-08-12T06:34:01.735629+00:00"
     },
     "managed_vector_shadow_comparison": {
       "path": "Data/evals/rag/latest_managed_vector_shadow_comparison.json",
       "status": "ready_for_managed_shadow_run",
-      "generated_at": "2026-08-11T09:43:11.385263+00:00"
+      "generated_at": "2026-08-12T06:34:06.062360+00:00"
     },
     "automation_staging_readiness": {
       "path": "Data/evals/ops/latest_synthetic_automation_staging_readiness.json",
       "status": "ready_for_synthetic_runtime",
-      "generated_at": "2026-08-11T09:59:44.587817+00:00"
+      "generated_at": "2026-08-12T06:43:37.874014+00:00"
     },
     "disposable_staging_readiness": {
       "path": "Data/evals/ops/latest_disposable_synthetic_staging_readiness.json",
       "status": "ready_for_disposable_synthetic_runtime",
-      "generated_at": "2026-08-11T10:03:56.883369+00:00"
+      "generated_at": "2026-08-12T06:48:05.377496+00:00"
     },
     "runtime_recovery": {
       "path": "Data/evals/ops/latest_synthetic_staging_runtime_recovery.json",
@@ -126,7 +126,7 @@
       "generated_at": "2026-08-09T15:35:14.734876+00:00"
     }
   },
-  "staging_runtime_completed": true,
+  "staging_runtime_completed": false,
   "managed_cloud_drill_completed": false,
   "real_external_delivery_completed": false,
   "human_acknowledgement_proven": false,

@@ -1,6 +1,6 @@
 {
   "schema_version": "disposable_synthetic_staging_readiness_v1",
-  "generated_at": "2026-08-11T10:03:56.883369+00:00",
+  "generated_at": "2026-08-12T06:48:05.377496+00:00",
   "status": "ready_for_disposable_synthetic_runtime",
   "compose_path": "docker-compose.synthetic-staging.yml",
   "compose_sha256": "100e1387528c340e6a60cc957495704c150304cbf4fcf0139398f219bea17dd2",
@@ -58,77 +58,13 @@
     "exit_code": 0,
     "stderr_tail": ""
   },
-  "runtime_started": true,
-  "runtime_healthchecks_completed": true,
-  "runtime_evidence_source": "preserved_matching_compose",
-  "runtime_observations": {
-    "observed_at": "2026-08-11T06:14:58.789217+00:00",
-    "evidence_scope": "loopback_disposable_synthetic_runtime",
-    "runtime_started": true,
-    "runtime_healthchecks_completed": true,
-    "running_services": [
-      "backend",
-      "frontend",
-      "mailhog",
-      "n8n",
-      "postgres",
-      "redis",
-      "saas-outbox-worker",
-      "saas-worker",
-      "worker"
-    ],
-    "service_listing": {
-      "executed": true,
-      "exit_code": 0,
-      "stdout": "backend\nfrontend\nmailhog\nn8n\npostgres\nredis\nsaas-outbox-worker\nsaas-worker\nworker\n",
-      "stderr": ""
-    },
-    "health_probes": {
-      "backend_health": true,
-      "backend_dependency_import": true,
-      "frontend_http": true,
-      "n8n_health": true,
-      "mailhog_api": true,
-      "postgres_tcp": true,
-      "redis_tcp": true
-    },
-    "postgres_restore_drill_completed": true,
-    "postgres_restore_drill": {
-      "completed": true,
-      "restored_public_table_count": 45,
-      "command_result": {
-        "executed": true,
-        "exit_code": 0,
-        "stdout": "45\n",
-        "stderr": "NOTICE:  database \"nlcare_restore_drill\" does not exist, skipping\n"
-      }
-    },
-    "n8n_workflow_import_completed": true,
-    "n8n_workflow_import": {
-      "completed": true,
-      "workflow": "synthetic_high_risk_review_alert",
-      "activated": false,
-      "external_delivery_enabled": false,
-      "command_result": {
-        "executed": true,
-        "exit_code": 0,
-        "stdout": "User settings loaded from: /home/node/.n8n/config\nError tracking disabled because this release is older than 6 weeks.\nImporting 1 workflows...\nSuccessfully imported 1 workflow.\n",
-        "stderr": ""
-      }
-    },
-    "mailhog_delivery_receipt_completed": true,
-    "mailhog_delivery_receipt": {
-      "completed": true,
-      "synthetic_marker": "nlcare-synthetic-5ff8a26fead949b5a28e9a57ee622866",
-      "recipient_domain": "nlcare.invalid",
-      "external_delivery": false
-    },
-    "real_external_delivery_completed": false,
-    "patient_data_processed": false
-  },
-  "postgres_restore_drill_completed": true,
-  "n8n_workflow_import_completed": true,
-  "mailhog_delivery_receipt_completed": true,
+  "runtime_started": false,
+  "runtime_healthchecks_completed": false,
+  "runtime_evidence_source": "not_collected",
+  "runtime_observations": {},
+  "postgres_restore_drill_completed": false,
+  "n8n_workflow_import_completed": false,
+  "mailhog_delivery_receipt_completed": false,
   "managed_vector_network_call_completed": false,
   "real_external_delivery_completed": false,
   "patient_data_processed": false,

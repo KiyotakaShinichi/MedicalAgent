@@ -1,0 +1,88 @@
+{
+  "schema_version": "dep001a_implementation_freeze_v1",
+  "generated_at": "2026-08-13T12:27:07.948147+00:00",
+  "status": "frozen_for_external_no_read_evaluation",
+  "dep001_status": "blocked_pending_new_external_no_read_holdout",
+  "model_version": "dep001a-multilingual-minilm-linear-v10",
+  "dataset_version": "dep001a-safety-corpus-v10",
+  "files": [
+    {
+      "path": "config/dep001a_semantic_safety.yaml",
+      "sha256": "e172bb1dd0c5031f144ade2b79ad3a8f05633aec5181bba2990cff25d6131018",
+      "bytes": 624
+    },
+    {
+      "path": "backend/services/dep001a_safety_corpus.py",
+      "sha256": "4fc90558f6aec5af797b2ddd9d6da0a3c2b4bc49d8e9cf494faa9abf4b716014",
+      "bytes": 41302
+    },
+    {
+      "path": "backend/services/dep001a_semantic_safety_training.py",
+      "sha256": "8d9f9db4dd059ba1087e43fa64373c77f220a082f9dbf2b40bca5a058c642a41",
+      "bytes": 25161
+    },
+    {
+      "path": "backend/services/multilingual_semantic_safety.py",
+      "sha256": "f0b38e2e161a8d5eb073ed4291d1e62e153f470490bc1439964169a0c28888a7",
+      "bytes": 13121
+    },
+    {
+      "path": "backend/services/agent_safety.py",
+      "sha256": "62c649455312e0650d416d94b44ccc8309ae5f91e38a6a1255d4ccbcf85ab95e",
+      "bytes": 18171
+    },
+    {
+      "path": "backend/services/post_generation_validator.py",
+      "sha256": "b0fd0c4bfabe9d82a86d14314e7eb7402a6445de4f35f3f14d657cb2522ae7c4",
+      "bytes": 12863
+    },
+    {
+      "path": "Data/evals/safety/dep001a/dataset_manifest.json",
+      "sha256": "5b61c3d69e4e169525f3d594f66c59af5774e1a890821161173bed6c28aae9d7",
+      "bytes": 3152
+    },
+    {
+      "path": "Data/evals/safety/dep001a/semantic_safety_model.joblib",
+      "sha256": "6f4e1033dbe5dcbd2fc591c3f05578737ef18e9f6414a982e770b915a55be2ec",
+      "bytes": 76055
+    },
+    {
+      "path": "Data/evals/safety/dep001a/semantic_safety_calibration.joblib",
+      "sha256": "91842bb434bfee8266ea607fb334ed76bff48edeabc317b0114d024b880b5913",
+      "bytes": 848
+    },
+    {
+      "path": "Data/evals/safety/dep001a/semantic_safety_thresholds.json",
+      "sha256": "99fd87a661f2342fbcb1d3fc5b9937d6365912ea2094a8841709323c8f9badc0",
+      "bytes": 604
+    },
+    {
+      "path": "Data/evals/safety/dep001a/semantic_safety_model_manifest.json",
+      "sha256": "5fb5057c11072109f96124bfa9f392c9f83bfada497d6307da3040acb7d019a2",
+      "bytes": 1507
+    },
+    {
+      "path": "Data/evals/safety/dep001a/latest_semantic_safety_eval.json",
+      "sha256": "eb3e51700fa02c841b881fd7d08a03d6b62814ab6a3c99cf64852543221a5fa2",
+      "bytes": 14012
+    },
+    {
+      "path": "Data/evals/safety/dep001a/latest_runtime_assurance.json",
+      "sha256": "a72d4c76e17a3da8cfb2ff314373fe59cbe4ad7e135d8d3c5e021b229ec779f3",
+      "bytes": 10565
+    },
+    {
+      "path": "Data/evals/safety/dep001a/latest_holdout_integrity.json",
+      "sha256": "c5eada5481b37eaf46d747f588f509327f033ceb4f76132562d8f4d360139ee0",
+      "bytes": 406
+    }
+  ],
+  "runtime_assurance_sha256": "a72d4c76e17a3da8cfb2ff314373fe59cbe4ad7e135d8d3c5e021b229ec779f3",
+  "sealed_old_holdout_integrity_passed": true,
+  "old_frozen_holdout_rerun": false,
+  "new_external_holdout_completed": false,
+  "was_used_for_tuning": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "Internal engineering candidate freeze only; not clinical validation, not a real-world safety guarantee, and not healthcare deployment approval."
+}

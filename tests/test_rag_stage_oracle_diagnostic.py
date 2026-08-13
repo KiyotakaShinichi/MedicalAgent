@@ -34,12 +34,22 @@ from backend.services.rag_stage_oracle_diagnostic import (
 )
 
 
+COMPARISON_PATH = Path("Data/evals/rag/latest_rag_baseline_comparison.json")
+
+
+def _current_full_stack_recall() -> float:
+    payload = json.loads(COMPARISON_PATH.read_text(encoding="utf-8"))
+    return float(payload["summary"]["full_stack_recall_at_10"])
+
+
 # ─── Slow harness suite ─────────────────────────────────────────────────
 
 
 def _live_report() -> dict:
     if not hasattr(_live_report, "_cache"):
-        _live_report._cache = build_report(actual_full_stack_recall_at_10=0.7838)  # type: ignore[attr-defined]
+        _live_report._cache = build_report(  # type: ignore[attr-defined]
+            actual_full_stack_recall_at_10=_current_full_stack_recall()
+        )
     return _live_report._cache  # type: ignore[attr-defined]
 
 
@@ -148,7 +158,7 @@ class DoesNotMutateGoldset(unittest.TestCase):
     def test_goldset_file_is_unchanged_after_report(self) -> None:
         before = _digest(DEFAULT_GOLDSET_PATH)
         # Force a fresh build (don't share the cache).
-        build_report(actual_full_stack_recall_at_10=0.7838)
+        build_report(actual_full_stack_recall_at_10=_current_full_stack_recall())
         after = _digest(DEFAULT_GOLDSET_PATH)
         self.assertEqual(before, after, "goldset hash changed after diagnostic ran")
 
@@ -175,7 +185,7 @@ class DoesNotInvokeLiveAgent(unittest.TestCase):
         if original is not None:
             agent_rag.run_patient_agent_pipeline = _tripwire
         try:
-            build_report(actual_full_stack_recall_at_10=0.7838)
+            build_report(actual_full_stack_recall_at_10=_current_full_stack_recall())
         finally:
             if original is not None:
                 agent_rag.run_patient_agent_pipeline = original

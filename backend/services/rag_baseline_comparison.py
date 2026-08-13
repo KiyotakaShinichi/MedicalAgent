@@ -71,6 +71,8 @@ CONFIGURATIONS: tuple[dict[str, Any], ...] = (
     {
         "id": "hybrid_rrf_query_rewrite_parent_child_source_tier_pruned",
         "label": "Full stack + citation-context pruner",
+        "experimental": True,
+        "positioning": "negative_result_not_promoted",
         "description": (
             "Full stack with the citation_context_pruner applied between source-tier "
             "filtering and citation assembly.  Eval-path experiment only — not wired "
@@ -312,6 +314,8 @@ def run_rag_baseline_comparison(
         comparison_rows.append({
             "configuration": config["id"],
             "label": config["label"],
+            "experimental": bool(config.get("experimental", False)),
+            "positioning": config.get("positioning", "canonical_comparison"),
             "recall_at_5": summary["recall_at_5"],
             "recall_at_10": summary["recall_at_10"],
             "mrr": summary["mrr"],

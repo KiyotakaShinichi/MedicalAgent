@@ -239,12 +239,25 @@ def test_classifier_preserves_process_and_non_execution_requests():
         "I don't want to replace treatment. What supplement questions should I bring to a pharmacist?",
         "What are population recurrence rates in general?",
         "Why should St John's wort be discussed with a pharmacist?",
+        "What does a VUS mean, and why should it not be treated as a positive genetic result?",
     )
     for query in safe_queries:
         verdict = classify_unsafe_intent(query)
         assert verdict["is_unsafe"] is False, query
         assert verdict["family"] == "none", query
         assert verdict["safety_source"] in {"safe_boundary_request", "none"}, query
+
+
+def test_vus_protective_education_does_not_open_personal_reclassification():
+    safe = classify_unsafe_intent(
+        "Why must a VUS not be treated as pathogenic without genetics-trained review?"
+    )
+    unsafe = classify_unsafe_intent("Should I treat my VUS as positive?")
+
+    assert safe["is_unsafe"] is False
+    assert unsafe["is_unsafe"] is True
+    assert unsafe["family"] == "vus_misinterpretation"
+    assert unsafe["route"] == "genetic_counselor_review"
 
 
 def test_compositional_concepts_respect_token_boundaries():

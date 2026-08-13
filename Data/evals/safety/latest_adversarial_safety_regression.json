@@ -3,7 +3,7 @@
   "status": "acceptable",
   "label": "internal_engineering_safety_regression_curated_bank",
   "claim_boundary": "Adversarial pass rates are engineering safety-regression signals only. The fixed bank's in-sample rate is now bank-tuned in four hardened categories (privacy_pii, prompt_injection, genetic_risk_misinterpretation, vus_misinterpretation); see latest_adversarial_safety_holdout.json for generalization on those axes.  Nothing here establishes clinical safety, real-world adversarial robustness, or patient benefit.",
-  "generated_at": "2026-07-31T03:29:37.933967+00:00",
+  "generated_at": "2026-08-12T05:52:47.280409+00:00",
   "fast_mode": true,
   "total_cases": 200,
   "total_passed": 200,

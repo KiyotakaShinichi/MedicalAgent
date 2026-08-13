@@ -1,6 +1,6 @@
 {
   "schema_version": "service_health_snapshot_v2",
-  "generated_at": "2026-08-11T10:07:52.079118+00:00",
+  "generated_at": "2026-08-12T07:00:34.239111+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -11,7 +11,7 @@
   "metrics": {
     "live_rag_case_count": 21,
     "live_rag_latency_p50_ms": 3810.25,
-    "normal_rag_latency_p95_ms": 3575.45,
+    "normal_rag_latency_p95_ms": 392.11,
     "normal_rag_percentile_credible": true,
     "routes_with_insufficient_samples": 0,
     "retrieval_case_failure_rate": 0.0952,
@@ -33,7 +33,7 @@
     "deployment_profile_status": "development_profile",
     "release_decision": "PROCEED_WITH_WARNINGS",
     "release_gate_status": "needs_attention",
-    "stale_artifact_count": 121,
+    "stale_artifact_count": 116,
     "failed_benchmark_count": 0
   },
   "attention_items": [
@@ -43,11 +43,7 @@
     "strict_deployment_profile_not_active"
   ],
   "stale_artifacts": [
-    "adversarial_safety_regression",
-    "adversarial_failure_analysis",
-    "adversarial_holdout_monitor",
     "adversarial_generalization_eval",
-    "adversarial_generalization_v2_eval",
     "heldout_adversarial_failure_analysis",
     "multilingual_refusal",
     "rag_governance_tradeoff",
@@ -79,7 +75,6 @@
     "public_biomarker_dataset_readiness",
     "public_treatment_dataset_readiness",
     "deep_learning_candidate_benchmark",
-    "canonical_oncology_schema",
     "external_data_bridge_eval",
     "ispy2_tcia_external_stress",
     "duke_tcia_external_stress",
@@ -92,7 +87,12 @@
     "toxicity_review_target_v3",
     "ml_coverage_risk_diagnostics",
     "durable_automation_worker",
-    "external_failure_case_analysis"
+    "external_failure_case_analysis",
+    "restricted_data_access_packet",
+    "cbioportal_clinical_export",
+    "external_distribution_alignment",
+    "student_constraint_elevation_plan",
+    "common_feature_transfer_stress"
   ],
   "failed_artifacts": [],
   "source_artifacts": {

@@ -164,7 +164,7 @@ class BreastDCEDLModelPredictRequest(BaseModel):
 
 # ─── Import / schema ──────────────────────────────────────────────────────────
 
-@router.get("/import-schema")
+@router.get("/import-schema", dependencies=[Depends(get_admin_access_context)])
 def get_import_schema():
     from backend.services.csv_importer import DATASET_ADAPTERS, SUPPORTED_IMPORT_TYPES
 
@@ -183,15 +183,20 @@ def import_csv_payload(
 ):
     from backend.services.csv_importer import import_csv
 
-    if not payload.csv_text and not payload.file_path:
-        raise HTTPException(status_code=400, detail="Provide csv_text or file_path")
+    if payload.file_path:
+        raise HTTPException(
+            status_code=400,
+            detail="Server file_path imports are disabled over the API; submit csv_text instead",
+        )
+    if not payload.csv_text:
+        raise HTTPException(status_code=400, detail="Provide csv_text")
 
     try:
         result = import_csv(
             db=db,
             import_type=payload.import_type,
             csv_text=payload.csv_text,
-            file_path=payload.file_path,
+            file_path=None,
             dataset=payload.dataset,
         )
     except ValueError as exc:
@@ -205,7 +210,7 @@ def import_csv_payload(
     }
 
 
-@router.post("/import-qin-breast-02")
+@router.post("/import-qin-breast-02", dependencies=[Depends(get_admin_access_context)])
 def import_qin_breast_02(payload: QINBreast02ImportRequest, db: Session = Depends(get_db)):
     from backend.services.csv_importer import import_qin_breast_02_clinical_xlsx
 
@@ -224,7 +229,7 @@ def import_qin_breast_02(payload: QINBreast02ImportRequest, db: Session = Depend
 
 # ─── Synthetic data generation ────────────────────────────────────────────────
 
-@router.post("/generate-qin-synthetic-cbc")
+@router.post("/generate-qin-synthetic-cbc", dependencies=[Depends(get_admin_access_context)])
 def generate_qin_synthetic_cbc(db: Session = Depends(get_db)):
     from backend.services.synthetic_cbc import generate_synthetic_cbc_for_qin_patients
 
@@ -235,7 +240,7 @@ def generate_qin_synthetic_cbc(db: Session = Depends(get_db)):
     }
 
 
-@router.post("/generate-synthetic-breast-journeys")
+@router.post("/generate-synthetic-breast-journeys", dependencies=[Depends(get_admin_access_context)])
 def generate_synthetic_breast_journeys(payload: SyntheticJourneyRequest, db: Session = Depends(get_db)):
     from backend.services.synthetic_journey import generate_synthetic_breast_cancer_journeys
 
@@ -249,7 +254,7 @@ def generate_synthetic_breast_journeys(payload: SyntheticJourneyRequest, db: Ses
     }
 
 
-@router.post("/generate-temporal-synthetic-breast-journeys")
+@router.post("/generate-temporal-synthetic-breast-journeys", dependencies=[Depends(get_admin_access_context)])
 def generate_temporal_synthetic_breast_journeys(payload: TemporalSyntheticJourneyRequest, db: Session = Depends(get_db)):
     from backend.services.synthetic_journey import generate_temporal_breast_cancer_journeys
 
@@ -265,7 +270,7 @@ def generate_temporal_synthetic_breast_journeys(payload: TemporalSyntheticJourne
     }
 
 
-@router.post("/generate-complete-synthetic-breast-dataset")
+@router.post("/generate-complete-synthetic-breast-dataset", dependencies=[Depends(get_admin_access_context)])
 def generate_complete_synthetic_breast_dataset_endpoint(
     payload: CompleteSyntheticDatasetRequest,
     db: Session = Depends(get_db),
@@ -304,7 +309,7 @@ def generate_complete_synthetic_breast_dataset_endpoint(
 
 # ─── Model training ───────────────────────────────────────────────────────────
 
-@router.post("/train-complete-synthetic-models")
+@router.post("/train-complete-synthetic-models", dependencies=[Depends(get_admin_access_context)])
 def train_complete_synthetic_models_endpoint(
     payload: CompleteSyntheticTrainingRequest,
     db: Session = Depends(get_db),
@@ -369,7 +374,7 @@ def train_complete_synthetic_models_endpoint(
     }
 
 
-@router.post("/generate-complete-synthetic-xai")
+@router.post("/generate-complete-synthetic-xai", dependencies=[Depends(get_admin_access_context)])
 def generate_complete_synthetic_xai_endpoint(payload: CompleteSyntheticXAIRequest):
     from backend.services.complete_synthetic_xai import generate_complete_synthetic_xai
 
@@ -398,7 +403,7 @@ def generate_complete_synthetic_xai_endpoint(payload: CompleteSyntheticXAIReques
 
 # ─── QIN MRI pipeline ─────────────────────────────────────────────────────────
 
-@router.post("/index-qin-mri")
+@router.post("/index-qin-mri", dependencies=[Depends(get_admin_access_context)])
 def index_qin_mri(payload: MRISeriesIndexRequest, db: Session = Depends(get_db)):
     from backend.services.mri_series_indexer import index_mri_series
 
@@ -410,7 +415,7 @@ def index_qin_mri(payload: MRISeriesIndexRequest, db: Session = Depends(get_db))
     return {"message": "MRI DICOM series index completed", "result": result}
 
 
-@router.post("/build-qin-mri-manifest")
+@router.post("/build-qin-mri-manifest", dependencies=[Depends(get_admin_access_context)])
 def build_qin_mri_manifest_endpoint(payload: MRIManifestRequest, db: Session = Depends(get_db)):
     from backend.services.mri_manifest import build_qin_mri_manifest
 
@@ -420,7 +425,7 @@ def build_qin_mri_manifest_endpoint(payload: MRIManifestRequest, db: Session = D
     }
 
 
-@router.post("/preprocess-qin-mri-previews")
+@router.post("/preprocess-qin-mri-previews", dependencies=[Depends(get_admin_access_context)])
 def preprocess_qin_mri_previews(payload: MRIPreviewPreprocessRequest):
     from backend.services.mri_preprocessing import preprocess_mri_manifest_previews
 
@@ -432,7 +437,7 @@ def preprocess_qin_mri_previews(payload: MRIPreviewPreprocessRequest):
 
 # ─── BreastDCEDL pipeline ─────────────────────────────────────────────────────
 
-@router.post("/inspect-breastdcedl")
+@router.post("/inspect-breastdcedl", dependencies=[Depends(get_admin_access_context)])
 def inspect_breastdcedl(payload: BreastDCEDLInspectRequest):
     from backend.services.breastdcedl_inspector import inspect_breastdcedl_dataset
 
@@ -446,7 +451,7 @@ def inspect_breastdcedl(payload: BreastDCEDLInspectRequest):
     return {"message": "BreastDCEDL local dataset inspection completed", "result": result}
 
 
-@router.post("/build-breastdcedl-manifest")
+@router.post("/build-breastdcedl-manifest", dependencies=[Depends(get_admin_access_context)])
 def build_breastdcedl_manifest_endpoint(payload: BreastDCEDLManifestRequest):
     from backend.services.breastdcedl_inspector import build_breastdcedl_manifest
 
@@ -458,7 +463,7 @@ def build_breastdcedl_manifest_endpoint(payload: BreastDCEDLManifestRequest):
     return {"message": "BreastDCEDL manifest built", "result": result}
 
 
-@router.post("/run-breastdcedl-baseline")
+@router.post("/run-breastdcedl-baseline", dependencies=[Depends(get_admin_access_context)])
 def run_breastdcedl_baseline_endpoint(payload: BreastDCEDLBaselineRequest):
     from backend.services.breastdcedl_baseline import run_breastdcedl_baseline
 
@@ -476,7 +481,7 @@ def run_breastdcedl_baseline_endpoint(payload: BreastDCEDLBaselineRequest):
     return {"message": "BreastDCEDL baseline completed", "result": result}
 
 
-@router.post("/generate-breastdcedl-previews")
+@router.post("/generate-breastdcedl-previews", dependencies=[Depends(get_admin_access_context)])
 def generate_breastdcedl_previews_endpoint(payload: BreastDCEDLPreviewRequest):
     from backend.services.breastdcedl_previews import generate_breastdcedl_previews
 
@@ -490,7 +495,7 @@ def generate_breastdcedl_previews_endpoint(payload: BreastDCEDLPreviewRequest):
     }
 
 
-@router.post("/import-breastdcedl-patients")
+@router.post("/import-breastdcedl-patients", dependencies=[Depends(get_admin_access_context)])
 def import_breastdcedl_patients_endpoint(payload: BreastDCEDLImportRequest, db: Session = Depends(get_db)):
     from backend.services.breastdcedl_importer import import_breastdcedl_patients_to_dashboard
 
@@ -500,7 +505,7 @@ def import_breastdcedl_patients_endpoint(payload: BreastDCEDLImportRequest, db: 
     }
 
 
-@router.post("/run-breastdcedl-cnn")
+@router.post("/run-breastdcedl-cnn", dependencies=[Depends(get_admin_access_context)])
 def run_breastdcedl_cnn_endpoint(payload: BreastDCEDLCNNRequest):
     from backend.services.breastdcedl_cnn import run_breastdcedl_small_cnn
 
@@ -518,7 +523,7 @@ def run_breastdcedl_cnn_endpoint(payload: BreastDCEDLCNNRequest):
     return {"message": "BreastDCEDL small CNN baseline completed", "result": result}
 
 
-@router.post("/generate-breastdcedl-xai")
+@router.post("/generate-breastdcedl-xai", dependencies=[Depends(get_admin_access_context)])
 def generate_breastdcedl_xai_endpoint(payload: BreastDCEDLXAIRequest):
     from backend.services.breastdcedl_xai import generate_breastdcedl_shap_explanations
 
@@ -534,7 +539,7 @@ def generate_breastdcedl_xai_endpoint(payload: BreastDCEDLXAIRequest):
 
 # ─── Model registry ───────────────────────────────────────────────────────────
 
-@router.post("/models/breastdcedl/train-final")
+@router.post("/models/breastdcedl/train-final", dependencies=[Depends(get_admin_access_context)])
 def train_breastdcedl_final_model_endpoint(payload: BreastDCEDLModelTrainRequest, db: Session = Depends(get_db)):
     from backend.services.model_artifacts import train_and_register_breastdcedl_model
 

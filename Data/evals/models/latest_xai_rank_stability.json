@@ -1,6 +1,6 @@
 {
   "schema_version": "xai_rank_stability_v1",
-  "generated_at": "2026-08-11T09:48:46.958045+00:00",
+  "generated_at": "2026-08-12T06:36:40.154849+00:00",
   "status": "acceptable",
   "method": "patient_bootstrap_mean_absolute_shap_ranking",
   "patient_explanation_n": 600,

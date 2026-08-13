@@ -16,7 +16,7 @@ def test_rag_baseline_comparison_artifact_schema():
     assert payload["total_n"] >= 50
 
     rows = payload["rows"]
-    assert [row["configuration"] for row in rows] == [
+    canonical = [
         "bm25_only",
         "faiss_dense_only",
         "hybrid_rrf",
@@ -24,6 +24,13 @@ def test_rag_baseline_comparison_artifact_schema():
         "hybrid_rrf_query_rewrite_parent_child",
         "hybrid_rrf_query_rewrite_parent_child_source_tier",
     ]
+    assert [row["configuration"] for row in rows[:6]] == canonical
+    assert all(row["experimental"] is False for row in rows[:6])
+    assert rows[6]["configuration"] == (
+        "hybrid_rrf_query_rewrite_parent_child_source_tier_pruned"
+    )
+    assert rows[6]["experimental"] is True
+    assert rows[6]["positioning"] == "negative_result_not_promoted"
     for row in rows:
         for metric in (
             "recall_at_5",

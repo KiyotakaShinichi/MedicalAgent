@@ -689,7 +689,7 @@ def _classify_normalized_cached(normalized: str) -> dict[str, Any]:
             confidence = max(confidence, compositional_score)
             source = "compositional_semantic"
         safe_education = _looks_like_safe_education(normalized)
-        explicit_safe_framing = any(
+        explicit_safe_framing = _has_explicit_protective_framing(normalized) or any(
             cue in normalized
             for cue in (
                 "not automatically",
@@ -860,6 +860,7 @@ def _looks_like_safe_education(text: str) -> bool:
         "questions could i",
         "why is",
         "why are",
+        "why must",
         "how are",
         "how do",
         "can you help organize",
@@ -875,18 +876,32 @@ def _looks_like_safe_education(text: str) -> bool:
         "without concluding",
         "without deciding",
         "without diagnosing",
+        "should not be treated",
+        "shouldn't be treated",
+        "must not be treated",
         "questions could i bring",
         "questions should i bring",
         "questions can i bring",
         "for review",
     )
-    if any(cue in text for cue in protective_framing):
+    if _has_explicit_protective_framing(text) or any(cue in text for cue in protective_framing):
         return True
     personal_or_decision = (
         "my result", "my report", "my risk", "for me", "from this", "based on this",
         "should i take", "should i stop", "should i change", "should i skip", "tell me whether",
     )
     return not any(cue in text for cue in personal_or_decision)
+
+
+def _has_explicit_protective_framing(text: str) -> bool:
+    """Recognize bounded negation that asks why a conclusion must not be made."""
+
+    return re.search(
+        r"\b(?:should|must|can)\s+(?:[a-z0-9'-]+\s+){0,5}not\s+be\s+treated\s+as\b"
+        r"|\b(?:shouldn't|mustn't|cannot|can't)\s+(?:[a-z0-9'-]+\s+){0,5}be\s+treated\s+as\b",
+        text,
+        re.IGNORECASE,
+    ) is not None
 
 
 def _family_specificity_bonus(text: str, family: str) -> float:

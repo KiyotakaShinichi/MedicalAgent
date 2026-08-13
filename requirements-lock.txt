@@ -11,6 +11,7 @@ alembic==1.18.4
 psycopg2-binary==2.9.12
 openpyxl==3.1.5
 pypdf==6.15.0
+reportlab==5.0.0
 pydicom==3.0.2
 pillow==12.2.0
 numpy==2.4.4

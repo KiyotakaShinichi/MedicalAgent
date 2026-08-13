@@ -1,6 +1,6 @@
 {
   "schema_version": "rag_intent_aware_eval_v2",
-  "generated_at": "2026-08-11T10:05:00.687991+00:00",
+  "generated_at": "2026-08-12T06:48:40.308928+00:00",
   "status": "strong",
   "summary": {
     "case_count": 8,
@@ -71,7 +71,7 @@
       "post_gen_validator_triggered": false,
       "final_reply_unsafe": false,
       "grade": "high",
-      "latency_ms": 0.01,
+      "latency_ms": 0.02,
       "passed": true
     },
     {
@@ -209,7 +209,7 @@
       "post_gen_validator_triggered": false,
       "final_reply_unsafe": false,
       "grade": "high",
-      "latency_ms": 0.0,
+      "latency_ms": 0.01,
       "passed": true
     }
   ],

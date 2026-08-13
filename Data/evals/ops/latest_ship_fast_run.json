@@ -1,9 +1,9 @@
 {
   "schema_version": "nlcare_ship_run_v2",
-  "generated_at": "2026-08-11T04:47:07.188355+00:00",
+  "generated_at": "2026-08-12T06:33:21.382245+00:00",
   "status": "passed",
   "tier": "fast",
-  "resume_requested": false,
+  "resume_requested": true,
   "clinical_validation": false,
   "healthcare_production_ready": false,
   "completed_step_count": 10,
@@ -15,7 +15,7 @@
     {
       "name": "Backend breast-monitoring integration tests",
       "status": "passed",
-      "duration_seconds": 109.725,
+      "duration_seconds": 117.461,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -25,12 +25,12 @@
         "tests/test_breast_monitoring.py",
         "-q"
       ],
-      "dependency_fingerprint": "360df0ed6f8bd28f42a0e1d36ec95be6c33cf244d611ca0229e422748c0f95cd"
+      "dependency_fingerprint": "ace280582a6e7e79e45ac71051f8afbdbc25ea6c72f5fa122b85a29fca9a8d91"
     },
     {
       "name": "Backend progressive-loading and notification reliability tests",
       "status": "passed",
-      "duration_seconds": 58.84,
+      "duration_seconds": 31.831,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -44,12 +44,12 @@
         "tests/test_n8n_automation_templates.py",
         "-q"
       ],
-      "dependency_fingerprint": "5bc2ccf14311bd0571c1375a84bb752195421e4b0434098f1c1f6c278d098cbe"
+      "dependency_fingerprint": "29e500152bcb859ee74b7df43a53a8087036244f1d5f33463307bba651ba881b"
     },
     {
       "name": "Cloud, data-platform, and managed-vector contract tests",
       "status": "passed",
-      "duration_seconds": 107.128,
+      "duration_seconds": 50.669,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -81,12 +81,12 @@
         "tests/test_patient_xai_readability_dossier.py",
         "-q"
       ],
-      "dependency_fingerprint": "713f4424dd5df7de17b10f3d96a60d01b43bd39c81da253017fef4532c43f89c"
+      "dependency_fingerprint": "b6caff616671878857e3821db0b2a68046904a0e623efa433e2cf629599f989c"
     },
     {
       "name": "Assurance, XAI, automation, and safety contract tests",
       "status": "passed",
-      "duration_seconds": 393.336,
+      "duration_seconds": 215.168,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -130,12 +130,12 @@
         "tests/test_restricted_synthetic_staging_assurance.py",
         "-q"
       ],
-      "dependency_fingerprint": "36b35bfa94a28b704210de72ac42454ae17f6e1c6b46367fa80bcad64c924598"
+      "dependency_fingerprint": "c8e65cf3613985193f99830a03c94acdc3634687f1024bdc9513a894bdfe2f26"
     },
     {
       "name": "SaaS control-plane and worker contract tests",
       "status": "passed",
-      "duration_seconds": 24.936,
+      "duration_seconds": 21.324,
       "timeout_seconds": 900,
       "cwd": ".",
       "command": [
@@ -151,12 +151,12 @@
         "tests/test_multimodal_evidence_abstention.py",
         "-q"
       ],
-      "dependency_fingerprint": "4c66798fe23a771f3d8e8e4f88c09cc154b0b319437316a8df1926d4be42ffca"
+      "dependency_fingerprint": "2cc529090ad09a4dd29b27397f36ec78d8d430d7cf823829a096672823148052"
     },
     {
       "name": "Frontend Vitest unit tests",
       "status": "passed",
-      "duration_seconds": 129.921,
+      "duration_seconds": 97.622,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -164,12 +164,12 @@
         "run",
         "test"
       ],
-      "dependency_fingerprint": "6fd8f83ade7ad7ee05b14cd6454e824c973761a5b10df2dbab00c98e106f76c8"
+      "dependency_fingerprint": "c7c0d3af0ef9358e348398de86a6a48d76cc815bfc7af47758ce65e407418f87"
     },
     {
       "name": "Frontend lint",
       "status": "passed",
-      "duration_seconds": 114.731,
+      "duration_seconds": 105.843,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -177,12 +177,12 @@
         "run",
         "lint"
       ],
-      "dependency_fingerprint": "111072535cb4f01a623fd56defc2d80b4568627cade37bfa2307792485dd59e2"
+      "dependency_fingerprint": "eec1e99d3c6ba74a9657ecff6bd1903e44073e5bd890d5d5911a989c273d2d9e"
     },
     {
       "name": "Frontend production build",
       "status": "passed",
-      "duration_seconds": 69.287,
+      "duration_seconds": 48.04,
       "timeout_seconds": 900,
       "cwd": "frontend-react",
       "command": [
@@ -190,31 +190,31 @@
         "run",
         "build"
       ],
-      "dependency_fingerprint": "1641aea6073bf0278d169332bd199a54dbcd04b751583e2c6e3d83a6db5baac8"
+      "dependency_fingerprint": "e08bf6bf461e58dd7fcbb2f0800bea5764031325d39fa3703604ab8eadb85d46"
     },
     {
       "name": "Fail-closed RAG release assurance",
       "status": "passed",
-      "duration_seconds": 14.262,
+      "duration_seconds": 13.198,
       "timeout_seconds": 240,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_fail_closed_rag_assurance.py"
       ],
-      "dependency_fingerprint": "3eb205a561a1d83f7bbfad7144231b97f638859061faf88696144d100a7f5f01"
+      "dependency_fingerprint": "419a3989f96a54febde81d38ef8bbce1bab05411dab1f19fc5808a99c6dc3f06"
     },
     {
       "name": "Restricted synthetic staging assurance",
       "status": "passed",
-      "duration_seconds": 15.766,
+      "duration_seconds": 10.483,
       "timeout_seconds": 240,
       "cwd": ".",
       "command": [
         "C:\\Python314\\python.exe",
         "scripts/run_restricted_synthetic_staging_assurance.py"
       ],
-      "dependency_fingerprint": "c51730870d291686fb93602bbb4bcf6e60d3ca67135dfc3ae379265f13095f44"
+      "dependency_fingerprint": "4998e28923ae9709e6b7492b147357fe25af1481a496fdb626157eef0efbe9fa"
     }
   ],
   "claim_boundary": "This manifest records local engineering gate execution only. A passing ship run does not establish clinical validation, real-world safety, compliance, or production healthcare readiness."

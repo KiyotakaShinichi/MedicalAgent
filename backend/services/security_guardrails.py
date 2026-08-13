@@ -657,6 +657,8 @@ def _is_obvious_low_risk_support_or_education(normalized):
         "side effect",
         "breast cancer monitoring",
         "chemotherapy",
+        "model signal",
+        "nlcare portal",
     ]
     return any(term in normalized for term in low_risk_terms)
 

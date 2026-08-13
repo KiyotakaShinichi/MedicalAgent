@@ -1,7 +1,7 @@
 {
   "schema_version": "gold_claim_grounding_eval_v2",
-  "generated_at": "2026-05-20T16:52:11.488289+00:00",
-  "release_id": "rag-gold-20260520",
+  "generated_at": "2026-08-12T06:02:03.680947+00:00",
+  "release_id": "rag-gold-20260812",
   "baseline_version": "gold_claim_grounding_cases_v2_2026_05",
   "status": "strong",
   "n_size": 12,
@@ -25,7 +25,7 @@
     "was_used_for_tuning": true,
     "internal_vs_external_authored": "internal_engineering_authored",
     "baseline_version": "gold_claim_grounding_cases_v2_2026_05",
-    "release_id": "rag-gold-20260520",
+    "release_id": "rag-gold-20260812",
     "contamination_disclosure": "Cases are authored from known NLCare failure modes and safety boundaries. Contamination risk: they may be used for engineering tuning and are not external validation.",
     "category_count": 12,
     "unsupported_claim_total": 36,
@@ -796,6 +796,6 @@
       "safety_notes": "Goldset is engineering-curated and not clinician-approved."
     }
   ],
-  "jsonl_path": "Data/evals/rag/gold_claim_grounding_cases.jsonl",
+  "jsonl_path": "C:\\Users\\L\\AppData\\Local\\Temp\\pytest-of-L\\pytest-549\\test_rag_goldset_has_minimum_c0\\gold.jsonl",
   "claim_boundary": "These artifacts improve engineering readiness, reviewer preparation, and safety-case transparency. They do not establish clinical validation, clinician sign-off, real patient benefit, or production compliance."
 }

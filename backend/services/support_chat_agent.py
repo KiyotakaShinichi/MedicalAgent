@@ -77,6 +77,8 @@ def handle_patient_chat(db, patient_id, message):
         urgent_flags,
         previous_user_messages=prior_user_messages,
     )
+    input_guardrail_preview = input_guardrail_check(normalized, routing_safety)
+    terminal_input_block = input_guardrail_preview.get("status") == "failed"
     try:
         from backend.services.emotional_distress_detection import detect_emotional_distress
         emotional_distress = detect_emotional_distress(normalized, safety=routing_safety)
@@ -99,10 +101,14 @@ def handle_patient_chat(db, patient_id, message):
     compound_intent = None
     llm_compound_verdict: dict | None = None
     try:
+        if terminal_input_block:
+            raise RuntimeError("terminal input safety block")
         from backend.services.compound_intent_router import detect_compound_intents_with_llm
         compound_intent, llm_compound_verdict = detect_compound_intents_with_llm(message)
     except Exception:  # noqa: BLE001 — never break chat on the router
         try:
+            if terminal_input_block:
+                raise RuntimeError("terminal input safety block")
             from backend.services.compound_intent_router import detect_compound_intents
             compound_intent = detect_compound_intents(message)
         except Exception:  # noqa: BLE001
@@ -125,9 +131,27 @@ def handle_patient_chat(db, patient_id, message):
 
     high_risk_alert = None
     alert_action = None
-    confirmation_actions = resolve_pending_record_write(db, patient_id, normalized)
+    confirmation_actions = (
+        None
+        if terminal_input_block
+        else resolve_pending_record_write(db, patient_id, normalized)
+    )
     actions = list(confirmation_actions or [])
-    selected_tools = set() if confirmation_actions is not None else set(tool_plan["selected_tools"])
+    selected_tools = (
+        set()
+        if terminal_input_block or confirmation_actions is not None
+        else set(tool_plan["selected_tools"])
+    )
+    if terminal_input_block:
+        tool_plan = {
+            **tool_plan,
+            "intent": "safety_boundary",
+            "selected_tools": ["none"],
+            "forced_tools": [],
+            "source": "terminal_input_safety_block",
+            "confidence": 1.0,
+            "reason": "input safety boundary is terminal; no record action or tool follow-up is allowed",
+        }
     if confirmation_actions is not None:
         tool_plan = {
             **tool_plan,
@@ -287,6 +311,8 @@ def handle_patient_chat(db, patient_id, message):
         and compound_intent.has_tool_request
         and not has_concrete_save
         and not urgent_flags
+        and not terminal_input_block
+        and tool_plan.get("intent") != "portal_help"
     ):
         actions.append({
             "type": "partial_tool_request_detected",
@@ -337,6 +363,7 @@ def handle_patient_chat(db, patient_id, message):
     patient_context = _recent_patient_context(db, patient_id)
     direct_safety_reply = None
     direct_scope_reply = None
+    direct_portal_reply = None
     if safety_followup:
         direct_safety_reply = _safety_location_followup_reply()
     elif immediate_danger:
@@ -348,10 +375,13 @@ def handle_patient_chat(db, patient_id, message):
         emotional_distress=emotional_distress,
     ):
         direct_scope_reply = _out_of_domain_reply()
+    elif tool_plan.get("intent") == "portal_help":
+        direct_portal_reply = _portal_help_reply()
 
     fallback_response = (
         direct_safety_reply
         or direct_scope_reply
+        or direct_portal_reply
         or _build_response(normalized, actions, urgent_flags, patient_context)
     )
     routing_intent = (
@@ -359,6 +389,8 @@ def handle_patient_chat(db, patient_id, message):
         if direct_safety_reply
         else "scope_boundary"
         if direct_scope_reply
+        else "portal_help"
+        if direct_portal_reply
         else tool_plan["intent"]
         if tool_plan.get("intent") in ALLOWED_SUPPORT_INTENTS
         else route_intent(normalized, actions=actions, safety=routing_safety)
@@ -383,6 +415,7 @@ def handle_patient_chat(db, patient_id, message):
     if (
         direct_safety_reply
         or direct_scope_reply
+        or direct_portal_reply
         or contextual_record_route
         or _should_bypass_rag_for_tool_actions(actions, routing_intent)
     ):
@@ -391,6 +424,8 @@ def handle_patient_chat(db, patient_id, message):
             if direct_safety_reply
             else "out-of-domain request; no LLM or RAG generation"
             if direct_scope_reply
+            else "deterministic portal navigation help; no external-evidence RAG generation"
+            if direct_portal_reply
             else "patient-scoped record comparison; no external-evidence RAG generation"
             if contextual_record_route
             else "deterministic tool confirmation; no RAG generation"
@@ -417,6 +452,8 @@ def handle_patient_chat(db, patient_id, message):
                         if direct_safety_reply
                         else "scope_boundary_reply"
                         if direct_scope_reply
+                        else "portal_help_reply"
+                        if direct_portal_reply
                         else "patient_record_context"
                         if contextual_record_route
                         else "deterministic_tool_action"
@@ -426,6 +463,8 @@ def handle_patient_chat(db, patient_id, message):
                         if direct_safety_reply
                         else "scope_redirect"
                         if direct_scope_reply
+                        else "portal_navigation"
+                        if direct_portal_reply
                         else "record_change_explanation"
                         if contextual_record_route
                         else "confirmation_reply"
@@ -935,7 +974,7 @@ def _deterministic_tool_plan(message, extracted, safety):
         # allowed to create a patient confirmation and clinical-review flag;
         # neither path writes a record without an explicit follow-up confirm.
         blocked_tools = {"save_medication"}
-        explicit_record_command = bool(re.search(r"\b(?:log|save|record|add|enter)\b", lower))
+        explicit_record_command = _has_explicit_record_command(message)
         explicit_imaging_record = bool(
             extracted.get("imaging_report")
             and re.search(r"\b(?:mri|ct|ultrasound|mammogram|imaging|scan)\b", lower)
@@ -1001,6 +1040,12 @@ def _select_tool_plan(message, extracted, deterministic_plan, safety):
 
     selected = _reconcile_selected_tools(selected, extracted, message)
     selected = _dedupe_tools([tool for tool in selected if tool != "none"] + deterministic_plan.get("force_tools", []))
+    if _is_safety_limited_turn(safety) and not _has_explicit_record_command(message):
+        selected = [
+            tool
+            for tool in selected
+            if tool not in {"save_symptom", "request_symptom_details", "save_medication"}
+        ]
     if not selected:
         selected = ["none"]
     if selected != ["none"]:
@@ -1032,6 +1077,31 @@ def _normalize_selected_tools(raw_tools):
         if normalized in ALLOWED_SUPPORT_TOOLS:
             tools.append(normalized)
     return _dedupe_tools(tools) or ["none"]
+
+
+def _is_safety_limited_turn(safety):
+    safety = safety or {}
+    return (
+        safety.get("level") in {"high_risk", "blocked"}
+        or safety.get("scope") in {
+            "treatment_decision_request",
+            "urgent_or_safety_related",
+            "diagnosis_or_outcome_claim",
+        }
+    )
+
+
+def _has_explicit_record_command(message):
+    return re.search(r"\b(?:log|save|record|add|enter)\b", str(message or "").lower()) is not None
+
+
+def _portal_help_reply():
+    return (
+        "Use the left navigation to open Overview, Labs, Signals, Timeline, Family & Genetics, or Support. "
+        "In Support, select the plus button beside the message box to open a structured form for symptoms, "
+        "CBC values, imaging reports, medications, or treatment notes. Nothing is saved until you review and "
+        "submit or explicitly confirm it."
+    )
 
 
 def _reconcile_selected_tools(selected, extracted, message):

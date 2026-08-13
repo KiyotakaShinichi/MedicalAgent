@@ -52,6 +52,7 @@ jobs:
             tests/test_timeline_uncertainty.py \
             tests/test_safety_eval_center.py \
             tests/test_access_control.py \
+            tests/test_model_route_authorization.py \
             tests/test_public_imaging_services.py
 
       - name: Legacy full monitoring regression

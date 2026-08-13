@@ -1,5 +1,7 @@
 # Study Guide: AI/ML, Statistics, and Medical Terms
 
+> For the complete repository-grounded course, including advanced RAG, bounded agents, statistics, MLE, XAI, fine-tuning, SWE, data engineering, automation, infrastructure, security, deployment, medical governance, labs, quizzes, and interview preparation, use `docs/NLCARE_PROJECT_LEARNING_GUIDE.md` or the generated `output/pdf/NLCare_Engineering_Academy.pdf`.
+
 This guide explains the terms used in this project in plain language. The safest way to study this system is to remember its boundary:
 
 > The project is a monitoring and clinician-review PoC. It does not diagnose, confirm response, or recommend treatment.

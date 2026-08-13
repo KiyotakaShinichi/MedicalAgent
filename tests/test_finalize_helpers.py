@@ -148,7 +148,7 @@ class IntentAwareLayerWritesFields(unittest.TestCase):
 
 
 class IntentAwareLayerNeverCrashes(unittest.TestCase):
-    def test_internal_exception_records_missing_grade(self) -> None:
+    def test_internal_exception_records_sanitized_missing_grade(self) -> None:
         """If any of the four sub-services raises, the helper logs a
         `missing` grade and returns — never propagates the exception."""
         result = {"intent": "education", "reply": "x", "retrieval_context": []}
@@ -158,7 +158,11 @@ class IntentAwareLayerNeverCrashes(unittest.TestCase):
         ):
             _apply_intent_aware_rag_layer(result, retrieved=[], input_guardrails={}, pgv_decision=_StubDecision())
         self.assertEqual(result["evidence_grade"]["grade"], "missing")
-        self.assertIn("simulated upstream failure", result["evidence_grade"]["reasoning"])
+        self.assertEqual(
+            result["evidence_grade"]["reasoning"],
+            "intent_aware_rag_layer_failed_closed:select_mode",
+        )
+        self.assertNotIn("simulated upstream failure", result["evidence_grade"]["reasoning"])
 
 
 class IntentAwareLayerActorRoleUpgrade(unittest.TestCase):

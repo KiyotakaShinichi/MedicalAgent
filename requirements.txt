@@ -9,6 +9,7 @@ alembic
 psycopg2-binary
 openpyxl
 pypdf
+reportlab
 pydicom
 pillow
 numpy

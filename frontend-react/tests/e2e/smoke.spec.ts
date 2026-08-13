@@ -34,7 +34,7 @@ async function signIn(page: Page, username: string, password: string, expectedRo
   );
   await page.getByRole("button", { name: /sign in to workspace/i }).click();
   await response;
-  await page.waitForURL(expectedRoute, { timeout: 30_000 });
+  await expect(page).toHaveURL(expectedRoute, { timeout: 30_000 });
 }
 
 function chatComposer(page: Page) {

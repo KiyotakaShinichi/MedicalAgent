@@ -224,58 +224,73 @@ async function streamChat(
   handlers: ChatStreamHandlers,
 ): Promise<ChatResponse> {
   const token = getToken();
-  const res = await fetch(`${BASE}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-      "X-NLCare-Data-Class": "synthetic",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify({ message }),
-  });
-  if (!res.ok || !res.body) {
-    throw await responseError(res);
-  }
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 45_000);
+  try {
+    const res = await fetch(`${BASE}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
+        "X-NLCare-Data-Class": "synthetic",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ message }),
+      signal: controller.signal,
+    });
+    if (!res.ok || !res.body) {
+      throw await responseError(res);
+    }
 
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let finalAnswer: ChatResponse | null = null;
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let finalAnswer: ChatResponse | null = null;
 
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const events = buffer.split("\n\n");
-    buffer = events.pop() ?? "";
-    for (const eventBlock of events) {
-      const event = parseSseEvent(eventBlock);
-      if (!event) continue;
-      if (event.name === "pipeline_stage") {
-        handlers.onStage?.(String(event.data?.label ?? ""));
-      } else if (event.name === "answer_delta") {
-        handlers.onDelta?.(String(event.data?.text ?? ""));
-      } else if (event.name === "answer") {
-        finalAnswer = {
-          reply: String(event.data?.reply ?? ""),
-          saved_actions: Array.isArray(event.data?.saved_actions) ? event.data.saved_actions : [],
-          citations: normalizeCitationLabels(event.data?.citations),
-          assistant_message_id:
-            typeof event.data?.assistant_message_id === "string" || typeof event.data?.assistant_message_id === "number"
-              ? event.data.assistant_message_id
-              : undefined,
-        };
-      } else if (event.name === "error") {
-        throw new Error(String(event.data?.error ?? "Streaming chat failed"));
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const events = buffer.split("\n\n");
+      buffer = events.pop() ?? "";
+      for (const eventBlock of events) {
+        const event = parseSseEvent(eventBlock);
+        if (!event) continue;
+        if (event.name === "pipeline_stage") {
+          handlers.onStage?.(String(event.data?.label ?? ""));
+        } else if (event.name === "answer_delta") {
+          handlers.onDelta?.(String(event.data?.text ?? ""));
+        } else if (event.name === "answer") {
+          finalAnswer = {
+            reply: String(event.data?.reply ?? ""),
+            saved_actions: Array.isArray(event.data?.saved_actions) ? event.data.saved_actions : [],
+            citations: normalizeCitationLabels(event.data?.citations),
+            assistant_message_id:
+              typeof event.data?.assistant_message_id === "string" || typeof event.data?.assistant_message_id === "number"
+                ? event.data.assistant_message_id
+                : undefined,
+          };
+        } else if (event.name === "error") {
+          throw new Error(String(event.data?.error ?? "Streaming chat failed"));
+        }
       }
     }
-  }
 
-  if (!finalAnswer) {
-    throw new Error("Streaming chat ended without an answer.");
+    if (!finalAnswer) {
+      throw new Error("Streaming chat ended without an answer.");
+    }
+    return finalAnswer;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(
+        "The support response timed out. Please try again; no record was saved by this timed-out turn.",
+        { cause: error },
+      );
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
   }
-  return finalAnswer;
 }
 
 function parseSseEvent(block: string): { name: string; data: Record<string, unknown> } | null {

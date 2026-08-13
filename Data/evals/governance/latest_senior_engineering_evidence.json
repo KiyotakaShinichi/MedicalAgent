@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_senior_engineering_evidence_v1",
-  "generated_at": "2026-08-11T10:07:01.274625+00:00",
+  "generated_at": "2026-08-12T07:00:10.502875+00:00",
   "status": "strong_internal_engineering_evidence",
   "evidence_maturity": "advanced_internal_candidate",
   "senior_title_awarded_by_artifact": false,
@@ -72,7 +72,7 @@
       "artifact": {
         "path": "Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json",
         "exists": true,
-        "sha256": "8a9e58636e03e9cb9a9d6df9bd8855d54edaae59bd4dc1e51a787d19b7dd3f1e",
+        "sha256": "55422cb44abc577eaa454ae014cf7a19f8b78ad925b10e641cc6db741250c783",
         "size_bytes": 8005
       },
       "artifact_status": "strong",
@@ -96,7 +96,7 @@
       "artifact": {
         "path": "Data/evals/governance/latest_cross_domain_assurance_eval.json",
         "exists": true,
-        "sha256": "ba5a3b4286cdec07b1a53006ae61d344a4a064f4207ce5985b6072526cdb47a9",
+        "sha256": "6b2d644aaeac9f5f6626bd808ba3ad9a8a7ecefda2f36baf0b15b1a695b7bd5f",
         "size_bytes": 4051
       },
       "artifact_status": "strong_internal_assurance",
@@ -144,7 +144,7 @@
       "artifact": {
         "path": "Data/evals/rag/latest_rag_degradation_resilience.json",
         "exists": true,
-        "sha256": "16c64c12dc7679fce5bb4985b74f42994da7b26446c5b1cbd43c42fcf0bf0c92",
+        "sha256": "be029db9eeebe198818d58e6df4ce9b9b5054e6615bc53a8dcb2d85fc0ed5e4c",
         "size_bytes": 1520
       },
       "artifact_status": "strong_offline_drill",
@@ -168,7 +168,7 @@
       "artifact": {
         "path": "Data/evals/models/latest_synthetic_prediction_statistical_audit.json",
         "exists": true,
-        "sha256": "cff0d36fc3a81e90f00bdbb3eceda6d862f6bc9d1ceca53cb2fe116929d3c88c",
+        "sha256": "4f1c5420b0111da1b84993886fb5a22619c9d15c4cbb02b612269af99dd7a3b9",
         "size_bytes": 11274
       },
       "artifact_status": "needs_attention",
@@ -192,7 +192,7 @@
       "artifact": {
         "path": "Data/evals/governance/latest_patient_xai_readability_dossier.json",
         "exists": true,
-        "sha256": "ba39ff222f5a27d0b5764767fa73ad1f376644d2c5fd0d1c7875bfa432713999",
+        "sha256": "89a7a28f3fb15ab61760d22c43888e2f49e5fdc6ae9a7466b9f3ef779382704d",
         "size_bytes": 6545
       },
       "artifact_status": "strong",
@@ -216,7 +216,7 @@
       "artifact": {
         "path": "Data/evals/ops/latest_data_platform_reliability_eval.json",
         "exists": true,
-        "sha256": "2b4074f087d75b7f80fb523b23d95b4f9a841a95d46863496fc5c73e235ee9cd",
+        "sha256": "5948ae0eb6b44fa8d2677290ef0115e34d59252b3bd471d3a6dd2ba5b43d3d94",
         "size_bytes": 2832
       },
       "artifact_status": "strong_offline_drill",
@@ -240,7 +240,7 @@
       "artifact": {
         "path": "Data/evals/ops/latest_cloud_infrastructure_readiness.json",
         "exists": true,
-        "sha256": "4b621ffa5d084abc62e8286471ed34d37e74aab5f5490aebcf7709f2a896612f",
+        "sha256": "1119ddbeac27bd5cd3e99143c5ef8e09a6cdae4dc3429cc2bb828ff8b20c4f39",
         "size_bytes": 8283
       },
       "artifact_status": "compiled_reference_architecture",
@@ -252,8 +252,8 @@
     {
       "path": "Data/evals/ops/latest_ship_run.json",
       "exists": true,
-      "sha256": "6f9f5dd09d4a3ea371b86913a9a51b78b30517b08e77932a434ae830f47a617d",
-      "size_bytes": 35937,
+      "sha256": "5233b775b230dc820ee2ab76cd4af42f006a84750aa3c3148f1bb9c3e7ef0d7d",
+      "size_bytes": 36344,
       "status": "passed",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -261,8 +261,8 @@
     {
       "path": "Data/evals/governance/latest_release_decision_surface.json",
       "exists": true,
-      "sha256": "07336632acb551e70bc9b311b09437b013c434be4d114270922efe4641916643",
-      "size_bytes": 17122,
+      "sha256": "06243c4758e3c7e23ea50ed17f47facf02d378864257f25b90cadd8bfe86bff5",
+      "size_bytes": 17129,
       "status": "needs_attention",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -270,8 +270,8 @@
     {
       "path": "Data/evals/governance/latest_focused_release_summary.json",
       "exists": true,
-      "sha256": "c41515de8a01f7cadc367f75a91ed3dd10e9b794dedfbb2edcdbacffed2c879b",
-      "size_bytes": 12412,
+      "sha256": "3e03ece7139a65d4b7ff17159b5d2e413a18c9efe36eb81a89fafd8240d9443f",
+      "size_bytes": 12422,
       "status": "needs_attention",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -279,9 +279,9 @@
     {
       "path": "Data/evals/rag/latest_rag_baseline_comparison.json",
       "exists": true,
-      "sha256": "9841e9adcf4d6c322715e0bf9cd97d16c952a503f5e0504ed7ba7aaf943dd40c",
-      "size_bytes": 769953,
-      "status": "acceptable",
+      "sha256": "1b7ad1469c1e7f8f098694792947feb647a9698294afc9d655e746f43660d20e",
+      "size_bytes": 779568,
+      "status": "needs_attention",
       "clinical_validation": false,
       "healthcare_production_ready": null
     },
@@ -297,7 +297,7 @@
     {
       "path": "Data/evals/ops/latest_dependency_security_scan.json",
       "exists": true,
-      "sha256": "54bb578cc6e117cb825dc8383bdd13d2078e1eaddb27e245feda829b91ac702a",
+      "sha256": "f734747f42ecb6da8889e0c996b718109caf03b440c580e4fd8b2253182b62a9",
       "size_bytes": 2534,
       "status": "acceptable",
       "clinical_validation": null,
@@ -306,8 +306,8 @@
     {
       "path": "Data/evals/ops/latest_software_supply_chain_evidence.json",
       "exists": true,
-      "sha256": "092350b8443c8e41b737086ecb6bdb07e1878fb93198b59571b6e7d4cffc2d61",
-      "size_bytes": 2444,
+      "sha256": "145b928cc1b1473e56d63838eb48ebbe77be204c4cf155df33c31ad03a0a1c90",
+      "size_bytes": 2436,
       "status": "needs_attention",
       "clinical_validation": false,
       "healthcare_production_ready": false
@@ -333,7 +333,7 @@
   ],
   "reproducibility": {
     "ship_status": "passed",
-    "ship_completed_step_count": 77,
+    "ship_completed_step_count": 78,
     "recorded_commands": [
       {
         "name": "Backend breast-monitoring integration tests",
@@ -1200,6 +1200,16 @@
         "cwd": ".",
         "duration_seconds": 3.784,
         "timeout_seconds": 900
+      },
+      {
+        "name": "Post-ship evidence reconciliation",
+        "command": [
+          "C:\\Python314\\python.exe",
+          "scripts/run_post_ship_evidence_reconciliation.py"
+        ],
+        "cwd": ".",
+        "duration_seconds": 92.433,
+        "timeout_seconds": 300
       }
     ],
     "source_artifact_hashes_complete": true,
@@ -1210,16 +1220,16 @@
     },
     "repository_state": {
       "git_available": true,
-      "commit": "8ea0322bf37f972c4530e1a3e5b50e0a6be6b6fa",
+      "commit": "2af6322a918ddd200dfa665b8fd10e30352b4acd",
       "worktree_dirty": true,
-      "dirty_path_count": 118,
+      "dirty_path_count": 127,
       "note": "Hashes in this dossier bind the evaluated working tree even when it is not a clean commit."
     }
   },
   "negative_results": {
     "rag_improvement_proven_vs_bm25": false,
-    "rag_full_stack_recall_at_10": 0.7838,
-    "rag_bm25_recall_at_10": 0.8041,
+    "rag_full_stack_recall_at_10": 0.5946,
+    "rag_bm25_recall_at_10": 0.75,
     "frozen_adversarial_v7_pass_rate": 0.676056,
     "frozen_adversarial_v7_unsafe_leakage_rate": 0.354545,
     "synthetic_ml_promotion_decision": "hold_synthetic_only",

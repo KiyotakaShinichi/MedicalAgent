@@ -1,48 +1,48 @@
 {
   "schema_version": "rag_governance_tradeoff_v2_2026_07",
-  "generated_at": "2026-07-28T14:43:01.240454+00:00",
-  "status": "acceptable",
-  "status_basis": "acceptable_for_internal_policy_constrained_use",
+  "generated_at": "2026-08-12T07:00:03.267356+00:00",
+  "status": "needs_attention",
+  "status_basis": "patient_facing_governance_constraints_not_met",
   "internal_goldset_n": 74,
   "internal_goldset_only": true,
   "bm25": {
-    "recall_at_5": 0.7162,
-    "recall_at_10": 0.8041,
-    "mrr": 0.7086,
-    "ndcg_at_10": 0.6557,
-    "citation_precision": 0.4135,
-    "claim_support_rate": 0.9054,
-    "unsupported_context_rate": 0.0946,
+    "recall_at_5": 0.6419,
+    "recall_at_10": 0.75,
+    "mrr": 0.5839,
+    "ndcg_at_10": 0.5245,
+    "citation_precision": 0.2811,
+    "claim_support_rate": 0.8514,
+    "unsupported_context_rate": 0.1486,
     "refusal_correctness": 1.0,
-    "source_tier_correctness": 0.4595,
-    "latency_p50_ms": 44.512,
-    "latency_p95_ms": 74.411
+    "source_tier_correctness": 0.5135,
+    "latency_p50_ms": 583.226,
+    "latency_p95_ms": 777.61
   },
   "best_ungoverned_hybrid": {
-    "recall_at_5": 0.7635,
-    "recall_at_10": 0.8851,
-    "mrr": 0.7262,
-    "ndcg_at_10": 0.6868,
-    "citation_precision": 0.5054,
-    "claim_support_rate": 0.9595,
-    "unsupported_context_rate": 0.0405,
+    "recall_at_5": 0.6014,
+    "recall_at_10": 0.6622,
+    "mrr": 0.5511,
+    "ndcg_at_10": 0.4922,
+    "citation_precision": 0.3432,
+    "claim_support_rate": 0.7432,
+    "unsupported_context_rate": 0.2568,
     "refusal_correctness": 1.0,
-    "source_tier_correctness": 0.6216,
-    "latency_p50_ms": 268.331,
-    "latency_p95_ms": 306.788
+    "source_tier_correctness": 0.6757,
+    "latency_p50_ms": 264.626,
+    "latency_p95_ms": 381.677
   },
   "full_source_governed_stack": {
-    "recall_at_5": 0.7027,
-    "recall_at_10": 0.7838,
-    "mrr": 0.6892,
-    "ndcg_at_10": 0.6453,
-    "citation_precision": 0.5243,
-    "claim_support_rate": 0.8378,
-    "unsupported_context_rate": 0.1622,
+    "recall_at_5": 0.5541,
+    "recall_at_10": 0.5946,
+    "mrr": 0.5193,
+    "ndcg_at_10": 0.4592,
+    "citation_precision": 0.4054,
+    "claim_support_rate": 0.6622,
+    "unsupported_context_rate": 0.3378,
     "refusal_correctness": 1.0,
     "source_tier_correctness": 1.0,
-    "latency_p50_ms": 268.953,
-    "latency_p95_ms": 307.365
+    "latency_p50_ms": 268.041,
+    "latency_p95_ms": 389.633
   },
   "policy_constrained_selection": {
     "selected_configuration": "hybrid_rrf_query_rewrite_parent_child_source_tier",
@@ -62,24 +62,24 @@
         "passed": true
       },
       "unsupported_context_rate": {
-        "value": 0.1622,
+        "value": 0.3378,
         "minimum": null,
         "maximum": 0.2,
-        "passed": true
+        "passed": false
       }
     },
-    "all_constraints_pass": true,
+    "all_constraints_pass": false,
     "scope": "internal engineering prototype only"
   },
   "tradeoffs": {
-    "full_minus_bm25_recall_at_10": -0.0203,
-    "full_minus_bm25_source_tier_correctness": 0.5405,
-    "full_vs_bm25_latency_p95_ratio": 4.1306,
+    "full_minus_bm25_recall_at_10": -0.1554,
+    "full_minus_bm25_source_tier_correctness": 0.4865,
+    "full_vs_bm25_latency_p95_ratio": 0.5011,
     "raw_retrieval_improvement_proven": false,
     "governance_improvement_observed_internally": true
   },
   "raw_retrieval_superiority_status": "not_proven",
-  "governance_control_status": "passed_internal_policy_checks",
+  "governance_control_status": "needs_attention",
   "residual_limitations": [
     "BM25 has higher Recall@10 on the internal goldset.",
     "The source-governed stack has higher p95 latency than BM25.",

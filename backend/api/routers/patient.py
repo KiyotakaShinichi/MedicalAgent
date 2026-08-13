@@ -427,11 +427,26 @@ def warm_patient_report_enrichment_cache() -> None:
         enabled = "false" if environment in {"test", "testing"} else "true"
     if str(enabled).strip().lower() not in {"1", "true", "yes", "on"}:
         return
+
+    raw_patient_ids = os.getenv("NLCARE_PATIENT_ENRICHMENT_PREWARM_PATIENT_IDS", "P001,P002")
+    try:
+        configured_limit = int(os.getenv("NLCARE_PATIENT_ENRICHMENT_PREWARM_LIMIT", "2"))
+    except ValueError:
+        configured_limit = 2
+    prewarm_limit = max(0, min(configured_limit, 10))
+    patient_ids = list(
+        dict.fromkeys(
+            patient_id.strip()
+            for patient_id in raw_patient_ids.split(",")
+            if patient_id.strip()
+        )
+    )[:prewarm_limit]
+
     from backend.database import SessionLocal
 
     db = SessionLocal()
     try:
-        patient_ids = [patient.id for patient in get_all_patients(db)]
+        patient_ids = [patient_id for patient_id in patient_ids if get_patient(db, patient_id) is not None]
     finally:
         db.close()
     for patient_id in patient_ids:

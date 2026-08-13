@@ -1,7 +1,7 @@
 {
   "schema_version": "retrieval_runtime_cache_eval_v1",
-  "generated_at": "2026-08-11T09:54:20.322345+00:00",
-  "status": "needs_attention",
+  "generated_at": "2026-08-12T06:38:42.760072+00:00",
+  "status": "improved_local_regression",
   "optimization": {
     "index_file_cache": true,
     "bm25_runtime_cache": true,
@@ -33,11 +33,11 @@
   },
   "current": {
     "sample_count": 30,
-    "retrieval_p50_ms": 472.08,
-    "retrieval_p95_ms": 2025.19,
-    "total_p50_ms": 812.39,
-    "total_p95_ms": 3229.52,
-    "source_generated_at": "2026-08-11T09:53:53.144083+00:00",
+    "retrieval_p50_ms": 175.16,
+    "retrieval_p95_ms": 247.68,
+    "total_p50_ms": 294.12,
+    "total_p95_ms": 388.65,
+    "source_generated_at": "2026-08-12T06:38:35.563755+00:00",
     "workload": {
       "database": "in_memory_sqlite",
       "agent_mode": "fast",
@@ -49,31 +49,31 @@
   "comparison": {
     "retrieval_p50_ms": {
       "baseline_ms": 1215.88,
-      "current_ms": 472.08,
-      "delta_ms": -743.8,
-      "relative_change": -0.6117
+      "current_ms": 175.16,
+      "delta_ms": -1040.72,
+      "relative_change": -0.8559
     },
     "retrieval_p95_ms": {
       "baseline_ms": 1806.32,
-      "current_ms": 2025.19,
-      "delta_ms": 218.87,
-      "relative_change": 0.1212
+      "current_ms": 247.68,
+      "delta_ms": -1558.64,
+      "relative_change": -0.8629
     },
     "total_p50_ms": {
       "baseline_ms": 1405.04,
-      "current_ms": 812.39,
-      "delta_ms": -592.65,
-      "relative_change": -0.4218
+      "current_ms": 294.12,
+      "delta_ms": -1110.92,
+      "relative_change": -0.7907
     },
     "total_p95_ms": {
       "baseline_ms": 2082.15,
-      "current_ms": 3229.52,
-      "delta_ms": 1147.37,
-      "relative_change": 0.5511
+      "current_ms": 388.65,
+      "delta_ms": -1693.5,
+      "relative_change": -0.8133
     }
   },
   "sample_contract_met": true,
-  "local_regression_improvement_observed": false,
+  "local_regression_improvement_observed": true,
   "dense_unique_query_latency_measured": false,
   "provider_network_latency_measured": false,
   "production_ready": false,

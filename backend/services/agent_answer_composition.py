@@ -121,9 +121,9 @@ _SAFETY_NOTE: str = (
 
 
 _SAFETY_REFUSAL_FALLBACK: str = (
-    "I cannot safely answer that as a treatment or diagnosis decision. "
+    "I cannot decide or provide that as a treatment, diagnosis, prognosis, genetic-risk, or tumor-marker conclusion. "
     "Please contact your oncology care team for medical review. "
-    "If symptoms feel sudden, severe, or unsafe, use local emergency services."
+    "If symptoms feel urgent, sudden, severe, or unsafe, use local emergency services."
 )
 
 
@@ -158,7 +158,11 @@ def safety_reply(
     """
     scope = (safety or {}).get("scope") or ""
     include_background = bool(compressed_context) and scope not in _REFUSAL_SCOPES_NO_BACKGROUND
-    pieces = [fallback_response.strip().rstrip(".")]
+    # ``fallback_response`` may contain provider output or caller-supplied
+    # prose. Once a turn is high-risk it is untrusted and must not be echoed
+    # into the refusal, even when later validation is unavailable.
+    del fallback_response
+    pieces = [_SAFETY_REFUSAL_FALLBACK.rstrip(".")]
     pieces.append("This is monitoring support only - not a diagnosis or treatment recommendation")
     pieces.append("Please contact your oncology care team or clinician for medical review")
     pieces.append("If symptoms feel sudden, severe, or unsafe, call your local emergency services")

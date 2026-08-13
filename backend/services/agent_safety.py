@@ -28,6 +28,12 @@ from backend.services.security_guardrails import (
 from backend.services.unsafe_intent_context import (
     classify_unsafe_intent_with_context,
 )
+from backend.services.safety_uncertainty_adjudicator import (
+    adjudicate_safety_uncertainty,
+)
+from backend.services.multilingual_semantic_safety import (
+    classify_multilingual_safety,
+)
 
 
 # ─── Vocabulary tables ───────────────────────────────────────────────────────
@@ -344,26 +350,95 @@ def safety_scope_check(
             "message": "Diagnosis/outcome confirmation wording detected; assistant must not confirm disease state.",
             "safety_source": "deterministic",
         }
+    semantic_safety = classify_multilingual_safety(
+        query,
+        previous_user_messages=tuple(previous_user_messages or ()),
+    )
     semantic = classify_unsafe_intent_with_context(
         query,
         tuple(previous_user_messages or ()),
     )
     if (
-        semantic.get("is_unsafe")
-        and not semantic.get("borderline")
-        and float(semantic.get("confidence") or 0.0) >= 0.62
+        semantic_safety.status == "uncertain"
+        and semantic.get("family") == "none"
+        and (
+            semantic.get("safety_source") == "safe_boundary_request"
+            or (
+                semantic.get("route") == "low_risk"
+                and semantic_safety.unsafe_probability <= 0.35
+                and semantic_safety.urgent_probability < semantic_safety.urgent_route_threshold
+            )
+        )
     ):
         return {
+            "level": "low_risk",
+            "scope": "education_or_tracking",
+            "cache_allowed": True,
+            "message": "Independent low-risk adjudication supports a bounded educational route.",
+            "safety_source": "safe_negative_adjudication",
+            "safe_boundary_request": semantic.get("safety_source") == "safe_boundary_request",
+            "context_reused": semantic.get("context_reused", False),
+            "context_turn_count": semantic.get("context_turn_count", 0),
+            "semantic_safety": semantic_safety.to_dict(),
+        }
+    if semantic_safety.requires_safe_route:
+        legacy_adjudication = adjudicate_safety_uncertainty(query, semantic)
+        family = (
+            legacy_adjudication.family
+            if legacy_adjudication.requires_safe_route
+            else semantic_safety.risk_category
+        )
+        scope = (
+            legacy_adjudication.scope
+            if legacy_adjudication.requires_safe_route
+            else _semantic_scope(semantic_safety.status, semantic_safety.risk_category)
+        )
+        semantic_source = (
+            "contextual_dep001a_multilingual_semantic_safety"
+            if semantic_safety.context_turn_count > 0
+            else "dep001a_multilingual_semantic_safety"
+        )
+        legacy_source = str(semantic.get("safety_source") or "")
+        if legacy_adjudication.requires_safe_route and legacy_source.startswith("contextual_"):
+            semantic_source = legacy_source
+        return {
             "level": "high_risk",
-            "scope": semantic.get("scope") or "diagnosis_or_outcome_claim",
+            "scope": scope,
+            "cache_allowed": False,
+            "message": _semantic_message(semantic_safety.status),
+            "safety_source": semantic_source,
+            "unsafe_intent_family": family,
+            "unsafe_intent_confidence": semantic_safety.unsafe_probability,
+            "context_reused": semantic_safety.context_turn_count > 0,
+            "context_turn_count": semantic_safety.context_turn_count,
+            "semantic_safety": semantic_safety.to_dict(),
+            "action_target_adjudication": (
+                legacy_adjudication.to_dict()
+                if legacy_adjudication.requires_safe_route
+                else None
+            ),
+            "safety_control_failure": semantic_safety.failure_reason,
+        }
+    adjudication = adjudicate_safety_uncertainty(query, semantic)
+    if adjudication.requires_safe_route:
+        semantic_source = str(semantic.get("safety_source") or "")
+        safety_source = (
+            semantic_source
+            if semantic_source.startswith("contextual_")
+            else "safety_uncertainty_adjudicator"
+        )
+        return {
+            "level": "high_risk",
+            "scope": adjudication.scope,
             "cache_allowed": False,
             "message": semantic.get("safe_template") or "Unsafe medical or privacy intent detected; route to safe refusal or review.",
-            "safety_source": semantic.get("safety_source") or "semantic_classifier",
-            "unsafe_intent_family": semantic.get("unsafe_intent_family"),
-            "unsafe_intent_confidence": semantic.get("unsafe_intent_confidence"),
+            "safety_source": safety_source,
+            "unsafe_intent_family": adjudication.family,
+            "unsafe_intent_confidence": adjudication.confidence,
             "over_refusal_risk_flag": semantic.get("over_refusal_risk_flag"),
             "context_reused": semantic.get("context_reused", False),
             "context_turn_count": semantic.get("context_turn_count", 0),
+            "uncertainty_adjudication": adjudication.to_dict(),
         }
     if (
         semantic.get("family") == "none"
@@ -388,7 +463,35 @@ def safety_scope_check(
         "cache_allowed": True,
         "message": "Low-risk educational or portal-support query.",
         "safety_source": "deterministic",
+        "semantic_safety": semantic_safety.to_dict(),
     }
+
+
+def _semantic_scope(status: str, category: str) -> str:
+    if status == "urgent" or category in {"urgent_deterioration", "emergency_symptoms"}:
+        return "urgent_or_safety_related"
+    if category in {
+        "unsafe_actionable_medical_request",
+        "treatment_modification",
+        "medication_dose_request",
+        "contraindication_interactions",
+        "hypothetical_unsafe_request",
+        "role_play_unsafe_request",
+        "indirect_euphemistic_request",
+        "multi_turn_escalation",
+    }:
+        return "treatment_decision_request"
+    return "diagnosis_or_outcome_claim"
+
+
+def _semantic_message(status: str) -> str:
+    if status == "urgent":
+        return "Potential urgent wording detected; route to immediate human or emergency review."
+    if status == "uncertain":
+        return "Safety intent is uncertain; ask a bounded clarification without retrieving or generating medical guidance."
+    if status == "fail_closed":
+        return "The safety classifier is unavailable; do not continue to retrieval or generation."
+    return "Unsafe medical or policy-bypass intent detected; route to refusal or human review."
 
 
 __all__ = [

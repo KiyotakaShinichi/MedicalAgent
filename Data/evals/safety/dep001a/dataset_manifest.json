@@ -1,0 +1,89 @@
+{
+  "schema_version": "dep001a_dataset_manifest_v1",
+  "generated_at": "2026-08-13T12:20:08.484798+00:00",
+  "dataset_version": "dep001a-safety-corpus-v10",
+  "random_seed": 17031,
+  "development": {
+    "path": "Data\\evals\\safety\\dep001a\\development_semantic_safety_bank.jsonl",
+    "sha256": "559889830844a6fd4442890e6f300bc0e2c67665af8cc9ebe79b71886ef5b21f",
+    "n": 4600,
+    "language_counts": {
+      "en": 1541,
+      "filipino_heavy_taglish": 1518,
+      "taglish": 1541
+    },
+    "category_counts": {
+      "ambiguous": 200,
+      "authority_impersonation": 200,
+      "contraindication_interactions": 200,
+      "emergency_symptoms": 200,
+      "hypothetical_unsafe_request": 200,
+      "indirect_euphemistic_request": 200,
+      "medication_dose_request": 200,
+      "multi_turn_escalation": 200,
+      "rag_conditioned_unsafe_request": 200,
+      "refusal_bypass_attempt": 200,
+      "role_play_unsafe_request": 200,
+      "safe_clinical_education_direct": 200,
+      "safe_conversation": 200,
+      "safe_educational": 200,
+      "safe_emotional_support": 200,
+      "safe_informational": 200,
+      "safe_out_of_scope": 200,
+      "safe_research_lookup": 200,
+      "safe_symptom_logging": 200,
+      "treatment_modification": 200,
+      "unsafe_actionable_medical_request": 200,
+      "urgent_deterioration": 200,
+      "urgent_natural_language": 200
+    },
+    "review_status": "internal_engineering_labels_unreviewed"
+  },
+  "validation": {
+    "path": "Data\\evals\\safety\\dep001a\\validation_semantic_safety_bank.jsonl",
+    "sha256": "856558d9704d6dd89f188e4ef24b8efd913060e98a3edfca7e344acb3ba8c645",
+    "n": 1150,
+    "language_counts": {
+      "en": 391,
+      "filipino_heavy_taglish": 368,
+      "taglish": 391
+    },
+    "category_counts": {
+      "ambiguous": 50,
+      "authority_impersonation": 50,
+      "contraindication_interactions": 50,
+      "emergency_symptoms": 50,
+      "hypothetical_unsafe_request": 50,
+      "indirect_euphemistic_request": 50,
+      "medication_dose_request": 50,
+      "multi_turn_escalation": 50,
+      "rag_conditioned_unsafe_request": 50,
+      "refusal_bypass_attempt": 50,
+      "role_play_unsafe_request": 50,
+      "safe_clinical_education_direct": 50,
+      "safe_conversation": 50,
+      "safe_educational": 50,
+      "safe_emotional_support": 50,
+      "safe_informational": 50,
+      "safe_out_of_scope": 50,
+      "safe_research_lookup": 50,
+      "safe_symptom_logging": 50,
+      "treatment_modification": 50,
+      "unsafe_actionable_medical_request": 50,
+      "urgent_deterioration": 50,
+      "urgent_natural_language": 50
+    },
+    "review_status": "internal_engineering_labels_unreviewed"
+  },
+  "provenance": {
+    "authoring_method": "deterministic_independent_threat_grammar",
+    "source": "DEP-001A category specification and independently authored slot grammar",
+    "contains_final_holdout_examples": false,
+    "used_for_tuning": {
+      "development": true,
+      "validation": true
+    }
+  },
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "credibility_gap_registry_v1",
-  "generated_at": "2026-08-11T10:07:04.717380+00:00",
+  "generated_at": "2026-08-12T07:00:11.073600+00:00",
   "status": "needs_attention",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -32,8 +32,8 @@
         "controlled_probe_query_count": 30,
         "controlled_probe_provider_usage_coverage_rate": 0.0,
         "controlled_probe_provider_reported_total_tokens": 0,
-        "controlled_probe_warm_latency_p95_ms": 712.34,
-        "controlled_probe_cold_start_latency_ms": 33204.7,
+        "controlled_probe_warm_latency_p95_ms": 681.22,
+        "controlled_probe_cold_start_latency_ms": 44720.81,
         "controlled_probe_scope": "internal synthetic research-query suite; no response text retained"
       },
       "completion_criteria": "Capture provider-reported usage on at least 80% of 30+ controlled representative synthetic requests; staged traffic remains separate.",
@@ -137,12 +137,12 @@
         "comparison_scope": "internal frozen goldset",
         "paired_headline": {
           "full_stack_improvement_proven_vs_bm25": false,
-          "full_stack_recall_at_10_favorable_delta": -0.02027,
+          "full_stack_recall_at_10_favorable_delta": -0.155405,
           "full_stack_recall_at_10_ci95": [
-            -0.108108,
-            0.067568
+            -0.27027,
+            -0.033784
           ],
-          "full_stack_recall_at_10_adjusted_p_value": 1.0,
+          "full_stack_recall_at_10_adjusted_p_value": 0.072992,
           "interpretation": "A negative favorable delta means the governed stack trails BM25 on raw recall. Governance gains must be reported separately."
         }
       },

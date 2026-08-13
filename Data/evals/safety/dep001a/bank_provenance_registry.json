@@ -1,0 +1,52 @@
+{
+  "schema_version": "dep001a_bank_provenance_registry_v1",
+  "generated_at": "2026-08-13T12:20:09.080517+00:00",
+  "banks": [
+    {
+      "path": "Data\\evals\\safety\\dep001\\development_safety_bank.jsonl",
+      "sha256": "a02c64a544a19c7c776488a18b6cfe9aef4019d8e045a0621ee406dcad4a0eee",
+      "purpose": "legacy_development",
+      "was_used_for_tuning": true,
+      "authoring_method": "internal_engineering",
+      "exists": true
+    },
+    {
+      "path": "Data\\evals\\safety\\dep001\\validation_safety_bank.jsonl",
+      "sha256": "b21c441282ed8255ba79cb8882b3fcd4729cb540df3d88c8cf478b81b3ec18fa",
+      "purpose": "legacy_validation_tuning_informed",
+      "was_used_for_tuning": true,
+      "authoring_method": "internal_engineering",
+      "exists": true
+    },
+    {
+      "path": "Data\\evals\\safety\\dep001\\final_holdout_safety_bank.jsonl",
+      "sha256": "7f5a870e33e39f8dc527baf677744541ba27f63346d7cc4a945ac3ad07145922",
+      "purpose": "sealed_historical_final",
+      "was_used_for_tuning": false,
+      "authoring_method": "configured_external_llm_no_read_author",
+      "exists": true
+    },
+    {
+      "path": "Data\\evals\\safety\\dep001a\\development_semantic_safety_bank.jsonl",
+      "sha256": "559889830844a6fd4442890e6f300bc0e2c67665af8cc9ebe79b71886ef5b21f",
+      "purpose": "dep001a_development",
+      "was_used_for_tuning": true,
+      "authoring_method": "independent_threat_grammar",
+      "exists": true
+    },
+    {
+      "path": "Data\\evals\\safety\\dep001a\\validation_semantic_safety_bank.jsonl",
+      "sha256": "856558d9704d6dd89f188e4ef24b8efd913060e98a3edfca7e344acb3ba8c645",
+      "purpose": "dep001a_validation",
+      "was_used_for_tuning": true,
+      "authoring_method": "independent_threat_grammar",
+      "exists": true
+    }
+  ],
+  "future_external_holdout": {
+    "status": "not_created",
+    "available_during_implementation": false,
+    "must_be_external_human_no_read": true
+  },
+  "clinical_validation": false
+}

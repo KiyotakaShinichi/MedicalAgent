@@ -410,10 +410,15 @@ def _groq_json(system, prompt, tier="router"):
     prompt_parts = [system, prompt]
     try:
         client = Groq(api_key=api_key, timeout=float(config.get("timeout_seconds") or 3))
+        structured_max_tokens = max(
+            64,
+            min(int(os.environ.get("GROQ_STRUCTURED_MAX_TOKENS", "320")), 8192),
+        )
         completion = client.chat.completions.create(
             model=model,
             temperature=0,
-            max_tokens=320,
+            max_tokens=structured_max_tokens,
+            response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": f"{system}\nReturn a single valid JSON object and no markdown."},
                 {"role": "user", "content": prompt},
@@ -471,7 +476,13 @@ def _ollama_json(system, prompt):
         "prompt": prompt,
         "stream": False,
         "format": "json",
-        "options": {"temperature": 0},
+        "options": {
+            "temperature": 0,
+            "num_predict": max(
+                64,
+                min(int(os.environ.get("OLLAMA_STRUCTURED_MAX_TOKENS", "320")), 4096),
+            ),
+        },
     }
     request = urllib.request.Request(
         url,

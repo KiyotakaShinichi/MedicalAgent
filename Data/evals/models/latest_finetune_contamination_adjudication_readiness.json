@@ -1,6 +1,6 @@
 {
   "schema_version": "finetune_contamination_adjudication_readiness_v2",
-  "generated_at": "2026-08-11T10:00:16.320301+00:00",
+  "generated_at": "2026-08-12T06:43:50.549090+00:00",
   "status": "ready_for_human_adjudication",
   "completed": false,
   "source_artifact": "Data/evals/models/latest_finetune_semantic_contamination.json",
@@ -17,7 +17,7 @@
   },
   "validation_issues": [],
   "integrity": {
-    "source_artifact_sha256": "cd42312702067e15f3d8f7b4ec0774e7330656be331fb7062a782bb7ed8a7088",
+    "source_artifact_sha256": "ecdc566e2ead781888552cbf79eb45e0bfb28823f4fe7e7eff03db2854db01b7",
     "candidate_snapshot_sha256": "03f24320bce1aa8ce8338d1ce8d56f48b0d7264f09e3553881de8dd56c4f6b56",
     "candidate_count": 150
   },

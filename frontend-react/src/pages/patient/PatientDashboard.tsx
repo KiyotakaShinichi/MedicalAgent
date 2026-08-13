@@ -96,6 +96,10 @@ export default function PatientDashboard() {
         const retryAfter = Math.max(500, value.report_enrichment?.retry_after_ms ?? 750);
         enrichmentPollTimer.current = window.setTimeout(() => { void poll(attempt + 1); }, retryAfter);
       } catch {
+        if (attempt < 3) {
+          enrichmentPollTimer.current = window.setTimeout(() => { void poll(attempt + 1); }, 1500);
+          return;
+        }
         setEnrichmentStatus("error");
       }
     };
