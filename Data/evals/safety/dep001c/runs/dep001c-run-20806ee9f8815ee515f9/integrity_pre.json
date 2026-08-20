@@ -1,0 +1,21 @@
+{
+  "schema_version": "dep001c_pre_run_integrity_v1",
+  "generated_at": "2026-08-14T01:30:44.849968+00:00",
+  "candidate": {
+    "passed": true,
+    "snapshot_id": "dep001c-6e32530bead7175e75b4",
+    "canonical_manifest_sha256": "6e32530bead7175e75b40748808f95493101ecd5a221b9253a9b3eca66da0f0b",
+    "artifact_count": 15,
+    "mismatches": [],
+    "verified_at": "2026-08-14T01:30:44.846690+00:00"
+  },
+  "blind_bank": {
+    "passed": true,
+    "snapshot_id": "dep001cblind-443183a2442b635b2025",
+    "canonical_manifest_sha256": "443183a2442b635b202529b26123bcf2ada06ea572c63bc9f1a1ef4c3a627770",
+    "artifact_count": 2,
+    "mismatches": [],
+    "verified_at": "2026-08-14T01:30:44.849954+00:00"
+  },
+  "passed": true
+}

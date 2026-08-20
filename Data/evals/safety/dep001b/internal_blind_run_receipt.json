@@ -1,0 +1,11 @@
+{
+  "schema_version": "dep001b_internal_blind_receipt_v1",
+  "status": "completed",
+  "started_at": "2026-08-13T18:40:47.266767+00:00",
+  "candidate_manifest_sha256": "211c04c02a68317c3f7b5847ecc22f5e5c16d7a283b78e4f9ca3e18af4f42b7a",
+  "blind_bank_sha256": "2a5a1177f286a9a88d6911ad66960cd3050cee3caf076989040f69d3ad7cafee",
+  "rerun_allowed": false,
+  "completed_at": "2026-08-13T18:46:56.024207+00:00",
+  "result_status": "passed_internal_blind_pending_new_external_holdout",
+  "result_sha256": "cfdccadd0c76bfc5e3826bfe2e6856d89126c4ffdeae6d07e3c8143f85cac43c"
+}

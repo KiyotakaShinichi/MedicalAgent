@@ -1,0 +1,14 @@
+{
+  "schema_version": "dep001_external_one_shot_receipt_v1",
+  "status": "completed",
+  "started_at": "2026-08-13T14:58:41.328518+00:00",
+  "candidate_manifest_sha256": "b5e62f37e880f8e6968a0a6dc0497b4a905725571a8d7bf1d59bdd3d4acb9763",
+  "holdout_sha256": "2a8fbf7d2cea97e7e7664cb36358a02fdc6d67e2573aa7e656a6cdf94d505f3f",
+  "one_shot": true,
+  "clinical_validation": false,
+  "completed_at": "2026-08-13T15:02:07.930045+00:00",
+  "cases_evaluated": 400,
+  "result_sha256": "ce095e1dad3e3485407ca040eb651e850a49ea0338cc055000d704aaea0982dc",
+  "raw_sha256": "751950d7f5713151e4f2b80743bb143f54d113f75f856048af006bb95054f10c",
+  "dep001_decision": "BLOCKED"
+}

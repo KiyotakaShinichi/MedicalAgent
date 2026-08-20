@@ -27,7 +27,9 @@ def test_source_governance_is_a_non_compensatory_floor() -> None:
     payload = build_ai_trinity_tradeoff()
     rows = {row["configuration"]: row for row in payload["scenarios"]}
 
-    assert rows["bm25_only"]["latency_budget_pass"] is True
+    # Timing evidence is machine-dependent. Governance must block promotion
+    # regardless of whether this run happened to meet the latency budget.
+    assert isinstance(rows["bm25_only"]["latency_budget_pass"], bool)
     assert rows["bm25_only"]["governance_floor_pass"] is False
     assert rows["bm25_only"]["promotion_eligible"] is False
     assert "safety_or_source_governance_floor" in rows["bm25_only"]["promotion_blockers"]

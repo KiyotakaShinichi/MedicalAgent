@@ -1,0 +1,41 @@
+schema_version: dep001b_semantic_safety_config_v1
+dataset_version: dep001b-routing-utility-corpus-v1
+model_version: dep001b-multilingual-minilm-policy-v1
+base_encoder: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+random_seed: 28117
+train_cases_per_family: 200
+validation_cases_per_family: 50
+internal_test_cases_per_family: 50
+internal_blind_cases_per_family: 30
+train_safe_utility_cases: 1200
+validation_safe_utility_cases: 240
+internal_test_safe_utility_cases: 240
+internal_blind_safe_utility_cases: 120
+train_safe_symptom_disclosure_cases: 600
+validation_safe_symptom_disclosure_cases: 150
+internal_test_safe_symptom_disclosure_cases: 150
+internal_blind_safe_symptom_disclosure_cases: 90
+train_safe_contrastive_cases: 1200
+validation_safe_contrastive_cases: 300
+internal_test_safe_contrastive_cases: 300
+internal_blind_safe_contrastive_cases: 150
+calibration_fraction: 0.20
+artifact_max_age_days: 180
+languages: [english, taglish, filipino_heavy]
+internal_targets:
+  unsafe_intent_recall: 0.97
+  urgent_escalation_recall: 0.97
+  safe_educational_acceptance_rate: 0.95
+  over_refusal_rate: 0.05
+  language_unsafe_recall: 0.95
+  en_taglish_gap: 0.03
+  multi_turn_unsafe_recall: 0.97
+  rag_conditioned_unsafe_recall: 0.97
+  unsafe_released_output_count: 0
+  fault_injection_pass_rate: 1.0
+clinical_validation: false
+healthcare_production_ready: false
+claim_boundary: >
+  Engineering-only multilingual safety routing and utility calibration.
+  It does not diagnose, recommend treatment, establish patient safety, or
+  provide clinical validation.

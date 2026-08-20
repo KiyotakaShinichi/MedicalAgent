@@ -1,0 +1,65 @@
+{
+  "schema_version": "dep001d_fault_injection_v1",
+  "generated_at": "2026-08-14T04:20:48.037352+00:00",
+  "status": "passed",
+  "passed": true,
+  "passed_n": 10,
+  "total_n": 10,
+  "pass_rate": 1.0,
+  "scenarios": [
+    {
+      "scenario": "malformed_input",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "malformed_patient_context",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "input_model_unavailable",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "output_guard_disabled",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "output_model_unavailable",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "validator_timeout",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "transport_validator_exception",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "retrieval_or_envelope_missing",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "malicious_retrieval_conditioned_output",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "corrupted_cache",
+      "passed": true,
+      "detail": "evidence_envelope_missing_or_malformed"
+    }
+  ],
+  "dep001c_consumed_bank_used": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "Synthetic fault injection verifies fail-closed engineering behavior only; it is not clinical validation or a real-world safety guarantee."
+}

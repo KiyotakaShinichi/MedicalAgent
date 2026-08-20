@@ -1,0 +1,94 @@
+{
+  "schema_version": "dep001d_corpus_manifest_v1",
+  "generated_at": "2026-08-14T03:38:58.969523+00:00",
+  "dataset_version": "dep001d-independent-multilingual-safety-v1",
+  "authoring_method": "independent_dep001d_multilingual_compositional_grammars",
+  "consumed_dep001c_prompts_loaded_for_authoring": false,
+  "development_case_n": 10200,
+  "output_actionability_case_n": 5400,
+  "partitions": {
+    "input_train": {
+      "path": "Data/evals/safety/dep001d/corpus/train_input_safety.jsonl",
+      "sha256": "f46319489aca92dd1117f99e49907993c6cf9e87ab3fa565bdee3e36a0c5bcd9",
+      "n": 6000,
+      "language_n": {
+        "english": 2000,
+        "filipino_heavy": 2000,
+        "taglish": 2000
+      }
+    },
+    "input_calibration": {
+      "path": "Data/evals/safety/dep001d/corpus/calibration_input_safety.jsonl",
+      "sha256": "5470a523c29c475949f2d0410bdfcc53e95d418721f3916fa36ee8609b5a620e",
+      "n": 1200,
+      "language_n": {
+        "english": 400,
+        "filipino_heavy": 400,
+        "taglish": 400
+      }
+    },
+    "input_validation": {
+      "path": "Data/evals/safety/dep001d/corpus/validation_input_safety.jsonl",
+      "sha256": "5ba9d8253ca1be4683614b5995e5c9f6b81131a0c3fe375e8b56215c468376d9",
+      "n": 1500,
+      "language_n": {
+        "english": 500,
+        "filipino_heavy": 500,
+        "taglish": 500
+      }
+    },
+    "input_internal_test": {
+      "path": "Data/evals/safety/dep001d/corpus/internal_test_input_safety.jsonl",
+      "sha256": "fe56560248edd258fc03e9f64d04465d374a7ab753312ebd2e17e2851066b9a0",
+      "n": 1500,
+      "language_n": {
+        "english": 500,
+        "filipino_heavy": 500,
+        "taglish": 500
+      }
+    },
+    "output_train": {
+      "path": "Data/evals/safety/dep001d/corpus/train_output_actionability.jsonl",
+      "sha256": "9d17e5fcf43877f8cf07afe0b7c174a1ff649343b7c6c80af42d12ea3c9eb55e",
+      "n": 3000,
+      "language_n": {
+        "english": 1000,
+        "filipino_heavy": 1000,
+        "taglish": 1000
+      }
+    },
+    "output_calibration": {
+      "path": "Data/evals/safety/dep001d/corpus/calibration_output_actionability.jsonl",
+      "sha256": "61c282099317e4ed025ffca833ad1ad5d5fd9edbe98e6c28bd4dffd75a4c0c3c",
+      "n": 600,
+      "language_n": {
+        "english": 200,
+        "filipino_heavy": 200,
+        "taglish": 200
+      }
+    },
+    "output_validation": {
+      "path": "Data/evals/safety/dep001d/corpus/validation_output_actionability.jsonl",
+      "sha256": "5c3320494fcd88b20b5b3593a73c24813a22667dfaf47cd654248ef1c4f55dd1",
+      "n": 900,
+      "language_n": {
+        "english": 300,
+        "filipino_heavy": 300,
+        "taglish": 300
+      }
+    },
+    "output_internal_test": {
+      "path": "Data/evals/safety/dep001d/corpus/internal_test_output_actionability.jsonl",
+      "sha256": "888d24c1b7ab055aa5f30bc5c0ae108c50191ac3feb29b44aeb589e8da7adb81",
+      "n": 900,
+      "language_n": {
+        "english": 300,
+        "filipino_heavy": 300,
+        "taglish": 300
+      }
+    }
+  },
+  "clinical_validation": false,
+  "healthcare_production_ready": false,
+  "claim_boundary": "Synthetic engineering development data only. It is not clinical evidence and does not establish real-world safety or deployment readiness."
+}

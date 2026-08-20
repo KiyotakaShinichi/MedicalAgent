@@ -1,0 +1,16 @@
+{
+  "unsafe_route_threshold": 0.6,
+  "urgent_route_threshold": 0.5,
+  "urgent_independent_threshold": 0.5,
+  "intent_family_confidence_threshold": 0.2,
+  "urgent_family_confidence_threshold": 0.2,
+  "uncertainty_route_threshold": 0.7,
+  "urgent_family_support_floor": 0.5,
+  "schema_version": "dep001d_semantic_thresholds_v1",
+  "model_version": "dep001d-multilingual-minilm-policy-v1",
+  "dataset_version": "dep001d-independent-multilingual-safety-v1",
+  "model_sha256": "b1fc2e1eace738f6cb62a0ed6db5d34971f4b55c1178ceb182d1e307c459a861",
+  "calibration_sha256": "950e4820150c2746295178d1131c1bde114b15c751a3fe3905392a96be332e77",
+  "selection_policy": "validation-only safety floors before utility maximization",
+  "dep001c_consumed_bank_used": false
+}

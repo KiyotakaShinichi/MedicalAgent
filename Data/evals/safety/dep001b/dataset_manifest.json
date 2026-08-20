@@ -1,0 +1,152 @@
+{
+  "schema_version": "dep001b_dataset_manifest_v1",
+  "generated_at": "2026-08-13T17:48:36.818791+00:00",
+  "dataset_version": "dep001b-routing-utility-corpus-v1",
+  "random_seed": 28117,
+  "development_case_n": 8280,
+  "internal_blind_case_n": 750,
+  "splits": {
+    "train": {
+      "path": "Data/evals/safety/dep001b/train_safety_bank.jsonl",
+      "n": 5600,
+      "sha256": "c612575ad5719962dbe689b13383e3533de04d2c7091db78b0b4a81bda1734ca",
+      "used_for_tuning": true,
+      "by_language": {
+        "english": 1871,
+        "filipino_heavy": 1858,
+        "taglish": 1871
+      },
+      "by_intent_family": {
+        "ACTIVE_SYMPTOM_MANAGEMENT": 200,
+        "EDUCATIONAL_GENERAL": 1370,
+        "INTERACTION_EDUCATION": 440,
+        "MEDICATION_DOSING": 200,
+        "PERSONALIZED_ACTION_REQUEST": 200,
+        "PERSONALIZED_INFORMATION": 1790,
+        "PERSONALIZED_INTERACTION_ACTION": 200,
+        "SYMPTOM_EDUCATION": 200,
+        "TREATMENT_MODIFICATION": 200,
+        "TUMOR_MARKER_EDUCATION": 200,
+        "TUMOR_MARKER_TREATMENT_DECISION": 200,
+        "UNKNOWN_HIGH_RISK": 200,
+        "URGENT_PRESENTATION": 200
+      },
+      "multi_turn_n": 440,
+      "rag_conditioned_n": 1100,
+      "safe_utility_negative_control_n": 1200,
+      "safe_symptom_disclosure_negative_control_n": 600,
+      "safe_contrastive_negative_control_n": 1200
+    },
+    "validation": {
+      "path": "Data/evals/safety/dep001b/validation_safety_bank.jsonl",
+      "n": 1340,
+      "sha256": "8e07bb4faa89f5c39488fb0bd5d07a1b7be625a7a50b5119eaec77da70c3e624",
+      "used_for_tuning": true,
+      "by_language": {
+        "english": 451,
+        "filipino_heavy": 438,
+        "taglish": 451
+      },
+      "by_intent_family": {
+        "ACTIVE_SYMPTOM_MANAGEMENT": 50,
+        "EDUCATIONAL_GENERAL": 320,
+        "INTERACTION_EDUCATION": 110,
+        "MEDICATION_DOSING": 50,
+        "PERSONALIZED_ACTION_REQUEST": 50,
+        "PERSONALIZED_INFORMATION": 410,
+        "PERSONALIZED_INTERACTION_ACTION": 50,
+        "SYMPTOM_EDUCATION": 50,
+        "TREATMENT_MODIFICATION": 50,
+        "TUMOR_MARKER_EDUCATION": 50,
+        "TUMOR_MARKER_TREATMENT_DECISION": 50,
+        "UNKNOWN_HIGH_RISK": 50,
+        "URGENT_PRESENTATION": 50
+      },
+      "multi_turn_n": 104,
+      "rag_conditioned_n": 269,
+      "safe_utility_negative_control_n": 240,
+      "safe_symptom_disclosure_negative_control_n": 150,
+      "safe_contrastive_negative_control_n": 300
+    },
+    "internal_test": {
+      "path": "Data/evals/safety/dep001b/internal_test_safety_bank.jsonl",
+      "n": 1340,
+      "sha256": "4e47204172bdcdef2c5678e3a09dbed976053342fd9c5a94b5947e6f2f26eb36",
+      "used_for_tuning": false,
+      "by_language": {
+        "english": 451,
+        "filipino_heavy": 438,
+        "taglish": 451
+      },
+      "by_intent_family": {
+        "ACTIVE_SYMPTOM_MANAGEMENT": 50,
+        "EDUCATIONAL_GENERAL": 320,
+        "INTERACTION_EDUCATION": 110,
+        "MEDICATION_DOSING": 50,
+        "PERSONALIZED_ACTION_REQUEST": 50,
+        "PERSONALIZED_INFORMATION": 410,
+        "PERSONALIZED_INTERACTION_ACTION": 50,
+        "SYMPTOM_EDUCATION": 50,
+        "TREATMENT_MODIFICATION": 50,
+        "TUMOR_MARKER_EDUCATION": 50,
+        "TUMOR_MARKER_TREATMENT_DECISION": 50,
+        "UNKNOWN_HIGH_RISK": 50,
+        "URGENT_PRESENTATION": 50
+      },
+      "multi_turn_n": 104,
+      "rag_conditioned_n": 269,
+      "safe_utility_negative_control_n": 240,
+      "safe_symptom_disclosure_negative_control_n": 150,
+      "safe_contrastive_negative_control_n": 300
+    },
+    "internal_blind": {
+      "path": "Data/evals/safety/dep001b/internal_blind_safety_bank.jsonl",
+      "n": 750,
+      "sha256": "2a5a1177f286a9a88d6911ad66960cd3050cee3caf076989040f69d3ad7cafee",
+      "used_for_tuning": false,
+      "by_language": {
+        "english": 250,
+        "filipino_heavy": 250,
+        "taglish": 250
+      },
+      "by_intent_family": {
+        "ACTIVE_SYMPTOM_MANAGEMENT": 30,
+        "EDUCATIONAL_GENERAL": 165,
+        "INTERACTION_EDUCATION": 60,
+        "MEDICATION_DOSING": 30,
+        "PERSONALIZED_ACTION_REQUEST": 30,
+        "PERSONALIZED_INFORMATION": 225,
+        "PERSONALIZED_INTERACTION_ACTION": 30,
+        "SYMPTOM_EDUCATION": 30,
+        "TREATMENT_MODIFICATION": 30,
+        "TUMOR_MARKER_EDUCATION": 30,
+        "TUMOR_MARKER_TREATMENT_DECISION": 30,
+        "UNKNOWN_HIGH_RISK": 30,
+        "URGENT_PRESENTATION": 30
+      },
+      "multi_turn_n": 60,
+      "rag_conditioned_n": 141,
+      "safe_utility_negative_control_n": 120,
+      "safe_symptom_disclosure_negative_control_n": 90,
+      "safe_contrastive_negative_control_n": 150
+    }
+  },
+  "split_exact_overlap_count": 0,
+  "provenance": {
+    "authoring_method": "deterministic_compositional_intent_family_grammar",
+    "source": "DEP-001B public intent-family and policy-action specification",
+    "burned_external_holdout_opened_for_authoring": false,
+    "burned_external_examples_used_as_templates": false,
+    "internal_blind_loaded_by_training": false,
+    "safe_utility_negative_controls": true,
+    "safe_symptom_disclosure_negative_controls": true,
+    "safe_contrastive_negative_controls": true
+  },
+  "limitations": [
+    "Synthetic internally authored cases are not independent external evidence.",
+    "The internal blind bank tests split isolation, not real-world clinical safety.",
+    "No clinician reviewed these labels."
+  ],
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

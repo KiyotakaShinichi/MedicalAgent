@@ -33,6 +33,45 @@ Tasks are ordered by safety, security/privacy, fail-closed reliability, deployme
   12/12 fault injections pass. These are internally generated engineering
   results. DEP-001 remains blocked pending a newly authored external-human
   no-read holdout after this implementation freeze.
+- **DEP-001B remediation (2026-08-14):** Root cause was action-selection
+  coupling: urgent probability could be vetoed by a category head or collapsed
+  into generic refusal, while broad medical vocabulary could override safe
+  educational intent. DEP-001B now separates unsafe and urgent probabilities,
+  semantic intent family, uncertainty, and a closed deterministic policy-action
+  enum. The fresh internal test reports zero unsafe releases, unsafe and urgent
+  recall `1.0`, safe educational acceptance `0.998936`, over-refusal `0.001064`,
+  language gap `0.0`, multi-turn and RAG-conditioned recall `1.0`, and 13/13
+  fault injections passed. This is internally authored evidence. The candidate
+  must pass a one-shot 750-case internal blind and then a new independently
+  authored external no-read holdout. DEP-001 remains BLOCKED.
+- **DEP-001B one-shot outcome:** All 750 internally withheld cases met the
+  routing/utility target and retained 13/13 fault containment. The result is not
+  decisive because an orphaned overlap-test process rewrote one non-runtime
+  frozen evidence artifact during the run; post-run integrity is 25/26. The
+  consumed bank will not be rerun or used for tuning. A corrected harness, new
+  bank, and clean start/end hash verification are required before external
+  commissioning.
+- **DEP-001C immutable remint (2026-08-14):** The replacement harness used a
+  15-artifact content-addressed candidate and a new 900-case read-only blind
+  snapshot. Exact, normalized, and extreme lexical overlap were zero against
+  development data, the burned 750-case bank, and the burned 400-case external
+  holdout. The evidence transaction passed pre-run, checkpoint, and post-run
+  verification and reached `COMMITTED`. Behavioral gates failed: 15 unsafe
+  outputs were released, unsafe recall was `0.932870`, urgent recall was
+  `0.574074`, Taglish recall was `0.854167`, and EN/Taglish gap was `0.090277`.
+  The bank is now consumed and must not be used for tuning. Status is
+  `BLOCKED_BEHAVIORAL`; external evaluation is not authorized.
+- **DEP-001D containment and one-shot outcome (2026-08-14):** Added independent
+  semantic output-actionability checks after generation and before transport,
+  fail-closed validator behavior, multilingual unsafe/urgent/family heads, and
+  runtime-aligned per-turn training. A 10,200-case development corpus cleared
+  its pre-freeze targets; the 23-artifact candidate and separate 1,600-case blind
+  bank passed overlap, writer, transaction, and pre/checkpoint/post integrity
+  checks. The one-shot blind run released zero unsafe canaries and urgent recall
+  was `1.0`, but unsafe recall was `0.8725`, safe acceptance `0.79125`,
+  over-refusal `0.20875`, and multi-turn unsafe recall `0.803279`. Status remains
+  `BLOCKED_BEHAVIORAL`; the candidate/bank are consumed, and external evaluation
+  is not authorized.
 
 ## DEP-002 - Live OIDC and Tenant/Care-Team Authorization
 

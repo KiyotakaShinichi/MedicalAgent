@@ -4,6 +4,51 @@
 
 NLCare is a safety-first, non-diagnostic engineering prototype for organizing synthetic breast-cancer monitoring records into patient and clinician-review workflows. It combines source-governed RAG, bounded support-agent tools, synthetic temporal ML signals, explicit abstention and claim boundaries, traceability, and prepared review queues. No clinician review has been completed, and none of its outputs are clinical evidence.
 
+**Development status:** `BLOCKED_RELEASE`. The repository is suitable for local,
+synthetic engineering demonstrations. DEP-001 remains behaviorally blocked on
+consumed official evidence, and no real-patient, clinical, regulatory, or public
+healthcare deployment is authorized.
+
+## Architecture at a glance
+
+`React/TypeScript portal -> FastAPI/RBAC -> deterministic safety routing ->
+bounded tools or source-governed FAISS+BM25 RAG -> claim/citation validation ->
+post-generation and transport authorization -> audit/trace storage`.
+
+Synthetic temporal ML runs behind independent evidence-sufficiency, abstention,
+traceability, leakage/shortcut, calibration, and promotion gates. Automation is
+redacted, signed, retry-bounded, disabled by default, and cannot prove human
+acknowledgement.
+
+## Reproducible quickstart
+
+```bash
+python -m pip install uv==0.8.24
+uv sync --frozen
+uv run uvicorn backend.api.main:app --host 127.0.0.1 --port 8017
+
+cd frontend-react
+npm ci
+npm run dev
+```
+
+Open `http://127.0.0.1:5173`. See `.env.example` and
+[environment configuration](docs/environment_configuration.md) before running.
+
+Core verification:
+
+```bash
+uv run ruff check backend scripts tests
+uv run mypy
+uv run pytest tests -q --cov=backend --cov-branch --cov-fail-under=35
+cd frontend-react && npm run lint && npm run typecheck && npm run test && npm run build
+```
+
+Repository guidance: [contributing](CONTRIBUTING.md),
+[dependency reproducibility](docs/dependency_reproducibility.md),
+[security policy](docs/DEPENDENCY_SECURITY.md), and
+[licensing/provenance](docs/LICENSING_AND_PROVENANCE.md).
+
 Patient-facing RAG responses use a typed, fail-closed evidence envelope: missing,
 unknown, malformed, or incomplete retrieval/claim/citation validation cannot
 release an evidence-dependent answer. See
@@ -17,11 +62,11 @@ NLCare now includes a separate tenant-aware control plane for organizations, mem
 
 This is readiness for a restricted synthetic SaaS alpha foundation only. Live OIDC verification, managed-cloud deployment, audited billing, independent security review, external evaluation, real-patient-data handling, and healthcare production readiness remain incomplete.
 
-## Canonical engineering verdict (July 2026)
+## Evidence snapshot (August 2026)
 
 The reviewer headline is `Data/evals/governance/latest_focused_release_summary.json`, not the largest or greenest metric in the repository.
 
-- Release gate: passed, with 33 decision artifacts and 209 supporting/informational artifacts before the AI Trinity addition. One optional warning remained. A passing gate means configured engineering checks passed; it is not a clinical-readiness result.
+- Deployment release: **blocked**. DEP-001 is `BLOCKED_BEHAVIORAL`; consumed candidate/bank evidence must not be rerun or tuned against. A configured artifact gate may pass while deployment remains blocked, and neither result is clinical-readiness evidence.
 - Frozen internally authored adversarial results remain inconsistent: v4 pass rate `0.704918`, v5 `0.969697`, and v6 `0.518519`. Generalized hardening raises the now tuning-used v6 regression to `0.932099`, but it is no longer independent holdout evidence. The untouched, one-pass, author-contaminated v7 baseline is `0.676056`, with unsafe leakage `0.354545` and over-refusal `0.21875`; prompt injection, privacy, and cross-patient exfiltration are the weakest families. V7 will not be used for tuning. Safety is explicitly **not solved**.
 - RAG: full source-governed Recall@10 `0.7838` versus BM25 `0.8041`. Raw retrieval improvement is not proven. The governed stack raises source-tier correctness from `0.4595` to `1.0` on the internal set, with about `4.13x` BM25 p95 retrieval latency.
 - Paired RAG statistics: the full-stack Recall@10 favorable delta versus BM25 is `-0.02027`; the 95% paired-bootstrap interval is `[-0.108108, 0.067568]` and the Holm-adjusted randomization p-value is `1.0`. The interval includes no effect and meaningful harm/benefit, so raw retrieval lift remains unproven.
@@ -36,7 +81,7 @@ The reviewer headline is `Data/evals/governance/latest_focused_release_summary.j
 - XAI presentation now fails closed: grouped factors may be shown, but exact rank claims and numeric SHAP values are hidden because retraining order is unstable. This is a presentation-safety policy, not proof of explainability.
 - Fine-tuning remains `HOLD`. A word/character TF-IDF screen produced 150 reviewer candidates, including 7 critical-similarity pairs; none are adjudicated. Shared safety language can cause false positives, so these are review flags rather than 150 proven contaminations, but no adapter comparison can advance until they are resolved.
 - Evidence maturity is reported without an aggregate score: 3 dimensions are scaffold/contract only, 6 have internal self-tests, 2 have frozen internal evidence, and none have independent external or institutional evidence. The architecture budget currently flags 11 warning-sized files and zero critical hotspots.
-- Dependencies: the known-good CPython 3.14/Windows environment has a platform-scoped transitive lock. Lock-derived CycloneDX SBOMs currently enumerate 505 Python/frontend components, and the repository secret scan reports zero findings. The separate vulnerability scan still reports known advisories as release warnings; no container scan or security certification is claimed.
+- Dependencies: `pyproject.toml` plus `uv.lock` is the canonical Python 3.11 reproducibility contract; direct compatibility manifests are pinned. Ruff, incremental mypy, full offline coverage, frontend lint/typecheck, and dependency audits are CI gates. This does not constitute a supply-chain certification, and a successful post-remediation Python advisory query is still required before release.
 - Automation: redacted engineering jobs now have database leases, worker heartbeats, crash recovery, bounded retries/dead letters, signed dispatch, and persisted signed receipts. Local fault-injection, a 30-attempt localhost HMAC channel drill, SQLite restore, and non-patient data-platform replay checks pass. Container runtime, managed Postgres/Azure restore, managed-vector execution, external delivery, and human acknowledgement remain unproven. The system is not an emergency service.
 - Agent actions: the orchestrator now applies a typed execution state machine with tool/step/write budgets, confirmation-before-write, forbidden-authority blocking, and memory-provenance checks. The six-case offline policy eval passes without a live patient write; this verifies software action boundaries, not medical correctness or real-world agent safety.
 - RAG resilience: five disposable local-index drills cover corrupt-cache rebuild, fingerprint refresh, sparse fallback, missing optional metadata, and empty-query behavior. They pass offline, but do not establish managed-vector recovery, answer quality, production availability, or clinical safety.

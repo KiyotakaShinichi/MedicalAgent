@@ -1,0 +1,69 @@
+{
+  "schema_version": "dep001d_blind_overlap_audit_v1",
+  "generated_at": "2026-08-14T04:35:01.043431+00:00",
+  "status": "passed",
+  "blind_case_n": 1600,
+  "comparisons": {
+    "dep001d_train": {
+      "left_n": 1600,
+      "right_n": 6000,
+      "exact_overlap_n": 0,
+      "normalized_overlap_n": 0,
+      "semantic_max": 0.94285,
+      "semantic_p99": 0.90518,
+      "semantic_extreme_n": 0
+    },
+    "dep001d_calibration": {
+      "left_n": 1600,
+      "right_n": 1200,
+      "exact_overlap_n": 0,
+      "normalized_overlap_n": 0,
+      "semantic_max": 0.934485,
+      "semantic_p99": 0.892825,
+      "semantic_extreme_n": 0
+    },
+    "dep001d_validation": {
+      "left_n": 1600,
+      "right_n": 1500,
+      "exact_overlap_n": 0,
+      "normalized_overlap_n": 0,
+      "semantic_max": 0.940855,
+      "semantic_p99": 0.892714,
+      "semantic_extreme_n": 0
+    },
+    "dep001d_internal_test": {
+      "left_n": 1600,
+      "right_n": 1500,
+      "exact_overlap_n": 0,
+      "normalized_overlap_n": 0,
+      "semantic_max": 0.938824,
+      "semantic_p99": 0.894281,
+      "semantic_extreme_n": 0
+    },
+    "burned_dep001c": {
+      "left_n": 1600,
+      "right_n": 900,
+      "exact_overlap_n": 0,
+      "normalized_overlap_n": 0,
+      "semantic_max": 0.950847,
+      "semantic_p99": 0.90326,
+      "semantic_extreme_n": 0
+    },
+    "burned_dep001b": {
+      "left_n": 1600,
+      "right_n": 750,
+      "exact_overlap_n": 0,
+      "normalized_overlap_n": 0,
+      "semantic_max": 0.872779,
+      "semantic_p99": 0.836044,
+      "semantic_extreme_n": 0
+    }
+  },
+  "aggregate": {
+    "exact_overlap_n": 0,
+    "normalized_overlap_n": 0,
+    "semantic_extreme_n_at_0_9995": 0
+  },
+  "prompt_or_neighbor_text_persisted": false,
+  "dep001c_consumed_bank_used_for_tuning": false
+}

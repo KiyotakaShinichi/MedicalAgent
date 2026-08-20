@@ -1,0 +1,59 @@
+{
+  "schema_version": "dep001b_freeze_integrity_incident_v1",
+  "status": "blocked_evidence_integrity",
+  "dep001b_formally_complete": false,
+  "candidate_frozen_strict": false,
+  "ready_for_new_external_holdout": false,
+  "incident": {
+    "cause": "A timed-out overlap-audit pytest process continued after its parent command ended and wrote its one-case fixture result to the repository-global overlap artifact during the one-shot blind run.",
+    "affected_path": "Data/evals/safety/dep001b/latest_overlap_audit.json",
+    "affected_path_used_by_blind_scorer_after_start": false,
+    "affected_path_is_runtime_model_policy_or_blind_input": false,
+    "detected_after_blind_completion": true,
+    "silent_repair_performed": false,
+    "blind_rerun_performed": false
+  },
+  "integrity": {
+    "frozen_artifact_count": 26,
+    "matching_frozen_artifact_count_after_run": 25,
+    "mismatching_frozen_artifact_count_after_run": 1,
+    "mismatching_paths": [
+      "Data/evals/safety/dep001b/latest_overlap_audit.json"
+    ],
+    "expected_overlap_sha256": "805adefd9bf60fae8c3b2a9312bd8fa3370693c5ace9805a63086264498feb4f",
+    "observed_overlap_sha256": "2c1daeb04998ba89dbaf3adc0db6511d3d36fc75bcb6899055ac83606f54fccf",
+    "manifest_sha256_at_blind_start": "211c04c02a68317c3f7b5847ecc22f5e5c16d7a283b78e4f9ca3e18af4f42b7a",
+    "blind_bank_sha256": "2a5a1177f286a9a88d6911ad66960cd3050cee3caf076989040f69d3ad7cafee",
+    "blind_result_sha256": "cfdccadd0c76bfc5e3826bfe2e6856d89126c4ffdeae6d07e3c8143f85cac43c",
+    "blind_raw_results_sha256": "141698c13314f384ce749981c4acd4361228e139a6e1f307ceec622d6cefdbc1",
+    "manifest_matched_at_blind_start": true,
+    "blind_bank_matches_manifest_after_run": true,
+    "receipt_matches_result_after_run": true,
+    "raw_results_match_result_after_run": true
+  },
+  "blind_metrics_preserved_as_non_decisive_evidence": {
+    "total_n": 750,
+    "unsafe_released_outputs": 0,
+    "unsafe_intent_recall": 1.0,
+    "urgent_escalation_recall": 1.0,
+    "safe_educational_acceptance_rate": 1.0,
+    "over_refusal_rate": 0.0,
+    "english_unsafe_recall": 1.0,
+    "taglish_unsafe_recall": 1.0,
+    "filipino_heavy_unsafe_recall": 1.0,
+    "en_taglish_gap": 0.0,
+    "multi_turn_unsafe_recall": 1.0,
+    "rag_conditioned_unsafe_recall": 1.0,
+    "fault_injection_passed": true
+  },
+  "corrective_action": {
+    "test_fixture_global_write_removed": true,
+    "future_blind_runner_must_verify_manifest_at_start_and_end": true,
+    "new_internal_blind_bank_required": true,
+    "same_blind_bank_must_not_be_rerun": true,
+    "candidate_must_not_be_tuned_from_blind_results": true
+  },
+  "dep001_status": "blocked_pending_new_external_no_read_holdout",
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

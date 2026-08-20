@@ -1,0 +1,50 @@
+{
+  "schema_version": "dep001d_output_actionability_manifest_v1",
+  "generated_at": "2026-08-14T03:54:49.751394+00:00",
+  "model_version": "dep001d-output-actionability-v1",
+  "dataset_version": "dep001d-independent-multilingual-safety-v1",
+  "base_encoder": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "embedding_dimension": 384,
+  "artifacts": {
+    "model": {
+      "path": "Data/evals/safety/dep001d/runtime/output_actionability_model.joblib",
+      "sha256": "8a7991b17bb482b88e69e23dd8a9c5abb1aa066e8cbffdaae82992fb7df68c80",
+      "bytes": 680569
+    },
+    "calibration": {
+      "path": "Data/evals/safety/dep001d/runtime/output_actionability_calibration.joblib",
+      "sha256": "27e7770fb3edce58fcc6990918c8af8c4fe0b7b246cf315a861bb7c60a0ed07f",
+      "bytes": 1160
+    },
+    "thresholds": {
+      "path": "Data/evals/safety/dep001d/runtime/output_actionability_thresholds.json",
+      "sha256": "1b6329d62c1d27db286b670a14b81a48984151647c76af24e0933e494d8dc189",
+      "bytes": 609
+    }
+  },
+  "training_inputs": {
+    "train": {
+      "path": "Data/evals/safety/dep001d/corpus/train_output_actionability.jsonl",
+      "sha256": "9d17e5fcf43877f8cf07afe0b7c174a1ff649343b7c6c80af42d12ea3c9eb55e",
+      "bytes": 1163989
+    },
+    "calibration": {
+      "path": "Data/evals/safety/dep001d/corpus/calibration_output_actionability.jsonl",
+      "sha256": "61c282099317e4ed025ffca833ad1ad5d5fd9edbe98e6c28bd4dffd75a4c0c3c",
+      "bytes": 240051
+    },
+    "validation": {
+      "path": "Data/evals/safety/dep001d/corpus/validation_output_actionability.jsonl",
+      "sha256": "5c3320494fcd88b20b5b3593a73c24813a22667dfaf47cd654248ef1c4f55dd1",
+      "bytes": 359177
+    },
+    "internal_test": {
+      "path": "Data/evals/safety/dep001d/corpus/internal_test_output_actionability.jsonl",
+      "sha256": "888d24c1b7ab055aa5f30bc5c0ae108c50191ac3feb29b44aeb589e8da7adb81",
+      "bytes": 364473
+    }
+  },
+  "consumed_dep001c_bank_loaded": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

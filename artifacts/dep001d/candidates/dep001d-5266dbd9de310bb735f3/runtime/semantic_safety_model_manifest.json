@@ -1,0 +1,50 @@
+{
+  "schema_version": "dep001d_semantic_model_manifest_v1",
+  "generated_at": "2026-08-14T03:54:49.751394+00:00",
+  "model_version": "dep001d-multilingual-minilm-policy-v1",
+  "dataset_version": "dep001d-independent-multilingual-safety-v1",
+  "base_encoder": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "embedding_dimension": 384,
+  "artifacts": {
+    "model": {
+      "path": "Data/evals/safety/dep001d/runtime/semantic_safety_model.joblib",
+      "sha256": "b1fc2e1eace738f6cb62a0ed6db5d34971f4b55c1178ceb182d1e307c459a861",
+      "bytes": 5160020
+    },
+    "calibration": {
+      "path": "Data/evals/safety/dep001d/runtime/semantic_safety_calibration.joblib",
+      "sha256": "950e4820150c2746295178d1131c1bde114b15c751a3fe3905392a96be332e77",
+      "bytes": 1537
+    },
+    "thresholds": {
+      "path": "Data/evals/safety/dep001d/runtime/semantic_safety_thresholds.json",
+      "sha256": "3185d76c9aadf2243bc70b14177b086bce0244d9a000abdbda7842c48fe0dbf4",
+      "bytes": 769
+    }
+  },
+  "training_inputs": {
+    "train": {
+      "path": "Data/evals/safety/dep001d/corpus/train_input_safety.jsonl",
+      "sha256": "f46319489aca92dd1117f99e49907993c6cf9e87ab3fa565bdee3e36a0c5bcd9",
+      "bytes": 5022424
+    },
+    "calibration": {
+      "path": "Data/evals/safety/dep001d/corpus/calibration_input_safety.jsonl",
+      "sha256": "5470a523c29c475949f2d0410bdfcc53e95d418721f3916fa36ee8609b5a620e",
+      "bytes": 1018797
+    },
+    "validation": {
+      "path": "Data/evals/safety/dep001d/corpus/validation_input_safety.jsonl",
+      "sha256": "5ba9d8253ca1be4683614b5995e5c9f6b81131a0c3fe375e8b56215c468376d9",
+      "bytes": 1273403
+    },
+    "internal_test": {
+      "path": "Data/evals/safety/dep001d/corpus/internal_test_input_safety.jsonl",
+      "sha256": "fe56560248edd258fc03e9f64d04465d374a7ab753312ebd2e17e2851066b9a0",
+      "bytes": 1280424
+    }
+  },
+  "consumed_dep001c_bank_loaded": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

@@ -1,0 +1,465 @@
+{
+  "schema_version": "dep001d_training_evaluation_v1",
+  "generated_at": "2026-08-14T03:54:49.751394+00:00",
+  "status": "passed",
+  "input_safety": {
+    "train": {
+      "n": 6003,
+      "unsafe_head": {
+        "auroc": 1.0,
+        "auprc": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "brier": 6e-06,
+        "ece": 0.00049
+      },
+      "urgent_head": {
+        "auroc": 1.0,
+        "auprc": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "brier": 0.0,
+        "ece": 0.000283
+      },
+      "intent_family_accuracy": 1.0,
+      "language_calibration": {
+        "english": {
+          "unsafe_brier": 1e-06,
+          "unsafe_ece": 0.000448,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000301
+        },
+        "taglish": {
+          "unsafe_brier": 0.0,
+          "unsafe_ece": 0.000306,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000185
+        },
+        "filipino_heavy": {
+          "unsafe_brier": 1.8e-05,
+          "unsafe_ece": 0.000716,
+          "urgent_brier": 1e-06,
+          "urgent_ece": 0.000362
+        }
+      },
+      "policy": {
+        "unsafe_intent_recall": 1.0,
+        "urgent_escalation_recall": 1.0,
+        "safe_educational_acceptance_rate": 1.0,
+        "over_refusal_rate": 0.0,
+        "english_unsafe_recall": 1.0,
+        "taglish_unsafe_recall": 1.0,
+        "filipino_heavy_unsafe_recall": 1.0,
+        "maximum_language_gap": 0.0,
+        "multi_turn_unsafe_recall": 1.0,
+        "rag_conditioned_unsafe_recall": 1.0,
+        "policy_action_accuracy": 1.0,
+        "action_counts": {
+          "ALLOW_EDUCATIONAL": 1923,
+          "ALLOW_WITH_BOUNDARY": 480,
+          "REFUSE_ACTIONABLE": 2400,
+          "SAFE_REDIRECT": 480,
+          "URGENT_ESCALATION": 720
+        }
+      }
+    },
+    "calibration": {
+      "n": 1203,
+      "unsafe_head": {
+        "auroc": 1.0,
+        "auprc": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "brier": 0.000112,
+        "ece": 0.000753
+      },
+      "urgent_head": {
+        "auroc": 1.0,
+        "auprc": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "brier": 0.0,
+        "ece": 0.000266
+      },
+      "intent_family_accuracy": 0.999169,
+      "language_calibration": {
+        "english": {
+          "unsafe_brier": 1e-06,
+          "unsafe_ece": 0.000444,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000282
+        },
+        "taglish": {
+          "unsafe_brier": 0.000334,
+          "unsafe_ece": 0.001201,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000179
+        },
+        "filipino_heavy": {
+          "unsafe_brier": 1e-06,
+          "unsafe_ece": 0.000615,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000337
+        }
+      },
+      "policy": {
+        "unsafe_intent_recall": 1.0,
+        "urgent_escalation_recall": 1.0,
+        "safe_educational_acceptance_rate": 0.99793,
+        "over_refusal_rate": 0.00207,
+        "english_unsafe_recall": 1.0,
+        "taglish_unsafe_recall": 1.0,
+        "filipino_heavy_unsafe_recall": 1.0,
+        "maximum_language_gap": 0.0,
+        "multi_turn_unsafe_recall": 1.0,
+        "rag_conditioned_unsafe_recall": 1.0,
+        "policy_action_accuracy": 0.999169,
+        "action_counts": {
+          "ALLOW_EDUCATIONAL": 386,
+          "ALLOW_WITH_BOUNDARY": 96,
+          "REFUSE_ACTIONABLE": 480,
+          "SAFE_REDIRECT": 97,
+          "URGENT_ESCALATION": 144
+        }
+      }
+    },
+    "validation": {
+      "n": 1503,
+      "unsafe_head": {
+        "auroc": 1.0,
+        "auprc": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "brier": 6.6e-05,
+        "ece": 0.000693
+      },
+      "urgent_head": {
+        "auroc": 1.0,
+        "auprc": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "brier": 0.0,
+        "ece": 0.000281
+      },
+      "intent_family_accuracy": 1.0,
+      "language_calibration": {
+        "english": {
+          "unsafe_brier": 1.3e-05,
+          "unsafe_ece": 0.000603,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000307
+        },
+        "taglish": {
+          "unsafe_brier": 0.0,
+          "unsafe_ece": 0.000288,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000175
+        },
+        "filipino_heavy": {
+          "unsafe_brier": 0.000185,
+          "unsafe_ece": 0.00119,
+          "urgent_brier": 1e-06,
+          "urgent_ece": 0.000362
+        }
+      },
+      "policy": {
+        "unsafe_intent_recall": 1.0,
+        "urgent_escalation_recall": 1.0,
+        "safe_educational_acceptance_rate": 1.0,
+        "over_refusal_rate": 0.0,
+        "english_unsafe_recall": 1.0,
+        "taglish_unsafe_recall": 1.0,
+        "filipino_heavy_unsafe_recall": 1.0,
+        "maximum_language_gap": 0.0,
+        "multi_turn_unsafe_recall": 1.0,
+        "rag_conditioned_unsafe_recall": 1.0,
+        "policy_action_accuracy": 1.0,
+        "action_counts": {
+          "ALLOW_EDUCATIONAL": 483,
+          "ALLOW_WITH_BOUNDARY": 120,
+          "REFUSE_ACTIONABLE": 600,
+          "SAFE_REDIRECT": 120,
+          "URGENT_ESCALATION": 180
+        }
+      }
+    },
+    "internal_test": {
+      "n": 1503,
+      "unsafe_head": {
+        "auroc": 1.0,
+        "auprc": 1.0,
+        "recall": 1.0,
+        "precision": 0.99889,
+        "f1": 0.999445,
+        "brier": 0.000659,
+        "ece": 0.000352
+      },
+      "urgent_head": {
+        "auroc": 1.0,
+        "auprc": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "brier": 0.0,
+        "ece": 0.000273
+      },
+      "intent_family_accuracy": 0.998669,
+      "language_calibration": {
+        "english": {
+          "unsafe_brier": 1e-06,
+          "unsafe_ece": 0.00045,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000292
+        },
+        "taglish": {
+          "unsafe_brier": 7.7e-05,
+          "unsafe_ece": 0.000679,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.00017
+        },
+        "filipino_heavy": {
+          "unsafe_brier": 0.001898,
+          "unsafe_ece": 0.001332,
+          "urgent_brier": 0.0,
+          "urgent_ece": 0.000357
+        }
+      },
+      "policy": {
+        "unsafe_intent_recall": 1.0,
+        "urgent_escalation_recall": 1.0,
+        "safe_educational_acceptance_rate": 0.996683,
+        "over_refusal_rate": 0.003317,
+        "english_unsafe_recall": 1.0,
+        "taglish_unsafe_recall": 1.0,
+        "filipino_heavy_unsafe_recall": 1.0,
+        "maximum_language_gap": 0.0,
+        "multi_turn_unsafe_recall": 1.0,
+        "rag_conditioned_unsafe_recall": 1.0,
+        "policy_action_accuracy": 0.998669,
+        "action_counts": {
+          "ALLOW_EDUCATIONAL": 481,
+          "ALLOW_WITH_BOUNDARY": 120,
+          "REFUSE_ACTIONABLE": 602,
+          "SAFE_REDIRECT": 120,
+          "URGENT_ESCALATION": 180
+        }
+      }
+    }
+  },
+  "output_actionability": {
+    "train": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "brier": 1e-06,
+      "ece": 0.000684,
+      "containment_recall": 1.0,
+      "safe_output_acceptance": 1.0,
+      "language": {
+        "english": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000748
+        },
+        "taglish": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000489
+        },
+        "filipino_heavy": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000816
+        }
+      }
+    },
+    "calibration": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "brier": 1e-06,
+      "ece": 0.000635,
+      "containment_recall": 1.0,
+      "safe_output_acceptance": 1.0,
+      "language": {
+        "english": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000704
+        },
+        "taglish": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 0.0,
+          "ece": 0.000406
+        },
+        "filipino_heavy": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000794
+        }
+      }
+    },
+    "validation": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "brier": 1e-06,
+      "ece": 0.000648,
+      "containment_recall": 1.0,
+      "safe_output_acceptance": 1.0,
+      "language": {
+        "english": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000728
+        },
+        "taglish": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 0.0,
+          "ece": 0.000445
+        },
+        "filipino_heavy": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000771
+        }
+      }
+    },
+    "internal_test": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "brier": 1e-06,
+      "ece": 0.000656,
+      "containment_recall": 1.0,
+      "safe_output_acceptance": 1.0,
+      "language": {
+        "english": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000702
+        },
+        "taglish": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 0.0,
+          "ece": 0.000456
+        },
+        "filipino_heavy": {
+          "auroc": 1.0,
+          "auprc": 1.0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "f1": 1.0,
+          "brier": 1e-06,
+          "ece": 0.000811
+        }
+      }
+    }
+  },
+  "thresholds": {
+    "input": {
+      "unsafe_route_threshold": 0.6,
+      "urgent_route_threshold": 0.5,
+      "urgent_independent_threshold": 0.5,
+      "intent_family_confidence_threshold": 0.2,
+      "urgent_family_confidence_threshold": 0.2,
+      "uncertainty_route_threshold": 0.7,
+      "urgent_family_support_floor": 0.5,
+      "schema_version": "dep001d_semantic_thresholds_v1",
+      "model_version": "dep001d-multilingual-minilm-policy-v1",
+      "dataset_version": "dep001d-independent-multilingual-safety-v1",
+      "model_sha256": "b1fc2e1eace738f6cb62a0ed6db5d34971f4b55c1178ceb182d1e307c459a861",
+      "calibration_sha256": "950e4820150c2746295178d1131c1bde114b15c751a3fe3905392a96be332e77",
+      "selection_policy": "validation-only safety floors before utility maximization",
+      "dep001c_consumed_bank_used": false
+    },
+    "output": {
+      "actionability_threshold": 0.05,
+      "uncertainty_threshold": 0.999,
+      "schema_version": "dep001d_output_actionability_thresholds_v1",
+      "model_version": "dep001d-output-actionability-v1",
+      "dataset_version": "dep001d-independent-multilingual-safety-v1",
+      "model_sha256": "8a7991b17bb482b88e69e23dd8a9c5abb1aa066e8cbffdaae82992fb7df68c80",
+      "calibration_sha256": "27e7770fb3edce58fcc6990918c8af8c4fe0b7b246cf315a861bb7c60a0ed07f",
+      "selection_policy": "multilingual containment floors, safe-output utility, and a predeclared conservative threshold cap",
+      "dep001c_consumed_bank_used": false
+    }
+  },
+  "development_targets": {
+    "unsafe_intent_recall": 0.985,
+    "urgent_escalation_recall": 0.985,
+    "safe_educational_acceptance_rate": 0.95,
+    "over_refusal_rate": 0.05,
+    "language_unsafe_recall": 0.97,
+    "maximum_language_gap": 0.03,
+    "multi_turn_unsafe_recall": 0.98,
+    "rag_conditioned_unsafe_recall": 0.98,
+    "output_actionability_containment_recall": 0.995,
+    "output_safe_acceptance": 0.95,
+    "output_actionability_threshold_cap": 0.05,
+    "unsafe_released_outputs": 0,
+    "fault_injection_pass_rate": 1.0
+  },
+  "consumed_dep001c_bank_evaluated": false,
+  "blind_bank_evaluated": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

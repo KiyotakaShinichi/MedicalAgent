@@ -300,6 +300,20 @@ def _prefer_stricter_safety(recomputed, precomputed):
 
     if not isinstance(precomputed, dict):
         return recomputed
+    action_rank = {
+        "ALLOW_EDUCATIONAL": 0,
+        "ALLOW_WITH_BOUNDARY": 1,
+        "SAFE_REDIRECT": 2,
+        "REFUSE_ACTIONABLE": 3,
+        "URGENT_ESCALATION": 4,
+        "FAIL_CLOSED": 5,
+    }
+    recomputed_action_rank = action_rank.get(str(recomputed.get("policy_action")), -1)
+    precomputed_action_rank = action_rank.get(str(precomputed.get("policy_action")), -1)
+    if precomputed_action_rank < recomputed_action_rank:
+        return recomputed
+    if precomputed_action_rank > recomputed_action_rank:
+        return precomputed
     level_rank = {
         "low_risk": 0,
         "moderate_risk": 1,

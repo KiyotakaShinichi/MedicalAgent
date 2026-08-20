@@ -66,6 +66,7 @@ from backend.models import (
     CTReport,
     ImagingReport,
     LabResult,
+    MedicationLog,
     MRIFileRegistry,
     Patient,
     PatientUpload,

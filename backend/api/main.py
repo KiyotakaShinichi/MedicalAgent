@@ -7,6 +7,7 @@ health-check / redirect routes. All business logic lives in routers/.
 
 import asyncio
 import os
+import time
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
@@ -32,6 +33,8 @@ from backend.services.request_context import reset_request_id, set_request_id
 from backend.services.api_protection import EngineeringApiProtectionMiddleware
 from backend.services.synthetic_data_boundary import SyntheticDataBoundaryMiddleware
 from backend.services.llm_telemetry import reset_llm_telemetry, start_llm_telemetry
+from backend.services.runtime_health import liveness_payload, readiness_payload
+from backend.services.structured_logging import configure_logging, log_event
 
 
 # ─── App setup ────────────────────────────────────────────────────────────────
@@ -66,6 +69,7 @@ app = FastAPI(
     title="NLCare Breast Cancer Monitoring Engineering Prototype",
     lifespan=lifespan,
 )
+configure_logging()
 ensure_schema()
 
 # CORS — explicit origin list.  FastAPI/Starlette warns that the combination
@@ -110,13 +114,42 @@ app.add_middleware(SyntheticDataBoundaryMiddleware)
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("x-request-id") or str(uuid4())
+    started = time.perf_counter()
     token = set_request_id(request_id)
     telemetry_token = start_llm_telemetry()
     try:
         response = await call_next(request)
+    except Exception as exc:
+        route = getattr(request.scope.get("route"), "path", "unmatched")
+        log_event(
+            "http_request_failed",
+            severity="error",
+            request_id=request_id,
+            component="api",
+            details={
+                "method": request.method,
+                "route": route,
+                "duration_ms": round((time.perf_counter() - started) * 1000, 2),
+                "error_type": type(exc).__name__,
+            },
+        )
+        raise
     finally:
         reset_llm_telemetry(telemetry_token)
         reset_request_id(token)
+    route = getattr(request.scope.get("route"), "path", "unmatched")
+    log_event(
+        "http_request_completed",
+        severity="warning" if response.status_code >= 400 else "info",
+        request_id=request_id,
+        component="api",
+        details={
+            "method": request.method,
+            "route": route,
+            "status_code": response.status_code,
+            "duration_ms": round((time.perf_counter() - started) * 1000, 2),
+        },
+    )
     response.headers["x-request-id"] = request_id
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("X-Frame-Options", "DENY")
@@ -169,15 +202,8 @@ def admin_dashboard():
 
 
 @app.get("/health")
-def healthcheck(db: Session = Depends(get_db)):
-    from sqlalchemy import text
-
-    db.execute(text("SELECT 1"))
-    return {
-        "status": "ok",
-        "service": "nlcare_monitoring_prototype",
-        "database": "ok",
-    }
+def healthcheck():
+    return liveness_payload()
 
 
 @app.get("/ready")
@@ -187,34 +213,17 @@ def readinesscheck(response: Response, db: Session = Depends(get_db)):
     This checks database reachability and reports deployment posture. It does
     not imply healthcare production readiness or clinical validation.
     """
-    from sqlalchemy import text
-
-    db.execute(text("SELECT 1"))
-    environment = (os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or "development").strip().lower()
     from backend.services.auth import is_demo_auth_allowed
-
-    demo_auth_allowed = is_demo_auth_allowed()
     from backend.services.rag_vector_index import rag_runtime_readiness
 
-    retrieval_runtime = rag_runtime_readiness()
-    retrieval_ready = bool(retrieval_runtime.get("meets_deployment_requirement"))
-    if not retrieval_ready:
+    payload, ready = readiness_payload(
+        db,
+        retrieval_probe=rag_runtime_readiness,
+        demo_auth_probe=is_demo_auth_allowed,
+    )
+    if not ready:
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-    return {
-        "status": "ready" if retrieval_ready else "not_ready",
-        "service": "nlcare_monitoring_prototype",
-        "database": "ok",
-        "environment": environment,
-        "demo_auth_allowed": demo_auth_allowed,
-        "retrieval_runtime": retrieval_runtime,
-        "retrieval_ready": retrieval_ready,
-        "clinical_validation": False,
-        "healthcare_production_ready": False,
-        "claim_boundary": (
-            "Readiness means the engineering service can answer probes. It is "
-            "not clinical validation, real-patient approval, or PHI compliance."
-        ),
-    }
+    return payload
 
 
 # ─── Static files ─────────────────────────────────────────────────────────────

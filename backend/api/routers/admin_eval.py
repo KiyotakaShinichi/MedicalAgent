@@ -5,9 +5,12 @@ from collections.abc import Callable
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from backend.api.routers.admin_eval_observability import build_admin_observability_router
+
 
 def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable) -> APIRouter:
     router = APIRouter(tags=["admin-evaluation"])
+    router.include_router(build_admin_observability_router(get_admin_access_context, get_db))
 
     @router.post("/admin/agent-regression")
     def run_admin_agent_regression_endpoint(
@@ -30,79 +33,6 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
         return {
             "message": "MLE readiness checks completed.",
             "result": build_mle_readiness_summary(db=db, output_path=DEFAULT_OUTPUT_PATH),
-        }
-
-    @router.get("/admin/agent-trace-logs")
-    def get_admin_agent_trace_logs_endpoint(
-        limit: int = 50,
-        context=Depends(get_admin_access_context),
-        db: Session = Depends(get_db),
-    ):
-        """Return the most recent RAG/agent evaluation trace log entries."""
-        import json as _json
-
-        from backend.models import RAGEvaluationLog
-
-        safe_limit = max(1, min(limit, 200))
-        rows = (
-            db.query(RAGEvaluationLog)
-            .order_by(RAGEvaluationLog.created_at.desc(), RAGEvaluationLog.id.desc())
-            .limit(safe_limit)
-            .all()
-        )
-
-        def _loads(value):
-            try:
-                return _json.loads(value) if value else []
-            except Exception:
-                return []
-
-        def _loads_or_none(value):
-            """Like _loads but returns None when the value is absent —
-            used for new structured JSON columns where empty list would
-            misrepresent missing data."""
-            try:
-                return _json.loads(value) if value else None
-            except Exception:
-                return None
-
-        traces = [
-            {
-                "id": row.id,
-                "patient_id": row.patient_id,
-                "request_id": getattr(row, "request_id", None),
-                "query_preview": row.query_preview or "(no preview)",
-                "intent": row.intent,
-                "safety_level": row.safety_level,
-                "cache_status": row.cache_status,
-                "terminal_step": row.terminal_step,
-                "input_guardrail": row.input_guardrail_status,
-                "output_guardrail": row.output_guardrail_status,
-                "grounding_score": row.grounding_score,
-                "hallucination_score": row.hallucination_score,
-                "hallucination_risk": row.hallucination_risk,
-                "latency_ms": row.latency_ms,
-                "estimated_input_tokens": row.estimated_input_tokens,
-                "estimated_output_tokens": row.estimated_output_tokens,
-                "estimated_total_tokens": row.estimated_total_tokens,
-                "estimated_cost_usd": row.estimated_llm_cost_usd,
-                "model_used": getattr(row, "model_used", None),
-                "stage_latency": _loads_or_none(getattr(row, "stage_latency_json", None)),
-                "token_usage": _loads_or_none(getattr(row, "token_usage_json", None)),
-                "retrieved_source_ids": _loads(row.retrieved_source_ids_json),
-                "cited_source_ids": _loads(row.cited_source_ids_json),
-                "compound_intent": _loads_or_none(getattr(row, "compound_intent_json", None)),
-                "created_at": str(row.created_at),
-            }
-            for row in rows
-        ]
-        return {
-            "count": len(traces),
-            "traces": traces,
-            "note": (
-                "Each entry is one agent/RAG pipeline call. query_preview is truncated at 120 chars. "
-                "Provider-reported tokens are identified in token_usage; all other token counts are estimates."
-            ),
         }
 
     @router.get("/admin/noise-eval")
@@ -972,70 +902,6 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
         from backend.services.taglish_safety_parity import load_taglish_safety_parity
         return load_taglish_safety_parity()
 
-    @router.get("/admin/rag-trace-replay")
-    def get_admin_rag_trace_replay_endpoint(
-        limit: int = 25,
-        context=Depends(get_admin_access_context),
-        db: Session = Depends(get_db),
-    ):
-        """Return recent RAG evaluation log rows with Phase 11 fields
-        (intent, rewrite, retrieved sources, source tiers, claim
-        validation, post-gen validator, evidence grade, final answer)
-        flattened into a single per-call shape ready for the trace
-        replay panel."""
-        import json as _json
-        from backend.models import RAGEvaluationLog
-
-        safe_limit = max(1, min(limit, 200))
-        rows = (
-            db.query(RAGEvaluationLog)
-            .order_by(RAGEvaluationLog.created_at.desc(), RAGEvaluationLog.id.desc())
-            .limit(safe_limit)
-            .all()
-        )
-
-        def _safe_loads(value):
-            try:
-                return _json.loads(value) if value else None
-            except Exception:
-                return None
-
-        # Phase 11 columns now live on the model (migration 0003) — direct
-        # attribute access, no more silent None defaults via getattr.
-        traces = []
-        for row in rows:
-            traces.append({
-                "id": row.id,
-                "created_at": str(row.created_at) if row.created_at else None,
-                "patient_id": row.patient_id,
-                "query_preview": row.query_preview,
-                "intent": row.intent,
-                "safety_level": row.safety_level,
-                "rag_mode": row.rag_mode,
-                "rewritten_query": row.rewritten_query,
-                "retrieved_source_ids": _safe_loads(row.retrieved_source_ids_json) or [],
-                "cited_source_ids": _safe_loads(row.cited_source_ids_json) or [],
-                "evidence_grade": _safe_loads(row.evidence_grade_json),
-                "claim_validation": _safe_loads(row.claim_validation_json),
-                "retrieval_confidence": _safe_loads(getattr(row, "retrieval_confidence_json", None)),
-                "trace_diagnostics": _safe_loads(getattr(row, "trace_diagnostics_json", None)),
-                "tier_filter": _safe_loads(row.tier_filter_json),
-                "post_gen_validator": _safe_loads(row.post_gen_validator_json),
-                "grounding_score": row.grounding_score,
-                "hallucination_score": row.hallucination_score,
-                "latency_ms": row.latency_ms,
-                "input_guardrail": row.input_guardrail_status,
-                "output_guardrail": row.output_guardrail_status,
-            })
-        return {
-            "count": len(traces),
-            "traces": traces,
-            "trace_coverage_note": (
-                "Trace diagnostics and retrieval-confidence fields apply to new RAG rows "
-                "written after the trace diagnostics migration; older rows may be blank."
-            ),
-        }
-
     @router.get("/admin/toxicity-feature-audit")
     def get_admin_toxicity_feature_audit_endpoint(
         context=Depends(get_admin_access_context),
@@ -1381,29 +1247,6 @@ def build_admin_eval_router(get_admin_access_context: Callable, get_db: Callable
         return {
             "message": "Clinical safety review checklist generated.",
             "result": build_clinical_safety_review_checklist(),
-        }
-
-    @router.get("/admin/system-health")
-    def get_admin_system_health_endpoint(
-        context=Depends(get_admin_access_context),
-        db: Session = Depends(get_db),
-    ):
-        """Return backend/frontend/artifact/dependency health for the engineering demo."""
-        from backend.services.system_health import load_system_health_report
-
-        return load_system_health_report(db=db)
-
-    @router.post("/admin/system-health")
-    def run_admin_system_health_endpoint(
-        context=Depends(get_admin_access_context),
-        db: Session = Depends(get_db),
-    ):
-        """Rebuild system health report."""
-        from backend.services.system_health import build_system_health_report
-
-        return {
-            "message": "System health report generated.",
-            "result": build_system_health_report(db=db),
         }
 
     return router

@@ -1,0 +1,120 @@
+{
+  "schema_version": "dep001b_candidate_freeze_v1",
+  "generated_at": "2026-08-13T18:40:11.381897+00:00",
+  "status": "frozen_for_internal_blind",
+  "candidate_frozen": true,
+  "dep001_status": "blocked_pending_new_external_no_read_holdout",
+  "frozen_artifacts": {
+    "config/dep001b_semantic_safety.yaml": {
+      "sha256": "995bc0a3475b759acc42fd02b72e31c409fdf3051511c827c7e69d58a3729157",
+      "bytes": 1561
+    },
+    "config/release_gate_thresholds.yaml": {
+      "sha256": "945aa9a6ddc33abf2f5d2cae429b0be1d734beb4a0be21cccda6f03918ae9a19",
+      "bytes": 147948
+    },
+    "backend/services/dep001b_candidate_freeze.py": {
+      "sha256": "c5caa3ae6a40015a76c8cab612dc9f22e1d0060bd961a1f493a9572afdbf3360",
+      "bytes": 5482
+    },
+    "backend/services/dep001b_overlap_audit.py": {
+      "sha256": "48026c9972aa13c6f3f789ec325025361122e3742d55c404c1d232094386aae2",
+      "bytes": 5936
+    },
+    "backend/services/safety_policy_action.py": {
+      "sha256": "f6e7a7452e5f4d906932fee3f63f4dc904bf25669162fa320c48da31e2c05c82",
+      "bytes": 9781
+    },
+    "backend/services/dep001b_semantic_safety.py": {
+      "sha256": "5c9dc026d39802079b42f46f252b425f981cd57c91e56d9d51e746ad4b1e9e03",
+      "bytes": 11436
+    },
+    "backend/services/dep001b_semantic_safety_training.py": {
+      "sha256": "2ddc8f03ae85cafe723e391be0f8dd09efc28d43167e61d8f30579764c2ca9d1",
+      "bytes": 24689
+    },
+    "backend/services/dep001b_safety_corpus.py": {
+      "sha256": "1657c2158c42f43e58ee736ba7c65f891a96f7be50313f4ce9bdd83e6c910aa0",
+      "bytes": 62735
+    },
+    "backend/services/dep001b_safety_evaluation.py": {
+      "sha256": "e2e346965bb0c03ec63104028bd68595fbcc525082f988293a56d199945da2ed",
+      "bytes": 8916
+    },
+    "backend/services/dep001b_runtime_assurance.py": {
+      "sha256": "7cb836e84ae281e55ac9cfcd5baefa9cfc9111811edbcb201602ae09fdba35e3",
+      "bytes": 7865
+    },
+    "backend/services/dep001b_internal_blind_evaluation.py": {
+      "sha256": "8b67b0a266a2d38f77d616bcc0135df12ae743ab65539d812eb5dedba07cea34",
+      "bytes": 5656
+    },
+    "backend/services/agent_safety.py": {
+      "sha256": "dd580065db150346ac7369cccbe853a383376a31518a8f4453c7b41000c79a1d",
+      "bytes": 21180
+    },
+    "backend/services/agent_intent_router.py": {
+      "sha256": "cd890b5d76cf054989dc92573b0a7de30e91b956556babb851cd9ad14711ce54",
+      "bytes": 12179
+    },
+    "backend/services/agent_rag.py": {
+      "sha256": "28993e367da284ad5078192f0eb0541e228f4f45fed21a1883df9f8bb34ac762",
+      "bytes": 39815
+    },
+    "backend/services/post_generation_validator.py": {
+      "sha256": "b0fd0c4bfabe9d82a86d14314e7eb7402a6445de4f35f3f14d657cb2522ae7c4",
+      "bytes": 12863
+    },
+    "Data/evals/safety/dep001b/train_safety_bank.jsonl": {
+      "sha256": "c612575ad5719962dbe689b13383e3533de04d2c7091db78b0b4a81bda1734ca",
+      "bytes": 5071864
+    },
+    "Data/evals/safety/dep001b/validation_safety_bank.jsonl": {
+      "sha256": "8e07bb4faa89f5c39488fb0bd5d07a1b7be625a7a50b5119eaec77da70c3e624",
+      "bytes": 1229749
+    },
+    "Data/evals/safety/dep001b/internal_test_safety_bank.jsonl": {
+      "sha256": "4e47204172bdcdef2c5678e3a09dbed976053342fd9c5a94b5947e6f2f26eb36",
+      "bytes": 1239367
+    },
+    "Data/evals/safety/dep001b/internal_blind_safety_bank.jsonl": {
+      "sha256": "2a5a1177f286a9a88d6911ad66960cd3050cee3caf076989040f69d3ad7cafee",
+      "bytes": 738435
+    },
+    "Data/evals/safety/dep001b/semantic_safety_model.joblib": {
+      "sha256": "d094156f313c5eb8f828d8ee6f5e6b327f24d7fba8de6596ae1516ef8a1d5be3",
+      "bytes": 4773103
+    },
+    "Data/evals/safety/dep001b/semantic_safety_calibration.joblib": {
+      "sha256": "548382a3176d529c848a2dd6ea047873c98c710ba65a06a7872d535a17c66c17",
+      "bytes": 1521
+    },
+    "Data/evals/safety/dep001b/semantic_safety_thresholds.json": {
+      "sha256": "aa0b88c7adcd66d64c263fbc7d3b40b06371394132a65bb6fe995bd2696e07b4",
+      "bytes": 789
+    },
+    "Data/evals/safety/dep001b/semantic_safety_model_manifest.json": {
+      "sha256": "0f178256c4b473ce788653a17a91d69c320f9000d1185100cfa06c7cf22a6b38",
+      "bytes": 1520
+    },
+    "Data/evals/safety/dep001b/latest_training_evaluation.json": {
+      "sha256": "c11753ec0591a270bdb9fd519788bc77ffe5b12f062a9023db305d2e81eaae19",
+      "bytes": 6349
+    },
+    "Data/evals/safety/dep001b/latest_overlap_audit.json": {
+      "sha256": "805adefd9bf60fae8c3b2a9312bd8fa3370693c5ace9805a63086264498feb4f",
+      "bytes": 2333
+    },
+    "Data/evals/safety/dep001b/latest_runtime_assurance.json": {
+      "sha256": "f83b0b414d4cac7403a7b4326b0f77e3f3040590d09409057e7fd59c10b12338",
+      "bytes": 954415
+    }
+  },
+  "frozen_artifact_count": 26,
+  "internal_blind_completed": false,
+  "new_external_holdout_completed": false,
+  "burned_external_holdout_rerun": false,
+  "was_used_for_tuning": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

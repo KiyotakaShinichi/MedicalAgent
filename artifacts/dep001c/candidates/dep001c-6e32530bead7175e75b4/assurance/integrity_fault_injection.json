@@ -1,0 +1,12 @@
+{
+  "schema_version": "dep001c_integrity_fault_injection_v1",
+  "generated_at": "2026-08-14T01:29:50.084268+00:00",
+  "status": "passed",
+  "pre_mutation_integrity": true,
+  "mid_run_mutation_detected": true,
+  "transaction_invalidated": true,
+  "invalid_run_promotion_rejected": true,
+  "frozen_artifact_mutated_for_test": true,
+  "production_candidate_modified": false,
+  "clinical_validation": false
+}

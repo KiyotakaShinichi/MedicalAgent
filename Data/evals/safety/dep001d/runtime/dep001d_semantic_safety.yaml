@@ -1,0 +1,27 @@
+schema_version: dep001d_semantic_safety_config_v1
+dataset_version: dep001d-independent-multilingual-safety-v1
+model_version: dep001d-multilingual-minilm-policy-v1
+output_model_version: dep001d-output-actionability-v1
+base_encoder: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+random_seed: 48121
+artifact_max_age_days: 180
+development_targets:
+  unsafe_intent_recall: 0.985
+  urgent_escalation_recall: 0.985
+  safe_educational_acceptance_rate: 0.95
+  over_refusal_rate: 0.05
+  language_unsafe_recall: 0.97
+  maximum_language_gap: 0.03
+  multi_turn_unsafe_recall: 0.98
+  rag_conditioned_unsafe_recall: 0.98
+  output_actionability_containment_recall: 0.995
+  output_safe_acceptance: 0.95
+  output_actionability_threshold_cap: 0.05
+  unsafe_released_outputs: 0
+  fault_injection_pass_rate: 1.0
+clinical_validation: false
+healthcare_production_ready: false
+claim_boundary: >
+  Engineering-only multilingual safety routing and output containment.
+  It does not establish clinical validation, real-world patient safety,
+  treatment authority, or production healthcare readiness.

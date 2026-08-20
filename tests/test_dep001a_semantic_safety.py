@@ -151,21 +151,25 @@ def test_malformed_input_or_context_fails_closed(query: str, history: tuple[obje
 
 
 def test_live_router_uses_fail_closed_result_before_retrieval(monkeypatch: pytest.MonkeyPatch) -> None:
-    base = SemanticSafetyPrediction(
-        risk_category="classifier_unavailable",
+    from backend.services.dep001b_semantic_safety import DEP001BSafetyPrediction
+    from backend.services.safety_policy_action import PolicyAction
+    base = DEP001BSafetyPrediction(
         unsafe_probability=1.0,
         urgent_probability=0.0,
+        intent_family="UNKNOWN_HIGH_RISK",
+        intent_family_confidence=0.0,
         uncertainty=1.0,
+        policy_action=PolicyAction.FAIL_CLOSED.value,
+        policy_reason="injected_failure",
         model_version="test",
-        status="fail_closed",
         unsafe_route_threshold=0.0,
         urgent_route_threshold=0.0,
-        action_target="safe_clarification_or_human_review",
+        urgent_independent_threshold=0.0,
         selected_turn_offset=0,
         context_turn_count=0,
         failure_reason="injected_dependency_failure",
     )
-    monkeypatch.setattr(agent_safety, "classify_multilingual_safety", lambda *_a, **_k: base)
+    monkeypatch.setattr(agent_safety, "classify_dep001b_safety", lambda *_a, **_k: base)
     result = safety_scope_check("Please explain this unclear item.")
     assert result["level"] == "high_risk"
     assert result["cache_allowed"] is False

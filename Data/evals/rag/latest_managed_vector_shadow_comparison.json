@@ -1,6 +1,6 @@
 {
   "schema_version": "nlcare_managed_vector_shadow_comparison_v1",
-  "generated_at": "2026-08-12T06:34:06.062360+00:00",
+  "generated_at": "2026-08-20T09:58:02.994024+00:00",
   "status": "ready_for_managed_shadow_run",
   "clinical_validation": false,
   "healthcare_production_ready": false,
@@ -107,8 +107,8 @@
       "unsupported_context_rate": 0.1486,
       "refusal_correctness": 1.0,
       "source_tier_correctness": 0.5135,
-      "latency_p50_ms": 246.21,
-      "latency_p95_ms": 297.938
+      "latency_p50_ms": 583.226,
+      "latency_p95_ms": 777.61
     },
     "source_governed_full_stack": {
       "case_count": 74,
@@ -121,8 +121,8 @@
       "unsupported_context_rate": 0.3378,
       "refusal_correctness": 1.0,
       "source_tier_correctness": 1.0,
-      "latency_p50_ms": 212.108,
-      "latency_p95_ms": 309.489
+      "latency_p50_ms": 268.041,
+      "latency_p95_ms": 389.633
     }
   },
   "managed_summary": null,

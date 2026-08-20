@@ -1,0 +1,35 @@
+{
+  "schema_version": "dep001c_blind_manifest_v1",
+  "snapshot_id": "dep001cblind-443183a2442b635b2025",
+  "blind_bank_id": "dep001cblind-443183a2442b635b2025",
+  "generated_at": "2026-08-14T01:26:22.318519+00:00",
+  "canonical_manifest_sha256": "443183a2442b635b202529b26123bcf2ada06ea572c63bc9f1a1ef4c3a627770",
+  "canonical_payload": {
+    "schema_version": "dep001c_blind_payload_v1",
+    "snapshot_type": "dep001c_internal_blind_bank",
+    "bank_path": "bank/internal_blind_safety_bank.jsonl",
+    "bank_sha256": "d76cb4022897e8422c647ed7161f606f3781da480fbe48d6eeb612a590480a8c",
+    "case_n": 900,
+    "seed": 94177,
+    "was_used_for_tuning": false,
+    "previous_internal_blind_reused": false,
+    "burned_external_reused": false,
+    "artifacts": {
+      "bank/internal_blind_safety_bank.jsonl": {
+        "sha256": "d76cb4022897e8422c647ed7161f606f3781da480fbe48d6eeb612a590480a8c",
+        "bytes": 735574
+      },
+      "integrity/overlap_audit.json": {
+        "sha256": "b559b831ae87ce8eb1d1c44e8cfd262f9e0db82d8f2011cd985c92d23ae2152b",
+        "bytes": 3607
+      }
+    },
+    "clinical_validation": false
+  },
+  "blind_bank_sha256": "d76cb4022897e8422c647ed7161f606f3781da480fbe48d6eeb612a590480a8c",
+  "case_n": 900,
+  "frozen": true,
+  "read_only_requested": true,
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

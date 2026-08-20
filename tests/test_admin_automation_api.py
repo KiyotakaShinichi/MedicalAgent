@@ -3,12 +3,26 @@ from __future__ import annotations
 from fastapi.testclient import TestClient
 
 from backend.api.main import app
+from backend.database import SessionLocal
+from backend.models import Patient
 
 
 client = TestClient(app)
 
 
+def _ensure_synthetic_patient() -> None:
+    db = SessionLocal()
+    try:
+        if db.query(Patient).filter(Patient.id == "P001").first() is None:
+            db.add(Patient(id="P001", name="Synthetic auth fixture", diagnosis="Synthetic test data"))
+            db.commit()
+    finally:
+        db.close()
+
+
 def _token(username: str, password: str) -> str:
+    if username.upper() == "P001":
+        _ensure_synthetic_patient()
     response = client.post(
         "/auth/demo-credential-login",
         json={"username": username, "password": password},

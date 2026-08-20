@@ -1,0 +1,142 @@
+{
+  "schema_version": "dep001c_blind_overlap_audit_v1",
+  "generated_at": "2026-08-14T01:26:22.277134+00:00",
+  "status": "passed",
+  "new_case_n": 900,
+  "comparison_case_counts": {
+    "development_train": 5600,
+    "development_validation": 1340,
+    "development_internal_test": 1340,
+    "burned_internal_blind_v1": 750,
+    "burned_external_holdout": 400
+  },
+  "exact_overlap_counts": {
+    "development_train": 0,
+    "development_validation": 0,
+    "development_internal_test": 0,
+    "burned_internal_blind_v1": 0,
+    "burned_external_holdout": 0
+  },
+  "normalized_overlap_counts": {
+    "development_train": 0,
+    "development_validation": 0,
+    "development_internal_test": 0,
+    "burned_internal_blind_v1": 0,
+    "burned_external_holdout": 0
+  },
+  "near_duplicate_lexical": {
+    "development_train": {
+      "n": 900,
+      "maximum": 0.533478,
+      "p95": 0.422607,
+      "p99": 0.48177,
+      "count_ge_0_9": 0,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    },
+    "development_validation": {
+      "n": 900,
+      "maximum": 0.492486,
+      "p95": 0.395375,
+      "p99": 0.449766,
+      "count_ge_0_9": 0,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    },
+    "development_internal_test": {
+      "n": 900,
+      "maximum": 0.481571,
+      "p95": 0.385925,
+      "p99": 0.417804,
+      "count_ge_0_9": 0,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    },
+    "burned_internal_blind_v1": {
+      "n": 900,
+      "maximum": 0.494548,
+      "p95": 0.364368,
+      "p99": 0.419317,
+      "count_ge_0_9": 0,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    },
+    "burned_external_holdout": {
+      "n": 900,
+      "maximum": 0.354113,
+      "p95": 0.275719,
+      "p99": 0.333941,
+      "count_ge_0_9": 0,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    }
+  },
+  "semantic_similarity": {
+    "development_train": {
+      "n": 900,
+      "maximum": 0.936844,
+      "p95": 0.904627,
+      "p99": 0.927753,
+      "count_ge_0_9": 55,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    },
+    "development_validation": {
+      "n": 900,
+      "maximum": 0.936672,
+      "p95": 0.887442,
+      "p99": 0.918338,
+      "count_ge_0_9": 31,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    },
+    "development_internal_test": {
+      "n": 900,
+      "maximum": 0.928968,
+      "p95": 0.879315,
+      "p99": 0.919437,
+      "count_ge_0_9": 19,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    },
+    "burned_internal_blind_v1": {
+      "n": 900,
+      "maximum": 0.917771,
+      "p95": 0.839702,
+      "p99": 0.879918,
+      "count_ge_0_9": 3,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    },
+    "burned_external_holdout": {
+      "n": 900,
+      "maximum": 0.889699,
+      "p95": 0.833377,
+      "p99": 0.857299,
+      "count_ge_0_9": 0,
+      "count_ge_0_95": 0,
+      "count_ge_0_98": 0,
+      "count_ge_0_995": 0
+    }
+  },
+  "exact_overlap_total": 0,
+  "normalized_overlap_total": 0,
+  "extreme_lexical_near_duplicate_total": 0,
+  "external_text_or_case_ids_emitted": false,
+  "previous_blind_text_or_case_ids_emitted": false,
+  "used_for_tuning": false,
+  "clinical_validation": false,
+  "limitations": [
+    "Semantic similarity is reported as aggregate contamination risk, not independence proof.",
+    "The bank remains internally generated synthetic engineering evidence."
+  ]
+}

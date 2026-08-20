@@ -38,6 +38,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Iterable
 
+from backend.services.dep001d_output_actionability import classify_output_actionability
 from backend.services.medical_claim_boundary import classify_medical_claim
 
 
@@ -194,6 +195,7 @@ class ValidatorDecision:
     suggested_response: str | None = None  # safe replacement when blocked
     severity: str = "low"    # "low" when allowed, otherwise highest rule
     claim_boundary: dict | None = None
+    semantic_actionability: dict | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -203,6 +205,7 @@ class ValidatorDecision:
             "suggested_response": self.suggested_response,
             "severity": self.severity,
             "claim_boundary": self.claim_boundary,
+            "semantic_actionability": self.semantic_actionability,
         }
 
 
@@ -236,9 +239,23 @@ def validate_reply(
             suggested_response=safe_refusal,
             severity="high",
             claim_boundary=classify_medical_claim(""),
+            semantic_actionability={
+                "decision": "blocked",
+                "reason": "malformed_or_empty_output",
+                "failure_reason": "malformed_or_empty_output",
+            },
         )
 
     claim_boundary = classify_medical_claim(reply)
+    try:
+        semantic_actionability = classify_output_actionability(reply).to_dict()
+    except Exception as exc:
+        semantic_actionability = {
+            "decision": "blocked",
+            "blocked": True,
+            "reason": "output_actionability_validation_unavailable",
+            "failure_reason": f"validator_exception:{type(exc).__name__}",
+        }
 
     triggered: list[str] = []
     excerpts: list[dict[str, str]] = []
@@ -275,8 +292,26 @@ def validate_reply(
                 suggested_response=safe_refusal,
                 severity="high",
                 claim_boundary=claim_boundary,
+                semantic_actionability=semantic_actionability,
             )
-        return ValidatorDecision(decision="allowed", claim_boundary=claim_boundary)
+        recognized_safe_output = _is_high_confidence_non_actionable_output(reply)
+        if semantic_actionability["decision"] == "blocked" and not (
+            recognized_safe_output and not semantic_actionability.get("failure_reason")
+        ):
+            return ValidatorDecision(
+                decision="blocked",
+                triggered_rules=["semantic_output_actionability"],
+                matched_excerpts=[],
+                suggested_response=safe_refusal,
+                severity="high",
+                claim_boundary=claim_boundary,
+                semantic_actionability=semantic_actionability,
+            )
+        return ValidatorDecision(
+            decision="allowed",
+            claim_boundary=claim_boundary,
+            semantic_actionability=semantic_actionability,
+        )
 
     return ValidatorDecision(
         decision="blocked",
@@ -285,7 +320,36 @@ def validate_reply(
         suggested_response=safe_refusal,
         severity=severity,
         claim_boundary=claim_boundary,
+        semantic_actionability=semantic_actionability,
     )
+
+
+def _is_high_confidence_non_actionable_output(reply: str) -> bool:
+    """Permit explicit education or clinician deferral with no action authority."""
+    normalized = " ".join(reply.lower().split())
+    prohibited = (
+        r"\b(?:you should|i recommend|start|stop|skip|switch|increase|decrease|"
+        r"change your|take\s+\d+\s*(?:mg|ml|tablets?)|you have cancer|"
+        r"you have recurrence|months? to live|years? to live)\b"
+    )
+    if re.search(prohibited, normalized):
+        return False
+    general_education = bool(re.search(
+        r"\b(?:stands for|refers to|in general|generally|can mean)\b",
+        normalized,
+    ))
+    explicit_boundary = bool(re.search(
+        r"\b(?:cannot|can not|does not|doesn't)\s+(?:by itself\s+)?"
+        r"(?:prove|confirm|establish|determine|diagnose|decide)\b"
+        r"|\bnot\s+(?:a\s+)?(?:clinical diagnosis|treatment recommendation)\b",
+        normalized,
+    ))
+    clinician_deferral = bool(re.search(
+        r"\b(?:your\s+)?(?:team|care team|oncology team|clinician|doctor)\b"
+        r".{0,50}\b(?:should|can|will)\s+(?:advise|review|decide|assess|interpret)\b",
+        normalized,
+    ))
+    return general_education or explicit_boundary or clinician_deferral
 
 
 def _excerpt(text: str, start: int, end: int, window: int = 60) -> str:

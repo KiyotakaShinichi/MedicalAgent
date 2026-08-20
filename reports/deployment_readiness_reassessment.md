@@ -41,6 +41,58 @@ deployment verdict. DEP-001 remains blocked until a fresh external-human
 no-read holdout is authored after the implementation freeze and passes the
 hard final-output gate.
 
+### DEP-001B routing and utility calibration update
+
+The official DEP-001 external bank is permanently burned and was not rerun or
+used for tuning. Its aggregate result showed that containment and general
+unsafe recognition were strong, but urgent action selection (`0.208333`) and
+safe educational acceptance (`0.614286`) failed. DEP-001B therefore separates
+calibrated unsafe probability, urgent probability, semantic intent family,
+uncertainty, and deterministic policy action instead of treating medical risk
+recognition as the response action.
+
+The new 8,280-case internal development corpus and 1,340-case internal test
+meet all predeclared routing and utility targets: zero unsafe releases, unsafe
+recall `1.0`, urgent recall `1.0`, safe educational acceptance `0.998936`,
+over-refusal `0.001064`, all three language-slice recalls `1.0`, and multi-turn
+and RAG-conditioned unsafe recall `1.0`. All 13 fault injections contain output
+safely. These are internally authored compositional engineering tests, not
+external evidence. DEP-001 remains blocked until the frozen DEP-001B candidate
+passes its one-shot internal blind and then a new eligible external no-read
+holdout.
+
+The one-shot internal blind later met every metric target on 750 internally
+withheld cases. A timed-out overlap-audit test process nevertheless rewrote one
+of 26 frozen evidence artifacts during evaluation. Model, policy, configuration,
+threshold, calibration, and blind-bank hashes remained unchanged, but strict
+post-run manifest verification failed. The result is preserved as non-decisive
+internal evidence and is not rerun. DEP-001B remains blocked until a corrected
+harness and newly withheld bank pass start-and-end integrity checks.
+
+DEP-001C mechanically closed that integrity gap with a content-addressed,
+read-only candidate snapshot; a separately frozen 900-case bank; writer-process
+inventory; a candidate lock; no mutable aliases; and a `PREPARED -> LOCKED ->
+VERIFIED_PRE -> RUNNING -> VERIFIED_POST -> COMMITTED` transaction. Its
+official run passed every integrity stage and the deliberate mutation test, so
+the behavioral evidence is valid. The behavior did not pass: 15 unsafe outputs
+were released, unsafe recall was `0.932870`, urgent recall was `0.574074`,
+Taglish recall was `0.854167`, and the language gap was `0.090277`. Safe
+acceptance and over-refusal remained within bounds. DEP-001C is therefore
+`BLOCKED_BEHAVIORAL`, no new external holdout should be commissioned, and
+DEP-001 remains blocked.
+
+DEP-001D added independent semantic output-actionability validation after
+generation and again immediately before transport, plus fail-closed behavior for
+validator/runtime failures. It also corrected a discovered multi-turn train/serve
+skew and froze a 23-artifact candidate before a new 1,600-case internal blind run.
+The one-shot transaction passed pre-run, checkpoint, and post-run integrity and
+released zero unsafe canaries. Behavioral generalization still failed: unsafe
+recall was `0.8725`, safe acceptance `0.79125`, over-refusal `0.20875`, and
+multi-turn unsafe recall `0.803279`. Urgent recall was `1.0` and the maximum
+language gap was `0.006537`, but those gains do not average away the failed
+gates. DEP-001D is `BLOCKED_BEHAVIORAL`; its candidate and bank are consumed,
+external evaluation is not authorized, and DEP-001 remains blocked.
+
 ## 2. Current Maturity
 
 - **Engineering maturity:** strong portfolio prototype with selected production-shaped controls.

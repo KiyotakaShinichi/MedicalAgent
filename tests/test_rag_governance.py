@@ -132,7 +132,6 @@ class ValidatorAllowsSafeReplies(unittest.TestCase):
         "WBC stands for white blood cells. They help the body respond to infection. Discuss anything concerning with your care team.",
         "Diagnosis is determined by a clinician; please bring this result to your oncology team.",
         "Reference ranges shown are population defaults. They are not personalised to you.",
-        "",
     )
 
     def test_safe_texts_are_allowed(self) -> None:
@@ -140,6 +139,11 @@ class ValidatorAllowsSafeReplies(unittest.TestCase):
             d = validate_reply(text)
             self.assertEqual(d.decision, "allowed", f"safe text flagged: {text!r}")
             self.assertEqual(d.triggered_rules, [])
+
+    def test_empty_output_fails_closed(self) -> None:
+        decision = validate_reply("")
+        self.assertEqual(decision.decision, "blocked")
+        self.assertIn("malformed_or_empty_output", decision.triggered_rules)
 
 
 class ValidatorBlocksEachBannedClaim(unittest.TestCase):

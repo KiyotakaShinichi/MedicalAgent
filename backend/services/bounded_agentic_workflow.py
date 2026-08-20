@@ -118,6 +118,12 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
         review_route = "urgent_or_crisis_review"
         final_action = "urgent_escalation"
         rationale = "Urgent symptom or safety language detected before any record write."
+    elif active_boundary:
+        route = str(active_boundary["route"])
+        review_route = str(active_boundary.get("review_route") or "clinician_review_required")
+        final_action = "urgent_escalation" if route in {"urgent_clinician_review", "crisis_support"} else "safe_refusal"
+        rationale = "A vague follow-up retained the prior safety boundary instead of resetting to general conversation."
+        boundary_context_reused = True
     elif (
         _specific_boundary_precedes_distress(text, unsafe)
         and _unsafe_block_is_authoritative(unsafe, safety)
@@ -132,12 +138,6 @@ def plan_patient_agent_workflow(message: str, *, patient_context: dict[str, Any]
         review_route = "urgent_or_crisis_review"
         final_action = "urgent_escalation"
         rationale = "Urgent symptom or safety language detected before any record write."
-    elif active_boundary:
-        route = str(active_boundary["route"])
-        review_route = str(active_boundary.get("review_route") or "clinician_review_required")
-        final_action = "urgent_escalation" if route in {"urgent_clinician_review", "crisis_support"} else "safe_refusal"
-        rationale = "A vague follow-up retained the prior safety boundary instead of resetting to general conversation."
-        boundary_context_reused = True
     elif _contains_false_reassurance_instruction(text):
         route = "medical_boundary_refusal"
         review_route = "clinician_review_required"
@@ -456,6 +456,30 @@ def _safe_structured_record_context(
     unsafe: dict[str, Any],
 ) -> bool:
     normalized = text.lower()
+    mixed_action_request = bool(re.search(
+        r"\b(?:should i|can i|tell me (?:i can|to)|recommend|prescribe|"
+        r"stop|skip|delay|switch|increase|decrease|change)\b"
+        r".{0,55}\b(?:chemo|chemotherapy|treatment|dose|medication|medicine)\b"
+        r"|\b(?:chemo|chemotherapy|treatment|dose|medication|medicine)\b"
+        r".{0,55}\b(?:should i|can i|stop|skip|delay|switch|increase|decrease|change)\b",
+        normalized,
+    ))
+    kind = extracted.get("kind")
+    if kind in {"symptom", "symptom_details"}:
+        return not mixed_action_request and not _looks_immediate_danger(normalized) and not bool(re.search(
+            r"\b(?:what should i do|what medicine|which medicine|treat|remedy|stay home)\b",
+            normalized,
+        ))
+    if kind in {"cbc", "cbc_details"}:
+        return not mixed_action_request and not bool(re.search(
+            r"\b(?:diagnose|prove|confirm|should i|change|stop|start|dose)\b",
+            normalized,
+        ))
+    if kind == "medication":
+        return not mixed_action_request and bool(re.search(r"\b(?:took|taking|started|stopped taking|save|log|add|record)\b", normalized)) and not bool(re.search(
+            r"\b(?:should i|can i|what should|recommend|prescribe|increase|decrease|change my|stop my|start my)\b",
+            normalized,
+        ))
     if unsafe.get("is_unsafe"):
         historical_treatment_note = (
             unsafe.get("family") == "treatment_change"
@@ -465,7 +489,6 @@ def _safe_structured_record_context(
         )
         if not historical_treatment_note and "treatment-related change" not in normalized:
             return False
-    kind = extracted.get("kind")
     if kind == "imaging":
         if re.search(r"\b(should|can i|stop|skip|delay|dose|recommend|switch|start|increase|decrease)\b", normalized):
             return False

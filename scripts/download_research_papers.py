@@ -367,9 +367,10 @@ def download_paper(paper):
                 except Exception:
                     text = ""
             if not text:
+                pmc_numeric_id = re.sub(r"\D", "", paper["pmcid"])
                 text = extract_text_from_article_xml(fetch_bytes(
                     "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-                    f"?db=pmc&id={re.sub(r'\D', '', paper['pmcid'])}&retmode=xml"
+                    f"?db=pmc&id={pmc_numeric_id}&retmode=xml"
                     "&tool=NLCareEngineeringPrototype"
                 ))
                 file_type = "pmc_efetch_xml_text"

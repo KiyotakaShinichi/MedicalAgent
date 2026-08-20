@@ -211,7 +211,7 @@ def route_intent(
     scope = safety.get("scope")
     if scope == "treatment_decision_request":
         deterministic = "treatment_decision_boundary"
-    elif scope in {"urgent_or_safety_related", "diagnosis_or_outcome_claim"}:
+    elif scope in {"urgent_or_safety_related", "diagnosis_or_outcome_claim", "safety_control_unavailable"}:
         deterministic = "safety_boundary"
     elif actions:
         deterministic = "data_entry_confirmation"

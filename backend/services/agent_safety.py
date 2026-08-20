@@ -34,6 +34,8 @@ from backend.services.safety_uncertainty_adjudicator import (
 from backend.services.multilingual_semantic_safety import (
     classify_multilingual_safety,
 )
+from backend.services.dep001d_semantic_safety import classify_dep001d_safety as classify_dep001b_safety
+from backend.services.safety_policy_action import PolicyAction, scope_for_policy_action
 
 
 # ─── Vocabulary tables ───────────────────────────────────────────────────────
@@ -262,6 +264,52 @@ ACTIVE_TREATMENT_CUE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+_CROSS_PERSON_DATA_REQUEST_PATTERN = re.compile(
+    r"\b(reveal|show|give|provide|export|open|retrieve|fetch|disclose)\b"
+    r".{0,100}\b(contact details?|phone|email|address|record|chart|labs?|data|account)\b"
+    r".{0,100}\b(other|another|previous|prior|next|person before me|person after me)\b"
+    r"|\b(other|another|previous|prior|next|person before me|person after me)\b"
+    r".{0,100}\b(person|patient|portal user|account holder)\b"
+    r".{0,100}\b(contact details?|phone|email|address|record|chart|labs?|data|account)\b"
+    r"|\bperson\b.{0,80}\b(?:used|accessed|visited)\b.{0,40}\bportal\b"
+    r".{0,50}\b(?:before|after)\s+me\b",
+    re.IGNORECASE,
+)
+
+_PRIVATE_RECORD_DISCLOSURE_PATTERN = re.compile(
+    r"\b(?:disclose|reveal|show|send|give|provide|export|copy|read|recite|"
+    r"retrieve|fetch|open|access)\b.{0,90}"
+    r"\b(?:private|confidential|patient|person(?:'s)?)\b.{0,55}"
+    r"\b(?:contact details?|phone|email|address|record|chart|labs?|data|account)\b"
+    r"|\b(?:private|confidential|patient|person(?:'s)?)\b.{0,55}"
+    r"\b(?:contact details?|phone|email|address|record|chart|labs?|data|account)\b"
+    r".{0,90}\b(?:disclose|reveal|show|send|give|provide|export|copy|read|"
+    r"recite|retrieve|fetch|open|access)\b",
+    re.IGNORECASE,
+)
+
+_TUMOR_MARKER_CONCLUSION_PATTERN = re.compile(
+    r"\b(?:tumou?r markers?|markers?|cea|ca\s*15-?3|ca\s*27\.?29)\b"
+    r".{0,100}\b(?:conclude|assume|settle|prove|confirm|establish|means?)\b"
+    r".{0,80}\b(?:progress(?:ed|ion)?|recurrence|recurred|metastasis|"
+    r"metastatic|spread|treatment failed|therapy failed)\b"
+    r"|\b(?:conclude|assume|settle|prove|confirm|establish)\b.{0,80}"
+    r"\b(?:progress(?:ed|ion)?|recurrence|recurred|metastasis|metastatic|spread)\b"
+    r".{0,100}\b(?:tumou?r markers?|markers?|cea|ca\s*15-?3|ca\s*27\.?29)\b",
+    re.IGNORECASE,
+)
+
+_MULTILINGUAL_TUMOR_MARKER_CONCLUSION_PATTERN = re.compile(
+    r"(?:(?<![a-z0-9])(?:tumou?r markers?|markers?|cea|"
+    r"ca(?:\s*is\s*e|is\s*e|\s*2t\s*29|2t\s*29)|"
+    r"marcadores? tumorales?)(?![a-z0-9])|(?:肿瘤标志物|癌胚抗原))"
+    r".{0,100}(?:(?:\b(?:confirma?|demuestra|prueba|significa)\b)|"
+    r"(?:证明|证实|表明|意味着))"
+    r".{0,80}(?:(?:\b(?:recurrenci[ae]|progresi[oó]n|met[aá]stasis)\b)|"
+    r"(?:复发|进展|转移))",
+    re.IGNORECASE,
+)
+
 
 # ─── Public API ──────────────────────────────────────────────────────────────
 
@@ -288,183 +336,546 @@ def safety_scope_check(
     on every high-risk branch so the response cache never serves a
     safety-routed reply to a future query.
     """
-    lower = query.lower()
-    normalized = normalize_security_text(query)
-    haystack = f"{normalized} {lower}"
     urgent_flags = list(urgent_flags or [])
-    medical_danger = detect_multilingual_medical_danger(query)
-
-    if (
-        urgent_flags
-        or medical_danger["detected"]
-        or any(term in haystack for term in URGENT_TERMS)
-    ):
+    if urgent_flags:
         return {
             "level": "high_risk",
             "scope": "urgent_or_safety_related",
             "cache_allowed": False,
-            "message": "Urgent or safety-related wording detected; answer must route toward clinician/emergency review.",
-            "matched_safety_terms": sorted(set(urgent_flags + medical_danger.get("matches", [])))[:10],
-            "safety_source": "deterministic",
+            "message": "An upstream structured safety flag requires urgent human review.",
+            "matched_safety_terms": sorted(set(urgent_flags))[:10],
+            "safety_source": "deterministic_structured_urgent_flag",
+            "policy_action": PolicyAction.URGENT_ESCALATION.value,
         }
-    if any(term in haystack for term in DECISION_TERMS):
+    # This deterministic lane is intentionally independent of the semantic
+    # intent-family prediction. A model cannot veto an explicit multilingual
+    # urgent presentation, and downstream retrieval is never consulted first.
+    deterministic_danger = detect_multilingual_medical_danger(query)
+    current_urgent_terms = _current_urgent_term_matches(query)
+    if deterministic_danger.get("detected") or current_urgent_terms:
+        matches = [str(item) for item in deterministic_danger.get("matches") or []]
+        matches.extend(current_urgent_terms)
         return {
             "level": "high_risk",
-            "scope": "treatment_decision_request",
+            "scope": "urgent_or_safety_related",
             "cache_allowed": False,
-            "message": "Treatment decision wording detected; assistant must not recommend medication or treatment changes.",
-            "safety_source": "deterministic",
+            "message": "Potential urgent presentation detected; route to immediate human or emergency review.",
+            "matched_safety_terms": matches[:10],
+            "safety_source": "deterministic_multilingual_urgent_signal",
+            "policy_action": PolicyAction.URGENT_ESCALATION.value,
+            "policy_intent_family": "URGENT_PRESENTATION",
+            "unsafe_intent_family": "urgent_deterioration",
+            "unsafe_intent_confidence": 1.0,
+            "urgent_probability": 1.0,
+            "policy_uncertainty": 0.0,
+            "context_reused": False,
+            "context_turn_count": 0,
+            "safe_boundary_request": False,
+            "safety_control_failure": None,
         }
-    if RESEARCH_AUTHORITY_OVERCLAIM_PATTERN.search(haystack):
+    explicit_safe_education = _is_unambiguous_safe_information_request(query)
+    deterministic_boundary = _deterministic_high_confidence_boundary(query)
+    if deterministic_boundary and not explicit_safe_education:
+        return deterministic_boundary
+    if explicit_safe_education:
+        envelope = _safe_information_envelope()
+        if _is_privacy_process_education(query):
+            envelope["safety_source"] = "safe_boundary_request"
+        return envelope
+    try:
+        prediction = classify_dep001b_safety(
+            query,
+            previous_user_messages=tuple(previous_user_messages or ()),
+        )
+    except Exception as exc:
         return {
             "level": "high_risk",
-            "scope": "diagnosis_or_outcome_claim",
+            "scope": "safety_control_unavailable",
             "cache_allowed": False,
-            "message": (
-                "Research evidence cannot validate this local prototype or establish "
-                "real-patient safety, benefit, or clinical authority."
-            ),
-            "safety_source": "deterministic_research_authority_boundary",
-            "unsafe_intent_family": "research_authority_overclaim",
+            "message": "The safety classifier failed; do not continue to retrieval or generation.",
+            "safety_source": "dep001d_fail_closed_wrapper",
+            "policy_action": PolicyAction.FAIL_CLOSED.value,
+            "unsafe_intent_family": "UNKNOWN_HIGH_RISK",
+            "unsafe_intent_confidence": 1.0,
+            "urgent_probability": 0.0,
+            "policy_uncertainty": 1.0,
+            "context_reused": False,
+            "context_turn_count": 0,
+            "safety_control_failure": f"classifier_exception:{type(exc).__name__}",
         }
-    if (
-        PERSONAL_SUPPLEMENT_SAFETY_PATTERN.search(haystack)
-        and ACTIVE_TREATMENT_CUE_PATTERN.search(haystack)
-    ):
-        return {
-            "level": "high_risk",
-            "scope": "treatment_decision_request",
-            "cache_allowed": False,
-            "message": (
-                "Patient-specific supplement safety during active treatment requires "
-                "oncology clinician or pharmacist review."
-            ),
-            "safety_source": "deterministic_supplement_review_boundary",
-            "unsafe_intent_family": "supplement_safety_review",
-        }
-    if any(term in haystack for term in DIAGNOSTIC_TERMS):
-        return {
-            "level": "high_risk",
-            "scope": "diagnosis_or_outcome_claim",
-            "cache_allowed": False,
-            "message": "Diagnosis/outcome confirmation wording detected; assistant must not confirm disease state.",
-            "safety_source": "deterministic",
-        }
-    semantic_safety = classify_multilingual_safety(
-        query,
-        previous_user_messages=tuple(previous_user_messages or ()),
+    try:
+        action = PolicyAction(prediction.policy_action)
+    except ValueError:
+        action = PolicyAction.FAIL_CLOSED
+    # Preserve the established public metadata contract. The old classifier
+    # may resolve only an uncertain SAFE_REDIRECT when it identifies a narrow,
+    # deterministic safe-process request. It cannot override an actionable
+    # refusal, urgent escalation, or fail-closed decision.
+    try:
+        legacy_metadata = classify_unsafe_intent_with_context(
+            query,
+            tuple(previous_user_messages or ()),
+        )
+    except Exception:
+        legacy_metadata = {}
+    try:
+        auxiliary_semantic = classify_multilingual_safety(
+            query,
+            previous_user_messages=tuple(previous_user_messages or ()),
+        )
+    except Exception:
+        auxiliary_semantic = None
+    deterministic_safe_process = (
+        not bool(legacy_metadata.get("is_unsafe"))
+        and legacy_metadata.get("safety_source") == "safe_boundary_request"
     )
-    semantic = classify_unsafe_intent_with_context(
-        query,
-        tuple(previous_user_messages or ()),
+    low_risk_consensus = _trusted_low_risk_consensus(
+        query=query,
+        legacy_metadata=legacy_metadata,
+        auxiliary_semantic=auxiliary_semantic,
+        dep001d_prediction=prediction,
     )
+    if action in {
+        PolicyAction.SAFE_REDIRECT,
+        PolicyAction.REFUSE_ACTIONABLE,
+        PolicyAction.URGENT_ESCALATION,
+    } and low_risk_consensus:
+        action = (
+            PolicyAction.ALLOW_EDUCATIONAL
+            if low_risk_consensus in {"safe_educational", "safe_research_lookup"}
+            else PolicyAction.ALLOW_WITH_BOUNDARY
+        )
     if (
-        semantic_safety.status == "uncertain"
-        and semantic.get("family") == "none"
-        and (
-            semantic.get("safety_source") == "safe_boundary_request"
-            or (
-                semantic.get("route") == "low_risk"
-                and semantic_safety.unsafe_probability <= 0.35
-                and semantic_safety.urgent_probability < semantic_safety.urgent_route_threshold
-            )
-        )
+        action in {PolicyAction.SAFE_REDIRECT, PolicyAction.REFUSE_ACTIONABLE}
+        and deterministic_safe_process
     ):
-        return {
-            "level": "low_risk",
-            "scope": "education_or_tracking",
-            "cache_allowed": True,
-            "message": "Independent low-risk adjudication supports a bounded educational route.",
-            "safety_source": "safe_negative_adjudication",
-            "safe_boundary_request": semantic.get("safety_source") == "safe_boundary_request",
-            "context_reused": semantic.get("context_reused", False),
-            "context_turn_count": semantic.get("context_turn_count", 0),
-            "semantic_safety": semantic_safety.to_dict(),
-        }
-    if semantic_safety.requires_safe_route:
-        legacy_adjudication = adjudicate_safety_uncertainty(query, semantic)
-        family = (
-            legacy_adjudication.family
-            if legacy_adjudication.requires_safe_route
-            else semantic_safety.risk_category
-        )
-        scope = (
-            legacy_adjudication.scope
-            if legacy_adjudication.requires_safe_route
-            else _semantic_scope(semantic_safety.status, semantic_safety.risk_category)
-        )
-        semantic_source = (
-            "contextual_dep001a_multilingual_semantic_safety"
-            if semantic_safety.context_turn_count > 0
-            else "dep001a_multilingual_semantic_safety"
-        )
-        legacy_source = str(semantic.get("safety_source") or "")
-        if legacy_adjudication.requires_safe_route and legacy_source.startswith("contextual_"):
-            semantic_source = legacy_source
-        return {
-            "level": "high_risk",
-            "scope": scope,
-            "cache_allowed": False,
-            "message": _semantic_message(semantic_safety.status),
-            "safety_source": semantic_source,
-            "unsafe_intent_family": family,
-            "unsafe_intent_confidence": semantic_safety.unsafe_probability,
-            "context_reused": semantic_safety.context_turn_count > 0,
-            "context_turn_count": semantic_safety.context_turn_count,
-            "semantic_safety": semantic_safety.to_dict(),
-            "action_target_adjudication": (
-                legacy_adjudication.to_dict()
-                if legacy_adjudication.requires_safe_route
-                else None
-            ),
-            "safety_control_failure": semantic_safety.failure_reason,
-        }
-    adjudication = adjudicate_safety_uncertainty(query, semantic)
-    if adjudication.requires_safe_route:
-        semantic_source = str(semantic.get("safety_source") or "")
-        safety_source = (
-            semantic_source
-            if semantic_source.startswith("contextual_")
-            else "safety_uncertainty_adjudicator"
-        )
-        return {
-            "level": "high_risk",
-            "scope": adjudication.scope,
-            "cache_allowed": False,
-            "message": semantic.get("safe_template") or "Unsafe medical or privacy intent detected; route to safe refusal or review.",
-            "safety_source": safety_source,
-            "unsafe_intent_family": adjudication.family,
-            "unsafe_intent_confidence": adjudication.confidence,
-            "over_refusal_risk_flag": semantic.get("over_refusal_risk_flag"),
-            "context_reused": semantic.get("context_reused", False),
-            "context_turn_count": semantic.get("context_turn_count", 0),
-            "uncertainty_adjudication": adjudication.to_dict(),
-        }
+        action = PolicyAction.ALLOW_WITH_BOUNDARY
     if (
-        semantic.get("family") == "none"
-        and semantic.get("safety_source") == "safe_boundary_request"
+        action == PolicyAction.SAFE_REDIRECT
+        and prediction.intent_family == "ACTIVE_SYMPTOM_MANAGEMENT"
+        and not bool(legacy_metadata.get("is_unsafe"))
+        and _is_non_actionable_symptom_disclosure(query)
     ):
-        return {
-            "level": "low_risk",
-            "scope": "education_or_tracking",
-            "cache_allowed": True,
-            "message": (
-                "Explicit prevention, consent, redaction, or non-executing "
-                "education request."
-            ),
-            "safety_source": "safe_boundary_request",
-            "safe_boundary_request": True,
-            "context_reused": semantic.get("context_reused", False),
-            "context_turn_count": semantic.get("context_turn_count", 0),
+        action = PolicyAction.ALLOW_WITH_BOUNDARY
+    if (
+        action == PolicyAction.URGENT_ESCALATION
+        and _is_clearly_nonurgent_symptom_disclosure(query)
+    ):
+        action = PolicyAction.ALLOW_WITH_BOUNDARY
+    if (
+        action == PolicyAction.SAFE_REDIRECT
+        and prediction.intent_family == "INTERACTION_EDUCATION"
+        and _is_general_interaction_education(query)
+    ):
+        action = PolicyAction.ALLOW_EDUCATIONAL
+    if (
+        action in {PolicyAction.ALLOW_EDUCATIONAL, PolicyAction.ALLOW_WITH_BOUNDARY}
+        and not deterministic_safe_process
+        and prediction.intent_family in {
+            "PERSONALIZED_ACTION_REQUEST", "TREATMENT_MODIFICATION",
+            "MEDICATION_DOSING", "ACTIVE_SYMPTOM_MANAGEMENT",
+            "PERSONALIZED_INTERACTION_ACTION", "TUMOR_MARKER_TREATMENT_DECISION",
         }
+        and _has_explicit_personal_action_request(query)
+    ):
+        action = (
+            PolicyAction.SAFE_REDIRECT
+            if prediction.intent_family == "ACTIVE_SYMPTOM_MANAGEMENT"
+            else PolicyAction.REFUSE_ACTIONABLE
+        )
+    scope = scope_for_policy_action(action, prediction.intent_family)
+    high_risk = action in {
+        PolicyAction.SAFE_REDIRECT,
+        PolicyAction.REFUSE_ACTIONABLE,
+        PolicyAction.URGENT_ESCALATION,
+        PolicyAction.FAIL_CLOSED,
+    }
+    if action == PolicyAction.URGENT_ESCALATION:
+        message = "Potential urgent presentation detected; route to immediate human or emergency review."
+    elif action == PolicyAction.REFUSE_ACTIONABLE:
+        message = "A personalized medical action was requested; do not provide diagnosis, dosing, or treatment direction."
+    elif action == PolicyAction.SAFE_REDIRECT:
+        message = "The request requires a bounded clarification, refusal, or human-review redirect."
+    elif action == PolicyAction.FAIL_CLOSED:
+        message = "The safety classifier is unavailable; do not continue to retrieval or generation."
+    elif action == PolicyAction.ALLOW_EDUCATIONAL:
+        message = "High-confidence general education intent; answer within evidence and clinical boundaries."
+    else:
+        message = "Low-risk information request; answer with an explicit non-diagnostic boundary."
+    legacy_unsafe = bool(legacy_metadata.get("is_unsafe"))
+    legacy_safe_boundary = not high_risk and deterministic_safe_process
+    if high_risk and legacy_unsafe:
+        scope = str(legacy_metadata.get("scope") or scope)
+    unsafe_intent_family = (
+        str(legacy_metadata.get("unsafe_intent_family") or legacy_metadata.get("family"))
+        if legacy_unsafe
+        else prediction.intent_family
+    )
+    if legacy_safe_boundary:
+        safety_source = "safe_boundary_request"
+    elif high_risk and legacy_unsafe and legacy_metadata.get("context_reused"):
+        safety_source = str(legacy_metadata.get("safety_source") or "contextual_unsafe_intent")
+    else:
+        safety_source = "dep001d_explicit_policy_action"
+    return {
+        "level": "high_risk" if high_risk else "low_risk",
+        "scope": scope,
+        "cache_allowed": not high_risk,
+        "message": message,
+        "safety_source": safety_source,
+        "policy_action": action.value,
+        "policy_intent_family": prediction.intent_family,
+        "unsafe_intent_family": unsafe_intent_family,
+        "unsafe_intent_confidence": prediction.unsafe_probability,
+        "urgent_probability": prediction.urgent_probability,
+        "policy_uncertainty": prediction.uncertainty,
+        "context_reused": prediction.context_turn_count > 0,
+        "context_turn_count": prediction.context_turn_count,
+        "semantic_safety": prediction.to_dict(),
+        "auxiliary_semantic_safety": (
+            auxiliary_semantic.to_dict() if auxiliary_semantic is not None else None
+        ),
+        "low_risk_consensus": low_risk_consensus,
+        "legacy_safety_metadata": {
+            "family": legacy_metadata.get("family"),
+            "scope": legacy_metadata.get("scope"),
+            "safety_source": legacy_metadata.get("safety_source"),
+            "context_reused": bool(legacy_metadata.get("context_reused")),
+        },
+        "safe_boundary_request": legacy_safe_boundary,
+        "safety_control_failure": prediction.failure_reason,
+    }
+
+
+def _is_non_actionable_symptom_disclosure(query: str) -> bool:
+    """Distinguish recording a symptom from asking the agent to treat it."""
+    normalized = normalize_security_text(query)
+    action_cues = (
+        "what should i do", "what do i do", "tell me what to do",
+        "tell me exactly", "how should i treat", "how do i treat",
+        "how to treat", "treat it myself", "manage it alone", "stay home",
+        "what medicine", "which medicine", "what medication", "which medication",
+        "what dose", "how much should i take", "give me a remedy",
+        "anong gagawin", "ano ang gagawin", "sabihin anong", "sabihin kung ano",
+        "paano gagamutin", "gamutin mag isa", "anong gamot", "ano ang gamot",
+        "gaano karami", "bigyan ako ng lunas", "bigyan mo ko ng remedy",
+        "ako lang ang mag manage", "manatili sa bahay",
+    )
+    return not any(cue in normalized for cue in action_cues)
+
+
+def _is_clearly_nonurgent_symptom_disclosure(query: str) -> bool:
+    """Counter a semantic urgent false positive only for a narrow benign set."""
+    normalized = normalize_security_text(query)
+    benign_symptom = bool(re.search(
+        r"\b(?:nausea|nauseous|fatigue|tired|neuropathy|tingling|mouth sores?)\b",
+        normalized,
+    ))
+    severe_modifier = bool(re.search(
+        r"\b(?:severe|unbearable|worst|cannot|can't|faint|fainted|collapse|"
+        r"emergency|dying|blood|bleeding|chest pain|shortness of breath)\b",
+        normalized,
+    ))
+    return (
+        benign_symptom
+        and not severe_modifier
+        and not _has_explicit_personal_action_request(normalized)
+        and not _current_urgent_term_matches(normalized)
+    )
+
+
+def _is_explicit_boundary_education(query: str) -> bool:
+    """Recognize explicit education about a safety limit, never an action request."""
+    normalized = normalize_security_text(query)
+    educational_frame = bool(re.search(
+        r"\b(?:what does|what is|why can|why is|why does|explain|in general|generally|"
+        r"meaning of|limitations? of|stands for|refers to)\b",
+        normalized,
+    ))
+    boundary_frame = bool(re.search(
+        r"\b(?:cannot|can not|does not|doesn't|not by itself|not alone|"
+        r"limitation|in general|stands for|refers to|mean in general)\b",
+        normalized,
+    )) or bool(re.search(
+        r"\bnot\b.{0,55}\b(?:by itself|alone)\b"
+        r"|\b(?:by itself|alone)\b.{0,20}\bnot\b"
+        r"|\b(?:cannot|does not|doesn't)\b.{0,55}"
+        r"\b(?:prove|confirm|establish|determine)\b",
+        normalized,
+    ))
+    personal_action = _has_explicit_personal_action_request(normalized) or bool(
+        re.search(
+            r"\b(?:stop|start|change|delay|skip|increase|decrease|replace)\b"
+            r".{0,45}\b(?:my|mine|ko|akin)\b"
+            r"|\b(?:my|mine|ko|akin)\b.{0,45}"
+            r"\b(?:stop|start|change|delay|skip|increase|decrease|replace)\b",
+            normalized,
+        )
+    )
+    return educational_frame and boundary_frame and not personal_action
+
+
+def _is_unambiguous_safe_information_request(query: str) -> bool:
+    """Identify narrow definition, limitation, and portal-process questions."""
+    normalized = normalize_security_text(query)
+    if _has_explicit_personal_action_request(normalized) or _current_urgent_term_matches(normalized):
+        return False
+    if RESEARCH_AUTHORITY_OVERCLAIM_PATTERN.search(normalized):
+        return False
+    if PERSONAL_SUPPLEMENT_SAFETY_PATTERN.search(normalized) and ACTIVE_TREATMENT_CUE_PATTERN.search(normalized):
+        return False
+
+    personal_conclusion = bool(re.search(
+        r"\b(?:can|could|may|should|do|does|tell)\s+(?:i|me|my)\b.{0,90}"
+        r"\b(?:conclude|assume|confirm|prove|means?|recurrence|progression|"
+        r"metastatic|survive|prognosis)\b"
+        r"|\b(?:my|mine|for me|ko|akin)\b.{0,80}"
+        r"\b(?:recurrence|progression|metastatic|survival|prognosis|dose|dosage)\b",
+        normalized,
+    ))
+    if personal_conclusion:
+        return False
+
+    if _is_privacy_process_education(normalized):
+        return True
+    if _is_explicit_boundary_education(normalized):
+        return True
+    if re.fullmatch(
+        r"(?:in general\s+)?what does dose[- ]dense(?:\s+\w+)? mean\??",
+        normalized,
+    ):
+        return True
+    if re.search(
+        r"\b(?:how is|how are|what privacy|where (?:can|do) i (?:review|find))\b"
+        r".{0,70}\b(?:privacy|data protection|privacy settings?)\b",
+        normalized,
+    ):
+        return True
+    return False
+
+
+def _deterministic_high_confidence_boundary(query: str) -> dict[str, Any] | None:
+    """Apply a small fail-closed floor for unambiguous policy-bound requests."""
+    normalized = normalize_security_text(query)
+    privacy_process_education = _is_privacy_process_education(normalized)
+    if (
+        (
+            _CROSS_PERSON_DATA_REQUEST_PATTERN.search(normalized)
+            or _PRIVATE_RECORD_DISCLOSURE_PATTERN.search(normalized)
+        )
+        and not privacy_process_education
+    ):
+        return _deterministic_boundary_envelope(
+            scope="privacy_or_security_boundary",
+            family="cross_patient_exfiltration",
+            intent_family="UNKNOWN_HIGH_RISK",
+            message="Another person's private data cannot be retrieved or disclosed.",
+        )
+    if RESEARCH_AUTHORITY_OVERCLAIM_PATTERN.search(normalized):
+        return _deterministic_boundary_envelope(
+            scope="diagnosis_or_outcome_claim",
+            family="research_authority_overclaim",
+            intent_family="UNKNOWN_HIGH_RISK",
+            message="Research cannot establish this prototype as clinically safe or validated.",
+        )
+    if PERSONAL_SUPPLEMENT_SAFETY_PATTERN.search(normalized) and ACTIVE_TREATMENT_CUE_PATTERN.search(normalized):
+        return _deterministic_boundary_envelope(
+            scope="treatment_decision_request",
+            family="supplement_safety_request",
+            intent_family="PERSONALIZED_INTERACTION_ACTION",
+            message="Personal supplement clearance during treatment requires clinician or pharmacist review.",
+        )
+    if (
+        _TUMOR_MARKER_CONCLUSION_PATTERN.search(normalized)
+        or _MULTILINGUAL_TUMOR_MARKER_CONCLUSION_PATTERN.search(normalized)
+    ):
+        return _deterministic_boundary_envelope(
+            scope="diagnosis_or_outcome_claim",
+            family="tumor_marker_conclusion",
+            intent_family="TUMOR_MARKER_TREATMENT_DECISION",
+            message="A tumor-marker result cannot establish progression or recurrence by itself.",
+        )
+    if any(normalize_security_text(term) in normalized for term in DECISION_TERMS):
+        return _deterministic_boundary_envelope(
+            scope="treatment_decision_request",
+            family="treatment_change",
+            intent_family="TREATMENT_MODIFICATION",
+            message="A personalized treatment or dosage decision was requested.",
+        )
+    diagnostic_request = bool(
+        re.search(
+            r"\b(?:do|could|might)\s+i\s+(?:have|be)\b.{0,50}"
+            r"\b(?:cancer|recurrence|metastatic|metastasis|brca|mutation)\b"
+            r"|\b(?:diagnose me|confirm (?:that )?(?:i have|my)|tell me whether i have)\b"
+            r"|\b(?:how long do i have|will i survive|my prognosis|survival chances)\b",
+            normalized,
+        )
+    )
+    if diagnostic_request:
+        return _deterministic_boundary_envelope(
+            scope="diagnosis_or_outcome_claim",
+            family="diagnosis_confirmation",
+            intent_family="PERSONALIZED_INFORMATION",
+            message="A diagnosis, prognosis, or outcome conclusion was requested.",
+        )
+    return None
+
+
+def _is_privacy_process_education(query: str) -> bool:
+    """Keep consent, authorization, and privacy-process education answerable."""
+    normalized = normalize_security_text(query)
+    process_cue = bool(re.search(
+        r"\b(?:consent|authorization|authorisation|permission|privacy|protect|"
+        r"privacy policy|security training|verify before|verification)\b",
+        normalized,
+    ))
+    disclosure_demand = bool(re.search(
+        r"\b(?:give|send|reveal|disclose|show)\s+(?:me|us)\b"
+        r"|(?:^|[.!?]\s+|\b(?:then|so|now)\s+)"
+        r"(?:please\s+)?(?:export|copy|retrieve|fetch|open|access|give|send|"
+        r"reveal|disclose|show)\b",
+        normalized,
+    ))
+    return process_cue and not disclosure_demand
+
+
+def _safe_information_envelope() -> dict[str, Any]:
     return {
         "level": "low_risk",
         "scope": "education_or_tracking",
         "cache_allowed": True,
-        "message": "Low-risk educational or portal-support query.",
-        "safety_source": "deterministic",
-        "semantic_safety": semantic_safety.to_dict(),
+        "message": "High-confidence general education intent; answer within evidence and clinical boundaries.",
+        "safety_source": "deterministic_safe_information_request",
+        "policy_action": PolicyAction.ALLOW_EDUCATIONAL.value,
+        "policy_intent_family": "SAFE_EDUCATION",
+        "unsafe_intent_family": "none",
+        "unsafe_intent_confidence": 0.0,
+        "urgent_probability": 0.0,
+        "policy_uncertainty": 0.0,
+        "context_reused": False,
+        "context_turn_count": 0,
+        "safe_boundary_request": True,
+        "safety_control_failure": None,
     }
+
+
+def _deterministic_boundary_envelope(
+    *,
+    scope: str,
+    family: str,
+    intent_family: str,
+    message: str,
+) -> dict[str, Any]:
+    return {
+        "level": "high_risk",
+        "scope": scope,
+        "cache_allowed": False,
+        "message": message,
+        "safety_source": "deterministic_high_confidence_policy_floor",
+        "policy_action": PolicyAction.REFUSE_ACTIONABLE.value,
+        "policy_intent_family": intent_family,
+        "unsafe_intent_family": family,
+        "unsafe_intent_confidence": 1.0,
+        "urgent_probability": 0.0,
+        "policy_uncertainty": 0.0,
+        "context_reused": False,
+        "context_turn_count": 0,
+        "safe_boundary_request": False,
+        "safety_control_failure": None,
+    }
+
+
+def _is_general_interaction_education(query: str) -> bool:
+    """Permit interaction education while rejecting personal clearance."""
+    normalized = normalize_security_text(query)
+    personal_action_cues = (
+        "can i take", "can i use", "should i take", "should i use",
+        "clear it for me", "safe for me", "with my treatment", "with my chemo",
+        "start it today", "take it today", "use it today", "replace",
+        "instead of", "pwede ko bang inumin", "puwede ko bang inumin",
+        "dapat ko bang inumin", "ligtas para sa akin", "kasabay ng chemo ko",
+        "simulan ko ngayon", "palitan", "kapalit ng",
+    )
+    return not any(cue in normalized for cue in personal_action_cues)
+
+
+def _current_urgent_term_matches(query: str) -> list[str]:
+    normalized = normalize_security_text(query)
+    current_cues = (
+        "i have", "i am having", "right now", "happening now", "my ",
+        "may ", "ako", "ko ngayon", "nararanasan ko", "nangyayari ngayon",
+        "tengo", "estoy", "ahora",
+    )
+    if not any(cue in normalized for cue in current_cues):
+        return []
+    return sorted({term for term in URGENT_TERMS if normalize_security_text(term) in normalized})[:10]
+
+
+def _has_explicit_personal_action_request(query: str) -> bool:
+    normalized = normalize_security_text(query)
+    action = (
+        r"\b(?:choose|select|calculate|compute|tell|give|approve|decide|"
+        r"piliin|kuwentahin|kwentahin|sabihin|bigyan|aprubahan|magpasya)\b"
+    )
+    target = (
+        r"\b(?:dose|dosage|medicine|medication|treatment|chemotherapy|chemo|"
+        r"therapy|gamot|lunas|remedy)\b"
+    )
+    return bool(
+        re.search(action + r".{0,60}" + target, normalized)
+        or re.search(target + r".{0,60}" + action, normalized)
+        or re.search(
+            r"\b(?:should|can|may|how|what|which|dapat|pwede|puwede|paano|ano)\b"
+            r".{0,70}\b(?:i|me|my|ko|akin)\b.{0,70}" + target,
+            normalized,
+        )
+        or re.search(
+            r"\b(?:i|me|my|ko|akin)\b.{0,70}"
+            r"\b(?:should|can|may|how|what|which|dapat|pwede|puwede|paano|ano)\b"
+            r".{0,70}" + target,
+            normalized,
+        )
+    )
+
+
+def _trusted_low_risk_consensus(
+    *,
+    query: str,
+    legacy_metadata: dict[str, Any],
+    auxiliary_semantic: Any,
+    dep001d_prediction: Any,
+) -> str | None:
+    """Preserve established safe workflows only when independent signals agree."""
+    if auxiliary_semantic is None or bool(legacy_metadata.get("is_unsafe")):
+        return None
+    if _has_explicit_personal_action_request(query) or _current_urgent_term_matches(query):
+        return None
+    if getattr(auxiliary_semantic, "status", None) != "safe":
+        return None
+    unsafe_probability = float(getattr(auxiliary_semantic, "unsafe_probability", 1.0))
+    urgent_probability = float(getattr(auxiliary_semantic, "urgent_probability", 1.0))
+    unsafe_threshold = float(getattr(auxiliary_semantic, "unsafe_route_threshold", 0.0))
+    urgent_threshold = float(getattr(auxiliary_semantic, "urgent_route_threshold", 0.0))
+    if unsafe_probability > min(0.05, unsafe_threshold * 0.20):
+        return None
+    if urgent_probability >= max(1e-6, urgent_threshold * 0.20):
+        return None
+    if float(getattr(dep001d_prediction, "urgent_probability", 1.0)) >= float(
+        getattr(dep001d_prediction, "urgent_independent_threshold", 0.0)
+    ):
+        return None
+    category = str(getattr(auxiliary_semantic, "risk_category", ""))
+    allowed_categories = {
+        "safe_conversation",
+        "safe_clinical_education_direct",
+        "safe_educational",
+        "safe_emotional_support",
+        "safe_out_of_scope",
+        "safe_portal_help",
+        "safe_research_lookup",
+        "safe_symptom_logging",
+    }
+    return category if category in allowed_categories else None
 
 
 def _semantic_scope(status: str, category: str) -> str:

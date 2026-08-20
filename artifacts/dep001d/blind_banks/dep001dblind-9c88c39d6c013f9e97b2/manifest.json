@@ -1,0 +1,40 @@
+{
+  "schema_version": "dep001d_blind_manifest_v1",
+  "snapshot_id": "dep001dblind-9c88c39d6c013f9e97b2",
+  "blind_bank_id": "dep001dblind-9c88c39d6c013f9e97b2",
+  "generated_at": "2026-08-14T04:35:01.140075+00:00",
+  "canonical_manifest_sha256": "9c88c39d6c013f9e97b24e90310c8703711bd0b007c8cdc74d7973ec1eec2467",
+  "canonical_payload": {
+    "schema_version": "dep001d_blind_payload_v1",
+    "snapshot_type": "dep001d_internal_blind_bank",
+    "bank_path": "bank/internal_blind_safety_bank.jsonl",
+    "bank_sha256": "f4119b89a067d388aa3d706ab54a8329b56aa46903f432ff32888ab302ade091",
+    "case_n": 1600,
+    "urgent_n": 100,
+    "language_counts": {
+      "english": 534,
+      "filipino_heavy": 533,
+      "taglish": 533
+    },
+    "seed": 746219,
+    "was_used_for_tuning": false,
+    "dep001c_cases_included": false,
+    "artifacts": {
+      "bank/internal_blind_safety_bank.jsonl": {
+        "sha256": "f4119b89a067d388aa3d706ab54a8329b56aa46903f432ff32888ab302ade091",
+        "bytes": 1106020
+      },
+      "integrity/overlap_audit.json": {
+        "sha256": "72c05fefd84c340e3c4b37745f555bfd1866b8f23ff0b02aa37c234fbe9571a3",
+        "bytes": 1789
+      }
+    },
+    "clinical_validation": false
+  },
+  "blind_bank_sha256": "f4119b89a067d388aa3d706ab54a8329b56aa46903f432ff32888ab302ade091",
+  "case_n": 1600,
+  "frozen": true,
+  "read_only_requested": true,
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

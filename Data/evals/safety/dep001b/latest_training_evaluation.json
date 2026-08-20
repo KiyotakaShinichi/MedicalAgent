@@ -1,0 +1,222 @@
+{
+  "schema_version": "dep001b_training_evaluation_v1",
+  "generated_at": "2026-08-13T17:52:56.549570+00:00",
+  "status": "trained_pending_runtime_integration",
+  "model_version": "dep001b-multilingual-minilm-policy-v1",
+  "dataset_version": "dep001b-routing-utility-corpus-v1",
+  "architecture": "local multilingual MiniLM embeddings with separately calibrated unsafe and urgent logistic heads, multiclass intent family, and deterministic policy action",
+  "train": {
+    "n": 5600,
+    "unsafe_head": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 0.998752,
+      "f1": 0.999375,
+      "brier": 0.000113,
+      "ece": 0.001682
+    },
+    "urgent_head": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "brier": 3.8e-05,
+      "ece": 0.000832
+    },
+    "intent_family_accuracy": 0.99875,
+    "policy": {
+      "unsafe_intent_recall": 1.0,
+      "urgent_escalation_recall": 1.0,
+      "safe_educational_acceptance_rate": 0.999,
+      "over_refusal_rate": 0.001,
+      "english_unsafe_recall": 1.0,
+      "taglish_unsafe_recall": 1.0,
+      "filipino_heavy_unsafe_recall": 1.0,
+      "en_taglish_gap": 0.0,
+      "multi_turn_unsafe_recall": 1.0,
+      "rag_conditioned_unsafe_recall": 1.0,
+      "policy_action_accuracy": 0.998036,
+      "action_counts": {
+        "ALLOW_EDUCATIONAL": 2200,
+        "ALLOW_WITH_BOUNDARY": 1796,
+        "REFUSE_ACTIONABLE": 1000,
+        "SAFE_REDIRECT": 404,
+        "URGENT_ESCALATION": 200
+      }
+    }
+  },
+  "validation": {
+    "n": 1340,
+    "unsafe_head": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "brier": 0.000116,
+      "ece": 0.002009
+    },
+    "urgent_head": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "brier": 0.000232,
+      "ece": 0.001143
+    },
+    "intent_family_accuracy": 0.997015,
+    "policy": {
+      "unsafe_intent_recall": 1.0,
+      "urgent_escalation_recall": 1.0,
+      "safe_educational_acceptance_rate": 1.0,
+      "over_refusal_rate": 0.0,
+      "english_unsafe_recall": 1.0,
+      "taglish_unsafe_recall": 1.0,
+      "filipino_heavy_unsafe_recall": 1.0,
+      "en_taglish_gap": 0.0,
+      "multi_turn_unsafe_recall": 1.0,
+      "rag_conditioned_unsafe_recall": 1.0,
+      "policy_action_accuracy": 0.997761,
+      "action_counts": {
+        "ALLOW_EDUCATIONAL": 527,
+        "ALLOW_WITH_BOUNDARY": 413,
+        "REFUSE_ACTIONABLE": 250,
+        "SAFE_REDIRECT": 100,
+        "URGENT_ESCALATION": 50
+      }
+    }
+  },
+  "internal_test": {
+    "n": 1340,
+    "unsafe_head": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 0.997506,
+      "f1": 0.998752,
+      "brier": 0.000214,
+      "ece": 0.002163
+    },
+    "urgent_head": {
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "recall": 1.0,
+      "precision": 1.0,
+      "f1": 1.0,
+      "brier": 8e-05,
+      "ece": 0.000966
+    },
+    "intent_family_accuracy": 0.997015,
+    "policy": {
+      "unsafe_intent_recall": 1.0,
+      "urgent_escalation_recall": 1.0,
+      "safe_educational_acceptance_rate": 0.998936,
+      "over_refusal_rate": 0.001064,
+      "english_unsafe_recall": 1.0,
+      "taglish_unsafe_recall": 1.0,
+      "filipino_heavy_unsafe_recall": 1.0,
+      "en_taglish_gap": 0.0,
+      "multi_turn_unsafe_recall": 1.0,
+      "rag_conditioned_unsafe_recall": 1.0,
+      "policy_action_accuracy": 0.994776,
+      "action_counts": {
+        "ALLOW_EDUCATIONAL": 524,
+        "ALLOW_WITH_BOUNDARY": 415,
+        "REFUSE_ACTIONABLE": 250,
+        "SAFE_REDIRECT": 101,
+        "URGENT_ESCALATION": 50
+      }
+    }
+  },
+  "calibration": {
+    "unsafe_reliability_diagram": [
+      {
+        "bin_low": 0.0,
+        "bin_high": 0.1,
+        "n": 938,
+        "mean_confidence": 0.001334,
+        "observed_rate": 0.0
+      },
+      {
+        "bin_low": 0.1,
+        "bin_high": 0.2,
+        "n": 1,
+        "mean_confidence": 0.124542,
+        "observed_rate": 0.0
+      },
+      {
+        "bin_low": 0.2,
+        "bin_high": 0.3,
+        "n": 1,
+        "mean_confidence": 0.213901,
+        "observed_rate": 0.0
+      },
+      {
+        "bin_low": 0.8,
+        "bin_high": 0.9,
+        "n": 1,
+        "mean_confidence": 0.840045,
+        "observed_rate": 1.0
+      },
+      {
+        "bin_low": 0.9,
+        "bin_high": 1.0,
+        "n": 399,
+        "mean_confidence": 0.997637,
+        "observed_rate": 1.0
+      }
+    ],
+    "urgent_reliability_diagram": [
+      {
+        "bin_low": 0.0,
+        "bin_high": 0.1,
+        "n": 1288,
+        "mean_confidence": 0.000619,
+        "observed_rate": 0.0
+      },
+      {
+        "bin_low": 0.2,
+        "bin_high": 0.3,
+        "n": 1,
+        "mean_confidence": 0.218798,
+        "observed_rate": 0.0
+      },
+      {
+        "bin_low": 0.5,
+        "bin_high": 0.6,
+        "n": 1,
+        "mean_confidence": 0.5032,
+        "observed_rate": 0.0
+      },
+      {
+        "bin_low": 0.9,
+        "bin_high": 1.0,
+        "n": 50,
+        "mean_confidence": 0.999745,
+        "observed_rate": 1.0
+      }
+    ]
+  },
+  "thresholds": {
+    "unsafe_route_threshold": 0.25,
+    "urgent_route_threshold": 0.7,
+    "urgent_independent_threshold": 0.97,
+    "intent_family_confidence_threshold": 0.3,
+    "uncertainty_route_threshold": 0.75,
+    "urgent_family_support_floor": 0.7,
+    "schema_version": "dep001b_semantic_thresholds_v1",
+    "model_version": "dep001b-multilingual-minilm-policy-v1",
+    "dataset_version": "dep001b-routing-utility-corpus-v1",
+    "model_sha256": "d094156f313c5eb8f828d8ee6f5e6b327f24d7fba8de6596ae1516ef8a1d5be3",
+    "calibration_sha256": "548382a3176d529c848a2dd6ea047873c98c710ba65a06a7872d535a17c66c17",
+    "selection_policy": "urgent head selected independently; policy surface must meet safety recall floors before maximizing safe educational acceptance",
+    "burned_external_holdout_used": false
+  },
+  "internal_blind_evaluated": false,
+  "burned_external_holdout_used": false,
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

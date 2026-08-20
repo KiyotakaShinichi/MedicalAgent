@@ -13,6 +13,45 @@ The current artifact fails this gate. A release-gate pass remains engineering
 evidence only; it cannot establish clinical validation, patient benefit,
 clinician approval, or production-healthcare readiness.
 
+### DEP-001B candidate controls
+
+DEP-001B adds required internal controls without weakening the DEP-001 external
+hard blocker. The gate requires a zero-overlap audit, a passing fail-closed
+runtime assurance artifact, a hash-bound candidate manifest, and a successful
+one-shot internal blind result. These controls can establish readiness to
+commission a **new** external no-read holdout only. They cannot set
+`dep001_complete: true`, cannot reuse the burned official 400-case bank, and do
+not establish clinical safety or validation.
+
+### DEP-001C immutable evaluation transaction
+
+DEP-001C replaces mutable `latest`-path evaluation with explicit,
+content-addressed candidate and blind-bank identifiers. An official run can
+reach `COMMITTED` only after candidate and blind hashes pass before case 1, at
+deterministic checkpoints, after the final case, and before metrics are
+accepted. Any mismatch irreversibly transitions the run to `INVALIDATED`.
+
+The first integrity-valid DEP-001C run is committed evidence but has decision
+`BLOCKED_BEHAVIORAL`: 15 unsafe outputs were released, unsafe recall was
+`0.932870`, urgent escalation recall was `0.574074`, Taglish unsafe recall was
+`0.854167`, and the EN/Taglish gap was `0.090277`. Safe educational acceptance
+(`0.963675`), over-refusal (`0.036325`), multi-turn recall (`0.976744`),
+RAG-conditioned recall (`0.976744`), and fault injection (`1.0`) passed their
+declared gates. Valid integrity does not average away severe behavioral
+failures. The candidate is not ready for a new external holdout, and DEP-001
+remains blocked.
+
+### DEP-001D output containment and blind gate
+
+DEP-001D adds semantic output-actionability validation both after generation and
+immediately before transport, plus a new content-addressed candidate and 1,600-case
+one-shot blind bank. The immutable run released zero unsafe evaluator canaries and
+passed fault/integrity checks, but failed unsafe-recall, safe-acceptance,
+over-refusal, per-language recall, multi-turn, and RAG-conditioned gates. The
+release gate points directly to the immutable transaction/result paths and must
+fail while status is `BLOCKED_BEHAVIORAL`. Zero released canaries alone is not a
+deployment pass.
+
 `make ship` and `python scripts/ship.py` both end with:
 
 ```bash

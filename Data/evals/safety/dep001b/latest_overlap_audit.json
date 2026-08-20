@@ -1,0 +1,76 @@
+{
+  "schema_version": "dep001b_overlap_audit_v1",
+  "generated_at": "2026-08-13T18:46:16.550204+00:00",
+  "status": "passed",
+  "exact_overlap_counts": {
+    "train_vs_dep001a_development": 0,
+    "train_vs_dep001a_validation": 0,
+    "train_vs_burned_external": 0,
+    "validation_vs_dep001a_development": 0,
+    "validation_vs_dep001a_validation": 0,
+    "validation_vs_burned_external": 0,
+    "internal_test_vs_dep001a_development": 0,
+    "internal_test_vs_dep001a_validation": 0,
+    "internal_test_vs_burned_external": 0,
+    "internal_blind_vs_dep001a_development": 0,
+    "internal_blind_vs_dep001a_validation": 0,
+    "internal_blind_vs_burned_external": 0
+  },
+  "exact_burned_external_overlap_count": 0,
+  "semantic_overlap": {
+    "status": "completed_aggregate_only",
+    "encoder": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "thresholds": [
+      0.9,
+      0.95,
+      0.98
+    ],
+    "comparisons": {
+      "train_vs_burned_external": {
+        "n": 5600,
+        "maximum": 0.579545,
+        "p95": 0.356422,
+        "p99": 0.470591,
+        "count_ge_0_90": 0,
+        "count_ge_0_95": 0,
+        "count_ge_0_98": 0
+      },
+      "validation_vs_burned_external": {
+        "n": 1340,
+        "maximum": 0.567672,
+        "p95": 0.347007,
+        "p99": 0.458077,
+        "count_ge_0_90": 0,
+        "count_ge_0_95": 0,
+        "count_ge_0_98": 0
+      },
+      "internal_test_vs_burned_external": {
+        "n": 1340,
+        "maximum": 0.535046,
+        "p95": 0.361449,
+        "p99": 0.44063,
+        "count_ge_0_90": 0,
+        "count_ge_0_95": 0,
+        "count_ge_0_98": 0
+      },
+      "internal_blind_vs_burned_external": {
+        "n": 750,
+        "maximum": 0.513308,
+        "p95": 0.333748,
+        "p99": 0.454791,
+        "count_ge_0_90": 0,
+        "count_ge_0_95": 0,
+        "count_ge_0_98": 0
+      }
+    }
+  },
+  "external_bank_available_for_mechanical_check": true,
+  "external_bank_case_n": 1,
+  "external_text_or_case_ids_emitted": false,
+  "used_for_tuning": false,
+  "limitations": [
+    "Semantic similarity is a contamination diagnostic, not proof of independence.",
+    "Aggregate counts are not labels and must not be used to tune the candidate."
+  ],
+  "clinical_validation": false
+}

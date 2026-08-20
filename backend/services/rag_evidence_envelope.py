@@ -20,6 +20,8 @@ from enum import Enum
 from typing import Any, Mapping, MutableMapping, Sequence
 from uuid import uuid4
 
+from backend.services.dep001d_output_actionability import classify_output_actionability
+
 
 EVIDENCE_ENVELOPE_VERSION = "rag_evidence_envelope_v1"
 EVIDENCE_POLICY_VERSION = "rag_release_policy_v1"
@@ -469,6 +471,45 @@ def enforce_transport_release(result: MutableMapping[str, Any], *, query: str = 
     envelope_raw = container.get("evidence_envelope") or result.get("evidence_envelope")
     envelope, error = parse_evidence_envelope(envelope_raw)
     reply = result.get("reply") if "reply" in result else container.get("reply")
+    try:
+        output_guard = classify_output_actionability(reply if isinstance(reply, str) else "")
+    except Exception as exc:
+        from backend.services.dep001d_output_actionability import OutputActionabilityDecision
+
+        output_guard = OutputActionabilityDecision(
+            decision="blocked",
+            actionable_probability=1.0,
+            uncertainty=1.0,
+            threshold=0.0,
+            uncertainty_threshold=0.0,
+            model_version="unavailable",
+            reason="output_actionability_validation_unavailable",
+            failure_reason=f"transport_validator_exception:{type(exc).__name__}",
+        )
+    if output_guard.blocked:
+        reason = f"semantic_output_guard:{output_guard.reason}"
+        _increment("rag_release_denied_total")
+        _increment("rag_validation_failure_total")
+        _increment("rag_abstention_total")
+        failed = build_fail_closed_error_result(
+            query=query,
+            request_id=(envelope.request_id if envelope else None),
+            error_code=reason,
+            result=container,
+        )
+        trace = failed["evidence_envelope"].setdefault("trace_metadata", {})
+        trace["semantic_output_actionability"] = output_guard.to_dict()
+        safe_reply = failed["reply"]
+        result["reply"] = safe_reply
+        result["citations"] = []
+        result["evidence_envelope"] = failed["evidence_envelope"]
+        result["release_authorization"] = failed["release_authorization"]
+        if container is not result:
+            container["reply"] = safe_reply
+            container["citations"] = []
+            container["evidence_envelope"] = failed["evidence_envelope"]
+            container["release_authorization"] = failed["release_authorization"]
+        return result
     if envelope is None or response_digest(reply) != envelope.response_digest:
         reason = error or "response_changed_after_authorization"
         _increment("rag_release_denied_total")

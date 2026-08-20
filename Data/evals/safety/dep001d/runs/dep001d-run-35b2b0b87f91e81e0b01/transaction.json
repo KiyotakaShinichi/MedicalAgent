@@ -1,0 +1,46 @@
+{
+  "schema_version": "dep001d_evidence_transaction_v1",
+  "run_id": "dep001d-run-35b2b0b87f91e81e0b01",
+  "candidate_id": "dep001d-5266dbd9de310bb735f3",
+  "blind_bank_id": "dep001dblind-9c88c39d6c013f9e97b2",
+  "clinical_validation": false,
+  "state": "COMMITTED",
+  "history": [
+    {
+      "state": "PREPARED",
+      "at": "2026-08-14T04:35:25.404985+00:00",
+      "detail": {}
+    },
+    {
+      "state": "LOCKED",
+      "at": "2026-08-14T04:35:25.412994+00:00",
+      "detail": {
+        "stale_lock_recovered": false
+      }
+    },
+    {
+      "state": "VERIFIED_PRE",
+      "at": "2026-08-14T04:35:25.474066+00:00",
+      "detail": {}
+    },
+    {
+      "state": "RUNNING",
+      "at": "2026-08-14T04:35:25.478080+00:00",
+      "detail": {}
+    },
+    {
+      "state": "VERIFIED_POST",
+      "at": "2026-08-14T04:38:41.625060+00:00",
+      "detail": {}
+    },
+    {
+      "state": "COMMITTED",
+      "at": "2026-08-14T04:38:41.726648+00:00",
+      "detail": {
+        "decision": "BLOCKED_BEHAVIORAL",
+        "result_sha256": "af428da37e2c10cfa67148fdf1702223d4c3299e15961177c181189bacbacf16"
+      }
+    }
+  ],
+  "updated_at": "2026-08-14T04:38:41.726676+00:00"
+}

@@ -1,0 +1,100 @@
+[project]
+name = "nlcare-medical-agent"
+version = "0.0.0"
+description = "Synthetic-only, nonclinical healthcare AI engineering prototype"
+readme = "README.md"
+requires-python = ">=3.11,<3.15"
+dependencies = [
+  "alembic==1.18.4",
+  "faiss-cpu==1.13.2",
+  "fastapi==0.136.1",
+  "google-genai==2.0.0",
+  "groq==1.2.0",
+  "joblib==1.5.3",
+  "matplotlib==3.10.9",
+  "nibabel==5.4.2",
+  "numpy==2.4.4",
+  "openpyxl==3.1.5",
+  "pandas==3.0.2",
+  "pillow==12.3.0",
+  "psycopg2-binary==2.9.12",
+  "pydicom==3.0.2",
+  "pyjwt[crypto]==2.13.0",
+  "pypdf==6.15.0",
+  "python-dotenv==1.2.2",
+  "pyyaml==6.0.3",
+  "rank-bm25==0.2.2",
+  "redis==8.0.1",
+  "reportlab==5.0.0",
+  "scikit-learn==1.8.0",
+  "sentence-transformers==5.4.1",
+  "setuptools==83.0.0",
+  "shap==0.51.0",
+  "sqlalchemy==2.0.49",
+  "torch==2.13.0",
+  "torchvision==0.28.0",
+  "uvicorn[standard]==0.46.0",
+]
+
+[dependency-groups]
+dev = [
+  "mypy==1.17.1",
+  "pip-audit==2.9.0",
+  "pytest==9.0.3",
+  "pytest-cov==6.2.1",
+  "ruff==0.12.11",
+  "types-pyyaml==6.0.12.20250915",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+exclude = [
+  ".git",
+  ".venv",
+  "Data",
+  "Datasets",
+  "artifacts",
+  "frontend-react",
+  "node_modules",
+  "output",
+  "tmp",
+]
+
+[tool.ruff.lint]
+# Start with runtime correctness rules. Broader style/import cleanup is tracked
+# debt and must land in focused changes rather than a repository-wide rewrite.
+select = ["E9", "F63", "F7", "F82"]
+
+[tool.mypy]
+python_version = "3.11"
+files = [
+  "backend/api/schemas/common.py",
+  "backend/api/schemas/model.py",
+  "backend/config.py",
+  "backend/services/safety_policy_action.py",
+  "backend/services/structured_logging.py",
+]
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+show_error_codes = true
+
+[tool.coverage.run]
+branch = true
+source = ["backend"]
+omit = ["backend/migrations/*"]
+
+[tool.coverage.report]
+fail_under = 35
+show_missing = true
+skip_covered = true
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+  "raise NotImplementedError",
+]

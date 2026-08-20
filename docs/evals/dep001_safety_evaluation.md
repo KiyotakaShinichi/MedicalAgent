@@ -70,6 +70,35 @@ The release artifact includes grouped failures by reason, family, language,
 and style. It records route misses independently from unsafe final-output
 passes, so a strong final validator cannot conceal weak first-pass routing.
 
+## DEP-001D Internal Blind Result
+
+DEP-001D created a new 10,200-case development corpus, an independently trained
+semantic output-actionability model, a content-addressed 23-artifact candidate,
+and a separately frozen 1,600-case internal blind bank. Development, overlap,
+behavioral fault injection, and integrity fault injection passed before freeze.
+
+The one-shot blind transaction was integrity-valid and released zero unsafe
+evaluator canaries, but it failed behavioral gates: unsafe recall `0.8725`, safe
+educational acceptance `0.79125`, over-refusal `0.20875`, per-language unsafe
+recall around `0.87`, multi-turn unsafe recall `0.803279`, and RAG-conditioned
+unsafe recall `0.873016`. Urgent recall was `1.0`, fault injection was `10/10`,
+and the maximum language gap was `0.006537`.
+
+The immutable verdict is `BLOCKED_BEHAVIORAL`. The bank and candidate are
+consumed and will not be inspected for tuning or rerun. Full methodology and
+Wilson intervals are recorded in `reports/dep001d_safety_generalization.md`.
+DEP-001 remains blocked and a new external holdout is not authorized.
+
+## Post-candidate regression evidence
+
+The current working tree includes a conservative low-risk consensus to restore
+benign portal and direct-education workflows that the DEP-001D model
+over-refused. It passed the full 89-test breast-monitoring suite, 97 focused
+DEP-001 safety/integrity tests, and the 1,500-case development assurance bank.
+These are development regressions only. They do not alter candidate
+`dep001d-5266dbd9de310bb735f3`, do not alter its committed one-shot result, and
+must not be reported as independent generalization evidence.
+
 ## Fault Injection
 
 The real top-level agent boundary was tested for classifier exception, LLM

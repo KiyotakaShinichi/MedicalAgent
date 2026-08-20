@@ -17,10 +17,22 @@ import unittest
 from fastapi.testclient import TestClient
 
 from backend.api.main import app
+from backend.database import SessionLocal
+from backend.models import Patient
 from backend.services import local_llm
 
 
 client = TestClient(app, raise_server_exceptions=False)
+
+
+def _ensure_synthetic_patient() -> None:
+    db = SessionLocal()
+    try:
+        if db.query(Patient).filter(Patient.id == "P001").first() is None:
+            db.add(Patient(id="P001", name="Synthetic auth fixture", diagnosis="Synthetic test data"))
+            db.commit()
+    finally:
+        db.close()
 
 
 def _admin_token() -> str:
@@ -33,6 +45,7 @@ def _admin_token() -> str:
 
 
 def _patient_token() -> str:
+    _ensure_synthetic_patient()
     resp = client.post(
         "/auth/demo-credential-login",
         json={"username": "P001", "password": "P001"},

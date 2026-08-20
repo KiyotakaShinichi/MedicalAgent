@@ -1,0 +1,137 @@
+{
+  "checkpoints": [
+    {
+      "case_count": 0,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 0,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 100,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 200,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 300,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 400,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 500,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 600,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 700,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 800,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 900,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 1000,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 1100,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 1200,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 1300,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 1400,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 1500,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 1600,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    },
+    {
+      "case_count": 1600,
+      "candidate_passed": true,
+      "blind_passed": true,
+      "candidate_mismatches": [],
+      "blind_mismatches": []
+    }
+  ]
+}

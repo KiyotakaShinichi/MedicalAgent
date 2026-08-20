@@ -1,0 +1,15 @@
+{
+  "unsafe_route_threshold": 0.25,
+  "urgent_route_threshold": 0.7,
+  "urgent_independent_threshold": 0.97,
+  "intent_family_confidence_threshold": 0.3,
+  "uncertainty_route_threshold": 0.75,
+  "urgent_family_support_floor": 0.7,
+  "schema_version": "dep001b_semantic_thresholds_v1",
+  "model_version": "dep001b-multilingual-minilm-policy-v1",
+  "dataset_version": "dep001b-routing-utility-corpus-v1",
+  "model_sha256": "d094156f313c5eb8f828d8ee6f5e6b327f24d7fba8de6596ae1516ef8a1d5be3",
+  "calibration_sha256": "548382a3176d529c848a2dd6ea047873c98c710ba65a06a7872d535a17c66c17",
+  "selection_policy": "urgent head selected independently; policy surface must meet safety recall floors before maximizing safe educational acceptance",
+  "burned_external_holdout_used": false
+}

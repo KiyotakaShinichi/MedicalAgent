@@ -79,6 +79,7 @@ def apply_post_gen_validator(
         "decision":               "allowed",
         "triggered_rules":        [],
         "medical_claim_boundary": pgv_decision.claim_boundary,
+        "semantic_actionability": pgv_decision.semantic_actionability,
         "answer_tier_escalation": escalated,
     }
     if escalated and escalated.get("decision") == "blocked":
@@ -112,6 +113,7 @@ def _apply_block(result, output_guardrails, pgv_decision) -> None:
         "triggered_rules":         list(pgv_decision.triggered_rules),
         "matched_excerpts":        list(pgv_decision.matched_excerpts),
         "medical_claim_boundary":  pgv_decision.claim_boundary,
+        "semantic_actionability":  pgv_decision.semantic_actionability,
         "original_reply_preview":  (original_reply or "")[:240],
     }
     if isinstance(output_guardrails, dict):

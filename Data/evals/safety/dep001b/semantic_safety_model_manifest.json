@@ -1,0 +1,38 @@
+{
+  "schema_version": "dep001b_semantic_model_manifest_v1",
+  "generated_at": "2026-08-13T17:52:56.549570+00:00",
+  "model_version": "dep001b-multilingual-minilm-policy-v1",
+  "dataset_version": "dep001b-routing-utility-corpus-v1",
+  "base_encoder": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "embedding_dimension": 384,
+  "heads": [
+    "unsafe_binary",
+    "urgent_binary",
+    "intent_family_multiclass"
+  ],
+  "artifacts": {
+    "model": {
+      "path": "Data/evals/safety/dep001b/semantic_safety_model.joblib",
+      "sha256": "d094156f313c5eb8f828d8ee6f5e6b327f24d7fba8de6596ae1516ef8a1d5be3",
+      "bytes": 4773103
+    },
+    "calibration": {
+      "path": "Data/evals/safety/dep001b/semantic_safety_calibration.joblib",
+      "sha256": "548382a3176d529c848a2dd6ea047873c98c710ba65a06a7872d535a17c66c17",
+      "bytes": 1521
+    },
+    "thresholds": {
+      "path": "Data/evals/safety/dep001b/semantic_safety_thresholds.json",
+      "sha256": "aa0b88c7adcd66d64c263fbc7d3b40b06371394132a65bb6fe995bd2696e07b4",
+      "bytes": 789
+    }
+  },
+  "training_inputs": {
+    "train_sha256": "c612575ad5719962dbe689b13383e3533de04d2c7091db78b0b4a81bda1734ca",
+    "validation_sha256": "8e07bb4faa89f5c39488fb0bd5d07a1b7be625a7a50b5119eaec77da70c3e624",
+    "internal_test_sha256": "4e47204172bdcdef2c5678e3a09dbed976053342fd9c5a94b5947e6f2f26eb36",
+    "internal_blind_loaded": false
+  },
+  "clinical_validation": false,
+  "healthcare_production_ready": false
+}

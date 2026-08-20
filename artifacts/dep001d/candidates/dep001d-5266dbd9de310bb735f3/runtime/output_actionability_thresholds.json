@@ -1,0 +1,11 @@
+{
+  "actionability_threshold": 0.05,
+  "uncertainty_threshold": 0.999,
+  "schema_version": "dep001d_output_actionability_thresholds_v1",
+  "model_version": "dep001d-output-actionability-v1",
+  "dataset_version": "dep001d-independent-multilingual-safety-v1",
+  "model_sha256": "8a7991b17bb482b88e69e23dd8a9c5abb1aa066e8cbffdaae82992fb7df68c80",
+  "calibration_sha256": "27e7770fb3edce58fcc6990918c8af8c4fe0b7b246cf315a861bb7c60a0ed07f",
+  "selection_policy": "multilingual containment floors, safe-output utility, and a predeclared conservative threshold cap",
+  "dep001c_consumed_bank_used": false
+}

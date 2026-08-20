@@ -1,9 +1,28 @@
 # Dependency reproducibility
 
-`requirements-lock.txt` pins direct Python dependencies. The generated
-`requirements-lock-py314-win.txt` captures every installed distribution for the
-known-good CPython 3.14 Windows engineering environment, together with its
-interpreter/platform fingerprint. Refresh and audit it from that environment:
+`pyproject.toml` and `uv.lock` are the canonical cross-platform dependency
+contract. Direct runtime and development dependencies are exact-pinned in the
+project manifest; the lock records the resolved transitive graph for supported
+Python versions. CI must install with a pinned uv version and `uv sync --frozen`
+so dependency resolution cannot drift during a build.
+
+Update dependencies intentionally:
+
+```powershell
+uv lock --upgrade-package <package-name>
+uv sync --frozen
+python scripts/check_dependency_contract.py
+python -m pip check
+```
+
+`requirements.txt` and `requirements-serving.txt` remain exact-pinned
+compatibility manifests for legacy tooling and container profiles. They are not
+the canonical transitive lock.
+
+The generated `requirements-lock-py314-win.txt` remains a historical snapshot
+of the known-good CPython 3.14 Windows engineering environment, together with
+its interpreter/platform fingerprint. Refresh and audit it only from that
+environment:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_dependency_lock_audit.py --refresh-transitive-lock
@@ -12,12 +31,9 @@ interpreter/platform fingerprint. Refresh and audit it from that environment:
 The audit reports direct-lock drift, transitive graph drift, missing or extra
 distributions, the lock SHA-256, and an environment-fingerprint mismatch.
 
-This transitive lock is intentionally platform-scoped. The lock audit itself
-does not reproduce the Python 3.11 Linux CI environment or prove secure
-deployment. Run `python scripts/run_dependency_security_scan.py` separately to
-audit the Windows Python lock and frontend lockfile; advisory findings remain
-release warnings until upgraded, mitigated, or explicitly accepted with scope.
-A deployment pipeline still needs a separately generated Linux lock, reviewed
-container digest, SBOM, transitive/container scans, image signing, and
-verification in an isolated environment. None of these controls establishes
-compliance or makes NLCare healthcare production ready.
+The Windows snapshot is intentionally platform-scoped and is not the CI lock.
+Run dependency and container audits separately; a reproducible graph is not a
+security certification. Deployment still requires reviewed image digests,
+SBOMs, transitive/container scans, signing, and isolated verification. None of
+these controls establishes compliance or makes NLCare healthcare production
+ready.
