@@ -35,6 +35,7 @@ import type {
   SaaSProject,
   SaaSPlatformJob,
 } from "../types/api";
+import { redactUrlPath, reportError } from "../lib/telemetry";
 
 /**
  * Backend base URL.  Resolved from (in order):
@@ -51,7 +52,26 @@ export const API_BASE: string =
 const BASE = API_BASE;
 const inFlightGetRequests = new Map<string, Promise<unknown>>();
 
-async function responseError(response: Response): Promise<Error> {
+/**
+ * An API failure carrying the HTTP status, so callers (and telemetry) can tell
+ * an expected 4xx apart from a server fault without re-parsing the message.
+ */
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+
+  /** 4xx responses are product states: unauthorised, invalid input, not found. */
+  get isExpected(): boolean {
+    return this.status >= 400 && this.status < 500;
+  }
+}
+
+async function responseError(response: Response): Promise<ApiError> {
   const raw = await response.text().catch(() => "");
   if (raw) {
     try {
@@ -62,12 +82,12 @@ async function responseError(response: Response): Promise<Error> {
           : typeof payload.message === "string"
             ? payload.message
             : null;
-      if (message) return new Error(message);
+      if (message) return new ApiError(message, response.status);
     } catch {
-      return new Error(`Request failed (${response.status}): ${raw}`);
+      return new ApiError(`Request failed (${response.status}): ${raw}`, response.status);
     }
   }
-  return new Error(`Request failed (${response.status})`);
+  return new ApiError(`Request failed (${response.status})`, response.status);
 }
 
 function getToken(): string | null {
@@ -105,6 +125,20 @@ async function request<T>(
         throw await responseError(res);
       }
       return res.json() as Promise<T>;
+    })
+    .catch((error: unknown) => {
+      // Report once, here, at the network boundary. `path` and `method` are
+      // safe to record; the request body is not and is never attached.
+      reportError(error, {
+        surface: "api.request",
+        kind: error instanceof ApiError && error.isExpected ? "expected" : "unexpected",
+        detail: {
+          method,
+          route: redactUrlPath(path),
+          status: error instanceof ApiError ? error.status : undefined,
+        },
+      });
+      throw error;
     })
     .finally(() => {
       if (cacheKey) inFlightGetRequests.delete(cacheKey);

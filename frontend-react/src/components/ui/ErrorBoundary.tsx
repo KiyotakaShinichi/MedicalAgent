@@ -1,5 +1,6 @@
 import { Component, type ReactNode } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
+import { reportError } from "../../lib/telemetry";
 
 interface Props {
   children: ReactNode;
@@ -28,9 +29,15 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Keep console reporting; in a portfolio demo this is enough. In
-    // production this is where Sentry / Datadog instrumentation would go.
-    console.error("[ErrorBoundary]", this.props.surface ?? "unknown", error, info);
+    // A render crash is always a defect, never an expected product state, so
+    // it is reported as "unexpected". The component stack goes through the
+    // same redaction path as everything else — stacks can embed props, and
+    // props on this app carry patient data.
+    reportError(error, {
+      surface: `ErrorBoundary:${this.props.surface ?? "unknown"}`,
+      kind: "unexpected",
+      detail: { componentStack: info.componentStack },
+    });
   }
 
   handleReset = () => {

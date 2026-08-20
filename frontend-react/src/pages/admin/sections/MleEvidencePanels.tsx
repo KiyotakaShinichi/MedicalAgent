@@ -3,6 +3,7 @@ import { Badge } from "../../../components/ui/Badge";
 import { statusVariant } from "../../../components/ui/badgeUtils";
 import { Button } from "../../../components/ui/Button";
 import { MetricCard } from "../../../components/ui/MetricCard";
+import { ExternalLink } from "../../../components/ui/ExternalLink";
 import type {
   NoiseEvalResult,
   TemporalEvalResult,
@@ -103,9 +104,9 @@ export function PublicBiomarkerManifestPanel({ data }: { data: PublicBiomarkerDa
             {data.datasets.map((source) => (
               <tr key={source.id} style={{ borderBottom: "1px solid var(--border)" }} className="last:border-0">
                 <td className="py-2 pr-4">
-                  <a href={source.url} target="_blank" rel="noreferrer" className="font-semibold" style={{ color: "var(--text)" }}>
+                  <ExternalLink href={source.url} className="font-semibold" style={{ color: "var(--text)" }}>
                     {source.name}
-                  </a>
+                  </ExternalLink>
                   <p style={{ color: "var(--text-faint)" }}>{source.provider}</p>
                 </td>
                 <td className="py-2 pr-4" style={{ color: "var(--text-dim)" }}>{source.predictor_fields.slice(0, 4).join(", ")}</td>

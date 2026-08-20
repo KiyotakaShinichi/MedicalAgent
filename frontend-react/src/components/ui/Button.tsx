@@ -38,6 +38,10 @@ export function Button({
   return (
     <button
       disabled={disabled || loading}
+      // Announce in-flight work: the spinner swap is a purely visual cue, so
+      // without this a screen-reader user gets no signal that the action is
+      // running rather than simply disabled.
+      aria-busy={loading || undefined}
       className={clsx(
         "inline-flex items-center justify-center rounded-md font-medium transition-opacity",
         "hover:opacity-80 active:opacity-60 disabled:opacity-40 disabled:cursor-not-allowed",

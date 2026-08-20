@@ -42,6 +42,24 @@ jobs:
         working-directory: frontend-react
         run: npm run typecheck
 
+      # Runs in the fast lane as well as in quality-gates. quality-gates only
+      # starts after the full offline backend suite and the dependency audit,
+      # so without this a frontend-only regression is not reported for tens of
+      # minutes. Coverage is emitted for inspection but is not yet gated on a
+      # threshold — see reports/frontend_production_hardening.md.
+      - name: Frontend unit tests
+        working-directory: frontend-react
+        run: npm run test:coverage
+
+      - name: Upload frontend coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend-react/coverage
+          if-no-files-found: ignore
+          retention-days: 7
+
   full-offline-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 60

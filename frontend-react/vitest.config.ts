@@ -14,5 +14,21 @@ export default defineConfig({
     include: ["tests/**/*.test.{ts,tsx}"],
     exclude: ["tests/e2e/**", "node_modules/**"],
     css: false,
+    coverage: {
+      provider: "v8",
+      reportsDirectory: "coverage",
+      reporter: ["text-summary", "json-summary", "lcov"],
+      include: ["src/**/*.{ts,tsx}"],
+      // Excluded from the denominator on purpose:
+      //   - generated-openapi.d.ts and types/*     : declarations, no runtime code
+      //   - main.tsx                               : DOM bootstrap, covered by e2e
+      //   - assets                                 : non-code
+      exclude: [
+        "src/types/**",
+        "src/main.tsx",
+        "src/vite-env.d.ts",
+        "src/assets/**",
+      ],
+    },
   },
 });

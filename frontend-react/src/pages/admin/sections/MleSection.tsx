@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { RefreshCw, AlertTriangle, Info } from "lucide-react";
 import { Badge } from "../../../components/ui/Badge";
 import { statusVariant } from "../../../components/ui/badgeUtils";
@@ -8,6 +8,7 @@ import { MetricCard } from "../../../components/ui/MetricCard";
 import { MetricGlossary, ALL_METRIC_SPECS } from "../../../components/ui/MetricInterpretation";
 import { LoadingPane, ErrorPane, EmptyPane } from "../../../components/ui/Spinner";
 import { useApi } from "../../../hooks/useApi";
+import { useArtifactRunner } from "../../../hooks/useArtifactRunner";
 import { LeakageAuditCard } from "./cards/LeakageAuditCard";
 import { EvidenceAbstentionCard } from "./cards/EvidenceAbstentionCard";
 import { FailureModeRegistryCard } from "./cards/FailureModeRegistryCard";
@@ -86,7 +87,6 @@ interface Props { analytics: AdminAnalytics; onRefresh: () => void }
 
 export function MleSection({ analytics, onRefresh }: Props) {
   const mle = analytics.mle_readiness;
-  const [runningMle, setRunningMle] = useState(false);
   const [showGlossary, setShowGlossary] = useState(false);
 
   const { data: trainingReport, status: trStatus } = useApi(getTrainingReport, []);
@@ -111,164 +111,76 @@ export function MleSection({ analytics, onRefresh }: Props) {
   const { data: modalityComparison, status: modalityComparisonStatus, refetch: refetchModalityComparison } = useApi(
     getModalityRobustnessComparison, [],
   );
-  const [runningModalityComparison, setRunningModalityComparison] = useState(false);
   const { data: conformalCalibration, status: conformalStatus, refetch: refetchConformalCalibration } = useApi(
     getResponseConformalCalibration, [],
   );
   const { data: robustnessStress, status: robustnessStressStatus, refetch: refetchRobustnessStress } = useApi(
     getRobustnessStress, [],
   );
-  const [runningConformalCalibration, setRunningConformalCalibration] = useState(false);
-  const [runningRobustnessStress, setRunningRobustnessStress] = useState(false);
 
   const { data: generatorCard, status: generatorCardStatus, refetch: refetchGeneratorCard } = useApi(getSyntheticGeneratorCard, []);
   const { data: failureRegistry, status: failureRegistryStatus, refetch: refetchFailureRegistry } = useApi(getFailureModeRegistry, []);
   const { data: kbGovernance, status: kbGovernanceStatus, refetch: refetchKbGovernance } = useApi(getKbSourceGovernance, []);
-  const [runningGeneratorCard, setRunningGeneratorCard] = useState(false);
-  const [runningFailureRegistry, setRunningFailureRegistry] = useState(false);
-  const [runningKbGovernance, setRunningKbGovernance] = useState(false);
-  const [runningCandidate, setRunningCandidate] = useState(false);
-  const [runningLeakageAudit, setRunningLeakageAudit] = useState(false);
-  const [runningAbstentionEval, setRunningAbstentionEval] = useState(false);
-  const [runningBiomarkerManifest, setRunningBiomarkerManifest] = useState(false);
-  const [runningBiomarkerMapping, setRunningBiomarkerMapping] = useState(false);
-  const [runningCbioMapping, setRunningCbioMapping] = useState(false);
-  const [runningFullFeatureAblation, setRunningFullFeatureAblation] = useState(false);
 
-  async function runMle() {
-    setRunningMle(true);
-    try { await runMleReadiness(); onRefresh(); } finally { setRunningMle(false); }
-  }
+  // Each of these was previously a `useState` flag plus a hand-written
+  // `try/finally` with no `catch`, so a failed regeneration reset the spinner
+  // and then escaped as an unhandled promise rejection with nothing shown to
+  // the operator. `useArtifactRunner` keeps the spinner behaviour, captures
+  // the failure, and reports it — see `runnerErrors` below for the surface.
+  const { running: runningMle, run: runMle, error: mleError } =
+    useArtifactRunner(runMleReadiness, onRefresh, "admin.mle.readiness");
+  const { running: runningCandidate, run: runCandidateComparison, error: candidateError } =
+    useArtifactRunner(runCurrentVsRealismCandidate, refetchCandidate, "admin.mle.candidateComparison");
+  const { running: runningBiomarkerManifest, run: refreshBiomarkerManifest, error: biomarkerManifestError } =
+    useArtifactRunner(runPublicBiomarkerDatasetManifest, refetchBiomarkerManifest, "admin.mle.biomarkerManifest");
+  const { running: runningBiomarkerMapping, run: refreshBiomarkerMapping, error: biomarkerMappingError } =
+    useArtifactRunner(runPublicBiomarkerMappingReadiness, refetchBiomarkerMapping, "admin.mle.biomarkerMapping");
+  const { running: runningLeakageAudit, run: refreshLeakageAudit, error: leakageAuditError } =
+    useArtifactRunner(runLeakageAudit, refetchLeakageAudit, "admin.mle.leakageAudit");
+  const { running: runningAbstentionEval, run: refreshAbstentionEval, error: abstentionEvalError } =
+    useArtifactRunner(runEvidenceAbstentionEval, refetchAbstentionEval, "admin.mle.abstentionEval");
+  const { running: runningModalityComparison, run: refreshModalityComparison, error: modalityComparisonError } =
+    useArtifactRunner(runModalityRobustnessComparison, refetchModalityComparison, "admin.mle.modalityComparison");
+  const { running: runningConformalCalibration, run: refreshConformalCalibration, error: conformalCalibrationError } =
+    useArtifactRunner(runResponseConformalCalibration, refetchConformalCalibration, "admin.mle.conformalCalibration");
+  const { running: runningRobustnessStress, run: refreshRobustnessStress, error: robustnessStressError } =
+    useArtifactRunner(runRobustnessStress, refetchRobustnessStress, "admin.mle.robustnessStress");
+  const { running: runningGeneratorCard, run: refreshGeneratorCard, error: generatorCardError } =
+    useArtifactRunner(runSyntheticGeneratorCard, refetchGeneratorCard, "admin.mle.generatorCard");
+  const { running: runningFailureRegistry, run: refreshFailureRegistry, error: failureRegistryError } =
+    useArtifactRunner(runFailureModeRegistry, refetchFailureRegistry, "admin.mle.failureRegistry");
+  const { running: runningKbGovernance, run: refreshKbGovernance, error: kbGovernanceError } =
+    useArtifactRunner(runKbSourceGovernance, refetchKbGovernance, "admin.mle.kbGovernance");
+  const { running: runningCbioMapping, run: refreshCbioMapping, error: cbioMappingError } =
+    useArtifactRunner(
+      useCallback(() => runCbioportalBiomarkerSchemaMapping(true), []),
+      refetchCbioMapping,
+      "admin.mle.cbioMapping",
+    );
+  const { running: runningFullFeatureAblation, run: refreshFullFeatureAblation, error: fullFeatureAblationError } =
+    useArtifactRunner(runFullFeatureGroupAblation, refetchFullFeatureAblation, "admin.mle.fullFeatureAblation");
 
-  async function runCandidateComparison() {
-    setRunningCandidate(true);
-    try {
-      await runCurrentVsRealismCandidate();
-      await refetchCandidate();
-    } finally {
-      setRunningCandidate(false);
-    }
-  }
-
-  async function refreshBiomarkerManifest() {
-    setRunningBiomarkerManifest(true);
-    try {
-      await runPublicBiomarkerDatasetManifest();
-      await refetchBiomarkerManifest();
-    } finally {
-      setRunningBiomarkerManifest(false);
-    }
-  }
-
-  async function refreshBiomarkerMapping() {
-    setRunningBiomarkerMapping(true);
-    try {
-      await runPublicBiomarkerMappingReadiness();
-      await refetchBiomarkerMapping();
-    } finally {
-      setRunningBiomarkerMapping(false);
-    }
-  }
-
-  async function refreshLeakageAudit() {
-    setRunningLeakageAudit(true);
-    try {
-      await runLeakageAudit();
-      await refetchLeakageAudit();
-    } finally {
-      setRunningLeakageAudit(false);
-    }
-  }
-
-  async function refreshAbstentionEval() {
-    setRunningAbstentionEval(true);
-    try {
-      await runEvidenceAbstentionEval();
-      await refetchAbstentionEval();
-    } finally {
-      setRunningAbstentionEval(false);
-    }
-  }
-
-  async function refreshModalityComparison() {
-    setRunningModalityComparison(true);
-    try {
-      await runModalityRobustnessComparison();
-      await refetchModalityComparison();
-    } finally {
-      setRunningModalityComparison(false);
-    }
-  }
-
-  async function refreshConformalCalibration() {
-    setRunningConformalCalibration(true);
-    try {
-      await runResponseConformalCalibration();
-      await refetchConformalCalibration();
-    } finally {
-      setRunningConformalCalibration(false);
-    }
-  }
-
-  async function refreshRobustnessStress() {
-    setRunningRobustnessStress(true);
-    try {
-      await runRobustnessStress();
-      await refetchRobustnessStress();
-    } finally {
-      setRunningRobustnessStress(false);
-    }
-  }
-
-  async function refreshGeneratorCard() {
-    setRunningGeneratorCard(true);
-    try {
-      await runSyntheticGeneratorCard();
-      await refetchGeneratorCard();
-    } finally {
-      setRunningGeneratorCard(false);
-    }
-  }
-
-  async function refreshFailureRegistry() {
-    setRunningFailureRegistry(true);
-    try {
-      await runFailureModeRegistry();
-      await refetchFailureRegistry();
-    } finally {
-      setRunningFailureRegistry(false);
-    }
-  }
-
-  async function refreshKbGovernance() {
-    setRunningKbGovernance(true);
-    try {
-      await runKbSourceGovernance();
-      await refetchKbGovernance();
-    } finally {
-      setRunningKbGovernance(false);
-    }
-  }
-
-  async function refreshCbioMapping() {
-    setRunningCbioMapping(true);
-    try {
-      await runCbioportalBiomarkerSchemaMapping(true);
-      await refetchCbioMapping();
-    } finally {
-      setRunningCbioMapping(false);
-    }
-  }
-
-  async function refreshFullFeatureAblation() {
-    setRunningFullFeatureAblation(true);
-    try {
-      await runFullFeatureGroupAblation();
-      await refetchFullFeatureAblation();
-    } finally {
-      setRunningFullFeatureAblation(false);
-    }
-  }
+  /**
+   * First failure among the artifact runners. Only one banner is shown because
+   * these are operator-triggered one at a time; listing every stale error would
+   * be noise.
+   */
+  const runnerError = [
+    mleError,
+    candidateError,
+    biomarkerManifestError,
+    biomarkerMappingError,
+    leakageAuditError,
+    abstentionEvalError,
+    modalityComparisonError,
+    conformalCalibrationError,
+    robustnessStressError,
+    generatorCardError,
+    failureRegistryError,
+    kbGovernanceError,
+    cbioMappingError,
+    fullFeatureAblationError,
+  ].find(Boolean) ?? null;
 
   const tr = (trainingReport as { result?: Record<string, unknown> } | null)?.result;
   const ho = (holdout as { result?: Record<string, unknown> } | null)?.result;
@@ -283,6 +195,20 @@ export function MleSection({ analytics, onRefresh }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
+      {runnerError && (
+        <div
+          role="alert"
+          className="flex items-start gap-2 px-3 py-2.5 rounded-lg border text-xs"
+          style={{ background: "rgba(244,63,94,0.06)", borderColor: "rgba(244,63,94,0.28)", color: "var(--text)" }}
+        >
+          <AlertTriangle size={13} aria-hidden="true" style={{ flexShrink: 0, marginTop: 1 }} />
+          <span>
+            <strong>Artifact run failed.</strong> {runnerError} The panel below still shows the
+            previous artifact.
+          </span>
+        </div>
+      )}
+
       {/* Synthetic data disclaimer */}
       <div
         className="flex items-start gap-2 px-3 py-2.5 rounded-lg border text-xs"
