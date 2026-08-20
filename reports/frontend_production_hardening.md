@@ -1,8 +1,16 @@
 # Frontend Production Hardening Sprint
 
-**Scope:** `frontend-react/` (plus one additive change to `.github/workflows/ci.yml`)
+**Scope:** `frontend-react/` (plus one additive change to `.github/workflows/ci.yml` in sprint 1)
 **Date:** 2026-08-21
 **Baseline commit:** `f65109dab4af20919447e5c17b5799533d106d0c` (branch `main`)
+
+> **Sprint 2 (same day) is recorded in [§21](#21-sprint-2--remaining-weakness-remediation).**
+> Sections 1–20 below describe sprint 1 and are left as written. Where sprint 2
+> changed a number, §21 gives the updated figure and the delta.
+>
+> **Headline movement across both sprints:** 60 → 152 → **248** tests;
+> 9.19% → 19.82% → **39.10%** statement coverage; `SafetyCenterSection`
+> 1,023 → 242 lines; `MleSection` 717 → 654 → **119** lines.
 
 ---
 
@@ -513,3 +521,305 @@ surface and by the god component that remains.
 that each own their own `useApi` call (the `sections/cards/` components already provide
 the seams), and add component tests for `PatientDashboard` and `ReviewQueue` — the two
 highest-traffic untested surfaces.
+
+---
+
+# 21. Sprint 2 — Remaining-Weakness Remediation
+
+**Date:** 2026-08-21 (same day, immediately following sprint 1)
+**Scope:** `frontend-react/` only. **No** root-CI change, **no** backend change,
+**no** regeneration of `Data/openapi.json` or the generated frontend API types.
+**Starting point:** sprint 1's work, staged but uncommitted, on `f65109d`.
+
+Objective: close the weaknesses §17 listed as outstanding. Nothing from sprint 1
+was redone.
+
+## 21.1 Verified starting baseline
+
+Re-measured before any edit, rather than trusting §7/§8:
+
+| Check | Result |
+| ----- | ------ |
+| `npm run test:coverage` | pass — 19 files, **152 tests**, 19.82% statements / 62.35% branches / 35.19% functions |
+| Protected paths | `Data/`, `backend/`, `scripts/`, `tests/`, `evals/` all clean |
+
+## 21.2 MleSection decomposition (§17 item 1 — closed)
+
+**654 → 119 lines.** The 24 `useApi` calls and 14 runner hooks that sat in one
+component body are gone; each panel now owns its own data.
+
+The enabling abstraction is `mle/useArtifactPanel.ts`: one call binds an
+artifact's GET, its regeneration job, and its telemetry surface, and returns
+exactly the `{ report, loading, running, onRefresh }` shape the nine existing
+`cards/` components already accept.
+
+| New module | LOC | Responsibility |
+| ---------- | --- | -------------- |
+| `mle/EvidenceArtifactPanels.tsx` | 161 | 9 self-contained artifact containers |
+| `mle/ModelPerformanceSection.tsx` | 162 | Training report, holdout, external validation, model comparison |
+| `mle/PublicDataSection.tsx` | 131 | Data manifest, biomarker sources/mapping, cBioPortal, ablation |
+| `mle/mleMetrics.ts` | 128 | Pure metric grading — thresholds and direction as data |
+| `mle/DataPanelCard.tsx` | 80 | Shared loading/error/empty/ready switch |
+| `mle/RobustnessEvalSection.tsx` | 74 | Noise, temporal, per-prediction error |
+| `mle/MleReadinessGatesCard.tsx` | 71 | Release gates |
+| `mle/useArtifactPanel.ts` | 57 | Per-artifact data + action ownership |
+| `mle/CostSensitiveEvaluationCard.tsx` | 57 | Static operating-point rationale |
+| `mle/MetricGlossaryCard.tsx` | 44 | Collapsible interpretation guide |
+| `mle/PanelErrorNotice.tsx` | 28 | Per-panel staleness warning |
+| `mle/CandidateComparisonCard.tsx` | 26 | Champion vs realism candidate |
+
+## 21.3 PatientDashboard decomposition (§17 item 4 — partly closed)
+
+**590 → 438 lines.** Audited as a genuine multi-responsibility component and
+split along its actual seams, not to hit a line count:
+
+- **`hooks/useReportEnrichment.ts`** — the background-job polling state machine
+  (bounded transient-failure recovery, backend-suggested backoff with a floor,
+  an attempt ceiling, timer cleanup). 60 lines of branching that no test could
+  reach while it lived inside the component. Now has 12 tests.
+- **`lib/fileEncoding.ts`** — chunked binary→base64 for uploads.
+- **`pages/patient/MedLogPanel.tsx`** — ~90 lines of inline table markup.
+- **`pages/patient/savedActions.ts`** — the action-type set that decides whether
+  a chat write triggers a patient-record refetch.
+
+## 21.4 Defects found and fixed
+
+6. **`parseFloat(x) || null` mapped a measured zero to "not measured".** The
+   metric glossary used a falsy check, so a genuine `0` — a perfectly
+   calibrated ECE, a zero error rate — displayed as absent. Fixed in
+   `parseMetricValue`. *Tests: `mleMetrics.test.ts`.*
+
+7. **Metric grading direction was keyed off the visible label.** `gradeMetric`
+   compared the label string against `"Brier score"`/`"MAE"`/`"RMSE"` to decide
+   whether lower was better, so renaming a label silently inverted its grading.
+   Direction is now declared as data on each spec. *Tests: `mleMetrics.test.ts`.*
+
+8. **Panels checked `empty` before `error`.** Several MLE panels had no error
+   branch at all, so a failed fetch fell through to the empty state and told
+   the operator the evidence did not exist when the request had actually
+   failed. `DataPanelCard` now evaluates error first, for every panel.
+   *Tests: `DataPanelCard.test.tsx`.*
+
+9. **`RagSection` had the same unhandled-rejection bug fixed in `MleSection`
+   during sprint 1.** `refreshLiveRag` used `try/finally` with no `catch`.
+   Converted to `useArtifactRunner` with an inline `PanelErrorNotice`.
+
+10. **The aggregated runner-error banner named no panel.** Sprint 1 surfaced
+    only the *first* of fourteen possible errors at the top of the page.
+    Replaced with `PanelErrorNotice` next to the panel that failed, stating
+    that the values still shown are from the previous run.
+
+11. **Suite was flaky under coverage.** Three `PatientDashboard` tests passed
+    under `npm test` but exceeded the 5s default timeout under
+    `test:coverage`, which roughly doubles runtime. The tests are
+    deterministic; only the wall-clock budget was wrong. `testTimeout` raised
+    to 20s. Confirmed by a full green `test:coverage` run afterwards.
+
+## 21.5 Tests added
+
+**152 → 248 tests** (19 → 26 files). All deterministic and offline.
+
+| File | Tests | Focus |
+| ---- | ----- | ----- |
+| `patientHelpers.test.tsx` | 19 | base64 chunk-boundary encoding, record-write action mapping, MedLogPanel ordering/caps/a11y |
+| `mleMetrics.test.ts` | 18 | Grading bands, zero preservation, direction-not-label, muted-never-green |
+| `PatientDashboard.test.tsx` | 15 | Loading, error+retry, enrichment pending/failed, empty, malformed payloads, routing |
+| `ReviewQueue.test.tsx` | 13 | Selection, keyboard operation, urgent flags, triage order, malformed rows, a11y |
+| `DataPanelCard.test.tsx` | 12 | State-switch precedence, action naming, `PanelErrorNotice` |
+| `useReportEnrichment.test.tsx` | 12 | Backoff floor, null retry hint, bounded recovery, attempt ceiling, unmount |
+| `useArtifactPanel.test.tsx` | 7 | Load/run failure separation, stale-artifact retention, read-only degradation |
+
+Six are explicit regression tests for the defects above.
+
+Two safety-relevant behaviours are now asserted rather than assumed:
+
+- A failed or pending enrichment leaves `enrichment` **null**, so the dashboard
+  renders core records only and never presents half-computed model output.
+- `ReviewQueue` renders the backend's triage order unchanged, so clinical
+  prioritisation cannot be silently re-ranked by the frontend.
+
+## 21.6 Coverage — before / after
+
+| Metric | Sprint 1 end | Sprint 2 end | Δ |
+| ------ | ------------ | ------------ | - |
+| Statements | 19.82% (2798/14117) | **39.10%** (5634/14406) | **+19.28 pp** |
+| Branches | 62.35% (578/927) | **65.42%** (967/1478) | +3.07 pp |
+| Functions | 35.19% (126/358) | **34.24%** (188/549) | **−0.95 pp** |
+| Lines | 19.82% | **39.10%** | +19.28 pp |
+
+**Functions went down, and that is not a regression in testing.** Covered
+functions rose from 126 to 188 (+49%), but decomposition raised the total from
+358 to 549 (+53%) — splitting two god components into 26 small ones creates many
+new function declarations. The denominator grew slightly faster than the
+numerator. Reported as measured rather than dropped from the table.
+
+## 21.7 Coverage regression gate (§17 item 3 — closed)
+
+Thresholds live in `vitest.config.ts`, so they apply to `npm run test:coverage`
+wherever it runs — **no root-CI edit was needed**, which keeps this sprint
+inside its constraint. CI already invokes that script (added in sprint 1, §13).
+
+```
+statements: 35   (measured 39.10)
+branches:   62   (measured 65.42)
+functions:  31   (measured 34.24)
+lines:      35   (measured 39.10)
+```
+
+Each sits ~3–4 points below measured: enough headroom for ordinary churn and
+v8's run-to-run variance, tight enough that deleting a suite or landing a large
+untested surface fails the build. Deliberately **not** aspirational.
+
+**The gate was verified to actually fail**, not merely configured:
+
+```
+$ npx vitest run --coverage --coverage.thresholds.statements=95 tests/unit/safeUrl.test.ts
+ERROR: Coverage for statements (0.17%) does not meet global threshold (95%)
+ERROR: Coverage for lines (0.17%) does not meet global threshold (35%)
+ERROR: Coverage for branches (25.17%) does not meet global threshold (62%)
+ERROR: Coverage for functions (18.18%) does not meet global threshold (31%)
+exit code 1
+```
+
+## 21.8 Automated accessibility testing (§17 item 5 — closed)
+
+`vitest-axe` + `axe-core` integrate cleanly with the existing Vitest/jsdom
+stack. `tests/a11y.ts` exposes `expectNoA11yViolations`, wired into three
+component suites (`ReviewQueue`, `MedLogPanel`, `DataPanelCard`).
+
+Two rules are disabled **with reasons recorded in the helper**, not silently:
+
+- `color-contrast` — the app colours entirely through CSS custom properties,
+  which jsdom does not resolve. Contrast is a real concern that this
+  environment cannot decide; a check that always passes for the wrong reason is
+  worse than a stated gap.
+- `region` — these tests mount fragments, not whole pages.
+
+The failure message lists every violation with its offending markup rather than
+only the first.
+
+Accessibility fixes made this sprint:
+
+- `ReviewQueue` is now a real `<ul>`/`<li>` list with an `aria-label` carrying
+  the queue length, and `aria-current="true"` on the open patient. Previously a
+  bare stack of buttons conveyed neither queue size nor which patient was open.
+- `DataPanelCard` action buttons take `"{action} — {panel title}"` as their
+  accessible name; "Refresh"/"Rerun" alone repeat across many panels.
+- `MedLogPanel` gained an `sr-only` caption, `scope="col"`, and a `scope="row"`
+  date cell.
+- `MleReadinessGatesCard` renders gate categories as `<dl>/<dt>/<dd>` pairs.
+- `MetricGlossaryCard` toggle carries `aria-expanded`.
+
+`tests/setup.ts` gained jsdom environment shims (`matchMedia`, `scrollTo`,
+`scrollIntoView`, `ResizeObserver`). These stand in for APIs jsdom does not
+implement; none alters component behaviour.
+
+## 21.9 Files above 500 LOC — re-audit (§17 items 1 & 4)
+
+| File | LOC | Verdict |
+| ---- | --- | ------- |
+| `types/generated-openapi.d.ts` | 9,987 | **Generated. Untouched, by policy.** |
+| `api/client.ts` | 831 | Flat endpoint registry sharing one `request<T>()`. Re-confirmed: not a god object. Unchanged. |
+| `types/api.admin.ts` / `api.platform.ts` / `api.patient.ts` | 721 / 527 / 502 | Type declarations, no runtime code. |
+| `RagSection.tsx` | 625 | **Genuine god component** — 15 `useApi` calls in one body. Its unhandled-rejection defect is fixed (§21.4 #9); the panel split is **not** done. See §21.12. |
+| `ChatPanel.tsx` | 601 | Already internally decomposed into 6 named components plus a hook. Long but cohesive. Left alone. |
+| `MleEvidencePanels.tsx` | 499 | Below threshold; a library of presentational panels, each small. |
+
+`MleSection` (119) and `PatientDashboard` (438) have dropped off this list.
+
+## 21.10 Verification — commands and results
+
+From a **clean `npm ci`** in `frontend-react/`:
+
+| Command | Result |
+| ------- | ------ |
+| `npm ci` | **pass** — 367 packages, 0 vulnerabilities |
+| `npm run lint` | **pass** — exit 0, no errors, no warnings |
+| `npm run typecheck` | **pass** — exit 0, both projects |
+| `npm run test:coverage` | **pass** — 26 files, **248/248 tests**, all four thresholds met, exit 0 |
+| `npm run build` | **pass** — exit 0 |
+| `npm audit --audit-level=high` | **pass** — 0 vulnerabilities |
+| gate-enforcement check | **pass** — exit 1 when a threshold is unmet |
+
+**Not executed, with reasons:** `npm run test:e2e` (needs a live backend and a
+Chromium download; the e2e suite was not modified). Backend suites, release
+gate, and safety-eval scripts — backend-owned, unmodified, and mid-change by
+the other agent. `npm run typegen:file` — **deliberately not run**; the
+26-endpoint OpenAPI drift belongs to the backend sprint.
+
+Bundle impact is negligible: `AdminDashboard` 192.90 → 192.92 kB
+(39.98 kB gzip); `PatientDashboard` 86.56 kB (23.94 kB gzip).
+
+## 21.11 Files changed in sprint 2
+
+**Modified (8):** `package.json`, `package-lock.json` (axe deps),
+`vitest.config.ts` (timeout + thresholds), `tests/setup.ts` (jsdom shims),
+`MleSection.tsx` (−795/+…), `RagSection.tsx`, `ReviewQueue.tsx`,
+`PatientDashboard.tsx`. Net **−914 / +354** lines across tracked files.
+
+**Added (13+):** `src/pages/admin/sections/mle/` (12 modules),
+`src/hooks/useReportEnrichment.ts`, `src/lib/fileEncoding.ts`,
+`src/pages/patient/MedLogPanel.tsx`, `src/pages/patient/savedActions.ts`,
+`tests/a11y.ts`, and 7 new test suites.
+
+## 21.12 Remaining frontend weaknesses
+
+1. **`RagSection.tsx` (625 LOC) is the last god component.** 15 `useApi` calls
+   in one body. `useArtifactPanel` and `DataPanelCard` now exist and fit it
+   directly, so the path is mechanical — it was left undone rather than rushed
+   at the end of a sprint against a surface with no component coverage.
+2. **Function coverage (34.24%) trails statement coverage (39.10%).** Many new
+   small components are rendered by their parents' tests but not directly
+   asserted.
+3. **Clinician surfaces beyond `ReviewQueue` remain untested** —
+   `ClinicianDashboard`, `ReviewPanel`, `PredictionTracesPanel`.
+4. **Colour contrast is unverified.** jsdom cannot resolve CSS custom
+   properties; this needs a real-browser axe pass (Playwright + `@axe-core/playwright`).
+5. **`test:coverage` takes 90–410 s on Windows**, dominated by jsdom
+   environment setup. Not a correctness issue, but it slows the loop.
+6. **Telemetry still has no remote sink wired.** Unchanged from sprint 1.
+7. **`LabTrendsChart` remains a 345 kB chunk.** Unchanged from sprint 1.
+
+## 21.13 Constraint compliance
+
+| Constraint | Status |
+| ---------- | ------ |
+| No backend / ML / RAG / safety-evidence / infra change | **Held** — `git status` on `backend/`, `scripts/`, `tests/`, `evals/` is clean |
+| No root-CI change | **Held** — `git diff .github/` is empty for sprint 2; the coverage gate lives in `vitest.config.ts` instead |
+| No `Data/openapi.json` regeneration | **Held** — not run; `git diff` on the generated types is empty |
+| No generated-type edits | **Held** — `generated-openapi.d.ts` untouched |
+| No weakened tests or gates | **Held** — no test modified, skipped, or deleted; the raised `testTimeout` widens a wall-clock budget for deterministic tests and changes no assertion |
+| Sprint 1 work preserved | **Held** — staged index untouched; all 152 sprint-1 tests still pass |
+
+**One observation, not mine:** `Data/complete_synthetic_training/latest_detailed_eval_manifest.json`
+shows as modified (12 insertions, 12 deletions). This sprint executed **no**
+Python and **no** backend scripts — only `npm` commands. It is attributable to
+the concurrently-running backend sprint. It was **left untouched**; reverting it
+would destroy that agent's work.
+
+## 21.14 Updated production-readiness assessment
+
+**Assessment: materially stronger; still a governed-pilot system, not a
+clinically deployable one.**
+
+Closed since sprint 1: both god components in the admin surface, the two
+highest-traffic untested surfaces, the missing coverage gate, and the missing
+accessibility harness. Statement coverage roughly doubled, and the patient and
+clinician surfaces now have real behavioural tests covering loading, error,
+empty, and malformed-response paths — the states most likely to mislead a user
+in a clinical product.
+
+Still open: one god component, no real-browser contrast verification, no remote
+error sink, and coverage that is honest-but-moderate at 39%.
+
+**Internal frontend maturity estimate: 76–79 / B.** Up from 68–72. The increase
+reflects verified engineering evidence — 96 new tests, +19.3 pp statements, two
+decompositions, six fixed defects, an enforced coverage gate, and automated a11y
+checks — not the number of files touched. Held below 80 by `RagSection`,
+by function coverage that lags statements, and by clinician surfaces that remain
+largely untested.
+
+**Recommended next frontend task:** decompose `RagSection.tsx` using the now-
+established `useArtifactPanel` + `DataPanelCard` pattern, and add component
+tests for `ClinicianDashboard` and `ReviewPanel` — after which raising the
+coverage thresholds to match the new baseline becomes the natural follow-up.

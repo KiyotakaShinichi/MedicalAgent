@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "PowerShell(Set-Location c:\\\\Users\\\\L\\\\Downloads\\\\MedicalAgent\\\\frontend-react; npm run test:coverage 2>&1 | Select-Object -Last 14; echo \"TEST=$LASTEXITCODE\")"
     ]
   }
 }

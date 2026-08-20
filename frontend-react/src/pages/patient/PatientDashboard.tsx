@@ -1,9 +1,11 @@
-import { LayoutDashboard, FlaskConical, Activity, Clock, MessageSquare, Pill, Dna, ShieldCheck } from "lucide-react";
+﻿import { LayoutDashboard, FlaskConical, Activity, Clock, MessageSquare, Dna, ShieldCheck } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { useApi } from "../../hooks/useApi";
-import { getMyReportCore, getMyReportEnrichment, sendMyChat, sendMyChatStream, getMyChatHistory, undoMyConfirmedRecordWrite, uploadFile } from "../../api/client";
+import { useReportEnrichment } from "../../hooks/useReportEnrichment";
+import { readFileAsBase64 } from "../../lib/fileEncoding";
+import { getMyReportCore, sendMyChat, sendMyChatStream, getMyChatHistory, undoMyConfirmedRecordWrite, uploadFile } from "../../api/client";
 import { ErrorPane } from "../../components/ui/Spinner";
 import { SkeletonDashboard } from "../../components/ui/Skeleton";
 import { PatientBanner } from "./PatientBanner";
@@ -18,8 +20,8 @@ import { ModelSignalPanel } from "./ModelSignalPanel";
 import { EvidenceAwarePredictionCard } from "./EvidenceAwarePredictionCard";
 import { HybridPredictionCard } from "./HybridPredictionCard";
 import { GeneticCounselingPanel } from "./GeneticCounselingPanel";
-import { SectionCard } from "../../components/ui/SectionCard";
-import { EmptyPane } from "../../components/ui/Spinner";
+import { MedLogPanel } from "./MedLogPanel";
+import { touchesPatientReport } from "./savedActions";
 import { ChatPanel, describeSavedAction } from "../../components/ui/ChatPanel";
 import { ToolTraceDrawer } from "../../components/ui/ToolTraceDrawer";
 import { useToast } from "../../components/ui/Toast";
@@ -31,7 +33,7 @@ import { TreatmentNoteForm } from "./tools/TreatmentNoteForm";
 import { ComposerToolButton, type ToolKey } from "./tools/ComposerToolButton";
 import { useAuth } from "../../hooks/useAuth";
 import { ClinicalBoundaryBanner } from "../../components/ui/ClinicalBoundaryBanner";
-import type { ChatMessage, MedicationLog, SavedAction } from "../../types/api";
+import type { ChatMessage, SavedAction } from "../../types/api";
 
 const NAV = [
   { to: "/patient",          label: "Overview",  icon: LayoutDashboard },
@@ -57,88 +59,36 @@ export default function PatientDashboard() {
     refetch: refetchCoreReport,
     lastFetchedAt: coreFetchedAt,
   } = useApi(getMyReportCore, [patientId]);
-  const [enrichment, setEnrichment] = useState<Partial<NonNullable<typeof coreReport>> | null>(null);
-  const [enrichmentStatus, setEnrichmentStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [enrichmentFetchedAt, setEnrichmentFetchedAt] = useState<number | null>(null);
-  const enrichmentRequestStarted = useRef(false);
-  const enrichmentPollTimer = useRef<number | null>(null);
+
+  // The slow half of the report arrives via a background job; the polling
+  // state machine lives in its own hook so it is testable in isolation.
+  const {
+    enrichment,
+    status: enrichmentStatus,
+    fetchedAt: enrichmentFetchedAt,
+    start: loadEnrichment,
+    reset: resetEnrichment,
+  } = useReportEnrichment<Partial<NonNullable<typeof coreReport>>>();
+
   const { data: chatData, refetch: refetchChat } = useApi(getMyChatHistory, [patientId]);
   const report = useMemo(
     () => coreReport ? { ...coreReport, ...(enrichment ?? {}) } : null,
     [coreReport, enrichment],
   );
   const reportFetchedAt = enrichmentFetchedAt ?? coreFetchedAt;
-  const loadEnrichment = useCallback(() => {
-    if (enrichmentRequestStarted.current) return;
-    enrichmentRequestStarted.current = true;
-    queueMicrotask(() => setEnrichmentStatus("loading"));
-    const poll = async (attempt: number) => {
-      try {
-        const value = await getMyReportEnrichment();
-        const jobStatus = value.report_enrichment?.status;
-        if (jobStatus === "complete") {
-          setEnrichment(value);
-          setEnrichmentStatus("success");
-          setEnrichmentFetchedAt(Date.now());
-          return;
-        }
-        if (jobStatus === "failed" && attempt < 3) {
-          // A cold local start can fail once while synthetic model artifacts
-          // are still being loaded. The backend reschedules failed jobs on
-          // the next poll, so allow a small bounded recovery window.
-          enrichmentPollTimer.current = window.setTimeout(() => { void poll(attempt + 1); }, 1500);
-          return;
-        }
-        if (jobStatus === "failed" || attempt >= 60) {
-          setEnrichmentStatus("error");
-          return;
-        }
-        const retryAfter = Math.max(500, value.report_enrichment?.retry_after_ms ?? 750);
-        enrichmentPollTimer.current = window.setTimeout(() => { void poll(attempt + 1); }, retryAfter);
-      } catch {
-        if (attempt < 3) {
-          enrichmentPollTimer.current = window.setTimeout(() => { void poll(attempt + 1); }, 1500);
-          return;
-        }
-        setEnrichmentStatus("error");
-      }
-    };
-    void poll(0);
-  }, []);
-  const refetchReport = useCallback(() => {
-    if (enrichmentPollTimer.current !== null) window.clearTimeout(enrichmentPollTimer.current);
-    enrichmentPollTimer.current = null;
-    enrichmentRequestStarted.current = false;
-    setEnrichment(null);
-    setEnrichmentStatus("idle");
-    setEnrichmentFetchedAt(null);
-    refetchCoreReport();
-  }, [refetchCoreReport]);
 
-  useEffect(() => () => {
-    if (enrichmentPollTimer.current !== null) window.clearTimeout(enrichmentPollTimer.current);
-  }, []);
+  const refetchReport = useCallback(() => {
+    resetEnrichment();
+    refetchCoreReport();
+  }, [refetchCoreReport, resetEnrichment]);
+
   const chatMessages = chatData?.messages ?? report?.chat_history ?? [];
   const chatKey = buildChatKey(patientId ?? "patient", chatMessages);
 
-  // Tool tray modal state. One key at a time — opening a new tool closes
+  // Tool tray modal state. One key at a time â€” opening a new tool closes
   // any other open form so the user never sees two modals stacked.
   const [activeTool, setActiveTool] = useState<ToolKey | null>(null);
   const closeTool = () => setActiveTool(null);
-
-  // File-to-base64 helper for the upload buttons.  Keeps the full data URL
-  // off the wire (we strip the data:*/*;base64, prefix) so the existing
-  // /me/uploads endpoint receives just the base64 payload it expects.
-  async function readFileAsBase64(file: File): Promise<string> {
-    const buffer = await file.arrayBuffer();
-    const bytes = new Uint8Array(buffer);
-    let binary = "";
-    const chunk = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunk) {
-      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
-    }
-    return btoa(binary);
-  }
 
   async function handleToolSelect(key: ToolKey, file?: File) {
     if (key === "education") {
@@ -149,7 +99,7 @@ export default function PatientDashboard() {
       toast.push({
         tone: "info",
         title: "Ask away",
-        description: "Type your question in the chat below — the assistant will cite sources where it can.",
+        description: "Type your question in the chat below â€” the assistant will cite sources where it can.",
       });
       return;
     }
@@ -265,7 +215,7 @@ export default function PatientDashboard() {
 
           {tab === "overview" && (
             <div className="dashboard-content dashboard-grid">
-              {/* Row 1 — KPI strip across the top: at-a-glance numbers that the
+              {/* Row 1 â€” KPI strip across the top: at-a-glance numbers that the
                   rest of the dashboard then breaks down.  Mirrors a standard
                   analytics-dashboard top-row pattern so the most important
                   signals are above the fold without scrolling. */}
@@ -283,7 +233,7 @@ export default function PatientDashboard() {
                 )}
               </div>
 
-              {/* Row 2 — Hybrid monitoring signal (detail) sits beside the
+              {/* Row 2 â€” Hybrid monitoring signal (detail) sits beside the
                   Lab trend chart so the at-a-glance KPI summary AND the
                   detailed signal slots are both in the first viewport. */}
               <div className="col-7" data-section="labs">
@@ -296,8 +246,8 @@ export default function PatientDashboard() {
                 }
               </div>
 
-              {/* Row 3 — Today's summary · Review queue (merged with Next review)
-                  · Model signal.  Review queue is now ONE strong card so the
+              {/* Row 3 â€” Today's summary Â· Review queue (merged with Next review)
+                  Â· Model signal.  Review queue is now ONE strong card so the
                   WBC/platelet warning doesn't show twice on the dashboard. */}
               <div className="col-4" data-section="summary">
                 <KeySignalsCard
@@ -313,7 +263,7 @@ export default function PatientDashboard() {
                 <ModelSignalPanel report={report} />
               </div>
 
-              {/* Row 4 — Symptoms · Timeline · Recent AI explanations.  All
+              {/* Row 4 â€” Symptoms Â· Timeline Â· Recent AI explanations.  All
                   three are compact peer cards; none of them is allowed to
                   stretch into a tall scroll monolith on its own. */}
               <div className="col-4" data-section="symptoms">
@@ -326,7 +276,7 @@ export default function PatientDashboard() {
                 <RecentAiExplanationsCard messages={chatMessages} />
               </div>
 
-              {/* Row 5 — Family & Genetics readiness summary.  The detailed
+              {/* Row 5 â€” Family & Genetics readiness summary.  The detailed
                   forms (family history, genetic test, biomarker, tumor
                   marker) live behind the GeneticCounselingPanel's own
                   collapsible body so the overview never opens as a giant
@@ -338,12 +288,12 @@ export default function PatientDashboard() {
                   defaultCollapsed
                 />
               </div>
-              {/* Row 6 — medication log full-width (compact table). */}
+              {/* Row 6 â€” medication log full-width (compact table). */}
               <div className="dashboard-grid-full" data-section="medications">
                 <MedLogPanel meds={report.medication_logs ?? []} />
               </div>
 
-              {/* Page-level safety footnote — reinforces the topbar pill so the
+              {/* Page-level safety footnote â€” reinforces the topbar pill so the
                   PoC boundary is visible after the user scrolls the dashboard. */}
               <div className="dashboard-grid-full">
                 <p
@@ -363,7 +313,7 @@ export default function PatientDashboard() {
                     aria-hidden="true"
                   />
                   <span>
-                    <strong style={{ color: "var(--text-dim)" }}>Proof-of-concept</strong> — this dashboard summarises
+                    <strong style={{ color: "var(--text-dim)" }}>Proof-of-concept</strong> â€” this dashboard summarises
                     what you have logged and what the AI noticed. It does not diagnose, recommend treatment, or
                     replace clinician judgement. If something feels wrong, contact your care team.
                   </span>
@@ -400,22 +350,9 @@ export default function PatientDashboard() {
                     };
                   }}
                   onSavedActions={(actions: SavedAction[]) => {
-                    // Any save action means the patient record changed — refetch
-                    // so the symptom log / labs / timeline reflect it immediately.
-                    const touchesReport = actions.some((a) =>
-                      [
-                        "saved_symptom",
-                        "saved_labs",
-                        "saved_medication",
-                        "saved_imaging_report",
-                        "save_symptom",
-                        "save_lab",
-                        "save_medication",
-                        "save_mri",
-                        "save_imaging_report",
-                      ].includes(a.type),
-                    );
-                    if (touchesReport) refetchReport();
+                    // A write to the clinical record must refetch, or the
+                    // patient is told "saved" while still looking at pre-save data.
+                    if (touchesPatientReport(actions)) refetchReport();
                     refetchChat();
 
                     // Surface a toast per save action with the right tone +
@@ -452,7 +389,7 @@ export default function PatientDashboard() {
           toast.push({
             tone: urgent_flag ? "warning" : "success",
             title: urgent_flag ? "Symptom saved and flagged for review" : "Symptom saved",
-            description: `${symptom} · severity ${severity}/10`,
+            description: `${symptom} Â· severity ${severity}/10`,
           });
         }}
       />
@@ -463,7 +400,7 @@ export default function PatientDashboard() {
           refetchReport();
           toast.push({
             tone: hasAbnormal ? "warning" : "success",
-            title: hasAbnormal ? "CBC saved — values flagged for review" : "CBC saved",
+            title: hasAbnormal ? "CBC saved â€” values flagged for review" : "CBC saved",
             description: "Lab card updated",
           });
         }}
@@ -509,7 +446,7 @@ export default function PatientDashboard() {
 }
 
 /**
- * Stable chat key — keyed only on the patient id, NOT on the message list.
+ * Stable chat key â€” keyed only on the patient id, NOT on the message list.
  *
  * The previous implementation embedded `messages.length` and the last
  * message's content, which forced ChatPanel to remount every time a message
@@ -523,94 +460,7 @@ export default function PatientDashboard() {
  * we never need to remount the panel just because the message list changed.
  */
 function buildChatKey(scope: string, _messages: ChatMessage[]) {
-  void _messages; // intentionally unused — keyed only on patient/session scope
+  void _messages; // intentionally unused â€” keyed only on patient/session scope
   return `chat:${scope}`;
 }
 
-function MedLogPanel({ meds }: { meds: MedicationLog[] }) {
-  const sorted = [...meds].sort((a, b) => b.date.localeCompare(a.date));
-  return (
-    <SectionCard
-      title="Medication log"
-      icon={Pill}
-      meta={sorted.length > 0 ? `${sorted.length} entries` : undefined}
-    >
-      {sorted.length === 0 ? (
-        <EmptyPane label="No medications recorded — your care team can add these from the clinician portal." />
-      ) : (
-        <div className="overflow-x-auto">
-          <table
-            className="w-full text-[0.86rem]"
-            style={{
-              borderCollapse: "separate",
-              borderSpacing: 0,
-              minWidth: 520, /* triggers horizontal scroll on narrow screens
-                                 rather than crushing columns. */
-            }}
-          >
-            <thead>
-              <tr>
-                {["Date", "Medication", "Dose", "Frequency"].map((h, i) => (
-                  <th
-                    key={h}
-                    className="text-left font-semibold py-2 px-3"
-                    style={{
-                      color: "var(--text-faint)",
-                      fontSize: "0.72rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      borderBottom: "1px solid var(--border)",
-                      width: i === 0 ? 110 : i === 2 ? 90 : undefined,
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.slice(0, 12).map((m, i) => (
-                <tr
-                  key={i}
-                  className="transition-colors"
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--surface2)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-                >
-                  <td
-                    className="py-2.5 px-3 tabular-nums"
-                    style={{ color: "var(--text-dim)", borderBottom: "1px solid var(--border-soft)" }}
-                  >
-                    {m.date?.slice(0, 10)}
-                  </td>
-                  <td
-                    className="py-2.5 px-3 font-semibold"
-                    style={{ color: "var(--text-strong)", borderBottom: "1px solid var(--border-soft)" }}
-                  >
-                    {m.medication}
-                  </td>
-                  <td
-                    className="py-2.5 px-3 tabular-nums"
-                    style={{ color: "var(--text)", borderBottom: "1px solid var(--border-soft)" }}
-                  >
-                    {m.dose}
-                  </td>
-                  <td
-                    className="py-2.5 px-3"
-                    style={{ color: "var(--text-dim)", borderBottom: "1px solid var(--border-soft)" }}
-                  >
-                    {m.frequency}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {sorted.length > 12 && (
-            <p className="text-[0.74rem] mt-2 px-3" style={{ color: "var(--text-faint)" }}>
-              + {sorted.length - 12} more in patient record
-            </p>
-          )}
-        </div>
-      )}
-    </SectionCard>
-  );
-}

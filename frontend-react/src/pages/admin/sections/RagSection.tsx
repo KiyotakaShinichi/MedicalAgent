@@ -1,5 +1,7 @@
 import { useApi } from "../../../hooks/useApi";
-import { useState, type ReactNode } from "react";
+import { useArtifactRunner } from "../../../hooks/useArtifactRunner";
+import { PanelErrorNotice } from "./mle/PanelErrorNotice";
+import { type ReactNode } from "react";
 import {
   getNormalizedBenchmarkArtifact,
   getRagAblation,
@@ -70,21 +72,20 @@ export function RagSection({ analytics }: Props) {
     [],
   );
   const { data: traceReplay, status: traceReplayStatus } = useApi(() => getRagTraceReplay(8), []);
-  const [runningLiveRag, setRunningLiveRag] = useState(false);
-  const rag = analytics?.rag_evaluation;
+  // Previously a `useState` flag plus a `try/finally` with no `catch`, so a
+  // failed rerun reset the spinner and then escaped as an unhandled promise
+  // rejection with nothing shown to the operator.
+  const {
+    running: runningLiveRag,
+    error: liveRagError,
+    run: refreshLiveRag,
+  } = useArtifactRunner(runLiveRagEval, refetchLiveRag, "admin.rag.liveRagEval");
 
-  async function refreshLiveRag() {
-    setRunningLiveRag(true);
-    try {
-      await runLiveRagEval();
-      await refetchLiveRag();
-    } finally {
-      setRunningLiveRag(false);
-    }
-  }
+  const rag = analytics?.rag_evaluation;
 
   return (
     <div className="flex flex-col gap-4">
+      <PanelErrorNotice panel="Live RAG evaluation" error={liveRagError} />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MetricCard label="Evaluations" value={rag?.evaluations ?? null} />
         <MetricCard
