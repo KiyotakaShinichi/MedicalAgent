@@ -100,6 +100,33 @@ jobs:
         run: |
           python -m pip install uv==0.8.24
           uv sync --frozen
+
+      # The DEP-001 safety runtimes load their base encoder with
+      # `local_files_only=True`. On a fresh runner the Hugging Face cache is
+      # empty, that call raises, and the runtime correctly FAILS CLOSED — which
+      # made ~89 tests asserting that benign prompts stay `low_risk` fail. The
+      # encoder is fetched once here, with the offline flags lifted for this
+      # step only; the test run below still executes fully offline.
+      - name: Cache Hugging Face encoders
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-safety-encoders-${{ hashFiles('config/dep001*_semantic_safety.yaml') }}
+          restore-keys: |
+            hf-safety-encoders-
+
+      - name: Provision semantic safety encoders
+        env:
+          HF_HUB_OFFLINE: "0"
+          TRANSFORMERS_OFFLINE: "0"
+        run: uv run python scripts/provision_semantic_safety_encoders.py
+
+      # Preflight guard. Without it, a provisioning failure degrades silently
+      # into fail-closed classification and the suite still "runs" — just
+      # against safety defaults instead of the real classifier.
+      - name: Verify encoders load offline
+        run: uv run python scripts/provision_semantic_safety_encoders.py --check-only
+
       - name: Run complete offline suite with branch coverage
         run: |
           mkdir -p Data/test_tmp
@@ -166,6 +193,24 @@ jobs:
           python -m pip install uv==0.8.24
           uv sync --frozen
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+      # Same requirement as full-offline-tests: the safety runtimes load their
+      # encoder with `local_files_only=True`, so it must be in the cache even
+      # though this job does not set the offline flags. Without it the safety
+      # eval scripts below run against fail-closed defaults.
+      - name: Cache Hugging Face encoders
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-safety-encoders-${{ hashFiles('config/dep001*_semantic_safety.yaml') }}
+          restore-keys: |
+            hf-safety-encoders-
+
+      - name: Provision semantic safety encoders
+        run: python scripts/provision_semantic_safety_encoders.py
+
+      - name: Verify encoders load offline
+        run: python scripts/provision_semantic_safety_encoders.py --check-only
 
       - name: Install frontend dependencies
         working-directory: frontend-react

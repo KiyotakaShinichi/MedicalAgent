@@ -45,6 +45,25 @@ jobs:
           python -m pip install uv==0.8.24
           uv sync --frozen
 
+      # ship.py runs the safety contract test suites, which load the DEP-001
+      # encoder with `local_files_only=True`. Without it in the cache those
+      # runtimes fail closed and the safety steps fail for an environment
+      # reason rather than a real regression. This provisions the environment;
+      # it does not change any release criterion.
+      - name: Cache Hugging Face encoders
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-safety-encoders-${{ hashFiles('config/dep001*_semantic_safety.yaml') }}
+          restore-keys: |
+            hf-safety-encoders-
+
+      - name: Provision semantic safety encoders
+        run: uv run python scripts/provision_semantic_safety_encoders.py
+
+      - name: Verify encoders load offline
+        run: uv run python scripts/provision_semantic_safety_encoders.py --check-only
+
       - name: Install frontend dependencies
         working-directory: frontend-react
         run: npm ci

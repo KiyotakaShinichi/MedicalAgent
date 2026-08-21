@@ -10,6 +10,7 @@ authority.
 ```bash
 python -m pip install uv==0.8.24
 uv sync --frozen
+python scripts/provision_semantic_safety_encoders.py   # one-time, needs network
 cd frontend-react
 npm ci
 ```
@@ -17,6 +18,32 @@ npm ci
 Use Python 3.11 for the canonical CI environment. Start from `.env.example`,
 keep `NLCARE_SYNTHETIC_ONLY=true`, and never commit secrets, raw patient data,
 or a local `.env` file.
+
+**Use npm 10 (Node 20) for anything that writes `package-lock.json`.** CI pins
+Node 20, and `npm ci` there rejects a lockfile written by npm 11 — the newer
+resolver omits transitive entries (`@emnapi/core`, `@emnapi/wasi-threads`) that
+npm 10 requires. A lockfile produced by npm 10 is readable by both. If you have
+a newer Node, run `npx npm@10 install` rather than plain `npm install`.
+
+### Semantic safety encoders
+
+The DEP-001 safety runtimes load their sentence-transformer encoder with
+`local_files_only=True`, so it must already be in the local Hugging Face cache.
+If it is missing the runtime **fails closed** — correct in production, but it
+turns the offline suite into a test of safety defaults rather than of the real
+classifier, and roughly ninety tests that assert benign prompts stay
+`low_risk` will fail.
+
+Provision it once (network required), then everything else runs offline:
+
+```bash
+python scripts/provision_semantic_safety_encoders.py            # download
+python scripts/provision_semantic_safety_encoders.py --check-only   # verify
+```
+
+If you see widespread `high_risk` results for obviously benign prompts, run the
+`--check-only` command before debugging safety logic — an empty cache is by far
+the more likely cause.
 
 ### Verifying a fresh clone
 
