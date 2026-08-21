@@ -8,11 +8,8 @@ POST /patients/{patient_id}/chat/stream.
 from __future__ import annotations
 
 import json
-import os
-import time
 from pathlib import Path
 
-import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session
@@ -25,90 +22,44 @@ from backend.api.deps import (
 from backend.api.schemas.patient import (
     AgentFeedbackRequest,
     BiomarkerRecordCreate,
-    CTReportCreate,
     FamilyHistoryCreate,
     GeneticReviewCreate,
     GeneticTestRecordCreate,
-    ImagingReportCreate,
-    LabCreate,
-    MRIRegistryCreate,
     MyImagingReportCreate,
     MyLabCreate,
     MyMedicationCreate,
     MySymptomCreate,
     MyTreatmentCreate,
     PatientChatRequest,
-    PatientCreate,
     PatientUploadCreate,
-    SymptomCreate,
-    TreatmentCreate,
     TumorMarkerRecordCreate,
 )
 from backend.crud import (
-    get_all_patients,
-    get_breast_cancer_profile,
     get_chat_messages,
-    get_clinical_interventions,
-    get_ct_reports_df,
-    get_imaging_reports_df,
-    get_labs_df,
-    get_medication_logs,
-    get_mri_registry,
-    get_mri_series_index,
     get_patient,
-    get_patient_uploads,
-    get_symptoms_df,
-    get_treatment_outcome,
-    get_treatments_df,
 )
 from backend.models import (
-    BreastCancerProfile,
-    CTReport,
     ImagingReport,
     LabResult,
     MedicationLog,
-    MRIFileRegistry,
-    Patient,
     PatientUpload,
     SymptomReport,
     Treatment,
 )
-from backend.processing.radiology_analysis import analyze_breast_imaging_reports
 from backend.processing.patient_state import build_patient_state
-from backend.processing.risk_engine import (
-    detect_clinical_rule_risks,
-    detect_risks,
-    detect_symptom_risks,
-    detect_trend_risk,
-)
-from backend.processing.timeline import build_clinical_timeline
-from backend.processing.treatment_analysis import align_labs_with_treatment
-from backend.processing.trend_analysis import analyze_labs
-from backend.processing.clinical_summary import generate_clinical_summary
-from backend.reports.patient_report import build_patient_report
 from backend.services.app_logging import log_app_event
 from backend.services.input_validation import (
     validate_cbc_values,
     validate_chat_message,
     validate_imaging_report_payload,
-    validate_patient_payload,
     validate_symptom_payload,
     validate_treatment_payload,
     validation_error_payload,
 )
 from backend.services.ctcae_mapping import map_symptom_to_ctcae_review_hint
 from backend.services.lab_reference_context import build_cbc_reference_context
-from backend.services.multimodal_fusion import build_multimodal_assessment
-from backend.services.patient_timeline_summary import build_patient_timeline_risk_summary
 from backend.services.support_chat_agent import handle_patient_chat
 from backend.services.rag_evidence_envelope import enforce_transport_release
-from backend.services.timeline_intelligence import answer_timeline_question, build_timeline_intelligence
-from backend.services.data_availability import build_data_availability
-from backend.services.patient_report_enrichment_jobs import (
-    get_patient_enrichment_job,
-    invalidate_patient_enrichment,
-    schedule_patient_enrichment,
-)
 
 from backend.api.routers.patient import _invalidate_report_cache
 
@@ -716,7 +667,7 @@ def _stream_agent_pipeline(db: Session, patient_id: str, message: str, *, persis
                     "or recommend treatment changes. Please review concerns with the oncology care team."
                 ),
             )
-    except Exception as exc:
+    except Exception:
         yield _sse_event("error", {"error": "Agent pipeline failed. Please try again.", "code": "pipeline_error"})
         yield _sse_event("done", {})
         return

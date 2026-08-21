@@ -20,11 +20,9 @@ from __future__ import annotations
 
 import hashlib
 import json
-import sys
 import unittest
 from pathlib import Path
 
-import pytest
 
 
 from backend.services.rag_stage_oracle_diagnostic import (

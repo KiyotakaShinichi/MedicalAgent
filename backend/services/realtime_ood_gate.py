@@ -14,7 +14,6 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from statistics import mean
 from typing import Any, Mapping
 
 import pandas as pd
@@ -79,12 +78,14 @@ def assess_realtime_ood(row: Mapping[str, Any]) -> OODGateResult:
     moderate: list[str] = []
     mild: list[str] = []
 
-    for field, (lo, hi) in PHYSIOLOGICAL_BOUNDS.items():
-        value = _as_float(row.get(field))
+    # Named `field_name` rather than `field`, which shadowed dataclasses.field
+    # imported at module scope.
+    for field_name, (lo, hi) in PHYSIOLOGICAL_BOUNDS.items():
+        value = _as_float(row.get(field_name))
         if value is None:
             continue
         if value < lo or value > hi:
-            severe.append(f"physiological_range_violation:{field}")
+            severe.append(f"physiological_range_violation:{field_name}")
 
     for key, value in row.items():
         if not key.endswith("_unit") or value is None:
@@ -246,16 +247,16 @@ def _as_float(value: Any) -> float | None:
 
 
 def _date_quality_reason(row: Mapping[str, Any]) -> str | None:
-    for field in ("treatment_date", "imaging_date", "report_date"):
-        raw = row.get(field)
+    for field_name in ("treatment_date", "imaging_date", "report_date"):
+        raw = row.get(field_name)
         if raw in (None, ""):
             continue
         try:
             parsed = datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
         except ValueError:
-            return f"invalid_date:{field}"
+            return f"invalid_date:{field_name}"
         if parsed.year > datetime.now(timezone.utc).year + 5 or parsed.year < 1900:
-            return f"impossible_date:{field}"
+            return f"impossible_date:{field_name}"
     return None
 
 

@@ -96,10 +96,14 @@ def _bucket_age(age: Any) -> str:
         age_f = float(age)
     except (TypeError, ValueError):
         return "unknown"
-    if age_f < 40: return "<40"
-    if age_f < 50: return "40-49"
-    if age_f < 60: return "50-59"
-    if age_f < 70: return "60-69"
+    if age_f < 40:
+        return "<40"
+    if age_f < 50:
+        return "40-49"
+    if age_f < 60:
+        return "50-59"
+    if age_f < 70:
+        return "60-69"
     return "70+"
 
 

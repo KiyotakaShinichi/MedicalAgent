@@ -11,10 +11,8 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from statistics import median
 from time import perf_counter
 from typing import Any, Iterable, Mapping
 

@@ -4,7 +4,6 @@ from backend.services.adversarial_generalization_vnext import build_adversarial_
 
 
 def test_vnext_preserves_frozen_v7_and_labels_mutations_as_tuning_used(tmp_path):
-    source = tmp_path / "source-copy.json"
     from backend.services.adversarial_generalization_vnext import V7_BASELINE
 
     before = V7_BASELINE.read_bytes()

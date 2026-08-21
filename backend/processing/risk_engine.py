@@ -351,7 +351,12 @@ def _cbc_symptom_combination_rules(labs_df, symptoms_df):
         fever_date = fever["date"]
         nearby = low_wbc_rows[
             low_wbc_rows["date"].apply(
-                lambda d: abs((d - fever_date).days) <= combo_window
+                # `fever_date` is bound as a default so the lambda captures this
+                # iteration's value rather than the loop variable itself. The
+                # call is eager today, so behaviour is unchanged; the binding
+                # stops a later refactor that defers evaluation from silently
+                # comparing every row against the final fever date.
+                lambda d, fever_date=fever_date: abs((d - fever_date).days) <= combo_window
             )
         ]
         if not nearby.empty:

@@ -1,0 +1,114 @@
+# Dependabot configuration for NLCare.
+#
+# Policy: every update is REVIEW-BASED. Nothing here auto-merges, and no
+# auto-merge workflow accompanies this file. A dependency bump in a system that
+# runs safety evaluation and ML inference can change model behaviour, numeric
+# output, or refusal routing without failing a type check, so a human reads
+# every diff and CI runs the full offline suite before anything lands.
+#
+# Updates are grouped per ecosystem to keep the review queue small: one PR for
+# routine patch/minor traffic, separate PRs for majors, which need real
+# scrutiny. `open-pull-requests-limit` is deliberately low for the same reason.
+version: 2
+
+updates:
+  # ── Python (uv is the resolver of record; uv.lock is canonical) ────────────
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "deps(python)"
+    groups:
+      # Routine traffic lands as one reviewable PR.
+      python-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # Majors for the numerical/ML stack are excluded from automation on
+      # purpose. Upgrading these can shift model outputs and evaluation
+      # metrics, which invalidates frozen evidence; they are handled as
+      # deliberate, separately-evidenced migrations rather than as a bot PR.
+      - dependency-name: "numpy"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "pandas"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "scikit-learn"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "torch"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "transformers"
+        update-types: ["version-update:semver-major"]
+
+  # ── Frontend ──────────────────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/frontend-react"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "deps(frontend)"
+    groups:
+      # Dev tooling churns most and carries no runtime risk, so it is grouped
+      # apart from anything that ships to a browser.
+      frontend-dev-minor-patch:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      frontend-prod-minor-patch:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ── CI actions ────────────────────────────────────────────────────────────
+  # Pinned action majors go stale silently and are a supply-chain surface.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "deps(ci)"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # ── Container base image ──────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 2
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "deps(docker)"

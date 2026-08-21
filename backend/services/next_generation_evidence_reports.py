@@ -218,8 +218,8 @@ def _performance(data: dict[str, dict[str, Any]]) -> str:
         "|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in load.get("profiles") or []:
-        l = row.get("latency_ms") or {}
-        lines.append(f"| {row.get('concurrency')} | {row.get('request_count')} | {row.get('throughput_rps')} | {row.get('error_rate')} | {l.get('p50')} | {l.get('p95')} | {l.get('p99')} |")
+        latency = row.get("latency_ms") or {}
+        lines.append(f"| {row.get('concurrency')} | {row.get('request_count')} | {row.get('throughput_rps')} | {row.get('error_rate')} | {latency.get('p50')} | {latency.get('p95')} | {latency.get('p99')} |")
     lines += [
         "",
         "## Decision",

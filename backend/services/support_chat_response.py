@@ -278,13 +278,6 @@ def _generate_llm_response(message, actions, urgent_flags, patient_context, fall
     return reply
 
 
-from backend.services.support_chat_context import (
-    _chat_toxicity_summary,
-    _last_14_day_changes,
-    _recent_patient_context,
-    _synthetic_model_context,
-    _timeline_context,
-)
 
 def _contextual_reply(message, context):
     lower = message.lower()

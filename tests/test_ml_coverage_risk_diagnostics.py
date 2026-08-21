@@ -12,7 +12,7 @@ from backend.services.ml_coverage_risk_diagnostics import (
 def test_ml_coverage_risk_diagnostics_writes_nonclinical_artifact(tmp_path: Path):
     output = tmp_path / "coverage_risk.json"
 
-    report = build_ml_coverage_risk_diagnostics(output_path=output)
+    build_ml_coverage_risk_diagnostics(output_path=output)
 
     assert output.exists()
     payload = json.loads(output.read_text(encoding="utf-8"))

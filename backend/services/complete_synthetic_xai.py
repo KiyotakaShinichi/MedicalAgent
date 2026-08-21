@@ -275,7 +275,8 @@ def _save_importance_plot(global_importance, plot_path: str, method_label: str, 
         importances = [item["importance"] for item in reversed(top)]
 
         fig, ax = plt.subplots(figsize=(9, 6))
-        bars = ax.barh(features, importances, color="#4C72B0", edgecolor="white", height=0.7)
+        # Drawn for its side effect on the axes; the returned artists are unused.
+        ax.barh(features, importances, color="#4C72B0", edgecolor="white", height=0.7)
         ax.set_xlabel("Mean |contribution| (feature explanation units)", fontsize=10)
         ax.set_title(
             f"Synthetic Champion Model - Global Feature Explanation\n({method_label})",

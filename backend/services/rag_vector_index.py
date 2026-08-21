@@ -595,7 +595,8 @@ def _compute_dense_scores(index, query):
 
     # Map back to original document order
     ordered = np.zeros(n, dtype="float32")
-    for rank_idx, (doc_idx, score) in enumerate(zip(indices[0], scores[0])):
+    # The rank index was never used, so the enumerate wrapper is dropped.
+    for doc_idx, score in zip(indices[0], scores[0]):
         ordered[int(doc_idx)] = float(score)
     return ordered.tolist()
 

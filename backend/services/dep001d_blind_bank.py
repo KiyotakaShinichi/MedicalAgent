@@ -1,7 +1,6 @@
 """Author, overlap-audit, and freeze a new DEP-001D internal blind bank."""
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import random
@@ -11,7 +10,6 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from backend.services.dep001d_integrity import (

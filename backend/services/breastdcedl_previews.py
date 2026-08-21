@@ -13,9 +13,11 @@ def generate_breastdcedl_previews(
     max_patients: int = 40,
 ):
     manifest = pd.read_csv(manifest_csv_path)
+    # Elementwise Series mask — see breastdcedl_baseline for why `.eq(True)`
+    # rather than a truthiness check.
     eligible = manifest[
-        (manifest["has_core_dce_inputs"] == True)
-        & (manifest["has_mask"] == True)
+        manifest["has_core_dce_inputs"].eq(True)
+        & manifest["has_mask"].eq(True)
     ].head(max_patients)
 
     output_path = Path(output_dir)

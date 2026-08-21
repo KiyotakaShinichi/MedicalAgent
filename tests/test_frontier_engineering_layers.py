@@ -14,12 +14,8 @@ goldset mutation, review_only_boundary, anti-fabrication).
 """
 from __future__ import annotations
 
-import hashlib
-import json
 import os
-import tempfile
 import unittest
-from pathlib import Path
 
 
 REQUIRED_DISCLAIMER = "not clinical validation"

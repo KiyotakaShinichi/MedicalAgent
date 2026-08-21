@@ -37,7 +37,6 @@ from backend.services.synthetic_feature_policy import (
     CATEGORICAL_FEATURES as POLICY_CATEGORICAL_FEATURES,
     CANONICAL_PROMOTION_NUMERIC_FEATURES,
     LEGACY_NUMERIC_FEATURES,
-    POLICY_ID as PROMOTION_FEATURE_POLICY_ID,
 )
 
 DEFAULT_ML_CSV_PATH = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"

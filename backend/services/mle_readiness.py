@@ -12,15 +12,12 @@ from backend.services.agent_regression_eval import (
 )
 from backend.services.feature_store import load_feature_store_manifest
 from backend.services.temporal_eval import (
-    DEFAULT_TEMPORAL_EVAL_PATH,
     run_temporal_eval,
 )
 from backend.services.noise_eval import (
-    DEFAULT_NOISE_EVAL_PATH,
     run_noise_eval,
 )
 from backend.services.calibration_eval import (
-    DEFAULT_CALIBRATION_EVAL_PATH,
     run_calibration_eval,
 )
 from backend.services.synthetic_realism_report import (

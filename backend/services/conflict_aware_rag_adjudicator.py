@@ -105,7 +105,7 @@ def _classify_candidate_uncertainty(
 
 def _per_case(case: Mapping[str, Any]) -> dict[str, Any]:
     pool = _retrieve_pool_for(case)
-    # Two disjoint candidate slices — top-5 and middle-5 — so a
+    # Two disjoint candidate slices â€” top-5 and middle-5 â€” so a
     # conflict arises whenever the two windows surface different
     # source IDs from the post-filter pool.
     candidate_a = pool[:5]
@@ -124,7 +124,6 @@ def _per_case(case: Mapping[str, Any]) -> dict[str, Any]:
     # Successful conflict resolution: refusal/safety cases are routed
     # away from a confident citation; education cases either stay
     # confident or are escalated to a review/conflict state.
-    conflict_detected = candidates_conflict
     resolved_via_escalation = actual_status in {
         "conflicting_evidence", "clinician_review_required",
         "insufficient_evidence", "refuse_due_to_safety",

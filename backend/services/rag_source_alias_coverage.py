@@ -52,8 +52,7 @@ DEFAULT_OUTPUT_PATH = Path("Data/evals/rag/latest_source_alias_coverage.json")
 _STOPWORDS = frozenset({
     "the", "a", "an", "and", "or", "of", "in", "on", "to", "is", "are",
     "for", "with", "as", "at", "by", "from", "this", "that", "during",
-    "during", "during", "of", "and", "or", "in", "on", "to", "for",
-    "during", "guide", "reference", "patient", "patients", "breast",
+    "guide", "reference", "patient", "patients", "breast",
     "cancer", "treatment",
 })
 

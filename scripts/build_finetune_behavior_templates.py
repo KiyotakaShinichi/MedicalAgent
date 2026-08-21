@@ -146,7 +146,7 @@ def _text(behavior: str, index: int) -> tuple[str, str]:
         assistants = (
             f"I hear that you are {emotion}. I can help organize {context} and your concerns for the care team, while they provide the medical assessment and support.",
             f"That sounds difficult. We can slow down, list what {context} actually show, separate unknowns, and prepare a clear message for your oncology team.",
-            f"Thank you for saying how this feels. I cannot predict an outcome, but I can help document the concern and identify whether you need immediate human support.",
+            "Thank you for saying how this feels. I cannot predict an outcome, but I can help document the concern and identify whether you need immediate human support.",
             f"Your distress matters. I can summarize {context} without drawing a diagnosis and help you contact the appropriate care-team or emergency support when needed.",
         )
     elif behavior == "privacy_boundary":

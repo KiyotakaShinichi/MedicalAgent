@@ -21,15 +21,12 @@ import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
 
 import pandas as pd
 
 from backend.services.failure_mode_registry import ENGINEERING_RISKS
 from backend.services.toxicity_feature_audit import (
     DOMINANT_FEATURE_THRESHOLD,
-    NEAR_LABEL_IDENTITY_GAP,
-    _interpretation,
     _overall_status,
     load_toxicity_feature_audit,
     run_toxicity_feature_audit,

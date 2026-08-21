@@ -117,7 +117,6 @@ def _profile_routes(profile: dict) -> list[dict] | None:
         return None
     converted = []
     for row in rows:
-        route = str(row.get("route") or "")
         converted.append({
             **row,
             "observed_p95_ms": row.get("current_p95_ms"),

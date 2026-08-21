@@ -52,7 +52,6 @@ def run_synthetic_v2_model_stability(
     feature_columns = [column for column in frame.columns if column not in TARGET_OR_PROXY_COLUMNS]
     groups = frame["patient_id"].astype(str)
     y_class = frame["treatment_success_binary"].astype(int)
-    y_reg = frame["response_score_percent"].astype(float)
     rows: list[dict[str, Any]] = []
 
     for seed in SEEDS:
@@ -207,7 +206,6 @@ def _safe_auc(y_true: pd.Series, probability: np.ndarray) -> float | None:
 
 
 def _ece(y_true: np.ndarray, probability: np.ndarray, bins: int = 10) -> float:
-    total = len(y_true)
     error = 0.0
     for lower in np.linspace(0, 1, bins, endpoint=False):
         upper = lower + 1 / bins

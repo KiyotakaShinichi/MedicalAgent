@@ -21,7 +21,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 
 COMPARISON_PATH = Path("Data/evals/rag/latest_rag_baseline_comparison.json")

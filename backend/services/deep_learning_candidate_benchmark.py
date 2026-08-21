@@ -314,7 +314,6 @@ def _prepare_sequences(rows: pd.DataFrame, *, config: TrainingConfig) -> dict[st
         stratify=y_class,
     )
     train_set = set(train_patients)
-    test_set = set(test_patients)
     train_rows = model_rows[model_rows["patient_id"].isin(train_set)].copy()
     scaler = StandardScaler()
     scaler.fit(train_rows[feature_names].fillna(0.0).astype(float))

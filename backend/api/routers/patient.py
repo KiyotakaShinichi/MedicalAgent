@@ -7,14 +7,11 @@ POST /patients/{patient_id}/chat/stream.
 
 from __future__ import annotations
 
-import json
 import os
 import time
-from pathlib import Path
 
 import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session
 
 from backend.api.deps import (
@@ -23,26 +20,13 @@ from backend.api.deps import (
     get_clinician_or_admin_context,
 )
 from backend.api.schemas.patient import (
-    AgentFeedbackRequest,
-    BiomarkerRecordCreate,
     CTReportCreate,
-    FamilyHistoryCreate,
-    GeneticReviewCreate,
-    GeneticTestRecordCreate,
     ImagingReportCreate,
     LabCreate,
     MRIRegistryCreate,
-    MyImagingReportCreate,
-    MyLabCreate,
-    MyMedicationCreate,
-    MySymptomCreate,
-    MyTreatmentCreate,
-    PatientChatRequest,
     PatientCreate,
-    PatientUploadCreate,
     SymptomCreate,
     TreatmentCreate,
-    TumorMarkerRecordCreate,
 )
 from backend.crud import (
     get_all_patients,
@@ -68,7 +52,6 @@ from backend.models import (
     LabResult,
     MRIFileRegistry,
     Patient,
-    PatientUpload,
     SymptomReport,
     Treatment,
 )
@@ -88,7 +71,6 @@ from backend.reports.patient_report import build_patient_report
 from backend.services.app_logging import log_app_event
 from backend.services.input_validation import (
     validate_cbc_values,
-    validate_chat_message,
     validate_imaging_report_payload,
     validate_patient_payload,
     validate_symptom_payload,
@@ -99,8 +81,7 @@ from backend.services.ctcae_mapping import map_symptom_to_ctcae_review_hint
 from backend.services.lab_reference_context import build_cbc_reference_context
 from backend.services.multimodal_fusion import build_multimodal_assessment
 from backend.services.patient_timeline_summary import build_patient_timeline_risk_summary
-from backend.services.support_chat_agent import handle_patient_chat
-from backend.services.timeline_intelligence import answer_timeline_question, build_timeline_intelligence
+from backend.services.timeline_intelligence import build_timeline_intelligence
 from backend.services.data_availability import build_data_availability
 from backend.services.patient_report_enrichment_jobs import (
     get_patient_enrichment_job,

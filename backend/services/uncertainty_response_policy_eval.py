@@ -22,7 +22,7 @@ import json
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from backend.services.retrieval_confidence import (
     ANSWERABILITY_STATUS_VALUES,

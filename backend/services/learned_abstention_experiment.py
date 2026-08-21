@@ -11,7 +11,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, brier_score_loss, roc_auc_score
+from sklearn.metrics import brier_score_loss, roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -118,7 +118,7 @@ def _pipeline(features: list[str]) -> Pipeline:
 
 def _build_meta_rows(model, frame: pd.DataFrame, features: list[str], include_rule: bool = False):
     rows, labels, rule_cover = [], [], []
-    for scenario_name, drop_modalities in SCENARIOS.items():
+    for _scenario_name, drop_modalities in SCENARIOS.items():
         masked = _strip_modalities(frame.copy(), drop_modalities)
         probs = model.predict_proba(masked[features])[:, 1]
         preds = (probs >= 0.5).astype(int)

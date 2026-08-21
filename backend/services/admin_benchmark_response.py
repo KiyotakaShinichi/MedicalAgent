@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 from backend.services.benchmark_registry import BENCHMARK_SPECS, ROOT_DIR

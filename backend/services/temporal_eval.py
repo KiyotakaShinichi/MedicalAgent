@@ -20,7 +20,6 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, brier_score_loss, roc_auc_score
@@ -292,7 +291,6 @@ def _auroc_status(auroc) -> str:
 def _interpretation(gap, status: str) -> str:
     if gap is None:
         return "Temporal evaluation could not be computed."
-    abs_gap = abs(gap)
     if status == "stable":
         return (
             f"Temporal generalisation is stable (gap={gap:+.3f}). "

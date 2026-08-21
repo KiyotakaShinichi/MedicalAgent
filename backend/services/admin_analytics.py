@@ -911,11 +911,8 @@ def _load_csv(path):
 from backend.services.admin_metric_interpretation import (
     _metric_interpretation_guide,
     _score_model_metric_set,
-    _higher_is_better_status,
-    _lower_is_better_status,
     _standardized_shift_status,
     _missing_rate_status,
-    _ece_status,
     _ci_width_status,
     _false_negative_status,
     _subgroup_status,

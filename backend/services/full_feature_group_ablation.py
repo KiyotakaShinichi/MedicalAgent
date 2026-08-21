@@ -25,7 +25,6 @@ from sklearn.preprocessing import OneHotEncoder
 
 from backend.services.artifact_manifest import build_artifact_manifest
 from backend.services.biomarker_feature_benchmark import (
-    BIOMARKER_NUMERIC_FEATURES,
     DEFAULT_SOURCE_CSV,
     FORBIDDEN_LEAKAGE_COLUMNS,
     REGRESSION_TARGET,

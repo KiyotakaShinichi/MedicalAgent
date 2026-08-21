@@ -13,7 +13,6 @@ error, so the dashboard's existing pre-computed prediction stays intact.
 
 from __future__ import annotations
 
-import json
 import math
 import re
 from datetime import timedelta
@@ -38,8 +37,6 @@ from backend.services.hybrid_prediction import (
     EvidenceAwareRegression,
     HybridPrediction,
     predict_hybrid,
-    predict_response_score_with_abstention,
-    predict_toxicity_with_abstention,
 )
 from backend.services.evidence_sufficiency import EvidenceAssessment
 from backend.services.predict_with_abstention import (

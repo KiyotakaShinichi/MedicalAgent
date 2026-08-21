@@ -3,7 +3,7 @@ Per-prediction ML error table.
 
 Reads the saved predictions CSV, classifies each row into TP/FP/TN/FN,
 computes absolute error, and attaches SHAP feature contributions where available.
-All data is synthetic — clearly labelled in every response field.
+All data is synthetic â€” clearly labelled in every response field.
 """
 
 from __future__ import annotations
@@ -35,7 +35,6 @@ def build_prediction_error_table(
 
     df = pd.read_csv(p)
     prob_col = f"{model}_probability"
-    pred_col = f"{model}_predicted_label"
 
     if prob_col not in df.columns or "actual_label" not in df.columns:
         return _unavailable(f"Required columns missing: {prob_col}, actual_label")
@@ -44,7 +43,7 @@ def build_prediction_error_table(
 
     rows = []
     for _, row in df.head(limit).iterrows():
-        patient_id = str(row.get("patient_id", "—"))
+        patient_id = str(row.get("patient_id", "â€”"))
         actual = int(row["actual_label"])
         prob = float(row[prob_col])
         pred = int(prob >= threshold)
@@ -97,7 +96,7 @@ def _confusion_type(actual: int, pred: int) -> str:
 
 def _case_note(confusion: str, prob: float, actual: int) -> str:
     if confusion == "FN":
-        return f"Missed positive (prob={prob:.2f}). FN cost is high in cancer monitoring — review threshold."
+        return f"Missed positive (prob={prob:.2f}). FN cost is high in cancer monitoring â€” review threshold."
     if confusion == "FP":
         return f"False alarm (prob={prob:.2f}). Increases clinician review burden but not directly harmful."
     if confusion == "TP":

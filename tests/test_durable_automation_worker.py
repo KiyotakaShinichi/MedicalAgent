@@ -9,7 +9,6 @@ from backend.models import AsyncTask
 from backend.services.automation_job_queue import enqueue_automation_task
 from backend.services.automation_worker import (
     claim_next_automation_task,
-    execute_claimed_automation_task,
     heartbeat_automation_task,
     record_automation_delivery_receipt,
     recover_expired_automation_leases,

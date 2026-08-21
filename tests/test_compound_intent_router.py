@@ -18,8 +18,6 @@ from __future__ import annotations
 import unittest
 
 from backend.services.compound_intent_router import (
-    CompoundIntent,
-    IntentSegment,
     detect_compound_intents,
 )
 

@@ -22,7 +22,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import pytest
 
 
 TEMPLATE_PATH = Path("Data/evals/rag/retrieval_goldset_holdout_v2_template.jsonl")

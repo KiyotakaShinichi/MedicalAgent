@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
-import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -14,7 +13,6 @@ OUTPUT = ROOT / "Data/evals/ops/latest_openapi_type_drift_check.json"
 
 
 def main() -> int:
-    npm = "npm.cmd" if shutil.which("npm.cmd") else "npm"
     npx = "npx.cmd" if shutil.which("npx.cmd") else "npx"
     rows = []
     ok = True

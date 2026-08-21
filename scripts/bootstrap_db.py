@@ -63,7 +63,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if sqlite_path is not None and sqlite_path.exists():
         print(f"[bootstrap_db] DB already exists at {sqlite_path} — nothing to do.")
-        print(f"[bootstrap_db] pass --reset to recreate.")
+        print("[bootstrap_db] pass --reset to recreate.")
         return 0
 
     _create_schema()

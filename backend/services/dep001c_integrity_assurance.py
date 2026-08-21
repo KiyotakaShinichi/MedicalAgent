@@ -1,7 +1,6 @@
 """Disposable integrity fault injection for the DEP-001C harness."""
 from __future__ import annotations
 
-import json
 import stat
 import tempfile
 from pathlib import Path

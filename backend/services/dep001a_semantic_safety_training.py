@@ -4,13 +4,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
-import os
 import random
-from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import joblib
 import numpy as np
@@ -400,7 +397,6 @@ def _evaluate_predictions(
     predicted_unsafe = (unsafe_prob >= unsafe_threshold) | predicted_urgent | category_unsafe
     safe_mask = np.array([row["safe_or_unsafe"] == "safe" for row in rows])
     unsafe_mask = y_unsafe == 1
-    urgent_mask = y_urgent == 1
     by_language = {}
     for language in sorted({row["language"] for row in rows}):
         mask = np.array([row["language"] == language for row in rows])

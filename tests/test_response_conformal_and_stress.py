@@ -1,4 +1,3 @@
-from pathlib import Path
 
 from backend.services.breast_cancer_journey import infer_journey_phase
 from backend.services.medical_report_parser import classify_report_type, parse_report

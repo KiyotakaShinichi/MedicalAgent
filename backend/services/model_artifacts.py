@@ -13,7 +13,6 @@ from backend.services.breastdcedl_baseline import (
     FEATURE_COLUMNS,
     _logistic_regression_pipeline,
 )
-from backend.services.breastdcedl_xai import load_patient_shap_explanation
 
 
 DEFAULT_MODEL_NAME = "breastdcedl_pcr_logreg"

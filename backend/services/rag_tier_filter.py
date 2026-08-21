@@ -17,7 +17,6 @@ from functools import lru_cache
 from typing import Any, Iterable, Mapping
 
 from backend.services.kb_source_governance import (
-    TIER_MAP,
     load_kb_source_governance,
 )
 from backend.services.rag_intent_modes import RagModeConfig

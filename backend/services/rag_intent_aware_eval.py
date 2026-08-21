@@ -1,4 +1,4 @@
-﻿"""Intent-aware RAG benchmark.
+"""Intent-aware RAG benchmark.
 
 Reports the seven metrics the Phase 11 spec called for:
 
@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from time import perf_counter

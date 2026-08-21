@@ -43,10 +43,8 @@ from typing import Any
 from backend.services.agent_intent_router import (
     EMOTIONAL_TERMS,
     GREETINGS,
-    IDENTITY_PATTERNS,
     MEMORY_TERMS,
     PORTAL_TERMS,
-    SOCIAL_CHECKIN_PATTERNS,
     TIMELINE_TERMS,
     is_conversation_opening,
     is_identity_or_capability_question,
@@ -353,7 +351,11 @@ def detect_compound_intents(message: str) -> CompoundIntent:
             primary_intent="general_support",
         )
 
-    normalized = normalize_user_text(message)
+    # LATENT DEFECT (documented, not fixed here): the normalised text is
+    # computed and then discarded — clause splitting runs on the raw `message`.
+    # Switching to `normalized` would change intent routing, which is a
+    # safety-relevant behavioural change and needs its own evidenced sprint.
+    normalized = normalize_user_text(message)  # noqa: F841 - see comment above
     clauses = [_clean_clause(c) for c in _CLAUSE_SPLIT_RE.split(message) if _clean_clause(c)]
     if not clauses:
         clauses = [message.strip()]
@@ -673,7 +675,7 @@ def classify_compound_intent_with_llm(message: str) -> dict[str, Any] | None:
             prompt=_json.dumps({"message": message}, ensure_ascii=False),
             tier="router",
         )
-    except Exception as exc:  # noqa: BLE001 — never crash chat on the classifier
+    except Exception:  # noqa: BLE001 — never crash chat on the classifier
         return None
 
     if not verdict.get("available"):

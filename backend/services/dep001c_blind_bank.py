@@ -12,7 +12,6 @@ import random
 import re
 import shutil
 import tempfile
-from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 

@@ -7,7 +7,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, brier_score_loss
+from sklearn.metrics import brier_score_loss
 
 from backend.services.artifact_manifest import build_artifact_manifest
 from backend.services.biomarker_feature_benchmark import DEFAULT_SOURCE_CSV

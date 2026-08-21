@@ -13,9 +13,7 @@ Lock-ins:
 """
 from __future__ import annotations
 
-import json
 import unittest
-from pathlib import Path
 
 from backend.services.rag_source_alias_coverage import (
     DEFAULT_GOLDSET_PATH,

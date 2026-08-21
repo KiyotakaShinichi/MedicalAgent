@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 def build_timeline_intelligence(report):
     timeline = report.get("timeline") or []
     labs = report.get("lab_history") or []
-    symptoms = report.get("symptoms") or []
     assessment = report.get("multimodal_assessment") or {}
     risks = report.get("risks") or []
     mri_signal = (assessment.get("signals") or {}).get("mri_response") or {}

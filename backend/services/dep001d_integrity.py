@@ -3,7 +3,22 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from backend.services.dep001c_integrity import *  # noqa: F401,F403
+# Explicit re-export rather than `import *`. The starred form hid which
+# primitives this facade actually forwards and left every name in `__all__`
+# unverifiable by static analysis; these are exactly the names `__all__`
+# already declared.
+from backend.services.dep001c_integrity import (
+    EvaluationLock,
+    IntegrityViolation,
+    atomic_write_json,
+    canonical_hash,
+    detect_conflicting_writers,
+    make_tree_read_only,
+    sha256_file,
+    transition_transaction,
+    utc_now,
+    verify_snapshot,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]

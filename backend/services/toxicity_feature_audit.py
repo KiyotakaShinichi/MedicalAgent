@@ -44,8 +44,7 @@ arrives at its synthetic numbers.
 from __future__ import annotations
 
 import json
-from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -61,7 +60,6 @@ from backend.services.complete_synthetic_training import (
     CATEGORICAL_FEATURES,
     NUMERIC_FEATURES,
     _patient_split,
-    _preprocessor,
 )
 
 
@@ -250,7 +248,8 @@ def _per_feature_label_separation(rows: pd.DataFrame, target: str) -> list[Featu
                 bottom_decile_rate=None, top_decile_rate=None,
             ))
             continue
-        sv = s[valid]; yv = y[valid]
+        sv = s[valid]
+        yv = y[valid]
         q1, q9 = np.quantile(sv, [0.10, 0.90])
         bottom_rate = float(yv[sv <= q1].mean()) if (sv <= q1).any() else None
         top_rate = float(yv[sv >= q9].mean()) if (sv >= q9).any() else None

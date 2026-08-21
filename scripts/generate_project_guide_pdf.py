@@ -18,7 +18,6 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (
     Flowable,
-    KeepTogether,
     LongTable,
     PageBreak,
     Paragraph,
@@ -422,7 +421,6 @@ def build_story() -> list[Any]:
     conformal = _load("Data/evals/models/latest_response_conformal_calibration.json")
     latency = _load("Data/evals/ops/latest_route_latency_budget.json")
     sentinel = _load("Data/evals/ops/latest_runtime_quality_sentinel.json")
-    release = _load("Data/evals/governance/latest_release_gate_explanation.json")
 
     bm25 = _configuration(rag, "bm25_only")
     full = _configuration(rag, "hybrid_rrf_query_rewrite_parent_child_source_tier")

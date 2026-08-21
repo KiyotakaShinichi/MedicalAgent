@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import csv
-from pathlib import Path
 
 from backend.services.row_level_prediction_export import run_row_level_prediction_evidence
 

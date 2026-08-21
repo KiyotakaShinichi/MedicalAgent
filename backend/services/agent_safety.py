@@ -28,9 +28,6 @@ from backend.services.security_guardrails import (
 from backend.services.unsafe_intent_context import (
     classify_unsafe_intent_with_context,
 )
-from backend.services.safety_uncertainty_adjudicator import (
-    adjudicate_safety_uncertainty,
-)
 from backend.services.multilingual_semantic_safety import (
     classify_multilingual_safety,
 )

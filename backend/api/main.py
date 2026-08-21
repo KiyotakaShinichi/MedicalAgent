@@ -17,10 +17,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from backend.database import SessionLocal
 from backend.schema_migrations import ensure_schema
 
-from backend.api.deps import get_access_context, get_admin_access_context, get_db
+from backend.api.deps import get_admin_access_context, get_db
 from backend.api.routers.auth import router as auth_router
 from backend.api.routers.patient import router as patient_router, warm_patient_report_enrichment_cache
 from backend.api.routers.clinician_review import router as clinician_review_router

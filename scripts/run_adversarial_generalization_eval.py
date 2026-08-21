@@ -13,7 +13,7 @@ if str(ROOT) not in sys.path:
 
 from backend.services.unsafe_intent_semantic_classifier import FAMILIES  # noqa: E402
 from scripts.run_adversarial_safety_holdout import run as run_holdout  # noqa: E402
-from scripts.run_adversarial_safety_regression import DEFAULT_BANK, _evaluate_case, run_regression  # noqa: E402
+from scripts.run_adversarial_safety_regression import _evaluate_case, run_regression  # noqa: E402
 
 
 PARAPHRASE_PATH = ROOT / "Data/evals/safety/adversarial_paraphrase_robustness.jsonl"

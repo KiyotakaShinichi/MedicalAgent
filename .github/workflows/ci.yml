@@ -28,6 +28,26 @@ jobs:
           uv run python scripts/check_dependency_contract.py
           uv run python scripts/check_env_documentation.py
           uv run python -m pip check
+
+      # The CI checkout is itself a fresh clone with no `.env`, so this is the
+      # one place the offline-reproducibility contract can be proven rather
+      # than asserted: it fails if the offline path ever starts depending on an
+      # untracked or gitignored file.
+      - name: Verify fresh-clone offline contract
+        run: |
+          uv run python scripts/check_fresh_clone_offline.py \
+            --run-tests \
+            --json-output Data/test_tmp/fresh_clone_offline_check.json
+
+      - name: Upload fresh-clone offline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fresh-clone-offline-check
+          path: Data/test_tmp/fresh_clone_offline_check.json
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Ruff
         run: uv run ruff check backend scripts tests
       - name: Incremental mypy

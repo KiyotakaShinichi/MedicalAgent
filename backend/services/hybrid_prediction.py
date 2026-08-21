@@ -249,14 +249,19 @@ def predict_response_score_with_abstention(
     modifier = evidence.confidence_modifier
 
     # Preferred path: three quantile heads, sorted per row.
-    for quantile_p10_path, quantile_p50_path, quantile_p90_path, version_tag in _quantile_candidate_paths(
+    # The loop targets are named distinctly from the arguments they are derived
+    # from. Rebinding the arguments in the loop header worked only because the
+    # call is evaluated once, before iteration begins; any later change that
+    # re-evaluated the candidate list would have silently consumed the
+    # already-overwritten paths.
+    for candidate_p10_path, candidate_p50_path, candidate_p90_path, version_tag in _quantile_candidate_paths(
         quantile_p10_path,
         quantile_p50_path,
         quantile_p90_path,
     ):
-        p10_model = _load_pipeline(quantile_p10_path)
-        p50_model = _load_pipeline(quantile_p50_path)
-        p90_model = _load_pipeline(quantile_p90_path)
+        p10_model = _load_pipeline(candidate_p10_path)
+        p50_model = _load_pipeline(candidate_p50_path)
+        p90_model = _load_pipeline(candidate_p90_path)
         if p10_model is not None and p50_model is not None and p90_model is not None:
             raw_percentages = sorted([
                 float(p10_model.predict(feature_frame)[0]),

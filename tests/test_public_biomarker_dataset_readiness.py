@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 
 from backend.services.public_biomarker_dataset_readiness import build_public_biomarker_dataset_readiness
 

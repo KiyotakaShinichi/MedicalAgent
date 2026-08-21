@@ -27,7 +27,6 @@ import os
 import unittest
 from pathlib import Path
 
-import pytest
 
 
 BANK_PATH = Path("Data/evals/safety/adversarial_safety_regression_bank.jsonl")

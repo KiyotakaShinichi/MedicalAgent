@@ -7,7 +7,7 @@ import re
 import textwrap
 from pathlib import Path
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
@@ -447,7 +447,9 @@ def _parse_markdown(lines: list[str]) -> list[Flowable]:
 
         if stripped.startswith("```"):
             if in_code:
-                story.append(XPreformatted(_wrap_code(code_lines), STYLES["code"])); code_lines = []; in_code = False
+                story.append(XPreformatted(_wrap_code(code_lines), STYLES["code"]))
+                code_lines = []
+                in_code = False
             else:
                 in_code = True
             index += 1
@@ -505,7 +507,8 @@ def _parse_markdown(lines: list[str]) -> list[Flowable]:
                 ("TOPPADDING", (0, 0), (-1, -1), 2.5 * mm),
                 ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5 * mm),
             ]))
-            story.append(quote); story.append(Spacer(1, 2 * mm))
+            story.append(quote)
+            story.append(Spacer(1, 2 * mm))
             continue
 
         if stripped.startswith("|") and index + 1 < len(lines) and _is_separator(lines[index + 1]):
@@ -514,7 +517,8 @@ def _parse_markdown(lines: list[str]) -> list[Flowable]:
             while index < len(lines) and lines[index].strip().startswith("|"):
                 rows.append(_table_row(lines[index]))
                 index += 1
-            story.append(_make_table(rows)); story.append(Spacer(1, 3 * mm))
+            story.append(_make_table(rows))
+            story.append(Spacer(1, 3 * mm))
             continue
 
         if re.match(r"^-\s+", stripped):

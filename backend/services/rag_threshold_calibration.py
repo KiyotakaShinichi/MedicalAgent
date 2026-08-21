@@ -38,7 +38,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable
 
 from backend.services.rag_claim_validator import (
     SUPPORTED_THRESHOLD,

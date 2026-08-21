@@ -140,7 +140,7 @@ def _top_factors(
     if not allowed or reliability_policy.get("unlisted_factor_groups_allowed"):
         return []
     grouped: dict[str, dict[str, Any]] = {}
-    for direction, key in (
+    for _direction, key in (
         ("toward_synthetic_positive_class", "positive_contributions"),
         ("away_from_synthetic_positive_class", "negative_contributions"),
     ):

@@ -66,10 +66,14 @@ def extract_breastdcedl_features(
     max_patients: int | None = None,
 ):
     manifest = pd.read_csv(manifest_csv_path)
+    # `.eq(True)` rather than `== True`: this is an elementwise mask over a
+    # pandas Series, so a Python truthiness check would be wrong here. `.eq`
+    # is exactly equivalent to the previous comparison and keeps the strict
+    # match against True (not merely truthy) that the manifest columns expect.
     eligible = manifest[
-        (manifest["has_core_dce_inputs"] == True)
-        & (manifest["has_mask"] == True)
-        & (manifest["pcr_label"].notna())
+        manifest["has_core_dce_inputs"].eq(True)
+        & manifest["has_mask"].eq(True)
+        & manifest["pcr_label"].notna()
     ].copy()
     if max_patients:
         eligible = eligible.head(max_patients)

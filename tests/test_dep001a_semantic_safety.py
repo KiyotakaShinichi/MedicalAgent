@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import shutil
-from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -11,7 +10,6 @@ import pytest
 from backend.services import agent_safety
 from backend.services.agent_safety import safety_scope_check
 from backend.services.multilingual_semantic_safety import (
-    SemanticSafetyPrediction,
     classify_multilingual_safety,
     clear_semantic_safety_runtime_cache,
 )

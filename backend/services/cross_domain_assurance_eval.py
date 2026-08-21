@@ -11,7 +11,7 @@ import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Callable
+from typing import Any
 
 from backend.services.agent_execution_policy import (
     build_confirmation_contract,

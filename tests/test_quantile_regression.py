@@ -14,7 +14,6 @@ Contract guarded:
 """
 from __future__ import annotations
 
-import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -29,10 +28,7 @@ from backend.services.hybrid_prediction import (
     predict_response_score_with_abstention,
 )
 from backend.services.quantile_regression_training import (
-    DEFAULT_QUANTILES,
-    _model_path_for,
     load_quantile_regression_training_metadata,
-    train_quantile_regression_heads,
 )
 
 

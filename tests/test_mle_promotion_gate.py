@@ -17,7 +17,6 @@ import json
 import sys
 import unittest
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 
 # Load the script as a module under the same import path so tests can

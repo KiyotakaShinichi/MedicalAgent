@@ -104,7 +104,13 @@ def _clean_feature_name(name):
 
 
 def _feature_meaning(feature):
-    meanings = {
+    # LATENT DEFECT (documented, not fixed here): this table is built and then
+    # never consulted — the function falls through to the generic strings
+    # below, so every feature renders as "Model input feature." Wiring the
+    # lookup up would change the text shown in a clinician-facing XAI surface,
+    # which is a behavioural change that needs a domain owner, not a lint pass.
+    # Kept rather than deleted so the intended mapping is not lost.
+    meanings = {  # noqa: F841 - see comment above; needs domain review
         "age": "Patient age in the dataset metadata.",
         "baseline_longest_diameter_mm": "Baseline MRI longest tumor diameter.",
         "tumor_voxel_count": "Tumor mask volume proxy.",

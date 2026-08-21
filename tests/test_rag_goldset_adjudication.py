@@ -30,11 +30,8 @@ from pathlib import Path
 
 from backend.services.rag_goldset_adjudication import (
     ALLOWED_DECISIONS,
-    DECISIONS_REQUIRING_NOTES,
-    DECISIONS_REQUIRING_REVIEWER_ROLE,
     GOLDSET_PATH,
     PACKET_OUTPUT_PATH,
-    READINESS_OUTPUT_PATH,
     build_packet,
     build_readiness_report,
     packet_did_not_mutate_goldset,

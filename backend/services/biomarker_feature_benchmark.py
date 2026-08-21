@@ -268,7 +268,6 @@ def _add_synthetic_biomarker_features(rows: pd.DataFrame, seed: int) -> pd.DataF
     rows["cea_value_synthetic"] = (2.0 + stage_load * 2.4 + biology_load * 1.2 + symptoms * 0.2 + _stable_noise(rows, seed, "cea", scale=0.8)).clip(0.2, 40).round(2)
     rows["tumor_marker_rising_synthetic"] = (marker_trend > 3.5).astype(int)
 
-    marker_columns = ["ca15_3_value_synthetic", "ca27_29_value_synthetic", "cea_value_synthetic"]
     missing_any = np.zeros(len(rows), dtype=int)
     for column, rate in {"ca15_3_value_synthetic": 0.12, "ca27_29_value_synthetic": 0.16, "cea_value_synthetic": 0.1}.items():
         mask = np.array([

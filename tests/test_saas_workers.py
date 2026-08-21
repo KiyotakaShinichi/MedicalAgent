@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from backend.database import Base
-from backend.models import SaaSOutboxEvent, SaaSPlatformJob
+from backend.models import SaaSOutboxEvent
 from backend.services.saas_control_plane import (
     SaaSActor,
     append_outbox_event,

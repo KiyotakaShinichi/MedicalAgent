@@ -29,7 +29,6 @@ from backend.services.rag_intent_aware_eval import (
 )
 from backend.services.rag_intent_modes import (
     COMMON_BANNED_CLAIMS,
-    INTENT_TO_MODE,
     MODES,
     select_mode,
 )

@@ -29,7 +29,6 @@ from pathlib import Path
 from backend.services.external_review_execution_readiness import (
     OUTPUT_PATH,
     PENDING_REVIEW_TYPES,
-    REQUIRED_TEMPLATE_PATHS,
     REVIEWER_ROLE_PACKETS,
     build_readiness,
 )
@@ -150,7 +149,7 @@ class AttestationTemplateInvariants(unittest.TestCase):
         self.assertTrue(ATTESTATION_PATH.exists())
 
     def test_contains_contamination_disclosure(self) -> None:
-        self.assertIn("contamination disclosure", cls := self.text)
+        self.assertIn("contamination disclosure", self.text)
 
     def test_lists_no_read_protocol_required_files(self) -> None:
         # At minimum the frozen goldset path must appear so a reviewer
@@ -218,7 +217,6 @@ class AntiFabricationRule(unittest.TestCase):
         self.assertEqual(_payload()["completed_reviews"], 0)
 
     def test_filled_attestation_with_ticks_increments_count(self) -> None:
-        from backend.services.external_review_execution_readiness import build_readiness
         # Simulate a filled attestation in an isolated location by
         # building the readiness against a temp directory.  This
         # asserts the counting logic is alive without committing a

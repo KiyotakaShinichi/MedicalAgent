@@ -85,7 +85,6 @@ def apply_post_gen_validator(
     if escalated and escalated.get("decision") == "blocked":
         # Build a synthetic pgv-like decision from the LLM verdict and
         # apply the same block path.
-        from backend.services.post_generation_validator import validate_reply as _vr
         synthetic = type(pgv_decision)(  # reuse the dataclass shape
             decision="blocked",
             triggered_rules=tuple(escalated.get("triggered_rules") or ["llm_answer_tier_block"]),

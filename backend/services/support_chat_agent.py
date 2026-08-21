@@ -2,13 +2,6 @@ import json
 import re
 from backend.models import (
     ChatMessage,
-    ClinicalIntervention,
-    ImagingReport,
-    LabResult,
-    MedicationLog,
-    SymptomReport,
-    Treatment,
-    TreatmentOutcome,
 )
 from backend.processing.radiology_analysis import detect_possible_metastatic_indicators
 from backend.services.agent_rag import run_patient_agent_pipeline, route_intent, safety_scope_check
@@ -19,7 +12,6 @@ from backend.services.app_logging import log_app_event
 from backend.services.input_validation import validate_cbc_values, validate_imaging_report_payload, validate_symptom_payload
 from backend.services.local_llm import select_support_tools_with_local_llm
 from backend.services.support_chat_context import _recent_patient_context
-from backend.services.security_guardrails import detect_multilingual_medical_danger, normalize_security_text
 from backend.services.rag_evidence_envelope import (
     build_fail_closed_error_result,
     enforce_evidence_release,
@@ -42,13 +34,6 @@ from backend.services.confirmed_record_write import (
 from backend.services.support_chat_policy import (
     ALLOWED_SUPPORT_INTENTS,
     ALLOWED_SUPPORT_TOOLS,
-    DOMAIN_SCOPE_TERMS,
-    GENERAL_SUPPORT_PATTERNS,
-    IMMEDIATE_DANGER_PATTERNS,
-    OUT_OF_DOMAIN_PATTERNS,
-    SAFETY_LOCATION_FOLLOWUP_PATTERNS,
-    SYMPTOM_KEYWORDS,
-    URGENT_TERMS,
 )
 
 def handle_patient_chat(db, patient_id, message):
@@ -1189,6 +1174,11 @@ from backend.services.support_chat_extraction import (
 )
 
 
+# These three blocks are a deliberate re-export facade, not ordinary imports:
+# the helpers were split out of this module and callers (including tests) still
+# reach them as `support_chat_agent.<name>`. Names not referenced inside this
+# file are therefore marked `noqa: F401` — removing them silently breaks those
+# callers, which is exactly what happened when the rule was first enabled.
 from backend.services.support_chat_safety import (
     _detect_urgent_flags,
     _enforce_record_provenance,
@@ -1197,9 +1187,9 @@ from backend.services.support_chat_safety import (
     _immediate_danger_reply,
     _is_immediate_danger_statement,
     _is_out_of_domain_request,
-    _looks_truncated_reply,
+    _looks_truncated_reply,  # noqa: F401 - re-exported facade name
     _out_of_domain_reply,
-    _prefer_deterministic_reply,
+    _prefer_deterministic_reply,  # noqa: F401 - re-exported facade name
     _resolve_safety_location_followup,
     _safety_location_followup_reply,
 )
@@ -1207,7 +1197,7 @@ from backend.services.support_chat_safety import (
 from backend.services.support_chat_response import (
     _build_response,
     _is_conversational_prompt,
-    _is_small_talk,
+    _is_small_talk,  # noqa: F401 - re-exported facade name
     _should_use_llm_direct_reply,
     _generate_llm_response,
 )

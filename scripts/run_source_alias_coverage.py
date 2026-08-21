@@ -4,7 +4,6 @@ Writes ``Data/evals/rag/latest_source_alias_coverage.json``.
 """
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 

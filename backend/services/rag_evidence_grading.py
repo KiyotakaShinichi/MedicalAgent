@@ -26,7 +26,6 @@ from __future__ import annotations
 
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Iterable, Mapping
 
 from backend.services.rag_claim_validator import ClaimValidationResult
 from backend.services.rag_intent_modes import RagModeConfig

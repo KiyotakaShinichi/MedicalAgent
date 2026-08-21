@@ -1,7 +1,6 @@
 import json
 import os
 import unittest
-import tempfile
 import uuid
 import zipfile
 import base64

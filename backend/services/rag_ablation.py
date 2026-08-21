@@ -54,7 +54,6 @@ def run_rag_ablation(output_path: str = ABLATION_OUTPUT_PATH) -> dict:
         hybrid_retrieval,
         knowledge_base_fingerprint,
         rerank_context,
-        rewrite_and_decompose,
     )
     from backend.services.rag_vector_index import rag_index_status, search_hybrid_index
 

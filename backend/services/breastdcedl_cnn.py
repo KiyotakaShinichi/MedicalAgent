@@ -112,10 +112,12 @@ class SmallDceCnn(nn.Module):
 
 def _eligible_rows(manifest_csv_path, max_patients):
     manifest = pd.read_csv(manifest_csv_path)
+    # Elementwise Series mask — see breastdcedl_baseline for why `.eq(True)`
+    # rather than a truthiness check.
     rows = manifest[
-        (manifest["has_core_dce_inputs"] == True)
-        & (manifest["has_mask"] == True)
-        & (manifest["pcr_label"].notna())
+        manifest["has_core_dce_inputs"].eq(True)
+        & manifest["has_mask"].eq(True)
+        & manifest["pcr_label"].notna()
     ].copy()
     rows["pcr_label"] = rows["pcr_label"].astype(int)
     if max_patients:

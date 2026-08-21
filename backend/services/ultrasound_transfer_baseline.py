@@ -39,7 +39,7 @@ def run_ultrasound_transfer_baseline(
         from sklearn.model_selection import train_test_split
         from sklearn.preprocessing import LabelEncoder
         from torch import nn
-        from torch.utils.data import DataLoader, Dataset
+        from torch.utils.data import DataLoader
         from torchvision import models, transforms
     except Exception as exc:
         payload = _unavailable(f"Required transfer-learning dependency is unavailable: {exc}", "Install torch, torchvision, pillow, and scikit-learn.")

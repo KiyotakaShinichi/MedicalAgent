@@ -9,7 +9,7 @@ from backend.services.ml_logic_safety_alignment import build_ml_logic_safety_ali
 def test_ml_logic_safety_alignment_writes_nonclinical_artifact(tmp_path: Path):
     output = tmp_path / "latest_ml_logic_safety_alignment.json"
 
-    report = build_ml_logic_safety_alignment(output_path=output)
+    build_ml_logic_safety_alignment(output_path=output)
 
     assert output.exists()
     payload = json.loads(output.read_text(encoding="utf-8"))

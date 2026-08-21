@@ -7,7 +7,6 @@ Covers /models/*, /train-*, /generate-*, /import-*, /build-*, /run-*, /index-*,
 
 from __future__ import annotations
 
-from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
