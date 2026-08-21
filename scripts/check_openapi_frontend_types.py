@@ -11,6 +11,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "Data/evals/ops/latest_openapi_type_drift_check.json"
 
+# Pinned deliberately. The generator's output is a committed artifact that this
+# very check diffs, so an unpinned `npx openapi-typescript` (which resolves to
+# whatever is newest) would let a generator release silently rewrite the
+# contract and fail the gate for everyone at once.
+#
+# It is invoked through npx rather than being a devDependency because
+# openapi-typescript 7.x declares `peer typescript@^5.x` while this project is
+# on typescript ~6.0; adding it to package.json would force --legacy-peer-deps
+# on every install. Keep this version in sync with the `typegen` scripts in
+# frontend-react/package.json.
+OPENAPI_TYPESCRIPT_VERSION = "7.13.0"
+
 
 def main() -> int:
     npx = "npx.cmd" if shutil.which("npx.cmd") else "npx"
@@ -20,7 +32,14 @@ def main() -> int:
         generated = Path(tmp) / "generated-openapi.d.ts"
         commands = [
             ["python", "scripts/export_openapi_schema.py"],
-            [npx, "-y", "openapi-typescript", "../Data/openapi.json", "-o", str(generated)],
+            [
+                npx,
+                "-y",
+                f"openapi-typescript@{OPENAPI_TYPESCRIPT_VERSION}",
+                "../Data/openapi.json",
+                "-o",
+                str(generated),
+            ],
         ]
         for command in commands:
             cwd = ROOT / "frontend-react" if Path(command[0]).name.startswith("npx") else ROOT

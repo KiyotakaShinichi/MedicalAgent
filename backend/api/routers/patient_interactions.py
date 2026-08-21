@@ -64,7 +64,13 @@ from backend.services.rag_evidence_envelope import enforce_transport_release
 from backend.api.routers.patient import _invalidate_report_cache
 
 
-router = APIRouter(tags=["patient"])
+# No `tags=` here on purpose. This router is mounted only by
+# `backend/api/routers/patient.py`, whose own router already declares
+# `tags=["patient"]`, and FastAPI concatenates the parent's tags with the
+# child's. Declaring the tag in both places emitted `["patient", "patient"]`
+# for all 22 operations in this module, which is what the committed OpenAPI
+# schema (single tag) shows was intended.
+router = APIRouter()
 
 @router.post("/me/symptoms")
 def add_my_symptom(

@@ -24,7 +24,11 @@ def build_admin_observability_router(
     get_db: Callable,
 ) -> APIRouter:
     """Build trace and runtime-observability routes with injected dependencies."""
-    router = APIRouter(tags=["admin-evaluation"])
+    # No `tags=` here on purpose — see patient_interactions.py for the same
+    # pattern. This router is mounted only by `admin_eval.py`, whose router
+    # already declares `tags=["admin-evaluation"]`; declaring it twice emitted
+    # a duplicated tag for every operation in this module.
+    router = APIRouter()
 
     @router.get("/admin/agent-trace-logs")
     def get_admin_agent_trace_logs_endpoint(
