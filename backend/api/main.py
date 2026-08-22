@@ -13,7 +13,7 @@ from uuid import uuid4
 
 from fastapi import Depends, FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
@@ -29,7 +29,7 @@ from backend.api.routers.admin_eval import build_admin_eval_router
 from backend.api.routers.automation import router as automation_router
 from backend.api.routers.platform import router as platform_router
 from backend.api.schemas.operations import LivenessResponse, ReadinessResponse
-from backend.services.request_context import reset_request_id, set_request_id
+from backend.services.request_context import get_request_id, reset_request_id, set_request_id
 from backend.services.api_protection import EngineeringApiProtectionMiddleware
 from backend.services.synthetic_data_boundary import SyntheticDataBoundaryMiddleware
 from backend.services.llm_telemetry import reset_llm_telemetry, start_llm_telemetry
@@ -173,6 +173,49 @@ async def request_id_middleware(request: Request, call_next):
         "default-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
     )
     return response
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    """Return a correlated, non-revealing 500 instead of a bare stack trace.
+
+    Without this, an unhandled exception produced a plain Starlette 500 whose
+    body carried no correlation id, so a user-reported failure could not be
+    tied to a log line. The middleware's `X-Request-ID` header never made it
+    onto that response either, because the exception unwound past the code
+    that sets it.
+
+    What is deliberately *not* here: the exception message, its traceback, the
+    failing module, or any request content. Those go to the structured log
+    under the same `request_id`; the response carries the id and nothing more,
+    so a caller can quote it in a bug report without the API having disclosed
+    connection strings, file paths, or prompt text.
+
+    `HTTPException` is unaffected — FastAPI's own handler still owns it, so
+    404s and 403s keep their existing bodies.
+    """
+    request_id = get_request_id() or request.headers.get("x-request-id") or str(uuid4())
+    route = getattr(request.scope.get("route"), "path", "unmatched")
+    log_event(
+        "http_request_unhandled_exception",
+        severity="error",
+        request_id=request_id,
+        component="api",
+        details={
+            "method": request.method,
+            "route": route,
+            "error_type": type(exc).__name__,
+        },
+    )
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "internal_server_error",
+            "request_id": request_id,
+            "detail": "The request failed. Quote the request_id when reporting this.",
+        },
+        headers={"X-Request-ID": request_id},
+    )
 
 
 # ─── Routers ──────────────────────────────────────────────────────────────────
