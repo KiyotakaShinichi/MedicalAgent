@@ -33,9 +33,16 @@ jobs:
       # one place the offline-reproducibility contract can be proven rather
       # than asserted: it fails if the offline path ever starts depending on an
       # untracked or gitignored file.
+      # `--provision` is what makes this gate able to catch the defect class it
+      # previously missed: it rebuilds the gitignored derived artifacts from
+      # tracked inputs and then runs a consumer test against the result. Seven
+      # tests passed locally and failed on every fresh clone because nothing
+      # verified those artifacts were reproducible. This job is the fast lane,
+      # so the failure now surfaces here rather than in full-offline-tests.
       - name: Verify fresh-clone offline contract
         run: |
           uv run python scripts/check_fresh_clone_offline.py \
+            --provision \
             --run-tests \
             --json-output Data/test_tmp/fresh_clone_offline_check.json
 
@@ -143,6 +150,42 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+      # The suite consumes derived artifacts that are gitignored on purpose
+      # (a RAG index, the KB chunk file, the lakehouse gold records). A fresh
+      # runner has none of them, which is why ~5 tests failed here while
+      # passing on developer machines that still had last month's copies.
+      # Rebuilt from tracked inputs; no network, so the suite below stays
+      # fully offline.
+      - name: Provision derived offline artifacts
+        run: |
+          mkdir -p Data/test_tmp
+          uv run python scripts/provision_derived_artifacts.py \
+            --json-output Data/test_tmp/derived_artifact_provisioning.json
+          uv run python scripts/provision_derived_artifacts.py --check-only
+
+      # Class B: an external tool, not project data. `cloud_infrastructure_
+      # readiness` shells out to the Bicep CLI to compile the checked-in
+      # template, and reports `needs_attention` when it is absent. Pinned
+      # rather than latest so a Bicep release cannot change a CI result.
+      - name: Install Bicep CLI
+        env:
+          BICEP_VERSION: v0.45.15
+        run: |
+          curl -fsSL -o /tmp/bicep \
+            "https://github.com/Azure/bicep/releases/download/${BICEP_VERSION}/bicep-linux-x64"
+          chmod +x /tmp/bicep
+          sudo mv /tmp/bicep /usr/local/bin/bicep
+          bicep --version
+
+      - name: Upload derived artifact provisioning evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: derived-artifact-provisioning
+          path: Data/test_tmp/derived_artifact_provisioning.json
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Run complete offline suite with branch coverage
         run: |
           mkdir -p Data/test_tmp
@@ -229,6 +272,14 @@ jobs:
       # while a runtime is degraded, so the runtime probe is required.
       - name: Verify safety runtimes load offline
         run: python scripts/provision_semantic_safety_encoders.py --check-only --verify-runtimes
+
+      # Same requirement as full-offline-tests: the legacy monitoring
+      # regression below runs the RAG path, which needs the derived index.
+      - name: Provision derived offline artifacts
+        run: |
+          mkdir -p Data/test_tmp
+          python scripts/provision_derived_artifacts.py
+          python scripts/provision_derived_artifacts.py --check-only
 
       - name: Install frontend dependencies
         working-directory: frontend-react

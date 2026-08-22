@@ -3,8 +3,20 @@
 Scope of the claim
 ------------------
 This checks *repository content sufficiency*: that everything the offline test
-path needs is tracked in git, and that nothing in it requires a secret, a
-populated ``.env``, a prebuilt RAG index, or a reachable network service.
+path needs is either tracked in git or rebuildable from tracked inputs, and
+that nothing in it requires a secret, a populated ``.env``, or a reachable
+network service.
+
+Derived artifacts are the subtle half of that claim. A prebuilt RAG index and
+the lakehouse gold records are gitignored on purpose - they are derived data,
+not source - so "not tracked" is correct for them and "not needed" is not.
+They must be *reproducible*, and this script verifies that by checking every
+declared input in
+:data:`scripts.provision_derived_artifacts.DERIVED_ARTIFACTS` is present, and
+(with ``--provision``) by rebuilding them and running a consumer test against
+the result. An earlier version asserted a prebuilt index was simply unnecessary
+and checked nothing, which is how seven tests came to pass locally and fail on
+every fresh clone.
 
 It deliberately does NOT claim that dependency installation works. Resolving
 and installing the pinned environment is a separate contract already covered by
@@ -24,9 +36,15 @@ Usage
     python scripts/check_fresh_clone_offline.py
     python scripts/check_fresh_clone_offline.py --json-output path.json
     python scripts/check_fresh_clone_offline.py --run-tests
+    python scripts/check_fresh_clone_offline.py --provision --run-tests
 
 ``--run-tests`` additionally executes the designated offline subset in-process
 via pytest. It is off by default so the structural checks stay fast.
+
+``--provision`` rebuilds the declared derived artifacts and then, together with
+``--run-tests``, executes a consumer test that reads one of them. That pairing
+is the point: it proves the artifacts are reproducible *and* that a consumer is
+satisfied by the rebuilt result, rather than only that some file now exists.
 """
 
 from __future__ import annotations
@@ -42,6 +60,15 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.provision_derived_artifacts import (  # noqa: E402 - needs ROOT on sys.path
+    DERIVED_ARTIFACTS,
+    missing_artifacts,
+    missing_inputs,
+    provision,
+)
 
 # Files a fresh clone must contain for the offline path to be runnable at all.
 REQUIRED_TRACKED_FILES = (
@@ -71,6 +98,15 @@ OFFLINE_TEST_SUBSET = (
     "tests/test_constants_sync.py",
     "tests/test_access_control.py",
     "tests/test_safety_eval_center.py",
+)
+
+# Tests that read a derived artifact, so they are meaningful only *after*
+# provisioning. `test_managed_vector_shadow_sync` is the sharpest of them: on a
+# fresh clone without provisioning it raises FileNotFoundError on the lakehouse
+# gold records, so it fails loudly rather than degrading to a soft status.
+PROVISIONED_CONSUMER_TESTS = (
+    "tests/test_managed_vector_shadow_sync.py",
+    "tests/test_data_platform_reliability_eval.py",
 )
 
 # Environment that the offline path is contracted to run under. Mirrors the CI
@@ -181,6 +217,76 @@ def _check_ruff_config_self_contained(root: Path) -> CheckResult:
     return CheckResult("ruff_config_self_contained", True, f"select = {select}")
 
 
+def _check_derived_artifact_inputs_present(root: Path) -> CheckResult:
+    """Every declared derived artifact must be rebuildable from tracked content.
+
+    This is the check that would have caught the regression. The consuming
+    tests do not fail because an artifact is gitignored - that is deliberate -
+    they fail because nothing verified the artifact could be *recreated*. If a
+    generator ever starts depending on an input that is itself gitignored, that
+    input is absent here and this fails on a fresh clone, before the full
+    offline suite ever runs.
+    """
+    absent = missing_inputs(root)
+    if absent:
+        return CheckResult(
+            "derived_artifact_inputs_present",
+            False,
+            f"declared inputs missing from a fresh checkout: {', '.join(absent)}",
+        )
+    inputs = sum(len(artifact.inputs) for artifact in DERIVED_ARTIFACTS)
+    return CheckResult(
+        "derived_artifact_inputs_present",
+        True,
+        f"{len(DERIVED_ARTIFACTS)} artifacts, {inputs} tracked inputs",
+    )
+
+
+def _check_derived_artifacts_provisionable(root: Path) -> CheckResult:
+    """Actually rebuild the derived artifacts and confirm each one appears."""
+    results = provision(root)
+    failures = [entry["artifact"] for entry in results if not entry["ok"]]
+    if failures:
+        return CheckResult(
+            "derived_artifacts_provisionable",
+            False,
+            f"could not rebuild: {', '.join(failures)}",
+        )
+    still_missing = missing_artifacts(root)
+    if still_missing:
+        return CheckResult(
+            "derived_artifacts_provisionable",
+            False,
+            f"generator reported success but artifact absent: {', '.join(still_missing)}",
+        )
+    actions = ", ".join(f"{e['artifact']}={e['action']}" for e in results)
+    return CheckResult("derived_artifacts_provisionable", True, actions)
+
+
+def _run_provisioned_consumer_tests(root: Path) -> CheckResult:
+    """Run a test that reads a rebuilt artifact.
+
+    Separate from :data:`OFFLINE_TEST_SUBSET` on purpose. The subset is the
+    set of tests that need no derived artifact at all; these are the opposite,
+    and running them without provisioning first would simply move a known
+    failure into an earlier job rather than prove anything.
+    """
+    env = {**os.environ, **OFFLINE_ENV}
+    env["DATABASE_URL"] = "sqlite:///./Data/test_tmp/fresh_clone_consumers.db"
+    (root / "Data" / "test_tmp").mkdir(parents=True, exist_ok=True)
+    proc = subprocess.run(
+        [sys.executable, "-m", "pytest", *PROVISIONED_CONSUMER_TESTS, "-q"],
+        cwd=root,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=3600,
+    )
+    tail = (proc.stdout or proc.stderr).strip().splitlines()
+    summary = tail[-1] if tail else f"exit {proc.returncode}"
+    return CheckResult("provisioned_consumer_tests_pass", proc.returncode == 0, summary)
+
+
 def _check_offline_subset_present(root: Path) -> CheckResult:
     missing = [p for p in OFFLINE_TEST_SUBSET if not (root / p).is_file()]
     if missing:
@@ -205,15 +311,24 @@ def _run_offline_subset(root: Path) -> CheckResult:
     return CheckResult("offline_test_subset_passes", proc.returncode == 0, summary)
 
 
-def run_checks(root: Path = ROOT, run_tests: bool = False) -> list[CheckResult]:
+def run_checks(
+    root: Path = ROOT,
+    run_tests: bool = False,
+    provision_artifacts: bool = False,
+) -> list[CheckResult]:
     results: list[CheckResult] = []
     results.extend(_check_required_paths(root))
     results.append(_check_no_dotenv_required(root))
     results.append(_check_ruff_config_self_contained(root))
     results.append(_check_offline_subset_present(root))
+    results.append(_check_derived_artifact_inputs_present(root))
     results.append(_check_config_imports_without_secrets(root))
+    if provision_artifacts:
+        results.append(_check_derived_artifacts_provisionable(root))
     if run_tests:
         results.append(_run_offline_subset(root))
+        if provision_artifacts:
+            results.append(_run_provisioned_consumer_tests(root))
     return results
 
 
@@ -225,9 +340,17 @@ def main() -> int:
         action="store_true",
         help="also execute the designated offline pytest subset",
     )
+    parser.add_argument(
+        "--provision",
+        action="store_true",
+        help=(
+            "rebuild the declared derived artifacts and verify them; with --run-tests, "
+            "also run a consumer test against the rebuilt result"
+        ),
+    )
     args = parser.parse_args()
 
-    results = run_checks(run_tests=args.run_tests)
+    results = run_checks(run_tests=args.run_tests, provision_artifacts=args.provision)
     failures = [r for r in results if not r.passed]
 
     for result in results:
@@ -242,15 +365,17 @@ def main() -> int:
 
     if args.json_output:
         payload = {
-            "schema_version": "fresh_clone_offline_check_v1",
+            "schema_version": "fresh_clone_offline_check_v2",
             "checks": [asdict(r) for r in results],
             "passed": not failures,
             "tests_executed": args.run_tests,
+            "artifacts_provisioned": args.provision,
             "claim_boundary": (
                 "Verifies that tracked repository content is sufficient to run the offline "
-                "test path without secrets, a populated .env, a prebuilt RAG index, or "
-                "network access. Does not verify dependency resolution or installation, and "
-                "makes no clinical or production-readiness claim."
+                "test path without secrets, a populated .env, or network access, and that "
+                "the derived artifacts the path consumes are rebuildable from tracked "
+                "inputs. Does not verify dependency resolution or installation, and makes "
+                "no clinical or production-readiness claim."
             ),
         }
         args.json_output.parent.mkdir(parents=True, exist_ok=True)

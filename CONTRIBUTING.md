@@ -47,17 +47,40 @@ the more likely cause.
 
 ### Verifying a fresh clone
 
-The offline test path must run from a clean checkout with **no `.env`**, no
-prebuilt RAG index, and no network access. Confirm that before opening a PR
-that touches configuration, fixtures, or test bootstrapping:
+The offline test path must run from a clean checkout with **no `.env`** and no
+network access. Confirm that before opening a PR that touches configuration,
+fixtures, or test bootstrapping:
 
 ```bash
-python scripts/check_fresh_clone_offline.py --run-tests
+python scripts/check_fresh_clone_offline.py --provision --run-tests
 ```
 
 It fails if the offline path starts depending on an untracked or gitignored
 file — the failure mode where a repository runs only on the machine that
 generated its artifacts. CI runs the same command on its own fresh checkout.
+
+### Derived artifacts
+
+Some artifacts the suite consumes are gitignored on purpose: they are derived
+data, not source. A RAG index, the knowledge-base chunk file, and the lakehouse
+gold records are all rebuilt from tracked inputs rather than committed:
+
+```bash
+python scripts/provision_derived_artifacts.py               # rebuild what is missing
+python scripts/provision_derived_artifacts.py --check-only  # verify, non-zero if absent
+```
+
+**Gitignored is fine; unreproducible is not.** Each artifact declares the
+tracked inputs it derives from in `DERIVED_ARTIFACTS`, and the fresh-clone
+check fails if any declared input is itself untracked. If you add a test that
+reads a generated file, add the artifact to that registry — otherwise the test
+passes for you and fails for everyone starting from a clean clone, which is how
+seven tests came to be green locally and red in CI.
+
+`tests/test_cloud_infrastructure_readiness.py` additionally needs the **Bicep
+CLI** on `PATH` (or at `tools/bin/bicep.exe`). That is a tool dependency, not
+project data, so it is installed and version-pinned in CI rather than
+committed.
 
 The check covers *repository content sufficiency* only. Dependency resolution
 and installation are a separate contract, verified by `uv lock --check` and
