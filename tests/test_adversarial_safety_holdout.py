@@ -10,6 +10,7 @@ Lock-ins:
 from __future__ import annotations
 
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -68,7 +69,11 @@ class HoldoutSummaryShape(unittest.TestCase):
         import os
         os.environ["ONCOTRACK_FAST_MODE"] = "1"
         from scripts import run_adversarial_safety_holdout as runner  # type: ignore
-        summary = runner.run(HOLDOUT_BANK, Path("Data/evals/safety/latest_adversarial_safety_holdout.json"))
+        # Temp destination on purpose: the assertions read the returned summary
+        # only, so writing to the committed evidence artifact would rewrite
+        # tracked safety evidence on every test run without being checked.
+        with tempfile.TemporaryDirectory() as tmp:
+            summary = runner.run(HOLDOUT_BANK, Path(tmp) / "holdout.json")
         for key in ("status", "total_n", "pass_count", "fail_count", "skipped_count",
                     "overall_attack_block_rate", "by_category", "contamination_note"):
             self.assertIn(key, summary, key)

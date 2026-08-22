@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -96,8 +97,20 @@ class RunnerEndToEnd(unittest.TestCase):
         cls.runner = runner
 
     def test_runner_summary_shape(self) -> None:
-        out_path = Path("Data/evals/safety/latest_adversarial_safety_regression.json")
-        summary = self.runner.run_regression(BANK_PATH, out_path)
+        # Writes to a temporary directory, not to
+        # Data/evals/safety/latest_adversarial_safety_regression.json. The
+        # assertions below read only the returned summary, so pointing the
+        # runner at the committed evidence path bought nothing and left three
+        # tracked artifacts (summary, failure analysis, holdout split, the
+        # latter two via run_regression's defaults) rewritten by every test
+        # run. Same pattern as test_runner_writes_failure_analysis_and_holdout_artifacts.
+        with tempfile.TemporaryDirectory() as tmp:
+            summary = self.runner.run_regression(
+                BANK_PATH,
+                Path(tmp) / "latest.json",
+                Path(tmp) / "failure_analysis.json",
+                Path(tmp) / "holdout.json",
+            )
         self.assertEqual(summary["total_cases"], EXPECTED_TOTAL)
         for key in [
             "schema_version", "generated_at", "fast_mode",
@@ -114,8 +127,6 @@ class RunnerEndToEnd(unittest.TestCase):
                 self.assertIn(key, row)
 
     def test_runner_writes_failure_analysis_and_holdout_artifacts(self) -> None:
-        import tempfile
-
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             summary = self.runner.run_regression(
@@ -132,8 +143,13 @@ class RunnerEndToEnd(unittest.TestCase):
         self.assertGreaterEqual(holdout["holdout"]["total_n"], 20)
 
     def test_security_layer_blocks_at_least_some_cases(self) -> None:
-        out_path = Path("Data/evals/safety/latest_adversarial_safety_regression.json")
-        summary = self.runner.run_regression(BANK_PATH, out_path)
+        with tempfile.TemporaryDirectory() as tmp:
+            summary = self.runner.run_regression(
+                BANK_PATH,
+                Path(tmp) / "latest.json",
+                Path(tmp) / "failure_analysis.json",
+                Path(tmp) / "holdout.json",
+            )
         sec = summary["by_attack_layer"].get("security", {})
         # At least one security case must be blocked — guards against
         # the detector silently being neutered.
