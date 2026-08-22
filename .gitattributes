@@ -1,0 +1,53 @@
+# Frozen DEP-001C/DEP-001D evidence snapshots are verified byte-for-byte
+# against SHA-256 hashes recorded in their manifests, so their checkout
+# representation must be reproducible on every platform.
+#
+# Default for these trees: no end-of-line conversion at all. With
+# core.autocrlf=true a Windows checkout would otherwise rewrite LF to CRLF and
+# break every LF-hashed entry.
+artifacts/dep001c/** -text
+artifacts/dep001d/** -text
+
+# The twelve files below were hashed with CRLF when the snapshots were frozen
+# on a Windows machine, while their siblings were hashed with LF. Git stores
+# all of them normalised to LF, so no single global setting reproduces the
+# frozen state and verify_snapshot() fails on Linux and on fresh Windows
+# clones alike - in opposite halves.
+#
+# Pinning exactly these paths to CRLF reconstructs the bytes the manifests
+# were frozen against, without modifying one byte of the evidence itself.
+# Re-freezing the manifests would be the alternative and is not permitted:
+# these are consumed DEP-001 snapshots.
+artifacts/dep001c/blind_banks/dep001cblind-443183a2442b635b2025/bank/internal_blind_safety_bank.jsonl text eol=crlf
+artifacts/dep001c/candidates/dep001c-6e32530bead7175e75b4/assurance/runtime_assurance.json text eol=crlf
+artifacts/dep001c/candidates/dep001c-6e32530bead7175e75b4/runtime/semantic_safety_model_manifest.json text eol=crlf
+artifacts/dep001c/candidates/dep001c-6e32530bead7175e75b4/runtime/semantic_safety_thresholds.json text eol=crlf
+artifacts/dep001d/blind_banks/dep001dblind-9c88c39d6c013f9e97b2/bank/internal_blind_safety_bank.jsonl text eol=crlf
+artifacts/dep001d/candidates/dep001d-5266dbd9de310bb735f3/assurance/development_assurance.json text eol=crlf
+artifacts/dep001d/candidates/dep001d-5266dbd9de310bb735f3/assurance/development_overlap_audit.json text eol=crlf
+artifacts/dep001d/candidates/dep001d-5266dbd9de310bb735f3/assurance/fault_injection.json text eol=crlf
+artifacts/dep001d/candidates/dep001d-5266dbd9de310bb735f3/runtime/output_actionability_manifest.json text eol=crlf
+artifacts/dep001d/candidates/dep001d-5266dbd9de310bb735f3/runtime/output_actionability_thresholds.json text eol=crlf
+artifacts/dep001d/candidates/dep001d-5266dbd9de310bb735f3/runtime/semantic_safety_model_manifest.json text eol=crlf
+artifacts/dep001d/candidates/dep001d-5266dbd9de310bb735f3/runtime/semantic_safety_thresholds.json text eol=crlf
+
+# DEP-001 *runtime* artifacts. Distinct from the frozen snapshots above: these
+# are loaded on every request, and each runtime verifies its threshold and
+# dataset-manifest files against a SHA-256 recorded in
+# semantic_safety_model_manifest.json before it will serve a prediction.
+#
+# Those five hashes were recorded over CRLF bytes on a Windows machine. Git
+# stores the files normalised to LF, so a Linux checkout hands the runtime LF
+# content, the hash check raises, and the runtime FAILS CLOSED — correct
+# behaviour, but it means every prompt is classified high-risk. That is why
+# `Verify safety runtimes load offline` fails on GitHub while passing on every
+# developer machine, where autocrlf restores CRLF and the hashes match.
+#
+# Pinning reproduces the exact bytes the manifests were signed over on every
+# platform, without altering one byte of DEP-001 evidence. Re-recording the
+# hashes is the alternative and is not permitted for safety evidence.
+Data/evals/safety/dep001a/semantic_safety_thresholds.json text eol=crlf
+Data/evals/safety/dep001a/dataset_manifest.json text eol=crlf
+Data/evals/safety/dep001b/semantic_safety_thresholds.json text eol=crlf
+Data/evals/safety/dep001d/runtime/semantic_safety_thresholds.json text eol=crlf
+Data/evals/safety/dep001d/runtime/output_actionability_thresholds.json text eol=crlf
