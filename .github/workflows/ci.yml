@@ -72,9 +72,12 @@ jobs:
       # Runs in the fast lane as well as in quality-gates. quality-gates only
       # starts after the full offline backend suite and the dependency audit,
       # so without this a frontend-only regression is not reported for tens of
-      # minutes. Coverage is emitted for inspection but is not yet gated on a
-      # threshold — see reports/frontend_production_hardening.md.
-      - name: Frontend unit tests
+      # minutes. This step is also the frontend coverage gate: `test:coverage`
+      # runs vitest with the thresholds declared in `coverage.thresholds` in
+      # frontend-react/vitest.config.ts and exits non-zero when any is missed,
+      # so a coverage regression fails this job rather than merely being
+      # reported in the uploaded artifact.
+      - name: Frontend unit tests and coverage gate
         working-directory: frontend-react
         run: npm run test:coverage
 

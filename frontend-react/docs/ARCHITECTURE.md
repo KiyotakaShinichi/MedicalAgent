@@ -217,8 +217,12 @@ Conventions:
 - Tests must be deterministic and offline. Mock `src/api/client` with
   `vi.mock`; never hit a live service.
 - Every defect fixed gets a regression test that names the defect in a comment.
-- Coverage is measured, not gated. `src/types/**` and `main.tsx` are excluded
-  from the denominator (declarations and DOM bootstrap).
+- **Coverage is gated, not merely measured.** `npm run test:coverage` enforces
+  the thresholds declared in `coverage.thresholds` in `vitest.config.ts`
+  (statements 35, branches 62, functions 31, lines 35) and exits non-zero when
+  any is missed. CI runs that exact command in the `static-quality` job, so a
+  coverage regression fails the build. `src/types/**` and `main.tsx` are
+  excluded from the denominator (declarations and DOM bootstrap).
 
 The safety blocks are the highest-value target: their tests assert that absent,
 disabled, and malformed artifacts never render as passing results.
@@ -274,7 +278,8 @@ Tracked honestly rather than hidden; see
   done.
 - `RagSection.tsx`, `ChatPanel.tsx`, and `PatientDashboard.tsx` are all
   500–650 lines. `ChatPanel` is internally decomposed; the other two are not.
-- Coverage is ~20% of statements. Patient and clinician surfaces have far less
-  component coverage than the admin safety surface.
-- No coverage threshold is enforced in CI yet.
+- Coverage is ~39% of statements (65% branches). Patient and clinician surfaces
+  have far less component coverage than the admin safety surface. The gate in
+  `vitest.config.ts` is a regression floor set below measured, not a target —
+  raise it as coverage genuinely improves.
 - `LabTrendsChart` (Recharts) is 345 kB — the largest chunk by a wide margin.
