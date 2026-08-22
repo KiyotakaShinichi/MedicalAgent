@@ -25,8 +25,14 @@ from typing import Any
 
 
 LOGGER = logging.getLogger("nlcare.events")
+# Substrings matched against the *key* name, case-insensitively. Chosen to be
+# specific enough not to redact ordinary operational fields: a bare "key" would
+# blank `cache_key`, `chunk_key`, and `idempotency_key`, which are exactly the
+# values an operator needs when debugging. `api_key` was missing until a
+# redaction probe caught `{"api_key": "k-secret"}` reaching the log intact.
 _SENSITIVE_KEY_PARTS = {
-    "authorization", "cookie", "message", "password", "patient", "prompt",
+    "access_key", "api_key", "apikey", "authorization", "bearer", "cookie",
+    "credential", "message", "password", "patient", "private_key", "prompt",
     "secret", "token",
 }
 _ALLOWED_SEVERITIES = {"debug", "info", "warning", "error", "critical"}
@@ -119,7 +125,16 @@ def _sanitize(value: Any, *, key: str = "", depth: int = 0) -> Any:
     if isinstance(value, (list, tuple)):
         return [_sanitize(item, depth=depth + 1) for item in value[:50]]
     if isinstance(value, str):
-        return value[:500]
+        # Defence in depth. Key-name matching cannot catch an identifier that
+        # arrives inside an innocently-named field — `{"summary": "contact
+        # maria@example.com"}` has no sensitive key. `redact_text` is the same
+        # value-pattern pass (email/phone/SSN/MRN/DOB) the database audit trail
+        # already applies, so both logging paths now enforce one policy.
+        # Applied before truncation so a pattern spanning the 500-char cut is
+        # still matched.
+        from backend.services.pii_redaction import redact_text
+
+        return redact_text(value)[:500]
     if value is None or isinstance(value, (bool, int, float)):
         return value
     return str(value)[:500]
