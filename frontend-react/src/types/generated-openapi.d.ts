@@ -3245,8 +3245,19 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Healthcheck */
-        get: operations["healthcheck_health_get"];
+        /**
+         * Liveness probe
+         * @description Liveness probe. Returns 200 whenever the process can serve requests.
+         *
+         *     Deliberately touches no database, cache, model, or network dependency: an
+         *     orchestrator uses this to decide whether to *restart* the process, so a
+         *     slow or unavailable dependency must not make it fail. Dependency state is
+         *     reported by `/ready` instead.
+         *
+         *     `/healthz` is an unlisted alias for orchestrators that probe the
+         *     Kubernetes-conventional path.
+         */
+        get: operations["getHealth"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3263,13 +3274,23 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Readinesscheck
+         * Readiness probe
          * @description Runtime readiness probe for engineering deployments.
          *
-         *     This checks database reachability and reports deployment posture. It does
-         *     not imply healthcare production readiness or clinical validation.
+         *     Checks database reachability, retrieval-index availability, and — only
+         *     when shared rate limiting is enabled — Redis. Each probe is bounded, and a
+         *     failing probe reports its exception *class name* only, never the message,
+         *     which can carry connection strings or filesystem paths.
+         *
+         *     Returns 503 when any required dependency is not ready, so a load balancer
+         *     can drain the instance without restarting it.
+         *
+         *     This reports deployment posture. It does not imply healthcare production
+         *     readiness or clinical validation.
+         *
+         *     `/readyz` is an unlisted alias for the Kubernetes-conventional path.
          */
-        get: operations["readinesscheck_ready_get"];
+        get: operations["getReady"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3942,6 +3963,24 @@ export interface components {
             /** Source Note */
             source_note?: string | null;
         };
+        /**
+         * LivenessResponse
+         * @description Process-liveness answer. Deliberately does not touch dependencies.
+         */
+        LivenessResponse: {
+            /**
+             * Status
+             * @description `ok` whenever the process can serve requests.
+             * @example ok
+             */
+            status: string;
+            /**
+             * Service
+             * @description Stable service identifier.
+             * @example nlcare_monitoring_prototype
+             */
+            service: string;
+        };
         /** LoginResponse */
         LoginResponse: {
             /**
@@ -4190,6 +4229,61 @@ export interface components {
              * @default datasets/QIN-BREAST-02_clinicalData-Transformed-20191022-Revised20200210.xlsx
              */
             clinical_xlsx_path: string;
+        };
+        /**
+         * ReadinessResponse
+         * @description Dependency-readiness answer, returned with 200 (ready) or 503 (not).
+         *
+         *     `checks` is intentionally typed loosely: each probe contributes its own
+         *     shape, and pinning it would freeze subsystem internals into the public
+         *     contract. Probe failures report `error_type` only - never the exception
+         *     message, which can carry connection strings or file paths.
+         */
+        ReadinessResponse: {
+            /**
+             * Status
+             * @description `ready` when every required probe answered, else `not_ready`.
+             * @example ready
+             */
+            status: string;
+            /**
+             * Service
+             * @example nlcare_monitoring_prototype
+             */
+            service: string;
+            /**
+             * Environment
+             * @description Deployment environment name, lowercased.
+             * @example test
+             */
+            environment: string;
+            /**
+             * Demo Auth Allowed
+             * @description Whether demo authentication is currently permitted.
+             */
+            demo_auth_allowed: boolean;
+            /**
+             * Checks
+             * @description Per-dependency probe results keyed by subsystem (`database`, `retrieval`, `redis`). Each carries `ready`, and on failure an `error_type` class name with no message text.
+             */
+            checks: {
+                [key: string]: unknown;
+            };
+            /**
+             * Clinical Validation
+             * @description Always false. Readiness is an engineering signal only.
+             */
+            clinical_validation: boolean;
+            /**
+             * Healthcare Production Ready
+             * @description Always false. This prototype is not cleared for patient care.
+             */
+            healthcare_production_ready: boolean;
+            /**
+             * Claim Boundary
+             * @description Explicit statement of what readiness does and does not mean.
+             */
+            claim_boundary: string;
         };
         /** SymptomCreate */
         SymptomCreate: {
@@ -11404,7 +11498,7 @@ export interface operations {
             };
         };
     };
-    healthcheck_health_get: {
+    getHealth: {
         parameters: {
             query?: never;
             header?: never;
@@ -11413,18 +11507,18 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Successful Response */
+            /** @description Process is alive and able to serve requests. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["LivenessResponse"];
                 };
             };
         };
     };
-    readinesscheck_ready_get: {
+    getReady: {
         parameters: {
             query?: never;
             header?: never;
@@ -11433,13 +11527,22 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Successful Response */
+            /** @description Every required dependency answered its probe. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ReadinessResponse"];
+                };
+            };
+            /** @description At least one required dependency is not ready. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadinessResponse"];
                 };
             };
         };

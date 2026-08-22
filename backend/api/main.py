@@ -28,6 +28,7 @@ from backend.api.routers.model import router as model_router
 from backend.api.routers.admin_eval import build_admin_eval_router
 from backend.api.routers.automation import router as automation_router
 from backend.api.routers.platform import router as platform_router
+from backend.api.schemas.operations import LivenessResponse, ReadinessResponse
 from backend.services.request_context import reset_request_id, set_request_id
 from backend.services.api_protection import EngineeringApiProtectionMiddleware
 from backend.services.synthetic_data_boundary import SyntheticDataBoundaryMiddleware
@@ -64,9 +65,22 @@ async def lifespan(_: FastAPI):
         prewarm_task.cancel()
 
 
+# Declared so the operational probes are discoverable as a group rather than
+# appearing as two untagged operations among ~200 clinical ones.
+OPENAPI_TAGS = [
+    {
+        "name": "operations",
+        "description": (
+            "Liveness and readiness probes for deployment orchestration. "
+            "No patient data, no clinical meaning, no authentication required."
+        ),
+    },
+]
+
 app = FastAPI(
     title="NLCare Breast Cancer Monitoring Engineering Prototype",
     lifespan=lifespan,
+    openapi_tags=OPENAPI_TAGS,
 )
 configure_logging()
 ensure_schema()
@@ -200,17 +214,59 @@ def admin_dashboard():
     return RedirectResponse(url="/frontend/admin.html")
 
 
-@app.get("/health")
+@app.get(
+    "/health",
+    tags=["operations"],
+    summary="Liveness probe",
+    response_model=LivenessResponse,
+    operation_id="getHealth",
+    responses={200: {"description": "Process is alive and able to serve requests."}},
+)
+@app.get("/healthz", tags=["operations"], include_in_schema=False, response_model=LivenessResponse)
 def healthcheck():
+    """Liveness probe. Returns 200 whenever the process can serve requests.
+
+    Deliberately touches no database, cache, model, or network dependency: an
+    orchestrator uses this to decide whether to *restart* the process, so a
+    slow or unavailable dependency must not make it fail. Dependency state is
+    reported by `/ready` instead.
+
+    `/healthz` is an unlisted alias for orchestrators that probe the
+    Kubernetes-conventional path.
+    """
     return liveness_payload()
 
 
-@app.get("/ready")
+@app.get(
+    "/ready",
+    tags=["operations"],
+    summary="Readiness probe",
+    response_model=ReadinessResponse,
+    operation_id="getReady",
+    responses={
+        200: {"description": "Every required dependency answered its probe."},
+        503: {
+            "description": "At least one required dependency is not ready.",
+            "model": ReadinessResponse,
+        },
+    },
+)
+@app.get("/readyz", tags=["operations"], include_in_schema=False, response_model=ReadinessResponse)
 def readinesscheck(response: Response, db: Session = Depends(get_db)):
     """Runtime readiness probe for engineering deployments.
 
-    This checks database reachability and reports deployment posture. It does
-    not imply healthcare production readiness or clinical validation.
+    Checks database reachability, retrieval-index availability, and — only
+    when shared rate limiting is enabled — Redis. Each probe is bounded, and a
+    failing probe reports its exception *class name* only, never the message,
+    which can carry connection strings or filesystem paths.
+
+    Returns 503 when any required dependency is not ready, so a load balancer
+    can drain the instance without restarting it.
+
+    This reports deployment posture. It does not imply healthcare production
+    readiness or clinical validation.
+
+    `/readyz` is an unlisted alias for the Kubernetes-conventional path.
     """
     from backend.services.auth import is_demo_auth_allowed
     from backend.services.rag_vector_index import rag_runtime_readiness

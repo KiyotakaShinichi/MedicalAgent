@@ -11484,14 +11484,20 @@
     },
     "/health": {
       "get": {
-        "summary": "Healthcheck",
-        "operationId": "healthcheck_health_get",
+        "tags": [
+          "operations"
+        ],
+        "summary": "Liveness probe",
+        "description": "Liveness probe. Returns 200 whenever the process can serve requests.\n\nDeliberately touches no database, cache, model, or network dependency: an\norchestrator uses this to decide whether to *restart* the process, so a\nslow or unavailable dependency must not make it fail. Dependency state is\nreported by `/ready` instead.\n\n`/healthz` is an unlisted alias for orchestrators that probe the\nKubernetes-conventional path.",
+        "operationId": "getHealth",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Process is alive and able to serve requests.",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/LivenessResponse"
+                }
               }
             }
           }
@@ -11500,15 +11506,30 @@
     },
     "/ready": {
       "get": {
-        "summary": "Readinesscheck",
-        "description": "Runtime readiness probe for engineering deployments.\n\nThis checks database reachability and reports deployment posture. It does\nnot imply healthcare production readiness or clinical validation.",
-        "operationId": "readinesscheck_ready_get",
+        "tags": [
+          "operations"
+        ],
+        "summary": "Readiness probe",
+        "description": "Runtime readiness probe for engineering deployments.\n\nChecks database reachability, retrieval-index availability, and \u2014 only\nwhen shared rate limiting is enabled \u2014 Redis. Each probe is bounded, and a\nfailing probe reports its exception *class name* only, never the message,\nwhich can carry connection strings or filesystem paths.\n\nReturns 503 when any required dependency is not ready, so a load balancer\ncan drain the instance without restarting it.\n\nThis reports deployment posture. It does not imply healthcare production\nreadiness or clinical validation.\n\n`/readyz` is an unlisted alias for the Kubernetes-conventional path.",
+        "operationId": "getReady",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Every required dependency answered its probe.",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "At least one required dependency is not ready.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
               }
             }
           }
@@ -12879,6 +12900,33 @@
         ],
         "title": "LabCreate"
       },
+      "LivenessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "`ok` whenever the process can serve requests.",
+            "examples": [
+              "ok"
+            ]
+          },
+          "service": {
+            "type": "string",
+            "title": "Service",
+            "description": "Stable service identifier.",
+            "examples": [
+              "nlcare_monitoring_prototype"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "service"
+        ],
+        "title": "LivenessResponse",
+        "description": "Process-liveness answer. Deliberately does not touch dependencies."
+      },
       "LoginResponse": {
         "properties": {
           "role": {
@@ -13649,6 +13697,72 @@
         "type": "object",
         "title": "QINBreast02ImportRequest"
       },
+      "ReadinessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "`ready` when every required probe answered, else `not_ready`.",
+            "examples": [
+              "ready"
+            ]
+          },
+          "service": {
+            "type": "string",
+            "title": "Service",
+            "examples": [
+              "nlcare_monitoring_prototype"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "title": "Environment",
+            "description": "Deployment environment name, lowercased.",
+            "examples": [
+              "test"
+            ]
+          },
+          "demo_auth_allowed": {
+            "type": "boolean",
+            "title": "Demo Auth Allowed",
+            "description": "Whether demo authentication is currently permitted."
+          },
+          "checks": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Checks",
+            "description": "Per-dependency probe results keyed by subsystem (`database`, `retrieval`, `redis`). Each carries `ready`, and on failure an `error_type` class name with no message text."
+          },
+          "clinical_validation": {
+            "type": "boolean",
+            "title": "Clinical Validation",
+            "description": "Always false. Readiness is an engineering signal only."
+          },
+          "healthcare_production_ready": {
+            "type": "boolean",
+            "title": "Healthcare Production Ready",
+            "description": "Always false. This prototype is not cleared for patient care."
+          },
+          "claim_boundary": {
+            "type": "string",
+            "title": "Claim Boundary",
+            "description": "Explicit statement of what readiness does and does not mean."
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "service",
+          "environment",
+          "demo_auth_allowed",
+          "checks",
+          "clinical_validation",
+          "healthcare_production_ready",
+          "claim_boundary"
+        ],
+        "title": "ReadinessResponse",
+        "description": "Dependency-readiness answer, returned with 200 (ready) or 503 (not).\n\n`checks` is intentionally typed loosely: each probe contributes its own\nshape, and pinning it would freeze subsystem internals into the public\ncontract. Probe failures report `error_type` only - never the exception\nmessage, which can carry connection strings or file paths."
+      },
       "SymptomCreate": {
         "properties": {
           "date": {
@@ -13892,5 +14006,11 @@
         "title": "WhoAmIResponse"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "operations",
+      "description": "Liveness and readiness probes for deployment orchestration. No patient data, no clinical meaning, no authentication required."
+    }
+  ]
 }
