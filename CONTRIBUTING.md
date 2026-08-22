@@ -9,11 +9,47 @@ authority.
 
 ```bash
 python -m pip install uv==0.8.24
-uv sync --frozen
-python scripts/provision_semantic_safety_encoders.py   # one-time, needs network
-cd frontend-react
-npm ci
+python scripts/bootstrap.py            # add --with-frontend for npm ci
 ```
+
+That is the whole setup. `bootstrap.py` runs the declared steps in the order
+they depend on each other — dependency sync, one-time encoder download, derived
+artifact generation, then a preflight that proves the safety runtimes actually
+load rather than merely that the commands exited zero. Order matters and is not
+obvious: get it wrong and the failure surfaces as ~90 safety tests failing on
+benign prompts, not as a setup error.
+
+Then run the default suite:
+
+```bash
+uv run pytest tests -q --cov=backend --cov-branch --cov-fail-under=60
+```
+
+`python scripts/bootstrap.py --check` verifies an existing checkout without
+downloading or generating anything.
+
+### What the default test run guarantees
+
+The default suite is **hermetic**: `tests/conftest.py` clears third-party
+credentials (`GROQ_API_KEY`, `PINECONE_API_KEY`, `AZURE_SEARCH_API_KEY`,
+`N8N_*`, `MLFLOW_TRACKING_URI`, `OLLAMA_BASE_URL`, …) and blocks outbound
+non-loopback connections for the whole session.
+
+This blocks **transport only**. No safety policy, DEP-001 classifier, or
+evaluator is stubbed — those run for real. The point is that a test which
+quietly depends on a reachable Groq/Ollama/Pinecone endpoint fails immediately
+and by name, instead of passing on the one machine that has them configured.
+
+A test that genuinely needs the network marks itself:
+
+```python
+@pytest.mark.network
+def test_something_that_really_calls_out(): ...
+```
+
+`pytest.ini` deselects that marker by default (`-m "not network"`), so the
+exclusion is declared in one place rather than as scattered `skipif`s. To run
+them deliberately: `NLCARE_ALLOW_TEST_NETWORK=1 pytest -m network`.
 
 Use Python 3.11 for the canonical CI environment. Start from `.env.example`,
 keep `NLCARE_SYNTHETIC_ONLY=true`, and never commit secrets, raw patient data,

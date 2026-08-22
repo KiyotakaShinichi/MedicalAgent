@@ -24,13 +24,18 @@ acknowledgement.
 
 ```bash
 python -m pip install uv==0.8.24
-uv sync --frozen
+python scripts/bootstrap.py --with-frontend
 uv run uvicorn backend.api.main:app --host 127.0.0.1 --port 8017
 
 cd frontend-react
-npm ci
 npm run dev
 ```
+
+`bootstrap.py` is the single documented setup command: it syncs the frozen
+dependency set, downloads the semantic-safety encoders once, rebuilds the
+derived RAG and lakehouse artifacts from tracked inputs, and then verifies the
+safety runtimes actually load. Only the dependency sync and the one-time
+encoder download touch the network; everything after that runs offline.
 
 Open `http://127.0.0.1:5173`. See `.env.example` and
 [environment configuration](docs/environment_configuration.md) before running.
