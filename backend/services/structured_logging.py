@@ -1,4 +1,18 @@
-"""Canonical structured logging with conservative sensitive-data redaction."""
+"""Canonical structured logging with conservative sensitive-data redaction.
+
+Built on the standard library only. `logging.config.dictConfig` drives setup,
+so the configuration is inspectable data rather than imperative handler
+wiring, and no third-party logging dependency is introduced.
+
+Two logging systems exist in this codebase and are not interchangeable:
+
+* this module emits **JSON events to stdout** for operational monitoring;
+* `backend.services.app_logging` writes an **auditable database trail**
+  (`AppEventLog`) for application/business events.
+
+Both redact before writing. Use this one for anything an operator would grep;
+use `app_logging` for anything that must survive as a record.
+"""
 
 from __future__ import annotations
 
@@ -33,16 +47,66 @@ class JsonEventFormatter(logging.Formatter):
         return json.dumps(event, sort_keys=True, default=str)
 
 
+def logging_config() -> dict[str, Any]:
+    """The `dictConfig` schema this application logs under.
+
+    Exposed as data so it can be asserted on in tests and read by anyone
+    auditing how logs are produced, rather than being implied by a sequence of
+    `addHandler` calls.
+
+    `disable_existing_loggers` is False on purpose: turning it on would silence
+    library loggers already created at import time, and would break pytest's
+    `caplog` capture.
+    """
+    level = os.environ.get("NLCARE_LOG_LEVEL", "INFO").upper()
+    return {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "nlcare_json": {"()": f"{__name__}.JsonEventFormatter"},
+        },
+        "handlers": {
+            "nlcare_stdout": {
+                "class": "logging.StreamHandler",
+                "formatter": "nlcare_json",
+            },
+        },
+        "loggers": {
+            LOGGER.name: {
+                "handlers": ["nlcare_stdout"],
+                "level": level,
+                # Events carry their own JSON envelope; propagating would emit
+                # each one twice once the root logger also has a handler.
+                "propagate": False,
+            },
+        },
+    }
+
+
 def configure_logging(*, force: bool = False) -> None:
-    """Configure one JSON event handler without mutating unrelated loggers."""
+    """Install the JSON event handler. Idempotent.
+
+    Also gives the root logger the same JSON formatter, but **only when it has
+    no handlers of its own**. That makes third-party and framework output
+    machine-readable in a deployed process, while leaving an embedding
+    application's — or pytest's — logging setup untouched.
+    """
+    # Imported inside the function: this module is listed in [tool.mypy]
+    # `files`, and pulling logging.config into the module graph at import time
+    # makes mypy resolve backend/services under two module names and abort.
+    from logging.config import dictConfig
+
     if LOGGER.handlers and not force:
         return
     LOGGER.handlers.clear()
-    handler = logging.StreamHandler()
-    handler.setFormatter(JsonEventFormatter())
-    LOGGER.addHandler(handler)
-    LOGGER.setLevel(os.environ.get("NLCARE_LOG_LEVEL", "INFO").upper())
-    LOGGER.propagate = False
+    dictConfig(logging_config())
+
+    root = logging.getLogger()
+    if not root.handlers:
+        root_handler = logging.StreamHandler()
+        root_handler.setFormatter(JsonEventFormatter())
+        root.addHandler(root_handler)
+        root.setLevel(os.environ.get("NLCARE_ROOT_LOG_LEVEL", "WARNING").upper())
 
 
 def _sanitize(value: Any, *, key: str = "", depth: int = 0) -> Any:
@@ -79,13 +143,30 @@ def build_event(
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     normalized_severity = severity.lower() if severity.lower() in _ALLOWED_SEVERITIES else "info"
+    # Fall back to the in-flight request's id before minting a new one. Without
+    # this, any `log_event` call from the service layer invented a fresh id, so
+    # the events emitted while handling one request did not correlate with the
+    # `http_request_completed` event for that same request — the correlation id
+    # was present but useless for anything except the middleware's own events.
+    # Imported here, not at module scope, on purpose. This module is one of the
+    # files listed in [tool.mypy] `files`, and mypy resolves those by path: a
+    # module-level `from backend.services...` import makes it load
+    # backend/services/__init__.py under a second module name and abort with
+    # "Source file found twice under different module names". Every other
+    # mypy-tracked file is likewise free of module-level backend imports.
+    from backend.services.request_context import get_request_id
+
+    ambient_request_id = get_request_id()
+    resolved_request_id = (
+        request_id or correlation_id or ambient_request_id or new_correlation_id()
+    )
     return {
         "schema_version": "structured_event_v2",
         "event_type": event_type,
         "severity": normalized_severity,
         "component": component,
-        "request_id": request_id or correlation_id or new_correlation_id(),
-        "correlation_id": correlation_id or request_id or new_correlation_id("corr"),
+        "request_id": resolved_request_id,
+        "correlation_id": correlation_id or request_id or ambient_request_id or new_correlation_id("corr"),
         "user_role": user_role,
         "patient_id": "[REDACTED]" if patient_id else None,
         "artifact_id": artifact_id,
