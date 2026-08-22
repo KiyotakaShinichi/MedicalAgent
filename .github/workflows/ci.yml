@@ -194,7 +194,7 @@ jobs:
             --cov-branch \
             --cov-report=term-missing:skip-covered \
             --cov-report=xml:Data/test_tmp/backend-coverage.xml \
-            --cov-fail-under=35
+            --cov-fail-under=60
 
   dependency-audit:
     runs-on: ubuntu-latest

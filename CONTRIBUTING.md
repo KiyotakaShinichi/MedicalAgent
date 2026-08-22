@@ -115,7 +115,7 @@ uv run python scripts/check_env_documentation.py
 uv run python scripts/check_fresh_clone_offline.py
 uv run ruff check backend scripts tests
 uv run mypy
-uv run pytest tests -q --cov=backend --cov-branch --cov-fail-under=35
+uv run pytest tests -q --cov=backend --cov-branch --cov-fail-under=60
 cd frontend-react
 npm run lint
 npm run typecheck

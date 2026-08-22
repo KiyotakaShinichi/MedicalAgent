@@ -40,7 +40,7 @@ Core verification:
 ```bash
 uv run ruff check backend scripts tests
 uv run mypy
-uv run pytest tests -q --cov=backend --cov-branch --cov-fail-under=35
+uv run pytest tests -q --cov=backend --cov-branch --cov-fail-under=60
 cd frontend-react && npm run lint && npm run typecheck && npm run test && npm run build
 ```
 
