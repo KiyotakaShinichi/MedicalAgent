@@ -189,6 +189,15 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+      # Keeps CI and the documented one-command setup from drifting apart.
+      # CI deliberately keeps its steps separate — per-step env (the encoder
+      # download is the only step allowed network) and per-step failure
+      # attribution are what make a red run diagnosable. `bootstrap.py --check`
+      # asserts that the path a contributor is told to run agrees with what CI
+      # actually did, without duplicating the steps themselves.
+      - name: Verify documented bootstrap agrees with CI setup
+        run: uv run python scripts/bootstrap.py --check
+
       - name: Run complete offline suite with branch coverage
         run: |
           mkdir -p Data/test_tmp
