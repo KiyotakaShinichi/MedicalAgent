@@ -61,8 +61,10 @@ jobs:
       - name: Provision semantic safety encoders
         run: uv run python scripts/provision_semantic_safety_encoders.py
 
-      - name: Verify encoders load offline
-        run: uv run python scripts/provision_semantic_safety_encoders.py --check-only
+      # Runtime probe, not just the encoder: ship.py runs the safety contract
+      # suites, and an encoder-only check passes while a runtime fails closed.
+      - name: Verify safety runtimes load offline
+        run: uv run python scripts/provision_semantic_safety_encoders.py --check-only --verify-runtimes
 
       - name: Install frontend dependencies
         working-directory: frontend-react

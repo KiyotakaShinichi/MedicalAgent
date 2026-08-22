@@ -121,11 +121,27 @@ jobs:
           TRANSFORMERS_OFFLINE: "0"
         run: uv run python scripts/provision_semantic_safety_encoders.py
 
-      # Preflight guard. Without it, a provisioning failure degrades silently
-      # into fail-closed classification and the suite still "runs" — just
-      # against safety defaults instead of the real classifier.
-      - name: Verify encoders load offline
-        run: uv run python scripts/provision_semantic_safety_encoders.py --check-only
+      # Preflight guard. `--verify-runtimes` is essential, not decorative: an
+      # encoder-only check exits 0 while a DEP-001 runtime is fully degraded,
+      # because each runtime also loads joblib artifacts, verifies their
+      # SHA-256, and checks the embedding dimension — and every one of those
+      # fails *closed* rather than raising. That combination is what let the
+      # suite fail ~88 tests while verification reported success.
+      - name: Verify safety runtimes load offline
+        run: |
+          uv run python scripts/provision_semantic_safety_encoders.py \
+            --check-only \
+            --verify-runtimes \
+            --json-output Data/test_tmp/semantic_safety_provisioning.json
+
+      - name: Upload safety provisioning evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-safety-provisioning
+          path: Data/test_tmp/semantic_safety_provisioning.json
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Run complete offline suite with branch coverage
         run: |
@@ -209,8 +225,10 @@ jobs:
       - name: Provision semantic safety encoders
         run: python scripts/provision_semantic_safety_encoders.py
 
-      - name: Verify encoders load offline
-        run: python scripts/provision_semantic_safety_encoders.py --check-only
+      # See full-offline-tests: the encoder-only form of this check passes
+      # while a runtime is degraded, so the runtime probe is required.
+      - name: Verify safety runtimes load offline
+        run: python scripts/provision_semantic_safety_encoders.py --check-only --verify-runtimes
 
       - name: Install frontend dependencies
         working-directory: frontend-react
