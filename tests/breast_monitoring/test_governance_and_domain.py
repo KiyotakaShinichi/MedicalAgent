@@ -9,7 +9,9 @@ from backend.services.mle_readiness import build_mle_readiness_summary, _poc_dem
 from backend.services.support_chat_agent import handle_patient_chat
 
 from tests.breast_monitoring.support import (
+    _format_diagnostics,
     _make_temp_dir,
+    _regression_failure_diagnostics,
     _temp_db_session,
     _temp_root,
 )
@@ -26,7 +28,27 @@ class GovernanceAndDomainTestsMixin:
         self.assertEqual(report["summary"]["attack_block_rate"], 1.0)
         self.assertEqual(report["summary"]["output_guardrail_pass_rate"], 1.0)
         self.assertGreaterEqual(report["summary"]["expected_source_hit_rate"], 0.67)
-        self.assertIn(report["summary"]["status"], {"acceptable", "strong"})
+        # Accepted set unchanged. On the Linux runner this reports
+        # "'unideal' not found in {'acceptable', 'strong'}" while every
+        # assertion above it passes — so by `_status()` in
+        # agent_regression_eval, the cause is `pass_rate < 0.80` rather than a
+        # guardrail regression. The aggregate is already visible; what is not
+        # is *which* cases failed and what each retrieved, so the diagnostics
+        # carry the per-case breakdown. Built only when the assertion fails.
+        # Built inside the branch, not passed as `msg=`: unittest evaluates the
+        # message argument eagerly, so rendering diagnostics there would run
+        # them on every passing run too — and an exception inside them would
+        # then fail a test that had actually passed.
+        accepted_status = {"acceptable", "strong"}
+        observed_status = report["summary"]["status"]
+        if observed_status not in accepted_status:
+            self.fail(
+                f"status {observed_status!r} not in {sorted(accepted_status)}"
+                + _format_diagnostics(
+                    "agent regression suite degraded",
+                    _regression_failure_diagnostics(report),
+                )
+            )
 
     def test_mle_readiness_checks_data_contract_and_artifacts(self):
         test_dir = _make_temp_dir(_temp_root())

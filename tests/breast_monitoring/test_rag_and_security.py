@@ -14,7 +14,9 @@ from backend.services.rag_vector_index import build_rag_vector_index, search_hyb
 from backend.services.security_guardrails import detect_multilingual_medical_danger, detect_prompt_injection_or_exfiltration
 
 from tests.breast_monitoring.support import (
+    _format_diagnostics,
     _make_temp_dir,
+    _rag_pipeline_diagnostics,
     _temp_db_session,
     _temp_root,
 )
@@ -141,7 +143,25 @@ class RAGAndSecurityTestsMixin:
             # Per REFUSAL_INTENTS policy in agent_rag, citations are stripped
             # on safety_boundary so the refusal does not read as evidence-backed
             # medical advice. Retrieval still ran — verify via retrieval_context.
-            self.assertGreaterEqual(len(result.get("retrieval_context") or []), 1)
+            #
+            # This assertion passes on developer machines and fails only on the
+            # Linux runner, where it reports "0 not greater than or equal to 1"
+            # and nothing else. The diagnostics render the retrieval funnel the
+            # pipeline already recorded (retrieved -> reranked -> compressed,
+            # plus both tier filters), so the failing stage is identifiable from
+            # the CI log instead of requiring a reproduction that has so far not
+            # been achievable off-runner. Built only when the assertion fails.
+            # Built inside the branch, not passed as `msg=`: unittest evaluates
+            # the message argument eagerly, so rendering diagnostics there would
+            # run them on every passing run too.
+            retrieval_context_count = len(result.get("retrieval_context") or [])
+            if retrieval_context_count < 1:
+                self.fail(
+                    f"retrieval_context is empty ({retrieval_context_count} chunks)"
+                    + _format_diagnostics(
+                        "retrieval funnel collapsed", _rag_pipeline_diagnostics(result)
+                    )
+                )
             self.assertEqual(db.query(AgentResponseCache).count(), 0)
         finally:
             db.close()
