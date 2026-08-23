@@ -165,13 +165,17 @@ class TierAwareGroqDispatch(unittest.TestCase):
 
             return _Completion()
 
-        if not config_snapshot.get("api_key"):
-            # CI without GROQ_API_KEY — the call short-circuits before
-            # we can capture; this test simply verifies the helper
-            # surface exists.  Stronger plumbing is left to the
-            # CI-with-keys path.
-            self.skipTest("GROQ_API_KEY not configured")
-        with patch("groq.Groq") as fake_groq_cls:
+        # `_groq_json` short-circuits before building a client when no API key
+        # is configured, so this used to skip wherever one was absent — which
+        # meant it ran on a developer machine with a `.env` and silently did
+        # not run in CI. The credential is supplied here as a dummy instead:
+        # `groq.Groq` is patched below, so nothing is ever sent anywhere, and
+        # the test now exercises the same path everywhere it runs.
+        hermetic_config = {**config_snapshot, "api_key": "test-key-not-a-real-credential"}
+        local_llm.reset_provider_circuit()
+
+        with patch.object(local_llm, "get_groq_config", return_value=hermetic_config), \
+                patch("groq.Groq") as fake_groq_cls:
             fake_groq_cls.return_value.chat.completions.create.side_effect = fake_create
             local_llm._groq_json(system="s", prompt="p", tier="router")
             self.assertEqual(captured["model"], config_snapshot["router_model"])
