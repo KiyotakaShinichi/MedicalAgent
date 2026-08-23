@@ -51,3 +51,99 @@ Data/evals/safety/dep001a/dataset_manifest.json text eol=crlf
 Data/evals/safety/dep001b/semantic_safety_thresholds.json text eol=crlf
 Data/evals/safety/dep001d/runtime/semantic_safety_thresholds.json text eol=crlf
 Data/evals/safety/dep001d/runtime/output_actionability_thresholds.json text eol=crlf
+
+# Hash-verified data artifacts (evidence banks, fine-tune splits, dataset
+# lineage, evaluation snapshots).
+#
+# Each file below has a SHA-256 recorded in a committed manifest, and that hash
+# was computed on Windows over CRLF bytes. Git stores the files normalised to
+# LF, so a Linux checkout hands every consumer LF content and the recorded hash
+# no longer matches:
+#
+#     final_holdout_safety_bank.jsonl
+#         manifest: 7f5a870e33e39f8d...  (CRLF)
+#         Linux   : 87c5c6f74460f544...  (LF)
+#
+# That is why `Run complete offline suite with branch coverage` fails on GitHub
+# while passing on every developer machine, where core.autocrlf restores CRLF.
+#
+# Pinning reproduces the exact bytes each manifest was signed over, on every
+# platform, without altering one byte of evidence. Re-recording the hashes is
+# the alternative and is not permitted: these are frozen DEP-001 banks,
+# fine-tune split manifests, and dataset lineage records.
+#
+# Only files whose recorded hash matches CRLF and not LF are listed. The 35
+# artifacts already hashed as LF are deliberately absent, and pinning them
+# would break them.
+Data/complete_synthetic_breast_journeys/diagnoses.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/interventions.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/labs.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/medications.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/mri_reports.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/outcomes.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/patients.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/symptoms.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv text eol=crlf
+Data/complete_synthetic_breast_journeys/treatment_sessions.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/diagnoses.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/interventions.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/labs.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/medications.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/mri_reports.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/outcomes.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/patients.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/symptoms.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv text eol=crlf
+Data/complete_synthetic_breast_journeys_realism_v2/treatment_sessions.csv text eol=crlf
+Data/complete_synthetic_training/complete_synthetic_model_metrics.json text eol=crlf
+Data/complete_synthetic_training/complete_synthetic_model_predictions.csv text eol=crlf
+Data/complete_synthetic_training/locked_holdout/development_rows.csv text eol=crlf
+Data/complete_synthetic_training_realism_v2/complete_synthetic_model_metrics.json text eol=crlf
+Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv text eol=crlf
+Data/evals/agentic_tool_use/latest_agent_execution_policy_eval.json text eol=crlf
+Data/evals/governance/latest_patient_xai_readability_dossier.json text eol=crlf
+Data/evals/governance/latest_release_decision_surface.json text eol=crlf
+Data/evals/models/latest_synthetic_prediction_statistical_audit.json text eol=crlf
+Data/evals/ops/latest_automation_fault_injection.json text eol=crlf
+Data/evals/ops/latest_dependency_security_scan.json text eol=crlf
+Data/evals/ops/latest_deployment_recovery_drill.json text eol=crlf
+Data/evals/ops/latest_ship_run.json text eol=crlf
+Data/evals/ops/latest_software_supply_chain_evidence.json text eol=crlf
+Data/evals/ops/latest_trace_envelope_v2_eval.json text eol=crlf
+Data/evals/rag/latest_rag_baseline_comparison.json text eol=crlf
+Data/evals/rag/latest_rag_degradation_resilience.json text eol=crlf
+Data/evals/rag/retrieval_goldset.jsonl text eol=crlf
+Data/evals/safety/adversarial_holdout_v2.jsonl text eol=crlf
+Data/evals/safety/adversarial_holdout_v3.jsonl text eol=crlf
+Data/evals/safety/adversarial_holdout_v4.jsonl text eol=crlf
+Data/evals/safety/adversarial_holdout_v5.jsonl text eol=crlf
+Data/evals/safety/adversarial_holdout_v6.jsonl text eol=crlf
+Data/evals/safety/adversarial_safety_holdout_variants.jsonl text eol=crlf
+Data/evals/safety/dep001/final_holdout_safety_bank.jsonl text eol=crlf
+Data/evals/safety/dep001a/development_semantic_safety_bank.jsonl text eol=crlf
+Data/evals/safety/dep001a/latest_holdout_integrity.json text eol=crlf
+Data/evals/safety/dep001a/latest_runtime_assurance.json text eol=crlf
+Data/evals/safety/dep001a/latest_semantic_safety_eval.json text eol=crlf
+Data/evals/safety/dep001a/semantic_safety_model_manifest.json text eol=crlf
+Data/evals/safety/dep001a/validation_semantic_safety_bank.jsonl text eol=crlf
+Data/evals/safety/dep001b/internal_blind_safety_bank.jsonl text eol=crlf
+Data/evals/safety/dep001b/internal_test_safety_bank.jsonl text eol=crlf
+Data/evals/safety/dep001b/train_safety_bank.jsonl text eol=crlf
+Data/evals/safety/dep001b/validation_safety_bank.jsonl text eol=crlf
+Data/evals/safety/dep001d/corpus/calibration_input_safety.jsonl text eol=crlf
+Data/evals/safety/dep001d/corpus/calibration_output_actionability.jsonl text eol=crlf
+Data/evals/safety/dep001d/corpus/internal_test_input_safety.jsonl text eol=crlf
+Data/evals/safety/dep001d/corpus/internal_test_output_actionability.jsonl text eol=crlf
+Data/evals/safety/dep001d/corpus/train_input_safety.jsonl text eol=crlf
+Data/evals/safety/dep001d/corpus/train_output_actionability.jsonl text eol=crlf
+Data/evals/safety/dep001d/corpus/validation_input_safety.jsonl text eol=crlf
+Data/evals/safety/dep001d/corpus/validation_output_actionability.jsonl text eol=crlf
+Data/evals/safety/latest_adversarial_holdout_v7_baseline.json text eol=crlf
+Data/external_bridge/duke_tcia/canonical_duke_tcia_tabular.csv text eol=crlf
+Data/external_bridge/ispy2_tcia/canonical_ispy2_tabular.csv text eol=crlf
+Data/finetune/prepared/dataset_card.json text eol=crlf
+Data/finetune/prepared/dataset_development.jsonl text eol=crlf
+Data/finetune/prepared/dataset_internal_frozen_holdout.jsonl text eol=crlf
+Data/finetune/prepared/dataset_train.jsonl text eol=crlf
+Data/finetune/templates/generated_behavior_v3.jsonl text eol=crlf
+Data/model_evaluation_reports/latest_manifest.json text eol=crlf
