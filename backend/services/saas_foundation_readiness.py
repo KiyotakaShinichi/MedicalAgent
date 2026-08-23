@@ -91,13 +91,53 @@ def write_saas_foundation_readiness(
 
 
 def _contains(path: Path, needle: str, control_id: str) -> dict[str, Any]:
-    exists = path.exists()
-    content = path.read_text(encoding="utf-8") if exists else ""
+    """Check for a needle in a file, or across a package's modules.
+
+    When `path` is a control-plane module, its siblings are searched too. The
+    control plane is `saas_control_plane` plus the responsibility modules it
+    re-exports (`saas_common`, `saas_organizations`, `saas_projects`,
+    `saas_jobs`), and a control implemented in any of them is implemented in the
+    control plane. Reading only the facade would report `idempotency_key` as
+    absent purely because the enqueue path moved into `saas_jobs` — the contract
+    unchanged, the evidence wrong.
+    """
+    candidates = _control_plane_sources(path)
+    content = ""
+    found_in = None
+    for candidate in candidates:
+        if not candidate.exists():
+            continue
+        text = candidate.read_text(encoding="utf-8")
+        content += text
+        if found_in is None and needle in text:
+            found_in = candidate
+
+    evidence_path = found_in or path
     return {
         "id": control_id,
-        "passed": exists and needle in content,
-        "evidence": str(path.relative_to(ROOT)).replace("\\", "/") if path.is_relative_to(ROOT) else str(path),
+        "passed": needle in content,
+        "evidence": (
+            str(evidence_path.relative_to(ROOT)).replace("\\", "/")
+            if evidence_path.is_relative_to(ROOT)
+            else str(evidence_path)
+        ),
     }
+
+
+#: The facade and the responsibility modules behind it, searched as one unit.
+CONTROL_PLANE_MODULES = (
+    "saas_control_plane.py",
+    "saas_common.py",
+    "saas_organizations.py",
+    "saas_projects.py",
+    "saas_jobs.py",
+)
+
+
+def _control_plane_sources(path: Path) -> list[Path]:
+    if path.name != "saas_control_plane.py":
+        return [path]
+    return [path.parent / name for name in CONTROL_PLANE_MODULES]
 
 
 def _migration_check(repo: Path) -> dict[str, Any]:
