@@ -49,6 +49,25 @@ uv run pytest tests -q --cov=backend --cov-branch --cov-fail-under=60
 cd frontend-react && npm run lint && npm run typecheck && npm run test && npm run build
 ```
 
+## Reproduce the ML pipeline
+
+```bash
+python scripts/run_training_pipeline.py
+```
+
+One command, deterministic by default (`--seed 42`). It trains the classical,
+regression, and temporal models, then writes dataset lineage, a temporal
+leakage audit, a detailed training report, a versioned evaluation report, the
+locked-holdout manifest, and the registered champion, tracking the run as an
+MLflow experiment.
+
+Override the inputs with `--ml-csv-path`, `--target`, `--test-size`, `--seed`,
+`--cnn-epochs`, or `--cnn-batch-size`. Full detail lives in
+[ML lifecycle](docs/ml_lifecycle.md) and [evaluation](docs/evaluation.md);
+model code is under `backend/services/complete_synthetic_training/`.
+
+All data is synthetic. Nothing here is clinically validated.
+
 Repository guidance: [contributing](CONTRIBUTING.md),
 [dependency reproducibility](docs/dependency_reproducibility.md),
 [security policy](docs/DEPENDENCY_SECURITY.md), and
