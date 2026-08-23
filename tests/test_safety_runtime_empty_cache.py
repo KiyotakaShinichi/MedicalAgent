@@ -187,8 +187,16 @@ def test_preflight_with_runtime_verification_also_fails(empty_cache: Path) -> No
     assert result.returncode != 0
 
 
-def test_preflight_reports_the_cache_it_actually_inspected(empty_cache: Path) -> None:
-    """A preflight that checked a different cache than the run would be worthless."""
+def test_preflight_names_the_encoder_it_looked_for(empty_cache: Path) -> None:
+    """A preflight that checked a different target than the run would be worthless.
+
+    Asserted through the encoder name it reports, which is derived from the
+    committed config and manifests. An earlier version of this test asserted on
+    the script's cache diagnostic block instead; that block is only printed on
+    some paths, so it passed locally and failed in CI against the very
+    missing-encoder case this file exists to cover. The name is the stable,
+    meaningful signal.
+    """
     result = subprocess.run(
         [
             sys.executable, "scripts/provision_semantic_safety_encoders.py",
@@ -197,7 +205,17 @@ def test_preflight_reports_the_cache_it_actually_inspected(empty_cache: Path) ->
         cwd=ROOT, env=_isolated_env(empty_cache), capture_output=True, text=True, timeout=900,
     )
     combined = result.stdout + result.stderr
-    assert "hub.cache_exists" in combined or "HF_HOME" in combined
+
+    assert result.returncode != 0
+    assert REQUIRED_ENCODER in combined, (
+        "the preflight did not say which encoder it looked for"
+    )
+    # And it is the encoder the committed runtime config actually names.
+    manifest = json.loads(
+        (ROOT / "Data/evals/safety/dep001d/runtime/semantic_safety_model_manifest.json")
+        .read_text(encoding="utf-8")
+    )
+    assert manifest["base_encoder"] == REQUIRED_ENCODER
 
 
 # ─── why there is no bundled fixture encoder ─────────────────────────────────
