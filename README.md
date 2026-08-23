@@ -438,8 +438,32 @@ Implementation: [backend/services/app_logging.py](backend/services/app_logging.p
    .venv\Scripts\activate
    ```
    `pyproject.toml` + `uv.lock` are the canonical dependency source; `uv sync`
-   creates `.venv` from them. For the minimal serving profile, add
-   `--no-default-groups`.
+   creates `.venv` from them.
+
+   **Which profile do you need?**
+
+   | you want to | run | you get |
+   | --- | --- | --- |
+   | develop, test, train, or evaluate | `uv sync --frozen` | full developer environment |
+   | only run the service | `uv sync --frozen --no-default-groups` | minimal serving runtime |
+
+   The default installs every dependency group — `dev` (pytest, ruff, mypy),
+   `ml` (torch, torchvision, sentence-transformers, shap), and `reporting`
+   (matplotlib, reportlab) — because that is what running the test suite,
+   the safety evaluations, and the training workflow requires.
+
+   `--no-default-groups` installs `[project].dependencies` only: the packages
+   the request path actually imports. That resolves to roughly 64 packages
+   against ~146 for the default, and excludes torch, torchvision,
+   sentence-transformers, shap, matplotlib, reportlab, and pytest. It is what
+   the serving container builds
+   (`Dockerfile`, `ARG PYTHON_PROFILE=serving`), and it is the right choice for
+   anyone deploying the API who does not need to train or evaluate locally.
+
+   Note that the semantic safety runtimes need their encoder provisioned once
+   with network access before the offline suite is meaningful — see
+   [CONTRIBUTING.md](CONTRIBUTING.md). A serving-only install still runs the
+   API; it simply cannot run the local training and evaluation workflows.
 2. Initialize the local database and seed demo data:
    ```
    python seed_db.py
