@@ -1,22 +1,30 @@
-import json
-from pathlib import Path
+"""Admin analytics dashboard payload.
 
-import numpy as np
-import pandas as pd
-from sklearn.metrics import average_precision_score, brier_score_loss, confusion_matrix, roc_auc_score
+Engineering monitoring for ML and retrieval behaviour on synthetic data. These
+panels do not diagnose, do not decide treatment, and are not clinical evidence.
 
-from backend.models import ModelRegistry, PredictionAuditLog
+The implementation is split by responsibility:
+
+* ``admin_analytics_readiness`` - artifact loading and the MLE readiness panel;
+  the one place that decides what a missing input means;
+* ``admin_analytics_panels`` - one function per dashboard panel, each built
+  from already-loaded data;
+* ``admin_analytics_summary`` - the statistical layer: intervals, thresholds,
+  decision analysis, subgroup and false-negative review.
+
+This module composes them and remains the public import surface, so
+``from backend.services.admin_analytics import build_admin_analytics`` keeps
+working for the admin router and the evaluation reports. The private panel
+helpers are re-exported too, because they were module attributes here before
+the split.
+"""
+
 from backend.services.app_logging import build_app_monitoring_summary
 from backend.services.agent_feedback import build_agent_feedback_summary
 from backend.services.agent_regression_eval import load_latest_agent_regression_report
-from backend.services.clinician_feedback import clinical_feedback_summary
-from backend.services.mri_derived_features import (
-    build_mri_derived_feature_summary as build_mri_derived_feature_summary_service,
-)
 from backend.services.rag_analytics import build_rag_evaluation_summary
 from backend.services.rag_source_registry import build_rag_source_registry
 from backend.services.summary_quality_eval import build_summary_quality_report
-from backend.services.admin_calibration import _calibration_metrics
 from backend.services.admin_dashboard_panels import (
     _calibration_panel,
     _confusion_matrix_panel,
@@ -24,30 +32,46 @@ from backend.services.admin_dashboard_panels import (
     _evaluation_report_links,
     _feature_explanation_panel,
 )
-
-
-def _prefer_existing(candidate: str, fallback: str) -> str:
-    return candidate if Path(candidate).exists() else fallback
-
-
-DEFAULT_SYNTHETIC_METRICS_PATH = _prefer_existing(
-    "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_metrics.json",
-    "Data/complete_synthetic_training/complete_synthetic_model_metrics.json",
+from backend.services.admin_metric_interpretation import _metric_interpretation_guide
+from backend.services.admin_analytics_readiness import (
+    DEFAULT_BREASTDCEDL_METRICS_PATH,
+    DEFAULT_MLE_READINESS_PATH,
+    DEFAULT_SYNTHETIC_METRICS_PATH,
+    DEFAULT_SYNTHETIC_MRI_REPORTS_CSV,
+    DEFAULT_SYNTHETIC_PREDICTIONS_PATH,
+    DEFAULT_SYNTHETIC_TRAINING_CSV,
+    _load_csv,
+    _load_json,
+    _prefer_existing as _prefer_existing,
 )
-DEFAULT_SYNTHETIC_PREDICTIONS_PATH = _prefer_existing(
-    "Data/complete_synthetic_training_realism_v2/complete_synthetic_model_predictions.csv",
-    "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv",
+from backend.services.admin_analytics_panels import (
+    _ab_testing,
+    _audit_and_feedback,
+    _clinician_loop_metrics,
+    _coverage_item as _coverage_item,
+    _data_coverage,
+    _data_quality,
+    _drift_monitoring,
+    _evidence_separation,
+    _frontend_guardrail_summary,
+    _frontend_rag_summary,
+    _model_performance,
+    _mri_report_feature_pipeline as _mri_report_feature_pipeline,
 )
-DEFAULT_SYNTHETIC_TRAINING_CSV = _prefer_existing(
-    "Data/complete_synthetic_breast_journeys_realism_v2/temporal_ml_rows.csv",
-    "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv",
+from backend.services.admin_analytics_summary import (
+    _advanced_model_evaluation,
+    _binary_metric_summary as _binary_metric_summary,
+    _bootstrap_confidence_intervals as _bootstrap_confidence_intervals,
+    _cost_sensitive_thresholds as _cost_sensitive_thresholds,
+    _decision_curve as _decision_curve,
+    _decision_impact_simulation as _decision_impact_simulation,
+    _false_negative_review as _false_negative_review,
+    _metric_estimate as _metric_estimate,
+    _mri_derived_feature_summary as _mri_derived_feature_summary,
+    _patient_context as _patient_context,
+    _subgroup_performance as _subgroup_performance,
+    _threshold_operating_points as _threshold_operating_points,
 )
-DEFAULT_SYNTHETIC_MRI_REPORTS_CSV = _prefer_existing(
-    "Data/complete_synthetic_breast_journeys_realism_v2/mri_reports.csv",
-    "Data/complete_synthetic_breast_journeys/mri_reports.csv",
-)
-DEFAULT_BREASTDCEDL_METRICS_PATH = "Data/breastdcedl_spy1_baseline_metrics.json"
-DEFAULT_MLE_READINESS_PATH = "Data/mle_monitoring/latest_mle_readiness.json"
 
 
 def build_admin_analytics(db):
@@ -102,827 +126,53 @@ def build_admin_analytics(db):
         ),
     }
 
-
-def _frontend_rag_summary(summary):
-    """Keep the React dashboard stable across old and new analytics schemas."""
-    summary = dict(summary or {})
-    summary.setdefault("evaluations", summary.get("call_count", 0))
-    summary.setdefault("grounding_score", summary.get("average_grounding_score"))
-    summary.setdefault("hallucination_score", summary.get("average_hallucination_score"))
-    summary.setdefault("precision_at_3", summary.get("average_retrieval_precision_at_3"))
-    summary.setdefault("estimated_cost_usd", summary.get("estimated_llm_cost_usd"))
-    api_costs = summary.get("api_costs") or {}
-    summary.setdefault("input_tokens", api_costs.get("estimated_input_tokens"))
-    summary.setdefault("output_tokens", api_costs.get("estimated_output_tokens"))
-    return summary
-
-
-def _frontend_guardrail_summary(rag_summary, regression_report):
-    regression_summary = (regression_report or {}).get("summary") or {}
-    input_counts = (rag_summary or {}).get("input_guardrail_counts") or {}
-    output_counts = (rag_summary or {}).get("output_guardrail_counts") or {}
-    input_blocks = sum(
-        int(count or 0)
-        for status, count in input_counts.items()
-        if status not in {"passed", "ok", "unknown"}
-    )
-    output_blocks = sum(
-        int(count or 0)
-        for status, count in output_counts.items()
-        if status not in {"passed", "ok", "unknown"}
-    )
-    return {
-        "input_blocks": input_blocks,
-        "output_blocks": output_blocks,
-        "attack_block_rate": regression_summary.get("attack_block_rate"),
-        "pass_rate": regression_summary.get("pass_rate"),
-    }
-
-
-def _model_performance(synthetic_metrics, breastdcedl_metrics):
-    synthetic_models = (synthetic_metrics or {}).get("models") or {}
-    best = (synthetic_metrics or {}).get("best_model_by_patient_level_roc_auc")
-    best_metrics = synthetic_models.get(best, {}) if best else {}
-    synthetic_payload = {
-        "task": (synthetic_metrics or {}).get("task"),
-        "best_model": best,
-        "patient_level_roc_auc": best_metrics.get("patient_level_roc_auc"),
-        "patient_level_average_precision": best_metrics.get("patient_level_average_precision"),
-        "patient_level_brier_score": best_metrics.get("patient_level_brier_score"),
-        "patient_level_sensitivity": best_metrics.get("patient_level_sensitivity"),
-        "patient_level_specificity": best_metrics.get("patient_level_specificity"),
-        "warning": (synthetic_metrics or {}).get("warning"),
-    }
-    synthetic_payload["metric_statuses"] = _score_model_metric_set(synthetic_payload)
-
-    return {
-        "synthetic_longitudinal_response": {
-            **synthetic_payload,
-        },
-        "real_breastdcedl_baseline": breastdcedl_metrics or {
-            "status": "not_available",
-            "message": "BreastDCEDL baseline metrics file was not found.",
-        },
-    }
-
-
-def _evidence_separation(synthetic_metrics, breastdcedl_metrics):
-    synthetic_models = (synthetic_metrics or {}).get("models") or {}
-    synthetic_best = (synthetic_metrics or {}).get("best_model_by_patient_level_roc_auc")
-    synthetic_best_metrics = synthetic_models.get(synthetic_best, {}) if synthetic_best else {}
-    real_models = (breastdcedl_metrics or {}).get("models") or {}
-    real_best = (breastdcedl_metrics or {}).get("best_model_by_roc_auc")
-    real_best_metrics = real_models.get(real_best, {}) if real_best else {}
-    return {
-        "purpose": "Separates simulator-learning evidence from real-dataset exploratory evidence so project claims stay honest.",
-        "sections": [
-            {
-                "name": "Synthetic longitudinal simulator",
-                "status": "engineering_evidence",
-                "rows": (synthetic_metrics or {}).get("rows"),
-                "patients": (synthetic_metrics or {}).get("patients"),
-                "best_model": synthetic_best,
-                "primary_metric": "patient_level_roc_auc",
-                "primary_metric_value": synthetic_best_metrics.get("patient_level_roc_auc"),
-                "claim_boundary": "Useful for workflow, MLOps, and model-practice evidence. It does not prove real clinical performance.",
-            },
-            {
-                "name": "BreastDCEDL / I-SPY1 MRI-derived baseline",
-                "status": "exploratory_real_dataset_baseline" if breastdcedl_metrics else "not_available",
-                "rows": (breastdcedl_metrics or {}).get("rows"),
-                "patients": (breastdcedl_metrics or {}).get("rows"),
-                "best_model": real_best,
-                "primary_metric": "roc_auc",
-                "primary_metric_value": real_best_metrics.get("roc_auc"),
-                "claim_boundary": "Small real-data MRI-derived tabular baseline. Not longitudinal clinical validation.",
-            },
-            {
-                "name": "Raw MRI computer vision",
-                "status": "planned_integration",
-                "rows": None,
-                "patients": None,
-                "best_model": None,
-                "primary_metric": None,
-                "primary_metric_value": None,
-                "claim_boundary": "Planned multimodal work. Current longitudinal response models use MRI-derived tabular trend features.",
-            },
-        ],
-    }
-
-
-def _drift_monitoring(training_rows):
-    if training_rows is None or training_rows.empty or "patient_id" not in training_rows.columns:
-        return {"status": "unavailable", "features": []}
-
-    patient_order = sorted(training_rows["patient_id"].dropna().unique())
-    if len(patient_order) < 4:
-        return {"status": "insufficient_data", "features": []}
-
-    midpoint = len(patient_order) // 2
-    reference_ids = set(patient_order[:midpoint])
-    current_ids = set(patient_order[midpoint:])
-    reference = training_rows[training_rows["patient_id"].isin(reference_ids)]
-    current = training_rows[training_rows["patient_id"].isin(current_ids)]
-
-    feature_rows = []
-    for feature in ["age", "nadir_wbc", "nadir_hemoglobin", "nadir_platelets", "mri_percent_change_from_baseline", "max_symptom_severity"]:
-        if feature not in training_rows.columns:
-            continue
-        ref_mean = float(reference[feature].dropna().mean())
-        cur_mean = float(current[feature].dropna().mean())
-        ref_std = float(reference[feature].dropna().std() or 1.0)
-        standardized_mean_shift = abs(cur_mean - ref_mean) / max(ref_std, 1e-6)
-        status = _standardized_shift_status(standardized_mean_shift)
-        feature_rows.append({
-            "feature": feature,
-            "reference_mean": round(ref_mean, 3),
-            "current_mean": round(cur_mean, 3),
-            "standardized_mean_shift": round(standardized_mean_shift, 3),
-            "status": status,
-            "meaning": _status_meaning(status),
-        })
-
-    watch_count = sum(1 for row in feature_rows if row["status"] in {"unideal", "failed"})
-    return {
-        "status": _worst_status(row["status"] for row in feature_rows),
-        "method": "reference/current split by synthetic patient id; standardized mean shift.",
-        "watch_feature_count": watch_count,
-        "features": feature_rows,
-    }
-
-
-def _ab_testing(synthetic_metrics, predictions):
-    models = (synthetic_metrics or {}).get("models") or {}
-    candidates = []
-    for name, metrics in models.items():
-        candidate = {
-            "model": name,
-            "patient_level_roc_auc": metrics.get("patient_level_roc_auc"),
-            "patient_level_average_precision": metrics.get("patient_level_average_precision"),
-            "patient_level_brier_score": metrics.get("patient_level_brier_score"),
-            "patient_level_sensitivity": metrics.get("patient_level_sensitivity"),
-            "patient_level_specificity": metrics.get("patient_level_specificity"),
-        }
-        candidate["metric_statuses"] = _score_model_metric_set(candidate)
-        candidates.append(candidate)
-    candidates = sorted(
-        candidates,
-        key=lambda row: row.get("patient_level_roc_auc") if row.get("patient_level_roc_auc") is not None else -1,
-        reverse=True,
-    )
-
-    disagreement = None
-    if predictions is not None and not predictions.empty:
-        probability_columns = [column for column in predictions.columns if column.endswith("_probability")]
-        if len(probability_columns) >= 2:
-            label_frame = predictions[probability_columns].apply(lambda column: column >= 0.5)
-            disagreement = round(float(label_frame.nunique(axis=1).gt(1).mean()), 3)
-
-    return {
-        "champion": candidates[0] if candidates else None,
-        "challengers": candidates[1:4],
-        "prediction_disagreement_rate": disagreement,
-        "recommendation": (
-            "Use champion/challenger evaluation offline until clinician-feedback and real-world monitoring data are strong enough."
-        ),
-    }
-
-
-def _audit_and_feedback(db):
-    return {
-        "registered_model_count": db.query(ModelRegistry).count(),
-        "prediction_audit_count": db.query(PredictionAuditLog).count(),
-        "clinical_feedback": clinical_feedback_summary(db),
-    }
-
-
-def _data_quality(training_rows):
-    if training_rows is None or training_rows.empty:
-        return {"status": "unavailable", "missingness": []}
-
-    missingness = []
-    for column in training_rows.columns:
-        rate = float(training_rows[column].isna().mean())
-        if rate:
-            status = _missing_rate_status(rate)
-            missingness.append({
-                "column": column,
-                "missing_rate": round(rate, 3),
-                "status": status,
-                "meaning": _status_meaning(status),
-            })
-    return {
-        "status": _worst_status(row["status"] for row in missingness) if missingness else "passed",
-        "rows": int(len(training_rows)),
-        "patients": int(training_rows["patient_id"].nunique()) if "patient_id" in training_rows.columns else None,
-        "missingness": sorted(missingness, key=lambda row: row["missing_rate"], reverse=True)[:20],
-    }
-
-
-def _advanced_model_evaluation(synthetic_metrics, predictions, training_rows, mri_reports=None):
-    best_model = (synthetic_metrics or {}).get("best_model_by_patient_level_roc_auc")
-    if predictions is None or predictions.empty or not best_model:
-        return {
-            "status": "unavailable",
-            "message": "Synthetic prediction artifacts are required for advanced evaluation.",
-        }
-
-    calibrated_column = f"{best_model}_calibrated_probability"
-    raw_probability_column = f"{best_model}_probability"
-    probability_column = calibrated_column if calibrated_column in predictions.columns else raw_probability_column
-    if probability_column not in predictions.columns or "actual_label" not in predictions.columns:
-        return {
-            "status": "unavailable",
-            "message": f"Prediction column {probability_column} was not found.",
-        }
-
-    frame = predictions[["patient_id", "actual_label", probability_column]].copy()
-    frame = frame.dropna(subset=["actual_label", probability_column])
-    frame["actual_label"] = frame["actual_label"].astype(int)
-    frame["probability"] = frame[probability_column].astype(float)
-    frame["predicted_label"] = (frame["probability"] >= 0.5).astype(int)
-
-    context = _patient_context(training_rows)
-    if context is not None:
-        frame = frame.merge(context, on="patient_id", how="left")
-
-    labels = frame["actual_label"].to_numpy(dtype=int)
-    probabilities = frame["probability"].to_numpy(dtype=float)
-    calibration = _calibration_metrics(labels, probabilities)
-    confidence_intervals = _bootstrap_confidence_intervals(labels, probabilities)
-    false_negative_review = _false_negative_review(frame)
-    subgroup_performance = _subgroup_performance(frame)
-    threshold_metrics = _threshold_operating_points(labels, probabilities)
-    cost_sensitive = _cost_sensitive_thresholds(labels, probabilities)
-    decision_impact = _decision_impact_simulation(frame)
-    mri_features = _mri_derived_feature_summary(frame, mri_reports)
-
-    return {
-        "status": _worst_status([
-            calibration["status"],
-            confidence_intervals["status"],
-            false_negative_review["status"],
-            subgroup_performance["status"],
-            cost_sensitive["status"],
-        ]),
-        "champion_model": best_model,
-        "probability_column": probability_column,
-        "probability_source": "calibrated_champion" if probability_column == calibrated_column else "raw_champion",
-        "threshold": 0.5,
-        "evaluated_patients": int(len(frame)),
-        "calibration": calibration,
-        "bootstrap_confidence_intervals": confidence_intervals,
-        "decision_curve": _decision_curve(labels, probabilities),
-        "threshold_operating_points": threshold_metrics,
-        "cost_sensitive_thresholds": cost_sensitive,
-        "decision_impact_simulation": decision_impact,
-        "false_negative_review": false_negative_review,
-        "subgroup_performance": subgroup_performance,
-        "mri_derived_features": mri_features,
-    }
-
-
-def _patient_context(training_rows):
-    if training_rows is None or training_rows.empty or "patient_id" not in training_rows.columns:
-        return None
-
-    rows = training_rows.sort_values(["patient_id", "cycle"]).copy()
-    aggregations = {}
-    for output, column, func in [
-        ("age", "age", "first"),
-        ("stage", "stage", "first"),
-        ("molecular_subtype", "molecular_subtype", "first"),
-        ("regimen", "regimen", "first"),
-        ("cycles_observed", "cycle", "max"),
-        ("latest_mri_percent_change", "mri_percent_change_from_baseline", "last"),
-        ("latest_mri_tumor_size_cm", "mri_tumor_size_cm", "last"),
-        ("max_symptom_severity", "max_symptom_severity", "max"),
-        ("nadir_wbc", "nadir_wbc", "min"),
-        ("nadir_anc", "nadir_anc", "min"),
-        ("nadir_hemoglobin", "nadir_hemoglobin", "min"),
-        ("nadir_platelets", "nadir_platelets", "min"),
-        ("intervention_count", "intervention_count", "sum"),
-        ("dose_delay_count", "dose_delayed", "sum"),
-        ("dose_reduction_count", "dose_reduced", "sum"),
-        ("final_cancer_status", "final_cancer_status", "last"),
-        ("final_response_category", "final_response_category", "last"),
-    ]:
-        if column in rows.columns:
-            aggregations[output] = (column, func)
-    context = rows.groupby("patient_id", as_index=False).agg(**aggregations)
-    if "age" in context.columns:
-        context["age_band"] = pd.cut(
-            context["age"],
-            bins=[0, 44, 54, 64, 74, 120],
-            labels=["<45", "45-54", "55-64", "65-74", "75+"],
-            include_lowest=True,
-        ).astype(str)
-    return context
-
-
-def _bootstrap_confidence_intervals(labels, probabilities, resamples=300, seed=42):
-    if len(labels) < 10:
-        return {"status": "unavailable", "metrics": [], "resamples": 0}
-
-    rng = np.random.default_rng(seed)
-    metric_values = {"AUROC": [], "AUPRC": [], "Brier": []}
-    n = len(labels)
-    for _ in range(resamples):
-        indices = rng.integers(0, n, n)
-        sample_labels = labels[indices]
-        sample_probabilities = probabilities[indices]
-        if len(set(sample_labels.tolist())) > 1:
-            metric_values["AUROC"].append(float(roc_auc_score(sample_labels, sample_probabilities)))
-            metric_values["AUPRC"].append(float(average_precision_score(sample_labels, sample_probabilities)))
-        metric_values["Brier"].append(float(brier_score_loss(sample_labels, sample_probabilities)))
-
-    rows = []
-    statuses = []
-    for metric, values in metric_values.items():
-        if not values:
-            rows.append({"metric": metric, "status": "unavailable"})
-            statuses.append("unavailable")
-            continue
-        low, high = np.quantile(values, [0.025, 0.975])
-        estimate = _metric_estimate(metric, labels, probabilities)
-        width = float(high - low)
-        status = _ci_width_status(width)
-        statuses.append(status)
-        rows.append({
-            "metric": metric,
-            "estimate": _round(estimate),
-            "ci_low": _round(low),
-            "ci_high": _round(high),
-            "interval_width": _round(width),
-            "status": status,
-        })
-
-    return {
-        "status": _worst_status(statuses),
-        "purpose": "Shows how stable the metric is under resampling; wide intervals mean the validation set is too small or noisy.",
-        "method": "Patient-level bootstrap with replacement.",
-        "resamples": resamples,
-        "metrics": rows,
-    }
-
-
-def _decision_curve(labels, probabilities, thresholds=None):
-    thresholds = thresholds or [0.30, 0.50, 0.70]
-    n = len(labels)
-    prevalence = float(np.mean(labels)) if n else 0.0
-    rows = []
-    for threshold in thresholds:
-        predictions = probabilities >= threshold
-        tp = int(((predictions == 1) & (labels == 1)).sum())
-        fp = int(((predictions == 1) & (labels == 0)).sum())
-        net_benefit = (tp / n) - (fp / n) * (threshold / (1 - threshold)) if n else None
-        treat_all = prevalence - (1 - prevalence) * (threshold / (1 - threshold))
-        rows.append({
-            "threshold": threshold,
-            "flagged_patients": int(predictions.sum()),
-            "true_positive": tp,
-            "false_positive": fp,
-            "model_net_benefit": _round(net_benefit),
-            "treat_all_net_benefit": _round(treat_all),
-            "treat_none_net_benefit": 0.0,
-            "status": "passed" if net_benefit is not None and net_benefit > max(treat_all, 0) else "unideal",
-        })
-    return {
-        "purpose": "Estimates whether using the model at a threshold adds value versus flagging everyone or no one.",
-        "rows": rows,
-    }
-
-
-def _threshold_operating_points(labels, probabilities, thresholds=None):
-    thresholds = thresholds or [0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80]
-    rows = []
-    for threshold in thresholds:
-        predictions = (probabilities >= threshold).astype(int)
-        tn, fp, fn, tp = confusion_matrix(labels, predictions, labels=[0, 1]).ravel()
-        sensitivity = tp / (tp + fn) if (tp + fn) else None
-        specificity = tn / (tn + fp) if (tn + fp) else None
-        precision = tp / (tp + fp) if (tp + fp) else None
-        false_negative_rate = fn / (tp + fn) if (tp + fn) else None
-        false_positive_rate = fp / (tn + fp) if (tn + fp) else None
-        rows.append({
-            "threshold": threshold,
-            "flagged_positive_rate": _round(float(predictions.mean())),
-            "sensitivity": _round(sensitivity),
-            "specificity": _round(specificity),
-            "precision": _round(precision),
-            "false_negative_rate": _round(false_negative_rate),
-            "false_positive_rate": _round(false_positive_rate),
-            "true_positive": int(tp),
-            "false_positive": int(fp),
-            "false_negative": int(fn),
-            "true_negative": int(tn),
-            "status": _false_negative_status(false_negative_rate or 0),
-        })
-    return {
-        "purpose": "Shows the tradeoff between catching positive response cases and adding false alarms at different thresholds.",
-        "rows": rows,
-    }
-
-
-def _cost_sensitive_thresholds(labels, probabilities, thresholds=None):
-    thresholds = thresholds or [round(value / 100, 2) for value in range(10, 91, 5)]
-    policies = [
-        {
-            "name": "safety_first",
-            "false_negative_cost": 5,
-            "false_positive_cost": 1,
-            "purpose": "Prioritizes avoiding missed positive/benefit cases, accepting more review flags.",
-        },
-        {
-            "name": "balanced",
-            "false_negative_cost": 2,
-            "false_positive_cost": 1,
-            "purpose": "Keeps false negatives more expensive while limiting unnecessary review burden.",
-        },
-        {
-            "name": "precision_first",
-            "false_negative_cost": 1,
-            "false_positive_cost": 2,
-            "purpose": "Prioritizes fewer false alarms when review capacity is limited.",
-        },
-    ]
-    rows = []
-    statuses = []
-    for policy in policies:
-        candidates = []
-        for threshold in thresholds:
-            predictions = (probabilities >= threshold).astype(int)
-            tn, fp, fn, tp = confusion_matrix(labels, predictions, labels=[0, 1]).ravel()
-            weighted_error = (
-                (policy["false_negative_cost"] * fn) + (policy["false_positive_cost"] * fp)
-            ) / max(len(labels), 1)
-            candidates.append({
-                "threshold": threshold,
-                "weighted_error": float(weighted_error),
-                "true_positive": int(tp),
-                "false_positive": int(fp),
-                "false_negative": int(fn),
-                "true_negative": int(tn),
-                "sensitivity": tp / (tp + fn) if (tp + fn) else None,
-                "specificity": tn / (tn + fp) if (tn + fp) else None,
-            })
-        best = min(candidates, key=lambda row: row["weighted_error"])
-        status = _weighted_error_status(best["weighted_error"])
-        statuses.append(status)
-        rows.append({
-            **policy,
-            "recommended_threshold": best["threshold"],
-            "weighted_error": _round(best["weighted_error"]),
-            "sensitivity": _round(best["sensitivity"]),
-            "specificity": _round(best["specificity"]),
-            "false_negative": best["false_negative"],
-            "false_positive": best["false_positive"],
-            "status": status,
-        })
-    return {
-        "status": _worst_status(statuses),
-        "purpose": "Treats errors differently so the threshold matches the clinical-review workflow being simulated.",
-        "policies": rows,
-    }
-
-
-def _decision_impact_simulation(frame):
-    rows = []
-    for _, row in frame.iterrows():
-        probability = float(row["probability"])
-        latest_mri_change = _cell(row, "latest_mri_percent_change")
-        max_symptom = _cell(row, "max_symptom_severity")
-        nadir_wbc = _cell(row, "nadir_wbc")
-        nadir_anc = _cell(row, "nadir_anc")
-        interventions = _cell(row, "intervention_count") or 0
-
-        toxicity_review = (
-            (max_symptom is not None and float(max_symptom) >= 7)
-            or (nadir_wbc is not None and float(nadir_wbc) < 2.0)
-            or (nadir_anc is not None and float(nadir_anc) < 1.0)
-        )
-        mri_unfavorable = latest_mri_change is not None and float(latest_mri_change) > -20
-
-        if toxicity_review and probability >= 0.70:
-            category = "discordant_response_toxicity_review"
-            action = "Favorable response signal, but toxicity signals would route to clinician review."
-        elif toxicity_review:
-            category = "toxicity_review"
-            action = "CBC/symptom toxicity signals would route to clinician review."
-        elif probability < 0.35 or (probability < 0.50 and mri_unfavorable):
-            category = "response_concern_review"
-            action = "Low response probability or weak MRI improvement would route to response-trend review."
-        elif probability < 0.65:
-            category = "close_monitoring"
-            action = "Uncertain response signal would trigger closer monitoring and repeat data check."
-        else:
-            category = "routine_monitoring"
-            action = "Favorable response signal would remain in routine monitoring, assuming no clinician concern."
-
-        rows.append({
-            "patient_id": row["patient_id"],
-            "category": category,
-            "action": action,
-            "probability": _round(probability),
-            "latest_mri_percent_change": _round(latest_mri_change),
-            "max_symptom_severity": _round(max_symptom),
-            "nadir_wbc": _round(nadir_wbc),
-            "intervention_count": _round(interventions),
-        })
-
-    category_counts = {}
-    for row in rows:
-        category_counts[row["category"]] = category_counts.get(row["category"], 0) + 1
-    total = max(len(rows), 1)
-    summary = [
-        {
-            "category": category,
-            "count": count,
-            "rate": _round(count / total),
-            "meaning": _decision_category_meaning(category),
-        }
-        for category, count in sorted(category_counts.items())
-    ]
-    return {
-        "purpose": "Simulates what model/timeline signals would change in the clinician-review workflow. It does not recommend treatment changes.",
-        "categories": summary,
-        "examples": rows[:12],
-        "safety_note": "These are review-routing categories, not chemotherapy recommendations.",
-    }
-
-
-def _mri_derived_feature_summary(frame, mri_reports=None):
-    return build_mri_derived_feature_summary_service(
-        evaluation_frame=frame,
-        mri_reports=mri_reports,
-    )
-
-
-def _mri_report_feature_pipeline(mri_reports):
-    if mri_reports is None or mri_reports.empty or "patient_id" not in mri_reports.columns:
-        return {
-            "status": "unavailable",
-            "purpose": "No MRI report table was available for derived-feature inventory.",
-            "steps": [],
-        }
-
-    reports = mri_reports.copy()
-    reports["date"] = pd.to_datetime(reports.get("date"), errors="coerce")
-    sort_columns = [column for column in ["patient_id", "date", "cycle"] if column in reports.columns]
-    reports = reports.sort_values(sort_columns)
-    patient_count = int(reports["patient_id"].nunique())
-    baseline = reports[reports.get("timepoint", "").astype(str).str.lower().eq("baseline")] if "timepoint" in reports.columns else pd.DataFrame()
-    followup = reports[~reports.index.isin(baseline.index)] if not baseline.empty else reports
-
-    patient_latest = reports.groupby("patient_id", as_index=False).tail(1)
-    change_column = "percent_change_from_baseline"
-    latest_changes = patient_latest[change_column].dropna().astype(float) if change_column in patient_latest.columns else pd.Series(dtype=float)
-    size_values = reports["tumor_size_cm"].dropna().astype(float) if "tumor_size_cm" in reports.columns else pd.Series(dtype=float)
-    coverage = float(len(latest_changes) / patient_count) if patient_count else 0.0
-    status = _coverage_status(coverage)
-    trend_buckets = {
-        "strong_decrease": int((latest_changes <= -50).sum()),
-        "partial_decrease": int(((latest_changes > -50) & (latest_changes <= -20)).sum()),
-        "stable_or_weak_decrease": int(((latest_changes > -20) & (latest_changes <= 10)).sum()),
-        "increase": int((latest_changes > 10).sum()),
-    }
-
-    return {
-        "status": status,
-        "purpose": "Inventory of the MRI-derived feature pipeline from synthetic MRI measurements.",
-        "patients_with_mri": patient_count,
-        "measurement_rows": int(len(reports)),
-        "patients_with_baseline": int(baseline["patient_id"].nunique()) if not baseline.empty else 0,
-        "patients_with_followup": int(followup["patient_id"].nunique()) if not followup.empty else 0,
-        "latest_change_coverage": _round(coverage),
-        "tumor_size_cm_mean": _round(size_values.mean()) if not size_values.empty else None,
-        "latest_percent_change_mean": _round(latest_changes.mean()) if not latest_changes.empty else None,
-        "response_trend_buckets": trend_buckets,
-        "steps": [
-            "Read one synthetic MRI measurement row per patient baseline and treatment-cycle follow-up.",
-            "Sort measurements by patient and date.",
-            "Use baseline tumor size as the reference measurement.",
-            "Compute latest tumor size and percent change from baseline.",
-            "Bucket MRI-derived trend as strong decrease, partial decrease, stable/weak decrease, or increase.",
-            "Join MRI-derived trend features into the longitudinal treatment model table.",
-        ],
-    }
-
-
-def _false_negative_review(frame):
-    positives = int(frame["actual_label"].sum())
-    false_negative_mask = (frame["actual_label"] == 1) & (frame["predicted_label"] == 0)
-    false_negatives = frame[false_negative_mask].copy()
-    rate = float(len(false_negatives) / positives) if positives else 0.0
-    cases = []
-    for _, row in false_negatives.sort_values("probability", ascending=False).head(10).iterrows():
-        cases.append({
-            "patient_id": row["patient_id"],
-            "probability": _round(row["probability"]),
-            "stage": _cell(row, "stage"),
-            "molecular_subtype": _cell(row, "molecular_subtype"),
-            "latest_mri_percent_change": _round(_cell(row, "latest_mri_percent_change")),
-            "max_symptom_severity": _round(_cell(row, "max_symptom_severity")),
-            "nadir_wbc": _round(_cell(row, "nadir_wbc")),
-            "final_cancer_status": _cell(row, "final_cancer_status"),
-        })
-    return {
-        "status": _false_negative_status(rate),
-        "purpose": "Finds positive/benefit cases the model missed at the current threshold. These are the cases to inspect first in medical ML.",
-        "count": int(len(false_negatives)),
-        "positive_cases": positives,
-        "false_negative_rate": _round(rate),
-        "cases": cases,
-    }
-
-
-def _subgroup_performance(frame):
-    rows = []
-    gate_statuses = []
-    powered_statuses = []
-    low_support_groups = []
-    for column, label in [
-        ("stage", "Cancer stage"),
-        ("molecular_subtype", "Molecular subtype"),
-        ("age_band", "Age band"),
-        ("regimen", "Treatment regimen"),
-    ]:
-        if column not in frame.columns:
-            continue
-        for value, group in frame.dropna(subset=[column]).groupby(column):
-            if str(value) in {"nan", ""}:
-                continue
-            labels = group["actual_label"].to_numpy(dtype=int)
-            probabilities = group["probability"].to_numpy(dtype=float)
-            metrics = _binary_metric_summary(labels, probabilities)
-            status = _subgroup_status(metrics, len(group))
-            gate_status = "acceptable" if status == "low_support" else status
-            gate_statuses.append(gate_status)
-            if status == "low_support":
-                low_support_groups.append({"group": label, "value": str(value), "n": int(len(group))})
-            else:
-                powered_statuses.append(status)
-            rows.append({
-                "group": label,
-                "value": str(value),
-                "n": int(len(group)),
-                "positive_rate": _round(float(labels.mean())) if len(labels) else None,
-                "roc_auc": metrics["roc_auc"],
-                "average_precision": metrics["average_precision"],
-                "brier_score": metrics["brier_score"],
-                "sensitivity": metrics["sensitivity"],
-                "specificity": metrics["specificity"],
-                "status": status,
-            })
-
-    rows = sorted(rows, key=lambda row: (row["group"], -row["n"], row["value"]))
-    return {
-        "status": _worst_status(gate_statuses) if gate_statuses else "unavailable",
-        "purpose": "Checks whether the model behaves differently across clinically relevant groups.",
-        "powered_group_status": _worst_status(powered_statuses),
-        "low_support_group_count": len(low_support_groups),
-        "low_support_groups": low_support_groups[:12],
-        "interpretation": (
-            "Low-support groups are validation coverage gaps, not proof of model failure. "
-            "Adequately powered subgroup failures should block stronger claims."
-        ),
-        "rows": rows[:40],
-    }
-
-
-def _clinician_loop_metrics(feedback):
-    review_count = int((feedback or {}).get("review_count") or 0)
-    decisions = (feedback or {}).get("decision_counts") or {}
-    if not review_count:
-        return {
-            "status": "unavailable",
-            "purpose": "Measures whether clinicians accept, edit, reject, or escalate AI-generated summaries.",
-            "message": "No clinician reviews have been logged yet.",
-        }
-
-    accepted = sum(int(decisions.get(name, 0)) for name in ["approved", "edited", "needs_followup"])
-    rejected = int(decisions.get("rejected", 0))
-    edited = int(decisions.get("edited", 0))
-    needs_followup = int(decisions.get("needs_followup", 0))
-    acceptance_rate = accepted / review_count
-    rejection_rate = rejected / review_count
-    edit_rate = edited / review_count
-    followup_rate = needs_followup / review_count
-    explanation_quality = (feedback or {}).get("average_explanation_quality_score")
-    usefulness = (feedback or {}).get("average_model_usefulness_score")
-
-    return {
-        "status": _worst_status([
-            _acceptance_rate_status(acceptance_rate),
-            _quality_score_status(explanation_quality),
-            _quality_score_status(usefulness),
-        ]),
-        "purpose": "A clinician-in-the-loop proxy for alert precision and summary usefulness. It is workflow evidence, not ground-truth clinical accuracy.",
-        "review_count": review_count,
-        "accepted_review_rate": _round(acceptance_rate),
-        "rejected_review_rate": _round(rejection_rate),
-        "edited_review_rate": _round(edit_rate),
-        "needs_followup_rate": _round(followup_rate),
-        "average_explanation_quality_score": explanation_quality,
-        "average_model_usefulness_score": usefulness,
-        "accepted_review_status": _acceptance_rate_status(acceptance_rate),
-        "summary_quality_status": _quality_score_status(explanation_quality),
-        "model_usefulness_status": _quality_score_status(usefulness),
-    }
-
-
-def _data_coverage(training_rows):
-    if training_rows is None or training_rows.empty:
-        return {"status": "unavailable", "items": []}
-
-    items = []
-    patient_count = training_rows["patient_id"].nunique() if "patient_id" in training_rows.columns else len(training_rows)
-    if "cycle" in training_rows.columns and "patient_id" in training_rows.columns:
-        cycles_per_patient = training_rows.groupby("patient_id")["cycle"].nunique()
-        complete_rate = float((cycles_per_patient >= 6).mean())
-        items.append(_coverage_item("Longitudinal depth", complete_rate, f"{int((cycles_per_patient >= 6).sum())}/{patient_count} patients have at least 6 cycles."))
-
-    for name, columns in [
-        ("CBC coverage", ["pre_wbc", "pre_anc", "pre_hemoglobin", "pre_platelets", "nadir_wbc", "nadir_anc", "nadir_hemoglobin", "nadir_platelets"]),
-        ("MRI trend coverage", ["mri_tumor_size_cm", "mri_percent_change_from_baseline"]),
-        ("Treatment schedule coverage", ["treatment_date", "cycle", "regimen"]),
-        ("Symptom/toxicity coverage", ["max_symptom_severity", "symptom_count", "intervention_count"]),
-    ]:
-        available = [column for column in columns if column in training_rows.columns]
-        if not available:
-            items.append({"name": name, "coverage_rate": None, "status": "unavailable", "detail": "Required columns are unavailable."})
-            continue
-        coverage_rate = float(1.0 - training_rows[available].isna().mean().mean())
-        items.append(_coverage_item(name, coverage_rate, f"{len(available)}/{len(columns)} expected columns present."))
-
-    statuses = [item["status"] for item in items]
-    return {
-        "status": _worst_status(statuses),
-        "purpose": "Shows whether the longitudinal dataset is complete enough to trust model and timeline metrics.",
-        "rows": int(len(training_rows)),
-        "patients": int(patient_count),
-        "items": items,
-    }
-
-
-def _coverage_item(name, rate, detail):
-    return {
-        "name": name,
-        "coverage_rate": _round(rate),
-        "status": _coverage_status(rate),
-        "detail": detail,
-    }
-
-
-def _metric_estimate(metric, labels, probabilities):
-    if metric == "AUROC":
-        return roc_auc_score(labels, probabilities)
-    if metric == "AUPRC":
-        return average_precision_score(labels, probabilities)
-    return brier_score_loss(labels, probabilities)
-
-
-def _binary_metric_summary(labels, probabilities):
-    predictions = (probabilities >= 0.5).astype(int)
-    tn, fp, fn, tp = confusion_matrix(labels, predictions, labels=[0, 1]).ravel()
-    return {
-        "roc_auc": _round(roc_auc_score(labels, probabilities)) if len(set(labels.tolist())) > 1 else None,
-        "average_precision": _round(average_precision_score(labels, probabilities)) if len(set(labels.tolist())) > 1 else None,
-        "brier_score": _round(brier_score_loss(labels, probabilities)),
-        "sensitivity": _round(tp / (tp + fn)) if (tp + fn) else None,
-        "specificity": _round(tn / (tn + fp)) if (tn + fp) else None,
-    }
-
-
-def _load_json(path):
-    json_path = Path(path)
-    if not json_path.exists():
-        return None
-    return json.loads(json_path.read_text(encoding="utf-8"))
-
-
-def _load_csv(path):
-    csv_path = Path(path)
-    if not csv_path.exists():
-        return None
-    return pd.read_csv(csv_path)
-
-
-from backend.services.admin_metric_interpretation import (
-    _metric_interpretation_guide,
-    _score_model_metric_set,
-    _standardized_shift_status,
-    _missing_rate_status,
-    _ci_width_status,
-    _false_negative_status,
-    _subgroup_status,
-    _acceptance_rate_status,
-    _quality_score_status,
-    _coverage_status,
-    _weighted_error_status,
-    _decision_category_meaning,
-    _worst_status,
-    _round,
-    _cell,
-    _status_meaning,
+# ── compatibility re-exports ────────────────────────────────────────────────
+# These were module attributes of admin_analytics before the split, because the
+# original module imported them at module scope. Callers and tests can bind to
+# any of them - `_calibration_metrics` is monkeypatched by the breast-monitoring
+# suite - so the facade stays a strict superset of the pre-split surface rather
+# than only of the names it happens to define.
+import json as json  # noqa: E402
+from pathlib import Path as Path  # noqa: E402
+
+import numpy as np  # noqa: E402,F401
+import pandas as pd  # noqa: E402,F401
+from sklearn.metrics import (  # noqa: E402
+    average_precision_score as average_precision_score,
+    brier_score_loss as brier_score_loss,
+    confusion_matrix as confusion_matrix,
+    roc_auc_score as roc_auc_score,
 )
+
+from backend.models import (  # noqa: E402
+    ModelRegistry as ModelRegistry,
+    PredictionAuditLog as PredictionAuditLog,
+)
+from backend.services.admin_calibration import (  # noqa: E402
+    _calibration_metrics as _calibration_metrics,
+)
+from backend.services.clinician_feedback import (  # noqa: E402
+    clinical_feedback_summary as clinical_feedback_summary,
+)
+from backend.services.mri_derived_features import (  # noqa: E402,F401
+    build_mri_derived_feature_summary as build_mri_derived_feature_summary_service,
+)
+from backend.services.admin_metric_interpretation import (  # noqa: E402
+    _acceptance_rate_status as _acceptance_rate_status,
+    _cell as _cell,
+    _ci_width_status as _ci_width_status,
+    _coverage_status as _coverage_status,
+    _decision_category_meaning as _decision_category_meaning,
+    _false_negative_status as _false_negative_status,
+    _missing_rate_status as _missing_rate_status,
+    _quality_score_status as _quality_score_status,
+    _round as _round,
+    _score_model_metric_set as _score_model_metric_set,
+    _standardized_shift_status as _standardized_shift_status,
+    _status_meaning as _status_meaning,
+    _subgroup_status as _subgroup_status,
+    _weighted_error_status as _weighted_error_status,
+    _worst_status as _worst_status,
+)
+
+__all__ = ["build_admin_analytics"]
