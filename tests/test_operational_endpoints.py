@@ -49,17 +49,24 @@ def test_health_endpoint_exists_and_reports_ok(client: TestClient) -> None:
         "status": "ok",
         "service": "nlcare_monitoring_prototype",
         "version": application_version(),
+        "database": {"connected": True, "error_type": None},
     }
 
 
 def test_health_schema_is_stable(client: TestClient) -> None:
     """Exact key set. A probe consumer breaks on an unannounced field change.
 
-    `version` was added deliberately, so an operator can tell *which build*
-    answered a probe rather than only that one did. The assertion stays an
-    exact-set comparison: the point is that the shape never drifts silently.
+    `version` and `database` were both added deliberately - the first so an
+    operator can tell which build answered, the second so database reachability
+    is visible from the conventional probe. The assertion stays an exact-set
+    comparison: the point is that the shape never drifts silently.
     """
-    assert set(client.get("/health").json()) == {"status", "service", "version"}
+    assert set(client.get("/health").json()) == {
+        "status",
+        "service",
+        "version",
+        "database",
+    }
 
 
 def test_healthz_alias_matches_health(client: TestClient) -> None:
@@ -67,16 +74,26 @@ def test_healthz_alias_matches_health(client: TestClient) -> None:
     assert client.get("/healthz").json() == client.get("/health").json()
 
 
-def test_liveness_does_not_depend_on_the_database(client: TestClient) -> None:
-    """Liveness must stay cheap: it decides restarts, not traffic routing.
+def test_liveness_verdict_does_not_depend_on_the_database(client: TestClient) -> None:
+    """Liveness decides restarts, not traffic routing.
 
-    A liveness probe that consults the database turns a slow dependency into a
-    restart loop. Asserting on the payload shape is the proxy — the response
-    reports no dependency state at all.
+    `/health` now reports database reachability, because that is what an
+    operator looking at a health probe expects to see. What it must never do is
+    *act* on it: a probe that fails when the database is down turns a degraded
+    dependency into a cluster-wide restart loop, and restarting a process
+    cannot repair a database.
+
+    So the database appears as an informational field, while the verdict —
+    `status` and the HTTP code — stays a statement about this process only.
+    `/ready` owns the fail-closed decision; the unreachable-database case is
+    exercised in tests/test_health_endpoint.py.
     """
     payload = client.get("/health").json()
+    assert payload["status"] == "ok"
+    assert "connected" in payload["database"]
+    # The aggregated readiness verdict stays on /ready.
     assert "checks" not in payload
-    assert "database" not in json.dumps(payload)
+    assert "retrieval" not in json.dumps(payload)
 
 
 # ─── Readiness ───────────────────────────────────────────────────────────────

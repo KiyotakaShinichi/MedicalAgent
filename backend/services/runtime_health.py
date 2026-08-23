@@ -32,18 +32,68 @@ def application_version() -> str:
         return "unknown"
 
 
-def liveness_payload() -> dict[str, Any]:
-    """Cheap liveness answer.
+# A liveness probe that can block is itself a restart vector: an orchestrator
+# that times out waiting for /health restarts the process just as surely as a
+# 500 would. The database probe below is therefore bounded, and the bound is
+# deliberately far shorter than any sane probe timeout.
+LIVENESS_DATABASE_PROBE_TIMEOUT_SECONDS = 0.5
+
+
+def database_connectivity(
+    db: Session, *, timeout_seconds: float = LIVENESS_DATABASE_PROBE_TIMEOUT_SECONDS
+) -> dict[str, Any]:
+    """Bounded, informational answer to "can we reach the database right now?"
+
+    Never raises and never blocks for longer than `timeout_seconds`. The query
+    runs on a worker thread so that a driver call which hangs - rather than
+    failing - cannot hold the liveness response open; if the deadline passes the
+    answer is simply "not connected", and the abandoned thread dies with its
+    session.
+
+    Reports `error_type` only, never the exception message. Connection failures
+    routinely carry the DSN, and this endpoint is unauthenticated.
+    """
+    from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
+
+    def probe() -> None:
+        db.execute(text("SELECT 1"))
+
+    executor = ThreadPoolExecutor(max_workers=1)
+    try:
+        executor.submit(probe).result(timeout=timeout_seconds)
+        return {"connected": True}
+    except FutureTimeout:
+        return {"connected": False, "error_type": "TimeoutError"}
+    except Exception as exc:  # noqa: BLE001 - liveness must survive any failure
+        return {"connected": False, "error_type": type(exc).__name__}
+    finally:
+        # Do not wait: the point of the timeout is to not block on a hung probe.
+        executor.shutdown(wait=False)
+
+
+def liveness_payload(database: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    """Liveness answer, with database reachability reported for visibility.
 
     Reports the running version alongside status so an operator can tell *which
     build* answered, which is the difference between a useful health probe and
-    one that only proves a socket is open. Still touches no database, cache, or
-    network dependency - dependency state belongs to `readiness_payload`.
+    one that only proves a socket is open.
+
+    `database` is **informational and non-authoritative**. It never changes
+    `status`, and the route never changes its HTTP code because of it: a live
+    process with an unreachable database is still live, and restarting it would
+    not fix the database. `/ready` remains the authoritative, fail-closed
+    signal that decides whether traffic should be routed here.
+
+    Callers pass the result of `database_connectivity`; when no probe was run
+    the key is reported as unprobed rather than guessed.
     """
     return {
         "status": "ok",
         "service": "nlcare_monitoring_prototype",
         "version": application_version(),
+        "database": dict(database)
+        if database is not None
+        else {"connected": False, "error_type": "NotProbed"},
     }
 
 
@@ -106,4 +156,9 @@ def _redis_readiness(url: str) -> dict[str, Any]:
         return {"ready": False, "required": True, "error_type": type(exc).__name__}
 
 
-__all__ = ["application_version", "liveness_payload", "readiness_payload"]
+__all__ = [
+    "application_version",
+    "database_connectivity",
+    "liveness_payload",
+    "readiness_payload",
+]

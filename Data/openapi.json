@@ -11488,7 +11488,7 @@
           "operations"
         ],
         "summary": "Liveness probe",
-        "description": "Liveness probe. Returns 200 whenever the process can serve requests.\n\nDeliberately touches no database, cache, model, or network dependency: an\norchestrator uses this to decide whether to *restart* the process, so a\nslow or unavailable dependency must not make it fail. Dependency state is\nreported by `/ready` instead.\n\n`/healthz` is an unlisted alias for orchestrators that probe the\nKubernetes-conventional path.",
+        "description": "Liveness probe. Returns 200 whenever the process can serve requests.\n\nReports `status`, `service`, `version`, and database reachability.\n\nThe database result is **informational**. This endpoint returns 200 for a\nlive process even when the database is unreachable, and `status` stays\n`ok`: an orchestrator uses liveness to decide whether to *restart* the\nprocess, and restarting it cannot repair a database. Letting a dependency\nfailure fail this probe is what turns a degraded database into a\ncluster-wide restart loop. `/ready` remains the authoritative, fail-closed\nsignal that decides whether traffic should be routed here, and it is the\none that returns 503.\n\nThe probe itself is bounded (see `LIVENESS_DATABASE_PROBE_TIMEOUT_SECONDS`)\nbecause a liveness probe that *hangs* is a restart vector too. It reports\nan exception class name at most - never a message, host, or connection\nstring, since this route is unauthenticated.\n\n`/healthz` is an unlisted alias for orchestrators that probe the\nKubernetes-conventional path.",
         "operationId": "getHealth",
         "responses": {
           "200": {
@@ -12341,6 +12341,36 @@
         "type": "object",
         "title": "CompleteSyntheticXAIRequest"
       },
+      "DatabaseLiveness": {
+        "properties": {
+          "connected": {
+            "type": "boolean",
+            "title": "Connected",
+            "description": "Whether a bounded `SELECT 1` succeeded at probe time."
+          },
+          "error_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Type",
+            "description": "Exception class name when the probe failed, else absent. Never carries the message text, which can contain the connection string.",
+            "examples": [
+              "OperationalError"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "connected"
+        ],
+        "title": "DatabaseLiveness",
+        "description": "Database reachability as reported by `/health`.\n\nInformational only. It never changes the liveness `status` or the HTTP\ncode: a live process with an unreachable database is still live, and\nrestarting it would not repair the database. `/ready` is the authoritative\nfail-closed signal."
+      },
       "DemoCredentialLoginRequest": {
         "properties": {
           "username": {
@@ -12917,15 +12947,29 @@
             "examples": [
               "nlcare_monitoring_prototype"
             ]
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Running application version, or `unknown` if it could not be resolved. Lets an operator tell which build answered the probe.",
+            "examples": [
+              "0.0.0"
+            ]
+          },
+          "database": {
+            "$ref": "#/components/schemas/DatabaseLiveness",
+            "description": "Database reachability at probe time. Informational: it does not affect `status` or the HTTP code. See `/ready` for the authoritative readiness decision."
           }
         },
         "type": "object",
         "required": [
           "status",
-          "service"
+          "service",
+          "version",
+          "database"
         ],
         "title": "LivenessResponse",
-        "description": "Process-liveness answer. Deliberately does not touch dependencies."
+        "description": "Process-liveness answer, plus informational dependency visibility."
       },
       "LoginResponse": {
         "properties": {

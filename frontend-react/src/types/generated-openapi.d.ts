@@ -3249,10 +3249,21 @@ export interface paths {
          * Liveness probe
          * @description Liveness probe. Returns 200 whenever the process can serve requests.
          *
-         *     Deliberately touches no database, cache, model, or network dependency: an
-         *     orchestrator uses this to decide whether to *restart* the process, so a
-         *     slow or unavailable dependency must not make it fail. Dependency state is
-         *     reported by `/ready` instead.
+         *     Reports `status`, `service`, `version`, and database reachability.
+         *
+         *     The database result is **informational**. This endpoint returns 200 for a
+         *     live process even when the database is unreachable, and `status` stays
+         *     `ok`: an orchestrator uses liveness to decide whether to *restart* the
+         *     process, and restarting it cannot repair a database. Letting a dependency
+         *     failure fail this probe is what turns a degraded database into a
+         *     cluster-wide restart loop. `/ready` remains the authoritative, fail-closed
+         *     signal that decides whether traffic should be routed here, and it is the
+         *     one that returns 503.
+         *
+         *     The probe itself is bounded (see `LIVENESS_DATABASE_PROBE_TIMEOUT_SECONDS`)
+         *     because a liveness probe that *hangs* is a restart vector too. It reports
+         *     an exception class name at most - never a message, host, or connection
+         *     string, since this route is unauthenticated.
          *
          *     `/healthz` is an unlisted alias for orchestrators that probe the
          *     Kubernetes-conventional path.
@@ -3753,6 +3764,28 @@ export interface components {
              */
             top_n: number;
         };
+        /**
+         * DatabaseLiveness
+         * @description Database reachability as reported by `/health`.
+         *
+         *     Informational only. It never changes the liveness `status` or the HTTP
+         *     code: a live process with an unreachable database is still live, and
+         *     restarting it would not repair the database. `/ready` is the authoritative
+         *     fail-closed signal.
+         */
+        DatabaseLiveness: {
+            /**
+             * Connected
+             * @description Whether a bounded `SELECT 1` succeeded at probe time.
+             */
+            connected: boolean;
+            /**
+             * Error Type
+             * @description Exception class name when the probe failed, else absent. Never carries the message text, which can contain the connection string.
+             * @example OperationalError
+             */
+            error_type?: string | null;
+        };
         /** DemoCredentialLoginRequest */
         DemoCredentialLoginRequest: {
             /** Username */
@@ -3965,7 +3998,7 @@ export interface components {
         };
         /**
          * LivenessResponse
-         * @description Process-liveness answer. Deliberately does not touch dependencies.
+         * @description Process-liveness answer, plus informational dependency visibility.
          */
         LivenessResponse: {
             /**
@@ -3980,6 +4013,14 @@ export interface components {
              * @example nlcare_monitoring_prototype
              */
             service: string;
+            /**
+             * Version
+             * @description Running application version, or `unknown` if it could not be resolved. Lets an operator tell which build answered the probe.
+             * @example 0.0.0
+             */
+            version: string;
+            /** @description Database reachability at probe time. Informational: it does not affect `status` or the HTTP code. See `/ready` for the authoritative readiness decision. */
+            database: components["schemas"]["DatabaseLiveness"];
         };
         /** LoginResponse */
         LoginResponse: {

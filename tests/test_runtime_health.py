@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from backend.services.runtime_health import liveness_payload, readiness_payload
+from backend.services.runtime_health import (
+    application_version,
+    database_connectivity,
+    liveness_payload,
+    readiness_payload,
+)
 
 
 class _Database:
@@ -19,10 +24,41 @@ def _retrieval_ready():
     return {"meets_deployment_requirement": True, "backend": "test_index"}
 
 
-def test_liveness_is_dependency_free():
-    assert liveness_payload() == {
-        "status": "ok",
-        "service": "nlcare_monitoring_prototype",
+def test_liveness_reports_status_version_and_database():
+    """The payload's shape, including the informational database field.
+
+    `version` tells an operator which build answered; `database` makes
+    reachability visible from the conventional probe. Neither is allowed to
+    change `status` - see `test_liveness_verdict_ignores_the_database` below.
+    """
+    payload = liveness_payload(database_connectivity(_Database()))
+
+    assert payload["status"] == "ok"
+    assert payload["service"] == "nlcare_monitoring_prototype"
+    assert payload["version"] == application_version()
+    assert payload["database"] == {"connected": True}
+
+
+def test_liveness_verdict_ignores_the_database():
+    """A live process with a dead database is still live.
+
+    This is the property that keeps liveness from becoming a restart loop:
+    restarting a process cannot repair a database, so the verdict must not
+    track it. `/ready` owns the fail-closed decision.
+    """
+    payload = liveness_payload(database_connectivity(_Database(fails=True)))
+
+    assert payload["status"] == "ok"
+    assert payload["database"]["connected"] is False
+    assert payload["database"]["error_type"] == "ConnectionError"
+    assert "database unavailable" not in str(payload), "probe leaked the message"
+
+
+def test_liveness_without_a_probe_is_reported_as_unprobed():
+    """A caller that ran no probe gets "not probed", never a guessed `true`."""
+    assert liveness_payload()["database"] == {
+        "connected": False,
+        "error_type": "NotProbed",
     }
 
 

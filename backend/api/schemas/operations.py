@@ -15,8 +15,30 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
+class DatabaseLiveness(BaseModel):
+    """Database reachability as reported by `/health`.
+
+    Informational only. It never changes the liveness `status` or the HTTP
+    code: a live process with an unreachable database is still live, and
+    restarting it would not repair the database. `/ready` is the authoritative
+    fail-closed signal.
+    """
+
+    connected: bool = Field(
+        description="Whether a bounded `SELECT 1` succeeded at probe time.",
+    )
+    error_type: str | None = Field(
+        default=None,
+        description=(
+            "Exception class name when the probe failed, else absent. Never "
+            "carries the message text, which can contain the connection string."
+        ),
+        examples=["OperationalError"],
+    )
+
+
 class LivenessResponse(BaseModel):
-    """Process-liveness answer. Deliberately does not touch dependencies."""
+    """Process-liveness answer, plus informational dependency visibility."""
 
     status: str = Field(
         description="`ok` whenever the process can serve requests.",
@@ -32,6 +54,13 @@ class LivenessResponse(BaseModel):
             "resolved. Lets an operator tell which build answered the probe."
         ),
         examples=["0.0.0"],
+    )
+    database: DatabaseLiveness = Field(
+        description=(
+            "Database reachability at probe time. Informational: it does not "
+            "affect `status` or the HTTP code. See `/ready` for the "
+            "authoritative readiness decision."
+        ),
     )
 
 
@@ -94,4 +123,9 @@ class ErrorResponse(BaseModel):
     )
 
 
-__all__ = ["ErrorResponse", "LivenessResponse", "ReadinessResponse"]
+__all__ = [
+    "DatabaseLiveness",
+    "ErrorResponse",
+    "LivenessResponse",
+    "ReadinessResponse",
+]

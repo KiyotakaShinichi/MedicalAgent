@@ -33,7 +33,11 @@ from backend.services.request_context import get_request_id, reset_request_id, s
 from backend.services.api_protection import EngineeringApiProtectionMiddleware
 from backend.services.synthetic_data_boundary import SyntheticDataBoundaryMiddleware
 from backend.services.llm_telemetry import reset_llm_telemetry, start_llm_telemetry
-from backend.services.runtime_health import liveness_payload, readiness_payload
+from backend.services.runtime_health import (
+    database_connectivity,
+    liveness_payload,
+    readiness_payload,
+)
 from backend.services.structured_logging import configure_logging, log_event
 
 
@@ -266,18 +270,29 @@ def admin_dashboard():
     responses={200: {"description": "Process is alive and able to serve requests."}},
 )
 @app.get("/healthz", tags=["operations"], include_in_schema=False, response_model=LivenessResponse)
-def healthcheck():
+def healthcheck(db: Session = Depends(get_db)):
     """Liveness probe. Returns 200 whenever the process can serve requests.
 
-    Deliberately touches no database, cache, model, or network dependency: an
-    orchestrator uses this to decide whether to *restart* the process, so a
-    slow or unavailable dependency must not make it fail. Dependency state is
-    reported by `/ready` instead.
+    Reports `status`, `service`, `version`, and database reachability.
+
+    The database result is **informational**. This endpoint returns 200 for a
+    live process even when the database is unreachable, and `status` stays
+    `ok`: an orchestrator uses liveness to decide whether to *restart* the
+    process, and restarting it cannot repair a database. Letting a dependency
+    failure fail this probe is what turns a degraded database into a
+    cluster-wide restart loop. `/ready` remains the authoritative, fail-closed
+    signal that decides whether traffic should be routed here, and it is the
+    one that returns 503.
+
+    The probe itself is bounded (see `LIVENESS_DATABASE_PROBE_TIMEOUT_SECONDS`)
+    because a liveness probe that *hangs* is a restart vector too. It reports
+    an exception class name at most - never a message, host, or connection
+    string, since this route is unauthenticated.
 
     `/healthz` is an unlisted alias for orchestrators that probe the
     Kubernetes-conventional path.
     """
-    return liveness_payload()
+    return liveness_payload(database_connectivity(db))
 
 
 @app.get(

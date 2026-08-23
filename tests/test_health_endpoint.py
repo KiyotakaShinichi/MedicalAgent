@@ -21,19 +21,25 @@ contract itself and does not repeat those.
 
 from __future__ import annotations
 
+import json
 import sys
+import time
+from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.exc import OperationalError
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from backend.api.deps import get_db  # noqa: E402
 from backend.api.main import app  # noqa: E402
 from backend.services.runtime_health import (  # noqa: E402
     application_version,
+    database_connectivity,
     liveness_payload,
     readiness_payload,
 )
@@ -42,6 +48,33 @@ from backend.services.runtime_health import (  # noqa: E402
 @pytest.fixture(scope="module")
 def client() -> TestClient:
     return TestClient(app)
+
+
+@contextmanager
+def _unreachable_database():
+    """A client whose database session fails the way a dead database does.
+
+    The error text deliberately carries a credential-bearing DSN, so the
+    redaction assertions are testing against the shape of a real failure rather
+    than a sanitised stand-in.
+    """
+
+    class UnreachableSession:
+        def execute(self, *_args, **_kwargs):
+            raise OperationalError(
+                "SELECT 1",
+                {},
+                Exception("could not connect to postgres://user:hunter2@db.internal:5432/nlcare_prod"),
+            )
+
+        def close(self) -> None:
+            return None
+
+    app.dependency_overrides[get_db] = lambda: UnreachableSession()
+    try:
+        yield TestClient(app)
+    finally:
+        app.dependency_overrides.pop(get_db, None)
 
 
 # ─── GET /health ─────────────────────────────────────────────────────────────
@@ -53,7 +86,12 @@ def test_health_returns_200(client: TestClient) -> None:
 
 def test_health_exposes_the_expected_keys(client: TestClient) -> None:
     """Exact key set: a probe consumer breaks on an unannounced field change."""
-    assert set(client.get("/health").json()) == {"status", "service", "version"}
+    assert set(client.get("/health").json()) == {
+        "status",
+        "service",
+        "version",
+        "database",
+    }
 
 
 def test_health_reports_ok_status_and_service(client: TestClient) -> None:
@@ -74,16 +112,94 @@ def test_version_resolution_never_raises() -> None:
     assert isinstance(application_version(), str)
 
 
-def test_health_does_not_touch_the_database(client: TestClient) -> None:
-    """Liveness decides restarts, so it must not depend on a slow dependency.
+# ─── /health database connectivity (informational) ───────────────────────────
 
-    A database-backed liveness probe converts a degraded database into a
-    restart loop. The payload reporting no dependency state is the observable
-    proxy for that.
+
+def test_health_reports_database_connectivity(client: TestClient) -> None:
+    """The field exists and is a boolean, so a reader can act on it."""
+    database = client.get("/health").json()["database"]
+    assert "connected" in database
+    assert isinstance(database["connected"], bool)
+
+
+def test_health_reports_connected_when_the_database_is_reachable(
+    client: TestClient,
+) -> None:
+    assert client.get("/health").json()["database"]["connected"] is True
+
+
+def test_health_stays_200_and_ok_when_the_database_is_unreachable() -> None:
+    """The whole point of the liveness/readiness split, asserted directly.
+
+    A live process with a dead database is still live. Failing this probe would
+    make an orchestrator restart every replica, which cannot repair a database
+    and takes the service down with it. The database result is informational:
+    it changes the `database` field and nothing else.
+    """
+    with _unreachable_database() as failing_client:
+        response = failing_client.get("/health")
+
+    assert response.status_code == 200, "a dead database must not fail liveness"
+    payload = response.json()
+    assert payload["status"] == "ok", "liveness status must not track the database"
+    assert payload["database"]["connected"] is False
+    assert payload["service"] == "nlcare_monitoring_prototype"
+    assert payload["version"] == application_version()
+
+
+def test_health_reports_only_an_exception_class_for_a_failed_probe() -> None:
+    """Never the message: it carries the DSN, and this route is unauthenticated."""
+    with _unreachable_database() as failing_client:
+        payload = failing_client.get("/health").json()
+
+    assert payload["database"]["error_type"] == "OperationalError"
+    serialized = json.dumps(payload)
+    for secret in ("hunter2", "postgres://", "db.internal", "5432", "nlcare_prod"):
+        assert secret not in serialized, f"/health leaked {secret!r}"
+
+
+def test_health_database_probe_is_bounded() -> None:
+    """A liveness probe that hangs is a restart vector as surely as one that 500s.
+
+    A driver call that never returns would hold the response open past any
+    orchestrator's probe timeout, so the probe carries its own deadline.
+    """
+
+    class HangingSession:
+        def execute(self, *_args, **_kwargs):
+            time.sleep(30)
+
+    started = time.perf_counter()
+    result = database_connectivity(HangingSession(), timeout_seconds=0.2)
+    elapsed = time.perf_counter() - started
+
+    assert elapsed < 5, f"probe took {elapsed:.1f}s; it must not block on a hung driver"
+    assert result == {"connected": False, "error_type": "TimeoutError"}
+
+
+def test_database_connectivity_never_raises() -> None:
+    """Any driver failure must become a reported value, not an exception."""
+
+    class ExplodingSession:
+        def execute(self, *_args, **_kwargs):
+            raise RuntimeError("postgres://user:hunter2@db.internal:5432/nlcare_prod")
+
+    result = database_connectivity(ExplodingSession())
+    assert result["connected"] is False
+    assert result["error_type"] == "RuntimeError"
+    assert "hunter2" not in json.dumps(result)
+
+
+def test_health_does_not_report_full_readiness(client: TestClient) -> None:
+    """`/health` reports one informational fact, not the readiness verdict.
+
+    Readiness aggregates retrieval and Redis as well, and it is the endpoint
+    allowed to say "do not send traffic here". Duplicating that decision onto
+    liveness is what recreates the restart loop.
     """
     payload = client.get("/health").json()
     assert "checks" not in payload
-    assert "database" not in str(payload).lower()
+    assert "retrieval" not in payload and "redis" not in payload
 
 
 def test_healthz_alias_matches_health(client: TestClient) -> None:
@@ -169,4 +285,47 @@ def test_readiness_never_claims_clinical_validation(client: TestClient) -> None:
 
 def test_liveness_payload_is_the_source_of_the_route_response(client: TestClient) -> None:
     """Route and service helper must not drift apart."""
-    assert client.get("/health").json() == liveness_payload()
+    assert client.get("/health").json() == liveness_payload({"connected": True, "error_type": None})
+
+
+def test_liveness_payload_reports_an_unprobed_database_honestly() -> None:
+    """A caller that ran no probe gets "not probed", not a guessed `true`."""
+    payload = liveness_payload()
+    assert payload["database"] == {"connected": False, "error_type": "NotProbed"}
+    assert payload["status"] == "ok"
+
+
+def test_health_publishes_the_database_field_in_its_schema() -> None:
+    """DataFactor and any other static reader see the contract from the spec.
+
+    A field only present at runtime is invisible to anything reading the
+    OpenAPI document, which is how an external evaluator inspects the API.
+    """
+    spec = app.openapi()
+    liveness = spec["components"]["schemas"]["LivenessResponse"]
+    assert set(liveness["required"]) >= {"status", "service", "version", "database"}
+
+    ref = str(liveness["properties"]["database"])
+    assert "DatabaseLiveness" in ref
+    database_schema = spec["components"]["schemas"]["DatabaseLiveness"]
+    assert "connected" in database_schema["properties"]
+    assert database_schema["properties"]["connected"]["type"] == "boolean"
+
+
+def test_health_route_is_registered_in_main() -> None:
+    """The probe is wired in backend/api/main.py, not hidden behind a router.
+
+    Asserted so the route cannot drift into a router later without this being
+    a deliberate, visible decision - and so exactly one function serves both
+    `/health` and `/healthz` rather than two diverging copies.
+    """
+    import backend.api.main as main_module
+
+    handlers = {
+        route.path: route.endpoint
+        for route in app.routes
+        if getattr(route, "path", None) in ("/health", "/healthz")
+    }
+    assert set(handlers) == {"/health", "/healthz"}
+    assert handlers["/health"] is handlers["/healthz"], "aliases must share one handler"
+    assert handlers["/health"].__module__ == main_module.__name__
