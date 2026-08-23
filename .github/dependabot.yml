@@ -27,8 +27,60 @@ updates:
     commit-message:
       prefix: "deps(python)"
     groups:
-      # Routine traffic lands as one reviewable PR.
-      python-minor-patch:
+      # Grouped so the heavy stacks stay reviewable separately from routine
+      # runtime traffic. A single catch-all group put a torch bump and a
+      # starlette bump in the same PR, which meant either reviewing model-output
+      # risk and web-framework risk together or not reviewing either properly.
+      #
+      # LIMITATION: Dependabot groups by dependency *name pattern*. It has no
+      # concept of uv dependency groups, so these patterns mirror the `ml`,
+      # `reporting`, and `dev` groups in pyproject.toml by hand rather than
+      # reading them. tests/test_dependabot_group_policy.py fails if the two
+      # drift apart, because a package that matches no pattern would silently
+      # fall into the runtime group.
+      python-ml:
+        patterns:
+          - "torch*"
+          - "sentence-transformers"
+          - "transformers"
+          - "tokenizers"
+          - "safetensors"
+          - "huggingface-hub"
+          - "shap"
+          - "numpy"
+          - "pandas"
+          - "scikit-learn"
+          - "scipy"
+          - "numba"
+          - "llvmlite"
+          - "faiss-cpu"
+        update-types:
+          - "minor"
+          - "patch"
+      python-reporting:
+        patterns:
+          - "matplotlib"
+          - "reportlab"
+          - "fonttools"
+          - "pillow"
+          - "pypdf"
+          - "openpyxl"
+        update-types:
+          - "minor"
+          - "patch"
+      python-dev-tooling:
+        patterns:
+          - "pytest*"
+          - "ruff"
+          - "mypy"
+          - "pip-audit"
+          - "types-*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Everything else: the request-path runtime. Kept last so the specific
+      # groups above claim their members first.
+      python-runtime:
         patterns:
           - "*"
         update-types:
