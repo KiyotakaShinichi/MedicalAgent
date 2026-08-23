@@ -37,6 +37,29 @@ class DatabaseLiveness(BaseModel):
     )
 
 
+class RagIndexLiveness(BaseModel):
+    """Retrieval index state as reported by `/health`.
+
+    Informational only, and cheap by construction: it reads in-process cache
+    counters and never loads or builds an index. `loaded: false` is a normal
+    state for a replica that has not served a retrieval query yet, not a fault.
+    `/ready` remains the authoritative answer to whether retrieval can serve
+    traffic.
+    """
+
+    loaded: bool = Field(
+        description="Whether a retrieval index is loaded in this process.",
+    )
+    error_type: str | None = Field(
+        default=None,
+        description=(
+            "Exception class name when the state could not be read, else "
+            "absent. Never carries message text."
+        ),
+        examples=["RuntimeError"],
+    )
+
+
 class LivenessResponse(BaseModel):
     """Process-liveness answer, plus informational dependency visibility."""
 
@@ -60,6 +83,13 @@ class LivenessResponse(BaseModel):
             "Database reachability at probe time. Informational: it does not "
             "affect `status` or the HTTP code. See `/ready` for the "
             "authoritative readiness decision."
+        ),
+    )
+    rag_index: RagIndexLiveness = Field(
+        description=(
+            "Whether the retrieval index is loaded in this process. "
+            "Informational, and never triggers a load. See `/ready` for "
+            "whether retrieval can serve traffic."
         ),
     )
 
@@ -125,6 +155,7 @@ class ErrorResponse(BaseModel):
 
 __all__ = [
     "DatabaseLiveness",
+    "RagIndexLiveness",
     "ErrorResponse",
     "LivenessResponse",
     "ReadinessResponse",

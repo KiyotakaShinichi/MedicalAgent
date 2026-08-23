@@ -45,27 +45,36 @@ def client() -> TestClient:
 def test_health_endpoint_exists_and_reports_ok(client: TestClient) -> None:
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {
+    payload = response.json()
+    # `rag_index.loaded` depends on whether anything has warmed the index in
+    # this process, so its value is read back rather than pinned; the shape is
+    # what this test guards.
+    assert payload == {
         "status": "ok",
         "service": "nlcare_monitoring_prototype",
         "version": application_version(),
         "database": {"connected": True, "error_type": None},
+        "rag_index": payload["rag_index"],
     }
+    assert set(payload["rag_index"]) == {"loaded", "error_type"}
+    assert isinstance(payload["rag_index"]["loaded"], bool)
 
 
 def test_health_schema_is_stable(client: TestClient) -> None:
     """Exact key set. A probe consumer breaks on an unannounced field change.
 
-    `version` and `database` were both added deliberately - the first so an
-    operator can tell which build answered, the second so database reachability
-    is visible from the conventional probe. The assertion stays an exact-set
-    comparison: the point is that the shape never drifts silently.
+    `version`, `database`, and `rag_index` were each added deliberately: the
+    first so an operator can tell which build answered, the other two so
+    dependency state is visible from the conventional probe. The assertion
+    stays an exact-set comparison: the point is that the shape never drifts
+    silently.
     """
     assert set(client.get("/health").json()) == {
         "status",
         "service",
         "version",
         "database",
+        "rag_index",
     }
 
 

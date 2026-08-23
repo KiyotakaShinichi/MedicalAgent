@@ -98,6 +98,7 @@ def test_health_exposes_the_expected_keys(client: TestClient) -> None:
         "service",
         "version",
         "database",
+        "rag_index",
     }
 
 
@@ -292,14 +293,23 @@ def test_readiness_never_claims_clinical_validation(client: TestClient) -> None:
 
 def test_liveness_payload_is_the_source_of_the_route_response(client: TestClient) -> None:
     """Route and service helper must not drift apart."""
-    assert client.get("/health").json() == liveness_payload({"connected": True, "error_type": None})
+    response = client.get("/health").json()
+    # `rag_index.loaded` reflects live process state - whether anything has
+    # warmed the index yet - so it is read from the response rather than
+    # asserted to a fixed value, which would make this test depend on suite
+    # ordering.
+    assert response == liveness_payload(
+        {"connected": True, "error_type": None},
+        response["rag_index"],
+    )
 
 
-def test_liveness_payload_reports_an_unprobed_database_honestly() -> None:
+def test_liveness_payload_reports_unprobed_dependencies_honestly() -> None:
     """A caller that ran no probe gets "not probed", not a guessed `true`."""
     payload = liveness_payload()
     assert payload["database"] == {"connected": False, "error_type": "NotProbed"}
-    assert payload["status"] == "ok"
+    assert payload["rag_index"] == {"loaded": False, "error_type": "NotProbed"}
+    assert payload["status"] == "ok", "an unprobed dependency is not a liveness failure"
 
 
 def test_health_publishes_the_database_field_in_its_schema() -> None:
@@ -346,29 +356,55 @@ def test_health_route_is_registered_in_main() -> None:
 # conventional enough for a tool - not just a person - to find them.
 
 
-def test_logging_config_module_is_the_startup_entrypoint() -> None:
-    """`backend/logging_config.py` is the conventional place to look."""
-    from backend import logging_config
+def test_app_logging_module_is_the_startup_entrypoint() -> None:
+    """`backend/app_logging.py` is the canonical place to look."""
+    from backend import app_logging
 
-    assert callable(logging_config.configure_logging)
-    assert callable(logging_config.setup_logging)
-    assert callable(logging_config.get_logging_config)
+    assert callable(app_logging.configure_logging)
+    assert callable(app_logging.setup_logging)
+    assert callable(app_logging.get_logging_config)
 
 
-def test_logging_config_names_its_json_framework_explicitly() -> None:
+def test_logging_config_is_an_alias_not_a_second_configuration() -> None:
+    """Two modules configuring logging is how duplicate handlers happen."""
+    from backend import app_logging, logging_config
+
+    assert logging_config.configure_logging is app_logging.configure_logging
+    assert logging_config.get_logging_config is app_logging.get_logging_config
+
+    source = Path(logging_config.__file__).read_text(encoding="utf-8")
+    assert "dictConfig" not in source, "the alias re-implements configuration"
+
+
+def test_stdout_logging_is_distinct_from_the_database_audit_trail() -> None:
+    """`backend.app_logging` and `backend.services.app_logging` are different.
+
+    One writes JSON events to stdout, the other writes an auditable database
+    trail. The names are similar and the distinction is load-bearing, so it is
+    stated in the module and asserted here.
+    """
+    from backend import app_logging
+    from backend.services import app_logging as audit_trail
+
+    assert app_logging is not audit_trail
+    assert hasattr(audit_trail, "log_app_event"), "the audit trail writer moved"
+    assert "database" in Path(app_logging.__file__).read_text(encoding="utf-8").lower()
+
+
+def test_app_logging_names_its_json_framework_explicitly() -> None:
     """python-json-logger is imported, not just referenced by string.
 
     The dictConfig names the formatter by dotted path, which is enough for
     `logging` but invisible to anything reading imports. The explicit import is
     what makes the dependency legible.
     """
-    import backend.logging_config as logging_config
+    import backend.app_logging as app_logging
     from pythonjsonlogger.json import JsonFormatter
 
-    assert logging_config.JsonFormatter is JsonFormatter
-    assert logging_config.LIBRARY_JSON_FORMATTER is JsonFormatter
+    assert app_logging.JsonFormatter is JsonFormatter
+    assert app_logging.LIBRARY_JSON_FORMATTER is JsonFormatter
 
-    source = Path(logging_config.__file__).read_text(encoding="utf-8")
+    source = Path(app_logging.__file__).read_text(encoding="utf-8")
     assert "from pythonjsonlogger.json import JsonFormatter" in source
 
 
@@ -376,13 +412,13 @@ def test_app_startup_configures_logging_from_the_conventional_module() -> None:
     import backend.api.main as main_module
 
     source = Path(main_module.__file__).read_text(encoding="utf-8")
-    assert "from backend.logging_config import" in source
+    assert "from backend.app_logging import" in source
     assert "configure_logging()" in source
 
 
 def test_logging_configuration_declares_both_formatters() -> None:
     """One formatter for our events, one for framework records."""
-    from backend.logging_config import get_logging_config
+    from backend.app_logging import get_logging_config
 
     config = get_logging_config()
     formatters = config["formatters"]
@@ -396,7 +432,7 @@ def test_configure_logging_is_idempotent() -> None:
     Duplicate handlers double every log line, which is the classic symptom of
     logging being configured in more than one place.
     """
-    from backend.logging_config import LOGGER, configure_logging
+    from backend.app_logging import LOGGER, configure_logging
 
     configure_logging()
     first = list(LOGGER.handlers)
@@ -406,7 +442,7 @@ def test_configure_logging_is_idempotent() -> None:
 
 def test_application_events_are_emitted_as_json(capsys) -> None:
     """An operator greps these, so they must parse as JSON."""
-    from backend.logging_config import configure_logging, log_event
+    from backend.app_logging import configure_logging, log_event
 
     configure_logging(force=True)
     log_event("health_probe_test", severity="info", details={"route": "/health"})
@@ -422,7 +458,7 @@ def test_application_events_are_emitted_as_json(capsys) -> None:
 
 def test_logged_events_keep_their_request_id() -> None:
     """Correlation is the whole point of the envelope."""
-    from backend.logging_config import build_event
+    from backend.app_logging import build_event
     from backend.services.request_context import reset_request_id, set_request_id
 
     token = set_request_id("req-health-123")
@@ -436,7 +472,7 @@ def test_logged_events_keep_their_request_id() -> None:
 
 def test_logged_events_still_redact_sensitive_details() -> None:
     """Redaction runs before emission, on both key name and value pattern."""
-    from backend.logging_config import build_event
+    from backend.app_logging import build_event
 
     event = build_event(
         "health_probe_test",
@@ -448,7 +484,7 @@ def test_logged_events_still_redact_sensitive_details() -> None:
 
 
 def test_log_level_environment_variable_is_honoured(monkeypatch) -> None:
-    from backend.logging_config import get_logging_config
+    from backend.app_logging import get_logging_config
 
     monkeypatch.setenv("NLCARE_LOG_LEVEL", "warning")
     assert get_logging_config()["loggers"]["nlcare.events"]["level"] == "WARNING"
@@ -460,6 +496,111 @@ def test_logging_config_does_not_seize_the_root_logger() -> None:
     It would also silently drop whatever handlers an embedding application had
     installed, which is why the root logger is only touched when it is unclaimed.
     """
-    from backend.logging_config import get_logging_config
+    from backend.app_logging import get_logging_config
 
     assert "root" not in get_logging_config()
+
+
+# ─── /health retrieval index state (informational) ───────────────────────────
+
+
+def test_health_reports_rag_index_state(client: TestClient) -> None:
+    """The field exists and is a boolean, so a reader can act on it."""
+    rag_index = client.get("/health").json()["rag_index"]
+    assert "loaded" in rag_index
+    assert isinstance(rag_index["loaded"], bool)
+
+
+def test_rag_index_state_never_triggers_a_load() -> None:
+    """A liveness probe must not be able to start the most expensive work here.
+
+    An orchestrator polls this every few seconds. If answering it built or
+    loaded the retrieval index, the probe would become the heaviest request the
+    service handles, and a cold replica would be hammered precisely while it is
+    least able to cope.
+    """
+    from backend.services import rag_vector_index
+    from backend.services.runtime_health import rag_index_liveness
+
+    rag_vector_index.clear_rag_runtime_cache()
+    before = rag_vector_index.rag_runtime_cache_stats()
+
+    result = rag_index_liveness()
+
+    after = rag_vector_index.rag_runtime_cache_stats()
+    assert result["loaded"] is False, "an empty cache must report not loaded"
+    assert after["cached_index_count"] == before["cached_index_count"] == 0, (
+        "reading liveness populated the index cache"
+    )
+
+
+def test_rag_index_state_reports_loaded_once_an_index_is_cached(monkeypatch) -> None:
+    """The field must be able to say `true`, or it reports nothing useful."""
+    from backend.services import runtime_health
+
+    monkeypatch.setattr(
+        "backend.services.rag_vector_index.rag_runtime_cache_stats",
+        lambda: {"cached_index_count": 1},
+    )
+    assert runtime_health.rag_index_liveness() == {"loaded": True}
+
+
+def test_rag_index_state_is_safe_when_the_subsystem_cannot_be_inspected(monkeypatch) -> None:
+    """An optional subsystem must not be able to fail the liveness probe."""
+    from backend.services import runtime_health
+
+    def explode():
+        raise RuntimeError("index backend unavailable at /srv/secret/index")
+
+    monkeypatch.setattr(
+        "backend.services.rag_vector_index.rag_runtime_cache_stats", explode
+    )
+    result = runtime_health.rag_index_liveness()
+
+    assert result["loaded"] is False
+    assert result["error_type"] == "RuntimeError"
+    assert "/srv/secret/index" not in json.dumps(result), "the probe leaked a path"
+
+
+def test_health_stays_200_when_the_rag_index_state_is_unavailable(monkeypatch) -> None:
+    """Liveness must not track an optional subsystem's health."""
+
+    def explode():
+        raise RuntimeError("index backend unavailable")
+
+    monkeypatch.setattr(
+        "backend.services.rag_vector_index.rag_runtime_cache_stats", explode
+    )
+    with TestClient(app) as probing_client:
+        response = probing_client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+    assert response.json()["rag_index"]["loaded"] is False
+
+
+def test_health_publishes_the_rag_index_field_in_its_schema() -> None:
+    """A runtime-only field is invisible to anything reading the OpenAPI document."""
+    spec = app.openapi()
+    liveness = spec["components"]["schemas"]["LivenessResponse"]
+    assert set(liveness["required"]) >= {
+        "status", "service", "version", "database", "rag_index",
+    }
+    assert "RagIndexLiveness" in str(liveness["properties"]["rag_index"])
+
+    rag_schema = spec["components"]["schemas"]["RagIndexLiveness"]
+    assert rag_schema["properties"]["loaded"]["type"] == "boolean"
+
+
+def test_ready_still_owns_the_retrieval_verdict(client: TestClient) -> None:
+    """`/health` says whether an index is loaded; `/ready` says whether it suffices.
+
+    These are different questions, and conflating them is what would make
+    liveness fail on a cold replica.
+    """
+    ready = client.get("/ready").json()
+    assert "retrieval" in ready["checks"]
+    assert "meets_deployment_requirement" in ready["checks"]["retrieval"]["summary"]
+
+    health = client.get("/health").json()
+    assert "meets_deployment_requirement" not in json.dumps(health["rag_index"])

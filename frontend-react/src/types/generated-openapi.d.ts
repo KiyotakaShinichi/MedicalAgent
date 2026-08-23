@@ -3249,7 +3249,8 @@ export interface paths {
          * Liveness probe
          * @description Liveness probe. Returns 200 whenever the process can serve requests.
          *
-         *     Reports `status`, `service`, `version`, and database reachability.
+         *     Reports `status`, `service`, `version`, database reachability, and whether
+         *     the retrieval index is loaded in this process.
          *
          *     The database result is **informational**. This endpoint returns 200 for a
          *     live process even when the database is unreachable, and `status` stays
@@ -3264,6 +3265,12 @@ export interface paths {
          *     because a liveness probe that *hangs* is a restart vector too. It reports
          *     an exception class name at most - never a message, host, or connection
          *     string, since this route is unauthenticated.
+         *
+         *     The retrieval field is informational on the same terms, and is read from
+         *     in-process cache counters: answering this probe never loads or builds an
+         *     index, because an orchestrator polling every few seconds must not be able
+         *     to trigger the most expensive work the service does. `loaded: false` is
+         *     normal for a replica that has not served a query yet.
          *
          *     `/healthz` is an unlisted alias for orchestrators that probe the
          *     Kubernetes-conventional path.
@@ -4021,6 +4028,8 @@ export interface components {
             version: string;
             /** @description Database reachability at probe time. Informational: it does not affect `status` or the HTTP code. See `/ready` for the authoritative readiness decision. */
             database: components["schemas"]["DatabaseLiveness"];
+            /** @description Whether the retrieval index is loaded in this process. Informational, and never triggers a load. See `/ready` for whether retrieval can serve traffic. */
+            rag_index: components["schemas"]["RagIndexLiveness"];
         };
         /** LoginResponse */
         LoginResponse: {
@@ -4270,6 +4279,29 @@ export interface components {
              * @default datasets/QIN-BREAST-02_clinicalData-Transformed-20191022-Revised20200210.xlsx
              */
             clinical_xlsx_path: string;
+        };
+        /**
+         * RagIndexLiveness
+         * @description Retrieval index state as reported by `/health`.
+         *
+         *     Informational only, and cheap by construction: it reads in-process cache
+         *     counters and never loads or builds an index. `loaded: false` is a normal
+         *     state for a replica that has not served a retrieval query yet, not a fault.
+         *     `/ready` remains the authoritative answer to whether retrieval can serve
+         *     traffic.
+         */
+        RagIndexLiveness: {
+            /**
+             * Loaded
+             * @description Whether a retrieval index is loaded in this process.
+             */
+            loaded: boolean;
+            /**
+             * Error Type
+             * @description Exception class name when the state could not be read, else absent. Never carries message text.
+             * @example RuntimeError
+             */
+            error_type?: string | null;
         };
         /**
          * ReadinessResponse

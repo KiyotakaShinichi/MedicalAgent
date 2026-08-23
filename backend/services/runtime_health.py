@@ -71,7 +71,36 @@ def database_connectivity(
         executor.shutdown(wait=False)
 
 
-def liveness_payload(database: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def rag_index_liveness() -> dict[str, Any]:
+    """Whether the retrieval index is loaded in this process. Informational.
+
+    Reads the in-process cache counters only. It never loads, builds, or warms
+    an index: doing that from a liveness probe would turn a cheap health check
+    into the most expensive request the service handles, and an orchestrator
+    polling it every few seconds would keep paying that cost.
+
+    `loaded: false` is therefore a normal answer, not a fault. It means this
+    process has not served a retrieval query yet - a freshly started replica
+    reports false until its first search or its prewarm finishes. Whether
+    retrieval is *ready enough to serve traffic* is a different question, and
+    `/ready` answers it authoritatively.
+
+    Never raises: a liveness probe must not fail because an optional subsystem
+    could not be inspected.
+    """
+    try:
+        from backend.services.rag_vector_index import rag_runtime_cache_stats
+
+        stats = rag_runtime_cache_stats()
+        return {"loaded": int(stats.get("cached_index_count", 0)) > 0}
+    except Exception as exc:  # noqa: BLE001 - liveness must survive any failure
+        return {"loaded": False, "error_type": type(exc).__name__}
+
+
+def liveness_payload(
+    database: Mapping[str, Any] | None = None,
+    rag_index: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     """Liveness answer, with database reachability reported for visibility.
 
     Reports the running version alongside status so an operator can tell *which
@@ -84,8 +113,13 @@ def liveness_payload(database: Mapping[str, Any] | None = None) -> dict[str, Any
     not fix the database. `/ready` remains the authoritative, fail-closed
     signal that decides whether traffic should be routed here.
 
-    Callers pass the result of `database_connectivity`; when no probe was run
-    the key is reported as unprobed rather than guessed.
+    `rag_index` is informational on the same terms: it reports whether the
+    retrieval index is loaded in this process, and `loaded: false` is a normal
+    state for a replica that has not served a query yet.
+
+    Callers pass the results of `database_connectivity` and
+    `rag_index_liveness`; when no probe was run the key is reported as unprobed
+    rather than guessed.
     """
     return {
         "status": "ok",
@@ -94,6 +128,9 @@ def liveness_payload(database: Mapping[str, Any] | None = None) -> dict[str, Any
         "database": dict(database)
         if database is not None
         else {"connected": False, "error_type": "NotProbed"},
+        "rag_index": dict(rag_index)
+        if rag_index is not None
+        else {"loaded": False, "error_type": "NotProbed"},
     }
 
 
@@ -159,6 +196,7 @@ def _redis_readiness(url: str) -> dict[str, Any]:
 __all__ = [
     "application_version",
     "database_connectivity",
+    "rag_index_liveness",
     "liveness_payload",
     "readiness_payload",
 ]

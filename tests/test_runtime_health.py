@@ -37,6 +37,7 @@ def test_liveness_reports_status_version_and_database():
     assert payload["service"] == "nlcare_monitoring_prototype"
     assert payload["version"] == application_version()
     assert payload["database"] == {"connected": True}
+    assert isinstance(payload["rag_index"]["loaded"], bool)
 
 
 def test_liveness_verdict_ignores_the_database():
@@ -56,10 +57,9 @@ def test_liveness_verdict_ignores_the_database():
 
 def test_liveness_without_a_probe_is_reported_as_unprobed():
     """A caller that ran no probe gets "not probed", never a guessed `true`."""
-    assert liveness_payload()["database"] == {
-        "connected": False,
-        "error_type": "NotProbed",
-    }
+    payload = liveness_payload()
+    assert payload["database"] == {"connected": False, "error_type": "NotProbed"}
+    assert payload["rag_index"] == {"loaded": False, "error_type": "NotProbed"}
 
 
 def test_readiness_passes_when_required_dependencies_answer():

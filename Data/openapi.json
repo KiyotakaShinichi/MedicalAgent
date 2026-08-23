@@ -11488,7 +11488,7 @@
           "operations"
         ],
         "summary": "Liveness probe",
-        "description": "Liveness probe. Returns 200 whenever the process can serve requests.\n\nReports `status`, `service`, `version`, and database reachability.\n\nThe database result is **informational**. This endpoint returns 200 for a\nlive process even when the database is unreachable, and `status` stays\n`ok`: an orchestrator uses liveness to decide whether to *restart* the\nprocess, and restarting it cannot repair a database. Letting a dependency\nfailure fail this probe is what turns a degraded database into a\ncluster-wide restart loop. `/ready` remains the authoritative, fail-closed\nsignal that decides whether traffic should be routed here, and it is the\none that returns 503.\n\nThe probe itself is bounded (see `LIVENESS_DATABASE_PROBE_TIMEOUT_SECONDS`)\nbecause a liveness probe that *hangs* is a restart vector too. It reports\nan exception class name at most - never a message, host, or connection\nstring, since this route is unauthenticated.\n\n`/healthz` is an unlisted alias for orchestrators that probe the\nKubernetes-conventional path.",
+        "description": "Liveness probe. Returns 200 whenever the process can serve requests.\n\nReports `status`, `service`, `version`, database reachability, and whether\nthe retrieval index is loaded in this process.\n\nThe database result is **informational**. This endpoint returns 200 for a\nlive process even when the database is unreachable, and `status` stays\n`ok`: an orchestrator uses liveness to decide whether to *restart* the\nprocess, and restarting it cannot repair a database. Letting a dependency\nfailure fail this probe is what turns a degraded database into a\ncluster-wide restart loop. `/ready` remains the authoritative, fail-closed\nsignal that decides whether traffic should be routed here, and it is the\none that returns 503.\n\nThe probe itself is bounded (see `LIVENESS_DATABASE_PROBE_TIMEOUT_SECONDS`)\nbecause a liveness probe that *hangs* is a restart vector too. It reports\nan exception class name at most - never a message, host, or connection\nstring, since this route is unauthenticated.\n\nThe retrieval field is informational on the same terms, and is read from\nin-process cache counters: answering this probe never loads or builds an\nindex, because an orchestrator polling every few seconds must not be able\nto trigger the most expensive work the service does. `loaded: false` is\nnormal for a replica that has not served a query yet.\n\n`/healthz` is an unlisted alias for orchestrators that probe the\nKubernetes-conventional path.",
         "operationId": "getHealth",
         "responses": {
           "200": {
@@ -12959,6 +12959,10 @@
           "database": {
             "$ref": "#/components/schemas/DatabaseLiveness",
             "description": "Database reachability at probe time. Informational: it does not affect `status` or the HTTP code. See `/ready` for the authoritative readiness decision."
+          },
+          "rag_index": {
+            "$ref": "#/components/schemas/RagIndexLiveness",
+            "description": "Whether the retrieval index is loaded in this process. Informational, and never triggers a load. See `/ready` for whether retrieval can serve traffic."
           }
         },
         "type": "object",
@@ -12966,7 +12970,8 @@
           "status",
           "service",
           "version",
-          "database"
+          "database",
+          "rag_index"
         ],
         "title": "LivenessResponse",
         "description": "Process-liveness answer, plus informational dependency visibility."
@@ -13740,6 +13745,36 @@
         },
         "type": "object",
         "title": "QINBreast02ImportRequest"
+      },
+      "RagIndexLiveness": {
+        "properties": {
+          "loaded": {
+            "type": "boolean",
+            "title": "Loaded",
+            "description": "Whether a retrieval index is loaded in this process."
+          },
+          "error_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Type",
+            "description": "Exception class name when the state could not be read, else absent. Never carries message text.",
+            "examples": [
+              "RuntimeError"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "loaded"
+        ],
+        "title": "RagIndexLiveness",
+        "description": "Retrieval index state as reported by `/health`.\n\nInformational only, and cheap by construction: it reads in-process cache\ncounters and never loads or builds an index. `loaded: false` is a normal\nstate for a replica that has not served a retrieval query yet, not a fault.\n`/ready` remains the authoritative answer to whether retrieval can serve\ntraffic."
       },
       "ReadinessResponse": {
         "properties": {
