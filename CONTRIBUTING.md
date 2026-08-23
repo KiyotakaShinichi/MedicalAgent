@@ -142,6 +142,29 @@ automation and handled as separately-evidenced migrations.
 - Do not rewrite history, fabricate contributors, or split work merely to
   increase commit count.
 
+### Source changes ship with tests
+
+A change to production code under `backend/services/` must include a change
+under `tests/` in the same commit or pull request. Not a token file touch — the
+test that would have failed before your change and passes after it.
+
+This is enforced, not just asked for: `scripts/check_change_discipline.py` runs
+in CI on pushes and pull requests and fails when service code changes without
+any accompanying test change.
+
+The check compares the parsed syntax tree of each changed service module, so a
+change that only edits comments or docstrings is recognised as documentation and
+exempted automatically. Alembic revisions under `migrations/versions/` are
+generated and exempt too. If you hit the check for a change that genuinely
+cannot carry a test, say why in the pull request rather than adding an empty
+test to satisfy it.
+
+Run it locally the way CI does:
+
+```bash
+python scripts/check_change_discipline.py --base origin/main --head HEAD
+```
+
 ## Required checks
 
 ```bash
