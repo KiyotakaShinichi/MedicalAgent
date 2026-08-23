@@ -18,16 +18,21 @@ jobs:
           node-version: "20"
           cache: npm
           cache-dependency-path: frontend-react/package-lock.json
+      # uv creates the environment; `.venv/bin` then goes on PATH so every
+      # later step invokes the tools directly. Same venv, same interpreter,
+      # same locked versions as `uv run` — but one shape across all jobs
+      # instead of two, and the command that runs is the command you read.
       - name: Sync frozen Python environment
         run: |
           python -m pip install uv==0.8.24
           uv sync --frozen
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
       - name: Validate Python dependency contract
         run: |
           uv lock --check
-          uv run python scripts/check_dependency_contract.py
-          uv run python scripts/check_env_documentation.py
-          uv run python -m pip check
+          python scripts/check_dependency_contract.py
+          python scripts/check_env_documentation.py
+          python -m pip check
 
       # The CI checkout is itself a fresh clone with no `.env`, so this is the
       # one place the offline-reproducibility contract can be proven rather
@@ -41,7 +46,7 @@ jobs:
       # so the failure now surfaces here rather than in full-offline-tests.
       - name: Verify fresh-clone offline contract
         run: |
-          uv run python scripts/check_fresh_clone_offline.py \
+          python scripts/check_fresh_clone_offline.py \
             --provision \
             --run-tests \
             --json-output Data/test_tmp/fresh_clone_offline_check.json
@@ -56,9 +61,9 @@ jobs:
           retention-days: 14
 
       - name: Ruff
-        run: uv run ruff check backend scripts tests
+        run: ruff check backend scripts tests
       - name: Incremental mypy
-        run: uv run mypy
+        run: mypy
       - name: Install frontend dependencies
         working-directory: frontend-react
         run: npm ci
@@ -106,10 +111,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      # uv creates the environment; `.venv/bin` then goes on PATH so every
+      # later step invokes the tools directly. Same venv, same interpreter,
+      # same locked versions as `uv run` — but one shape across all jobs
+      # instead of two, and the command that runs is the command you read.
       - name: Sync frozen Python environment
         run: |
           python -m pip install uv==0.8.24
           uv sync --frozen
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
       # The DEP-001 safety runtimes load their base encoder with
       # `local_files_only=True`. On a fresh runner the Hugging Face cache is
@@ -129,7 +139,7 @@ jobs:
         env:
           HF_HUB_OFFLINE: "0"
           TRANSFORMERS_OFFLINE: "0"
-        run: uv run python scripts/provision_semantic_safety_encoders.py
+        run: python scripts/provision_semantic_safety_encoders.py
 
       # Preflight guard. `--verify-runtimes` is essential, not decorative: an
       # encoder-only check exits 0 while a DEP-001 runtime is fully degraded,
@@ -139,7 +149,7 @@ jobs:
       # suite fail ~88 tests while verification reported success.
       - name: Verify safety runtimes load offline
         run: |
-          uv run python scripts/provision_semantic_safety_encoders.py \
+          python scripts/provision_semantic_safety_encoders.py \
             --check-only \
             --verify-runtimes \
             --json-output Data/test_tmp/semantic_safety_provisioning.json
@@ -162,9 +172,9 @@ jobs:
       - name: Provision derived offline artifacts
         run: |
           mkdir -p Data/test_tmp
-          uv run python scripts/provision_derived_artifacts.py \
+          python scripts/provision_derived_artifacts.py \
             --json-output Data/test_tmp/derived_artifact_provisioning.json
-          uv run python scripts/provision_derived_artifacts.py --check-only
+          python scripts/provision_derived_artifacts.py --check-only
 
       # Class B: an external tool, not project data. `cloud_infrastructure_
       # readiness` shells out to the Bicep CLI to compile the checked-in
@@ -196,12 +206,12 @@ jobs:
       # asserts that the path a contributor is told to run agrees with what CI
       # actually did, without duplicating the steps themselves.
       - name: Verify documented bootstrap agrees with CI setup
-        run: uv run python scripts/bootstrap.py --check
+        run: python scripts/bootstrap.py --check
 
       - name: Run complete offline suite with branch coverage
         run: |
           mkdir -p Data/test_tmp
-          uv run pytest tests -q \
+          python -m pytest tests -q \
             --cov=backend \
             --cov-branch \
             --cov-report=term-missing:skip-covered \
@@ -221,13 +231,17 @@ jobs:
           node-version: "20"
           cache: npm
           cache-dependency-path: frontend-react/package-lock.json
+      # `export PATH=` rather than `$GITHUB_PATH` here: this job syncs and runs
+      # the tool inside a single step, and `$GITHUB_PATH` only takes effect for
+      # *subsequent* steps. Same venv either way.
       - name: Audit frozen Python production dependencies
         run: |
           python -m pip install uv==0.8.24
           uv sync --frozen
+          export PATH="$PWD/.venv/bin:$PATH"
           uv export --frozen --no-dev --format requirements-txt --no-hashes --quiet \
             --output-file /tmp/nlcare-production-requirements.txt
-          uv run pip-audit -r /tmp/nlcare-production-requirements.txt \
+          pip-audit -r /tmp/nlcare-production-requirements.txt \
             --no-deps --disable-pip --progress-spinner off --timeout 60
       - name: Audit frontend dependencies
         working-directory: frontend-react
