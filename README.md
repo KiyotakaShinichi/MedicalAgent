@@ -433,10 +433,13 @@ Implementation: [backend/services/app_logging.py](backend/services/app_logging.p
 ## Setup instructions
 1. Create a virtual environment and install dependencies:
    ```
-   python -m venv .venv
+   pip install uv==0.8.24
+   uv sync --frozen
    .venv\Scripts\activate
-   pip install -r requirements.txt
    ```
+   `pyproject.toml` + `uv.lock` are the canonical dependency source; `uv sync`
+   creates `.venv` from them. For the minimal serving profile, add
+   `--no-default-groups`.
 2. Initialize the local database and seed demo data:
    ```
    python seed_db.py
@@ -694,8 +697,8 @@ Honest reading: `needs_attention` can be a valid output. For example, shortcut a
 
 ### How to run (30 seconds)
 ```bash
-# 1. Install Python dependencies
-pip install -r requirements.txt
+# 1. Install Python dependencies (pyproject.toml + uv.lock are canonical)
+pip install uv==0.8.24 && uv sync --frozen
 
 # 2. Start backend
 uvicorn backend.api.main:app --host 127.0.0.1 --port 8017 --reload

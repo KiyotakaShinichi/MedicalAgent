@@ -41,7 +41,7 @@ def _load_config(config_path: Path) -> dict[str, Any]:
     if path.suffix.lower() in {".yaml", ".yml"}:
         try:
             import yaml
-        except ImportError as exc:  # pragma: no cover - dependency is in requirements.txt
+        except ImportError as exc:  # pragma: no cover - pyyaml is a pinned project dependency
             raise RuntimeError("PyYAML is required for YAML release-gate configs.") from exc
         payload = yaml.safe_load(text)
     else:

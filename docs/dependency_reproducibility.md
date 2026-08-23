@@ -15,33 +15,50 @@ python scripts/check_dependency_contract.py
 python -m pip check
 ```
 
-`requirements.txt` and `requirements-serving.txt` remain exact-pinned
-compatibility manifests for legacy tooling and container profiles. They are not
-the canonical transitive lock.
+## Install profiles
 
-They are kept because something real installs from them: the container image
-builds with plain `pip` and never runs `uv` (`Dockerfile`,
-`ARG REQUIREMENTS_FILE=requirements.txt`), and `requirements-serving.txt` is the
-deliberately smaller runtime profile that omits the training, deep-learning,
-SHAP, and evaluation stack. `requirements.txt` additionally serves pip-only
-contributors, so it may carry development extras such as the test runner.
+There is no `requirements.txt` and no `requirements-serving.txt`. Profiles are
+uv dependency groups, so there is exactly one place a version is written:
 
-Because they are hand-maintained exports of a canonical source, they can drift
-from it while staying perfectly pinned — two files can both be exact-pinned to
+| profile | command | contents |
+| --- | --- | --- |
+| development / CI | `uv sync --frozen` | project dependencies + `dev`, `ml`, `reporting` |
+| minimal serving | `uv sync --frozen --no-default-groups` | project dependencies only |
+
+`[project].dependencies` is the minimal request-path runtime. The heavier
+stacks live in groups:
+
+- `ml` — torch, torchvision, sentence-transformers, shap;
+- `reporting` — matplotlib, reportlab;
+- `dev` — pytest, ruff, mypy, pip-audit, and friends.
+
+`[tool.uv] default-groups` lists all three, so a plain `uv sync --frozen` still
+installs exactly what it installed when these packages were flat runtime
+dependencies. The groups exist so the *serving image* can opt out, not so the
+default environment can shrink. `scripts/check_dependency_contract.py` fails if
+a declared group is missing from `default-groups`, because that would quietly
+change what every developer and CI job installs without any file appearing to
+move.
+
+The container resolves the same lockfile rather than a manifest maintained
+beside it. `Dockerfile` takes `ARG PYTHON_PROFILE` (`full` or `serving`) and
+runs the matching `uv export`; `docker-compose.synthetic-staging.yml` builds
+with `PYTHON_PROFILE: serving`.
+
+## Why the manifests were removed
+
+They were hand-maintained exports of a canonical source, and being exact-pinned
+never made them correct: two files can both be perfectly pinned to
 *disagreeing* versions, which ships one dependency set to the container and a
-different one to every test. `scripts/check_dependency_contract.py` therefore
-enforces agreement, not just pinning:
+different one to every test. That failure was only detectable by a contract
+that compared them. The contract is now simply that they do not exist —
+`scripts/check_dependency_contract.py` fails if either path reappears, and says
+what to do instead. CI runs that check in `static-quality`, and
+`tests/test_dependency_contract.py` covers each failure mode.
 
-- every runtime dependency in `pyproject.toml` appears in `requirements.txt` at
-  the same version;
-- an extra entry that `pyproject.toml` also declares in a dependency group must
-  match that group's pin;
-- `requirements-serving.txt` is a subset of `requirements.txt` with matching
-  versions.
+To add or change a dependency: edit `pyproject.toml`, run `uv lock`, and commit
+the lockfile. There is no second file to mirror it into.
 
-CI runs this check in `static-quality`, and `tests/test_dependency_contract.py`
-covers each drift mode. When you change a dependency, update `pyproject.toml`
-first, re-lock, then mirror the pin into the compatibility manifests.
 
 The generated `requirements-lock-py314-win.txt` remains a historical snapshot
 of the known-good CPython 3.14 Windows engineering environment, together with

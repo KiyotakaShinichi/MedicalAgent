@@ -34,7 +34,9 @@ services:
     build:
       context: .
       args:
-        REQUIREMENTS_FILE: requirements-serving.txt
+        # Minimal request-path runtime, resolved from uv.lock. Excludes the
+        # training, embedding, explainability, and reporting stacks.
+        PYTHON_PROFILE: serving
     depends_on:
       postgres:
         condition: service_healthy

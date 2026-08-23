@@ -4,18 +4,37 @@ ENV PIP_NO_CACHE_DIR=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /build
-ARG REQUIREMENTS_FILE=requirements.txt
+
+# Which dependency profile to install, resolved from uv.lock:
+#   full    - project dependencies plus every default group (dev, ml, reporting)
+#   serving - project dependencies only; the minimal request-path runtime
+# `serving` is what docker-compose builds. It excludes torch, torchvision,
+# sentence-transformers, shap, matplotlib, and reportlab, none of which are
+# imported on the request path and which together dominate the image size.
+ARG PYTHON_PROFILE=full
+# Pinned to the same uv the CI workflows install, so a container build and a CI
+# run resolve the lockfile identically.
+ARG UV_VERSION=0.8.24
 
 RUN apt-get update \
     && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements*.txt ./
+# pyproject.toml + uv.lock are the only dependency source of truth.
+COPY pyproject.toml uv.lock ./
 RUN python -m pip install --upgrade \
         pip==26.2.1 \
         "setuptools>=78.1.1" \
         "wheel>=0.46.2" \
-    && python -m pip install --prefix=/runtime -r "${REQUIREMENTS_FILE}"
+    && python -m pip install "uv==${UV_VERSION}" \
+    && case "${PYTHON_PROFILE}" in \
+         full)    uv export --frozen --format requirements-txt --no-hashes \
+                    --output-file /tmp/runtime-requirements.txt ;; \
+         serving) uv export --frozen --no-default-groups --format requirements-txt \
+                    --no-hashes --output-file /tmp/runtime-requirements.txt ;; \
+         *) echo "PYTHON_PROFILE must be 'full' or 'serving', got '${PYTHON_PROFILE}'" >&2; exit 1 ;; \
+       esac \
+    && python -m pip install --prefix=/runtime -r /tmp/runtime-requirements.txt
 
 
 FROM gcr.io/distroless/python3-debian13:nonroot@sha256:1c680cdb442a9e7a89f64fd1706367c62302ea1f9ab80fdebdb72ae9fcded46f

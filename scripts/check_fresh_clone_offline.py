@@ -74,7 +74,6 @@ from scripts.provision_derived_artifacts import (  # noqa: E402 - needs ROOT on 
 REQUIRED_TRACKED_FILES = (
     "pyproject.toml",
     "uv.lock",
-    "requirements.txt",
     ".env.example",
     "pytest.ini",
     "tests/conftest.py",

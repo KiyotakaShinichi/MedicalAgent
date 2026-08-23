@@ -8,9 +8,9 @@ A 5-minute click-by-click walk-through that surfaces the safety, evaluation, and
 
 ```bash
 # Backend
-python -m venv .venv
+pip install uv==0.8.24
+uv sync --frozen                 # creates .venv from pyproject.toml + uv.lock
 .venv\Scripts\activate           # macOS / Linux: source .venv/bin/activate
-pip install -r requirements.txt
 
 # Frontend
 cd frontend-react

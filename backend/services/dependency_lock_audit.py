@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 
-REQUIREMENTS = Path("requirements.txt")
+REQUIREMENTS = Path("pyproject.toml")
 LOCK = Path("requirements-lock.txt")
 TRANSITIVE_LOCK = Path("requirements-lock-py314-win.txt")
 OUTPUT = Path("Data/evals/ops/latest_dependency_lock_audit.json")
@@ -125,9 +125,35 @@ def write_environment_transitive_lock(path: str | Path = TRANSITIVE_LOCK) -> Pat
     return output
 
 
+def _declared_requirements(path: Path) -> list[str]:
+    """Requirement strings declared by a manifest.
+
+    `pyproject.toml` is the canonical declaration: its `[project].dependencies`
+    plus every `[dependency-groups]` entry are exactly the direct requirements a
+    default `uv sync --frozen` installs. Plain requirements files are still
+    parsed line-wise, because the lock snapshots this audit compares against are
+    still requirements-format files.
+    """
+    if path.suffix == ".toml":
+        import tomllib
+
+        project = tomllib.loads(path.read_text(encoding="utf-8"))
+        declared = [str(entry) for entry in project.get("project", {}).get("dependencies", [])]
+        for group, entries in (project.get("dependency-groups") or {}).items():
+            # `dev` is test and lint tooling, not part of the runtime or
+            # research surface these lock snapshots cover. Including it would
+            # report every linter as missing from a lock that was never
+            # intended to pin one.
+            if group == "dev":
+                continue
+            declared.extend(str(entry) for entry in entries)
+        return declared
+    return path.read_text(encoding="utf-8").splitlines()
+
+
 def _requirements(path: Path, *, locked: bool) -> dict[str, str | None]:
     parsed: dict[str, str | None] = {}
-    for raw in path.read_text(encoding="utf-8").splitlines():
+    for raw in _declared_requirements(path):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue

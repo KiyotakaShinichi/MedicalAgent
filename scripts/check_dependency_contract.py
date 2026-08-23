@@ -1,47 +1,66 @@
-"""Validate NLCare's canonical dependency and compatibility manifests.
+"""Validate NLCare's canonical dependency declaration.
 
 Source of truth
 ---------------
-``pyproject.toml`` plus ``uv.lock`` are canonical. ``uv sync --frozen`` is the
-only supported way to build a development or CI environment.
+``pyproject.toml`` plus ``uv.lock`` are the only Python dependency source of
+truth. ``uv sync --frozen`` is the only supported way to build a development or
+CI environment, and the container image resolves the same lockfile rather than
+a manifest maintained beside it.
 
-``requirements.txt`` and ``requirements-serving.txt`` are **not** duplicates and
-are not obsolete: the container image installs with plain ``pip`` and never
-runs ``uv`` (see ``Dockerfile``, ``ARG REQUIREMENTS_FILE=requirements.txt``),
-and ``requirements-serving.txt`` is the deliberately smaller runtime profile
-that omits training, deep-learning, SHAP, and evaluation dependencies.
+Profiles are expressed as uv dependency groups, not as separate files:
 
-Because they are hand-maintained exports of a canonical source, they can drift
-from it silently — a version bumped in ``pyproject.toml`` but not in
-``requirements.txt`` ships a *different* dependency set to the container than
-the one every test ran against. Pinning alone never caught that: both files
-stayed perfectly pinned to disagreeing versions.
+* ``[project].dependencies`` is the minimal request-path runtime, which is what
+  the serving image installs (``uv sync --frozen --no-default-groups``, and the
+  equivalent ``uv export`` in the ``Dockerfile``);
+* ``ml`` carries training, embedding, and explainability;
+* ``reporting`` carries figure and document generation;
+* ``dev`` carries the test and tooling stack.
 
-This module therefore enforces three things:
+``[tool.uv] default-groups`` lists every one of those groups, so a plain
+``uv sync --frozen`` still installs the complete environment a developer and CI
+had before the profiles were split apart. That is the property check 4 below
+protects: if a group were dropped from ``default-groups``, the default install
+would silently shrink and CI would start running against a different
+environment than the one the lockfile describes.
 
-1. every manifest is exact-pinned;
-2. every runtime dependency in ``pyproject.toml`` appears in
-   ``requirements.txt`` at the *same* version;
-3. ``requirements-serving.txt`` is a subset of ``requirements.txt`` with
-   matching versions.
+Why the removed manifests are not allowed back
+----------------------------------------------
+``requirements.txt`` and ``requirements-serving.txt`` used to be hand-maintained
+exports of the canonical source. Being exact-pinned never made them correct: two
+files can both be perfectly pinned and still disagree, which shipped one
+dependency set to the container and a different one to every test. The drift
+could only be caught by a contract that compared them - so the contract is now
+that they do not exist.
 
-Extra entries in ``requirements.txt`` are allowed — it doubles as the
-pip-only development profile, so it legitimately carries a test runner — but an
-extra entry that also appears in ``pyproject.toml`` must agree with it.
+This module enforces:
+
+1. ``pyproject.toml`` and ``uv.lock`` are present;
+2. every project dependency and every dependency-group entry is exact-pinned;
+3. no removed manifest has reappeared at the repository root;
+4. every declared dependency group is listed in ``[tool.uv] default-groups``.
 """
 
 from __future__ import annotations
 
 import re
-import sys
 import tomllib
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PINNED_REQUIREMENT = re.compile(
-    r"^[A-Za-z0-9_.-]+(?:\[[A-Za-z0-9_,.-]+\])?==[^\s;]+(?:\s*;.*)?$"
+
+# Manifests that were consolidated into pyproject.toml + uv.lock. A file
+# reappearing here is a second source of truth, which is the exact failure the
+# consolidation removed.
+REMOVED_MANIFESTS = ("requirements.txt", "requirements-serving.txt")
+
+REINTRODUCTION_GUIDANCE = (
+    "pyproject.toml + uv.lock are canonical. Install with `uv sync --frozen`; "
+    "build the minimal serving profile with `uv sync --frozen --no-default-groups`. "
+    "To add a dependency, edit pyproject.toml and run `uv lock` - do not add a "
+    "requirements file, which becomes a second source of truth that drifts silently."
 )
+
 # name, optional extras, pinned version.
 _REQUIREMENT_PARTS = re.compile(
     r"^(?P<name>[A-Za-z0-9_.-]+)(?:\[[A-Za-z0-9_,.-]+\])?==(?P<version>[^\s;]+)"
@@ -63,14 +82,6 @@ def _pinned_versions(requirements: list[str]) -> dict[str, str]:
     return versions
 
 
-def _active_requirements(path: Path) -> list[str]:
-    return [
-        line.strip()
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip() and not line.lstrip().startswith("#")
-    ]
-
-
 def validate_dependency_contract(root: Path = ROOT) -> list[str]:
     issues: list[str] = []
     pyproject_path = root / "pyproject.toml"
@@ -88,76 +99,62 @@ def validate_dependency_contract(root: Path = ROOT) -> list[str]:
         if "==" not in str(requirement):
             issues.append(f"unpinned project dependency: {requirement}")
 
-    manifests: dict[str, dict[str, str]] = {}
-    for relative_path in ("requirements.txt", "requirements-serving.txt"):
-        path = root / relative_path
-        if not path.is_file():
-            issues.append(f"missing {relative_path}")
-            continue
-        active = _active_requirements(path)
-        for requirement in active:
-            if not PINNED_REQUIREMENT.match(requirement):
-                issues.append(f"unpinned compatibility dependency in {relative_path}: {requirement}")
-        manifests[relative_path] = _pinned_versions(active)
+    groups = project.get("dependency-groups") or {}
+    for group_name, entries in sorted(groups.items()):
+        for requirement in entries:
+            if "==" not in str(requirement):
+                issues.append(
+                    f"unpinned dependency in group '{group_name}': {requirement}"
+                )
 
-    issues.extend(_drift_issues(project, dependencies, manifests))
+    issues.extend(_removed_manifest_issues(root))
+    issues.extend(_default_group_issues(project, groups))
     return issues
 
 
-def _drift_issues(
-    project: dict,
-    dependencies: list,
-    manifests: dict[str, dict[str, str]],
-) -> list[str]:
-    """Compatibility manifests must agree with the canonical source.
+def _removed_manifest_issues(root: Path) -> list[str]:
+    """Fail if a consolidated manifest has been recreated."""
+    issues: list[str] = []
+    for relative_path in REMOVED_MANIFESTS:
+        if (root / relative_path).exists():
+            issues.append(
+                f"{relative_path} has reappeared at the repository root. "
+                + REINTRODUCTION_GUIDANCE
+            )
+    return issues
 
-    Pinning is not agreement: two files can both be exact-pinned and still
-    disagree, which is the failure that ships one dependency set to the
-    container and a different one to every test.
+
+def _default_group_issues(project: dict, groups: dict) -> list[str]:
+    """Every declared group must be installed by a plain `uv sync --frozen`.
+
+    The groups exist so the *serving* image can opt out, not so the default
+    developer or CI environment can quietly become smaller. A group missing
+    here would drop packages from every `uv sync --frozen` without any manifest
+    appearing to change.
     """
     issues: list[str] = []
-    canonical = _pinned_versions([str(d) for d in dependencies])
-    full = manifests.get("requirements.txt")
-    serving = manifests.get("requirements-serving.txt")
-
-    if full is not None:
-        for name, version in sorted(canonical.items()):
-            if name not in full:
-                issues.append(
-                    f"requirements.txt is missing runtime dependency {name}=={version} "
-                    "declared in pyproject.toml"
-                )
-            elif full[name] != version:
-                issues.append(
-                    f"dependency drift for {name}: pyproject.toml pins {version} "
-                    f"but requirements.txt pins {full[name]}"
-                )
-
-        # `requirements.txt` doubles as the pip-only development profile, so
-        # extras are fine — but an extra that pyproject also declares (in a
-        # dependency group) must not disagree with it.
-        grouped: dict[str, str] = {}
-        for group in (project.get("dependency-groups") or {}).values():
-            grouped.update(_pinned_versions([str(entry) for entry in group]))
-        for name, version in sorted(grouped.items()):
-            if name in full and full[name] != version:
-                issues.append(
-                    f"dependency drift for {name}: pyproject.toml dependency group pins "
-                    f"{version} but requirements.txt pins {full[name]}"
-                )
-
-    if full is not None and serving is not None:
-        for name, version in sorted(serving.items()):
-            if name not in full:
-                issues.append(
-                    f"requirements-serving.txt declares {name}=={version}, which is absent "
-                    "from requirements.txt; the serving profile must be a subset"
-                )
-            elif full[name] != version:
-                issues.append(
-                    f"dependency drift for {name}: requirements.txt pins {full[name]} "
-                    f"but requirements-serving.txt pins {version}"
-                )
+    if not groups:
+        return issues
+    default_groups = (project.get("tool", {}).get("uv", {}) or {}).get("default-groups")
+    if default_groups is None:
+        issues.append(
+            "[tool.uv] default-groups is not declared, so `uv sync --frozen` would "
+            f"install only the 'dev' group and silently drop: "
+            f"{', '.join(sorted(set(groups) - {'dev'}))}"
+        )
+        return issues
+    missing = sorted(set(groups) - set(default_groups))
+    if missing:
+        issues.append(
+            "dependency groups declared but absent from [tool.uv] default-groups, so "
+            f"`uv sync --frozen` would not install them: {', '.join(missing)}"
+        )
+    unknown = sorted(set(default_groups) - set(groups))
+    if unknown:
+        issues.append(
+            "[tool.uv] default-groups names groups that do not exist: "
+            f"{', '.join(unknown)}"
+        )
     return issues
 
 
@@ -173,5 +170,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
-
+    raise SystemExit(main())
