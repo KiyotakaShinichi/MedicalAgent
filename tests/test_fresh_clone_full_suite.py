@@ -17,6 +17,7 @@ the verifier itself does, and which takes the better part of an hour).
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -186,3 +187,105 @@ def test_default_suite_deselects_network_marked_tests() -> None:
     config = (ROOT / "pytest.ini").read_text(encoding="utf-8")
     assert 'addopts = -m "not network"' in config
     assert "network:" in config, "the marker must be registered, not implicit"
+
+
+# ─── the pytest command CI states explicitly ─────────────────────────────────
+#
+# CI passes the exact pytest invocation rather than letting the verifier hide
+# it, so the command that runs is the command you read in the workflow. That is
+# visibility, not configurability: a supplied command that ran a subset or
+# dropped the coverage floor would earn a green hermetic report for a much
+# weaker run, so the shape is validated.
+
+
+def test_supplied_command_must_run_the_whole_tree() -> None:
+    from scripts.check_fresh_clone_offline import _assert_command_is_a_full_suite_run
+
+    with pytest.raises(ValueError, match="whole `tests` tree"):
+        _assert_command_is_a_full_suite_run(
+            ["python", "-m", "pytest", "tests/test_health_endpoint.py",
+             "--cov=backend", "--cov-fail-under=60"]
+        )
+
+
+def test_supplied_command_must_keep_the_coverage_floor() -> None:
+    from scripts.check_fresh_clone_offline import _assert_command_is_a_full_suite_run
+
+    with pytest.raises(ValueError, match="cov-fail-under"):
+        _assert_command_is_a_full_suite_run(
+            ["python", "-m", "pytest", "tests", "--cov=backend"]
+        )
+
+
+def test_supplied_command_must_measure_backend_coverage() -> None:
+    from scripts.check_fresh_clone_offline import _assert_command_is_a_full_suite_run
+
+    with pytest.raises(ValueError, match="backend coverage"):
+        _assert_command_is_a_full_suite_run(
+            ["python", "-m", "pytest", "tests", "--cov-fail-under=60"]
+        )
+
+
+def test_supplied_command_must_actually_invoke_pytest() -> None:
+    from scripts.check_fresh_clone_offline import _assert_command_is_a_full_suite_run
+
+    with pytest.raises(ValueError, match="invoke pytest"):
+        _assert_command_is_a_full_suite_run(["echo", "tests", "--cov=backend",
+                                             "--cov-fail-under=60"])
+
+
+def test_the_ci_supplied_command_passes_validation() -> None:
+    """The command in the workflow must be one the verifier accepts."""
+    import shlex
+
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    match = re.search(r'--pytest-command "([^"]+)"', workflow)
+    assert match, "CI no longer states the pytest command explicitly"
+
+    from scripts.check_fresh_clone_offline import _assert_command_is_a_full_suite_run
+
+    _assert_command_is_a_full_suite_run(shlex.split(match.group(1)))
+
+
+def test_ci_states_the_pytest_invocation_literally() -> None:
+    """A reader of the workflow can see which tests run, without following code."""
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "pytest tests" in workflow, (
+        "the authoritative test command is no longer visible in the workflow"
+    )
+    assert "--cov-fail-under=60" in workflow
+
+
+def test_tests_still_run_exactly_once() -> None:
+    """Visibility must not have been bought with a duplicate full-suite run."""
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    full_suite_runs = workflow.count("pytest tests ")
+    assert full_suite_runs == 1, (
+        f"the full suite appears to be invoked {full_suite_runs} times; it must run once"
+    )
+
+
+def test_supplied_command_runs_on_the_current_interpreter() -> None:
+    """`python` in the workflow must not mean a different environment locally.
+
+    CI has the project venv on PATH, so `python` is the right interpreter
+    there. Run from a developer machine the same string would resolve to
+    whatever `python` happens to be first, and the suite would execute against
+    an environment missing the project's dependencies — which is exactly how
+    this first surfaced, as 17 import errors for python-json-logger.
+    """
+    import shlex
+    import subprocess
+
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    match = re.search(r'--pytest-command "([^"]+)"', workflow)
+    assert match
+    assert shlex.split(match.group(1))[0] == "python", (
+        "the workflow should read naturally; the verifier substitutes the interpreter"
+    )
+
+    source = (ROOT / "scripts" / "check_fresh_clone_offline.py").read_text(encoding="utf-8")
+    assert "command[0] = sys.executable" in source, (
+        "the verifier no longer normalises the interpreter"
+    )
+    assert subprocess.run  # the substitution only matters because we spawn a process

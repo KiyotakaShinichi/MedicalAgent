@@ -249,6 +249,7 @@ jobs:
           mkdir -p Data/test_tmp
           python scripts/check_fresh_clone_offline.py \
             --full-suite \
+            --pytest-command "python -m pytest tests -q --cov=backend --cov-branch --cov-fail-under=60 --cov-report=term-missing:skip-covered" \
             --json-output Data/test_tmp/fresh_clone_full_suite.json
 
       - name: Upload full-suite hermetic evidence

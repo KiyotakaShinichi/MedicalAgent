@@ -53,6 +53,7 @@ import argparse
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import tomllib
@@ -419,7 +420,30 @@ def parse_pytest_summary(output: str) -> dict[str, int]:
     return counts
 
 
-def _run_full_suite(root: Path) -> tuple[list[CheckResult], dict]:
+def _assert_command_is_a_full_suite_run(command: list[str]) -> None:
+    """Reject a supplied command that is not the full, coverage-gated suite.
+
+    The point of letting CI state the command is visibility, not
+    configurability. A caller that passed a subset or dropped the coverage
+    floor would get a green hermetic report for a run that proved much less, so
+    the shape is checked rather than trusted.
+    """
+    joined = " ".join(command)
+    if "pytest" not in joined:
+        raise ValueError("pytest command does not invoke pytest")
+    if "tests" not in command:
+        raise ValueError("pytest command must run the whole `tests` tree, not a subset")
+    if f"--cov-fail-under={FULL_SUITE_MIN_COVERAGE}" not in joined:
+        raise ValueError(
+            f"pytest command must enforce --cov-fail-under={FULL_SUITE_MIN_COVERAGE}"
+        )
+    if "--cov=backend" not in joined:
+        raise ValueError("pytest command must measure backend coverage")
+
+
+def _run_full_suite(
+    root: Path, pytest_command: list[str] | None = None
+) -> tuple[list[CheckResult], dict]:
     """Run the complete suite under the hermetic contract and account for skips."""
     env = {**os.environ, **OFFLINE_ENV}
     env["DATABASE_URL"] = "sqlite:///./Data/test_tmp/fresh_clone_offline.db"
@@ -442,13 +466,31 @@ def _run_full_suite(root: Path) -> tuple[list[CheckResult], dict]:
     collected_match = _COLLECTED_PATTERN.findall(collect.stdout or "")
     collected_count = int(collected_match[-1]) if collected_match else 0
 
-    command = [
-        sys.executable, "-m", "pytest", "tests", "-q", "-rfs",
-        "-p", "no:cacheprovider",
-        "--cov=backend", "--cov-branch",
-        f"--cov-fail-under={FULL_SUITE_MIN_COVERAGE}",
-        "--cov-report=term-missing:skip-covered",
-    ]
+    # The caller may supply the command so the workflow can state it literally
+    # rather than hiding it in here - this repository's CI principle is that
+    # the command that runs is the command you read. It is validated below, so
+    # passing it cannot be used to quietly weaken the run.
+    if pytest_command:
+        command = list(pytest_command)
+        _assert_command_is_a_full_suite_run(command)
+        # A workflow states `python` because that is what a reader expects and
+        # what CI's PATH resolves to. Run it with *this* interpreter instead, so
+        # a local invocation cannot silently execute against a different
+        # environment than the one that imported this script.
+        if command[0] in ("python", "python3", "py"):
+            command[0] = sys.executable
+        # Reporting flags this check depends on, added if the caller omitted them.
+        for required in ("-rfs", "-q"):
+            if required not in command:
+                command.append(required)
+    else:
+        command = [
+            sys.executable, "-m", "pytest", "tests", "-q", "-rfs",
+            "-p", "no:cacheprovider",
+            "--cov=backend", "--cov-branch",
+            f"--cov-fail-under={FULL_SUITE_MIN_COVERAGE}",
+            "--cov-report=term-missing:skip-covered",
+        ]
     proc = subprocess.run(
         command, cwd=root, env=env, capture_output=True, text=True, timeout=14400
     )
@@ -518,6 +560,7 @@ def run_checks(
     run_tests: bool = False,
     provision_artifacts: bool = False,
     full_suite: bool = False,
+    pytest_command: list[str] | None = None,
 ) -> tuple[list[CheckResult], dict]:
     results: list[CheckResult] = []
     results.extend(_check_required_paths(root))
@@ -534,7 +577,7 @@ def run_checks(
             results.append(_run_provisioned_consumer_tests(root))
     full_suite_detail: dict = {}
     if full_suite:
-        suite_results, full_suite_detail = _run_full_suite(root)
+        suite_results, full_suite_detail = _run_full_suite(root, pytest_command)
         results.extend(suite_results)
     return results, full_suite_detail
 
@@ -556,6 +599,15 @@ def main() -> int:
         ),
     )
     parser.add_argument(
+        "--pytest-command",
+        default=None,
+        help=(
+            "the exact pytest command to run for the full suite, so a workflow "
+            "can state it literally instead of it being hidden here. Validated: "
+            "it must run the whole tests tree with the backend coverage floor."
+        ),
+    )
+    parser.add_argument(
         "--provision",
         action="store_true",
         help=(
@@ -569,6 +621,7 @@ def main() -> int:
         run_tests=args.run_tests,
         provision_artifacts=args.provision,
         full_suite=args.full_suite,
+        pytest_command=shlex.split(args.pytest_command) if args.pytest_command else None,
     )
     failures = [r for r in results if not r.passed]
 
