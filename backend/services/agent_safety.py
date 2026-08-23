@@ -296,6 +296,37 @@ _TUMOR_MARKER_CONCLUSION_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# Tagalog/Taglish "do I have <disease>?" requests.
+#
+# The English diagnostic-request rule below keys on the surface form
+# "do/could/might I have", which Tagalog cannot produce: possession is
+# existential (`meron/mayroon/may ... ako`) and the question is marked by the
+# particle `ba`. So "Base sa symptoms ko, meron na ba akong metastatic?" — the
+# exact translation of a request the English rule stops — matched nothing and
+# was routed as `general_support` / `education_or_tracking`, i.e. a diagnosis
+# request from a Taglish speaker crossed the safety boundary that the same
+# request in English does not.
+#
+# Two orders are accepted because Tagalog permits both:
+#   particle-first  "meron na ba akong metastatic"
+#   particle-last   "kanser na ba ako", "may bukol ba ako"
+#
+# The interrogative particle `ba` and a first-person/subject marker are both
+# required, so purely educational phrasings such as "Ano ba yung metastatic?"
+# ("what is metastatic?") stay educational: they carry no possession claim
+# about the speaker. Over-triggering here would make the assistant refuse
+# ordinary Tagalog health education, which is its own harm.
+_TAGLISH_DIAGNOSTIC_REQUEST_PATTERN = re.compile(
+    r"(?:\b(?:meron|mayroon|may)\b(?:\s+na)?\s+\bba\b.{0,60}?"
+    r"\b(?:cancer|kanser|recurrence|metasta\w*|bukol|tumor|brca|mutation)\b"
+    r"|\b(?:meron|mayroon|may)\b.{0,40}?"
+    r"\b(?:cancer|kanser|recurrence|metasta\w*|bukol|tumor)\b\s*"
+    r"(?:na\s+)?\bba\s+(?:ako|ito|ang)\b"
+    r"|\b(?:cancer|kanser|recurrence|metasta\w*|bukol|tumor)\b\s*"
+    r"(?:na\s+)?\bba\s+(?:ako|ito)\b)",
+    re.IGNORECASE,
+)
+
 _MULTILINGUAL_TUMOR_MARKER_CONCLUSION_PATTERN = re.compile(
     r"(?:(?<![a-z0-9])(?:tumou?r markers?|markers?|cea|"
     r"ca(?:\s*is\s*e|is\s*e|\s*2t\s*29|2t\s*29)|"
@@ -707,6 +738,8 @@ def _deterministic_high_confidence_boundary(query: str) -> dict[str, Any] | None
             r"|\b(?:how long do i have|will i survive|my prognosis|survival chances)\b",
             normalized,
         )
+        # Same request in Tagalog/Taglish, which has no "do I have" surface form.
+        or _TAGLISH_DIAGNOSTIC_REQUEST_PATTERN.search(normalized)
     )
     if diagnostic_request:
         return _deterministic_boundary_envelope(
