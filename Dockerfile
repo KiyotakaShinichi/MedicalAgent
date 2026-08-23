@@ -37,7 +37,7 @@ RUN python -m pip install --upgrade \
     && python -m pip install --prefix=/runtime -r /tmp/runtime-requirements.txt
 
 
-FROM gcr.io/distroless/python3-debian13:nonroot@sha256:1c680cdb442a9e7a89f64fd1706367c62302ea1f9ab80fdebdb72ae9fcded46f
+FROM gcr.io/distroless/python3-debian13:nonroot@sha256:6bfc400d0a6d89f50f5bbc0a4b4ff57214ae5c01647c3a74c2a0c8d830b4cc00
 
 ARG SOURCE_REVISION=uncommitted
 ARG BUILD_CREATED=unknown
