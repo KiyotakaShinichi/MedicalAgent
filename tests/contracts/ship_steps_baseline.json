@@ -1,0 +1,918 @@
+{
+  "_comment": "Frozen pre-refactor snapshot of scripts/ship.py's step list, captured from _build_steps() while it was still a single 477-line literal. tests/test_ship_step_contract.py replays it against the current scripts/ship_steps package. Machine-specific values are tokenised: {python} = sys.executable, {root} = repo root, {npm} = npm/npm.cmd.",
+  "captured_from": "scripts/ship.py::_build_steps (pre-decomposition)",
+  "main": [
+    {
+      "name": "Backend breast-monitoring integration tests",
+      "command": [
+        "{python}",
+        "-m",
+        "pytest",
+        "tests/test_breast_monitoring.py",
+        "-q"
+      ],
+      "cwd": "{root}",
+      "env": {
+        "ONCOTRACK_FAST_MODE": "true",
+        "RAG_FORCE_SPARSE": "true"
+      },
+      "timeout_seconds": null
+    },
+    {
+      "name": "Backend progressive-loading and notification reliability tests",
+      "command": [
+        "{python}",
+        "-m",
+        "pytest",
+        "tests/test_patient_progressive_report.py",
+        "tests/test_patient_report_enrichment_jobs.py",
+        "tests/test_high_risk_conversation_alerts.py",
+        "tests/test_n8n_webhook_dispatcher.py",
+        "tests/test_n8n_automation_templates.py",
+        "-q"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Cloud, data-platform, and managed-vector contract tests",
+      "command": [
+        "{python}",
+        "-m",
+        "pytest",
+        "tests/test_managed_vector_store.py",
+        "tests/test_data_platform_pipeline.py",
+        "tests/test_cloud_infrastructure_readiness.py",
+        "tests/test_vector_store_contract_eval.py",
+        "tests/test_azure_search_index_admin.py",
+        "tests/test_managed_vector_shadow_sync.py",
+        "tests/test_managed_vector_shadow_comparison.py",
+        "tests/test_data_platform_reliability_eval.py",
+        "tests/test_ops_health_snapshot.py",
+        "tests/test_release_decision_surface.py",
+        "tests/test_constraint_aware_improvement_program.py",
+        "tests/test_oidc_pkce.py",
+        "tests/test_dependency_security_scan.py",
+        "tests/test_container_security_scan.py",
+        "tests/test_container_runtime_hardening.py",
+        "tests/test_software_supply_chain_evidence.py",
+        "tests/test_synthetic_automation_staging_readiness.py",
+        "tests/test_rag_degradation_resilience_eval.py",
+        "tests/test_agent_execution_policy_eval.py",
+        "tests/test_agent_execution_policy.py",
+        "tests/test_agentic_orchestrator_and_verifier.py",
+        "tests/test_synthetic_prediction_statistical_audit.py",
+        "tests/test_patient_xai_readability_dossier.py",
+        "-q"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Assurance, XAI, automation, and safety contract tests",
+      "command": [
+        "{python}",
+        "-m",
+        "pytest",
+        "tests/test_ship_runner.py",
+        "tests/test_kb_research_provenance.py",
+        "tests/test_research_paper_kb_eval.py",
+        "tests/test_governance_credibility_artifacts.py",
+        "tests/test_xai_retraining_stability_audit.py",
+        "tests/test_xai_rank_stability_audit.py",
+        "tests/test_credible_route_latency_sample.py",
+        "tests/test_automation_channel_drill.py",
+        "tests/test_adversarial_v6_tuning_regression.py",
+        "tests/test_unsafe_intent_mutation_dev_eval.py",
+        "tests/test_cross_domain_assurance_eval.py",
+        "tests/test_senior_engineering_evidence.py",
+        "tests/test_llm_usage_telemetry.py",
+        "tests/test_finetune_promotion.py",
+        "tests/test_finetune_semantic_contamination.py",
+        "tests/test_finetune_hardening_assurance.py",
+        "tests/test_rag_paired_statistical_comparison.py",
+        "tests/test_xai_reliability_gate.py",
+        "tests/test_patient_xai_envelope.py",
+        "tests/test_evidence_maturity_matrix.py",
+        "tests/test_credibility_gap_registry.py",
+        "tests/test_rag_vector_runtime_cache.py",
+        "tests/test_retrieval_runtime_cache_eval.py",
+        "tests/test_provider_usage_reconciliation.py",
+        "tests/test_provider_usage_capture_readiness.py",
+        "tests/test_finetune_contamination_adjudication.py",
+        "tests/test_synthetic_feature_policy.py",
+        "tests/test_synthetic_model_perturbation_retrain_eval.py",
+        "tests/test_disposable_synthetic_staging_readiness.py",
+        "tests/test_synthetic_staging_resilience_dossier.py",
+        "tests/test_adversarial_holdout_v7.py",
+        "tests/test_fail_closed_rag_assurance.py",
+        "tests/test_deployment_worker_wiring.py",
+        "tests/test_restricted_synthetic_staging_hardening.py",
+        "tests/test_restricted_synthetic_staging_assurance.py",
+        "-q"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "SaaS control-plane and worker contract tests",
+      "command": [
+        "{python}",
+        "-m",
+        "pytest",
+        "tests/test_saas_control_plane.py",
+        "tests/test_saas_workers.py",
+        "tests/test_saas_foundation_readiness.py",
+        "tests/test_saas_platform_api.py",
+        "tests/test_api_security_hardening.py",
+        "tests/test_model_route_authorization.py",
+        "tests/test_synthetic_demo_bootstrap.py",
+        "tests/test_multimodal_evidence_abstention.py",
+        "-q"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Research abstention and scale-evaluation contract tests",
+      "command": [
+        "{python}",
+        "-m",
+        "pytest",
+        "tests/test_rag_runtime_prewarm.py",
+        "tests/test_research_evidence_answerability.py",
+        "tests/test_prototype_independent_prompt_bank_v2.py",
+        "tests/test_real_pipeline_scale_eval.py",
+        "tests/test_mixed_query_scale_eval.py",
+        "tests/test_adversarial_generalization_label_audit.py",
+        "-q"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Frontend Vitest unit tests",
+      "command": [
+        "{npm}",
+        "run",
+        "test"
+      ],
+      "cwd": "{root}/frontend-react",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Frontend Playwright smoke",
+      "command": [
+        "{npm}",
+        "run",
+        "test:e2e",
+        "--",
+        "tests/e2e/smoke.spec.ts"
+      ],
+      "cwd": "{root}/frontend-react",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Frontend lint",
+      "command": [
+        "{npm}",
+        "run",
+        "lint"
+      ],
+      "cwd": "{root}/frontend-react",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Frontend production build",
+      "command": [
+        "{npm}",
+        "run",
+        "build"
+      ],
+      "cwd": "{root}/frontend-react",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Reproducible knowledge-base chunk materialization",
+      "command": [
+        "{python}",
+        "scripts/ingest_knowledge_base.py",
+        "--skip-index"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Fingerprint-matched local RAG index rebuild",
+      "command": [
+        "{python}",
+        "scripts/build_rag_index.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 600
+    },
+    {
+      "name": "Frozen RAG baseline comparison refresh",
+      "command": [
+        "{python}",
+        "scripts/run_rag_baseline_comparison.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 900
+    },
+    {
+      "name": "Canonical RAG governance tradeoff refresh",
+      "command": [
+        "{python}",
+        "scripts/run_rag_governance_tradeoff.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Non-patient data-platform pipeline",
+      "command": [
+        "{python}",
+        "scripts/run_data_platform_pipeline.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Managed-vector contract evaluation",
+      "command": [
+        "{python}",
+        "scripts/run_vector_store_contract_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Data-platform reliability drills",
+      "command": [
+        "{python}",
+        "scripts/run_data_platform_reliability_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Azure AI Search index readiness",
+      "command": [
+        "{python}",
+        "scripts/run_azure_search_index_readiness.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Managed-vector shadow sync readiness",
+      "command": [
+        "{python}",
+        "scripts/run_managed_vector_shadow_sync.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Managed-vector frozen shadow comparison readiness",
+      "command": [
+        "{python}",
+        "scripts/run_managed_vector_shadow_comparison.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Azure compiled reference-infrastructure readiness",
+      "command": [
+        "{python}",
+        "scripts/run_cloud_infrastructure_readiness.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Patient enrichment background eval",
+      "command": [
+        "{python}",
+        "scripts/run_patient_enrichment_background_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "High-risk conversation alert eval",
+      "command": [
+        "{python}",
+        "scripts/run_high_risk_conversation_alert_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "ML logic/safety alignment audit",
+      "command": [
+        "{python}",
+        "scripts/run_ml_logic_safety_alignment.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Synthetic statistical sensitivity audit",
+      "command": [
+        "{python}",
+        "scripts/run_synthetic_prediction_statistical_audit.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Patient XAI implementation-readability audit",
+      "command": [
+        "{python}",
+        "scripts/run_patient_xai_readability_dossier.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Restricted synthetic SaaS foundation readiness",
+      "command": [
+        "{python}",
+        "scripts/run_saas_foundation_readiness.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "OIDC browser PKCE readiness",
+      "command": [
+        "{python}",
+        "scripts/run_oidc_browser_pkce_readiness.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Deployment profile and fail-closed matrix",
+      "command": [
+        "{python}",
+        "scripts/validate_deployment_env.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Dependency security scan",
+      "command": [
+        "{python}",
+        "scripts/run_dependency_security_scan.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Container security evidence",
+      "command": [
+        "{python}",
+        "scripts/run_container_security_scan.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Lock-derived SBOM and repository secret scan",
+      "command": [
+        "{python}",
+        "scripts/run_software_supply_chain_evidence.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Development unsafe-intent mutation regression",
+      "command": [
+        "{python}",
+        "scripts/run_unsafe_intent_mutation_dev_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Tuning-informed adversarial v6 regression",
+      "command": [
+        "{python}",
+        "scripts/run_adversarial_v6_tuning_regression.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Adversarial v6 contamination retrospective",
+      "command": [
+        "{python}",
+        "scripts/run_adversarial_v6_retrospective.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Synthetic XAI rank-stability audit",
+      "command": [
+        "{python}",
+        "scripts/run_xai_rank_stability_audit.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Synthetic XAI retraining-stability audit",
+      "command": [
+        "{python}",
+        "scripts/run_xai_retraining_stability_audit.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Synthetic XAI mechanical fidelity audit",
+      "command": [
+        "{python}",
+        "scripts/run_xai_fidelity_audit.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Fail-closed synthetic XAI presentation policy",
+      "command": [
+        "{python}",
+        "scripts/run_xai_reliability_gate.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Bounded agent execution-policy eval",
+      "command": [
+        "{python}",
+        "scripts/run_agent_execution_policy_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Local RAG degradation resilience drill",
+      "command": [
+        "{python}",
+        "scripts/run_rag_degradation_resilience_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Credible local route-latency sample",
+      "command": [
+        "{python}",
+        "scripts/run_credible_route_latency_sample.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Route-latency budget refresh",
+      "command": [
+        "{python}",
+        "scripts/run_route_latency_budget.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Token, cost, and stage-latency observability refresh",
+      "command": [
+        "{python}",
+        "scripts/run_cost_latency_report.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Retrieval runtime-cache regression evidence",
+      "command": [
+        "{python}",
+        "scripts/run_retrieval_runtime_cache_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Guarded normal-API provider usage probe",
+      "command": [
+        "{python}",
+        "scripts/run_provider_api_path_capture.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Provider-token reconciliation",
+      "command": [
+        "{python}",
+        "scripts/run_provider_usage_reconciliation.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Provider-usage capture readiness",
+      "command": [
+        "{python}",
+        "scripts/run_provider_usage_capture_readiness.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Paired RAG statistical comparison",
+      "command": [
+        "{python}",
+        "scripts/run_rag_paired_statistical_comparison.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Research-paper KB provenance and retrieval evaluation",
+      "command": [
+        "{python}",
+        "scripts/run_research_paper_kb_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 600
+    },
+    {
+      "name": "Research-paper per-query token and latency telemetry",
+      "command": [
+        "{python}",
+        "scripts/run_research_paper_query_telemetry.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 600
+    },
+    {
+      "name": "Claim-conditioned citation selector offline evaluation",
+      "command": [
+        "{python}",
+        "scripts/run_claim_conditioned_citation_selector_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Frozen claim-conditioned selector holdout",
+      "command": [
+        "{python}",
+        "scripts/run_claim_conditioned_citation_selector_holdout.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Accuracy-latency-unit-cost tradeoff refresh",
+      "command": [
+        "{python}",
+        "scripts/run_ai_trinity_tradeoff.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Signed localhost automation channel drill",
+      "command": [
+        "{python}",
+        "scripts/run_automation_channel_drill.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Synthetic n8n and MailHog staging readiness",
+      "command": [
+        "{python}",
+        "scripts/run_synthetic_automation_staging_readiness.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Fine-tune promotion evidence gate",
+      "command": [
+        "{python}",
+        "scripts/run_finetune_promotion_gate.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Fine-tune semantic contamination screen",
+      "command": [
+        "{python}",
+        "scripts/run_finetune_semantic_contamination.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Fine-tune contamination adjudication readiness",
+      "command": [
+        "{python}",
+        "scripts/run_finetune_contamination_adjudication.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Canonical proxy-removed synthetic feature policy",
+      "command": [
+        "{python}",
+        "scripts/run_synthetic_feature_policy.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Synthetic ML perturbation and retraining stress",
+      "command": [
+        "{python}",
+        "scripts/run_synthetic_model_perturbation_retrain_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 900
+    },
+    {
+      "name": "Disposable synthetic staging readiness",
+      "command": [
+        "{python}",
+        "scripts/run_disposable_synthetic_staging_readiness.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Synthetic staging resilience dossier",
+      "command": [
+        "{python}",
+        "scripts/run_synthetic_staging_resilience_dossier.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Fine-tune hardening assurance",
+      "command": [
+        "{python}",
+        "scripts/run_finetune_hardening_assurance.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Fail-closed RAG release assurance",
+      "command": [
+        "{python}",
+        "scripts/run_fail_closed_rag_assurance.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 240
+    },
+    {
+      "name": "Restricted synthetic staging assurance",
+      "command": [
+        "{python}",
+        "scripts/run_restricted_synthetic_staging_assurance.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 240
+    },
+    {
+      "name": "Required safety benchmark refresh",
+      "command": [
+        "{python}",
+        "scripts/run_safety_benchmark.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 300
+    },
+    {
+      "name": "Required adversarial benchmark refresh",
+      "command": [
+        "{python}",
+        "scripts/run_adversarial_benchmark.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 300
+    },
+    {
+      "name": "Required RAG benchmark refresh",
+      "command": [
+        "{python}",
+        "scripts/run_rag_benchmark.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 600
+    },
+    {
+      "name": "Required intent-aware RAG benchmark refresh",
+      "command": [
+        "{python}",
+        "scripts/run_rag_intent_aware_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 600
+    },
+    {
+      "name": "Cross-domain evidence maturity matrix",
+      "command": [
+        "{python}",
+        "scripts/run_evidence_maturity_matrix.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Canonical credibility-gap registry",
+      "command": [
+        "{python}",
+        "scripts/run_credibility_gap_registry.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Cross-domain composed assurance drill",
+      "command": [
+        "{python}",
+        "scripts/run_cross_domain_assurance_eval.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Senior engineering evidence dossier",
+      "command": [
+        "{python}",
+        "scripts/run_senior_engineering_evidence.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Canonical release decision surface",
+      "command": [
+        "{python}",
+        "scripts/run_release_decision_surface.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Constraint-aware cross-domain improvement program",
+      "command": [
+        "{python}",
+        "scripts/run_constraint_aware_improvement_program.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Consolidated benchmark registry",
+      "command": [
+        "{python}",
+        "scripts/generate_benchmark_report.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Evidence-backed service health snapshot",
+      "command": [
+        "{python}",
+        "scripts/run_ops_health_snapshot.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Focused release summary",
+      "command": [
+        "{python}",
+        "scripts/run_focused_release_summary.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "Release artifact gate",
+      "command": [
+        "{python}",
+        "scripts/run_release_gate.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    }
+  ],
+  "post_success": [
+    {
+      "name": "Post-ship evidence reconciliation",
+      "command": [
+        "{python}",
+        "scripts/run_post_ship_evidence_reconciliation.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": 300
+    }
+  ]
+}
