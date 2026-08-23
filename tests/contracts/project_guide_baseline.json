@@ -1,5 +1,5 @@
 {
- "_comment": "Frozen pre-refactor snapshot of the engineering guide's flowable stream, captured from build_story() while it was still a single 1032-line function in scripts/generate_project_guide_pdf.py. tests/test_project_guide_document.py replays it against the current scripts/project_guide package. The document's own generation timestamp is normalised to {generated}.",
+ "_comment": "Frozen pre-refactor snapshot of the engineering guide's flowable stream, captured from build_story() while it was still a single 1032-line function in scripts/generate_project_guide_pdf.py. tests/test_project_guide_document.py replays it against the current scripts/project_guide package. The document's own generation timestamp is normalised to {generated}, and the absolute checkout path it prints is normalised to {root}, so the baseline is portable between a developer machine and a CI runner.",
  "flowable_count": 380,
  "page_count": 20,
  "type_counts": {
@@ -88,7 +88,7 @@
   "Recommended sequence",
   "Engineering north star"
  ],
- "story_digest": "dc998234929dd0ab2197eb2197ccebcb4b4cdcb04719889256b6d36c9a41a35c",
+ "story_digest": "f4fe1525a5349fec0633cae89e641661c8626e96672a3240819b5c01b80a7d21",
  "lines": [
   "Spacer:1x45.35433070866142",
   "Paragraph[CoverKicker]:REVIEWER-FACING ENGINEERING GUIDE",
@@ -105,7 +105,7 @@
   "Paragraph[Heading2Custom]:Generated",
   "Paragraph[BodyCustom]:{generated}",
   "Paragraph[Heading2Custom]:Canonical project root",
-  "Paragraph[Formula]:C:\\Users\\L\\Downloads\\MedicalAgent",
+  "Paragraph[Formula]:{root}",
   "PageBreak",
   "Paragraph[CoverKicker]:01 / NLCare engineering guide",
   "Paragraph[SectionTitle]:Executive map",

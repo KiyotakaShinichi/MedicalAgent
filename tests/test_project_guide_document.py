@@ -10,14 +10,17 @@ replays `tests/contracts/project_guide_baseline.json`, a snapshot of the
 flowable stream taken from the pre-decomposition `build_story`, and requires an
 exact match on every flowable's type, style, text, and table contents, in order.
 
-Two things are deliberately normalised out, because they are not properties of
-the refactor:
+Two things are deliberately normalised out, because they are properties of the
+machine rather than of the document:
 
 * the document's own generation timestamp, which differs between any two runs;
-* nothing else - evidence values are *not* normalised. If an artifact stops
-  loading, its cells become "not reported" and these tests fail, which is the
-  intended behaviour: it is exactly the bug a path change in `theme.ROOT`
-  introduced during this refactor.
+* the absolute repository path the guide prints as its "canonical project
+  root", which differs between a developer checkout and a CI runner.
+
+Nothing else is normalised. Evidence values in particular are not: if an
+artifact stops loading its cells become "not reported" and these tests fail,
+which is the intended behaviour - it is exactly the bug a path change in
+`theme.ROOT` introduced during this refactor.
 
 The baseline is a historical record. A deliberate future edit to the guide
 should update it in the same commit, so the diff shows the document changing on
@@ -48,6 +51,14 @@ from scripts.project_guide.sections import SECTION_BUILDERS  # noqa: E402
 from scripts.project_guide.theme import OUTPUT, ROOT as THEME_ROOT  # noqa: E402
 
 _TIMESTAMP = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC")
+
+
+def _normalize(line: str) -> str:
+    """Strip the two machine-dependent values from a flowable description."""
+    line = _TIMESTAMP.sub("{generated}", line)
+    # The guide prints its own absolute checkout path. Both separator styles are
+    # replaced so a Windows developer and a Linux CI runner agree.
+    return line.replace(str(ROOT), "{root}").replace(str(ROOT).replace("\\", "/"), "{root}")
 
 
 def _describe(flowable) -> str:
@@ -90,7 +101,7 @@ def story() -> list:
 
 @pytest.fixture(scope="module")
 def lines(story: list) -> list[str]:
-    return [_TIMESTAMP.sub("{generated}", _describe(f)) for f in story]
+    return [_normalize(_describe(f)) for f in story]
 
 
 # ─── the equivalence proof ───────────────────────────────────────────────────
