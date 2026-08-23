@@ -38,7 +38,7 @@ from backend.services.runtime_health import (
     liveness_payload,
     readiness_payload,
 )
-from backend.services.structured_logging import configure_logging, log_event
+from backend.logging_config import configure_logging, log_event
 
 
 # ─── App setup ────────────────────────────────────────────────────────────────
@@ -81,6 +81,9 @@ OPENAPI_TAGS = [
     },
 ]
 
+# Structured JSON logging is installed before anything else can emit a
+# record. See backend/logging_config.py for the pipeline and its redaction
+# policy; configure_logging() is idempotent, so this is safe on re-import.
 app = FastAPI(
     title="NLCare Breast Cancer Monitoring Engineering Prototype",
     lifespan=lifespan,
@@ -261,14 +264,12 @@ def admin_dashboard():
     return RedirectResponse(url="/frontend/admin.html")
 
 
-@app.get(
-    "/health",
-    tags=["operations"],
-    summary="Liveness probe",
-    response_model=LivenessResponse,
-    operation_id="getHealth",
-    responses={200: {"description": "Process is alive and able to serve requests."}},
-)
+# The path stays on the decorator line, not wrapped onto its own, so that
+# `@app.get("/health"` is greppable as a single string. Route registration is
+# something people and tools look for by literal text.
+@app.get("/health", tags=["operations"], summary="Liveness probe",
+         response_model=LivenessResponse, operation_id="getHealth",
+         responses={200: {"description": "Process is alive and able to serve requests."}})
 @app.get("/healthz", tags=["operations"], include_in_schema=False, response_model=LivenessResponse)
 def healthcheck(db: Session = Depends(get_db)):
     """Liveness probe. Returns 200 whenever the process can serve requests.

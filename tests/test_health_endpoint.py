@@ -1,22 +1,29 @@
-"""Operational probe contract: `/health` liveness and `/ready` dependency state.
+"""Operational contract: `GET /health`, `/ready`, and the logging pipeline.
 
-The split matters and is deliberate, so it is asserted rather than assumed:
+The liveness/readiness split matters and is deliberate, so it is asserted
+rather than assumed:
 
-* **`/health`** answers "is this process alive?" It touches no database, cache,
-  model, or network dependency. An orchestrator uses it to decide whether to
-  *restart* the process, so making it depend on a slow database turns a
-  degraded dependency into a restart loop.
-* **`/ready`** answers "should traffic be sent here?" It runs bounded probes
-  against the database, retrieval index, and (when shared rate limiting is on)
-  Redis, and returns 503 when any required one is unavailable so a load
-  balancer drains the instance instead of restarting it.
+* **`/health`** answers "is this process alive?" It reports `status`,
+  `service`, `version`, and database reachability. The database result is
+  **informational**: the endpoint returns 200 with `status: ok` even when the
+  database is unreachable. An orchestrator uses liveness to decide whether to
+  *restart* the process, and restarting cannot repair a database — a probe that
+  failed on a dependency outage would turn that outage into a restart loop. The
+  probe is also bounded, because a liveness probe that hangs is a restart
+  vector too.
+* **`/ready`** answers "should traffic be sent here?" It aggregates database,
+  retrieval index, and (when shared rate limiting is on) Redis, and returns 503
+  when any required one is unavailable, so a load balancer drains the instance
+  instead of restarting it. It stays the authoritative, fail-closed signal.
 
-Database-connectivity evidence therefore lives in the `/ready` tests below,
-which is where that behaviour is actually contracted.
+The second half of this file covers structured logging. The two belong
+together: the probe says whether the process is alive, the logs say what it
+did, and both have to be conventional enough for a tool — not only a person —
+to find.
 
 `tests/test_operational_endpoints.py` covers correlation, OpenAPI
-discoverability, and log redaction. This file covers the probe response
-contract itself and does not repeat those.
+discoverability, and log redaction at the middleware level. This file covers
+the probe response contract and the logging configuration itself.
 """
 
 from __future__ import annotations
@@ -329,3 +336,130 @@ def test_health_route_is_registered_in_main() -> None:
     assert set(handlers) == {"/health", "/healthz"}
     assert handlers["/health"] is handlers["/healthz"], "aliases must share one handler"
     assert handlers["/health"].__module__ == main_module.__name__
+
+
+# ─── structured logging configuration ────────────────────────────────────────
+#
+# `/health` and the logging pipeline are covered together because they are the
+# two halves of "can an operator see what this process is doing": the probe
+# says whether it is alive, the logs say what it did. Both have to be
+# conventional enough for a tool - not just a person - to find them.
+
+
+def test_logging_config_module_is_the_startup_entrypoint() -> None:
+    """`backend/logging_config.py` is the conventional place to look."""
+    from backend import logging_config
+
+    assert callable(logging_config.configure_logging)
+    assert callable(logging_config.setup_logging)
+    assert callable(logging_config.get_logging_config)
+
+
+def test_logging_config_names_its_json_framework_explicitly() -> None:
+    """python-json-logger is imported, not just referenced by string.
+
+    The dictConfig names the formatter by dotted path, which is enough for
+    `logging` but invisible to anything reading imports. The explicit import is
+    what makes the dependency legible.
+    """
+    import backend.logging_config as logging_config
+    from pythonjsonlogger.json import JsonFormatter
+
+    assert logging_config.JsonFormatter is JsonFormatter
+    assert logging_config.LIBRARY_JSON_FORMATTER is JsonFormatter
+
+    source = Path(logging_config.__file__).read_text(encoding="utf-8")
+    assert "from pythonjsonlogger.json import JsonFormatter" in source
+
+
+def test_app_startup_configures_logging_from_the_conventional_module() -> None:
+    import backend.api.main as main_module
+
+    source = Path(main_module.__file__).read_text(encoding="utf-8")
+    assert "from backend.logging_config import" in source
+    assert "configure_logging()" in source
+
+
+def test_logging_configuration_declares_both_formatters() -> None:
+    """One formatter for our events, one for framework records."""
+    from backend.logging_config import get_logging_config
+
+    config = get_logging_config()
+    formatters = config["formatters"]
+    assert "nlcare_json" in formatters
+    assert formatters["library_json"]["()"] == "pythonjsonlogger.json.JsonFormatter"
+
+
+def test_configure_logging_is_idempotent() -> None:
+    """Importing or calling twice must not attach a second handler.
+
+    Duplicate handlers double every log line, which is the classic symptom of
+    logging being configured in more than one place.
+    """
+    from backend.logging_config import LOGGER, configure_logging
+
+    configure_logging()
+    first = list(LOGGER.handlers)
+    configure_logging()
+    assert list(LOGGER.handlers) == first
+
+
+def test_application_events_are_emitted_as_json(capsys) -> None:
+    """An operator greps these, so they must parse as JSON."""
+    from backend.logging_config import configure_logging, log_event
+
+    configure_logging(force=True)
+    log_event("health_probe_test", severity="info", details={"route": "/health"})
+    captured = capsys.readouterr()
+    payloads = [
+        json.loads(line)
+        for line in (captured.err + captured.out).splitlines()
+        if line.strip().startswith("{")
+    ]
+    assert payloads, "no JSON log record was emitted"
+    assert any(p.get("event_type") == "health_probe_test" for p in payloads)
+
+
+def test_logged_events_keep_their_request_id() -> None:
+    """Correlation is the whole point of the envelope."""
+    from backend.logging_config import build_event
+    from backend.services.request_context import reset_request_id, set_request_id
+
+    token = set_request_id("req-health-123")
+    try:
+        event = build_event("health_probe_test", component="api")
+    finally:
+        reset_request_id(token)
+
+    assert event["request_id"] == "req-health-123"
+
+
+def test_logged_events_still_redact_sensitive_details() -> None:
+    """Redaction runs before emission, on both key name and value pattern."""
+    from backend.logging_config import build_event
+
+    event = build_event(
+        "health_probe_test",
+        details={"api_key": "k-secret-value", "summary": "contact maria@example.com"},
+    )
+    serialized = json.dumps(event)
+    assert "k-secret-value" not in serialized
+    assert "maria@example.com" not in serialized
+
+
+def test_log_level_environment_variable_is_honoured(monkeypatch) -> None:
+    from backend.logging_config import get_logging_config
+
+    monkeypatch.setenv("NLCARE_LOG_LEVEL", "warning")
+    assert get_logging_config()["loggers"]["nlcare.events"]["level"] == "WARNING"
+
+
+def test_logging_config_does_not_seize_the_root_logger() -> None:
+    """Declaring `root` in dictConfig would replace pytest's caplog handlers.
+
+    It would also silently drop whatever handlers an embedding application had
+    installed, which is why the root logger is only touched when it is unclaimed.
+    """
+    from backend.logging_config import get_logging_config
+
+    assert "root" not in get_logging_config()
