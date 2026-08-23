@@ -124,8 +124,16 @@ def build_senior_engineering_evidence(
         root / "Data/evals/ops/latest_cloud_infrastructure_readiness.json"
     )
 
-    ship_source = (root / "scripts/ship.py").read_text(
-        encoding="utf-8", errors="replace"
+    # The ship gate's step definitions live in scripts/ship_steps/ as well as in
+    # scripts/ship.py itself, so both are read. This check asks whether the
+    # evidence scripts are wired into the gate, not which file happens to hold
+    # the step literal - reading only ship.py would report "not wired" purely
+    # because the definitions were grouped into modules.
+    ship_sources = [root / "scripts/ship.py", *sorted((root / "scripts/ship_steps").glob("*.py"))]
+    ship_source = "\n".join(
+        path.read_text(encoding="utf-8", errors="replace")
+        for path in ship_sources
+        if path.is_file()
     )
     architecture_fitness = [
         _check(
