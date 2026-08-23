@@ -101,7 +101,7 @@ def test_offline_env_pins_providers_and_network_off() -> None:
 
 
 def test_run_checks_reports_structured_results() -> None:
-    results = run_checks(ROOT, run_tests=False)
+    results, _full_suite = run_checks(ROOT, run_tests=False)
     assert results, "run_checks returned nothing"
     assert all(isinstance(r, CheckResult) for r in results)
     names = {r.name for r in results}
@@ -112,7 +112,7 @@ def test_run_checks_reports_structured_results() -> None:
 
 def test_json_payload_shape_is_serialisable() -> None:
     """The artifact this writes must be machine-readable for a reviewer."""
-    results = run_checks(ROOT, run_tests=False)
+    results, _full_suite = run_checks(ROOT, run_tests=False)
     payload = {
         "schema_version": "fresh_clone_offline_check_v1",
         "checks": [{"name": r.name, "passed": r.passed, "detail": r.detail} for r in results],

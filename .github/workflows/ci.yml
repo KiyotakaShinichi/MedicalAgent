@@ -9,7 +9,10 @@ jobs:
   static-quality:
     runs-on: ubuntu-latest
     steps:
+      # Full history: the change-discipline check diffs against a base ref.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -33,6 +36,29 @@ jobs:
           python scripts/check_dependency_contract.py
           python scripts/check_env_documentation.py
           python -m pip check
+
+      # A 900-line service has no seam a reviewer can hold in their head. The
+      # limit is a ratchet, not a flat ban: pre-existing offenders are frozen
+      # at their current size in tests/contracts/backend_loc_baseline.json and
+      # may only shrink, while anything new must come in under 500. That way
+      # the debt cannot grow and unrelated legacy files do not fail `main`.
+      - name: Enforce backend service size limits
+        run: python scripts/check_file_size.py backend/services --max-loc 500
+
+      # Production changes ship with tests. `fetch-depth: 0` above gives the
+      # diff something to compare against; on a pull request that is the merge
+      # base, on a push it is the previous commit.
+      - name: Require tests alongside service changes
+        run: |
+          if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+          elif [ -n "${{ github.event.before }}" ] &&                git cat-file -e "${{ github.event.before }}^{commit}" 2>/dev/null; then
+            BASE="${{ github.event.before }}"
+          else
+            BASE="$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)"
+          fi
+          echo "Comparing $BASE...HEAD"
+          python scripts/check_change_discipline.py --base "$BASE" --head HEAD
 
       # The CI checkout is itself a fresh clone with no `.env`, so this is the
       # one place the offline-reproducibility contract can be proven rather
@@ -208,15 +234,30 @@ jobs:
       - name: Verify documented bootstrap agrees with CI setup
         run: python scripts/bootstrap.py --check
 
+      # The canonical offline verification. This runs the *complete* tests tree
+      # with branch coverage, and additionally accounts for the thing a bare
+      # pytest invocation cannot: whether the suite was actually hermetic. It
+      # strips every live provider credential, refuses to inherit
+      # NLCARE_ALLOW_TEST_NETWORK, and fails if any test skipped because a
+      # network or credential was unavailable — a skip is invisible in a green
+      # summary line, which is how a suite quietly shrinks. It reports the
+      # discovered test-file count, the collected test count, and the
+      # pass/fail/skip split, so the hermetic claim is checkable rather than
+      # asserted.
       - name: Run complete offline suite with branch coverage
         run: |
           mkdir -p Data/test_tmp
-          python -m pytest tests -q \
-            --cov=backend \
-            --cov-branch \
-            --cov-report=term-missing:skip-covered \
-            --cov-report=xml:Data/test_tmp/backend-coverage.xml \
-            --cov-fail-under=60
+          python scripts/check_fresh_clone_offline.py \
+            --full-suite \
+            --json-output Data/test_tmp/fresh_clone_full_suite.json
+
+      - name: Upload full-suite hermetic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fresh-clone-full-suite
+          path: Data/test_tmp/fresh_clone_full_suite.json
+          if-no-files-found: ignore
 
   dependency-audit:
     runs-on: ubuntu-latest

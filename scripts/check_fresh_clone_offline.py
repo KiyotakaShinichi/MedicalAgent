@@ -310,11 +310,215 @@ def _run_offline_subset(root: Path) -> CheckResult:
     return CheckResult("offline_test_subset_passes", proc.returncode == 0, summary)
 
 
+# ─── full-suite hermetic contract ────────────────────────────────────────────
+#
+# The subset above answers "can a fresh clone run *anything* offline?".  It
+# cannot answer "is the whole suite hermetic?", and a subset that passes while
+# the other 297 files quietly need a network is exactly the gap this section
+# closes.
+#
+# The default suite is already hermetic by construction: tests/conftest.py
+# clears third-party credentials and blocks every non-loopback connection.
+# What was missing was proof that the full suite runs under those conditions,
+# and accounting for anything that skipped because of them.
+
+#: Live provider credentials that must be absent for the run to mean anything.
+#: Kept in step with tests/conftest.py by test_fresh_clone_full_suite.py - if
+#: they drift, the verifier would attest to a weaker contract than the suite
+#: actually enforces.
+THIRD_PARTY_CREDENTIAL_VARS = (
+    "GROQ_API_KEY",
+    "PINECONE_API_KEY",
+    "AZURE_SEARCH_API_KEY",
+    "AZURE_OPENAI_API_KEY",
+    "GOOGLE_API_KEY",
+    "GEMINI_API_KEY",
+    "OPENAI_API_KEY",
+    "N8N_WEBHOOK_URL",
+    "N8N_API_KEY",
+    "MLFLOW_TRACKING_URI",
+    "OLLAMA_BASE_URL",
+)
+
+#: Coverage floor for the full-suite run, matching the CI gate.
+FULL_SUITE_MIN_COVERAGE = 60
+
+#: Skip reasons attributable to a missing network, credential, or live service.
+#: A skip matching any of these means the suite is not hermetic - the test did
+#: not run, and its absence was hidden behind a green summary line.
+NETWORK_SKIP_MARKERS = (
+    "network",
+    "credential",
+    "api key",
+    "api_key",
+    "token",
+    "offline",
+    "connection",
+    "unreachable",
+    "dns",
+    "socket",
+    "http",
+    "groq",
+    "ollama",
+    "pinecone",
+    "azure",
+    "openai",
+    "gemini",
+    "mlflow",
+    "n8n",
+    "endpoint",
+    "service unavailable",
+)
+
+_COUNT_PATTERN = re.compile(r"(\d+) (passed|failed|skipped|error|errors|xfailed|xpassed)")
+_COLLECTED_PATTERN = re.compile(r"(\d+) tests? collected")
+_SKIP_LINE_PATTERN = re.compile(r"^SKIPPED \[(\d+)\]\s*(.*)$", re.MULTILINE)
+#: Failing test ids, so a failure names itself instead of being a count.
+_FAILED_TEST_PATTERN = re.compile(r"^FAILED (\S+)", re.MULTILINE)
+
+
+def discovered_test_files(root: Path) -> list[str]:
+    """Every tracked test module, via git so untracked scratch never inflates it."""
+    proc = subprocess.run(
+        ["git", "ls-files", "tests"],
+        cwd=root, capture_output=True, text=True, check=True,
+    )
+    return sorted(
+        line for line in proc.stdout.splitlines()
+        if re.search(r"(^|/)test_[^/]*\.py$", line)
+    )
+
+
+def classify_skips(pytest_output: str) -> tuple[list[str], list[str]]:
+    """Split reported skips into network/credential ones and everything else.
+
+    Returns (network_related, other). A platform or missing-tool skip is
+    legitimate and reported separately; a skip caused by an absent network or
+    credential means the suite silently shrank.
+    """
+    network, other = [], []
+    for count, reason in _SKIP_LINE_PATTERN.findall(pytest_output):
+        entry = f"[{count}] {reason.strip()}"
+        haystack = reason.lower()
+        if any(marker in haystack for marker in NETWORK_SKIP_MARKERS):
+            network.append(entry)
+        else:
+            other.append(entry)
+    return network, other
+
+
+def parse_pytest_summary(output: str) -> dict[str, int]:
+    counts = {"passed": 0, "failed": 0, "skipped": 0, "errors": 0, "collected": 0}
+    collected = _COLLECTED_PATTERN.findall(output)
+    if collected:
+        counts["collected"] = int(collected[-1])
+    for number, label in _COUNT_PATTERN.findall(output):
+        key = "errors" if label.startswith("error") else label
+        if key in counts:
+            counts[key] = max(counts[key], int(number))
+    return counts
+
+
+def _run_full_suite(root: Path) -> tuple[list[CheckResult], dict]:
+    """Run the complete suite under the hermetic contract and account for skips."""
+    env = {**os.environ, **OFFLINE_ENV}
+    env["DATABASE_URL"] = "sqlite:///./Data/test_tmp/fresh_clone_offline.db"
+    # Never inherit an opt-out: the whole point is to prove the hermetic default.
+    env.pop("NLCARE_ALLOW_TEST_NETWORK", None)
+    for name in THIRD_PARTY_CREDENTIAL_VARS:
+        env.pop(name, None)
+    (root / "Data" / "test_tmp").mkdir(parents=True, exist_ok=True)
+
+    files = discovered_test_files(root)
+
+    # `pytest -q` does not print a collection count, so it is obtained from a
+    # dedicated collection pass. That also proves the whole tree imports
+    # cleanly, which a failing run would otherwise hide.
+    collect = subprocess.run(
+        [sys.executable, "-m", "pytest", "tests", "--collect-only", "-q",
+         "-p", "no:cacheprovider"],
+        cwd=root, env=env, capture_output=True, text=True, timeout=3600,
+    )
+    collected_match = _COLLECTED_PATTERN.findall(collect.stdout or "")
+    collected_count = int(collected_match[-1]) if collected_match else 0
+
+    command = [
+        sys.executable, "-m", "pytest", "tests", "-q", "-rfs",
+        "-p", "no:cacheprovider",
+        "--cov=backend", "--cov-branch",
+        f"--cov-fail-under={FULL_SUITE_MIN_COVERAGE}",
+        "--cov-report=term-missing:skip-covered",
+    ]
+    proc = subprocess.run(
+        command, cwd=root, env=env, capture_output=True, text=True, timeout=14400
+    )
+    output = (proc.stdout or "") + (proc.stderr or "")
+    counts = parse_pytest_summary(output)
+    if collected_count:
+        counts["collected"] = collected_count
+    network_skips, other_skips = classify_skips(output)
+    failed_tests = _FAILED_TEST_PATTERN.findall(output)
+
+    results = [
+        CheckResult(
+            "full_suite_executed",
+            proc.returncode == 0,
+            f"{counts['collected']} collected from {len(files)} test files; "
+            f"{counts['passed']} passed, {counts['failed']} failed, "
+            f"{counts['skipped']} skipped, {counts['errors']} error(s)",
+        ),
+        CheckResult(
+            "full_suite_covers_every_test_file",
+            counts["collected"] > 0 and len(files) > 0,
+            f"{len(files)} tracked test files discovered, whole `tests` tree executed "
+            "(no subset selection)",
+        ),
+        CheckResult(
+            "no_network_or_credential_skips",
+            not network_skips,
+            "none"
+            if not network_skips
+            else f"{len(network_skips)} skip(s) attributable to network/credentials: "
+            + "; ".join(network_skips[:5]),
+        ),
+        CheckResult(
+            "coverage_floor_met",
+            proc.returncode == 0,
+            f"pytest enforced --cov-fail-under={FULL_SUITE_MIN_COVERAGE}"
+            + ("" if proc.returncode == 0 else " (run did not pass)"),
+        ),
+    ]
+    detail = {
+        "test_files_discovered": len(files),
+        "tests_collected": counts["collected"],
+        "passed": counts["passed"],
+        "failed": counts["failed"],
+        "skipped": counts["skipped"],
+        "errors": counts["errors"],
+        "failed_tests": failed_tests,
+        "network_or_credential_skips": network_skips,
+        "other_skips": other_skips,
+        "coverage_floor": FULL_SUITE_MIN_COVERAGE,
+        "credentials_cleared": list(THIRD_PARTY_CREDENTIAL_VARS),
+        "network_policy": "non-loopback connections blocked by tests/conftest.py",
+        "exit_code": proc.returncode,
+    }
+    if proc.returncode != 0:
+        log_path = root / "Data" / "test_tmp" / "full_suite_output.txt"
+        log_path.write_text(output, encoding="utf-8")
+        detail["full_output_path"] = str(log_path.relative_to(root)).replace("\\", "/")
+        detail["failure_tail"] = [
+            line for line in output.splitlines() if line.startswith("FAILED")
+        ][:25]
+    return results, detail
+
+
 def run_checks(
     root: Path = ROOT,
     run_tests: bool = False,
     provision_artifacts: bool = False,
-) -> list[CheckResult]:
+    full_suite: bool = False,
+) -> tuple[list[CheckResult], dict]:
     results: list[CheckResult] = []
     results.extend(_check_required_paths(root))
     results.append(_check_no_dotenv_required(root))
@@ -328,7 +532,11 @@ def run_checks(
         results.append(_run_offline_subset(root))
         if provision_artifacts:
             results.append(_run_provisioned_consumer_tests(root))
-    return results
+    full_suite_detail: dict = {}
+    if full_suite:
+        suite_results, full_suite_detail = _run_full_suite(root)
+        results.extend(suite_results)
+    return results, full_suite_detail
 
 
 def main() -> int:
@@ -340,6 +548,14 @@ def main() -> int:
         help="also execute the designated offline pytest subset",
     )
     parser.add_argument(
+        "--full-suite",
+        action="store_true",
+        help=(
+            "run the complete tests/ tree with coverage under the hermetic contract "
+            "and account for every skip (the canonical offline verification)"
+        ),
+    )
+    parser.add_argument(
         "--provision",
         action="store_true",
         help=(
@@ -349,11 +565,40 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    results = run_checks(run_tests=args.run_tests, provision_artifacts=args.provision)
+    results, full_suite_detail = run_checks(
+        run_tests=args.run_tests,
+        provision_artifacts=args.provision,
+        full_suite=args.full_suite,
+    )
     failures = [r for r in results if not r.passed]
 
     for result in results:
         print(f"[{'PASS' if result.passed else 'FAIL'}] {result.name}: {result.detail}")
+
+    if full_suite_detail:
+        print()
+        print("Full-suite hermetic accounting")
+        print(f"  test files discovered   : {full_suite_detail['test_files_discovered']}")
+        print(f"  tests collected         : {full_suite_detail['tests_collected']}")
+        print(
+            f"  passed/failed/skipped   : {full_suite_detail['passed']}/"
+            f"{full_suite_detail['failed']}/{full_suite_detail['skipped']}"
+        )
+        print(
+            f"  network/credential skips: "
+            f"{len(full_suite_detail['network_or_credential_skips'])}"
+        )
+        for entry in full_suite_detail["network_or_credential_skips"]:
+            print(f"      {entry}")
+        print(f"  other (legitimate) skips: {len(full_suite_detail['other_skips'])}")
+        for entry in full_suite_detail["other_skips"]:
+            print(f"      {entry}")
+        print(f"  credentials cleared     : {len(full_suite_detail['credentials_cleared'])}")
+        print(f"  network policy          : {full_suite_detail['network_policy']}")
+        for test_id in full_suite_detail.get("failed_tests", []):
+            print(f"  FAILED: {test_id}")
+        for line in full_suite_detail.get("failure_tail", []):
+            print(f"      {line}")
 
     print()
     print(
@@ -369,6 +614,8 @@ def main() -> int:
             "passed": not failures,
             "tests_executed": args.run_tests,
             "artifacts_provisioned": args.provision,
+            "full_suite": args.full_suite,
+            "full_suite_detail": full_suite_detail,
             "claim_boundary": (
                 "Verifies that tracked repository content is sufficient to run the offline "
                 "test path without secrets, a populated .env, or network access, and that "

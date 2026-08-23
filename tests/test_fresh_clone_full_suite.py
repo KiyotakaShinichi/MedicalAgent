@@ -1,0 +1,188 @@
+"""The fresh-clone verifier's full-suite hermetic contract.
+
+The verifier used to run a three-file subset. A subset that passes tells you
+nothing about the other 300 files, which is precisely where a hidden dependency
+on a network or a credential would live — and it would stay hidden, because
+skipped tests do not fail.
+
+`--full-suite` closes that: it runs the whole `tests` tree with coverage,
+credentials stripped and the network blocked, and accounts for every skip. A
+skip attributable to a missing network or credential fails the check; a
+platform or tooling skip is reported separately and does not.
+
+These tests drive the accounting functions with synthetic pytest output, so
+they assert the classification rules rather than re-running the suite (which
+the verifier itself does, and which takes the better part of an hour).
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.check_fresh_clone_offline import (  # noqa: E402
+    FULL_SUITE_MIN_COVERAGE,
+    NETWORK_SKIP_MARKERS,
+    THIRD_PARTY_CREDENTIAL_VARS,
+    classify_skips,
+    discovered_test_files,
+    parse_pytest_summary,
+)
+
+
+# ─── skip accounting ─────────────────────────────────────────────────────────
+
+
+@pytest.mark.parametrize(
+    "reason",
+    [
+        "tests/test_x.py:3: requires network access",
+        "tests/test_x.py:3: no GROQ_API_KEY credential configured",
+        "tests/test_x.py:3: Pinecone endpoint unreachable",
+        "tests/test_x.py:3: Azure Search API key missing",
+        "tests/test_x.py:3: OLLAMA_BASE_URL not set",
+        "tests/test_x.py:3: connection refused",
+    ],
+)
+def test_network_and_credential_skips_are_detected(reason: str) -> None:
+    """These are the skips that mean the suite silently shrank."""
+    network, other = classify_skips(f"SKIPPED [1] {reason}")
+    assert len(network) == 1, f"not classified as network/credential: {reason}"
+    assert other == []
+
+
+@pytest.mark.parametrize(
+    "reason",
+    [
+        "tests/test_x.py:3: requires Windows",
+        "tests/test_x.py:3: docker binary not installed",
+        "tests/test_x.py:3: needs python 3.13",
+    ],
+)
+def test_platform_and_tooling_skips_are_reported_separately(reason: str) -> None:
+    """A legitimate skip must not fail the check, but must still be visible."""
+    network, other = classify_skips(f"SKIPPED [1] {reason}")
+    assert network == []
+    assert len(other) == 1
+
+
+def test_mixed_skips_are_split_correctly() -> None:
+    output = (
+        "SKIPPED [2] tests/a.py:1: requires network access\n"
+        "SKIPPED [1] tests/b.py:9: requires Windows\n"
+        "SKIPPED [3] tests/c.py:4: missing OPENAI_API_KEY\n"
+    )
+    network, other = classify_skips(output)
+    assert len(network) == 2
+    assert len(other) == 1
+    assert "[2]" in network[0], "the skip count is preserved for reporting"
+
+
+def test_no_skips_classifies_cleanly() -> None:
+    assert classify_skips("2202 passed in 3284s") == ([], [])
+
+
+def test_every_cleared_credential_would_be_caught_as_a_skip_reason() -> None:
+    """A credential the suite strips must be recognisable if a test skips for it.
+
+    Otherwise the verifier would clear `GROQ_API_KEY`, a test would skip citing
+    it, and the skip would be filed as "legitimate".
+    """
+    for variable in THIRD_PARTY_CREDENTIAL_VARS:
+        reason = f"tests/test_x.py:1: {variable} is not configured"
+        network, _other = classify_skips(f"SKIPPED [1] {reason}")
+        assert network, f"a skip citing {variable} would not be flagged"
+
+
+# ─── summary parsing ─────────────────────────────────────────────────────────
+
+
+def test_summary_parsing_reads_a_passing_run() -> None:
+    counts = parse_pytest_summary("2202 tests collected\n2202 passed in 3284.26s\n")
+    assert counts["collected"] == 2202
+    assert counts["passed"] == 2202
+    assert counts["failed"] == 0
+
+
+def test_summary_parsing_reads_a_failing_run() -> None:
+    counts = parse_pytest_summary(
+        "2202 tests collected\n1 failed, 2200 passed, 1 skipped in 3284.26s\n"
+    )
+    assert counts["failed"] == 1
+    assert counts["passed"] == 2200
+    assert counts["skipped"] == 1
+
+
+def test_summary_parsing_survives_missing_numbers() -> None:
+    """A crashed run must report zeros, not raise."""
+    assert parse_pytest_summary("INTERNALERROR")["collected"] == 0
+
+
+# ─── discovery ───────────────────────────────────────────────────────────────
+
+
+def test_discovery_finds_the_repository_test_files() -> None:
+    files = discovered_test_files(ROOT)
+    assert len(files) > 250, f"only {len(files)} test files discovered"
+    assert all(Path(f).name.startswith("test_") for f in files)
+    assert all(f.startswith("tests/") for f in files)
+
+
+def test_discovery_includes_subdirectory_tests() -> None:
+    """`tests/breast_monitoring/` must not be missed by a flat glob."""
+    files = discovered_test_files(ROOT)
+    assert any("/" in f[len("tests/"):] for f in files), "no nested test files found"
+
+
+def test_discovery_only_returns_tracked_files() -> None:
+    """Untracked scratch must not inflate the reported coverage of the suite."""
+    files = discovered_test_files(ROOT)
+    assert len(set(files)) == len(files), "duplicate entries"
+
+
+# ─── the contract's own constants ────────────────────────────────────────────
+
+
+def test_credential_list_matches_the_test_suite() -> None:
+    """The verifier and conftest must strip the same variables.
+
+    If they drift, the verifier attests to a weaker hermetic contract than the
+    suite actually enforces — or a stronger one it does not.
+    """
+    conftest = (ROOT / "tests" / "conftest.py").read_text(encoding="utf-8")
+    for variable in THIRD_PARTY_CREDENTIAL_VARS:
+        assert variable in conftest, f"{variable} is not cleared by tests/conftest.py"
+
+
+def test_ci_runs_this_verifier_in_full_suite_mode() -> None:
+    """CI's authoritative test run is this contract, not a bare pytest line.
+
+    If CI went back to invoking pytest directly, the hermetic accounting would
+    stop running and nothing would notice — the suite would still be green.
+    """
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "check_fresh_clone_offline.py" in workflow
+    assert "--full-suite" in workflow
+
+
+def test_coverage_floor_is_sixty() -> None:
+    """The floor lives here now, so it is pinned here."""
+    assert FULL_SUITE_MIN_COVERAGE == 60
+
+
+def test_network_markers_cover_the_providers_the_repository_uses() -> None:
+    for provider in ("groq", "ollama", "pinecone", "azure", "openai"):
+        assert provider in NETWORK_SKIP_MARKERS
+
+
+def test_default_suite_deselects_network_marked_tests() -> None:
+    """The hermetic default is declared in pytest.ini, not ad hoc per test."""
+    config = (ROOT / "pytest.ini").read_text(encoding="utf-8")
+    assert 'addopts = -m "not network"' in config
+    assert "network:" in config, "the marker must be registered, not implicit"

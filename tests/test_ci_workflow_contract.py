@@ -55,8 +55,14 @@ def _run_blocks() -> str:
 REQUIRED_INVOCATIONS = [
     ("ruff lint", ("ruff", "check")),
     ("mypy typecheck", ("mypy",)),
-    ("backend pytest", ("pytest", "tests")),
-    ("backend coverage floor", ("--cov-fail-under",)),
+    # The complete backend suite runs through the fresh-clone verifier rather
+    # than a bare pytest line. The verifier invokes `pytest tests` with the same
+    # branch-coverage settings and additionally accounts for hermeticity: it
+    # strips live credentials, refuses the network opt-out, and fails on any
+    # skip caused by a missing network or credential. Running both would mean
+    # executing the whole suite twice, so this is the single authoritative run.
+    ("backend full offline suite", ("check_fresh_clone_offline.py",)),
+    ("backend full-suite mode", ("--full-suite",)),
     ("frontend lint", ("npm run lint",)),
     ("frontend typecheck", ("npm run typecheck",)),
     ("frontend tests/coverage", ("npm run test:coverage",)),
@@ -90,11 +96,23 @@ def test_gate_detection_rejects_a_workflow_missing_the_gate() -> None:
 
 
 def test_backend_coverage_floor_is_not_lowered() -> None:
-    """The floor is a regression gate; lowering it to pass a build is the failure."""
-    text = CI_WORKFLOW.read_text(encoding="utf-8")
-    assert "--cov-fail-under=60" in text, (
-        "the enforced backend coverage floor is no longer 60 in CI"
+    """The floor is a regression gate; lowering it to pass a build is the failure.
+
+    The floor moved out of the workflow file and into the verifier that runs the
+    suite, so it is asserted at its source. Both halves are checked: the number
+    itself, and that the verifier actually hands it to pytest — a constant that
+    nothing passes through would enforce nothing.
+    """
+    from scripts.check_fresh_clone_offline import FULL_SUITE_MIN_COVERAGE
+
+    assert FULL_SUITE_MIN_COVERAGE == 60, (
+        "the enforced backend coverage floor is no longer 60"
     )
+    verifier = (ROOT / "scripts" / "check_fresh_clone_offline.py").read_text(encoding="utf-8")
+    assert 'f"--cov-fail-under={FULL_SUITE_MIN_COVERAGE}"' in verifier, (
+        "the coverage floor constant is no longer passed to pytest"
+    )
+    assert "--cov-branch" in verifier, "branch coverage is no longer requested"
 
 
 # ─── the gates must block ────────────────────────────────────────────────────
