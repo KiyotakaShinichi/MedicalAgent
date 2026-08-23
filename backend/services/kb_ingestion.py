@@ -45,7 +45,7 @@ def ingest_knowledge_base(
                 "title": metadata["title"],
                 "source_name": metadata["source_name"],
                 "source_url": metadata["source_url"],
-                "source_path": str(source_path),
+                "source_path": _canonical_source_key(source_path),
                 "source_type": source_path.suffix.lower().lstrip("."),
                 "trust_level": metadata["trust_level"],
                 "topic": metadata["topic"],
@@ -201,13 +201,17 @@ def _source_metadata(path, text, source_manifest=None):
     trust_level = manifest_entry.get("trust_level") or _infer_trust_level(path)
     pmcid = manifest_entry.get("pmcid") or _extract_pmcid(path, text)
     tags = sorted(set(_infer_tags(f"{path.name} {title} {topic} {' '.join(modality)} {care_stage} {text[:2000]}")))
-    source_id_seed = pmcid or str(path)
+    source_id_seed = pmcid or _canonical_source_key(path)
     source_id = hashlib.sha256(source_id_seed.encode("utf-8")).hexdigest()[:16]
     return {
         "source_id": source_id,
         "title": title,
         "source_name": title,
-        "source_url": manifest_entry.get("landing_url") or manifest_entry.get("pdf_url") or str(path),
+        "source_url": (
+            manifest_entry.get("landing_url")
+            or manifest_entry.get("pdf_url")
+            or _canonical_source_key(path)
+        ),
         "trust_level": trust_level,
         "topic": topic,
         "modality": modality,
@@ -563,8 +567,36 @@ def _counts(values):
     return output
 
 
+def _canonical_source_key(path):
+    """Platform-independent string used to derive KB source and chunk ids.
+
+    `str(Path(...))` renders the separator of whatever OS is running, so the
+    same source file produced different ids on Windows and Linux:
+
+        Windows  KnowledgeBase\\raw\\...\\minimum_evidence...md -> 28cfcee61ce1e4a4
+        Linux    KnowledgeBase/raw/.../minimum_evidence...md    -> 191dafae170c06c0
+
+    Those ids are the key the KB source-governance map is looked up by, so on
+    Linux every ingested chunk resolved to no governance entry, arrived at the
+    pre-generation tier filter with no tier or allowed_use, and was correctly
+    dropped - taking retrieval_context, citations, and the regression pass rate
+    with it. Only the hardcoded seed snippets, whose ids are static, survived.
+
+    Backslashes are canonical here, not because they are a good choice, but
+    because they are the form the established identifiers already encode:
+    twenty-one committed evidence artifacts key on these ids, including a
+    frozen claim-selector holdout bank. Re-issuing every identifier to adopt
+    POSIX separators would invalidate all of them, which is a far larger and
+    less reversible change than pinning the convention already in use. The
+    point is that the id no longer depends on which OS ran the ingestion.
+    """
+    return str(path).replace("/", "\\")
+
+
 def _chunk_id(path, index, chunk_text):
-    digest = hashlib.sha256(f"{path}:{index}:{chunk_text[:80]}".encode("utf-8")).hexdigest()
+    digest = hashlib.sha256(
+        f"{_canonical_source_key(path)}:{index}:{chunk_text[:80]}".encode("utf-8")
+    ).hexdigest()
     return digest[:20]
 
 
