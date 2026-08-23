@@ -3,14 +3,48 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 
+def application_version() -> str:
+    """Deployed application version, or `unknown` when it cannot be resolved.
+
+    Read from installed package metadata so the value reflects what is actually
+    running rather than a constant that can drift from the build. Never raises:
+    a liveness probe must not fail because version lookup did.
+    """
+    try:
+        from importlib.metadata import version
+
+        return version("nlcare-medical-agent")
+    except Exception:  # noqa: BLE001 - liveness must not depend on metadata
+        pass
+    try:
+        import tomllib
+
+        pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
+        return str(tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["version"])
+    except Exception:  # noqa: BLE001
+        return "unknown"
+
+
 def liveness_payload() -> dict[str, Any]:
-    return {"status": "ok", "service": "nlcare_monitoring_prototype"}
+    """Cheap liveness answer.
+
+    Reports the running version alongside status so an operator can tell *which
+    build* answered, which is the difference between a useful health probe and
+    one that only proves a socket is open. Still touches no database, cache, or
+    network dependency - dependency state belongs to `readiness_payload`.
+    """
+    return {
+        "status": "ok",
+        "service": "nlcare_monitoring_prototype",
+        "version": application_version(),
+    }
 
 
 def readiness_payload(
@@ -72,4 +106,4 @@ def _redis_readiness(url: str) -> dict[str, Any]:
         return {"ready": False, "required": True, "error_type": type(exc).__name__}
 
 
-__all__ = ["liveness_payload", "readiness_payload"]
+__all__ = ["application_version", "liveness_payload", "readiness_payload"]

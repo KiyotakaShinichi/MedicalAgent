@@ -26,6 +26,7 @@ if str(ROOT) not in sys.path:
 
 from backend.api.main import app  # noqa: E402
 from backend.services.request_context import reset_request_id, set_request_id  # noqa: E402
+from backend.services.runtime_health import application_version  # noqa: E402
 from backend.services.structured_logging import (  # noqa: E402
     JsonEventFormatter,
     build_event,
@@ -44,12 +45,21 @@ def client() -> TestClient:
 def test_health_endpoint_exists_and_reports_ok(client: TestClient) -> None:
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok", "service": "nlcare_monitoring_prototype"}
+    assert response.json() == {
+        "status": "ok",
+        "service": "nlcare_monitoring_prototype",
+        "version": application_version(),
+    }
 
 
 def test_health_schema_is_stable(client: TestClient) -> None:
-    """Exact key set. A probe consumer breaks on an unannounced field change."""
-    assert set(client.get("/health").json()) == {"status", "service"}
+    """Exact key set. A probe consumer breaks on an unannounced field change.
+
+    `version` was added deliberately, so an operator can tell *which build*
+    answered a probe rather than only that one did. The assertion stays an
+    exact-set comparison: the point is that the shape never drifts silently.
+    """
+    assert set(client.get("/health").json()) == {"status", "service", "version"}
 
 
 def test_healthz_alias_matches_health(client: TestClient) -> None:

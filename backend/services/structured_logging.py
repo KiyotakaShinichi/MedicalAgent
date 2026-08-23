@@ -1,8 +1,17 @@
 """Canonical structured logging with conservative sensitive-data redaction.
 
-Built on the standard library only. `logging.config.dictConfig` drives setup,
-so the configuration is inspectable data rather than imperative handler
-wiring, and no third-party logging dependency is introduced.
+`logging.config.dictConfig` drives setup, so the configuration is inspectable
+data rather than imperative handler wiring. Two formatters share that pipeline:
+
+* `JsonEventFormatter` (here) renders application events, carrying the redacted
+  `nlcare_event` envelope - request id, correlation id, severity, sanitised
+  details;
+* `python-json-logger` renders framework and third-party records (uvicorn,
+  sqlalchemy, httpx), which have no envelope and were previously wrapped in a
+  synthetic one.
+
+Both run through stdlib `logging`; nothing here replaces it with a competing
+framework.
 
 Two logging systems exist in this codebase and are not interchangeable:
 
@@ -64,17 +73,38 @@ def logging_config() -> dict[str, Any]:
     library loggers already created at import time, and would break pytest's
     `caplog` capture.
     """
+    # `root` is deliberately absent from the returned config. Declaring it
+    # would make dictConfig replace whatever handlers the root logger already
+    # has, including pytest's caplog capture and any handlers an embedding
+    # application installed. `configure_logging` attaches the library handler
+    # to root only when it is unclaimed.
     level = os.environ.get("NLCARE_LOG_LEVEL", "INFO").upper()
     return {
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
+            # Application events. Carries the redacted `nlcare_event` envelope
+            # (request_id, correlation_id, severity, sanitised details), so it
+            # stays ours rather than a generic serialiser.
             "nlcare_json": {"()": f"{__name__}.JsonEventFormatter"},
+            # Framework and third-party records (uvicorn, sqlalchemy, httpx).
+            # These have no `nlcare_event`, so they were previously wrapped in a
+            # synthetic envelope by the formatter above. `python-json-logger`
+            # renders them as what they are: structured records with their own
+            # standard fields.
+            "library_json": {
+                "()": "pythonjsonlogger.json.JsonFormatter",
+                "fmt": "%(asctime)s %(levelname)s %(name)s %(message)s",
+            },
         },
         "handlers": {
             "nlcare_stdout": {
                 "class": "logging.StreamHandler",
                 "formatter": "nlcare_json",
+            },
+            "library_stdout": {
+                "class": "logging.StreamHandler",
+                "formatter": "library_json",
             },
         },
         "loggers": {
@@ -92,8 +122,8 @@ def logging_config() -> dict[str, Any]:
 def configure_logging(*, force: bool = False) -> None:
     """Install the JSON event handler. Idempotent.
 
-    Also gives the root logger the same JSON formatter, but **only when it has
-    no handlers of its own**. That makes third-party and framework output
+    Also gives the root logger a JSON formatter, but **only when it has no
+    handlers of its own**. That makes third-party and framework output
     machine-readable in a deployed process, while leaving an embedding
     application's — or pytest's — logging setup untouched.
     """
@@ -109,8 +139,17 @@ def configure_logging(*, force: bool = False) -> None:
 
     root = logging.getLogger()
     if not root.handlers:
+        # Framework and third-party records carry no `nlcare_event`, so the
+        # event formatter had to wrap each one in a synthetic envelope.
+        # `python-json-logger` renders them as the structured records they
+        # already are, and keeps this a stdlib `logging` pipeline rather than a
+        # competing framework.
+        from pythonjsonlogger.json import JsonFormatter
+
         root_handler = logging.StreamHandler()
-        root_handler.setFormatter(JsonEventFormatter())
+        root_handler.setFormatter(
+            JsonFormatter("%(asctime)s %(levelname)s %(name)s %(message)s")
+        )
         root.addHandler(root_handler)
         root.setLevel(os.environ.get("NLCARE_ROOT_LOG_LEVEL", "WARNING").upper())
 

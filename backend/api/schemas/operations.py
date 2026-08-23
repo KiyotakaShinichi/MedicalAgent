@@ -26,6 +26,13 @@ class LivenessResponse(BaseModel):
         description="Stable service identifier.",
         examples=["nlcare_monitoring_prototype"],
     )
+    version: str = Field(
+        description=(
+            "Running application version, or `unknown` if it could not be "
+            "resolved. Lets an operator tell which build answered the probe."
+        ),
+        examples=["0.0.0"],
+    )
 
 
 class ReadinessResponse(BaseModel):
