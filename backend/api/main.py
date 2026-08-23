@@ -36,9 +36,10 @@ from backend.services.llm_telemetry import reset_llm_telemetry, start_llm_teleme
 from backend.services.runtime_health import (
     database_connectivity,
     liveness_payload,
+    rag_index_liveness,
     readiness_payload,
 )
-from backend.logging_config import configure_logging, log_event
+from backend.app_logging import configure_logging, log_event
 
 
 # ─── App setup ────────────────────────────────────────────────────────────────
@@ -82,7 +83,7 @@ OPENAPI_TAGS = [
 ]
 
 # Structured JSON logging is installed before anything else can emit a
-# record. See backend/logging_config.py for the pipeline and its redaction
+# record. See backend/app_logging.py for the pipeline and its redaction
 # policy; configure_logging() is idempotent, so this is safe on re-import.
 app = FastAPI(
     title="NLCare Breast Cancer Monitoring Engineering Prototype",
@@ -274,7 +275,8 @@ def admin_dashboard():
 def healthcheck(db: Session = Depends(get_db)):
     """Liveness probe. Returns 200 whenever the process can serve requests.
 
-    Reports `status`, `service`, `version`, and database reachability.
+    Reports `status`, `service`, `version`, database reachability, and whether
+    the retrieval index is loaded in this process.
 
     The database result is **informational**. This endpoint returns 200 for a
     live process even when the database is unreachable, and `status` stays
@@ -290,10 +292,16 @@ def healthcheck(db: Session = Depends(get_db)):
     an exception class name at most - never a message, host, or connection
     string, since this route is unauthenticated.
 
+    The retrieval field is informational on the same terms, and is read from
+    in-process cache counters: answering this probe never loads or builds an
+    index, because an orchestrator polling every few seconds must not be able
+    to trigger the most expensive work the service does. `loaded: false` is
+    normal for a replica that has not served a query yet.
+
     `/healthz` is an unlisted alias for orchestrators that probe the
     Kubernetes-conventional path.
     """
-    return liveness_payload(database_connectivity(db))
+    return liveness_payload(database_connectivity(db), rag_index_liveness())
 
 
 @app.get(
