@@ -306,3 +306,27 @@ __all__ = [
     "_is_identity_or_capability_question",
     "_is_social_checkin",
 ]
+
+
+def _validated_preselected_intent(intent, safety):
+    """Validate a caller-provided intent and downgrade to a safety
+    boundary intent when the safety scope demands it."""
+    allowed = {
+        "safety_boundary",
+        "treatment_decision_boundary",
+        "data_entry_confirmation",
+        "portal_help",
+        "patient_timeline_monitoring",
+        "education",
+        "emotional_support",
+        "general_support",
+        "conversation",
+        "patient_memory",
+    }
+    if intent not in allowed:
+        return None
+    if safety.get("scope") == "treatment_decision_request":
+        return "treatment_decision_boundary"
+    if safety.get("scope") in {"urgent_or_safety_related", "diagnosis_or_outcome_claim"}:
+        return "safety_boundary"
+    return intent

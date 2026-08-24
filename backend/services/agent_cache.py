@@ -453,3 +453,35 @@ __all__ = [
     "_cache_policy_snapshot",
     "_mark_cache_hit",
 ]
+
+
+def _lookup_cache(
+    db,
+    cacheable,
+    rewritten,
+    intent,
+    safety,
+    knowledge_fingerprint,
+    cache_rejection_events=None,
+):
+    """Return the exact-cache hit envelope, falling back to semantic.
+    None when the request isn't cacheable or no fresh row matches."""
+    if not cacheable:
+        return None
+    hit = exact_cache_check(
+        db,
+        rewritten["normalized_query"],
+        intent=intent,
+        safety_level=safety.get("level"),
+        knowledge_fingerprint=knowledge_fingerprint,
+        rejection_events=cache_rejection_events,
+    )
+    if hit is None:
+        hit = semantic_cache_check(
+            db,
+            rewritten["semantic_key"],
+            intent,
+            knowledge_fingerprint=knowledge_fingerprint,
+            rejection_events=cache_rejection_events,
+        )
+    return hit
