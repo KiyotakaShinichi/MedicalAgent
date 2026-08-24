@@ -91,14 +91,20 @@ def run_research_paper_query_telemetry(
     # the corpus it does not crash - it quietly measures retrieval against a
     # knowledge base containing no research papers and reports the misses as
     # though they were a finding. That is the more misleading of the two
-    # failure modes, so it gets the same preflight.
-    inspection = inspect_research_paper_corpus()
-    if inspection.absent:
-        return _not_evaluated_telemetry(
-            inspection,
-            output_path=Path(output_path),
-            failures_path=Path(failures_path),
-        )
+    # failure modes, so the default probe gets the same preflight.
+    #
+    # Only the default suite is gated. `QUERY_CASES` is the fixed set that asks
+    # about the papers; a caller passing its own cases is measuring the runner
+    # itself and has no dependency on the corpus, so short-circuiting it there
+    # would answer a question it did not ask.
+    if cases is QUERY_CASES:
+        inspection = inspect_research_paper_corpus()
+        if inspection.absent:
+            return _not_evaluated_telemetry(
+                inspection,
+                output_path=Path(output_path),
+                failures_path=Path(failures_path),
+            )
 
     if not allow_provider:
         os.environ["ONCOTRACK_FAST_MODE"] = "true"

@@ -308,3 +308,66 @@ def test_the_non_result_status_is_not_silently_accepted() -> None:
                 walk(value)
 
     walk(config)
+
+
+def test_a_caller_supplying_its_own_cases_is_not_corpus_gated(monkeypatch, tmp_path: Path) -> None:
+    """Only the default probe depends on the corpus.
+
+    `QUERY_CASES` is the fixed suite that asks about the papers, so it is gated.
+    A caller passing its own cases is exercising the runner itself and has no
+    such dependency; short-circuiting it would answer a question it did not ask.
+    This was a real regression: gating every call broke a runner test that stubs
+    the pipeline outright, and it only showed up on a checkout without the
+    corpus.
+    """
+    import backend.services.agent_rag as agent_rag
+    from backend.services.research_paper_query_telemetry import (
+        run_research_paper_query_telemetry,
+    )
+
+    monkeypatch.setattr(
+        agent_rag,
+        "run_patient_agent_pipeline",
+        lambda **_: {"reply": "x", "citations": [], "sources": [], "intent": "education"},
+    )
+    monkeypatch.setattr(
+        "backend.services.research_paper_query_telemetry.inspect_research_paper_corpus",
+        lambda **_: CorpusInspection(state=ABSENT, reason="absent", manifest_path="none"),
+    )
+
+    report = run_research_paper_query_telemetry(
+        output_path=tmp_path / "telemetry.json",
+        failures_path=tmp_path / "failures.json",
+        cases=[
+            {
+                "id": "fixture",
+                "category": "fixture",
+                "style": "formal",
+                "query": "fixture query",
+                "allowed_intents": ["education"],
+            }
+        ],
+    )
+
+    assert report.get("evaluated") is not False, (
+        "an explicit-cases call was gated on the corpus it does not use"
+    )
+    assert report["query_count"] == 1
+
+
+def test_the_default_probe_is_still_corpus_gated(monkeypatch, tmp_path: Path) -> None:
+    """The other half of the same distinction."""
+    from backend.services import research_paper_query_telemetry as telemetry
+
+    monkeypatch.setattr(
+        telemetry,
+        "inspect_research_paper_corpus",
+        lambda **_: CorpusInspection(state=ABSENT, reason="absent", manifest_path="none"),
+    )
+
+    report = telemetry.run_research_paper_query_telemetry(
+        output_path=tmp_path / "telemetry.json",
+        failures_path=tmp_path / "failures.json",
+    )
+    assert report["status"] == NOT_EVALUATED_STATUS
+    assert report["evaluated"] is False
