@@ -97,6 +97,25 @@ jobs:
           uv run python scripts/provision_derived_artifacts.py
           uv run python scripts/provision_derived_artifacts.py --check-only
 
+      # The ship database starts as an empty file with no schema at all, so the
+      # progressive-report tests could not log in: demo credentials resolve by
+      # looking up the patient row, and with no `patients` table there was
+      # nothing to resolve, which surfaced as 401 on /auth/demo-credential-login
+      # rather than as a missing-database error.
+      #
+      # This is the same initializer scripts/run_playwright_backend.py uses for
+      # its own disposable database: it applies the Alembic migrations and then
+      # seeds the synthetic demo records. It takes the URL from this job's
+      # environment, so it can only ever touch the ephemeral SQLite file above.
+      #
+      # No demo-bootstrap flag is set anywhere: this seeds data, it does not
+      # widen the authentication surface, and nothing here is enabled for a
+      # deployment profile.
+      - name: Initialize the disposable ship database
+        run: |
+          mkdir -p Data/test_tmp
+          uv run python scripts/reset_local_db.py --database-url "$DATABASE_URL"
+
       # Data/test_tmp is gitignored, so it does not exist on a fresh runner, and
       # DATABASE_URL points the ship database inside it. SQLite does not create
       # missing parents; it fails the connection outright, which took the gate
