@@ -329,14 +329,21 @@ def test_health_publishes_the_database_field_in_its_schema() -> None:
     assert database_schema["properties"]["connected"]["type"] == "boolean"
 
 
-def test_health_route_is_registered_in_main() -> None:
-    """The probe is wired in backend/api/main.py, not hidden behind a router.
+def test_health_route_is_discoverable_from_main() -> None:
+    """The probe must be findable from the app entrypoint.
 
-    Asserted so the route cannot drift into a router later without this being
-    a deliberate, visible decision - and so exactly one function serves both
-    `/health` and `/healthz` rather than two diverging copies.
+    It was previously decorated inline on the app object here; it now lives in
+    backend/api/routers/health.py and is registered with an explicit
+    `app.include_router(health.router)`. Either way a reader starting at
+    main.py can find it, which is the property this test protects — the module
+    it resolves to is asserted in
+    `test_health_is_served_by_the_conventional_router`.
     """
     import backend.api.main as main_module
+
+    source = Path(main_module.__file__).read_text(encoding="utf-8")
+    assert "from backend.api.routers import health" in source
+    assert "app.include_router(health.router)" in source
 
     handlers = {
         route.path: route.endpoint
@@ -345,7 +352,6 @@ def test_health_route_is_registered_in_main() -> None:
     }
     assert set(handlers) == {"/health", "/healthz"}
     assert handlers["/health"] is handlers["/healthz"], "aliases must share one handler"
-    assert handlers["/health"].__module__ == main_module.__name__
 
 
 # ─── structured logging configuration ────────────────────────────────────────
@@ -356,23 +362,23 @@ def test_health_route_is_registered_in_main() -> None:
 # conventional enough for a tool - not just a person - to find them.
 
 
-def test_app_logging_module_is_the_startup_entrypoint() -> None:
-    """`backend/app_logging.py` is the canonical place to look."""
-    from backend import app_logging
+def test_logging_config_module_is_the_startup_entrypoint() -> None:
+    """`backend/logging_config.py` is the canonical place to look."""
+    from backend import logging_config
 
-    assert callable(app_logging.configure_logging)
-    assert callable(app_logging.setup_logging)
-    assert callable(app_logging.get_logging_config)
+    assert callable(logging_config.configure_logging)
+    assert callable(logging_config.setup_logging)
+    assert callable(logging_config.get_logging_config)
 
 
-def test_logging_config_is_an_alias_not_a_second_configuration() -> None:
+def test_app_logging_is_an_alias_not_a_second_configuration() -> None:
     """Two modules configuring logging is how duplicate handlers happen."""
     from backend import app_logging, logging_config
 
-    assert logging_config.configure_logging is app_logging.configure_logging
-    assert logging_config.get_logging_config is app_logging.get_logging_config
+    assert app_logging.configure_logging is logging_config.configure_logging
+    assert app_logging.get_logging_config is logging_config.get_logging_config
 
-    source = Path(logging_config.__file__).read_text(encoding="utf-8")
+    source = Path(app_logging.__file__).read_text(encoding="utf-8")
     assert "dictConfig" not in source, "the alias re-implements configuration"
 
 
@@ -383,28 +389,28 @@ def test_stdout_logging_is_distinct_from_the_database_audit_trail() -> None:
     trail. The names are similar and the distinction is load-bearing, so it is
     stated in the module and asserted here.
     """
-    from backend import app_logging
+    from backend import logging_config
     from backend.services import app_logging as audit_trail
 
-    assert app_logging is not audit_trail
+    assert logging_config is not audit_trail
     assert hasattr(audit_trail, "log_app_event"), "the audit trail writer moved"
-    assert "database" in Path(app_logging.__file__).read_text(encoding="utf-8").lower()
+    assert "database" in Path(logging_config.__file__).read_text(encoding="utf-8").lower()
 
 
-def test_app_logging_names_its_json_framework_explicitly() -> None:
+def test_logging_config_names_its_json_framework_explicitly() -> None:
     """python-json-logger is imported, not just referenced by string.
 
     The dictConfig names the formatter by dotted path, which is enough for
     `logging` but invisible to anything reading imports. The explicit import is
     what makes the dependency legible.
     """
-    import backend.app_logging as app_logging
+    import backend.logging_config as logging_config
     from pythonjsonlogger.json import JsonFormatter
 
-    assert app_logging.JsonFormatter is JsonFormatter
-    assert app_logging.LIBRARY_JSON_FORMATTER is JsonFormatter
+    assert logging_config.JsonFormatter is JsonFormatter
+    assert logging_config.LIBRARY_JSON_FORMATTER is JsonFormatter
 
-    source = Path(app_logging.__file__).read_text(encoding="utf-8")
+    source = Path(logging_config.__file__).read_text(encoding="utf-8")
     assert "from pythonjsonlogger.json import JsonFormatter" in source
 
 
@@ -412,13 +418,13 @@ def test_app_startup_configures_logging_from_the_conventional_module() -> None:
     import backend.api.main as main_module
 
     source = Path(main_module.__file__).read_text(encoding="utf-8")
-    assert "from backend.app_logging import" in source
+    assert "from backend.logging_config import" in source
     assert "configure_logging()" in source
 
 
 def test_logging_configuration_declares_both_formatters() -> None:
     """One formatter for our events, one for framework records."""
-    from backend.app_logging import get_logging_config
+    from backend.logging_config import get_logging_config
 
     config = get_logging_config()
     formatters = config["formatters"]
@@ -432,7 +438,7 @@ def test_configure_logging_is_idempotent() -> None:
     Duplicate handlers double every log line, which is the classic symptom of
     logging being configured in more than one place.
     """
-    from backend.app_logging import LOGGER, configure_logging
+    from backend.logging_config import LOGGER, configure_logging
 
     configure_logging()
     first = list(LOGGER.handlers)
@@ -442,7 +448,7 @@ def test_configure_logging_is_idempotent() -> None:
 
 def test_application_events_are_emitted_as_json(capsys) -> None:
     """An operator greps these, so they must parse as JSON."""
-    from backend.app_logging import configure_logging, log_event
+    from backend.logging_config import configure_logging, log_event
 
     configure_logging(force=True)
     log_event("health_probe_test", severity="info", details={"route": "/health"})
@@ -458,7 +464,7 @@ def test_application_events_are_emitted_as_json(capsys) -> None:
 
 def test_logged_events_keep_their_request_id() -> None:
     """Correlation is the whole point of the envelope."""
-    from backend.app_logging import build_event
+    from backend.logging_config import build_event
     from backend.services.request_context import reset_request_id, set_request_id
 
     token = set_request_id("req-health-123")
@@ -472,7 +478,7 @@ def test_logged_events_keep_their_request_id() -> None:
 
 def test_logged_events_still_redact_sensitive_details() -> None:
     """Redaction runs before emission, on both key name and value pattern."""
-    from backend.app_logging import build_event
+    from backend.logging_config import build_event
 
     event = build_event(
         "health_probe_test",
@@ -484,7 +490,7 @@ def test_logged_events_still_redact_sensitive_details() -> None:
 
 
 def test_log_level_environment_variable_is_honoured(monkeypatch) -> None:
-    from backend.app_logging import get_logging_config
+    from backend.logging_config import get_logging_config
 
     monkeypatch.setenv("NLCARE_LOG_LEVEL", "warning")
     assert get_logging_config()["loggers"]["nlcare.events"]["level"] == "WARNING"
@@ -496,7 +502,7 @@ def test_logging_config_does_not_seize_the_root_logger() -> None:
     It would also silently drop whatever handlers an embedding application had
     installed, which is why the root logger is only touched when it is unclaimed.
     """
-    from backend.app_logging import get_logging_config
+    from backend.logging_config import get_logging_config
 
     assert "root" not in get_logging_config()
 
@@ -604,3 +610,68 @@ def test_ready_still_owns_the_retrieval_verdict(client: TestClient) -> None:
 
     health = client.get("/health").json()
     assert "meets_deployment_requirement" not in json.dumps(health["rag_index"])
+
+
+# ─── conventional router registration ────────────────────────────────────────
+
+
+def test_health_is_served_by_the_conventional_router() -> None:
+    """`/health` lives in backend/api/routers/health.py, like every other route group.
+
+    It used to be decorated inline on the app object in main.py, which made it
+    the one route group a reader could not find where they would look for it.
+    """
+    from backend.api.routers import health as health_router
+
+    assert hasattr(health_router, "router")
+    handlers = {
+        route.path: route.endpoint
+        for route in app.routes
+        if getattr(route, "path", None) in ("/health", "/healthz", "/ready", "/readyz")
+    }
+    assert handlers["/health"].__module__ == health_router.__name__
+    assert handlers["/ready"].__module__ == health_router.__name__
+
+
+def test_main_registers_the_health_router_visibly() -> None:
+    """Registration is a literal `app.include_router(health.router)` line."""
+    import backend.api.main as main_module
+
+    source = Path(main_module.__file__).read_text(encoding="utf-8")
+    assert "app.include_router(health.router)" in source
+
+
+def test_exactly_one_health_route_is_registered() -> None:
+    """Two GET /health routes would let the answers drift apart silently.
+
+    Moving the route to a router is only safe if the inline one is gone, so the
+    count is asserted rather than assumed.
+    """
+    from collections import Counter
+
+    registrations = Counter(
+        route.path
+        for route in app.routes
+        if getattr(route, "path", None) in ("/health", "/healthz", "/ready", "/readyz")
+        and "GET" in getattr(route, "methods", set())
+    )
+    assert registrations["/health"] == 1, f"/health registered {registrations['/health']} times"
+    assert registrations["/ready"] == 1
+    assert registrations["/healthz"] == 1
+    assert registrations["/readyz"] == 1
+
+
+def test_health_and_healthz_share_one_handler() -> None:
+    handlers = {
+        route.path: route.endpoint
+        for route in app.routes
+        if getattr(route, "path", None) in ("/health", "/healthz")
+    }
+    assert handlers["/health"] is handlers["/healthz"]
+
+
+def test_health_status_is_ok_and_two_hundred(client: TestClient) -> None:
+    """The plainest statement of the contract, kept greppable."""
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
