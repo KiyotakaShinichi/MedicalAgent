@@ -4,6 +4,68 @@
  */
 
 export interface paths {
+    "/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Liveness probe
+         * @description Liveness probe. Returns 200 whenever the process can serve requests.
+         *
+         *     Reports `status`, `service`, `version`, database reachability, and whether
+         *     the retrieval index is loaded in this process. The dependency fields are
+         *     informational — see the module docstring for why a dead database still
+         *     returns 200 here and 503 on `/ready`.
+         *
+         *     `/healthz` is an unlisted alias for orchestrators probing the
+         *     Kubernetes-conventional path. It shares this handler, so the two answers
+         *     cannot drift apart.
+         */
+        get: operations["getHealth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ready": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Readiness probe
+         * @description Runtime readiness probe for engineering deployments.
+         *
+         *     Checks database reachability, retrieval-index availability, and — only when
+         *     shared rate limiting is enabled — Redis. Each probe is bounded, and a
+         *     failing probe reports its exception *class name* only, never the message,
+         *     which can carry connection strings or filesystem paths.
+         *
+         *     Returns 503 when any required dependency is not ready, so a load balancer
+         *     can drain the instance without restarting it.
+         *
+         *     This reports deployment posture. It does not imply healthcare production
+         *     readiness or clinical validation.
+         *
+         *     `/readyz` is an unlisted alias for the Kubernetes-conventional path.
+         */
+        get: operations["getReady"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/demo-login": {
         parameters: {
             query?: never;
@@ -3238,85 +3300,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Liveness probe
-         * @description Liveness probe. Returns 200 whenever the process can serve requests.
-         *
-         *     Reports `status`, `service`, `version`, database reachability, and whether
-         *     the retrieval index is loaded in this process.
-         *
-         *     The database result is **informational**. This endpoint returns 200 for a
-         *     live process even when the database is unreachable, and `status` stays
-         *     `ok`: an orchestrator uses liveness to decide whether to *restart* the
-         *     process, and restarting it cannot repair a database. Letting a dependency
-         *     failure fail this probe is what turns a degraded database into a
-         *     cluster-wide restart loop. `/ready` remains the authoritative, fail-closed
-         *     signal that decides whether traffic should be routed here, and it is the
-         *     one that returns 503.
-         *
-         *     The probe itself is bounded (see `LIVENESS_DATABASE_PROBE_TIMEOUT_SECONDS`)
-         *     because a liveness probe that *hangs* is a restart vector too. It reports
-         *     an exception class name at most - never a message, host, or connection
-         *     string, since this route is unauthenticated.
-         *
-         *     The retrieval field is informational on the same terms, and is read from
-         *     in-process cache counters: answering this probe never loads or builds an
-         *     index, because an orchestrator polling every few seconds must not be able
-         *     to trigger the most expensive work the service does. `loaded: false` is
-         *     normal for a replica that has not served a query yet.
-         *
-         *     `/healthz` is an unlisted alias for orchestrators that probe the
-         *     Kubernetes-conventional path.
-         */
-        get: operations["getHealth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ready": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Readiness probe
-         * @description Runtime readiness probe for engineering deployments.
-         *
-         *     Checks database reachability, retrieval-index availability, and — only
-         *     when shared rate limiting is enabled — Redis. Each probe is bounded, and a
-         *     failing probe reports its exception *class name* only, never the message,
-         *     which can carry connection strings or filesystem paths.
-         *
-         *     Returns 503 when any required dependency is not ready, so a load balancer
-         *     can drain the instance without restarting it.
-         *
-         *     This reports deployment posture. It does not imply healthcare production
-         *     readiness or clinical validation.
-         *
-         *     `/readyz` is an unlisted alias for the Kubernetes-conventional path.
-         */
-        get: operations["getReady"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -4124,18 +4107,34 @@ export interface components {
             /** Notes */
             notes?: string | null;
         };
-        /** MyLabCreate */
+        /**
+         * MyLabCreate
+         * @description Patient-entered CBC record.
+         *
+         *     The numeric bounds are the demo-data constraints from `CBC_LIMITS`, not
+         *     clinical reference ranges. A value inside them can still be clinically
+         *     alarming, which is what the warnings from `validate_cbc_values` are for.
+         */
         MyLabCreate: {
             /**
              * Date
              * Format: date
              */
             date: string;
-            /** Wbc */
+            /**
+             * Wbc
+             * @description White blood cells, 10^9/L.
+             */
             wbc: number;
-            /** Hemoglobin */
+            /**
+             * Hemoglobin
+             * @description Haemoglobin, g/dL.
+             */
             hemoglobin: number;
-            /** Platelets */
+            /**
+             * Platelets
+             * @description Platelets, 10^9/L.
+             */
             platelets: number;
             /** Anc */
             anc?: number | null;
@@ -4162,16 +4161,25 @@ export interface components {
             /** Notes */
             notes?: string | null;
         };
-        /** MySymptomCreate */
+        /**
+         * MySymptomCreate
+         * @description Patient-entered symptom record.
+         */
         MySymptomCreate: {
             /**
              * Date
              * Format: date
              */
             date: string;
-            /** Symptom */
+            /**
+             * Symptom
+             * @description Short free-text symptom label.
+             */
             symptom: string;
-            /** Severity */
+            /**
+             * Severity
+             * @description Patient-reported severity, 0-10 inclusive.
+             */
             severity: number;
             /** Notes */
             notes?: string | null;
@@ -4204,9 +4212,15 @@ export interface components {
             /** Slug */
             slug?: string | null;
         };
-        /** PatientChatRequest */
+        /**
+         * PatientChatRequest
+         * @description A single patient message to the support agent.
+         */
         PatientChatRequest: {
-            /** Message */
+            /**
+             * Message
+             * @description Patient message text.
+             */
             message: string;
         };
         /** PatientCreate */
@@ -4472,6 +4486,55 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getHealth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Process is alive and able to serve requests. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LivenessResponse"];
+                };
+            };
+        };
+    };
+    getReady: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Every required dependency answered its probe. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadinessResponse"];
+                };
+            };
+            /** @description At least one required dependency is not ready. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadinessResponse"];
+                };
+            };
+        };
+    };
     demo_login_auth_demo_login_post: {
         parameters: {
             query?: never;
@@ -11567,55 +11630,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    getHealth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Process is alive and able to serve requests. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LivenessResponse"];
-                };
-            };
-        };
-    };
-    getReady: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Every required dependency answered its probe. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReadinessResponse"];
-                };
-            };
-            /** @description At least one required dependency is not ready. */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ReadinessResponse"];
                 };
             };
         };
