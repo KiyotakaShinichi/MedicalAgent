@@ -79,6 +79,24 @@ jobs:
         working-directory: frontend-react
         run: npx playwright install --with-deps chromium
 
+      # ship.py's first step is the breast-monitoring suite, which retrieves
+      # against the RAG index and chunk artifact. Both are gitignored and
+      # rebuilt from tracked inputs under KnowledgeBase/raw, so on a fresh
+      # runner they are simply absent: retrieval scored 19 candidates, the tier
+      # filter dropped all 19 for want of ingested chunks, and two tests failed
+      # on empty retrieval rather than on anything they were testing.
+      #
+      # This is the same script quality-gates runs and that bootstrap.py runs
+      # for the fresh-clone job, invoked the same way, including the
+      # `--check-only` pass that turns "generated nothing" into a failure here
+      # rather than a confusing test failure later. Offline: it reads tracked
+      # files and writes gitignored ones.
+      - name: Provision derived offline artifacts
+        run: |
+          mkdir -p Data/test_tmp
+          uv run python scripts/provision_derived_artifacts.py
+          uv run python scripts/provision_derived_artifacts.py --check-only
+
       # Data/test_tmp is gitignored, so it does not exist on a fresh runner, and
       # DATABASE_URL points the ship database inside it. SQLite does not create
       # missing parents; it fails the connection outright, which took the gate
