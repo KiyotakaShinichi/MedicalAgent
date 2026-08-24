@@ -1,10 +1,36 @@
-"""Pydantic request contracts for patient-facing and clinician patient routes."""
+"""Pydantic request contracts for patient-facing and clinician patient routes.
+
+Field constraints here are the structural boundary: length, numeric range, and
+type. They are enforced before any handler runs, so a request that violates one
+is rejected with a 422 and never reaches business logic.
+
+The bounds are imported from :mod:`backend.services.input_validation` rather
+than written out again. That module enforces the same limits for callers who
+never send a request body - the support agent constructs symptom and lab
+records from a conversation - and two copies of the numbers would eventually
+disagree. One declaration, two enforcement points appropriate to their layers.
+
+What deliberately stays in that module: cross-field coherence and the
+*warnings* it returns for values that are inside the accepted range but still
+merit clinician review. Pydantic cannot express "accept this but flag it", and
+folding clinical judgement into a request schema would put it in the wrong
+layer.
+"""
 
 from __future__ import annotations
 
 from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
+
+from backend.services.input_validation import (
+    CBC_LIMITS,
+    CHAT_MESSAGE_MAX_LENGTH,
+    NOTES_MAX_LENGTH,
+    SEVERITY_MAX,
+    SEVERITY_MIN,
+    SYMPTOM_MAX_LENGTH,
+)
 
 
 class PatientCreate(BaseModel):
@@ -43,22 +69,60 @@ class SymptomCreate(BaseModel):
 
 
 class MySymptomCreate(BaseModel):
+    """Patient-entered symptom record."""
+
     date: date
-    symptom: str
-    severity: int
-    notes: str | None = None
-    duration: str | None = None
+    symptom: str = Field(
+        min_length=1,
+        max_length=SYMPTOM_MAX_LENGTH,
+        description="Short free-text symptom label.",
+    )
+    severity: int = Field(
+        ge=SEVERITY_MIN,
+        le=SEVERITY_MAX,
+        description=f"Patient-reported severity, {SEVERITY_MIN}-{SEVERITY_MAX} inclusive.",
+    )
+    notes: str | None = Field(default=None, max_length=NOTES_MAX_LENGTH)
+    duration: str | None = Field(default=None, max_length=NOTES_MAX_LENGTH)
     urgent_flag: bool = False
+
+    @field_validator("symptom")
+    @classmethod
+    def _symptom_must_not_be_blank(cls, value: str) -> str:
+        """A whitespace-only label passes min_length but records nothing."""
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("symptom is required.")
+        return cleaned
 
 
 class MyLabCreate(BaseModel):
+    """Patient-entered CBC record.
+
+    The numeric bounds are the demo-data constraints from `CBC_LIMITS`, not
+    clinical reference ranges. A value inside them can still be clinically
+    alarming, which is what the warnings from `validate_cbc_values` are for.
+    """
+
     date: date
-    wbc: float
-    hemoglobin: float
-    platelets: float
-    anc: float | None = None
-    lab_source: str | None = None
-    notes: str | None = None
+    wbc: float = Field(
+        ge=CBC_LIMITS["wbc"]["min"],
+        le=CBC_LIMITS["wbc"]["max"],
+        description=f"White blood cells, {CBC_LIMITS['wbc']['unit']}.",
+    )
+    hemoglobin: float = Field(
+        ge=CBC_LIMITS["hemoglobin"]["min"],
+        le=CBC_LIMITS["hemoglobin"]["max"],
+        description=f"Haemoglobin, {CBC_LIMITS['hemoglobin']['unit']}.",
+    )
+    platelets: float = Field(
+        ge=CBC_LIMITS["platelets"]["min"],
+        le=CBC_LIMITS["platelets"]["max"],
+        description=f"Platelets, {CBC_LIMITS['platelets']['unit']}.",
+    )
+    anc: float | None = Field(default=None, ge=0.0)
+    lab_source: str | None = Field(default=None, max_length=NOTES_MAX_LENGTH)
+    notes: str | None = Field(default=None, max_length=NOTES_MAX_LENGTH)
 
 
 class MyImagingReportCreate(BaseModel):
@@ -112,7 +176,22 @@ class MRIRegistryCreate(BaseModel):
 
 
 class PatientChatRequest(BaseModel):
-    message: str
+    """A single patient message to the support agent."""
+
+    message: str = Field(
+        min_length=1,
+        max_length=CHAT_MESSAGE_MAX_LENGTH,
+        description="Patient message text.",
+    )
+
+    @field_validator("message")
+    @classmethod
+    def _message_must_not_be_blank(cls, value: str) -> str:
+        """Whitespace is not a question; reject it at the boundary."""
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("message is required.")
+        return cleaned
 
 
 class AgentFeedbackRequest(BaseModel):

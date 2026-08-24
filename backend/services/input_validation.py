@@ -1,3 +1,35 @@
+"""Domain validation for patient-entered records.
+
+These bounds are enforced at two layers, on purpose:
+
+* :mod:`backend.api.schemas.patient` declares them as Pydantic field
+  constraints, so an HTTP request that violates one is rejected at the boundary
+  with a 422 before any handler code runs;
+* the ``validate_*`` functions below enforce the same bounds for callers that
+  never pass through a request body - notably the support agent's record-write
+  actions, which construct records from a conversation.
+
+That is why both layers exist. To stop them drifting into two different answers,
+the bounds themselves are declared once here, as the constants below, and the
+schema imports them rather than repeating the numbers.
+
+The functions also return *warnings* - values inside the accepted range that a
+clinician should still look at. Pydantic cannot express that, and it is not a
+rejection, so it stays here.
+"""
+
+# ─── bounds, declared once and shared with the Pydantic schemas ──────────────
+
+#: Free-text symptom label.
+SYMPTOM_MAX_LENGTH = 80
+#: Patient-reported severity, inclusive.
+SEVERITY_MIN = 0
+SEVERITY_MAX = 10
+#: Free-text notes attached to a symptom record.
+NOTES_MAX_LENGTH = 800
+#: A single chat message.
+CHAT_MESSAGE_MAX_LENGTH = 3000
+
 CBC_LIMITS = {
     "wbc": {
         "min": 0.1,
@@ -55,12 +87,14 @@ def validate_cbc_values(wbc, hemoglobin, platelets):
 
 
 def validate_symptom_payload(symptom, severity, notes=None):
-    _require_text("symptom", symptom, max_length=80)
+    _require_text("symptom", symptom, max_length=SYMPTOM_MAX_LENGTH)
     if not isinstance(severity, int):
-        raise ValueError("severity must be an integer between 0 and 10.")
-    if severity < 0 or severity > 10:
-        raise ValueError("severity must be between 0 and 10.")
-    _optional_text("notes", notes, max_length=800)
+        raise ValueError(
+            f"severity must be an integer between {SEVERITY_MIN} and {SEVERITY_MAX}."
+        )
+    if severity < SEVERITY_MIN or severity > SEVERITY_MAX:
+        raise ValueError(f"severity must be between {SEVERITY_MIN} and {SEVERITY_MAX}.")
+    _optional_text("notes", notes, max_length=NOTES_MAX_LENGTH)
     warnings = []
     if severity >= 8:
         warnings.append({
@@ -102,7 +136,7 @@ def validate_patient_payload(patient_id, name):
 
 
 def validate_chat_message(message):
-    _require_text("message", message, max_length=3000)
+    _require_text("message", message, max_length=CHAT_MESSAGE_MAX_LENGTH)
 
 
 def validation_error_payload(error, route=None):
