@@ -70,6 +70,15 @@ jobs:
         working-directory: frontend-react
         run: npm ci
 
+      # `npm ci` installs @playwright/test, which contains no browsers, and this
+      # project declares no postinstall hook. ship.py runs the Playwright smoke,
+      # so without this the gate fails on a missing executable rather than on a
+      # real regression. `--with-deps` because the runner is Ubuntu and the
+      # browser needs system libraries the image does not carry.
+      - name: Provision Playwright browser
+        working-directory: frontend-react
+        run: npx playwright install --with-deps chromium
+
       - name: Run cross-platform ship gate
         run: uv run python scripts/ship.py
 

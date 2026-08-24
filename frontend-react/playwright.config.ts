@@ -13,7 +13,12 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: ".\\.venv\\Scripts\\python.exe scripts\\run_playwright_backend.py",
+      // `uv run` resolves the project interpreter on whichever platform is
+      // running. The previous form hardcoded `.venv/Scripts/python.exe`,
+      // which exists only on Windows; on the Linux CI runner a POSIX shell
+      // read its backslashes as escapes and reported command not found, so
+      // the gate failed before any browser started.
+      command: "uv run python scripts/run_playwright_backend.py",
       cwd: "..",
       url: "http://127.0.0.1:8117/health",
       reuseExistingServer: false,
