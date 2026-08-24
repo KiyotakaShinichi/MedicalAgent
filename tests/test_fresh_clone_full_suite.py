@@ -168,8 +168,11 @@ def test_ci_runs_this_verifier_in_full_suite_mode() -> None:
     stop running and nothing would notice — the suite would still be green.
     """
     workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    assert "check_fresh_clone_offline.py" in workflow
-    assert "--full-suite" in workflow
+    smoke = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
+    # CI runs the smoke script; the script runs the verifier in full-suite mode.
+    assert "verify_fresh_clone.sh" in workflow
+    assert "check_fresh_clone_offline.py" in smoke
+    assert "--full-suite" in smoke
 
 
 def test_coverage_floor_is_sixty() -> None:
@@ -238,9 +241,9 @@ def test_the_ci_supplied_command_passes_validation() -> None:
     """The command in the workflow must be one the verifier accepts."""
     import shlex
 
-    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    match = re.search(r'--pytest-command "([^"]+)"', workflow)
-    assert match, "CI no longer states the pytest command explicitly"
+    smoke = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
+    match = re.search(r'--pytest-command "([^"]+)"', smoke)
+    assert match, "the smoke script no longer states the pytest command explicitly"
 
     from scripts.check_fresh_clone_offline import _assert_command_is_a_full_suite_run
 
@@ -249,19 +252,20 @@ def test_the_ci_supplied_command_passes_validation() -> None:
 
 def test_ci_states_the_pytest_invocation_literally() -> None:
     """A reader of the workflow can see which tests run, without following code."""
-    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    assert "pytest tests" in workflow, (
-        "the authoritative test command is no longer visible in the workflow"
+    smoke = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
+    assert "pytest tests" in smoke, (
+        "the authoritative test command is no longer visible in the smoke script"
     )
-    assert "--cov-fail-under=60" in workflow
+    assert "--cov-fail-under=60" in smoke
 
 
 def test_tests_still_run_exactly_once() -> None:
     """Visibility must not have been bought with a duplicate full-suite run."""
+    smoke = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
     workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    full_suite_runs = workflow.count("pytest tests ")
-    assert full_suite_runs == 1, (
-        f"the full suite appears to be invoked {full_suite_runs} times; it must run once"
+    assert smoke.count("--pytest-command") == 1
+    assert workflow.count("verify_fresh_clone.sh") == 1, (
+        "the smoke script is invoked more than once; the full suite must run once"
     )
 
 
@@ -277,8 +281,8 @@ def test_supplied_command_runs_on_the_current_interpreter() -> None:
     import shlex
     import subprocess
 
-    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    match = re.search(r'--pytest-command "([^"]+)"', workflow)
+    smoke = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
+    match = re.search(r'--pytest-command "([^"]+)"', smoke)
     assert match
     assert shlex.split(match.group(1))[0] == "python", (
         "the workflow should read naturally; the verifier substitutes the interpreter"

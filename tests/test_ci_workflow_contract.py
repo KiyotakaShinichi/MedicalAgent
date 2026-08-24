@@ -61,8 +61,11 @@ REQUIRED_INVOCATIONS = [
     # strips live credentials, refuses the network opt-out, and fails on any
     # skip caused by a missing network or credential. Running both would mean
     # executing the whole suite twice, so this is the single authoritative run.
-    ("backend full offline suite", ("check_fresh_clone_offline.py",)),
-    ("backend full-suite mode", ("--full-suite",)),
+    # The full suite runs through scripts/verify_fresh_clone.sh, which invokes
+    # check_fresh_clone_offline.py --full-suite, which runs the pytest command
+    # printed in the script. One execution; the workflow names the script and
+    # the script names the command.
+    ("backend fresh-clone smoke", ("verify_fresh_clone.sh",)),
     ("frontend lint", ("npm run lint",)),
     ("frontend typecheck", ("npm run typecheck",)),
     ("frontend tests/coverage", ("npm run test:coverage",)),
@@ -108,6 +111,9 @@ def test_backend_coverage_floor_is_not_lowered() -> None:
     assert FULL_SUITE_MIN_COVERAGE == 60, (
         "the enforced backend coverage floor is no longer 60"
     )
+    smoke = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
+    assert "--cov-fail-under=60" in smoke, "the smoke script no longer states the floor"
+
     verifier = (ROOT / "scripts" / "check_fresh_clone_offline.py").read_text(encoding="utf-8")
     assert 'f"--cov-fail-under={FULL_SUITE_MIN_COVERAGE}"' in verifier, (
         "the coverage floor constant is no longer passed to pytest"
@@ -165,7 +171,7 @@ def test_downstream_jobs_depend_on_the_gates() -> None:
     """Later jobs must not run when the gates failed."""
     jobs = _workflow()["jobs"]
     needs = jobs["quality-gates"].get("needs") or []
-    for required in ("static-quality", "full-offline-tests", "dependency-audit"):
+    for required in ("static-quality", "fresh-clone-smoke", "dependency-audit"):
         assert required in needs, f"quality-gates does not wait for {required}"
     assert "quality-gates" in (jobs["docker-build"].get("needs") or [])
 
@@ -205,3 +211,114 @@ def test_environment_is_built_from_the_frozen_lockfile() -> None:
     assert "uv sync" not in runs.replace("uv sync --frozen", ""), (
         "an unfrozen `uv sync` would let CI resolve versions the lockfile does not pin"
     )
+
+
+# ─── the quality commands are literally visible ──────────────────────────────
+#
+# External scanners and new contributors both read the workflow to find out how
+# a project is checked. A command hidden inside a wrapper script is invisible to
+# the first and unfindable by the second, so the literal invocations are
+# asserted here — without adding a second execution of anything.
+
+LITERAL_COMMANDS = [
+    ("ruff", "ruff check backend scripts tests"),
+    ("mypy", "mypy"),
+    ("frontend lint", "npm run lint"),
+    ("frontend typecheck", "npm run typecheck"),
+    ("frontend unit tests", "npm run test"),
+    ("frontend build", "npm run build"),
+    ("backend pytest", "python -m pytest"),
+]
+
+
+@pytest.mark.parametrize("label,command", LITERAL_COMMANDS)
+def test_quality_command_is_literally_present(label: str, command: str) -> None:
+    assert command in _run_blocks(), (
+        f"the {label} command is no longer visible as literal text in a workflow "
+        f"run block; expected {command!r}"
+    )
+
+
+def test_the_fresh_clone_smoke_job_exists() -> None:
+    """A clean-checkout job, distinct from the caches every other job uses."""
+    jobs = _workflow()["jobs"]
+    assert "fresh-clone-smoke" in jobs, "the fresh-clone smoke job is missing"
+
+
+def test_the_smoke_job_does_not_restore_dependency_caches() -> None:
+    """Restoring .venv or node_modules would make it not a fresh clone.
+
+    The Hugging Face model cache is deliberately allowed: the safety encoder is
+    a 480 MB download, not a project dependency, and the job provisions it when
+    absent.
+    """
+    job = _workflow()["jobs"]["fresh-clone-smoke"]
+    for step in job["steps"]:
+        cache_path = str((step.get("with") or {}).get("path") or "")
+        if "cache" in str(step.get("uses") or ""):
+            assert "node_modules" not in cache_path, "node_modules restored into the smoke job"
+            assert ".venv" not in cache_path, "the virtualenv was restored into the smoke job"
+
+
+def test_the_smoke_job_runs_the_smoke_script() -> None:
+    job = _workflow()["jobs"]["fresh-clone-smoke"]
+    runs = "\n".join(str(step.get("run") or "") for step in job["steps"])
+    assert "verify_fresh_clone.sh" in runs
+
+
+def test_the_smoke_script_covers_the_whole_sequence() -> None:
+    """Bootstrap, backend suite, frontend build, and an unambiguous verdict."""
+    script = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
+    for token in (
+        "scripts/bootstrap.py --with-frontend",
+        "pytest tests",
+        "--cov=backend",
+        "--cov-fail-under=60",
+        "npm ci",
+        "npm run build",
+        "FRESH CLONE OK",
+    ):
+        assert token in script, f"the smoke script no longer runs {token!r}"
+
+
+def test_the_smoke_script_fails_fast() -> None:
+    """Without `set -e` a failing step would still reach FRESH CLONE OK."""
+    script = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
+    assert "set -eu" in script
+
+
+def test_the_full_suite_runs_exactly_once_in_ci() -> None:
+    """Visibility must not be bought with a duplicate 55-minute run."""
+    runs = _run_blocks()
+    assert runs.count("verify_fresh_clone.sh") == 1
+    assert runs.count("--full-suite") == 0, (
+        "the verifier's full-suite mode is invoked directly as well as through "
+        "the smoke script; that would run the whole suite twice"
+    )
+
+
+# ─── the ML regression gate ──────────────────────────────────────────────────
+
+
+def test_the_ml_regression_job_exists() -> None:
+    assert "ml-regression" in _workflow()["jobs"]
+
+
+def test_ml_regression_runs_deterministic_suites_only() -> None:
+    """No training, no model download, no network — it must stay fast and fixed."""
+    job = _workflow()["jobs"]["ml-regression"]
+    runs = "\n".join(str(step.get("run") or "") for step in job["steps"])
+
+    assert "python -m pytest" in runs
+    assert "test_synthetic_model_perturbation" in runs
+    assert job["env"]["HF_HUB_OFFLINE"] == "1", "the ML job must not download models"
+    assert job["env"]["TRANSFORMERS_OFFLINE"] == "1"
+
+
+def test_ml_regression_asserts_real_metrics() -> None:
+    """A job that ran no metric assertions would be a green light for nothing."""
+    suite = (ROOT / "tests" / "test_synthetic_model_perturbation_modules.py").read_text(
+        encoding="utf-8"
+    )
+    assert "SEED" in suite and "REPEATED_SPLIT_SEEDS" in suite
+    assert "classification_auroc" in suite, "no metric threshold is exercised"
