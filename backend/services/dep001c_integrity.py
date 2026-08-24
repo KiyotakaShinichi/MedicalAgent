@@ -246,24 +246,72 @@ def _process_records_procfs() -> list[dict[str, Any]]:
     return rows
 
 
+def _windows_pid_is_alive(pid: int) -> bool:
+    """Ask the kernel directly whether a PID is running.
+
+    `ctypes.wintypes` does not import off Windows, so it is loaded here rather
+    than at module scope.
+    """
+    import ctypes
+    from ctypes import wintypes
+
+    PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+    ERROR_INVALID_PARAMETER = 87
+    STILL_ACTIVE = 259
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    # Without explicit restypes ctypes truncates a 64-bit HANDLE to int.
+    kernel32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+    kernel32.OpenProcess.restype = wintypes.HANDLE
+    kernel32.GetExitCodeProcess.argtypes = (wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD))
+    kernel32.GetExitCodeProcess.restype = wintypes.BOOL
+    kernel32.CloseHandle.argtypes = (wintypes.HANDLE,)
+    kernel32.CloseHandle.restype = wintypes.BOOL
+
+    handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+    if not handle:
+        # "No such PID" is the only definite no. Access denied means the
+        # process is running under an account we may not open - still running.
+        return ctypes.get_last_error() != ERROR_INVALID_PARAMETER
+    try:
+        exit_code = wintypes.DWORD()
+        if not kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code)):
+            return True
+        return exit_code.value == STILL_ACTIVE
+    finally:
+        kernel32.CloseHandle(handle)
+
+
 def pid_is_alive(pid: int) -> bool:
+    """Is a process with this PID running right now?
+
+    This is asked of the PID written into an existing evaluation lock, to tell
+    a lock held by a live run (refuse to proceed) from one left behind by a
+    crashed run (recover it as stale). The permissive answer is the dangerous
+    one: reporting a live evaluation as dead lets a second run steal its lock
+    and overwrite evidence mid-flight. So every uncertain case here resolves to
+    "alive", and only a positive "no such process" counts as dead.
+
+    Windows asks the kernel through OpenProcess instead of shelling out to
+    PowerShell. The subprocess it replaces cost ~1.8s per probe on an idle
+    machine and, under the load of a full test suite, consistently blew its own
+    10s timeout - raising TimeoutExpired out of lock acquisition rather than
+    returning an answer at all.
+    """
     if pid <= 0:
         return False
     if os.name == "nt":
-        command = f"if (Get-Process -Id {pid} -ErrorAction SilentlyContinue) {{ 'alive' }}"
-        completed = subprocess.run(
-            ["powershell", "-NoProfile", "-Command", command],
-            capture_output=True,
-            text=True,
-            timeout=10,
-            check=False,
-        )
-        return "alive" in completed.stdout
+        return _windows_pid_is_alive(pid)
     try:
         os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        # It exists; it is simply owned by another user.
         return True
     except OSError:
-        return False
+        return True
+    return True
 
 
 @dataclass
