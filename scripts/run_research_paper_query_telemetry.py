@@ -32,6 +32,17 @@ def main() -> int:
         failures_path=args.failures_output,
         allow_provider=args.allow_provider,
     )
+    if not report.get("evaluated", True):
+        print(
+            "Research-paper query telemetry: "
+            f"{report['status'].upper()} - {report['reason']}"
+        )
+        print(
+            "  no queries were issued; running this probe without the corpus "
+            "would report retrieval misses as a measurement."
+        )
+        return 0
+
     print(json.dumps({
         "status": report["status"],
         "query_count": report["query_count"],

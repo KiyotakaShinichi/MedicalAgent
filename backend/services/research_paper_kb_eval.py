@@ -8,13 +8,11 @@ not evaluate clinical correctness.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 import random
 import re
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
 from pathlib import Path
 from statistics import median
 from typing import Any, Iterable
@@ -29,6 +27,15 @@ from backend.services.rag_baseline_comparison import (
     _retrieve_for_config,
 )
 
+
+from backend.services.research_paper_corpus import (
+    load_evidence_json as _load_json,
+    not_evaluated_reports_if_absent,
+    relative_to_root as _relative,
+    sha256_file as _sha256,
+    utc_now as _now,
+    write_evidence_json as _write_json,
+)
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 KB_PATH = ROOT_DIR / "Data/rag_knowledge_base_chunks.json"
@@ -68,6 +75,15 @@ def run_research_paper_kb_eval(
     kb_path = Path(kb_path)
     manifest_path = Path(manifest_path)
     cases_path = Path(cases_path)
+
+    # Optional licence-restricted corpus: absent means "not evaluated", while a
+    # corpus that is present but broken raises out of here instead.
+    skipped = not_evaluated_reports_if_absent(
+        manifest_path, Path(audit_path), Path(eval_path), Path(failures_path)
+    )
+    if skipped is not None:
+        return skipped
+
     build_kb_source_governance(kb_chunks_path=str(kb_path))
 
     raw_chunks = _load_json(kb_path).get("chunks") or []
@@ -632,13 +648,6 @@ def _load_cases(path: Path) -> list[dict[str, Any]]:
     return cases
 
 
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
 def _mean(values: Iterable[float | bool | None]) -> float:
@@ -656,19 +665,6 @@ def _percentile(values: list[float], percentile: int) -> float:
     return round(ordered[index], 3)
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _relative(path: Path) -> str:
-    try:
-        return path.resolve().relative_to(ROOT_DIR).as_posix()
-    except ValueError:
-        return str(path)
-
-
-def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
 
 
 __all__ = ["build_research_paper_kb_audit", "run_research_paper_kb_eval"]

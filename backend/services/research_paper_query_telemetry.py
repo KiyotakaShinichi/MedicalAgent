@@ -20,6 +20,11 @@ from time import perf_counter
 from typing import Any, Iterable
 
 
+from backend.services.research_paper_corpus import (
+    inspect_research_paper_corpus,
+    not_evaluated_artifact,
+)
+
 ROOT_DIR = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT_PATH = ROOT_DIR / "Data/evals/rag/latest_research_paper_query_telemetry.json"
 DEFAULT_FAILURES_PATH = ROOT_DIR / "Data/evals/rag/latest_research_paper_query_telemetry_failures.json"
@@ -82,6 +87,19 @@ def run_research_paper_query_telemetry(
     cases: Iterable[dict[str, Any]] = QUERY_CASES,
     allow_provider: bool = False,
 ) -> dict[str, Any]:
+    # Unlike the KB evaluation this probe never reads the manifest, so without
+    # the corpus it does not crash - it quietly measures retrieval against a
+    # knowledge base containing no research papers and reports the misses as
+    # though they were a finding. That is the more misleading of the two
+    # failure modes, so it gets the same preflight.
+    inspection = inspect_research_paper_corpus()
+    if inspection.absent:
+        return _not_evaluated_telemetry(
+            inspection,
+            output_path=Path(output_path),
+            failures_path=Path(failures_path),
+        )
+
     if not allow_provider:
         os.environ["ONCOTRACK_FAST_MODE"] = "true"
         os.environ["LLM_JUDGE_ENABLED"] = "false"
@@ -325,3 +343,27 @@ __all__ = [
     "QUERY_CASES",
     "run_research_paper_query_telemetry",
 ]
+
+
+def _not_evaluated_telemetry(
+    inspection,
+    *,
+    output_path: Path,
+    failures_path: Path,
+) -> dict[str, Any]:
+    """Report no telemetry rather than telemetry gathered without the corpus."""
+    payload = not_evaluated_artifact(
+        schema_version="research_paper_query_telemetry_v1",
+        inspection=inspection,
+        query_count=None,
+        internal_vs_external_authored="internal",
+    )
+    failures = not_evaluated_artifact(
+        schema_version="research_paper_query_telemetry_failures_v1",
+        inspection=inspection,
+        failure_count=None,
+        failures=None,
+    )
+    _write_json(output_path, payload)
+    _write_json(failures_path, failures)
+    return payload

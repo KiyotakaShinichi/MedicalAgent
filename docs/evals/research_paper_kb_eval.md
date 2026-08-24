@@ -10,6 +10,50 @@ retrieval, source-tier enforcement, and unsafe-premise handling.
 It does **not** evaluate clinical correctness, completeness of the medical
 literature, real-patient safety, or clinical validation.
 
+## Corpus availability, and what a run without it means
+
+The paper corpus is **optional and local**. Full text lives under
+`KnowledgeBase/raw/research_papers/`, which is gitignored: the 21 papers carry
+mixed licences (CC BY, CC BY-NC, CC BY-NC-ND, and two with no usable
+redistribution permission), so the text is deliberately never committed. A
+fresh clone therefore does not have the corpus and does not try to acquire it -
+the default Ship run stays offline and never downloads papers. Acquiring them is
+an explicit maintainer step.
+
+Being permitted to *read* a paper through an open-access route is not the same
+as being permitted to *redistribute* it. Source selection and copyright
+clearance are separate questions, and only the first was settled when these
+papers were chosen.
+
+Runs therefore fall into three cases, and they are kept distinct on purpose:
+
+| Corpus | Result |
+| --- | --- |
+| present and complete | the real evaluation runs, exactly as described below |
+| absent | `status: not_evaluated_optional_corpus`, `evaluated: false`, no metrics; Ship continues |
+| present but incomplete or malformed | the step fails closed |
+
+An absent corpus is **not** a pass. The artifact records that no evaluation
+happened rather than reporting zeros, because a zero recall reads as a measured
+result. That status is deliberately absent from every `accepted_status` list in
+`config/release_gate_thresholds.yaml`; since all five research-paper artifacts
+are already `required: false`, it surfaces as a warning instead of blocking the
+release gate.
+
+The five artifacts are also **overwritten** on a no-corpus run. They are tracked
+files holding the previous run's numbers, so leaving them in place would let the
+release gate read month-old retrieval metrics as though this run had produced
+them.
+
+A half-built corpus - a manifest referencing files that are not there, an
+unparseable manifest, or papers with no manifest - is treated as a failure, not
+as absence. Collapsing those into "unavailable" would turn a corrupted corpus
+into a green run.
+
+The synthetic fixtures used by the test suite are test-only. They exist to
+exercise the absent/invalid branches and are never evidence for the 21-paper,
+44-case benchmark.
+
 ## Current corpus
 
 The research-paper manifest contains 21 PubMed Central papers selected through
@@ -41,6 +85,11 @@ The cases were authored from the evaluated KB. They are marked
 `was_used_for_tuning: false`, and this pass must not tune retrieval against
 their failures. They are still **internal corpus-derived cases**, not an
 independent holdout.
+
+Any 21-paper / 44-case numbers quoted in this repository are results from a
+**local maintainer run with the corpus present**. They are historical evidence,
+not something every Ship reproduces: a checkout without the corpus records
+`not_evaluated_optional_corpus` and produces no metrics at all.
 
 ## Compared retrieval configurations
 

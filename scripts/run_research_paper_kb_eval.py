@@ -14,6 +14,21 @@ if __name__ == "__main__":
     reports = run_research_paper_kb_eval()
     audit = reports["audit"]
     evaluation = reports["evaluation"]
+
+    if not evaluation.get("evaluated", True):
+        # The optional corpus is not here. Say so loudly and exit clean: the
+        # five research-paper artifacts are `required: false`, so the release
+        # gate treats a non-result as a warning rather than a blocker.
+        print(
+            "Research-paper KB evaluation: "
+            f"{evaluation['status'].upper()} - {evaluation['reason']}"
+        )
+        print(
+            "  no metrics were produced, and the previous run's numbers were "
+            "overwritten so they cannot be read as current evidence."
+        )
+        raise SystemExit(0)
+
     summary = evaluation["summary"]
     print(
         f"status={evaluation['status']} papers={evaluation['paper_count']} "
