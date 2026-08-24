@@ -7,6 +7,22 @@ published a tagged release; historical entries are intentionally not invented.
 
 ### Added
 
+- `backend/api/routers/health.py`: the operational probes are now a router
+  registered with `app.include_router(health.router)`, like every other route
+  group, instead of being decorated inline on the app object.
+- `scripts/verify_fresh_clone.sh` and a `fresh-clone-smoke` CI job: a clean
+  checkout with no restored virtualenv or `node_modules` is bootstrapped, the
+  backend suite runs hermetically, the frontend is built, and the run prints
+  `FRESH CLONE OK`.
+- A `ml-regression` CI job running the deterministic perturbation and
+  patient-grouped temporal cross-validation suites offline against committed
+  synthetic fixtures.
+- Field-level Pydantic constraints on the patient write boundaries, and
+  `tests/test_api_input_validation_schema.py` covering malformed payloads for
+  `/me/symptoms`, `/me/labs`, and `/me/chat`.
+- Contract tests for the API client's request core: `ApiError` status
+  classification, in-flight GET de-duplication, error normalisation, and
+  single-report failure telemetry.
 - Responsibility-named modules for the SaaS control plane, governance
   credibility artifacts, admin analytics, and the synthetic perturbation
   retrain evaluation, each behind its original module as a compatibility
@@ -41,6 +57,19 @@ published a tagged release; historical entries are intentionally not invented.
 
 ### Changed
 
+- `backend/services/agent_rag.py` is now a 211-line facade; branch execution
+  moved to `agent_pipeline_runner` and response shaping to
+  `agent_result_shaping`, with the cache lookup and intent validation returned
+  to the modules that own those subjects. No backend file now exceeds 1000
+  lines.
+- Structural bounds for patient records are declared once in
+  `backend.services.input_validation` and imported by the Pydantic schemas, so
+  the HTTP boundary and the support agent's record-write path cannot drift into
+  different limits. A request that breaches one is now refused at the boundary
+  with 422 rather than reaching the handler and being refused with 400;
+  accepted inputs are unchanged.
+- `backend/logging_config.py` is the canonical logging module and
+  `backend/app_logging.py` re-exports it, rather than the reverse.
 - `GET /health` now reports `status`, `service`, `version`, database
   reachability, and whether the retrieval index is loaded in this process. All
   dependency fields are informational: the endpoint returns 200 while the
@@ -56,6 +85,19 @@ published a tagged release; historical entries are intentionally not invented.
   responsibility-named modules without changing their public contracts.
 - Corrected privacy-process routing so consent education remains answerable
   while mixed disclosure demands and prompt-injection instructions fail closed.
+
+### Fixed
+
+- The DEP-001C evaluation lock could fail to acquire under load. Deciding
+  whether an existing lock belonged to a live run or a crashed one shelled out
+  to PowerShell on Windows, which cost ~1.8s per probe idle and exceeded its
+  own 10s timeout under the load of a full test suite, raising
+  `TimeoutExpired` out of lock acquisition instead of returning an answer. The
+  probe now asks the kernel directly via `OpenProcess` (~0.3ms). On POSIX, a
+  PID owned by another user reported `PermissionError`, which was read as
+  "dead" and would have let a second run recover a live run's lock as stale;
+  liveness now fails closed, and only a positive "no such process" counts as
+  dead.
 
 ### Security
 
