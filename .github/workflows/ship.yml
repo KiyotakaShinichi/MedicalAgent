@@ -84,10 +84,38 @@ jobs:
       # missing parents; it fails the connection outright, which took the gate
       # down on its first backend step. Same `mkdir -p` the quality-gates job
       # already uses.
+      #
+      # ship.py lets its children write straight to this process's stdout and
+      # stderr, so the whole run is already in the job log - but reading that
+      # log needs admin rights on the repository, which turned a failing gate
+      # into an exit code and nothing else. Teeing it to a file makes the same
+      # output downloadable as an ordinary artifact.
+      #
+      # `pipefail` is what keeps that honest: without it the pipeline reports
+      # tee's status, tee always succeeds, and a failing gate would go green.
       - name: Run cross-platform ship gate
+        shell: bash
         run: |
+          set -o pipefail
           mkdir -p Data/test_tmp
-          uv run python scripts/ship.py
+          uv run python scripts/ship.py 2>&1 | tee Data/test_tmp/ship_gate_output.log
+
+      # `always()` because the diagnosis is wanted precisely when the gate
+      # fails. An upload step cannot turn a red job green: the gate's own
+      # failure is already recorded by the step above.
+      #
+      # Named files rather than the directory: Data/test_tmp also holds the
+      # SQLite databases the run creates, and those are not diagnostics.
+      - name: Upload ship gate diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ship-gate-diagnostics
+          path: |
+            Data/test_tmp/ship_gate_output.log
+            Data/evals/ops/latest_ship_run.json
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: OpenAPI type drift check
         run: uv run python scripts/check_openapi_frontend_types.py
