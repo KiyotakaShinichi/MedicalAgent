@@ -1,7 +1,6 @@
 {
   "_comment": "Pre-existing files above the LOC limit, frozen at their current size. This list is shrink-only: scripts/check_file_size.py fails if a listed file grows, and --update may lower an entry or drop one that has come under the limit, never raise one. Do not add a new file here to get a large module past review.",
   "files": {
-    "backend/services/agent_regression_eval.py": 995,
     "backend/services/agent_safety.py": 943,
     "backend/services/ai_trinity_tradeoff.py": 530,
     "backend/services/biomarker_feature_benchmark.py": 627,
