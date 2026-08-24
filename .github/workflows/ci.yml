@@ -138,7 +138,21 @@ jobs:
       HF_HUB_OFFLINE: "1"
       TRANSFORMERS_OFFLINE: "1"
     steps:
+      # Full history, not the default shallow checkout. This job runs the whole
+      # tests tree, and the ML decomposition suites prove equivalence against
+      # the pre-refactor module by loading it with `git show <commit>:<path>`.
+      # Under a depth-1 clone that object does not exist, the loader raises at
+      # import time, and pytest reports one collection error and runs nothing
+      # at all - 2498 tests collected, zero executed.
+      #
+      # Deepening the clone rather than teaching the test to skip is deliberate:
+      # a skip would quietly retire the equivalence check in the one job that
+      # runs every test file, which is the kind of invisible gap this job exists
+      # to catch. A real `git clone` has full history anyway, so this is also
+      # closer to the fresh checkout the job is simulating.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
