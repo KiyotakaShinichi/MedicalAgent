@@ -31,7 +31,6 @@
     "backend/services/mixed_query_scale_eval.py": 671,
     "backend/services/multilingual_tool_router.py": 535,
     "backend/services/priority_dataset_bridge.py": 611,
-    "backend/services/rag_baseline_comparison.py": 873,
     "backend/services/rag_claim_validator.py": 557,
     "backend/services/rag_eval_suite.py": 506,
     "backend/services/rag_vector_index.py": 819,

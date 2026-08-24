@@ -8,20 +8,43 @@ baselines, while keeping the result framed as engineering evidence only.
 
 from __future__ import annotations
 
-import json
+import json  # noqa: F401 - compatibility export
 import math
-import re
+import re  # noqa: F401 - compatibility export
 import time
-from collections import Counter
+from collections import Counter  # noqa: F401 - compatibility export
 from datetime import datetime, timezone
 from pathlib import Path
-from statistics import median
-from typing import Any, Iterable, Mapping
+from statistics import median  # noqa: F401 - compatibility export
+from typing import Any, Iterable, Mapping  # noqa: F401 - compatibility export
 
 from backend.services.agent_query_rewriting import rewrite_and_decompose
 from backend.services.agent_rag import _knowledge_snippets, knowledge_base_fingerprint
 from backend.services.agent_retrieval import expand_parent_child_windows
 from backend.services.kb_source_governance import ALLOWED_USE_VOCABULARY
+from backend.services.rag_baseline_config import (
+    CONFIGURATIONS,
+    LOGICAL_SOURCE_ALIASES,
+    REFUSAL_INTENTS,  # noqa: F401 - compatibility export
+)
+from backend.services.rag_baseline_metrics import (
+    _document_text,
+    _mean,
+    _percentile,
+    _rate,
+    _tokenize,
+)
+from backend.services.rag_baseline_reporting import (
+    _build_failure_payload,
+    _dedupe_rows,
+    _failure_projection,
+    _failure_reasons,
+    _goldset_authored_date,
+    _load_goldset,
+    _map_goldset_intent,
+    _refusal_policy_correct,
+    _write_json,
+)
 from backend.services.rag_intent_modes import COMMON_BANNED_CLAIMS, RagModeConfig
 from backend.services.rag_tier_filter import filter_chunks_by_mode
 from backend.services.rag_vector_index import rag_index_status, search_hybrid_index
@@ -36,247 +59,6 @@ CITED_CONTEXT_K = 5
 EVAL_CONTEXT_K = 10
 INITIAL_CANDIDATE_LIMIT = 50
 PARENT_CHILD_SEED_LIMIT = 20
-
-CONFIGURATIONS: tuple[dict[str, Any], ...] = (
-    {
-        "id": "bm25_only",
-        "label": "BM25 only",
-        "description": "Sparse BM25 lexical retrieval over the frozen KB corpus; no query rewriting.",
-    },
-    {
-        "id": "faiss_dense_only",
-        "label": "FAISS dense only",
-        "description": "Dense/vector score ordering from the active local index; falls back honestly if dense FAISS is unavailable.",
-    },
-    {
-        "id": "hybrid_rrf",
-        "label": "Dense + sparse hybrid RRF",
-        "description": "Active dense/sparse hybrid retrieval with reciprocal-rank-style fusion; no query rewriting.",
-    },
-    {
-        "id": "hybrid_rrf_query_rewrite",
-        "label": "Hybrid + query rewrite",
-        "description": "Hybrid retrieval using the agent query rewriting/decomposition output.",
-    },
-    {
-        "id": "hybrid_rrf_query_rewrite_parent_child",
-        "label": "Hybrid + rewrite + parent-child",
-        "description": "Hybrid retrieval with query rewriting plus parent-child context expansion.",
-    },
-    {
-        "id": "hybrid_rrf_query_rewrite_parent_child_source_tier",
-        "label": "Hybrid + rewrite + parent-child + source tiers",
-        "description": "Full compared retrieval stack with source-tier/allowed-use filtering before context selection.",
-    },
-    {
-        "id": "hybrid_rrf_query_rewrite_parent_child_source_tier_pruned",
-        "label": "Full stack + citation-context pruner",
-        "experimental": True,
-        "positioning": "negative_result_not_promoted",
-        "description": (
-            "Full stack with the citation_context_pruner applied between source-tier "
-            "filtering and citation assembly.  Eval-path experiment only — not wired "
-            "into the live patient agent."
-        ),
-    },
-)
-
-REFUSAL_INTENTS = {
-    "urgent_escalation",
-    "genetic_counselor_review",
-    "tumor_marker_boundary",
-    "pharmacist_or_clinician_review",
-    "treatment_refusal",
-    "prognosis_refusal",
-    "diagnosis_refusal",
-    "privacy_refusal",
-}
-
-# Source normalization keeps logical gold labels comparable to the current KB
-# source IDs.  It is not a ranking tweak and does not inspect retrieved text.
-LOGICAL_SOURCE_ALIASES: dict[str, set[str]] = {
-    "nci-her2-breast": {
-        "nci-her2-breast",
-        "her2 in breast cancer",
-        "breast-treatment-basics",
-        "national cancer institute",
-    },
-    "curated-her2-basics": {
-        "curated-her2-basics",
-        "nci-her2-breast",
-        "her2 in breast cancer",
-        "breast-treatment-basics",
-    },
-    "cbc-monitoring": {
-        "cbc-monitoring",
-        "curated-wbc-neutropenia",
-        "cbc labs and trend monitoring",
-        "cbc, anc, hemoglobin, and platelet monitoring reference",
-        "0185db088c803c80",
-        "36b7a3ffdb9205a4",
-        "927cf11805df9019d710",
-        "f6726c194bf1f479171f",
-    },
-    "curated-wbc-neutropenia": {
-        "curated-wbc-neutropenia",
-        "cbc-monitoring",
-        "side effects and red flags during breast cancer treatment",
-        "treatment-side-effects",
-        "3ca1dfefbd3147b0",
-        "c30ab0b49f328562e76f",
-        "nci-febrile-neutropenia",
-        "febrile neutropenia during chemotherapy",
-    },
-    "infection-safety": {
-        "infection-safety",
-        "cdc",
-        "cdc-fever-chemo",
-        "fever during chemotherapy",
-        "nci-febrile-neutropenia",
-        "febrile neutropenia during chemotherapy",
-        "treatment-side-effects",
-        # Discovered by content match (see latest_source_alias_coverage.json).
-        "9a6347c207d53299",  # Hematology, Bleeding, and Infection Review Reference
-    },
-    "curated-fever-neutropenia": {
-        "curated-fever-neutropenia",
-        "nci-febrile-neutropenia",
-        "febrile neutropenia during chemotherapy",
-        "infection-safety",
-        "treatment-side-effects",
-    },
-    "imaging-monitoring": {
-        "imaging-monitoring",
-        "curated-mri-response-terms",
-        "imaging report monitoring: mri, ct, ultrasound, and response language",
-        "mri, ct, ultrasound, and imaging response terms reference",
-        "a734a844daed9ef7",
-        "33ef73acba84d60bd7a1",
-        "87ec22bc66c88b40ea76",
-        "7cd1e3e1103a156a",
-    },
-    "curated-mri-response-terms": {
-        "curated-mri-response-terms",
-        "imaging-monitoring",
-        "imaging report monitoring: mri, ct, ultrasound, and response language",
-        "mri, ct, ultrasound, and imaging response terms reference",
-        "a734a844daed9ef7",
-        "33ef73acba84d60bd7a1",
-        "87ec22bc66c88b40ea76",
-        "7cd1e3e1103a156a",
-        # Discovered by content match (see latest_source_alias_coverage.json).
-        "2524619e8115a75d",  # DCE-MRI texture features for early breast cancer therapy response prediction
-        "2a9f2ed73f0b189c",  # Early treatment response prediction using DCE-MRI tumor heterogeneity
-    },
-    "genetic-counseling": {
-        "genetic-counseling",
-        "curated-vus-boundary",
-        "genetic counseling readiness and family history intake",
-        "germline testing, somatic testing, vus, and multigene panels",
-        "genetics, biomarker, and tumor marker safety terms reference",
-        "22d463a5a12d490af4c6",
-        "29f0f5dda9789b7e",
-        "4787d2a42440789f",
-        "eafe5c100c4cd819b6fa",
-        "917264d81e3123c0d2a8",
-        # Discovered by content match against KB titles
-        # (see latest_source_alias_coverage.json, 2026-05-27 diagnostic).
-        "664fb49bb1343408",  # Family History Readiness Depth Reference
-        "ef3bcc511aad3c2c",  # Genetic Counseling Readiness and Family History Intake
-    },
-    "curated-vus-boundary": {
-        "curated-vus-boundary",
-        "genetic-counseling",
-        "vus",
-        "germline testing, somatic testing, vus, and multigene panels",
-        "genetics, biomarker, and tumor marker safety terms reference",
-        "29f0f5dda9789b7e",
-        "4787d2a42440789f",
-        "eafe5c100c4cd819b6fa",
-        "917264d81e3123c0d2a8",
-    },
-    "tumor-marker-context": {
-        "tumor-marker-context",
-        "curated-tumor-marker-limitations",
-        "minimum evidence and medical claim boundaries",
-        "genetics, biomarker, and tumor marker safety terms reference",
-        "28cfcee61ce1e4a4",
-        "4787d2a42440789f",
-        "972b1b8be879098562a7",
-        "150bf2854b59cec640b1",
-        "917264d81e3123c0d2a8",
-        # Discovered by content match (see latest_source_alias_coverage.json).
-        "5598e2371d2713c4",  # Breast Cancer Biomarkers and Tumor Marker Safety
-    },
-    "curated-tumor-marker-limitations": {
-        "curated-tumor-marker-limitations",
-        "tumor-marker-context",
-        "minimum evidence and medical claim boundaries",
-        "genetics, biomarker, and tumor marker safety terms reference",
-        "28cfcee61ce1e4a4",
-        "4787d2a42440789f",
-        "972b1b8be879098562a7",
-        "150bf2854b59cec640b1",
-        "917264d81e3123c0d2a8",
-        # Discovered by content match (see latest_source_alias_coverage.json).
-        "5598e2371d2713c4",  # Breast Cancer Biomarkers and Tumor Marker Safety
-    },
-    "supplement-safety": {
-        "supplement-safety",
-        "curated-st-johns-wort",
-        "curated-st-johns-wort-safety",
-        "nci-msk-supplement-safety",
-        "supplements during cancer treatment",
-        "curated supplement interaction safety",
-        "supplement and natural product safety by product reference",
-        "6649c1bba1cd7799",
-        "2c9cf580eb45af0e",
-        "bd077c510af8e9bb2107",
-        # Discovered by content match (see latest_source_alias_coverage.json).
-        "918edc260afd2d63",  # Diagnosis, Treatment, and Supplement Safety Boundaries
-    },
-    "curated-st-johns-wort": {
-        "curated-st-johns-wort",
-        "curated-st-johns-wort-safety",
-        "supplement-safety",
-        "st. johns wort interaction safety",
-        "st johns wort interaction safety",
-    },
-    "project safety policy": {
-        "project safety policy",
-        "project-monitoring-score",
-        "monitoring score boundary",
-        "diagnosis, treatment, and supplement safety boundaries",
-        "minimum evidence and medical claim boundaries",
-        "response-modeling",
-        "918edc260afd2d63",
-        "28cfcee61ce1e4a4",
-        "b4b9ee5dfff5d9bb4a84",
-    },
-    "treatment-side-effects": {
-        "treatment-side-effects",
-        "acs-chemo-side-effects",
-        "side effects and red flags during breast cancer treatment",
-        "3ca1dfefbd3147b0",
-        "1d8b472e73bcd9696d15",
-        # Discovered by content match (see latest_source_alias_coverage.json).
-        "24de6c8ad0379f43",  # GI Symptoms, Mouth Sores, Neuropathy, and Fatigue Reference
-        "d50090fd5d38a39d",  # Symptom Red Flags and Review Hints During Treatment
-    },
-    "portal-help": {
-        "portal-help",
-        "portal-help-upload",
-        "portal-help-symptom-entry",
-        "portal-help-lab-results",
-        "portal-help-mri-upload",
-        "patient portal help",
-        "using the patient portal tools",
-        # Discovered by content match (see latest_source_alias_coverage.json).
-        "c35c9264029ff9c9",  # NLCare Portal Help and Data Entry
-        "479e2ce02e7d9e05",  # Patient Portal Workflow Reference
-    },
-}
-
 
 def run_rag_baseline_comparison(
     *,
@@ -412,13 +194,8 @@ def _evaluate_configuration(
             ranked = _apply_case_source_filter(case, ranked)
             latency_ms += (time.perf_counter() - filter_started) * 1000.0
         if config["id"].endswith("_pruned"):
-            # Apply the citation-context pruner AFTER source-governance
-            # filtering and BEFORE the top-k window used by citation
-            # precision.  We prune to EVAL_CONTEXT_K so the
-            # downstream recall / MRR / NDCG metrics are computed on
-            # the same window size as the unpruned baseline — any
-            # recall regression is therefore attributable to the
-            # pruner's ordering, not to a smaller window.
+            # Prune after governance but keep the evaluation window size so
+            # any metric change is attributable to ordering, not a smaller K.
             from backend.services.citation_context_pruner import prune as _prune_citation_context
             pruner_started = time.perf_counter()
             rewritten_query = _rewritten_query_for(query, intent, rewrite_cache)
@@ -482,7 +259,6 @@ def _retrieve_for_config(
     if config_id == "bm25_only":
         started = time.perf_counter()
         return _bm25_only_retrieval(query, corpus, limit=INITIAL_CANDIDATE_LIMIT), (time.perf_counter() - started) * 1000.0
-
     search_query = query
     rewrite_latency_ms = 0.0
     if "query_rewrite" in config_id:
@@ -512,7 +288,7 @@ def _retrieve_for_config(
     if config_id == "faiss_dense_only":
         ranked = sorted(
             candidates,
-            key=lambda row: float(row.get("dense_score") if row.get("dense_score") is not None else row.get("vector_score") or 0.0),
+            key=lambda row: float(row.get("dense_score") if row.get("dense_score") is not None else row.get("vector_score") or 0.0),  # type: ignore[arg-type]
             reverse=True,
         )
     else:
@@ -528,7 +304,6 @@ def _retrieve_for_config(
             rewrite_latency_ms + search_latency_ms + expansion_latency_ms,
         )
     return ranked, rewrite_latency_ms + search_latency_ms
-
 
 def _score_case(
     config_id: str,
@@ -579,7 +354,6 @@ def _score_case(
         "failure_reasons": failure_reasons,
     }
 
-
 def _bm25_only_retrieval(query: str, corpus: list[dict[str, Any]], *, limit: int) -> list[dict[str, Any]]:
     tokens = [_tokenize(_document_text(row)) for row in corpus]
     query_tokens = _tokenize(query)
@@ -604,12 +378,10 @@ def _bm25_only_retrieval(query: str, corpus: list[dict[str, Any]], *, limit: int
         })
     return sorted(rows, key=lambda row: float(row.get("retrieval_score") or 0.0), reverse=True)[:limit]
 
-
 def _apply_case_source_filter(case: Mapping[str, Any], rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     mode = _case_filter_mode(case)
     result = filter_chunks_by_mode(rows, mode, keep_unmapped=False)
     return result.kept_chunks
-
 
 def _case_filter_mode(case: Mapping[str, Any]) -> RagModeConfig:
     allowed_tiers = tuple(str(tier) for tier in (case.get("acceptable_source_tiers") or ["T1", "T2", "T3"]))
@@ -627,13 +399,11 @@ def _case_filter_mode(case: Mapping[str, Any]) -> RagModeConfig:
         require_clinician_handoff_clause=bool(case.get("expected_refusal_or_insufficient_evidence")),
     )
 
-
 def _source_tier_correct(case: Mapping[str, Any], rows: list[dict[str, Any]]) -> bool:
     if not rows:
         return True
     result = filter_chunks_by_mode(rows, _case_filter_mode(case), keep_unmapped=False)
     return len(result.kept_chunks) == len(rows)
-
 
 def _expected_source_groups(case: Mapping[str, Any]) -> list[set[str]]:
     raw_ids = [str(value).strip().lower() for value in case.get("expected_source_ids", []) if str(value).strip()]
@@ -644,7 +414,6 @@ def _expected_source_groups(case: Mapping[str, Any]) -> list[set[str]]:
         aliases |= LOGICAL_SOURCE_ALIASES.get(value.lower(), set())
         groups.append({_normalize_identifier(item) for item in aliases if item})
     return groups
-
 
 def _matched_expected_groups(rows: list[dict[str, Any]], expected_groups: list[set[str]]) -> set[int]:
     matched: set[int] = set()
@@ -708,154 +477,8 @@ def _representative_row_id(row: Mapping[str, Any]) -> str:
     return str(row.get("source_id") or row.get("id") or row.get("parent_id") or row.get("source_name") or "")
 
 
-def _failure_reasons(
-    *,
-    recall_at_10: float,
-    citation_precision: float,
-    source_tier_correct: bool,
-    refusal_correct: bool,
-) -> list[str]:
-    reasons: list[str] = []
-    if recall_at_10 <= 0:
-        reasons.append("retrieval_miss")
-        reasons.append("unsupported_context")
-    elif recall_at_10 < 1.0:
-        reasons.append("partial_source_recall")
-    if citation_precision < 0.5:
-        reasons.append("low_citation_precision")
-    if not source_tier_correct:
-        reasons.append("source_tier_mismatch")
-    if not refusal_correct:
-        reasons.append("refusal_policy_mismatch")
-    return reasons
-
-
-def _failure_projection(case: Mapping[str, Any]) -> dict[str, Any]:
-    return {
-        "case_id": case.get("case_id"),
-        "query": case.get("query"),
-        "expected_intent": case.get("expected_intent"),
-        "expected_source_ids": case.get("expected_source_ids"),
-        "retrieved_source_ids": case.get("retrieved_source_ids"),
-        "first_relevant_rank": case.get("first_relevant_rank"),
-        "recall_at_10": case.get("recall_at_10"),
-        "citation_precision": case.get("citation_precision"),
-        "failure_reasons": case.get("failure_reasons"),
-    }
-
-
-def _build_failure_payload(goldset: list[dict[str, Any]], failures: list[dict[str, Any]]) -> dict[str, Any]:
-    by_configuration = Counter(str(item.get("configuration")) for item in failures)
-    by_reason: Counter[str] = Counter()
-    for item in failures:
-        by_reason.update(str(reason) for reason in item.get("failure_reasons") or [])
-    return {
-        "schema_version": "rag_baseline_failures_v1",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "status": "needs_attention" if failures else "strong",
-        "total_n": len(goldset),
-        "failed_n": len(failures),
-        "by_configuration": dict(sorted(by_configuration.items())),
-        "by_reason": dict(sorted(by_reason.items())),
-        "failures": failures,
-        "clinical_validation": False,
-        "claim_boundary": (
-            "Failure examples are for engineering triage only. They do not establish clinical behavior."
-        ),
-    }
-
-
-def _load_goldset(path: Path) -> list[dict[str, Any]]:
-    if not path.exists():
-        raise FileNotFoundError(f"RAG retrieval goldset is missing: {path}")
-    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if not rows:
-        raise ValueError(f"RAG retrieval goldset is empty: {path}")
-    return rows
-
-
-def _goldset_authored_date(rows: list[Mapping[str, Any]]) -> str | None:
-    dates = sorted({str(row.get("authored_date")) for row in rows if row.get("authored_date")})
-    return dates[-1] if dates else None
-
-
-def _map_goldset_intent(intent: str) -> str:
-    if intent in {"urgent_escalation"}:
-        return "safety_boundary"
-    if intent in {
-        "treatment_refusal",
-        "prognosis_refusal",
-        "diagnosis_refusal",
-        "genetic_counselor_review",
-        "tumor_marker_boundary",
-        "pharmacist_or_clinician_review",
-    }:
-        return "safety_boundary"
-    if intent == "privacy_refusal":
-        return "security_boundary"
-    return intent or "education"
-
-
-def _refusal_policy_correct(case: Mapping[str, Any]) -> bool:
-    expected_refusal = bool(case.get("expected_refusal_or_insufficient_evidence"))
-    intent = str(case.get("expected_intent") or "")
-    actual_refusal = intent in REFUSAL_INTENTS
-    return actual_refusal == expected_refusal
-
-
-def _dedupe_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    seen: set[str] = set()
-    deduped: list[dict[str, Any]] = []
-    for row in rows:
-        key = str(row.get("id") or row.get("chunk_id") or row.get("source_id") or row.get("parent_id"))
-        if key in seen:
-            continue
-        seen.add(key)
-        deduped.append(row)
-    return deduped
-
-
-def _document_text(item: Mapping[str, Any]) -> str:
-    return " ".join([
-        str(item.get("title") or ""),
-        str(item.get("text") or ""),
-        " ".join(str(tag) for tag in item.get("tags") or []),
-        str(item.get("topic") or ""),
-        str(item.get("section") or ""),
-    ])
-
-
-def _tokenize(text: str) -> list[str]:
-    return re.findall(r"[a-zA-Z0-9][a-zA-Z0-9/-]+", (text or "").lower())
-
-
 def _normalize_identifier(value: Any) -> str:
     return re.sub(r"\s+", " ", str(value).strip().lower())
-
-
-def _mean(values: Iterable[float]) -> float:
-    vals = [float(value) for value in values]
-    return round(sum(vals) / max(len(vals), 1), 4)
-
-
-def _rate(values: Iterable[bool]) -> float:
-    vals = [bool(value) for value in values]
-    return round(sum(1 for value in vals if value) / max(len(vals), 1), 4)
-
-
-def _percentile(values: list[float], percentile: int) -> float | None:
-    if not values:
-        return None
-    ordered = sorted(values)
-    if percentile == 50:
-        return round(float(median(ordered)), 3)
-    index = math.ceil((percentile / 100) * len(ordered)) - 1
-    return round(ordered[max(0, min(index, len(ordered) - 1))], 3)
-
-
-def _write_json(path: Path, payload: Mapping[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
 def _repo_relative(path: Path) -> str:
