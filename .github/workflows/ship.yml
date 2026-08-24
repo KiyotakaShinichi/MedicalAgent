@@ -79,8 +79,15 @@ jobs:
         working-directory: frontend-react
         run: npx playwright install --with-deps chromium
 
+      # Data/test_tmp is gitignored, so it does not exist on a fresh runner, and
+      # DATABASE_URL points the ship database inside it. SQLite does not create
+      # missing parents; it fails the connection outright, which took the gate
+      # down on its first backend step. Same `mkdir -p` the quality-gates job
+      # already uses.
       - name: Run cross-platform ship gate
-        run: uv run python scripts/ship.py
+        run: |
+          mkdir -p Data/test_tmp
+          uv run python scripts/ship.py
 
       - name: OpenAPI type drift check
         run: uv run python scripts/check_openapi_frontend_types.py
