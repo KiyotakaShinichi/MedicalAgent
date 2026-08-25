@@ -16,6 +16,57 @@ from typing import Any
 
 NEGATIVE_RESULTS_PATH = Path("Data/evals/governance/latest_negative_results_gallery.json")
 
+#: Statuses meaning the artifact behind an entry was not produced by this run.
+NON_RESULT_STATUSES = frozenset({"not_evaluated_optional_corpus"})
+
+
+def _artifact_status(relative_path: str) -> str | None:
+    try:
+        payload = json.loads(Path(relative_path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(payload, dict):
+        return None
+    return payload.get("status")
+
+
+def _mark_evidence_currency(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Say plainly that every recorded metric is from the run that found it.
+
+    The metric values in this gallery are literals: they were written down when
+    the finding was made and are never recomputed. That is deliberate - a
+    negative result must not be quietly revised - but it also means they are
+    historical by construction, and nothing here should be read as this run's
+    numbers.
+
+    The research-paper entry makes that concrete. Its metrics describe a
+    nine-paper, thirty-two-case corpus that no longer exists; the current suite
+    is larger, and on a checkout without the optional corpus there is no current
+    suite at all. So each entry also carries the *current* status of the
+    artifact it cites, which is how a reader tells "still true" from "recorded
+    once".
+    """
+    marked = []
+    for item in items:
+        entry = dict(item)
+        entry["evidence_currency"] = "historical"
+        entry["metric_value_is_current_run"] = False
+        artifact = entry.get("evidence_artifact")
+        if artifact:
+            status = _artifact_status(str(artifact))
+            entry["current_artifact_status"] = status
+            if status in NON_RESULT_STATUSES:
+                entry["current_run_evaluated"] = False
+                entry["currency_note"] = (
+                    "The cited artifact reports no evaluation for the current run, so "
+                    "the metrics above are historical only and must not be quoted as "
+                    "current evidence."
+                )
+            elif status is not None:
+                entry["current_run_evaluated"] = True
+        marked.append(entry)
+    return marked
+
 
 def build_negative_results_gallery() -> dict[str, Any]:
     items = [
@@ -364,6 +415,7 @@ def build_negative_results_gallery() -> dict[str, Any]:
         },
     ]
 
+    items = _mark_evidence_currency(items)
     return {
         "schema_version": "negative_results_gallery_v1",
         "status": "informational",

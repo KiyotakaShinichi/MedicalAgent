@@ -57,6 +57,30 @@ CLAIM_BOUNDARY = (
 )
 
 
+def _research_paper_sentence(research_paper_rag: dict) -> str:
+    """Describe the paper suite as it stands in *this* run.
+
+    The case count used to be written into the sentence as a constant, which
+    read as a current measurement even on a checkout where the optional corpus
+    is absent and nothing was measured at all. The count now comes from the
+    artifact, and when there is no current evaluation the sentence says so
+    instead of quoting a number.
+    """
+    status = research_paper_rag.get("status")
+    if research_paper_rag.get("evaluated") is False:
+        return (
+            "The corpus-derived research-paper suite was not evaluated in this run "
+            f"(status={status}); its optional local corpus is unavailable, so no "
+            "current PMCID identity, section retrieval, or provenance measurement exists."
+        )
+    case_count = research_paper_rag.get("case_count")
+    scale = f"{case_count}-case " if isinstance(case_count, int) else ""
+    return (
+        f"A separate {scale}corpus-derived research-paper suite measures PMCID identity, "
+        f"section retrieval, provenance, and no-evidence behavior (status={status})."
+    )
+
+
 def build_evidence_maturity_matrix(
     *,
     output_path: str | Path = DEFAULT_OUTPUT_PATH,
@@ -140,8 +164,7 @@ def _dimensions(artifacts: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
             "multiple-comparison correction, source governance, negative results, and "
             f"an offline claim-conditioned citation candidate status={citation_selector.get('status')}. "
             f"Its frozen generated-answer holdout decision={citation_selector_holdout.get('promotion_decision')}. "
-            "A separate 44-case corpus-derived research-paper suite measures PMCID identity, "
-            f"section retrieval, provenance, and no-evidence behavior (status={research_paper_rag.get('status')}).",
+            f"{_research_paper_sentence(research_paper_rag)}",
             (
                 "Full governed-stack raw Recall@10 superiority over BM25 is not proven; "
                 f"current headline={rag_headline.get('full_stack_improvement_proven_vs_bm25')}. "
