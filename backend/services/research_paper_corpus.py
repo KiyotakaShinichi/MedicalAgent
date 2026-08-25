@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -55,8 +56,34 @@ ABSENT_REASON = (
 )
 
 
+#: Statuses the downloader records for a paper it actually obtained. Anything
+#: else ("failed", "skipped") means the manifest is describing an acquisition
+#: that did not complete.
+ACQUIRED_STATUSES = frozenset({"downloaded", "exists"})
+
+#: Suffixes the downloader writes. A manifest entry pointing at anything else is
+#: not a paper.
+PAPER_SUFFIXES = frozenset({".txt", ".xml"})
+
+
 class ResearchPaperCorpusInvalid(RuntimeError):
     """The corpus is present but not usable, which is a failure, not an absence."""
+
+
+def expected_pmcids() -> frozenset[str]:
+    """The canonical selection, read from the tracked downloader.
+
+    `scripts/download_research_papers.py` holds the reviewed list of papers as
+    a literal, which makes it the single source of truth for what a complete
+    corpus contains. Deriving from it means the expected set cannot drift from
+    the selection the way a hardcoded count silently would.
+
+    Imported lazily: this module is used on the absent-corpus path, where the
+    downloader is never needed.
+    """
+    from scripts.download_research_papers import PAPERS
+
+    return frozenset(str(paper["pmcid"]) for paper in PAPERS)
 
 
 @dataclass(frozen=True)
@@ -119,27 +146,75 @@ def inspect_research_paper_corpus(
         # never fetched anything.
         raise ResearchPaperCorpusInvalid(f"{rendered} lists no papers")
 
-    missing: list[str] = []
+    expected = expected_pmcids()
+    seen: dict[str, str] = {}
+    problems: list[str] = []
+
     for item in items:
         if not isinstance(item, dict):
             raise ResearchPaperCorpusInvalid(f"{rendered} contains a non-object entry")
+
+        pmcid = str(item.get("pmcid") or "").strip()
+        if not pmcid:
+            raise ResearchPaperCorpusInvalid(
+                f"{rendered} contains an entry with no PMCID; provenance cannot be "
+                "established for it"
+            )
+        if pmcid in seen:
+            raise ResearchPaperCorpusInvalid(
+                f"{rendered} lists {pmcid} more than once; the same paper counted "
+                "twice would inflate coverage"
+            )
+        seen[pmcid] = pmcid
+
+        status = str(item.get("status") or "").strip().lower()
+        if status not in ACQUIRED_STATUSES:
+            problems.append(f"{pmcid}: acquisition status {status!r}")
+            continue
+
         relative = item.get("path") or item.get("file_name")
         if not relative:
-            raise ResearchPaperCorpusInvalid(
-                f"{rendered} entry {item.get('pmcid') or '<unknown>'} names no file"
-            )
+            raise ResearchPaperCorpusInvalid(f"{rendered} entry {pmcid} names no file")
+
         candidate = Path(relative)
         if not candidate.is_absolute():
             candidate = root / candidate
         if not candidate.exists():
             candidate = manifest_path.parent / Path(relative).name
         if not candidate.exists():
-            missing.append(str(relative))
+            problems.append(f"{pmcid}: file missing ({relative})")
+            continue
+        if candidate.suffix.lower() not in PAPER_SUFFIXES:
+            problems.append(f"{pmcid}: {candidate.suffix or 'no suffix'} is not a paper file")
+            continue
+        try:
+            size = candidate.stat().st_size
+        except OSError as exc:
+            problems.append(f"{pmcid}: unreadable ({exc})")
+            continue
+        if size <= 0:
+            problems.append(f"{pmcid}: file is empty")
 
-    if missing:
+    # Cardinality and membership together. A corpus holding one paper of the
+    # reviewed twenty-one is not a small corpus, it is a broken one, and
+    # evaluating it would report benchmark numbers for a selection nobody chose.
+    present = frozenset(seen)
+    if present != expected:
+        missing_ids = sorted(expected - present)
+        unexpected = sorted(present - expected)
+        detail = []
+        if missing_ids:
+            detail.append(f"{len(missing_ids)} of {len(expected)} expected papers absent")
+        if unexpected:
+            detail.append(f"{len(unexpected)} unrecognised: {unexpected[:3]}")
         raise ResearchPaperCorpusInvalid(
-            f"{rendered} references {len(missing)} file(s) that are not present: "
-            f"{missing[:5]}{'...' if len(missing) > 5 else ''}"
+            f"{rendered} does not match the reviewed selection - " + "; ".join(detail)
+        )
+
+    if problems:
+        raise ResearchPaperCorpusInvalid(
+            f"{rendered} describes {len(problems)} unusable paper(s): "
+            f"{problems[:5]}{'...' if len(problems) > 5 else ''}"
         )
 
     return CorpusInspection(
@@ -192,6 +267,11 @@ def not_evaluated_artifact(
     return payload
 
 
+def evaluation_run_id() -> str:
+    """A short id shared by the artifacts one call writes."""
+    return "paper-noeval-" + uuid.uuid4().hex[:12]
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -235,14 +315,22 @@ def not_evaluated_reports_if_absent(
     if not inspection.absent:
         return None
 
+    # One id across the three artifacts this call writes, so a reader can tell
+    # they describe the same non-run rather than three coincidental ones. It is
+    # deliberately local: there is no repository-wide ship-run identity to
+    # propagate, and inventing one to span separate Ship steps would be a much
+    # larger change than this defect needs.
+    run_id = evaluation_run_id()
     audit = not_evaluated_artifact(
         schema_version="research_paper_kb_audit_v2",
         inspection=inspection,
+        evaluation_run_id=run_id,
         paper_count=None,
     )
     evaluation = not_evaluated_artifact(
         schema_version="research_paper_retrieval_eval_v2",
         inspection=inspection,
+        evaluation_run_id=run_id,
         paper_count=None,
         case_count=None,
         configurations=None,
@@ -250,6 +338,7 @@ def not_evaluated_reports_if_absent(
     failures = not_evaluated_artifact(
         schema_version="research_paper_retrieval_failures_v1",
         inspection=inspection,
+        evaluation_run_id=run_id,
         failure_count=None,
         failures=None,
     )

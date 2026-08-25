@@ -78,21 +78,34 @@ def test_absent_corpus_is_absent(tmp_path: Path) -> None:
 
 
 def test_complete_corpus_is_available(tmp_path: Path) -> None:
-    manifest = _manifest(tmp_path, [])
-    name = _paper(manifest.parent, "PMC0000001_placeholder.txt")
-    manifest.write_text(
-        json.dumps({"items": [{"pmcid": "PMC0000001", "path": name}]}),
-        encoding="utf-8",
-    )
+    """A valid corpus is the whole reviewed selection, not any manifest at all.
 
-    inspection = inspect_research_paper_corpus(manifest_path=manifest, root=manifest.parent)
+    This test used to build a single-paper manifest and assert AVAILABLE, which
+    encoded the defect the hardening removed: a one-paper corpus would have
+    produced benchmark numbers for a selection nobody chose. The completeness
+    cases live in test_research_paper_corpus_hardening.py; this keeps the
+    original intent - a good corpus is accepted - against the real selection.
+    """
+    from backend.services.research_paper_corpus import expected_pmcids
+
+    directory = tmp_path / "research_papers"
+    directory.mkdir(parents=True, exist_ok=True)
+    items = []
+    for pmcid in sorted(expected_pmcids()):
+        name = _paper(directory, f"{pmcid}_placeholder.txt")
+        items.append({"pmcid": pmcid, "path": name, "status": "downloaded"})
+    manifest = directory / "research_papers_manifest.json"
+    manifest.write_text(json.dumps({"items": items}), encoding="utf-8")
+
+    inspection = inspect_research_paper_corpus(manifest_path=manifest, root=directory)
     assert inspection.state == AVAILABLE
-    assert inspection.item_count == 1
+    assert inspection.item_count == len(expected_pmcids())
 
 
 def test_manifest_referencing_a_missing_file_is_invalid(tmp_path: Path) -> None:
+    """Still invalid; the inspector now reports it against the reviewed set."""
     manifest = _manifest(tmp_path, [{"pmcid": "PMC1", "path": "not_here.txt"}])
-    with pytest.raises(ResearchPaperCorpusInvalid, match="not present"):
+    with pytest.raises(ResearchPaperCorpusInvalid):
         inspect_research_paper_corpus(manifest_path=manifest, root=tmp_path)
 
 

@@ -21,6 +21,7 @@ from typing import Any, Iterable
 
 
 from backend.services.research_paper_corpus import (
+    evaluation_run_id,
     inspect_research_paper_corpus,
     not_evaluated_artifact,
 )
@@ -80,24 +81,52 @@ def _new_db_session():
     return sessionmaker(bind=engine)()
 
 
+CANONICAL_CASE_IDS = frozenset(str(case["id"]) for case in QUERY_CASES)
+
+
+def suite_requires_research_paper_corpus(cases: list[dict[str, Any]]) -> bool:
+    """Does this suite measure the research-paper corpus?
+
+    Decided by what the cases *are*, not by which object was passed. The
+    previous version compared `cases is QUERY_CASES`, so `list(QUERY_CASES)` or
+    a deepcopy - the canonical questions, asked of a knowledge base with no
+    papers in it - slipped past the preflight and reported the misses as a
+    measurement.
+
+    A suite drawn entirely from the canonical questions depends on the corpus,
+    however it was constructed. A suite containing anything else is asking
+    about something this corpus does not answer, and callers who need to say so
+    outright can pass `requires_research_paper_corpus` explicitly.
+    """
+    if not cases:
+        return False
+    ids = {str(case.get("id")) for case in cases}
+    return ids <= CANONICAL_CASE_IDS
+
+
 def run_research_paper_query_telemetry(
     *,
     output_path: Path | str = DEFAULT_OUTPUT_PATH,
     failures_path: Path | str = DEFAULT_FAILURES_PATH,
     cases: Iterable[dict[str, Any]] = QUERY_CASES,
     allow_provider: bool = False,
+    requires_research_paper_corpus: bool | None = None,
 ) -> dict[str, Any]:
     # Unlike the KB evaluation this probe never reads the manifest, so without
     # the corpus it does not crash - it quietly measures retrieval against a
     # knowledge base containing no research papers and reports the misses as
     # though they were a finding. That is the more misleading of the two
-    # failure modes, so the default probe gets the same preflight.
+    # failure modes, so a corpus-dependent suite gets the same preflight.
     #
-    # Only the default suite is gated. `QUERY_CASES` is the fixed set that asks
-    # about the papers; a caller passing its own cases is measuring the runner
-    # itself and has no dependency on the corpus, so short-circuiting it there
-    # would answer a question it did not ask.
-    if cases is QUERY_CASES:
+    # Materialised once, before the decision: `cases` is an Iterable, and a
+    # generator inspected here would be empty by the time it is run.
+    case_list = [dict(case) for case in cases]
+    needs_corpus = (
+        suite_requires_research_paper_corpus(case_list)
+        if requires_research_paper_corpus is None
+        else bool(requires_research_paper_corpus)
+    )
+    if needs_corpus:
         inspection = inspect_research_paper_corpus()
         if inspection.absent:
             return _not_evaluated_telemetry(
@@ -117,7 +146,6 @@ def run_research_paper_query_telemetry(
 
     db = _new_db_session()
     rows: list[dict[str, Any]] = []
-    case_list = [dict(case) for case in cases]
     for case in case_list:
         telemetry_token = start_llm_telemetry()
         started = perf_counter()
@@ -358,15 +386,18 @@ def _not_evaluated_telemetry(
     failures_path: Path,
 ) -> dict[str, Any]:
     """Report no telemetry rather than telemetry gathered without the corpus."""
+    run_id = evaluation_run_id()
     payload = not_evaluated_artifact(
         schema_version="research_paper_query_telemetry_v1",
         inspection=inspection,
+        evaluation_run_id=run_id,
         query_count=None,
         internal_vs_external_authored="internal",
     )
     failures = not_evaluated_artifact(
         schema_version="research_paper_query_telemetry_failures_v1",
         inspection=inspection,
+        evaluation_run_id=run_id,
         failure_count=None,
         failures=None,
     )
