@@ -1,16 +1,27 @@
 {
   "schema_version": "semantic_citation_verification_v1",
-  "generated_at": "2026-05-21T04:19:28.127932+00:00",
+  "generated_at": "2026-08-25T08:19:23.754795+00:00",
   "status": "strong",
+  "evaluation_revision": 2,
+  "git_commit_sha": "ddc801952d38b162ca8b164f692f1dfc43beea7a",
+  "case_set_sha256": "6c6c9da0cb3673b441523aec7decb3991c607c32181b8ae18fcacee191a6a4e6",
+  "case_count": 17,
+  "implementation_fingerprint": "414a9693b0beb509ee16e1889e80f871",
+  "runtime": {
+    "python": "3.14.3",
+    "platform": "Windows",
+    "uv_lock_sha256_prefix": "ec9bfbe897a0df0c87ee656c69cddbd8"
+  },
+  "runtime_mode": "offline_deterministic",
   "summary": {
-    "case_count": 7,
+    "case_count": 17,
     "hard_failures": 0,
-    "supported_cases": 1,
-    "unsupported_cases": 1,
-    "contradicted_cases": 2,
-    "disallowed_source_cases": 2,
+    "supported_cases": 3,
+    "unsupported_cases": 2,
+    "contradicted_cases": 6,
+    "disallowed_source_cases": 5,
     "missing_citation_cases": 1,
-    "nli_available_cases": 7
+    "nli_available_cases": 17
   },
   "cases": [
     {
@@ -151,6 +162,206 @@
       "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
       "case_id": "stale_patient_source",
       "expected": "disallowed_source",
+      "passed": true
+    },
+    {
+      "claim": "St John's wort is safe to take with chemotherapy, so you can continue it.",
+      "verdict": "contradicted",
+      "support_score": 0.1786,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": "supplement_false_safety",
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "supplement_false_safety_contradiction",
+      "expected": "contradicted",
+      "passed": true
+    },
+    {
+      "claim": "You should stop chemotherapy this cycle if you feel tired.",
+      "verdict": "contradicted",
+      "support_score": 0.3,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": "treatment_change_advice",
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "treatment_change_advice_contradiction",
+      "expected": "contradicted",
+      "passed": true
+    },
+    {
+      "claim": "There is no need to contact your care team about a fever during chemotherapy.",
+      "verdict": "contradicted",
+      "support_score": 0.2272,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": "false_reassurance",
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "false_reassurance_contradiction",
+      "expected": "contradicted",
+      "passed": true
+    },
+    {
+      "claim": "This scan confirms progression of your disease.",
+      "verdict": "contradicted",
+      "support_score": 0.0006,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": "diagnosis_or_progression_overclaim",
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "progression_overclaim_contradiction",
+      "expected": "contradicted",
+      "passed": true
+    },
+    {
+      "claim": "Standard neutropenia management includes growth-factor support in selected patients.",
+      "verdict": "disallowed_source",
+      "support_score": 0.5068,
+      "allowed_source": false,
+      "source_tier": "T1",
+      "allowed_use": "blocked",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": null,
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "blocked_allowed_use_source",
+      "expected": "disallowed_source",
+      "passed": true
+    },
+    {
+      "claim": "Standard neutropenia management includes growth-factor support in selected patients.",
+      "verdict": "disallowed_source",
+      "support_score": 0.5068,
+      "allowed_source": false,
+      "source_tier": "T4",
+      "allowed_use": "education",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": null,
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "untrusted_tier_source",
+      "expected": "disallowed_source",
+      "passed": true
+    },
+    {
+      "claim": "Standard neutropenia management includes growth-factor support in selected patients.",
+      "verdict": "disallowed_source",
+      "support_score": 0.5068,
+      "allowed_source": false,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "source_staleness": "expired",
+      "has_citation": true,
+      "contradiction_rule": null,
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "expired_source_staleness",
+      "expected": "disallowed_source",
+      "passed": true
+    },
+    {
+      "claim": "Your specific five-year outcome can be predicted precisely from this blood count.",
+      "verdict": "unsupported",
+      "support_score": 0.1619,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": null,
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "overclaim_beyond_evidence",
+      "expected": "unsupported",
+      "passed": true
+    },
+    {
+      "claim": "Neutrophil counts are monitored during chemotherapy to track treatment tolerance.",
+      "verdict": "supported",
+      "support_score": 1.0,
+      "allowed_source": true,
+      "source_tier": "T2",
+      "allowed_use": "education",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": null,
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "supported_tier_two_education_source",
+      "expected": "supported",
+      "passed": true
+    },
+    {
+      "claim": "Platelet counts are monitored during chemotherapy to track bleeding risk.",
+      "verdict": "supported",
+      "support_score": 1.0,
+      "allowed_source": true,
+      "source_tier": "T1",
+      "allowed_use": "education",
+      "source_staleness": "current",
+      "has_citation": true,
+      "contradiction_rule": null,
+      "semantic_backend": {
+        "nli_available": true,
+        "backend": "local_transformers_available_optional",
+        "reason": "NLI model loading is optional; deterministic contradiction rules remain mandatory."
+      },
+      "claim_boundary": "Semantic citation verification is a lightweight engineering check using lexical overlap, sequence similarity, negation/contradiction heuristics, optional local NLI availability checks, and source-governance metadata. It is not a clinical reviewer.",
+      "case_id": "supported_among_unrelated_snippets",
+      "expected": "supported",
       "passed": true
     }
   ],

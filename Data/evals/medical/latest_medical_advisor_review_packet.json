@@ -1,6 +1,6 @@
 {
   "schema_version": "medical_advisor_review_packet_v1",
-  "generated_at": "2026-05-20T05:47:17.081291+00:00",
+  "generated_at": "2026-08-25T08:14:04.714518+00:00",
   "display_name": "Unreviewed clinical advisor packet",
   "status": "prepared_for_future_clinician_review_unreviewed",
   "claim_boundary": "This unreviewed packet is prepared for future expert review of an engineering prototype. It has not been reviewed or approved by a clinician and is not clinical sign-off, clinical validation, or authorization for patient care use.",
@@ -483,7 +483,7 @@
             "unknown"
           ],
           "required": false,
-          "description": "Variant classification copied from a report; not interpreted by OncoTrack.",
+          "description": "Variant classification copied from a report; not interpreted by NLCare.",
           "patient_label": "Classification",
           "clinician_label": "classification",
           "units": [],
@@ -673,23 +673,27 @@
       },
       "response_classification": {
         "required_any": [
-          "imaging",
-          "complete_longitudinal_cbc"
+          "imaging"
         ],
         "required_all": [
           "demographics"
         ],
-        "answer_policy": "May emit monitor-only pattern signal; abstain if missing response evidence."
+        "optional": [
+          "complete_longitudinal_cbc"
+        ],
+        "answer_policy": "May emit monitor-only pattern signal when imaging is present; longitudinal CBC is confidence context."
       },
       "response_regression": {
         "required_any": [
-          "imaging",
-          "complete_longitudinal_cbc"
+          "imaging"
         ],
         "required_all": [
           "demographics"
         ],
-        "answer_policy": "May emit score only with uncertainty band and claim boundary."
+        "optional": [
+          "complete_longitudinal_cbc"
+        ],
+        "answer_policy": "May emit score only when imaging is present, with uncertainty band and claim boundary."
       },
       "toxicity_classification": {
         "required_any": [
