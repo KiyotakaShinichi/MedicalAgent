@@ -296,6 +296,63 @@ def relative_to_root(path: Path) -> str:
         return str(path)
 
 
+def paper_chunks_with_verified_provenance(
+    chunk_path: Path | str,
+    is_paper_chunk,
+    *,
+    expected: frozenset[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Load the knowledge-base chunks, refusing to continue on partial provenance.
+
+    A complete raw corpus is not the same as a complete *ingested* one. Every
+    reviewed paper can be on disk while the chunk artifact holds only twenty of
+    the twenty-one, and the evaluation would then run happily over the twenty:
+    coverage reported 0.9524, status came back needs_attention, and the gate
+    exited zero. A benchmark measured over a corpus missing a paper is not a
+    slightly worse benchmark, it is a measurement of a different corpus.
+
+    Paper-level identity is what matters here, not volume. Any number of chunks
+    may carry one PMCID - that is just how a paper was split - so this compares
+    the *set* of ingested paper PMCIDs against the reviewed selection and never
+    counts chunks.
+
+    Unexpected paper PMCIDs fail too: content from a paper nobody reviewed is a
+    provenance problem in the other direction. Curated and other non-paper KB
+    chunks are untouched by this - `is_paper_chunk` decides what counts, and
+    everything else is simply not this contract's business.
+    """
+    chunk_path = Path(chunk_path)
+    if not chunk_path.exists():
+        raise ResearchPaperCorpusInvalid(
+            f"the raw corpus is present but {chunk_path.as_posix()} is not; "
+            "paper provenance cannot be established"
+        )
+
+    chunks = load_evidence_json(chunk_path).get("chunks") or []
+    reviewed = {pmcid.upper() for pmcid in (expected if expected is not None else expected_pmcids())}
+    ingested = {
+        str(row.get("pmcid") or "").upper()
+        for row in chunks
+        if is_paper_chunk(row) and row.get("pmcid")
+    }
+
+    missing = sorted(reviewed - ingested)
+    unexpected = sorted(ingested - reviewed)
+    if missing or unexpected:
+        detail = []
+        if missing:
+            detail.append(
+                f"{len(missing)} of {len(reviewed)} reviewed papers have no ingested "
+                f"chunks: {missing[:5]}{'...' if len(missing) > 5 else ''}"
+            )
+        if unexpected:
+            detail.append(f"chunks claim unreviewed papers: {unexpected[:5]}")
+        raise ResearchPaperCorpusInvalid(
+            "incomplete research-paper provenance - " + "; ".join(detail)
+        )
+    return chunks
+
+
 def not_evaluated_reports_if_absent(
     manifest_path: Path | str,
     audit_path: Path,

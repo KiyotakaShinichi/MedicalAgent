@@ -31,6 +31,7 @@ from backend.services.rag_baseline_comparison import (
 from backend.services.research_paper_corpus import (
     load_evidence_json as _load_json,
     not_evaluated_reports_if_absent,
+    paper_chunks_with_verified_provenance,
     relative_to_root as _relative,
     sha256_file as _sha256,
     utc_now as _now,
@@ -86,7 +87,7 @@ def run_research_paper_kb_eval(
 
     build_kb_source_governance(kb_chunks_path=str(kb_path))
 
-    raw_chunks = _load_json(kb_path).get("chunks") or []
+    raw_chunks = paper_chunks_with_verified_provenance(kb_path, _is_owned_research_source)
     manifest = _load_json(manifest_path)
     cases = _load_cases(cases_path)
     audit = build_research_paper_kb_audit(raw_chunks, manifest, cases)
