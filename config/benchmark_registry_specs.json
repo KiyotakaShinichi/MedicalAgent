@@ -2456,41 +2456,10 @@
     }
   },
   {
-    "id": "current_vs_realism_candidate",
-    "title": "Current vs realism-calibrated candidate",
-    "path": "Data/mle_monitoring/current_vs_realism_candidate.json",
-    "tier": "critical",
-    "metrics": {
-      "status": [
-        "status"
-      ],
-      "decision": [
-        "recommendation",
-        "decision"
-      ],
-      "candidate_use": [
-        "recommendation",
-        "candidate_use"
-      ],
-      "production_replacement_allowed": [
-        "recommendation",
-        "production_replacement_allowed"
-      ],
-      "classification_auroc_delta": [
-        "recommendation",
-        "classification_auroc_delta"
-      ],
-      "regression_mae_delta": [
-        "recommendation",
-        "regression_mae_delta"
-      ]
-    }
-  },
-  {
     "id": "synthetic_realism_candidate",
     "title": "Synthetic realism candidate",
     "path": "Data/mle_monitoring/synthetic_realism_candidate_report.json",
-    "tier": "critical",
+    "tier": "supporting",
     "metrics": {
       "alignment_score": [
         "realism_alignment_score"

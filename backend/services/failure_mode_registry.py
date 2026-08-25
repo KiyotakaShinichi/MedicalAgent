@@ -55,7 +55,7 @@ ENGINEERING_RISKS: tuple[dict[str, Any], ...] = (
         "risk": "Performance numbers from synthetic data are not transferrable to real patients.",
         "detection": "Compare synthetic AUROC vs. external_breastdcedl_auroc in model_benchmark.",
         "mitigation": "Every patient-facing surface carries a non-diagnostic disclaimer; model recommendations are monitor_only.",
-        "benchmark_coverage": ["model_benchmark", "synthetic_realism_candidate", "current_vs_realism_candidate"],
+        "benchmark_coverage": ["model_benchmark", "synthetic_realism_candidate", "realism_candidate_ab_gate"],
         "remaining_gap": "No prospective validation; real-world calibration unknown.",
         "severity": "high",
     },

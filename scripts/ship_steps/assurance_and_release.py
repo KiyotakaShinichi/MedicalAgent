@@ -105,6 +105,21 @@ def assurance_and_release_steps() -> list[Step]:
                     name="Constraint-aware cross-domain improvement program",
                     command=[sys.executable, "scripts/run_constraint_aware_improvement_program.py"],
                 ),
+                # The consolidated registry treats MLE readiness as critical
+                # evidence, and docs/ci_cd.md lists "MLE readiness hard gates
+                # must pass" as a release gate - but Ship never produced it, so
+                # on a clean runner the artifact was simply absent and the
+                # registry blocked on a file this pipeline had no way to create.
+                # ci.yml and run_quality_gate.py already run this exact command;
+                # it reads tracked inputs, needs no network or model, and does
+                # not touch the locked holdout it reports on.
+                #
+                # Placed immediately before the registry so it runs after every
+                # step that may refresh the evidence it aggregates.
+                Step(
+                    name="MLE readiness gate",
+                    command=[sys.executable, "scripts/run_mle_checks.py"],
+                ),
                 Step(
                     name="Consolidated benchmark registry",
                     command=[sys.executable, "scripts/generate_benchmark_report.py"],

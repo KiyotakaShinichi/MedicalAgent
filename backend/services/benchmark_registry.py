@@ -184,7 +184,11 @@ def _issue_message(row: dict[str, Any]) -> str:
 def _next_actions(rows: list[dict[str, Any]], issues: list[dict[str, Any]]) -> list[str]:
     by_id = {row["id"]: row for row in rows}
     actions: list[str] = []
-    candidate = by_id.get("current_vs_realism_candidate", {})
+    # Reads the canonical A/B gate row. The old id pointed at a legacy output
+    # path that duplicated this same evidence, and `.get` would have silently
+    # returned {} once that duplicate was removed - retiring this
+    # recommendation without anyone noticing. Both specs expose `decision`.
+    candidate = by_id.get("realism_candidate_ab_gate", {})
     if _dig(candidate, ["metrics", "decision"]) == "promote_candidate_after_review":
         actions.append(
             "Review the realism-calibrated synthetic candidate carefully; promotion language should stay blocked without external temporal validation."

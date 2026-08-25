@@ -1,5 +1,5 @@
 {
-  "_comment": "Frozen pre-refactor snapshot of scripts/ship.py's step list, captured from _build_steps() while it was still a single 477-line literal. tests/test_ship_step_contract.py replays it against the current scripts/ship_steps package. Machine-specific values are tokenised: {python} = sys.executable, {root} = repo root, {npm} = npm/npm.cmd.",
+  "_comment": "Frozen pre-refactor snapshot of scripts/ship.py's step list, captured from _build_steps() while it was still a single 477-line literal. tests/test_ship_step_contract.py replays it against the current scripts/ship_steps package. Machine-specific values are tokenised: {python} = sys.executable, {root} = repo root, {npm} = npm/npm.cmd.  2026-08-25: one step added on purpose - \"MLE readiness gate\" at index 76, immediately before the consolidated benchmark registry, which treats its artifact as critical evidence that Ship previously never generated.",
   "captured_from": "scripts/ship.py::_build_steps (pre-decomposition)",
   "main": [
     {
@@ -857,6 +857,16 @@
       "command": [
         "{python}",
         "scripts/run_constraint_aware_improvement_program.py"
+      ],
+      "cwd": "{root}",
+      "env": null,
+      "timeout_seconds": null
+    },
+    {
+      "name": "MLE readiness gate",
+      "command": [
+        "{python}",
+        "scripts/run_mle_checks.py"
       ],
       "cwd": "{root}",
       "env": null,
