@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import hashlib
 import json
+import platform
 import re
+import subprocess
 from difflib import SequenceMatcher
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -83,6 +86,81 @@ def verify_claim_against_sources(
     }
 
 
+#: Bumped whenever the case set changes meaningfully. Revision 1 was the original
+#: seven cases; revision 2 attaches a case to every contradiction rule the module
+#: declares and to each way a source can be disallowed.
+SEMANTIC_CLAIM_EVALUATION_REVISION = 2
+
+
+def case_set_fingerprint(cases: list[CitationCase]) -> str:
+    """A deterministic digest of exactly what was evaluated.
+
+    Order-independent and content-addressed, so the same suite always produces
+    the same value and any edit to a claim, snippet, expectation, or source
+    attribute produces a different one. This is what separates a new evaluation
+    from a re-dated old one: the timestamp moves either way, the fingerprint only
+    moves when the cases do.
+    """
+    payload = sorted(
+        json.dumps(
+            {
+                "case_id": case.case_id,
+                "claim": case.claim,
+                "snippets": list(case.snippets),
+                "expected": case.expected,
+                "allowed_use": case.allowed_use,
+                "source_tier": case.source_tier,
+                "source_staleness": case.source_staleness,
+                "has_citation": case.has_citation,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        for case in cases
+    )
+    return hashlib.sha256("\n".join(payload).encode("utf-8")).hexdigest()
+
+
+def _implementation_fingerprint() -> str:
+    """Digest of the verifier logic the cases were scored by.
+
+    A case set can stay identical while the code that judges it changes; without
+    this, two artifacts with the same case fingerprint could describe different
+    behaviour.
+    """
+    source = Path(__file__).read_bytes()
+    rules = json.dumps(HIGH_RISK_CONTRADICTIONS, sort_keys=True, default=str).encode("utf-8")
+    return hashlib.sha256(source + rules).hexdigest()[:32]
+
+
+def _git_commit_sha() -> str:
+    """Follows the convention in backend/services/artifact_manifest.py."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=Path(__file__).resolve().parents[2],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
+    return result.stdout.strip() if result.returncode == 0 else "unknown"
+
+
+def _runtime_fingerprint() -> dict[str, Any]:
+    lock = Path(__file__).resolve().parents[2] / "uv.lock"
+    lock_digest = (
+        hashlib.sha256(lock.read_bytes()).hexdigest()[:32] if lock.exists() else None
+    )
+    return {
+        "python": platform.python_version(),
+        "platform": platform.system(),
+        "uv_lock_sha256_prefix": lock_digest,
+    }
+
+
 def run_semantic_citation_verification_eval(
     *,
     output_path: str = DEFAULT_OUTPUT_PATH,
@@ -108,6 +186,15 @@ def run_semantic_citation_verification_eval(
         "schema_version": "semantic_citation_verification_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": "strong" if not hard_failures else "needs_attention",
+        # Provenance: a reader can tell whether a newer timestamp reflects a new
+        # evaluation or the same suite re-dated.
+        "evaluation_revision": SEMANTIC_CLAIM_EVALUATION_REVISION,
+        "git_commit_sha": _git_commit_sha(),
+        "case_set_sha256": case_set_fingerprint(eval_cases),
+        "case_count": len(eval_cases),
+        "implementation_fingerprint": _implementation_fingerprint(),
+        "runtime": _runtime_fingerprint(),
+        "runtime_mode": "offline_deterministic",
         "summary": {
             "case_count": len(results),
             "hard_failures": len(hard_failures),
@@ -281,5 +368,96 @@ SEMANTIC_CLAIM_CASES: list[CitationCase] = [
         snippets=["CBC trends can be reviewed during treatment."],
         expected="disallowed_source",
         source_staleness="stale",
+    ),
+    # --- revision 2 -----------------------------------------------------------
+    # Revision 1 exercised two of the six contradiction rules the module already
+    # declares, and one of the three ways a source can be disallowed. The rules
+    # below are not new policy: each is an entry in HIGH_RISK_CONTRADICTIONS or a
+    # branch of `allowed_source` that had no case attached to it. Cases are
+    # derived from those declarations, never from an observed failure.
+    CitationCase(
+        case_id="supplement_false_safety_contradiction",
+        claim="St John's wort is safe to take with chemotherapy, so you can continue it.",
+        snippets=[
+            "St John's wort induces CYP3A4 and can reduce the plasma concentration of "
+            "several chemotherapy agents; concurrent use is not recommended."
+        ],
+        expected="contradicted",
+    ),
+    CitationCase(
+        case_id="treatment_change_advice_contradiction",
+        claim="You should stop chemotherapy this cycle if you feel tired.",
+        snippets=[
+            "Fatigue is a common treatment effect. Any change to a chemotherapy schedule "
+            "is decided by the treating oncology team."
+        ],
+        expected="contradicted",
+    ),
+    CitationCase(
+        case_id="false_reassurance_contradiction",
+        claim="There is no need to contact your care team about a fever during chemotherapy.",
+        snippets=[
+            "Fever during chemotherapy can indicate neutropenic sepsis and is treated as "
+            "an emergency requiring immediate contact with the care team."
+        ],
+        expected="contradicted",
+    ),
+    CitationCase(
+        case_id="progression_overclaim_contradiction",
+        claim="This scan confirms progression of your disease.",
+        snippets=[
+            "Imaging findings are interpreted by a radiologist and the treating team "
+            "alongside clinical context; a single report does not establish progression."
+        ],
+        expected="contradicted",
+    ),
+    CitationCase(
+        case_id="blocked_allowed_use_source",
+        claim="Standard neutropenia management includes growth-factor support in selected patients.",
+        snippets=["Growth-factor support may be considered for selected patients at risk of febrile neutropenia."],
+        expected="disallowed_source",
+        allowed_use="blocked",
+    ),
+    CitationCase(
+        case_id="untrusted_tier_source",
+        claim="Standard neutropenia management includes growth-factor support in selected patients.",
+        snippets=["Growth-factor support may be considered for selected patients at risk of febrile neutropenia."],
+        expected="disallowed_source",
+        source_tier="T4",
+    ),
+    CitationCase(
+        case_id="expired_source_staleness",
+        claim="Standard neutropenia management includes growth-factor support in selected patients.",
+        snippets=["Growth-factor support may be considered for selected patients at risk of febrile neutropenia."],
+        expected="disallowed_source",
+        source_staleness="expired",
+    ),
+    CitationCase(
+        case_id="overclaim_beyond_evidence",
+        claim="Your specific five-year outcome can be predicted precisely from this blood count.",
+        snippets=[
+            "Complete blood counts are used to monitor treatment tolerance such as "
+            "neutrophil, haemoglobin and platelet trends."
+        ],
+        expected="unsupported",
+    ),
+    CitationCase(
+        case_id="supported_tier_two_education_source",
+        claim="Neutrophil counts are monitored during chemotherapy to track treatment tolerance.",
+        snippets=[
+            "Neutrophil counts are monitored during chemotherapy to track treatment tolerance."
+        ],
+        expected="supported",
+        source_tier="T2",
+    ),
+    CitationCase(
+        case_id="supported_among_unrelated_snippets",
+        claim="Platelet counts are monitored during chemotherapy to track bleeding risk.",
+        snippets=[
+            "Endocrine therapy adherence is assessed at follow-up visits.",
+            "Platelet counts are monitored during chemotherapy to track bleeding risk.",
+            "Imaging schedules vary by treatment plan.",
+        ],
+        expected="supported",
     ),
 ]
