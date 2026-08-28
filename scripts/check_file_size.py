@@ -41,6 +41,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_BASELINE = ROOT / "tests" / "contracts" / "backend_loc_baseline.json"
 DEFAULT_MAX_LOC = 500
+DEFAULT_EXTENSIONS = (".py",)
 
 # Machine-generated or vendored trees. Kept short on purpose: every entry here
 # is a place the limit stops applying, so a broad pattern would quietly excuse
@@ -48,6 +49,7 @@ DEFAULT_MAX_LOC = 500
 GENERATED_PATH_PARTS = (
     "migrations/versions",  # alembic revision files are generated
     "__pycache__",
+    "frontend-react/src/types/generated-openapi.d.ts",
 )
 
 
@@ -67,17 +69,31 @@ def is_generated(relative: str) -> bool:
     return any(part in normalized for part in GENERATED_PATH_PARTS)
 
 
-def tracked_python_files(root: Path, target: Path) -> list[Path]:
-    """Tracked `.py` files under `target`, via git so untracked scratch is ignored."""
+def tracked_source_files(
+    root: Path,
+    target: Path,
+    extensions: tuple[str, ...] = DEFAULT_EXTENSIONS,
+) -> list[Path]:
+    """Return tracked authored source files under ``target``."""
     result = subprocess.run(
-        ["git", "ls-files", "--", str(target.relative_to(root)).replace("\\", "/") + "/*.py"],
-        cwd=root, capture_output=True, text=True, check=True,
+        ["git", "ls-files", "--", str(target.relative_to(root)).replace("\\", "/")],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=True,
     )
     return [
         root / line
         for line in result.stdout.splitlines()
-        if line.strip() and not is_generated(line)
+        if line.strip()
+        and not is_generated(line)
+        and any(line.endswith(extension) for extension in extensions)
     ]
+
+
+def tracked_python_files(root: Path, target: Path) -> list[Path]:
+    """Backward-compatible Python-only tracked-file helper."""
+    return tracked_source_files(root, target)
 
 
 def load_baseline(path: Path) -> dict[str, int]:
@@ -87,9 +103,13 @@ def load_baseline(path: Path) -> dict[str, int]:
     return {k: int(v) for k, v in data.get("files", {}).items()}
 
 
-def measure(root: Path, target: Path) -> dict[str, int]:
+def measure(
+    root: Path,
+    target: Path,
+    extensions: tuple[str, ...] = DEFAULT_EXTENSIONS,
+) -> dict[str, int]:
     sizes = {}
-    for path in tracked_python_files(root, target):
+    for path in tracked_source_files(root, target, extensions):
         relative = path.relative_to(root).as_posix()
         sizes[relative] = physical_loc(path)
     return sizes
@@ -117,7 +137,9 @@ def evaluate(sizes: dict[str, int], baseline: dict[str, int], max_loc: int) -> l
     return problems
 
 
-def write_baseline(path: Path, sizes: dict[str, int], baseline: dict[str, int], max_loc: int) -> dict:
+def write_baseline(
+    path: Path, sizes: dict[str, int], baseline: dict[str, int], max_loc: int
+) -> dict:
     """Shrink-only update: sizes may fall, never rise."""
     updated: dict[str, int] = {}
     lowered, dropped = [], []
@@ -150,18 +172,28 @@ def write_baseline(path: Path, sizes: dict[str, int], baseline: dict[str, int], 
         "max_loc": max_loc,
         "files": updated,
     }
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    )
     return {"recorded": len(updated), "lowered": lowered, "dropped": sorted(set(dropped))}
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("target", nargs="?", default="backend/services",
-                        help="directory to inspect (default: backend/services)")
+    parser.add_argument(
+        "target",
+        nargs="?",
+        default="backend/services",
+        help="directory to inspect (default: backend/services)",
+    )
     parser.add_argument("--max-loc", type=int, default=DEFAULT_MAX_LOC)
     parser.add_argument("--baseline", type=Path, default=DEFAULT_BASELINE)
-    parser.add_argument("--update", action="store_true",
-                        help="rewrite the baseline (shrink-only)")
+    parser.add_argument(
+        "--extensions",
+        default=".py",
+        help="comma-separated authored source suffixes (default: .py)",
+    )
+    parser.add_argument("--update", action="store_true", help="rewrite the baseline (shrink-only)")
     args = parser.parse_args(argv)
 
     target = (ROOT / args.target).resolve()
@@ -169,7 +201,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"check_file_size: not a directory: {args.target}", file=sys.stderr)
         return 2
 
-    sizes = measure(ROOT, target)
+    extensions = tuple(
+        suffix if suffix.startswith(".") else f".{suffix}"
+        for raw in args.extensions.split(",")
+        if (suffix := raw.strip())
+    )
+    if not extensions:
+        print("check_file_size: at least one extension is required", file=sys.stderr)
+        return 2
+    sizes = measure(ROOT, target, extensions)
     baseline = load_baseline(args.baseline)
 
     if args.update:

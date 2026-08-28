@@ -30,6 +30,7 @@ from scripts.check_file_size import (  # noqa: E402
     load_baseline,
     main,
     physical_loc,
+    tracked_source_files,
     write_baseline,
 )
 
@@ -62,15 +63,17 @@ def test_a_baseline_file_that_grows_fails() -> None:
 
 
 def test_a_baseline_file_that_shrinks_passes() -> None:
-    assert evaluate(
-        {"backend/services/legacy.py": 700}, {"backend/services/legacy.py": 900}, MAX
-    ) == []
+    assert (
+        evaluate({"backend/services/legacy.py": 700}, {"backend/services/legacy.py": 900}, MAX)
+        == []
+    )
 
 
 def test_a_baseline_file_that_stays_the_same_passes() -> None:
-    assert evaluate(
-        {"backend/services/legacy.py": 900}, {"backend/services/legacy.py": 900}, MAX
-    ) == []
+    assert (
+        evaluate({"backend/services/legacy.py": 900}, {"backend/services/legacy.py": 900}, MAX)
+        == []
+    )
 
 
 def test_multiple_violations_are_all_reported() -> None:
@@ -97,8 +100,10 @@ def test_violation_messages_say_what_to_do() -> None:
 def test_update_lowers_a_recorded_size(tmp_path: Path) -> None:
     baseline_path = tmp_path / "baseline.json"
     result = write_baseline(
-        baseline_path, {"backend/services/legacy.py": 700},
-        {"backend/services/legacy.py": 900}, MAX,
+        baseline_path,
+        {"backend/services/legacy.py": 700},
+        {"backend/services/legacy.py": 900},
+        MAX,
     )
     assert load_baseline(baseline_path)["backend/services/legacy.py"] == 700
     assert result["lowered"] == ["backend/services/legacy.py 900 -> 700"]
@@ -112,23 +117,25 @@ def test_update_refuses_to_raise_a_recorded_size(tmp_path: Path) -> None:
     """
     baseline_path = tmp_path / "baseline.json"
     write_baseline(
-        baseline_path, {"backend/services/legacy.py": 950},
-        {"backend/services/legacy.py": 900}, MAX,
+        baseline_path,
+        {"backend/services/legacy.py": 950},
+        {"backend/services/legacy.py": 900},
+        MAX,
     )
     assert load_baseline(baseline_path)["backend/services/legacy.py"] == 900
 
     # And the frozen value still fails the grown file.
-    assert evaluate(
-        {"backend/services/legacy.py": 950}, load_baseline(baseline_path), MAX
-    )
+    assert evaluate({"backend/services/legacy.py": 950}, load_baseline(baseline_path), MAX)
 
 
 def test_update_drops_a_file_that_came_under_the_limit(tmp_path: Path) -> None:
     """A remediated file leaves the debt list and cannot silently regrow."""
     baseline_path = tmp_path / "baseline.json"
     result = write_baseline(
-        baseline_path, {"backend/services/fixed.py": 200},
-        {"backend/services/fixed.py": 900}, MAX,
+        baseline_path,
+        {"backend/services/fixed.py": 200},
+        {"backend/services/fixed.py": 900},
+        MAX,
     )
     assert "backend/services/fixed.py" not in load_baseline(baseline_path)
     assert "backend/services/fixed.py" in result["dropped"]
@@ -169,13 +176,42 @@ def test_generated_trees_are_excluded_narrowly() -> None:
     assert is_generated("backend/services/__pycache__/x.py")
     assert not is_generated("backend/services/saas_jobs.py")
     assert not is_generated("backend/services/migrations_helper.py")
+    assert is_generated("frontend-react/src/types/generated-openapi.d.ts")
+
+
+def test_tracked_source_files_supports_frontend_suffixes() -> None:
+    files = tracked_source_files(ROOT, ROOT / "frontend-react/src", (".ts", ".tsx", ".css"))
+    relative = {path.relative_to(ROOT).as_posix() for path in files}
+    assert "frontend-react/src/api/client.ts" in relative
+    assert "frontend-react/src/types/generated-openapi.d.ts" not in relative
 
 
 # ─── the repository's own state ──────────────────────────────────────────────
 
 
 def test_the_repository_currently_passes_its_own_ratchet() -> None:
-    assert main(["backend/services"]) == 0
+    assert (
+        main(
+            [
+                "backend",
+                "--baseline",
+                "tests/contracts/backend_authored_loc_baseline.json",
+            ]
+        )
+        == 0
+    )
+    assert (
+        main(
+            [
+                "frontend-react/src",
+                "--extensions",
+                ".ts,.tsx,.css",
+                "--baseline",
+                "tests/contracts/frontend_authored_loc_baseline.json",
+            ]
+        )
+        == 0
+    )
 
 
 def test_the_committed_baseline_excludes_the_remediated_modules() -> None:
@@ -200,6 +236,16 @@ def test_the_committed_baseline_excludes_the_remediated_modules() -> None:
         "backend/services/governance_artifacts/portfolio_claim_safety.py",
         "backend/services/governance_artifacts/contamination_harmonization.py",
         "backend/services/governance_artifacts/noisier_v2_readiness.py",
+        "backend/services/agent_safety.py",
+        "backend/services/agent_safety_vocab.py",
+        "backend/services/agent_safety_rules.py",
+        "backend/services/unsafe_intent_semantic_classifier.py",
+        "backend/services/unsafe_intent_families.py",
+        "backend/services/unsafe_intent_compositional_rules.py",
+        "backend/api/routers/patient_interactions.py",
+        "backend/api/routers/patient_interaction_records.py",
+        "backend/api/routers/patient_interaction_genetics.py",
+        "backend/api/routers/patient_interaction_support.py",
     ],
 )
 def test_every_module_created_by_this_split_is_within_the_limit(module: str) -> None:

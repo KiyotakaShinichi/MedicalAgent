@@ -43,7 +43,9 @@ jobs:
       # may only shrink, while anything new must come in under 500. That way
       # the debt cannot grow and unrelated legacy files do not fail `main`.
       - name: Enforce backend service size limits
-        run: python scripts/check_file_size.py backend/services --max-loc 500
+        run: |
+          python scripts/check_file_size.py backend --max-loc 500 --baseline tests/contracts/backend_authored_loc_baseline.json
+          python scripts/check_file_size.py frontend-react/src --extensions .ts,.tsx,.css --max-loc 500 --baseline tests/contracts/frontend_authored_loc_baseline.json
 
       # Production changes ship with tests. `fetch-depth: 0` above gives the
       # diff something to compare against; on a pull request that is the merge
