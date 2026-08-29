@@ -24,7 +24,7 @@ attributable test failure.
 
 This blocks **transport**, never behaviour. No safety policy, DEP-001
 classifier, evaluator, or medical logic is stubbed here: those are exercised
-for real. A test that genuinely needs the network marks itself `network` and
+for real. A test that genuinely needs the network marks itself `requires_network` and
 is deselected from the default run by `pytest.ini`.
 """
 
@@ -63,6 +63,7 @@ _THIRD_PARTY_CREDENTIAL_VARS = (
 # Offline flags the safety runtimes rely on. Set here as well as in CI so a
 # local run without the CI environment behaves identically.
 _OFFLINE_ENV = {
+    "NLCARE_TEST_OFFLINE": "true",
     "HF_HUB_OFFLINE": "1",
     "TRANSFORMERS_OFFLINE": "1",
 }
@@ -79,47 +80,21 @@ class NetworkEgressBlocked(RuntimeError):
     """Raised when the default suite attempts a real outbound connection."""
 
 
+def network_block_required(node: pytest.Item) -> bool:
+    """Return whether this pytest node belongs to the hermetic default suite."""
+    return node.get_closest_marker("requires_network") is None
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _hermetic_test_environment() -> object:
-    """Clear third-party credentials and block non-loopback egress."""
+    """Clear third-party credentials and declare the canonical offline mode."""
     saved = {name: os.environ.pop(name, None) for name in _THIRD_PARTY_CREDENTIAL_VARS}
     saved_offline = {k: os.environ.get(k) for k in _OFFLINE_ENV}
     os.environ.update(_OFFLINE_ENV)
 
-    # Opt-out for the explicitly-marked network suite and for debugging.
-    allow = os.environ.get("NLCARE_ALLOW_TEST_NETWORK", "").strip().lower() in {
-        "1", "true", "yes", "on",
-    }
-
-    real_connect = socket.socket.connect
-    real_create_connection = socket.create_connection
-
-    def guarded_connect(self, address, *args, **kwargs):  # type: ignore[no-untyped-def]
-        host = address[0] if isinstance(address, tuple) else address
-        if not _is_loopback(host):
-            raise NetworkEgressBlocked(
-                f"Blocked outbound connection to {host!r}. The default test suite is "
-                "hermetic: it must pass on a fresh clone with no credentials and no "
-                "reachable third-party services. Either stub this call, or mark the "
-                "test `@pytest.mark.network` (it will then be excluded from the "
-                "default run)."
-            )
-        return real_connect(self, address, *args, **kwargs)
-
-    def guarded_create_connection(address, *args, **kwargs):  # type: ignore[no-untyped-def]
-        host = address[0] if isinstance(address, tuple) else address
-        if not _is_loopback(host):
-            raise NetworkEgressBlocked(f"Blocked outbound connection to {host!r}.")
-        return real_create_connection(address, *args, **kwargs)
-
-    if not allow:
-        socket.socket.connect = guarded_connect  # type: ignore[method-assign]
-        socket.create_connection = guarded_create_connection  # type: ignore[assignment]
     try:
         yield
     finally:
-        socket.socket.connect = real_connect  # type: ignore[method-assign]
-        socket.create_connection = real_create_connection  # type: ignore[assignment]
         for name, value in saved.items():
             if value is not None:
                 os.environ[name] = value
@@ -128,3 +103,47 @@ def _hermetic_test_environment() -> object:
                 os.environ.pop(name, None)
             else:
                 os.environ[name] = value
+
+
+@pytest.fixture(autouse=True)
+def _block_unexpected_network(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Block external DNS and sockets unless the test explicitly declares network use."""
+    if not network_block_required(request.node):
+        return
+
+    real_connect = socket.socket.connect
+    real_create_connection = socket.create_connection
+    real_getaddrinfo = socket.getaddrinfo
+
+    def guarded_connect(self, address, *args, **kwargs):  # type: ignore[no-untyped-def]
+        host = address[0] if isinstance(address, tuple) else address
+        if not _is_loopback(host):
+            raise NetworkEgressBlocked(
+                f"Blocked outbound connection to {host!r}. The default test suite is "
+                "hermetic: it must pass on a fresh clone with no credentials and no "
+                "reachable third-party services. Either stub this call, or mark the "
+                "test `@pytest.mark.requires_network` (it will then be excluded from the "
+                "default run)."
+            )
+        return real_connect(self, address, *args, **kwargs)
+
+    def guarded_create_connection(address, *args, **kwargs):  # type: ignore[no-untyped-def]
+        host = address[0] if isinstance(address, tuple) else address
+        if not _is_loopback(host):
+            raise NetworkEgressBlocked(
+                f"Blocked outbound connection to {host!r}. Mark a genuinely live "
+                "integration test with @pytest.mark.requires_network."
+            )
+        return real_create_connection(address, *args, **kwargs)
+
+    def guarded_getaddrinfo(host, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if not _is_loopback(host):
+            raise NetworkEgressBlocked(
+                f"Blocked external DNS lookup for {host!r}. The default test suite "
+                "runs with NLCARE_TEST_OFFLINE=true."
+            )
+        return real_getaddrinfo(host, *args, **kwargs)
+
+    monkeypatch.setattr(socket.socket, "connect", guarded_connect)
+    monkeypatch.setattr(socket, "create_connection", guarded_create_connection)
+    monkeypatch.setattr(socket, "getaddrinfo", guarded_getaddrinfo)

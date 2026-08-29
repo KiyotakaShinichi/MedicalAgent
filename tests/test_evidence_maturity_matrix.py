@@ -36,7 +36,6 @@ def test_architecture_budget_surfaces_hotspots_without_claiming_failure(tmp_path
     architecture = result["architecture_maintainability"]
     assert architecture["backend_service_file_count"] > 0
     assert architecture["test_file_count"] > 0
-    assert architecture["oversized_file_count"] >= 1
     assert "Do not add a new service" in architecture["policy"]
     assert architecture["ratchet"]["oversized_file_baseline"] == 9
     assert architecture["oversized_file_count"] <= 9

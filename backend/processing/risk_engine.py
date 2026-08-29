@@ -115,7 +115,7 @@ def _base_evidence(**kwargs) -> dict:
 # -- Public API ----------------------------------------------------------------
 
 def detect_risks(labs_df):
-    risks = []
+    risks: list[dict[str, Any]] = []
     thresholds = _lab_thresholds_dict()
 
     for metric, config in thresholds.items():
@@ -144,7 +144,7 @@ def detect_risks(labs_df):
 
 
 def detect_trend_risk(labs_df):
-    risks = []
+    risks: list[dict[str, Any]] = []
     wbc_start = float(labs_df["wbc"].iloc[0])
     wbc_min = float(labs_df["wbc"].min())
     if wbc_start <= 0:
@@ -176,7 +176,7 @@ def detect_trend_risk(labs_df):
 
 
 def detect_symptom_risks(symptoms_df):
-    risks = []
+    risks: list[dict[str, Any]] = []
     if symptoms_df is None or symptoms_df.empty:
         return risks
 
@@ -208,7 +208,7 @@ def detect_clinical_rule_risks(labs_df, symptoms_df, treatments_df):
 
     Conservative clinical-support flags - not diagnosis or treatment orders.
     """
-    risks = []
+    risks: list[dict[str, Any]] = []
     risks.extend(_critical_cbc_rules(labs_df))
     risks.extend(_fever_after_treatment_rules(symptoms_df, treatments_df))
     risks.extend(_cbc_symptom_combination_rules(labs_df, symptoms_df))
@@ -219,7 +219,7 @@ def _critical_cbc_rules(labs_df):
     if labs_df is None or labs_df.empty:
         return []
 
-    risks = []
+    risks: list[dict[str, Any]] = []
     latest = labs_df.sort_values("date").iloc[-1]
     baseline = labs_df.sort_values("date").iloc[0]
     min_wbc = labs_df.loc[labs_df["wbc"].idxmin()]
@@ -295,7 +295,7 @@ def _fever_after_treatment_rules(symptoms_df, treatments_df):
         return []
 
     window_days = int(_rule_cfg("fever_after_chemo_window_days").get("threshold", 14))
-    risks = []
+    risks: list[dict[str, Any]] = []
     fever_rows = symptoms_df[
         symptoms_df["symptom"].astype(str).str.lower().str.contains(
             "fever|chills", regex=True, na=False
@@ -337,7 +337,7 @@ def _cbc_symptom_combination_rules(labs_df, symptoms_df):
     combo_window = int(_rule_cfg("cbc_symptom_combo_window_days").get("threshold", 3))
     low_wbc_threshold = float(_rule_cfg("low_wbc_for_combo_rule").get("threshold", 3.0))
 
-    risks = []
+    risks: list[dict[str, Any]] = []
     low_wbc_rows = labs_df[labs_df["wbc"] < low_wbc_threshold]
     fever_rows = symptoms_df[
         symptoms_df["symptom"].astype(str).str.lower().str.contains(

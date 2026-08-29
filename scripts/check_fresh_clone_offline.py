@@ -112,6 +112,7 @@ PROVISIONED_CONSUMER_TESTS = (
 # Environment that the offline path is contracted to run under. Mirrors the CI
 # `full-offline-tests` job so local and CI results mean the same thing.
 OFFLINE_ENV = {
+    "NLCARE_TEST_OFFLINE": "true",
     "ENVIRONMENT": "test",
     "LLM_ADJUDICATION_ENABLED": "false",
     "RAG_FORCE_SPARSE": "true",
@@ -376,6 +377,9 @@ _COLLECTED_PATTERN = re.compile(r"(\d+) tests? collected")
 _SKIP_LINE_PATTERN = re.compile(r"^SKIPPED \[(\d+)\]\s*(.*)$", re.MULTILINE)
 #: Failing test ids, so a failure names itself instead of being a count.
 _FAILED_TEST_PATTERN = re.compile(r"^FAILED (\S+)", re.MULTILINE)
+_COVERAGE_TOTAL_PATTERN = re.compile(
+    r"^TOTAL\s+.*?\s(?P<percent>\d+(?:\.\d+)?)%\s*$", re.MULTILINE
+)
 
 
 def discovered_test_files(root: Path) -> list[str]:
@@ -441,6 +445,35 @@ def _assert_command_is_a_full_suite_run(command: list[str]) -> None:
         raise ValueError("pytest command must measure backend coverage")
 
 
+def _initialize_disposable_test_database(root: Path, env: dict[str, str]) -> CheckResult:
+    """Create the full suite's synthetic SQLite fixture from tracked sources."""
+    initialize = subprocess.run(
+        [
+            sys.executable,
+            "scripts/reset_local_db.py",
+            "--database-url",
+            env["DATABASE_URL"],
+        ],
+        cwd=root,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    if initialize.returncode == 0:
+        return CheckResult(
+            "disposable_test_database_initialized",
+            True,
+            "schema migrated and synthetic P001 demo data seeded offline",
+        )
+    detail = (initialize.stderr or initialize.stdout).strip().splitlines()
+    return CheckResult(
+        "disposable_test_database_initialized",
+        False,
+        detail[-1] if detail else f"exit {initialize.returncode}",
+    )
+
+
 def _run_full_suite(
     root: Path, pytest_command: list[str] | None = None
 ) -> tuple[list[CheckResult], dict]:
@@ -452,6 +485,30 @@ def _run_full_suite(
     for name in THIRD_PARTY_CREDENTIAL_VARS:
         env.pop(name, None)
     (root / "Data" / "test_tmp").mkdir(parents=True, exist_ok=True)
+
+    # A fresh checkout has no tracked database. Reuse the same deterministic,
+    # offline SQLite initializer as Ship instead of relying on a developer's
+    # ignored medical_agent.db. This is evidence setup, not an auth bypass:
+    # demo login still resolves through the seeded patient rows.
+    database_check = _initialize_disposable_test_database(root, env)
+    if not database_check.passed:
+        return (
+            [database_check],
+            {
+                "database_initialized": False,
+                "test_files_discovered": 0,
+                "tests_collected": 0,
+                "passed": 0,
+                "failed": 0,
+                "skipped": 0,
+                "errors": 0,
+                "coverage_percent": None,
+                "network_or_credential_skips": [],
+                "other_skips": [],
+                "failed_tests": [],
+                "exit_code": 1,
+            },
+        )
 
     files = discovered_test_files(root)
 
@@ -500,8 +557,11 @@ def _run_full_suite(
         counts["collected"] = collected_count
     network_skips, other_skips = classify_skips(output)
     failed_tests = _FAILED_TEST_PATTERN.findall(output)
+    coverage_matches = _COVERAGE_TOTAL_PATTERN.findall(output)
+    coverage_percent = float(coverage_matches[-1]) if coverage_matches else None
 
     results = [
+        database_check,
         CheckResult(
             "full_suite_executed",
             proc.returncode == 0,
@@ -541,6 +601,7 @@ def _run_full_suite(
         "network_or_credential_skips": network_skips,
         "other_skips": other_skips,
         "coverage_floor": FULL_SUITE_MIN_COVERAGE,
+        "coverage_percent": coverage_percent,
         "credentials_cleared": list(THIRD_PARTY_CREDENTIAL_VARS),
         "network_policy": "non-loopback connections blocked by tests/conftest.py",
         "exit_code": proc.returncode,
@@ -665,7 +726,7 @@ def main() -> int:
             "schema_version": "fresh_clone_offline_check_v2",
             "checks": [asdict(r) for r in results],
             "passed": not failures,
-            "tests_executed": args.run_tests,
+            "tests_executed": args.run_tests or args.full_suite,
             "artifacts_provisioned": args.provision,
             "full_suite": args.full_suite,
             "full_suite_detail": full_suite_detail,

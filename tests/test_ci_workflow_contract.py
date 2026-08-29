@@ -170,10 +170,14 @@ def test_conditional_steps_are_only_evidence_uploads() -> None:
 def test_downstream_jobs_depend_on_the_gates() -> None:
     """Later jobs must not run when the gates failed."""
     jobs = _workflow()["jobs"]
-    needs = jobs["quality-gates"].get("needs") or []
-    for required in ("static-quality", "fresh-clone-smoke", "dependency-audit"):
-        assert required in needs, f"quality-gates does not wait for {required}"
-    assert "quality-gates" in (jobs["docker-build"].get("needs") or [])
+    needs = jobs["docker-build"].get("needs") or []
+    for required in (
+        "static-quality",
+        "fresh-clone-smoke",
+        "ml-regression",
+        "dependency-audit",
+    ):
+        assert required in needs, f"docker-build does not wait for {required}"
 
 
 # ─── environment consistency ─────────────────────────────────────────────────
@@ -267,15 +271,26 @@ def test_the_smoke_job_runs_the_smoke_script() -> None:
 
 
 def test_the_smoke_script_covers_the_whole_sequence() -> None:
-    """Bootstrap, backend suite, frontend build, and an unambiguous verdict."""
+    """The one-command verifier covers every core engineering gate."""
     script = (ROOT / "scripts" / "verify_fresh_clone.sh").read_text(encoding="utf-8")
     for token in (
-        "scripts/bootstrap.py --with-frontend",
+        "uv sync --frozen",
+        "scripts/provision_semantic_safety_encoders.py",
+        "scripts/provision_derived_artifacts.py",
+        "NLCARE_TEST_OFFLINE=true",
+        "ruff check backend scripts tests",
+        "uv run mypy",
         "pytest tests",
         "--cov=backend",
         "--cov-fail-under=60",
         "npm ci",
+        "npm run lint",
+        "npm run typecheck",
+        "npm run test:coverage",
         "npm run build",
+        "scripts/check_dependency_contract.py",
+        "scripts/check_file_size.py",
+        "scripts/build_fresh_clone_summary.py",
         "FRESH CLONE OK",
     ):
         assert token in script, f"the smoke script no longer runs {token!r}"
@@ -295,6 +310,29 @@ def test_the_full_suite_runs_exactly_once_in_ci() -> None:
         "the verifier's full-suite mode is invoked directly as well as through "
         "the smoke script; that would run the whole suite twice"
     )
+
+
+def test_core_ci_does_not_execute_release_or_external_tooling() -> None:
+    """Genuine release evidence and CDN tools belong to Ship, not core CI."""
+    ci_runs = _run_blocks()
+    ship = (ROOT / ".github" / "workflows" / "ship.yml").read_text(encoding="utf-8")
+    for token in ("playwright install", "bicep-linux"):
+        assert token not in ci_runs, f"core CI still executes release-only step {token!r}"
+        assert token in ship, f"{token!r} was removed instead of isolated in Ship"
+    release_steps = (ROOT / "scripts" / "ship_steps" / "assurance_and_release.py").read_text(
+        encoding="utf-8"
+    )
+    assert "scripts/run_release_gate.py" not in ci_runs
+    assert "scripts/run_release_gate.py" in release_steps
+    assert "scripts/ship.py" in ship
+
+
+def test_fresh_clone_summary_is_uploaded_but_not_committed() -> None:
+    job = _workflow()["jobs"]["fresh-clone-smoke"]
+    upload_paths = "\n".join(
+        str((step.get("with") or {}).get("path") or "") for step in job["steps"]
+    )
+    assert "Data/test_tmp/fresh_clone_summary.json" in upload_paths
 
 
 # ─── the ML regression gate ──────────────────────────────────────────────────

@@ -316,7 +316,7 @@ def _treatment_monitoring_score_breakdown(mri_signal, clinical_signal, symptom_s
     urgent_deduction = min(35, urgent_count * 12)
     watch_deduction = min(20, watch_count * 5)
 
-    symptom_deduction = 0
+    symptom_deduction = 0.0
     if max_severity is not None:
         symptom_deduction = min(12, int(max_severity) * 1.2)
 

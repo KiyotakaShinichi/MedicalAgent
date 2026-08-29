@@ -8,9 +8,10 @@ chunks, and the suite fails on empty results rather than on anything it was
 testing. On a fresh runner that read as `ingested_chunks: 0`, `retrieved_count:
 19`, `tier_kept: 0`.
 
-`quality-gates` provisions with `scripts/provision_derived_artifacts.py`, and
-the fresh-clone job gets the same script through `scripts/bootstrap.py`. The
-Ship Gate ran neither, which is what these tests pin.
+The canonical fresh-clone script provisions with
+`scripts/provision_derived_artifacts.py`, and `scripts/bootstrap.py` uses the
+same path for local setup. The Ship Gate once ran neither, which is what these
+tests pin.
 
 The provisioning is deliberately not something this contract reinvents: it
 asserts the Ship Gate uses the same script the already-green paths use, so
@@ -34,8 +35,8 @@ if str(ROOT) not in sys.path:
 from scripts.provision_derived_artifacts import DERIVED_ARTIFACTS  # noqa: E402
 
 SHIP_WORKFLOW = ROOT / ".github/workflows/ship.yml"
-CI_WORKFLOW = ROOT / ".github/workflows/ci.yml"
 BOOTSTRAP = ROOT / "scripts/bootstrap.py"
+FRESH_CLONE = ROOT / "scripts/verify_fresh_clone.sh"
 
 PROVISIONER = "scripts/provision_derived_artifacts.py"
 GATE = "scripts/ship.py"
@@ -114,11 +115,9 @@ def test_the_gate_verifies_provisioning_actually_produced_the_artifacts() -> Non
 # --- it is the same path the green workflows use -----------------------------
 
 
-def test_quality_gates_uses_the_same_provisioner() -> None:
-    lines = _lines(_steps(CI_WORKFLOW, "quality-gates"))
-    assert _first(lines, PROVISIONER) is not None, (
-        "quality-gates no longer uses this script; the Ship Gate would be "
-        "provisioning by a path nothing else exercises"
+def test_fresh_clone_uses_the_same_provisioner() -> None:
+    assert PROVISIONER in FRESH_CLONE.read_text(encoding="utf-8"), (
+        "the canonical fresh-clone path no longer uses the Ship provisioner"
     )
 
 

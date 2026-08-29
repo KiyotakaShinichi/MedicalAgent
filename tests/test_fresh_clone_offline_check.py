@@ -94,6 +94,7 @@ def test_ruff_config_absence_is_detected(tmp_path: Path) -> None:
 
 def test_offline_env_pins_providers_and_network_off() -> None:
     """The declared offline environment must actually disable live services."""
+    assert OFFLINE_ENV["NLCARE_TEST_OFFLINE"] == "true"
     assert OFFLINE_ENV["LLM_ADJUDICATION_ENABLED"] == "false"
     assert OFFLINE_ENV["HF_HUB_OFFLINE"] == "1"
     assert OFFLINE_ENV["TRANSFORMERS_OFFLINE"] == "1"

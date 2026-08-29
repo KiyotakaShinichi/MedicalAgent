@@ -7,6 +7,7 @@ obvious violations before a reply is returned or cached.
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 
@@ -37,9 +38,9 @@ REFUSAL_INTENTS_FOR_VERIFIER = frozenset({
 def verify_patient_support_answer(
     reply: str,
     *,
-    citations: list[dict[str, Any]] | None = None,
-    retrieved_context: list[dict[str, Any]] | None = None,
-    safety: dict[str, Any] | None = None,
+    citations: Sequence[Mapping[str, Any]] | None = None,
+    retrieved_context: Sequence[Mapping[str, Any]] | None = None,
+    safety: Mapping[str, Any] | None = None,
     intent: str | None = None,
     deliberate_evidence_abstention: bool = False,
 ) -> dict[str, Any]:

@@ -43,13 +43,13 @@ and by name, instead of passing on the one machine that has them configured.
 A test that genuinely needs the network marks itself:
 
 ```python
-@pytest.mark.network
+@pytest.mark.requires_network
 def test_something_that_really_calls_out(): ...
 ```
 
-`pytest.ini` deselects that marker by default (`-m "not network"`), so the
+`pytest.ini` deselects that marker by default (`-m "not requires_network"`), so the
 exclusion is declared in one place rather than as scattered `skipif`s. To run
-them deliberately: `NLCARE_ALLOW_TEST_NETWORK=1 pytest -m network`.
+them deliberately: `pytest -m requires_network`.
 
 Use Python 3.11 for the canonical CI environment. Start from `.env.example`,
 keep `NLCARE_SYNTHETIC_ONLY=true`, and never commit secrets, raw patient data,
@@ -83,12 +83,14 @@ the more likely cause.
 
 ### Verifying a fresh clone
 
-The offline test path must run from a clean checkout with **no `.env`** and no
-network access. Confirm that before opening a PR that touches configuration,
-fixtures, or test bootstrapping:
+The verification path must run from a clean checkout with **no `.env`** or
+provider credentials. Dependency and safety-encoder provisioning may use the
+network first; the complete test phase then runs with outbound network blocked.
+Confirm that before opening a PR that touches configuration, fixtures, or test
+bootstrapping:
 
 ```bash
-python scripts/check_fresh_clone_offline.py --provision --run-tests
+sh scripts/verify_fresh_clone.sh
 ```
 
 It fails if the offline path starts depending on an untracked or gitignored
@@ -113,10 +115,9 @@ reads a generated file, add the artifact to that registry — otherwise the test
 passes for you and fails for everyone starting from a clean clone, which is how
 seven tests came to be green locally and red in CI.
 
-`tests/test_cloud_infrastructure_readiness.py` additionally needs the **Bicep
-CLI** on `PATH` (or at `tools/bin/bicep.exe`). That is a tool dependency, not
-project data, so it is installed and version-pinned in CI rather than
-committed.
+The **Bicep CLI** is a deployment tool dependency, not project data. It is
+installed and checksum-pinned in the Ship workflow rather than making core
+lint, typecheck, or test gates depend on its download.
 
 The check covers *repository content sufficiency* only. Dependency resolution
 and installation are a separate contract, verified by `uv lock --check` and

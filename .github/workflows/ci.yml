@@ -1,5 +1,9 @@
 name: CI
 
+# Core engineering verification only. Release evidence, Playwright/browser
+# provisioning, Bicep validation, and the honestly blocked DEP-001 gate live in
+# ship.yml so a release-safety finding cannot masquerade as a lint/test failure.
+
 on:
   push:
   pull_request:
@@ -102,10 +106,9 @@ jobs:
         working-directory: frontend-react
         run: npm run typecheck
 
-      # Runs in the fast lane as well as in quality-gates. quality-gates only
-      # starts after the full offline backend suite and the dependency audit,
-      # so without this a frontend-only regression is not reported for tens of
-      # minutes. This step is also the frontend coverage gate: `test:coverage`
+      # Runs in the fast lane as well as in the clean-checkout verification, so
+      # a frontend-only regression is reported without waiting for the complete
+      # backend suite. This step is also the frontend coverage gate: `test:coverage`
       # runs vitest with the thresholds declared in `coverage.thresholds` in
       # frontend-react/vitest.config.ts and exits non-zero when any is missed,
       # so a coverage regression fails this job rather than merely being
@@ -113,6 +116,21 @@ jobs:
       - name: Frontend unit tests and coverage gate
         working-directory: frontend-react
         run: npm run test:coverage
+
+      - name: Frontend production build
+        working-directory: frontend-react
+        run: npm run build
+
+      - name: Backend executable contract tests
+        run: |
+          python -m pytest \
+            tests/test_hermetic_network_contract.py \
+            tests/test_ci_workflow_contract.py \
+            tests/test_operational_endpoints.py \
+            tests/test_structured_logging.py \
+            tests/test_api_input_validation_boundaries.py \
+            tests/test_dependency_contract.py \
+            -q
 
       - name: Upload frontend coverage
         if: always()
@@ -123,17 +141,17 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  # A clean checkout, bootstrapped from nothing: no restored virtualenv and no
-  # restored node_modules. `npm ci` and `uv sync --frozen` install from the
-  # lockfiles, which is the property being proven. The Hugging Face cache is
-  # restored because the safety encoder is a 480 MB model download, not a
-  # project dependency - the provisioning step below fetches it when absent.
+  # A clean checkout, bootstrapped from nothing: no restored virtualenv,
+  # node_modules, application cache, or Hugging Face cache. Provisioning may
+  # use the network before verification; every test then runs under the
+  # repository's socket/DNS block with NLCARE_TEST_OFFLINE=true.
   fresh-clone-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
       DATABASE_URL: sqlite:///./Data/test_tmp/full_suite.db
       ENVIRONMENT: test
+      NLCARE_TEST_OFFLINE: "true"
       LLM_ADJUDICATION_ENABLED: "false"
       RAG_FORCE_SPARSE: "true"
       RAG_ENABLE_CROSS_ENCODER: "false"
@@ -161,102 +179,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      # uv creates the environment; `.venv/bin` then goes on PATH so every
-      # later step invokes the tools directly. Same venv, same interpreter,
-      # same locked versions as `uv run` — but one shape across all jobs
-      # instead of two, and the command that runs is the command you read.
-      - name: Sync frozen Python environment
-        run: |
-          python -m pip install uv==0.8.24
-          uv sync --frozen
-          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
-
-      # The DEP-001 safety runtimes load their base encoder with
-      # `local_files_only=True`. On a fresh runner the Hugging Face cache is
-      # empty, that call raises, and the runtime correctly FAILS CLOSED — which
-      # made ~89 tests asserting that benign prompts stay `low_risk` fail. The
-      # encoder is fetched once here, with the offline flags lifted for this
-      # step only; the test run below still executes fully offline.
-      - name: Cache Hugging Face encoders
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/huggingface
-          key: hf-safety-encoders-${{ hashFiles('config/dep001*_semantic_safety.yaml') }}
-          restore-keys: |
-            hf-safety-encoders-
-
-      - name: Provision semantic safety encoders
-        env:
-          HF_HUB_OFFLINE: "0"
-          TRANSFORMERS_OFFLINE: "0"
-        run: python scripts/provision_semantic_safety_encoders.py
-
-      # Preflight guard. `--verify-runtimes` is essential, not decorative: an
-      # encoder-only check exits 0 while a DEP-001 runtime is fully degraded,
-      # because each runtime also loads joblib artifacts, verifies their
-      # SHA-256, and checks the embedding dimension — and every one of those
-      # fails *closed* rather than raising. That combination is what let the
-      # suite fail ~88 tests while verification reported success.
-      - name: Verify safety runtimes load offline
-        run: |
-          python scripts/provision_semantic_safety_encoders.py \
-            --check-only \
-            --verify-runtimes \
-            --json-output Data/test_tmp/semantic_safety_provisioning.json
-
-      - name: Upload safety provisioning evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: semantic-safety-provisioning
-          path: Data/test_tmp/semantic_safety_provisioning.json
-          if-no-files-found: ignore
-          retention-days: 14
-
-      # The suite consumes derived artifacts that are gitignored on purpose
-      # (a RAG index, the KB chunk file, the lakehouse gold records). A fresh
-      # runner has none of them, which is why ~5 tests failed here while
-      # passing on developer machines that still had last month's copies.
-      # Rebuilt from tracked inputs; no network, so the suite below stays
-      # fully offline.
-      - name: Provision derived offline artifacts
-        run: |
-          mkdir -p Data/test_tmp
-          python scripts/provision_derived_artifacts.py \
-            --json-output Data/test_tmp/derived_artifact_provisioning.json
-          python scripts/provision_derived_artifacts.py --check-only
-
-      # Class B: an external tool, not project data. `cloud_infrastructure_
-      # readiness` shells out to the Bicep CLI to compile the checked-in
-      # template, and reports `needs_attention` when it is absent. Pinned
-      # rather than latest so a Bicep release cannot change a CI result.
-      - name: Install Bicep CLI
-        env:
-          BICEP_VERSION: v0.45.15
-        run: |
-          curl -fsSL -o /tmp/bicep \
-            "https://github.com/Azure/bicep/releases/download/${BICEP_VERSION}/bicep-linux-x64"
-          chmod +x /tmp/bicep
-          sudo mv /tmp/bicep /usr/local/bin/bicep
-          bicep --version
-
-      - name: Upload derived artifact provisioning evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: derived-artifact-provisioning
-          path: Data/test_tmp/derived_artifact_provisioning.json
-          if-no-files-found: ignore
-          retention-days: 14
-
-      # Keeps CI and the documented one-command setup from drifting apart.
-      # CI deliberately keeps its steps separate — per-step env (the encoder
-      # download is the only step allowed network) and per-step failure
-      # attribution are what make a red run diagnosable. `bootstrap.py --check`
-      # asserts that the path a contributor is told to run agrees with what CI
-      # actually did, without duplicating the steps themselves.
-      - name: Verify documented bootstrap agrees with CI setup
-        run: python scripts/bootstrap.py --check
+      - name: Install pinned uv bootstrap
+        run: python -m pip install uv==0.8.24
 
       # The canonical offline verification. This runs the *complete* tests tree
       # with branch coverage, and additionally accounts for the thing a bare
@@ -283,7 +207,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: fresh-clone-full-suite
-          path: Data/test_tmp/fresh_clone_full_suite.json
+          path: |
+            Data/test_tmp/fresh_clone_full_suite.json
+            Data/test_tmp/fresh_clone_summary.json
+            Data/test_tmp/frontend_vitest_results.json
           if-no-files-found: ignore
 
   # Deterministic ML regression. No training, no model download, no network:
@@ -345,162 +272,9 @@ jobs:
           npm ci
           npm audit --audit-level=high
 
-  quality-gates:
-    runs-on: ubuntu-latest
-    needs: [static-quality, fresh-clone-smoke, dependency-audit]
-    env:
-      DATABASE_URL: sqlite:///./Data/test_tmp/ci_medical_agent.db
-      LLM_ADJUDICATION_ENABLED: "false"
-      RAG_FORCE_SPARSE: "true"
-      RAG_ENABLE_CROSS_ENCODER: "false"
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: frontend-react/package-lock.json
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install uv==0.8.24
-          uv sync --frozen
-          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
-
-      # Same requirement as full-offline-tests: the safety runtimes load their
-      # encoder with `local_files_only=True`, so it must be in the cache even
-      # though this job does not set the offline flags. Without it the safety
-      # eval scripts below run against fail-closed defaults.
-      - name: Cache Hugging Face encoders
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/huggingface
-          key: hf-safety-encoders-${{ hashFiles('config/dep001*_semantic_safety.yaml') }}
-          restore-keys: |
-            hf-safety-encoders-
-
-      - name: Provision semantic safety encoders
-        run: python scripts/provision_semantic_safety_encoders.py
-
-      # See full-offline-tests: the encoder-only form of this check passes
-      # while a runtime is degraded, so the runtime probe is required.
-      - name: Verify safety runtimes load offline
-        run: python scripts/provision_semantic_safety_encoders.py --check-only --verify-runtimes
-
-      # Same requirement as full-offline-tests: the legacy monitoring
-      # regression below runs the RAG path, which needs the derived index.
-      - name: Provision derived offline artifacts
-        run: |
-          mkdir -p Data/test_tmp
-          python scripts/provision_derived_artifacts.py
-          python scripts/provision_derived_artifacts.py --check-only
-
-      - name: Install frontend dependencies
-        working-directory: frontend-react
-        run: npm ci
-
-      - name: Secret scan
-        run: python scripts/ci_secret_scan.py
-
-      - name: Compile backend and scripts
-        run: python -m compileall backend scripts
-
-      - name: Backend unit and regression tests
-        run: |
-          mkdir -p Data/test_tmp
-          python -m pytest \
-            tests/test_constants_sync.py \
-            tests/test_timeline_uncertainty.py \
-            tests/test_safety_eval_center.py \
-            tests/test_access_control.py \
-            tests/test_model_route_authorization.py \
-            tests/test_public_imaging_services.py
-
-      - name: Legacy full monitoring regression
-        run: python -m unittest tests/test_breast_monitoring.py
-
-      - name: Frontend TypeScript build
-        working-directory: frontend-react
-        run: npm run build
-
-      - name: Frontend unit tests
-        working-directory: frontend-react
-        run: npm run test
-
-      - name: Export OpenAPI schema and verify frontend API types
-        run: |
-          python scripts/export_openapi_schema.py
-          cd frontend-react
-          npm run typegen:file
-          git diff --exit-code src/types/generated-openapi.d.ts
-
-      - name: Knowledge-base ingestion smoke
-        run: |
-          mkdir -p KnowledgeBase/raw Data/test_tmp
-          printf "# Breast cancer chemotherapy\n\nCBC monitoring can help track WBC, hemoglobin, platelets, and treatment toxicity." > KnowledgeBase/raw/ci_smoke.md
-          python scripts/ingest_knowledge_base.py --input-dir KnowledgeBase/raw --output-path Data/test_tmp/rag_chunks.json
-
-      - name: Agent RAG regression suite
-        run: python scripts/evaluate_agent_rag.py --output-path Data/test_tmp/agent_regression.json --max-cases 8
-
-      - name: RAG gold-set evaluation
-        run: python scripts/evaluate_rag_gold_set.py --output-path Data/test_tmp/rag_gold_eval.json --print-summary
-
-      - name: Safety evaluation center
-        run: python scripts/run_safety_eval_center.py --print-summary
-
-      - name: MLE readiness checks
-        run: python scripts/run_mle_checks.py --output-path Data/test_tmp/mle_readiness.json
-
-      - name: Synthetic-only hardening artifacts
-        run: |
-          python scripts/run_taglish_safety_parity.py
-          python scripts/run_rag_intent_aware_eval.py
-          python scripts/run_rag_tier_ablation.py
-          python scripts/run_rag_claim_validation_eval.py
-          python scripts/run_nli_claim_validation_eval.py
-          python scripts/run_live_rag_eval.py
-          python scripts/run_learned_abstention_experiment.py
-          python scripts/run_learned_abstention_eval.py
-          python scripts/run_soft_toxicity_target_benchmark.py
-          python scripts/run_hybrid_subgroup_metrics.py
-          python scripts/run_synthetic_realism_hardening.py
-          python scripts/run_self_supervised_timeline_pretraining.py
-          python scripts/run_counterfactual_stability_eval.py
-          python scripts/run_per_head_calibration.py
-          python scripts/run_shortcut_audit.py
-          python scripts/run_minimum_evidence_standards.py
-          python scripts/run_medical_claim_boundary_eval.py
-          python scripts/build_medical_advisor_review_packet.py
-
-      - name: Release gate
-        run: python scripts/run_release_gate.py
-
-      - name: Frontend Playwright smoke
-        working-directory: frontend-react
-        run: |
-          npx playwright install chromium
-          npm run test:e2e -- tests/e2e/smoke.spec.ts
-
-      - name: API smoke checks
-        run: |
-          python -m uvicorn backend.api.main:app --host 127.0.0.1 --port 8017 &
-          echo $! > uvicorn.pid
-          trap "kill $(cat uvicorn.pid)" EXIT
-          sleep 8
-          python scripts/api_smoke.py
-
   docker-build:
     runs-on: ubuntu-latest
-    needs: quality-gates
+    needs: [static-quality, fresh-clone-smoke, ml-regression, dependency-audit]
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

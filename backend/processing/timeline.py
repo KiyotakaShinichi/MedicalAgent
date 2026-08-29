@@ -13,6 +13,7 @@ AI/model output must surface these fields together.
 """
 
 from pathlib import Path
+from typing import Any
 
 
 def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks, media_records=None):
@@ -157,7 +158,7 @@ def build_clinical_timeline(labs, treatments, imaging_reports, symptoms, risks, 
 def _matching_media(media_records, row):
     event_date = str(row.get("date", ""))[:10]
     modality = str(row.get("modality") or "").lower()
-    matches_by_path = {}
+    matches_by_path: dict[str, dict[str, Any]] = {}
     for record in media_records:
         record_date = str(record.get("scan_date") or record.get("created_at") or "")[:10]
         record_modality = str(record.get("modality") or record.get("upload_type") or "").lower()

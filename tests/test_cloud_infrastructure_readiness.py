@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
 
 from backend.services.cloud_infrastructure_readiness import (
     REQUIRED_RESOURCE_MARKERS,
@@ -13,16 +14,26 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 
 def test_azure_reference_foundation_covers_required_services():
     report = build_cloud_infrastructure_readiness(root_dir=ROOT_DIR)
-    assert report["status"] == "compiled_reference_architecture"
     assert report["cloud_deployment_completed"] is False
     assert report["healthcare_production_ready"] is False
     assert report["patient_data_allowed"] is False
-    assert report["bicep_compile_completed"] is True
     assert report["what_if_completed"] is False
-    assert report["failed"] == 0
     assert report["n_checks"] >= len(REQUIRED_RESOURCE_MARKERS)
     checks = {row["check_id"]: row for row in report["checks"]}
     assert checks["fail_closed_deployment_guards"]["passed"] is True
+
+    if shutil.which("bicep"):
+        assert report["status"] == "compiled_reference_architecture"
+        assert report["bicep_compile_completed"] is True
+        assert report["failed"] == 0
+    else:
+        # Bicep is intentionally provisioned only by the deployment/Ship job.
+        # Core offline CI still validates every source-level infrastructure
+        # invariant and must expose, rather than hide, the missing compiler.
+        failed = {row["check_id"] for row in report["checks"] if not row["passed"]}
+        assert report["status"] == "needs_attention"
+        assert report["bicep_compile_completed"] is False
+        assert failed == {"bicep_compiles"}
 
 
 def test_reference_foundation_defaults_cost_bearing_resources_off():

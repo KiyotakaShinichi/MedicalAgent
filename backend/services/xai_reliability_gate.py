@@ -33,9 +33,10 @@ def build_xai_reliability_gate(
     fidelity = _read(fidelity_path)
     rank = _read(rank_path)
     retraining = _read(retraining_path)
+    retraining_metrics_value = retraining.get("metrics")
     retraining_metrics = (
-        retraining.get("metrics")
-        if isinstance(retraining.get("metrics"), dict)
+        retraining_metrics_value
+        if isinstance(retraining_metrics_value, dict)
         else retraining
     )
     additivity = _float(fidelity.get("additivity_pass_rate"))
@@ -45,21 +46,17 @@ def build_xai_reliability_gate(
         retraining_metrics.get("global_rank_correlation_median")
     )
     rank_p05 = _float(retraining_metrics.get("global_rank_correlation_p05"))
-    consensus = (
-        retraining.get("consensus_feature_tiers")
-        if isinstance(retraining.get("consensus_feature_tiers"), dict)
-        else {}
-    )
+    consensus_value = retraining.get("consensus_feature_tiers")
+    consensus = consensus_value if isinstance(consensus_value, dict) else {}
     stable_groups = _consensus_group_names(
         consensus.get("stable_core_alphabetical")
     )
     suppressed_groups = _consensus_group_names(
         consensus.get("suppressed_low_consensus_alphabetical")
     )
+    retraining_policy_value = retraining.get("presentation_policy")
     retraining_policy = (
-        retraining.get("presentation_policy")
-        if isinstance(retraining.get("presentation_policy"), dict)
-        else {}
+        retraining_policy_value if isinstance(retraining_policy_value, dict) else {}
     )
     mechanical_fidelity = (
         additivity is not None

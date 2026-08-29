@@ -20,6 +20,7 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -175,9 +176,63 @@ def test_ci_runs_this_verifier_in_full_suite_mode() -> None:
     assert "--full-suite" in smoke
 
 
+def test_full_suite_is_reported_as_test_execution() -> None:
+    source = (ROOT / "scripts" / "check_fresh_clone_offline.py").read_text(
+        encoding="utf-8"
+    )
+    assert '"tests_executed": args.run_tests or args.full_suite' in source
+
+
 def test_coverage_floor_is_sixty() -> None:
     """The floor lives here now, so it is pinned here."""
     assert FULL_SUITE_MIN_COVERAGE == 60
+
+
+def test_disposable_database_uses_repository_initializer(monkeypatch, tmp_path: Path) -> None:
+    """The full suite must not inherit a developer's ignored SQLite file."""
+    from scripts import check_fresh_clone_offline as verifier
+
+    observed: dict[str, object] = {}
+
+    def fake_run(command, **kwargs):
+        observed["command"] = command
+        observed["kwargs"] = kwargs
+        return SimpleNamespace(returncode=0, stdout="[reset-db] done", stderr="")
+
+    monkeypatch.setattr(verifier.subprocess, "run", fake_run)
+    env = {"DATABASE_URL": "sqlite:///./Data/test_tmp/fresh_clone_offline.db"}
+    result = verifier._initialize_disposable_test_database(tmp_path, env)
+
+    assert result.passed is True
+    assert observed["command"] == [
+        sys.executable,
+        "scripts/reset_local_db.py",
+        "--database-url",
+        env["DATABASE_URL"],
+    ]
+    assert observed["kwargs"]["env"] is env
+    assert observed["kwargs"]["cwd"] == tmp_path
+
+
+def test_disposable_database_initialization_fails_closed(monkeypatch, tmp_path: Path) -> None:
+    from scripts import check_fresh_clone_offline as verifier
+
+    monkeypatch.setattr(
+        verifier.subprocess,
+        "run",
+        lambda *args, **kwargs: SimpleNamespace(
+            returncode=2,
+            stdout="",
+            stderr="migration refused",
+        ),
+    )
+    result = verifier._initialize_disposable_test_database(
+        tmp_path,
+        {"DATABASE_URL": "sqlite:///./Data/test_tmp/fresh_clone_offline.db"},
+    )
+
+    assert result.passed is False
+    assert result.detail == "migration refused"
 
 
 def test_network_markers_cover_the_providers_the_repository_uses() -> None:
@@ -188,8 +243,8 @@ def test_network_markers_cover_the_providers_the_repository_uses() -> None:
 def test_default_suite_deselects_network_marked_tests() -> None:
     """The hermetic default is declared in pytest.ini, not ad hoc per test."""
     config = (ROOT / "pytest.ini").read_text(encoding="utf-8")
-    assert 'addopts = -m "not network"' in config
-    assert "network:" in config, "the marker must be registered, not implicit"
+    assert 'addopts = -m "not requires_network"' in config
+    assert "requires_network:" in config, "the marker must be registered, not implicit"
 
 
 # ─── the pytest command CI states explicitly ─────────────────────────────────

@@ -18,6 +18,10 @@ clinician should still look at. Pydantic cannot express that, and it is not a
 rejection, so it stays here.
 """
 
+from __future__ import annotations
+
+from typing import TypedDict
+
 # ─── bounds, declared once and shared with the Pydantic schemas ──────────────
 
 #: Free-text symptom label.
@@ -30,7 +34,16 @@ NOTES_MAX_LENGTH = 800
 #: A single chat message.
 CHAT_MESSAGE_MAX_LENGTH = 3000
 
-CBC_LIMITS = {
+
+class CbcLimits(TypedDict):
+    min: float
+    max: float
+    watch_low: float
+    watch_high: float
+    unit: str
+
+
+CBC_LIMITS: dict[str, CbcLimits] = {
     "wbc": {
         "min": 0.1,
         "max": 200.0,

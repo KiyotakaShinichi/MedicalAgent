@@ -148,11 +148,19 @@ ignore = [
 [tool.mypy]
 python_version = "3.11"
 files = [
+  "backend/api/schemas/patient.py",
   "backend/api/schemas/common.py",
   "backend/api/schemas/model.py",
   "backend/config.py",
+  "backend/processing/risk_engine.py",
+  "backend/processing/timeline.py",
+  "backend/services/agent_answer_composition.py",
+  "backend/services/answer_verifier.py",
+  "backend/services/input_validation.py",
+  "backend/services/multimodal_fusion.py",
   "backend/services/safety_policy_action.py",
   "backend/services/structured_logging.py",
+  "backend/services/xai_reliability_gate.py",
 ]
 ignore_missing_imports = true
 check_untyped_defs = true
