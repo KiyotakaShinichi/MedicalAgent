@@ -2,24 +2,14 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import {
   Send,
   Sparkles,
-  User,
   AlertCircle,
   Activity,
   FlaskConical,
   ScanLine,
   HelpCircle,
   ShieldCheck,
-  CheckCircle2,
-  BookOpen,
-  Pill,
-  AlertTriangle,
-  X,
-  Undo2,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { clsx } from "clsx";
 import { Spinner } from "./Spinner";
-import { MarkdownMessage } from "./MarkdownMessage";
 import { ErrorBoundary } from "./ErrorBoundary";
 import {
   normaliseMessages,
@@ -27,36 +17,8 @@ import {
   type NormalisedMessage,
 } from "./chat-utils";
 import type { ChatMessage as ChatMessageType, ChatStreamHandlers, SavedAction } from "../../types/api";
-
-const PIPELINE_STAGES = [
-  { label: "Checking safety gate...", delay: 0 },
-  { label: "Routing intent...",       delay: 300 },
-  { label: "Retrieving context...",   delay: 700 },
-  { label: "Generating response...",  delay: 1500 },
-];
-
-function usePipelineStatus(active: boolean) {
-  const [timing, setTiming] = useState<{ startedAt: number; now: number } | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    if (!active) {
-      window.setTimeout(() => { if (!cancelled) setTiming(null); }, 0);
-      return () => { cancelled = true; };
-    }
-    const startedAt = Date.now();
-    window.setTimeout(() => { if (!cancelled) setTiming({ startedAt, now: startedAt }); }, 0);
-    const interval = window.setInterval(() => {
-      setTiming((current) => current ? { ...current, now: Date.now() } : current);
-    }, 150);
-    return () => { cancelled = true; window.clearInterval(interval); };
-  }, [active]);
-
-  if (!active || !timing) return PIPELINE_STAGES[0].label;
-  const elapsedMs = Math.max(0, timing.now - timing.startedAt);
-  const idx = PIPELINE_STAGES.findLastIndex((step) => elapsedMs >= step.delay);
-  return PIPELINE_STAGES[Math.max(0, idx)].label;
-}
+import { ChatMessageBubble } from "./chat/ChatMessageBubble";
+import { usePipelineStatus } from "./chat/usePipelineStatus";
 
 interface ChatPanelProps {
   messages: ChatMessageType[];
@@ -83,217 +45,6 @@ const QUICK_PROMPTS: { icon: typeof Activity; label: string; prompt: string }[] 
   { icon: HelpCircle,   label: "Ask about the portal", prompt: "How does this portal work and what can I do here?" },
 ];
 
-type ChipTone = "success" | "warning" | "info";
-
-interface ChipDescriptor {
-  label: string;
-  Icon: LucideIcon;
-  tone: ChipTone;
-}
-
-function chipDescriptor(action: SavedAction): ChipDescriptor {
-  switch (action.type) {
-    case "saved_symptom":
-    case "save_symptom":
-      return { label: "Symptom saved", Icon: Activity, tone: "success" };
-    case "saved_labs":
-    case "save_lab":
-      return { label: "CBC saved", Icon: FlaskConical, tone: "success" };
-    case "saved_medication":
-    case "save_medication":
-      return { label: "Medication saved", Icon: Pill, tone: "success" };
-    case "saved_imaging_report":
-    case "save_mri": {
-      const modality = String((action.data as { modality?: unknown })?.modality ?? "").toLowerCase();
-      const label =
-        modality.includes("mri")        ? "MRI report saved" :
-        modality.includes("ct")         ? "CT report saved" :
-        modality.includes("ultrasound") ? "Ultrasound report saved" :
-                                          "Imaging report saved";
-      return { label, Icon: ScanLine, tone: "success" };
-    }
-    case "possible_metastatic_indicator":
-      return { label: "Review flag added", Icon: AlertTriangle, tone: "warning" };
-    case "pending_record_confirmation":
-      return { label: "Waiting for your confirmation", Icon: ShieldCheck, tone: "info" };
-    case "record_write_cancelled":
-      return { label: "Save cancelled", Icon: X, tone: "info" };
-    case "duplicate_record_prevented":
-      return { label: "Duplicate prevented", Icon: ShieldCheck, tone: "warning" };
-    case "record_write_undone":
-      return { label: "Save undone", Icon: Undo2, tone: "info" };
-    default:
-      return { label: action.type, Icon: CheckCircle2, tone: "success" };
-  }
-}
-
-const CHIP_STYLE: Record<ChipTone, { bg: string; fg: string; border: string }> = {
-  success: { bg: "#ecfdf5", fg: "#047857", border: "#a7f3d0" },
-  warning: { bg: "#fffbeb", fg: "#92400e", border: "#fde68a" },
-  info: { bg: "#f0f7ff", fg: "#24527a", border: "#bfd8ee" },
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function describeSavedAction(action: SavedAction): { label: string; tone: ChipTone } {
-  const { label, tone } = chipDescriptor(action);
-  return { label, tone };
-}
-
-function ActionChip({
-  action,
-  canConfirm,
-  onQuickReply,
-  onUndoAction,
-}: {
-  action: SavedAction;
-  canConfirm?: boolean;
-  onQuickReply?: (message: string) => void;
-  onUndoAction?: (auditId: number) => Promise<void>;
-}) {
-  const [undoState, setUndoState] = useState<"idle" | "working" | "done">("idle");
-  const { label, Icon, tone } = chipDescriptor(action);
-  const style = CHIP_STYLE[tone];
-  if (action.type === "pending_record_confirmation") {
-    return (
-      <div className="chat-confirmation-card" role="group" aria-label="Confirm patient record preview">
-        <div className="chat-confirmation-title">
-          <ShieldCheck size={14} aria-hidden="true" />
-          Review before saving
-        </div>
-        <p>{String(action.preview ?? "Review the extracted record values.")}</p>
-        <span>Nothing is saved until you confirm.</span>
-        {canConfirm && onQuickReply && (
-          <div className="chat-confirmation-actions">
-            <button type="button" onClick={() => onQuickReply("Confirm save")}>
-              <CheckCircle2 size={13} /> Confirm save
-            </button>
-            <button type="button" className="secondary" onClick={() => onQuickReply("Cancel save")}>
-              <X size={13} /> Cancel
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  }
-  const auditId = typeof action.audit_action_id === "number" ? action.audit_action_id : null;
-  const canUndo = Boolean(action.undo_available && auditId != null && onUndoAction && undoState !== "done");
-  return (
-    <span className="chat-action-chip-wrap">
-      <span
-        className="inline-flex items-center gap-1.5 text-[0.72rem] px-2 py-0.5 rounded-full border font-medium"
-        style={{ background: style.bg, borderColor: style.border, color: style.fg }}
-      >
-        <Icon size={11} />
-        {label}
-      </span>
-      {canUndo && auditId != null && (
-        <button
-          type="button"
-          className="chat-action-undo"
-          disabled={undoState === "working"}
-          onClick={async () => {
-            if (!onUndoAction || undoState !== "idle") return;
-            setUndoState("working");
-            try {
-              await onUndoAction(auditId);
-              setUndoState("done");
-            } catch {
-              setUndoState("idle");
-            }
-          }}
-        >
-          <Undo2 size={11} /> {undoState === "working" ? "Undoing..." : "Undo"}
-        </button>
-      )}
-      {undoState === "done" && <span className="chat-action-undone">Entry removed</span>}
-    </span>
-  );
-}
-
-interface MessageProps {
-  message: NormalisedMessage;
-  isLatestAssistant?: boolean;
-  registerNode?: (node: HTMLDivElement | null) => void;
-  onQuickReply?: (message: string) => void;
-  onUndoAction?: (auditId: number) => Promise<void>;
-}
-
-function ChatBubble({ message, isLatestAssistant, registerNode, onQuickReply, onUndoAction }: MessageProps) {
-  const isUser = message.role === "user";
-  const content = message.content || (isUser ? "" : "…");
-
-  return (
-    <div
-      ref={isLatestAssistant ? registerNode : undefined}
-      data-testid={isUser ? "user-message" : "assistant-message"}
-      data-message-ready={isUser || Boolean(message.content) ? "true" : "false"}
-      className={clsx("chat-message-row flex gap-3 items-start", isUser ? "flex-row-reverse" : "flex-row")}
-    >
-      <span
-        className="flex-shrink-0 inline-flex items-center justify-center"
-        style={{
-          width: 32,
-          height: 32,
-          borderRadius: 10,
-          background: isUser ? "var(--surface2)" : "var(--rose-pale)",
-          color: isUser ? "var(--text-dim)" : "var(--rose-deep)",
-          border: "1px solid var(--border)",
-        }}
-        aria-hidden="true"
-      >
-        {isUser ? <User size={14} /> : <Sparkles size={14} />}
-      </span>
-
-      <div className={clsx("chat-message-body flex flex-col gap-1.5 min-w-0", isUser ? "items-end" : "items-start")}>
-        <div className="text-[0.72rem] font-medium" style={{ color: "var(--text-faint)" }}>
-          {isUser ? "You" : "NLCare assistant"}
-        </div>
-        <div
-          className={clsx("chat-message-bubble text-[0.92rem]", isUser ? "is-user" : "is-assistant")}
-          style={{
-            padding: "10px 14px",
-            borderRadius: isUser ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
-            background: isUser ? "var(--rose)" : "var(--surface)",
-            color: isUser ? "#fff" : "var(--text)",
-            border: isUser ? "none" : "1px solid var(--border)",
-            boxShadow: isUser
-              ? "0 2px 8px rgba(236,72,153,0.18)"
-              : "0 1px 2px rgba(17,24,39,0.04)",
-            wordBreak: "break-word",
-          }}
-        >
-          {isUser ? (
-            <span style={{ whiteSpace: "pre-wrap", lineHeight: 1.55 }}>{content}</span>
-          ) : (
-            <MarkdownMessage text={content} />
-          )}
-        </div>
-        {message.saved_actions.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-0.5">
-            {message.saved_actions.map((a, j) => (
-              <ActionChip
-                key={j}
-                action={a}
-                canConfirm={isLatestAssistant}
-                onQuickReply={onQuickReply}
-                onUndoAction={onUndoAction}
-              />
-            ))}
-          </div>
-        )}
-        {message.citations.length > 0 && (
-          <div
-            className="flex items-center gap-1.5 text-[0.72rem] mt-0.5"
-            style={{ color: "var(--text-faint)" }}
-          >
-            <BookOpen size={11} aria-hidden="true" />
-            Sources: {message.citations.slice(0, 3).join(", ")}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /**
  * How close to the bottom (in px) counts as "user is reading the latest
@@ -322,7 +73,12 @@ function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSav
   const messages = useMemo<NormalisedMessage[]>(() => {
     if (localMessages.length === 0) return normalisedParentMessages;
     const seen = new Set(normalisedParentMessages.map((m) => m.id));
-    const extras = localMessages.filter((m) => !seen.has(m.id));
+    const parentContent = new Set(
+      normalisedParentMessages.map((m) => `${m.role}\u0000${m.content}`),
+    );
+    const extras = localMessages.filter(
+      (m) => !seen.has(m.id) && !parentContent.has(`${m.role}\u0000${m.content}`),
+    );
     return [...normalisedParentMessages, ...extras];
   }, [normalisedParentMessages, localMessages]);
 
@@ -334,8 +90,14 @@ function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSav
   useEffect(() => {
     if (sending) return;
     if (localMessages.length === 0) return;
-    const stillStreaming = localMessages.some((m) => m.streamId);
-    if (stillStreaming) return;
+    if (localMessages.some((m) => m.streamId)) return;
+    const parentContent = new Set(
+      normalisedParentMessages.map((m) => `${m.role}\u0000${m.content}`),
+    );
+    const parentHasCompletedTurn = localMessages.every(
+      (m) => parentContent.has(`${m.role}\u0000${m.content}`),
+    );
+    if (!parentHasCompletedTurn) return;
     // Schedule the clear so it runs after React commits, not synchronously
     // within the effect body — avoids the cascading-render anti-pattern.
     const id = window.setTimeout(() => setLocalMessages([]), 0);
@@ -518,7 +280,7 @@ function ChatPanelInner({ messages: initialMessages, onSend, onSendStream, onSav
           )}
 
           {messages.map((msg, i) => (
-            <ChatBubble
+            <ChatMessageBubble
               key={msg.id}
               message={msg}
               isLatestAssistant={i === lastAssistantIndex}

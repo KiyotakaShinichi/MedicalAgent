@@ -38,8 +38,9 @@ export default defineConfig({
       /**
        * Regression gate, not a target.
        *
-       * Measured on 2026-08-21: 39.10% statements, 65.42% branches, 34.24%
-       * functions, 39.10% lines. Each threshold sits a few points below its
+       * Measured on 2026-08-30 after the R3 critical-path reliability suite:
+       * 49.79% statements, 67.54% branches, 43.95% functions, 49.79% lines.
+       * Each threshold sits several points below its
        * measured value so ordinary churn and v8's slight run-to-run variance
        * cannot redden CI, while a real drop — someone deleting a suite or
        * landing a large untested surface — still fails the build.
@@ -48,10 +49,10 @@ export default defineConfig({
        * a failing build pass; that converts the gate into decoration.
        */
       thresholds: {
-        statements: 35,
-        branches: 62,
-        functions: 31,
-        lines: 35,
+        statements: 46,
+        branches: 64,
+        functions: 40,
+        lines: 46,
       },
     },
   },

@@ -246,6 +246,7 @@ describe("PatientDashboard", () => {
 describe("ToastProvider integration", () => {
   it("mounts the dashboard inside providers without throwing", () => {
     mocked.getMyReportCore.mockReturnValue(pending());
+    mocked.getMyChatHistory.mockReturnValue(pending());
     const wrapper = ({ children }: { children: ReactNode }) => (
       <MemoryRouter>
         <ToastProvider>

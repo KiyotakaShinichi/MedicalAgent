@@ -11,7 +11,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { login } from "../api/client";
+import { ApiError, login } from "../api/client";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../components/ui/Button";
 import type { Role } from "../types/api";
@@ -53,6 +53,18 @@ const platformSignals = [
   { label: "Human oversight", value: "review workflow" },
 ];
 
+function loginErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.status === 401 || error.status === 403) {
+      return "Those demo credentials were not accepted. Check the selected role and try again.";
+    }
+    if (error.status >= 400 && error.status < 500) {
+      return "The sign-in request could not be accepted. Check the form and try again.";
+    }
+  }
+  return "Could not sign in right now. Check that the local API is running, then try again.";
+}
+
 export default function LoginPage() {
   const { setSession } = useAuth();
   const navigate = useNavigate();
@@ -72,7 +84,7 @@ export default function LoginPage() {
       else if (res.role === "clinician") navigate("/clinician");
       else navigate("/workspace");
     } catch (err: unknown) {
-      setError((err as Error).message || "Login failed");
+      setError(loginErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -173,7 +185,7 @@ export default function LoginPage() {
               </div>
             </label>
 
-            {error && <p className="login-error">{error}</p>}
+            {error && <p className="login-error" role="alert">{error}</p>}
 
             <Button
               type="submit"

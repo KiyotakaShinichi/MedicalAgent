@@ -1,10 +1,7 @@
 {
   "_comment": "Pre-existing files above the LOC limit, frozen at their current size. This list is shrink-only: scripts/check_file_size.py fails if a listed file grows, and --update may lower an entry or drop one that has come under the limit, never raise one. Do not add a new file here to get a large module past review.",
   "files": {
-    "frontend-react/src/components/ui/ChatPanel.tsx": 641,
     "frontend-react/src/index.css": 4867,
-    "frontend-react/src/pages/admin/sections/MleEvidencePanels.tsx": 526,
-    "frontend-react/src/pages/admin/sections/RagSection.tsx": 661,
     "frontend-react/src/types/api.patient.ts": 550,
     "frontend-react/src/types/api.platform.ts": 550
   },
