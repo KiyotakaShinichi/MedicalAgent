@@ -65,6 +65,10 @@ class ClinicalReportsTestsMixin:
 
     def test_detailed_training_report_exports_hybrid_rules_and_residuals(self):
         test_dir = _make_temp_dir(_temp_root())
+        tracked_manifest = Path(
+            "Data/complete_synthetic_training/latest_detailed_eval_manifest.json"
+        )
+        manifest_before = tracked_manifest.read_bytes()
         rows = []
         for idx in range(6):
             patient_id = f"RPT-P{idx:03d}"
@@ -121,12 +125,15 @@ class ClinicalReportsTestsMixin:
             regression_predictions_path=str(regression_path),
             metrics_path=str(metrics_path),
             output_dir=str(test_dir / "report"),
+            latest_manifest_path=str(test_dir / "latest_detailed_eval_manifest.json"),
         )
 
         self.assertTrue(Path(report["files"]["test_set_predictions_detailed_csv"]).exists())
         self.assertTrue(Path(report["files"]["regression_residual_review_csv"]).exists())
         self.assertEqual(report["best_classifier"], "gradient_boosting")
         self.assertEqual(report["best_regressor"], "random_forest_regressor")
+        self.assertTrue((test_dir / "latest_detailed_eval_manifest.json").exists())
+        self.assertEqual(tracked_manifest.read_bytes(), manifest_before)
 
     def test_qin_cycle_sync_merges_agents_and_restores_cbc_density(self):
         db = _temp_db_session()

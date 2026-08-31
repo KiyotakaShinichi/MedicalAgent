@@ -13,6 +13,7 @@ def test_priority_dataset_bridge_writes_templates_without_local_exports(tmp_path
         template_dir=str(tmp_path / "templates"),
         genie_canonical_csv=str(tmp_path / "genie.csv"),
         duke_canonical_csv=str(tmp_path / "duke.csv"),
+        schema_output_path=str(tmp_path / "schema.json"),
     )
 
     assert report["status"] == "ready_for_mapping"
@@ -68,6 +69,7 @@ def test_priority_dataset_bridge_maps_fixture_rows_into_canonical_schema(tmp_pat
         template_dir=str(tmp_path / "templates"),
         genie_canonical_csv=str(tmp_path / "canonical_genie.csv"),
         duke_canonical_csv=str(tmp_path / "canonical_duke.csv"),
+        schema_output_path=str(tmp_path / "schema.json"),
     )
 
     assert report["status"] == "strong"

@@ -39,7 +39,10 @@ from backend.services.complete_synthetic_training import (
     ROW_LEVEL_TARGETS,
     _patient_split,
 )
-from backend.services.temporal_leakage_audit import run_temporal_leakage_audit
+from backend.services.temporal_leakage_audit import (
+    DEFAULT_OUTPUT_PATH as DEFAULT_TEMPORAL_OUTPUT_PATH,
+    run_temporal_leakage_audit,
+)
 
 
 DEFAULT_TRAINING_ROWS_PATH = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
@@ -96,6 +99,7 @@ def run_leakage_audit(
     classification_targets: tuple[str, ...] = DEFAULT_CLASSIFICATION_TARGETS,
     split_seeds: tuple[int, ...] = DEFAULT_SPLIT_SEEDS,
     test_size: float = 0.25,
+    temporal_output_path: str = DEFAULT_TEMPORAL_OUTPUT_PATH,
 ) -> dict[str, Any]:
     """Run every leakage check and write the unified report.
 
@@ -118,7 +122,10 @@ def run_leakage_audit(
     # temporal audit fails, that itself is an audit failure.
     temporal_payload: dict[str, Any] | None
     try:
-        temporal_payload = run_temporal_leakage_audit(training_rows_path=training_rows_path)
+        temporal_payload = run_temporal_leakage_audit(
+            training_rows_path=training_rows_path,
+            output_path=temporal_output_path,
+        )
     except Exception as exc:  # noqa: BLE001 — audit itself crashing is an audit failure
         temporal_payload = None
         findings.append(_Finding(

@@ -154,7 +154,7 @@ def test_provisioning_is_idempotent() -> None:
     ), f"expected no rebuild on a provisioned tree, got {results}"
 
 
-def test_provisioned_artifacts_satisfy_their_consumer() -> None:
+def test_provisioned_artifacts_satisfy_their_consumer(tmp_path: Path) -> None:
     """The rebuilt lakehouse records must actually drive the shadow sync.
 
     An existence check would pass on a truncated or empty file; this asserts
@@ -164,7 +164,10 @@ def test_provisioned_artifacts_satisfy_their_consumer() -> None:
         pytest.skip("artifacts not provisioned in this checkout")
     from backend.services.managed_vector_shadow_sync import build_managed_vector_shadow_sync
 
-    report = build_managed_vector_shadow_sync(root_dir=ROOT)
+    report = build_managed_vector_shadow_sync(
+        root_dir=ROOT,
+        output_path=tmp_path / "shadow-sync.json",
+    )
     # Same expectation as tests/test_managed_vector_shadow_sync.py:67 - the
     # established contract for a default, no-network run. Kept identical on
     # purpose: this test proves the *rebuilt* artifact reaches the same status

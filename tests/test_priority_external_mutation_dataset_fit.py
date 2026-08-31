@@ -15,6 +15,7 @@ def test_priority_external_stress_blocks_promotion_without_exact_temporal_labels
         template_dir=str(tmp_path / "templates"),
         genie_canonical_csv=str(tmp_path / "canonical_genie.csv"),
         duke_canonical_csv=str(tmp_path / "canonical_duke.csv"),
+        schema_output_path=str(tmp_path / "schema.json"),
     )
     assert bridge["status"] == "ready_for_mapping"
 

@@ -28,9 +28,11 @@ from __future__ import annotations
 import json
 import logging
 import os
-import uuid
+import sys
 from datetime import datetime, timezone
 from typing import Any
+
+from backend.services.structured_logging_ids import new_request_id
 
 
 LOGGER = logging.getLogger("nlcare.events")
@@ -60,6 +62,14 @@ class JsonEventFormatter(logging.Formatter):
                 "details": {"summary": str(record.getMessage())[:500]},
             }
         return json.dumps(event, sort_keys=True, default=str)
+
+
+class DynamicStdoutHandler(logging.StreamHandler):
+    """Resolve stdout at emit time so capture wrappers cannot go stale."""
+
+    def emit(self, record: logging.LogRecord) -> None:
+        self.stream = sys.stdout
+        super().emit(record)
 
 
 def logging_config() -> dict[str, Any]:
@@ -99,11 +109,11 @@ def logging_config() -> dict[str, Any]:
         },
         "handlers": {
             "nlcare_stdout": {
-                "class": "logging.StreamHandler",
+                "class": f"{__name__}.DynamicStdoutHandler",
                 "formatter": "nlcare_json",
             },
             "library_stdout": {
-                "class": "logging.StreamHandler",
+                "class": f"{__name__}.DynamicStdoutHandler",
                 "formatter": "library_json",
             },
         },
@@ -146,7 +156,7 @@ def configure_logging(*, force: bool = False) -> None:
         # competing framework.
         from pythonjsonlogger.json import JsonFormatter
 
-        root_handler = logging.StreamHandler()
+        root_handler = DynamicStdoutHandler()
         root_handler.setFormatter(
             JsonFormatter("%(asctime)s %(levelname)s %(name)s %(message)s")
         )
@@ -180,7 +190,7 @@ def _sanitize(value: Any, *, key: str = "", depth: int = 0) -> Any:
 
 
 def new_correlation_id(prefix: str = "req") -> str:
-    return f"{prefix}_{uuid.uuid4().hex[:16]}"
+    return new_request_id(prefix)
 
 
 def build_event(
@@ -208,25 +218,44 @@ def build_event(
     # backend/services/__init__.py under a second module name and abort with
     # "Source file found twice under different module names". Every other
     # mypy-tracked file is likewise free of module-level backend imports.
-    from backend.services.request_context import get_request_id
+    from backend.services.request_context import get_request_id, normalize_request_id
 
     ambient_request_id = get_request_id()
+    request_candidate = request_id or correlation_id or ambient_request_id
+    correlation_candidate = correlation_id or request_id or ambient_request_id
     resolved_request_id = (
-        request_id or correlation_id or ambient_request_id or new_correlation_id()
+        normalize_request_id(request_candidate)
+        if request_candidate
+        else new_correlation_id()
     )
+    resolved_correlation_id = (
+        normalize_request_id(correlation_candidate)
+        if correlation_candidate
+        else new_correlation_id("corr")
+    )
+    sanitized_details = _sanitize(details or {})
     return {
         "schema_version": "structured_event_v2",
+        "service": "nlcare_monitoring_prototype",
+        "environment": (
+            os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or "development"
+        ).strip().lower(),
+        "event": event_type,
         "event_type": event_type,
+        "level": normalized_severity,
         "severity": normalized_severity,
         "component": component,
         "request_id": resolved_request_id,
-        "correlation_id": correlation_id or request_id or ambient_request_id or new_correlation_id("corr"),
+        "correlation_id": resolved_correlation_id,
         "user_role": user_role,
         "patient_id": "[REDACTED]" if patient_id else None,
         "artifact_id": artifact_id,
         "model_version": model_version,
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "details": _sanitize(details or {}),
+        "route": sanitized_details.get("route"),
+        "method": sanitized_details.get("method"),
+        "status_code": sanitized_details.get("status_code"),
+        "details": sanitized_details,
     }
 
 
@@ -239,6 +268,6 @@ def log_event(event_type: str, **kwargs: Any) -> dict[str, Any]:
 
 
 __all__ = [
-    "JsonEventFormatter", "build_event", "configure_logging", "log_event",
+    "DynamicStdoutHandler", "JsonEventFormatter", "build_event", "configure_logging", "log_event",
     "new_correlation_id",
 ]

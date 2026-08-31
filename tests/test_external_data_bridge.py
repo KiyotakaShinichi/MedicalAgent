@@ -71,6 +71,7 @@ def test_external_data_bridge_maps_breastdcedl_into_canonical_rows(tmp_path):
         canonical_csv=str(canonical),
         output_path=str(output),
         failure_gallery_path=str(gallery),
+        schema_output_path=str(tmp_path / "schema.json"),
     )
 
     assert output.exists()

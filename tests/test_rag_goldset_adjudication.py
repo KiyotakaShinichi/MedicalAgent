@@ -24,6 +24,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -31,7 +32,6 @@ from pathlib import Path
 from backend.services.rag_goldset_adjudication import (
     ALLOWED_DECISIONS,
     GOLDSET_PATH,
-    PACKET_OUTPUT_PATH,
     build_packet,
     build_readiness_report,
     packet_did_not_mutate_goldset,
@@ -89,13 +89,15 @@ class PacketSelection(unittest.TestCase):
 class PacketDoesNotMutateGoldset(unittest.TestCase):
     def test_building_packet_does_not_change_goldset_hash(self) -> None:
         before = _hash(GOLDSET_PATH)
-        write_packet(PACKET_OUTPUT_PATH)
+        with tempfile.TemporaryDirectory() as tmp:
+            write_packet(Path(tmp) / "packet.json")
         after = _hash(GOLDSET_PATH)
         self.assertEqual(before, after)
 
     def test_packet_lock_in_check_passes_on_fresh_build(self) -> None:
-        write_packet(PACKET_OUTPUT_PATH)
-        packet = json.loads(PACKET_OUTPUT_PATH.read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as tmp:
+            packet_path = write_packet(Path(tmp) / "packet.json")
+            packet = json.loads(packet_path.read_text(encoding="utf-8"))
         self.assertTrue(packet_did_not_mutate_goldset(packet))
 
 

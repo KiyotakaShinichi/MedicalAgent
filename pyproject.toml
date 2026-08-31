@@ -156,10 +156,16 @@ files = [
   "backend/processing/timeline.py",
   "backend/services/agent_answer_composition.py",
   "backend/services/answer_verifier.py",
+  "backend/services/api_boundary_inventory.py",
+  "backend/services/error_reporting.py",
   "backend/services/input_validation.py",
   "backend/services/multimodal_fusion.py",
   "backend/services/safety_policy_action.py",
+  "backend/services/request_context.py",
+  "backend/services/runtime_health.py",
+  "backend/services/runtime_metrics.py",
   "backend/services/structured_logging.py",
+  "backend/services/structured_logging_ids.py",
   "backend/services/xai_reliability_gate.py",
 ]
 ignore_missing_imports = true

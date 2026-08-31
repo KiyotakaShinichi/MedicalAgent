@@ -43,6 +43,8 @@ from backend.services.runtime_health import (
     rag_index_liveness,
     readiness_payload,
 )
+from backend.services.runtime_metrics import record_readiness
+from backend.services.structured_logging import log_event
 
 router = APIRouter(tags=["operations"])
 
@@ -104,8 +106,18 @@ def ready(response: Response, db: Session = Depends(get_db)) -> dict:
         retrieval_probe=rag_runtime_readiness,
         demo_auth_probe=is_demo_auth_allowed,
     )
+    record_readiness(ready=is_ready)
     if not is_ready:
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        failed_checks = sorted(
+            name for name, check in payload["checks"].items() if not check.get("ready")
+        )
+        log_event(
+            "readiness_probe_failed",
+            severity="warning",
+            component="operations",
+            details={"failed_checks": failed_checks, "status_code": 503},
+        )
     return payload
 
 

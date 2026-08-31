@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from backend.services.oncology_canonical_schema import (
+    DEFAULT_OUTPUT_PATH as DEFAULT_CANONICAL_SCHEMA_PATH,
     ROOT_DIR,
     build_canonical_oncology_schema,
     validate_canonical_rows,
@@ -139,14 +140,13 @@ def build_priority_dataset_bridge(
     template_dir: str = DEFAULT_TEMPLATE_DIR,
     genie_canonical_csv: str = DEFAULT_GENIE_CANONICAL_CSV,
     duke_canonical_csv: str = DEFAULT_DUKE_CANONICAL_CSV,
+    schema_output_path: str = DEFAULT_CANONICAL_SCHEMA_PATH,
 ) -> dict[str, Any]:
-    build_canonical_oncology_schema()
+    build_canonical_oncology_schema(output_path=schema_output_path)
     templates = _write_templates(_resolve(template_dir))
 
-    genie_rows = _read_csv(_resolve(genie_csv)) if genie_csv else []
-    duke_rows = _read_csv(_resolve(duke_csv)) if duke_csv else []
-    genie_canonical = [_genie_to_canonical(row) for row in genie_rows]
-    duke_canonical = [_duke_to_canonical(row) for row in duke_rows]
+    genie_canonical = list(map(_genie_to_canonical, _read_csv(_resolve(genie_csv)) if genie_csv else []))
+    duke_canonical = list(map(_duke_to_canonical, _read_csv(_resolve(duke_csv)) if duke_csv else []))
 
     genie_report = _dataset_report(
         dataset_id="genie_bpc_brca",
@@ -188,7 +188,7 @@ def build_priority_dataset_bridge(
         "schema_version": "priority_dataset_bridge_v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": _overall_status([genie_report, duke_report]),
-        "canonical_schema_path": "Data/external_bridge/canonical_oncology_schema.json",
+        "canonical_schema_path": schema_output_path,
         "template_paths": templates,
         "datasets": {
             "genie_bpc_brca": genie_report,

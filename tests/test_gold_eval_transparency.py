@@ -26,8 +26,13 @@ REQUIRED_CASE_FIELDS = {
 }
 
 
-def test_rag_gold_claim_grounding_cases_are_transparent():
-    artifact = write_rag_gold_claim_grounding_cases()
+def test_rag_gold_claim_grounding_cases_are_transparent(tmp_path):
+    artifact = write_rag_gold_claim_grounding_cases(
+        output_path=str(tmp_path / "gold.jsonl"),
+        doc_path=str(tmp_path / "gold.md"),
+        eval_output_path=str(tmp_path / "eval.json"),
+        manifest_output_path=str(tmp_path / "manifest.json"),
+    )
 
     assert artifact["status"] == "strong"
     assert artifact["summary"]["case_count"] >= 10

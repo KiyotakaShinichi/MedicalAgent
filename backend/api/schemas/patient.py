@@ -21,7 +21,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from backend.services.input_validation import (
     CBC_LIMITS,
@@ -71,6 +71,8 @@ class SymptomCreate(BaseModel):
 class MySymptomCreate(BaseModel):
     """Patient-entered symptom record."""
 
+    model_config = ConfigDict(extra="forbid")
+
     date: date
     symptom: str = Field(
         min_length=1,
@@ -103,6 +105,8 @@ class MyLabCreate(BaseModel):
     clinical reference ranges. A value inside them can still be clinically
     alarming, which is what the warnings from `validate_cbc_values` are for.
     """
+
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
     date: date
     wbc: float = Field(
@@ -177,6 +181,8 @@ class MRIRegistryCreate(BaseModel):
 
 class PatientChatRequest(BaseModel):
     """A single patient message to the support agent."""
+
+    model_config = ConfigDict(extra="forbid")
 
     message: str = Field(
         min_length=1,

@@ -3,6 +3,8 @@
 !.env.example
 __pycache__/
 *.pyc
+.coverage
+.coverage.*
 .venv/
 MedicalAgent/
 Datasets/
@@ -12,6 +14,7 @@ Data/qin_mri_previews/
 Data/breastdcedl_previews/
 Data/uploads/
 Data/test_tmp/
+tests/_tmp_drift/
 Data/server_logs/
 Data/runtime/
 Data/mle_monitoring/

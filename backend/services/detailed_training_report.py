@@ -5,8 +5,6 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, r2_score
-
-
 DEFAULT_TRAINING_ROWS_PATH = "Data/complete_synthetic_breast_journeys/temporal_ml_rows.csv"
 DEFAULT_CLASSIFICATION_PREDICTIONS_PATH = "Data/complete_synthetic_training/complete_synthetic_model_predictions.csv"
 DEFAULT_REGRESSION_PREDICTIONS_PATH = "Data/complete_synthetic_training/complete_synthetic_response_regression_predictions.csv"
@@ -20,6 +18,7 @@ def generate_detailed_training_report(
     regression_predictions_path=DEFAULT_REGRESSION_PREDICTIONS_PATH,
     metrics_path=DEFAULT_METRICS_PATH,
     output_dir=DEFAULT_OUTPUT_DIR,
+    latest_manifest_path=None,
 ):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -107,7 +106,8 @@ def generate_detailed_training_report(
     markdown = _markdown_report(summary, detailed, regression_slices, residual_review, hybrid_policy, error_taxonomy, cost_sensitive)
     Path(files["markdown_report"]).write_text(markdown, encoding="utf-8")
     Path(files["html_report"]).write_text(_html_report(markdown), encoding="utf-8")
-    latest_manifest = Path(DEFAULT_OUTPUT_DIR).parent / "latest_detailed_eval_manifest.json"
+    latest_manifest = Path(latest_manifest_path) if latest_manifest_path is not None else Path(DEFAULT_OUTPUT_DIR).parent / "latest_detailed_eval_manifest.json"
+    latest_manifest.parent.mkdir(parents=True, exist_ok=True)
     latest_manifest.write_text(
         json.dumps({
             "schema_version": "latest_detailed_eval_manifest_v1",

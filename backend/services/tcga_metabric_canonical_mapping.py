@@ -9,7 +9,11 @@ from backend.services.cbioportal_biomarker_mapper import (
     DEFAULT_OUTPUT_PATH as CBIOPORTAL_MAPPING_PATH,
     build_cbioportal_biomarker_schema_mapping,
 )
-from backend.services.oncology_canonical_schema import ROOT_DIR, build_canonical_oncology_schema
+from backend.services.oncology_canonical_schema import (
+    DEFAULT_OUTPUT_PATH as DEFAULT_CANONICAL_SCHEMA_PATH,
+    ROOT_DIR,
+    build_canonical_oncology_schema,
+)
 
 
 DEFAULT_OUTPUT_PATH = "Data/evals/models/latest_tcga_metabric_canonical_mapping.json"
@@ -28,8 +32,9 @@ def build_tcga_metabric_canonical_mapping(
     mapping_path: str = DEFAULT_MAPPING_PATH,
     source_mapping_path: str = CBIOPORTAL_MAPPING_PATH,
     live_fetch: bool = False,
+    schema_output_path: str = DEFAULT_CANONICAL_SCHEMA_PATH,
 ) -> dict[str, Any]:
-    build_canonical_oncology_schema()
+    build_canonical_oncology_schema(output_path=schema_output_path)
     cbio = _load_or_build_cbioportal_mapping(source_mapping_path=source_mapping_path, live_fetch=live_fetch)
     datasets = {
         "tcga_brca_pan_can_atlas_2018": _dataset_mapping(

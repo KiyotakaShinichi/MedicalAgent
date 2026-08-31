@@ -17,6 +17,7 @@ def test_cbioportal_clinical_export_maps_fixture_rows_to_canonical_schema(tmp_pa
         combined_csv=str(tmp_path / "combined.csv"),
         live_fetch=False,
         fixture_records=_fixture_records(),
+        schema_output_path=str(tmp_path / "schema.json"),
     )
 
     assert report["status"] == "strong"
@@ -44,6 +45,7 @@ def test_external_distribution_alignment_uses_real_export_shape_without_validati
         combined_csv=str(cbio),
         live_fetch=False,
         fixture_records=_fixture_records(),
+        schema_output_path=str(tmp_path / "schema.json"),
     )
 
     report = build_external_distribution_alignment(

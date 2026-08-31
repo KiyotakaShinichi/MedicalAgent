@@ -77,7 +77,7 @@ class RagEvalSuiteTests(unittest.TestCase):
     def test_suite_runs_against_default_case_catalog(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "rag.json"
-            payload = run_rag_eval_suite(output_path=str(output))
+            payload = run_rag_eval_suite(output_path=str(output), csv_path=None)
             self.assertEqual(payload["schema_version"], "rag_eval_suite_v2")
             self.assertIn("summary", payload)
             self.assertIn("cases", payload)
@@ -93,7 +93,7 @@ class RagEvalSuiteTests(unittest.TestCase):
             self.assertTrue(output.exists())
 
     def test_each_case_emits_metrics_block(self):
-        payload = run_rag_eval_suite(output_path=None)
+        payload = run_rag_eval_suite(output_path=None, csv_path=None)
         for case in payload["cases"]:
             self.assertIn("metrics", case)
             self.assertIn("pass", case)

@@ -9,7 +9,6 @@ import asyncio
 import os
 import time
 from contextlib import asynccontextmanager
-from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,7 +27,17 @@ from backend.api.routers.model import router as model_router
 from backend.api.routers.admin_eval import build_admin_eval_router
 from backend.api.routers.automation import router as automation_router
 from backend.api.routers.platform import router as platform_router
-from backend.services.request_context import get_request_id, reset_request_id, set_request_id
+from backend.services.error_reporting import (
+    OperationalErrorCategory,
+    capture_exception,
+)
+from backend.services.request_context import (
+    get_request_id,
+    normalize_request_id,
+    reset_request_id,
+    set_request_id,
+)
+from backend.services.runtime_metrics import record_http_request
 from backend.services.api_protection import EngineeringApiProtectionMiddleware
 from backend.services.synthetic_data_boundary import SyntheticDataBoundaryMiddleware
 from backend.services.llm_telemetry import reset_llm_telemetry, start_llm_telemetry
@@ -39,6 +48,10 @@ from backend.logging_config import configure_logging, log_event
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    # Logging setup belongs to application startup, not module import. The
+    # configuration is idempotent, and log_event() still self-configures for a
+    # background worker that uses the service modules without FastAPI.
+    configure_logging()
     warm_patient_report_enrichment_cache()
     prewarm_task = None
     environment = (os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or "development").strip().lower()
@@ -75,15 +88,11 @@ OPENAPI_TAGS = [
     },
 ]
 
-# Structured JSON logging is installed before anything else can emit a
-# record. See backend/logging_config.py for the pipeline and its redaction
-# policy; configure_logging() is idempotent, so this is safe on re-import.
 app = FastAPI(
     title="NLCare Breast Cancer Monitoring Engineering Prototype",
     lifespan=lifespan,
     openapi_tags=OPENAPI_TAGS,
 )
-configure_logging()
 ensure_schema()
 
 # CORS — explicit origin list.  FastAPI/Starlette warns that the combination
@@ -127,31 +136,33 @@ app.add_middleware(SyntheticDataBoundaryMiddleware)
 
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
-    request_id = request.headers.get("x-request-id") or str(uuid4())
+    request_id = normalize_request_id(request.headers.get("x-request-id"))
+    request.state.request_id = request_id
     started = time.perf_counter()
     token = set_request_id(request_id)
     telemetry_token = start_llm_telemetry()
     try:
         response = await call_next(request)
-    except Exception as exc:
+    except Exception:
         route = getattr(request.scope.get("route"), "path", "unmatched")
-        log_event(
-            "http_request_failed",
-            severity="error",
-            request_id=request_id,
-            component="api",
-            details={
-                "method": request.method,
-                "route": route,
-                "duration_ms": round((time.perf_counter() - started) * 1000, 2),
-                "error_type": type(exc).__name__,
-            },
+        record_http_request(
+            method=request.method,
+            route=route,
+            status_code=500,
+            duration_ms=(time.perf_counter() - started) * 1000,
         )
         raise
     finally:
         reset_llm_telemetry(telemetry_token)
         reset_request_id(token)
     route = getattr(request.scope.get("route"), "path", "unmatched")
+    duration_ms = round((time.perf_counter() - started) * 1000, 2)
+    record_http_request(
+        method=request.method,
+        route=route,
+        status_code=response.status_code,
+        duration_ms=duration_ms,
+    )
     log_event(
         "http_request_completed",
         severity="warning" if response.status_code >= 400 else "info",
@@ -161,7 +172,7 @@ async def request_id_middleware(request: Request, call_next):
             "method": request.method,
             "route": route,
             "status_code": response.status_code,
-            "duration_ms": round((time.perf_counter() - started) * 1000, 2),
+            "duration_ms": duration_ms,
         },
     )
     response.headers["x-request-id"] = request_id
@@ -195,17 +206,15 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
     `HTTPException` is unaffected — FastAPI's own handler still owns it, so
     404s and 403s keep their existing bodies.
     """
-    request_id = get_request_id() or request.headers.get("x-request-id") or str(uuid4())
+    request_id = get_request_id() or normalize_request_id(request.headers.get("x-request-id"))
     route = getattr(request.scope.get("route"), "path", "unmatched")
-    log_event(
-        "http_request_unhandled_exception",
-        severity="error",
+    capture_exception(
+        exc,
+        category=OperationalErrorCategory.INTERNAL_SERVICE,
         request_id=request_id,
-        component="api",
-        details={
+        context={
             "method": request.method,
             "route": route,
-            "error_type": type(exc).__name__,
         },
     )
     return JSONResponse(

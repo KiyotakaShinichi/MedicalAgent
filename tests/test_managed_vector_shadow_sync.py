@@ -56,8 +56,11 @@ def _write_gold(tmp_path: Path, rows: list[dict]) -> Path:
     return path
 
 
-def test_default_sync_is_validated_readiness_without_network():
-    report = build_managed_vector_shadow_sync(root_dir=ROOT_DIR)
+def test_default_sync_is_validated_readiness_without_network(tmp_path):
+    report = build_managed_vector_shadow_sync(
+        root_dir=ROOT_DIR,
+        output_path=tmp_path / "report.json",
+    )
     expected_record_count = sum(
         bool(line.strip())
         for line in (

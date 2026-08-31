@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from backend.services.oncology_canonical_schema import (
+    DEFAULT_OUTPUT_PATH as DEFAULT_CANONICAL_SCHEMA_PATH,
     ROOT_DIR,
     build_canonical_oncology_schema,
     validate_canonical_rows,
@@ -41,8 +42,9 @@ def build_external_data_bridge(
     canonical_csv: str = DEFAULT_CANONICAL_CSV,
     output_path: str = DEFAULT_OUTPUT_PATH,
     failure_gallery_path: str = DEFAULT_FAILURE_GALLERY_PATH,
+    schema_output_path: str = DEFAULT_CANONICAL_SCHEMA_PATH,
 ) -> dict[str, Any]:
-    build_canonical_oncology_schema()
+    build_canonical_oncology_schema(output_path=schema_output_path)
 
     features_path = _resolve(features_csv)
     rows = _read_csv(features_path)

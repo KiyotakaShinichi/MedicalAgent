@@ -12,8 +12,11 @@ from backend.services.cloud_infrastructure_readiness import (
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 
-def test_azure_reference_foundation_covers_required_services():
-    report = build_cloud_infrastructure_readiness(root_dir=ROOT_DIR)
+def test_azure_reference_foundation_covers_required_services(tmp_path):
+    report = build_cloud_infrastructure_readiness(
+        root_dir=ROOT_DIR,
+        output_path=tmp_path / "report.json",
+    )
     assert report["cloud_deployment_completed"] is False
     assert report["healthcare_production_ready"] is False
     assert report["patient_data_allowed"] is False

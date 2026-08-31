@@ -9,7 +9,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from backend.services.oncology_canonical_schema import ROOT_DIR, build_canonical_oncology_schema, validate_canonical_rows
+from backend.services.oncology_canonical_schema import (
+    DEFAULT_OUTPUT_PATH as DEFAULT_CANONICAL_SCHEMA_PATH,
+    ROOT_DIR,
+    build_canonical_oncology_schema,
+    validate_canonical_rows,
+)
 
 
 CBIOPORTAL_API_BASE = "https://www.cbioportal.org/api"
@@ -101,8 +106,9 @@ def build_cbioportal_clinical_export(
     page_size: int = 100000,
     timeout_seconds: int = 45,
     fixture_records: dict[str, list[dict[str, Any]]] | None = None,
+    schema_output_path: str = DEFAULT_CANONICAL_SCHEMA_PATH,
 ) -> dict[str, Any]:
-    build_canonical_oncology_schema()
+    build_canonical_oncology_schema(output_path=schema_output_path)
     all_rows: list[dict[str, Any]] = []
     studies: dict[str, Any] = {}
     base_dir = _resolve(output_dir)

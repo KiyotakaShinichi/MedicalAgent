@@ -160,7 +160,11 @@ def test_readiness_probe_failure_is_handled_without_leaking_details() -> None:
     )
     assert ready is False
     assert payload["status"] == "not_ready"
-    assert payload["checks"]["database"] == {"ready": False, "error_type": "RuntimeError"}
+    assert payload["checks"]["database"] == {
+        "ready": False,
+        "required": True,
+        "error_type": "RuntimeError",
+    }
     serialized = json.dumps(payload)
     assert "hunter2" not in serialized
     assert "postgres://" not in serialized
@@ -207,7 +211,7 @@ def test_logging_config_is_declarative_and_uses_stdlib() -> None:
     config = logging_config()
     assert config["version"] == 1
     assert config["disable_existing_loggers"] is False
-    assert config["handlers"]["nlcare_stdout"]["class"] == "logging.StreamHandler"
+    assert config["handlers"]["nlcare_stdout"]["class"].endswith(".DynamicStdoutHandler")
     assert "nlcare.events" in config["loggers"]
 
 

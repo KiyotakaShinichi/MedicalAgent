@@ -21,6 +21,8 @@ def test_rag_goldset_has_minimum_coverage(tmp_path):
     report = write_rag_gold_claim_grounding_cases(
         output_path=str(tmp_path / "gold.jsonl"),
         doc_path=str(tmp_path / "gold.md"),
+        eval_output_path=str(tmp_path / "eval.json"),
+        manifest_output_path=str(tmp_path / "manifest.json"),
     )
     rows = [json.loads(line) for line in (tmp_path / "gold.jsonl").read_text(encoding="utf-8").splitlines()]
     categories = {row["category"] for row in rows}

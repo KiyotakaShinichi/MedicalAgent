@@ -13,8 +13,12 @@ from backend.services.managed_vector_shadow_comparison import (
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 
-def test_default_run_is_honest_readiness_without_network():
-    report = build_managed_vector_shadow_comparison(root_dir=ROOT_DIR)
+def test_default_run_is_honest_readiness_without_network(tmp_path: Path):
+    report = build_managed_vector_shadow_comparison(
+        root_dir=ROOT_DIR,
+        output_path=tmp_path / "comparison.json",
+        failure_path=tmp_path / "failures.json",
+    )
     assert report["status"] == "ready_for_managed_shadow_run"
     assert report["comparison_completed"] is False
     assert report["managed_network_request_performed"] is False

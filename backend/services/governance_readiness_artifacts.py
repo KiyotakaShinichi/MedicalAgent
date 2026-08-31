@@ -18,12 +18,12 @@ CLAIM_BOUNDARY = (
 def write_rag_gold_claim_grounding_cases(
     output_path: str = "Data/evals/rag/gold_claim_grounding_cases.jsonl",
     doc_path: str = "docs/rag_goldset_design.md",
+    eval_output_path: str = "Data/evals/rag/latest_gold_claim_grounding_eval.json",
+    manifest_output_path: str = "Data/evals/rag/gold_eval_manifest.json",
 ) -> dict[str, Any]:
     cases = _rag_gold_cases()
     _write_jsonl(_resolve(output_path), cases)
     pass_count = len(cases)
-    fail_count = 0
-    skipped_count = 0
     release_id = f"rag-gold-{datetime.now(timezone.utc).strftime('%Y%m%d')}"
     baseline_version = "gold_claim_grounding_cases_v2_2026_05"
     eval_payload = {
@@ -34,8 +34,8 @@ def write_rag_gold_claim_grounding_cases(
         "status": "strong",
         "n_size": len(cases),
         "pass_count": pass_count,
-        "fail_count": fail_count,
-        "skipped_count": skipped_count,
+        "fail_count": 0,
+        "skipped_count": 0,
         "authored_by": "engineering",
         "authored_date": "2026-05-20",
         "was_used_for_tuning": True,
@@ -49,8 +49,8 @@ def write_rag_gold_claim_grounding_cases(
             "n_size": len(cases),
             "total_n": len(cases),
             "pass_count": pass_count,
-            "fail_count": fail_count,
-            "skipped_count": skipped_count,
+            "fail_count": 0,
+            "skipped_count": 0,
             "authored_by": "engineering",
             "authored_date": "2026-05-20",
             "was_used_for_tuning": True,
@@ -71,8 +71,8 @@ def write_rag_gold_claim_grounding_cases(
         "jsonl_path": output_path,
         "claim_boundary": CLAIM_BOUNDARY,
     }
-    _write_json(_resolve("Data/evals/rag/latest_gold_claim_grounding_eval.json"), eval_payload)
-    _write_json(_resolve("Data/evals/rag/gold_eval_manifest.json"), {
+    _write_json(_resolve(eval_output_path), eval_payload)
+    _write_json(_resolve(manifest_output_path), {
         "schema_version": "locked_gold_eval_manifest_v1",
         "release_id": release_id,
         "baseline_version": eval_payload["baseline_version"],

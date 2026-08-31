@@ -74,8 +74,9 @@ def test_readiness_passes_when_required_dependencies_answer():
 
     assert ready is True
     assert payload["status"] == "ready"
-    assert payload["checks"]["database"]["ready"] is True
+    assert payload["checks"]["database"] == {"ready": True, "required": True}
     assert payload["checks"]["retrieval"]["ready"] is True
+    assert payload["checks"]["retrieval"]["required"] is True
     assert payload["demo_auth_allowed"] is True
     assert payload["clinical_validation"] is False
     assert payload["healthcare_production_ready"] is False
@@ -92,6 +93,7 @@ def test_readiness_fails_closed_when_database_is_unavailable():
     assert payload["status"] == "not_ready"
     assert payload["checks"]["database"] == {
         "ready": False,
+        "required": True,
         "error_type": "ConnectionError",
     }
 
@@ -109,8 +111,59 @@ def test_readiness_fails_closed_when_retrieval_probe_throws():
     assert ready is False
     assert payload["checks"]["retrieval"] == {
         "ready": False,
+        "required": True,
         "error_type": "RuntimeError",
     }
+
+
+def test_readiness_fails_closed_when_required_configuration_probe_throws():
+    payload, ready = readiness_payload(
+        _Database(),
+        environment={"APP_ENV": "test"},
+        retrieval_probe=_retrieval_ready,
+        demo_auth_probe=lambda: (_ for _ in ()).throw(ValueError("bad secret")),
+    )
+
+    assert ready is False
+    assert payload["demo_auth_allowed"] is False
+    assert payload["checks"]["configuration"] == {
+        "ready": False,
+        "required": True,
+        "error_type": "ValueError",
+    }
+
+
+def test_readiness_does_not_expose_unbounded_retrieval_details():
+    payload, ready = readiness_payload(
+        _Database(),
+        environment={"APP_ENV": "test"},
+        retrieval_probe=lambda: {
+            "meets_deployment_requirement": False,
+            "status": "missing",
+            "path": "C:/private/patient/index.json",
+            "source_url": "https://user:secret@example.invalid",
+        },
+    )
+
+    summary = payload["checks"]["retrieval"]["summary"]
+    assert ready is False
+    assert summary == {"status": "missing", "meets_deployment_requirement": False}
+
+
+def test_optional_external_provider_configuration_does_not_control_readiness():
+    payload, ready = readiness_payload(
+        _Database(),
+        environment={
+            "APP_ENV": "test",
+            "GROQ_API_KEY": "configured-but-not-probed",
+            "PINECONE_API_KEY": "configured-but-not-probed",
+        },
+        retrieval_probe=_retrieval_ready,
+    )
+
+    assert ready is True
+    assert payload["status"] == "ready"
+    assert set(payload["checks"]) == {"database", "retrieval", "redis"}
 
 
 def test_readiness_requires_redis_url_when_shared_limit_is_enabled():

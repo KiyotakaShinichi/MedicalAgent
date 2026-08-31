@@ -274,6 +274,50 @@ def test_schema_bounds_come_from_the_shared_declaration() -> None:
         assert name in source, f"{name} is not sourced from the shared declaration"
 
 
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_cbc_schema_rejects_non_finite_numbers(value: float) -> None:
+    from pydantic import ValidationError
+
+    from backend.api.schemas.patient import MyLabCreate
+
+    with pytest.raises(ValidationError):
+        MyLabCreate(
+            date="2026-01-01",
+            wbc=value,
+            hemoglobin=12.0,
+            platelets=200.0,
+        )
+
+
+@pytest.mark.parametrize(
+    ("model_name", "payload"),
+    [
+        (
+            "MySymptomCreate",
+            {"date": "2026-01-01", "symptom": "fatigue", "severity": 3, "typo": True},
+        ),
+        (
+            "MyLabCreate",
+            {
+                "date": "2026-01-01",
+                "wbc": 6.0,
+                "hemoglobin": 12.0,
+                "platelets": 200.0,
+                "unknown_lab": 1,
+            },
+        ),
+        ("PatientChatRequest", {"message": "What does WBC mean?", "instruction": "hidden"}),
+    ],
+)
+def test_patient_write_schemas_reject_unknown_fields(model_name: str, payload: dict) -> None:
+    from pydantic import ValidationError
+
+    from backend.api.schemas import patient
+
+    with pytest.raises(ValidationError):
+        getattr(patient, model_name).model_validate(payload)
+
+
 def test_openapi_publishes_the_constraints() -> None:
     """Declared constraints must be visible to a client reading the schema."""
     schemas = app.openapi()["components"]["schemas"]

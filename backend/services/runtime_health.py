@@ -145,16 +145,28 @@ def readiness_payload(
     checks: dict[str, Any] = {}
     try:
         db.execute(text("SELECT 1"))
-        checks["database"] = {"ready": True}
+        checks["database"] = {"ready": True, "required": True}
     except Exception as exc:
-        checks["database"] = {"ready": False, "error_type": type(exc).__name__}
+        checks["database"] = {
+            "ready": False,
+            "required": True,
+            "error_type": type(exc).__name__,
+        }
 
     try:
         retrieval = retrieval_probe() if retrieval_probe else {}
         retrieval_ready = bool(retrieval.get("meets_deployment_requirement"))
-        checks["retrieval"] = {"ready": retrieval_ready, "summary": retrieval}
+        checks["retrieval"] = {
+            "ready": retrieval_ready,
+            "required": True,
+            "summary": _bounded_retrieval_summary(retrieval),
+        }
     except Exception as exc:
-        checks["retrieval"] = {"ready": False, "error_type": type(exc).__name__}
+        checks["retrieval"] = {
+            "ready": False,
+            "required": True,
+            "error_type": type(exc).__name__,
+        }
 
     shared_redis_required = str(env.get("NLCARE_SHARED_RATE_LIMIT_ENABLED", "")).lower() in {
         "1", "true", "yes", "on",
@@ -164,13 +176,27 @@ def readiness_payload(
     else:
         checks["redis"] = {"ready": True, "required": False}
 
-    ready = all(bool(check.get("ready")) for check in checks.values())
+    try:
+        demo_auth_allowed = bool(demo_auth_probe()) if demo_auth_probe else False
+    except Exception as exc:
+        demo_auth_allowed = False
+        checks["configuration"] = {
+            "ready": False,
+            "required": True,
+            "error_type": type(exc).__name__,
+        }
+
+    ready = all(
+        bool(check.get("ready"))
+        for check in checks.values()
+        if bool(check.get("required", True))
+    )
     app_environment = str(env.get("ENVIRONMENT") or env.get("APP_ENV") or "development")
     return {
         "status": "ready" if ready else "not_ready",
         "service": "nlcare_monitoring_prototype",
         "environment": app_environment.strip().lower(),
-        "demo_auth_allowed": bool(demo_auth_probe()) if demo_auth_probe else False,
+        "demo_auth_allowed": demo_auth_allowed,
         "checks": checks,
         "clinical_validation": False,
         "healthcare_production_ready": False,
@@ -179,6 +205,19 @@ def readiness_payload(
             "It is not clinical validation, real-patient approval, or PHI compliance."
         ),
     }, ready
+
+
+def _bounded_retrieval_summary(value: Mapping[str, Any]) -> dict[str, Any]:
+    """Expose readiness facts without paths, URLs, content, or credentials."""
+    allowed = (
+        "status",
+        "backend",
+        "dense_backend_required",
+        "dense_backend_active",
+        "meets_deployment_requirement",
+        "active_mode",
+    )
+    return {key: value[key] for key in allowed if key in value}
 
 
 def _redis_readiness(url: str) -> dict[str, Any]:

@@ -112,6 +112,7 @@ class CleanFrameAudit(unittest.TestCase):
             payload = run_leakage_audit(
                 training_rows_path=str(csv_path),
                 output_path=str(out_path),
+                temporal_output_path=str(Path(tmp) / "temporal.json"),
                 classification_targets=("treatment_success_binary",),
                 split_seeds=(0, 7),
             )
@@ -140,6 +141,7 @@ class DuplicatePatientCycleDetected(unittest.TestCase):
             payload = run_leakage_audit(
                 training_rows_path=str(csv_path),
                 output_path=str(out_path),
+                temporal_output_path=str(Path(tmp) / "temporal.json"),
                 classification_targets=("treatment_success_binary",),
                 split_seeds=(0,),
             )
@@ -171,6 +173,7 @@ class LabelIdentityDetected(unittest.TestCase):
             payload = run_leakage_audit(
                 training_rows_path=str(csv_path),
                 output_path=str(out_path),
+                temporal_output_path=str(Path(tmp) / "temporal.json"),
                 classification_targets=("treatment_success_binary",),
                 split_seeds=(0,),
             )
@@ -198,6 +201,7 @@ class PatientSplitDisjoint(unittest.TestCase):
             payload = run_leakage_audit(
                 training_rows_path=str(csv_path),
                 output_path=str(out_path),
+                temporal_output_path=str(Path(tmp) / "temporal.json"),
                 classification_targets=("treatment_success_binary",),
                 split_seeds=(0, 7, 42, 123),
             )
@@ -224,6 +228,7 @@ class RealDatasetAuditRuns(unittest.TestCase):
             payload = run_leakage_audit(
                 training_rows_path=str(production_csv),
                 output_path=str(out_path),
+                temporal_output_path=str(Path(tmp) / "temporal.json"),
                 classification_targets=DEFAULT_CLASSIFICATION_TARGETS,
                 split_seeds=(0, 42),
             )

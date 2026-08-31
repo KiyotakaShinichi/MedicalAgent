@@ -15,8 +15,11 @@ from backend.services.data_platform_reliability_eval import (
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 
-def test_reliability_eval_runs_all_offline_drills():
-    report = build_data_platform_reliability_eval(root_dir=ROOT_DIR)
+def test_reliability_eval_runs_all_offline_drills(tmp_path):
+    report = build_data_platform_reliability_eval(
+        root_dir=ROOT_DIR,
+        output_path=tmp_path / "report.json",
+    )
     assert report["status"] == "strong_offline_drill"
     assert report["n_cases"] >= 6
     assert report["failed"] == 0

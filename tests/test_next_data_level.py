@@ -37,6 +37,7 @@ def test_tcga_metabric_canonical_mapping_is_schema_only_and_claim_bounded(tmp_pa
         mapping_path=str(tmp_path / "mapping.json"),
         source_mapping_path=str(cbio),
         live_fetch=False,
+        schema_output_path=str(tmp_path / "schema.json"),
     )
 
     assert report["status"] == "strong"
