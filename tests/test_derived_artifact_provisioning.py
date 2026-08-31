@@ -34,10 +34,44 @@ if str(ROOT) not in sys.path:
 
 from scripts.provision_derived_artifacts import (  # noqa: E402 - needs ROOT on sys.path
     DERIVED_ARTIFACTS,
+    DerivedArtifact,
+    _run_generator,
     missing_artifacts,
     missing_inputs,
     provision,
 )
+
+
+def test_generator_preserves_declared_tracked_side_effects(tmp_path: Path) -> None:
+    preserved = tmp_path / "tracked" / "manifest.json"
+    created_only_by_generator = tmp_path / "tracked" / "transient.json"
+    target = tmp_path / "derived" / "artifact.json"
+    preserved.parent.mkdir(parents=True)
+    preserved.write_bytes(b'{"state":"before"}')
+    script = (
+        "from pathlib import Path; "
+        "Path('tracked/manifest.json').write_text('changed'); "
+        "Path('tracked/transient.json').write_text('temporary'); "
+        "Path('derived').mkdir(); "
+        "Path('derived/artifact.json').write_text('generated')"
+    )
+    artifact = DerivedArtifact(
+        name="isolated-generator",
+        path="derived/artifact.json",
+        inputs=(),
+        generator=("-c", script),
+        preserved_side_effects=(
+            "tracked/manifest.json",
+            "tracked/transient.json",
+        ),
+    )
+
+    result = _run_generator(artifact, tmp_path)
+
+    assert result["exit_code"] == 0
+    assert target.read_text(encoding="utf-8") == "generated"
+    assert preserved.read_bytes() == b'{"state":"before"}'
+    assert not created_only_by_generator.exists()
 
 
 def test_every_derived_artifact_declares_tracked_inputs() -> None:

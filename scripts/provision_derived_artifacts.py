@@ -57,6 +57,7 @@ class DerivedArtifact:
     inputs: tuple[str, ...]
     generator: tuple[str, ...]
     consumers: tuple[str, ...] = field(default=())
+    preserved_side_effects: tuple[str, ...] = field(default=())
 
     def target(self, root: Path) -> Path:
         return root / self.path
@@ -99,6 +100,11 @@ DERIVED_ARTIFACTS: tuple[DerivedArtifact, ...] = (
             "Data/evals/rag/latest_kb_source_governance.json",
         ),
         generator=("scripts/run_data_platform_pipeline.py",),
+        preserved_side_effects=(
+            "Data/lakehouse/lineage/latest_lineage.json",
+            "Data/lakehouse/manifests/latest_pipeline_run.json",
+            "Data/lakehouse/manifests/latest_source_manifest.json",
+        ),
         consumers=(
             "tests/test_managed_vector_shadow_sync.py",
             "tests/test_data_platform_reliability_eval.py",
@@ -128,13 +134,27 @@ def missing_artifacts(root: Path = ROOT) -> list[str]:
 
 
 def _run_generator(artifact: DerivedArtifact, root: Path) -> dict[str, Any]:
-    proc = subprocess.run(
-        [sys.executable, *artifact.generator],
-        cwd=root,
-        capture_output=True,
-        text=True,
-        timeout=1800,
-    )
+    preserved = {
+        root / relative: (root / relative).read_bytes()
+        if (root / relative).exists()
+        else None
+        for relative in artifact.preserved_side_effects
+    }
+    try:
+        proc = subprocess.run(
+            [sys.executable, *artifact.generator],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            timeout=1800,
+        )
+    finally:
+        for path, content in preserved.items():
+            if content is None:
+                path.unlink(missing_ok=True)
+            else:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
     detail = (proc.stderr or proc.stdout).strip().splitlines()
     return {
         "exit_code": proc.returncode,
