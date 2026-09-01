@@ -61,6 +61,48 @@ def tracked_file_bytes(path: str | Path) -> bytes:
         raise ContractError(f"Unable to read tracked file at HEAD: {relative}") from exc
 
 
+def tracked_files_bytes(paths: list[str]) -> dict[str, bytes]:
+    """Read many committed blobs with one batch process."""
+    wanted = set(paths)
+    tree = subprocess.check_output(["git", "ls-tree", "-r", "-z", "HEAD"], cwd=ROOT)
+    refs: dict[str, str] = {}
+    for record in tree.split(b"\0"):
+        if not record:
+            continue
+        metadata, raw_path = record.split(b"\t", 1)
+        _mode, object_type, raw_oid = metadata.split()
+        path = raw_path.decode("utf-8")
+        if path in wanted and object_type == b"blob":
+            refs[path] = raw_oid.decode("ascii")
+    missing = sorted(wanted - set(refs))
+    if missing:
+        raise ContractError(f"Tracked snapshot omitted files: {missing[:10]}")
+
+    object_ids = sorted(set(refs.values()))
+    process = subprocess.run(
+        ["git", "cat-file", "--batch"],
+        cwd=ROOT,
+        input="".join(f"{oid}\n" for oid in object_ids).encode("ascii"),
+        capture_output=True,
+        check=False,
+    )
+    if process.returncode != 0:
+        raise ContractError(process.stderr.decode("utf-8", errors="replace").strip())
+    from io import BytesIO
+
+    stream = BytesIO(process.stdout)
+    objects: dict[str, bytes] = {}
+    for expected_oid in object_ids:
+        header = stream.readline().decode("ascii").strip().split()
+        if len(header) != 3 or header[0] != expected_oid or header[1] != "blob":
+            raise ContractError(f"Unexpected git cat-file response for {expected_oid}")
+        size = int(header[2])
+        objects[expected_oid] = stream.read(size)
+        if stream.read(1) != b"\n":
+            raise ContractError(f"Malformed git cat-file response for {expected_oid}")
+    return {path: objects[oid] for path, oid in refs.items()}
+
+
 def sha256_tracked_file(path: str | Path) -> str:
     """Hash committed bytes so checkout line-ending settings cannot change identity."""
     return hashlib.sha256(tracked_file_bytes(path)).hexdigest()
@@ -221,17 +263,25 @@ def verify_protected_evidence(payload: dict[str, Any]) -> tuple[int, list[str]]:
         raise ContractError("Unexpected protected-evidence schema_version")
     entries = payload.get("files", [])
     failures: list[str] = []
+    paths = [str(entry.get("path", "")) for entry in entries]
+    try:
+        committed = tracked_files_bytes(paths)
+    except ContractError as exc:
+        return len(entries), [str(exc)]
+    changed_output = subprocess.check_output(
+        ["git", "diff", "--name-only", "-z", "HEAD"], cwd=ROOT
+    ).decode("utf-8")
+    changed = set(changed_output.split("\0"))
     for entry in entries:
         path = entry.get("path", "")
         normalized = Path(path)
         if normalized.is_absolute() or ".." in normalized.parts:
             failures.append(f"invalid protected path: {path}")
             continue
-        resolved = ROOT / path
-        if not resolved.is_file():
-            failures.append(f"missing: {path}")
-        elif sha256_file(resolved) != entry.get("sha256"):
+        if path in changed or not (ROOT / path).is_file():
             failures.append(f"changed: {path}")
+        elif hashlib.sha256(committed[path]).hexdigest() != entry.get("sha256"):
+            failures.append(f"manifest mismatch: {path}")
     if payload.get("file_count") != len(entries):
         failures.append("protected evidence file_count does not match entries")
     return len(entries), failures
