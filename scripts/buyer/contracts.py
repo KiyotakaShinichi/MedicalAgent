@@ -49,12 +49,29 @@ def sha256_file(path: str | Path) -> str:
     return digest.hexdigest()
 
 
+def tracked_file_bytes(path: str | Path) -> bytes:
+    """Return the committed bytes for a tracked, repository-relative file."""
+    normalized = Path(path)
+    if normalized.is_absolute() or ".." in normalized.parts:
+        raise ContractError(f"Tracked path must be repository-relative: {path}")
+    relative = normalized.as_posix()
+    try:
+        return subprocess.check_output(["git", "show", f"HEAD:{relative}"], cwd=ROOT)
+    except subprocess.CalledProcessError as exc:
+        raise ContractError(f"Unable to read tracked file at HEAD: {relative}") from exc
+
+
+def sha256_tracked_file(path: str | Path) -> str:
+    """Hash committed bytes so checkout line-ending settings cannot change identity."""
+    return hashlib.sha256(tracked_file_bytes(path)).hexdigest()
+
+
 def combined_hash(paths: list[str]) -> str:
     digest = hashlib.sha256()
     for path in sorted(paths):
         digest.update(path.encode("utf-8"))
         digest.update(b"\0")
-        digest.update(sha256_file(path).encode("ascii"))
+        digest.update(sha256_tracked_file(path).encode("ascii"))
         digest.update(b"\n")
     return digest.hexdigest()
 

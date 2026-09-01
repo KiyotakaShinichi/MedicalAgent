@@ -26,7 +26,7 @@ from scripts.buyer.contracts import (  # noqa: E402
     combined_hash,
     git_sha,
     load_json,
-    sha256_file,
+    sha256_tracked_file,
     validate_asset_manifest,
     validate_candidate_manifest,
     validate_configuration_matrix,
@@ -186,11 +186,13 @@ def build_report(*, full: bool, allow_dirty: bool) -> dict:
     checks.extend([_demo_lifecycle(), _package_dry_run()])
 
     resolved_hashes = {
-        "asset_manifest_hash": sha256_file("config/buyer/asset_manifest.json"),
-        "license_inventory_hash": sha256_file("config/buyer/license_inventory.json"),
+        "asset_manifest_hash": sha256_tracked_file("config/buyer/asset_manifest.json"),
+        "license_inventory_hash": sha256_tracked_file("config/buyer/license_inventory.json"),
         "dependency_lock_hash": combined_hash(["uv.lock", "frontend-react/package-lock.json"]),
-        "evidence_index_hash": sha256_file("docs/buyer/EVIDENCE_AND_LIMITATIONS.md"),
-        "protected_evidence_hash": sha256_file("config/buyer/protected_evidence_manifest.json"),
+        "evidence_index_hash": sha256_tracked_file("docs/buyer/EVIDENCE_AND_LIMITATIONS.md"),
+        "protected_evidence_hash": sha256_tracked_file(
+            "config/buyer/protected_evidence_manifest.json"
+        ),
     }
     return {
         "schema_version": "nlcare_buyer_candidate_verification_v1",

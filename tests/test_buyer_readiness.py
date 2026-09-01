@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
+import zipfile
+from io import BytesIO
 
 import pytest
 
 from scripts.buyer.contracts import (
     ROOT,
     load_json,
+    sha256_tracked_file,
+    tracked_file_bytes,
     validate_asset_manifest,
     validate_candidate_manifest,
     validate_configuration_matrix,
@@ -77,6 +82,14 @@ def test_small_archive_is_deterministic_and_manifest_bound() -> None:
     assert first == second
     assert first_manifest == second_manifest
     assert verify_archive(first) == first_manifest
+    with zipfile.ZipFile(BytesIO(first)) as archive:
+        assert archive.read("README.md") == tracked_file_bytes("README.md")
+
+
+def test_tracked_hash_uses_committed_bytes() -> None:
+    committed = subprocess.check_output(["git", "show", "HEAD:README.md"], cwd=ROOT)
+    assert tracked_file_bytes("README.md") == committed
+    assert sha256_tracked_file("README.md") == hashlib.sha256(committed).hexdigest()
 
 
 def test_demo_path_rejects_non_demo_database() -> None:

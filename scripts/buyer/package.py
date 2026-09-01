@@ -6,11 +6,17 @@ import fnmatch
 import hashlib
 import io
 import json
+import subprocess
 import zipfile
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from scripts.buyer.contracts import ROOT, git_sha, load_json, sha256_file, tracked_files
+from scripts.buyer.contracts import (
+    ROOT,
+    git_sha,
+    load_json,
+    tracked_files,
+)
 
 
 FIXED_ZIP_TIME = (1980, 1, 1, 0, 0, 0)
@@ -47,7 +53,48 @@ def selected_files(policy: dict[str, Any] | None = None) -> list[str]:
     return sorted(selected)
 
 
-def build_manifest(paths: list[str]) -> dict[str, Any]:
+def _tracked_snapshot(paths: list[str]) -> dict[str, bytes]:
+    """Read HEAD once so package bytes are canonical without per-file Git processes."""
+    tree = subprocess.check_output(["git", "ls-tree", "-r", "-z", "HEAD"], cwd=ROOT)
+    wanted = set(paths)
+    refs: dict[str, str] = {}
+    for record in tree.split(b"\0"):
+        if not record:
+            continue
+        metadata, raw_path = record.split(b"\t", 1)
+        _mode, object_type, raw_oid = metadata.split()
+        path = raw_path.decode("utf-8")
+        if path in wanted and object_type == b"blob":
+            refs[path] = raw_oid.decode("ascii")
+    missing = sorted(wanted - set(refs))
+    if missing:
+        raise PackageError(f"Tracked snapshot omitted files: {missing[:10]}")
+
+    object_ids = sorted(set(refs.values()))
+    process = subprocess.run(
+        ["git", "cat-file", "--batch"],
+        cwd=ROOT,
+        input="".join(f"{oid}\n" for oid in object_ids).encode("ascii"),
+        capture_output=True,
+        check=False,
+    )
+    if process.returncode != 0:
+        raise PackageError(process.stderr.decode("utf-8", errors="replace").strip())
+
+    stream = io.BytesIO(process.stdout)
+    objects: dict[str, bytes] = {}
+    for expected_oid in object_ids:
+        header = stream.readline().decode("ascii").strip().split()
+        if len(header) != 3 or header[0] != expected_oid or header[1] != "blob":
+            raise PackageError(f"Unexpected git cat-file response for {expected_oid}")
+        size = int(header[2])
+        objects[expected_oid] = stream.read(size)
+        if stream.read(1) != b"\n":
+            raise PackageError(f"Malformed git cat-file response for {expected_oid}")
+    return {path: objects[oid] for path, oid in refs.items()}
+
+
+def build_manifest(paths: list[str], snapshot: dict[str, bytes]) -> dict[str, Any]:
     return {
         "schema_version": "nlcare_buyer_package_manifest_v1",
         "candidate_type": "BUYER_CANDIDATE",
@@ -55,7 +102,11 @@ def build_manifest(paths: list[str]) -> dict[str, Any]:
         "data_boundary": "synthetic/research artifacts only; no real patient data",
         "file_count": len(paths) + 1,
         "files": [
-            {"path": path, "sha256": sha256_file(path), "size_bytes": (ROOT / path).stat().st_size}
+            {
+                "path": path,
+                "sha256": hashlib.sha256(snapshot[path]).hexdigest(),
+                "size_bytes": len(snapshot[path]),
+            }
             for path in paths
         ],
     }
@@ -69,12 +120,13 @@ def _zip_info(path: str) -> zipfile.ZipInfo:
 
 
 def archive_bytes(paths: list[str]) -> tuple[bytes, dict[str, Any]]:
-    manifest = build_manifest(paths)
+    snapshot = _tracked_snapshot(paths)
+    manifest = build_manifest(paths, snapshot)
     manifest_bytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode("utf-8")
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
         for path in paths:
-            archive.writestr(_zip_info(path), (ROOT / path).read_bytes())
+            archive.writestr(_zip_info(path), snapshot[path])
         archive.writestr(_zip_info(MANIFEST_NAME), manifest_bytes)
     return buffer.getvalue(), manifest
 
