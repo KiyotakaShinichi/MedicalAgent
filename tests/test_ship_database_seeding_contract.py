@@ -163,9 +163,8 @@ def test_no_server_database_can_be_targeted(scheme: str) -> None:
 def test_no_generated_ship_database_is_committed() -> None:
     """The disposable database is rebuilt each run, so it must not be in git.
 
-    Scoped to the disposable directory rather than every `*.db` in the tree:
-    `Data/medicalagent.db` is a pre-existing tracked file that predates this
-    workflow and is not what this contract governs.
+    The Ship database lives under the disposable directory, and runtime
+    database files are excluded from source control repository-wide.
     """
     result = subprocess.run(
         ["git", "ls-files", "--", "Data/test_tmp"],
