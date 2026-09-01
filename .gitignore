@@ -39,3 +39,6 @@ medical_agent.db
 *_dev_server.log
 *_dev_server.err.log
 logs/*.log
+*.log
+tmp/
+reports/coverage.xml

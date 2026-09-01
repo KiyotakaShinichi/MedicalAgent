@@ -1,0 +1,31 @@
+name: Buyer Readiness
+
+on:
+  push:
+    branches:
+      - buyer-sp1-acquisition-readiness
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  transfer-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Sync pinned runtime and test tools
+        run: |
+          python -m pip install uv==0.8.24
+          uv sync --frozen --no-default-groups --group dev
+      - name: Validate buyer contracts and disposable demo
+        run: |
+          uv run pytest tests/test_buyer_readiness.py -q
+          uv run python scripts/verify_buyer_candidate.py
+      - name: Validate deterministic package selection
+        run: uv run python scripts/build_buyer_package.py --dry-run
+      - name: Confirm generated and protected state stayed clean
+        run: git diff --exit-code

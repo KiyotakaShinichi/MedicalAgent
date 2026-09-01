@@ -14,6 +14,7 @@ Key contracts under test
 from __future__ import annotations
 
 import importlib.util
+import math
 import sys
 import unittest
 from pathlib import Path
@@ -53,9 +54,15 @@ class SameVariantHolds(unittest.TestCase):
         )
         self.assertEqual(report.decision, "HOLD")
         self.assertFalse(report.safety_regression)
-        # All deltas zero on a self-vs-self run.
+        # Behavioral and quality deltas must be zero. Wall-clock latency is
+        # measured from two sequential calls and may differ by timer jitter.
         for key, value in report._deltas().items():
+            if key == "latency_p50_ms":
+                self.assertTrue(math.isfinite(value))
+                continue
             self.assertEqual(value, 0.0, f"delta {key} should be zero")
+        self.assertGreaterEqual(report.baseline.latency_p50_ms, 0.0)
+        self.assertGreaterEqual(report.candidate.latency_p50_ms, 0.0)
 
 
 class UnsafeCandidateRejected(unittest.TestCase):

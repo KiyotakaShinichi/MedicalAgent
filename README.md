@@ -9,6 +9,14 @@ synthetic engineering demonstrations. DEP-001 remains behaviorally blocked on
 consumed official evidence, and no real-patient, clinical, regulatory, or public
 healthcare deployment is authorized.
 
+## Acquisition / Technical Diligence
+
+NLCare has a buyer-facing technical data room, machine-readable asset/license
+contracts, a deterministic synthetic demo, and an integrity-checked archive and
+verification flow. Start with [the buyer data room](docs/buyer/README.md).
+This is transfer diligence for a pre-commercial engineering asset, not a sale,
+production-release, clinical-readiness, revenue, user, or patient-benefit claim.
+
 ## Architecture at a glance
 
 `React/TypeScript portal -> FastAPI/RBAC -> deterministic safety routing ->

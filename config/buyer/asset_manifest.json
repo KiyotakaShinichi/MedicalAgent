@@ -1,0 +1,182 @@
+{
+  "schema_version": "nlcare_buyer_asset_manifest_v1",
+  "candidate_scope": "Technical diligence candidate; not a production or clinical release",
+  "assets": [
+    {
+      "asset_id": "git-source-history",
+      "path_or_category": ".git and tracked source",
+      "description": "Single-author NLCare source history plus automated dependency commits.",
+      "ownership_status": "REVIEW_REQUIRED",
+      "included_in_transfer": true,
+      "generated": false,
+      "requires_external_provider": false,
+      "buyer_action_required": "Obtain written ownership/assignment representations and choose a source-license structure with counsel.",
+      "notes": "No repository-root LICENSE is present; Git author metadata remains part of history."
+    },
+    {
+      "asset_id": "backend",
+      "path_or_category": "backend/",
+      "description": "FastAPI APIs, safety-governed agent services, RAG, ML/MLE services, migrations, auth, and operations boundaries.",
+      "ownership_status": "INCLUDED",
+      "included_in_transfer": true,
+      "generated": false,
+      "requires_external_provider": false,
+      "buyer_action_required": "Review intended hosted scope and configure buyer-owned infrastructure.",
+      "notes": "Core offline behavior does not require an LLM provider."
+    },
+    {
+      "asset_id": "frontend",
+      "path_or_category": "frontend-react/",
+      "description": "React and TypeScript patient, clinician, and admin research interfaces.",
+      "ownership_status": "INCLUDED",
+      "included_in_transfer": true,
+      "generated": false,
+      "requires_external_provider": false,
+      "buyer_action_required": "Replace demo identity and complete accessibility/security review before hosting.",
+      "notes": "UI is marked as synthetic and nonclinical."
+    },
+    {
+      "asset_id": "database-schema",
+      "path_or_category": "backend/models.py; backend/migrations/",
+      "description": "SQLAlchemy schema and Alembic migration chain through the SaaS control-plane revision.",
+      "ownership_status": "INCLUDED",
+      "included_in_transfer": true,
+      "generated": false,
+      "requires_external_provider": false,
+      "buyer_action_required": "Run migration and backup/restore drills against the buyer's target database.",
+      "notes": "SQLite demo and PostgreSQL-shaped operation are supported; no enterprise DR claim."
+    },
+    {
+      "asset_id": "synthetic-demo",
+      "path_or_category": "seed_db.py; scripts/seed_buyer_demo.py; Data/complete_synthetic_*",
+      "description": "Deterministic synthetic patient demo fixtures and simulator-built ML material.",
+      "ownership_status": "GENERATED",
+      "included_in_transfer": true,
+      "generated": true,
+      "requires_external_provider": false,
+      "buyer_action_required": "Keep synthetic classification visible and do not substitute real patient data without a separate program.",
+      "notes": "No claim of clinical realism or patient benefit."
+    },
+    {
+      "asset_id": "rag-agent-safety",
+      "path_or_category": "backend/services/; KnowledgeBase/raw/curated_medical_kb/",
+      "description": "Source-governed RAG, agent routing, claim checks, refusal/escalation layers, and curated summaries.",
+      "ownership_status": "REVIEW_REQUIRED",
+      "included_in_transfer": true,
+      "generated": false,
+      "requires_external_provider": false,
+      "buyer_action_required": "Review authorship/source attribution of curated medical summaries before commercial redistribution.",
+      "notes": "DEP-001 negative evidence remains release-blocking."
+    },
+    {
+      "asset_id": "research-paper-corpus",
+      "path_or_category": "KnowledgeBase/raw/research_papers/",
+      "description": "Optional downloaded research-paper full text used by separate evaluations.",
+      "ownership_status": "BUYER_MUST_PROVISION",
+      "included_in_transfer": false,
+      "generated": false,
+      "requires_external_provider": true,
+      "buyer_action_required": "Acquire papers independently from their authoritative sources under applicable terms.",
+      "notes": "The directory is gitignored; only the acquisition manifest and provenance tooling transfer."
+    },
+    {
+      "asset_id": "external-dataset-bridges",
+      "path_or_category": "Data/external_bridge/; Data/external_validation/; Data/breastdcedl_*",
+      "description": "Research stress-test mappings and derived files from public/restricted datasets.",
+      "ownership_status": "REVIEW_REQUIRED",
+      "included_in_transfer": false,
+      "generated": true,
+      "requires_external_provider": true,
+      "buyer_action_required": "Reacquire source datasets and validate commercial/redistribution rights; BreastDCEDL is noncommercial.",
+      "notes": "Excluded from the deterministic buyer archive; protected evaluation summaries remain included."
+    },
+    {
+      "asset_id": "trained-model-artifacts",
+      "path_or_category": "Data/models/; Data/complete_synthetic_training/",
+      "description": "Serialized synthetic-only model and candidate artifacts.",
+      "ownership_status": "REVIEW_REQUIRED",
+      "included_in_transfer": true,
+      "generated": true,
+      "requires_external_provider": false,
+      "buyer_action_required": "Review lineage per artifact; do not promote any model beyond its recorded use boundary.",
+      "notes": "BreastDCEDL-derived model files are excluded from the buyer archive."
+    },
+    {
+      "asset_id": "embedding-models",
+      "path_or_category": "Hugging Face model cache (not tracked)",
+      "description": "Optional dense embedding and cross-encoder runtime weights.",
+      "ownership_status": "DEPENDENCY",
+      "included_in_transfer": false,
+      "generated": false,
+      "requires_external_provider": true,
+      "buyer_action_required": "Download pinned model revisions and retain Apache-2.0 notices.",
+      "notes": "Model weights are not vendored in the repository."
+    },
+    {
+      "asset_id": "tests-ci",
+      "path_or_category": "tests/; frontend-react/tests/; .github/workflows/",
+      "description": "Hermetic backend/frontend tests, evidence contracts, and CI workflows.",
+      "ownership_status": "INCLUDED",
+      "included_in_transfer": true,
+      "generated": false,
+      "requires_external_provider": false,
+      "buyer_action_required": "Provision buyer-owned CI credentials only for optional integrations.",
+      "notes": "Core verification is offline after dependency/model provisioning."
+    },
+    {
+      "asset_id": "docker-infrastructure",
+      "path_or_category": "Dockerfile; docker-compose*.yml; infra/",
+      "description": "Local and production-shaped containers plus infrastructure boundary examples.",
+      "ownership_status": "INCLUDED",
+      "included_in_transfer": true,
+      "generated": false,
+      "requires_external_provider": false,
+      "buyer_action_required": "Pin deployment digests, configure TLS/secrets, and validate the buyer platform.",
+      "notes": "Not evidence of a clinical or production deployment."
+    },
+    {
+      "asset_id": "evidence-artifacts",
+      "path_or_category": "Data/evals/",
+      "description": "Registered safety, RAG, ML, XAI, provenance, operations, and governance evidence.",
+      "ownership_status": "GENERATED",
+      "included_in_transfer": true,
+      "generated": true,
+      "requires_external_provider": false,
+      "buyer_action_required": "Interpret current, historical, consumed, and informational statuses exactly as recorded.",
+      "notes": "Protected payloads remain byte-identical; negative evidence is intentionally retained."
+    },
+    {
+      "asset_id": "documentation",
+      "path_or_category": "docs/; README.md; cards and reports",
+      "description": "Architecture, safety, data, model, operations, and buyer diligence documentation.",
+      "ownership_status": "INCLUDED",
+      "included_in_transfer": true,
+      "generated": false,
+      "requires_external_provider": false,
+      "buyer_action_required": "Revalidate statements when implementation or evidence changes.",
+      "notes": "Documentation is technical, not legal or medical advice."
+    },
+    {
+      "asset_id": "external-accounts-secrets",
+      "path_or_category": "Buyer-provisioned providers and credentials",
+      "description": "LLM, vector, automation, identity, cloud, email, DNS/TLS, and monitoring accounts.",
+      "ownership_status": "NOT_INCLUDED",
+      "included_in_transfer": false,
+      "generated": false,
+      "requires_external_provider": true,
+      "buyer_action_required": "Create buyer-owned accounts and rotate/provision all secrets.",
+      "notes": "No personal API keys, cloud accounts, cookies, SSH keys, or browser profiles transfer."
+    },
+    {
+      "asset_id": "clinical-regulatory-status",
+      "path_or_category": "Clinical validation, approvals, and certifications",
+      "description": "Clinical validation, device status, regulatory clearance, clinician approval, and real-patient evidence.",
+      "ownership_status": "NOT_INCLUDED",
+      "included_in_transfer": false,
+      "generated": false,
+      "requires_external_provider": true,
+      "buyer_action_required": "Establish independently if pursuing a clinical product.",
+      "notes": "None is claimed or implied by transfer."
+    }
+  ]
+}

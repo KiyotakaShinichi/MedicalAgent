@@ -1,0 +1,160 @@
+{
+  "schema_version": "nlcare_technical_license_inventory_v1",
+  "disclaimer": "Technical diligence inventory only; obtain legal advice before transfer or commercial use.",
+  "components": [
+    {
+      "component": "NLCare first-party source and documentation",
+      "version_or_source": "Git history at candidate SHA",
+      "license": "UNKNOWN",
+      "commercial_use_status": "Not established by a repository license",
+      "redistribution_status": "Not established by a repository license",
+      "transfer_status": "REVIEW_REQUIRED",
+      "evidence_reference": "Repository root has no LICENSE file; git shortlog shows one human author plus Dependabot",
+      "buyer_action": "Obtain signed ownership/assignment representations and legal terms outside the repository.",
+      "notes": "Do not apply a permissive root license to third-party content."
+    },
+    {
+      "component": "Python runtime and development dependencies",
+      "version_or_source": "uv.lock / pyproject.toml",
+      "license": "Per-package licenses",
+      "commercial_use_status": "Dependency-specific",
+      "redistribution_status": "Dependency-specific notices/terms apply",
+      "transfer_status": "DEPENDENCY_ONLY",
+      "evidence_reference": "Data/evals/ops/sbom/python.cdx.json",
+      "buyer_action": "Run counsel/security review of the pinned SBOM before redistribution.",
+      "notes": "Dependencies are not owned by NLCare."
+    },
+    {
+      "component": "Node/frontend dependencies",
+      "version_or_source": "frontend-react/package-lock.json",
+      "license": "Per-package licenses",
+      "commercial_use_status": "Dependency-specific",
+      "redistribution_status": "Dependency-specific notices/terms apply",
+      "transfer_status": "DEPENDENCY_ONLY",
+      "evidence_reference": "Data/evals/ops/sbom/frontend.cdx.json",
+      "buyer_action": "Run counsel/security review of the pinned SBOM before redistribution.",
+      "notes": "React/Vite starter marks remain third-party assets where retained."
+    },
+    {
+      "component": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "version_or_source": "Hugging Face model card; runtime download",
+      "license": "Apache-2.0",
+      "commercial_use_status": "Generally permitted under the stated model license",
+      "redistribution_status": "Apache-2.0 notice and terms apply",
+      "transfer_status": "BUYER_MUST_OBTAIN",
+      "evidence_reference": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "buyer_action": "Download and pin the buyer-approved revision; retain license notices.",
+      "notes": "Weights are not included in Git."
+    },
+    {
+      "component": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "version_or_source": "Hugging Face model card; optional runtime download",
+      "license": "Apache-2.0",
+      "commercial_use_status": "Generally permitted under the stated model license",
+      "redistribution_status": "Apache-2.0 notice and terms apply",
+      "transfer_status": "BUYER_MUST_OBTAIN",
+      "evidence_reference": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "buyer_action": "Download and pin the buyer-approved revision; retain license notices.",
+      "notes": "Cross-encoder is optional and disabled by default."
+    },
+    {
+      "component": "Curated medical knowledge-base summaries",
+      "version_or_source": "KnowledgeBase/raw/curated_medical_kb/",
+      "license": "UNKNOWN",
+      "commercial_use_status": "Not established",
+      "redistribution_status": "Not established",
+      "transfer_status": "REVIEW_REQUIRED",
+      "evidence_reference": "KnowledgeBase/raw/curated_medical_kb/research_papers_manifest.json",
+      "buyer_action": "Verify authorship, source attribution, and permitted reuse before commercial redistribution.",
+      "notes": "Project-authored summary text is distinct from source publications, but ownership is not formally attested."
+    },
+    {
+      "component": "Optional research-paper full text",
+      "version_or_source": "KnowledgeBase/raw/research_papers/ (gitignored)",
+      "license": "Source-specific",
+      "commercial_use_status": "Source-specific",
+      "redistribution_status": "Not assumed",
+      "transfer_status": "NOT_INCLUDED",
+      "evidence_reference": "KnowledgeBase/README.md",
+      "buyer_action": "Reacquire from authoritative sources and preserve individual terms.",
+      "notes": "No downloaded paper corpus is included in the buyer archive."
+    },
+    {
+      "component": "BreastDCEDL dataset and derived research bridge",
+      "version_or_source": "Zenodo/TCIA BreastDCEDL sources",
+      "license": "CC BY-NC 4.0 dataset; article terms may be CC BY-NC-ND 4.0",
+      "commercial_use_status": "Noncommercial; commercial permission not established",
+      "redistribution_status": "Attribution and source-specific restrictions apply",
+      "transfer_status": "REVIEW_REQUIRED",
+      "evidence_reference": "https://zenodo.org/records/18114231 and DATA_CARD.md",
+      "buyer_action": "Reacquire source data and obtain permission for any commercial use; review derived artifacts separately.",
+      "notes": "External bridge data and BreastDCEDL model paths are excluded from the deterministic buyer archive."
+    },
+    {
+      "component": "TCIA, TCGA, METABRIC, CPTAC, SEER, GENIE and other mapped datasets",
+      "version_or_source": "Dataset-specific public or controlled-access sources",
+      "license": "Source-specific / data-use agreement",
+      "commercial_use_status": "Not established as a group",
+      "redistribution_status": "Not established as a group",
+      "transfer_status": "BUYER_MUST_OBTAIN",
+      "evidence_reference": "DATA_CARD.md; Data/evals/models/latest_public_*_dataset_readiness.json",
+      "buyer_action": "Obtain access and review each source's current terms independently.",
+      "notes": "Dataset mapping/readiness metadata does not transfer dataset rights."
+    },
+    {
+      "component": "Synthetic datasets generated by NLCare",
+      "version_or_source": "Data/complete_synthetic_* and generator lineage",
+      "license": "UNKNOWN",
+      "commercial_use_status": "Depends on first-party ownership resolution",
+      "redistribution_status": "Depends on first-party ownership resolution",
+      "transfer_status": "REVIEW_REQUIRED",
+      "evidence_reference": "DATA_CARD.md; generator manifests under Data/evals/models/",
+      "buyer_action": "Include generated-data rights in the first-party assignment/licensing review.",
+      "notes": "Synthetic does not mean clinically realistic or automatically unencumbered."
+    },
+    {
+      "component": "Synthetic-only trained models",
+      "version_or_source": "Data/models and Data/complete_synthetic_training",
+      "license": "UNKNOWN",
+      "commercial_use_status": "Depends on first-party and training-input review",
+      "redistribution_status": "Depends on first-party and serialization/runtime terms",
+      "transfer_status": "REVIEW_REQUIRED",
+      "evidence_reference": "MODEL_CARD.md; Data/evals/models/latest_data_promotion_roadmap.json",
+      "buyer_action": "Review lineage and exclude any external-data-derived model from commercial transfer.",
+      "notes": "No model is clinically promoted."
+    },
+    {
+      "component": "Lucide icons",
+      "version_or_source": "lucide-react in frontend package lock",
+      "license": "ISC",
+      "commercial_use_status": "Permitted subject to license",
+      "redistribution_status": "Retain applicable notice",
+      "transfer_status": "DEPENDENCY_ONLY",
+      "evidence_reference": "frontend-react/package-lock.json",
+      "buyer_action": "Retain package license notices.",
+      "notes": "No separately vendored icon library is claimed as first-party."
+    },
+    {
+      "component": "Frontend bitmap/logo assets",
+      "version_or_source": "frontend-react/src/assets and public assets",
+      "license": "UNKNOWN",
+      "commercial_use_status": "Not fully established",
+      "redistribution_status": "Not fully established",
+      "transfer_status": "REVIEW_REQUIRED",
+      "evidence_reference": "frontend-react/src/assets; frontend-react/public",
+      "buyer_action": "Confirm origin or replace nonessential starter/brand assets before commercial listing.",
+      "notes": "No external font files are tracked."
+    },
+    {
+      "component": "Groq, Ollama, Pinecone, Azure AI Search, n8n, OIDC and cloud services",
+      "version_or_source": "Optional provider seams configured through environment variables",
+      "license": "Provider terms",
+      "commercial_use_status": "Provider/account-specific",
+      "redistribution_status": "Accounts and hosted services do not transfer",
+      "transfer_status": "BUYER_MUST_OBTAIN",
+      "evidence_reference": ".env.example; config/buyer/configuration_matrix.json",
+      "buyer_action": "Provision buyer-owned accounts, agreements, regions, credentials, and spending controls.",
+      "notes": "Core buyer verification does not require these accounts."
+    }
+  ]
+}
