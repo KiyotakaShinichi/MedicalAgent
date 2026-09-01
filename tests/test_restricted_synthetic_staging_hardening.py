@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-import sys
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.models import AccessSession, Base, Patient, PatientUpload
-from backend.services import patient_uploads
+from backend.services import patient_uploads, upload_security
 from backend.services.auth import create_demo_session, get_context_from_authorization, revoke_session
 from backend.services.rag_evidence_envelope import _high_risk_semantic_validation_required
 from backend.services.synthetic_data_boundary import assert_synthetic_patient_id
@@ -85,12 +85,17 @@ def test_active_pdf_is_rejected(tmp_path):
 
 
 def test_external_scanner_failure_keeps_file_quarantined(tmp_path, monkeypatch):
-    script = tmp_path / "reject.py"
-    script.write_text("raise SystemExit(2)\n", encoding="utf-8")
     quarantine = tmp_path / "quarantine"
     uploads = tmp_path / "uploads"
     monkeypatch.setattr(patient_uploads, "UPLOAD_QUARANTINE_DIR", quarantine)
     monkeypatch.setattr(patient_uploads, "UPLOAD_DIR", uploads)
+    scanner_commands: list[list[str]] = []
+
+    def reject_scan(command, **_kwargs):
+        scanner_commands.append(command)
+        return subprocess.CompletedProcess(command, 2, "", "rejected")
+
+    monkeypatch.setattr(upload_security.subprocess, "run", reject_scan)
     db = _db()
     db.add(Patient(id="TEST-P002", name="Synthetic", diagnosis="Synthetic fixture"))
     db.commit()
@@ -98,7 +103,7 @@ def test_external_scanner_failure_keeps_file_quarantined(tmp_path, monkeypatch):
         True,
         True,
         "external",
-        f'"{sys.executable}" "{script}"',
+        "scanner-cli",
         10,
     )
     payload = base64.b64encode(b"synthetic report").decode("ascii")
@@ -113,6 +118,8 @@ def test_external_scanner_failure_keeps_file_quarantined(tmp_path, monkeypatch):
             security_policy=policy,
         )
     assert db.query(PatientUpload).count() == 0
+    assert scanner_commands and scanner_commands[0][0] == "scanner-cli"
+    assert scanner_commands[0][-1].endswith(".pending")
     assert list(quarantine.glob("*.blocked"))
     assert not list(uploads.rglob("*.txt"))
 

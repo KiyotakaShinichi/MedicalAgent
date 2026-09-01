@@ -53,10 +53,12 @@ class StepResult:
 
 def _run(name: str, argv: list[str], *, cwd: Path = ROOT, optional: bool = False) -> StepResult:
     started = time.perf_counter()
-    if shutil.which(argv[0]) is None and argv[0] not in {sys.executable}:
+    executable = argv[0] if Path(argv[0]).is_file() else shutil.which(argv[0])
+    if executable is None:
         detail = f"{argv[0]} not found on PATH"
         return StepResult(name, optional, detail, 0.0)
-    proc = subprocess.run(argv, cwd=cwd, capture_output=True, text=True)
+    command = [executable, *argv[1:]]
+    proc = subprocess.run(command, cwd=cwd, capture_output=True, text=True)
     elapsed = round(time.perf_counter() - started, 1)
     if proc.returncode == 0:
         tail = (proc.stdout or "").strip().splitlines()
